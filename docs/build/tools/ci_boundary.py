@@ -47,12 +47,14 @@ unexpired entry is plain red — never quarantined, skipped or retried.
 
 **External delta (G3c, P34.2).** Each read also records `origin/main`'s head (a best-effort
 `git fetch origin main` first), whether the chain tip descends from it, the PRs merged since
-the last boundary (the latest `## PHASE LOG — Round 11` entry's date), every open PR whose head
-is no chain row, and the link ancestry of each stacked pair — in the record's `external`
-object and the boundary line's ` · main: <sha7> …` tail. An off-stack merge or a chain tip that
-does not descend from `origin/main` is `blockedOn`; a stack link whose parent head is not an
-ancestor of the child's is a rebase/retarget and is `blockedOn` too (OM-03/OM-17). Unresolvable
-pieces are recorded, never claimed.
+the last boundary (the latest `## PHASE LOG — Round 11` entry's boundary time when it records
+one, else its date), every open PR whose head is no chain row, and the link ancestry of each
+stacked pair — in the record's `external` object and the boundary line's ` · main: <sha7> …`
+tail. An off-stack merge inside the window is `blockedOn`, and a stack link whose parent head
+is not an ancestor of the child's is a rebase/retarget — `blockedOn` too (OM-03/OM-17). A
+chain tip that does not descend from `origin/main` is *recorded* (`descends:no`) — the
+operator merges the chain late, so the tip normally trails main's head; it is not itself a
+rebase signal. Unresolvable pieces are recorded, never claimed.
 
 **Output.** The `ci-boundary/1` JSON at `--json` and, as the last stdout line, the line to
 record: `ci: pass #<n>@<sha7> (python <run>; docs <run>; composed <run>; security <run>;
@@ -490,17 +492,21 @@ class Boundary:
             )
         tip = stack[0]
         mb = self.git("merge-base", "--is-ancestor", "origin/main", tip.head_sha)
-        if mb.returncode == 1:
+        if mb.returncode == 0:
+            ext["chain_descends"] = True
+        elif mb.returncode == 1:
             ext["chain_descends"] = False
-            return ext, Verdict(
-                "fail",
-                "stack",
-                "external",
-                f"the chain tip #{tip.number}@{tip.sha7} does not descend from origin/main "
-                f"{main_sha[:7]} — a rebase outside the documented procedure",
+            # Recorded, never a block on its own: the operator merges the chain
+            # late (GATE-M Q-11), so the tip normally trails main's head. The
+            # red conditions are an off-stack merge in the window and a broken
+            # stack link — both checked below.
+            ext["descends_note"] = (
+                f"origin/main {main_sha[:7]} is not an ancestor of the tip — main "
+                "carries commits the chain does not contain (the chain trails main, "
+                "merged late by the operator)"
             )
-        ext["chain_descends"] = True if mb.returncode == 0 else None
-        if mb.returncode not in (0, 1):
+        else:
+            ext["chain_descends"] = None
             ext["descends_note"] = (mb.stderr or "").strip()[:160] or "unverifiable"
         # Each stacked pair: the parent's recorded head is an ancestor of the child's —
         # a retarget/rebase outside the operator's procedure breaks that (OM-03/OM-17).
@@ -545,7 +551,7 @@ class Boundary:
                 "--state",
                 "merged",
                 "--search",
-                f"merged:>={since}",
+                f"merged:>={since[:10]}",
                 "--json",
                 "number,headRefName,headRefOid,baseRefName,mergedAt",
                 "--limit",
@@ -562,6 +568,11 @@ class Boundary:
                 }
                 for m in (got or [])
             ]
+            # "Since the last boundary" is a timestamp, not a date — the search
+            # window covers the whole day; a merge earlier that day predates the
+            # boundary and is not its delta.
+            if "T" in since:
+                merged = [m for m in merged if m["merged_at"] > since]
             off_stack = [m for m in merged if not m["on_stack"]]
             ext["merged_since"] = merged
             if off_stack:
@@ -1018,7 +1029,7 @@ def main(argv: list[str] | None = None) -> int:
         # G3c (P34.2): the external delta — origin/main's head, the chain's descent and
         # link ancestry, merges since the last boundary, off-chain open PRs. A violation
         # is a red verdict emitted before any wait; the fields land in the record either way.
-        ext, ext_red = b.external(stack, last_boundary_date(ledger))
+        ext, ext_red = b.external(stack, last_boundary(ledger))
         out.doc["external"] = ext
         if ext_red is not None:
             return out.emit(
@@ -1247,14 +1258,21 @@ def pass_line(
     return line
 
 
-def last_boundary_date(ledger: str) -> str:
-    """The date of the latest `## PHASE LOG — Round 11` entry — the merge window's start
-    (G3c). An empty/absent section gives an empty string and the merge scan is skipped."""
-    section = re.search(r"(?ms)^##\s+PHASE LOG — Round 11\s*$(.*?)(?=^##\s|\Z)", ledger)
+def last_boundary(ledger: str) -> str:
+    """The last Round-11 boundary's timestamp — the merge window's start (G3c).
+
+    The latest `## PHASE LOG — Round 11` entry's leading date, refined to a full
+    ISO instant when the entry names one (`ci_boundary 22:18:48Z`); the date alone
+    when it does not. An empty/absent section gives an empty string and the merge
+    scan is skipped."""
+    section = re.search(r"(?ms)^##\s+PHASE LOG — Round 11\b[^\n]*$(.*?)(?=^##\s|\Z)", ledger)
     if not section:
         return ""
-    dates = re.findall(r"(?m)^\s*-\s*(\d{4}-\d{2}-\d{2})", section.group(1))
-    return dates[-1] if dates else ""
+    entries = re.findall(r"(?m)^\s*-\s*(\d{4}-\d{2}-\d{2}[^\n]*)$", section.group(1))
+    if not entries:
+        return ""
+    stamp = re.search(r"ci_boundary\s+(\d{2}:\d{2}:\d{2}Z)", entries[-1])
+    return f"{entries[-1][:10]}T{stamp.group(1)}" if stamp else entries[-1][:10]
 
 
 if __name__ == "__main__":

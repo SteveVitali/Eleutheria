@@ -244,10 +244,23 @@ def test_bare_field_with_a_red_check_run_fails(env) -> None:
 
 
 def test_unparseable_ci_fragment_fails(env) -> None:
-    env.add_file("x.md", "ci: pass oops-not-a-record\n")
+    """On a record surface, a `ci:`-shaped fragment that is not a parseable
+    field is a claim we cannot audit — red."""
+    env.add_file("docs/build/runs/x.md", "ci: pass oops-not-a-record\n")
     env.set(fx())
     rc, out, _ = env.run("--diff-base", "HEAD~1")
     assert rc == 3 and "unparseable ci: fragment" in out
+
+
+def test_ci_token_in_a_non_record_file_is_a_mention(env) -> None:
+    """Outside the record surfaces (LEDGER, BUILD_INDEX, runs/) a `ci:` token is
+    prose or code — a doc comment, a test literal, a template `#<n>@<sha>` —
+    not a recorded claim."""
+    env.add_file("notes.md", "docs: a bare `ci: pass #N@sha` re-reads check-runs\n")
+    env.add_file("mod.py", 'S = "ci: pass #1@{SHA_HEAD[:7]}\\n"\n')
+    env.set(fx())
+    rc, out, _ = env.run("--diff-base", "HEAD~1")
+    assert rc == 0, out
 
 
 def test_non_done_entry_is_exempt(env) -> None:

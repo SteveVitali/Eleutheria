@@ -143,12 +143,31 @@ def parse_ci_line(text: str, where: str) -> list[Claim]:
     return out
 
 
-def has_stray_ci(line: str) -> bool:
+#: The surfaces where a `ci:` field is a *claim* — every other file (code,
+#: comments, tickets, PR-body prose) only *mentions* the token, and a
+#: backticked or string-literal `ci: pass #<n>@<sha>` template there is
+#: documentation, not a recorded result.
+CLAIM_FILE_RE = re.compile(
+    r"(?:^|/)docs/build/(?:LEDGER\.md|BUILD_INDEX\.md|runs/[^/]+\.md)$"
+)
+#: `ci:` asserting an outcome in claim context.
+CI_TOKEN_RE = re.compile(r"(?<![\w/-])ci:\s*(?:pass-after-rerun|pass|blockedOn|fail)")
+#: … occupying a field position: the line opens with the `ci:` field (modulo a
+#: list/quote marker). A mid-line `ci:` in a record file — e.g. a documented
+#: example `` `ci: pass #202@…` `` — is a mention, not a recorded result.
+CI_FIELD_RE = re.compile(r"^\s*[-*>|]?\s*ci:\s*(?:pass-after-rerun|pass|blockedOn|fail)")
+
+
+def has_stray_ci(line: str, *, bullet: bool = False, claim_file: bool = False) -> bool:
     """A `ci:`-shaped fragment that is not a parseable field — a claim we cannot
-    audit. Bare prose mentions (`ci:` inside a word) are not claims."""
+    audit. Checked only where `ci:` fields are records: PHASE LOG bullets (every
+    `ci:` there is claim text) and the build-memory claim files at a field
+    position. Anywhere else a `ci:` token is prose or code, not a result."""
     if CI_RE.search(line):
         return False
-    return bool(re.search(r"(?<![\w/-])ci:\s*(pass|blockedOn|fail)", line))
+    if bullet:
+        return bool(CI_TOKEN_RE.search(line))
+    return bool(claim_file and CI_FIELD_RE.match(line))
 
 
 def load_guard() -> Any:
@@ -197,7 +216,7 @@ def collect_all(repo: Path, ledger_text: str) -> tuple[list[Claim], list[str]]:
         claims.extend(found)
         if ENTRY_RE.match(bullet) and not found and not any(k in bullet.lower() for k in NON_DONE):
             missing.append(f"PHASE LOG entry with no ci: field: {bullet.strip()[:100]}")
-        if has_stray_ci(bullet):
+        if has_stray_ci(bullet, bullet=True):
             missing.append(f"unparseable ci: fragment: {bullet.strip()[:100]}")
         tickets.update(TICKET_RE.findall(bullet))
     for ticket in sorted(tickets):
@@ -208,6 +227,11 @@ def collect_all(repo: Path, ledger_text: str) -> tuple[list[Claim], list[str]]:
             continue  # a named ticket without a run ledger is not a ci: claim
         for lineno, line in enumerate(text.splitlines(), 1):
             claims.extend(parse_ci_line(line, f"{RUNS_REL}/{ticket}.md:{lineno}"))
+            if has_stray_ci(line, claim_file=True):
+                missing.append(
+                    f"unparseable ci: fragment in {RUNS_REL}/{ticket}.md:{lineno}: "
+                    f"{line[:100]}"
+                )
     return claims, missing
 
 
@@ -219,10 +243,13 @@ def collect_diff(repo: Path, base: str) -> tuple[list[Claim], list[str]]:
         found = parse_ci_line(line, f"{path} (added)")
         claims.extend(found)
         body = re.sub(r"^\s*-\s+", "", line)
-        if path.endswith("LEDGER.md") and ENTRY_RE.match(body):
+        entry = path.endswith("LEDGER.md") and bool(ENTRY_RE.match(body))
+        if entry:
             if not found and not any(k in line.lower() for k in NON_DONE):
                 missing.append(f"added PHASE LOG entry with no ci: field: {line[:100]}")
-        if has_stray_ci(line):
+        if has_stray_ci(
+            line, bullet=entry, claim_file=bool(CLAIM_FILE_RE.search(path))
+        ):
             missing.append(f"unparseable ci: fragment added in {path}: {line[:100]}")
     return claims, missing
 
