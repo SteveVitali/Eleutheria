@@ -1,0 +1,2004 @@
+{
+  "schema": "input-manifest/1",
+  "acyclic": true,
+  "rule": "inputs are enumerated source files only; generated projections, run receipts and validation output under docs/build/reports/current/ are structurally excluded — the manifest cannot contain a forward or cyclic dependency because outputs are never inputs",
+  "excluded_prefixes": [
+    "docs/build/reports/current/",
+    "docs/build/logs/"
+  ],
+  "input_commit": "6bade66ea020bc854a3ac59f6af6f80ed0bdbf8d",
+  "inputs": [
+    {
+      "path": "docs/2_canonical_design_spec.md",
+      "sha256": "6d705d6e7f78d152f72e1bc47cfd09684ea1553857b6defd1e3629134e24e8bb"
+    },
+    {
+      "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
+      "sha256": "6a56fd6206fc1d526c091e2948705c15f6122301068ad8fa6c9e2da8447a69e6"
+    },
+    {
+      "path": "docs/adr/ADR-002-append-only-claim-table.md",
+      "sha256": "6c675c4d6398d8c35aee5af5b8826a907188c2d9a94294242fb5b41607c30ff5"
+    },
+    {
+      "path": "docs/adr/ADR-003-two-interval-time-dimensions-plus-one-ordering-scalar.md",
+      "sha256": "3df7863545d899a4fb9ec42b960f535c6f60528e57584a5f71b525b72d036ace"
+    },
+    {
+      "path": "docs/adr/ADR-004-edtf-for-uncertain-dates.md",
+      "sha256": "3541b538484bfbe186c6eccc35e6203cc2f5378cff30660087d67f9a68c21d8c"
+    },
+    {
+      "path": "docs/adr/ADR-005-resolution-as-a-stored-decision-record-not-a-view.md",
+      "sha256": "bd18fe9468203f8918aa387cb25112cd298d4617e3d5514318a0639418925fcb"
+    },
+    {
+      "path": "docs/adr/ADR-006-ocfl-11-evidence-store-on-object-storage-with-governance-mod.md",
+      "sha256": "7485b322846f3282f50ae130715f162e2633f137101da33f4fde95717a7561e4"
+    },
+    {
+      "path": "docs/adr/ADR-007-linkml-as-the-single-ontology-source-of-truth.md",
+      "sha256": "a06b65b1c77c4aef93321ead48c4b883b5d48b57f9e5ea9e18cf7035efa77903"
+    },
+    {
+      "path": "docs/adr/ADR-008-skos-for-published-controlled-vocabularies.md",
+      "sha256": "4930c1886bddab0fd6437616c51e53576eae945395267ef24710d4d344e5e9f6"
+    },
+    {
+      "path": "docs/adr/ADR-009-spdx-expressions-for-per-source-licensing-with-a-build-time.md",
+      "sha256": "a21665c35075ea1d7e51034dfb0b878d5bd9de6662bab3233854dedefba09f4d"
+    },
+    {
+      "path": "docs/adr/ADR-010-duckdb-parquet-analytics-boundary.md",
+      "sha256": "71d75057c7aef8c96e3587e70b3995b8a085838475f098561aa72e692d79a9d0"
+    },
+    {
+      "path": "docs/adr/ADR-011-the-odbl-posture.md",
+      "sha256": "4bda05cb2531fde2205e89e7059273865b6d6d4e2a0e488b7a25236238054e28"
+    },
+    {
+      "path": "docs/adr/ADR-012-sensitivity-tiers-enforced-by-rls-applied-at-the-view-layer.md",
+      "sha256": "c5baf4a51c671b5d43bb22ef25c78544e59b6b91a178c383df96659d7fa967f9"
+    },
+    {
+      "path": "docs/adr/ADR-013-uv-as-the-workspace-and-lockfile-tool.md",
+      "sha256": "efe03b4e04a50048ebfff7ca7859a08b52dce513a371b08708a427cbfd95e0b8"
+    },
+    {
+      "path": "docs/adr/ADR-014-astro-for-the-public-web-surface.md",
+      "sha256": "0667430bfa85c5f283d838633b231af8d85c3b65b3d5d774e59425cc92bc993b"
+    },
+    {
+      "path": "docs/adr/ADR-015-aws-s3-for-the-evidence-store-and-cloudfront-for-bulk-export.md",
+      "sha256": "dedd30dcff8410882b3d1ca325032908dfd8a3a89a682825bca709a21091ca2a"
+    },
+    {
+      "path": "docs/adr/ADR-016-dagster-oss-for-orchestration-kept-reversible.md",
+      "sha256": "e462b31993fe8c5dd270eab65a70a8a8ec62b508cf6860cd75e4debbe05a2304"
+    },
+    {
+      "path": "docs/adr/ADR-017-fastapi-for-the-read-api.md",
+      "sha256": "d6b6204d03292043f2610546a76a64fe1d5fd77ca1c4acb54b095b6ecb197acf"
+    },
+    {
+      "path": "docs/adr/ADR-018-maplibre-gl-for-the-web-map.md",
+      "sha256": "cb69f30a8d404669ae1a7f4b1a2a340c6603001e6ae3fdbe69514e79d2d1cfaf"
+    },
+    {
+      "path": "docs/adr/ADR-019-pytest-+-hypothesis-for-testing.md",
+      "sha256": "da3ce36eaf4b1d409626eb347237f88dc4e8289fe4b770cfd9e32c79513b65e6"
+    },
+    {
+      "path": "docs/adr/ADR-020-github-actions-for-ci.md",
+      "sha256": "33a7cb233f7cee3ea259c2c7a53cf80ea97628b59f655fe0b3ec6276b37cbdf2"
+    },
+    {
+      "path": "docs/adr/ADR-021-source-registry-as-seeded-data-with-a-runtime-ingestion-gate.md",
+      "sha256": "2f82aa92f564af99c226ea306ed7fcaef0f26390a2418929ce59cf12be517d8a"
+    },
+    {
+      "path": "docs/adr/ADR-022-defer-claim-partitioning-to-preserve-the-claim_id-fk-contract.md",
+      "sha256": "ad755577d7ba9dcd7224e5f8eff54736cfe8ff46058ba555350d4ba2e0e780c4"
+    },
+    {
+      "path": "docs/adr/ADR-023-evidence-package-and-content-addressed-blob-dedup.md",
+      "sha256": "c116c1ef43dd65504c6f93b3757f1392bae5008fccf5690dbe4a8655c8767684"
+    },
+    {
+      "path": "docs/adr/ADR-024-deterministic-edtf-envelope-derivation.md",
+      "sha256": "23c87d745e1d10fb1fc735e04be1ca1235e324d5eb3da43557e3382d53336331"
+    },
+    {
+      "path": "docs/adr/ADR-025-temporal-invariants-as-pipeline-checks-and-as-of-sql-functions.md",
+      "sha256": "bf12dd8bbc8d1705a307be72188a9774b6206e5b58450c861fa34f0bc7c4f991"
+    },
+    {
+      "path": "docs/adr/ADR-026-the-eight-stage-connector-framework-fetch-only-egress-and-network-isolated-replay.md",
+      "sha256": "a2b16174f655b6cca5b01e296f0273d4110d35306bfe4849cdc79549dc8d1932"
+    },
+    {
+      "path": "docs/adr/ADR-027-the-osm-connector-vocabulary-keying-and-odbl-landing.md",
+      "sha256": "654e87d643efff77bce320f249bc9a7a47fe36cacfc6abf5ca89fce059023fce"
+    },
+    {
+      "path": "docs/adr/ADR-028-the-atlas-connector-family-granularity-agency-keying-and-category-retirement.md",
+      "sha256": "f7b45a98661a95aa73b2025a5f9061680c04d3db70a6daa68459c9a3d90777f9"
+    },
+    {
+      "path": "docs/adr/ADR-029-splink-4-for-probabilistic-entity-resolution-tiers-4-5.md",
+      "sha256": "00572b09222bb861bcbe8fd5a5bddf03e00175f983470c8f966ff00e8c3f916d"
+    },
+    {
+      "path": "docs/adr/ADR-030-review-queue-and-llm-extraction-scaffolding-as-library-plus-cli.md",
+      "sha256": "4701c42360a2e692f6ac44b2f39d3454f2f57bfe787fe160eaa1eca3b1381297"
+    },
+    {
+      "path": "docs/adr/ADR-031-minimal-count-reconciliation-and-added-count-predicates-for-the-vertical-slice.md",
+      "sha256": "c93d016d010fef7874d28816549cdcf471b0060de852f3fb47c66c99b7769b7a"
+    },
+    {
+      "path": "docs/adr/ADR-032-minimal-slice-dossier-renderer-ahead-of-the-production-surface.md",
+      "sha256": "a9cb8ff772b84753e42944cf2fd27743d2c25cfb838bdc4b575bd0d297ff535a"
+    },
+    {
+      "path": "docs/adr/ADR-033-the-layered-parsing-stack-and-the-parser-interface.md",
+      "sha256": "fb92f7e04b37f578ead7914a8b5b6b88a95862a0d6cf8fd335d680881b1a904c"
+    },
+    {
+      "path": "docs/adr/ADR-034-the-records-connector-targeted-lookups-muckrock-jwt-and-the-no-responsive-records-coverage-bridge.md",
+      "sha256": "a520cc363d1309d1c0bf957d1090e763a6905df03c25d1e4a4641bad9eb7ecae"
+    },
+    {
+      "path": "docs/adr/ADR-035-the-procurement-connector-cooperative-piggyback-federal-subawards-and-the-agenda-platform-tenant-registry.md",
+      "sha256": "08a6e4906a302c0ce584ef9f7b7b81422c59ea51a5f499c6e436f38a7e664b85"
+    },
+    {
+      "path": "docs/adr/ADR-036-the-reconciliation-workflows-layered-on-the-resolver.md",
+      "sha256": "b1c7b41a0ef47428b7dd3c91d12fe9a7a73be652a221b89b3c8f0c8e92483f05"
+    },
+    {
+      "path": "docs/adr/ADR-037-the-materialized-contradiction-entity-and-byte-identical-l3-rebuild.md",
+      "sha256": "9c0657755c9889f4e0b1f985f3505582a019f9961b5337c5cf711a69882f0632"
+    },
+    {
+      "path": "docs/adr/ADR-038-the-coverage-metrics-layer-and-the-executable-capture-recapture-prohibition.md",
+      "sha256": "b7b72a65ccdeaea4c50616afae7388083ae12e80203a9956c9f0d3b85de977cf"
+    },
+    {
+      "path": "docs/adr/ADR-039-the-research-task-engine-detector-as-data-callable-closing-conditions-and-executable-anti-abuse.md",
+      "sha256": "356249f0fce5a6e73ca1302696d699ddd0e28060c616a26c7ce3fd38e3fdc090"
+    },
+    {
+      "path": "docs/adr/ADR-040-the-detector-catalog-and-the-contradiction-task-map.md",
+      "sha256": "c273e6ceaeed974a872aa460efd1db796d543e45d21161ef405d2039e9625d33"
+    },
+    {
+      "path": "docs/adr/ADR-041-the-records-request-generator-the-51-jurisdiction-law-table-residency-routing-and-consent.md",
+      "sha256": "1a7f36ce40f2fe8894553d084c38855012fdb9c3b57410d81ee7b928ecc0f02e"
+    },
+    {
+      "path": "docs/adr/ADR-042-the-flock-portal-connector-cc-by-sa-compartment-snapshot-keyed-change-detection-and-the-reconciler-seam.md",
+      "sha256": "20531366d966f05d8f7ef1539f4d2f66972436c220e3e8bb04cb54ffaad335ad"
+    },
+    {
+      "path": "docs/adr/ADR-043-the-audit-structural-connector-aggregates-only-the-per-plate-bright-line-and-independent-count-and-sharing-seams.md",
+      "sha256": "a9d3bfb5c3d49204e878146ece96e6117f42f905c978179677c547774b25b311"
+    },
+    {
+      "path": "docs/adr/ADR-044-the-usage-analytics-boundary-duckdb-parquet-substrate-uuid-period-join-partition-as-evidence-and-small-cell-suppression.md",
+      "sha256": "d05efe253554c7f56d591f7ddf59cf83ee54699514555919bfd97c507ea1c9df"
+    },
+    {
+      "path": "docs/adr/ADR-045-access-path-closure-the-composition-bound-and-the-required-automaticity-tightening.md",
+      "sha256": "06a4615179e92fd62fa7a92cafb12f429b5ac4ce245daf034bede6eaec400ed2"
+    },
+    {
+      "path": "docs/adr/ADR-046-policy-legal-instruments-the-never-merged-invariant-and-the-curated-index-general-form.md",
+      "sha256": "4f9a8283e201dedf1ee469889cbd30351bb406c6fc12b1b199eee55b4650800e"
+    },
+    {
+      "path": "docs/adr/ADR-047-the-public-read-api-hand-written-versioned-contract-envelope-on-every-fact-and-the-prohibited-endpoint-bar.md",
+      "sha256": "25f62cc51b2cd53b57d496e691fb2b4bf709e9f35e3db90c31790327cae2430e"
+    },
+    {
+      "path": "docs/adr/ADR-048-bulk-exports-computed-licence-compartments-reproducible-releases-and-egress-friendly-distribution.md",
+      "sha256": "599e26debea662a7c2ec975d6941550ec68173ebb3fd4577960a9e4dbd7fcd7d"
+    },
+    {
+      "path": "docs/adr/ADR-049-the-epistemic-visual-language-and-the-no-js-archivable-web-shell.md",
+      "sha256": "39dc4dbb65d71208517fc1d299e84ddd0e8bfdead5f0f9fcb8e7cc0f1a5068b2"
+    },
+    {
+      "path": "docs/adr/ADR-050-the-production-local-dossier-surface-print-to-pdf-and-the-superseded-slice-renderer.md",
+      "sha256": "b0a95d88352042715684bb197d63cc854bcdfd59efd76e9032919b6a4bcbcec4"
+    },
+    {
+      "path": "docs/adr/ADR-051-the-infrastructure-map-and-network-explorer-honest-rendering-and-the-static-pmtiles-serving-contract.md",
+      "sha256": "d969e7e4aebc35dc11c0314220c3f5dd79a29311ad6a0f68ebf9d1549793b9e8"
+    },
+    {
+      "path": "docs/adr/ADR-052-the-renewal-watch-evidence-recommender-and-evidence-viewer-neutrality-and-static-subscriptions.md",
+      "sha256": "c60895442e28a7d5b39391373377d7207d1e1383939e9c79767dce23aef129a9"
+    },
+    {
+      "path": "docs/adr/ADR-053-the-research-queue-corrections-log-methodology-metrics-and-editorial-standards-conformance-gate.md",
+      "sha256": "a3f1871edbbd262aa5253fd5dee0e1980e84b5ac04267caa6b2add99132b5ffd"
+    },
+    {
+      "path": "docs/adr/ADR-054-the-contributor-system-five-tiers-l0-entry-revert-as-new-assertion-and-poisoning-resistance.md",
+      "sha256": "d74b09b16761dda1933f8033edbe6089e146062c792f013f97c8b017403c1d84"
+    },
+    {
+      "path": "docs/adr/ADR-055-no-direct-automated-osm-writes-the-human-mediated-suggestion-workflow-and-the-osm-compliance-analysis.md",
+      "sha256": "5bbf17fe8e954a0c6a098e65e6d4be4d96329c9a80211737cf545c6a72ede613"
+    },
+    {
+      "path": "docs/adr/ADR-056-the-jurisdiction-adapter-framework-namespaced-vocabularies-bcp47-labels-and-coarse-international-ingestion.md",
+      "sha256": "225af1ad98afa25d5b9d1945944a330a3deaf64541ef447cbcb772c043bd220e"
+    },
+    {
+      "path": "docs/adr/ADR-057-the-france-belgium-technopolice-connectors-prefectural-orders-decp-and-the-osm-import-study.md",
+      "sha256": "b063bc952d1cd04d92bc061f1819761cf6f23107b505865f0498bb730954474e"
+    },
+    {
+      "path": "docs/adr/ADR-058-tickets-and-build-memory-are-committed-and-scratch-is-unified.md",
+      "sha256": "7a75d6f8c9c862fbf6b5ce7eea26f972fe7cd7be94c129562c7a3f8eaaad31e8"
+    },
+    {
+      "path": "docs/adr/ADR-059-the-capstone-spine-wiring-pgclaimsink-pgreadstore-and-compute-on-read.md",
+      "sha256": "b797722ea4eca95c43f0afd1217fddb7f0bc6050bb03fe14009dedee793c0ff4"
+    },
+    {
+      "path": "docs/adr/ADR-060-the-resolver-p08-1-retro-fitted-record.md",
+      "sha256": "8658ede2fac2160481aa4f73db6c626af65a507737fbc4860ba6d00bf1ed39c1"
+    },
+    {
+      "path": "docs/adr/ADR-061-capstone-gap-closure-export-gate-jurisdiction-render-er-over-pg.md",
+      "sha256": "108a04213050eebcdd448b2b57020c3a3917632b9a37e65d03edb8a56ac45af3"
+    },
+    {
+      "path": "docs/adr/ADR-062-spec-reconciliation-after-the-46-ticket-build.md",
+      "sha256": "f21aa5a1c8fd4a1399bfd24c9b3d51b2cc362a0b8bccbacc8440677b95389fe7"
+    },
+    {
+      "path": "docs/adr/ADR-063-registry-review-metadata-and-the-flip-rule.md",
+      "sha256": "fdace4888a380ae71c7014ebe482e3924abcf14789b46f1f6e93a2939341df65"
+    },
+    {
+      "path": "docs/adr/ADR-065-live-connector-wiring-httpx-transport-ocfl-capture-store-and-the-gated-run-cli.md",
+      "sha256": "38000037a03d94740b59e14c9fda87a1254b4f0cdceb77b9e37213c93f775828"
+    },
+    {
+      "path": "docs/adr/ADR-066-runtime-composition-and-the-export-backed-web-data-layer.md",
+      "sha256": "e906a5951359e1e3c4645d42431036203ec99caca61d04f71beb99aa757d4bcb"
+    },
+    {
+      "path": "docs/adr/ADR-067-deposits-object-store-tiles-mirrors-and-degraded-mode.md",
+      "sha256": "d66f977b59633d08e6dab36ab57615d2999ac2962a815485976e210d4ab6a921"
+    },
+    {
+      "path": "docs/adr/ADR-068-the-authenticated-curation-service-and-the-curate-web-surface.md",
+      "sha256": "97c26414b463b593fd1f070934ff98e61d84303002806cad04ca3b33fd156f7f"
+    },
+    {
+      "path": "docs/adr/ADR-069-contribution-back-live-maproulette-client-osm-changeset-feed-and-the-registration-gate.md",
+      "sha256": "e51f6d38f935e448aa64c5212bb922f67cbd21e2581f9d4d803b3c1763db8d0c"
+    },
+    {
+      "path": "docs/adr/ADR-070-data-driven-release-model-and-the-coarse-international-capture-path.md",
+      "sha256": "86cd2a0da29d29c19c29714369f4024dceb83dbfe653c143169d65fd55867e70"
+    },
+    {
+      "path": "docs/adr/ADR-071-the-pathways-connector-one-connector-three-extractors-the-adr-033-deferred-parser-layers-and-the-procured-not-deployed-epistemic-guard.md",
+      "sha256": "a19e169f18b9f167f3144685c6237708d65272ad39cd4e85abbd092af7f61a6c"
+    },
+    {
+      "path": "docs/adr/ADR-072-documentation-freshness-gates.md",
+      "sha256": "7ed1dad1d3167b23da2de95a7e7495547c06fec0b60e74c5f1d25ebc78068451"
+    },
+    {
+      "path": "docs/adr/ADR-073-build-memory-committed-under-docs-build-scratch-retired.md",
+      "sha256": "8975567cff1e527e305886c00e38dd783eb69bca8280abbf42bb54b26f2dea7a"
+    },
+    {
+      "path": "docs/adr/ADR-074-okc-document-connectors-okc-procurement-okcpd-policy-ok-statute-over-the-sig-parsing-layers-with-the-part-viii-guard.md",
+      "sha256": "e15e3dc1a74d5772c0a29d21d5f74b4e39be4dac27d70c713c358220e80cf8f8"
+    },
+    {
+      "path": "docs/adr/ADR-075-gcp-hosted-deployment-e2-micro-vs-cloud-sql.md",
+      "sha256": "66e8b01b650740f0c2a5105bc9b837a6d7e7de6dd1b4d606213715e56d8eea80"
+    },
+    {
+      "path": "docs/adr/ADR-076-reingest-cadence-github-actions-scheduler-vs-prefect-dagster-and-the-cadence-vs-etiquette-design.md",
+      "sha256": "0fdf0a3d00e824efe2786361ef45677d22163d3ce4d40f0bf9f851302d1be4ef"
+    },
+    {
+      "path": "docs/adr/ADR-077-observability-and-alerting-recorded-alert-ledger-env-webhook-notifier-and-bounded-logs.md",
+      "sha256": "dd58269f142be631072fdf3aa9bacd2d509da5987f66d3eff78d6aea62d787d6"
+    },
+    {
+      "path": "docs/adr/ADR-078-ci-composed-hardening-composed-e2e-job-offline-scanners-nightly-cadence-and-the-starlette-fix.md",
+      "sha256": "205fcd47f898488aeee526dff20125dd09f75096c90bd5aa84caff35d67a9577"
+    },
+    {
+      "path": "docs/adr/ADR-079-second-jurisdiction-france-gex-adapter-wiring-and-the-okc-assumption-dispositions.md",
+      "sha256": "31471aad2bc13989e2dde37927bc97763628a5ad73c08cc375ca1c729d1e40d4"
+    },
+    {
+      "path": "docs/adr/ADR-080-government-mandated-disclosure-ccops-one-connector-three-source-adapters-the-per-agency-aggregate-row-schema-and-the-two-layer-procured-not-deployed-guard.md",
+      "sha256": "6c6b8b66c33270052777b857605fb76ddd89226f77b12a91ea7a33b1f03c4727"
+    },
+    {
+      "path": "docs/adr/ADR-081-gcp-live-deployment-cloud-sql-and-cloud-run-vs-the-e2-micro-decision-plus-the-image-dsn-and-read-grant-gap-closures.md",
+      "sha256": "b4408eadfde6501519d358c8fbb4e77468c8a6bf8034377fc68741244bf7930d"
+    },
+    {
+      "path": "docs/adr/ADR-082-live-fetch-targets-table-and-the-overpass-robots-gate-finding.md",
+      "sha256": "75f89adb456a6f84a08e990243965ebb22ab991d907524a0b501740e4c364ae4"
+    },
+    {
+      "path": "docs/adr/ADR-083-crawler-conduct-documented-api-access-is-not-crawling-carve-out.md",
+      "sha256": "43e3a36e8552e6c7eeec8b7647fa165d24a1447d7174734608da836cc2e41249"
+    },
+    {
+      "path": "docs/adr/ADR-084-accept-licence-ouverte-2-0-in-the-spdx-set-for-decp-fr.md",
+      "sha256": "089f5e6f6a681b73bb2177ba20ddd6334940267f0bd4bfc317b3e506c819231b"
+    },
+    {
+      "path": "docs/adr/ADR-085-municipal-mandated-disclosure-and-derived-facts-basis-for-ccops-and-pathways.md",
+      "sha256": "deeb1542e67ef7df57af049139edace77b2ae0f4c3f211d041c1b375044cd886"
+    },
+    {
+      "path": "docs/adr/ADR-086-hg02-counsel-resolution-derived-facts-publication-compartment.md",
+      "sha256": "7c7cd148001733173490f15da37094c4b1a5b9e059a832ee132601e3ea19991a"
+    },
+    {
+      "path": "docs/adr/ADR-087-robots-4xx-means-no-policy-exists-rfc-9309-access-result-split.md",
+      "sha256": "ba38eeabdc337cd08bd6e9a8281b6321577140bd39aa038ed8cd2e88a53973b1"
+    },
+    {
+      "path": "docs/adr/ADR-088-robots-verdicts-recorded-never-enforced-gl-gate-08.md",
+      "sha256": "7aff917307357101f30bfe894af9cb1329154aced137f9efbc636f030a9ffc6f"
+    },
+    {
+      "path": "docs/adr/ADR-089-bounded-quota-aware-sam-gov-sweep.md",
+      "sha256": "c7691d616ad2f4b56c6d50d6fc933758739a97815a46222b25ac7d9dbf299c80"
+    },
+    {
+      "path": "docs/adr/ADR-090-national-public-surface-from-a-spine-built-export.md",
+      "sha256": "2c98b6068161c64cf8f2a6c256d6a5f6d9a28421b500ace5ad51263e1728ff62"
+    },
+    {
+      "path": "docs/adr/ADR-091-static-core-plus-progressive-enhancement-react-islands.md",
+      "sha256": "d222dcab1075d6a21702a08debcfe6add50b68dbd4c646b3f30a454114793e77"
+    },
+    {
+      "path": "docs/adr/ADR-092-spine-built-export-and-launch-resolution-posture.md",
+      "sha256": "7451332ed2185e9e2b51a452bb6b414e3a1b8bcd2faf8e0560c625f9787b58eb"
+    },
+    {
+      "path": "docs/adr/ADR-093-information-architecture-redesign-and-national-landing.md",
+      "sha256": "3a887cb6c049242e740ab828656d26e271e798afdd8ce56f9c35727a03bb104f"
+    },
+    {
+      "path": "docs/adr/ADR-094-maximize-publishable-scope-rights-resolution.md",
+      "sha256": "951b9494c6a3829db069b1776ba54cea502d7040372b1807a2556352ebd681f2"
+    },
+    {
+      "path": "docs/adr/ADR-095-append-only-rights-decision-log.md",
+      "sha256": "13f2143a9d845983589ddb76aa7efd18f652cc2388a04493b9eb28e309892d51"
+    },
+    {
+      "path": "docs/adr/ADR-096-national-public-cutover-published-compartment.md",
+      "sha256": "9af9f4809cb94118a2497595a990e533d2b4be3550ee30780de5c5383b29347e"
+    },
+    {
+      "path": "docs/adr/ADR-097-public-progressive-enhancement-islands-map-graph-search.md",
+      "sha256": "b88947a7029aa9c398b5ce225a96f07f161ff999633084aaea5294932415e786"
+    },
+    {
+      "path": "docs/adr/ADR-098-custom-domain-cutover-via-external-https-load-balancer.md",
+      "sha256": "6f12f48c76ce769d9c557f4fdeb4670f865aa9996dae600c5d14531d0850e45f"
+    },
+    {
+      "path": "docs/adr/ADR-099-materialize-entity-resolution-at-scale-with-a-measured-eval-loop.md",
+      "sha256": "2969ad4675fce78d9901e8da11976ac68eb21286a28403be5924fbe295ae1b2b"
+    },
+    {
+      "path": "docs/adr/ADR-100-identity-minimization-for-contribution.md",
+      "sha256": "c485d07146457edcef525cf207f087e7ca9ba3d0ab8e029e19ade4c082ded7ef"
+    },
+    {
+      "path": "docs/adr/ADR-101-public-surface-reads-the-materialized-graph.md",
+      "sha256": "b840ad3013b683ee5a2410891bfe681389a99e25393d708ab588d8d3a3f6ddfc"
+    },
+    {
+      "path": "docs/adr/ADR-102-temporary-cloud-sql-scale-up-and-settled-audit-snapshot.md",
+      "sha256": "ade28f35c90f3b943051803d2780545f7c0758634ff344229a30970eade5a741"
+    },
+    {
+      "path": "docs/adr/ADR-103-hosted-round6-materialization-least-privilege-role-and-in-gcp-execution.md",
+      "sha256": "b2f98ece4d5572691cf94d9c6d24d4277fbc95816b70f483f46c88e9b581f888"
+    },
+    {
+      "path": "docs/adr/ADR-104-camera-registry-predicates-in-the-predicate-registry.md",
+      "sha256": "ba559bd4ac072cfe63a4948fd8f4291fca54528319c64be1376a82d9b356e706"
+    },
+    {
+      "path": "docs/adr/ADR-105-geospatial-camera-site-entity-resolution.md",
+      "sha256": "22c413858e68c5b6e99bf6987857a993b1846c8843e1333a43d2b118571d6120"
+    },
+    {
+      "path": "docs/adr/ADR-106-public-share-alike-compartments-published-separately.md",
+      "sha256": "28c1570d191e9af1d2d0d954e8be8735d2c90643dccb39158e4cf0c7868c6922"
+    },
+    {
+      "path": "docs/adr/ADR-107-cloud-sql-steady-state-tier-after-launch.md",
+      "sha256": "67a763f74d88c0a393705d541dbcd986aaa241db76b17854c4366b4b809e5dc8"
+    },
+    {
+      "path": "docs/adr/ADR-108-api-connection-pool-and-bounded-search.md",
+      "sha256": "63f15e7ece7b926c5eb897b8989725c900dbcbcb1e804679bf38fd3173fb3b6d"
+    },
+    {
+      "path": "docs/adr/ADR-109-append-only-ingest-run-completion.md",
+      "sha256": "9e3fc5c5e276f2a8e2009aa90cff643de3a7e22e56a719aabe878a9cf312e4aa"
+    },
+    {
+      "path": "docs/adr/ADR-110-sink-identity-guard-and-batched-writes.md",
+      "sha256": "e48c4ff1fc5ca08cf1ca9bd5063b17a8e50bfc7a63678d81d024418e5358fcec"
+    },
+    {
+      "path": "docs/adr/ADR-111-restart-resume-capture-store-and-pinned-job-images.md",
+      "sha256": "eb6a049395597fb0535e2f43f53ae59161a157dcba87f4fe84102eef2a71e35d"
+    },
+    {
+      "path": "docs/adr/ADR-112-partner-organisation-entity-ref-claims.md",
+      "sha256": "a769207b7748f63c2504902498c39e27217512579c490eea01b7d241e380e3bd"
+    },
+    {
+      "path": "docs/adr/ADR-113-asserting-replay-of-persisted-captures.md",
+      "sha256": "244009f6cd568b90b0520025e80c869f061f755ce32a1581595138fbef582aca"
+    },
+    {
+      "path": "docs/adr/ADR-114-claim-re-sightings-and-latest-capture-dating.md",
+      "sha256": "6429ae786f885dc691dbdb6b99420284cc31d3d810d6679cd0a8e54f6b7934bf"
+    },
+    {
+      "path": "docs/adr/ADR-115-peer-class-negative-space-declared-tracked-predicates.md",
+      "sha256": "a4b93a83fb397b2302b3fd68e38b7bea36dca90913fa608f377260512a81d372"
+    },
+    {
+      "path": "docs/adr/ADR-116-human-review-decisions-into-camera-site-clustering.md",
+      "sha256": "f61b0d6a88d13747aac16e391b5cdb7816ede111f4d87964d0bfdbca7f30c09b"
+    },
+    {
+      "path": "docs/adr/ADR-117-presentation-analytics-emitted-by-the-spine-export.md",
+      "sha256": "f94f6205a6e39b43e7ff64cae35ff37b949d75bda5638d10a867a9527387fb19"
+    },
+    {
+      "path": "docs/adr/ADR-118-per-compartment-vector-tiles-compression-and-points-json-retirement.md",
+      "sha256": "6fd8c35512403b65bc4e096c2fea26266d6e368107e583fdddea9dfa1a8151a9"
+    },
+    {
+      "path": "docs/adr/ADR-119-project-id-leak-check-scoped-to-code-and-config.md",
+      "sha256": "854020e94a636b3e02d4c35a37019b1407a03ad67592180624a3838d51a277e1"
+    },
+    {
+      "path": "docs/adr/ADR-120-six-stream-integrity-investigation-and-memory-extension.md",
+      "sha256": "1795b41cf7c35f097ff54675d5b22ea53ce9fb70d6ff2354d1c0a1de93620d17"
+    },
+    {
+      "path": "docs/adr/ADR-121-typed-assertions-and-actual-capture-bindings.md",
+      "sha256": "d434038f0b175f27d3c7012988f1bfa8cf7dd240e9dc0784970e3314b62866ac"
+    },
+    {
+      "path": "docs/adr/ADR-122-role-semantics-count-scope-and-conservative-organization-identity.md",
+      "sha256": "9cd03edcb02bbec2f063ad3aae2d12d37647d0d5ac19601d217d1b13bc5e251c"
+    },
+    {
+      "path": "docs/adr/ADR-123-shared-bitemporal-occurrence-selection.md",
+      "sha256": "453bfba9d26a602818e94e612ec93e6e6db567f1fa13a5ebf84301511d921a79"
+    },
+    {
+      "path": "docs/adr/ADR-124-one-publication-eligibility-policy.md",
+      "sha256": "5b9292d098b73d3a37450a6b2ad3c689197179ba6fb1c12012e576f4f181dd60"
+    },
+    {
+      "path": "docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md",
+      "sha256": "dfac21b8f4eb0bf2de681d1997b138106d0bfda02351e5fc2f724fae2d4407b7"
+    },
+    {
+      "path": "docs/adr/ADR-126-obligation-events-and-current-projection.md",
+      "sha256": "c1708cc769655951250cc4dbec7f56c0ec420a7059c8752ec1c94a00b1f69728"
+    },
+    {
+      "path": "docs/adr/README.md",
+      "sha256": "82143d87c8e3fae0da378dad6306cb829cf45cecb0bbf026086e382b62f5c8f3"
+    },
+    {
+      "path": "docs/build/BACKLOG.csv",
+      "sha256": "32cbb13a8b349da84a6eb5246875685ce9b6b8e7add96da58dba3ae06b74ed63"
+    },
+    {
+      "path": "docs/build/BUILD_INDEX.md",
+      "sha256": "81b5dde08260dffbacb5ffba03cdedb0d9799c291039c8d2202e683b6344ae5d"
+    },
+    {
+      "path": "docs/build/COVERAGE_MATRIX.csv",
+      "sha256": "e2a6876dad248f58b99d0b02df3104ad87398b11fcd4c20c6373616d38931465"
+    },
+    {
+      "path": "docs/build/LEDGER.md",
+      "sha256": "ace0e0aa88a540743b88f9aca4d65476f0f4c77bed1291ac06c855a7575b39c1"
+    },
+    {
+      "path": "docs/build/readouts/ACCEPT-R10.md",
+      "sha256": "939ec8a46c6dea51a0b2cc2f04d3f7bd6403006ffd21d803b8d27e97749f868b"
+    },
+    {
+      "path": "docs/build/readouts/ACCEPT-R8.md",
+      "sha256": "b0a2ecf9c8ee5edbe3e8cc45b5be253e440f411492194f6455689bca2d29e10d"
+    },
+    {
+      "path": "docs/build/readouts/GATE-ACCEPT.md",
+      "sha256": "828bc79789426594ddacc7067a255f6bad08e5d8da715a9ddeb5f6607bf7a4cf"
+    },
+    {
+      "path": "docs/build/readouts/GATE-G1.md",
+      "sha256": "0a1e2acbd975b4b71ed90d7304a9ee6b8fbb1311a55c3c2c44e3bbf2c9d4fec2"
+    },
+    {
+      "path": "docs/build/readouts/GATE-G2.md",
+      "sha256": "77cbcd9e28d9a16873cc18cb8438addf1c5228310f1efc31ee7bd929b177b7ee"
+    },
+    {
+      "path": "docs/build/readouts/GATE-G3.md",
+      "sha256": "79a2d79c56923a20bf0aa62bcb56d3cc1ca86ee639fab820646165cd2f4e21c8"
+    },
+    {
+      "path": "docs/build/readouts/HUMAN-H1.md",
+      "sha256": "d60b6948b778b3b67680a628c572be612f35e562ea175a7a72446a9255a18e13"
+    },
+    {
+      "path": "docs/build/readouts/HUMAN-H2.md",
+      "sha256": "0cfe4d58ece035c28ae595e554c52c2be9163f3e689af1344742ed01ef2da093"
+    },
+    {
+      "path": "docs/build/readouts/HUMAN-H3.md",
+      "sha256": "be11bda755fc74f88a3e912b491e79b75d641e6ae100b4660a7d4eb79ae2a576"
+    },
+    {
+      "path": "docs/build/readouts/HUMAN-H4.md",
+      "sha256": "a17808c21c288ff63b68c950e973977251ecf65d01818000db7ed9da9e0090f3"
+    },
+    {
+      "path": "docs/build/readouts/HUMAN-H5.md",
+      "sha256": "379fe6fe15e9464f83491fa07bdf923df9537bef96873d7d8cdd3324a5a113db"
+    },
+    {
+      "path": "docs/build/reports/obligations/MIGRATION.md",
+      "sha256": "32235a6d9a849758243a15f28f1db3021d0b49af5d227930b94e21ffa1297541"
+    },
+    {
+      "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
+      "sha256": "edd0502b6e40ac3dca35a8f24751ab0fcd2fb6b72ea253fa7736bae8044de2a4"
+    },
+    {
+      "path": "docs/build/reports/obligations/events.jsonl",
+      "sha256": "352b33edc1930502372a92c82ed0d2e22770ba156594de836ecf3fca414522ff"
+    },
+    {
+      "path": "docs/build/reports/obligations/governing_adrs.json",
+      "sha256": "bcd7af4903f7688e7a6346aa39977b49b4ed17269cf01a747c7557159bd27c84"
+    },
+    {
+      "path": "docs/build/reports/obligations/reconciliations.json",
+      "sha256": "037a7963e2d50b48c1ca1f5418a26a4216369e99b73a8bcf3003365ab8c3f653"
+    },
+    {
+      "path": "docs/build/reports/p32.1-baseline/EVIDENCE_DOMAINS_AND_SOURCE_FUNNEL.md",
+      "sha256": "a3a40f9ebd425f3ccd3a5858124038fb179a7dea81083c9e0e2d1ede6e3378af"
+    },
+    {
+      "path": "docs/build/reports/p32.1-baseline/RECONCILIATION.md",
+      "sha256": "1502b9bed7f9f1df42d8eaec69df4d32fedcced248be5052087d0c4b75ca460e"
+    },
+    {
+      "path": "docs/build/runs/P00.1.md",
+      "sha256": "7e65366f09734d5d9a064bbc464cc9112b6d5da33b01880f5f68524207362d1f"
+    },
+    {
+      "path": "docs/build/runs/P00.2.md",
+      "sha256": "ca269dbb8a2ca62f6dc7f8aaab5e0e3c8ee760f0e18c12a40834a3bd98b4df2a"
+    },
+    {
+      "path": "docs/build/runs/P00.3.md",
+      "sha256": "c4dda8d05e678d5e39888d33060f9f1a2cddca479f85f12a3e54fc5f0301c799"
+    },
+    {
+      "path": "docs/build/runs/P01.1.md",
+      "sha256": "0d1ceb61859bd51fe2b196cad854e65714e00d0e1fa367e8302a1e7469ea8744"
+    },
+    {
+      "path": "docs/build/runs/P02.1.md",
+      "sha256": "34043c78181e14ea0bc54031abc1f5479fc6121fd2cb89e3168dca802c84044b"
+    },
+    {
+      "path": "docs/build/runs/P02.2.md",
+      "sha256": "9ac2db33409107e21d5b5941720468f0f17908f196d7c27256322cb8c93eae17"
+    },
+    {
+      "path": "docs/build/runs/P02.3.md",
+      "sha256": "c4dedae26c391f3a6499e0c515996684f2984d0f1c5e29867308b16fd4b193fa"
+    },
+    {
+      "path": "docs/build/runs/P03.1.md",
+      "sha256": "e0ba2e1ec27edb363fcc0e8c28d1810ffb0f0961339e05ace0bfa9ec46011ba5"
+    },
+    {
+      "path": "docs/build/runs/P03.2.md",
+      "sha256": "c8de99858b702f376f7790804611fdb0921ba04549925fdab0c00fa8be63464f"
+    },
+    {
+      "path": "docs/build/runs/P04.1.md",
+      "sha256": "ffe15484c91ac6adfea5c67884576876df0364df77b51691f305f2ed51e80de4"
+    },
+    {
+      "path": "docs/build/runs/P04.3.md",
+      "sha256": "e0e57fd12986efcabf1934ea74639ec8edd53c933cd5ccaa8d35fc874447353f"
+    },
+    {
+      "path": "docs/build/runs/P05.1.md",
+      "sha256": "d224f6c199f78534e57f71ae915b6d5504ee33974b883246be4f29049587bfa3"
+    },
+    {
+      "path": "docs/build/runs/P05.2.md",
+      "sha256": "c35f5f6fbf73c886e4d362319162c4f884cddb6a041fa205ce60788665f59fbc"
+    },
+    {
+      "path": "docs/build/runs/P06.1.md",
+      "sha256": "72c4b63a470ee016b9ab24730880e75603f2e5a953180dc2217afa013ebf38bd"
+    },
+    {
+      "path": "docs/build/runs/P07.1.md",
+      "sha256": "b2d44e3436229127336ce3db1702bffa862a3c3706ae4458dc709bddb53e34dc"
+    },
+    {
+      "path": "docs/build/runs/P07.2.md",
+      "sha256": "eec3d2e2740a4c863dd7ad97b21448fcefa56ea00c898142e1daafc648e84d89"
+    },
+    {
+      "path": "docs/build/runs/P07.3.md",
+      "sha256": "69d73bc0cf13436726c8eedd0603cfe7cd1549a8cc99a895e6e49b202e46dde5"
+    },
+    {
+      "path": "docs/build/runs/P08.1.md",
+      "sha256": "734b5d36be1063638f726e25177d78bb836652c7fe5ec81efcfdd6a5843d5d23"
+    },
+    {
+      "path": "docs/build/runs/P08.2.md",
+      "sha256": "bcd710cf1cc94f0c2678810a8c2678784aca658a48f1c03e3510dd8c4d3361ed"
+    },
+    {
+      "path": "docs/build/runs/P08.3.md",
+      "sha256": "4a05bbe383cee8712ce7fc3bc44e26fe0e521df1fbcae14c14193c8071329663"
+    },
+    {
+      "path": "docs/build/runs/P09.1.md",
+      "sha256": "f7e036812b35394139692044e05974bd8c27b51fb62989f1af99349ae4e2ce5a"
+    },
+    {
+      "path": "docs/build/runs/P10.1.md",
+      "sha256": "cd6f165a9dd99513e44f54765f05a4ce39d0ef42f933eb26a19b5ef61652fcc7"
+    },
+    {
+      "path": "docs/build/runs/P10.2.md",
+      "sha256": "7d30c440c1e94881044bf76b9864958101f68115711392a31bafc2ecd4af1acb"
+    },
+    {
+      "path": "docs/build/runs/P10.3.md",
+      "sha256": "1a2dd76824aa1d124588e7c99a76df64d1f8f88f8b8c3fe553e1c93cc1a7208c"
+    },
+    {
+      "path": "docs/build/runs/P11.1.md",
+      "sha256": "85931848a032be2b5d32ace05ee0ded3b43515fbd4437a732a452dda9cab9991"
+    },
+    {
+      "path": "docs/build/runs/P11.2.md",
+      "sha256": "6c131600cbbbc91134c35929997f959e1546b78a42499e2cf5d16243224a3e48"
+    },
+    {
+      "path": "docs/build/runs/P12.1.md",
+      "sha256": "c3ad5ae28137377b3401e67145edca4edcf86df1e9e5fb9a01ec110d728101ed"
+    },
+    {
+      "path": "docs/build/runs/P12.2.md",
+      "sha256": "c5e43c67e3a6ce99d5d0e4d5e36f7409e74cc54ea055ee462022bca18b782d56"
+    },
+    {
+      "path": "docs/build/runs/P13.1.md",
+      "sha256": "3ebf5d3142694a8178b69d47c5f02d35ecae6797647a58d41c11b5f8bb802f92"
+    },
+    {
+      "path": "docs/build/runs/P13.2.md",
+      "sha256": "0419e229fafef73681f4aee927d33c310b9d6e18bccf19f796ff75fda126dfd6"
+    },
+    {
+      "path": "docs/build/runs/P14.1.md",
+      "sha256": "56e6f7de6376b33a5ada7691f330d5b41be991cb35320f91a060314d27cbc628"
+    },
+    {
+      "path": "docs/build/runs/P14.2.md",
+      "sha256": "12d8e339d8d461245059a17680ab519f02f2f941cba00f2e372564cb93116ec8"
+    },
+    {
+      "path": "docs/build/runs/P15.1.md",
+      "sha256": "2fda6499f7a7974edfeee6a71a0ce03367e46f29e76b9a02ac948b471f24c550"
+    },
+    {
+      "path": "docs/build/runs/P15.2.md",
+      "sha256": "94c351f6f8884bd909d64586666fdf239430de89734f4ab29d9bf42d1b9bb97e"
+    },
+    {
+      "path": "docs/build/runs/P15.3.md",
+      "sha256": "06f77ba4a66998dadc537c47e64c12314d1569f8bd8c00a6e39af80202f27ab2"
+    },
+    {
+      "path": "docs/build/runs/P15.4.md",
+      "sha256": "1d4bbcaca341c181bc2d5fed9266a72d39315970a5744c8aa995953818b20794"
+    },
+    {
+      "path": "docs/build/runs/P15.5.md",
+      "sha256": "f5b17976c8ed7b962ad626087f591ae631015abc5acb2e48eaec04e7a75031d6"
+    },
+    {
+      "path": "docs/build/runs/P16.1.md",
+      "sha256": "cf13500a44bfe327a019021cab4a5af5ef1b1febaf1981751552369f99e80258"
+    },
+    {
+      "path": "docs/build/runs/P16.2.md",
+      "sha256": "7a5a619c59021cc32926998a53b9ee769808a84133c51ce6e0cdf77762898574"
+    },
+    {
+      "path": "docs/build/runs/P17.1.md",
+      "sha256": "714c97e8170abe158ca0949ca4036f31ff38f38233052cb43e4d40eca3675150"
+    },
+    {
+      "path": "docs/build/runs/P17.2.md",
+      "sha256": "631c1cd9a29d2ed317fda42a54bb770aea3b3a38e074aa2cfbe57df2a39a5238"
+    },
+    {
+      "path": "docs/build/runs/P17.3.md",
+      "sha256": "b0aa99dc95bd8384ec9ff24edb4e37077a5a19d8818f33de7e036871138a7e16"
+    },
+    {
+      "path": "docs/build/runs/P18.1.md",
+      "sha256": "a93bed0e07d3d226aa46149195fcd36ae9f1067090a2db8f331c194207507e53"
+    },
+    {
+      "path": "docs/build/runs/P18.2.md",
+      "sha256": "40218e401e25f7ea600b1155a7d26e61a79586cbd5fae6d2a5ec378c1cf047c4"
+    },
+    {
+      "path": "docs/build/runs/P19.2.md",
+      "sha256": "82eef112b79c6bc050319e46a4545ba8b4e5f8474c06be9a60e6001ff0cc26f8"
+    },
+    {
+      "path": "docs/build/runs/P19.3.md",
+      "sha256": "bb1077ee1532fc86669ec525bc6f0536d04d9a3b63bf38fa045a3a3c4aa99da9"
+    },
+    {
+      "path": "docs/build/runs/P19.5.md",
+      "sha256": "96e322a9a17992f5dab82e26a53da8d71d1b34c7dd63acf45df8344699cf13a7"
+    },
+    {
+      "path": "docs/build/runs/P20.1.md",
+      "sha256": "4f9a28a05ea74ffbe377f2750ff630d231159fa753a035ebfb2dd90ba34bd71e"
+    },
+    {
+      "path": "docs/build/runs/P20.3-dup1.md",
+      "sha256": "0b87dbe2e4b1bd732a33f100106b2f7bbb4319e8b2c1d9f31a3eae8c61382b61"
+    },
+    {
+      "path": "docs/build/runs/P20.3.md",
+      "sha256": "a565a76f00a500dc88d89d624317239f27858e49f1b7575c57eaa156d6d11818"
+    },
+    {
+      "path": "docs/build/runs/P20.4.md",
+      "sha256": "5a9b80b9f77da5e60618ab8373c72c36cddf7be71d7cab3036dedad9c02c39d6"
+    },
+    {
+      "path": "docs/build/runs/P21.1.md",
+      "sha256": "aa4cbfac746f13562c4c7d18270c49bfb6491b476a27dfc5e21c98fbc21a18b2"
+    },
+    {
+      "path": "docs/build/runs/P21.2.md",
+      "sha256": "36ac5fb7c644f82a6baddec63c9734e920f4b48685b63917fb737c4e4f3df02f"
+    },
+    {
+      "path": "docs/build/runs/P21.3.md",
+      "sha256": "e34818589cae4fda10f079ca9bb23bb5d46e214dfb0460e8acfccd1237d842ce"
+    },
+    {
+      "path": "docs/build/runs/P21.4.md",
+      "sha256": "55b9b8dfc823788c115a6bba2b466dff70d32abe92ad5ce7c7e2708b986be2e7"
+    },
+    {
+      "path": "docs/build/runs/P21.5.md",
+      "sha256": "74c24daf76f60d84f75ba28128289c03f2124ca37873335bf40e99277355733d"
+    },
+    {
+      "path": "docs/build/runs/P21.7.md",
+      "sha256": "88f4314b4c7d1d4f9fc90914dd1aee59d6eccaf23e53157d73647ba9c621e0e5"
+    },
+    {
+      "path": "docs/build/runs/P21.8.md",
+      "sha256": "6305a85f273826b7997dc2bf08c8e56633f338492e89c10cbb4ca74d7d4dcafe"
+    },
+    {
+      "path": "docs/build/runs/P21.9.md",
+      "sha256": "a21335bede49d0e73c76e489e7b8162efbb9acec51e4a9e2021c409dcad24efe"
+    },
+    {
+      "path": "docs/build/runs/P22.1.md",
+      "sha256": "63d3ebc9111ca90e4b66917ec05d90db64a0c91f4141d8b114e98b0bb0b99320"
+    },
+    {
+      "path": "docs/build/runs/P22.2.md",
+      "sha256": "8c13693d84294c39dcc99cfedd267e779370a21a64bf25c9851713d2084b30f2"
+    },
+    {
+      "path": "docs/build/runs/P22.3.md",
+      "sha256": "43d5cea5145eed878cce1f76fbaeee32acf948b8ae905efb51c95ea0d7c8b540"
+    },
+    {
+      "path": "docs/build/runs/P23.1.md",
+      "sha256": "7283378012979155a4a2bbe3a12cc64f26c01b67bf573da9c5823595c18e6a9a"
+    },
+    {
+      "path": "docs/build/runs/P23.2.md",
+      "sha256": "1828a913bcf9c43720ae63971cbc51fbc0891d3a43a4264a60fbde626e752761"
+    },
+    {
+      "path": "docs/build/runs/P23.3.md",
+      "sha256": "ffacaf5cde938a8dab4c6f9d9a87d56c3824912f2ab44e87b36e21990f1d6451"
+    },
+    {
+      "path": "docs/build/runs/P23.4.md",
+      "sha256": "c35f126c34bb13afa6e44062ded207dc723953a12b0a1ddf311f7249eb356df6"
+    },
+    {
+      "path": "docs/build/runs/P23.5.md",
+      "sha256": "4db0eb8c29b2e28ac85d142e2f0b9601f8149979e0080fd69f3ca0db7a231234"
+    },
+    {
+      "path": "docs/build/runs/P23.6.md",
+      "sha256": "7b8b903a44b76667b8033a02905179e79f69b96427b856431244eae1f098f019"
+    },
+    {
+      "path": "docs/build/runs/P24.1.md",
+      "sha256": "cef9319f75f0fcc2632f07139355ca4379665c6c1837bfb1dc2f8c6680f5a9df"
+    },
+    {
+      "path": "docs/build/runs/P24.2.md",
+      "sha256": "c263681071bea98d90015e643a7932ec77c27f0b3f97ca5cc2af18927b926d68"
+    },
+    {
+      "path": "docs/build/runs/P24.3.md",
+      "sha256": "e1b24b4e8317ca6b1962b262264b0e3c9b80a0c1a6abfb3b57da24f3e11cb75c"
+    },
+    {
+      "path": "docs/build/runs/P24.4.md",
+      "sha256": "4aec3a3960700efddc360010775d877771f98d77a0da46455cdfef100c7da8f1"
+    },
+    {
+      "path": "docs/build/runs/P24.5.md",
+      "sha256": "2fec61bd76a61d2add481e1fae79063b3052372bdbaa3fe7b1bfeefd08dc0659"
+    },
+    {
+      "path": "docs/build/runs/P24.6.md",
+      "sha256": "bc38472c53b8a733162e1a9494f47643231f91c1796719fa23780b35948d2e39"
+    },
+    {
+      "path": "docs/build/runs/P24.7.md",
+      "sha256": "2511ed36d78382d24ed21b2461ea041824ead236b90e85fbb48772b978f75e23"
+    },
+    {
+      "path": "docs/build/runs/P24.8.md",
+      "sha256": "06dcb9b3b6513bf731bef5f10b8b54c6009ceb857e87b9b9c9b1fd5a1c05cc8e"
+    },
+    {
+      "path": "docs/build/runs/P25.1.md",
+      "sha256": "7bd3816416fcc6b679e66ee2c14618016b7df11435589c130b1ac3e8082b13d5"
+    },
+    {
+      "path": "docs/build/runs/P25.10.md",
+      "sha256": "080e56a24aedc3a2219b52f537b9be2739f17502bbda124599b5a7567fa3703c"
+    },
+    {
+      "path": "docs/build/runs/P25.2.md",
+      "sha256": "387ce48d59a3e7e2b41a720043c8b385447ac992b1766a9dc6c67cdb9c63c56e"
+    },
+    {
+      "path": "docs/build/runs/P25.3.md",
+      "sha256": "8b7e68cafb7d145bb768cdedf2e57f0e5cdb8e232c2c9fe6876211f56eb67762"
+    },
+    {
+      "path": "docs/build/runs/P25.4.md",
+      "sha256": "55fc5911b4e9cb8fad89b0bfa8981eeb61c323923158ea6ffab91776814c9cd3"
+    },
+    {
+      "path": "docs/build/runs/P25.5.md",
+      "sha256": "37a19ae172e375c1b88313507687f0d7e4b23c45fc4d3ebfe1f6e131ebd2af10"
+    },
+    {
+      "path": "docs/build/runs/P25.6.md",
+      "sha256": "a993a13b66629c8376d7afc16a56e9fdabfe601aac03bff216ef32d1fd7cf8f8"
+    },
+    {
+      "path": "docs/build/runs/P25.7.md",
+      "sha256": "cc1ee1f6772663703b2aea0e7a58bbacf8768e3240bfe7f3bf30dc336fb89a3e"
+    },
+    {
+      "path": "docs/build/runs/P25.8.md",
+      "sha256": "be01b7da047f2565c1aca313851730e078c7d526a67e13b9a9faa61ae32e68e1"
+    },
+    {
+      "path": "docs/build/runs/P25.9.md",
+      "sha256": "b153817991965ade43851181159577f762147fa0a2b7dd5c25b43827ebbe98a9"
+    },
+    {
+      "path": "docs/build/runs/P26.1.md",
+      "sha256": "231216959e20e58317531c3daa6288974b3a96f67ed47fd7d36aeaa85fd27f27"
+    },
+    {
+      "path": "docs/build/runs/P26.10.md",
+      "sha256": "6ba06a850bb2377ebbc66acdf501903efeb5b98ef81c909a876009070730361c"
+    },
+    {
+      "path": "docs/build/runs/P26.11.md",
+      "sha256": "83978902e08ec28d08af5cf96fcf7f8b1fbca00eb52012871fcfa8047b7f9d68"
+    },
+    {
+      "path": "docs/build/runs/P26.12.md",
+      "sha256": "f77a3d759ebc9b3e0268d986f7f90a252696a9906c6c9e4a0f0e32f589d30ce1"
+    },
+    {
+      "path": "docs/build/runs/P26.13.md",
+      "sha256": "2bf082d276a78fc647309e48b1de9a045d1de53617c8fcb8a7499ad3ffa21f52"
+    },
+    {
+      "path": "docs/build/runs/P26.14.md",
+      "sha256": "40e103fec30e439a5a6c0f7ca4059d2dca1d84b44929300a02d80f8a7d223668"
+    },
+    {
+      "path": "docs/build/runs/P26.15.md",
+      "sha256": "74aa427f4dcbd38571fe9ad3afb43f419ccdf5a0af88b5562f4f88f82949eec9"
+    },
+    {
+      "path": "docs/build/runs/P26.16.md",
+      "sha256": "e0e402e1fe0bb4debb806c42f794bfc3ebc1f33ebd9b95350e7bf1080b86d10f"
+    },
+    {
+      "path": "docs/build/runs/P26.17.md",
+      "sha256": "a3733b9bfc98f47c3191608ec5ab0ed6e4af61a294b7eb66b9416df25d991603"
+    },
+    {
+      "path": "docs/build/runs/P26.18.md",
+      "sha256": "21428e23f7eb3212507ea02f714a0bcb2067b9c4139b09f6cf40766f73840dfa"
+    },
+    {
+      "path": "docs/build/runs/P26.19.md",
+      "sha256": "9686145d493bccbaa79b9a5b677546939fcc443c7627a2ed89bff82fe1aadf46"
+    },
+    {
+      "path": "docs/build/runs/P26.2.md",
+      "sha256": "1ab9ab43f54cf3f916642ff408b22022021c9fafc3ac3ecca57d06cc2f0f8ad4"
+    },
+    {
+      "path": "docs/build/runs/P26.3.md",
+      "sha256": "371c30f4c4558855587515c7136b7fa44a91b33d5be9dd881b2169f3a1daa3de"
+    },
+    {
+      "path": "docs/build/runs/P26.4.md",
+      "sha256": "1fd17401f3bbcae4ff69232fbacbca309b1bc7a3b4f44c1f9257361939ae2d17"
+    },
+    {
+      "path": "docs/build/runs/P26.5.md",
+      "sha256": "e87fe31ba926647fc4524b2048247d298ef788bd3e07aa9e7da79357f12d9658"
+    },
+    {
+      "path": "docs/build/runs/P26.6.md",
+      "sha256": "486f9084aa50a1332ca96c107a7a035fd12d990b57d9a1dcf94dad743a8c1504"
+    },
+    {
+      "path": "docs/build/runs/P26.7.md",
+      "sha256": "09b1ae1a9f910ebf56fcba3c16374fa02126d3875f8c51a338326af41989ede7"
+    },
+    {
+      "path": "docs/build/runs/P26.8.md",
+      "sha256": "13556c5b42cb411448c44d842b72b3ed1c384a060f712accade0d897b618c772"
+    },
+    {
+      "path": "docs/build/runs/P26.9.md",
+      "sha256": "2f6ac381b7c463cc69a24e7e81100b59b7be5f28fb3440823267163a7b660615"
+    },
+    {
+      "path": "docs/build/runs/P27.1.md",
+      "sha256": "c21f6fd7cdfead8288518620c316fe24a7fb0e1bfe549f8860709b48c4404de4"
+    },
+    {
+      "path": "docs/build/runs/P27.10.md",
+      "sha256": "8c4a5254f5c8dd0049dd308fa813ba76f0b9e9fd49ea7352af1d74694a3f536e"
+    },
+    {
+      "path": "docs/build/runs/P27.2.md",
+      "sha256": "a02fb68b02bc2f4fb17f24b77f7851d3aeac946ac035dc2fa5aecb9f2927a236"
+    },
+    {
+      "path": "docs/build/runs/P27.3.md",
+      "sha256": "b63500625b4efbb5e491f33b924471fe654375224842e4c2ec62bc30fed0995f"
+    },
+    {
+      "path": "docs/build/runs/P27.4.md",
+      "sha256": "3c23fafc9f1437fe37c4b74afb26a038eaaacadbc5b8e60e60db513be03ab9a5"
+    },
+    {
+      "path": "docs/build/runs/P27.5.md",
+      "sha256": "582ed9da45ca9d91c4d96dff020019dd99631af4f4a1849e47a60ec378f5c538"
+    },
+    {
+      "path": "docs/build/runs/P27.6.md",
+      "sha256": "76f09033c6de22c883cada857cf89da1c9a9c72b44492824cb02edc29cc81dc6"
+    },
+    {
+      "path": "docs/build/runs/P27.7.md",
+      "sha256": "fb86109f29432960d9f74b696f1bf5f536f7d75a9fabf192bc5ee42f5a49ca9e"
+    },
+    {
+      "path": "docs/build/runs/P27.8.md",
+      "sha256": "a404f349955e56e0291857b3057c346c9861d5727d3ce8626da91d10c6d9d410"
+    },
+    {
+      "path": "docs/build/runs/P27.9.md",
+      "sha256": "9e48f2c3f21ff1c9ff97105f9db8dd73345c56a0487a0344b75442e287cf4884"
+    },
+    {
+      "path": "docs/build/runs/P28.1.md",
+      "sha256": "ff59651cff980591076be173ea67c85ab0d04873029fa772e873cc99ee3d2e55"
+    },
+    {
+      "path": "docs/build/runs/P28.2.md",
+      "sha256": "f21e2030981257a35d3a979ad155e0a4a177049ea3c70746263661a3733e2487"
+    },
+    {
+      "path": "docs/build/runs/P28.3.md",
+      "sha256": "bd628e96af5470e838ffdfbe87f72f6144c0fef8fc53ccde8ff75a4d5fcfd194"
+    },
+    {
+      "path": "docs/build/runs/P28.4.md",
+      "sha256": "04110ef1df1c7bebb82b6af34cdae92f81ed89b981c60d05322685b6dae4c8fd"
+    },
+    {
+      "path": "docs/build/runs/P28.5.md",
+      "sha256": "04d598e4f3ee53e8212997f45c1543da5bb4acfaffd24590c9cde79dfc715141"
+    },
+    {
+      "path": "docs/build/runs/P28.6.md",
+      "sha256": "382473bf7552d558b917a019e201be9d5a55938d509c36963338a3a32425f05f"
+    },
+    {
+      "path": "docs/build/runs/P29.1.md",
+      "sha256": "8b1ff7b64aba3a54caa1667868ff65b0531aad9e89abfbd37408abae706596a9"
+    },
+    {
+      "path": "docs/build/runs/P29.2.md",
+      "sha256": "cb9ac0d32cc4aa3e38363f60ed7d2642aac7e7a49aeb75a68b2317cdc8d5a536"
+    },
+    {
+      "path": "docs/build/runs/P29.3.md",
+      "sha256": "cbdd5f35bcf04a086a79b6e4fa04ddbf5aa9ea80aacd4fc7aa15a94b6702af01"
+    },
+    {
+      "path": "docs/build/runs/P30.1.md",
+      "sha256": "72d3926d9458f38b6b106752f09bcb292e693a4d2ff1888841c1a39ba92eee79"
+    },
+    {
+      "path": "docs/build/runs/P30.2.md",
+      "sha256": "2f4c4689ef055fc17ee9f95a6b27104668eaf6b5cbb81ebc4a23fcf1dc966201"
+    },
+    {
+      "path": "docs/build/runs/P30.2a.md",
+      "sha256": "f9a3f1debcf75c2ea9ea0cc3868d3ea3120e039e431304cd894e8042d77467fe"
+    },
+    {
+      "path": "docs/build/runs/P30.2b.md",
+      "sha256": "e465d69dbf7c47f06aa42e3581d07453c806228a081ac8067be4c3a56e7ce922"
+    },
+    {
+      "path": "docs/build/runs/P30.3.md",
+      "sha256": "261aaace62b999175a425d2968d3c6b41e6d4823fecfd35bdc7fd6b7ffb8561d"
+    },
+    {
+      "path": "docs/build/runs/P30.4.md",
+      "sha256": "538751c24bfe2994be8c2290188e709d2306acf15e38d58181671005b8fe75b7"
+    },
+    {
+      "path": "docs/build/runs/P31.1.md",
+      "sha256": "ee583e7207eddbb61bd41eb3d7c9b61babdef25107234029ab01af1eb01a1df3"
+    },
+    {
+      "path": "docs/build/runs/P31.10.md",
+      "sha256": "c0dc4bd38025e7e5680a8703ff56e2dc0fef9bbc40ce2826d5fa9670628a3ec4"
+    },
+    {
+      "path": "docs/build/runs/P31.11.md",
+      "sha256": "0526685c9845b4883f051ae42c8b37b22b9eebb0e1f15ad6d4410cacfa33365e"
+    },
+    {
+      "path": "docs/build/runs/P31.12.md",
+      "sha256": "9c9ed6a578647f0d16627fdb670c250e29c85547bbe8c92d367455345f0f053e"
+    },
+    {
+      "path": "docs/build/runs/P31.13.md",
+      "sha256": "2b8697ce8ecaa6acbfc53d511d041686b7eb80dedf76a9d15cadc81e5b87e242"
+    },
+    {
+      "path": "docs/build/runs/P31.14.md",
+      "sha256": "04395e83879d71d0c6aa178f4fe8ba04cd63071cae6d4a870f2dd3595157b183"
+    },
+    {
+      "path": "docs/build/runs/P31.15.md",
+      "sha256": "0115e359dfe00c8f71c4cb9e46767a4b1348c89c13fa60f91901fc8ee409b66f"
+    },
+    {
+      "path": "docs/build/runs/P31.16.md",
+      "sha256": "cfe9408ee4d404a4534f2c69f46f5e799139c7f1349bd683bc2d0ce1e6496eae"
+    },
+    {
+      "path": "docs/build/runs/P31.19.md",
+      "sha256": "45f1d399b949dfac47003c185e73d7d4648eb6c355716b385ca264de5a43dc25"
+    },
+    {
+      "path": "docs/build/runs/P31.2.md",
+      "sha256": "69fb4c696129a96d51140de36846364b1f29cdad29a99bbbd66c5387c25265a2"
+    },
+    {
+      "path": "docs/build/runs/P31.3.md",
+      "sha256": "d6d8a8e5b6882e690ad07d517cffae97976f9ed3206fdb944ec086411405013d"
+    },
+    {
+      "path": "docs/build/runs/P31.4.md",
+      "sha256": "48a7c600a7b419160d65a3c6ee5eeeafcce33ce8493b7e2f3d8ffd0912d3fddd"
+    },
+    {
+      "path": "docs/build/runs/P31.5.md",
+      "sha256": "3de7fbef099270fd5d7c0257a210641bc688e09a23dc6646d1d3912a359c14ea"
+    },
+    {
+      "path": "docs/build/runs/P31.6.md",
+      "sha256": "579fc4429bf427d62455756aebbd93c5d9e767ecfe4c3ef6f4d6fa91ef6a616b"
+    },
+    {
+      "path": "docs/build/runs/P31.7.md",
+      "sha256": "b3822c7fa4411d730ac5b7a48bf8b46c6c3a11695d54881b20bdfa0f9a2f331c"
+    },
+    {
+      "path": "docs/build/runs/P31.8.md",
+      "sha256": "c339d01113be8554bb52249bad67112bc2d1411a6f7bea6edb1d865dafcf8d89"
+    },
+    {
+      "path": "docs/build/runs/P31.9.md",
+      "sha256": "a1de3d4f15e96c689d11071b116c4190eafd33a23333a3608dc9ca59a9768af7"
+    },
+    {
+      "path": "docs/build/runs/P32.1.md",
+      "sha256": "eb10bf458d8be575456fb8f26e01cc6a20dea3808f51c127630a974c612ff672"
+    },
+    {
+      "path": "docs/build/runs/P32.2.md",
+      "sha256": "04d9e1a11951bc50f1f87c52b1c44254cfef6ae390f2a787318ee244d0aef8c6"
+    },
+    {
+      "path": "docs/build/runs/P32.3.md",
+      "sha256": "54ffb91f871c0e29c6dc91e4286b8bb3b4a7075dd1ac7e64622309ac6a993633"
+    },
+    {
+      "path": "docs/build/runs/P32.4.md",
+      "sha256": "8d48ca8757c78d47a8034bd70323579befc2aa1ab3ff8c0895741c797ce2dc8e"
+    },
+    {
+      "path": "docs/build/runs/P32.5.md",
+      "sha256": "ae952b3ee073b4969825533d1a49f84a9eabdcb7a221080c2a68ba90d1dc59c1"
+    },
+    {
+      "path": "docs/build/runs/P32.6.md",
+      "sha256": "ad5ba0ee19c858ae11867a772d39e46e1be83b757f6cfb438e53c938715b97e8"
+    },
+    {
+      "path": "docs/build/runs/P32.7.md",
+      "sha256": "a293fdb5db920f4d46b3af5351309eb19071b3bd41c2422f51bf56f1b5f683e7"
+    },
+    {
+      "path": "docs/tickets/00_MANIFEST.md",
+      "sha256": "c32695818bdeea48e53c5124c26316cfb033a986791240826e3b6bc03fe6cddf"
+    },
+    {
+      "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
+      "sha256": "974bf591aa52ec1694ff77002d6e755caea9989dd7f42a85a0f7de89bf6fc913"
+    },
+    {
+      "path": "docs/tickets/162_P32.2__typed-claims-and-capture-bindings.md",
+      "sha256": "548deafe01d7c7c6bfbcb7c4a55ff527be046c7cc6916915787739cbe54390c7"
+    },
+    {
+      "path": "docs/tickets/163_P32.3__roles-counts-and-organization-identity.md",
+      "sha256": "f6b66c1d0adc6c3415fd015da59d56ae1b57b9dbfb78bf880d5acf0bd149cccc"
+    },
+    {
+      "path": "docs/tickets/164_P32.4__shared-temporal-read-contract.md",
+      "sha256": "9152486a0488ce00b9db5daec72083a6f436ca82d23eb644712f0fde95506cdd"
+    },
+    {
+      "path": "docs/tickets/165_P32.5__publication-dispositions-and-filtering.md",
+      "sha256": "51a57b5edc9e60f06a437dc77c3313f2d2e3b92a8a5ed6189b98ce55a1f4d937"
+    },
+    {
+      "path": "docs/tickets/166_P32.6__legacy-evidence-audit-and-recovery-plan.md",
+      "sha256": "81b6ada378d09857dd894356ab541dfdf306ccf62f2a780c434789322ef272bf"
+    },
+    {
+      "path": "docs/tickets/167_P32.7__memory-events-and-current-projection.md",
+      "sha256": "a3660d52e0362f0f84b2cdff271145486421d0ff11294a659c64a735106ddc5d"
+    },
+    {
+      "path": "docs/tickets/168_P32.8__memory-concurrency-and-recovery.md",
+      "sha256": "fb2f6609d4d62af920a9e14039aa9d73d5f1f11296db8903864cec8b603f5584"
+    },
+    {
+      "path": "docs/tickets/169_P32.9__human-evaluation-protocol-and-packets.md",
+      "sha256": "41add5a03d395afc55e5c1ddcb44855389e8dbcf058c1543ea4dfa1976986818"
+    },
+    {
+      "path": "docs/tickets/170_P32.10__resolution-evaluator-and-confidence-gates.md",
+      "sha256": "bd596ec5983b1a62aba79e3bcd89eb6743968b60e3a130872414a9f22fdbeeb4"
+    },
+    {
+      "path": "docs/tickets/171_P32.11__gap-driven-source-discovery.md",
+      "sha256": "ff8d658fcbb6ebcf8efda717776a837b7d2839e4b11a1904e03548caf8b7ae74"
+    },
+    {
+      "path": "docs/tickets/172_P32.12__dossier-document-adapters.md",
+      "sha256": "36d1ea0ea42e16ff52a5bee232f4eab26735c10eaa9f1b76e9b221d10f23e711"
+    },
+    {
+      "path": "docs/tickets/173_P32.13__immutable-releases-and-records.md",
+      "sha256": "43de957264ae1d19a9852c2b67cdcd575fff79d158a9fdbd0f55ac3fabafb4e0"
+    },
+    {
+      "path": "docs/tickets/174_P32.14__full-corpus-release-search.md",
+      "sha256": "43e644ef360c3f841c7b5ed1816fd8d116e19d5af2692462013c699d5f546772"
+    },
+    {
+      "path": "docs/tickets/175_P32.15__coordinated-investigation-workspace.md",
+      "sha256": "ad45998a0f31c87652054d1e11f2d51449410614002a30904d11716c88b05da4"
+    },
+    {
+      "path": "docs/tickets/176_P32.16__anonymous-correction-intake.md",
+      "sha256": "d641b4e4daa68612b3322e4040a77b8c8158d7ba438793771773d1e84655d0d4"
+    },
+    {
+      "path": "docs/tickets/177_P32.16a__reviewed-correction-application.md",
+      "sha256": "6e6a9fef8370eb5b56ade9289b642c45589e6beb806f721b035cd1bfd938659c"
+    },
+    {
+      "path": "docs/tickets/178_P32.17__dossier-schema-and-completion.md",
+      "sha256": "a09710f11653edc79f69d41a0e40501fa94f40f4567f6cf494414943264d03d6"
+    },
+    {
+      "path": "docs/tickets/179_P32.18__oklahoma-city-evidence-dossier.md",
+      "sha256": "66d2993cecdbaa6e791357d1faeaca5f052e220b2b20923ff92644853286c8eb"
+    },
+    {
+      "path": "docs/tickets/180_P32.19__tulsa-evidence-dossier.md",
+      "sha256": "25788c01823436bc915a36874b758156b609a3ac543dfa92f6b49488874e955e"
+    },
+    {
+      "path": "docs/tickets/181_P32.20__san-diego-evidence-dossier.md",
+      "sha256": "e29649272de5f8b367de27a9f4e4f5f668eb9e9d81b214d52589636132f69782"
+    },
+    {
+      "path": "docs/tickets/182_P32.21__source-pilot-and-maintenance-decision.md",
+      "sha256": "272ed17ed7919a4caffb50ede4c21853b463a4d222f8056d9145ace35c37740b"
+    },
+    {
+      "path": "docs/tickets/183_P32.22__bounded-recovery-and-activation.md",
+      "sha256": "fa6ce96761106f01e858916d212b8a992eca8d09acead34018c3422c35f52f3b"
+    },
+    {
+      "path": "docs/tickets/184_HUMAN-H4__human-development-and-dossier-review.md",
+      "sha256": "b78846df8154967c503c47f4ff2218b0c5a62fd6ba174c189aaccb6874af8c54"
+    },
+    {
+      "path": "docs/tickets/185_P32.22a__candidate-and-confirmatory-frame-freeze.md",
+      "sha256": "006099ff64276f8fd0c5ff60991435df5672f9d242e5b2da568d13c0ad59a6e5"
+    },
+    {
+      "path": "docs/tickets/186_HUMAN-H5__blinded-confirmatory-human-campaign.md",
+      "sha256": "3ffc6f2bd929b7b10bddc67c5805f5da774bf521d2b962abb942f6c8e33c3c4d"
+    },
+    {
+      "path": "docs/tickets/187_P32.23__human-evaluation-and-rules-decision.md",
+      "sha256": "7f63cb94dfb944a805c719a382d3c3f9aa0d8023872c53e80417bac6f165ada0"
+    },
+    {
+      "path": "docs/tickets/188_P32.23a__post-evaluation-release-candidate.md",
+      "sha256": "858c9a5d1e4ffcc793f2d0c0fcc82d87ff034219c8c2734ce8a77f277137f704"
+    },
+    {
+      "path": "docs/tickets/189_P32.24__investigation-journey-verification.md",
+      "sha256": "32119eb1cbfc3fc5659b5bebe0c08fa7d6dcf0e4ec404861c17db320f7101748"
+    },
+    {
+      "path": "docs/tickets/190_GATE-G3__round10-publication-gate.md",
+      "sha256": "3d82a64cd290374731531b24b5782a23d3e3cbb294299872a789d84e736f0b48"
+    },
+    {
+      "path": "docs/tickets/191_P32.25__accepted-release-public-verification.md",
+      "sha256": "b9b9b5c4ce5889039f1c3ac5c935a4898b9090e563b5b6b4f563d7da7d766a2e"
+    },
+    {
+      "path": "docs/tickets/192_P33.1__round10-independent-gap-analysis.md",
+      "sha256": "78dfc4c76c0df6ff43b748078cd88bae4f5d2609cf1ca8eb4f7c383ff78e2837"
+    },
+    {
+      "path": "docs/tickets/193_P33.2__round10-composed-verification.md",
+      "sha256": "3be053b6076955db51bbc5f7c0a63129c1fda9e47ba92a300e7b38a3be00e6ae"
+    },
+    {
+      "path": "docs/tickets/194_P33.3__round10-capstone-closure.md",
+      "sha256": "0fed4f8ca0ddfae53021a882cb1e42697afd33b66ba7041c47738f60eec7e557"
+    },
+    {
+      "path": "docs/tickets/195_GATE-ACCEPT__round10-acceptance.md",
+      "sha256": "8efbf271b088a0533500465743d36c51a76a369394b8d98480ac8810f943abe2"
+    },
+    {
+      "path": "docs/tickets/196_P33.4__round10-backlog-and-readiness.md",
+      "sha256": "588bcd57695e1d02f6474863720d121d23912c212f74e158202e987f8b71c185"
+    },
+    {
+      "path": "docs/tickets/197_P33.5__round10-spec-reconciliation.md",
+      "sha256": "2096d0946049e598882f2239c81f8775eccdb3e1e0e5ef035df16858796722e0"
+    },
+    {
+      "path": "docs/tickets/198_P33.6__round10-integration-plan.md",
+      "sha256": "a082d92fd1a78ce74180a159176b9fa65e3f8f61d2a84dab94b38b79c43d984c"
+    },
+    {
+      "path": "docs/tickets/199_P33.7__round10-repo-docs-refresh.md",
+      "sha256": "d5a4da33bbf0e60099b5890eba2310c4be0c34574219e01b545e4276391be40a"
+    },
+    {
+      "path": "docs/tickets/200_P33.8__round10-agent-docs-refresh.md",
+      "sha256": "06bb02073d792ce5f0de70c0f4f2c75bfc0a3d282ea3e7e4dc2e4306ba0cb208"
+    },
+    {
+      "path": "docs/tickets/DEFERRALS.md",
+      "sha256": "9f2552c10164efc262a30dc26a7606c836f5596ae639f8745300fa71b4e529d5"
+    },
+    {
+      "path": "docs/tickets/P00.1__repo-skeleton.md",
+      "sha256": "4ea1a08bd2823411c67fda234922334a04ad12770f6cf27d31657302fb56d6f7"
+    },
+    {
+      "path": "docs/tickets/P00.2__policy-as-code.md",
+      "sha256": "777303243c98450a5076677772c63b0722592e8607f67b1f929cd99fab5e5008"
+    },
+    {
+      "path": "docs/tickets/P00.3__governance-policies.md",
+      "sha256": "93ce6254a2a5f9c5bcd9dc38ede088e5a2e0cc2fac838e740974c161468d45e9"
+    },
+    {
+      "path": "docs/tickets/P00.4__source-registry.md",
+      "sha256": "1769e37c65f364cab7a645798cdbe5483a6c3626f2db5e698c58f09c2ea6e8ae"
+    },
+    {
+      "path": "docs/tickets/P01.1__ontology-as-code.md",
+      "sha256": "e01d59bda18977391bef6089678592aa4d9c631ef8e41411094a160d2e667a61"
+    },
+    {
+      "path": "docs/tickets/P02.1__claim-spine.md",
+      "sha256": "a6e0062a195340cb2af3e55fd0b53497328bd3bca1c145edc5aab787095f2fba"
+    },
+    {
+      "path": "docs/tickets/P02.2__evidence-store.md",
+      "sha256": "bd12c0de6dd7890926d2f89ce53cb92b7faa2e53f68220f34544e77adbdcdf8c"
+    },
+    {
+      "path": "docs/tickets/P02.3__temporal-provenance.md",
+      "sha256": "562219a56aa09987d5150ea97dfc6283b670a33dc25b60a2c28ee7e757dfd288"
+    },
+    {
+      "path": "docs/tickets/P03.1__identity-registries.md",
+      "sha256": "7773f47df40be907191788be49fe0093eb4e0ad4a47f3e9e3d52e5acfd7ac804"
+    },
+    {
+      "path": "docs/tickets/P03.2__deterministic-er.md",
+      "sha256": "e677451d2b0cedca84c7ddb53f08730a572e2d27641039136a87fb6b85b67bc7"
+    },
+    {
+      "path": "docs/tickets/P04.1__connector-framework.md",
+      "sha256": "350ecb07c61cbc970cc77581c6e30c2eb8de2e3f34180e9c47b685cb5afa920d"
+    },
+    {
+      "path": "docs/tickets/P04.2__osm-connector.md",
+      "sha256": "dc445b8ee84078da0b555621c5653d28427601497a1797d5cc64a64c5ee262d8"
+    },
+    {
+      "path": "docs/tickets/P04.3__atlas-connector.md",
+      "sha256": "46daca59396276e6854c99ed82348dee58a8b9df7a4dda9ed57896c7e2b43346"
+    },
+    {
+      "path": "docs/tickets/P05.1__probabilistic-er.md",
+      "sha256": "ad731b50874efffcf6ec917f99c1ef1dec09c38d475d2564d65fe8692712bf0a"
+    },
+    {
+      "path": "docs/tickets/P05.2__curation-ui.md",
+      "sha256": "e8c9290df7cdc330171967b3935ecd231bf58505bb337991c2729af880596959"
+    },
+    {
+      "path": "docs/tickets/P06.1__vertical-slice.md",
+      "sha256": "e302b03b8f61fc54c4ab2fa868da662bf500b9b7b9537d1dcc21e098abc04fff"
+    },
+    {
+      "path": "docs/tickets/P07.1__parsing-stack.md",
+      "sha256": "956fcdb1ae36788eac0a92826793cdb9017792185ffc82d8cfa39f7daa868a8b"
+    },
+    {
+      "path": "docs/tickets/P07.2__records-connectors.md",
+      "sha256": "1315baff410f5c9ef9f54616cf07384f2ae2c9250c5e9396fad1aa43cbc7a752"
+    },
+    {
+      "path": "docs/tickets/P07.3__procurement-connectors.md",
+      "sha256": "cb48126467dc63a198dbc2ad3fdc415cc313a3fd8cf50739c14ba4fcc2a3a865"
+    },
+    {
+      "path": "docs/tickets/P08.1__resolver.md",
+      "sha256": "d55fc370dbed6edbc581b01409b9be1ef7dd0fde4e3d49b0475147382a42818b"
+    },
+    {
+      "path": "docs/tickets/P08.2__reconciliation-workflows.md",
+      "sha256": "b26da667c5f181546a1dae4b1984432b74a26041361375c892ac93a2ccd6565f"
+    },
+    {
+      "path": "docs/tickets/P08.3__contradiction-object.md",
+      "sha256": "fa9ad2e95f80b0c80ce6d4d26bba763bc372c2b70a33cfc4b610637e68d681d8"
+    },
+    {
+      "path": "docs/tickets/P09.1__coverage.md",
+      "sha256": "d7ffcfa4efa1c2bd44178ab80b1a5be21eca84ac47f10044258c3234364e19ae"
+    },
+    {
+      "path": "docs/tickets/P10.1__task-engine.md",
+      "sha256": "69eaa5eaa034836edbbc14e01a1c34cae4f62771ad5ebaa00a119a8f0b42a112"
+    },
+    {
+      "path": "docs/tickets/P10.2__detector-catalog.md",
+      "sha256": "031f0cf300f9d5299156ac824a1c3112010184bd2c6493e13520b07ada2ce4f4"
+    },
+    {
+      "path": "docs/tickets/P10.3__records-request-gen.md",
+      "sha256": "d1ced284f12d1ae1038bf09603b70f1764dd9c3e26595d86b19b1f5c39f4e759"
+    },
+    {
+      "path": "docs/tickets/P11.1__flock-portal.md",
+      "sha256": "13a15074ae5afd044199988802edd1c1934794955b35c01ed06d6034fddfcda8"
+    },
+    {
+      "path": "docs/tickets/P11.2__audit-structural.md",
+      "sha256": "22dab4fdf0633c928987e9712dce8c570ac8b42d8746e483920c9f161cbb0e83"
+    },
+    {
+      "path": "docs/tickets/P12.1__usage-analytics.md",
+      "sha256": "2b5e54726d7da85794723b13bc4ceb72e0958dbbde07867b9bfd01e06680f95d"
+    },
+    {
+      "path": "docs/tickets/P12.2__network-inference.md",
+      "sha256": "2a4be808bb6d908efd466383138c7ecee91f3e743e9e2289a9683cd9185ff8fb"
+    },
+    {
+      "path": "docs/tickets/P13.1__accountability.md",
+      "sha256": "736ea2d1a7ec6272f7f46d862bf2e659cb3a7909bcef9be3ca14d0c76719ed3d"
+    },
+    {
+      "path": "docs/tickets/P13.2__policy-legal.md",
+      "sha256": "477bc438b929ee8e92824b17e0aaea6ea786c13482ac60ac3668fa50bdcfc49c"
+    },
+    {
+      "path": "docs/tickets/P14.1__public-api.md",
+      "sha256": "a2a9f9ca49c9607ef554f1e25ca6e0f504be3947771a3787de0f96825d430c7f"
+    },
+    {
+      "path": "docs/tickets/P14.2__exports.md",
+      "sha256": "a5b3de51149997bbdef2d9d1dfdd4e8c9faa408adb816afe13d1942f8e91efa6"
+    },
+    {
+      "path": "docs/tickets/P15.1__web-shell.md",
+      "sha256": "e7d85c633e0022f41425b045fc124c55007c1d96f2221e4810561eebb4de8cdc"
+    },
+    {
+      "path": "docs/tickets/P15.2__local-dossier.md",
+      "sha256": "af96ccae2919fb9dbd3db10017cc66b0ce6d5293f1bfad84120ef6aff2e8cde5"
+    },
+    {
+      "path": "docs/tickets/P15.3__map-network.md",
+      "sha256": "df5949836556d3d86737cd314b446c334b630ebe358c3094f08c7f7593e7d557"
+    },
+    {
+      "path": "docs/tickets/P15.4__watch-evidence.md",
+      "sha256": "31110b7193f391c356c651b60f115b459b42f73fc3c52109572de1c36338045a"
+    },
+    {
+      "path": "docs/tickets/P15.5__corrections-methodology.md",
+      "sha256": "523ee732c5749157ade78f1aa2c0d6926d179c9fb9c9685e3b57a7e875e52bb0"
+    },
+    {
+      "path": "docs/tickets/P16.1__contributors.md",
+      "sha256": "32d3599aac48234ba425d4467d81857c9f6d1ef4827823227f8f7492f66ea486"
+    },
+    {
+      "path": "docs/tickets/P16.2__contribution-back.md",
+      "sha256": "be0b937b2e3254e027489e72c00d4e82cfe9d2926bcc0707ff9fdd82667b0cb1"
+    },
+    {
+      "path": "docs/tickets/P17.1__broader-federation-rtcc.md",
+      "sha256": "13ac3a7069bd1433e621faecb28351e66cc0a163713c05f313fd59615f09da6e"
+    },
+    {
+      "path": "docs/tickets/P17.2__broader-fr-css-forensics.md",
+      "sha256": "c1c77785b0d7af42b91d05a3f9912bdd21bcd1dbf2012b3f48a91b3018307081"
+    },
+    {
+      "path": "docs/tickets/P17.3__broader-acoustic-drone-loc.md",
+      "sha256": "7a03f7fa73db075a7d2d54e0d13efa9db3eb96132565f5ae48c6f581f4f38641"
+    },
+    {
+      "path": "docs/tickets/P18.1__international-framework.md",
+      "sha256": "b610514d5a881d732851acec70561bb7a5a64848e932fc2308e5d6e272f33665"
+    },
+    {
+      "path": "docs/tickets/P18.2__france-belgium.md",
+      "sha256": "9e684dfa0de282c9f4d659144f6c740846af111745caa2467951124284cb90b6"
+    },
+    {
+      "path": "docs/tickets/P19.1__build-memory-and-hygiene.md",
+      "sha256": "6012e2157ce811f1ddc201e985201fa804cd0061924c36ba2d734ae683e845d2"
+    },
+    {
+      "path": "docs/tickets/P19.2__capstone-gap-analysis.md",
+      "sha256": "be5733f2ed1eb1eff75ffd2472d31a60c1d8d6ebf6eeae928961e46d54afd2c0"
+    },
+    {
+      "path": "docs/tickets/P19.3__capstone-composed-verification.md",
+      "sha256": "d758e1b27f193bd632b29fc90bea23e7f74093341bb2942cd9f635f68390f6af"
+    },
+    {
+      "path": "docs/tickets/P19.4__capstone-spine-wiring.md",
+      "sha256": "738b8e8ec7703672971621735bc0504fceff0d6cafc4fffc6943cd70687a2ebf"
+    },
+    {
+      "path": "docs/tickets/P19.5__capstone-gap-closure.md",
+      "sha256": "0473570e987f293e989c2601fba02a96427d7f7b406a7550eb57348097387fae"
+    },
+    {
+      "path": "docs/tickets/P20.1__backlog-and-operational-readiness.md",
+      "sha256": "8c89cbdffafc0f4c2c1e8da1fbb540ed884b5d1c9812fd52848c20f41abe88d2"
+    },
+    {
+      "path": "docs/tickets/P20.2__spec-reconciliation.md",
+      "sha256": "aa95bd87f74263b4f67e73df9ee69662b43718e87a7a60ee97f5e778dbd84ff0"
+    },
+    {
+      "path": "docs/tickets/P20.3__integration-release.md",
+      "sha256": "f7de39d9bb0e95d97c435749a6392afa23c994ad85ddf525542aa4b4446d10b7"
+    },
+    {
+      "path": "docs/tickets/P21.1__rights-review-and-registry-completion.md",
+      "sha256": "c3c8412ac2ae9b56b856ee28e50ee46819203d4c372cbf8e41f597ada0d9955d"
+    },
+    {
+      "path": "docs/tickets/P21.2__persist-annotation-layer.md",
+      "sha256": "1e95665b5ae3e00ea6e4f349112abfba1a44fd85304cfab810ca57c0b6c1e0fd"
+    },
+    {
+      "path": "docs/tickets/P21.3__live-connector-wiring.md",
+      "sha256": "a2efbc9a3a55738ddefac868aa64231b3731afc366ab1cdc2022813090f123fb"
+    },
+    {
+      "path": "docs/tickets/P21.4__first-jurisdiction-ingest-and-publish.md",
+      "sha256": "8139393f3801b6dbe6db0130e6f4b2315382ca1055a56aafa8d9655818bf2578"
+    },
+    {
+      "path": "docs/tickets/P21.5__infra-deposit-and-tiles.md",
+      "sha256": "4c2ea2146d7a37f4965857a132f65852c020e7e0c8f9d97f2306d6b5ee915e99"
+    },
+    {
+      "path": "docs/tickets/P21.6__curation-web-ui.md",
+      "sha256": "327a44ad74704664728ff8b9608bde1a66e990d21a4963aa28b6e34555f6ed06"
+    },
+    {
+      "path": "docs/tickets/P21.7__contribution-back-live.md",
+      "sha256": "91823f5b9950b4e5fb8a5856cc69db89571fabf8d2f5121e2aebe8dd79445259"
+    },
+    {
+      "path": "docs/tickets/P21.8__data-driven-and-coarse-international.md",
+      "sha256": "2179687e21cbc85cb313447314334688a93081d8372de6e3ea9fb06b7c900b1d"
+    },
+    {
+      "path": "docs/tickets/P21.9__stage5-pathway-connectors.md",
+      "sha256": "9ff22e5c6737e3ab76ff52290edd51053247530cb08a49704b8ccf869a811edb"
+    },
+    {
+      "path": "docs/tickets/P22.1__repo-docs-refresh.md",
+      "sha256": "9d68589beb8ce2fac535c39be375fdcc1f774a871a58dba8836152717d647104"
+    },
+    {
+      "path": "docs/tickets/P22.2__agent-docs-refresh.md",
+      "sha256": "aeb267baa4c2b176434a93a44d05c04f16a8c2965b7de76b6807ff2e19ff6b6a"
+    },
+    {
+      "path": "docs/tickets/P22.3__build-memory-v2-migration.md",
+      "sha256": "033410281edd8846efd55e118743f8f51a5cf8bdacb7e2029b7a33034d91c4d3"
+    },
+    {
+      "path": "docs/tickets/P23.1__integrate-and-release-v0-1-0.md",
+      "sha256": "d446784be5d64ac1072099ac634e8e4c925c4f13939f294416eab76e618ab6b7"
+    },
+    {
+      "path": "docs/tickets/P23.2__legal-home-and-governance.md",
+      "sha256": "39d2b2db65f9403ddecad03c137e9e27784ab1dc1e0037709b72dbab920126dc"
+    },
+    {
+      "path": "docs/tickets/P23.3__counsel-signoff.md",
+      "sha256": "f6bbb9f2c5188aca5ea074adb6e232fff51a37b1faa48f26d583742a421d0df5"
+    },
+    {
+      "path": "docs/tickets/P23.4__accounts-credentials-hosting.md",
+      "sha256": "efe8d66f769ecf368a670f6d08e50ab496f09061f3a031e0e4b8e9c0ca344abd"
+    },
+    {
+      "path": "docs/tickets/P23.5__okc-document-connectors.md",
+      "sha256": "1840e74bbb4aa71799be16aa2bb0396049a51131c77bff2506c07efa01cee364"
+    },
+    {
+      "path": "docs/tickets/P23.6__go-public-dns-cutover.md",
+      "sha256": "f43344f8970d6ff148e98624f896cca1af37ed8c6e49266c600b5bfa6586206c"
+    },
+    {
+      "path": "docs/tickets/P24.1__gcp-hosted-deployment.md",
+      "sha256": "39eb5652386df7d0b1ffb5b239848abbbdc0a109e50b92ed378e8411f2a683ce"
+    },
+    {
+      "path": "docs/tickets/P24.2__reingest-cadence.md",
+      "sha256": "2cb30e75dbf81be8f17de79f25fa33f9f5442afbd4987e7477227a39276b565a"
+    },
+    {
+      "path": "docs/tickets/P24.3__observability-alerting.md",
+      "sha256": "40c326b0448b08fb9fcd8593e638e74ba4f28100f0aebae4f022a8a880c63f94"
+    },
+    {
+      "path": "docs/tickets/P24.4__ci-composed-hardening.md",
+      "sha256": "92b292f88e97742f40f649c3bdd691dc97d9b0c3e64e0b7199bc7de26c599535"
+    },
+    {
+      "path": "docs/tickets/P24.5__housekeeping-backlog.md",
+      "sha256": "1b3f4307b00ccd4135d391802dc72efd49168351938d2a21ff37528edbc7bd8a"
+    },
+    {
+      "path": "docs/tickets/P24.6__second-jurisdiction.md",
+      "sha256": "f2249005bdf31a8da45448c7c83fbf79000d9717c5e5b65f182f599c5dcadef3"
+    },
+    {
+      "path": "docs/tickets/P24.7__ccops-disclosure-connector.md",
+      "sha256": "a103bfb3aef7fb8a7579c5428fbc70ef13eb9a25cde23bd274cc0e1ba385a993"
+    },
+    {
+      "path": "docs/tickets/P24.8__golive-readiness-delta.md",
+      "sha256": "c8a3661066b866f9340c31709558f220b1c319a57aa1f25f0cecd91a0b411579"
+    },
+    {
+      "path": "docs/tickets/P24.9__operator-signs-golive-deviations.md",
+      "sha256": "caa4b8f977fb2e15c3f4381703ac2110d2a2b176ada29fb70f3dbc468813d705"
+    },
+    {
+      "path": "docs/tickets/P25.10__contradiction-serve-path.md",
+      "sha256": "b6126f116df493ea1d1de86404a7087e7859edb1fead5bdeee8d36507a36d251"
+    },
+    {
+      "path": "docs/tickets/P25.1__live-fetch-operationalization.md",
+      "sha256": "a3e0ed3f86c8d7933161227b1ffe544f45713632c36d494f4b0adde31048429a"
+    },
+    {
+      "path": "docs/tickets/P25.2__live-records-and-procurement.md",
+      "sha256": "4b93ee86c1acf11b303a54a8126adce79b716db825d636f63aa0ae1086d23e86"
+    },
+    {
+      "path": "docs/tickets/P25.3__live-osm-deflock-physical-layer.md",
+      "sha256": "deae44a49fd07f5760c3ef0cf02360aae7a5d3ef7b370e7d12d4eea7cf9b0589"
+    },
+    {
+      "path": "docs/tickets/P25.4__live-data-driven-and-international.md",
+      "sha256": "32f411a6bac58959aad7e4df9038d05429caef72d3db2795c2bb07253f016994"
+    },
+    {
+      "path": "docs/tickets/P25.5__live-pathways-france-belgium-ccops.md",
+      "sha256": "1038f659b562a14921b70eec131fd9a079c949901fe14265527d1d02c5401059"
+    },
+    {
+      "path": "docs/tickets/P25.6__unmapped-source-triage.md",
+      "sha256": "22f93785a0d0ec6f96d451ed0ace6447532efee70329ab59a882e816ca34e49d"
+    },
+    {
+      "path": "docs/tickets/P25.7__live-ops-hardening.md",
+      "sha256": "fc9bcbfb4f55edbfd5e4a14ba175acb8360ea9e3408b0b678622c25bf9a83e34"
+    },
+    {
+      "path": "docs/tickets/P25.8__post-live-deferral-closures-live-ops.md",
+      "sha256": "4a35bdf291efeeefec0324096c4f1f9797914d0cc29dbcbdff3e16cbfead7530"
+    },
+    {
+      "path": "docs/tickets/P25.9__post-live-deferral-closures-meta.md",
+      "sha256": "3c57a1c66d4956fb33e99e30c3b91b5c6666a329e2106186761e166123544117"
+    },
+    {
+      "path": "docs/tickets/P26.10__procurement-portal-tenants.md",
+      "sha256": "1b2dede948b33c309707c84f9c9c0be1e55adcec34aec901a2ab14b5349ad24c"
+    },
+    {
+      "path": "docs/tickets/P26.11__surveillance-legislation-depth.md",
+      "sha256": "fafacfad6234a5f309fc8682615ae5802a8d351d70200fc9d82caf4a117a7448"
+    },
+    {
+      "path": "docs/tickets/P26.12__congress-legislation.md",
+      "sha256": "5f18a63ce57bab3c2655e9848c86817481b5381e3e30932a2aec5dfd28049f1d"
+    },
+    {
+      "path": "docs/tickets/P26.13__open-data-catalog-sweep.md",
+      "sha256": "53f0470df6777791a1cc1c2a626326f956e40bce3d1cab3c4c46086b73c7c442"
+    },
+    {
+      "path": "docs/tickets/P26.14__federal-procurement-depth.md",
+      "sha256": "6d39881cd8f3288f9e75760e1e3490d4592eaefe5c0d52b7543b2800fbccac89"
+    },
+    {
+      "path": "docs/tickets/P26.15__eu-tender-sweep.md",
+      "sha256": "c41d0d50743e230521e61fc1a207172ed07cef62160be994fffc921ed47dd4c7"
+    },
+    {
+      "path": "docs/tickets/P26.16__rights-batch-execution.md",
+      "sha256": "954ae0a5872020c1c5e8f2ffcf38949fdfab1dba8d6c84f0382719e33c1aa393"
+    },
+    {
+      "path": "docs/tickets/P26.17__robots-non-gating.md",
+      "sha256": "486720caedf3ddc3fb47b98caf3f8bdec00a0d7a4a878d2d44e3faaf1a1a732c"
+    },
+    {
+      "path": "docs/tickets/P26.18__chunked-commit-large-sources.md",
+      "sha256": "013923fca138e3b21961e7237b01b64a635e99eaf98e737f4ea3bd86e1dee7ff"
+    },
+    {
+      "path": "docs/tickets/P26.19__bounded-sam-gov-sweep.md",
+      "sha256": "658f80d34c873e9d9b532095adcd7f017dfdd757a23b49f5da6a2ebbb6212883"
+    },
+    {
+      "path": "docs/tickets/P26.1__scheduled-live-operations.md",
+      "sha256": "388f11242dd8b4d1645bda75c77dfcab214a15fc2082dd26c93e33118f345033"
+    },
+    {
+      "path": "docs/tickets/P26.2__source-expansion.md",
+      "sha256": "6748598e3e085fbfbf459b85d092d6c871cd25a496d52be4a2dbf36dc73ebc6c"
+    },
+    {
+      "path": "docs/tickets/P26.3__ungate-and-multitenant-expansion.md",
+      "sha256": "0166e8c12202e03baaee0f1324cef308dd181d352e90e9767868d1bff65b3132"
+    },
+    {
+      "path": "docs/tickets/P26.4__credential-fed-live-ingests.md",
+      "sha256": "8a4de8ef30062a12eda0b72b779d8c6db6030e8a5cf026e390d4b5dd61fcf2e1"
+    },
+    {
+      "path": "docs/tickets/P26.5__vendor-tenant-universe.md",
+      "sha256": "28b848d25e1c36e0d6f9300887322000b7b36cef060e3934b76b37451c693431"
+    },
+    {
+      "path": "docs/tickets/P26.6__agenda-content-claims.md",
+      "sha256": "b8704e49a31769ff18fe2f6b375745f3a1d11ed449ef39e65337d0cef131cf68"
+    },
+    {
+      "path": "docs/tickets/P26.7__dot-511-camera-feeds.md",
+      "sha256": "30124af7db0fff00480df04393889bbeb3013bbddbae3ed17a2c67950bd20363"
+    },
+    {
+      "path": "docs/tickets/P26.8__dot511-hosted-ingest.md",
+      "sha256": "2faf40e6c34cca0affd408388e955ce7737b94972e49217b6d41dec1b02aa697"
+    },
+    {
+      "path": "docs/tickets/P26.9__camera-registry-expansion.md",
+      "sha256": "623b08f3d9a27aa80c162f0941a68f7bf48ff3eb3021e8a1d5c081d9e6c71ea9"
+    },
+    {
+      "path": "docs/tickets/P27.10__domain-cutover-surveillancegraph.md",
+      "sha256": "efc3acdc54b6453cc34b24496a5eb086bc9dce325f81fad1d5c45199afc28133"
+    },
+    {
+      "path": "docs/tickets/P27.1__public-surface-audit.md",
+      "sha256": "9d4ed24a0aa0c265027e369b1726a7ac99aded0d00cc62363f0593bcba224362"
+    },
+    {
+      "path": "docs/tickets/P27.2__maximize-publishable-scope.md",
+      "sha256": "73b0bf28a1c071c372419b9ccf46686770be29ef18cb77f0fbc62a3ee9b5e599"
+    },
+    {
+      "path": "docs/tickets/P27.3__export-data-shaping.md",
+      "sha256": "e1a2a2030f54ab0672776065aebc974557908cd83ab5d8fdaea3a3b70cb5f69d"
+    },
+    {
+      "path": "docs/tickets/P27.4__spine-backed-export-bundle.md",
+      "sha256": "54dfd162cb46c7f8094efe4399e8077c5f2128036afb234b7c1ea256f3b5c25d"
+    },
+    {
+      "path": "docs/tickets/P27.5__web-data-layer-wiring.md",
+      "sha256": "6e02aa78ff2ac412b447971cf6576cab7efd7dc6e17088277c2207367cae3e30"
+    },
+    {
+      "path": "docs/tickets/P27.6__ia-redesign-landing.md",
+      "sha256": "ab650c7542e1835a48db97f364f8f10799a845de85e50d47546f8458b33c42a6"
+    },
+    {
+      "path": "docs/tickets/P27.7__empty-states-and-polish.md",
+      "sha256": "8e992ae354f4953804c7a0bcad2f27f62da5d96df773c0126ad88a9342c6df77"
+    },
+    {
+      "path": "docs/tickets/P27.8__deploy-and-public-cutover.md",
+      "sha256": "a302f8f8c54e2f73a72f8e583b168c4dc6fb7cc1c5a6f0901f0465d2e6f14b7a"
+    },
+    {
+      "path": "docs/tickets/P27.9__interactive-islands.md",
+      "sha256": "9db8208cf63f923cff469f4293b8332e7b4db7e1e71eb346f8d8081149d49b53"
+    },
+    {
+      "path": "docs/tickets/P28.1__entity-resolution-at-scale.md",
+      "sha256": "47a2455fafe9939f56c753970a704d18f53bd42b94105d80d387327dcb6c455b"
+    },
+    {
+      "path": "docs/tickets/P28.2__sharing-relationship-network.md",
+      "sha256": "3f80c7f108ffad2c568ad1ea427cb63a3e00b48ba1d647c25fde51cf3d02e458"
+    },
+    {
+      "path": "docs/tickets/P28.3__contradictions-reconciliation.md",
+      "sha256": "48ba7cc767ce9f3b3af1e8676f6a27adc1c4c4bd6a878bffdfcf636e87005338"
+    },
+    {
+      "path": "docs/tickets/P28.4__honest-coverage.md",
+      "sha256": "033be58f09be6f148d3adaf7ac9bcb50b26be1b0c7591883f9a56bb6251c05ed"
+    },
+    {
+      "path": "docs/tickets/P28.5__refresh-surface-materialized-graph.md",
+      "sha256": "968fd5b1e2e6bb07b72979725a5971488a8d330e3e281848bcb445c10e0a50b9"
+    },
+    {
+      "path": "docs/tickets/P28.6__accountability-linkage.md",
+      "sha256": "c6f07b30d9b5dea8bdbff4cd3ddb4c61f9dd6f720825c3ae4424cbf8b8c01085"
+    },
+    {
+      "path": "docs/tickets/P29.1__contributor-identity-and-ops.md",
+      "sha256": "34e0d025e098a52eca6a4e00dcf429dcc98aa4dcc06eb136370454b0db822eed"
+    },
+    {
+      "path": "docs/tickets/P29.2__detector-records-request-loop.md",
+      "sha256": "2766a271b11f48ff2cf78b296d0db75ace34b135ef9e0a530c822fd387590426"
+    },
+    {
+      "path": "docs/tickets/P29.3__targeted-source-breadth.md",
+      "sha256": "9fed616d6339d48d8656a2ae980f0cef1a2bdee049e39f15462676a74818db06"
+    },
+    {
+      "path": "docs/tickets/P30.1__osm-land-and-settled-reaudit.md",
+      "sha256": "136551885cb822fb2888105043cec219767752e92a6e73c7fa64820966e6eab4"
+    },
+    {
+      "path": "docs/tickets/P30.2__hosted-round6-materialization.md",
+      "sha256": "c3fd7efb7d7f3968480ab9f5e9e22161cf602cb3444454f8567dd5e4059ae961"
+    },
+    {
+      "path": "docs/tickets/P30.2a__camera-predicate-registry.md",
+      "sha256": "fd3e04200579e9dec297071a4fcf68b9cc959160aee605b57da03793b2ea9644"
+    },
+    {
+      "path": "docs/tickets/P30.2b__geospatial-camera-site-resolution.md",
+      "sha256": "2f9a564e902eae48812dd2f1297194541ce618616ea536eadf1604f2e04ea1b1"
+    },
+    {
+      "path": "docs/tickets/P30.3__national-export-and-public-cutover.md",
+      "sha256": "c5fa6412cd8234722db449adcc01353ca04be7bf6fac3c094954586b366833b6"
+    },
+    {
+      "path": "docs/tickets/P30.4__post-launch-closeout.md",
+      "sha256": "820bc2fac7800bee598f0dbc04b2c978fe780f9aef55a5799d9f3b1fb5e97b61"
+    },
+    {
+      "path": "docs/tickets/P31.10__camera-site-review-surface.md",
+      "sha256": "11262b0b18b21f1d6c749a34ce3e15c0bb112ab4fe4e829060411470ca897cf5"
+    },
+    {
+      "path": "docs/tickets/P31.11__review-decisions-into-clustering.md",
+      "sha256": "a19de5e562a42a967ab02cdea3c92c99dbcb1d179a05e3049bbc88618df27e4c"
+    },
+    {
+      "path": "docs/tickets/P31.12__accountability-breadth-federal-uk.md",
+      "sha256": "300b19bf4fc399e5db43db4e364122e08fa8bc15053adab04143e51473a04d38"
+    },
+    {
+      "path": "docs/tickets/P31.13__accountability-breadth-ccops-fema.md",
+      "sha256": "1b5baf73c22a9725f39d1421c508078cf5a70d51011a833669fa992a83e7d167"
+    },
+    {
+      "path": "docs/tickets/P31.14__presentation-analytics-from-export.md",
+      "sha256": "57eb0747e70173b3758ffdd28bc70b3256c4f832fc428f53de4cf974febf2286"
+    },
+    {
+      "path": "docs/tickets/P31.15__vector-tiles-and-compression.md",
+      "sha256": "b93a45295c1aa40cb84598edc8a7f359e003f0272598728de41e6f00f7d32d2e"
+    },
+    {
+      "path": "docs/tickets/P31.16__rematerialize-reexport-republish.md",
+      "sha256": "f15e1c11b242b024876922237fb0922213cfc422d699542b9606c96ec3b46baf"
+    },
+    {
+      "path": "docs/tickets/P31.19__round9-closeout.md",
+      "sha256": "0382e0736d052b428ff4287d1b3773abc93473a79d6f0d4d618edd59a6e0c26a"
+    },
+    {
+      "path": "docs/tickets/P31.1__api-db-resilience-and-bounded-search.md",
+      "sha256": "f23e4c6032b8a508e2b692e4011c79754a4e17999eb298b53bf0c54ad2b78280"
+    },
+    {
+      "path": "docs/tickets/P31.2__ingest-run-completion-and-freshness.md",
+      "sha256": "4f1a75f03696348aedfa36cc6384c9146e5e9b0967d323e3a9d7bc434380fca3"
+    },
+    {
+      "path": "docs/tickets/P31.3__sink-identity-guard-and-batched-writes.md",
+      "sha256": "2f6c64ab1ac3cc03ff41c26da38dcbe8b545e13d4d0ee0ec3a5b81f06c9f3c9d"
+    },
+    {
+      "path": "docs/tickets/P31.4__incremental-restart-and-osm-replay-readiness.md",
+      "sha256": "3a48d9fd4b18ae6d32ea15c3e6d05afbf0bce2421c6ca81d4bf803f774ada407"
+    },
+    {
+      "path": "docs/tickets/P31.5__entity-ref-claims-procurement.md",
+      "sha256": "4f77a4af789d821ee9247aa5118db8289f2c895373fc2d334faab963e5a8cff6"
+    },
+    {
+      "path": "docs/tickets/P31.6__access-edges-and-hosted-link-materialization.md",
+      "sha256": "8705d4ada97915fe7b31b638effa9845df9832232cece387d5527b153290173c"
+    },
+    {
+      "path": "docs/tickets/P31.7__claim-re-sightings.md",
+      "sha256": "c1063eb333914c0217cfc56a2274d3c6c9df5f6d699307aa76e690d46c120e13"
+    },
+    {
+      "path": "docs/tickets/P31.8__predicate-registry-legislation-portal.md",
+      "sha256": "8b03fb20a2df2ce3508cd0526a9a448398b6f333deecc66ae6749a2df4c4deff"
+    },
+    {
+      "path": "docs/tickets/P31.9__negative-space-peer-classes.md",
+      "sha256": "97bb137bc03528de7ddf7db9ed0cc81ba0732741afab3b73d5dc55184082d7a7"
+    },
+    {
+      "path": "docs/tickets/_TEMPLATE.md",
+      "sha256": "57d3f5fada8b0f159a7c6d63fbe2975e5b770d5db30163a4e8276b358b1fe8dc"
+    }
+  ]
+}

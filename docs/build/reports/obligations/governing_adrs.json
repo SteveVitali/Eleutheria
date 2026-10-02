@@ -1,0 +1,32 @@
+{
+  "schema": "governing-adrs/1",
+  "recorded_by": "P32.7",
+  "note": "The governing ADR chain for build memory as it stands at this projection input set. Supersession is tracked in docs/adr/README.md (generated index); this list is the curated subset that governs how current state may be written and read.",
+  "adrs": [
+    {
+      "id": "ADR-073",
+      "file": "docs/adr/ADR-073-build-memory-committed-under-docs-build-scratch-retired.md",
+      "scope": "build-memory v2 — docs/build/ is the committed memory root; LEDGER.md holds the machine state (CURRENT STATE / GATE DECISIONS / RETURN PASS / PHASE LOG)"
+    },
+    {
+      "id": "ADR-119",
+      "file": "docs/adr/ADR-119-project-id-leak-check-scoped-to-code-and-config.md",
+      "scope": "P30.4 leak-scope policy — governs what a closeout/report may contain (referenced by obligation history)"
+    },
+    {
+      "id": "ADR-120",
+      "file": "docs/adr/ADR-120-six-stream-integrity-investigation-and-memory-extension.md",
+      "scope": "the Round-10 six-stream program + the memory extension this projection serves (S6 / SIG-MEM-*)"
+    },
+    {
+      "id": "ADR-125",
+      "file": "docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md",
+      "scope": "evidence-audit/1 + recovery-plan/1 — the offline audit/dry-run contracts the memory layer records alongside"
+    },
+    {
+      "id": "ADR-126",
+      "file": "docs/adr/ADR-126-obligation-events-and-current-projection.md",
+      "scope": "obligation-event/1 + coverage-assessment/1 + current-projection/1 + input-manifest/1 — append-only transitions, shadow mode, the single-writer boundary"
+    }
+  ]
+}
