@@ -20,6 +20,10 @@ dependencies = [
     # `parsing` is likewise a leaf (pypdf only): the typed-assertion adapter
     # validates locators through its single-source LocatorKind contract (P32.2).
     "sig-parsing",
+    # P32.5 (ADR-124): the publication-disposition persistence layer produces and
+    # validates the policy leaf's DispositionRecord / eligibility contract —
+    # leaf-ward, no cycle (sig-policy has no dependencies).
+    "sig-policy",
 ]
 
 [project.scripts]
@@ -28,6 +32,7 @@ sig-db = "db.cli:main"
 [tool.uv.sources]
 sig-evidence = { workspace = true }
 sig-parsing = { workspace = true }
+sig-policy = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

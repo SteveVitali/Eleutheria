@@ -67,6 +67,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any, Literal, Protocol
 
+from db.dispositions import claim_eligible_sql, entity_eligible_sql
 from db.occurrences import (
     BELIEF_NOW,
     BELIEF_PARAM,
@@ -192,11 +193,20 @@ class ShapingClaim:
     #: ``"capture_retrieved_at_latest"`` (capture-dated fallback — labelled, an
     #: inference not an asserted date) or ``"undated"``.
     observed_basis: str = "undated"
+    #: P32.5 (ADR-124, SIG-TRUST-006): the shared eligibility selector, evaluated
+    #: in the SAME query — a claim under a current deny disposition, or whose
+    #: subject or referenced entity is withheld, is not publishable (and is
+    #: honestly counted in ``claims_excluded_not_publishable``).
+    publication_permitted: bool = True
 
     @property
     def publishable(self) -> bool:
-        """Whether this claim may shape the public dataset (P27.2 posture)."""
-        return self.effective_redistributable == "yes" and self.sensitivity_tier == 0
+        """Whether this claim may shape the public dataset (P27.2 + P32.5)."""
+        return (
+            self.effective_redistributable == "yes"
+            and self.sensitivity_tier == 0
+            and self.publication_permitted
+        )
 
     def rights_record(self) -> RightsRecord:
         """The effective rights as a :class:`RightsRecord` for the licence gate."""
@@ -606,7 +616,11 @@ QUERIES: dict[str, str] = {
         "       cs.capture_id::text, cs.retrieved_at, cs.bound_at,"
         "       COALESCE(ld.rights_id, c.rights_id)::text AS effective_rights_id,"
         "       rr.spdx_expression, rr.redistributable, rr.derivative_permitted,"
-        "       rr.attribution_text, rr.terms_url"
+        "       rr.attribution_text, rr.terms_url,"
+        # P32.5/ADR-124: the shared eligibility selector — one fragment, every
+        # consumer (API + export + analytics + tiles all decide identically).
+        # ``{PUB_GATE}`` expands to ``true`` on a pre-P32.5 spine (no registry).
+        "       {PUB_GATE} AS publication_permitted"
         "  FROM claim c"
         "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
         "  LEFT JOIN latest_decision ld"
@@ -621,10 +635,17 @@ QUERIES: dict[str, str] = {
     "subject_entities": (
         "SELECT e.entity_id::text, e.entity_type FROM entity e"
         " WHERE EXISTS (SELECT 1 FROM claim c WHERE c.subject_id = e.entity_id"
-        "              AND c.predicate_id = ANY(%s) AND upper_inf(c.sys_period))"
+        "              AND c.predicate_id = ANY(%s) AND upper_inf(c.sys_period)"
+        "              AND {PUB_GATE})"
+        # P32.5/ADR-124: a fully-withheld subject contributes no entity-type row
+        # — its claims (and the entity itself) stay on the spine for review.
+        "   AND {PUB_ENTITY_GATE}"
         " ORDER BY e.entity_id"
     ),
     # Sources present on the shaped claims, with run + observation stats.
+    # {PUB_GATE} (P32.5/ADR-124): withheld claims never pad a source's public
+    # claim/observation counts — a count that included them would leak that
+    # something was withheld.
     "source_stats": (
         "{EFFECTIVE}" + "SELECT cs.source_id, count(*) AS claims,"
         "       max(c.observed_at) AS last_content_change,"
@@ -632,6 +653,7 @@ QUERIES: dict[str, str] = {
         "  FROM claim c"
         "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
         " WHERE c.predicate_id = ANY(%s) AND upper_inf(c.sys_period)"
+        "   AND {PUB_GATE}"
         " GROUP BY cs.source_id ORDER BY cs.source_id"
     ),
     # Per-source run freshness inputs: the last SUCCESSFUL run's finish, plus the
@@ -647,6 +669,7 @@ QUERIES: dict[str, str] = {
         "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
         "  JOIN ingest_run ir ON ir.run_id = c.ingest_run_id"
         " WHERE c.predicate_id = ANY(%s) AND upper_inf(c.sys_period)"
+        "   AND {PUB_GATE}"
         " GROUP BY cs.source_id ORDER BY cs.source_id"
     ),
     # Sharing-edge claims: entity_ref / sharing predicates at the public tier,
@@ -669,6 +692,9 @@ QUERIES: dict[str, str] = {
         "        OR c.predicate_id LIKE '%partner%')"
         "   AND rr.redistributable = 'yes'"
         "   AND upper_inf(c.sys_period) AND c.sensitivity_tier = 0"
+        # P32.5/ADR-124: a withheld partner entity is absent from edges — no
+        # topology leak, not merely an unlabelled node.
+        "   AND {PUB_GATE}"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id"
     ),
     # The append-only spine watermark (P25.10; the bounded trigger-maintained
@@ -694,27 +720,60 @@ _FALLBACK_CLAIM_SOURCE_CTE = (
 )
 
 
-def expand_query(sql: str, *, bound: str = BELIEF_NOW) -> str:
-    """Expand the ``{EFFECTIVE}`` marker into the effective-rights + shared
-    ``claim_source`` CTEs (a raw query string is not executable until expanded).
+def expand_query(
+    sql: str,
+    *,
+    bound: str = BELIEF_NOW,
+    pub_gate: str | None = None,
+    pub_entity_gate: str | None = None,
+) -> str:
+    """Expand the markers into executable SQL (a raw query string is not
+    executable until expanded).
 
     ``bound`` is the occurrence bound expression — ``BELIEF_NOW`` for a
     current-knowledge read, ``BELIEF_PARAM`` for a ``%s`` belief placeholder
-    (one leading parameter is then required).
+    (one leading parameter is then required). ``{PUB_GATE}``/``{PUB_ENTITY_GATE}``
+    (P32.5/ADR-124) default to the real shared fragments — the registry is part
+    of the spine now; a pre-P32.5 dump goes through :func:`_queries_for`, which
+    substitutes ``true`` BEFORE this call.
     """
-    return sql.replace("{EFFECTIVE}", _LATEST_DECISION_CTE + claim_source_cte(bound))
+    return (
+        sql.replace("{EFFECTIVE}", _LATEST_DECISION_CTE + claim_source_cte(bound))
+        .replace(
+            "{PUB_GATE}",
+            pub_gate if pub_gate is not None else claim_eligible_sql("c"),
+        )
+        .replace(
+            "{PUB_ENTITY_GATE}",
+            pub_entity_gate if pub_entity_gate is not None else entity_eligible_sql("e.entity_id"),
+        )
+    )
 
 
-def _queries_for(has_decisions: bool) -> dict[str, str]:
-    """The query set for this spine — effective rights when decisions exist."""
+def _queries_for(has_decisions: bool, *, has_dispositions: bool = True) -> dict[str, str]:
+    """The query set for this spine — effective rights when decisions exist.
+
+    ``{PUB_GATE}`` (P32.5/ADR-124) expands to the shared
+    :func:`db.dispositions.claim_eligible_sql` selector on a spine carrying the
+    ``publication_disposition`` registry, and to ``true`` on a pre-P32.5 dump —
+    the registry is absent there and no disposition can be recorded (the
+    review-flag half is in the same fragment, so it is gated together).
+    """
+    gate = claim_eligible_sql("c") if has_dispositions else "true"
+    entity_gate = entity_eligible_sql("e.entity_id") if has_dispositions else "true"
     if has_decisions:
-        return dict(QUERIES)
+        return {
+            key: sql.replace("{PUB_GATE}", gate).replace("{PUB_ENTITY_GATE}", entity_gate)
+            for key, sql in QUERIES.items()
+        }
     out: dict[str, str] = {}
     for key, sql in QUERIES.items():
         # A pre-P27.2 spine has no rights_decision; the recorded rights_id IS the
         # effective one (fail-closed), so the ld join collapses to NULL.
         out[key] = (
             sql.replace("{EFFECTIVE}", _FALLBACK_CLAIM_SOURCE_CTE)
+            .replace("{PUB_GATE}", gate)
+            .replace("{PUB_ENTITY_GATE}", entity_gate)
             .replace("COALESCE(ld.rights_id, c.rights_id)", "c.rights_id")
             .replace(
                 "  LEFT JOIN latest_decision ld"
@@ -1341,7 +1400,12 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
             derivative_permitted,
             attribution,
             terms_url,
-        ) = r
+        ) = r[:20]
+        # P32.5/ADR-124: the eligibility gate column is the 21st; a pre-P32.5
+        # row set (synthetic fixtures, older dumps) carries none — absent a
+        # recorded registry the pre-change posture applies (no dispositions can
+        # exist, so nothing is withheld by them).
+        publication_permitted = r[20] if len(r) > 20 else True
         observed_date = (
             observed_at.date()
             if isinstance(observed_at, datetime)
@@ -1385,6 +1449,7 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
                 occurrence_bound_at=occurrence_bound_at,
                 observed_instant=observed_instant,
                 observed_basis=observed_basis,
+                publication_permitted=bool(publication_permitted),
             )
         )
     return claims
@@ -1641,7 +1706,9 @@ def run_shaping(
         cur.execute("SELECT to_regclass('rights_decision') IS NOT NULL")
         has_row = cur.fetchone()
         has_decisions = bool(has_row and has_row[0])
-        queries = _queries_for(has_decisions)
+        cur.execute("SELECT to_regclass('publication_disposition') IS NOT NULL")
+        has_row = cur.fetchone()
+        queries = _queries_for(has_decisions, has_dispositions=bool(has_row and has_row[0]))
 
         raw = fetch_shaping_raw(cur, queries, belief=belief)
     finally:

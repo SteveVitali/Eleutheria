@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
-from typing import Protocol
+from typing import Any, Protocol
 
 from evidence.tiers import CaptureMetadata, StorageTier
 from inference.coverage import CoverageRecord
@@ -83,6 +83,10 @@ class StoredClaim:
     claim: Claim
     asserted_at: datetime
     capture_ids: tuple[str, ...] = ()
+    #: P32.5/ADR-124 (SIG-TRUST-006): the shared selector's denial, when the
+    #: claim may not be publicly represented — the route renders this as a
+    #: truthful tombstone (policy version + safe reason), never the value.
+    publication: Any = None  # policy.eligibility.PublicationDecision | None
 
 
 @dataclass(frozen=True)
@@ -98,6 +102,11 @@ class EntityRecord:
     lon: float | None = None
     sensitivity_class: SensitivityClass | None = None
     visibility: StorageTier = StorageTier.PUBLIC
+    #: P32.5/ADR-124 (SIG-TRUST-006): the shared selector's denial, when the
+    #: entity is withheld from public representation — the route renders a
+    #: truthful tombstone (entity id + type + safe reason), never its
+    #: name/facts. ``None`` = permitted (the common case).
+    publication: Any = None  # policy.eligibility.PublicationDecision | None
 
 
 @dataclass(frozen=True)
