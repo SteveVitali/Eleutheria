@@ -244,6 +244,199 @@ def build_parser() -> argparse.ArgumentParser:
         help="the pseudonymous reviewer handle recorded on every appended decision",
     )
 
+    # -- eval — the P32.9 independent blinded human-evaluation campaign surface
+    # (ADR-128). A different channel from `review`: reference labels answer
+    # "same defined object", they are never operational accept/reject
+    # decisions, and sealed_final labels stay invisible to clustering and
+    # model-development views until a custodian-recorded release. This surface
+    # only PREPARES campaigns and records labels a human produced elsewhere —
+    # it never runs a campaign, recruits a reviewer, or authors a label.
+    ev = sub.add_parser(
+        "eval",
+        help="independent blinded human-evaluation campaigns (P32.9, ADR-128; "
+        "prepare/record tooling only — never runs a human campaign)",
+    )
+    ev_sub = ev.add_subparsers(dest="eval_command")
+
+    ev_frame = ev_sub.add_parser(
+        "frame",
+        help="build a camera-site frame JSONL from pending review items (read-only)",
+    )
+    ev_frame.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_frame.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    ev_frame.add_argument("--limit", type=int, default=None, help="frame size cap")
+    ev_frame.add_argument("--out", default=None, help="output JSONL path (default: stdout)")
+
+    ev_prep = ev_sub.add_parser(
+        "prepare",
+        help="preregister a campaign and draw the disjoint, seeded sample "
+        "(immutable campaign + manifest + sample rows)",
+    )
+    ev_prep.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_prep.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_prep.add_argument("--campaign-id", required=True)
+    ev_prep.add_argument("--purpose", required=True)
+    ev_prep.add_argument("--protocol-digest", required=True)
+    ev_prep.add_argument("--frame-snapshot", required=True)
+    ev_prep.add_argument("--ruleset-digest", required=True)
+    ev_prep.add_argument("--seed", required=True)
+    ev_prep.add_argument(
+        "--frame-jsonl",
+        required=True,
+        help="the frame JSONL (rows from `eval frame` or a caller-built frame)",
+    )
+    ev_prep.add_argument(
+        "--design",
+        default=None,
+        help="optional JSON file {group_spec,sample_spec,target_population,rubric_version}",
+    )
+    ev_prep.add_argument(
+        "--created-by",
+        default="sig-resolution eval prepare",
+        help="the tool/engineering actor recorded on the campaign (never a person)",
+    )
+    ev_prep.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="compute + print the draw without writing any rows",
+    )
+
+    ev_pkt = ev_sub.add_parser(
+        "packets",
+        help="build + persist the blinded reviewer packets for a campaign's samples",
+    )
+    ev_pkt.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_pkt.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_pkt.add_argument("--campaign-id", required=True)
+    ev_pkt.add_argument(
+        "--from-spine",
+        action="store_true",
+        help="read the two observations per sample off the spine (camera-site pairs)",
+    )
+    ev_pkt.add_argument(
+        "--evidence-jsonl",
+        default=None,
+        help="JSONL {sample_id|pair_id, left:{…}, right:{…}} for non-spine frames",
+    )
+
+    ev_assign = ev_sub.add_parser(
+        "assign", help="record reviewer × sample × pass assignments (append-only)"
+    )
+    ev_assign.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_assign.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_assign.add_argument("--campaign-id", required=True)
+    ev_assign.add_argument("--reviewer", required=True, help="pseudonymous reviewer handle")
+    ev_assign.add_argument("--pass", dest="pass_no", type=int, required=True, choices=(1, 2))
+    ev_assign.add_argument(
+        "--samples",
+        default="all",
+        help="'all' or a comma list of sample ids (default: all of the campaign)",
+    )
+    ev_assign.add_argument(
+        "--assigned-by",
+        default="sig-resolution eval assign",
+        help="the tooling actor (never a person)",
+    )
+
+    ev_status = ev_sub.add_parser("status", help="campaign state + counts")
+    ev_status.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_status.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_status.add_argument("--campaign-id", required=True)
+
+    ev_export = ev_sub.add_parser(
+        "export",
+        help="export one reviewer's blinded workbook (JSONL; packet payloads only)",
+    )
+    ev_export.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_export.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_export.add_argument("--campaign-id", required=True)
+    ev_export.add_argument("--reviewer", required=True)
+    ev_export.add_argument("--pass", dest="pass_no", type=int, default=1, choices=(1, 2))
+    ev_export.add_argument("--out", default=None, help="output JSONL path (default: stdout)")
+
+    ev_attest = ev_sub.add_parser("attest", help="record a human-attestation event (append-only)")
+    ev_attest.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_attest.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_attest.add_argument("--campaign-id", default=None)
+    ev_attest.add_argument("--reviewer", required=True)
+    ev_attest.add_argument(
+        "--kind",
+        required=True,
+        choices=(
+            "human_identity",
+            "training_complete",
+            "conflict_declaration",
+            "blinding_breach",
+            "withdrawn",
+        ),
+    )
+    ev_attest.add_argument("--detail", default="{}", help="JSON detail object")
+    ev_attest.add_argument(
+        "--recorded-by", default="sig-resolution eval attest", help="the recording actor"
+    )
+
+    ev_import = ev_sub.add_parser(
+        "import-labels",
+        help="append reviewer labels from a filled workbook JSONL "
+        "(as sig_eval_reviewer — never as admin/materialize)",
+    )
+    ev_import.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_import.add_argument("--role", default="sig_eval_reviewer", help="role to SET ROLE to")
+    ev_import.add_argument("--campaign-id", required=True)
+    ev_import.add_argument("--reviewer", required=True, help="the label-owning reviewer")
+    ev_import.add_argument(
+        "--round",
+        dest="label_round",
+        default="independent_1",
+        choices=("independent_1", "independent_2", "repeat"),
+    )
+    ev_import.add_argument("--attestation", required=True, help="the reviewer's attestation_id")
+    ev_import.add_argument("--rubric-version", default="eval-rubric/1")
+    ev_import.add_argument("path", help="the filled workbook JSONL")
+
+    ev_adj = ev_sub.add_parser(
+        "adjudicate",
+        help="record an adjudication (custodian only; disagreements stay unresolved-able)",
+    )
+    ev_adj.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_adj.add_argument("--role", default="sig_eval_custodian", help="role to SET ROLE to")
+    ev_adj.add_argument("--campaign-id", required=True)
+    ev_adj.add_argument("--sample-id", required=True)
+    ev_adj.add_argument("--adjudicator", required=True, help="pseudonymous adjudicator")
+    ev_adj.add_argument("--phase", default="resolution", choices=("independent", "resolution"))
+    ev_adj.add_argument(
+        "--label",
+        required=True,
+        choices=("same", "different", "insufficient_evidence", "unresolved"),
+    )
+    ev_adj.add_argument("--reason", required=True)
+    ev_adj.add_argument("--evidence-refs", default="[]", help="JSON array")
+
+    ev_unseal = ev_sub.add_parser(
+        "unseal",
+        help="record the authorized unsealing decision (custodian only)",
+    )
+    ev_unseal.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_unseal.add_argument("--role", default="sig_eval_custodian", help="role to SET ROLE to")
+    ev_unseal.add_argument("--campaign-id", required=True)
+    ev_unseal.add_argument(
+        "--scope", required=True, choices=("development_only", "final", "operational")
+    )
+    ev_unseal.add_argument("--authorized-by", required=True)
+    ev_unseal.add_argument("--detail", default="{}", help="JSON detail object")
+
+    ev_verify = ev_sub.add_parser(
+        "verify", help="recompute the campaign manifest over live rows (tamper check)"
+    )
+    ev_verify.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_verify.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_verify.add_argument("--campaign-id", required=True)
+
+    ev_wm = ev_sub.add_parser("watermark", help="print the campaign's chained label watermark")
+    ev_wm.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_wm.add_argument("--role", default="sig_eval_custodian", help="role to SET ROLE to")
+    ev_wm.add_argument("--campaign-id", required=True)
+
     camera = sub.add_parser(
         "camera-sites",
         help="geospatial camera-site entity resolution over the PG spine (P30.2b)",
@@ -605,6 +798,421 @@ def _run_review(args: argparse.Namespace) -> int:
     return 2
 
 
+# --------------------------------------------------------------------------- #
+# `eval` — the P32.9 independent blinded human-evaluation campaign surface.     #
+# --------------------------------------------------------------------------- #
+def _frame_items_from_jsonl(path: str) -> list[Any]:
+    from .human_eval import FrameItem
+
+    items = []
+    with open(path, encoding="utf-8") as fh:
+        for i, line in enumerate(fh, 1):
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            try:
+                items.append(
+                    FrameItem(
+                        pair_id=row["pair_id"],
+                        left_ref=row["left_ref"],
+                        right_ref=row["right_ref"],
+                        stratum_id=row["stratum_id"],
+                        estimand=row.get("estimand", "auto_positive_precision"),
+                        reference_basis=row.get("reference_basis", "physical_identity"),
+                        entity_neighborhood=row.get("entity_neighborhood", ""),
+                        source_lineage_ids=tuple(row.get("source_lineage_ids") or ()),
+                        republisher_family=row.get("republisher_family", ""),
+                        mirror_group_id=row.get("mirror_group_id", ""),
+                    )
+                )
+            except (KeyError, ValueError) as exc:
+                raise ValueError(f"frame JSONL line {i}: {exc}") from exc
+    return items
+
+
+def _run_eval_frame(args: argparse.Namespace) -> int:
+    """Emit the camera-site frame JSONL (read-only)."""
+    import psycopg
+
+    from .camera_sites_pg import set_role
+    from .human_eval_pg import frame_from_review_items
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        conn.execute("SET TRANSACTION READ ONLY")
+        if args.role:
+            set_role(conn, args.role)
+        rows = frame_from_review_items(conn, limit=args.limit)
+    text = "".join(json.dumps(r, sort_keys=True) + "\n" for r in rows)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        print(f"wrote {len(rows)} frame item(s) to {args.out}")
+    else:
+        print(text, end="")
+    return 0
+
+
+def _run_eval_prepare(args: argparse.Namespace) -> int:
+    """Preregister the campaign + draw the disjoint seeded sample."""
+    import psycopg
+
+    from .human_eval import (
+        GroupSpec,
+        SampleSpec,
+        assign_partitions,
+        campaign_design,
+        draw_eval_sample,
+        homogenize_group_strata,
+        manifest_digest,
+    )
+    from .human_eval_pg import preregister_campaign, write_manifest, write_samples
+
+    items = _frame_items_from_jsonl(args.frame_jsonl)
+    spec_doc: dict[str, Any] = {}
+    if args.design:
+        with open(args.design, encoding="utf-8") as fh:
+            spec_doc = json.load(fh)
+    gs = spec_doc.get("group_spec") or {}
+    ss = spec_doc.get("sample_spec") or {}
+    group_spec = GroupSpec(
+        fractions=gs.get("fractions") or GroupSpec().fractions,
+        holdout_families=tuple(gs.get("holdout_families") or ()),
+        per_stratum=gs.get("per_stratum") or {},
+    )
+    sample_spec = SampleSpec(quotas=ss.get("quotas") or {})
+    design = campaign_design(
+        purpose=args.purpose,
+        protocol_digest=args.protocol_digest,
+        frame_snapshot=args.frame_snapshot,
+        ruleset_digest=args.ruleset_digest,
+        seed=args.seed,
+        group_spec=group_spec,
+        sample_spec=sample_spec,
+        target_population=spec_doc.get("target_population", ""),
+        rubric_version=spec_doc.get("rubric_version", "eval-rubric/1"),
+        extra=spec_doc.get("extra"),
+    )
+
+    items = homogenize_group_strata(items)
+    partitions = assign_partitions(items, seed=args.seed, spec=group_spec)
+    rows, denominators = draw_eval_sample(
+        items, partitions, campaign_id=args.campaign_id, seed=args.seed, spec=sample_spec
+    )
+    campaign = {
+        "campaign_id": args.campaign_id,
+        "purpose": args.purpose,
+        "design": design,
+    }
+    summary: dict[str, Any] = {
+        "campaign_id": args.campaign_id,
+        "frame_items": len(items),
+        "drawn": len(rows),
+        "partitions": {
+            p: sum(1 for r in rows if r["partition"] == p)
+            for p in sorted({r["partition"] for r in rows})
+        },
+        "denominators": denominators,
+        "manifest_digest": manifest_digest(campaign, rows),
+        "dry_run": bool(args.dry_run),
+    }
+    if not args.dry_run:
+        with psycopg.connect(args.dsn, autocommit=True) as conn:
+            preregister_campaign(
+                conn,
+                campaign_id=args.campaign_id,
+                purpose=args.purpose,
+                protocol_digest=args.protocol_digest,
+                frame_snapshot=args.frame_snapshot,
+                ruleset_digest=args.ruleset_digest,
+                seed=args.seed,
+                design=design,
+                created_by=args.created_by,
+                role=args.role,
+            )
+            write_samples(conn, rows, role=args.role)
+            manifest = write_manifest(
+                conn,
+                campaign_id=args.campaign_id,
+                sample_rows=rows,
+                denominators=denominators,
+                created_by=args.created_by,
+                role=args.role,
+            )
+            summary["manifest"] = manifest
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0
+
+
+def _run_eval_packets(args: argparse.Namespace) -> int:
+    """Build + persist blinded packets for the campaign's samples."""
+    import psycopg
+
+    from .camera_site_review import read_observation
+    from .camera_sites_pg import set_role
+    from .human_eval import build_blinded_packet
+    from .human_eval_pg import read_campaign, read_samples, write_packets
+
+    evidence: dict[str, Any] = {}
+    if args.evidence_jsonl:
+        with open(args.evidence_jsonl, encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    row = json.loads(line)
+                    evidence[row.get("sample_id") or row.get("pair_id")] = row
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        if args.role:
+            set_role(conn, args.role)
+        campaign = read_campaign(conn, args.campaign_id, role=None)
+        samples = read_samples(conn, args.campaign_id, role=None)
+        packets = []
+        skipped = 0
+        for s in samples:
+            if evidence:
+                row = evidence.get(s["sample_id"]) or evidence.get(s["pair_id"])
+                if row is None:
+                    skipped += 1
+                    continue
+                left_ev, right_ev = row.get("left") or {}, row.get("right") or {}
+            elif args.from_spine:
+                left_ev = read_observation(conn, s["left_ref"]) or {}
+                right_ev = read_observation(conn, s["right_ref"]) or {}
+            else:
+                print("packets needs --from-spine or --evidence-jsonl")
+                return 2
+            payload = build_blinded_packet(
+                sample_id=s["sample_id"],
+                seed=campaign["seed"],
+                left_evidence=left_ev,
+                right_evidence=right_ev,
+            )
+            packets.append(
+                {
+                    "campaign_id": s["campaign_id"],
+                    "sample_id": s["sample_id"],
+                    "payload": payload,
+                }
+            )
+        n = write_packets(conn, packets, role=None)
+    print(json.dumps({"packets": n, "skipped": skipped}, indent=2, sort_keys=True))
+    return 0
+
+
+def _run_eval_assign(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import assign_reviewers, read_samples
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        if args.samples == "all":
+            ids = [s["sample_id"] for s in read_samples(conn, args.campaign_id, role=args.role)]
+        else:
+            ids = [s.strip() for s in args.samples.split(",") if s.strip()]
+        n = assign_reviewers(
+            conn,
+            campaign_id=args.campaign_id,
+            reviewer_id=args.reviewer,
+            sample_ids=ids,
+            pass_no=args.pass_no,
+            assigned_by=args.assigned_by,
+            role=args.role,
+        )
+    print(json.dumps({"assigned": n, "reviewer": args.reviewer, "pass": args.pass_no}))
+    return 0
+
+
+def _run_eval_status(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import campaign_status
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        status = campaign_status(conn, args.campaign_id, role=args.role)
+    print(json.dumps(status, indent=2, sort_keys=True))
+    return 0
+
+
+def _run_eval_export(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import export_workbook
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        rows = export_workbook(
+            conn,
+            campaign_id=args.campaign_id,
+            reviewer_id=args.reviewer,
+            pass_no=args.pass_no,
+            role=args.role,
+        )
+    text = "".join(json.dumps(r, sort_keys=True) + "\n" for r in rows)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        print(f"exported {len(rows)} workbook row(s) to {args.out}")
+    else:
+        print(text, end="")
+    return 0
+
+
+def _run_eval_attest(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import record_attestation
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        attestation_id = record_attestation(
+            conn,
+            campaign_id=args.campaign_id,
+            reviewer_id=args.reviewer,
+            kind=args.kind,
+            detail=json.loads(args.detail),
+            recorded_by=args.recorded_by,
+            role=args.role,
+        )
+    print(json.dumps({"attestation_id": attestation_id, "reviewer": args.reviewer}))
+    return 0
+
+
+def _run_eval_import_labels(args: argparse.Namespace) -> int:
+    """Append human labels as the reviewer role — one row per filled workbook line."""
+    import psycopg
+
+    from .human_eval import label_digest as compute_label_digest
+    from .human_eval_pg import record_label
+
+    appended, errors = 0, []
+    with open(args.path, encoding="utf-8") as fh:
+        rows = [json.loads(line) for line in fh if line.strip()]
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        for i, row in enumerate(rows, 1):
+            label = row.get("label")
+            if not label:
+                continue  # a blank workbook row is an unanswered item, not a label
+            try:
+                digest = compute_label_digest(
+                    campaign_id=args.campaign_id,
+                    sample_id=row["sample_id"],
+                    reviewer_id=args.reviewer,
+                    round=args.label_round,
+                    label=label,
+                    reason_codes=row.get("reason_codes") or [],
+                    evidence_refs=row.get("evidence_refs") or [],
+                    rubric_version=row.get("rubric_version") or args.rubric_version,
+                    packet_digest=row["packet_digest"],
+                )
+                record_label(
+                    conn,
+                    campaign_id=args.campaign_id,
+                    sample_id=row["sample_id"],
+                    reviewer_id=args.reviewer,
+                    round=args.label_round,
+                    label=label,
+                    reason_codes=row.get("reason_codes") or [],
+                    evidence_refs=row.get("evidence_refs") or [],
+                    rubric_version=row.get("rubric_version") or args.rubric_version,
+                    packet_digest=row["packet_digest"],
+                    attestation_id=row.get("attestation_id") or args.attestation,
+                    label_digest=digest,
+                    role=args.role,
+                )
+                appended += 1
+            except (ValueError, KeyError) as exc:
+                errors.append({"line": i, "sample_id": row.get("sample_id"), "error": str(exc)})
+    print(json.dumps({"appended": appended, "errors": errors}, indent=2, sort_keys=True))
+    return 1 if errors else 0
+
+
+def _run_eval_adjudicate(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import record_adjudication
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        aid = record_adjudication(
+            conn,
+            campaign_id=args.campaign_id,
+            sample_id=args.sample_id,
+            adjudicator_id=args.adjudicator,
+            phase=args.phase,
+            label=args.label,
+            reason=args.reason,
+            evidence_refs=json.loads(args.evidence_refs),
+            role=args.role,
+        )
+    print(json.dumps({"adjudication_id": aid, "label": args.label}))
+    return 0
+
+
+def _run_eval_unseal(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import record_release
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        rid = record_release(
+            conn,
+            campaign_id=args.campaign_id,
+            scope=args.scope,
+            authorized_by=args.authorized_by,
+            detail=json.loads(args.detail),
+            role=args.role,
+        )
+    print(json.dumps({"release_id": rid, "scope": args.scope}))
+    return 0
+
+
+def _run_eval_verify(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import verify_manifest
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        result = verify_manifest(conn, args.campaign_id, role=args.role)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["verified"] else 1
+
+
+def _run_eval_watermark(args: argparse.Namespace) -> int:
+    import psycopg
+
+    from .human_eval_pg import campaign_watermark
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        wm = campaign_watermark(conn, args.campaign_id, role=args.role)
+    print(json.dumps({"campaign_id": args.campaign_id, "label_watermark": wm}))
+    return 0
+
+
+def _run_eval(args: argparse.Namespace) -> int:
+    handlers = {
+        "frame": _run_eval_frame,
+        "prepare": _run_eval_prepare,
+        "packets": _run_eval_packets,
+        "assign": _run_eval_assign,
+        "status": _run_eval_status,
+        "export": _run_eval_export,
+        "attest": _run_eval_attest,
+        "import-labels": _run_eval_import_labels,
+        "adjudicate": _run_eval_adjudicate,
+        "unseal": _run_eval_unseal,
+        "verify": _run_eval_verify,
+        "watermark": _run_eval_watermark,
+    }
+    handler = handlers.get(args.eval_command)
+    if handler is None:
+        print(
+            "usage: sig-resolution eval {frame,prepare,packets,assign,status,export,"
+            "attest,import-labels,adjudicate,unseal,verify,watermark} ..."
+        )
+        return 2
+    try:
+        return handler(args)
+    except ValueError as exc:
+        print(str(exc))
+        return 2
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `resolution` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -684,6 +1292,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_match(args)
     if args.command == "review":
         return _run_review(args)
+    if args.command == "eval":
+        return _run_eval(args)
     if args.command == "camera-sites":
         return _run_camera_sites(args)
     if args.command == "identity-triage":
