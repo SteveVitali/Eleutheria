@@ -609,3 +609,15 @@ ambiguity stays open until a recorded reconciliation. Findings and routing:
   rows (superseded by the landing amendment below it — history kept, not rewritten).
 - **`D-P31.4-1`** retains its exact post-2026-10-10 verify command; nothing is pre-dated.
 
+
+## P32.3 (Round 10 / row 163) — scoped partner identity: the disposition work the audit feeds (2026-10-10)
+
+P32.3 closed nothing — no existing row was scoped to it — and opened exactly one obligation.
+The legacy `sig.org.name` identity keys are deliberately NOT re-keyed in place (append-only spine;
+ADR-122): `sig-resolution partner-name-audit --dsn …` now produces the dry-run impact report —
+every legacy key's asserting sources/predicates and the `sig.org.name_scoped` keys it would
+decompose into — but the **recorded human disposition** per legacy key is new owed work.
+
+| id | kind | item | why deferred | unblocked by | how to verify | proxy now | status |
+|---|---|---|---|---|---|---|---|
+| D-P32.3-1 | P | a recorded identity disposition for every legacy `sig.org.name` key the `partner-name-audit` report lists — for each, keep the entity (harmless single-source union), split it into the reported scoped candidates, or link it `same_as` to a strong-id entity | the disposition is a human review decision over produced evidence — the audit is the dry-run input, not the decision itself; P32.3 ships the report, not the verdicts | a reviewer session over the report output (no code prerequisite) | every `sig.org.name` key in `entity_identifier` has a recorded disposition (`same_as`/`distinct` decision rows or an accepted "keep" record); the report's `split_keys` count is the auto-union exposure reviewed to zero | `partner-name-audit` prints the per-key impact JSON today (read-only); `tests/resolution/test_partner_name_audit.py` proves the decomposition arithmetic | OPEN 2026-10-10 (P32.3; cites BL-058) |

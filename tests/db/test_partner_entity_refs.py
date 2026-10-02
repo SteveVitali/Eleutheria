@@ -132,47 +132,74 @@ def test_the_sink_writes_entity_ref_claims_beside_unchanged_text_claims(clean_ds
             else:
                 assert object_entity is None
 
-        # One organisation per partner identifier, however many sources name it: the
-        # WSDOT contract buyer, USAspending recipient, both camera operators and the
-        # Atlas event all point at ONE entity.
+        # P32.3 / ADR-122 (SIG-TRUST-004): name-only identity is SCOPE-QUALIFIED
+        # — the same normalized name under different asserting sources mints
+        # separate unmerged candidates and NEVER auto-unions. The WSDOT buyer
+        # (govspend), recipient (usaspending) and Atlas event party land as
+        # three ``src:<source>|`` scoped entities; a union now needs a strong
+        # external id or a recorded disposition (proved in the materializer
+        # test below).
         wsdot = conn.execute(
             "SELECT DISTINCT c.object_entity FROM claim c"
             "  JOIN entity_identity_key k ON k.entity_id = c.object_entity"
-            " WHERE k.scheme = 'sig.org.name' AND k.value = %s",
-            (_WSDOT,),
+            " WHERE k.scheme = 'sig.org.name_scoped' AND k.value LIKE %s",
+            (f"%|{_WSDOT}",),
         ).fetchall()
-        assert len(wsdot) == 1
-        assert (
-            _count(
-                conn,
-                "SELECT count(DISTINCT c.predicate_id) FROM claim c WHERE c.object_entity = %s",
-                (wsdot[0][0],),
-            )
-            == 4  # buyer, recipient, camera_operator, event_organizations
-        )
+        assert len(wsdot) == 3
+        per_scope = conn.execute(
+            "SELECT k.value, count(DISTINCT c.predicate_id)"
+            "  FROM claim c JOIN entity_identity_key k ON k.entity_id = c.object_entity"
+            " WHERE k.scheme = 'sig.org.name_scoped' AND k.value LIKE %s"
+            " GROUP BY k.value",
+            (f"%|{_WSDOT}",),
+        ).fetchall()
+        assert sorted(per_scope) == [
+            ("src:alpr_accountability_atlas|" + _WSDOT, 1),  # event_organizations
+            ("src:govspend|" + _WSDOT, 1),  # buyer
+            ("src:usaspending|" + _WSDOT, 1),  # recipient
+        ]
 
         orgs = conn.execute(
             "SELECT o.cached_canonical_name, o.organization_type,"
             "       o.publication_review_required, o.identity_basis ->> 'scheme'"
             "  FROM organization o ORDER BY 1"
         ).fetchall()
-        assert {r[0] for r in orgs} == {
+        # Six organisation entities now: the seller, the city buyer, the TED
+        # buyer and THREE scoped WSDOT candidates that share the name.
+        assert {r[0] for r in orgs} <= {
             "City of Example Falls",
             "Example Traffic Camera Systems LLC",
             "Polska Agencja Żeglugi Powietrznej",
             "Washington State Department of Transportation",
+            "WASHINGTON STATE DEPARTMENT OF TRANSPORTATION",
         }
-        assert {r[1:] for r in orgs} == {("unclassified", True, "sig.org.name")}
+        assert len(orgs) == 6
+        # Every name-only mint is publication-review-required under the scoped
+        # scheme and carries its recorded identity basis.
+        assert {r[1:] for r in orgs} == {("unclassified", True, "sig.org.name_scoped")}
+        basis = conn.execute(
+            "SELECT identity_basis ->> 'scope', identity_basis ->> 'candidate'  FROM organization"
+        ).fetchall()
+        assert {r[1] for r in basis} == {"true"}  # every mint is an unmerged candidate
+        assert {str(r[0]).split(":")[0] for r in basis} == {"src"}  # all source-scoped
         from resolution.partner_identity import partner_rules_version
 
         rules = conn.execute(
             "SELECT DISTINCT identity_basis ->> 'rules' FROM organization"
         ).fetchall()
         assert rules == [(partner_rules_version(),)]  # the deciding ruleset is recorded
-        assert _count(conn, "SELECT count(*) FROM entity WHERE entity_type = 'organization'") == 4
+        assert _count(conn, "SELECT count(*) FROM entity WHERE entity_type = 'organization'") == 6
+        assert (
+            _count(
+                conn,
+                "SELECT count(*) FROM entity_identity_key WHERE scheme = 'sig.org.name_scoped'",
+            )
+            == 6
+        )
+        # Nothing new mints under the legacy global scheme.
         assert (
             _count(conn, "SELECT count(*) FROM entity_identity_key WHERE scheme = 'sig.org.name'")
-            == 4
+            == 0
         )
 
 
@@ -191,12 +218,15 @@ def test_person_shaped_and_ambiguous_partners_mint_nothing(clean_dsn: str) -> No
             "20009020700016",
             "31483054800140",
         ):
+            # Under either name scheme, a refused name mints no identifier — the
+            # scoped value is ``src:<source>|<name>``, so match the tail too.
             assert (
                 _count(
                     conn,
-                    "SELECT count(*) FROM entity_identifier WHERE scheme = 'sig.org.name'"
-                    " AND value = %s",
-                    (refused,),
+                    "SELECT count(*) FROM entity_identifier"
+                    " WHERE scheme IN ('sig.org.name', 'sig.org.name_scoped')"
+                    "   AND (value = %s OR value LIKE %s)",
+                    (refused, f"%|{refused}"),
                 )
                 == 0
             ), refused
@@ -245,16 +275,135 @@ def test_the_materializers_run_over_the_emitted_claims(clean_dsn: str) -> None:
         }
         assert len(cameras) == 2
 
+        # P32.3 / SIG-TRUST-003/004 — the conservative default: the WA registry's
+        # ``agency`` label lands as ``camera_registry_publisher`` provenance and
+        # mints NO operator ref, and the three scoped WSDOT candidates never
+        # auto-union. With no operator leg and no strong-id join, the
+        # materializer fabricates nothing — an honest zero, not a name-collision.
+        links = materialize_accountability_links(conn)
+        assert (links.inserted, links.by_link_type) == (0, {})
+        assert materialize_accountability_links(conn).inserted == 0
+
+        # The STRONG-ID path (SIG-TRUST-004): the same external id asserted on
+        # an operator claim and the partner claims joins them through ONE
+        # guarded identity — the union a name-only mint deliberately refuses.
+        # Synthesized rows through the production-wired sink (never edits to the
+        # committed capture fixtures).
+        from db.claim_sink import PgClaimSink, record_object_ref
+        from resolution.partner_identity import PartnerIdentity, partner_identity
+
+        uei = "TESTUEIP323000001"
+        vendor_uei = "TESTUEIP323000002"
+
+        def _org_ref(name: str, key: str = uei, role: str | None = None) -> dict[str, Any]:
+            ident = partner_identity(name, crosswalk={"uei": key})
+            assert isinstance(ident, PartnerIdentity) and ident.scheme == "us.sam.uei"
+            return ident.as_object_ref(role=role)
+
+        operator_ref = _org_ref("Example Operations Bureau", role="operator")
+        synthetic = [
+            # camera --operator--> bureau
+            {
+                "subject_id": "traffic_camera:p32x_sync_1",
+                "predicate_id": "camera_operator",
+                "value": "Example Operations Bureau",
+                "source_id": "src_p32x",
+                "object_ref": operator_ref,
+            },
+            # ...and a second camera — same operator
+            {
+                "subject_id": "traffic_camera:p32x_sync_2",
+                "predicate_id": "camera_operator",
+                "value": "Example Operations Bureau",
+                "source_id": "src_p32x",
+                "object_ref": operator_ref,
+            },
+            # contract --buyer--> the same bureau (SAME uei → union)
+            {
+                "subject_id": "contract:src_p32x:C-9",
+                "predicate_id": "buyer",
+                "value": "Example Operations Bureau",
+                "source_id": "src_p32x",
+                "object_ref": operator_ref,
+            },
+            # contract --seller--> the vendor (a different strong id)
+            {
+                "subject_id": "contract:src_p32x:C-9",
+                "predicate_id": "seller",
+                "value": "Example Camera Vendor Inc",
+                "source_id": "src_p32x",
+                "object_ref": _org_ref("Example Camera Vendor Inc", vendor_uei),
+            },
+            # funding --recipient--> the bureau
+            {
+                "subject_id": "award:src_p32x:A-1",
+                "predicate_id": "recipient",
+                "value": "Example Operations Bureau",
+                "source_id": "src_p32x",
+                "object_ref": operator_ref,
+            },
+            # event --organizations--> the bureau
+            {
+                "subject_id": "accountability_event:src_p32x:E-1",
+                "predicate_id": "event_organizations",
+                "value": "Example Operations Bureau",
+                "source_id": "src_p32x",
+                "object_ref": operator_ref,
+            },
+        ]
+        PgClaimSink(conn, connector_name="p32x", object_resolver=record_object_ref).assert_claims(
+            synthetic
+        )
+        # One guarded entity backs all five partner refs — the same uei keyed
+        # it once despite three different subject sources.
+        bureau = conn.execute(
+            "SELECT entity_id::text FROM entity_identity_key"
+            " WHERE scheme = 'us.sam.uei' AND value = %s",
+            (uei,),
+        ).fetchall()
+        assert len(bureau) == 1
+        # A name-only mint NEVER joins it: the same NAME under another scheme
+        # scope stays a separate candidate.
+        other = partner_identity("Example Operations Bureau", scope="src_p32y").as_object_ref()
+        PgClaimSink(conn, connector_name="p32y", object_resolver=record_object_ref).assert_claims(
+            [
+                {
+                    "subject_id": "contract:src_p32y:C-1",
+                    "predicate_id": "buyer",
+                    "value": "Example Operations Bureau",
+                    "source_id": "src_p32y",
+                    "object_ref": other,
+                }
+            ]
+        )
+        assert (
+            _count(
+                conn,
+                "SELECT count(*) FROM organization WHERE cached_canonical_name = %s",
+                ("Example Operations Bureau",),
+            )
+            == 2  # the uei-keyed org and the unmerged name candidate
+        )
+
+        cameras |= {
+            str(r[0])
+            for r in conn.execute(
+                "SELECT entity_id FROM entity_identifier WHERE scheme = 'sig.connector.subject'"
+                " AND value LIKE 'traffic_camera:p32x%%'"
+            ).fetchall()
+        }
+        assert len(cameras) == 4
+
         links = materialize_accountability_links(conn)
         assert links.inserted > 0
         assert links.by_link_type == {
-            # camera --operator--> WSDOT <--buyer-- contract C-001
+            # camera --operator--> bureau <--buyer-- contract C-9
             "procured_under_contract": 2,
             # ...and that contract's seller
             "has_vendor": 2,
-            # camera --operator--> WSDOT <--recipient-- the USAspending award
+            # camera --operator--> bureau <--recipient-- the award
             "funded_by": 2,
-            # camera --operator--> WSDOT <--organizations-- the Atlas event
+            # camera --operator--> bureau <--organizations-- the event
             "overseen_by": 2,
         }
         rows = read_materialized_accountability_links(conn)

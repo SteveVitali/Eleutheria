@@ -31,6 +31,10 @@ id = "ky_kytc_traffic_cameras"
 source_id = "dot_511_ky"
 state = "KY"
 agency = "Kentucky Transportation Cabinet"
+# P32.3 / SIG-TRUST-003: `agency` is the registry PUBLISHER (provenance). The
+# authoritative operator declaration lives on `operator` — KYTC operates the
+# KYTC-published camera layer, so only this field mints `camera_operator`.
+operator = "Kentucky Transportation Cabinet"
 platform = "arcgis_feature_layer"
 layer_url = "https://services2.arcgis.com/CcI36Pduqd0OR4W9/arcgis/rest/services/trafficCamerasCur_Prd/FeatureServer/0"
 arcgis_item_id = "00715d24d2bf42e5abc1fab8a08d45eb"

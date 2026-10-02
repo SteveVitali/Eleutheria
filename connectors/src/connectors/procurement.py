@@ -4187,7 +4187,9 @@ class ProcurementConnector(Connector):
         The connector still never mints an entity: the identity layer decides the
         identifier and the claim sink resolves it through the identity guard.
         """
-        return partner_ref_rows(normalized, predicates=PROCUREMENT_PARTNER_PREDICATES)
+        return partner_ref_rows(
+            normalized, predicates=PROCUREMENT_PARTNER_PREDICATES, scope=ctx.source.id
+        )
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only, SIG-INGEST-003)."""

@@ -32,11 +32,18 @@ def test_at_least_three_independent_source_families() -> None:
 
 
 def test_two_claims_on_one_predicate_that_disagree() -> None:
+    # P32.3: the precondition needs disagreeing claims on one predicate AT ONE
+    # SCOPE — the metro pair (DeFlock 299 vs The Oklahoman ~300) supplies it;
+    # the cross-scope 299-vs-~190 pair is a scope mismatch, not a disagreement.
     graph = slice_mod.build_slice()
     claimed = [c for c in graph.count_claims if c.count_basis == "claimed"]
     values = {c.value for c in claimed}
     assert len(values) >= 2, "need >=2 disagreeing claims on one predicate"
-    assert 190 in values and 299 in values
+    assert 299 in values and 300 in values
+    # and the cross-scope pair itself must be present-but-partitioned
+    metro = {c.value for c in claimed if c.scope and c.scope.label == "metro"}
+    city = {c.value for c in claimed if c.scope and c.scope.label == "city_limits"}
+    assert metro == {299, 300} and city == {100}
 
 
 def test_at_least_one_asset_with_no_operator() -> None:

@@ -35,6 +35,11 @@ from exports.dossier import (
     Row,
     Section,
 )
+from reconcile.count_scope import (
+    CountScope,
+    DerivedApproximateSum,
+    derive_approximate_sum,
+)
 from reconcile.counts import reconcile_as_single_count, reconcile_counts
 from reconcile.model import (
     POLICY_CONFIGURATION_DIVERGENCE,
@@ -144,6 +149,7 @@ class SliceGraph:
     deployment_id: str
     reconciliation: CountReconciliation
     count_claims: list[CountClaim]
+    derived_sums: list[DerivedApproximateSum]  # labelled L4 roll-ups (e.g. "~190")
     facts: dict[str, list[Fact]]  # keyed by dossier section id
     assets: list[PhysicalAsset]
     contradictions: list[Contradiction]
@@ -154,7 +160,15 @@ class SliceGraph:
 def build_slice() -> SliceGraph:
     ev = SliceEvidence()
 
-    # --- count claims (§29.1): six distinct predicates -----------------------
+    # --- count claims (§29.1 + P32.3 scope): six distinct predicates ---------
+    # P32.3 / SIG-TRUST-004: every count carries a DECLARED CountScope —
+    # comparability is scope-qualified, never guessed. The famous "~299 vs ~190"
+    # pair is a scope PARTITION, not a contradiction: DeFlock's 299 covers the
+    # METRO; the "~190" a reader derives is the city-limits roll-up of the
+    # agency's 90 active + Bacy's ~100 privately-owned — an explicitly DERIVED
+    # approximate sum (L4, labelled), not a claim.
+    _OKC_JUR = "us.state_abbr:OK"
+
     def cc(
         basis: str,
         value: int,
@@ -164,6 +178,7 @@ def build_slice() -> SliceGraph:
         genre: str | None = None,
         structured_exact: bool = False,
         scope: str | None = None,
+        scope_detail: str | None = None,
         quote: str | None = None,
     ) -> CountClaim:
         return CountClaim(
@@ -175,16 +190,31 @@ def build_slice() -> SliceGraph:
             genre=genre or ev.genre(artifact_id),
             evidence=ev.for_quote(artifact_id, quote if quote is not None else str(value)),
             structured_exact=structured_exact,
+            scope=(
+                CountScope(label=scope, jurisdiction=_OKC_JUR, detail=scope_detail)
+                if scope
+                else None
+            ),
             scope_note=scope,
         )
 
     count_claims = [
-        cc("contracted", 90, "okc-contract-c241032", date(2023, 1, 1), quote="90 cameras"),
+        cc(
+            "contracted",
+            90,
+            "okc-contract-c241032",
+            date(2023, 1, 1),
+            scope="city_limits",
+            scope_detail="agency_operated",
+            quote="90 cameras",
+        ),
         cc(
             "active",
             90,
             "okc-bacy-count-2026-08-18",
             date(2026, 8, 18),
+            scope="city_limits",
+            scope_detail="agency_operated",
             quote="OKCPD has 90 cameras",
         ),
         cc(
@@ -196,7 +226,8 @@ def build_slice() -> SliceGraph:
             scope="metro",
             quote="299",
         ),
-        # within-predicate disagreement (AC6): DeFlock ~299 vs Chief Bacy ~190.
+        # DeFlock's community-map count is a METRO figure (P32.3: scope
+        # mismatch, not a contradiction of the city-limits numbers).
         cc(
             "claimed",
             299,
@@ -206,17 +237,48 @@ def build_slice() -> SliceGraph:
             scope="metro",
             quote="299",
         ),
+        # Bacy's figure is ~100 PRIVATELY-OWNED cameras inside CITY LIMITS —
+        # the sourced input the derived "~190" city sum adds to the agency's 90.
         cc(
             "claimed",
-            190,
+            100,
             "okc-bacy-count-2026-08-18",
             date(2026, 8, 18),
             genre="news_article",
-            scope="city limits",
+            scope="city_limits",
+            scope_detail="privately_owned",
             quote="businesses own around 100 within city limits",
+        ),
+        # A genuine SAME-SCOPE disagreement stays a contradiction: The
+        # Oklahoman reports DeFlock OKC's estimate as ~300 METRO cameras while
+        # the DeFlock map itself claims 299 METRO — same scope, different value.
+        cc(
+            "claimed",
+            300,
+            "okc-oklahoman-2026-08-03",
+            date(2026, 8, 3),
+            scope="metro",
+            quote="estimated 300 ALPR cameras in the OKC metro area",
         ),
     ]
     reconciliation = reconcile_counts(DEPLOYMENT_ID, count_claims, as_of=AS_OF)
+
+    # The "~190" city figure is a DERIVED approximate sum — L4-labelled, never
+    # a claim or a resolved value (SIG-DOS-003 labels it; SIG-TRUST-004 keeps
+    # it out of the evidence counts).
+    derived_sums = [
+        derive_approximate_sum(
+            DEPLOYMENT_ID,
+            [
+                c
+                for c in count_claims
+                if c.scope is not None
+                and c.scope.label == "city_limits"
+                and c.scope.detail in ("agency_operated", "privately_owned")
+                and c.count_basis in ("active", "claimed")
+            ],
+        )
+    ]
 
     # the deliberate conflation §29.1 forbids: contracted 90 vs mapped 299 as ONE count
     conflation = reconcile_as_single_count(
@@ -407,6 +469,7 @@ def build_slice() -> SliceGraph:
         deployment_id=DEPLOYMENT_ID,
         reconciliation=reconciliation,
         count_claims=count_claims,
+        derived_sums=derived_sums,
         facts=facts,
         assets=assets,
         contradictions=contradictions,
@@ -492,7 +555,42 @@ def _ui_doc(e: Evidence) -> UiDoc:
     )
 
 
+def _claim_recon(c: CountClaim, weight: int | None, scope_label: str | None) -> ReconClaim:
+    return ReconClaim(
+        value=c.value,
+        source_family=c.evidence.source_family,
+        reliability=c.reliability,
+        weight=weight,
+        observed_at=c.observed_at,
+        document=_ui_doc(c.evidence),
+        scope_label=scope_label or (c.scope.label_text() if c.scope else None),
+    )
+
+
 def _count_figure(res: CountResolution) -> Figure:
+    label = res.count_basis.capitalize() + " device count"
+    if res.scope_partitions:
+        # P32.3 / SIG-TRUST-004 scope-mixed: no single winner — each scope keeps
+        # its own answer (and dissenters), rendered with its scope label. The
+        # figure deliberately has NO headline value (None renders "unknown").
+        competing = tuple(
+            _claim_recon(c, part.weight if c is part.winning_claim else None, None)
+            for part in res.scope_partitions
+            for c in (([part.winning_claim] if part.winning_claim else []) + list(part.dissenting))
+        )
+        return Figure(
+            key=res.predicate_id,
+            label=f"{label} — by scope (SIG-TRUST-004)",
+            value=None,
+            unit="cameras",
+            lower_bound=res.lower_bound,
+            reconciliation=Reconciliation(
+                rule="scope_mixed: each scope keeps its own answer",
+                winning=None,
+                competing=competing,
+                note=res.rationale,
+            ),
+        )
     win = res.winning_claim
     winning = ReconClaim(
         value=res.value,
@@ -501,19 +599,9 @@ def _count_figure(res: CountResolution) -> Figure:
         weight=res.weight,
         observed_at=win.observed_at,
         document=_ui_doc(win.evidence),
+        scope_label=win.scope.label_text() if win.scope else None,
     )
-    competing = tuple(
-        ReconClaim(
-            value=c.value,
-            source_family=c.evidence.source_family,
-            reliability=c.reliability,
-            weight=None,
-            observed_at=c.observed_at,
-            document=_ui_doc(c.evidence),
-        )
-        for c in res.dissenting
-    )
-    label = res.count_basis.capitalize() + " device count"
+    competing = tuple(_claim_recon(c, None, None) for c in res.dissenting)
     return Figure(
         key=res.predicate_id,
         label=label,
@@ -552,6 +640,23 @@ def build_dossier(graph: SliceGraph) -> Dossier:
         _count_figure(rec.resolutions[b])
         for b in ("contracted", "active", "installed", "mapped", "claimed", "invoiced")
         if b in rec.resolutions
+    )
+
+    # The derived roll-ups render LABELLED — "~190" shows its inputs, scope,
+    # bases and assumptions; never a bare number (SIG-DOS-003, P32.3).
+    derived_rows = tuple(
+        Row(
+            label=f"{s.label} {s.basis.replace('_', ' ')} (derived, L4)",
+            value=s.label,
+            status="derived",
+            note=(
+                f"{s.note}; inputs {list(s.inputs)} (bases: "
+                f"{', '.join(s.input_bases)}) at scope "
+                f"{s.scope.label_text() if s.scope else 'mixed'}; assumptions: "
+                f"{'; '.join(s.assumptions)}"
+            ),
+        )
+        for s in graph.derived_sums
     )
 
     # "What we don't know" (SIG-UI-011): the unresearched predicates + facts.
@@ -609,7 +714,7 @@ def build_dossier(graph: SliceGraph) -> Dossier:
         Section(
             "what_is_deployed",
             figures=deployed_figures,
-            rows=_rows(graph.facts.get("what_is_deployed", [])),
+            rows=_rows(graph.facts.get("what_is_deployed", [])) + derived_rows,
         ),
         Section("cost_and_expiry", rows=_rows(graph.facts.get("cost_and_expiry", []))),
         Section("who_else_can_see", rows=_rows(graph.facts.get("who_else_can_see", []))),

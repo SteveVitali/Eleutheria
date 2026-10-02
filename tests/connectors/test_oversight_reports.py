@@ -211,9 +211,11 @@ def test_gao_event_names_the_audited_agencies_with_entity_refs() -> None:
     _, report = _fixture_run("gao_surveillance_reports")
     refs = [c for c in report.claims if c.get("object_ref")]
     ref_orgs = {c["object_ref"]["value"] for c in refs}
-    assert "u s government accountability office" in ref_orgs
-    assert "federal bureau of investigation" in ref_orgs
-    assert "drug enforcement administration" in ref_orgs
+    # P32.3 / ADR-122: name-only mints key under the source-scoped scheme.
+    scope = "src:gao_surveillance_reports|"
+    assert scope + "u s government accountability office" in ref_orgs
+    assert scope + "federal bureau of investigation" in ref_orgs
+    assert scope + "drug enforcement administration" in ref_orgs
     # The list-valued text claim stays beside the per-name entity refs (P31.5).
     text = [
         c
@@ -241,8 +243,9 @@ def test_uk_commissioner_name_stays_a_text_claim_home_office_resolves() -> None:
 def test_fusion_assessment_names_the_national_network() -> None:
     _, report = _fixture_run("dhs_fusion_center_assessments")
     refs = {c["object_ref"]["value"] for c in report.claims if c.get("object_ref")}
-    assert "national network of fusion centers" in refs
-    assert "u s department of homeland security" in refs
+    scope = "src:dhs_fusion_center_assessments|"
+    assert scope + "national network of fusion centers" in refs
+    assert scope + "u s department of homeland security" in refs
 
 
 # --- fail closed: drift + unreviewed targets -----------------------------------

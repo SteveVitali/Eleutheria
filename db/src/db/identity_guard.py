@@ -46,14 +46,20 @@ from typing import Any
 SUBJECT_SCHEME = "sig.connector.subject"
 
 #: The partner-organisation identity schemes (P31.5 / ADR-112). ``sig.org.name`` is
-#: the normalized-name identifier (``resolution.normalize.normalize_org_name``); the
-#: rest are external crosswalk ids that name exactly one organisation. FIPS is left
-#: out on purpose: a place code is shared by every body in that place (the county
-#: government and its sheriff), so it is an attribute scheme like ``us.state``.
+#: the legacy GLOBAL normalized-name identifier (``resolution.normalize.normalize_org_name``);
+#: ``sig.org.name_scoped`` (P32.3 / ADR-122) is the scope-qualified name identifier —
+#: ``jur:<scheme>:<code>|<name>`` when the jurisdiction is evidenced, else
+#: ``src:<source-id>|<name>`` — so identical names in different jurisdictions or
+#: different source scopes never auto-union (SIG-TRUST-004). The rest are external
+#: crosswalk ids that name exactly one organisation. FIPS is left out on purpose:
+#: a place code is shared by every body in that place (the county government and
+#: its sheriff), so it is an attribute scheme like ``us.state``.
 PARTNER_NAME_SCHEME = "sig.org.name"
+PARTNER_NAME_SCOPED_SCHEME = "sig.org.name_scoped"
 PARTNER_ORG_SCHEMES = frozenset(
     {
         PARTNER_NAME_SCHEME,
+        PARTNER_NAME_SCOPED_SCHEME,
         "gleif.lei",
         "us.sam.uei",
         "dnb.duns",
@@ -212,6 +218,7 @@ def resolve_identities(
 __all__ = [
     "GUARDED_SCHEMES",
     "PARTNER_NAME_SCHEME",
+    "PARTNER_NAME_SCOPED_SCHEME",
     "PARTNER_ORG_SCHEMES",
     "IdentityBatch",
     "IdentityResolution",

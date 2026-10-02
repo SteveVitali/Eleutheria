@@ -78,7 +78,12 @@ class DocumentRef:
 
 @dataclass(frozen=True)
 class ReconClaim:
-    """One competing claim behind a figure, with its tier and date (SIG-UI-014)."""
+    """One competing claim behind a figure, with its tier and date (SIG-UI-014).
+
+    ``scope_label`` (P32.3 / SIG-TRUST-004) names the count's declared scope
+    ("metro", "city limits · privately owned") so a scope-partitioned figure
+    shows WHICH scope each claim covers instead of implying a single count.
+    """
 
     value: object
     source_family: str
@@ -86,6 +91,7 @@ class ReconClaim:
     weight: int | None  # W class
     observed_at: date
     document: DocumentRef
+    scope_label: str | None = None
 
     def as_json(self) -> dict[str, object]:
         return {
@@ -95,22 +101,29 @@ class ReconClaim:
             "weight": self.weight,
             "observed_at": self.observed_at.isoformat(),
             "document": self.document.as_json(),
+            "scope_label": self.scope_label,
         }
 
 
 @dataclass(frozen=True)
 class Reconciliation:
-    """The expandable reconciliation behind a material figure (SIG-UI-014)."""
+    """The expandable reconciliation behind a material figure (SIG-UI-014).
+
+    ``winning`` is ``None`` when the resolution has no single winner — the
+    P32.3 scope-mixed partition (claims in DIFFERENT scopes resolve
+    separately; the competing list carries their scope labels, and there is
+    deliberately no headline number).
+    """
 
     rule: str  # the rule that fired, e.g. "authoritative_source_wins -> W4"
-    winning: ReconClaim
+    winning: ReconClaim | None
     competing: tuple[ReconClaim, ...] = ()
     note: str = ""
 
     def as_json(self) -> dict[str, object]:
         return {
             "rule": self.rule,
-            "winning": self.winning.as_json(),
+            "winning": self.winning.as_json() if self.winning else None,
             "competing": [c.as_json() for c in self.competing],
             "note": self.note,
         }
@@ -264,13 +277,17 @@ def _figure_html(fig: Figure) -> str:
         f"<p class='rule'>Rule: {_e(r.rule)}</p>",
         f"<p class='note'>{_e(r.note)}</p>",
         "<table class='competing'><thead><tr>"
-        "<th>value</th><th>source</th><th>tier</th><th>W</th><th>date</th><th>document</th>"
+        "<th>value</th><th>scope</th><th>source</th><th>tier</th><th>W</th><th>date</th>"
+        "<th>document</th>"
         "</tr></thead><tbody>",
     ]
-    for c in (r.winning, *r.competing):
+    # winning may be None for a scope-partitioned resolution (P32.3): the
+    # competing rows carry the scope labels; there is no headline winner.
+    for c in tuple(x for x in (r.winning, *r.competing) if x is not None):
         rows.append(
             "<tr>"
-            f"<td>{_e(c.value)}</td><td>{_e(c.source_family)}</td>"
+            f"<td>{_e(c.value)}</td><td>{_e(c.scope_label or '')}</td>"
+            f"<td>{_e(c.source_family)}</td>"
             f"<td>{_e(c.reliability)}</td><td>{_e(c.weight)}</td>"
             f"<td>{_e(c.observed_at.isoformat())}</td>"
             f"<td><a href='{_e(c.document.stable_locator)}'>"

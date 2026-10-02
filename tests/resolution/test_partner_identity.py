@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""Partner-organisation identity (P31.5 / ADR-112): one scheme, the ambiguity rule and
-the never-a-person rule (Part VIII), plus the ``link()`` helper that emits the
-entity-ref twin without touching the text claim."""
+"""Partner-organisation identity (P31.5 / ADR-112 + P32.3 / ADR-122): one scheme,
+the ambiguity rule and the never-a-person rule (Part VIII), the scope-qualified
+name key (SIG-TRUST-004), the role gate (SIG-TRUST-003), and the ``link()``
+helper that emits the entity-ref twin without touching the text claim."""
 
 from __future__ import annotations
 
@@ -11,7 +12,12 @@ import re
 from pathlib import Path
 
 import pytest
-from db.identity_guard import GUARDED_SCHEMES, PARTNER_NAME_SCHEME, PARTNER_ORG_SCHEMES
+from db.identity_guard import (
+    GUARDED_SCHEMES,
+    PARTNER_NAME_SCHEME,
+    PARTNER_NAME_SCOPED_SCHEME,
+    PARTNER_ORG_SCHEMES,
+)
 from resolution.partner_identity import (
     CROSSWALK_SCHEMES,
     PARTNER_PREDICATES,
@@ -20,7 +26,13 @@ from resolution.partner_identity import (
     partner_identity,
     partner_ref_rows,
     partner_rules_version,
+    scoped_name_key,
 )
+
+#: The schemes the P31.5 sqitch backfill (``partner_org_identity_key.sql``)
+#: keyed — the legacy global-name scheme plus the five crosswalk ids. The
+#: P32.3 scoped-name scheme backfills in ``partner_org_scoped_identity_key.sql``.
+LEGACY_PARTNER_SCHEMES = PARTNER_ORG_SCHEMES - {PARTNER_NAME_SCOPED_SCHEME}
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -56,14 +68,18 @@ REPO = Path(__file__).resolve().parents[2]
         ("Axis Communications AB", "axis communications ab"),
     ],
 )
-def test_organisations_mint_under_the_normalized_name(name: str, value: str) -> None:
+def test_organisations_mint_under_the_scoped_name(name: str, value: str) -> None:
+    # P32.3 / ADR-122: a name-only mint keys under ``sig.org.name_scoped`` as
+    # ``src:unknown|<name>`` when no jurisdiction/scope is evidenced, marked a
+    # candidate (unmerged). The legacy global ``sig.org.name`` is retired.
     ident = partner_identity(name)
     assert isinstance(ident, PartnerIdentity), ident
     assert (ident.scheme, ident.value, ident.basis) == (
-        PARTNER_NAME_SCHEME,
-        value,
-        "normalized_name",
+        PARTNER_NAME_SCOPED_SCHEME,
+        f"src:unknown|{value}",
+        "normalized_name_scoped",
     )
+    assert ident.candidate is True and ident.scope == "src:unknown"
     assert ident.label == " ".join(name.split())
 
 
@@ -73,6 +89,98 @@ def test_the_same_body_written_two_ways_is_one_identifier() -> None:
     assert isinstance(a, PartnerIdentity) and isinstance(b, PartnerIdentity)
     assert (a.scheme, a.value) == (b.scheme, b.value)
     assert a.label != b.label  # the label is the verbatim display form
+
+
+# --- P32.3 / SIG-TRUST-004: conservative organisation identity -----------------
+
+
+def test_identical_names_across_jurisdictions_never_union() -> None:
+    # "Springfield Police Department" exists in many states: the SAME name at
+    # different evidenced jurisdictions keys differently — no auto-union.
+    ok = partner_identity("Springfield Police Department", jurisdiction="us.state_abbr:OK")
+    il = partner_identity("Springfield Police Department", jurisdiction="us.state_abbr:IL")
+    assert isinstance(ok, PartnerIdentity) and isinstance(il, PartnerIdentity)
+    assert (ok.scheme, ok.value) != (il.scheme, il.value)
+    assert ok.value == "jur:us.state_abbr:ok|springfield police department"
+    assert il.value == "jur:us.state_abbr:il|springfield police department"
+    assert ok.scope == "jur:us.state_abbr:ok" and il.scope == "jur:us.state_abbr:il"
+    # jurisdiction is carried as the identity basis on the mint
+    assert ok.jurisdiction == "us.state_abbr:OK" and il.jurisdiction == "us.state_abbr:IL"
+
+
+def test_identical_names_in_one_jurisdiction_union() -> None:
+    a = partner_identity("City of Seattle", jurisdiction="us.state_abbr:WA")
+    b = partner_identity("  CITY OF SEATTLE ", jurisdiction="us.state_abbr:WA")
+    assert isinstance(a, PartnerIdentity) and isinstance(b, PartnerIdentity)
+    assert (a.scheme, a.value) == (b.scheme, b.value)
+
+
+def test_different_source_scopes_never_union() -> None:
+    # With no evidenced jurisdiction the asserting source scopes the key —
+    # "City of Example Falls" under one source never unions with another's.
+    a = partner_identity("City of Example Falls", scope="okc-contract")
+    b = partner_identity("City of Example Falls", scope="tulsa-contract")
+    assert isinstance(a, PartnerIdentity) and isinstance(b, PartnerIdentity)
+    assert (a.scheme, a.value) != (b.scheme, b.value)
+    assert a.value == "src:okc-contract|city of example falls"
+    same = partner_identity("City of Example Falls", scope="okc-contract")
+    assert (same.scheme, same.value) == (a.scheme, a.value)
+
+
+def test_a_strong_external_id_joins_within_scope() -> None:
+    # The same UEI asserted under two different source scopes is ONE
+    # organisation — the external id is itself the universal scope.
+    a = partner_identity("Flock Group Inc", crosswalk={"uei": "ABC123"}, scope="src:a")
+    b = partner_identity("FLOCK GROUP INC", crosswalk={"uei": "ABC123"}, scope="src:b")
+    assert isinstance(a, PartnerIdentity) and isinstance(b, PartnerIdentity)
+    assert (a.scheme, a.value) == (b.scheme, b.value) == ("us.sam.uei", "ABC123")
+    # a crosswalk mint is not a name-only candidate
+    assert a.candidate is False and a.scope is None and a.jurisdiction is None
+
+
+def test_uncertain_identity_stays_a_candidate() -> None:
+    ident = partner_identity("City of Example Falls", jurisdiction="us.state_abbr:OK")
+    assert isinstance(ident, PartnerIdentity)
+    ref = ident.as_object_ref(role="operator")
+    assert ref["candidate"] is True
+    assert ref["jurisdiction"] == "us.state_abbr:OK"
+    assert ref["scope"] == "jur:us.state_abbr:ok"
+    assert ref["role"] == "operator"
+    # a crosswalk ref carries no candidate/scope markers
+    ext = partner_identity("Flock Group Inc", crosswalk={"lei": "L1"})
+    assert isinstance(ext, PartnerIdentity)
+    ext_ref = ext.as_object_ref()
+    assert "candidate" not in ext_ref and "scope" not in ext_ref
+
+
+def test_generic_fema_name_stays_unresolved() -> None:
+    # P31.13 preserved: the generic "Federal Emergency Management Agency" — the
+    # words name a body in every federal context — refuses the mint even with a
+    # jurisdiction attached, and even with a crosswalk id present (the P31.5
+    # decision order runs ambiguity before the crosswalk: a generic name never
+    # AUTO-resolves — a human disposition may still join the id claim).
+    assert partner_identity("Federal Emergency Management Agency") == PartnerRefusal("generic_name")
+    assert partner_identity(
+        "Federal Emergency Management Agency", jurisdiction="us.cgac.agency_code:7000"
+    ) == PartnerRefusal("generic_name")
+    assert partner_identity(
+        "Federal Emergency Management Agency", crosswalk={"agency_code": "70"}
+    ) == PartnerRefusal("generic_name")
+
+
+def test_scoped_name_key_format() -> None:
+    assert scoped_name_key("city of seattle", jurisdiction="us.state_abbr:WA") == (
+        "jur:us.state_abbr:wa|city of seattle",
+        "jur:us.state_abbr:wa",
+    )
+    assert scoped_name_key("city of seattle", scope="x") == (
+        "src:x|city of seattle",
+        "src:x",
+    )
+    assert scoped_name_key("city of seattle") == (
+        "src:unknown|city of seattle",
+        "src:unknown",
+    )
 
 
 def test_a_crosswalk_id_wins_over_the_name() -> None:
@@ -206,18 +314,64 @@ def test_partner_ref_rows_appends_a_twin_after_the_untouched_text_claim() -> Non
     marker = {"record_kind": "contract", "subject_id": "contract:src:1", "predicate_id": "buyer"}
     out = partner_ref_rows([text, other, marker])
     assert out[0] is text and text == snapshot  # the text claim is not modified
-    assert out[1]["object_ref"]["value"] == "city of example falls"
+    assert out[1]["object_ref"]["value"] == "src:unknown|city of example falls"
     assert out[2:] == [other, marker]  # a non-partner claim / a non-claim row: no twin
     twin = out[1]
     assert {k: v for k, v in twin.items() if k != "object_ref"} == snapshot
     assert twin["object_ref"] == {
-        "scheme": PARTNER_NAME_SCHEME,
-        "value": "city of example falls",
+        "scheme": PARTNER_NAME_SCOPED_SCHEME,
+        "value": "src:unknown|city of example falls",
         "entity_type": "organization",
         "label": "City of Example Falls",
-        "basis": "normalized_name",
+        "basis": "normalized_name_scoped",
+        "scope": "src:unknown",
+        "candidate": True,
+        "role": "buyer",
         "rules": partner_rules_version(),
     }
+
+
+def test_partner_ref_rows_carries_the_evidenced_scope_and_role() -> None:
+    # P32.3 / SIG-TRUST-004: a row's ``partner_jurisdiction`` anchors the
+    # name-only mint; the predicate's organisation role rides on the ref.
+    row = _row(
+        "camera_operator",
+        "Oklahoma City Police Department",
+        partner_jurisdiction="us.state_abbr:OK",
+    )
+    out = partner_ref_rows([row])
+    twin = out[1]
+    assert twin["object_ref"]["value"] == ("jur:us.state_abbr:ok|oklahoma city police department")
+    assert twin["object_ref"]["role"] == "operator"
+    assert twin["object_ref"]["candidate"] is True
+
+
+def test_partner_ref_rows_a_row_crosswalk_keys_the_strong_id() -> None:
+    # P32.3 / SIG-TRUST-004: a connector row that carries the party's external
+    # id takes the crosswalk path — two sources asserting the same UEI key ONE
+    # guarded entity (the union a name-only mint refuses).
+    govspend = _row("buyer", "Example Operations Bureau", partner_crosswalk={"uei": "X1"})
+    usaspending = _row("recipient", "EXAMPLE OPERATIONS BUREAU", partner_crosswalk={"uei": "X1"})
+    out = partner_ref_rows([govspend, usaspending])
+    a, b = out[1]["object_ref"], out[3]["object_ref"]
+    assert a["scheme"] == b["scheme"] == "us.sam.uei" and a["value"] == b["value"] == "X1"
+    assert a["basis"] == b["basis"] == "crosswalk:uei"
+    assert "candidate" not in a and "scope" not in a
+    # A malformed crosswalk value is ignored — the row falls back to the
+    # scoped name mint, never crashing the link stage.
+    bad = _row("buyer", "Example Operations Bureau", partner_crosswalk="X1")
+    out = partner_ref_rows([bad])
+    assert out[1]["object_ref"]["scheme"] == PARTNER_NAME_SCOPED_SCHEME
+
+
+def test_partner_ref_rows_never_mints_a_publisher() -> None:
+    # P32.3 / SIG-TRUST-003: ``camera_registry_publisher`` is provenance — even
+    # a caller that names it as a partner predicate gets NO entity-ref twin.
+    row = _row("camera_registry_publisher", "OSM Contributors")
+    out = partner_ref_rows([row], predicates={"camera_registry_publisher"})
+    assert out == [row]
+    # and the unmapped default-path case: not in PARTNER_PREDICATES at all
+    assert partner_ref_rows([row]) == [row]
 
 
 def test_partner_ref_rows_splits_a_list_value_and_drops_refused_parties() -> None:
@@ -251,7 +405,7 @@ def test_partner_ref_rows_only_touches_the_named_predicates() -> None:
     assert [r.get("object_ref", {}).get("value") for r in out] == [
         None,
         None,
-        "city of example falls",
+        "src:unknown|city of example falls",
     ]
 
 
@@ -280,11 +434,19 @@ def test_partner_predicates_are_the_reconfirmed_inventory() -> None:
 
 def test_partner_schemes_are_guarded_and_match_the_sqitch_backfill() -> None:
     assert PARTNER_ORG_SCHEMES <= GUARDED_SCHEMES
-    assert set(CROSSWALK_SCHEMES.values()) | {PARTNER_NAME_SCHEME} == PARTNER_ORG_SCHEMES
+    assert (
+        set(CROSSWALK_SCHEMES.values()) | {PARTNER_NAME_SCHEME, PARTNER_NAME_SCOPED_SCHEME}
+        == PARTNER_ORG_SCHEMES
+    )
     assert "us.census.fips" not in GUARDED_SCHEMES  # a shared place attribute, never keyed
+    # the P31.5 backfill keys the legacy schemes (the global name + crosswalks)
     for part in ("deploy", "verify"):
         sql = (REPO / "db" / part / "partner_org_identity_key.sql").read_text()
         lists = re.findall(r"scheme IN \(([^)]*)\)", sql)
         assert lists, part
         for listed in lists:
-            assert set(re.findall(r"'([^']+)'", listed)) == PARTNER_ORG_SCHEMES, part
+            assert set(re.findall(r"'([^']+)'", listed)) == LEGACY_PARTNER_SCHEMES, part
+    # the P32.3 backfill keys exactly the new scoped-name scheme
+    scoped_sql = (REPO / "db" / "deploy" / "partner_org_scoped_identity_key.sql").read_text()
+    assert "'sig.org.name_scoped'" in scoped_sql
+    assert "sig.org.name_scoped" == PARTNER_NAME_SCOPED_SCHEME

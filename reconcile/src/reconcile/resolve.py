@@ -93,6 +93,21 @@ class Claim:
     field_verified: bool = False
     #: Set for count predicates so Phase 2.3 can refuse cross-basis comparison.
     count_basis: str | None = None
+    #: The declared comparability scope of a count claim (P32.3 /
+    #: SIG-TRUST-004): the ``count_scope`` / ``count_scope_detail`` qualifier
+    #: values (and the scope qualifier's own ``jurisdiction``) read from
+    #: ``claim_qualifier``. Claims with different scope keys answer different
+    #: questions — they are retained and reported as ``SCOPE_MIXED``, never
+    #: compared (299 metro vs ~190 city is a scope mismatch, not a
+    #: contradiction).
+    count_scope: str | None = None
+    count_scope_detail: str | None = None
+    count_scope_jurisdiction: str | None = None
+    #: The claim's origin label (the ``evidence_origin`` qualifier): e.g.
+    #: ``seed_fixture`` — seeded/fixture material, never presented as primary
+    #: live evidence; the resolver labels resolutions computed from it in
+    #: ``rules_fired``.
+    evidence_origin: str | None = None
     #: A windowed predicate value (e.g. "412 searches in July") is *indexed*, not
     #: stale, and is exempt from currency downgrade for its window (SIG-RECON-011).
     windowed: bool = False
@@ -127,6 +142,18 @@ class Claim:
         """The collection method for method-breadth counting (§10.8, SIG-EPIS-028);
         falls back to the source id so an undeclared method is not free breadth."""
         return self.collection_method or self.source_id or self.claim_id
+
+    @property
+    def scope_key(self) -> str:
+        """The count comparability key: declared scope + detail + jurisdiction."""
+        if not self.count_scope:
+            return "unscoped"
+        parts = [self.count_scope.strip().lower()]
+        if self.count_scope_jurisdiction:
+            parts.append(f"jur={self.count_scope_jurisdiction.strip().lower()}")
+        if self.count_scope_detail:
+            parts.append(f"detail={self.count_scope_detail.strip().lower()}")
+        return "|".join(parts)
 
     def digest_token(self) -> str:
         if self.content_hash:
@@ -281,6 +308,10 @@ class _State:
     tasks: list[ResearchTask] = field(default_factory=list)
     rules: list[str] = field(default_factory=list)
     n_basis_dropped: int = 0
+    #: P32.3: the admissible count claims span more than one declared scope —
+    #: the pair cannot resolve to one value (SCOPE_MIXED), and no claim is
+    #: dropped or adjudicated against a different scope's.
+    scope_mixed: bool = False
 
     def fire(self, rule: str) -> None:
         if rule not in self.rules:
@@ -377,6 +408,34 @@ def RESOLVE(  # noqa: N802 - the spec names the function RESOLVE (SIG-RECON-006)
             strategy=strategy,
         )
 
+    # Phase 2.4 result — the admissible claims answer different SCOPES. The
+    # pair cannot resolve to one value; this is a scope mismatch, not a
+    # contradiction (SIG-TRUST-004: nothing is dropped, nothing is compared
+    # across scopes, and every claim stays in considered_claim_ids).
+    if st.scope_mixed:
+        st.fire("SIG-TRUST-004:scope_mixed")
+        task = ResearchTask(
+            task_id=_det_task_id(subject_id, predicate_id, "scope_mixed"),
+            task_type="clarify_count_scope",
+            subject_id=subject_id,
+            closing_condition=(
+                f"Establish whether the {predicate_id} claims asserted at distinct "
+                "scopes can be unioned or restated at one common scope; each scoped "
+                "answer is retained separately until then."
+            ),
+            detector_version=RESOLVER_VERSION,
+            priority=0.5,
+        )
+        st.tasks.append(task)
+        return _emit(
+            status="UNRESOLVED",
+            code="SCOPE_MIXED",
+            candidates=[],
+            winner=None,
+            second=None,
+            strategy=strategy,
+        )
+
     # Phase 3 WEIGHT + Phase 4 INDEPENDENCE -> candidates.
     candidates = _candidates(st, admissible, as_of_world)
     if not candidates:  # every admissible claim was W0 (retained, non-resolving).
@@ -453,6 +512,11 @@ def _admissibility(st: _State, pair: list[Claim]) -> list[Claim]:
             # The claim carried no observed_at; currency is derived from the capture's
             # retrieval time instead — an inference, labelled on the record (ADR-104).
             st.fire(f"SIG-RECON-008:observed_at={c.observed_at_basis}")
+        if c.evidence_origin == "seed_fixture":
+            # Fixture-origin material is admissible but labelled: a resolution
+            # computed over it is never mistaken for live-evidence resolution
+            # (SIG-TRUST-004).
+            st.fire("SIG-TRUST-004:evidence_origin=seed_fixture")
         kept.append(c)
 
     # 1.4 supersession: within one source and valid-time, the later observation
@@ -592,6 +656,16 @@ def _canonicalize(st: _State, claims: list[Claim]) -> list[Claim]:
                 research_task_ids=(task.task_id,),
             )
         )
+
+    # Phase 2.4 — count-scope comparability guard (P32.3 / SIG-TRUST-004).
+    # Two claims on the same basis but asserted at different declared scopes
+    # answer different questions: they are not a contradiction and they are
+    # never compared. The pair is reported SCOPE_MIXED (Phase 5.3), with every
+    # claim retained in `considered` — nothing is dropped.
+    scope_keys = {c.scope_key for c in kept}
+    if len(scope_keys) > 1:
+        st.scope_mixed = True
+        st.fire("SIG-RECON-028:count_scope")
     return kept
 
 
@@ -1004,7 +1078,10 @@ def _finalize(
 def _contradiction_state(status: str, code: str | None, agreement: str) -> str:
     if status == "RESOLVED":
         return "uncontested" if agreement == "UNCONTESTED" else "resolved_conflict"
-    if code in {"U0", "U1", "U5", "NO_STRATEGY", "NEVER_RESOLVE"}:
+    if code in {"U0", "U1", "U5", "NO_STRATEGY", "NEVER_RESOLVE", "SCOPE_MIXED"}:
+        # SCOPE_MIXED (P32.3): the pair holds admissible evidence but the claims
+        # answer different scopes — "insufficient to produce ONE value" is the
+        # honest codomain member; it is NOT an unresolved_conflict.
         return "insufficient"
     return "unresolved_conflict"
 

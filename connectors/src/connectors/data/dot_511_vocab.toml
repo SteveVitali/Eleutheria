@@ -41,7 +41,12 @@
 # field aliases (Socrata + non-US ArcGIS schemas), the `point_fields` GeoJSON
 # point-object candidates, and the extra media-bearing field names
 # (iframe/photo/media/weathercam/still) — additive only.
-vocab_version = "2026.09.19.1"
+# 2026.10.10 (P32.3 / SIG-TRUST-003, ADR-122): `camera_registry_publisher` joins
+# the allowlist — the target `agency` label is registry PUBLISHER provenance,
+# not operator evidence — and `operator_fields` names the authoritative
+# feature-field aliases that alone mint `camera_operator` (the target's
+# `operator` key wins first).
+vocab_version = "2026.10.10.1"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -59,6 +64,7 @@ predicate_allowlist = [
   "camera_jurisdiction",
   "camera_county",
   "camera_operator",
+  "camera_registry_publisher",
   "camera_status",
   "camera_latitude",
   "camera_longitude",
@@ -166,6 +172,18 @@ roadway_fields = [
   "roadwayname", "primary_st", "road", "street", "route_name",
   # P26.13: catalog-sweep registries — Peel red-light arms, title-case Street.
   "Street", "StrInt1", "StrInt2",
+]
+
+# Authoritative camera-OPERATOR fields (P32.3 / SIG-TRUST-003): ONLY a feature
+# attribute that itself names the camera's operating organisation mints a
+# `camera_operator` claim (the registry target's `operator` key wins first).
+# Deliberately conservative: an `agency`/`owner`/publisher-flavoured column is
+# NOT here — those name the registry's custodian, which is the
+# `camera_registry_publisher` provenance role, not evidenced operator.
+operator_fields = [
+  "operator", "Operator", "OPERATOR", "camera_operator", "CameraOperator",
+  "operating_agency", "OperatingAgency", "operated_by", "OperatedBy",
+  "maintained_by", "MaintainedBy",
 ]
 
 # Jurisdiction detail below the state (county/district/region as published).

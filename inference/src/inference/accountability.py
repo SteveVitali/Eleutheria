@@ -35,12 +35,14 @@ demands:
   establishing-claim set yields a new :func:`accountability_link_digest` and a superseding
   row; a re-run over an unchanged spine inserts +0.
 
-The chain is assembled over the ``operator``/``owner``/``purchaser`` role edge that ties a
-deployment to its org: a contract is reached because the deployment's operator is the
-contract's ``buyer``; the vendor because it is that contract's ``seller``; the funder
-because the operator is the funding instrument's ``recipient``; and so on. Anchors are
-``deployment`` entities that survive resolution (``merged_into IS NULL`` — the surviving
-resolved node after P28.1 dedup).
+The chain is assembled over the deployment → organisation edge built from the
+canonical role taxonomy (:mod:`db.organization_roles` — the operator + owner +
+buyer roles; P32.3 / ADR-122, never a provenance role): a contract is reached
+because the deployment's operator is the contract's ``buyer``; the vendor because
+it is that contract's ``seller``; the funder because the operator is the funding
+instrument's ``recipient``; and so on. Anchors are ``deployment`` entities that
+survive resolution (``merged_into IS NULL`` — the surviving resolved node after
+P28.1 dedup).
 """
 
 from __future__ import annotations
@@ -51,6 +53,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any, cast
 
+from db.organization_roles import (
+    PROVENANCE_ROLES,
+    ROLE_OF_PREDICATE,
+    OrganizationRole,
+    predicates_for_role,
+)
 from reconcile.model import Inference
 
 __all__ = [
@@ -145,13 +153,25 @@ def assert_not_deployment_link(link_type: str) -> str:
 
 
 # --- the accountability-layer predicates read off the spine -------------------
-#: deployment → org role edges (§12.4): who operates / owns / purchased the deployment.
-#: The join spine — a contract/funding/policy/oversight fact reaches a deployment
-#: through the org that operates it.
-#: P31.5 / ADR-112: ``camera_operator`` is the camera registry's operator attribution —
-#: the same deployment → operating-organisation edge, emitted as an entity-ref claim.
+#: deployment → org role edges (§12.4): who operates / owns / purchased the
+#: deployment — the join spine a contract/funding/policy/oversight fact reaches a
+#: deployment through. P32.3 (SIG-TRUST-003, ADR-122): the set is DERIVED from the
+#: canonical role taxonomy (:mod:`db.organization_roles`) — operator + owner +
+#: buyer roles — not a private list, so a predicate's role here is the same role
+#: the connector and identity layers see. P31.5 / ADR-112: ``camera_operator`` is
+#: the camera registry's operator attribution — the same deployment →
+#: operating-organisation edge, emitted as an entity-ref claim.
 _OPERATOR_PREDICATES: frozenset[str] = frozenset(
-    {"operator", "owner", "purchaser", "operated_by", "owned_by", "camera_operator"}
+    predicates_for_role(OrganizationRole.OPERATOR)
+    | predicates_for_role(OrganizationRole.OWNER)
+    | predicates_for_role(OrganizationRole.BUYER)
+)
+#: Provenance-role predicates (``camera_registry_publisher`` …) are structurally
+#: excluded from every accountability leg — a publisher is never an evidenced
+#: operator/owner/buyer (SIG-TRUST-003). The assert under
+#: :data:`ACCOUNTABILITY_PREDICATES` pins that no provenance role ever joins.
+_PROVENANCE_ROLE_PREDICATES: frozenset[str] = frozenset(
+    p for p, r in ROLE_OF_PREDICATE.items() if r in PROVENANCE_ROLES
 )
 #: deployment → vendor org, asserted directly on the deployment (§12.4 vendor/platform).
 #: ``seller`` is NOT here (P31.5 / ADR-112): it is a §11.11 *contract* predicate, and a
@@ -159,7 +179,7 @@ _OPERATOR_PREDICATES: frozenset[str] = frozenset(
 #: must never make its seller a deployment's vendor (procured ≠ deployed). A vendor is
 #: reached through the contract (operator → buyer → seller) instead.
 _VENDOR_PREDICATES: frozenset[str] = frozenset(
-    {"vendor", "platform_provider", "provides_platform_to"}
+    predicates_for_role(OrganizationRole.VENDOR) - {"seller"}
 )
 #: contract → buyer (the org) / seller (the vendor) (§11.11).
 _CONTRACT_BUYER = "buyer"
@@ -218,6 +238,10 @@ ACCOUNTABILITY_PREDICATES: frozenset[str] = frozenset(
     | _EVENT_ORGANIZATION_PREDICATES
     | _OVERSIGHT_ROLE_PREDICATES
 )
+#: SIG-TRUST-003 pinned at module load: no provenance-role predicate (publisher/
+#: host) ever joins an accountability leg — a registry publisher is not an
+#: evidenced operator, vendor, funder or access partner.
+assert not (_PROVENANCE_ROLE_PREDICATES & ACCOUNTABILITY_PREDICATES)
 
 
 @dataclass(frozen=True)

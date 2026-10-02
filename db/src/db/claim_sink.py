@@ -68,7 +68,7 @@ import json
 import logging
 import os
 import uuid
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
@@ -88,8 +88,18 @@ from .assertion import (
     binding_of,
     quarantine_payload,
 )
-from .identity_guard import PARTNER_NAME_SCHEME, SUBJECT_SCHEME, resolve_identity_batch
+from .identity_guard import (
+    PARTNER_NAME_SCHEME,
+    PARTNER_NAME_SCOPED_SCHEME,
+    SUBJECT_SCHEME,
+    resolve_identity_batch,
+)
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
+
+#: Name-derived identity schemes — organisations minted from a NAME (global or
+#: scope-qualified) are publication-review-required until an identity review
+#: disposes them (ADR-112 extended by ADR-122).
+_NAME_IDENTITY_SCHEMES = frozenset({PARTNER_NAME_SCHEME, PARTNER_NAME_SCOPED_SCHEME})
 
 _log = logging.getLogger(__name__)
 
@@ -174,6 +184,13 @@ class EntityRef:
     the sink records it once as the organisation's ``cached_canonical_name``, and
     ``rules`` (the identity ruleset version that decided it) in its immutable
     ``identity_basis``.
+
+    P32.3 (SIG-TRUST-004): the optional ``jurisdiction``/``scope``/``candidate``/
+    ``role`` fields carry the identity basis the decision was made under —
+    which jurisdiction or source scope a name-only candidate is anchored to,
+    whether it is an unmerged review candidate, and which organisation role
+    (:mod:`db.organization_roles`) minted it — all recorded in the immutable
+    ``identity_basis`` for later reviewed dispositions.
     """
 
     scheme: str
@@ -181,6 +198,17 @@ class EntityRef:
     entity_type: str
     label: str | None = None
     rules: str | None = None
+    #: The jurisdiction evidence the identifier is scoped under, e.g.
+    #: ``"us.state_abbr:OK"`` — recorded, never inferred.
+    jurisdiction: str | None = None
+    #: The scope token inside the scoped-name key (``"jur:<j>"``/``"src:<s>"``).
+    scope: str | None = None
+    #: True while the identity is a name-only review candidate that has NOT been
+    #: merged with any other entity (the conservative default — SIG-TRUST-004).
+    candidate: bool = False
+    #: The organisation role (``db.organization_roles``) the object was minted
+    #: for — ``operator``/``owner``/``vendor``/… — never ``publisher``/``host``.
+    role: str | None = None
 
 
 #: The object entity types the sink never mints (Part VIII). A person entity needs
@@ -220,7 +248,15 @@ def record_object_ref(claim: Mapping[str, Any]) -> EntityRef | None:
     label = ref.get("label")
     rules = ref.get("rules")
     return EntityRef(
-        scheme, value, entity_type, str(label) if label else None, str(rules) if rules else None
+        scheme,
+        value,
+        entity_type,
+        str(label) if label else None,
+        str(rules) if rules else None,
+        str(ref["jurisdiction"]) if ref.get("jurisdiction") else None,
+        str(ref["scope"]) if ref.get("scope") else None,
+        bool(ref.get("candidate")),
+        str(ref["role"]) if ref.get("role") else None,
     )
 
 
@@ -870,6 +906,22 @@ class PgClaimSink:
             "VALUES (%s, %s) ON CONFLICT (strategy_id) DO NOTHING",
             (strategy_id, "connector-asserted claim (P19.4 PgClaimSink)"),
         )
+
+    def register_vocabulary(self, predicates: Iterable[tuple[str, str]]) -> None:
+        """Pre-register predicate ids this sink's claims will name as qualifiers.
+
+        A qualifier id MUST already be a registered ``vocab_predicate`` or it
+        fails closed into ``assertion_quarantine`` (SIG-TRUST-001). A
+        qualifier-only id — ``count_scope``, ``count_scope_detail``,
+        ``evidence_origin`` (P32.3 / ADR-122) — has no claim path to the
+        auto-registration a ``predicate_id`` gets, so the connector declares it
+        explicitly with the SAME connector-declared registration write. It is
+        declared vocabulary, never a guessed qualifier (the unknown-qualifier
+        quarantine keeps its teeth).
+        """
+        for predicate_id, datatype in predicates:
+            self._pending_predicates.setdefault(str(predicate_id), str(datatype))
+        self._register_predicates()
 
     def _register_predicates(self) -> None:
         """Register the chunk's new predicates in one statement (cached per sink)."""
@@ -1729,10 +1781,24 @@ class PgClaimSink:
             if entity_id in self._org_rows or entity_id in rows:
                 continue
             basis = json.dumps(
-                {"scheme": o.scheme, "value": o.value, "rules": o.rules, "decided_by": "ADR-112"},
+                {
+                    "scheme": o.scheme,
+                    "value": o.value,
+                    "rules": o.rules,
+                    "decided_by": "ADR-112",
+                    # P32.3 / ADR-122: the recorded identity basis — the
+                    # jurisdiction/scope a name-only candidate is anchored to,
+                    # the unmerged-candidate disposition, and the organisation
+                    # role it was minted for (omitted when absent so a legacy
+                    # external-id ref digests exactly as before).
+                    **({"jurisdiction": o.jurisdiction} if o.jurisdiction else {}),
+                    **({"scope": o.scope} if o.scope else {}),
+                    **({"candidate": True} if o.candidate else {}),
+                    **({"role": o.role} if o.role else {}),
+                },
                 sort_keys=True,
             )
-            review = "true" if o.scheme == PARTNER_NAME_SCHEME else "false"
+            review = "true" if o.scheme in _NAME_IDENTITY_SCHEMES else "false"
             rows[entity_id] = (basis, o.label, review)
         if not rows:
             return

@@ -261,14 +261,18 @@ def test_sharednetworks_edges_are_configured_access_directional_single_snapshot(
 def test_sharednetworks_edge_partners_resolve_through_p31_5_identity() -> None:
     # P31.6 / ADR-113: SharedNetworks names partners by ORGANISATION NAME, so the
     # entity-ref goes through ADR-112's deterministic partner identity — an
-    # accepted name attaches a sig.org.name ref; a refused name (Springfield PD /
-    # Metro PD are person-shaped, "Unknown" is generic) stays a literal.
+    # accepted name attaches a scoped-name ref (P32.3: ``sig.org.name_scoped``
+    # ``src:unknown|<name>`` here — the audit carries no jurisdiction
+    # qualifier); a refused name (Springfield PD / Metro PD are person-shaped,
+    # "Unknown" is generic) stays a literal.
     report = _run_over("SharedNetworks.csv", file_kind="shared_networks", observed_at="2026-08-01")
     edges = [c for c in report.claims if c.get("predicate_id") == "configured_sharing_partner"]
     resolved = {e["to_org"]: e.get("object_ref") for e in edges}
     assert resolved["Shelby County SO"] is not None
     shelby = resolved["Shelby County SO"]
-    assert shelby["scheme"] == "sig.org.name"
+    assert shelby["scheme"] == "sig.org.name_scoped"
+    assert shelby["value"] == "src:audit_structural|shelby county so"
+    assert shelby["candidate"] is True and shelby["role"] == "access"
     assert shelby["entity_type"] == "organization"
     assert shelby["label"] == "Shelby County SO"
     # Refusals stay text-only — the claim is still asserted, the materializer

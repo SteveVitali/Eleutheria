@@ -89,7 +89,11 @@ from inference.coverage import CoverageRecord
 from policy.rights import RightsRecord
 from psycopg import sql
 from psycopg_pool import ConnectionPool, PoolTimeout
-from reconcile.materialize import CAPTURE_TIME_JOIN, observation_time
+from reconcile.materialize import (
+    CAPTURE_TIME_JOIN,
+    COUNT_QUALIFIER_JOIN,
+    observation_time,
+)
 from reconcile.resolve import RESOLVE, Claim
 from reconcile.ruleset import Ruleset
 from reconcile.snapshot_diff import Capture
@@ -477,7 +481,9 @@ class PgReadStore:
             "SELECT c.claim_id, c.value_kind, c.value_text, c.value_num, c.value_bool, "
             "       c.raw_value, c.observed_at, c.source_reliability, c.artifact_integrity, "
             "       c.review_status, lower(c.valid_period), upper(c.valid_period), "
-            "       ea.source_id, ea.artifact_type, cap.retrieved_at "
+            "       ea.source_id, ea.artifact_type, cap.retrieved_at, "
+            "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
+            "       q.evidence_origin "
             "  FROM claim c "
             "  LEFT JOIN LATERAL ("
             "     SELECT ea.source_id, ea.artifact_type "
@@ -487,6 +493,7 @@ class PgReadStore:
             "      WHERE ce.claim_id = c.claim_id LIMIT 1"
             "  ) ea ON true "
             + CAPTURE_TIME_JOIN
+            + COUNT_QUALIFIER_JOIN
             + " WHERE c.subject_id = %s AND c.predicate_id = %s "
             "   AND c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             "   AND c.sys_period @> %s::timestamptz",  # as-of belief (§9.4)
@@ -510,6 +517,10 @@ class PgReadStore:
                 source_id,
                 artifact_type,
                 retrieved_at,
+                count_scope,
+                count_scope_detail,
+                count_scope_jurisdiction,
+                evidence_origin,
             ) = r
             obs, basis = observation_time(observed_at, retrieved_at)
             claims.append(
@@ -528,6 +539,10 @@ class PgReadStore:
                     valid_to=_as_date(valid_to) if valid_to else None,
                     review_status=review_status or "active",
                     source_id=source_id or "",
+                    count_scope=count_scope,
+                    count_scope_detail=count_scope_detail,
+                    count_scope_jurisdiction=count_scope_jurisdiction,
+                    evidence_origin=evidence_origin,
                 )
             )
         return claims
@@ -598,7 +613,9 @@ class PgReadStore:
             "SELECT c.claim_id, c.predicate_id, c.value_kind, c.value_text, c.value_num, "
             "       c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
             "       c.artifact_integrity, c.review_status, lower(c.sys_period), c.subject_id, "
-            "       ea.source_id, ea.artifact_type, cap.retrieved_at "
+            "       ea.source_id, ea.artifact_type, cap.retrieved_at, "
+            "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
+            "       q.evidence_origin "
             "  FROM claim c "
             "  LEFT JOIN LATERAL ("
             "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
@@ -606,6 +623,7 @@ class PgReadStore:
             "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
             "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
             + CAPTURE_TIME_JOIN
+            + COUNT_QUALIFIER_JOIN
             + " WHERE c.claim_id = %s AND c.sensitivity_tier = 0",
             (claim_id,),
         ).fetchone()
@@ -632,6 +650,10 @@ class PgReadStore:
             raw_value=row[6] or "",
             review_status=row[10] or "active",
             source_id=row[13] or "",
+            count_scope=row[16],
+            count_scope_detail=row[17],
+            count_scope_jurisdiction=row[18],
+            evidence_origin=row[19],
         )
         return StoredClaim(claim=claim, asserted_at=asserted_at, capture_ids=capture_ids)
 
@@ -914,7 +936,9 @@ class PgReadStore:
             "       c.value_num, c.value_bool, c.raw_value, c.observed_at, "
             "       c.source_reliability, c.artifact_integrity, c.review_status, "
             "       lower(c.valid_period), upper(c.valid_period), "
-            "       ea.source_id, ea.artifact_type, cap.retrieved_at "
+            "       ea.source_id, ea.artifact_type, cap.retrieved_at, "
+            "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
+            "       q.evidence_origin "
             "  FROM claim c "
             "  LEFT JOIN LATERAL ("
             "     SELECT ea.source_id, ea.artifact_type "
@@ -924,6 +948,7 @@ class PgReadStore:
             "      WHERE ce.claim_id = c.claim_id LIMIT 1"
             "  ) ea ON true "
             + CAPTURE_TIME_JOIN
+            + COUNT_QUALIFIER_JOIN
             + " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             "   AND c.sys_period @> %s::timestamptz "  # as-of belief (§9.4)
             " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
@@ -949,6 +974,10 @@ class PgReadStore:
                 source_id,
                 artifact_type,
                 retrieved_at,
+                count_scope,
+                count_scope_detail,
+                count_scope_jurisdiction,
+                evidence_origin,
             ) = r
             sid, pid = str(subject_id), str(predicate_id)
             obs, basis = observation_time(observed_at, retrieved_at)
@@ -968,6 +997,10 @@ class PgReadStore:
                     valid_to=_as_date(valid_to) if valid_to else None,
                     review_status=review_status or "active",
                     source_id=source_id or "",
+                    count_scope=count_scope,
+                    count_scope_detail=count_scope_detail,
+                    count_scope_jurisdiction=count_scope_jurisdiction,
+                    evidence_origin=evidence_origin,
                 )
             )
         return groups

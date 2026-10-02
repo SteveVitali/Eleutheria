@@ -474,12 +474,22 @@ def test_ky_fixture_emits_camera_claims_with_evidence_and_locators() -> None:
     assert len(by_pred["camera_longitude"]) == 3
     assert len(by_pred["camera_roadway"]) == 3
     assert len(by_pred["camera_jurisdiction"]) == 3
-    # P31.5 / ADR-112: each operator text claim is followed by a separate entity-ref
-    # claim naming the same publisher as an organisation; the text claim is unchanged.
+    # P32.3 / SIG-TRUST-003: the registry's `agency` label lands as a
+    # camera_registry_publisher claim (provenance — 3 of them, never an
+    # operator); the target's authoritative `operator` field mints the
+    # camera_operator text claim, each followed by a separate entity-ref claim
+    # naming the organisation (P31.5 / ADR-112) scoped to its jurisdiction.
+    publisher = [c for c in by_pred["camera_registry_publisher"]]
+    assert len(publisher) == 3
+    assert {c["value"] for c in publisher} == {"Kentucky Transportation Cabinet"}
+    assert all("object_ref" not in c for c in publisher)  # provenance mints no org
     operator_text = [c for c in by_pred["camera_operator"] if "object_ref" not in c]
     operator_refs = [c for c in by_pred["camera_operator"] if "object_ref" in c]
     assert len(operator_text) == 3 and len(operator_refs) == 3
-    assert {c["object_ref"]["value"] for c in operator_refs} == {"kentucky transportation cabinet"}
+    assert {c["object_ref"]["value"] for c in operator_refs} == {
+        "jur:us.state_abbr:ky|kentucky transportation cabinet"
+    }
+    assert all(c["object_ref"]["role"] == "operator" for c in operator_refs)
     assert len(by_pred["camera_external_ref"]) == 3
     assert {c["value"] for c in by_pred["camera_roadway"]} == {"I-65", "I-64", "US-27"}
     assert {c["value"] for c in by_pred["camera_jurisdiction"]} == {"KY"}

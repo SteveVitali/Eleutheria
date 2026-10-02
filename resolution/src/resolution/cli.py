@@ -39,6 +39,9 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
   evidence and recorded decision (read-only; exit 1 while any pair is undecided).
   ``--apply`` appends the committed same_as/distinct decisions through the review
   queue (+0 on re-run).
+* ``partner-name-audit --dsn …`` — the P32.3 dry-run impact report (ADR-122):
+  every legacy ``sig.org.name`` partner key, its asserting sources/predicates,
+  and the scoped ``sig.org.name_scoped`` keys it decomposes into (read-only).
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -266,6 +269,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="append the committed decisions for pairs that have none (default: read-only)",
     )
+    audit = sub.add_parser(
+        "partner-name-audit",
+        help="P32.3 dry-run impact report: every legacy sig.org.name partner key, "
+        "its asserting sources/predicates, and the scoped sig.org.name_scoped keys "
+        "it decomposes into (read-only)",
+    )
+    audit.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
     return parser
 
 
@@ -678,6 +688,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_camera_sites(args)
     if args.command == "identity-triage":
         return _run_identity_triage(args)
+    if args.command == "partner-name-audit":
+        return _run_partner_name_audit(args)
 
     parser.print_help()
     return 0
@@ -716,6 +728,20 @@ def _run_identity_triage(args: argparse.Namespace) -> int:
         )
     )
     return 1 if undecided else 0
+
+
+def _run_partner_name_audit(args: argparse.Namespace) -> int:
+    """Dry-run impact report for legacy ``sig.org.name`` partner keys (P32.3)."""
+    import psycopg
+
+    from .partner_name_audit import name_scope_report
+
+    with psycopg.connect(args.dsn) as conn:
+        conn.execute("SET TRANSACTION READ ONLY")
+        report = name_scope_report(conn)
+        conn.rollback()
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
 
 
 def _run_camera_sites(args: argparse.Namespace) -> int:

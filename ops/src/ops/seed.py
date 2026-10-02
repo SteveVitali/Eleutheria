@@ -5,15 +5,20 @@
 
 `sig-ops seed --jurisdiction okc` loads the Oklahoma City / OKCPD Flock ALPR slice
 into a running spine so the composed stack has real, resolvable data to serve —
-above all the **299-vs-190 `claimed_device_count` contradiction** (§3.1) the
-dossier must surface with both sources and dates.
+the scope-qualified counts (P32.3 / SIG-TRUST-004) the dossier must keep
+distinct: DeFlock's **299 metro**, the agency's **90 active city-limits**, and
+Bacy's **~100 privately-owned city-limits** — a scope partition, NOT a
+contradiction; the "~190" city figure is an explicitly derived approximate sum,
+never a claim.
 
 There are **no green sources** on this build (HG-03 was skipped in P21.3), so this
 is *not* a live fetch: the values below are the committed P06.1 slice
 (`tests/acceptance/fixtures/okc_sources.json` / `okc_slice.py`), loaded through the
 same append-only write path a connector uses (`db.claim_sink.PgClaimSink`). Every
 row is an INSERT; nothing overwrites an existing claim (P1–P3). Re-running is
-idempotent (content-digest ON CONFLICT DO NOTHING).
+idempotent (content-digest ON CONFLICT DO NOTHING). Every seeded claim carries the
+``evidence_origin``=``seed_fixture`` qualifier (P32.3 / SIG-TRUST-004) so no read
+surface presents fixture material as primary live evidence.
 
 The OSM-derived physical layer is kept in its **separate ODbL compartment** (§42):
 its one seed claim carries ``ODbL-1.0`` with the OSM attribution + share-alike
@@ -40,11 +45,36 @@ from typing import Any
 _DEPLOYMENT = "sig:deployment:okc-okcpd-flock"
 _AGENCY = "agency:okc:okcpd"
 
-#: The committed OKC slice claims (P06.1). Each is a connector-shaped dict for
-#: PgClaimSink: the resolver derives count_basis from the `_device_count` suffix.
+#: The committed OKC slice claims (P06.1, scope-repaired P32.3 /
+#: SIG-TRUST-004). Each is a connector-shaped dict for PgClaimSink: the resolver
+#: derives count_basis from the `_device_count` suffix. Every row carries the
+#: ``evidence_origin``=``seed_fixture`` qualifier — seeded material is labelled
+#: so no read surface presents it as primary live evidence — and every count
+#: carries ``count_scope`` (+``count_scope_detail`` where it refines the scope):
+#: DeFlock's 299 is a METRO count, Bacy's ~100 is PRIVATELY-OWNED cameras inside
+#: CITY LIMITS, and the agency's 90 is CITY-LIMITS agency-operated — different
+#: scopes, so they are NOT a contradiction. The "~190" city figure a reader
+#: derives from 90 + ~100 is an explicitly derived approximate sum
+#: (``reconcile.count_scope.derive_approximate_sum``, L4-labelled, never a
+#: claim) — the seed asserts only the two sourced inputs, honestly.
+_OKC_JURISDICTION = "us.state_abbr:OK"
+
+
+def _okc_qualifiers(scope: str, detail: str | None = None) -> list[dict[str, Any]]:
+    qualifiers: list[dict[str, Any]] = [
+        {
+            "qualifier_id": "count_scope",
+            "value": scope,
+            "jurisdiction": _OKC_JURISDICTION,
+        },
+    ]
+    if detail:
+        qualifiers.append({"qualifier_id": "count_scope_detail", "value": detail})
+    return qualifiers
+
+
 _OKC_CLAIMS: list[dict[str, Any]] = [
-    # The within-predicate disagreement the dossier must keep visible: DeFlock's
-    # community map (~299 metro) vs Chief Bacy's statement (~190 city limits).
+    # DeFlock's community map — ~299 devices across the METRO (not the city).
     {
         "subject_id": _DEPLOYMENT,
         "predicate_id": "claimed_device_count",
@@ -54,20 +84,25 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "source_id": "deflock",
         "spdx": "CC-BY-4.0",
         "attribution": "DeFlock community map",
-        "evidence_genre": "news_article",
+        "evidence_genre": "community_map",
+        "qualifiers": _okc_qualifiers("metro"),
     },
+    # Chief Bacy's statement — ~100 PRIVATELY-OWNED cameras inside CITY LIMITS
+    # (the sourced input the "~190" derived city sum adds to the agency's 90 —
+    # the sum itself is derived, not claimed).
     {
         "subject_id": _DEPLOYMENT,
         "predicate_id": "claimed_device_count",
-        "value": 190,
+        "value": 100,
         "raw_value": "businesses own around 100 within city limits",
         "observed_at": "2026-08-18",
         "source_id": "bacy",
         "spdx": "CC-BY-4.0",
         "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
         "evidence_genre": "news_article",
+        "qualifiers": _okc_qualifiers("city_limits", "privately_owned"),
     },
-    # A resolved (uncontested) neighbour so the spine is not contradiction-only.
+    # The agency's own fleet — 90 active, city limits, agency-operated.
     {
         "subject_id": _DEPLOYMENT,
         "predicate_id": "active_device_count",
@@ -78,6 +113,7 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "spdx": "CC-BY-4.0",
         "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
         "evidence_genre": "official_statement",
+        "qualifiers": _okc_qualifiers("city_limits", "agency_operated"),
     },
     {
         "subject_id": _DEPLOYMENT,
@@ -89,6 +125,7 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "spdx": "CC-BY-4.0",
         "attribution": "OKC Master Agreement C241032",
         "evidence_genre": "contract",
+        "qualifiers": _okc_qualifiers("city_limits", "agency_operated"),
     },
     # The OSM-derived physical layer — SEPARATE ODbL compartment (§42, HG-02):
     # published with ODbL attribution + share-alike, kept apart from the graph.
@@ -102,6 +139,7 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "spdx": "ODbL-1.0",
         "attribution": "© OpenStreetMap contributors, ODbL 1.0 (share-alike)",
         "evidence_genre": "community_map",
+        "qualifiers": _okc_qualifiers("metro"),
     },
 ]
 
@@ -306,6 +344,16 @@ _SEED_SLICES: dict[str, dict[str, Any]] = {
 }
 
 
+#: The qualifier-only predicate ids the seed claims name (P32.3 / ADR-122) —
+#: pre-registered through the sink's connector-declared vocabulary path so the
+#: ``claim_qualifier`` FK never quarantines them.
+_SEED_QUALIFIER_VOCAB: tuple[tuple[str, str], ...] = (
+    ("count_scope", "string"),
+    ("count_scope_detail", "string"),
+    ("evidence_origin", "string"),
+)
+
+
 def seedable_jurisdictions() -> tuple[str, ...]:
     """The jurisdictions a slice exists for (the `sig-ops seed` allowlist)."""
     return tuple(sorted(_SEED_SLICES))
@@ -331,7 +379,20 @@ def seed_jurisdiction(dsn: str, jurisdiction: str = "okc") -> dict[str, int]:
         connector_version="1.0.0",
         code_commit=str(slice_def["code_commit"]),
     )
-    sink.assert_claims(slice_def["claims"])
+    sink.register_vocabulary(_SEED_QUALIFIER_VOCAB)
+
+    # P32.3 / SIG-TRUST-004: stamp ``evidence_origin=seed_fixture`` on EVERY
+    # seeded claim — fixture material is labelled, never presented as primary
+    # live evidence.
+    claims: list[dict[str, Any]] = []
+    for raw in slice_def["claims"]:
+        claim = dict(raw)
+        qualifiers = [dict(q) for q in claim.get("qualifiers") or ()]
+        if not any(q.get("qualifier_id") == "evidence_origin" for q in qualifiers):
+            qualifiers.append({"qualifier_id": "evidence_origin", "value": "seed_fixture"})
+        claim["qualifiers"] = qualifiers
+        claims.append(claim)
+    sink.assert_claims(claims)
 
     # Organisation projections for the ER candidate read (idempotent). The subject
     # identifiers go through the identity guard (P31.3 / ADR-110), so a concurrent

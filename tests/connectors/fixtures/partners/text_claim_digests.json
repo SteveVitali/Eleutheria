@@ -1,5 +1,5 @@
 {
-  "_note": "P31.5 shadow-diff golden: the content digest (db.claim_sink.content_digest) of every record the connectors emit over the partner fixture set (tests/partner_fixtures.py), computed at the P31.5 base commit 34406ff, before the partner entity-ref claims existed. tests/connectors/test_partner_refs_shadow.py asserts the post-P31.5 records without an object_ref are exactly these.",
+  "_note": "P31.5 shadow-diff golden: the content digest (db.claim_sink.content_digest) of every record the connectors emit over the partner fixture set (tests/partner_fixtures.py), computed at the P31.5 base commit 34406ff, before the partner entity-ref claims existed. tests/connectors/test_partner_refs_shadow.py asserts the post-P31.5 records without an object_ref are exactly these. P32.3 (ADR-122): dot_511_wa re-goldened \u2014 the registry agency label now emits camera_registry_publisher (provenance) instead of camera_operator; WA has no authoritative operator field so no operator claims mint.",
   "base_commit": "34406ff",
   "runs": {
     "atlas_issue_records": [
@@ -43,26 +43,26 @@
       "f746223655a1d0512c9b17360ee91075493122374a075d11d56d3423d6d295b0"
     ],
     "dot_511_wa": [
-      "0e26c9f9b00813f3d626cdc8b8e46a458a341fa3ab1954dcf6b9d52ed55d367f",
-      "31e828ee4783a83c0a8657c1d207f82996e5f9bb51c328f987e8baf5886fcc94",
-      "35b80789fbf22dcc776ba4a4814141ed9a43db951aca328d690b6cb16f1a349d",
-      "3bb50aaafd7e70a1252f9e0b065beff84db0d79d7417587def623a4a01c82bf6",
-      "56013e62101606231f4b84c2e5fa22a305592dbe4c9e49eb6ee7ffd0e2c515d8",
-      "5e7c340d34958a96f08a9be0c88fb15e73598c46fd842fe95b0ee1d0caf1e97a",
-      "6687a8092a0ccca9f4863b27b5724e7dfc0b4a56024f16678bf5ed0e56c913b7",
-      "69c53ed24ffdd13bc80598c355d2522dc3f54787334d92cd9eb191790a8196d2",
-      "6e91d3f5695637bf2c0cd9c5261b3e4709cf2a86001a56a8a142e8d95d762ab3",
-      "795cf217e03a6de8a78c5fac812749ee6037a027a5765fbd5efcc84fff9496d0",
-      "8441929cf851032ec839a8f2f1e6e54033e0716e42069d2d3542aa3b2d20e3d3",
-      "8a6ce11d4c681d4e51e1a55d987d063a6d2e7d0087c06f26689a1f3e2938e6eb",
-      "9207c80351648cc3e6d8cdaf05bfa497583263b27a5d4c03c01877108b352cb0",
-      "97074adeb3a917642dfdf766e843afd8d5d19c355a48c9fefeff674add5f0ed1",
-      "acfe5739bc0ae6016cf4774c8b76dcdde928bfca8a5055918bd512cbb25e7e4d",
-      "b6d8d3891d828f901d411314a1cdf75d952243585f1e47bf34ff4f11ff11d5fd",
-      "c554813d20297dbbb0d4718df89f55ede2cb57306b50266bf9f94a9f452dc52b",
-      "cf8a5a1d7c2793acfea705a83ad6c390bd406d91243ea752a13bf4a2f9ee188a",
-      "cfe453ea4f35059c573e208fd3151b1bc8a63196b11d2d58c67566be2fc68cd5",
-      "e56b8ea76607cd19dd6da7092be6b53bd68427124ff87dc28304b93edab6585c"
+      "01ddb4aa548ad5dcaa8c849c1a677f4ad1e57d60d115048bda77bd4f191deedb",
+      "034e8fe9f66929f0e21136de2ae4a55d825aed8eb9b2a8767656a86c849832ed",
+      "08e1487c4861c26f624c8854173d934e38ef3c00cfc9aed3eba10c2b5e69e030",
+      "13dbaceb53a4d45ff3478f4dacdc5dd824202dcf4cba73668b39a0a8e3800ab3",
+      "1d3c3821ba7d55cdc50b04b2f9182fa158a1ac6583f122e7f974e12108030fb4",
+      "2466fb6fdbdbb3cf3bb43cc3f45db91873eeaf3607aeb90fadc8398d31811695",
+      "37c8a952136e1b85b919b0539ceb2875fa9fd4257c06f3f563393eb113a7b8b3",
+      "3915176a8978b1e0f2d9764f42f87dd515dcccfa7dd08d39c151a824f1103f95",
+      "54aa279c682b2f9839b5294c63066dbe28dd42494088eb954a1b418dbdb655b1",
+      "5a769dbd8474408c82c4c24213f133aae2d9e012f4c2d6001bb80baa7b969959",
+      "630f0399023c1db2166e1d3c7ab3459644b1bcd4e312d1f32da8e2aec61c8b7e",
+      "a4c0c8b1c2d939c98cead40f4b2163132b57ff46b077b2a89c06884e4410f91c",
+      "af2bb137147e495b998cedc130288f9d0d94f83c85d80736ab5c1ed36e9505ac",
+      "b160256b3172d901d9c5cbd85396b852995504507d7dd3d901bd9af7e490b894",
+      "be28b97481d489225ddb9fb554461b8b249d96f4e02b3aa3b6ead68cb82e212a",
+      "cb1648bf0e1b974e9563b419520c0606411db7ec13cc566d11bef38b0b92561c",
+      "cd4ac78836f1896f3d87b2a1122f5ccff2565dc2d88d25ad334b390b0934c19e",
+      "d13d3d6d5216d4aaf170c327041598a6b1867f2a53d0a09c1cf6784356486141",
+      "e39cc60d8e479cd088ff26b89371c44382ca04acb6236221bf7522579a69fd15",
+      "f3743076b9e8adc3197c6fe7c01a53071d2d866e4035f479f7535c7a6d35c6b8"
     ],
     "procurement_contracts": [
       "0a6cb7fcc6f29a49b3d5b1ed5bea316b90b5568494a9eaccad620acaa5139e2b",

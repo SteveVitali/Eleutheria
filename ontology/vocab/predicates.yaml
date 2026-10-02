@@ -62,7 +62,14 @@ artifact_genres:
 - community_map
 - contract
 - official_statement
-count: 180
+# P32.3 (SIG-TRUST-003/004, ADR-122): the evidence-genre distinction the role
+# repair needs — a template page, a subscription record and a recommendation
+# document are NOT deployment/operator/owner evidence; all three are D6
+# (non-probative) for every current predicate by construction.
+- template
+- subscription
+- recommendation
+count: 184
 predicates:
 - predicate_id: contract_signed_date
   vocab_version: 1.0.0
@@ -92,6 +99,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: contract_value
   vocab_version: 1.0.0
   value_datatype: decimal
@@ -120,6 +130,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: contracted_device_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -148,6 +161,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: contract_start_date
   vocab_version: 1.0.0
   value_datatype: edtf
@@ -176,6 +192,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: contract_end_date
   vocab_version: 1.0.0
   value_datatype: edtf
@@ -204,6 +223,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: statutory_citation
   vocab_version: 1.0.0
   value_datatype: string
@@ -232,6 +254,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: funding_amount
   vocab_version: 1.0.0
   value_datatype: decimal
@@ -260,6 +285,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: funding_program_name
   vocab_version: 1.0.0
   value_datatype: string
@@ -288,6 +316,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: federal_award_id
   vocab_version: 1.0.0
   value_datatype: string
@@ -316,6 +347,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: event_epistemic_status
   vocab_version: 1.0.0
   value_datatype: EpistemicStatus
@@ -344,6 +378,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: organization_legal_name
   vocab_version: 1.0.0
   value_datatype: string
@@ -372,6 +409,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: organization_jurisdiction
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -400,6 +440,9 @@ predicates:
     community_map: D5
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: organization_ori
   vocab_version: 1.0.0
   value_datatype: string
@@ -428,6 +471,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: organization_type
   vocab_version: 1.0.0
   value_datatype: OrganizationType
@@ -456,6 +502,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: product_vendor
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -484,6 +533,9 @@ predicates:
     community_map: D4
     contract: D3
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: product_capabilities
   vocab_version: 1.0.0
   value_datatype: capability_code
@@ -512,6 +564,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: product_status
   vocab_version: 1.0.0
   value_datatype: ProductStatus
@@ -540,6 +595,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: implements_technology
   vocab_version: 1.0.0
   value_datatype: technology_code
@@ -568,6 +626,9 @@ predicates:
     community_map: D4
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: jurisdiction_parent
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -596,6 +657,9 @@ predicates:
     community_map: D4
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: jurisdiction_boundary
   vocab_version: 1.0.0
   value_datatype: geometry_wkt
@@ -624,6 +688,9 @@ predicates:
     community_map: D4
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: deployment_exists
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -652,6 +719,9 @@ predicates:
     community_map: D4
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: asset_operator
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -680,6 +750,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: fixed_asset_location
   vocab_version: 1.0.0
   value_datatype: geometry_wkt
@@ -708,6 +781,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: written_policy_value
   vocab_version: 1.0.0
   value_datatype: string
@@ -736,6 +812,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: policy_enforcement_mechanism
   vocab_version: 1.0.0
   value_datatype: EnforcementMechanism
@@ -764,6 +843,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: offense_category_filter
   vocab_version: 1.0.0
   value_datatype: string
@@ -792,6 +874,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: audit_case_code_required
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -820,6 +905,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: data_system_scope
   vocab_version: 1.0.0
   value_datatype: SystemScope
@@ -848,6 +936,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: holds_data_collected_by
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -876,6 +967,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: role_assignment
   vocab_version: 1.0.0
   value_datatype: Role
@@ -904,6 +998,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: candidate_location_estimate
   vocab_version: 1.0.0
   value_datatype: geometry_wkt
@@ -932,6 +1029,9 @@ predicates:
     community_map: D4
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: asset_exists_at_location
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -960,6 +1060,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: procurement_state
   vocab_version: 1.0.0
   value_datatype: ProcurementState
@@ -988,6 +1091,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: authorization_state
   vocab_version: 1.0.0
   value_datatype: AuthorizationState
@@ -1016,6 +1122,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: configured_retention_days
   vocab_version: 1.0.0
   value_datatype: duration_iso
@@ -1044,6 +1153,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: vendor_default_retention
   vocab_version: 1.0.0
   value_datatype: duration_iso
@@ -1072,6 +1184,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: data_system_retention
   vocab_version: 1.0.0
   value_datatype: duration_iso
@@ -1100,6 +1215,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: proceeding_posture
   vocab_version: 1.0.0
   value_datatype: ProceedingPosture
@@ -1128,6 +1246,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: records_response_status
   vocab_version: 1.0.0
   value_datatype: RecordsResponseStatus
@@ -1156,6 +1277,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: candidate_promotion_status
   vocab_version: 1.0.0
   value_datatype: PromotionStatus
@@ -1184,6 +1308,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: integration_edge_active
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -1212,6 +1339,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: operational_state
   vocab_version: 1.0.0
   value_datatype: OperationalState
@@ -1240,6 +1370,9 @@ predicates:
     community_map: D5
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: active_device_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -1271,6 +1404,9 @@ predicates:
     community_map: D3
     contract: D5
     official_statement: D2
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: installed_device_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -1299,6 +1435,9 @@ predicates:
     community_map: D3
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: invoiced_device_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -1327,6 +1466,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: mapped_device_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -1356,6 +1498,9 @@ predicates:
     community_map: D1
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: claimed_device_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -1385,6 +1530,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D1
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: configured_sharing_partner_set
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -1415,6 +1563,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: configured_sharing_partner
   vocab_version: 1.0.0
   value_datatype: string
@@ -1450,6 +1601,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
   maps_to: configured_sharing_partner_set
 - predicate_id: configured_access_edge
@@ -1480,6 +1634,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: state_lookup_enabled
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -1508,6 +1665,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: national_lookup_enabled
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -1536,6 +1696,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: federal_sharing_enabled
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -1564,6 +1727,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: subscribed_hotlist_topic
   vocab_version: 1.0.0
   value_datatype: string
@@ -1592,6 +1758,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: windowed_search_count
   vocab_version: 1.0.0
   value_datatype: integer
@@ -1620,6 +1789,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: observed_use_edge
   vocab_version: 1.0.0
   value_datatype: boolean
@@ -1648,6 +1820,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: asset_data_controller
   vocab_version: 1.0.0
   value_datatype: uriorcurie
@@ -1676,6 +1851,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_latitude
   vocab_version: 1.0.0
   value_datatype: decimal
@@ -1704,6 +1882,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   value_tolerance:
     kind: absolute
     value: 0.0005
@@ -1736,6 +1917,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   value_tolerance:
     kind: absolute
     value: 0.0005
@@ -1769,6 +1953,9 @@ predicates:
     community_map: D3
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_external_ref
   vocab_version: 1.0.0
   value_datatype: string
@@ -1797,6 +1984,9 @@ predicates:
     community_map: D3
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: external_id
   vocab_version: 1.0.0
   value_datatype: string
@@ -1825,11 +2015,18 @@ predicates:
     community_map: D2
     contract: D2
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_operator
   vocab_version: 1.0.0
   value_datatype: string
   cardinality: single
-  definition: Operator of a registry-listed camera as attributed by the registry's publisher (categorical).
+  definition: >-
+    Operator of a registry-listed camera as evidenced by an authoritative
+    operator field (the target's operator key or a feature operator attribute).
+    P32.3 / ADR-122: the registry's publisher label is NOT operator evidence —
+    it lands on `camera_registry_publisher` instead (categorical).
   skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator
   volatility_class: SLOW
   half_life: 3y
@@ -1853,6 +2050,9 @@ predicates:
     community_map: D2
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: camera_jurisdiction
   vocab_version: 1.0.0
@@ -1883,6 +2083,9 @@ predicates:
     community_map: D4
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_county
   vocab_version: 1.0.0
   value_datatype: string
@@ -1911,6 +2114,9 @@ predicates:
     community_map: D4
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_roadway
   vocab_version: 1.0.0
   value_datatype: string
@@ -1939,6 +2145,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_name
   vocab_version: 1.0.0
   value_datatype: string
@@ -1967,6 +2176,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_direction
   vocab_version: 1.0.0
   value_datatype: string
@@ -1995,6 +2207,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_status
   vocab_version: 1.0.0
   value_datatype: string
@@ -2023,6 +2238,9 @@ predicates:
     community_map: D3
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_type
   vocab_version: 1.0.0
   value_datatype: string
@@ -2051,6 +2269,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: camera_mount
   vocab_version: 1.0.0
   value_datatype: string
@@ -2079,6 +2300,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
 - predicate_id: buyer
   vocab_version: 1.0.0
   value_datatype: string
@@ -2108,6 +2332,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: seller
   vocab_version: 1.0.0
@@ -2138,6 +2365,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: funder
   vocab_version: 1.0.0
@@ -2168,6 +2398,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: recipient
   vocab_version: 1.0.0
@@ -2198,6 +2431,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: vendor
   vocab_version: 1.0.0
@@ -2231,6 +2467,9 @@ predicates:
     community_map: D5
     contract: D2
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: amount
   vocab_version: 1.0.0
@@ -2260,6 +2499,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: contract_value
 - predicate_id: currency
@@ -2290,6 +2532,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: signed_date
   vocab_version: 1.0.0
@@ -2319,6 +2564,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: contract_signed_date
 - predicate_id: start_date
@@ -2349,6 +2597,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: contract_start_date
 - predicate_id: end_date
@@ -2379,6 +2630,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: contract_end_date
 - predicate_id: renewal_options
@@ -2409,6 +2663,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: products
   vocab_version: 1.0.0
@@ -2438,6 +2695,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: quantities
   vocab_version: 1.0.0
@@ -2468,6 +2728,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: document
   vocab_version: 1.0.0
@@ -2497,6 +2760,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: acquisition_channel
   vocab_version: 1.0.0
@@ -2526,6 +2792,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: parent_cooperative_contract
   vocab_version: 1.0.0
@@ -2555,6 +2824,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: amends_contract
   vocab_version: 1.0.0
@@ -2584,6 +2856,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: lifecycle_transition
   vocab_version: 1.0.0
@@ -2613,6 +2888,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: procurement_state
 - predicate_id: instrument_type
@@ -2643,6 +2921,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: program_name
   vocab_version: 1.0.0
@@ -2672,6 +2953,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: funding_program_name
 - predicate_id: award_date
@@ -2702,6 +2986,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: period
   vocab_version: 1.0.0
@@ -2731,6 +3018,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: conditions
   vocab_version: 1.0.0
@@ -2760,6 +3050,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: notice_type
   vocab_version: 1.0.0
@@ -2789,6 +3082,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: posted_date
   vocab_version: 1.0.0
@@ -2818,6 +3114,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: response_deadline
   vocab_version: 1.0.0
@@ -2847,6 +3146,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: title
   vocab_version: 1.0.0
@@ -2876,6 +3178,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: description
   vocab_version: 1.0.0
@@ -2905,6 +3210,9 @@ predicates:
     community_map: D6
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: place_of_performance
   vocab_version: 1.0.0
@@ -2934,6 +3242,9 @@ predicates:
     community_map: D4
     contract: D2
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: country
   vocab_version: 1.0.0
@@ -2963,6 +3274,9 @@ predicates:
     community_map: D5
     contract: D3
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: matched_keyword
   vocab_version: 1.0.0
@@ -2993,6 +3307,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D1
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: content_term
   vocab_version: 1.0.0
@@ -3022,6 +3339,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D1
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: event_type
   vocab_version: 1.0.0
@@ -3051,6 +3371,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: event_date
   vocab_version: 1.0.0
@@ -3080,6 +3403,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: event_organizations
   vocab_version: 1.0.0
@@ -3110,6 +3436,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: entity_ref
 - predicate_id: event_deployments
   vocab_version: 1.0.0
@@ -3139,6 +3468,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: event_technologies
   vocab_version: 1.0.0
@@ -3168,6 +3500,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: affected_party_class
   vocab_version: 1.0.0
@@ -3197,6 +3532,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_court
   vocab_version: 1.0.0
@@ -3226,6 +3564,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_docket_number
   vocab_version: 1.0.0
@@ -3255,6 +3596,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_case_name
   vocab_version: 1.0.0
@@ -3284,6 +3628,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_parties
   vocab_version: 1.0.0
@@ -3314,6 +3661,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_party_role
   vocab_version: 1.0.0
@@ -3343,6 +3693,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_filed_date
   vocab_version: 1.0.0
@@ -3372,6 +3725,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_disposition_date
   vocab_version: 1.0.0
@@ -3401,6 +3757,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_courtlistener_id
   vocab_version: 1.0.0
@@ -3430,6 +3789,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: proceeding_recap_id
   vocab_version: 1.0.0
@@ -3459,6 +3821,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_external_id
   vocab_version: 1.0.0
@@ -3489,6 +3854,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_identifier
   vocab_version: 1.0.0
@@ -3519,6 +3887,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_title
   vocab_version: 1.0.0
@@ -3549,6 +3920,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: title
 - predicate_id: bill_session
@@ -3580,6 +3954,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_jurisdiction
   vocab_version: 1.0.0
@@ -3610,6 +3987,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_chamber
   vocab_version: 1.0.0
@@ -3641,6 +4021,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_status
   vocab_version: 1.0.0
@@ -3671,6 +4054,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_status_date
   vocab_version: 1.0.0
@@ -3701,6 +4087,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: bill_matched_keyword
   vocab_version: 1.0.0
@@ -3732,6 +4121,9 @@ predicates:
     community_map: D6
     contract: D1
     official_statement: D1
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: matched_keyword
 - predicate_id: portal_exists
@@ -3763,6 +4155,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: portal_stated_prohibited_use
   vocab_version: 1.0.0
@@ -3793,6 +4188,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: portal_last_updated_declared
   vocab_version: 1.0.0
@@ -3823,6 +4221,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: vehicles_detected_windowed_count
   vocab_version: 1.0.0
@@ -3853,6 +4254,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: hotlist_hit_windowed_count
   vocab_version: 1.0.0
@@ -3883,6 +4287,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: usage_search_windowed_count
   vocab_version: 1.0.0
@@ -3913,6 +4320,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: windowed_search_count
 - predicate_id: request_text
@@ -3944,6 +4354,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: requesting_party
   vocab_version: 1.0.0
@@ -3975,6 +4388,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: target_agency
   vocab_version: 1.0.0
@@ -4005,6 +4421,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: response_status
   vocab_version: 1.0.0
@@ -4035,6 +4454,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: records_response_status
 - predicate_id: response_date
@@ -4066,6 +4488,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: acquisition_method
   vocab_version: 1.0.0
@@ -4097,6 +4522,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: constrains_technology
   vocab_version: 1.0.0
@@ -4127,6 +4555,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: effective_from
   vocab_version: 1.0.0
@@ -4157,6 +4588,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: enacting_body
   vocab_version: 1.0.0
@@ -4187,6 +4621,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: jurisdiction
   vocab_version: 1.0.0
@@ -4217,6 +4654,9 @@ predicates:
     community_map: D5
     contract: D4
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: citation
   vocab_version: 1.0.0
@@ -4247,6 +4687,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: statutory_citation
 - predicate_id: sunset_date
@@ -4278,6 +4721,9 @@ predicates:
     community_map: D6
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: as_of
   vocab_version: 1.0.0
@@ -4308,6 +4754,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: technology
   vocab_version: 1.0.0
@@ -4339,6 +4788,9 @@ predicates:
     community_map: D4
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: retention_period
   vocab_version: 1.0.0
@@ -4369,6 +4821,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: use_restriction
   vocab_version: 1.0.0
@@ -4399,6 +4854,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: sharing_restriction
   vocab_version: 1.0.0
@@ -4430,6 +4888,9 @@ predicates:
     community_map: D6
     contract: D3
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: legal_authority
   vocab_version: 1.0.0
@@ -4461,6 +4922,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: ordinance_citation
   vocab_version: 1.0.0
@@ -4491,6 +4955,9 @@ predicates:
     community_map: D6
     contract: D4
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: statutory_citation
 - predicate_id: disclosure_field_state
@@ -4527,6 +4994,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: hit_volume_observed
   vocab_version: 1.0.0
@@ -4557,6 +5027,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: scan_volume_observed
   vocab_version: 1.0.0
@@ -4587,6 +5060,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: non_hit_proportion_observed
   vocab_version: 1.0.0
@@ -4617,6 +5093,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: pooled_lookup_participation
   vocab_version: 1.0.0
@@ -4647,6 +5126,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: sharing_partner_degree
   vocab_version: 1.0.0
@@ -4677,6 +5159,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: ai_surveillance_supplier
   vocab_version: 1.0.0
@@ -4707,6 +5192,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: ai_surveillance_tech_from_china
   vocab_version: 1.0.0
@@ -4737,6 +5225,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: ai_surveillance_tech_from_us
   vocab_version: 1.0.0
@@ -4767,6 +5258,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: uses_ai_surveillance
   vocab_version: 1.0.0
@@ -4797,6 +5291,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: uses_facial_recognition
   vocab_version: 1.0.0
@@ -4827,6 +5324,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: smart_city_surveillance
   vocab_version: 1.0.0
@@ -4857,6 +5357,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: smart_policing
   vocab_version: 1.0.0
@@ -4887,6 +5390,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: facial_recognition_status
   vocab_version: 1.0.0
@@ -4917,6 +5423,9 @@ predicates:
     community_map: D6
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: asset_type
   vocab_version: 1.0.0
@@ -4947,6 +5456,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: surveillance_zone
   vocab_version: 1.0.0
@@ -4978,6 +5490,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: manufacturer
   vocab_version: 1.0.0
@@ -5008,6 +5523,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: manufacturer_qid
   vocab_version: 1.0.0
@@ -5038,6 +5556,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: brand
   vocab_version: 1.0.0
@@ -5068,6 +5589,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: brand_qid
   vocab_version: 1.0.0
@@ -5098,6 +5622,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: operator_stated
   vocab_version: 1.0.0
@@ -5129,6 +5656,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: operator_qid
   vocab_version: 1.0.0
@@ -5159,6 +5689,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: operator_type
   vocab_version: 1.0.0
@@ -5189,6 +5722,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: power_arrangement
   vocab_version: 1.0.0
@@ -5219,6 +5755,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: first_observed
   vocab_version: 1.0.0
@@ -5249,6 +5788,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: mapping_source
   vocab_version: 1.0.0
@@ -5279,6 +5821,9 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
 - predicate_id: direction
   vocab_version: 1.0.0
@@ -5309,6 +5854,9 @@ predicates:
     community_map: D2
     contract: D5
     official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal
   maps_to: camera_direction
 - predicate_id: unmapped_surveillance_tag
@@ -5341,4 +5889,157 @@ predicates:
     community_map: D2
     contract: D6
     official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+- predicate_id: camera_registry_publisher
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The organisation that published this camera-registry artifact — registry
+    PUBLISHER provenance, not an operational role. P32.3 / ADR-122
+    (SIG-TRUST-003): a publisher label never evidences camera operation,
+    ownership, vendor or access status, and never mints an organisation
+    entity-ref (the OSM contributor label is the canonical case).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  # P32.3 assessment: the registry's own self-attribution is the direct
+  # provenance source (camera_registry D1); a community map / OSM node set IS
+  # the published artifact (D2); official statements can name a publisher (D3);
+  # all other genres non-probative (D6).
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D1
+    connector_run: D6
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+- predicate_id: count_scope
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    Qualifier: the comparability scope a count claim is asserted at (e.g.
+    metro, city_limits, jurisdiction, statewide). P32.3 / SIG-TRUST-004: counts
+    in different scopes answer different questions — they are retained
+    separately and never adjudicated against each other (a scope mismatch is
+    not a contradiction).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: never_resolve
+  # P32.3: a qualifier predicate — carried on claim_qualifier, not resolved as
+  # a claim; D6 across every genre by construction.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D6
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+- predicate_id: count_scope_detail
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    Qualifier: the refinement inside a count_scope (e.g. privately_owned,
+    partner_agency, agency_operated). Two counts differ on detail at the same
+    scope label are still different questions (P32.3 / SIG-TRUST-004).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: never_resolve
+  # P32.3: a qualifier predicate — carried on claim_qualifier, not resolved as
+  # a claim; D6 across every genre by construction.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D6
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+- predicate_id: evidence_origin
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    Qualifier: where the evidence behind a claim came from (e.g. seed_fixture,
+    live_capture). P32.3 / SIG-TRUST-004: seed-fixture material is labelled so
+    no read surface presents it as primary live evidence.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: never_resolve
+  # P32.3: a qualifier predicate — carried on claim_qualifier, not resolved as
+  # a claim; D6 across every genre by construction.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D6
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
   object_kind: literal

@@ -492,7 +492,8 @@ def test_link_twins_a_resolvable_vendor_label() -> None:
     assert len(linked) == 2  # the literal + its twin
     twin = linked[1]
     assert twin["predicate_id"] == "vendor"
-    assert twin["object_ref"]["scheme"] == "sig.org.name"
+    assert twin["object_ref"]["scheme"] == "sig.org.name_scoped"  # P32.3/ADR-122
+    assert twin["object_ref"]["role"] == "vendor"
     assert twin["object_ref"]["entity_type"] == "organization"
     assert twin["object_ref"]["label"] == "Vigilant Solutions (LEARN)"
     assert linked[0] == relabelled  # the text claim is never touched

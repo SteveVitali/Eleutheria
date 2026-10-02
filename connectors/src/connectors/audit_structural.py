@@ -65,6 +65,7 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from db.organization_roles import role_for_predicate
 from reconcile.counts import reconcile_counts
 from reconcile.model import CountClaim as _CountClaim
 from reconcile.model import CountReconciliation, Evidence
@@ -1040,10 +1041,12 @@ class AuditStructuralConnector(Connector):
         free-text cell — unlike Eyes on Flock's portal slugs — so the entity-ref
         goes through P31.5's deterministic partner identity
         (:func:`resolution.partner_identity.partner_identity`, ADR-112): an
-        accepted name attaches a ``sig.org.name`` organisation ref to the claim;
-        a refused one (ambiguous, generic, person-shaped) leaves the claim a
-        literal — the edge is still recorded and the materializer counts it
-        ``skipped_unmapped``, never a fabricated node.
+        accepted name attaches a ``sig.org.name_scoped`` organisation ref to the
+        claim (P32.3 / ADR-122 — scoped to this source, carrying the ``access``
+        role and the unmerged-candidate marker); a refused one (ambiguous,
+        generic, person-shaped) leaves the claim a literal — the edge is still
+        recorded and the materializer counts it ``skipped_unmapped``, never a
+        fabricated node.
         """
         out: list[dict[str, Any]] = []
         for row in normalized:
@@ -1052,10 +1055,11 @@ class AuditStructuralConnector(Connector):
                 and row.get("predicate_id") == "configured_sharing_partner"
                 and not row.get("object_ref")
             ):
-                ident = partner_identity(str(row.get("to_org") or ""))
+                role = role_for_predicate("configured_sharing_partner")
+                ident = partner_identity(str(row.get("to_org") or ""), scope=self.name)
                 if isinstance(ident, PartnerIdentity):
                     row = dict(row)
-                    row["object_ref"] = ident.as_object_ref()
+                    row["object_ref"] = ident.as_object_ref(role=str(role) if role else None)
             out.append(row)
         return out
 
