@@ -2,20 +2,16 @@
 
 | obligation | status | owner | landing | how to verify |
 |---|---|---|---|---|
-| D-P21.3-2 | OPEN | operator | operator action; no engineering work remains | no live fetch; no-token-literal test passes |
 | D-P21.5-1 | PARTIAL | operator | operator action (repo-visibility decision for the SWH save-now leg; HG-07 for any future credentialed leg) | free paths (tiles/.torrent/degraded/SWH-save) real; credentialed steps dry-run/stub tested. **Proxy-now re-verified 2026-09-10 by the INFRA.1 (GL-INFRA-01) re-r… |
 | D-P21.7-1 | OPEN | operator | operator action, then the one-step re-run in `docs/build/CONTRIBUTION_BACK_LIVE.md` | **proxy-now re-verified 2026-09-10 by the CONTRIB.1 (GL-CONTRIB-01) re-run (`devin/p21-7-contrib-rerun`, base `devin/p21-5-infra-rerun`, prepare-only)** on the … |
-| D-JURIS.2-1 | PARTIAL | operator | operator act | `sig-connectors review-status --source <id>` shows all five gate fields True; `sig-connectors run --source <id> --mode live` stops refusing exit 3 and writes a … |
 | D-SOURCES.2-2 | OPEN | operator | operator decision (decline is a valid close) | a flip (or a recorded decline) with review metadata; then `run --mode live` stops refusing exit 3 |
-| D-SOURCES.7-1 | OPEN | reviewer | reviewer decision | `sig-connectors gate --source dot_511_<st>` goes green after a recorded flip; `run --mode live` then produces captures instead of exit 3 |
+| D-SOURCES.7-1 | PARTIAL | reviewer | P36.2 (dot_511_tx remainder per PT-004) | `sig-connectors gate --source dot_511_<st>` goes green after a recorded flip; `run --mode live` then produces captures instead of exit 3 |
 | D-SOURCES.7-2 | OPEN | operator | operator action | a keyed live run produces captures + claims; the `[[enumerated]]` rows can graduate to `[[targets]]` for states still lacking an open layer |
 | D-SOURCES.8-1 | PARTIAL | reviewer | reviewer decision | `sig-connectors gate --source camreg_<id>` goes green after a recorded flip; `run --mode live` then produces captures instead of exit 3 |
 | D-SOURCES.8-2 | OPEN | operator | operator action | a keyed live run produces captures + claims; the `[[enumerated]]` rows can graduate to `[[targets]]` |
 | D-SOURCES.9-1 | OPEN | reviewer | reviewer action | `sig-connectors gate --source procportal_chicago_il` goes green after a recorded flip; `run --mode live` then produces captures instead of exit 3 |
-| D-SOURCES.9-2 | OPEN | reviewer + external | reviewer decision (HG-03), then an ingest run | a live run fetches a tenant portal index instead of the recorded politeness refusal |
 | D-SOURCES.9-3 | OPEN | external | a documented public endpoint appears + reviewable terms; then HG-03 | a live run fetches a portal index instead of the recorded challenge disappearance |
 | D-SOURCES.9-4 | OPEN | reviewer | reviewer action | `sig-connectors gate --source bidnet_direct` goes green after a recorded flip; `run --mode live` then produces captures instead of exit 3 |
-| D-SOURCES.12-1 | PARTIAL | engineering | BL-055, no chain row | `sig-connectors gate --source camreg_stalbert_ab` goes green after a recorded flip; the reviewed artifact's gated rows are the enumerable worklist (`spdx=null` … |
 | D-FEDERAL.1-1 | OPEN | scheduled | the `sig-sched-sam-gov` cron (automatic), then a +0 re-run check | GCS run row under `gs://…-sig-restricted/ops/runs/sam_gov/2026-09-19/` shows `outcome=ok` with `claims_added` for the widened sweep; hosted `claim` delta for `p… |
 | D-R6.1-EVAL | OPEN | maintainer + reviewers | **Round 10**: the human review campaign → P31.18 re-derivation | after P28.1 lands: re-`build_gold_set` from the live loop's human decisions → re-freeze a versioned holdout → re-measure P/R/F1 + B-cubed + LLM-vs-human κ on th… |
 | D-R7.1-AUTH | OPEN | operator | operator decision | when unblocked: author a NEW ADR + ticket for external-IdP OAuth (pseudonymous subject id + tier only; no passwords/PII) behind anti-poisoning + the safety plan… |

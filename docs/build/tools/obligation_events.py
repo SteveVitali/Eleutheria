@@ -15,20 +15,40 @@ predecessor and evidence refs. Ambiguity stays open.
 Subcommands (each a plain stdlib CLI — consume, don't fork
 `audit_current_state.py`, which stays the read-only inconsistency detector):
 
-    migrate --recorded-at YYYY-MM-DD [--source-commit SHA]
-        Regenerate the migration anchors for every DEFERRALS obligation row plus the
-        four P32.1 status-conflict reconciliations (RECONCILIATIONS below). Appended
-        transition events are preserved verbatim. Deterministic.
+    migrate [--recorded-at YYYY-MM-DD] [--source-commit SHA]
+        Create the migration anchors for every DEFERRALS obligation row plus the
+        reconciled status-conflict rows (RECONCILIATIONS below) on a *fresh* log.
+        The log is append-only (P34.8 / B2 §5.1, F-26): ``migrate`` REFUSES to run
+        over an existing events.jsonl — it never regenerates or rewrites history.
+        ``--recorded-at`` defaults to `date -u`; a future date or a date later
+        than the source commit is rejected.
 
-    append --event-json PATH
-        Validate one obligation-event/1 transition against the chain head and append
+    append --event-json PATH [--recorded-at YYYY-MM-DD]
+        Validate one obligation-event/1 record against the chain head and append
         it to events.jsonl (the shadow writer; the single-authoritative-writer
-        protocol arrives at cutover — D-R10-MEMORY-1, owner P32.8).
+        protocol arrives at cutover — D-R10-MEMORY-1, owner P32.8). The record's
+        ``recorded_at``/``observed_at`` may not be later than `date -u` nor later
+        than the ``source_commit``'s committer date, and a transition's
+        ``recorded_at`` may not be earlier than its predecessor's (the effective
+        date, after any appended ``date-correction`` records — correction events
+        themselves are excepted). ``--recorded-at`` stamps the event's
+        ``recorded_at`` before validating.
 
     check
         Validate events.jsonl + coverage_assessments.jsonl + DEFERRALS cell
         consistency. Emits {check, severity, file, obligation, evidence, message}
         diagnostics (same shape as audit_current_state.py); exit 1 on any.
+
+Corrections (P34.8): a ``kind: "correction"`` event is an appended annotation —
+it never extends the status chain. Its ``correction`` payload names the
+corrected record (``file``, ``line``, ``event_id``), the prior line's sha256 and
+the source commit that authored it; a ``reason`` beginning ``date-correction``
+carries ``field``, ``recorded_value`` and ``true_value`` (ADR-146: a wrong date
+is corrected only by an appended, dated correction — never by rewriting the
+record). Corrections of ``events.jsonl`` lines chain on the corrected event via
+``expected_previous_event``; corrections of another file's lines (e.g. the
+coverage ledger) carry ``expected_previous_event: null`` and ``obligation_id
+"—"``.
 """
 
 from __future__ import annotations
@@ -76,7 +96,7 @@ BL_HOME_RE = audit_current_state.BL_HOME_RE
 DATED_TERMINAL_RE = audit_current_state.DATED_TERMINAL_RE
 diag = audit_current_state.diag
 
-EVENT_KINDS = {"migration", "transition"}
+EVENT_KINDS = {"migration", "transition", "correction"}
 DOMAINS = ("fixture", "implementation", "composed-db", "hosted", "public")
 DOMAIN_RANK = {d: i for i, d in enumerate(DOMAINS)}
 # The verdict grammar is check_coverage_matrix.py's (ADR-150 D1; SIG-ENG-041; SEED-15): MET ·
@@ -127,6 +147,31 @@ EVENT_FIELDS = (
     "reason",
 )
 MIGRATION_EXTRA_FIELDS = ("anchor",)
+CORRECTION_EXTRA_FIELDS = ("correction",)
+# Payload of a kind="correction" event: the corrected record's location and
+# provenance. `prior_line_sha256`/`source_commit` name the line the correction
+# cites — for a date-correction the wrong-value-bearing line as it stands (the
+# commit that wrote the wrong value); for a rewrite correction the pre-rewrite
+# line and the commit that authored it (the rewrite itself is named by
+# `rewrite_commit`). A `date-correction` reason requires field/recorded_value/
+# true_value; a whole-record correction leaves them unset and may carry
+# `fields` (the rewritten field names) and `rewrite_commit`.
+CORRECTION_FIELDS = {
+    "file",
+    "line",
+    "event_id",
+    "field",
+    "recorded_value",
+    "true_value",
+    "fields",
+    "prior_line_sha256",
+    "source_commit",
+    "rewrite_commit",
+    "register_rec",
+    "note",
+}
+CORRECTION_REQUIRED = {"file", "line", "event_id", "prior_line_sha256", "source_commit"}
+DATE_CORRECTION_PREFIX = "date-correction"
 ASSESSMENT_FIELDS = (
     "schema",
     "assessment_id",
@@ -695,13 +740,66 @@ def _ref_exists(root: pathlib.Path, ref: str) -> bool:
     return (root / ref.split("#", 1)[0]).exists()
 
 
+def _validate_correction(root: pathlib.Path, ev: dict) -> list[str]:
+    """Correction-payload validation (kind="correction"); shape only — target
+    resolution happens in check_event_chain."""
+    errs: list[str] = []
+    corr = ev.get("correction")
+    if not isinstance(corr, dict):
+        return ["correction event missing correction{…} payload"]
+    for k in corr:
+        if k not in CORRECTION_FIELDS:
+            errs.append(f"unknown correction field {k!r}")
+    for k in CORRECTION_REQUIRED:
+        if k not in corr:
+            errs.append(f"correction missing field {k!r}")
+    if errs:
+        return errs
+    if not isinstance(corr["file"], str) or not _ref_exists(root, corr["file"]):
+        errs.append(f"correction file does not exist: {corr.get('file')!r}")
+    if not isinstance(corr["line"], int) or corr["line"] < 1:
+        errs.append("correction line must be a positive integer")
+    if not isinstance(corr["event_id"], str) or not corr["event_id"]:
+        errs.append("correction event_id must name the corrected record")
+    if not re.fullmatch(r"[0-9a-f]{64}", str(corr["prior_line_sha256"])):
+        errs.append("correction prior_line_sha256 must be a sha256 hex digest")
+    if str(ev.get("reason", "")).startswith(DATE_CORRECTION_PREFIX):
+        for k in ("recorded_value", "true_value"):
+            if corr.get(k) in (None, ""):
+                errs.append(f"date-correction requires correction.{k}")
+        if corr.get("field") is not None and not isinstance(corr["field"], str):
+            errs.append("date-correction correction.field must be a string")
+    for k in ("fields",):
+        if k in corr and not (
+            isinstance(corr[k], list) and all(isinstance(f, str) for f in corr[k])
+        ):
+            errs.append(f"correction {k} must be a list of field names")
+    epe = ev.get("expected_previous_event")
+    if corr["file"] == EVENTS_PATH:
+        if epe != corr["event_id"]:
+            errs.append(
+                "a correction of an events.jsonl record chains on the corrected "
+                "event: expected_previous_event must equal correction.event_id"
+            )
+    elif epe is not None:
+        errs.append(
+            "a correction of another file's record carries expected_previous_event=null"
+        )
+    return errs
+
+
 def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
     """Schema-level validation; returns messages (empty = valid)."""
     errs: list[str] = []
     if ev.get("schema") != EVENT_SCHEMA:
         errs.append(f"schema must be {EVENT_SCHEMA!r}")
+    kind = ev.get("kind")
     allowed = set(EVENT_FIELDS) | (
-        set(MIGRATION_EXTRA_FIELDS) if ev.get("kind") == "migration" else set()
+        set(MIGRATION_EXTRA_FIELDS)
+        if kind == "migration"
+        else set(CORRECTION_EXTRA_FIELDS)
+        if kind == "correction"
+        else set()
     )
     for k in ev:
         if k not in allowed:
@@ -716,7 +814,9 @@ def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
     if not isinstance(ev["seq"], int) or ev["seq"] < 0:
         errs.append("seq must be a non-negative integer")
     for s in ("from_status", "to_status"):
-        if ev[s] not in VALID_STATUSES:
+        if ev[s] not in VALID_STATUSES and not (
+            ev["kind"] == "correction" and ev[s] == "—"
+        ):
             errs.append(f"{s} {ev[s]!r} not a valid status")
     if not isinstance(ev["evidence_refs"], list) or not ev["evidence_refs"]:
         errs.append("evidence_refs must be a non-empty list")
@@ -740,16 +840,54 @@ def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
         anchor = ev.get("anchor")
         if not isinstance(anchor, dict) or "row_sha256" not in anchor:
             errs.append("migration event missing anchor{row_sha256}")
+    elif ev["kind"] == "correction":
+        errs += _validate_correction(root, ev)
     else:
         if ev["expected_previous_event"] is None:
             errs.append("transition must name expected_previous_event (chain on the anchor)")
     return errs
 
 
-def check_event_chain(root: pathlib.Path, events: list[dict]) -> list[dict]:
-    """Chain-level validation; returns diagnostics."""
+def _corrected_dates(events: list[dict]) -> dict[tuple[str, str], str]:
+    """`{(event_id, field): true_value}` from appended `date-correction` records
+    targeting this ledger — a correction supersedes the recorded value for
+    chain checks (ADR-146). Later corrections win."""
+    out: dict[tuple[str, str], str] = {}
+    for ev in events:
+        if ev.get("kind") != "correction":
+            continue
+        corr = ev.get("correction") or {}
+        if (
+            corr.get("file") == EVENTS_PATH
+            and str(ev.get("reason", "")).startswith(DATE_CORRECTION_PREFIX)
+            and isinstance(corr.get("field"), str)
+            and corr.get("true_value") is not None
+            and isinstance(corr.get("event_id"), str)
+        ):
+            # `true_value` may carry a full ISO instant; the wire field is a date
+            out[(corr["event_id"], corr["field"])] = str(corr["true_value"])[:10]
+    return out
+
+
+def _effective_date(ev: dict, field: str, corrected: dict[tuple[str, str], str]) -> str:
+    """The recorded date of `field`, as corrected by appended date-corrections."""
+    return corrected.get((str(ev.get("event_id")), field), str(ev.get(field)))
+
+
+def check_event_chain(
+    root: pathlib.Path,
+    events: list[dict],
+    assessments: list[dict] | None = None,
+    raw_lines: list[str] | None = None,
+) -> list[dict]:
+    """Chain-level validation; returns diagnostics. `raw_lines` (the file's
+    literal lines) lets a same-file correction be bound to the exact bytes it
+    names."""
     diags: list[dict] = []
     rows = {r["id"]: r for r in parse_obligation_rows(root)}
+    assessment_ids = (
+        {a.get("assessment_id") for a in assessments} if assessments is not None else None
+    )
     by_id: dict[str, dict] = {}
     by_obl: dict[str, list[dict]] = {}
     for ev in events:
@@ -774,7 +912,7 @@ def check_event_chain(root: pathlib.Path, events: list[dict]) -> list[dict]:
             by_id[eid] = ev
         by_obl.setdefault(ev.get("obligation_id", "?"), []).append(ev)
         oid = ev.get("obligation_id", "?")
-        if oid != "?" and oid not in rows:
+        if oid != "?" and oid not in rows and ev.get("kind") != "correction":
             diags.append(
                 diag(
                     "events/unknown-obligation",
@@ -785,10 +923,121 @@ def check_event_chain(root: pathlib.Path, events: list[dict]) -> list[dict]:
                     f"event names obligation {oid} which has no DEFERRALS row",
                 )
             )
+    # corrections resolve their targets after every event is known
+    for ev in events:
+        if ev.get("kind") != "correction":
+            continue
+        corr = ev.get("correction") or {}
+        eid = ev.get("event_id", "?")
+        oid = ev.get("obligation_id", "?")
+        target: dict | None = None
+        if corr.get("file") == EVENTS_PATH:
+            target = by_id.get(corr.get("event_id"))
+            if raw_lines is not None:
+                ln = corr.get("line")
+                target_line = (
+                    raw_lines[ln - 1] if isinstance(ln, int) and 1 <= ln <= len(raw_lines) else None
+                )
+                # a target beyond the on-disk prefix is a same-append candidate;
+                # the by_id check above still binds it
+                if target_line is not None:
+                    try:
+                        line_obj = json.loads(target_line)
+                    except json.JSONDecodeError:
+                        line_obj = {}
+                    if line_obj.get("event_id") != corr.get("event_id"):
+                        diags.append(
+                            diag(
+                                "events/unknown-correction-target",
+                                "error",
+                                EVENTS_PATH,
+                                oid,
+                                eid,
+                                f"correction names line {ln} as {corr.get('event_id')!r} but "
+                                f"that line carries {line_obj.get('event_id')!r}",
+                            )
+                        )
+                    elif str(ev.get("reason", "")).startswith(
+                        DATE_CORRECTION_PREFIX
+                    ) and _sha256_text(target_line) != corr.get("prior_line_sha256"):
+                        # a date-correction's prior_line_sha256 names the
+                        # wrong-value-bearing line exactly as it stands
+                        diags.append(
+                            diag(
+                                "events/stale-correction",
+                                "error",
+                                EVENTS_PATH,
+                                oid,
+                                eid,
+                                f"date-correction cites prior_line_sha256 "
+                                f"{str(corr.get('prior_line_sha256'))[:16]}… but line {ln} "
+                                "hashes differently",
+                            )
+                        )
+            if target is None:
+                diags.append(
+                    diag(
+                        "events/unknown-correction-target",
+                        "error",
+                        EVENTS_PATH,
+                        oid,
+                        eid,
+                        f"correction names event {corr.get('event_id')!r} which is not in "
+                        "this ledger",
+                    )
+                )
+            elif target.get("obligation_id") != oid:
+                diags.append(
+                    diag(
+                        "events/unknown-correction-target",
+                        "error",
+                        EVENTS_PATH,
+                        oid,
+                        eid,
+                        f"correction obligation_id {oid!r} does not match the corrected "
+                        f"event's {target.get('obligation_id')!r}",
+                    )
+                )
+        elif (
+            corr.get("file") == ASSESSMENTS_PATH
+            and assessment_ids is not None
+            and corr.get("event_id") not in assessment_ids
+        ):
+            diags.append(
+                diag(
+                    "events/unknown-correction-target",
+                    "error",
+                    EVENTS_PATH,
+                    oid,
+                    eid,
+                    f"correction names assessment {corr.get('event_id')!r} which is not in "
+                    f"{ASSESSMENTS_PATH}",
+                )
+            )
+        if (
+            target is not None
+            and isinstance(corr.get("field"), str)
+            and corr.get("recorded_value") is not None
+            and str(target.get(corr["field"])) != str(corr["recorded_value"])
+        ):
+            diags.append(
+                diag(
+                    "events/stale-correction",
+                    "error",
+                    EVENTS_PATH,
+                    oid,
+                    eid,
+                    f"correction records {corr['field']}={corr['recorded_value']!r} but the "
+                    f"corrected record carries {target.get(corr['field'])!r}",
+                )
+            )
+    corrected = _corrected_dates(events)
     heads: dict[str, dict] = {}
     for oid, evs in by_obl.items():
         anchors = [e for e in evs if e.get("kind") == "migration"]
         transitions = [e for e in evs if e.get("kind") == "transition"]
+        if not anchors and not transitions:
+            continue  # a corrections-only group is annotation, not a chain
         if len(anchors) == 0:
             diags.append(
                 diag(
@@ -841,12 +1090,16 @@ def check_event_chain(root: pathlib.Path, events: list[dict]) -> list[dict]:
                     )
                 )
         # replay the chain in seq order; each transition's expected_previous_event
-        # must equal the head event id before it applies.
+        # must equal the head event id before it applies. Correction events are
+        # annotations — never chain links — and are excepted from the
+        # backwards-recorded_at rule (P34.8).
         ordered = sorted(evs, key=lambda e: e.get("seq") if isinstance(e.get("seq"), int) else -1)
         head: dict | None = None
         for e in ordered:
             if e.get("kind") == "migration":
                 head = e
+                continue
+            if e.get("kind") == "correction":
                 continue
             if head is None:
                 diags.append(
@@ -885,6 +1138,21 @@ def check_event_chain(root: pathlib.Path, events: list[dict]) -> list[dict]:
                     )
                 )
             else:
+                prev_rec = _effective_date(head, "recorded_at", corrected)
+                if str(e.get("recorded_at")) < prev_rec:
+                    diags.append(
+                        diag(
+                            "events/backwards-recorded-at",
+                            "error",
+                            EVENTS_PATH,
+                            oid,
+                            e.get("event_id", "?"),
+                            f"{oid}: {e.get('event_id')} recorded_at {e.get('recorded_at')} is "
+                            f"earlier than its previous event's {prev_rec} — dates come from "
+                            "`date -u` at recording, corrected only by appended "
+                            "date-correction events (ADR-146)",
+                        )
+                    )
                 head = e
         if head is not None:
             heads[oid] = head
@@ -1113,34 +1381,99 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
     return diags
 
 
-def migrate(root: pathlib.Path, recorded_at: str, source_commit: str) -> int:
-    anchors, diags = build_anchors(root, recorded_at, source_commit)
+def _utc_today() -> str:
+    """`date -u +%F` — the only clock the tool reads (SIG-MEM-005 / OM-04)."""
+    import datetime
+
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+
+
+def _commit_utc_date(root: pathlib.Path, sha: str) -> str | None:
+    """UTC committer date (YYYY-MM-DD) of a commit, or None if it doesn't resolve."""
+    try:
+        out = subprocess.run(
+            ["git", "show", "-s", "--format=%cI", sha],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+    except Exception:
+        return None
+    return out[:10] or None
+
+
+def _check_event_dates(root: pathlib.Path, ev: dict, today: str) -> list[str]:
+    """Write-path date rules (B1 §5.6): no recorded/observed date later than
+    `date -u` nor later than the source commit's committer date. Stored history
+    is not re-judged — a wrong recorded value is corrected by an appended
+    date-correction, never rewritten."""
+    errs: list[str] = []
+    for d in ("observed_at", "recorded_at"):
+        v = str(ev.get(d, ""))
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", v):
+            continue  # the malformed check reports it
+        if v > today:
+            errs.append(
+                f"{d} {v} is later than `date -u` ({today}) — a recorded date comes "
+                "from the clock, never from a guessed schedule"
+            )
+        src = str(ev.get("source_commit", ""))
+        cdate = _commit_utc_date(root, src) if src not in ("", "—") else None
+        if cdate is not None and v > cdate:
+            errs.append(
+                f"{d} {v} is later than its source_commit's committer date {cdate} "
+                f"({src[:12]}) — a record cannot observe before its evidence exists"
+            )
+    return errs
+
+
+def migrate(
+    root: pathlib.Path, recorded_at: str | None = None, source_commit: str | None = None
+) -> int:
     events_path = root / EVENTS_PATH
-    transitions: list[str] = []
-    if events_path.is_file():
-        for line in events_path.read_text().splitlines():
-            if not line.strip():
-                continue
-            try:
-                if json.loads(line).get("kind") == "transition":
-                    transitions.append(line)
-            except json.JSONDecodeError:
-                continue
+    if events_path.exists():
+        print(
+            f"migrate: refused — {EVENTS_PATH} exists. The log is append-only: it is "
+            "never regenerated or rewritten; history is repaired by appended "
+            "correction/transition events (P34.8, B2 §5.1, F-26; ADR-146).",
+            file=sys.stderr,
+        )
+        return 1
+    recorded_at = recorded_at or _utc_today()
+    source_commit = source_commit or _git_head(root)
+    today = _utc_today()
+    for err in _check_event_dates(
+        root,
+        {"recorded_at": recorded_at, "observed_at": recorded_at, "source_commit": source_commit},
+        today,
+    ):
+        print(f"migrate: {err}", file=sys.stderr)
+        return 1
+    anchors, diags = build_anchors(root, recorded_at, source_commit)
+    bad = [
+        (ev["event_id"], e) for ev in anchors for e in _check_event_dates(root, ev, today)
+    ]
+    if bad:
+        for eid, e in bad:
+            print(f"migrate: {eid}: {e}", file=sys.stderr)
+        return 1
     events_path.parent.mkdir(parents=True, exist_ok=True)
     with events_path.open("w") as fh:
         for ev in anchors:
             fh.write(json.dumps(ev, ensure_ascii=False) + "\n")
-        for line in transitions:
-            fh.write(line + "\n")
     print(
-        f"migrate: wrote {len(anchors)} migration anchors (+{len(transitions)} preserved transitions) → {EVENTS_PATH}"
+        f"migrate: wrote {len(anchors)} migration anchors → {EVENTS_PATH} "
+        "(fresh log — the file is append-only from here; never run migrate on it again)"
     )
     for d in diags:
         print(f"  {d['severity']} {d['check']} {d['obligation']}: {d['message']}")
     return 0
 
 
-def append_event(root: pathlib.Path, event_json: pathlib.Path) -> int:
+def append_event(
+    root: pathlib.Path, event_json: pathlib.Path, recorded_at: str | None = None
+) -> int:
     events_path = root / EVENTS_PATH
     events, errs = load_jsonl(events_path)
     for e in errs:
@@ -1151,8 +1484,26 @@ def append_event(root: pathlib.Path, event_json: pathlib.Path) -> int:
     except (OSError, json.JSONDecodeError) as e:
         print(f"append: cannot read event json: {e}", file=sys.stderr)
         return 2
+    if recorded_at is not None:
+        ev["recorded_at"] = recorded_at
+    today = _utc_today()
+    date_errs = _check_event_dates(root, ev, today)
+    if date_errs:
+        for e in date_errs:
+            print(f"append: {e}", file=sys.stderr)
+        return 1
+    # corrections can name a record in the coverage ledger — resolve them
+    assessments = None
+    corr = ev.get("correction") or {}
+    if ev.get("kind") == "correction" and corr.get("file") == ASSESSMENTS_PATH:
+        assessments, _aerrs = load_jsonl(root / ASSESSMENTS_PATH)
+    raw = (
+        [ln for ln in events_path.read_text().splitlines() if ln.strip()]
+        if events_path.is_file()
+        else None
+    )
     candidate = events + [ev]
-    diags = check_event_chain(root, candidate)
+    diags = check_event_chain(root, candidate, assessments, raw)
     # Block on errors — except a cell-divergence on the appended obligation
     # itself: the event is appended first and is the very evidence that backs
     # the subsequent compatibility-cell update (cells move only with matching
@@ -1181,12 +1532,18 @@ def append_event(root: pathlib.Path, event_json: pathlib.Path) -> int:
 def check(root: pathlib.Path) -> int:
     diags: list[dict] = []
     events, errs = load_jsonl(root / EVENTS_PATH)
+    _epath = root / EVENTS_PATH
+    raw_event_lines = (
+        [ln for ln in _epath.read_text().splitlines() if ln.strip()]
+        if _epath.is_file()
+        else None
+    )
     for e in errs:
         diags.append(diag("events/malformed", "error", EVENTS_PATH, "—", "jsonl", e))
-    diags += check_event_chain(root, events)
     assessments, aerrs = load_jsonl(root / ASSESSMENTS_PATH)
     for e in aerrs:
         diags.append(diag("coverage/malformed", "error", ASSESSMENTS_PATH, "—", "jsonl", e))
+    diags += check_event_chain(root, events, assessments, raw_event_lines)
     diags += check_assessments(root, assessments)
     if not diags:
         print(
@@ -1203,17 +1560,31 @@ def check(root: pathlib.Path) -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd")
-    mig = sub.add_parser("migrate", help="(re)generate migration anchors")
-    mig.add_argument("--recorded-at", required=True, help="YYYY-MM-DD fixed input")
+    mig = sub.add_parser(
+        "migrate",
+        help="create the initial migration anchors (refuses an existing log — append-only)",
+    )
+    mig.add_argument(
+        "--recorded-at",
+        default=None,
+        help="YYYY-MM-DD; defaults to `date -u`",
+    )
     mig.add_argument("--source-commit", default=None)
-    app = sub.add_parser("append", help="validate + append a transition event")
+    app = sub.add_parser(
+        "append", help="validate + append an event (transition or correction)"
+    )
     app.add_argument("--event-json", required=True, type=pathlib.Path)
+    app.add_argument(
+        "--recorded-at",
+        default=None,
+        help="stamp the event's recorded_at (YYYY-MM-DD; default: the event's own)",
+    )
     sub.add_parser("check", help="validate events + assessments + cells")
     args = ap.parse_args(argv)
     if args.cmd == "migrate":
-        return migrate(ROOT, args.recorded_at, args.source_commit or _git_head(ROOT))
+        return migrate(ROOT, args.recorded_at, args.source_commit)
     if args.cmd == "append":
-        return append_event(ROOT, args.event_json)
+        return append_event(ROOT, args.event_json, args.recorded_at)
     if args.cmd == "check":
         return check(ROOT)
     ap.print_help()

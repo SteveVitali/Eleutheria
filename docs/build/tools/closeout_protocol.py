@@ -925,7 +925,6 @@ def cmd_activation_check(args) -> int:
                 "events/malformed", "error", obligation_events.EVENTS_PATH, "—", "jsonl", e
             )
         )
-    diags += obligation_events.check_event_chain(root, events)
     assessments, aerrs = obligation_events.load_jsonl(root / obligation_events.ASSESSMENTS_PATH)
     for e in aerrs:
         diags.append(
@@ -933,6 +932,8 @@ def cmd_activation_check(args) -> int:
                 "coverage/malformed", "error", obligation_events.ASSESSMENTS_PATH, "—", "jsonl", e
             )
         )
+    # assessments are loaded so corrections naming the coverage ledger resolve
+    diags += obligation_events.check_event_chain(root, events, assessments)
     diags += obligation_events.check_assessments(root, assessments)
     errors = [d for d in diags if d["severity"] == "error"]
     if errors:

@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "5b41a3ae39ce6cfda481f78ad139fe3766852d48",
-  "manifest_inputs": 931,
+  "input_commit": "d1f1df2db5ec568e01ef4324307bd22ad56f83a6",
+  "manifest_inputs": 932,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.8",
-    "lastCompleted": "P34.7",
+    "nextTicket": "P34.9",
+    "lastCompleted": "P34.8",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.50",
@@ -17,22 +17,22 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.7-append-only-checker-full-modes",
+    "chainTip": "r11/P34.8-obligation-events-repair",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-02T16:07:10Z"
+    "updatedAt": "2026-10-02T18:00:02Z"
   },
   "counts": {
     "obligations": 143,
-    "owed": 81,
-    "open": 77,
-    "partial": 4,
-    "terminal": 62,
-    "events": 144,
-    "transitions": 1,
+    "owed": 77,
+    "open": 74,
+    "partial": 3,
+    "terminal": 66,
+    "events": 611,
+    "transitions": 14,
     "coverage_assessments": 187,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
@@ -175,16 +175,16 @@
     },
     {
       "id": "D-P21.3-2",
-      "status": "OPEN",
-      "status_source": "event-head D-P21.3-2:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P21.3-2:e1",
       "kind": "P",
       "owner": "operator",
-      "landing": "operator action; no engineering work remains",
+      "landing": "PT-001 applied by P34.8",
       "backlog_home": "BL-024",
       "item": "HG-09 — API tokens (`SIG_MUCKROCK_TOKEN`/`SIG_DATA_GOV_KEY`/`SIG_OVERPASS_ENDPOINT`/`SIG_CIVICCLERK_BASE`) exported in the worker shell",
       "unblocked_by": "operator exports the env vars in the re-run shell; ledger records only `provided: yes/no`",
       "verify": "no live fetch; no-token-literal test passes",
-      "proxy": "OPEN (cites BL-024) — re-confirmed 2026-09-10 by the P21.3 LIVE.1 fetch re-run: HG-03 now cleared but tokens `provided: no` + no network egress in the isolated context → the live fetch still cannot run; stays OPEN. **P25.9 sweep 2026-09-16 — sole blocker: operator exports the `SIG_*` credentials in the run shell (HG-09); secrets exist in Secret Manager (`sig-muckrock-refresh`, `sig-data-gov-key`) but a re-run shell needs them exported — human prerequisite, nothing engineering-side remains.** · re-homed 2026-10-01 (SEED-15, Round-11 seed T4; append-only): (cites BL-084) — every BL row this row cited before is closed or accepted; owed until P34.8 applies the queued transition PT-001 (docs/build/reports/memory-repair/pending_transitions.csv); BL-084 is the phase-34 home for owed deferrals landing there (agent interpretation)",
+      "proxy": "DONE 2026-10-02 — **P34.8 applied queued transition `PT-001` (event `D-P21.3-2:e1`; was `OPEN`):** OPEN (cites BL-024) — re-confirmed 2026-09-10 by the P21.3 LIVE.1 fetch re-run: HG-03 now cleared but tokens `provided: no` + no network egress in the isolated context → the live fetch still cannot run; stays OPEN. **P25.9 sweep 2026-09-16 — sole blocker: operator exports the `SIG_*` credentials in the run shell (HG-09); secrets exist in Secret Manager (`sig-muckrock-refresh`, `sig-data-gov-key`) but a re-run shell needs them exported — human prerequisite, nothing engineering-side remains.** · re-homed 2026-10-01 (SEED-15, Round-11 seed T4; append-only): (cites BL-084) — every BL row this row cited before is closed or accepted; owed until P34.8 applies the queued transition PT-001 (docs/build/reports/memory-repair/pending_transitions.csv); BL-084 is the phase-34 home for owed deferrals landing there (agent interpretation)",
       "line": 38,
       "events": [
         {
@@ -214,6 +214,30 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P21.3-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P21.3-2",
+          "seq": 1,
+          "expected_previous_event": "D-P21.3-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.8",
+          "owner": "operator",
+          "landing": "PT-001 applied by P34.8",
+          "backlog_home": "BL-024",
+          "evidence_refs": [
+            "docs/build/planning/2026-09-30-next-phase/research/F1-owed-register.md",
+            "ops/cadence.toml",
+            "docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md",
+            "docs/build/reports/memory-repair/pending_transitions.csv"
+          ],
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "P34.8 applies queued transition PT-001 (decision F1-P21.3-2 confirm (packet line B-43; log round 17), decided 2026-10-01T04:49:27Z): already-done: the hosted scheduled jobs already use every credential (F1 §3: run rows for congress_gov, civicclerk and osm_overpass; muckrock execution fx2ch exit 0); the operator confirmed the correction ('Confirm all (Recommended)'); mapped in DEFERRALS § Round-11 mapping (SEED-14a)"
         }
       ]
     },
@@ -927,11 +951,11 @@
     },
     {
       "id": "D-JURIS.2-1",
-      "status": "PARTIAL",
-      "status_source": "event-head D-JURIS.2-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-JURIS.2-1:e1",
       "kind": "P",
       "owner": "operator",
-      "landing": "operator act",
+      "landing": "PT-005 applied by P34.8",
       "backlog_home": "BL-042",
       "item": "HG-03 — flip the reviewed France sources (`raa_prefectures`, `decp_fr`, `madada`) to `ingestion_permitted=true` after their rights reviews resolve; then the real LIVE fetches (RAA index → arrêté corpus, DECP national files, Ma Dada register)",
       "unblocked_by": "operator reads `docs/build/reports/rights/{raa_prefectures,decp_fr,madada}.md`, resolves the LO 2.0 disposition, flips each source with reviewer role + date recorded",
@@ -966,6 +990,30 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-JURIS.2-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-JURIS.2-1",
+          "seq": 1,
+          "expected_previous_event": "D-JURIS.2-1:e0",
+          "from_status": "PARTIAL",
+          "to_status": "DONE",
+          "ticket_id": "P34.8",
+          "owner": "operator",
+          "landing": "PT-005 applied by P34.8",
+          "backlog_home": "BL-042",
+          "evidence_refs": [
+            "docs/build/reports/rights/declarationcamera_be.md",
+            "connectors/src/connectors/data/sources.toml",
+            "docs/build/planning/2026-09-30-next-phase/design/E4-rights-packets.md",
+            "docs/build/reports/memory-repair/pending_transitions.csv"
+          ],
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "P34.8 applies queued transition PT-005 (decision E4-R1 a (packet line B-41; log round 17), decided 2026-10-01T04:49:27Z): the operator's answer 'a — close: rights DONE; eID leg WONTFIX' (E4 §3 R1): the rights/flip scope is DONE (rights decided 2026-09-15); the Belgian-eID leg is WONTFIX, skipped by the operator, consistent with D-JURIS.2-2"
         }
       ]
     },
@@ -1281,11 +1329,11 @@
     },
     {
       "id": "D-SOURCES.7-1",
-      "status": "OPEN",
-      "status_source": "event-head D-SOURCES.7-1:e0",
+      "status": "PARTIAL",
+      "status_source": "event-head D-SOURCES.7-1:e1",
       "kind": "P",
       "owner": "reviewer",
-      "landing": "reviewer decision",
+      "landing": "P36.2 (dot_511_tx remainder per PT-004)",
       "backlog_home": "BL-055",
       "item": "HG-03 — rights decisions for the five gated DOT/511 rows: `dot_511_la` (GOHSEP-owned item, empty licenseInfo), `dot_511_ga` (GEMA-owned, empty), `dot_511_al` (county E-911 publisher + empty), `dot_511_tx` (personal account + empty), `dot_511_md` (iMAP attribution-conditioned terms — needs a licence-registry row first)",
       "unblocked_by": "reviewer resolves each state's terms (packets carry the verbatim metadata in `sources.toml` notes + `dot_511_targets.toml` `rights_note`); MD additionally needs a LicenseRef/SPDX row for the iMAP conditioned terms",
@@ -1320,6 +1368,29 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-SOURCES.7-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-SOURCES.7-1",
+          "seq": 1,
+          "expected_previous_event": "D-SOURCES.7-1:e0",
+          "from_status": "OPEN",
+          "to_status": "PARTIAL",
+          "ticket_id": "P34.8",
+          "owner": "reviewer",
+          "landing": "P36.2 (dot_511_tx remainder per PT-004)",
+          "backlog_home": "BL-055",
+          "evidence_refs": [
+            "connectors/src/connectors/data/sources.toml",
+            "docs/build/planning/2026-09-30-next-phase/design/E4-rights-packets.md",
+            "docs/build/reports/memory-repair/pending_transitions.csv"
+          ],
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "P34.8 applies queued transition PT-004 (decision E4-S4 a (packet lines B-40 + B-43; log round 17), decided 2026-10-01T04:49:27Z): the operator's answer 'a — D-SOURCES.7-1 OPEN → PARTIAL (remainder dot_511_tx flips under E4-R3 a)': 4 of the 5 gated DOT/511 rows executed under GL-GATE-07; dot_511_tx flips in P36.2 (OP-26)"
         }
       ]
     },
@@ -1545,11 +1616,11 @@
     },
     {
       "id": "D-SOURCES.9-2",
-      "status": "OPEN",
-      "status_source": "event-head D-SOURCES.9-2:e0",
+      "status": "WONTFIX",
+      "status_source": "event-head D-SOURCES.9-2:e1",
       "kind": "F",
       "owner": "reviewer + external",
-      "landing": "reviewer decision (HG-03), then an ingest run",
+      "landing": "PT-003 applied by P34.8",
       "backlog_home": "BL-055",
       "item": "`bonfire` access wall — every verified `*.bonfirehub.com` tenant answers robots.txt `User-agent: *` / `Disallow: /` (laurier + columbus verified 2026-09-18, verbatim in `docs/build/reports/rights/bonfire.md`)",
       "unblocked_by": "the robots policy lifts on a tenant, or a reviewer records an ADR-083-class API-mode basis for a documented public endpoint",
@@ -1584,6 +1655,29 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-SOURCES.9-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-SOURCES.9-2",
+          "seq": 1,
+          "expected_previous_event": "D-SOURCES.9-2:e0",
+          "from_status": "OPEN",
+          "to_status": "WONTFIX",
+          "ticket_id": "P34.8",
+          "owner": "reviewer + external",
+          "landing": "PT-003 applied by P34.8",
+          "backlog_home": "BL-055",
+          "evidence_refs": [
+            "docs/build/reports/rights/bonfire.md",
+            "docs/build/planning/2026-09-30-next-phase/design/E4-rights-packets.md",
+            "docs/build/reports/memory-repair/pending_transitions.csv"
+          ],
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "P34.8 applies queued transition PT-003 (decision E4-S2 b (packet lines B-40 + B-43; log round 17), decided 2026-10-01T04:49:27Z): the operator's answer 'b — bonfire WONTFIX' (E4 §1 S2): every verified bonfirehub.com tenant disallows all user agents in robots.txt"
         }
       ]
     },
@@ -1721,11 +1815,11 @@
     },
     {
       "id": "D-SOURCES.12-1",
-      "status": "PARTIAL",
-      "status_source": "event-head D-SOURCES.12-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-SOURCES.12-1:e1",
       "kind": "P",
       "owner": "engineering",
-      "landing": "BL-055, no chain row",
+      "landing": "PT-002 applied by P34.8",
       "backlog_home": "BL-055",
       "item": "HG-03 — rights decisions for the gated sweep remainder: **257 camera-registry-shaped datasets with no clear verbatim licence grant** (the reviewed artifact's `gated_licence_registries` rows — 'See Terms of Use' links, 'No Conditions Apply'-class metadata, disclaimer-only text, and uncaptured terms pages), **68 probe-error rows** (DNS/SSL/503/no-layer ArcGIS + CKAN resource failures preserved as `error`, not dropped), and — named individually — **`camreg_stalbert_ab`** (ArcGIS item `6f2ca1b545844065b719483d562d553e`, 80 rows): the item names 'City of St. Albert Open Government License' but the grant text could not be captured verbatim (`data.stalbert.ca/pages/licence` is a JS-rendered shell — HTTP 200 with no terms in the served body; the Hub page item is not publicly searchable; no Wayback capture)",
       "unblocked_by": "reviewer captures St. Albert's licence text verbatim (browser session or operator contact with open@stalbert.ca) and resolves each gated row's terms from the recorded `licence_verbatim`/probe evidence in the reviewed artifact",
@@ -1760,6 +1854,30 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-SOURCES.12-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-SOURCES.12-1",
+          "seq": 1,
+          "expected_previous_event": "D-SOURCES.12-1:e0",
+          "from_status": "PARTIAL",
+          "to_status": "DONE",
+          "ticket_id": "P34.8",
+          "owner": "engineering",
+          "landing": "PT-002 applied by P34.8",
+          "backlog_home": "BL-055",
+          "evidence_refs": [
+            "docs/build/reports/catalog_sweep_2026-09-26_retry.json",
+            "docs/build/reports/p2616_dispositions.json",
+            "docs/build/planning/2026-09-30-next-phase/design/E4-rights-packets.md",
+            "docs/build/reports/memory-repair/pending_transitions.csv"
+          ],
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "P34.8 applies queued transition PT-002 (decision E4-S1 a (packet lines B-40 + B-43; log round 17), decided 2026-10-01T04:49:27Z): the operator's answer 'a — D-SOURCES.12-1 PARTIAL → DONE' (E4 §1 S1): the rights half DONE under GL-GATE-07 (P26.16), D-SOURCES.17-1 DONE, the 2026-09-26 catalog sweep retry 0 of 68"
         }
       ]
     },
@@ -2605,7 +2723,7 @@
     {
       "id": "D-P30.1-2",
       "status": "DONE",
-      "status_source": "event-head D-P30.1-2:e0",
+      "status_source": "event-head D-P30.1-2:e1",
       "kind": "F",
       "owner": "—",
       "landing": "—",
@@ -2646,6 +2764,31 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.1-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.1-2",
+          "seq": 1,
+          "expected_previous_event": "D-P30.1-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-057",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+            "tests/connectors/test_incremental_restart.py",
+            "tests/db/test_resume_pg.py",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P30.1-2:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-25 (P31.4 / HARDEN.4 / ADR-111) — memory-bounded resumable ingest with persisted per-target captures (ingest_run_capture + hosted GCS capture store); hosted kill/resume produced the identical output set (+0, same capture digests). Recorded interpretation: terminal DONE."
         }
       ]
     },
@@ -2784,7 +2927,7 @@
     {
       "id": "D-P30.2a-1",
       "status": "DONE",
-      "status_source": "event-head D-P30.2a-1:e0",
+      "status_source": "event-head D-P30.2a-1:e1",
       "kind": "F",
       "owner": "—",
       "landing": "—",
@@ -2824,13 +2967,37 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.2a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.2a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P30.2a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-057",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.8.md",
+            "docs/build/reports/p31.8-hosted/predicate_inventory_after.json",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P30.2a-1:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-25 (P31.8 completing P31.5's family half; ADR-112) — all 62 unregistered measured predicates registered, 180x17 genre/directness assessed, hosted materialize +13,131 envelopes then +0, after-inventory 2,623,647/2,623,647 links admissible. Recorded interpretation: terminal DONE."
         }
       ]
     },
     {
       "id": "D-P30.2a-2",
       "status": "DONE",
-      "status_source": "event-head D-P30.2a-2:e0",
+      "status_source": "event-head D-P30.2a-2:e1",
       "kind": "F",
       "owner": "—",
       "landing": "—",
@@ -2871,6 +3038,31 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.2a-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.2a-2",
+          "seq": 1,
+          "expected_previous_event": "D-P30.2a-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-057",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.7.md",
+            "docs/build/reports/p31.7-hosted/VERIFICATION.md",
+            "tests/db/test_resightings.py",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P30.2a-2:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-25 (P31.7; ADR-114 revisit trigger recorded) — uncapped re-sighting recording and supersession landed; hosted +232,096 links at 43% of the 15 GB disk projection, under the 50% trigger. Recorded interpretation: terminal DONE."
         }
       ]
     },
@@ -3053,7 +3245,7 @@
     {
       "id": "D-P30.3-1",
       "status": "DONE",
-      "status_source": "event-head D-P30.3-1:e0",
+      "status_source": "event-head D-P30.3-1:e1",
       "kind": "F",
       "owner": "—",
       "landing": "—",
@@ -3093,13 +3285,37 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.3-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.3-1",
+          "seq": 1,
+          "expected_previous_event": "D-P30.3-1:e0",
+          "from_status": "PARTIAL",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-056",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.2.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-27",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P30.3-1:e0 anchor in place (PARTIAL→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-27 (P31.16 publish completing P31.2's engine half; ADR-109) — /data-freshness/ serves real last_successful_run ISO dates for all 178 sources from the appended ingest_run_completion spine. Recorded interpretation: terminal DONE."
         }
       ]
     },
     {
       "id": "D-P30.3-2",
       "status": "DONE",
-      "status_source": "event-head D-P30.3-2:e0",
+      "status_source": "event-head D-P30.3-2:e1",
       "kind": "F",
       "owner": "—",
       "landing": "—",
@@ -3140,13 +3356,38 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.3-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.3-2",
+          "seq": 1,
+          "expected_previous_event": "D-P30.3-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-056",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.15.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+            "docs/build/readouts/ACCEPT-R8.md",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-27",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P30.3-2:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-27 (P31.16 publish completing P31.15's engineering half; ADR-118) — the live map draws from per-compartment pmtiles sources, /map/points.json is 404 on both origins, R8-1 recorded CLOSED. Recorded interpretation: terminal DONE."
         }
       ]
     },
     {
       "id": "D-P30.3-3",
       "status": "DONE",
-      "status_source": "event-head D-P30.3-3:e0",
+      "status_source": "event-head D-P30.3-3:e1",
       "kind": "F",
       "owner": "—",
       "landing": "—",
@@ -3186,6 +3427,30 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.3-3:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.3-3",
+          "seq": 1,
+          "expected_previous_event": "D-P30.3-3:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-056",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.14.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-27",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P30.3-3:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-27 (P31.16 publish completing P31.14's engineering half; ADR-117) — the web/analytics family is live licence-separated and the public surfaces render real values with no not-recorded placeholders. Recorded interpretation: terminal DONE."
         }
       ]
     },
@@ -3415,7 +3680,7 @@
     {
       "id": "D-P31.1-2",
       "status": "DONE",
-      "status_source": "event-head D-P31.1-2:e0",
+      "status_source": "event-head D-P31.1-2:e1",
       "kind": "H",
       "owner": "—",
       "landing": "—",
@@ -3454,6 +3719,29 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P31.1-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P31.1-2",
+          "seq": 1,
+          "expected_previous_event": "D-P31.1-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-057",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P31.1-2:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-25 (P31.4) — every sig-api job rolled by pinned digest (never :latest, before/after recorded); sig-probe swept 8/8 ok including sig-api-health. Recorded interpretation: terminal DONE."
         }
       ]
     },
@@ -3507,7 +3795,7 @@
     {
       "id": "D-P31.3-1",
       "status": "DONE",
-      "status_source": "event-head D-P31.3-1:e0",
+      "status_source": "event-head D-P31.3-1:e1",
       "kind": "V",
       "owner": "—",
       "landing": "—",
@@ -3546,6 +3834,29 @@
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P31.3-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P31.3-1",
+          "seq": 1,
+          "expected_previous_event": "D-P31.3-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-057",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+            "docs/tickets/210_P34.8__obligation-events-repair.md"
+          ],
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-02",
+          "source_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
+          "reason": "restored transition: 7a2ff9fa mutated the D-P31.3-1:e0 anchor in place (OPEN→DONE) instead of appending this event; P34.8 appends it now, chained on e0 — the cell records DONE 2026-09-25 (P31.4; ADR-111) — sig-sink-bench on the rolled image through the live gate: 179,882 claims/min, re-run +0, 0 duplicate digests; the later OSM-replay observation point is tracked separately under OPEN D-P31.4-1. Recorded interpretation: terminal DONE."
         }
       ]
     },
@@ -10694,8 +11005,8 @@
           "label": "historical/csv"
         },
         "SIG-MEM-006": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.7-1)",
+          "evidence": "docs/build/tools/memory_guard.py;docs/build/tools/record_policy/history.policy;tests/unit/fixtures/memory_guard/replay_expected.csv;docs/build/reports/memory-repair/P34.7-replay.json;docs/build/runs/P34.7.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -14300,10 +14611,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "4dbdf5f846bce0854d5b0d763957557fa155b3fc21bccf84c0960129b55a2817",
+  "manifest_sha256": "f8b65e96e768e6c2051a55aea3f67ea999f6c17ba4cbfd5b1cb4a7bafce7ee13",
   "current_md": {
     "lines": 74,
-    "bytes": 12849,
+    "bytes": 12844,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
