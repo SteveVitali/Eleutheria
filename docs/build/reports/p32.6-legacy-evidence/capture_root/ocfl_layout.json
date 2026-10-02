@@ -1,0 +1,4 @@
+{
+  "description": "Objects are addressed by three 2-char tuples of the SHA-256 of the object id, then the percent-encoded id.",
+  "extension": "0003-hash-and-id-n-tuple-storage-layout"
+}

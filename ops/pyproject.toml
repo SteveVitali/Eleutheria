@@ -15,6 +15,11 @@ dependencies = [
     # P27.8 (LAUNCH.8): the public cut-over partitions the export by licence compartment
     # (published vs restricted) using the share-alike facts in policy/data/licenses.toml.
     "sig-policy",
+    # P32.6 (SIG-TRUST-007): evidence-audit reads the mounted OCFL capture root
+    # (evidence.ocfl.OcflStore + evidence.digest multihash) and validates the
+    # typed locators the parsing contract defines (SIG-PARSE-003).
+    "sig-evidence",
+    "sig-parsing",
     "psycopg[binary]>=3.2",
     # P21.5: the Software Heritage "save code now" request (SIG-GOV-022) speaks HTTP
     # over httpx (already in the workspace); no token needed for public repos.
@@ -29,6 +34,8 @@ sig-db = { workspace = true }
 sig-api = { workspace = true }
 sig-connectors = { workspace = true }
 sig-policy = { workspace = true }
+sig-evidence = { workspace = true }
+sig-parsing = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
