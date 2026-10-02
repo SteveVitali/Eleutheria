@@ -20,16 +20,18 @@
 #     opens, so this workflow is safe to run before any HG-03 flip.
 #
 # Secrets (HG-09): any source token rides the environment only (SIG_*), never a file.
+#
+# Schedule removed 2026-10-02 (P34.4, QA-8): the hosted per-source reingestion
+# cadence is the Cloud Scheduler jobs driven from `ops/cadence.toml`
+# (`ops/gcp/scheduled-ops.sh`); the daily 05:00Z GHA cron was redundant and
+# failed every day (the daily-failure noise, G1-09). The workflow stays for
+# manual runs only; the live workflow is also disabled in GitHub by the
+# P34.4 leg (`ops/gcp/alerts.sh --apply reingest`).
 
 name: reingest
 
 on:
-  schedule:
-    # 05:00 UTC daily. The per-source cadence (`sig-orchestration due`) decides which
-    # sources actually run today; most fire far less often than daily. Daily is the
-    # scheduler's polling tick, not any source's fetch frequency.
-    - cron: "0 5 * * *"
-  # Manual trigger so an operator can drive a re-ingest on demand.
+  # Manual trigger only — the operator can still drive a re-ingest on demand.
   workflow_dispatch:
 
 concurrency:

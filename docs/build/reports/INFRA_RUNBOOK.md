@@ -117,3 +117,37 @@ QA-7 verification after the IAM change: `GET /` and `/map/` → 200 and
 `https://surveillancegraph.org` and the `sig-web` `*.run.app` URL, and the
 direct bucket URL `https://storage.googleapis.com/<project>-sig-web/index.html`
 → 403/404. Captured states land in the gitignored `docs/build/logs/protect/`.
+
+## 7. Alerts that reach a human (P34.4; SIG-OPS-006 partial, QA-3/4/5, QA-8 disable)
+
+`ops/gcp/alerts.sh` owns the five pre-authorised mutations (S5-3 11A list,
+expires GATE-G4) over the committed alert set (`ops/monitoring/*.json`,
+ADR-192). Same contract as `protect.sh`: dry-run by default, idempotent,
+window-gated (never 03:00–10:00Z; the `sig-probe` image roll additionally
+never inside an AR-3 window).
+
+| goal | command |
+|---|---|
+| print the plan (no ADC, no network) | `ops/gcp/alerts.sh --check` (bare, or per leg: `prestate\|monitoring\|reingest\|proberoll\|delivery\|jobfail`) |
+| capture pre-state JSON + sha256 (read-only, any time) | `ops/gcp/alerts.sh --apply prestate` |
+| leg A — create the TLS-expiry + SIG-ALERT policies, disable `reingest.yml`, build+roll `sig-probe` at HEAD, run the delivery test, post-state `--verify` | `ops/gcp/alerts.sh --apply all` |
+| leg B — extend the failed-job policy to `sig-probe` (self-gates: exit 42 while the re-roll's latest sweep is not green) | `ops/gcp/alerts.sh --apply jobfail` |
+| verify the outcome (live reads) | `ops/gcp/alerts.sh --verify` |
+| verify offline against recorded JSON | `ops/gcp/alerts.sh --verify --from-state <state-dir>` |
+| diff the committed defs alone | `uv run sig-ops monitoring-defs verify --live` (or `--from-state <dir>`) |
+
+Rollback per mutation (printed by the script; run manually if an interruption
+left a mid-apply state):
+
+| mutation | rollback |
+|---|---|
+| create a new alert policy (TLS-expiry / SIG-ALERT log) | `gcloud alpha monitoring policies delete <new id> --project <p>` |
+| extend the failed-job policy to `sig-probe` + rate limit | `gcloud alpha monitoring policies update 7285515107319155929 --policy-from-file=<apply-dir>/policy.7285515107319155929.prior.rendered.json` (the captured prior definition) |
+| `sig-probe` image roll | `uv run sig-ops roll-jobs --job sig-probe --image <before-digest> --apply` (the digest is in `<dir>/proberoll.record.json`) |
+| `reingest.yml` disabled | `gh workflow enable reingest.yml` (+ restore the `schedule:` block from git history if ever wanted — it stayed `workflow_dispatch`-only) |
+
+Evidence lands in the gitignored `docs/build/logs/alerts/` (pre/post captures
+with sha256s). The delivery test POSTs a synthetic `SIG-ALERT` to the
+`sig-alerts` webhook — its token is read from Secret Manager into memory only,
+never printed or persisted — and reads `SIG-ALERT-RECEIVED` back from Cloud
+Logging; the e-mail receipt itself is the operator's human check (`D-P34.4-2`).

@@ -1,0 +1,324 @@
+[
+  {
+    "_sig": {
+      "apply": "update",
+      "displayName": "SIG \u2014 Cloud SQL sig-pg disk utilization > 85%",
+      "id": "10812940548821947108",
+      "kind": "policy",
+      "source": "track0.5-live-export-2026-10-02"
+    },
+    "alertStrategy": {
+      "autoClose": "86400s"
+    },
+    "combiner": "OR",
+    "conditions": [
+      {
+        "conditionThreshold": {
+          "aggregations": [
+            {
+              "alignmentPeriod": "300s",
+              "perSeriesAligner": "ALIGN_MEAN"
+            }
+          ],
+          "comparison": "COMPARISON_GT",
+          "duration": "600s",
+          "filter": "metric.type = \"cloudsql.googleapis.com/database/disk/utilization\" AND resource.type = \"cloudsql_database\" AND resource.labels.database_id = \"sig-fixture-project:sig-pg\"",
+          "thresholdValue": 0.85,
+          "trigger": {
+            "count": 1
+          }
+        },
+        "displayName": "disk utilization > 0.85 for 10 min",
+        "name": "projects/sig-fixture-project/alertPolicies/10812940548821947108/conditions/108129405488219471080000"
+      }
+    ],
+    "creationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "displayName": "SIG \u2014 Cloud SQL sig-pg disk utilization > 85%",
+    "documentation": {
+      "content": "sig-pg disk is above 85% (15 GB disk, storage auto-resize ON with no limit). Review growth; the Round-11 plan proposes growing to 25 GB with a 40 GB cap. Created 2026-10-01 (Track 0.5).",
+      "mimeType": "text/markdown"
+    },
+    "enabled": true,
+    "mutationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "name": "projects/sig-fixture-project/alertPolicies/10812940548821947108",
+    "notificationChannels": [
+      "projects/sig-fixture-project/notificationChannels/10808426210098728267"
+    ]
+  },
+  {
+    "_sig": {
+      "apply": "update",
+      "displayName": "SIG site uptime check failing",
+      "id": "10812940548821949519",
+      "kind": "policy",
+      "source": "track0.5-live-export-2026-10-02"
+    },
+    "alertStrategy": {
+      "autoClose": "1800s"
+    },
+    "combiner": "OR",
+    "conditions": [
+      {
+        "conditionThreshold": {
+          "aggregations": [
+            {
+              "alignmentPeriod": "1200s",
+              "crossSeriesReducer": "REDUCE_COUNT_FALSE",
+              "groupByFields": [
+                "resource.labels.project_id",
+                "resource.labels.host"
+              ],
+              "perSeriesAligner": "ALIGN_NEXT_OLDER"
+            }
+          ],
+          "comparison": "COMPARISON_GT",
+          "duration": "60s",
+          "filter": "resource.type = \"uptime_url\" AND metric.type = \"monitoring.googleapis.com/uptime_check/check_passed\" AND metric.labels.check_id = \"sig-site-surveillancegraph-org-F2yZbTB73dw\"",
+          "thresholdValue": 1.0,
+          "trigger": {
+            "count": 1
+          }
+        },
+        "displayName": "check failing from >1 region",
+        "name": "projects/sig-fixture-project/alertPolicies/10812940548821949519/conditions/108129405488219495190000"
+      }
+    ],
+    "creationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "displayName": "SIG site uptime check failing",
+    "documentation": {
+      "content": "Uptime check sig-site-surveillancegraph-org-F2yZbTB73dw is failing from more than one region. Created 2026-10-01 (Track 0.5).",
+      "mimeType": "text/markdown"
+    },
+    "enabled": true,
+    "mutationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "name": "projects/sig-fixture-project/alertPolicies/10812940548821949519",
+    "notificationChannels": [
+      "projects/sig-fixture-project/notificationChannels/10808426210098728267"
+    ]
+  },
+  {
+    "_sig": {
+      "apply": "update",
+      "displayName": "SIG API uptime check failing",
+      "id": "1149999306662850342",
+      "kind": "policy",
+      "source": "track0.5-live-export-2026-10-02"
+    },
+    "alertStrategy": {
+      "autoClose": "1800s"
+    },
+    "combiner": "OR",
+    "conditions": [
+      {
+        "conditionThreshold": {
+          "aggregations": [
+            {
+              "alignmentPeriod": "1200s",
+              "crossSeriesReducer": "REDUCE_COUNT_FALSE",
+              "groupByFields": [
+                "resource.labels.project_id",
+                "resource.labels.host"
+              ],
+              "perSeriesAligner": "ALIGN_NEXT_OLDER"
+            }
+          ],
+          "comparison": "COMPARISON_GT",
+          "duration": "60s",
+          "filter": "resource.type = \"uptime_url\" AND metric.type = \"monitoring.googleapis.com/uptime_check/check_passed\" AND metric.labels.check_id = \"sig-api-health-or4_q7yICx4\"",
+          "thresholdValue": 1.0,
+          "trigger": {
+            "count": 1
+          }
+        },
+        "displayName": "check failing from >1 region",
+        "name": "projects/sig-fixture-project/alertPolicies/1149999306662850342/conditions/11499993066628503420000"
+      }
+    ],
+    "creationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "displayName": "SIG API uptime check failing",
+    "documentation": {
+      "content": "Uptime check sig-api-health-or4_q7yICx4 is failing from more than one region. Created 2026-10-01 (Track 0.5).",
+      "mimeType": "text/markdown"
+    },
+    "enabled": true,
+    "mutationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "name": "projects/sig-fixture-project/alertPolicies/1149999306662850342",
+    "notificationChannels": [
+      "projects/sig-fixture-project/notificationChannels/10808426210098728267"
+    ]
+  },
+  {
+    "_sig": {
+      "apply": "update",
+      "displayName": "SIG \u2014 Cloud Run job execution failed",
+      "id": "7285515107319155929",
+      "kind": "policy",
+      "source": "track0.5-live-export-2026-10-02"
+    },
+    "alertStrategy": {
+      "autoClose": "1800s",
+      "notificationRateLimit": {
+        "period": "86400s"
+      }
+    },
+    "combiner": "OR",
+    "conditions": [
+      {
+        "conditionThreshold": {
+          "aggregations": [
+            {
+              "alignmentPeriod": "300s",
+              "crossSeriesReducer": "REDUCE_SUM",
+              "groupByFields": [
+                "resource.labels.job_name"
+              ],
+              "perSeriesAligner": "ALIGN_SUM"
+            }
+          ],
+          "comparison": "COMPARISON_GT",
+          "duration": "0s",
+          "filter": "resource.type = \"cloud_run_job\" AND metric.type = \"run.googleapis.com/job/completed_execution_count\" AND metric.labels.result = \"failed\"",
+          "trigger": {
+            "count": 1
+          }
+        },
+        "displayName": "failed executions > 0 per job (5 min)",
+        "name": "projects/sig-fixture-project/alertPolicies/7285515107319155929/conditions/72855151073191559290000"
+      }
+    ],
+    "creationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "displayName": "SIG \u2014 Cloud Run job execution failed",
+    "documentation": {
+      "content": "A scheduled SIG Cloud Run job execution failed \u2014 including sig-probe. Check: gcloud run jobs executions list --region us-central1 --job <job_name>. sig-probe was excluded while it failed every sweep on a stale image (Track 0.5); the exclusion was lifted 2026-10-02 by P34.4 after its re-roll onto the current cadence went green. Re-notifies at most daily while an incident stays open (notificationRateLimit 86400s).",
+      "mimeType": "text/markdown"
+    },
+    "enabled": true,
+    "mutationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "name": "projects/sig-fixture-project/alertPolicies/7285515107319155929",
+    "notificationChannels": [
+      "projects/sig-fixture-project/notificationChannels/10808426210098728267"
+    ]
+  },
+  {
+    "_sig": {
+      "apply": "create",
+      "displayName": "SIG \u2014 TLS certificate expiry < 21 days (surveillancegraph.org)",
+      "id": null,
+      "kind": "policy",
+      "source": "p34.4-authored"
+    },
+    "alertStrategy": {
+      "autoClose": "604800s",
+      "notificationRateLimit": {
+        "period": "86400s"
+      }
+    },
+    "combiner": "OR",
+    "conditions": [
+      {
+        "conditionThreshold": {
+          "aggregations": [
+            {
+              "alignmentPeriod": "300s",
+              "perSeriesAligner": "ALIGN_MEAN"
+            }
+          ],
+          "comparison": "COMPARISON_LT",
+          "duration": "0s",
+          "filter": "resource.type = \"uptime_url\" AND metric.type = \"monitoring.googleapis.com/uptime_check/time_until_ssl_cert_expires\" AND resource.labels.host = \"surveillancegraph.org\"",
+          "thresholdValue": 21,
+          "trigger": {
+            "count": 1
+          }
+        },
+        "displayName": "TLS certificate expires in < 21 days",
+        "name": "projects/sig-fixture-project/alertPolicies/5500000000000000001/conditions/55000000000000000010000"
+      }
+    ],
+    "creationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "displayName": "SIG \u2014 TLS certificate expiry < 21 days (surveillancegraph.org)",
+    "documentation": {
+      "content": "The Google-managed certificate for surveillancegraph.org (sig-web-cert) expires in under 21 days. Check: gcloud compute ssl-certificates describe sig-web-cert --global --project sig-fixture-project. Created by P34.4 (QA-3) on top of the Track-0.5 uptime check that emits the metric.",
+      "mimeType": "text/markdown"
+    },
+    "enabled": true,
+    "mutationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "name": "projects/sig-fixture-project/alertPolicies/5500000000000000001",
+    "notificationChannels": [
+      "projects/sig-fixture-project/notificationChannels/10808426210098728267"
+    ]
+  },
+  {
+    "_sig": {
+      "apply": "create",
+      "displayName": "SIG \u2014 SIG-ALERT log line on sig-alerts",
+      "id": null,
+      "kind": "policy",
+      "source": "p34.4-authored"
+    },
+    "alertStrategy": {
+      "autoClose": "86400s",
+      "notificationRateLimit": {
+        "period": "86400s"
+      }
+    },
+    "combiner": "OR",
+    "conditions": [
+      {
+        "conditionMatchedLog": {
+          "filter": "resource.type = \"cloud_run_revision\" AND resource.labels.service_name = \"sig-alerts\" AND textPayload : \"SIG-ALERT\""
+        },
+        "displayName": "SIG-ALERT textPayload on sig-alerts",
+        "name": "projects/sig-fixture-project/alertPolicies/5500000000000000002/conditions/55000000000000000020000"
+      }
+    ],
+    "creationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "displayName": "SIG \u2014 SIG-ALERT log line on sig-alerts",
+    "documentation": {
+      "content": "sig-alerts emitted a SIG-ALERT line \u2014 a probe-hosted sweep reported a critical target down (or another SIG-ALERT emitter fired). Check: gcloud logging read 'resource.labels.service_name=\"sig-alerts\" AND textPayload:\"SIG-ALERT\"' --project sig-fixture-project --freshness=24h. Created by P34.4 (QA-4); the sig-alerts receiver is the SIG-ALERT webhook target (ops/src/ops/alerts.py).",
+      "mimeType": "text/markdown"
+    },
+    "enabled": true,
+    "mutationRecord": {
+      "mutateTime": "2026-10-02T12:00:00Z",
+      "mutatedBy": "ops-alerts@example.invalid"
+    },
+    "name": "projects/sig-fixture-project/alertPolicies/5500000000000000002",
+    "notificationChannels": [
+      "projects/sig-fixture-project/notificationChannels/10808426210098728267"
+    ]
+  }
+]

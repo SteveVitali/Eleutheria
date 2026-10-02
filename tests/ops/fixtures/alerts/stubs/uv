@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Offline `uv` stub for ops/gcp/alerts.sh tests (P34.4). Translates
+#   uv run sig-ops <args>  ->  python3 -m ops <args>   (PYTHONPATH=ops/src)
+#   uv run python  <args>  ->  python3 <args>          (PYTHONPATH=ops/src)
+# so the real ops modules run over the stubbed gcloud/gh. @REPO_ROOT@ is
+# substituted by the test harness. Logged to $UV_STUB_LOG.
+printf 'uv %s\n' "$*" >> "${UV_STUB_LOG:-/dev/null}"
+export PYTHONPATH="@REPO_ROOT@/ops/src"
+if [ "$1" = "run" ]; then shift; fi
+case "$1" in
+  sig-ops) shift; exec python3 -m ops "$@" ;;
+  python) shift; exec python3 "$@" ;;
+esac
+echo "uv stub: unhandled argv: $*" >&2
+exit 3

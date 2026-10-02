@@ -1,0 +1,20 @@
+[
+  {
+    "creationRecord": {
+      "mutateTime": "2026-10-01T00:08:05.828264416Z"
+    },
+    "description": "Operator-approved 2026-09-30: minimal alerting to the operator",
+    "displayName": "SIG operator email (Track 0.5)",
+    "enabled": true,
+    "labels": {
+      "email_address": "ops-alerts@example.invalid"
+    },
+    "mutationRecords": [
+      {
+        "mutateTime": "2026-10-01T00:08:05.828264416Z"
+      }
+    ],
+    "name": "projects/sig-fixture-project/notificationChannels/10808426210098728267",
+    "type": "email"
+  }
+]

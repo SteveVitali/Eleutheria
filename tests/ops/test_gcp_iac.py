@@ -35,6 +35,7 @@ SHELL_SCRIPTS = [
     "export.sh",
     "web.sh",
     "protect.sh",
+    "alerts.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -46,6 +47,7 @@ EXECUTABLE_SCRIPTS = [
     "export.sh",
     "web.sh",
     "protect.sh",
+    "alerts.sh",
 ]
 
 

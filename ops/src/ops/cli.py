@@ -593,6 +593,41 @@ def build_parser() -> argparse.ArgumentParser:
     alert_cmd.add_argument("--severity", default="critical", choices=["warn", "alarm", "critical"])
     alert_cmd.add_argument("--message", required=True, help="human-readable alert text")
 
+    mdefs = sub.add_parser(
+        "monitoring-defs",
+        help="P34.4 (QA-3/QA-4/QA-5): the committed Cloud Monitoring alert set in "
+        "ops/monitoring/*.json — list the definitions, verify them against the live "
+        "project (or a --from-state capture), or render a policy body for "
+        "`gcloud monitoring policies create|update --policy-from-file`",
+    )
+    msub = mdefs.add_subparsers(dest="monitoring_defs_command")
+    mverify = msub.add_parser(
+        "verify",
+        help="read-only diff: OK/DRIFT/MISSING per declared resource + EXTRA for "
+        "undeclared live ones; exit 1 on any non-OK (P35.3-probe shape)",
+    )
+    mverify.add_argument("--defs", default=None, help="definitions dir (default: ops/monitoring)")
+    mvsrc = mverify.add_mutually_exclusive_group(required=True)
+    mvsrc.add_argument("--live", action="store_true", help="read the live project (gcloud * list)")
+    mvsrc.add_argument(
+        "--from-state",
+        default=None,
+        help="a capture dir with channels.json + uptime-checks.json + alert-policies.json",
+    )
+    mverify.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    mlist = msub.add_parser("list", help="print the declared resources (offline)")
+    mlist.add_argument("--defs", default=None, help="definitions dir (default: ops/monitoring)")
+    mrender = msub.add_parser(
+        "render",
+        help="print a policy def's REST body (project substituted) — the "
+        "--policy-from-file payload",
+    )
+    mrender.add_argument("--defs", default=None, help="definitions dir (default: ops/monitoring)")
+    mrender.add_argument(
+        "--slug", required=True, help="file stem, e.g. alert-policy.tls-cert-expiry"
+    )
+    mrender.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+
     dash = sub.add_parser(
         "dashboard",
         help="render the observability readout (markdown) from the recorded state",
@@ -2030,6 +2065,97 @@ def _cmd_roll_jobs(args: argparse.Namespace) -> int:
     return 0
 
 
+def _monitoring_defs_dir(args: argparse.Namespace) -> Path:
+    if args.defs:
+        return Path(args.defs)
+    return Path(__file__).resolve().parents[2] / "monitoring"
+
+
+def _monitoring_defs_live(project: str) -> dict[str, list]:
+    """Read the live alert set — list verbs only, never a mutating call."""
+    from .job_roll import RollError, gcloud_cli
+
+    def _list(args: list[str]) -> list:
+        out = gcloud_cli([*args, f"--project={project}", "--format=json"])
+        return json.loads(out)
+
+    try:
+        return {
+            "channels": _list(["beta", "monitoring", "channels", "list"]),
+            "uptime_checks": _list(["monitoring", "uptime", "list-configs"]),
+            "policies": _list(["alpha", "monitoring", "policies", "list"]),
+        }
+    except RollError as exc:
+        print(f"monitoring-defs verify: live read failed: {exc}", file=sys.stderr)
+        raise
+
+
+def _cmd_monitoring_defs(args: argparse.Namespace) -> int:
+    """The committed alert set: list / render / verify (P34.4)."""
+    from .monitoring_defs import (
+        DefsError,
+        format_findings,
+        infer_project,
+        load_definitions,
+        load_live_dir,
+        render_policy_body,
+        verify_definitions,
+        verify_exit_code,
+    )
+
+    defs_dir = _monitoring_defs_dir(args)
+    try:
+        defs = load_definitions(defs_dir)
+    except DefsError as exc:
+        print(f"monitoring-defs: {exc}", file=sys.stderr)
+        return 2
+    cmd = args.monitoring_defs_command
+    if cmd == "list":
+        for d in defs:
+            print(f"{d.kind}/{d.slug} apply={d.apply} id={d.rid or '-'} {d.display_name}")
+        return 0
+    project = args.project or os.environ.get("SIG_GCP_PROJECT", "")
+    if cmd == "render":
+        if not project:
+            print(
+                "monitoring-defs render: --project / SIG_GCP_PROJECT is required",
+                file=sys.stderr,
+            )
+            return 2
+        for d in defs:
+            if d.slug == args.slug:
+                print(json.dumps(render_policy_body(d, project), indent=2, sort_keys=True))
+                return 0
+        print(f"monitoring-defs render: no policy def slug {args.slug!r}", file=sys.stderr)
+        return 2
+    if cmd == "verify":
+        if args.live and not project:
+            print(
+                "monitoring-defs verify --live: --project / SIG_GCP_PROJECT is required",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            live = _monitoring_defs_live(project) if args.live else load_live_dir(args.from_state)
+        except Exception as exc:
+            print(f"monitoring-defs verify: {exc}", file=sys.stderr)
+            return 2
+        if not project:
+            project = infer_project(live)
+        if not project:
+            print(
+                "monitoring-defs verify: --project / SIG_GCP_PROJECT required "
+                "(the capture carries no projects/<id>/ name to infer it from)",
+                file=sys.stderr,
+            )
+            return 2
+        findings = verify_definitions(defs, live, project)
+        print(format_findings(findings))
+        return verify_exit_code(findings)
+    print("monitoring-defs: a subcommand is required (list|render|verify)", file=sys.stderr)
+    return 2
+
+
 def _cmd_sink_bench(args: argparse.Namespace) -> int:
     """Time real-source PgClaimSink passes (P31.3 / ADR-110, the hosted measurement)."""
     import tempfile
@@ -2677,6 +2803,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_alerts(args)
     if args.command == "alert":
         return _cmd_alert(args)
+    if args.command == "monitoring-defs":
+        return _cmd_monitoring_defs(args)
     if args.command == "dashboard":
         return _cmd_dashboard(args)
     if args.command == "evidence-audit":

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Offline `curl` stub for ops/gcp/alerts.sh tests (P34.4). Records the target URL
+# (never the body or headers — a Bearer token in argv must not be persisted) to
+# $CURL_STUB_LOG, honours -o and -w enough for the delivery read-back.
+url=""
+out=""
+prev=""
+for a in "$@"; do
+  case "$prev" in
+    -o) out="$a" ;;
+    POST) url="$a" ;;
+  esac
+  prev="$a"
+  case "$a" in http*) url="$a" ;; esac
+done
+printf '%s\n' "$url" >> "${CURL_STUB_LOG:-/dev/null}"
+[ -n "$out" ] && printf '{}\n' > "$out"
+printf 'HTTP 200\n'
