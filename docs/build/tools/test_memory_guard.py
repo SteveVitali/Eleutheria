@@ -137,6 +137,7 @@ updatedAt:       2026-09-27T12:00:00Z
 ```
 
 ## OPEN FINDINGS
+- **F-1** first finding
 - none
 
 ## GATE DECISIONS
@@ -161,6 +162,7 @@ updatedAt:       2026-09-27T12:00:00Z
 ## PHASE LOG — Round 1
 - 2026-09-26 — GATE-G1 pause — waiting for the operator
 - 2026-09-27 — T1 done — demo/t1 · PR #1
+- 2026-09-27 — T9 planned — demo/t9 · PR pending
 """
 
 DEFERRALS = """# Deferrals
@@ -175,10 +177,12 @@ INDEX = """# Build index
 | seq | ticket | kind | branch | PR | base | landed | adr | deferrals | live | evidence |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 01 | T1 | ticket | demo/t1 | #1 | main | 2026-09-27 | — | — | n-a | runs/T1.md |
+| 90 | T9 | ticket | demo/t9 | #TBD | main | 2026-09-27 | — | — | n-a | runs/T9.md |
 """
 
 READOUT = """# GATE-G2 readout
 Status: PENDING
+Disposition: <pending>
 
 > An operator or authorized human record supplies the decision; an agent must not sign or assume silence is
 > approval.
@@ -262,7 +266,7 @@ def repo(tmp_path: Path) -> Path:
         r,
         "docs/build/runs/T1.md",
         "# Run ledger — T1\n\n- **Started:** 2026-09-27T10:00:00Z\n"
-        "- **Closed:** 2026-09-27T11:00:00Z\n- **PR:** #1\n",
+        "- **Closed:** 2026-09-27T11:00:00Z\n- **PR:** #1\n- **ci:** <pending>\n",
     )
     write(r, "docs/tickets/00_MANIFEST.md", MANIFEST)
     write(r, "docs/tickets/01_T1__demo.md", "# T1 — demo\n\n## Acceptance\n- it works\n")
@@ -301,10 +305,12 @@ def _have(sha: str) -> bool:
     return not shallow and ok.returncode == 0
 
 
-def replay(sha: str, tmp_path: Path) -> tuple[int, dict, str]:
+def replay(
+    sha: str, tmp_path: Path, now: str = "2026-10-01T08:00:00Z"
+) -> tuple[int, dict, str]:
     if not _have(sha):
         pytest.skip(f"{sha} not in this clone (shallow or rewritten history)")
-    return run_guard(ROOT, "all", "--first-parent", sha, now="2026-10-01T08:00:00Z", tmp=tmp_path)
+    return run_guard(ROOT, "all", "--first-parent", sha, now=now, tmp=tmp_path)
 
 
 @pytest.mark.parametrize("sha", ["c2055d96", "e2175c93"])
@@ -388,6 +394,16 @@ def test_oracle_4a921bb9_restoration_passes_and_blames_r37_r40(tmp_path: Path) -
     false_rows = {r["row"] for r in doc["restored"] if r["verdict"] != "ok"}
     assert false_rows == {"R37", "R38", "R39", "R40"}
     assert all(r["annotated"] for r in doc["restored"] if r["verdict"] != "ok")
+
+
+@pytest.mark.parametrize("sha", ["f68a3c96", "4b346d51"])
+def test_oracle_seed_commits_pass(sha: str, tmp_path: Path) -> None:
+    """The Stage-B seed commits must pass the full-mode guard — SEED-15 (`f68a3c96`) re-homes
+    deferral rows with their text preserved and SEED-12c (`4b346d51`) stamps DRAFT-* placeholders
+    with their final SIG-MEM-* ids and appends ADR clarification/status sections; both are the
+    sanctioned shapes the modes exist to allow."""
+    rc, doc, out = replay(sha, tmp_path, now="2026-10-03T00:00:00Z")
+    assert rc == 0, out
 
 
 def test_blame_mode_on_the_real_c2055d96_rows(tmp_path: Path) -> None:
@@ -548,7 +564,7 @@ def test_exempt_return_pass_current_is_not_judged_but_the_old_table_is(repo: Pat
     )
     git(repo, "commit", "-qam", "rewrite old table", date=T_CHANGE)
     rc2, doc2, _ = run_guard(repo, "all", "--first-parent", "HEAD")
-    assert rc2 == 1 and ("append-only", "append-only", "docs/build/LEDGER.md") in rules(doc2)
+    assert rc2 == 1 and ("append-only", "row-annotate", "docs/build/LEDGER.md") in rules(doc2)
 
 
 def test_deferrals_rewrite_flip_and_dated_flip(repo: Path) -> None:
@@ -642,11 +658,15 @@ def test_body_closed_line_is_not_a_header_stamp_d7cbc68e_shape(repo: Path) -> No
     rc, doc, out = judge(repo)
     assert rc == 0, out
     assert counts(doc)["record-dates"] == (1, 1)
-    # not closed (no dated header stamp): it may still be edited in place
+    # not closed (no dated header stamp): the ledger is still append-only — a body
+    # `Closed:` line is content, not the header stamp-fill position, so rewriting it
+    # in place is a removal the sanctioned modes do not cover (register: 7671b511)
     replace(repo, "docs/build/runs/T2.md", "- **Closed:** none.", "- **Closed:** D-T1-1.")
     git(repo, "commit", "-qam", "edit open run ledger", date=T_CHANGE)
     rc2, doc2, out2 = run_guard(repo, "all", "--first-parent", "HEAD")
-    assert rc2 == 0 and counts(doc2)["append-only"][1] == 2, out2
+    assert rc2 == 1 and ("append-only", "append-only", "docs/build/runs/T2.md") in rules(
+        doc2
+    ), out2
 
 
 def test_executed_contract_takes_only_amended_notes(repo: Path) -> None:
@@ -1616,3 +1636,531 @@ def test_stamp_parser() -> None:
     off = mg.parse_stamp("2026-09-27T23:30:00-04:00")
     assert off is not None and mg.utc_iso(off.epoch) == "2026-09-28T03:30:00Z"
     assert mg.parse_stamp("2026-13-40") is None
+
+
+# ── P34.7 (M1): remaining-mode fixtures — a passing and a failing diff per mode ──
+
+
+def test_row_annotate_open_findings_bullet_grown_passes(repo: Path) -> None:
+    """`row-annotate` (B2 §7): an OPEN FINDINGS bullet may be rewritten only to grow — the
+    id-matched old text stays inside the new line (strike-through is transparent)."""
+    replace(
+        repo,
+        "docs/build/LEDGER.md",
+        "- **F-1** first finding\n",
+        "- **F-1** ~~first finding~~ first finding — annotated 2026-09-28: cleared by T2\n",
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_row_annotate_bullet_without_an_id_cannot_be_rewritten(repo: Path) -> None:
+    """A bullet with no `**id**` has no id-matched counterpart — rewriting it is a removal."""
+    replace(
+        repo,
+        "docs/build/LEDGER.md",
+        "- none\n",
+        "- ~~none~~ none — annotated 2026-09-28: still none\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("append-only", "row-annotate", "docs/build/LEDGER.md") in rules(doc)
+
+
+def test_row_annotate_return_pass_contained_annotation_passes(repo: Path) -> None:
+    replace(
+        repo,
+        "docs/build/LEDGER.md",
+        "| T9 | G9 | wait | rerun |",
+        "| T9 | G9 | ~~wait~~ done 2026-09-28 (chat) | rerun |",
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_placeholder_fill_phase_log_pr_pending_passes(repo: Path) -> None:
+    """`placeholder-fill` (B2 §7): a PHASE LOG bullet's `PR pending` field fills with the real PR
+    at closeout — every other byte is identical."""
+    replace(repo, "docs/build/LEDGER.md", "· PR pending", "· PR #9")
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_placeholder_fill_a_real_field_is_not_fillable(repo: Path) -> None:
+    replace(repo, "docs/build/LEDGER.md", "· PR #1", "· PR #5")
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("append-only", "append-only", "docs/build/LEDGER.md") in rules(doc)
+
+
+def test_placeholder_fill_index_pr_cell_passes(repo: Path) -> None:
+    replace(repo, "docs/build/BUILD_INDEX.md", "| #TBD |", "| #7 |")
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_placeholder_fill_index_other_cell_fails(repo: Path) -> None:
+    replace(repo, "docs/build/BUILD_INDEX.md", "| T9 | ticket |", "| T9 | issue |")
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("append-only", "append-only", "docs/build/BUILD_INDEX.md") in rules(doc)
+
+
+def test_placeholder_fill_readout_disposition_passes(repo: Path) -> None:
+    replace(
+        repo, "docs/build/readouts/GATE-G2.md", "Disposition: <pending>", "Disposition: signed"
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["readouts"][1] > 0
+
+
+def test_placeholder_fill_readout_other_line_fails(repo: Path) -> None:
+    replace(
+        repo,
+        "docs/build/readouts/GATE-G2.md",
+        "- [ ] the demo is green",
+        "- [x] the demo is green",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("readouts", "readout", "docs/build/readouts/GATE-G2.md") in rules(doc)
+
+
+SWEEP = "# demo report\n\n## P9.9 demo sweep (2026-09-27)\n\n- finding one\n"
+
+
+def test_frozen_snapshot_late_insert_fails(repo: Path) -> None:
+    """`frozen-snapshot` (B2 §7): a `##` heading carrying a date and 'sweep'/'snapshot'/'as of'
+    is frozen by the commit that created it — a later insertion inside fails."""
+    write(repo, "docs/build/reports/demo-sweep.md", SWEEP)
+    commit(repo, "2026-09-27T20:00:00Z", "P9.9 sweep")
+    replace(
+        repo,
+        "docs/build/reports/demo-sweep.md",
+        "- finding one\n",
+        "- finding one\n- smuggled in later\n",
+    )
+    commit(repo)
+    rc, doc, _ = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 1 and (
+        "append-only",
+        "frozen-snapshot",
+        "docs/build/reports/demo-sweep.md",
+    ) in rules(doc)
+
+
+def test_frozen_snapshot_new_dated_section_appended_after_it_passes(repo: Path) -> None:
+    """A new dated section appended after a frozen tail region is a new region, not an edit of
+    the snapshot — the sanctioned correction shape (the 412cb337 append)."""
+    write(repo, "docs/build/reports/demo-sweep.md", SWEEP)
+    commit(repo, "2026-09-27T20:00:00Z", "P9.9 sweep")
+    append(
+        repo,
+        "docs/build/reports/demo-sweep.md",
+        "\n## P9.10 follow-up sweep (2026-09-28)\n\n- finding two\n",
+    )
+    commit(repo)
+    rc, doc, out = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_frozen_snapshot_tail_append_without_a_heading_is_inside(repo: Path) -> None:
+    """Bare lines appended at EOF still extend the frozen tail region — only an appended heading
+    opens a new section."""
+    write(repo, "docs/build/reports/demo-sweep.md", SWEEP)
+    commit(repo, "2026-09-27T20:00:00Z", "P9.9 sweep")
+    append(repo, "docs/build/reports/demo-sweep.md", "- finding two, sneaked at EOF\n")
+    commit(repo)
+    rc, doc, _ = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 1 and (
+        "append-only",
+        "frozen-snapshot",
+        "docs/build/reports/demo-sweep.md",
+    ) in rules(doc)
+
+
+def test_frozen_after_close_correction_section_passes(repo: Path) -> None:
+    """`frozen-after-close` (B2 §7): a run ledger with a dated Closed: stamp takes only
+    placeholder fills and appended `## Correction` sections."""
+    append(
+        repo,
+        "docs/build/runs/T1.md",
+        "\n## Correction\n\n- 2026-09-28 — the run's PR cell names #1.\n",
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_frozen_after_close_placeholder_fill_passes(repo: Path) -> None:
+    replace(repo, "docs/build/runs/T1.md", "- **ci:** <pending>", "- **ci:** green 2026-09-28")
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_frozen_after_close_other_section_append_fails(repo: Path) -> None:
+    append(repo, "docs/build/runs/T1.md", "\n## Notes\n\n- 2026-09-28 — extra\n")
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and (
+        "append-only",
+        "frozen-after-close",
+        "docs/build/runs/T1.md",
+    ) in rules(doc)
+
+
+def test_frozen_after_close_mid_file_insert_fails(repo: Path) -> None:
+    replace(
+        repo,
+        "docs/build/runs/T1.md",
+        "- **PR:** #1\n",
+        "- **PR:** #1\n- inserted after close\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("append-only", "append-position", "docs/build/runs/T1.md") in rules(doc)
+
+
+def test_gate_status_fill_in_the_executing_commit_passes(repo: Path) -> None:
+    """`frozen-after-execution` (B2 §7): a contract is frozen once execution starts, but the
+    commit whose subject begins the ticket may also fill the `Gate status:` line."""
+    write(
+        repo,
+        "docs/tickets/02_T7__gate.md",
+        "# T7 — gated demo\n\n- **Gate status:** <pending>\n\n## Acceptance\n- green\n",
+    )
+    commit(repo, "2026-09-27T20:00:00Z", "add the T7 contract")
+    replace(
+        repo,
+        "docs/tickets/02_T7__gate.md",
+        "- **Gate status:** <pending>",
+        "- **Gate status:** answered 2026-09-28 (operator, chat)",
+    )
+    commit(repo, msg="T7 gate — execution starts")
+    rc, doc, out = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 0, out
+    assert counts(doc)["append-only"][1] > 0
+
+
+def test_gate_status_fill_after_the_executing_commit_fails(repo: Path) -> None:
+    write(
+        repo,
+        "docs/tickets/02_T7__gate.md",
+        "# T7 — gated demo\n\n- **Gate status:** <pending>\n\n## Acceptance\n- green\n",
+    )
+    commit(repo, "2026-09-27T20:00:00Z", "add the T7 contract")
+    append(repo, "docs/build/LEDGER.md", PL_OK)
+    commit(repo, msg="T7 gate — execution starts")
+    replace(
+        repo,
+        "docs/tickets/02_T7__gate.md",
+        "- **Gate status:** <pending>",
+        "- **Gate status:** answered 2026-09-28 (operator, chat)",
+    )
+    commit(repo, msg="T7 later commit")
+    rc, doc, _ = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 1 and ("append-only", "frozen", "docs/tickets/02_T7__gate.md") in rules(doc)
+
+
+def test_living_head_archive_one_byte_off_fails(repo: Path) -> None:
+    """B4 G2 fixture: a `living-archived` archive that differs by one byte does not cover the
+    removed head — the bytes must match."""
+    write(
+        repo,
+        "docs/build/reports/memory-repair/LEDGER_head.txt",
+        "# demo — build ledger!\n",  # one byte off
+    )
+    replace(
+        repo,
+        "docs/build/LEDGER.md",
+        "# demo — build ledger\n",
+        "# demo — build ledger (slim)\n"
+        "<!-- archived: docs/build/reports/memory-repair/LEDGER_head.txt -->\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("append-only", "living-archived", "docs/build/LEDGER.md") in rules(doc)
+
+
+_EV = (
+    '{{"schema":"obligation-event/1","event_id":"{eid}","kind":"{kind}","obligation_id":'
+    '"{oid}","seq":{seq},"expected_previous_event":{epe},"from_status":"OPEN","to_status":'
+    '"{to}","ticket_id":"T9","owner":"—","landing":"—","backlog_home":"—","evidence_refs":[],'
+    '"observed_at":"2026-09-28","recorded_at":"2026-09-28","source_commit":"x","reason":"t"}}'
+)
+
+
+def _ev(eid: str, oid: str = "D-T9-1", kind: str = "transition", seq: int = 1, epe: str = '"x"', to: str = "DONE") -> str:
+    return _EV.format(eid=eid, oid=oid, kind=kind, seq=seq, epe=epe, to=to) + "\n"
+
+
+def test_jsonl_chained_transition_passes(repo: Path) -> None:
+    """`prefix` (B2 §7): an appended migration anchors a new obligation; a transition chains on
+    its event via expected_previous_event."""
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T9-1:e0", kind="migration", seq=0, epe="null", to="OPEN")
+        + _ev("D-T9-1:e1", epe='"D-T9-1:e0"'),
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["record-dates"][1] > 0
+
+
+def test_jsonl_transition_without_previous_event_fails(repo: Path) -> None:
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T9-1:e0", kind="migration", seq=0, epe="null", to="OPEN")
+        + _ev("D-T9-1:e1", epe="null"),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and (
+        "append-only",
+        "chain",
+        "docs/build/reports/obligations/events.jsonl",
+    ) in rules(doc)
+
+
+def test_jsonl_transition_chaining_the_wrong_event_fails(repo: Path) -> None:
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T9-1:e0", kind="migration", seq=0, epe="null", to="OPEN")
+        + _ev("D-T9-1:e1", epe='"D-T9-1:e9"'),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and (
+        "append-only",
+        "chain",
+        "docs/build/reports/obligations/events.jsonl",
+    ) in rules(doc)
+
+
+def test_jsonl_invalid_record_and_unknown_schema_fail(repo: Path) -> None:
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        '{"schema": "mystery/9"}\nnot-json\n',
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = [r for r in rules(doc) if r[:2] == ("append-only", "schema")]
+    assert rc == 1 and len(got) == 2, got
+
+
+def test_jsonl_event_missing_a_schema_field_fails(repo: Path) -> None:
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        '{"schema":"obligation-event/1","event_id":"D-T9-1:e0","kind":"migration"}\n',
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and (
+        "append-only",
+        "schema",
+        "docs/build/reports/obligations/events.jsonl",
+    ) in rules(doc)
+
+
+def test_jsonl_migration_re_anchor_fails(repo: Path) -> None:
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T9-1:e0", kind="migration", seq=0, epe="null", to="OPEN")
+        + _ev("D-T9-1:e9", kind="migration", seq=9, epe="null", to="OPEN"),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and (
+        "append-only",
+        "chain",
+        "docs/build/reports/obligations/events.jsonl",
+    ) in rules(doc)
+
+
+def test_jsonl_placeholder_fill_mid_file_passes(repo: Path) -> None:
+    """A `PENDING-COMMIT-SHA` token stamped with the landed sha is a declared placeholder fill,
+    not a prefix violation (e.g. the seed writes a record before its sha exists)."""
+    write(
+        repo,
+        "docs/build/reports/demo.jsonl",
+        '{"id":1,"recorded_at":"2026-09-28T00:00:00Z","source_commit":"PENDING-COMMIT-SHA"}\n',
+    )
+    commit(repo)
+    replace(
+        repo,
+        "docs/build/reports/demo.jsonl",
+        '"source_commit":"PENDING-COMMIT-SHA"',
+        '"source_commit":"0123456789abcdef"',
+    )
+    commit(repo)
+    rc, doc, out = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 0, out
+
+
+def test_chain_id_rebound_to_another_slug_fails(repo: Path) -> None:
+    """Chain-id registry (B4 G2 amendment 4): an id that ever appeared in the manifest chain
+    table never re-binds to a different file slug (the 32bea406 / P23.1–P23.7 shape)."""
+    replace(
+        repo,
+        "docs/tickets/00_MANIFEST.md",
+        "| 01 | `01_T1__demo.md` |",
+        "| 01 | `01_T1__demo.md` |\n| 02 | `02_T1__other-slug.md` |",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("record-shape", "id-registry", "docs/tickets/00_MANIFEST.md") in rules(doc)
+
+
+def test_chain_registry_is_cached_in_the_report(repo: Path) -> None:
+    """The chain-id scan result is recorded in the report (`extra.chain_registry`) so a caller can
+    audit what history the registry covered (B4 G2 amendment 4)."""
+    replace(
+        repo,
+        "docs/tickets/00_MANIFEST.md",
+        "| 01 | `01_T1__demo.md` |",
+        "| 01 | `01_T1__demo.md` |\n| 02 | `02_T2__next.md` |",
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    reg = doc.get("extra", {}).get("chain_registry")
+    assert reg and reg["ids"] >= 2 and reg["rebinds"] == [] and "git log" in reg["scan"]
+
+
+# ── replay + oracle comparison (B4 §G2) ─────────────────────────────────────
+
+
+def _oracle_csv(path: Path, rows: list[tuple[str, ...]]) -> str:
+    p = path / "oracle.csv"
+    with p.open("w", encoding="utf-8", newline="") as fh:
+        fh.write("kind,commit,path,check,rule,source,note\n")
+        for r in rows:
+            fh.write(",".join(r) + "\n")
+    return str(p)
+
+
+def test_replay_oracle_flags_expected_and_passes_clean(repo: Path, tmp_path: Path) -> None:
+    """Replay compares every first-parent commit against the expected set: the register-style
+    violation row is flagged, the clean row passes, exit 0."""
+    # a clean append (PHASE LOG entry) — judged and expected clean
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    good = commit(repo, T_CHANGE, "clean append")
+    # a violation commit: a DEFERRALS row rewritten in place (post-obligation-ledger era)
+    replace(repo, "docs/tickets/DEFERRALS.md", "| D-T1-1 |", "| D-T1-2 |")
+    bad = commit(repo, "2026-09-28T05:00:00Z", "row rewritten")
+    oracle = _oracle_csv(
+        tmp_path,
+        [
+            ("clean", good[:8], "docs/build/LEDGER.md", "append-only", "*", "test", ""),
+            ("violation", bad[:8], "docs/tickets/DEFERRALS.md", "*", "*", "test", ""),
+        ],
+    )
+    rc, doc, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD", "--oracle", oracle)
+    assert rc == 0, out
+    assert doc["judged"] == 2 and doc["disagreements"]["missing"] == []
+
+
+def test_replay_oracle_missed_expectation_fails(repo: Path, tmp_path: Path) -> None:
+    """An expected violation the replay does not flag is a miss — never silently re-baselined."""
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    head = commit(repo, T_CHANGE, "clean append")
+    oracle = _oracle_csv(
+        tmp_path,
+        [("violation", head[:8], "docs/build/LEDGER.md", "*", "*", "test", "")],
+    )
+    rc, doc, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD", "--oracle", oracle)
+    assert rc == 1 and doc["disagreements"]["missing"], out
+
+
+def test_replay_oracle_unexpected_finding_fails(repo: Path, tmp_path: Path) -> None:
+    """A flagged cell outside the expected set is a disagreement — benign rows may not flag."""
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    commit(repo, T_CHANGE, "clean append")
+    replace(repo, "docs/tickets/DEFERRALS.md", "| D-T1-1 |", "| D-T1-2 |")
+    bad = commit(repo, "2026-09-28T05:00:00Z", "row rewritten")
+    oracle = _oracle_csv(
+        tmp_path,
+        [("clean", bad[:8], "docs/tickets/DEFERRALS.md", "append-only", "*", "test", "")],
+    )
+    rc, doc, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD", "--oracle", oracle)
+    assert rc == 1 and doc["disagreements"]["unexpected"], out
+
+
+def test_replay_oracle_waived_row_withdraws_expectation(repo: Path, tmp_path: Path) -> None:
+    """A `source=reviewed` `waived` row withdraws the derived expectation it matches on
+    (commit, path, check-or-*): the register's claim and the adjudication sit side by side
+    in the file, and the waived expectation is neither missed nor asserted."""
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    head = commit(repo, T_CHANGE, "clean append")
+    oracle = _oracle_csv(
+        tmp_path,
+        [
+            ("violation", head[:8], "docs/build/LEDGER.md", "*", "*", "test", ""),
+            (
+                "waived",
+                head[:8],
+                "docs/build/LEDGER.md",
+                "*",
+                "*",
+                "reviewed",
+                "register attribution reviewed — nothing added here to flag",
+            ),
+        ],
+    )
+    rc, doc, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD", "--oracle", oracle)
+    assert rc == 0, out
+    assert doc["disagreements"]["missing"] == []
+
+
+def test_replay_oracle_waive_needs_reviewed_source(repo: Path, tmp_path: Path) -> None:
+    """A `waived` row without `source=reviewed` cannot withdraw an expectation — the waiver
+    is a review artifact, not another derived row."""
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    head = commit(repo, T_CHANGE, "clean append")
+    oracle = _oracle_csv(
+        tmp_path,
+        [
+            ("violation", head[:8], "docs/build/LEDGER.md", "*", "*", "test", ""),
+            ("waived", head[:8], "docs/build/LEDGER.md", "*", "*", "test", ""),
+        ],
+    )
+    rc, doc, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD", "--oracle", oracle)
+    assert rc == 1 and doc["disagreements"]["missing"], out
+
+
+def test_replay_empty_span_is_vacuous(repo: Path, tmp_path: Path) -> None:
+    """A vacuous replay — an empty span judged nothing — exits 3, never green."""
+    head = git(repo, "rev-parse", "HEAD").strip()
+    rc, _, out = run_guard(repo, "replay", f"{head}..{head}")
+    assert rc == 3, out
+
+
+def test_replay_all_vacuous_span_is_never_green(repo: Path, tmp_path: Path) -> None:
+    """A replay over a non-empty span that evaluated nothing at all — the only commit's
+    record dates are all unparseable — exits 3: a replay that proves nothing is not green
+    (SIG-ENG-042)."""
+    append(repo, "docs/build/LEDGER.md", "- T2 done — demo/t2 · PR #2 (no date)\n")
+    commit(repo, T_CHANGE, "undated phase-log entry")
+    rc, _, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD")
+    assert rc == 3 and "vacuous" in out, out
