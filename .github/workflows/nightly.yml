@@ -34,6 +34,10 @@ concurrency:
 
 permissions:
   contents: read
+  # P34.2 (G3b): the recorded-CI verifier stage reads workflow runs and
+  # check-runs through `gh api` — read-only, never a mutation.
+  actions: read
+  checks: read
 
 # Workflow-level `bash` = `bash --noprofile --norc -eo pipefail` on the runner
 # (SIG-ENG-046, P34.1): every `| tee` below then reports the LEFT side's failure —
@@ -101,6 +105,29 @@ jobs:
         continue-on-error: true
         run: bash scripts/ci/dep_audit.sh 2>&1 | tee dep-audit.txt
 
+      # The npm advisory audit runs FULL-tree nightly (P34.2): the per-PR gate
+      # is production-only (`--omit=dev`), so dev-toolchain advisories are
+      # judged here against the committed, dated allow-list
+      # (record_policy/npm_audit_allow.toml). `--full` runs both audits and
+      # cross-checks that every `dev-only` entry really is unreachable from
+      # production deps — an entry that lies about its scope blocks.
+      - name: npm advisory audit (full tree, dated allow-list gate)
+        id: npm
+        continue-on-error: true
+        run: bash scripts/ci/npm_audit_gate.sh --full --out . 2>&1 | tee npm-audit.txt
+
+      # G3b nightly scope (P34.2, SIG-MEM-007): verify EVERY recorded `ci:` line
+      # — every Round-11 PHASE LOG entry and the run ledgers they name — against
+      # the live GitHub records, so "green" stays auditable after the fact. A
+      # `done` entry without a verifiable `ci:` field is red; an unreadable
+      # GitHub response is UNKNOWN, never green.
+      - name: Recorded-CI verifier (all Round-11 records vs GitHub)
+        id: recordedci
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 docs/build/tools/verify_recorded_ci.py --all 2>&1 | tee recorded-ci.txt
+
       # The report is ALSO the gate: it writes nightly-report.md, then exits
       # non-zero if any stage outcome was not success — the upload below still
       # runs (if: always()), so the red nightly carries its own evidence.
@@ -110,8 +137,10 @@ jobs:
           uv run python scripts/ci/nightly_report.py --out nightly-report.md
           e2e=${{ steps.e2e.outcome }} secrets=${{ steps.secrets.outcome }}
           licenses=${{ steps.licenses.outcome }} depaudit=${{ steps.depaudit.outcome }}
+          npm=${{ steps.npm.outcome }} recordedci=${{ steps.recordedci.outcome }}
           --log e2e=nightly-e2e.txt --log secrets=secret-scan.txt
           --log licenses=license-scan.txt --log depaudit=dep-audit.txt
+          --log npm=npm-audit.txt --log recordedci=recorded-ci.txt
 
       - name: Upload the nightly report + stage logs
         if: always()
@@ -125,4 +154,8 @@ jobs:
             secret-scan.txt
             license-scan.txt
             dep-audit.txt
+            npm-audit.txt
+            npm-audit.json
+            npm-audit-prod.json
+            recorded-ci.txt
           if-no-files-found: warn

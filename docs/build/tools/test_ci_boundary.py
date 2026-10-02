@@ -5,8 +5,9 @@
 """Tests for ``ci_boundary.py`` (G3a; Round 11 Stage B, SEED-02b; B4 G3a, H2 §4).
 
 Every test runs the real CLI against a **stubbed ``gh``**: a small script (written per test into
-``tmp_path``) that answers ``gh pr view`` / ``gh pr list`` / ``gh api …/check-runs`` / ``gh run list``
-from a JSON fixture and logs every call. No network is touched. Each test asserts a verdict, a recorded
+``tmp_path``) that answers ``gh pr view`` / ``gh pr list`` / ``gh api …/check-runs`` /
+``gh run list`` from a JSON fixture and logs every call. No network is touched. Each test
+asserts a verdict, a recorded
 line or a call-log fact that a no-op hook (exit 0, no record) cannot produce, so every test fails
 against a no-op.
 
@@ -19,6 +20,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -28,8 +30,8 @@ import pytest
 
 HERE = Path(__file__).resolve().parent
 TOOL = HERE / "ci_boundary.py"
-# The interpreter the tool runs under (default: this one). SIG_TOOLS_PYTHON=/usr/bin/python3 checks the
-# oldest Python the skill may meet (macOS system Python 3.9).
+# The interpreter the tool runs under (default: this one). SIG_TOOLS_PYTHON=/usr/bin/python3
+# checks the oldest Python the skill may meet (macOS system Python 3.9).
 PYTHON = os.environ.get("SIG_TOOLS_PYTHON") or sys.executable
 REQUIRED = ["python", "docs", "composed", "security", "web"]
 
@@ -46,7 +48,9 @@ def nth(key, seq):
     n = state.get(key, 0)
     state[key] = n + 1
     json.dump(state, open(state_path, "w"))
-    return seq[min(n, len(seq) - 1)] if isinstance(seq, list) and seq and isinstance(seq[0], list) else seq
+    if isinstance(seq, list) and seq and isinstance(seq[0], list):
+        return seq[min(n, len(seq) - 1)]
+    return seq
 
 def fail(msg, code=1):
     sys.stderr.write(msg + "\n")
@@ -78,14 +82,28 @@ if args[:2] == ["pr", "view"]:
         fail(f"GraphQL: Could not resolve to a PullRequest with the number of {args[2]}.")
     print(json.dumps(pr_state(args[2], True)))
 elif args[:2] == ["pr", "list"]:
-    head = args[args.index("--head") + 1]
     st = args[args.index("--state") + 1]
-    out = []
-    for num in fx["prs"]:
-        p = pr_state(num, False)
-        if p["headRefName"] == head and (st == "all" or p["state"] == st.upper()):
-            out.append(pr_state(num, True))
+    if "--head" in args:
+        head = args[args.index("--head") + 1]
+        out = []
+        for num in fx["prs"]:
+            p = pr_state(num, False)
+            if p["headRefName"] == head and (st == "all" or p["state"] == st.upper()):
+                out.append(pr_state(num, True))
+    elif st == "merged":
+        out = fx.get("merged_prs", [])
+    else:
+        out = fx.get("open_prs", [
+            pr_state(num, False) for num in fx["prs"] if pr_state(num, False)["state"] == "OPEN"
+        ])
     print(json.dumps(out))
+elif args[:2] == ["run", "rerun"]:
+    # The one permitted GitHub write (B-15): record it; a fixture's `post_rerun`
+    # map gives the check-runs a sha reports after its failed jobs re-ran.
+    rid = args[-1]
+    state.setdefault("reruns", []).append(rid)
+    json.dump(state, open(state_path, "w"))
+    print("{}")
 elif args[:1] == ["api"] and "/check-runs/" in args[1] and args[1].endswith("/annotations"):
     cid = re.search(r"check-runs/(\d+)/", args[1]).group(1)
     print(json.dumps(fx.get("annotations", {}).get(cid, [])))
@@ -93,7 +111,10 @@ elif args[:1] == ["api"] and "/commits/" in args[1] and "/check-runs" in args[1]
     assert "--paginate" in args, args
     assert args[1].startswith("repos/{owner}/{repo}/"), args
     sha = re.search(r"commits/([0-9a-f]+)/check-runs", args[1]).group(1)
-    runs = nth("cr" + sha, fx.get("check_runs", {}).get(sha, []))
+    if state.get("reruns") and sha in fx.get("post_rerun", {}):
+        runs = nth("cr" + sha, fx["post_rerun"][sha])
+    else:
+        runs = nth("cr" + sha, fx.get("check_runs", {}).get(sha, []))
     half = len(runs) // 2  # two pages, printed back to back as `gh api --paginate` does
     print(json.dumps({"total_count": len(runs), "check_runs": runs[:half]}), end="")
     print(json.dumps({"total_count": len(runs), "check_runs": runs[half:]}))
@@ -139,7 +160,9 @@ def runs(sha: str, base_id: int, **override: tuple[str, str | None]) -> list[dic
                 "conclusion": concl,
                 "started_at": "2026-10-01T10:00:00Z",
                 "completed_at": "2026-10-01T10:08:00Z" if status == "completed" else None,
-                "details_url": f"https://github.com/o/r/actions/runs/{9000 + base_id}/job/{base_id + k}",
+                "details_url": (
+                    f"https://github.com/o/r/actions/runs/{9000 + base_id}/job/{base_id + k}"
+                ),
                 "app": {"slug": "github-actions"},
             }
         )
@@ -170,10 +193,10 @@ chainTip:        r11/p34-1   # the Round-11 chain tip
 | date | gate | question | answer | decided by | consequence | kind |
 |---|---|---|---|---|---|---|
 {waivers}
-## PHASE LOG — Round 11
+## PHASE LOG — Round 11 (append-only, newest last; the only append target)
 
 - 2026-10-01 — P34.1 done — PR #202
-"""
+{phase_entry}"""
 
 
 @pytest.fixture
@@ -185,13 +208,22 @@ def env(tmp_path: Path):
     shutil.copy(
         HERE / "record_policy" / "ci_required.txt", repo / "docs/build/tools/record_policy/"
     )
-    (repo / "docs/build/LEDGER.md").write_text(LEDGER.format(waivers=""), encoding="utf-8")
+    # An empty allow-list: no failure is a flake unless a test writes one (the real
+    # policy is exercised by the flake tests, which write their own entries).
+    (repo / "docs/build/tools/record_policy/ci_flakes.toml").write_text(
+        "# test fixture allow-list — empty\n", encoding="utf-8"
+    )
+    (repo / "docs/build/LEDGER.md").write_text(
+        LEDGER.format(waivers="", phase_entry=""), encoding="utf-8"
+    )
     (repo / "README").write_text("x\n")
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "base")
     head = git(repo, "rev-parse", "HEAD").strip()
     git(repo, "branch", "r11/p34-1", head)
     git(repo, "branch", "r11/seed", head)
+    # G3c: the chain must descend from origin/main — the worktree's remote-tracking ref.
+    git(repo, "update-ref", "refs/remotes/origin/main", head)
     stub = tmp_path / "gh"
     stub.write_text(f"#!{sys.executable}\n{STUB}", encoding="utf-8")
     stub.chmod(0o755)
@@ -205,8 +237,15 @@ def env(tmp_path: Path):
         def set(self, fx: dict[str, object]) -> None:
             fixture.write_text(json.dumps(fx), encoding="utf-8")
 
-        def ledger(self, waiver_rows: str = "", tip: str = "r11/p34-1") -> None:
-            text = LEDGER.format(waivers=waiver_rows).replace("r11/p34-1   #", f"{tip}   #")
+        def ledger(
+            self,
+            waiver_rows: str = "",
+            tip: str = "r11/p34-1",
+            phase_entry: str = "",
+        ) -> None:
+            text = LEDGER.format(waivers=waiver_rows, phase_entry=phase_entry).replace(
+                "r11/p34-1   #", f"{tip}   #"
+            )
             (repo / "docs/build/LEDGER.md").write_text(text, encoding="utf-8")
 
         def run(self, *args: str, gh: str | None = None) -> tuple[int, dict, str, list[list[str]]]:
@@ -241,7 +280,8 @@ def env(tmp_path: Path):
 
 
 def standard(local: str, **t1_override: tuple[str, str | None]) -> dict[str, object]:
-    """#202 (r11/p34-1, at the local branch head) on #201 (r11/seed) on #190 (Round 10, red at #185)."""
+    """#202 (r11/p34-1, at the local branch head) on #201 (r11/seed) on #190
+    (Round 10, red at #185)."""
     return {
         "prs": {
             "202": pr(202, "r11/p34-1", local, "r11/seed"),
@@ -269,7 +309,7 @@ def named_prs(calls: list[list[str]]) -> set[str]:
     for c in calls:
         if c[:2] == ["pr", "view"]:
             seen.add(c[2])
-        if c[:2] == ["pr", "list"]:
+        if c[:2] == ["pr", "list"] and "--head" in c:
             seen.add(c[c.index("--head") + 1])
     return seen
 
@@ -282,8 +322,10 @@ def test_green_stack_passes_and_never_reads_the_round10_stack(env) -> None:
     rc, doc, line, calls = env.run("--pr", "202", "--no-wait")
     assert rc == 0, line
     assert line == (
-        f"ci: pass #202@{env.local[:7]} (python 9100; docs 9100; composed 9100; security 9100; web 9100)"
+        f"ci: pass #202@{env.local[:7]} (python 9100; docs 9100; composed 9100; "
+        "security 9100; web 9100)"
         " · stack: #201 pass"
+        f" · main: {env.local[:7]} descends:yes merges:0 open-other:2"
     )
     assert doc["schema"] == "ci-boundary/1" and doc["state"] == "pass" and doc["exit"] == 0
     assert [s["pr"] for s in doc["stack"]] == [202, 201]
@@ -312,7 +354,7 @@ def test_out_of_scope_pr_reads_the_chain_tip_pr_instead(env) -> None:
     env.set(fx)
     rc, doc, line, calls = env.run("--pr", "190", "--no-wait")
     assert rc == 0 and doc["pr"] == 201 and doc["requested_pr"] == 190, line
-    assert line.endswith("· requested #190 out of scope (B-15)") and line.startswith(
+    assert "· requested #190 out of scope (B-15) · main: " in line and line.startswith(
         "ci: pass #201@"
     )
     assert "190" not in named_prs(calls)
@@ -419,7 +461,8 @@ def test_failure_line_carries_the_annotation_and_run_id(env) -> None:
     rc, _, line, _ = env.run("--pr", "202", "--no-wait")
     assert rc == 3
     assert line == (
-        f"blockedOn: CI fail on #202@{env.local[:7]} (web): failure — Performance budgets: score 0.81 (run 9100)"
+        f"blockedOn: CI fail on #202@{env.local[:7]} (web): failure — "
+        "Performance budgets: score 0.81 (run 9100)"
     )
 
 
@@ -584,6 +627,271 @@ def test_usage_errors_exit_1(argv: list[str], tmp_path: Path) -> None:
     assert proc.returncode == 1 and not (tmp_path / "x.json").exists()
 
 
+# ── P34.2: flake allow-list + one re-run per head (CI-5, B-15) ──────────────
+
+FLAKE_WEB = """[[flake]]
+id = "LH-PERF-1"
+job = "web"
+step = "Performance budgets (build fails on regression)"
+pattern = "Performance budgets.*score"
+evidence_runs = ["35051006427"]
+reason = "single-run perf noise"
+tracking = "P34.2"
+expires = "2099-01-01"
+"""
+
+
+def _flakes(env, text: str) -> None:
+    (env.root / "docs/build/tools/record_policy/ci_flakes.toml").write_text(text, encoding="utf-8")
+
+
+def _rerun_calls(calls: list[list[str]]) -> list[list[str]]:
+    return [c for c in calls if c[:2] == ["run", "rerun"]]
+
+
+def test_allow_listed_flake_gets_exactly_one_rerun_and_both_attempts_logged(env) -> None:
+    """CI-5: the failing `web` run matches LH-PERF-1 → one `gh run rerun --failed`,
+    both attempts in flake_log.csv, and the line reads pass-after-rerun."""
+    _flakes(env, FLAKE_WEB)
+    fx = standard(env.local, web=("completed", "failure"))
+    fx["post_rerun"] = {env.local: [runs(env.local, 100)]}
+    env.set(fx)
+    rc, doc, line, calls = env.run("--pr", "202", "--interval", "0.05", "--max-wait", "30")
+    assert rc == 0 and line.startswith("ci: pass-after-rerun #202@"), line
+    assert f"web a1 fail LH-PERF-1 run {100 + 9000}" in line and "a2 pass" in line
+    assert _rerun_calls(calls) == [["run", "rerun", "--failed", "9100"]]
+    assert doc["reruns"] == [
+        {
+            "pr": 202,
+            "check": "web",
+            "flake_id": "LH-PERF-1",
+            "run_id": "9100",
+            "at": doc["reruns"][0]["at"],
+        }
+    ]
+    log = (env.root / "docs/build/reports/ci/flake_log.csv").read_text()
+    rows = log.strip().splitlines()
+    assert rows[0].startswith("date,pr,head_sha") and len(rows) == 3
+    assert f"202,{env.local},web,LH-PERF-1,9100,1,failure" in rows[1]
+    assert rows[2].endswith(",2,rerun-requested")
+
+
+def test_a_second_flake_failure_on_the_head_is_red_not_rerun(env) -> None:
+    """One re-run per head: a head that already used it gets flake-exhausted red."""
+    _flakes(env, FLAKE_WEB)
+    fx = standard(env.local, web=("completed", "failure"))
+    # The durable log already holds this head's re-run (an earlier boundary took it).
+    env.run  # noqa: B018
+    log_path = env.root / "docs/build/reports/ci/flake_log.csv"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.write_text(
+        "date,pr,head_sha,check,flake_id,run_id,attempt,outcome\n"
+        f"2026-10-01T00:00:00Z,202,{env.local},web,LH-PERF-1,9000,1,failure\n"
+        f"2026-10-01T00:01:00Z,202,{env.local},web,LH-PERF-1,9000,2,rerun-requested\n"
+    )
+    env.set(fx)
+    rc, doc, line, calls = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and "flake-exhausted" in line and "LH-PERF-1" in line
+    assert _rerun_calls(calls) == []
+
+
+def test_a_failure_off_the_allow_list_is_never_rerun(env) -> None:
+    """A planted failure that matches no unexpired entry stays red — no gh write."""
+    _flakes(env, FLAKE_WEB)
+    env.set(standard(env.local, python=("completed", "failure")))
+    rc, _, line, calls = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and "(python): failure" in line and _rerun_calls(calls) == []
+
+
+def test_an_expired_flake_entry_matches_nothing(env) -> None:
+    _flakes(env, FLAKE_WEB.replace("2099-01-01", "2020-01-01"))
+    env.set(standard(env.local, web=("completed", "failure")))
+    rc, _, line, calls = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and "(web): failure" in line and _rerun_calls(calls) == []
+
+
+def test_a_flake_red_alongside_a_real_red_is_not_rerun(env) -> None:
+    """The one re-run covers allow-listed flakes only: a real failure on the same
+    head means no re-run is taken and the real failure is the reported one."""
+    _flakes(env, FLAKE_WEB)
+    fx = standard(env.local, web=("completed", "failure"), docs=("completed", "failure"))
+    env.set(fx)
+    rc, _, line, calls = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and "(docs): failure" in line and _rerun_calls(calls) == []
+
+
+def test_no_rerun_flag_disables_the_one_rerun(env) -> None:
+    _flakes(env, FLAKE_WEB)
+    env.set(standard(env.local, web=("completed", "failure")))
+    rc, _, line, calls = env.run("--pr", "202", "--no-wait", "--no-rerun")
+    assert rc == 3 and "(web): failure" in line and _rerun_calls(calls) == []
+
+
+def test_malformed_flake_policy_is_unknown_not_vacuous(env) -> None:
+    (env.root / "docs/build/tools/record_policy/ci_flakes.toml").write_text(
+        '[[flake]]\njob = "web"\n',
+        encoding="utf-8",  # missing id/pattern/expires
+    )
+    env.set(standard(env.local, web=("completed", "failure")))
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 5 and doc["state"] == "unknown" and "ci_flakes.toml" in line
+
+
+def test_committed_ci_flakes_toml_parses(env) -> None:
+    """The shipped allow-list parses under the tool's own minimal reader (3.9-safe)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("ci_boundary", TOOL)
+    assert spec is not None and spec.loader is not None
+    cb = importlib.util.module_from_spec(spec)
+    sys.modules["ci_boundary"] = cb
+    spec.loader.exec_module(cb)
+    flakes = cb.parse_flakes((HERE / "record_policy/ci_flakes.toml").read_text(encoding="utf-8"))
+    by_id = {f.id: f for f in flakes}
+    assert {"LH-PERF-1", "PY-SUBSTR-1"} <= set(by_id), "the two known flakes are listed"
+    assert by_id["LH-PERF-1"].job == "web" and by_id["PY-SUBSTR-1"].job == "python"
+    assert all(re.fullmatch(r"\d{4}-\d{2}-\d{2}", f.expires) for f in flakes)
+
+
+# ── P34.2: G3c external delta (OM-03/OM-17) ──────────────────────────────────
+
+
+def test_external_delta_fields_are_recorded_and_in_the_line(env) -> None:
+    env.set(standard(env.local))
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 0, line
+    ext = doc["external"]
+    assert ext["main_sha"] == env.local and ext["chain_descends"] is True
+    assert ext["merged_since"] == [] and ext["since"] == "2026-10-01"
+    assert {p["number"] for p in ext["open_off_chain"]} == {190, 185}
+    # SHA_SEED is a fixture sha, not a local object — honestly "unverifiable", never claimed.
+    assert ext["ancestry"] == [
+        {
+            "child": 202,
+            "parent": 201,
+            "ancestor": None,
+            "note": "parent head not resolvable locally",
+        }
+    ]
+    assert f" · main: {env.local[:7]} descends:yes merges:0 open-other:2" in line
+
+
+def test_off_stack_merge_since_the_last_boundary_is_red(env) -> None:
+    fx = standard(env.local)
+    fx["merged_prs"] = [
+        {
+            "number": 555,
+            "headRefName": "someone/hotfix",
+            "headRefOid": "e" * 40,
+            "baseRefName": "main",
+            "mergedAt": "2026-10-01T12:00:00Z",
+        }
+    ]
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and doc["kind"] == "stack" and "off-stack merge #555" in line
+    assert doc["external"]["merged_since"][0]["on_stack"] is False
+
+
+def test_a_chain_merge_is_recorded_not_blocked(env) -> None:
+    """An `r11/` PR merged since the last boundary is a chain row — recorded, not red."""
+    fx = standard(env.local)
+    fx["merged_prs"] = [
+        {
+            "number": 199,
+            "headRefName": "r11/p34-0",
+            "headRefOid": "f" * 40,
+            "baseRefName": "main",
+            "mergedAt": "2026-10-01T12:00:00Z",
+        }
+    ]
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 0 and doc["external"]["merged_since"][0]["on_stack"] is True
+    assert "merges:1" in line
+
+
+def test_a_tip_not_descending_from_main_is_recorded(env) -> None:
+    """chain_descends: false is *recorded* (`descends:no`), not a red — the
+    operator merges the chain late, so the tip normally trails main's head.
+    The red conditions are an off-stack merge in the window and a broken stack
+    link (OM-03/OM-17)."""
+    env.set(standard(env.local))
+    # Move origin/main to a commit the tip does not contain.
+    git(env.root, "checkout", "-q", "--orphan", "other-root")
+    git(env.root, "commit", "-q", "-m", "foreign root")
+    other = git(env.root, "rev-parse", "HEAD").strip()
+    git(env.root, "update-ref", "refs/remotes/origin/main", other)
+    git(env.root, "checkout", "-q", "r11/p34-1")
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 0, line
+    assert doc["external"]["chain_descends"] is False
+    assert "descends:no" in line and "blockedOn" not in line
+
+
+def test_a_merge_before_the_boundary_timestamp_is_not_since_it(env) -> None:
+    """The merge window is a timestamp, not a date: when the last PHASE LOG
+    entry names its boundary time, a merge earlier that day predates it and is
+    not part of the delta (the contract's 'since the last boundary')."""
+    env.ledger(
+        phase_entry="- 2026-10-01 — P34.1 done — PR #201 green "
+        # `ci: pass #201@SHA7X`: SHA7X is deliberately not hex — a parseable
+        # `ci:` field anywhere in the diff is verified against GitHub, and a
+        # sha-shaped placeholder would be taken for a real claim.
+        "(`ci: pass #201@SHA7X`; ci_boundary 22:18:48Z)\n"
+    )
+    fx = standard(env.local)
+    fx["merged_prs"] = [
+        {
+            "number": 154,
+            "headRefName": "devin/p31-19-round9-closeout",
+            "headRefOid": "e" * 40,
+            "baseRefName": "main",
+            # Earlier the same calendar day as the boundary — before it.
+            "mergedAt": "2026-10-01T04:26:00Z",
+        },
+        {
+            "number": 200,
+            "headRefName": "r11/p34-0",
+            "headRefOid": "f" * 40,
+            "baseRefName": "main",
+            "mergedAt": "2026-10-01T23:00:00Z",  # after the boundary — in the window
+        },
+    ]
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 0, line
+    ext = doc["external"]
+    assert ext["since"] == "2026-10-01T22:18:48Z"
+    assert [m["number"] for m in ext["merged_since"]] == [200], (
+        "the pre-boundary merge is outside the window; the chain merge is recorded"
+    )
+    assert "merges:1" in line
+
+
+def test_a_stack_link_broken_by_rebase_is_red(env) -> None:
+    """The parent head is not an ancestor of the child's — a rebase/retarget."""
+    fx = standard(env.local)
+    # #201's recorded head is a commit the tip does not contain.
+    git(env.root, "checkout", "-q", "--orphan", "rebased")
+    git(env.root, "commit", "-q", "-m", "foreign parent")
+    foreign = git(env.root, "rev-parse", "HEAD").strip()
+    git(env.root, "checkout", "-q", "r11/p34-1")
+    fx["prs"]["201"] = pr(201, "r11/seed", foreign, "devin/p33-8-agent-docs-refresh")
+    fx["check_runs"][foreign] = runs(foreign, 200)
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and doc["kind"] == "stack" and "does not contain its base" in line
+    assert doc["external"]["ancestry"][0]["ancestor"] is False
+
+
+def test_unreadable_origin_main_is_unavailable_not_green(env) -> None:
+    git(env.root, "update-ref", "-d", "refs/remotes/origin/main")
+    env.set(standard(env.local))
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and doc["kind"] == "unavailable" and "origin/main is not readable" in line
+
+
 def test_ledger_parsers() -> None:
     import importlib.util
 
@@ -594,9 +902,11 @@ def test_ledger_parsers() -> None:
     spec.loader.exec_module(cb)
     text = (
         LEDGER.format(
-            waivers='| 2026-10-01T12:00:00Z | g | q | "waive docs" | operator | c | waiver |\n'
+            waivers='| 2026-10-01T12:00:00Z | g | q | "waive docs" | operator | c | waiver |\n',
+            phase_entry="",
         )
-        + "\n## GATE DECISIONS (legacy)\n\n| date | gate | q | a | by | consequence |\n|---|---|---|---|---|---|\n"
+        + "\n## GATE DECISIONS (legacy)\n\n| date | gate | q | a | by | consequence |\n"
+        + "|---|---|---|---|---|---|\n"
         + ("| 2026-09-01 | g | q | a waiver | op | waiver |\n")
     )
     assert cb.ledger_value(text, "chainTip") == "r11/p34-1"

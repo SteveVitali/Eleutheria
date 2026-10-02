@@ -212,3 +212,172 @@ def test_nightly_report_fails_the_run_when_a_stage_fails(tmp_path: Path) -> None
     assert proc.returncode == 1, "a failed stage must fail the nightly"
     text = out.read_text()
     assert "RED" in text and "secrets" in text
+
+
+# --- npm_audit_gate.py (P34.2 deliverable 6, SIG-ENG-042) ---------------------
+#
+# The gate judges an `npm audit --json` report against the committed allow-list:
+# a finding at/above the level without a live entry blocks; an expired entry
+# fails loudly; a "dev-only" entry whose package is still vulnerable in the
+# `--omit=dev` audit was never dev-only and blocks. Every test feeds fixture
+# JSON — no network — and a removed/loosened gate must make one fail.
+
+GATE = "npm_audit_gate.py"
+
+
+def _audit(tmp_path: Path, vulns: dict, name: str = "audit.json") -> Path:
+    """A real `npm audit --json` shape — the gate refuses anything less."""
+    path = tmp_path / name
+    path.write_text(
+        json.dumps(
+            {
+                "auditReportVersion": 2,
+                "vulnerabilities": vulns,
+                "metadata": {
+                    "vulnerabilities": {
+                        "info": 0,
+                        "low": 0,
+                        "moderate": 0,
+                        "high": len(vulns),
+                        "critical": 0,
+                        "total": len(vulns),
+                    },
+                    "dependencies": {"total": 100},
+                },
+            }
+        )
+    )
+    return path
+
+
+def _vuln(advisories: list[tuple[str, str]], chain: list[str] | None = None) -> dict:
+    """One vulnerability entry: dict `via`s are leaf advisories; string `via`s
+    are dependency-chain nodes (no advisory of their own)."""
+    return {
+        "via": [
+            *[
+                {
+                    "source": i,
+                    "name": "x",
+                    "severity": sev,
+                    "title": f"advisory {ghsa}",
+                    "url": f"https://github.com/advisories/{ghsa}",
+                }
+                for i, (ghsa, sev) in enumerate(advisories)
+            ],
+            *(chain or []),
+        ],
+        "effects": [],
+        "nodes": ["node_modules/x"],
+        "fixAvailable": False,
+    }
+
+
+def _policy(tmp_path: Path, body: str) -> Path:
+    path = tmp_path / "npm_audit_allow.toml"
+    path.write_text(body)
+    return path
+
+
+def _gate(tmp_path: Path, audit: Path, *extra: str) -> subprocess.CompletedProcess[str]:
+    policy = tmp_path / "npm_audit_allow.toml"
+    if not policy.exists():
+        policy.write_text("")  # an empty allow-list is a valid policy
+    return _run(GATE, "--audit", str(audit), "--policy", str(policy), *extra)
+
+
+def test_npm_gate_clean_audit_passes(tmp_path: Path) -> None:
+    audit = _audit(tmp_path, {})
+    proc = _gate(tmp_path, audit)
+    assert proc.returncode == 0, proc.stderr
+    assert "candidates=0 evaluated=0" in proc.stdout
+
+
+def test_npm_gate_blocks_an_uncovered_high_advisory(tmp_path: Path) -> None:
+    audit = _audit(tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])})
+    proc = _gate(tmp_path, audit)
+    assert proc.returncode == 3
+    assert "GHSA-xxxx-yyyy-zzzz" in proc.stderr and "no allow-list entry" in proc.stderr
+    assert "candidates=1" in proc.stdout
+
+
+def test_npm_gate_allows_a_live_allow_list_entry(tmp_path: Path) -> None:
+    _policy(
+        tmp_path,
+        '[[allow]]\nid = "A-1"\npackage = "vulnerable-dep"\n'
+        'advisories = ["GHSA-xxxx-yyyy-zzzz"]\nscope = "dev-only"\n'
+        'reason = "dev-only tooling"\ntracking = "D-P34.2-1"\n'
+        'expires = "2999-01-01"\n',
+    )
+    audit = _audit(tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])})
+    proc = _gate(tmp_path, audit)
+    assert proc.returncode == 0 and "allowed=1" in proc.stdout
+
+
+def test_npm_gate_expired_entry_fails_loudly(tmp_path: Path) -> None:
+    _policy(
+        tmp_path,
+        '[[allow]]\nid = "A-1"\npackage = "vulnerable-dep"\n'
+        'advisories = ["GHSA-xxxx-yyyy-zzzz"]\nscope = "dev-only"\n'
+        'reason = "x"\ntracking = "D-1"\nexpires = "2020-01-01"\n',
+    )
+    audit = _audit(tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])})
+    proc = _gate(tmp_path, audit)
+    assert proc.returncode == 3 and "expired 2020-01-01" in proc.stderr
+
+
+def test_npm_gate_dev_only_entry_is_void_when_the_package_ships(tmp_path: Path) -> None:
+    """A `dev-only` allowance whose package is still in the production audit
+    was never dev-only — the cross-check makes it a lie."""
+    _policy(
+        tmp_path,
+        '[[allow]]\nid = "A-1"\npackage = "vulnerable-dep"\n'
+        'advisories = ["GHSA-xxxx-yyyy-zzzz"]\nscope = "dev-only"\n'
+        'reason = "x"\ntracking = "D-1"\nexpires = "2999-01-01"\n',
+    )
+    full = _audit(tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])})
+    prod = _audit(
+        tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])}, "prod.json"
+    )
+    proc = _gate(tmp_path, full, "--prod-audit", str(prod))
+    assert proc.returncode == 3 and "claims dev-only" in proc.stderr
+
+
+def test_npm_gate_below_level_findings_are_reported_not_judged(tmp_path: Path) -> None:
+    audit = _audit(tmp_path, {"dep": _vuln([("GHSA-a", "moderate")])})
+    proc = _gate(tmp_path, audit, "--level", "high")
+    assert proc.returncode == 0 and "below-level findings: 1" in proc.stdout
+
+
+def test_npm_gate_a_chain_node_is_not_a_leaf(tmp_path: Path) -> None:
+    """`via` strings are dependency-chain nodes — the leaf advisory they point
+    at is judged, not the chain name itself."""
+    audit = _audit(tmp_path, {"dep": _vuln([], chain=["upstream-dep"])})
+    proc = _gate(tmp_path, audit)
+    assert proc.returncode == 0 and "candidates=0" in proc.stdout
+
+
+def test_npm_gate_refuses_a_vacuous_report(tmp_path: Path) -> None:
+    """No `metadata.vulnerabilities.total` → not a real audit → UNKNOWN, never green."""
+    bad = tmp_path / "audit.json"
+    bad.write_text(json.dumps({"vulnerabilities": {}}))
+    proc = _gate(tmp_path, bad)
+    assert proc.returncode == 5 and "vacuous" in proc.stderr
+    missing = tmp_path / "gone.json"
+    proc = _gate(tmp_path, missing)
+    assert proc.returncode == 5 and "cannot read" in proc.stderr
+
+
+def test_npm_gate_committed_policy_parses(tmp_path: Path) -> None:
+    """The committed allow-list parses and covers today's dev-toolchain chain:
+    feed the gate the advisories it lists and the run is green."""
+    committed = REPO_ROOT / "docs/build/tools/record_policy/npm_audit_allow.toml"
+    assert committed.is_file()
+    proc = _run(
+        GATE,
+        "--audit",
+        str(_audit(tmp_path, {})),
+        "--policy",
+        str(committed),
+    )
+    assert proc.returncode == 0, proc.stderr

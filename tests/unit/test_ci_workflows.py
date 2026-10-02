@@ -635,11 +635,28 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
                 if any(p in plain for p in env_steps):
                     continue
                 line = norm(raw_line, web_cwd)
-                if "check_trailers.py" in line or "check-build-memory.sh" in line:
-                    tool = (
-                        "check_trailers.py"
-                        if "check_trailers.py" in line
-                        else "check-build-memory.sh"
+                if any(
+                    t in line
+                    for t in (
+                        "check_trailers.py",
+                        "check-build-memory.sh",
+                        "verify_recorded_ci.py",
+                        "npm_audit_gate.sh",
+                    )
+                ):
+                    # Checked by name, not verbatim: range/out args legitimately
+                    # differ locally — the verifier's diff base (branch base vs
+                    # the PR's recorded base sha) and the gate driver's --out
+                    # dir (gitignored docs/build/logs vs the workspace root).
+                    tool = next(
+                        t
+                        for t in (
+                            "check_trailers.py",
+                            "check-build-memory.sh",
+                            "verify_recorded_ci.py",
+                            "npm_audit_gate.sh",
+                        )
+                        if t in line
                     )
                     if any(tool in c for c in normalized_closure):
                         continue
@@ -656,3 +673,102 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
                 if not any(line in c or c == line for c in normalized_closure):
                     missing.append(f"{job_name}: `{line}` — no counterpart reachable from ci-local")
     assert missing == [], "ci.yml commands with no ci-local counterpart:\n" + "\n".join(missing)
+
+
+# --- P34.2 (SIG-MEM-007, SIG-ENG-042): recorded-CI verifier, advisory gate, ---
+# --- fail-closed leak check ------------------------------------------------
+
+
+def test_docs_job_verifies_added_ci_lines_against_github() -> None:
+    """G3b: the docs job re-verifies every `ci:` line the change adds against
+    GitHub — a closeout commit that records a green which never was fails."""
+    job = _doc(CI_YML)["jobs"]["docs"]
+    step = _docs_step("verify_recorded_ci.py")
+    assert "--diff-base" in step["run"], "the verifier judges the change's added lines"
+    assert "github.event.pull_request.base.sha" in step["run"]
+    assert "github.event.before" in step["run"], "pushes to main are verified too"
+    assert step["env"].get("GH_TOKEN") == "${{ secrets.GITHUB_TOKEN }}", (
+        "the verifier's `gh api` reads need the token — never secrets, read-only"
+    )
+    assert not step.get("continue-on-error") and "|| true" not in step["run"]
+    perms = job.get("permissions") or {}
+    assert perms.get("actions") == "read" and perms.get("checks") == "read", (
+        "the docs job needs actions:read + checks:read for the run/check-runs reads"
+    )
+
+
+def test_security_job_runs_the_npm_advisory_gate() -> None:
+    """P34.2 deliverable 6: the per-PR gate is `npm audit --omit=dev` judged by
+    npm_audit_gate.py at high — driven by one script ci-local runs verbatim, so
+    the preserved-status handling can never drift between the two."""
+    job = _doc(CI_YML)["jobs"]["security"]
+    runs = _runs(job)
+    gate = [r for r in runs if "npm_audit_gate.sh" in r]
+    assert len(gate) == 1, "the security job must run npm_audit_gate.sh exactly once"
+    assert "--full" not in gate[0], "the per-PR gate is production-only (not --full)"
+    # the driver really runs the prod audit + the gate — and preserves npm's status
+    script = (REPO_ROOT / "scripts/ci/npm_audit_gate.sh").read_text()
+    assert "npm --prefix web audit --omit=dev --json" in script
+    assert "--level high" in script and '"$rc" -gt 1' in script
+    assert "|| rc=$?" in script, "npm audit's findings exit (1) must be preserved for the gate"
+    # the gate needs the pinned toolchain — setup-node in this job
+    assert any("setup-node" in u for u in _uses(job))
+
+
+def test_fail_closed_leak_check_is_armed_everywhere_it_runs() -> None:
+    """P34.2 deliverable 7: `SIG_GCP_PROJECT` arms the leak check in EVERY job
+    whose suite can run it — the dedicated security step and the python job's
+    `make test` (the suite fails closed when it is unset)."""
+    doc = _doc(CI_YML)
+    sec = _step_env(doc["jobs"]["security"], "test_gcp_project_id_is_env_resolved")
+    assert sec.get("SIG_GCP_PROJECT") == "${{ vars.SIG_GCP_PROJECT }}"
+    py = _step_env(doc["jobs"]["python"], "make test")
+    assert py.get("SIG_GCP_PROJECT") == "${{ vars.SIG_GCP_PROJECT }}", (
+        "the full pytest suite includes the fail-closed leak check — the python "
+        "job must arm it or `make test` goes red"
+    )
+
+
+def test_nightly_carries_the_full_audit_and_recorded_ci_stages() -> None:
+    """Nightly scope (P34.2): the full-tree npm audit against the dated
+    allow-list, and `verify_recorded_ci.py --all` over every Round-11 record."""
+    doc = _doc(NIGHTLY_YML)
+    job = next(iter(doc["jobs"].values()))
+    steps = {s.get("id"): s for s in job.get("steps", []) if s.get("id")}
+    npm = steps.get("npm")
+    assert npm and "npm_audit_gate.sh" in npm["run"] and "--full" in npm["run"], (
+        "nightly must run the full npm audit through the allow-list gate"
+    )
+    script = (REPO_ROOT / "scripts/ci/npm_audit_gate.sh").read_text()
+    assert "npm --prefix web audit --json" in script and "--prod-audit" in script, (
+        "`--full` must run both audits and cross-check `dev-only` allow entries "
+        "against the production tree"
+    )
+    rci = steps.get("recordedci")
+    assert rci and "verify_recorded_ci.py --all" in rci["run"], (
+        "nightly must verify every recorded ci: line (the --all scope)"
+    )
+    assert (rci.get("env") or {}).get("GH_TOKEN") == "${{ secrets.GITHUB_TOKEN }}"
+    perms = doc.get("permissions") or {}
+    assert perms.get("actions") == "read" and perms.get("checks") == "read", (
+        "nightly's verifier needs actions:read + checks:read"
+    )
+    # the report is the gate — the new stages must be in it and the artifact
+    report = next(s for s in job["steps"] if "nightly_report" in (s.get("run") or ""))
+    assert "npm=" in report["run"] and "recordedci=" in report["run"], (
+        "a stage the report cannot see passes silently — wire both outcomes in"
+    )
+    upload = next(s for s in job["steps"] if "upload-artifact" in (s.get("uses") or ""))
+    paths = upload.get("with", {}).get("path", "")
+    assert "npm-audit.txt" in paths and "recorded-ci.txt" in paths
+
+
+def test_ci_local_mirrors_the_new_gates() -> None:
+    """`make ci-local` is the five-job mirror (P34.1): the verifier and the
+    advisory gate run locally on the same inputs."""
+    text = MAKEFILE.read_text()
+    ci_local = text.split("ci-local:", 1)[1].split("\n\n", 1)[0]
+    assert "verify_recorded_ci.py --diff-base" in ci_local
+    assert "npm_audit_gate.sh --out" in ci_local, (
+        "the advisory gate runs through the same driver script as ci.yml"
+    )

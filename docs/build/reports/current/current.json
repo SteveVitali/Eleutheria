@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "f02deb01c2ae66ec3142822a33507913e54bddcb",
-  "manifest_inputs": 919,
+  "input_commit": "9dbb26f3d39b6e8e446600091b7fd9233de8c95c",
+  "manifest_inputs": 921,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.2",
-    "lastCompleted": "P34.1",
+    "nextTicket": "P35.38a",
+    "lastCompleted": "P34.2",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25",
@@ -26,14 +26,14 @@
     "updatedAt": "2026-10-01T22:28:11Z"
   },
   "counts": {
-    "obligations": 125,
-    "owed": 64,
-    "open": 60,
+    "obligations": 127,
+    "owed": 66,
+    "open": 62,
     "partial": 4,
     "terminal": 61,
-    "events": 125,
+    "events": 127,
     "transitions": 0,
-    "coverage_assessments": 186,
+    "coverage_assessments": 187,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -5575,6 +5575,94 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.2-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.2-1:e0",
+      "kind": "F",
+      "owner": "the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain)",
+      "landing": "a @lhci/cli/lighthouse release whose tree drops the advisories — failing that, before the entries' 2026-11-30 expires makes the nightly gate fail loudly",
+      "backlog_home": "BL-084",
+      "item": "Replace or upgrade the `@lhci/cli` audit-runner chain so the four `dev-only` advisories (basic-ftp, extract-zip ×2, tmp) in `record_policy/npm_audit_allow.toml` retire",
+      "unblocked_by": "owner: the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain); trigger: a `@lhci/cli`/`lighthouse` release whose tree drops the advisories — failing that, before the entries' 2026-11-30 `expires` makes the nightly gate fail loudly",
+      "verify": "`scripts/ci/npm_audit_gate.sh --full` green with the entries REMOVED (the gate already notes when an entry covers no current finding); `npm --prefix web audit --json` shows the chain gone",
+      "proxy": "the per-PR production gate (`--omit=dev`) can never see these packages — the `--prod-audit` cross-check makes a dev-only entry that ships void; nightly judges the full tree every night",
+      "line": 975,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.2-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.2-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.2",
+          "owner": "the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain)",
+          "landing": "a @lhci/cli/lighthouse release whose tree drops the advisories — failing that, before the entries' 2026-11-30 expires makes the nightly gate fail loudly",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "5510d9d04c163b5812170223c75e5589cd0d128c",
+          "reason": "migration anchor appended by P34.2 (row 202) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 975,
+            "row_sha256": "478191d34c8f03ce60fa6afc9105baa65f72975414335079eb9abced8077751d",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.2-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.2-2:e0",
+      "kind": "V",
+      "owner": "P38.1a audits it (operator merge for the post-merge leg)",
+      "landing": "the first nightly --all recorded-CI verification green, and the first merge sitting (post-merge r11 stack audit)",
+      "backlog_home": "BL-084",
+      "item": "SIG-MEM-007's owed live sweeps — the first nightly `--all` recorded-CI verification over every Round-11 record, and the post-merge audit of the r11 stack's recorded `ci:` lines",
+      "unblocked_by": "owner: P38.1a audits it (operator merge for the post-merge leg); trigger: the first `nightly` run after this PR and the first merge sitting",
+      "verify": "`python3 docs/build/tools/verify_recorded_ci.py --all` green in a nightly run record; P38.1a's audit names this row",
+      "proxy": "the verifier is wired into the docs job + `ci-local` and verified #195's own record against GitHub head-bound",
+      "line": 976,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.2-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.2-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.2",
+          "owner": "P38.1a audits it (operator merge for the post-merge leg)",
+          "landing": "the first nightly --all recorded-CI verification green, and the first merge sitting (post-merge r11 stack audit)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "9dbb26f3d39b6e8e446600091b7fd9233de8c95c",
+          "reason": "migration anchor appended by P34.2 (row 202) for the row it added — appended, never migrate; raw cell status preserved verbatim; owner and landing read from the DEFERRALS row",
+          "anchor": {
+            "row_line": 976,
+            "row_sha256": "7607c63876b5f880ba71f21bac2f60ca9e377a0fb0a997f740330ee4aa5142c4",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "coverage": {
@@ -9885,8 +9973,8 @@
           "label": "historical/csv"
         },
         "SIG-MEM-007": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.2-2)",
+          "evidence": "docs/build/tools/verify_recorded_ci.py;docs/build/tools/ci_boundary.py;.github/workflows/ci.yml;.github/workflows/nightly.yml;Makefile",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -11268,6 +11356,16 @@
         "assessment_id": "SIG-MEM-007:r11-1"
       },
       {
+        "requirement_id": "SIG-MEM-007",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-P34.2-2)",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.2-recorded-ci-verifier-and-flake-policy-v2 @ 9dbb26f3d39b6e8e446600091b7fd9233de8c95c",
+        "limitations": "engineering legs landed and verified at implementation (5934-test gate, ci: pass #195@9dbb26f — the verifier itself ran live on the PR and caught the stray-fragment/merge-window defects); the owed legs are the first nightly --all sweep over every Round-11 record and the post-merge stack audit, held in D-P34.2-2 (home BL-084; P38.1a audits it) — previous matrix verdict MISSING (routing P34.2)",
+        "supersedes": "SIG-MEM-007:r11-1",
+        "assessment_id": "SIG-MEM-007:r11-2"
+      },
+      {
         "requirement_id": "SIG-MEM-008",
         "domain": "implementation",
         "verdict": "MISSING",
@@ -12421,6 +12519,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-MEM-007",
+          "verdict": "MET-ENGINEERED(D-P34.2-2)",
+          "assessed_at": "2026-10-02"
+        },
+        {
           "requirement": "SIG-MEM-008",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -13470,10 +13573,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "96dda5c578ea89b84f1f8790d0d55342b824e6f9666d50d2c4b705aa72708cc8",
+  "manifest_sha256": "d752104e7c5c6ea5daedd655b46528dc2a63c6d7efe41fd4b6d2fd6556db1753",
   "current_md": {
     "lines": 74,
-    "bytes": 12759,
+    "bytes": 12813,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

@@ -32,7 +32,10 @@ def test_gcp_plan_keeps_published_public_and_restricted_private() -> None:
     assert "sig-restricted  (non-published compartments, PRIVATE)" in joined
 
 
-def test_unset_project_uses_placeholder_never_a_literal() -> None:
+def test_unset_project_uses_placeholder_never_a_literal(monkeypatch: pytest.MonkeyPatch) -> None:
+    # P34.2 arms SIG_GCP_PROJECT in CI (the fail-closed leak check) — an "unset"
+    # project must not silently resolve to whatever the environment carries.
+    monkeypatch.delenv("SIG_GCP_PROJECT", raising=False)
     plan = D.build_gcp_plan(project="", region="")
     assert plan.project == "<SIG_GCP_PROJECT-unset>"
     assert plan.region == "us-central1"

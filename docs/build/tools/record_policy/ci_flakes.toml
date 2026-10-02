@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# ci_flakes.toml — the Round-11 CI flake allow-list (H2 §4.4; B-15; P34.2;
+# ADR-191). Read by docs/build/tools/ci_boundary.py, whose *minimal* TOML parser
+# (Python 3.9 has no tomllib) accepts only this shape: `[[flake]]` tables of
+# scalars and string arrays, `#` comments. Anything else fails loudly.
+#
+# A required check whose failure is a *known flake* gets exactly ONE
+# `gh run rerun --failed <run>` per head (the operator's Q-H2-4 [B-15] answer):
+#
+#   - the check name equals `job`;
+#   - `pattern` (a regex) matches the failure's first failing line — the
+#     check-run's output title/summary plus its first failure annotation; and
+#   - `expires` (a UTC date) has not passed at read time.
+#
+# `step` and `evidence_runs` are audit text (the CI step that produced the known
+# flake and the run ids that evidenced it); `reason` says why it is a flake;
+# `tracking` names the row/ADR that retires it. Every re-run is appended to
+# docs/build/reports/ci/flake_log.csv — both attempts are recorded, a second
+# failure on the head is plain red (`flake-exhausted`), and a failure matching
+# no unexpired entry is never re-run. Agents never quarantine, skip, xfail or
+# loosen a gate to pass (CI-5); three uses of one entry in a round escalate its
+# fix (OM-18).
+
+[[flake]]
+id = "LH-PERF-1"
+job = "web"
+step = "Performance budgets (build fails on regression)"
+pattern = 'categories\.performance failure for minScore|Performance budgets.*score'
+evidence_runs = ["35051006427", "35263896936", "35889213151", "36065771273", "36338778274"]
+reason = "single-run Lighthouse perf sampling noise; red→green on a same-sha re-run five times (H2 NEW-8)"
+tracking = "P34.2 / ADR-191 — stabilised by lhci numberOfRuns: 3 (median of three runs)"
+expires = "2026-11-01"
+
+[[flake]]
+id = "PY-SUBSTR-1"
+job = "python"
+pattern = "test_elapsed_time_never_written_to_the_submission_row.*assert ['\"]8\\.5['\"] not in"
+evidence_runs = ["35296544560"]
+reason = "test defect, not an environment flake: a substring assertion on str(row) collided with an ISO timestamp (H2 NEW-8; F-316)"
+tracking = "P34.2 deliverable 5 — the assertion walks the row's fields; this entry is residual cover only"
+expires = "2026-10-08"

@@ -47,9 +47,16 @@ jobs:
   # the trailer check over the same range; on a push to `main` the guard runs
   # over the landed head's first-parent diff and the trailer check over the
   # push's commits (event.before...sha, the landed head itself as fallback).
-  # All stdlib python3: the runner's system Python (3.12 on ubuntu-24.04); no uv.
+  # P34.2 (G3b, SIG-MEM-007): the last step re-verifies every `ci:` line the
+  # change adds against GitHub — `actions:read` + `checks:read` are needed for
+  # the run/check-runs reads. All stdlib python3: the runner's system Python
+  # (3.12 on ubuntu-24.04); no uv.
   docs:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      checks: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -103,6 +110,27 @@ jobs:
           fi
           python3 docs/build/tools/check_trailers.py --range "$base...$head" --json docs/build/logs/trailer-check.json
 
+      # G3b recorded-CI verifier (P34.2, SIG-MEM-007, B4 §G3b): every `ci:` line
+      # this change ADDS is verified against the live GitHub records — each
+      # recorded run id resolves to a run whose head_sha carries the recorded
+      # sha and whose conclusion is `success`, and a bare `ci: pass #N@sha`
+      # re-checks the sha's head-bound required check-runs. A Round-11 PHASE
+      # LOG `done` entry added without a `ci:` field fails. On a pull request
+      # the scope is base...head; on a push it is the push's commits
+      # (event.before...sha, landed-head fallback). Read-only `gh api` GETs —
+      # it never re-runs anything (the one re-run per head is the boundary
+      # tool's, B-15). Unavailable GitHub state is UNKNOWN, never green.
+      - name: Recorded-CI verifier (G3b — added `ci:` lines vs GitHub)
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          python3 docs/build/tools/verify_recorded_ci.py --diff-base "$base" --json docs/build/logs/recorded-ci-verify.json
+
   python:
     runs-on: ubuntu-24.04
     steps:
@@ -139,6 +167,10 @@ jobs:
         env:
           SIG_REQUIRE_DB_TESTS: "1"
           TESTCONTAINERS_RYUK_DISABLED: "true"
+          # P34.2: the suite's GCP leak check fails closed when the id is unset
+          # (an unarmed needle is not a pass) — the repo variable arms it here
+          # too, the same value the `security` job's dedicated step gets.
+          SIG_GCP_PROJECT: ${{ vars.SIG_GCP_PROJECT }}
 
       - name: Generated artifacts match a fresh generation
         run: make verify-gen
@@ -227,18 +259,44 @@ jobs:
       - name: Secret scan over every tracked file
         run: make scan-secrets
 
-      # Armed leak check (ADR-119 / D-P30.4-4, operator Q7 = (a)): the scoped
-      # test greps code + config for a literal GCP project id. The id is a repo
+      # Armed, FAIL-CLOSED leak check (ADR-119 / D-P30.4-4, operator Q7 = (a);
+      # P34.2 deliverable 7): the scoped test greps code + config for a literal
+      # GCP project id and reports candidates/evaluated. The id is a repo
       # VARIABLE, not a credential — it is already recorded publicly in the
-      # append-only build memory, which the check deliberately exempts. When
-      # `vars.SIG_GCP_PROJECT` is unset the check skips (never a false red).
-      - name: GCP project-id leak check (code + config scope)
+      # append-only build memory, which the check deliberately exempts. An unset
+      # `vars.SIG_GCP_PROJECT` is a RED, not a skip — a check without its needle
+      # never passes vacuously (SIG-ENG-042).
+      - name: GCP project-id leak check (code + config scope; fails when unarmed)
         run: uv run pytest tests/connectors/test_secrets.py::test_gcp_project_id_is_env_resolved_not_committed
         env:
           SIG_GCP_PROJECT: ${{ vars.SIG_GCP_PROJECT }}
 
       - name: Dependency licence scan (mirrors the web job's OSI/excluded-category gate)
         run: make scan-licenses
+
+      # The npm advisory gate needs the pinned toolchain (P34.2 deliverable 6).
+      - name: Install Node (exact pin from web/.nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install the pinned npm and print the toolchain
+        run: |
+          npm install -g "npm@$(node -p "require('./web/package.json').packageManager.split('@').pop()")"
+          node -v
+          npm -v
+
+      # Per-PR advisory gate (P34.2, SIG-ENG-042): production deps only,
+      # `--audit-level=high` — a new high+ advisory in the shipped tree fails
+      # the PR. The driver (`scripts/ci/npm_audit_gate.sh`) is the same command
+      # `make ci-local` runs; it preserves npm audit's status — rc 1 means
+      # "findings present" (the gate judges them), rc > 1 is an audit error and
+      # red either way. The committed allow-list carries NO production entries
+      # today; the nightly audits the full tree against it (`--full`).
+      - name: npm advisory gate (production deps, high+)
+        run: bash scripts/ci/npm_audit_gate.sh --out .
 
   # The Phase-15 web shell (SIG-UI-036..041). Confined to web/ (SIG-ENG-010). This
   # job IS the CI enforcement of the shell's mandated gates: WCAG 2.2 AA (axe), the

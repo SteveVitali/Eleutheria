@@ -2,57 +2,79 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""CI boundary gate G3a — `ci-boundary/1` (Round 11 Stage B, SEED-02b; B4 G3a, H2 §4, plan App. A T2).
+"""CI boundary gate G3a — `ci-boundary/1` (Round 11 Stage B, SEED-02b; B4 G3a, H2 §4, App. A T2).
 
-The repo hook of the orchestrate-build skill's `ci-boundary.sh` (BM-CI-01): when this file exists the
-skill runs `python3 docs/build/tools/ci_boundary.py --pr <n> --json <path>` from the worktree and passes
-the exit code through, so this tool owns the required set, the stack and the wait.
+The repo hook of the orchestrate-build skill's `ci-boundary.sh` (BM-CI-01): when this file
+exists the skill runs `python3 docs/build/tools/ci_boundary.py --pr <n> --json <path>` from
+the worktree and passes the exit code through, so this tool owns the required set, the stack
+and the wait.
 
 What it reads (read-only `gh` and `git`; it never mutates anything):
 
 - the PR (`gh pr view`): head sha, head and base branch, state, draft flag, mergeable;
-- the **head-bound check-runs** of that sha (`gh api repos/{owner}/{repo}/commits/<sha>/check-runs`,
-  GitHub Actions only, the highest id per name) — never `gh pr checks`, whose JSON names no sha and can
-  attribute a superseded head's result (H2 §4.1, NEW-12);
-- the stack: each open PR whose head is the previous PR's base, **only while that base is an `r11/`
-  branch**. The Round-10 stack #141–#190 is never read (B-15; plan App. A T2), so its red heads
-  #165/#179/#185 cannot block a Round-11 boundary. A requested PR outside that scope — e.g. #190, the PR
-  of `lastCompleted: P33.8` at the first boundary — is not read either: the tool reads the open PR of the
-  LEDGER's `chainTip` instead when that is an `r11/` branch, and says so in the record;
+- the **head-bound check-runs** of that sha
+  (`gh api repos/{owner}/{repo}/commits/<sha>/check-runs`, GitHub Actions only, the highest id
+  per name) — never `gh pr checks`, whose JSON names no sha and can attribute a superseded
+  head's result (H2 §4.1, NEW-12);
+- the stack: each open PR whose head is the previous PR's base, **only while that base is an
+  `r11/` branch**. The Round-10 stack #141–#190 is never read (B-15; plan App. A T2), so its
+  red heads #165/#179/#185 cannot block a Round-11 boundary. A requested PR outside that scope
+  — e.g. #190, the PR of `lastCompleted: P33.8` at the first boundary — is not read either:
+  the tool reads the open PR of the LEDGER's `chainTip` instead when that is an `r11/` branch,
+  and says so in the record;
 - the required set, `record_policy/ci_required.txt`, through `memory_guard.read_ci_required()`;
 - operator waivers: 7-column GATE DECISIONS rows of kind `waiver` naming `#<n>` and the check
   (BM-GATE-05; the skill's rule — a waiver covers the named PR only).
 
-**Green** — every PR of the stack is OPEN, not a draft, not CONFLICTING, its head did not move during the
-read; the current PR's local branch, when the repo has one, is at the PR head; and every required
-check-run on every head is `completed` with `success` (or a failure the operator waived). **Pending** — a
-required check is queued or running, or not registered yet. **Red** — everything else: `failure`,
-`cancelled`, `timed_out`, `action_required`, `startup_failure`, `stale`, `neutral`, a `skipped` required
-job, a required check still missing with no workflow run queued for the sha, a moved head, a stack with a
-gap, a closed or draft PR, conflicts. "Green locally" is never green (P11).
+**Green** — every PR of the stack is OPEN, not a draft, not CONFLICTING, its head did not move
+during the read; the current PR's local branch, when the repo has one, is at the PR head; and
+every required check-run on every head is `completed` with `success` (or a failure the operator
+waived). **Pending** — a required check is queued or running, or not registered yet. **Red** —
+everything else: `failure`, `cancelled`, `timed_out`, `action_required`, `startup_failure`,
+`stale`, `neutral`, a `skipped` required job, a required check still missing with no workflow
+run queued for the sha, a moved head, a stack with a gap, a closed or draft PR, conflicts.
+"Green locally" is never green (P11).
 
-**Wait.** Poll every `--interval` s (60) up to `--max-wait` s (2,700 = 45 min, H2 §4.3); `--no-wait`
-reads once (a missing check is then pending). A required check still missing after `--grace` s (300) of
-waiting while no workflow run is registered for the sha is red (`missing`: the workflow did not
-trigger). A `gh` error is retried after `--backoff` s (30,60,120) and then exits 5; an authentication
-error is not retried.
+**Flakes (P34.2, H2 §4.4, B-15).** `record_policy/ci_flakes.toml` lists known flakes as
+`{id, job, step, pattern, evidence_runs, tracking, reason, expires}` entries (parsed by the
+minimal TOML-subset reader below — Python 3.9 has no tomllib). A required check that fails and
+whose first failing line (check-run output title/summary + first failure annotation) matches
+an unexpired entry's `pattern` gets exactly **one** `gh run rerun --failed <run>` per head —
+the operator-approved GitHub write (Q-H2-4 [B-15]); `--no-rerun` disables it. Both attempts are
+appended to `docs/build/reports/ci/flake_log.csv`; a rerun the log cannot record is never
+taken. A second failure on the same head is `flake-exhausted` red; a failure matching no
+unexpired entry is plain red — never quarantined, skipped or retried.
 
-**Output.** The `ci-boundary/1` JSON at `--json` and, as the last stdout line, the line to record:
-`ci: pass #<n>@<sha7> (python <run>; docs <run>; composed <run>; security <run>; web <run>)[ · stack: #a
-pass][ · waived: …]`, or `blockedOn: CI <fail|cancel|missing|pending|unavailable|conflict|stack> on
-#<n>@<sha7> (<check>): <detail>` (H2 §4.5).
+**External delta (G3c, P34.2).** Each read also records `origin/main`'s head (a best-effort
+`git fetch origin main` first), whether the chain tip descends from it, the PRs merged since
+the last boundary (the latest `## PHASE LOG — Round 11` entry's boundary time when it records
+one, else its date), every open PR whose head is no chain row, and the link ancestry of each
+stacked pair — in the record's `external` object and the boundary line's ` · main: <sha7> …`
+tail. An off-stack merge inside the window is `blockedOn`, and a stack link whose parent head
+is not an ancestor of the child's is a rebase/retarget — `blockedOn` too (OM-03/OM-17). A
+chain tip that does not descend from `origin/main` is *recorded* (`descends:no`) — the
+operator merges the chain late, so the tip normally trails main's head; it is not itself a
+rebase signal. Unresolvable pieces are recorded, never claimed.
 
-Exit codes (the skill's hook contract, `ci-boundary.sh`): 0 pass · 1 usage · 3 red · 4 still pending
-after the wait · 5 unknown — `gh` absent, unauthenticated or offline, checks unreadable, the required set
-unreadable, or an out-of-scope PR with no `r11/` chainTip PR. Never treated as green.
+**Output.** The `ci-boundary/1` JSON at `--json` and, as the last stdout line, the line to
+record: `ci: pass #<n>@<sha7> (python <run>; docs <run>; composed <run>; security <run>;
+web <run>)[ · stack: #a pass][ · waived: …][ · main: <sha7> …]` — `ci: pass-after-rerun` when a
+flake re-run landed — or `blockedOn: CI <fail|cancel|missing|pending|unavailable|conflict|
+stack> on #<n>@<sha7> (<check>): <detail>` (H2 §4.5).
+
+Exit codes (the skill's hook contract, `ci-boundary.sh`): 0 pass · 1 usage · 3 red · 4 still
+pending after the wait · 5 unknown — `gh` absent, unauthenticated or offline, checks
+unreadable, the required set unreadable, or an out-of-scope PR with no `r11/` chainTip PR.
+Never treated as green.
 
 Usage::
 
     ci_boundary.py --pr <n> --json <path> [--repo DIR] [--ledger PATH] [--prefix r11/]
-                   [--interval S] [--max-wait S | --no-wait] [--grace S] [--backoff 30,60,120] [--gh PATH]
+                   [--interval S] [--max-wait S | --no-wait] [--grace S] [--gh PATH]
+                   [--backoff 30,60,120]
 
-Python 3.9+ (the skill runs it with whatever `python3` is on PATH — macOS's system Python is 3.9),
-stdlib, `git` and `gh` only.
+Python 3.9+ (the skill runs it with whatever `python3` is on PATH — macOS's system Python is
+3.9), stdlib, `git` and `gh` only.
 """
 
 from __future__ import annotations
@@ -76,6 +98,9 @@ SCHEMA = "ci-boundary/1"
 EXIT_PASS, EXIT_USAGE, EXIT_RED, EXIT_PENDING, EXIT_UNKNOWN = 0, 1, 3, 4, 5
 HERE = Path(__file__).resolve().parent
 LEDGER_REL = "docs/build/LEDGER.md"
+FLAKES_REL = "docs/build/tools/record_policy/ci_flakes.toml"
+FLAKE_LOG_REL = "docs/build/reports/ci/flake_log.csv"
+FLAKE_LOG_HEADER = "date,pr,head_sha,check,flake_id,run_id,attempt,outcome"
 DEFAULT_PREFIX = "r11/"
 # The Round-10 stack (#141–#190): never read by a Round-11 boundary (B-15; plan App. A T2 SEED-02).
 ROUND10_PRS = range(141, 191)
@@ -221,9 +246,11 @@ class PR:
 @dataclass
 class Verdict:
     state: str  # pass | fail | pending
-    kind: str = ""  # fail | cancel | missing | pending | conflict | stack
+    kind: str = ""  # fail | cancel | missing | pending | conflict | stack | unavailable
     check: str = "-"
     detail: str = ""
+    flake: Flake | None = None  # the allow-list entry a failure matched
+    run_id: str = ""  # the failed check's workflow run (a flake re-run's target)
 
 
 @dataclass
@@ -235,6 +262,8 @@ class Ctx:
     grace: float
     single_read: bool
     checks: list[dict[str, Any]] = field(default_factory=list)
+    flakes: list[Flake] = field(default_factory=list)
+    reran: dict[str, dict[str, str]] = field(default_factory=dict)  # check → attempt record
 
 
 def run_id_of(url: str) -> str:
@@ -286,6 +315,128 @@ def waived(waivers: list[str], pr: int, check: str) -> bool:
     return any(pr_re.search(w) and name_re.search(w) for w in waivers)
 
 
+# ── flake allow-list (ci_flakes.toml; P34.2, H2 §4.4, B-15) ──────────────────
+
+
+@dataclass
+class Flake:
+    """One allow-list entry. `step`/`evidence_runs`/`tracking`/`reason` are audit text."""
+
+    id: str
+    job: str
+    pattern: str
+    expires: str
+    step: str = ""
+    evidence_runs: list[str] = field(default_factory=list)
+    tracking: str = ""
+    reason: str = ""
+
+
+def _toml_comment(line: str) -> str:
+    """Strip a `#` comment outside quotes (the policy subset has no `#` in strings)."""
+    out, quote = [], ""
+    for ch in line:
+        if quote:
+            out.append(ch)
+            if ch == quote:
+                quote = ""
+        elif ch in "\"'":
+            quote = ch
+            out.append(ch)
+        elif ch == "#":
+            break
+        else:
+            out.append(ch)
+    return "".join(out).strip()
+
+
+def _toml_value(raw: str) -> Any:
+    """A scalar or string-array value of the `ci_flakes.toml` subset (3.9-safe, no tomllib)."""
+    raw = raw.strip()
+    if raw.startswith('"') and raw.endswith('"') and len(raw) >= 2:
+        return json.loads(raw)  # TOML basic strings are JSON-compatible here
+    if raw.startswith("'") and raw.endswith("'") and len(raw) >= 2:
+        return raw[1:-1]  # literal string
+    if raw.startswith("[") and raw.endswith("]"):
+        return [json.loads(m.group(0)) for m in re.finditer(r'"(?:[^"\\]|\\.)*"', raw[1:-1])]
+    raise ValueError(f"unsupported value {raw!r} (scalars and string arrays only)")
+
+
+def parse_flakes(text: str) -> list[Flake]:
+    """The committed allow-list. Anything outside the `[[flake]]` subset fails loudly —
+    a malformed policy must never silently allow or silently deny."""
+    entries: list[Flake] = []
+    cur: dict[str, Any] | None = None
+    for lineno, raw in enumerate(text.splitlines(), 1):
+        line = _toml_comment(raw)
+        if not line:
+            continue
+        if line == "[[flake]]":
+            if cur is not None:
+                entries.append(cur)
+            cur = {}
+            continue
+        if cur is None or "=" not in line:
+            raise ValueError(f"ci_flakes.toml:{lineno}: expected `key = value` inside [[flake]]")
+        key, _, val = line.partition("=")
+        cur[key.strip()] = _toml_value(val)
+    if cur is not None:
+        entries.append(cur)
+    flakes: list[Flake] = []
+    for i, e in enumerate(entries, 1):
+        missing = [k for k in ("id", "job", "pattern", "expires") if not e.get(k)]
+        if missing:
+            raise ValueError(f"ci_flakes.toml entry {i}: missing {', '.join(missing)}")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(e["expires"])):
+            raise ValueError(f"ci_flakes.toml entry {i}: `expires` must be a YYYY-MM-DD UTC date")
+        re.compile(str(e["pattern"]))  # a bad regex fails here, never at the boundary
+        flakes.append(
+            Flake(
+                id=str(e["id"]),
+                job=str(e["job"]),
+                pattern=str(e["pattern"]),
+                expires=str(e["expires"]),
+                step=str(e.get("step") or ""),
+                evidence_runs=[str(r) for r in (e.get("evidence_runs") or [])],
+                tracking=str(e.get("tracking") or ""),
+                reason=str(e.get("reason") or ""),
+            )
+        )
+    return flakes
+
+
+def flake_match(flakes: list[Flake], check: str, text: str, today: str) -> Flake | None:
+    """The unexpired entry whose job names the check and whose pattern hits the failing line."""
+    for f in flakes:
+        if f.job == check and f.expires >= today and re.search(f.pattern, text):
+            return f
+    return None
+
+
+def flake_log_heads(log_path: Path) -> set[str]:
+    """Head shas that already used their one re-run (the log is the durable record)."""
+    heads: set[str] = set()
+    try:
+        rows = log_path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return heads
+    for line in rows[1:]:
+        cells = line.split(",")
+        if len(cells) >= 8 and cells[7].strip() == "rerun-requested":
+            heads.add(cells[2].strip())
+    return heads
+
+
+def append_flake_log(log_path: Path, rows: list[list[str]]) -> None:
+    """Append attempt rows; create the file (with header) on first use. Never rewrites."""
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    if not log_path.exists():
+        log_path.write_text(FLAKE_LOG_HEADER + "\n", encoding="utf-8")
+    with log_path.open("a", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(",".join(str(c).replace(",", " ") for c in r) + "\n")
+
+
 # ── the gate ─────────────────────────────────────────────────────────────────
 
 
@@ -318,6 +469,145 @@ class Boundary:
             text=True,
         )
         return proc.stdout.strip() if proc.returncode == 0 else ""
+
+    def git(self, *args: str) -> subprocess.CompletedProcess:
+        return subprocess.run(["git", "-C", str(self.repo), *args], capture_output=True, text=True)
+
+    def external(self, stack: list[PR], since: str) -> tuple[dict[str, Any], Verdict | None]:
+        """G3c external delta: `origin/main`'s head, the chain's descent from it, the merges
+        since the last boundary, open PRs that are no chain row, and each stacked link's
+        ancestry. A violation is a red `Verdict`; an unresolvable piece is recorded as
+        `None` with a note — never claimed."""
+        ext: dict[str, Any] = {"read_at": utc_now(), "since": since or None}
+        fetch = self.git("fetch", "-q", "origin", "main")
+        ext["fetch"] = (
+            "ok" if fetch.returncode == 0 else f"failed: {(fetch.stderr or '').strip()[:160]}"
+        )
+        rev = self.git("rev-parse", "--verify", "-q", "refs/remotes/origin/main")
+        main_sha = rev.stdout.strip() if rev.returncode == 0 else ""
+        ext["main_sha"] = main_sha or None
+        if not main_sha:
+            return ext, Verdict(
+                "fail", "unavailable", "external", "origin/main is not readable in this worktree"
+            )
+        tip = stack[0]
+        mb = self.git("merge-base", "--is-ancestor", "origin/main", tip.head_sha)
+        if mb.returncode == 0:
+            ext["chain_descends"] = True
+        elif mb.returncode == 1:
+            ext["chain_descends"] = False
+            # Recorded, never a block on its own: the operator merges the chain
+            # late (GATE-M Q-11), so the tip normally trails main's head. The
+            # red conditions are an off-stack merge in the window and a broken
+            # stack link — both checked below.
+            ext["descends_note"] = (
+                f"origin/main {main_sha[:7]} is not an ancestor of the tip — main "
+                "carries commits the chain does not contain (the chain trails main, "
+                "merged late by the operator)"
+            )
+        else:
+            ext["chain_descends"] = None
+            ext["descends_note"] = (mb.stderr or "").strip()[:160] or "unverifiable"
+        # Each stacked pair: the parent's recorded head is an ancestor of the child's —
+        # a retarget/rebase outside the operator's procedure breaks that (OM-03/OM-17).
+        links: list[dict[str, Any]] = []
+        for child, parent in zip(stack, stack[1:]):  # noqa: B905 (3.9)
+            # `rev-parse --verify -q <sha>` echoes a syntactically-valid sha back with
+            # rc 0 even when the object is absent — `cat-file -e` really verifies.
+            have = self.git("cat-file", "-e", f"{parent.head_sha}^{{commit}}").returncode == 0
+            if not have:
+                links.append(
+                    {
+                        "child": child.number,
+                        "parent": parent.number,
+                        "ancestor": None,
+                        "note": "parent head not resolvable locally",
+                    }
+                )
+                continue
+            anc = self.git("merge-base", "--is-ancestor", parent.head_sha, child.head_sha)
+            links.append(
+                {
+                    "child": child.number,
+                    "parent": parent.number,
+                    "ancestor": anc.returncode == 0 if anc.returncode in (0, 1) else None,
+                }
+            )
+            if anc.returncode == 1:
+                ext["ancestry"] = links
+                return ext, Verdict(
+                    "fail",
+                    "stack",
+                    "external",
+                    f"#{child.number} does not contain its base #{parent.number}'s head "
+                    f"{parent.sha7} — rebased or retargeted outside the documented procedure",
+                )
+        ext["ancestry"] = links
+        merged: list[dict[str, Any]] = []
+        if since:
+            got = self.gh.json(
+                "pr",
+                "list",
+                "--state",
+                "merged",
+                "--search",
+                f"merged:>={since[:10]}",
+                "--json",
+                "number,headRefName,headRefOid,baseRefName,mergedAt",
+                "--limit",
+                "100",
+            )
+            merged = [
+                {
+                    "number": int(m["number"]),
+                    "head_ref": str(m.get("headRefName") or ""),
+                    "head_sha": str(m.get("headRefOid") or ""),
+                    "base": str(m.get("baseRefName") or ""),
+                    "merged_at": str(m.get("mergedAt") or ""),
+                    "on_stack": str(m.get("headRefName") or "").startswith(self.prefix),
+                }
+                for m in (got or [])
+            ]
+            # "Since the last boundary" is a timestamp, not a date — the search
+            # window covers the whole day; a merge earlier that day predates the
+            # boundary and is not its delta.
+            if "T" in since:
+                merged = [m for m in merged if m["merged_at"] > since]
+            off_stack = [m for m in merged if not m["on_stack"]]
+            ext["merged_since"] = merged
+            if off_stack:
+                m = off_stack[0]
+                return ext, Verdict(
+                    "fail",
+                    "stack",
+                    "external",
+                    f"off-stack merge #{m['number']} (`{m['head_ref']}` → `{m['base']}`) into main "
+                    f"at {m['merged_at']} — not a chain row (since {since})",
+                )
+        else:
+            ext["merged_since"] = []
+            ext["merged_note"] = "no prior Round-11 PHASE LOG entry — no merge window"
+        opened = self.gh.json(
+            "pr",
+            "list",
+            "--state",
+            "open",
+            "--json",
+            "number,headRefName,headRefOid,baseRefName",
+            "--limit",
+            "100",
+        )
+        ext["open_off_chain"] = [
+            {
+                "number": int(p["number"]),
+                "head_ref": str(p.get("headRefName") or ""),
+                "head_sha": str(p.get("headRefOid") or ""),
+                "base": str(p.get("baseRefName") or ""),
+            }
+            for p in (opened or [])
+            if not str(p.get("headRefName") or "").startswith(self.prefix)
+        ]
+        return ext, None
 
     def walk(self, current: PR) -> tuple[list[PR], str, Verdict | None]:
         """The current PR and its open `r11/` ancestors, the reason the walk stopped, and a stack
@@ -457,7 +747,21 @@ class Boundary:
                     detail = (concl or "no conclusion") + (f" — {note}" if note else "")
                     detail += f" (run {rid})" if rid else ""
                     kind = "cancel" if concl == "cancelled" else "fail"
-                    verdicts.append(Verdict("fail", kind, name, detail))
+                    flake = None
+                    if concl == "failure" and ctx.flakes:
+                        out = run.get("output") or {}
+                        text = (
+                            "\n".join(str(out.get(k) or "") for k in ("title", "summary"))
+                            + "\n"
+                            + note
+                        )
+                        flake = flake_match(
+                            ctx.flakes,
+                            name,
+                            text,
+                            dt.datetime.now(dt.timezone.utc).date().isoformat(),
+                        )
+                    verdicts.append(Verdict("fail", kind, name, detail, flake, rid))
         for want in ("fail", "pending"):
             hit = next((v for v in verdicts if v.state == want), None)
             if hit:
@@ -478,7 +782,8 @@ class Boundary:
                 "pending",
                 "pending",
                 name,
-                f"required check not registered; workflow run {r.get('databaseId')} is {r.get('status')}",
+                f"required check not registered; workflow run {r.get('databaseId')} "
+                f"is {r.get('status')}",
             )
         return Verdict(
             "fail",
@@ -543,6 +848,23 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     )
     ap.add_argument("--backoff", default="30,60,120", help="gh retry waits in seconds (30,60,120)")
     ap.add_argument("--gh", default="gh", help="the gh executable (default: gh on PATH)")
+    ap.add_argument(
+        "--flakes",
+        metavar="PATH",
+        help=f"the flake allow-list (default: <repo>/{FLAKES_REL})",
+    )
+    ap.add_argument(
+        "--flake-log",
+        metavar="PATH",
+        dest="flake_log",
+        help=f"the re-run log (default: <repo>/{FLAKE_LOG_REL})",
+    )
+    ap.add_argument(
+        "--no-rerun",
+        action="store_true",
+        dest="no_rerun",
+        help="read-only mode: never take the one allow-listed re-run per head (B-15)",
+    )
     args = ap.parse_args(argv)
     pr = str(args.pr).lstrip("#")
     if not pr.isdigit():
@@ -586,7 +908,8 @@ class Out:
                 f"ci_boundary.py: cannot write the record {self.json_path}: {exc}", file=sys.stderr
             )
             print(
-                f"blockedOn: CI unavailable on #{self.doc.get('pr')} (record): the record could not be written"
+                f"blockedOn: CI unavailable on #{self.doc.get('pr')} (record): the record "
+                "could not be written"
             )
             return EXIT_UNKNOWN
         print(f"ci-boundary: record → {self.json_path}")
@@ -618,12 +941,18 @@ def main(argv: list[str] | None = None) -> int:
             "base": None,
             "read_at": utc_now(),
             "prefix": args.prefix,
-            "scope": f"the current {args.prefix} PR and its open {args.prefix} ancestors; never #141–#190",
+            "scope": (
+                f"the current {args.prefix} PR and its open {args.prefix} ancestors; "
+                "never #141–#190"
+            ),
             "required": None,
             "stack": [],
             "stack_stop": None,
             "stack_digest": None,
             "local_head": None,
+            "external": None,
+            "flake_entries": [],
+            "reruns": [],
             "checks": [],
             "waivers": 0,
             "polls": 0,
@@ -649,6 +978,18 @@ def main(argv: list[str] | None = None) -> int:
             f"#{args.pr} (required set)", f"cannot read record_policy/ci_required.txt: {exc}"
         )
     out.doc["required"] = required
+    flakes_path = Path(args.flakes) if args.flakes else repo / FLAKES_REL
+    try:
+        flakes = parse_flakes(flakes_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return unknown(
+            f"#{args.pr} (flake policy)",
+            f"cannot read "
+            f"{flakes_path.relative_to(repo) if flakes_path.is_relative_to(repo) else flakes_path}"
+            f": {exc}",
+        )
+    out.doc["flake_entries"] = [f.id for f in flakes]
+    flake_log = Path(args.flake_log) if args.flake_log else repo / FLAKE_LOG_REL
     ledger = read_ledger(ledger_path)
     waivers = ledger_waivers(ledger)
     out.doc["waivers"] = len(waivers)
@@ -665,12 +1006,13 @@ def main(argv: list[str] | None = None) -> int:
             if cand is None or b.out_of_scope(cand):
                 return unknown(
                     f"#{args.pr} (scope)",
-                    f"#{args.pr} is outside the {args.prefix} scope (never #141–#190, B-15) and the LEDGER "
-                    f"chainTip `{tip or '(unset)'}` names no open {args.prefix} PR",
+                    f"#{args.pr} is outside the {args.prefix} scope (never #141–#190, "
+                    f"B-15) and the LEDGER chainTip `{tip or '(unset)'}` names no open "
+                    f"{args.prefix} PR",
                 )
             out.doc["redirect"] = (
-                f"#{args.pr} is outside the {args.prefix} scope (B-15); read the chainTip `{tip}` PR "
-                f"#{cand.number} instead"
+                f"#{args.pr} is outside the {args.prefix} scope (B-15); read the "
+                f"chainTip `{tip}` PR #{cand.number} instead"
             )
             pr = cand
         out.doc.update(
@@ -683,20 +1025,46 @@ def main(argv: list[str] | None = None) -> int:
         recorded = {p.number: p.head_sha for p in stack}
         out.doc["stack_stop"] = stop
         out.doc["stack_digest"] = stack_digest(stack)
+
+        # G3c (P34.2): the external delta — origin/main's head, the chain's descent and
+        # link ancestry, merges since the last boundary, off-chain open PRs. A violation
+        # is a red verdict emitted before any wait; the fields land in the record either way.
+        ext, ext_red = b.external(stack, last_boundary(ledger))
+        out.doc["external"] = ext
+        if ext_red is not None:
+            return out.emit(
+                "fail",
+                EXIT_RED,
+                f"blockedOn: CI {ext_red.kind} on #{pr.number}@{pr.sha7} "
+                f"(external): {ext_red.detail}",
+                ext_red.kind,
+            )
         if local and local != pr.head_sha:
             gap = gap or Verdict(
                 "fail",
                 "stack",
                 "-",
-                f"local `{pr.head_ref}` is at {local[:7]}, the PR head is {pr.sha7} — push or re-sync the chain "
+                f"local `{pr.head_ref}` is at {local[:7]}, the PR head is {pr.sha7} — "
+                "push or re-sync the chain "
                 "tip before the boundary",
             )
 
+        rerun_heads = flake_log_heads(flake_log)
+        reran: dict[str, dict[str, str]] = {}  # check → {flake_id, run_id, failed_line}
         start = time.monotonic()
         while True:
             waited = time.monotonic() - start
             final = args.max_wait <= 0 or waited + args.interval >= args.max_wait
-            ctx = Ctx(required, waivers, final, waited, args.grace, single_read=args.max_wait <= 0)
+            ctx = Ctx(
+                required,
+                waivers,
+                final,
+                waited,
+                args.grace,
+                single_read=args.max_wait <= 0,
+                flakes=flakes,
+                reran=reran,
+            )
             out.doc["polls"] += 1
             out.doc["waited_s"] = round(waited, 1)
             fresh: list[PR] = []
@@ -708,7 +1076,8 @@ def main(argv: list[str] | None = None) -> int:
                         "fail",
                         "stack",
                         "-",
-                        f"#{p.number} head moved {recorded[p.number][:7]} → {now.sha7} during the read",
+                        f"#{p.number} head moved {recorded[p.number][:7]} → "
+                        f"{now.sha7} during the read",
                     )
                 fresh.append(now)
             verdicts = [b.judge(p, ctx) for p in fresh]
@@ -730,22 +1099,105 @@ def main(argv: list[str] | None = None) -> int:
             red = gap or moved
             red_pr = fresh[0]
             if red is None:
-                for p, v in zip(fresh, verdicts):  # noqa: B905 (3.9 has no strict=)
-                    if v.state == "fail":
-                        red, red_pr = v, p
-                        break
+                # Prefer a non-flake fail for reporting: an allow-listed flake is re-run only
+                # when EVERY red on the head matches the allow-list — a real red is never
+                # masked by a flake's one permitted re-run.
+                fails = [
+                    (p, v)
+                    for p, v in zip(fresh, verdicts)  # noqa: B905 (3.9)
+                    if v.state == "fail"
+                ]
+                fails.sort(key=lambda pv: pv[1].flake is not None)
+                if fails:
+                    red, red_pr = fails[0][1], fails[0][0]
+            if red is not None and not (gap or moved):
+                # CI-5 (B-15): every red on this head that is an allow-listed flake gets the
+                # head's ONE `gh run rerun --failed`; any red outside the allow-list blocks.
+                red_fails = [v for v in verdicts if v.state == "fail" and v.kind in ("fail",)]
+                if red_fails and all(v.flake is not None for v in red_fails) and not args.no_rerun:
+                    if red_pr.head_sha in rerun_heads:
+                        red.detail += (
+                            f" — flake-exhausted: {red.flake.id} already used this head's "
+                            "one re-run (B-15); the failure is red, not re-run"
+                        )
+                    elif red.run_id:
+                        try:
+                            append_flake_log(
+                                flake_log,
+                                [
+                                    [
+                                        utc_now(),
+                                        red_pr.number,
+                                        red_pr.head_sha,
+                                        red.check,
+                                        red.flake.id,
+                                        red.run_id,
+                                        "1",
+                                        "failure",
+                                    ],
+                                    [
+                                        utc_now(),
+                                        red_pr.number,
+                                        red_pr.head_sha,
+                                        red.check,
+                                        red.flake.id,
+                                        red.run_id,
+                                        "2",
+                                        "rerun-requested",
+                                    ],
+                                ],
+                            )
+                        except OSError as exc:
+                            red.detail += (
+                                f" — {red.flake.id} is allow-listed but the re-run log is not "
+                                f"writable ({exc}); no re-run taken (the record is mandatory)"
+                            )
+                            red.flake = None
+                        if red.flake is not None:
+                            try:
+                                gh.run("run", "rerun", "--failed", red.run_id, retry=False)
+                            except GhError as exc:
+                                red.detail += f" — re-run of {red.run_id} failed: {exc}"
+                                red.flake = None
+                            else:
+                                rerun_heads.add(red_pr.head_sha)
+                                out.doc["reruns"].append(
+                                    {
+                                        "pr": red_pr.number,
+                                        "check": red.check,
+                                        "flake_id": red.flake.id,
+                                        "run_id": red.run_id,
+                                        "at": utc_now(),
+                                    }
+                                )
+                                reran[red.check] = {
+                                    "flake_id": red.flake.id,
+                                    "run_id": red.run_id,
+                                    "first_line": red.detail,
+                                }
+                                print(
+                                    f"ci-boundary: #{red_pr.number} {red.check} matched "
+                                    f"allow-listed flake {red.flake.id} — re-ran "
+                                    f"{red.run_id} (once per head, B-15)",
+                                    file=sys.stderr,
+                                )
+                                time.sleep(min(args.interval, 15))
+                                continue
             if red is not None:
                 return out.emit(
                     "fail",
                     EXIT_RED,
-                    f"blockedOn: CI {red.kind} on #{red_pr.number}@{red_pr.sha7} ({red.check}): {red.detail}",
+                    f"blockedOn: CI {red.kind} on #{red_pr.number}@{red_pr.sha7} "
+                    f"({red.check}): {red.detail}",
                     red.kind,
                 )
             pairs = list(zip(fresh, verdicts))  # noqa: B905 (3.9 has no strict=; equal by construction)
             pend = next(((p, v) for p, v in pairs if v.state == "pending"), None)
             if pend is None:
                 redirected = args.pr if out.doc.get("redirect") else None
-                return out.emit("pass", EXIT_PASS, pass_line(fresh, ctx, redirected))
+                return out.emit(
+                    "pass", EXIT_PASS, pass_line(fresh, ctx, redirected, out.doc.get("external"))
+                )
             if final:
                 p, v = pend
                 return out.emit(
@@ -756,7 +1208,8 @@ def main(argv: list[str] | None = None) -> int:
                     "pending",
                 )
             print(
-                f"ci-boundary: #{pend[0].number} pending ({pend[1].check}: {pend[1].detail}) — re-reading in "
+                f"ci-boundary: #{pend[0].number} pending ({pend[1].check}: "
+                f"{pend[1].detail}) — re-reading in "
                 f"{args.interval:g} s (waited {waited:.0f} s of {args.max_wait:g} s)",
                 file=sys.stderr,
             )
@@ -767,14 +1220,23 @@ def main(argv: list[str] | None = None) -> int:
         return unknown(f"#{out.doc['pr']} (gh)", f"unexpected gh output: {exc!r}"[:200])
 
 
-def pass_line(stack: list[PR], ctx: Ctx, redirected_from: int | None) -> str:
+def pass_line(
+    stack: list[PR], ctx: Ctx, redirected_from: int | None, external: dict[str, Any] | None
+) -> str:
     cur = stack[0]
     jobs = []
     for c in ctx.checks:
         if c["pr"] != cur.number or not c["required"]:
             continue
-        jobs.append(f"{c['name']} waived" if c["waived"] else f"{c['name']} {c['run_id'] or '-'}")
-    line = f"ci: pass #{cur.number}@{cur.sha7} ({'; '.join(jobs)})"
+        rr = ctx.reran.get(c["name"])
+        if rr:
+            jobs.append(f"{c['name']} a1 fail {rr['flake_id']} run {rr['run_id']}; a2 pass")
+        else:
+            jobs.append(
+                f"{c['name']} waived" if c["waived"] else f"{c['name']} {c['run_id'] or '-'}"
+            )
+    state = "pass-after-rerun" if ctx.reran else "pass"
+    line = f"ci: {state} #{cur.number}@{cur.sha7} ({'; '.join(jobs)})"
     if len(stack) > 1:
         line += " · stack: " + " ".join(f"#{p.number}" for p in stack[1:]) + " pass"
     anc_waived = [
@@ -784,7 +1246,33 @@ def pass_line(stack: list[PR], ctx: Ctx, redirected_from: int | None) -> str:
         line += " · waived: " + ", ".join(anc_waived)
     if redirected_from is not None:
         line += f" · requested #{redirected_from} out of scope (B-15)"
+    if external is not None:
+        desc = external.get("chain_descends")
+        tail = (
+            f"main: {(external.get('main_sha') or 'unread')[:7]} "
+            f"descends:{'yes' if desc else 'no' if desc is False else 'unverified'} "
+            f"merges:{len(external.get('merged_since') or [])} "
+            f"open-other:{len(external.get('open_off_chain') or [])}"
+        )
+        line += f" · {tail}"
     return line
+
+
+def last_boundary(ledger: str) -> str:
+    """The last Round-11 boundary's timestamp — the merge window's start (G3c).
+
+    The latest `## PHASE LOG — Round 11` entry's leading date, refined to a full
+    ISO instant when the entry names one (`ci_boundary 22:18:48Z`); the date alone
+    when it does not. An empty/absent section gives an empty string and the merge
+    scan is skipped."""
+    section = re.search(r"(?ms)^##\s+PHASE LOG — Round 11\b[^\n]*$(.*?)(?=^##\s|\Z)", ledger)
+    if not section:
+        return ""
+    entries = re.findall(r"(?m)^\s*-\s*(\d{4}-\d{2}-\d{2}[^\n]*)$", section.group(1))
+    if not entries:
+        return ""
+    stamp = re.search(r"ci_boundary\s+(\d{2}:\d{2}:\d{2}Z)", entries[-1])
+    return f"{entries[-1][:10]}T{stamp.group(1)}" if stamp else entries[-1][:10]
 
 
 if __name__ == "__main__":

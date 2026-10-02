@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# npm_audit_allow.toml — the advisory allow-list for scripts/ci/npm_audit_gate.py
+# (P34.2 deliverable 6, SIG-ENG-042). The gate runs at --audit-level=high:
+#
+#   - per PR (the `security` job): `npm audit --omit=dev` — production deps only;
+#     the list currently covers NO production finding (astro GHSA-26w7-cxv4-gfx2
+#     was fixed by the 7.2.4 → 7.3.5 pin, not allowed).
+#   - nightly (nightly.yml `npm` stage): a full `npm audit` — the entries below
+#     cover the `@lhci/cli` (Lighthouse runner) DEV toolchain. `lhci` executes
+#     the performance-budget audit locally in CI; nothing it ships reaches the
+#     static bundle the public surface serves (the bundle is built by astro,
+#     not by lhci), so the exposure is a build-time toolchain risk only.
+#
+# Every entry: `package` + `advisories` (the GHSA ids npm reports), `scope`,
+# `reason`, `tracking` (the row/ADR that retires it) and `expires` (a UTC date).
+# An expired entry fails the gate loudly — a dead grant is renewed deliberately
+# or removed, never kept stale. The only "fix" npm offers for this chain is
+# `@lhci/cli@0.1.0` — a 15-major downgrade that removes the runner — so the
+# entries stand until the toolchain moves (tracking: D-P34.2-1).
+
+[[allow]]
+id = "LHCI-CHAIN-BASIC-FTP"
+package = "basic-ftp"
+advisories = ["GHSA-c475-qrg2-pj4r"]
+scope = "dev-only"
+reason = "quadratic-time DoS in basic-ftp's Unix directory-listing parser; reachable only via get-uri ← pac-proxy-agent ← proxy-agent inside @lhci/cli — build-time Lighthouse tooling, never shipped in the static bundle"
+tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
+expires = "2026-11-30"
+
+[[allow]]
+id = "LHCI-CHAIN-EXTRACT-ZIP"
+package = "extract-zip"
+advisories = ["GHSA-jmr9-qjv8-65gv", "GHSA-7pqw-9j4j-h8q3"]
+scope = "dev-only"
+reason = "extract-zip zip-slip / DoS pair reachable only via @puppeteer/browsers ← puppeteer-core ← lighthouse ← @lhci/cli — the browser-download helper of the dev-only Lighthouse runner"
+tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
+expires = "2026-11-30"
+
+[[allow]]
+id = "LHCI-CHAIN-TMP"
+package = "tmp"
+advisories = ["GHSA-ph9p-34f9-6g65"]
+scope = "dev-only"
+reason = "tmp arbitrary-write via symlink reachable only inside @lhci/cli's external-editor path — dev-only tooling on a CI runner, not the shipped surface"
+tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
+expires = "2026-11-30"
