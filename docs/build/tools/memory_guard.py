@@ -213,7 +213,7 @@ GATE_STATUS_RE = re.compile(r"^\s*-?\s*(?:\*\*)?Gate status:(?:\*\*)?", re.I)
 OBLIGATIONS_PREFIX = "docs/build/reports/obligations/"
 EVENT_SCHEMA = "obligation-event/1"
 ASSESSMENT_SCHEMA = "coverage-assessment/1"
-EVENT_KINDS = {"migration", "transition"}
+EVENT_KINDS = {"migration", "transition", "correction"}
 EVENT_FIELDS = (
     "schema",
     "event_id",
@@ -2742,20 +2742,26 @@ class Judge:
         obligation's last event via `expected_previous_event`."""
         last: dict[str, str] = {}
         known: set[str] = set()
+        old_event_at_line: list[str | None] = []  # 1-indexed file line → event/record id
         for ln in (self.c.at_base(path) or "").splitlines():
+            old_event_at_line.append(None)
             if not ln.strip():
                 continue
             try:
                 obj = json.loads(ln)
             except (json.JSONDecodeError, ValueError):
                 continue  # pre-schema history is opaque; only appended lines are judged
+            if isinstance(obj.get("event_id") or obj.get("assessment_id"), str):
+                old_event_at_line[-1] = obj.get("event_id") or obj.get("assessment_id")
             if (
                 obj.get("schema") == EVENT_SCHEMA
                 and isinstance(obj.get("obligation_id"), str)
                 and isinstance(obj.get("event_id"), str)
             ):
-                last[obj["obligation_id"]] = obj["event_id"]
                 known.add(obj["event_id"])
+                if obj.get("kind") != "correction":
+                    # a correction is an annotation, never a chain link (P34.8)
+                    last[obj["obligation_id"]] = obj["event_id"]
         seen_oids = set(last)
         for hl, _, text in recs.added:
             if not text.strip():
@@ -2798,7 +2804,10 @@ class Judge:
                         commit,
                     )
                 for s in ("from_status", "to_status"):
-                    if obj[s] not in OBLIGATION_STATUSES:
+                    # a correction moves no status — `—` is the honest pair
+                    if obj[s] not in OBLIGATION_STATUSES and not (
+                        kind == "correction" and obj[s] == "—"
+                    ):
                         self.r.v(
                             "append-only",
                             "schema",
@@ -2819,7 +2828,62 @@ class Judge:
                     )
                 oid, eid = obj["obligation_id"], obj["event_id"]
                 epe = obj["expected_previous_event"]
-                if kind == "migration":
+                if kind == "correction":
+                    # a correction is an annotation — it repairs a named record and
+                    # never becomes a chain link (P34.8)
+                    corr = obj.get("correction")
+                    if not isinstance(corr, dict) or not isinstance(
+                        corr.get("file"), str
+                    ):
+                        self.r.v(
+                            "append-only",
+                            "schema",
+                            path,
+                            hl,
+                            f"correction {eid!r} carries no correction block naming the "
+                            "file/record it repairs",
+                            commit,
+                        )
+                    elif corr.get("file") == path:
+                        tgt_line = corr.get("line")
+                        tgt_eid = corr.get("event_id")
+                        if epe != tgt_eid:
+                            self.r.v(
+                                "append-only",
+                                "chain",
+                                path,
+                                hl,
+                                f"correction {eid!r} of a {path} record must carry "
+                                f"expected_previous_event == the corrected event "
+                                f"{tgt_eid!r}, got {epe!r}",
+                                commit,
+                            )
+                        if isinstance(tgt_line, int) and tgt_eid in known:
+                            idx = tgt_line - 1
+                            if not (
+                                0 <= idx < len(old_event_at_line)
+                                and old_event_at_line[idx] == tgt_eid
+                            ):
+                                self.r.v(
+                                    "append-only",
+                                    "chain",
+                                    path,
+                                    hl,
+                                    f"correction {eid!r} names {path} line {tgt_line} but "
+                                    f"that line is not {tgt_eid!r}",
+                                    commit,
+                                )
+                    elif not str(corr.get("file")).startswith(OBLIGATIONS_PREFIX):
+                        self.r.v(
+                            "append-only",
+                            "schema",
+                            path,
+                            hl,
+                            f"correction {eid!r} names file {corr.get('file')!r} which is "
+                            f"not an obligations-ledger record ({OBLIGATIONS_PREFIX}*)",
+                            commit,
+                        )
+                elif kind == "migration":
                     if epe is not None:
                         self.r.v(
                             "append-only",
@@ -2871,9 +2935,11 @@ class Judge:
                             commit,
                         )
                 if isinstance(eid, str):
-                    last[oid] = eid
                     known.add(eid)
-                    seen_oids.add(oid)
+                    if kind != "correction":
+                        # corrections annotate, they do not move the chain head
+                        last[oid] = eid
+                        seen_oids.add(oid)
             elif schema == ASSESSMENT_SCHEMA:
                 missing = [k for k in ASSESSMENT_FIELDS if k not in obj]
                 if missing:

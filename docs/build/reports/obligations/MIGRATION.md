@@ -72,3 +72,20 @@ checker and the projection both fail until a ticket records the interpretation).
   input set); the two documented non-deferral conflict classes are recorded in
   `reconciliations.json`.
 - `D-R10-MEMORY-1` — stays `OPEN`; this run annotated it with the shadow landing.
+
+## Corrections (appended — ADR-146; original text untouched)
+
+The entries below correct dates this report recorded on lines 55–57. The
+lines above are never rewritten; the true dates are established by git/GitHub
+timestamps and the date register (`docs/build/reports/memory-repair/
+date_corrections.csv` L278–L280), and are additionally bound to the event log
+by the appended `date-correction` events `D-P31.1-1:e0:dc-observed_at`,
+`D-P31.5-2:e0:dc-observed_at` and the `dc-recorded_at` corrections.
+
+| report line | obligation | recorded | true date (UTC) | basis |
+|---|---|---|---|---|
+| L55 | `D-P31.1-1` (`DONE 2026-10-11`) | 2026-10-11 | **2026-09-27T06:41Z** | P32.4: PR #159 createdAt 2026-09-27T06:41Z; closeout commit 03ac3b06 2026-09-27T06:43Z |
+| L56 | `D-P31.1-3` (`DONE 2026-09-28`) | 2026-09-28 | **2026-09-27T04:16Z** | P32.2: PR #157 createdAt 2026-09-27T04:16Z; closeout commit 5677495a 2026-09-27T04:17Z |
+| L57 | `D-P31.5-2` (`DONE 2026-10-12`) | 2026-10-12 | **2026-09-27T07:17Z** | P32.5: PR #160 createdAt 2026-09-27T07:17Z; closeout commit 616b889c 2026-09-27T07:19Z |
+
+Correction written 2026-10-02 (P34.8).

@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "5b41a3ae39ce6cfda481f78ad139fe3766852d48",
+  "input_commit": "f4e5c2a19f3e7e6fd36d818561f615d3a1601ace",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -762,11 +762,11 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "d79f0349c0d3f081e54491b709f1a4b1a35995fe2a6534e4c4fc3676d3a48ede"
+      "sha256": "fd0e62ab1871168eb30df2aea9697f2693e028ecaea8fc708fb951448726e2d7"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "9069b622bd321466f1a030a11b81239de2c469c143f41455b467c73e5974579c"
+      "sha256": "03c46692bd6f59e3e50bd077f858a1fb5ceac6b2cea4d779e41fbd6a99625cb1"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -814,7 +814,7 @@
     },
     {
       "path": "docs/build/reports/obligations/MIGRATION.md",
-      "sha256": "32235a6d9a849758243a15f28f1db3021d0b49af5d227930b94e21ffa1297541"
+      "sha256": "6e92d670392d347d1f7457144552d38097474d856d53aca60a006fbc8bad7f58"
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
@@ -822,7 +822,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "01c4945c2698993fc7d35b87c3acfb3dfa846c862eff12614ec6059526251d8e"
+      "sha256": "95ef30e4673106b28f2aaf2b6e7566604925b2c449a36f3ba8b594d4b029eb95"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1598,7 +1598,11 @@
     },
     {
       "path": "docs/build/runs/P34.7.md",
-      "sha256": "89ee5976226d4daaa3ccca8f6410efee582e15dcd7f1d7fb7cfa0f4292e6fbff"
+      "sha256": "66f495daea08d992b7dae045a5911e7abcfe94b795b7733193284fa43181e895"
+    },
+    {
+      "path": "docs/build/runs/P34.8.md",
+      "sha256": "6627f753e1042fc27a9b91abb3091e8ae520fe415e0f5d22c3bfea3d7d38fbeb"
     },
     {
       "path": "docs/build/runs/P35.38a.md",
@@ -3114,7 +3118,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "ffe92492a9e2f5e2d2300b6249396730a1794cfc0ec2e6ebd8c269d7f41e576d"
+      "sha256": "a9ef6941b4ad7fccad31fa7a2f136724ecf206e55211d04d6e1cd4bb036383f3"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
