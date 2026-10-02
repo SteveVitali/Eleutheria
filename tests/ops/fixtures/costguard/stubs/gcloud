@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+# Offline `gcloud` stub for ops/gcp/cost-guard.sh tests (P34.5). State lives in
+# $GCLOUD_STUB_STATE (a JSON file): keys `apis_enabled`, `budgets`, `channels`,
+# `billing_acct`, `project`, `deny_budgets`, `deny_adc`, `next_budget_id`.
+# Every invocation is logged to $GCLOUD_STUB_LOG. Mutations are limited to
+# `services enable`, `billing budgets create` and `billing budgets delete`.
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+LOG = os.environ.get("GCLOUD_STUB_LOG")
+if LOG:
+    Path(LOG).parent.mkdir(parents=True, exist_ok=True)
+    with open(LOG, "a") as fh:
+        fh.write("gcloud " + " ".join(sys.argv[1:]) + "\n")
+
+STATE_PATH = os.environ.get("GCLOUD_STUB_STATE", "/dev/null")
+state = {}
+try:
+    state = json.loads(Path(STATE_PATH).read_text())
+except Exception:
+    pass
+
+
+def save() -> None:
+    Path(STATE_PATH).write_text(json.dumps(state, indent=1, sort_keys=True))
+
+
+def flag(prefix: str) -> str:
+    for a in sys.argv[1:]:
+        if a.startswith(prefix):
+            return a[len(prefix):]
+    return ""
+
+
+def flags(prefix: str) -> list:
+    return [a[len(prefix):] for a in sys.argv[1:] if a.startswith(prefix)]
+
+
+pos = [a for a in sys.argv[1:] if not a.startswith("--")]
+acct = state.get("billing_acct", "AAAA-BBBB-CCCC")
+project = state.get("project", "stub-project")
+
+if pos[:3] == ["auth", "application-default", "print-access-token"]:
+    if state.get("deny_adc"):
+        print("ADC denied", file=sys.stderr)
+        sys.exit(1)
+    print("stub-token")
+elif pos[:3] == ["billing", "projects", "describe"]:
+    if "value(billingAccountName)" in " ".join(sys.argv[1:]):
+        print(f"billingAccounts/{acct}")
+    else:
+        print(
+            json.dumps(
+                {
+                    "billingAccountName": f"billingAccounts/{acct}",
+                    "billingEnabled": True,
+                    "name": f"projects/{project}",
+                    "projectId": project,
+                }
+            )
+        )
+elif pos[:2] == ["projects", "describe"]:
+    pnum = state.get("project_number", "42424242")
+    if "value(projectNumber)" in " ".join(sys.argv[1:]):
+        print(pnum)
+    else:
+        print(json.dumps({"projectNumber": pnum, "projectId": project}))
+elif pos[:2] == ["services", "list"]:
+    names = state.get("apis_enabled", [])
+    if "value(config.name)" in " ".join(sys.argv[1:]):
+        print("\n".join(names))
+    else:
+        print(json.dumps([{"config": {"name": n}} for n in names]))
+elif pos[:2] == ["services", "enable"]:
+    api = pos[2] if len(pos) > 2 else ""
+    state.setdefault("apis_enabled", [])
+    if api and api not in state["apis_enabled"]:
+        state["apis_enabled"].append(api)
+    save()
+    print("")
+elif pos[:3] == ["billing", "budgets", "list"]:
+    if state.get("deny_budgets"):
+        print("PERMISSION_DENIED: billing.viewer missing", file=sys.stderr)
+        sys.exit(1)
+    print(json.dumps(state.get("budgets", [])))
+elif pos[:3] == ["billing", "budgets", "create"]:
+    if state.get("deny_budgets"):
+        print(
+            "PERMISSION_DENIED: billing.budgets.create requires "
+            "roles/billing.costsManager on the account",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    amount_raw = flag("--budget-amount=").replace("USD", "")
+    try:
+        f = float(amount_raw)
+    except ValueError:
+        f = 0.0
+    units = int(f)
+    nanos = int(round((f - units) * 1e9))
+    bid = str(state.get("next_budget_id", 7001))
+    state["next_budget_id"] = int(bid) + 1
+    body = {
+        "name": f"billingAccounts/{acct}/budgets/{bid}",
+        "displayName": flag("--display-name="),
+        "amount": {
+            "specifiedAmount": {
+                "currencyCode": "USD",
+                "units": str(units),
+                "nanos": nanos,
+            }
+        },
+        "thresholdRules": [
+            {"thresholdPercent": float(t.split("=", 1)[-1].split(",")[0]), "spendBasis": "CURRENT_SPEND"}
+            for t in flags("--threshold-rule=")
+        ],
+        "budgetFilter": {"projects": flags("--filter-projects=")},
+        "allUpdatesRule": {
+            "monitoringNotificationChannels": flags(
+                "--notifications-rule-monitoring-notification-channels="
+            )
+        },
+    }
+    state.setdefault("budgets", []).append(body)
+    save()
+    print(json.dumps({"name": body["name"]}))
+elif pos[:3] == ["billing", "budgets", "delete"]:
+    bid = pos[3] if len(pos) > 3 else ""
+    state["budgets"] = [
+        b for b in state.get("budgets", []) if not str(b.get("name", "")).endswith("/" + bid)
+    ]
+    save()
+    print("")
+elif pos[:4] == ["beta", "monitoring", "channels", "list"]:
+    print(json.dumps(state.get("channels", [])))
+else:
+    print("{}")

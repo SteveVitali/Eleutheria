@@ -11,7 +11,10 @@ Realizes the hosted stack as **Cloud SQL + Cloud Run** (ADR-081 — the ADR-075
 documented alternative, promoted because Cloud Run→e2-micro needs a same-priced
 VPC connector and COS bootstrap is fragile). Project `eleutheria`
 (`$SIG_GCP_PROJECT`), region `us-central1`. Cost ≈ **$9/mo** (`db-f1-micro`;
-Cloud Run ≈ $0 idle) — a conscious departure from the zero-cost posture (SIG-STORE-003).
+Cloud Run ≈ $0 idle) — *estimate* (list-price inference, not measured billing);
+the measured monthly figure lives in
+[`docs/build/reports/spend/`](./spend/SPEND_LEDGER.md) (SIG-OPS-009, P34.5) — a
+conscious departure from the zero-cost posture (SIG-STORE-003).
 
 ## Prerequisites (operator)
 

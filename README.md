@@ -20,7 +20,10 @@ connectors behind the fail-closed `ingestion_permitted` gate.
 **[surveillancegraph.org](https://surveillancegraph.org)** — launched 2026-09-24 and republished
 2026-09-27 over a ~2.4M-claim spine assembled from live fetches of the green-reviewed sources
 (`docs/build/reports/LAUNCH_RECORD_2026-09-24.md`,
-`docs/build/reports/REPUBLISH_LIVE_2026-09-27.md`). What is *not* yet public: the Round-10
+`docs/build/reports/REPUBLISH_LIVE_2026-09-27.md`). Hosted spend is measured and
+alarmed against the $300/mo infrastructure ceiling; the monthly ledger with
+measured/operator-reported/estimate labels is
+[`docs/build/reports/spend/`](./docs/build/reports/spend/SPEND_LEDGER.md) (SIG-OPS-009). What is *not* yet public: the Round-10
 provisional-policy release candidate is published to a **staging namespace only** — production
 exposure, the hosted recovery/freeze it depends on, and the independent human evaluation all remain
 open obligations (see *Deployed state* below). The anonymous correction receiver is built

@@ -188,6 +188,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-190](ADR-190-wv-12-sig-ui-022-ego-network-default-waived-overview-default.md) | WV-12 — SIG-UI-022's ego-network default waived; the explorer may open on an aggregated overview | SEED-12 (Round-11 Stage B, T1 — unit SEED-12c) | Accepted |
 | [ADR-191](ADR-191-lighthouse-three-run-median.md) | Lighthouse performance gate samples three runs, asserts the median (P34.2) | P34.2 (Round 11 / P34, row 202; requirement SIG-MEM-007; cited: | accepted (engineering; `live_verification=false` — CI policy, verified |
 | [ADR-192](ADR-192-monitoring-alert-set-as-committed-definitions.md) | The production alert set lives as committed REST-shape definitions (P34.4) | P34.4 (Round 11 / P34, row 205; requirements SIG-OPS-006 partial, | accepted (engineering; the live legs are window-queued — D-P34.4-1) |
+| [ADR-193](ADR-193-cost-guard-budget-scope-and-spend-ledger.md) | Cost guard: project-scoped ceiling budget, test-threshold lifecycle, spend ledger conventions (P34.5) | P34.5 (Round 11 / P34, row 206; requirement SIG-OPS-009; answers | accepted (the apply legs ran live 2026-10-02; the test-budget |
 
 ## Notes
 
