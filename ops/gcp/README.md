@@ -31,6 +31,7 @@ the validation test (`tests/ops/test_gcp_iac.py`) shells `terraform validate` wh
 | `materialize.sh` | P30.2: the hosted Round-6 materialization — `schema` (sqitch deploy as the schema owner, incl. the least-privilege `sig_materialize` role) · `image` (SHA-tagged Cloud Build, never `:latest`) · `job` (`sig-materialize` Cloud Run job next to Cloud SQL) · `run <step>` (resolution / edges / contradictions / coverage / accountability / detect, each `--role sig_materialize`, append-only + idempotent) — ADR-103 |
 | `export.sh` | P30.3: the national `--from-spine` export Cloud Run job next to Cloud SQL (read-only snapshot; restricted bucket mount) — ADR-106 |
 | `web.sh` | P31.15 (ADR-R9-TILES): the repo-owned `sig-web` image + service path — `image` (Cloud Build `../web/Dockerfile`: nginx + compiled Brotli + `../web/nginx.conf`) · `service` (the hand-made service spec read live, then upserted on the pinned digest with the `<project>-sig-web` gcsfuse mount → `/mnt/sig-web`) · `describe` (the live spec). The roll itself is P31.16's |
+| `protect.sh` | P34.3 (SIG-OPS-002, SIG-STORE-048): the five pre-authorised data-protection mutations — `sig-pg` deletion protection + retain-backups-on-delete, SUN 09:00Z maintenance window, 40 GB autoresize cap; versioning + noncurrent lifecycle on `sig-restricted` (90 d) / `sig-public` / `sig-web` (30 d); `allUsers` off `sig-web`. Idempotent (live-read → SKIP), window-gated (never 03:00–10:00Z; `sig-pg` legs also never inside AR-3 or while `sig-materialize` runs), AR-2 backup first, per-action rollback on the stop rules. `--verify [--from-state DIR]` is the read-only outcome diff |
 | `../Dockerfile` | the Cloud Run API + export image (built + pushed by `sig-ops deploy` / `export.sh`) — also carries `sig-ops` for the scheduled jobs and the pinned tippecanoe the tile renderer uses |
 | `../web/Dockerfile` | the `sig-web` image: `nginx:1.27.5-alpine` + `ngx_http_brotli_*` compiled from sha256-verified sources against the exact nginx version (Alpine's packaged module is ABI-incompatible) + the repo-owned `../web/nginx.conf` |
 
@@ -38,6 +39,7 @@ the validation test (`tests/ops/test_gcp_iac.py`) shells `terraform validate` wh
 bash ops/gcp/provision.sh --check    # plan only, no ADC, no network, exit 0
 bash ops/gcp/backup.sh   --check     # backup + restore-drill plan, no ADC, exit 0
 bash ops/gcp/scheduled-ops.sh --check # scheduled-ops plan (probe + ingest triggers)
+bash ops/gcp/protect.sh   --check    # P34.3 data-protection plan; --verify diffs live state
 # operator, with ADC + SIG_GCP_PROJECT exported:
 bash ops/gcp/provision.sh --apply    # provisions for real (gate-pending here)
 SIG_JOB_IMAGE=<sig-api:SHA-tag or @sha256 digest> bash ops/gcp/scheduled-ops.sh --apply

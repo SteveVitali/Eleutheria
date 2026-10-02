@@ -34,6 +34,7 @@ SHELL_SCRIPTS = [
     "materialize.sh",
     "export.sh",
     "web.sh",
+    "protect.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -44,6 +45,7 @@ EXECUTABLE_SCRIPTS = [
     "materialize.sh",
     "export.sh",
     "web.sh",
+    "protect.sh",
 ]
 
 

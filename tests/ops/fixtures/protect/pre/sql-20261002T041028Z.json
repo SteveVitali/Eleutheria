@@ -1,0 +1,22 @@
+{
+  "name": "sig-pg",
+  "state": "RUNNABLE",
+  "settings": {
+    "activationPolicy": "ALWAYS",
+    "availabilityType": "ZONAL",
+    "backupConfiguration": {
+      "enabled": true,
+      "startTime": "05:00",
+      "pointInTimeRecoveryEnabled": true,
+      "backupRetentionSettings": {"retainedBackups": 7, "retentionUnit": "COUNT"},
+      "transactionLogRetentionDays": 7
+    },
+    "dataDiskSizeGb": "15",
+    "dataDiskType": "PD_SSD",
+    "deletionProtectionEnabled": false,
+    "maintenanceWindow": null,
+    "retainBackupsOnDelete": null,
+    "storageAutoResize": true,
+    "storageAutoResizeLimit": "0"
+  }
+}

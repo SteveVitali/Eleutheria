@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {"role": "roles/storage.legacyBucketOwner",
+     "members": ["projectEditor:example-proj", "projectOwner:example-proj"]},
+    {"role": "roles/storage.legacyBucketReader",
+     "members": ["projectViewer:example-proj"]},
+    {"role": "roles/storage.legacyObjectOwner",
+     "members": ["projectEditor:example-proj", "projectOwner:example-proj"]},
+    {"role": "roles/storage.legacyObjectReader",
+     "members": ["projectViewer:example-proj"]}
+  ]
+}

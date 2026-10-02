@@ -79,3 +79,41 @@ Prerequisite for the export-based commands: a built release, e.g.
 - **HG-12 (budget): zero-cost.** CDN/object-store config are templates only.
 - **A1: ticked.** The zero-JS static map stays; no MapLibre island; `/map/` script budget
   unchanged.
+
+## 6. Production data protection (P34.3; SIG-OPS-002, SIG-STORE-048)
+
+`ops/gcp/protect.sh` owns the five pre-authorised mutations (S5-3 11A list,
+expires GATE-G4). It is dry-run by default; every `--apply` leg is idempotent
+(live-read → `SKIP`) and window-gated (never 03:00–10:00Z; `sig-pg` legs also
+never inside an AR-3 window or while `sig-materialize` runs). The AR-2 restore
+point — an on-demand `sig-pg` backup verified `SUCCESSFUL` — runs before any
+instance patch.
+
+| goal | command |
+|---|---|
+| print the plan (no ADC, no network) | `ops/gcp/protect.sh --check` (bare, or per leg: `prestate\|backup\|instance\|buckets\|iam`) |
+| capture pre-state JSON + sha256 (read-only, any time) | `ops/gcp/protect.sh --apply prestate` |
+| run the live leg (order: prestate → AR-2 backup → three `sig-pg` patches → bucket versioning+lifecycle → `sig-web` IAM → post-state + `--verify` + site checks) | `ops/gcp/protect.sh --apply` |
+| verify the outcome (live reads) | `ops/gcp/protect.sh --verify` |
+| verify offline against recorded JSON | `ops/gcp/protect.sh --verify --from-state <state-dir>` |
+
+Stop rules (automatic): a non-`UPDATE` operation, a restart, an `api /health`
+failure, or a site route failing after QA-7 rolls that action back inline and
+exits non-zero — the leg never continues past a red step.
+
+Rollback per mutation (the script prints and runs these on a stop-rule trip;
+run manually if an interruption left a mid-apply state):
+
+| mutation | rollback |
+|---|---|
+| deletion protection + retain-backups | `gcloud sql instances patch sig-pg --no-deletion-protection --no-retain-backups-on-delete` |
+| maintenance window SUN 09:00Z | `gcloud sql instances patch sig-pg --maintenance-window-any` |
+| autoresize cap 40 GB | `gcloud sql instances patch sig-pg --storage-auto-increase-limit=0` |
+| bucket versioning + lifecycle (`sig-restricted`, `sig-public`, `sig-web`) | `gcloud storage buckets update gs://<bucket> --no-versioning` + re-apply the captured prior lifecycle file (pre-state: none — `--lifecycle-file` of an empty rule set clears it; noncurrent versions already written are kept) |
+| `allUsers` on `sig-web` | `gcloud storage buckets add-iam-policy-binding gs://<project>-sig-web --member=allUsers --role=roles/storage.objectViewer` |
+
+QA-7 verification after the IAM change: `GET /` and `/map/` → 200 and
+`GET /tiles/sig_graph-sites.pmtiles` (Range) → 206 on both
+`https://surveillancegraph.org` and the `sig-web` `*.run.app` URL, and the
+direct bucket URL `https://storage.googleapis.com/<project>-sig-web/index.html`
+→ 403/404. Captured states land in the gitignored `docs/build/logs/protect/`.
