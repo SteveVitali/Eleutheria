@@ -1,0 +1,5 @@
+month,surface,provider,category,amount_usd,source_label,evidence,note
+2026-10,infrastructure,gcp,all deployed services (list-price projection),~90-100,estimate,docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md,"inference from the deployed configuration — NOT measured billing; superseded (not edited) by export rows once the BigQuery export holds data"
+2026-10,infrastructure,gcp,billing export (per-service rows),,pending,docs/build/reports/spend/SPEND_LEDGER.md,"first monthly report leg D-P34.5-4 waits on the OP-12 export link; rows land within ~a day of linking"
+2026-10,storage/edge,cloudflare-r2,object hosting + CDN,,pending,docs/build/reports/spend/SPEND_LEDGER.md,"outside-cloud-account (OD-02/OD-03); operator-reported figure owed at the first monthly report"
+2026-10,domain,squarespace,registrar/domains,,pending,docs/build/reports/spend/SPEND_LEDGER.md,"outside-cloud-account (OD-02/OD-03); operator-reported figure owed at the first monthly report"

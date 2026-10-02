@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+# Offline `bq` stub for ops/gcp/cost-guard.sh tests (P34.5). Shares the same
+# $GCLOUD_STUB_STATE file as the gcloud stub: keys `datasets` (list of
+# {"datasetReference": {"datasetId": ...}, "id": "proj:ds"}) and `export_rows`
+# (int). Mutations are limited to `bq mk --dataset`. Logs to $BQ_STUB_LOG.
+import json
+import os
+import sys
+from pathlib import Path
+
+LOG = os.environ.get("BQ_STUB_LOG")
+if LOG:
+    Path(LOG).parent.mkdir(parents=True, exist_ok=True)
+    with open(LOG, "a") as fh:
+        fh.write("bq " + " ".join(sys.argv[1:]) + "\n")
+
+STATE_PATH = os.environ.get("GCLOUD_STUB_STATE", "/dev/null")
+state = {}
+try:
+    state = json.loads(Path(STATE_PATH).read_text())
+except Exception:
+    pass
+
+
+def save() -> None:
+    Path(STATE_PATH).write_text(json.dumps(state, indent=1, sort_keys=True))
+
+
+def flag(prefix: str) -> str:
+    for a in sys.argv[1:]:
+        if a.startswith(prefix):
+            return a[len(prefix):]
+    return ""
+
+
+pos = [a for a in sys.argv[1:] if not a.startswith("--")]
+project = state.get("project", "stub-project")
+
+if pos[:1] == ["ls"]:
+    print(json.dumps(state.get("datasets", [])))
+elif pos[:1] == ["mk"]:
+    ds = pos[-1] if pos else ""
+    entry = {"datasetReference": {"datasetId": ds, "projectId": project}, "id": f"{project}:{ds}"}
+    if not any(d.get("id") == entry["id"] for d in state.get("datasets", [])):
+        state.setdefault("datasets", []).append(entry)
+    save()
+    print(f"Dataset '{project}:{ds}' successfully created.")
+elif pos[:1] == ["query"]:
+    if int(state.get("export_rows", 0)) > 0:
+        print(json.dumps([{"rows_in_export": str(state["export_rows"])}]))
+    else:
+        print("Not found: Table gcp_billing_export_v1_* was not found", file=sys.stderr)
+        sys.exit(1)
+elif pos[:1] == ["rm"]:
+    ds = pos[-1] if pos else ""
+    state["datasets"] = [
+        d for d in state.get("datasets", []) if not str(d.get("id", "")).endswith(":" + ds)
+    ]
+    save()
+    print("")
+else:
+    print("{}")

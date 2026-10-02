@@ -151,3 +151,43 @@ with sha256s). The delivery test POSTs a synthetic `SIG-ALERT` to the
 `sig-alerts` webhook — its token is read from Secret Manager into memory only,
 never printed or persisted — and reads `SIG-ALERT-RECEIVED` back from Cloud
 Logging; the e-mail receipt itself is the operator's human check (`D-P34.4-2`).
+
+## 8. Cost guard (P34.5; SIG-OPS-009)
+
+The $300/month infrastructure ceiling is policed by a Cloud Billing **budget**
+with e-mail alerts at 50/90/100 % of CURRENT_SPEND, scoped to the SIG project
+(the billing account serves other projects — the ceiling covers SIG
+infrastructure only). Measured costs land in BigQuery dataset
+`sig_billing_export`; `docs/build/reports/spend/` is the committed monthly
+ledger (measured / operator-reported / estimate / pending labels; agent usage
+in `agent_usage.csv`, reported-never-capped).
+
+| goal | command |
+|---|---|
+| print the plan (no ADC, no network) | `ops/gcp/cost-guard.sh --check` (bare, or per leg: `prestate\|budget\|testbudget\|testbudget-delete\|dataset\|exportcheck`) |
+| capture pre-state JSON + sha256 (read-only, any time) | `ops/gcp/cost-guard.sh --apply prestate` |
+| create the ceiling budget + the test budget + the export dataset, post-state + verify | `ops/gcp/cost-guard.sh --apply all` |
+| delete the fired test budget (name-checked; refuses without `--fired-confirmed "<evidence>"`) | `ops/gcp/cost-guard.sh --apply testbudget-delete --fired-confirmed "<where the firing is recorded>"` |
+| verify the outcome (live reads; read-only) | `ops/gcp/cost-guard.sh --verify` |
+| verify offline against recorded JSON | `ops/gcp/cost-guard.sh --verify --from-state <state-dir>` |
+| is the export delivering rows yet? | `ops/gcp/cost-guard.sh --apply exportcheck` |
+
+The billing account is discovered live from the project's billing link (never
+committed); `SIG_BILLING_ACCOUNT` overrides. The **billing-export link itself
+is an operator console step (OP-12)** — Cloud Billing export has no public API
+path: Billing → Billing export → BigQuery export → dataset `sig_billing_export`
+on the SIG project. Rows land as `gcp_billing_export_v1_<billing-account-id>`
+within ~a day; the first monthly report leg waits for them (`D-P34.5-3`).
+
+Rollback per mutation (printed by the script):
+
+| mutation | rollback |
+|---|---|
+| `billingbudgets.googleapis.com` enabled (prerequisite) | `gcloud services disable billingbudgets.googleapis.com --project <p> --force` |
+| ceiling budget | `gcloud billing budgets delete <id> --billing-account <acct> --billing-project <p>` |
+| test budget | same delete (the scripted leg is name-checked and requires the fired confirmation) |
+| export dataset | `bq rm -r -d <p>:sig_billing_export` (disable the console export link first) |
+
+Evidence lands in the gitignored `docs/build/logs/cost-guard/` (pre/post
+captures with sha256s). The test budget's alert e-mail receipt is the
+operator's human check (`D-P34.5-1`) — an agent never asserts receipt.
