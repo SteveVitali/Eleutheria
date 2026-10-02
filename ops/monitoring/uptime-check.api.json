@@ -1,0 +1,26 @@
+{
+  "_sig": {
+    "apply": "diff-only",
+    "displayName": "SIG API health",
+    "id": "sig-api-health-or4_q7yICx4",
+    "kind": "uptime",
+    "source": "track0.5-live-export-2026-10-02"
+  },
+  "checkerType": "STATIC_IP_CHECKERS",
+  "displayName": "SIG API health",
+  "httpCheck": {
+    "path": "/health",
+    "port": 443,
+    "requestMethod": "GET",
+    "useSsl": true
+  },
+  "monitoredResource": {
+    "labels": {
+      "host": "sig-api-e5ctyx36jq-uc.a.run.app",
+      "project_id": "{project}"
+    },
+    "type": "uptime_url"
+  },
+  "period": "300s",
+  "timeout": "10s"
+}

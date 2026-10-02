@@ -1,0 +1,26 @@
+{
+  "_sig": {
+    "apply": "diff-only",
+    "displayName": "SIG site surveillancegraph.org",
+    "id": "sig-site-surveillancegraph-org-F2yZbTB73dw",
+    "kind": "uptime",
+    "source": "track0.5-live-export-2026-10-02"
+  },
+  "checkerType": "STATIC_IP_CHECKERS",
+  "displayName": "SIG site surveillancegraph.org",
+  "httpCheck": {
+    "path": "/",
+    "port": 443,
+    "requestMethod": "GET",
+    "useSsl": true
+  },
+  "monitoredResource": {
+    "labels": {
+      "host": "surveillancegraph.org",
+      "project_id": "{project}"
+    },
+    "type": "uptime_url"
+  },
+  "period": "300s",
+  "timeout": "10s"
+}

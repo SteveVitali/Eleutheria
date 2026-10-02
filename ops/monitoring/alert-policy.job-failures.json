@@ -1,0 +1,48 @@
+{
+  "_sig": {
+    "apply": "update",
+    "displayName": "SIG \u2014 Cloud Run job execution failed",
+    "id": "7285515107319155929",
+    "kind": "policy",
+    "source": "track0.5-live-export-2026-10-02"
+  },
+  "alertStrategy": {
+    "autoClose": "1800s",
+    "notificationRateLimit": {
+      "period": "86400s"
+    }
+  },
+  "combiner": "OR",
+  "conditions": [
+    {
+      "conditionThreshold": {
+        "aggregations": [
+          {
+            "alignmentPeriod": "300s",
+            "crossSeriesReducer": "REDUCE_SUM",
+            "groupByFields": [
+              "resource.labels.job_name"
+            ],
+            "perSeriesAligner": "ALIGN_SUM"
+          }
+        ],
+        "comparison": "COMPARISON_GT",
+        "duration": "0s",
+        "filter": "resource.type = \"cloud_run_job\" AND metric.type = \"run.googleapis.com/job/completed_execution_count\" AND metric.labels.result = \"failed\"",
+        "trigger": {
+          "count": 1
+        }
+      },
+      "displayName": "failed executions > 0 per job (5 min)"
+    }
+  ],
+  "displayName": "SIG \u2014 Cloud Run job execution failed",
+  "documentation": {
+    "content": "A scheduled SIG Cloud Run job execution failed \u2014 including sig-probe. Check: gcloud run jobs executions list --region us-central1 --job <job_name>. sig-probe was excluded while it failed every sweep on a stale image (Track 0.5); the exclusion was lifted 2026-10-02 by P34.4 after its re-roll onto the current cadence went green. Re-notifies at most daily while an incident stays open (notificationRateLimit 86400s).",
+    "mimeType": "text/markdown"
+  },
+  "enabled": true,
+  "notificationChannels": [
+    "projects/{project}/notificationChannels/10808426210098728267"
+  ]
+}

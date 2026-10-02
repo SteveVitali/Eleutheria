@@ -1,0 +1,45 @@
+{
+  "_sig": {
+    "apply": "create",
+    "displayName": "SIG \u2014 TLS certificate expiry < 21 days (surveillancegraph.org)",
+    "id": null,
+    "kind": "policy",
+    "source": "p34.4-authored"
+  },
+  "alertStrategy": {
+    "autoClose": "604800s",
+    "notificationRateLimit": {
+      "period": "86400s"
+    }
+  },
+  "combiner": "OR",
+  "conditions": [
+    {
+      "conditionThreshold": {
+        "aggregations": [
+          {
+            "alignmentPeriod": "300s",
+            "perSeriesAligner": "ALIGN_MEAN"
+          }
+        ],
+        "comparison": "COMPARISON_LT",
+        "duration": "0s",
+        "filter": "resource.type = \"uptime_url\" AND metric.type = \"monitoring.googleapis.com/uptime_check/time_until_ssl_cert_expires\" AND resource.labels.host = \"surveillancegraph.org\"",
+        "thresholdValue": 21,
+        "trigger": {
+          "count": 1
+        }
+      },
+      "displayName": "TLS certificate expires in < 21 days"
+    }
+  ],
+  "displayName": "SIG \u2014 TLS certificate expiry < 21 days (surveillancegraph.org)",
+  "documentation": {
+    "content": "The Google-managed certificate for surveillancegraph.org (sig-web-cert) expires in under 21 days. Check: gcloud compute ssl-certificates describe sig-web-cert --global --project {project}. Created by P34.4 (QA-3) on top of the Track-0.5 uptime check that emits the metric.",
+    "mimeType": "text/markdown"
+  },
+  "enabled": true,
+  "notificationChannels": [
+    "projects/{project}/notificationChannels/10808426210098728267"
+  ]
+}

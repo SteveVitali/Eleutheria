@@ -1,0 +1,42 @@
+[
+  {
+    "checkerType": "STATIC_IP_CHECKERS",
+    "displayName": "SIG site surveillancegraph.org",
+    "httpCheck": {
+      "path": "/",
+      "port": 443,
+      "requestMethod": "GET",
+      "useSsl": true
+    },
+    "monitoredResource": {
+      "labels": {
+        "host": "surveillancegraph.org",
+        "project_id": "sig-fixture-project"
+      },
+      "type": "uptime_url"
+    },
+    "name": "projects/sig-fixture-project/uptimeCheckConfigs/sig-site-surveillancegraph-org-F2yZbTB73dw",
+    "period": "300s",
+    "timeout": "10s"
+  },
+  {
+    "checkerType": "STATIC_IP_CHECKERS",
+    "displayName": "SIG API health",
+    "httpCheck": {
+      "path": "/health",
+      "port": 443,
+      "requestMethod": "GET",
+      "useSsl": true
+    },
+    "monitoredResource": {
+      "labels": {
+        "host": "sig-api-e5ctyx36jq-uc.a.run.app",
+        "project_id": "sig-fixture-project"
+      },
+      "type": "uptime_url"
+    },
+    "name": "projects/sig-fixture-project/uptimeCheckConfigs/sig-api-health-or4_q7yICx4",
+    "period": "300s",
+    "timeout": "10s"
+  }
+]
