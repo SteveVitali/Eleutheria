@@ -81,5 +81,6 @@
 | D-P34.6-4 | OPEN | engineering | BL-084 | `ops/gcp/logical-export.sh --verify` prints `export:seed-prefix` OK; `gcloud storage ls gs://<project>-sig-backups/pg/` still lists both originals |
 | D-P34.6-5 | OPEN | engineering | GATE-G4 | the same `sig.restore-drill/1` record with `sig-pg-drill-b-<stamp>` as `clone_instance`; `--verify` `0 DRIFT` |
 | D-P34.6-6 | OPEN | engineering | P34.46 | `ops/gcp/restore-drill.sh --apply clone/counts/…` re-run post-deploy; the record's `sqitch_equal` must stay true (the clone carries the new tip) |
+| D-P34.50-1 | OPEN | the operator (OP-09) | the operator's execution sitting by GATE-G4, before P35.5's R2 leg | post-switch: `dig +noall +answer surveillancegraph.org NS` returns the Cloudflare pair, `dig … A` → `136.81.80.102`, `dig +dnssec … A` carries the `ad` flag wit… |
 
 ← back: CURRENT.md

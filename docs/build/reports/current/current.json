@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "327fc579b54ec0ce4b8feb27d8cb5a95bc925483",
-  "manifest_inputs": 929,
+  "input_commit": "5afb92a4a2ee5541daa34873d42b43c3ac675941",
+  "manifest_inputs": 930,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.50",
-    "lastCompleted": "P34.6",
+    "nextTicket": "P34.7",
+    "lastCompleted": "P34.50",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.6-restore-drill-and-logical-export",
+    "chainTip": "r11/P34.50-dns-cutover-runbook-and-zone-inventory",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-02T11:16:00Z"
+    "updatedAt": "2026-10-02T12:19:00Z"
   },
   "counts": {
-    "obligations": 141,
-    "owed": 79,
-    "open": 75,
+    "obligations": 142,
+    "owed": 80,
+    "open": 76,
     "partial": 4,
     "terminal": 62,
-    "events": 142,
+    "events": 143,
     "transitions": 1,
     "coverage_assessments": 187,
     "coverage_historical_rows": 777,
@@ -6296,6 +6296,50 @@
           "anchor": {
             "row_line": 1030,
             "row_sha256": "e21c32b71daafbdcf8df94d40a65bc6a596462f318a4bd6f1cabab092ee90496",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.50-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.50-1:e0",
+      "kind": "P",
+      "owner": "the operator (OP-09)",
+      "landing": "the operator's execution sitting by GATE-G4, before P35.5's R2 leg",
+      "backlog_home": "BL-084",
+      "item": "The operator executes OP-09 — the `surveillancegraph.org` nameserver switch to Cloudflare — following `docs/build/reports/DNS_CUTOVER_RUNBOOK.md` (TTL step-down, grey-cloud `@`/`www`, double-DS at the registrar, NS change, post-switch checklist); then the runbook's real-world verification runs",
+      "unblocked_by": "owner: the operator (OP-09); trigger: the operator's execution sitting by GATE-G4, before P35.5's R2 leg",
+      "verify": "post-switch: `dig +noall +answer surveillancegraph.org NS` returns the Cloudflare pair, `dig … A` → `136.81.80.102`, `dig +dnssec … A` carries the `ad` flag with only Cloudflare's DS, `curl -sSI https://surveillancegraph.org/` → `200` with the managed cert intact; **P35.67** (row 263) is the verifying probe row — TLS, cert renewal status, every route, mail, second leg ≈ 11-22",
+      "proxy": "the runbook's rollback is a single registrar revert (the Squarespace zone is never deleted), the grey-cloud rule is pinned by `tests/unit/test_dns_cutover.py`, and P34.4's TLS-expiry alert fires at ≈21 days if renewal slips toward 2026-12-22 — a bad cut-over cannot fail silently",
+      "line": 1041,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.50-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.50-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.50",
+          "owner": "the operator (OP-09)",
+          "landing": "the operator's execution sitting by GATE-G4, before P35.5's R2 leg",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "48e40c71f9bffa9bbc492ec975de00f66735d032",
+          "reason": "migration anchor appended by P34.50 (row 208) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1041,
+            "row_sha256": "d66272e46a311e38189590130745c569574254498b384dba2a494723fc78b76e",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -14212,10 +14256,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "2af40353048583ebed1e058356def39a207c9addc42fcd0e23d6bd0912c05190",
+  "manifest_sha256": "c426827180e6f34579a1e6054dce5a52d9077e20ff2897568948a4e628b2daf2",
   "current_md": {
     "lines": 74,
-    "bytes": 12844,
+    "bytes": 12859,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
