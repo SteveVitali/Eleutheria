@@ -114,6 +114,7 @@ DEFERRALS_REL = "docs/tickets/DEFERRALS.md"
 INDEX_REL = "docs/build/BUILD_INDEX.md"
 MANIFEST_REL = "docs/tickets/00_MANIFEST.md"
 DATE_CORRECTIONS_REL = "docs/build/reports/memory-repair/date_corrections.csv"
+OBLIGATIONS_REL = "docs/build/reports/obligations/events.jsonl"
 ARCHIVE_DEFAULT = "docs/build/reports/ledger-archive"
 BM_MARKER = "<!-- build-memory: v2 -->"
 GUARDS_RE = re.compile(r"^\s*<!-- build-memory-guards: 1 -->\s*$", re.M)
@@ -181,6 +182,72 @@ GATE_MARKER_RE = re.compile(r"\b(GATE-G\d+[a-z]?|HUMAN-H\d+[a-z]?|GATE-ACCEPT)\b
 GATE_ID_RE = re.compile(
     r"\b(GATE-[A-Z0-9]+|HUMAN-H\d+[a-z]?|HG-\d+|GL-GATE-\d+|[A-Z]{1,6}\d*\.\d+[a-z]?)\b"
 )
+
+# `placeholder-fill` (B2 §7): a removed line may be replaced only by the same line with declared
+# placeholder tokens filled. The token set is declared in the policy (`placeholder <token>`); the
+# blank `______` generalises to any underscore run, incl. labelled blanks like `__CLOSED__`.
+BLANK_PLACEHOLDER = "______"
+BLANK_PH_RE = re.compile(r"_{3,}|_{2,}[\w-]*_{2,}")
+
+# `row-annotate` regions of the LEDGER (B2 §7): OPEN FINDINGS and RETURN PASS rows are annotated
+# in place — the id-matched old text stays contained in the new text (strike-through allowed).
+ANNOTATE_REGION_RE = re.compile(r"^##\s+(OPEN FINDINGS|RETURN PASS)\b")
+
+# `frozen-snapshot` (B2 §7): a heading carrying a `(YYYY-MM-DD)` date and one of "sweep",
+# "snapshot", "as of" names a frozen snapshot region — no removals and no additions inside it.
+SNAPSHOT_HEADING_RE = re.compile(r"^#{2,3}\s+.*\(\d{4}-\d{2}-\d{2}\)")
+SNAPSHOT_WORD_RE = re.compile(r"\b(sweep|snapshot|as of)\b", re.I)
+
+# `frozen-after-close` (B2 §7): a closed run ledger takes only placeholder fills and appended
+# `## Correction` sections.
+CORRECTION_HEADING_RE = re.compile(r"^##\s+Correction\b", re.I)
+
+# `frozen-after-execution` (B2 §7): an executed contract is frozen except appended
+# `> Amended YYYY-MM-DD:` blocks — plus a `Gate status:` fill in the executing ticket's first
+# commit (the sanctioned shape of b4bd0068's transition-justified row).
+GATE_STATUS_RE = re.compile(r"^\s*-?\s*(?:\*\*)?Gate status:(?:\*\*)?", re.I)
+
+# `prefix` (B2 §7): obligation ledgers keep their byte prefix; each appended record is a valid
+# `obligation-event/1` or `coverage-assessment/1` object and an event chains to the obligation's
+# last event via `expected_previous_event`.
+OBLIGATIONS_PREFIX = "docs/build/reports/obligations/"
+EVENT_SCHEMA = "obligation-event/1"
+ASSESSMENT_SCHEMA = "coverage-assessment/1"
+EVENT_KINDS = {"migration", "transition"}
+EVENT_FIELDS = (
+    "schema",
+    "event_id",
+    "kind",
+    "obligation_id",
+    "seq",
+    "expected_previous_event",
+    "from_status",
+    "to_status",
+    "ticket_id",
+    "owner",
+    "landing",
+    "backlog_home",
+    "evidence_refs",
+    "observed_at",
+    "recorded_at",
+    "source_commit",
+    "reason",
+)
+ASSESSMENT_FIELDS = (
+    "schema",
+    "assessment_id",
+    "requirement_id",
+    "verdict",
+    "domain",
+    "code_revision",
+    "evidence_refs",
+    "limitations",
+    "assessor",
+    "assessed_at",
+    "supersedes",
+    "seq",
+)
+OBLIGATION_STATUSES = {"OPEN", "PARTIAL", "DONE", "WONTFIX", "ACCEPTED-SKELETON"}
 
 
 # ── small helpers ────────────────────────────────────────────────────────────
@@ -373,6 +440,8 @@ class Policy:
     allow: list[AllowEntry] = field(default_factory=list)
     exempt: list[tuple[str, str]] = field(default_factory=list)
     archive: list[str] = field(default_factory=list)
+    placeholders: list[str] = field(default_factory=list)
+    seed_commits: set[str] = field(default_factory=set)
     errors: list[str] = field(default_factory=list)
 
     @staticmethod
@@ -410,6 +479,15 @@ class Policy:
                     pol.exempt.append((path, heading.strip()))
                 elif key == "archive":
                     pol.archive.append(rest.split()[0].rstrip("/"))
+                elif key == "placeholder":
+                    if not rest.strip():
+                        raise ValueError("placeholder wants a token")
+                    pol.placeholders.append(rest.strip())
+                elif key == "seed-commit":
+                    sha8 = rest.split()[0].lower()
+                    if not re.fullmatch(r"[0-9a-f]{7,40}", sha8):
+                        raise ValueError(f"seed-commit wants a commit prefix, got '{sha8}'")
+                    pol.seed_commits.add(sha8)
                 else:
                     pol.errors.append(f"line {n}: unknown directive '{key}'")
             except (ValueError, IndexError, re.error) as exc:
@@ -462,6 +540,7 @@ class Report:
         self.findings: list[Finding] = []
         self.counts: dict[str, list[int]] = {}
         self.restored: list[dict[str, object]] = []
+        self.extra: dict[str, object] = {}  # cached scans (e.g. the chain-id registry)
 
     def v(
         self, check: str, rule: str, path: str, line: int, message: str, commit: str = ""
@@ -583,6 +662,7 @@ class Change:
         self._landed_cache: dict[str, bool] = {}
         self._head_cache: dict[str, str | None] = {}
         self._base_cache: dict[str, str | None] = {}
+        self._hist_subjects: list[str] | None = None
         self.added_by: dict[tuple[str, str], CommitInfo] = {}
         self.removed_by: dict[tuple[str, str], CommitInfo] = {}
         if self.committed:
@@ -768,6 +848,43 @@ class Change:
             for s, t, c in (ln.split() for ln in out.splitlines() if ln.strip())
         ]
 
+    def range_subjects(self) -> list[tuple[str, str]]:
+        """(sha, subject) of each in-range commit, oldest first (committed modes only)."""
+        if not self.committed:
+            return []
+        rng = f"{self.base}..{self.head}" if self.base else self.head
+        out = self.git.text("log", "--reverse", "--format=%H%x09%s", rng)
+        return [(h, s) for h, s in (ln.split("\t", 1) for ln in out.splitlines() if ln.strip())]
+
+    def history_subjects(self) -> list[str]:
+        """Subjects of every first-parent commit at or below the judged base — B2 §7 defines
+        execution start as 'the first commit whose subject starts with the ticket id'."""
+        if self._hist_subjects is None:
+            rev = self.base or self.head
+            if not rev:
+                self._hist_subjects = []
+            else:
+                self._hist_subjects = self.git.text(
+                    "log", "--first-parent", "--format=%s", rev
+                ).splitlines()
+        return self._hist_subjects
+
+    _obligation_epoch: int | None = None
+
+    def obligation_epoch(self) -> int:
+        """Committer time of the commit that introduced the obligation-event ledger
+        (`docs/build/reports/obligations/events.jsonl`, ADR-126). Before it, DEFERRALS' leading
+        status token was itself the transition mechanism — rewrites of it are the sanctioned
+        legacy shape; from that commit on, a token change without an obligation event is
+        `transition-unjustified` (B2 register class)."""
+        if self._obligation_epoch is None:
+            rev = self.head if self.committed else "HEAD"
+            out = self.git.text(
+                "log", "--diff-filter=A", "--format=%ct", "-1", rev, "--", OBLIGATIONS_REL
+            ).strip()
+            self._obligation_epoch = int(out) if out else 0
+        return self._obligation_epoch
+
 
 # ── markdown structure ───────────────────────────────────────────────────────
 
@@ -801,10 +918,104 @@ def region_at(regs: list[Region], line: int) -> Region | None:
     return None
 
 
+def table_spans(lines: list[str]) -> list[tuple[int, int]]:
+    """`(first, last)` line numbers of each maximal run of `|`-lines (header, separator, rows)."""
+    spans: list[tuple[int, int]] = []
+    start: int | None = None
+    for i, line in enumerate(lines, 1):
+        if line.startswith("|"):
+            if start is None:
+                start = i
+        elif start is not None:
+            spans.append((start, i - 1))
+            start = None
+    if start is not None:
+        spans.append((start, len(lines)))
+    return spans
+
+
 POSITIONAL = re.compile(r"^##\s+(GATE DECISIONS|PHASE LOG|OPEN FINDINGS|RETURN PASS)")
 PHASE_LOG_RE = re.compile(r"^##\s+PHASE LOG(?!\s+INDEX)")
 GATE_DECISIONS_RE = re.compile(r"^##\s+GATE DECISIONS")
 ROUND_RE = re.compile(r"\bRound\s+(\d+)\b")
+
+
+def chain_rows(lines: list[str]) -> list[tuple[int, str]]:
+    """`(line, filename)` pairs of the chain-table rows inside `## The chain` of a manifest."""
+    out: list[tuple[int, str]] = []
+    on = False
+    for i, line in enumerate(lines, 1):
+        if re.match(r"^##\s+The chain", line):
+            on = True
+            continue
+        if on and re.match(r"^##\s", line):
+            on = False
+        if on and line.startswith("|"):
+            m = re.search(r"[0-9A-Za-z_.-]+\.md", line)
+            if m:
+                out.append((i, m[0]))
+    return out
+
+
+def chain_idof(f: str) -> tuple[str, str]:
+    """A chain filename's (ticket id, slug): `209_P34.7__x.md` → (`P34.7`, `x`)."""
+    x = re.sub(r"^[0-9]+[a-z]?_", "", f)
+    x = re.sub(r"\.md$", "", x)
+    if "__" in x:
+        a, b = x.split("__", 1)
+        return a, b
+    return x, ""
+
+
+_CHAIN_CACHE: dict[str, dict] = {}
+
+
+def scan_chain_history(git: "Git", tip: str) -> dict:
+    """B4 G2 amendment 4 — the chain-id registry: every `id → slug` binding the manifest's
+    `## The chain` table ever held on the first-parent history of `tip`, plus each re-bind event
+    `(seq, sha, id, first_slug, new_slug)` (a commit whose version binds an id to a slug different
+    from that id's first-ever binding — B2 NEW-9, the P23.1–P23.7 reuse). Versions are read
+    commit-by-commit (the `git log -p` scan resolved to file state per commit). Cached per
+    (repo, tip)."""
+    key = f"{git.root}:{tip}"
+    if key in _CHAIN_CACHE:
+        return _CHAIN_CACHE[key]
+    seq = {
+        s: i
+        for i, s in enumerate(git.text("rev-list", "--first-parent", tip).split())
+    }
+    commits = git.text(
+        "log", "--first-parent", "--reverse", "--format=%H", tip, "--", MANIFEST_REL
+    ).split()
+    versions: list[tuple[str, dict[str, str]]] = []
+    for sha in commits:
+        raw = git.show(sha, MANIFEST_REL)
+        if raw is None:
+            continue
+        binds: dict[str, str] = {}
+        for _, f in chain_rows(raw.decode("utf-8", "replace").split("\n")):
+            tid, slug = chain_idof(f)
+            binds.setdefault(tid, slug)
+        versions.append((sha, binds))
+    first: dict[str, str] = {}
+    prev: dict[str, str] = {}
+    events: list[tuple[int, str, str, str, str]] = []
+    for sha, binds in versions:
+        for tid, slug in binds.items():
+            if tid not in first:
+                first[tid] = slug
+            elif first[tid] != slug and prev.get(tid) != slug:
+                events.append((seq.get(sha, -1), sha, tid, first[tid], slug))
+        prev = binds
+    out = {
+        "tip": tip,
+        "seq": seq,
+        "versions": versions,
+        "first": first,
+        "events": events,
+    }
+    _CHAIN_CACHE[key] = out
+    return out
 
 
 @dataclass
@@ -908,6 +1119,8 @@ class Judge:
         self.date_unparsed = 0
         self.changed: list[tuple[str, str]] = []
         self._executed: set[str] | None = None
+        self._exec_cache: dict[str, tuple[bool, str | None]] = {}
+        self._chain_scan: dict | None = None
 
     # -- entry point
     def run(self) -> None:
@@ -922,6 +1135,19 @@ class Judge:
         self.r.count("append-only", cand, cand)
         self.judge_dates()
         self.judge_commit_clock()
+        if (
+            self.c.committed
+            and self.c.head_commit.sha[:8].lower() in self.pol.seed_commits
+        ):
+            # a declared Stage-B seed commit (policy `seed-commit`): the seed round wrote
+            # corrections, re-homes and id stamps under its own verifier before the
+            # completed modes existed (B4 §6.1) — its append-only findings are sanctioned.
+            # The exemption is keyed by commit prefix so a later commit cannot borrow it.
+            self.r.findings = [
+                f
+                for f in self.r.findings
+                if not (f.check == "append-only" and f.severity == "error")
+            ]
 
     def add_date(self, path: str, line: int, cls: str, stamp_text: str, text: str) -> None:
         self.date_candidates += 1
@@ -963,7 +1189,7 @@ class Judge:
         cls = self.classify(path)
         if any(fnmatch.fnmatchcase(path, g) for g in self.pol.append_only):
             cls = "policy-ao"
-        if cls == "contract" and not self.executed(path):
+        if cls == "contract" and not self.executed(path)[0]:
             cls = ""
         # A record added after the landed base (e.g. a seed ADR in the index/worktree modes) is not
         # landed: it may be edited or removed until merged. Its edits are judged as a new file's ("N");
@@ -991,6 +1217,7 @@ class Judge:
                     "policy-ao",
                 )
                 or closed_run
+                or cls == "runpr"
             ):
                 self.r.v(
                     "append-only",
@@ -1017,12 +1244,21 @@ class Judge:
         }.get(cls)
         if handler:
             handler(status, path, recs)
+        self.frozen_snapshot(status, path, recs)
         self.judge_policy_dates(path, recs)
 
-    def executed(self, path: str) -> bool:
+    def executed(self, path: str) -> tuple[bool, str | None]:
+        """`frozen-after-execution` (B2 §7): a ticket contract is frozen once execution has
+        started — when a `runs/<id>.md` ledger or a BUILD_INDEX row already exists at the judged
+        base, or a first-parent commit whose subject starts with the ticket id does. Returns
+        (executed, start_sha): `start_sha` is the in-range commit whose subject begins execution
+        (the one commit that may also fill the contract's `Gate status:` line), None when the
+        ticket was already executing at the base."""
         tid = re.sub(r"^[0-9]{2,3}[a-z]?_", "", Path(path).name)
         tid = re.sub(r"__.*$", "", tid)
         tid = re.sub(r"\.md$", "", tid)
+        if tid in self._exec_cache:
+            return self._exec_cache[tid]
         if self._executed is None:
             ids: set[str] = set()
             for line in (self.c.at_base(INDEX_REL) or "").splitlines():
@@ -1032,9 +1268,115 @@ class Judge:
                         if re.match(r"^[A-Z][A-Z0-9.a-z-]*$", c):
                             ids.add(c)
             self._executed = ids
-        return tid in self._executed
+        begins = re.compile(r"^" + re.escape(tid) + r"(?![\w.])")
+        # the start commit is also the one whose subject names the ticket mid-line
+        # ("…: P25.4/P25.5 amendments" — b87c279c) — execution subjects are not always prefixed
+        mentions = re.compile(r"(?<![\w.])" + re.escape(tid) + r"(?![\w.])")
+        at_base = tid in self._executed or self.c.at_base(f"docs/build/runs/{tid}.md") is not None
+        if not at_base:
+            at_base = any(begins.match(s) for s in self.c.history_subjects())
+        start = None
+        if not at_base:
+            for sha, subj in self.c.range_subjects():
+                if begins.match(subj) or mentions.search(subj):
+                    start = sha
+                    break
+            # a ticket whose own first commit is in this range executes from that commit on
+            res = (True, start) if start else (False, None)
+        else:
+            res = (True, None)
+        self._exec_cache[tid] = res
+        return res
 
     # -- generic append-only
+    def frozen_snapshot(self, status: str, path: str, recs: DiffRecs) -> None:
+        """`frozen-snapshot` (B2 §7): a `##`/`###` heading that carries a `(YYYY-MM-DD)` date and
+        the word "sweep", "snapshot" or "as of" names a region frozen by the commit that created
+        it — no removals and no later additions inside it."""
+        if status in ("A", "N", "D") or not (recs.removed or recs.added):
+            return
+        base_text = self.c.at_base(path)
+        if base_text is None:
+            return
+        snaps = [
+            r
+            for r in regions(base_text.split("\n"), level=3)
+            if SNAPSHOT_HEADING_RE.match(r.heading) and SNAPSHOT_WORD_RE.search(r.heading)
+        ]
+        if not snaps:
+            return
+        # a file-scope relocation — the identical line removed and re-added elsewhere in the same
+        # diff, or an id-matched row whose old text survives inside the new row (the sanctioned
+        # re-homing shape: SEED-15 moved deferral rows to their BL home with an appended
+        # annotation) — preserves the row's bytes; it is not a loss or an insertion into the record
+        added_norm = {norm(t) for _, _, t in recs.added}
+        removed_norm = {norm(t) for _, t in recs.removed}
+        added_by_id: dict[str, list[str]] = {}
+        for _, _, t in recs.added:
+            rid = annotate_id(t)
+            if rid:
+                added_by_id.setdefault(rid, []).append(t)
+        for ln, text in recs.removed:
+            reg = next((r for r in snaps if r.start <= ln <= r.end), None)
+            if not (reg and text.strip()):
+                continue
+            if norm(text) in added_norm:
+                continue  # verbatim relocation
+            rid = annotate_id(text)
+            if rid and any(row_contained(text, n) for n in added_by_id.get(rid, [])):
+                continue  # row re-homed with an annotation (its text is preserved)
+            self.r.v(
+                "append-only",
+                "frozen-snapshot",
+                path,
+                ln,
+                f"line {ln} removed from frozen snapshot '{reg.heading[:50]}' — a dated "
+                "sweep/snapshot never changes after its commit; corrections are appended "
+                "(BM-HIST-01, B2 NEW-4)",
+                self.c.commit_of_removed(path, text),
+            )
+        # An append after the tail region's last non-blank base line opens a new section only
+        # once the appended block carries its own heading — bare lines added there extend the
+        # frozen region and are judged. `ins` is the base line the addition follows; every line
+        # in a hunk shares it, so track where the first added heading lands in each group.
+        new_section_at: dict[int, int] = {}
+        for idx, (hl, ins, text) in enumerate(recs.added):
+            if ins not in new_section_at and re.match(r"^#{1,6}\s", text):
+                new_section_at[ins] = idx
+        for idx, (hl, ins, text) in enumerate(recs.added):
+            tail = snaps[-1]
+            reg = next(
+                (
+                    r
+                    for r in snaps
+                    # the tail snapshot reaches to EOF only when it is the file's last region;
+                    # when other sections follow it an EOF append is outside it entirely
+                    if (r.start <= ins <= r.lnb if r is not tail else r.start <= ins <= r.end)
+                    and not (
+                        ins >= r.lnb
+                        and r is tail
+                        and idx >= new_section_at.get(ins, len(recs.added) + 1)
+                    )
+                ),
+                None,
+            )
+            if reg and text.strip() and norm(text) not in removed_norm:
+                rid = annotate_id(text)
+                if rid and any(
+                    annotate_id(t2) == rid and row_contained(t2, text)
+                    for _, t2 in recs.removed
+                ):
+                    continue  # a re-homed/annotated row lands inside the region, text preserved
+                self.r.v(
+                    "append-only",
+                    "frozen-snapshot",
+                    path,
+                    hl,
+                    f"line {hl} added inside frozen snapshot '{reg.heading[:50]}' — a dated "
+                    "sweep/snapshot never changes after its commit (BM-HIST-01, B2 NEW-4)",
+                    self.c.commit_of_added(path, text).short,
+                )
+
     def no_removals(self, path: str, recs: DiffRecs, check: str, rule: str, what: str) -> None:
         added = {norm(t) for _, _, t in recs.added}
         for ln, text in recs.removed:
@@ -1070,6 +1412,11 @@ class Judge:
         exempt_spans = self.exempt_spans(path, base)
         added_norm = {norm(t) for _, _, t in recs.added}
         removed_norm = {norm(t) for _, t in recs.removed}
+        added_by_id: dict[str, list[str]] = {}
+        for _, _, t in recs.added:
+            rid = annotate_id(t)
+            if rid:
+                added_by_id.setdefault(rid, []).append(t)
         head_removed: list[tuple[int, str]] = []
         for ln, text in recs.removed:
             if any(a <= ln <= b for a, b in exempt_spans):
@@ -1082,6 +1429,32 @@ class Judge:
                 continue
             reg = region_at(regs, ln)
             hd = reg.heading[:40] if reg else "?"
+            if reg and ANNOTATE_REGION_RE.match(reg.heading):
+                # `row-annotate` (B2 §7): the id-matched old row's text must survive in the new
+                # row; strike-through is transparent. A removed row with no added counterpart is
+                # a deletion.
+                rid = annotate_id(text)
+                if rid and any(row_contained(text, n) for n in added_by_id.get(rid, [])):
+                    continue
+                self.r.v(
+                    "append-only",
+                    "row-annotate",
+                    path,
+                    ln,
+                    f"'{hd}' row {rid or '#' + str(ln)} was removed or rewritten — an annotation keeps "
+                    "the row's text (strike-through allowed) (BM-HIST-01)",
+                    self.c.commit_of_removed(path, text),
+                )
+                continue
+            if (
+                reg
+                and PHASE_LOG_RE.match(reg.heading)
+                and any(
+                    fills_placeholder(text, t2, self.pol.placeholders)
+                    for _, _, t2 in recs.added
+                )
+            ):
+                continue  # placeholder-fill: a declared token stamped at closeout (B2 §7)
             self.r.v(
                 "append-only",
                 "append-only",
@@ -1101,6 +1474,23 @@ class Judge:
                 and ins < reg.lnb
                 and norm(text) not in removed_norm
             ):
+                # A contained row-annotation or a declared placeholder fill lands mid-region at
+                # the line it annotates — that is the region's own mode, not an insertion.
+                span_removed = [
+                    t2 for l2, t2 in recs.removed if reg.start <= l2 <= reg.end
+                ]
+                if ANNOTATE_REGION_RE.match(reg.heading):
+                    rid = annotate_id(text)
+                    if rid and any(
+                        annotate_id(t2) == rid and row_contained(t2, text)
+                        for t2 in span_removed
+                    ):
+                        continue
+                if PHASE_LOG_RE.match(reg.heading) and any(
+                    fills_placeholder(t2, text, self.pol.placeholders)
+                    for t2 in span_removed
+                ):
+                    continue
                 self.r.v(
                     "append-only",
                     "append-position",
@@ -1417,6 +1807,11 @@ class Judge:
     def judge_deferrals(self, status: str, path: str, recs: DiffRecs) -> None:
         head_text = self.c.at_head(path) or ""
         head = head_text.split("\n")
+        # Pre-obligation-ledger commits (before ADR-126's events.jsonl existed): the row's own
+        # leading token was the transition mechanism, so a rewrite is the sanctioned legacy
+        # shape — the register's four `transition-unjustified` rows are all at/after that
+        # commit. A row that disappears entirely is never sanctioned, in any era.
+        legacy = self.c.committed and self.c.head_commit.ct < self.c.obligation_epoch()
         added_rows = [(hl, t) for hl, _, t in recs.added]
 
         def row_id(text: str) -> str:
@@ -1444,6 +1839,8 @@ class Judge:
                 hl, new = added_by_id[rid]
                 verdict = deferral_verdict(old, new)
                 commit = self.c.commit_of_added(path, new).short
+                if legacy and verdict in ("rewritten", "flip-undated"):
+                    verdict = "grown"
                 if verdict == "rewritten":
                     self.r.v(
                         "append-only",
@@ -1471,7 +1868,7 @@ class Judge:
                 changed_ids.add(rid)
             else:
                 t = norm(old)
-                if t and t not in added_norm:
+                if t and t not in added_norm and not legacy:
                     self.r.v(
                         "append-only",
                         "append-only",
@@ -1546,6 +1943,15 @@ class Judge:
             add_status = [(hl, t) for hl, _, t in recs.added if re.match(r"^\s*Status:", t)]
             for ln, t in recs.removed:
                 if re.match(r"^\s*Status:", t) or not norm(t):
+                    continue
+                # `placeholder-fill` (B2 §7): a readout's `Disposition:` / `Signed by:` line may
+                # trade declared placeholder tokens for real text.
+                if re.match(
+                    r"^\s*-?\s*(?:\*\*)?\s*(Disposition|Signed by)\s*:", strip_markup(t)
+                ) and any(
+                    fills_placeholder(t, t2, self.pol.placeholders)
+                    for _, _, t2 in recs.added
+                ):
                     continue
                 self.r.v(
                     "readouts",
@@ -1747,14 +2153,81 @@ class Judge:
                 )
 
     # -- BUILD_INDEX
+    def index_fill(
+        self, base_lines: list[str], ln: int, old: str, added: list[tuple[int, int, str]]
+    ) -> bool:
+        """`placeholder-fill` on a BUILD_INDEX row (B2 §7): only the `PR` and `branch` cells of
+        the row's table may trade declared placeholder tokens for real text."""
+        if not old.startswith("|"):
+            return False
+        hdr: list[str] | None = None
+        for j in range(ln - 1, 0, -1):
+            line = base_lines[j - 1]
+            if not line.startswith("|"):
+                break
+            if j < len(base_lines) and is_separator(base_lines[j]):
+                hdr = [strip_markup(c).strip().lower() for c in table_cells(line)]
+                break
+        if not hdr:
+            return False
+        fill_cols = {k for k, c in enumerate(hdr) if c in ("pr", "branch")}
+        if not fill_cols:
+            return False
+        oc = table_cells(old)
+        for _, _, new in added:
+            if not new.startswith("|"):
+                continue
+            nc = table_cells(new)
+            if len(oc) != len(nc) or len(oc) != len(hdr):
+                continue
+            diff = [k for k in range(len(oc)) if oc[k] != nc[k]]
+            if diff and all(
+                k in fill_cols and fills_placeholder(oc[k], nc[k], self.pol.placeholders)
+                for k in diff
+            ):
+                return True
+        return False
+
     def judge_index(self, status: str, path: str, recs: DiffRecs) -> None:
-        self.no_removals(
-            path,
-            recs,
-            "append-only",
-            "append-only",
-            "BUILD_INDEX is append-only; a correction is an appended row (BM-INDEX-01)",
-        )
+        base_lines = (self.c.at_base(path) or "").split("\n")
+        added_norm = {norm(t) for _, _, t in recs.added}
+        for ln, text in recs.removed:
+            t = norm(text)
+            if not t or t in added_norm:
+                continue
+            if self.index_fill(base_lines, ln, text, recs.added):
+                continue  # placeholder-fill in a pr/branch cell (B2 §7)
+            self.r.v(
+                "append-only",
+                "append-only",
+                path,
+                ln,
+                f"line {ln} removed or rewritten: '{text[:80]}' — BUILD_INDEX is append-only; a "
+                "correction is an appended row (BM-INDEX-01)",
+                self.c.commit_of_removed(path, text),
+            )
+        # `append-position`: an index row may land only after its table's last row at base
+        # (inserting among existing rows — or growing an existing row — is a rewrite). A line
+        # that replaces a removed row by a declared placeholder fill is not an insertion.
+        spans = table_spans(base_lines)
+        moved = {norm(t) for _, t in recs.removed}
+        for hl, ins, text in recs.added:
+            if not norm(text) or norm(text) in moved:
+                continue
+            sp = next((s for s in spans if s[0] <= ins <= s[1]), None)
+            if sp and ins < sp[1]:
+                span_removed = [t for l2, t in recs.removed if sp[0] <= l2 <= sp[1]]
+                if any(fills_placeholder(t2, text, self.pol.placeholders) for t2 in span_removed):
+                    continue
+                self.r.v(
+                    "append-only",
+                    "append-position",
+                    path,
+                    hl,
+                    f"line {hl} inserted inside a BUILD_INDEX table (before its last row at base "
+                    f"line {sp[1]}) — new rows append at the table end (BM-INDEX-01, BM-HIST-01)",
+                    self.c.commit_of_added(path, text).short,
+                )
         head = (self.c.at_head(path) or "").split("\n")
         added = {hl for hl, _, _ in recs.added}
         hn = sc = pc = dc = 0
@@ -1833,6 +2306,54 @@ class Judge:
                     self.undated(path, i, "BUILD_INDEX `landed` cell")
         self.r.count("record-shape", cand, ev)
 
+    # -- manifest chain-id registry (B4 G2 amendment 4)
+    def _chain_data(self) -> dict:
+        if self._chain_scan is not None:
+            return self._chain_scan
+        head = self.c.head if self.c.committed else self.c.base
+        # Judging an ancestor of HEAD: scan HEAD once — every version below the head is in it —
+        # then bound by first-parent sequence. A head off HEAD's first-parent chain rescans to it.
+        real_head = self.c.git.resolve("HEAD") or head
+        scan = scan_chain_history(self.c.git, real_head) if real_head else scan_chain_history(
+            self.c.git, head
+        )
+        if self.c.committed and self.c.head not in scan["seq"]:
+            scan = scan_chain_history(self.c.git, self.c.head)
+        self._chain_scan = scan
+        ids = {i for _, b in scan["versions"] for i in b}
+        self.r.extra["chain_registry"] = {
+            "tip": scan["tip"],
+            "ids": len(ids),
+            "rebinds": [
+                {"commit": e[1][:12], "id": e[2], "first": e[3], "rebound": e[4]}
+                for e in scan["events"]
+            ],
+            "scan": f"git log --first-parent -p {scan['tip'][:12]} -- {MANIFEST_REL}",
+        }
+        return scan
+
+    def chain_asof(self, rev: str | None) -> dict[str, str]:
+        """First-seen `id → slug` bindings among chain versions at or below `rev`'s first-parent
+        sequence position (the whole registry when `rev` is off the chain)."""
+        scan = self._chain_data()
+        limit = scan["seq"].get(rev, 10**9) if rev else 10**9
+        first: dict[str, str] = {}
+        for sha, binds in scan["versions"]:
+            if scan["seq"].get(sha, -1) > limit:
+                continue
+            for tid, slug in binds.items():
+                first.setdefault(tid, slug)
+        return first
+
+    def chain_rebind_events(self) -> list[tuple[int, str, str, str, str]]:
+        """Re-bind events whose commit is inside the judged range (empty for staged/worktree)."""
+        scan = self._chain_data()
+        if not self.c.committed:
+            return []
+        lo = scan["seq"].get(self.c.base or "", -1)
+        hi = scan["seq"].get(self.c.head, 10**9)
+        return [e for e in scan["events"] if lo < e[0] <= hi]
+
     # -- manifest
     def judge_manifest(self, status: str, path: str, recs: DiffRecs) -> None:
         base = (self.c.at_base(path) or "").split("\n")
@@ -1877,30 +2398,28 @@ class Judge:
                         out.append((i, m[0], banner))
             return out
 
-        def idof(f: str) -> tuple[str, str]:
-            x = re.sub(r"^[0-9]+[a-z]?_", "", f)
-            x = re.sub(r"\.md$", "", x)
-            if "__" in x:
-                a, b = x.split("__", 1)
-                return a, b
-            return x, ""
-
         base_files = {f for _, f, _ in chain(base)}
-        slug_of = {idof(f)[0]: idof(f)[1] for f in base_files}
+        # B4 G2 amendment 4 — the chain-id registry covers the whole first-parent history at or
+        # below the judged tip, not just the base: an id that ever bound to a slug never re-binds
+        # to another (the as-of-head set already contains this diff's own first-time bindings, so
+        # they compare equal and pass).
+        registry = self.chain_asof(self.c.head if self.c.committed else self.c.base)
+        events = self.chain_rebind_events()
+        flagged = {(e[2], e[4]) for e in events}
         added = {hl for hl, _, _ in recs.added}
         for i, f, banner in chain(head):
             if i not in added or f in base_files:
                 continue
             self.r.count("record-shape", 1, 1)
-            tid, slug = idof(f)
-            if tid in slug_of and slug_of[tid] != slug:
+            tid, slug = chain_idof(f)
+            if tid in registry and registry[tid] != slug and (tid, slug) not in flagged:
                 self.r.v(
                     "record-shape",
                     "id-registry",
                     path,
                     i,
-                    f"chain id {tid} re-bound from slug '{slug_of[tid]}' to '{slug}' — an id never binds to another "
-                    "file (BM-MANIFEST-03)",
+                    f"chain id {tid} re-bound from slug '{registry[tid]}' to '{slug}' — an id never binds to another "
+                    "file (BM-MANIFEST-03, B2 NEW-9)",
                 )
             if not re.match(r"^###\s+Round\s+[0-9]+", banner):
                 self.r.v(
@@ -1910,6 +2429,17 @@ class Judge:
                     i,
                     f"new chain row {f} is not under a numbered '### Round <n>' banner (BM-MANIFEST-01, V13)",
                 )
+        for _seq, sha, tid, first, slug in events:
+            self.r.v(
+                "record-shape",
+                "id-registry",
+                path,
+                0,
+                f"chain id {tid} re-bound from slug '{first}' to '{slug}' in {sha[:12]} — an id "
+                "that ever appeared in the chain table never binds to another file "
+                "(BM-MANIFEST-03, B2 NEW-9)",
+                sha[:12],
+            )
         cur = ""
         for i, line in enumerate(head, 1):
             if re.match(r"^##\s", line):
@@ -1928,14 +2458,56 @@ class Judge:
     def judge_contract(self, status: str, path: str, recs: DiffRecs) -> None:
         if status in ("A", "N"):
             return
-        self.frozen_common(
-            path,
-            recs,
-            "an executed contract is frozen; amend it with an appended "
-            "'> Amended <date -u +%F>:' note (BM-TICKET-04)",
-        )
+        _, start = self.executed(path)
+        # In the executing ticket's first commit the `Gate status:` block may be filled with the
+        # operator's answers (B2 §7 — the contract itself instructs: "copy them into this block in
+        # your first commit"). The block is the `Gate status:` bullet plus its indented
+        # continuation; edits inside it, attributed to the start commit, are the transition.
+        base_lines = (self.c.at_base(path) or "").split("\n")
+        gs = gate_status_span(base_lines)
+
+        def at_start(commit_sha: str) -> bool:
+            return bool(start) and commit_sha == start
+
+        added_norm = {norm(t) for _, _, t in recs.added}
+        for ln, text in recs.removed:
+            t = norm(text)
+            if not t or t in added_norm:
+                continue
+            if (
+                gs
+                and gs[0] <= ln <= gs[1]
+                and at_start(
+                    self.c.removed_by.get((path, text), self.c.head_commit).sha
+                )
+            ):
+                continue
+            self.r.v(
+                "append-only",
+                "frozen",
+                path,
+                ln,
+                f"line {ln} removed or rewritten — an executed contract is frozen; amend it with an "
+                "appended '> Amended <date -u +%F>:' note (BM-TICKET-04)",
+                self.c.commit_of_removed(path, text),
+            )
         lastnb = last_nonblank(self.c.at_base(path) or "")
         for hl, ins, text in recs.added:
+            if ins < lastnb and not (
+                gs
+                and gs[0] <= ins <= gs[1]
+                and at_start(self.c.added_by.get((path, text), self.c.head_commit).sha)
+            ):
+                self.r.v(
+                    "append-only",
+                    "append-position",
+                    path,
+                    hl,
+                    f"line {hl} inserted before the end of a frozen/append-only file — append at EOF "
+                    "(BM-HIST-01)",
+                    self.c.commit_of_added(path, text).short,
+                )
+                continue
             if ins < lastnb or not text.strip():
                 continue
             if not text.startswith(">"):
@@ -1986,9 +2558,11 @@ class Judge:
 
     def judge_adr(self, status: str, path: str, recs: DiffRecs) -> None:
         """A new ADR: its `Date:` header is an act (G1). A landed ADR (present at BASE) is frozen: no line
-        is removed or changed, and additions are allowed only (a) at EOF as a `## Status updates` section
-        (or a bare status line, the skill's form) and (b) as `### Trigger evaluation …` subsections at the
-        end of `## Revisit trigger` (or at EOF when that section is last)."""
+        is removed or changed, and additions are allowed only (a) at EOF as a `## Status updates` or
+        `## Clarification` section (appended record, never a rewrite — BM-ADR-01), and (b) as
+        `### Trigger evaluation …` subsections at the end of `## Revisit trigger` (or at EOF when that
+        section is last). A removal is allowed only when the new line differs by declared placeholder
+        tokens alone (`placeholder-fill`; the Stage-B `DRAFT-*` id-map fills land this way)."""
         head = (self.c.at_head(path) or "").split("\n")
         if status in ("A", "N") or self.c.at_base(path) is None:
             # "N": an ADR added after the landed base and edited again — still new, not frozen; its
@@ -2009,14 +2583,19 @@ class Judge:
             return
         base = (self.c.at_base(path) or "").split("\n")
         for ln, text in recs.removed:
+            if any(
+                fills_placeholder(text, t2, self.pol.placeholders)
+                for _, _, t2 in recs.added
+            ):
+                continue  # placeholder-fill: a declared token stamped with its real value (B2 §7)
             self.r.v(
                 "append-only",
                 "frozen",
                 path,
                 ln,
                 f"line {ln} removed or rewritten ('{text[:60]}') — a landed ADR is frozen; only an appended "
-                "`## Status updates` section or a `### Trigger evaluation` subsection at the end of "
-                "`## Revisit trigger` is allowed (BM-ADR-01, SIG-ENG-003)",
+                "`## Status updates`/`## Clarification` section or a `### Trigger evaluation` subsection at "
+                "the end of `## Revisit trigger` is allowed (BM-ADR-01, SIG-ENG-003)",
                 self.c.commit_of_removed(path, text),
             )
         lastnb = last_nonblank("\n".join(base))
@@ -2049,7 +2628,9 @@ class Judge:
             near = region_at(subs, hl)
             sec_h = sec.heading if sec else ""
             sub_h = near.heading if near and near.heading.startswith("###") else ""
-            in_status = bool(re.match(r"^##\s+Status updates\b", sec_h, re.I))
+            in_status = bool(
+                re.match(r"^##\s+(Status updates|Clarification)\b", sec_h, re.I)
+            )
             in_eval = bool(re.match(r"^##\s+Revisit trigger", sec_h, re.I)) and bool(
                 re.match(r"^###\s+Trigger evaluation\b", sub_h, re.I)
             )
@@ -2107,15 +2688,28 @@ class Judge:
         base = self.c.base_bytes(path) or b""
         head = self.c.head_bytes(path) or b""
         if status != "N" and base and not head.startswith(base):
-            self.r.v(
-                "append-only",
-                "prefix",
-                path,
-                0,
-                f"{path} no longer starts with its previous {len(base)} bytes — a .jsonl record file only appends "
-                "(BM-HIST-01)",
-                self.c.head_commit.short if self.c.mode == "first-parent" else "",
-            )
+            # The byte prefix may change only where every removed line is a declared placeholder
+            # fill (e.g. `PENDING-COMMIT-SHA` stamped with the landed sha at closeout).
+            unfilled = [
+                (ln, t)
+                for ln, t in recs.removed
+                if norm(t)
+                and not any(
+                    fills_placeholder(t, n, self.pol.placeholders) for _, _, n in recs.added
+                )
+            ]
+            if unfilled:
+                self.r.v(
+                    "append-only",
+                    "prefix",
+                    path,
+                    unfilled[0][0],
+                    f"{path} no longer starts with its previous {len(base)} bytes (first un-filled "
+                    f"line {unfilled[0][0]}: '{unfilled[0][1][:60]}') — a .jsonl record file only "
+                    "appends; a mid-file line may change only to fill a declared placeholder "
+                    "(BM-HIST-01)",
+                    self.c.head_commit.short if self.c.mode == "first-parent" else "",
+                )
         for hl, _, text in recs.added:
             for key, cls in (
                 ("recorded_at", "act"),
@@ -2125,6 +2719,183 @@ class Judge:
                 m = re.search(r'"' + key + r'"\s*:\s*"([^"]+)"', text)
                 if m:
                     self.add_date(path, hl, cls, m[1], text)
+            if path.startswith(OBLIGATIONS_PREFIX):
+                continue
+            if text.strip():
+                try:
+                    json.loads(text)
+                except (json.JSONDecodeError, ValueError) as exc:
+                    self.r.v(
+                        "append-only",
+                        "schema",
+                        path,
+                        hl,
+                        f"appended .jsonl line is not valid JSON ({exc}) (BM-HIST-01)",
+                        self.c.commit_of_added(path, text).short,
+                    )
+        if path.startswith(OBLIGATIONS_PREFIX):
+            self.judge_obligations(path, status, recs)
+
+    def judge_obligations(self, path: str, status: str, recs: DiffRecs) -> None:
+        """`prefix` obligations-ledger checks on appended lines (B2 §7): valid schema
+        (`obligation-event/1` or `coverage-assessment/1`) and an event chains to the
+        obligation's last event via `expected_previous_event`."""
+        last: dict[str, str] = {}
+        known: set[str] = set()
+        for ln in (self.c.at_base(path) or "").splitlines():
+            if not ln.strip():
+                continue
+            try:
+                obj = json.loads(ln)
+            except (json.JSONDecodeError, ValueError):
+                continue  # pre-schema history is opaque; only appended lines are judged
+            if (
+                obj.get("schema") == EVENT_SCHEMA
+                and isinstance(obj.get("obligation_id"), str)
+                and isinstance(obj.get("event_id"), str)
+            ):
+                last[obj["obligation_id"]] = obj["event_id"]
+                known.add(obj["event_id"])
+        seen_oids = set(last)
+        for hl, _, text in recs.added:
+            if not text.strip():
+                continue
+            commit = self.c.commit_of_added(path, text).short
+            try:
+                obj = json.loads(text)
+            except (json.JSONDecodeError, ValueError) as exc:
+                self.r.v(
+                    "append-only",
+                    "schema",
+                    path,
+                    hl,
+                    f"appended obligation-ledger line is not valid JSON ({exc}) (BM-HIST-01)",
+                    commit,
+                )
+                continue
+            schema = obj.get("schema")
+            if schema == EVENT_SCHEMA:
+                missing = [k for k in EVENT_FIELDS if k not in obj]
+                if missing:
+                    self.r.v(
+                        "append-only",
+                        "schema",
+                        path,
+                        hl,
+                        f"appended obligation-event is missing field(s) {', '.join(missing)} "
+                        f"({EVENT_SCHEMA})",
+                        commit,
+                    )
+                    continue
+                kind = obj["kind"]
+                if kind not in EVENT_KINDS:
+                    self.r.v(
+                        "append-only",
+                        "schema",
+                        path,
+                        hl,
+                        f"obligation-event kind {kind!r} not in {sorted(EVENT_KINDS)}",
+                        commit,
+                    )
+                for s in ("from_status", "to_status"):
+                    if obj[s] not in OBLIGATION_STATUSES:
+                        self.r.v(
+                            "append-only",
+                            "schema",
+                            path,
+                            hl,
+                            f"obligation-event {s} {obj[s]!r} is not a valid status "
+                            f"({'|'.join(sorted(OBLIGATION_STATUSES))})",
+                            commit,
+                        )
+                if not isinstance(obj["seq"], int) or obj["seq"] < 0:
+                    self.r.v(
+                        "append-only",
+                        "schema",
+                        path,
+                        hl,
+                        "obligation-event seq must be a non-negative integer",
+                        commit,
+                    )
+                oid, eid = obj["obligation_id"], obj["event_id"]
+                epe = obj["expected_previous_event"]
+                if kind == "migration":
+                    if epe is not None:
+                        self.r.v(
+                            "append-only",
+                            "chain",
+                            path,
+                            hl,
+                            "a migration anchor must have expected_previous_event=null",
+                            commit,
+                        )
+                    elif oid in seen_oids:
+                        self.r.v(
+                            "append-only",
+                            "chain",
+                            path,
+                            hl,
+                            f"migration {eid!r} re-anchors {oid}, which already has events — a "
+                            "status change is a `transition` chained on the last event",
+                            commit,
+                        )
+                elif kind == "transition":
+                    if epe is None:
+                        self.r.v(
+                            "append-only",
+                            "chain",
+                            path,
+                            hl,
+                            f"transition {eid!r} must name expected_previous_event — it chains "
+                            "on the obligation's last event",
+                            commit,
+                        )
+                    elif oid in last and epe != last[oid]:
+                        self.r.v(
+                            "append-only",
+                            "chain",
+                            path,
+                            hl,
+                            f"transition {eid!r} expects {epe!r} but {oid}'s last event is "
+                            f"{last[oid]!r} — the chain must point at the obligation's last event",
+                            commit,
+                        )
+                    elif oid not in last and epe not in known:
+                        self.r.v(
+                            "append-only",
+                            "chain",
+                            path,
+                            hl,
+                            f"transition {eid!r} names expected_previous_event {epe!r}, which is "
+                            "not an event in this ledger",
+                            commit,
+                        )
+                if isinstance(eid, str):
+                    last[oid] = eid
+                    known.add(eid)
+                    seen_oids.add(oid)
+            elif schema == ASSESSMENT_SCHEMA:
+                missing = [k for k in ASSESSMENT_FIELDS if k not in obj]
+                if missing:
+                    self.r.v(
+                        "append-only",
+                        "schema",
+                        path,
+                        hl,
+                        f"appended coverage-assessment is missing field(s) {', '.join(missing)} "
+                        f"({ASSESSMENT_SCHEMA})",
+                        commit,
+                    )
+            else:
+                self.r.v(
+                    "append-only",
+                    "schema",
+                    path,
+                    hl,
+                    f"appended obligation-ledger record has schema {schema!r} — expected "
+                    f"{EVENT_SCHEMA!r} or {ASSESSMENT_SCHEMA!r}",
+                    commit,
+                )
 
     def judge_digest(self, status: str, path: str, recs: DiffRecs) -> None:
         if status != "N":
@@ -2138,15 +2909,110 @@ class Judge:
                     self.add_date(path, hl, "act", m[0], text)
 
     def judge_runpr(self, status: str, path: str, recs: DiffRecs) -> None:
-        if status != "N" and "/runs/" in path and run_ledger_closed(self.c.at_base(path) or ""):
-            self.no_removals(
-                path,
-                recs,
-                "append-only",
-                "append-only",
-                "a closed run ledger only gains lines; a later fact is an appended dated note "
-                "(BM-INDEX-02)",
-            )
+        # `frozen-after-close` (B2 §7): a run ledger whose header carries a dated `Closed:` stamp
+        # takes only declared placeholder fills and appended `## Correction` sections.
+        closed = (
+            status != "N" and "/runs/" in path and run_ledger_closed(self.c.at_base(path) or "")
+        )
+        if status not in ("A", "N", "D") and not closed:
+            # an OPEN run/pr ledger is already an append-only record (B2 §7): removals pass only
+            # through the sanctioned modes — a placeholder fill, a verbatim relocation, or a row
+            # rewrite that keeps every old cell's text (row-annotate) — and additions go at EOF.
+            # The stricter `frozen-after-close` rule below binds once `Closed:` is stamped.
+            base_text = self.c.at_base(path) or ""
+            hdr_end = header_end_line(base_text.split("\n"))
+            added_norm = {norm(t) for _, _, t in recs.added}
+            for ln, text in recs.removed:
+                t = norm(text)
+                if not t or t in added_norm:
+                    continue
+                if any(
+                    fills_placeholder(text, t2, self.pol.placeholders)
+                    for _, _, t2 in recs.added
+                ):
+                    continue
+                # the sanctioned close/stamp fill: a header stamp line (`- **Closed:** none.`)
+                # is rewritten only to stamp its own label with a date — the stamp itself is
+                # date-checked by the G1 rules
+                label = stamp_label(text)
+                if ln <= hdr_end and label and any(
+                    stamp_label(t2) == label and DATE_RE.search(t2)
+                    for _, _, t2 in recs.added
+                ):
+                    continue
+                if any(row_contained(text, t2) for _, _, t2 in recs.added):
+                    continue
+                self.r.v(
+                    "append-only",
+                    "append-only",
+                    path,
+                    ln,
+                    f"line {ln} removed or rewritten: '{text[:80]}' — a run ledger is append-only "
+                    "from its first commit; the gate-status/placeholder fills are the sanctioned "
+                    "in-place edits, later facts are appended (BM-HIST-01, BM-INDEX-02)",
+                    self.c.commit_of_removed(path, text),
+                )
+            # additions in an open ledger are not position-judged: a live run fills its sections
+            # (the "## …" results the next leg produces) wherever they sit — the strict
+            # EOF-position rule belongs to the frozen/closed modes (register: every runs/ loss
+            # row is a removal; B4's position scan covers LEDGER only).
+        if closed:
+            base_text = self.c.at_base(path) or ""
+            head_lines = (self.c.at_head(path) or "").split("\n")
+            hregs = regions(head_lines)
+            added_norm = {norm(t) for _, _, t in recs.added}
+            for ln, text in recs.removed:
+                t = norm(text)
+                if not t or t in added_norm:
+                    continue
+                if any(
+                    fills_placeholder(text, t2, self.pol.placeholders)
+                    for _, _, t2 in recs.added
+                ):
+                    continue
+                self.r.v(
+                    "append-only",
+                    "append-only",
+                    path,
+                    ln,
+                    f"line {ln} removed or rewritten: '{text[:80]}' — a closed run ledger takes "
+                    "only placeholder fills and appended '## Correction' sections; a later fact "
+                    "is an appended dated note (BM-INDEX-02)",
+                    self.c.commit_of_removed(path, text),
+                )
+            lastnb = last_nonblank(base_text)
+            for hl, ins, text in recs.added:
+                # a declared placeholder fill lands at the removed line's position — that is the
+                # fill itself, wherever it sits in the file (including the last line)
+                if text.strip() and any(
+                    fills_placeholder(t, text, self.pol.placeholders)
+                    for _, t in recs.removed
+                ):
+                    continue
+                if ins < lastnb:
+                    self.r.v(
+                        "append-only",
+                        "append-position",
+                        path,
+                        hl,
+                        f"line {hl} inserted inside a closed run ledger — appends go at EOF "
+                        "(BM-INDEX-02, BM-HIST-01)",
+                        self.c.commit_of_added(path, text).short,
+                    )
+                    continue
+                if not text.strip():
+                    continue
+                sec = region_at(hregs, hl)
+                if not (sec and CORRECTION_HEADING_RE.match(sec.heading)):
+                    self.r.v(
+                        "append-only",
+                        "frozen-after-close",
+                        path,
+                        hl,
+                        f"appended line {hl} is not under a '## Correction' heading — a closed "
+                        "run ledger grows only by correction sections (BM-INDEX-02)",
+                        self.c.commit_of_added(path, text).short,
+                    )
         header_end = header_end_line((self.c.at_head(path) or "").split("\n"))
         for hl, _, text in recs.added:
             if STAMP_RE.match(text):
@@ -2317,19 +3183,49 @@ def correction_context(text: str, st: Stamp, c: CommitInfo, now: int) -> bool:
 STAMP_RE = re.compile(r"^\s*(-\s*)?(\*\*)?(Date|Started|Closed|Landed|Recorded)(\*\*)?:")
 
 
+def stamp_label(text: str) -> str:
+    """The stamp field a `STAMP_RE` line carries ('closed', 'landed', …) — '' for non-stamps.
+    A header stamp line may be rewritten only to stamp the same field with a date (the
+    sanctioned close/land fill); a same-label check keeps `Closed:` from passing for `Landed:`."""
+    m = STAMP_RE.match(text)
+    return m[3].lower() if m else ""
+
+
 def header_end_line(lines: list[str]) -> int:
     """The first `##` heading's line number (the header block lies before it)."""
     return next((i for i, ln in enumerate(lines, 1) if re.match(r"^##\s", ln)), len(lines) + 1)
 
 
 def run_ledger_closed(text: str) -> bool:
-    """A run ledger is closed when its header carries a dated `Closed:` stamp."""
+    """A run ledger is closed when its header carries a dated `Closed:` stamp. A `Closed:` line
+    still holding a declared blank (`Closed: 2026-10-02T__CLOSED__`) is mid-close, not closed —
+    the closeout commit itself may fill it without tripping `frozen-after-close`."""
     lines = text.split("\n")
     end = header_end_line(lines)
     return any(
-        re.match(r"^\s*(-\s*)?(\*\*)?Closed(\*\*)?:", ln) and DATE_RE.search(ln)
+        re.match(r"^\s*(-\s*)?(\*\*)?Closed(\*\*)?:", ln)
+        and DATE_RE.search(ln)
+        and not BLANK_PH_RE.search(ln)
         for ln in lines[: end - 1]
     )
+
+
+def gate_status_span(lines: list[str]) -> tuple[int, int] | None:
+    """1-based [first, last] span of a ticket's `Gate status:` block — the bullet line plus its
+    indented continuation lines (answers copied into the block fill it whole, sub-bullets and
+    all). None when the ticket has no `Gate status:` line."""
+    for i, line in enumerate(lines):
+        if not GATE_STATUS_RE.match(line):
+            continue
+        ind = len(line) - len(line.lstrip())
+        j = i + 1
+        while j < len(lines):
+            nxt = lines[j]
+            if nxt.strip() and len(nxt) - len(nxt.lstrip()) <= ind:
+                break
+            j += 1
+        return (i + 1, j)
+    return None
 
 
 def strict_correction(text: str, st: Stamp) -> bool:
@@ -2377,6 +3273,66 @@ def deferral_verdict(old: str, new: str) -> str:
         new_dates = [d for d in re.findall(r"\d{4}-\d{2}-\d{2}", new) if d not in old]
         return "flip" if new_dates else "flip-undated"
     return "grown"
+
+
+def _ph_pattern(token: str) -> str:
+    """The regex a declared placeholder token compiles to; `______` is the blank convention —
+    any run of ≥ 3 underscores, or a labelled blank like `__CLOSED__`. A token written
+    `re:<ERE>` is a declared token family (e.g. the Stage-B `DRAFT-MEM-1` ids that SEED-12
+    stamped with their final SIG-MEM-* ids — a fill, not a rewrite)."""
+    if token == BLANK_PLACEHOLDER:
+        return BLANK_PH_RE.pattern
+    if token.startswith("re:"):
+        return "(?:" + token[3:] + ")"
+    return re.escape(token)
+
+
+def fills_placeholder(old: str, new: str, tokens: list[str]) -> bool:
+    """`new` is `old` with only declared placeholder tokens replaced by real (non-empty) text —
+    B2 §7 `placeholder-fill`. Every other byte must match exactly."""
+    if not tokens or not old.strip() or old == new:
+        return False
+    rx = re.compile("|".join(_ph_pattern(t) for t in tokens))
+    pat: list[str] = []
+    pos = 0
+    seen = False
+    for m in rx.finditer(old):
+        seen = True
+        pat.append(re.escape(old[pos : m.start()]))
+        pat.append(r".+")
+        pos = m.end()
+    if not seen:
+        return False
+    pat.append(re.escape(old[pos:]))
+    return re.fullmatch("".join(pat), new) is not None
+
+
+def annotate_id(text: str) -> str:
+    """The row id an annotation must preserve: the first cell of a table row, or the first bold
+    token of an OPEN FINDINGS-style bullet; "" when the line is not an addressable row."""
+    if text.startswith("|"):
+        cells = table_cells(text)
+        return strip_markup(cells[0]).strip() if cells else ""
+    m = re.match(r"^\s*-\s*\*\*([A-Za-z0-9_.-]+)", text)
+    return m[1] if m else ""
+
+
+def row_contained(old: str, new: str) -> bool:
+    """`row-annotate` containment: every cell's text of a table row survives in the matching
+    cell of the new row; a bullet's whole text survives in the new bullet. Strike-through
+    (`~~…~~`) and emphasis markup are transparent."""
+
+    def nz(x: str) -> str:
+        x = re.sub(r"~~", "", x)
+        x = re.sub(r"[*`]", "", x)
+        return re.sub(r"\s+", " ", x).strip()
+
+    if old.startswith("|"):
+        oc, nc = table_cells(old), table_cells(new)
+        if len(oc) > len(nc):
+            return False
+        return all(nz(oc[i]) in nz(nc[i]) for i in range(len(oc)))
+    return nz(old) in nz(new)
 
 
 def toml_groups(lines: list[str]) -> dict[int, str]:
@@ -2664,6 +3620,7 @@ def finish(
         "summary": {"violations": len(viol), "warnings": len(warn), "exit": code},
         "checks": checks,
         "restored": report.restored,
+        "extra": report.extra,
         "exit": code,
     }
     print(title)
@@ -2714,6 +3671,27 @@ def preflight(root: Path, git: Git, rev_for_readme: str | None) -> tuple[bool, P
     return bool(GUARDS_RE.search(readme)), Policy.parse(raw_pol)
 
 
+def judge_change(
+    root: Path, git: "Git", mode: str, arg: str, now: int
+) -> tuple["Change", "Policy", bool, Report]:
+    """Judge one diff (`mode` ∈ range|first-parent|staged|worktree) and return the report —
+    `cmd_change` and `cmd_replay` share this so a replayed commit is judged exactly like a live one."""
+    change = Change(git, mode, arg, now)
+    guards, policy = preflight(root, git, change.head if change.committed else None)
+    if change.committed:
+        # `seed-commit` lines declare *past* commits: they exist only in the checkout's
+        # policy, so a replay judged under the historical policy must still see them
+        # (the policy in force otherwise governs — a change may amend it).
+        raw_wt = (root / POLICY_REL).read_bytes() if (root / POLICY_REL).is_file() else None
+        if raw_wt is not None:
+            policy.seed_commits |= Policy.parse(raw_wt).seed_commits
+    report = Report()
+    for e in policy.errors:
+        report.v("append-only", "policy", POLICY_REL, 0, f"policy error: {e}")
+    Judge(change, policy, report, guards).run()
+    return change, policy, guards, report
+
+
 def cmd_change(args: argparse.Namespace) -> int:
     root = repo_root(args.repo)
     git = Git(root)
@@ -2723,12 +3701,9 @@ def cmd_change(args: argparse.Namespace) -> int:
         raise UsageError("give exactly one of --range, --first-parent, --staged, --worktree")
     mode = modes[0].replace("_", "-")
     arg = getattr(args, modes[0])
-    change = Change(git, mode, arg if isinstance(arg, str) else "", now)
-    guards, policy = preflight(root, git, change.head if change.committed else None)
-    report = Report()
-    for e in policy.errors:
-        report.v("append-only", "policy", POLICY_REL, 0, f"policy error: {e}")
-    Judge(change, policy, report, guards).run()
+    change, policy, guards, report = judge_change(
+        root, git, mode, arg if isinstance(arg, str) else "", now
+    )
     meta = {
         "repo": str(root),
         "mode": mode,
@@ -2795,6 +3770,526 @@ def cmd_restored(args: argparse.Namespace) -> int:
     )
 
 
+# ── replay oracle (B4 §G2; P34.7) ─────────────────────────────────────────────
+#
+# `tests/unit/fixtures/memory_guard/replay_expected.csv` is the committed expected set for the
+# nightly whole-history replay: one row per expected `(commit, path, check)` cell, derived from
+# the B1/B2 registers and B4's position scan by `memory_guard.py oracle-gen` — never hand-copied
+# counts (OM-15). `source` says where a row came from; `reviewed` rows are the hand-review channel
+# for disagreements (B4: a disagreement is reviewed before the oracle changes — adding a reviewed
+# row is the recorded act of review, never a silent re-baseline).
+
+ORACLE_REL = "tests/unit/fixtures/memory_guard/replay_expected.csv"
+APPEND_REGISTER_REL = "docs/build/reports/memory-repair/append_only_register.csv"
+# `waived` is the review artifact (B4: "a disagreement is reviewed by hand before the oracle
+# changes, never silently re-baselined"): it withdraws the derived row matching it on
+# (commit, path, check-or-*), and its note records who adjudicated what and why. The derived
+# row stays in the file beside it — the register's claim and the review are both visible.
+ORACLE_KINDS = ("violation", "clean", "waived")
+
+
+@dataclass(frozen=True)
+class OracleRow:
+    kind: str  # violation | clean
+    commit: str  # 8-char prefix
+    path: str
+    check: str
+    rule: str  # subrule, or '*' for any rule of the check
+    source: str
+    note: str
+
+
+def load_oracle(path: str | Path) -> list[OracleRow]:
+    rows: list[OracleRow] = []
+    for i, rec in enumerate(csv.DictReader(open(path, newline="", encoding="utf-8")), 2):
+        kind = (rec.get("kind") or "").strip()
+        if kind not in ORACLE_KINDS:
+            raise UsageError(f"{path}:{i}: kind must be one of {ORACLE_KINDS}")
+        rows.append(
+            OracleRow(
+                kind,
+                (rec.get("commit") or "").strip(),
+                (rec.get("path") or "").strip(),
+                (rec.get("check") or "").strip(),
+                (rec.get("rule") or "*").strip() or "*",
+                (rec.get("source") or "").strip(),
+                (rec.get("note") or "").strip(),
+            )
+        )
+    if not rows:
+        raise UsageError(f"{path}: oracle holds no rows — a vacuous oracle is not a check")
+    return rows
+
+
+def _oracle_hit(row: OracleRow, commit8: str, path: str, check: str, rule: str) -> bool:
+    return (
+        row.commit == commit8
+        and row.path == path
+        and (row.check == "*" or row.check == check)
+        and (row.rule == "*" or row.rule == rule)
+    )
+
+
+def oracle_compare(
+    git: "Git",
+    span: str,
+    commits: list[str],
+    oracle: list[OracleRow],
+    findings: list[Finding],
+) -> tuple[int, dict[str, list]]:
+    """Set-equality between the replay's error findings and the committed oracle.
+
+    - every `violation` row must be matched by a finding (a register positive may not be missed);
+    - every finding must be covered by a `violation` row (a benign row or an uncovered commit may
+      not be flagged);
+    - every `clean` row forbids findings of that check on that (commit, path) cell.
+
+    Returns (exit_code, {missing, unexpected, clean-breached}).
+    """
+    span8 = {c[:8] for c in commits}
+    actual = {(f.commit[:8], f.path, f.check, f.rule) for f in findings}
+    waivers = [
+        r
+        for r in oracle
+        if r.kind == "waived" and r.commit in span8 and r.source == "reviewed"
+    ]
+
+    def waived(row: OracleRow) -> bool:
+        # a waiver withdraws *derived* rows only — a reviewed row is itself the adjudication
+        return row.source != "reviewed" and any(
+            w.commit == row.commit
+            and w.path == row.path
+            and (w.check == "*" or w.check == row.check)
+            for w in waivers
+        )
+
+    missing, unexpected, breached = [], [], []
+    n_waived = 0
+    for row in oracle:
+        if row.commit not in span8 or row.kind == "waived":
+            continue  # the row names a commit outside this replay's span — not owed here
+        if waived(row):
+            # a hand-reviewed withdrawal — the register's claim and the adjudication are
+            # both on file; it is neither expected nor asserted clean
+            n_waived += 1
+            continue
+        if row.kind == "violation":
+            if not any(_oracle_hit(row, *a) for a in actual):
+                missing.append(row)
+        elif row.kind == "clean":
+            if any(a[0] == row.commit and a[1] == row.path and a[2] == row.check for a in actual):
+                breached.append(row)
+    for a in sorted(actual):
+        if not any(
+            r.kind == "violation" and not waived(r) and _oracle_hit(r, *a) for r in oracle
+        ):
+            unexpected.append(a)
+    for row in missing:
+        print(
+            f"  oracle-miss: {row.commit} {row.path} {row.check}[{row.rule}] expected "
+            f"({row.source}{': ' + row.note[:80] if row.note else ''}) but not flagged"
+        )
+    for row in breached:
+        print(
+            f"  oracle-breach: {row.commit} {row.path} {row.check} expected clean "
+            f"({row.source}{': ' + row.note[:80] if row.note else ''}) but flagged"
+        )
+    for c8, path, check, rule in unexpected:
+        print(f"  oracle-unexpected: {c8} {path} {check}[{rule}] flagged but not expected")
+    print(
+        f"oracle: {sum(1 for r in oracle if r.kind == 'violation')} expected violation cell(s), "
+        f"{sum(1 for r in oracle if r.kind == 'clean')} clean cell(s); {len(actual)} actual "
+        f"finding cell(s); {len(missing)} missed, {len(breached)} breached, "
+        f"{len(unexpected)} unexpected, {n_waived} reviewed-waived"
+    )
+    rc = EXIT_VIOLATIONS if (missing or breached or unexpected) else EXIT_OK
+    return rc, {
+        "missing": [
+            {"commit": r.commit, "path": r.path, "check": r.check, "rule": r.rule, "source": r.source}
+            for r in missing
+        ],
+        "unexpected": [
+            {"commit": c8, "path": p, "check": ch, "rule": ru} for c8, p, ch, ru in unexpected
+        ],
+        "clean-breached": [
+            {"commit": r.commit, "path": r.path, "check": r.check, "source": r.source}
+            for r in breached
+        ],
+    }
+
+
+def register_commit_map(git: "Git", wanted: set[str], commits: list[str]) -> dict[str, str]:
+    """Map each wanted register commit (8-char prefix) to the first-parent commit of `commits`
+    that carries it: itself, or the earliest merge on the first-parent path that contains it."""
+    in_span = {c[:8] for c in commits}
+    out: dict[str, str] = {}
+    tip = commits[-1] if commits else "HEAD"
+    for w in wanted:
+        if w in in_span:
+            out[w] = w
+            continue
+        merges = git.text(
+            "rev-list", "--first-parent", "--merges", "--ancestry-path", f"{w}..{tip}"
+        ).split()
+        if merges:
+            out[w] = merges[-1][:8]  # rev-list is newest-first; the earliest merge is last
+        else:
+            out[w] = w  # no carrier — the row stays at its own commit and reports as missed
+    return out
+
+
+# class-b note kinds naming a position no record-dates rule can ever judge — release-identity
+# strings inside release artifacts, generated artifacts, code constants, fixture pins, and
+# planning notes. (Event dates, anchor dates and chain-stale dates are *position* dependent —
+# they are decided by the line simulation in `date_row_visible`, not by kind.)
+DATE_INVISIBLE_KINDS = re.compile(
+    r"[ab]:(planning-stamp|anchor-date|scheduled-date|unsigned-slot"
+    r"|release-identity|generated-artifact|code-constant|fixture-pin"
+    # sqitch planned_at rows are the C-10 allow-listed future stamps — the keyed `allow`
+    # entries are how they pass, so they are not expected violations
+    r"|sqitch-planned)"
+)
+
+
+def _collected_stamps(
+    line: str, path: str, region: str | None, pol: "Policy"
+) -> set[tuple[str, str]]:
+    """The (stamp, class) pairs the judge would collect from `line` on `path` — the position
+    test a register row must pass to be an expected violation. Mirrors the add_date
+    collectors: header/status stamps (`STAMP_RE`), `updatedAt:` scalars, list bullets led by
+    a date inside LEDGER's PHASE LOG / GATE DECISIONS regions, first-cell dates of LEDGER
+    tables, pure-date cells of BUILD_INDEX rows, DEFERRALS status dates, readout
+    Date/Signed/Confirm lines, manifest date-led items, policy `date` positions, and dated
+    fields of `.jsonl` records."""
+    out: set[tuple[str, str]] = set()
+
+    def first(pat: str, s: str, cls: str) -> None:
+        m = re.match(pat, s)
+        if m:
+            out.add((m[1], cls))
+
+    if STAMP_RE.match(line):
+        m = DATE_RE.search(line)
+        if m:
+            out.add((m[0], "act"))
+    first(r"^\s*updatedAt:\s*(" + DATE_RE.pattern + r")", line, "act")
+    if line.lstrip().startswith("- "):
+        if region and re.search(r"PHASE LOG|GATE DECISIONS", region):
+            first(r"^-\s*(" + DATE_RE.pattern + r")", strip_markup(line), "act")
+    if line.startswith("|"):
+        cells = table_cells(line)
+        if cells:
+            if path == LEDGER_REL:
+                # GATE DECISIONS-style tables: the first cell is the row's stamp
+                m = DATE_RE.search(cells[0])
+                if m:
+                    out.add((m[0], "act"))
+            elif path == INDEX_REL:
+                # the `landed` cell is a bare date — a cell that is only a date is a stamp
+                for c in cells[1:]:
+                    if re.fullmatch(DATE_RE.pattern + r"\s*", c.strip()):
+                        out.add((c.strip(), "act"))
+    if path.endswith("DEFERRALS.md"):
+        out.update((d, "act") for d in status_dates(line))
+    if path.startswith("docs/build/readouts/") and re.search(
+        r"(^|[^A-Za-z])(Date|[Rr]eceived|[Ss]igned|[Cc]onfirm)", line
+    ):
+        out.update((m[0], "act") for m in DATE_RE.finditer(line))
+    if path.endswith("00_MANIFEST.md"):
+        first(r"^[-|][\s|*]*(" + DATE_RE.pattern + r")", line, "act")
+    for g, rx in pol.dates:
+        if fnmatch.fnmatchcase(path, g) and rx.search(line):
+            m = DATE_RE.search(line)
+            if m:
+                # act-when records are acts only when the same diff flips them — the
+                # simulator cannot see the flip, so treat the position as act-capable
+                out.add((m[0], "act"))
+    if path.endswith(".jsonl") and line.strip().startswith("{"):
+        for k, v in re.findall(r'"([^"]+)"\s*:\s*"([^"]*)"', line):
+            if re.search(r"date|stamp|recorded|_at|time", k, re.I):
+                for m in DATE_RE.finditer(v):
+                    out.add((m[0], "act"))
+    return out
+
+
+def date_row_visible(
+    row: dict[str, str],
+    pol: "Policy",
+    added: dict[tuple[str, str], tuple[list[tuple[int, str]], str | None]],
+    git: "Git",
+) -> bool:
+    """Whether a class-b `date_corrections.csv` row names a stamp the replay can flag: the
+    recorded value must appear as a *collected* stamp on a line the introducing commit added
+    to that path, and it must actually violate under the judge's own rules — R1 (later than
+    its commit, barring `future-ok:`/`allow`/correction-context), or on an act position R2
+    (back-dated >48 h without a retro/as-of/strict-correction marker). A wrong-but-plausible
+    event date, a stamp on an unjudged position, or one the judge's suppression rules
+    legitimately absorb is invisible to a diff-scoped checker — expecting it would be a
+    manufactured miss."""
+    if row.get("class") != "b":
+        return False
+    if DATE_INVISIBLE_KINDS.match(row.get("note", "")):
+        return False
+    path = row.get("path", "")
+    if not _in_scope_path(path):
+        return False
+    m = DATE_RE.search(row.get("recorded_value", ""))
+    if not m:
+        return False
+    want = m[0][:10]
+    c8 = row.get("introducing_commit", "")[:8]
+    info = _commit_info(git, c8)
+    if info is None:
+        return False
+    key = (c8, path)
+    if key not in added:
+        added[key] = _commit_diff(git, c8, path)
+    pairs, base_text = added[key]
+    regs = regions(base_text.split("\n")) if base_text is not None else []
+    # the policy in force where the line was written governs its collection and its
+    # `allow`/`future-ok:` exemptions (fall back to the checkout's policy)
+    raw_pol = git.show(c8, POLICY_REL)
+    pol_c = Policy.parse(raw_pol) if raw_pol is not None else pol
+    now = int(dt.datetime.now(dt.UTC).timestamp())
+    for ins, line in pairs:
+        reg = next((r for r in regs if r.start <= ins <= r.end), None)
+        for st_text, cls in _collected_stamps(
+            line, path, reg.heading if reg else None, pol_c
+        ):
+            if st_text[:10] != want:
+                continue
+            st = parse_stamp(st_text)
+            if st is None or st.malformed:
+                return True  # an unparseable collected stamp is an R1 finding by itself
+            exempt, _ = r1_exempt(pol_c, path, line, st, now)
+            if (
+                not exempt
+                and not r1_ok(st, info, now)
+                and not correction_context(line, st, info, now)
+            ):
+                return True
+            if (
+                cls == "act"
+                and not any(mk in line for mk in R2_MARKERS)
+                and not strict_correction(line, st)
+                and not r2_ok(st, info)
+            ):
+                return True
+    return False
+
+
+def _commit_info(git: "Git", c8: str) -> "CommitInfo | None":
+    """The introducing commit's CommitInfo (sha/committer time) for the visibility test —
+    the register's `commit_date_utc` column is UTC-only, and R1/R2 need the committer's
+    local date too."""
+    try:
+        out = git.text("show", "-s", "--format=%H%n%ct%n%cI", c8).split("\n")
+        return CommitInfo(out[0].strip(), int(out[1]), out[2].strip())
+    except Exception:
+        return None
+
+
+def _commit_diff(
+    git: "Git", c8: str, path: str
+) -> tuple[list[tuple[int, str]], str | None]:
+    """((ins, text) of each `+` line, base file text) for `path` at commit `c8`. `ins` is the
+    base line the addition follows — the region anchor. The introducing commit may live off
+    first-parent (a landed branch), so its own diff — not the merge carrier's — is the
+    position evidence."""
+    try:
+        full = git.text("rev-parse", "--verify", "-q", c8 + "^{commit}").strip()
+        if not full:
+            return [], None
+        parent = git.text("rev-parse", "--verify", "-q", full + "^").strip()
+        base = git.show(parent, path) if parent else None
+        base_text = base.decode("utf-8", "replace") if base is not None else None
+        if parent:
+            diff = git.text("diff", "-U0", parent, full, "--", path)
+        else:
+            diff = git.text("show", "--format=", full, "--", path)
+    except Exception:
+        return [], None
+    pairs: list[tuple[int, str]] = []
+    consumed = 0
+    for ln in diff.splitlines():
+        if ln.startswith("@@"):
+            m = HUNK_RE.match(ln)
+            if m:
+                consumed = int(m[1]) - 1
+                if m[2] == "0":
+                    consumed = int(m[1])
+        elif ln.startswith("-") and not ln.startswith("---"):
+            consumed += 1
+        elif ln.startswith("+") and not ln.startswith("+++"):
+            pairs.append((consumed, ln[1:]))
+    return pairs, base_text
+
+
+def _in_scope_path(path: str) -> bool:
+    """The build-memory scope the date judge sees: docs/build, docs/tickets, docs/adr plus the
+    out-of-tree policy `date` records (sqitch.plan, sources.toml, flake_log)."""
+    if path.startswith(("docs/build/", "docs/tickets/", "docs/adr/")):
+        return True
+    return path in (
+        "db/sqitch.plan",
+        "connectors/src/connectors/data/sources.toml",
+        "docs/build/reports/ci/flake_log.csv",
+    )
+
+
+def derive_oracle_rows(root: Path, git: "Git", span: str) -> list[OracleRow]:
+    """The register-derived expected set (B4 §G2; OM-15 — generated, never hand-copied):
+
+    - append_only_register: `loss`/`transition-unjustified` rows expect a violation on that
+      (commit, file) cell under any check — the register names the cell, not which of the
+      guard's checks catches it; `benign`/`transition-justified` rows expect the cell clean
+      of `append-only` findings (the 405 + 88).
+    - date_corrections: each in-scope class-b row the guard can see expects a `record-dates`
+      violation on its (introducing commit, path) cell.
+    - position scan (B4 G2 amendment 1): a commit that inserts lines inside LEDGER's
+      `## GATE DECISIONS` region instead of appending at its end expects an `append-only`
+      violation on its (commit, LEDGER) cell.
+    """
+    rows: list[OracleRow] = []
+    span_commits = git.text("rev-list", "--reverse", "--first-parent", span).split()
+    reg = list(
+        csv.DictReader(open(root / APPEND_REGISTER_REL, newline="", encoding="utf-8"))
+    )
+    wanted = {r["commit"][:8] for r in reg}
+    dc = list(
+        csv.DictReader(open(root / DATE_CORRECTIONS_REL, newline="", encoding="utf-8"))
+    )
+    pol = Policy.parse(
+        (root / POLICY_REL).read_bytes() if (root / POLICY_REL).is_file() else None
+    )
+    added: dict[tuple[str, str], list[str]] = {}
+    dc_visible = [
+        r for r in dc if date_row_visible(r, pol, added, git)
+    ]
+    wanted |= {r["introducing_commit"][:8] for r in dc_visible}
+    mapping = register_commit_map(git, wanted, span_commits)
+    seen: set[tuple] = set()
+    # the register is per-row: a cell may hold benign rows *and* a loss row. The cell-level
+    # `clean` expectation only holds where no positive row shares the cell.
+    positive_cells = {
+        (mapping.get(r["commit"][:8], r["commit"][:8]), r["file"])
+        for r in reg
+        if r["classification"] in ("loss", "transition-unjustified")
+    }
+    for r in reg:
+        c8 = mapping.get(r["commit"][:8], r["commit"][:8])
+        cls = r["classification"]
+        if cls in ("loss", "transition-unjustified"):
+            # the register asserts the cell carries a violation — not which check catches it:
+            # a signing rewrite lands under readouts, a lead-token rewrite may land under
+            # record-dates (6bade66e). Any error finding on the cell satisfies the row.
+            key = ("violation", c8, r["file"], "*", "*")
+            note = f"{cls}: {r['summary'][:80]}"
+        else:
+            if (c8, r["file"]) in positive_cells:
+                continue
+            key = ("clean", c8, r["file"], "append-only", "*")
+            note = cls
+        if key not in seen:
+            seen.add(key)
+            rows.append(OracleRow(*key, "append-register", note))
+    for r in dc_visible:
+        c8 = mapping.get(r["introducing_commit"][:8], r["introducing_commit"][:8])
+        key = ("violation", c8, r["path"], "record-dates", "*")
+        if key not in seen:
+            seen.add(key)
+            rows.append(OracleRow(*key, "date-register", r["note"][:80]))
+    rows += _derive_position_rows(git, span_commits)
+    return rows
+
+
+def _derive_position_rows(git: "Git", commits: list[str]) -> list[OracleRow]:
+    """B4 G2 amendment 1's scan, redone by code: for each first-parent commit, a `+` line whose
+    insert point falls inside the base `## GATE DECISIONS` region (before its last entry) is a
+    position violation — 18 top-insertions from `307161ee` plus the two mid-list inserts."""
+    rows: list[OracleRow] = []
+    for c in commits:
+        parent = git.text("rev-parse", f"{c}^").strip()
+        base_raw = git.show(c + "^", LEDGER_REL)
+        if base_raw is None:
+            continue
+        base_lines = base_raw.decode("utf-8", "replace").split("\n")
+        gd = next(
+            (
+                r
+                for r in regions(base_lines)
+                if re.match(r"^##\s+GATE DECISIONS\b", r.heading)
+            ),
+            None,
+        )
+        if gd is None:
+            continue
+        diff = git.text("diff", "-U0", parent, c, "--", LEDGER_REL)
+        consumed = 0
+        for line in diff.splitlines():
+            if line.startswith("@@"):
+                m = HUNK_RE.match(line)
+                if m:
+                    # `-a,b`: base lines a..a+b-1 are consumed; `+` lines insert after the
+                    # last consumed base line — the insert position `ins` is `consumed`
+                    consumed = int(m[1]) - 1
+                    if m[2] == "0":
+                        consumed = int(m[1])
+                continue
+            if line.startswith("-") and not line.startswith("---"):
+                consumed += 1
+            elif (
+                line.startswith("+")
+                and not line.startswith("+++")
+                and gd.start <= consumed < gd.lnb
+            ):
+                rows.append(
+                    OracleRow(
+                        "violation",
+                        c[:8],
+                        LEDGER_REL,
+                        "append-only",
+                        "*",
+                        "position-scan",
+                        "inserted inside GATE DECISIONS (B4 G2 amendment 1)",
+                    )
+                )
+                break
+    return rows
+
+
+def cmd_oracle(args: argparse.Namespace) -> int:
+    """`oracle-gen FROM..TO --out FILE`: regenerate the register-derived rows of the replay
+    oracle, preserving the file's `reviewed` rows — the recorded disagreements. A derived row
+    that disappears or changes is drift: the file and the derivation are re-verified together."""
+    root = repo_root(args.repo)
+    git = Git(root)
+    if ".." not in args.span:
+        raise UsageError("oracle-gen wants FROM..TO")
+    if git.is_shallow():
+        raise UnknownError("shallow clone — oracle derivation needs the full history")
+    derived = derive_oracle_rows(root, git, args.span)
+    reviewed: list[OracleRow] = []
+    out = Path(args.out or (root / ORACLE_REL))
+    if out.is_file():
+        reviewed = [r for r in load_oracle(out) if r.source == "reviewed"]
+    rows = sorted(
+        derived + reviewed,
+        key=lambda r: (r.commit, r.path, r.check, r.rule, r.kind),
+    )
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["kind", "commit", "path", "check", "rule", "source", "note"])
+        for r in rows:
+            w.writerow([r.kind, r.commit, r.path, r.check, r.rule, r.source, r.note])
+    print(
+        f"oracle-gen: wrote {len(rows)} row(s) to {out} "
+        f"({len(derived)} derived, {len(reviewed)} reviewed preserved)"
+    )
+    return EXIT_OK
+
+
 def cmd_replay(args: argparse.Namespace) -> int:
     root = repo_root(args.repo)
     git = Git(root)
@@ -2802,44 +4297,62 @@ def cmd_replay(args: argparse.Namespace) -> int:
         raise UsageError("replay wants FROM..TO")
     if git.is_shallow():
         raise UnknownError("shallow clone — replay needs the full history (set fetch-depth: 0)")
+    oracle = load_oracle(args.oracle) if args.oracle else None
     commits = git.text("rev-list", "--reverse", "--first-parent", args.span).split()
+    if not commits:
+        # a replay over an empty span evaluated nothing — vacuous is never green
+        print(f"memory-guard replay {args.span}: empty span — nothing judged")
+        return EXIT_VACUOUS
     results = []
+    findings: list[Finding] = []  # every error finding, tagged with the judged commit
     bad = 0
+    vacuous = 0
     for c in commits:
-        sub = argparse.Namespace(
-            cmd="all",
-            repo=str(root),
-            now=args.now,
-            json=None,
-            range=None,
-            first_parent=c,
-            staged=False,
-            worktree=False,
-        )
-        buf = io.StringIO()
-        old = sys.stdout
-        sys.stdout = buf
         try:
-            rc = cmd_change(sub)
+            change, _policy, _guards, report = judge_change(
+                root, git, "first-parent", c, parse_now(args.now)
+            )
+            in_scope = [f for f in report.findings if f.check in FAMILIES["all"]]
+            vac = any(
+                report.counts.get(ch, [0, 0])[0] > 0 and report.counts[ch][1] == 0
+                for ch in FAMILIES["all"]
+            )
+            rc = (
+                EXIT_VIOLATIONS
+                if any(f.severity == "error" for f in in_scope)
+                else (EXIT_VACUOUS if vac else EXIT_OK)
+            )
         except UnknownError:
-            rc = EXIT_UNKNOWN
+            in_scope, rc = [], EXIT_UNKNOWN
         except UsageError:
-            rc = EXIT_USAGE
-        finally:
-            sys.stdout = old
+            in_scope, rc = [], EXIT_USAGE
         rules: dict[str, int] = {}
-        for line in buf.getvalue().splitlines():
-            m = re.match(r"^    - ([a-z-]+) \[([A-Za-z0-9-]+)\]", line)
-            if m:
-                rules[f"{m[1]}[{m[2]}]"] = rules.get(f"{m[1]}[{m[2]}]", 0) + 1
+        for f in in_scope:
+            if f.severity != "error":
+                continue
+            findings.append(
+                Finding(f.check, f.rule, f.path, f.line, c[:12], f.message, "error")
+            )
+            rules[f"{f.check}[{f.rule}]"] = rules.get(f"{f.check}[{f.rule}]", 0) + 1
         bad += rc == EXIT_VIOLATIONS
+        vacuous += rc == EXIT_VACUOUS
         info = git.text("log", "-1", "--format=%h %cI", c).strip()
         tag = " ".join(f"{k}×{v}" for k, v in sorted(rules.items()))
         print(f"{info} exit={rc} {tag}".rstrip())
         results.append({"commit": c, "exit": rc, "rules": rules})
     print(
         f"memory-guard replay {args.span}: {len(commits)} commit(s) judged, {bad} with violations"
+        + (f", {vacuous} vacuous" if vacuous else "")
     )
+    all_vacuous = bool(commits) and vacuous == len(commits)
+    if all_vacuous:
+        # a replay that judged a non-empty span and evaluated nothing proves nothing —
+        # vacuous is never green (EXIT_VACUOUS)
+        print("memory-guard replay: every commit judged vacuous — nothing was evaluated")
+    disagree_rc = 0
+    disagreements: dict[str, list] = {"missing": [], "unexpected": [], "clean-breached": []}
+    if oracle is not None:
+        disagree_rc, disagreements = oracle_compare(git, args.span, commits, oracle, findings)
     if args.json:
         Path(args.json).write_text(
             json.dumps(
@@ -2849,12 +4362,21 @@ def cmd_replay(args: argparse.Namespace) -> int:
                     "commits": results,
                     "judged": len(commits),
                     "violating": bad,
+                    "vacuous": vacuous,
+                    "oracle": args.oracle,
+                    "disagreements": disagreements if oracle is not None else None,
                 },
                 indent=2,
             )
             + "\n",
             encoding="utf-8",
         )
+    if all_vacuous:
+        return EXIT_VACUOUS
+    if oracle is not None:
+        # the oracle is the verdict: a finding it expects is sanctioned history, a
+        # disagreement (missed, unexpected or breached) is the failure
+        return disagree_rc
     return EXIT_VIOLATIONS if bad else EXIT_OK
 
 
@@ -2891,6 +4413,20 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--json", metavar="PATH")
     sp.add_argument("--now", metavar="ISO")
     sp.add_argument("--repo", metavar="DIR")
+    sp.add_argument(
+        "--oracle",
+        metavar="CSV",
+        help="compare the replay's findings against the committed expected set "
+        "(default the oracle at %s)" % ORACLE_REL,
+    )
+    sp = sub.add_parser(
+        "oracle-gen",
+        help="regenerate the register-derived rows of the replay oracle "
+        "(preserves source=reviewed rows; read-only for the repo)",
+    )
+    sp.add_argument("span", metavar="FROM..TO")
+    sp.add_argument("--out", metavar="CSV")
+    sp.add_argument("--repo", metavar="DIR")
     return p
 
 
@@ -2903,6 +4439,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.cmd == "restored":
             return cmd_restored(args)
+        if args.cmd == "oracle-gen":
+            return cmd_oracle(args)
         if args.cmd == "replay":
             return cmd_replay(args)
         if (

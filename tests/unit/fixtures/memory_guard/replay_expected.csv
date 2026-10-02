@@ -1,0 +1,970 @@
+kind,commit,path,check,rule,source,note
+clean,03450cb8,docs/tickets/00_MANIFEST.md,append-only,*,append-register,transition-justified
+clean,03450cb8,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,03450cb8,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,03450cb8,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,03450cb8,docs/tickets/P25.1__live-fetch-operationalization.md,append-only,*,append-register,transition-justified
+violation,03ac3b06,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.4: PR #159 createdAt 2026-09-27T06:41Z; closeout commit
+violation,03ac3b06,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.3: PR #158 createdAt 2026-09-27T05:27Z; closeout commit
+violation,03ac3b06,docs/build/pr/P32.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,04895cdc,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,062306e7,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,062306e7,docs/adr/ADR-114-claim-re-sightings-and-latest-capture-dating.md,record-dates,*,date-register,b:event-date; basis: P31.7: impl commit 062306e7 2026-09-25T08:09Z; PR #143 crea
+violation,065d8aa0,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,0669f65d,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.16: PR #172 createdAt 2026-09-27T15:05Z; closeout commi
+violation,0669f65d,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.16: PR #172 createdAt 2026-09-27T15:05Z; closeout commi
+clean,06c1d574,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,06c1d574,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,06c1d574,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,06c1d574,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,0848d2ee,docs/build/LEDGER.md,append-only,*,append-register,benign
+clean,0848d2ee,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,0848d2ee,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,0848d2ee,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,084ddad9,docs/build/pr/P30.2a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,084ddad9,docs/build/runs/P30.2a.md,append-only,*,append-register,benign
+violation,084ddad9,docs/build/runs/P30.2a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,084ddad9,docs/build/runs/P30.2a.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,089ce66b,docs/build/runs/P34.1.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,08b3135f,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P33.1: PR #183 createdAt 2026-09-28T05:14Z; closeout commit
+violation,08b3135f,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P33.1: PR #183 createdAt 2026-09-28T05:14Z; closeout commit
+clean,08d87c4d,docs/build/runs/P31.19.md,append-only,*,append-register,benign
+violation,08d87c4d,docs/build/runs/P31.19.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,08d87c4d,docs/build/runs/P31.19.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,0a715fcc,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,0a715fcc,docs/build/readouts/ACCEPT-R8.md,*,*,append-register,"loss: S3. Signature (operator instruction 'ok please sign …', 2026-09-24) justified, b"
+clean,0a715fcc,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,0a715fcc,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,0a715fcc,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,0bf4f5c5,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,0cb794c7,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,0f2e0711,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,0f2e0711,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,0f2e0711,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,0f2e0711,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.18: PR #175 createdAt 2026-09-27T17:31Z; closeout commi
+clean,0f2e0711,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,0f2e0711,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,0f2e0711,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,0f2e0711,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.18: PR #175 createdAt 2026-09-27T17:31Z; closeout commi
+clean,0f2e0711,docs/build/runs/P32.18.md,append-only,*,append-register,benign
+violation,0f2e0711,docs/build/runs/P32.18.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,0f2e0711,docs/build/runs/P32.18.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,0fc617d8,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,0fc617d8,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,0fc617d8,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,0fc617d8,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,0fc617d8,docs/build/runs/P26.17.md,append-only,*,append-register,benign
+violation,0fc617d8,docs/build/runs/P26.17.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,0fc617d8,docs/build/runs/P26.17.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,1155e064,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,1155e064,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,1155e064,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,1155e064,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,13ade2b2,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.10: PR #165 createdAt 2026-09-27T10:12Z; closeout commi
+clean,141efa97,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,141efa97,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,141efa97,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,141efa97,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,14674060,docs/build/pr/P26.12.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,14990030,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,150d6f17,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,150d6f17,docs/build/runs/P33.7.md,append-only,*,append-register,benign
+violation,150d6f17,docs/build/runs/P33.7.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,150d6f17,docs/build/runs/P33.7.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,159b5aec,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,159b5aec,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,159b5aec,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,159b5aec,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,165aef44,docs/build/runs/P26.16.md,append-only,*,append-register,benign
+violation,165aef44,docs/build/runs/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,165aef44,docs/build/runs/P26.16.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,184e3644,docs/adr/ADR-113-asserting-replay-of-persisted-captures.md,record-dates,*,date-register,b:event-date; basis: P31.6: impl commit 184e3644 2026-09-25T06:32Z; PR #142
+clean,18b426fc,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,18b426fc,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,18b426fc,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,18b426fc,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,18b426fc,docs/build/pr/P26.15.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,18bda164,docs/adr/ADR-123-shared-bitemporal-occurrence-selection.md,record-dates,*,date-register,b:event-date; basis: P32.4: PR #159 createdAt 2026-09-27T06:41Z; closeout commit
+clean,18bda164,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,1b4e5c36,docs/adr/ADR-129-design-aware-resolution-evaluation-and-shadow-confidence-gates.md,record-dates,*,date-register,b:event-date; basis: P32.10: PR #165 createdAt 2026-09-27T10:12Z; closeout commi
+clean,1b4e5c36,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,1c926c95,docs/adr/ADR-143-investigation-journey-acceptance-portfolio-evidence-classes-and-honest-gaps.md,record-dates,*,date-register,b:event-date; basis: P32.24: PR #181 createdAt 2026-09-28T03:08Z; closeout commi
+clean,1c926c95,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,21a8ef97,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,21a8ef97,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,21a8ef97,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,22b773f8,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,22b773f8,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,22b773f8,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,22b773f8,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: S3DEFER: commit a33cd6ec 'operator defers S3 human-eval spi
+clean,22b773f8,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,22b773f8,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,22b773f8,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,22b773f8,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.23a: PR #180 createdAt 2026-09-28T02:11Z; closeout comm
+violation,22b773f8,docs/build/pr/P32.23a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,22b773f8,docs/build/runs/P32.23a.md,append-only,*,append-register,benign
+violation,22b773f8,docs/build/runs/P32.23a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,22b773f8,docs/build/runs/P32.23a.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,22f76abf,docs/adr/README.md,append-only,*,append-register,benign
+violation,2404edb0,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,2404edb0,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,2500c5b1,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,26864e11,docs/build/runs/P35.38a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,28e46800,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+violation,28e46800,docs/tickets/00_MANIFEST.md,record-shape,*,reviewed,record-shape round-banner finding under the completed manifest rules (P34.7 review)
+violation,29b75f82,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,2a329e37,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.3: PR #158 createdAt 2026-09-27T05:27Z; closeout commit
+violation,2a329e37,docs/build/pr/P32.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,2a52e341,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,2a5d01e0,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,2a5d01e0,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,2a5d01e0,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,2a6f2496,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,2a6f2496,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,2a6f2496,docs/build/LEDGER.md,append-only,*,reviewed,register classed this cell benign under B1-era heuristics; the completed modes legitimately flag it — clean row withdrawn by review (P34.7). region-mode finding under the completed
+waived,2a6f2496,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,2c588cd6,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.17: PR #174 createdAt 2026-09-27T16:35Z; closeout commi
+violation,2c588cd6,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.17: PR #174 createdAt 2026-09-27T16:35Z; closeout commi
+clean,2c588cd6,docs/build/runs/P32.17.md,append-only,*,append-register,benign
+violation,2c588cd6,docs/build/runs/P32.17.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,2c588cd6,docs/build/runs/P32.17.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,2ecec80e,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+clean,2faf380d,docs/adr/README.md,append-only,*,append-register,benign
+clean,3050aa93,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,3050aa93,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,3050aa93,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,305f94d5,docs/adr/ADR-065-live-connector-wiring-httpx-transport-ocfl-capture-store-and-the-gated-run-cli.md,record-dates,*,date-register,b:event-date; basis: P21.3: PR #59 createdAt 2026-09-09T06:13Z; closeout commit 
+violation,307161ee,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,30d401dc,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,30d401dc,docs/build/reports/obligations/events.jsonl,*,*,append-register,loss: S3. Wholesale regeneration: source_commit rewritten on all 90 events; 1 anchor r
+clean,30d401dc,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,30f8638e,docs/adr/ADR-137-oklahoma-city-dossier-packet-and-additive-seed-correction.md,record-dates,*,date-register,b:event-date; basis: P32.18: PR #175 createdAt 2026-09-27T17:31Z; closeout commi
+violation,30f8638e,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,30f8638e,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,30f8638e,docs/build/LEDGER.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,30f8638e,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,30f8638e,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,31964ab8,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,323b3446,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,323b3446,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,323b3446,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,323b3446,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,3259ca81,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,3259ca81,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,3259ca81,docs/build/readouts/GATE-G1.md,*,*,append-register,loss: S3. Criterion text 'records the outcome here as PASSED' reworded to 'as cleared'
+violation,3259ca81,docs/build/readouts/GATE-G2.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,327fc579,docs/build/runs/P34.6.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,32bea406,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,32bea406,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,32bea406,docs/build/LEDGER.md,append-only,*,reviewed,register classed this cell benign under B1-era heuristics; the completed modes legitimately flag it — clean row withdrawn by review (P34.7). region-mode finding under the completed
+waived,32bea406,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,32bea406,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/67_GATE-G1__integrate-and-release-v0-1-0.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/68_HUMAN-H1__legal-home-and-governance.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/69_HUMAN-H2__counsel-signoff.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/70_HUMAN-H3__accounts-credentials-hosting.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/72_LIVE.1a__okc-document-connectors.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/75_GATE-G2__go-public-dns-cutover.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/79_DEPLOY.1__gcp-hosted-deployment.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/80_SCHED.1__reingest-cadence.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/81_OBS.1__observability-alerting.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/82_CI.1__ci-composed-hardening.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/83_META.1__housekeeping-backlog.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/84_JURIS.2__second-jurisdiction.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/85_CCOPS.1__ccops-disclosure-connector.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/86_REC.1__golive-readiness-delta.md,append-only,*,append-register,benign
+clean,32bea406,docs/tickets/87_GATE-ACCEPT__operator-signs-golive-deviations.md,append-only,*,append-register,benign
+clean,3357f8e7,docs/build/runs/P31.9.md,append-only,*,append-register,benign
+violation,3357f8e7,docs/build/runs/P31.9.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,3357f8e7,docs/build/runs/P31.9.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,3374008b,docs/tickets/232_P34.27__remaining-append-only-restorations.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,3374008b,docs/tickets/249_P34.40__serving-topology-dark.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,33aaf02e,docs/tickets/00_MANIFEST.md,record-shape,*,reviewed,record-shape round-banner finding under the completed manifest rules (P34.7 review)
+clean,34406ffc,docs/build/reports/round9-drafts/P31.10__camera-site-review-surface.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.11__review-decisions-into-clustering.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.12__accountability-breadth-federal-uk.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.13__accountability-breadth-ccops-fema.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.14__presentation-analytics-from-export.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.15__vector-tiles-and-compression.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.16__rematerialize-reexport-republish.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.19__round9-closeout.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.5__entity-ref-claims-procurement.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.6__access-edges-and-hosted-link-materialization.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.7__claim-re-sightings.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.8__predicate-registry-legislation-portal.md,append-only,*,append-register,benign
+clean,34406ffc,docs/build/reports/round9-drafts/P31.9__negative-space-peer-classes.md,append-only,*,append-register,benign
+clean,34406ffc,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,35cc3aab,docs/adr/README.md,append-only,*,append-register,benign
+clean,375f0f0b,docs/adr/README.md,append-only,*,append-register,benign
+violation,376f65ae,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,376f65ae,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,376f65ae,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,376f65ae,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,37f85ff1,docs/adr/README.md,append-only,*,append-register,benign
+violation,3819b63c,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,393684ad,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,393684ad,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,393684ad,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,393ffb4c,docs/build/pr/P32.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,3a4aa696,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,3a4aa696,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,3a78f6cd,docs/adr/README.md,append-only,*,append-register,benign
+violation,3be415cd,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,3c090012,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,3c9ea949,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,3d3eeb75,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,3d3eeb75,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,3d3eeb75,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,3e826aa5,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,3e826aa5,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,3fd71041,docs/build/pr/P31.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,3fd71041,docs/build/runs/P31.16.md,*,*,append-register,loss: S3. Pre-gate 'Stop line: … Nothing public was touched … HG-11 was not ticked' pa
+clean,3fd71041,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,401f6faa,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,40e7b197,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
+violation,40e7b197,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,40e7b197,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,40e7b197,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,4127dbf3,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,4127dbf3,docs/build/readouts/ACCEPT-R10.md,*,*,append-register,"loss: S3. Signature justified (GATE DECISIONS 2026-09-28 'oik looks good, proceed'), b"
+clean,422d605b,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,42340534,docs/tickets/P27.10__domain-cutover-surveillancegraph.md,append-only,*,append-register,transition-justified
+clean,4266db6f,docs/build/runs/P30.2b.md,append-only,*,append-register,benign
+violation,4266db6f,docs/build/runs/P30.2b.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,4266db6f,docs/build/runs/P30.2b.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,4314abbd,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,45c4a59f,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,45c4a59f,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,45c4a59f,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,45c4a59f,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,4608f056,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,4682f9d2,db/sqitch.plan,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+clean,474f69f4,docs/build/runs/P33.6.md,append-only,*,append-register,benign
+violation,474f69f4,docs/build/runs/P33.6.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,474f69f4,docs/build/runs/P33.6.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,488ac7c5,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,488ac7c5,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,488ac7c5,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,488ac7c5,docs/build/LEDGER.md,append-only,*,append-register,benign
+clean,488ac7c5,docs/build/runs/P24.5.md,append-only,*,append-register,benign
+violation,488ac7c5,docs/build/runs/P24.5.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,488ac7c5,docs/build/runs/P24.5.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,495f4302,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,495f4302,docs/build/runs/P34.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,4a29dae0,docs/tickets/P27.8__deploy-and-public-cutover.md,append-only,*,append-register,transition-justified
+violation,4c58f407,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,4c58f407,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,4c58f407,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,4c58f407,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,4c58f407,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,4c58f407,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,4c58f407,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,4cc7e13c,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
+violation,4cc7e13c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,4cc7e13c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,4d5a5d27,docs/adr/README.md,append-only,*,append-register,benign
+clean,4d5a5d27,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+violation,4d5a5d27,docs/tickets/00_MANIFEST.md,record-shape,*,reviewed,record-shape round-banner finding under the completed manifest rules (P34.7 review)
+violation,4dc4c80a,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P31.10: PR #146 createdAt 2026-09-25T22:18Z; closeout commi
+violation,4dc4c80a,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P31.10: PR #146 createdAt 2026-09-25T22:18Z; closeout commi
+clean,4dc4c80a,docs/build/runs/P31.10.md,append-only,*,append-register,benign
+violation,4dc4c80a,docs/build/runs/P31.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,4dc4c80a,docs/build/runs/P31.10.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,4dc4c80a,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,4dd5a038,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.15: PR #171 createdAt 2026-09-27T14:13Z; closeout commi
+violation,4dd5a038,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.15: PR #171 createdAt 2026-09-27T14:13Z; closeout commi
+clean,4dd5a038,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,4e0dd070,docs/adr/ADR-116-human-review-decisions-into-camera-site-clustering.md,record-dates,*,date-register,b:event-date; basis: P31.11: impl commit 4608f056 2026-09-25T23:21Z; PR #147 cre
+violation,4e0dd070,docs/tickets/DEFERRALS.md,*,*,append-register,transition-unjustified: Leading status token rewritten with a dated note + evidence in the same cell: D-
+clean,4efd5838,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,4efd5838,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,4efd5838,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,4efd5838,docs/build/LEDGER.md,append-only,*,append-register,benign
+clean,4f8c748d,docs/tickets/P27.6__ia-redesign-landing.md,append-only,*,append-register,benign
+clean,4f8c748d,docs/tickets/P27.8__deploy-and-public-cutover.md,append-only,*,append-register,benign
+violation,52eb2788,docs/build/runs/P34.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,556c6633,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,556c6633,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,556c6633,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,556c6633,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,556c6633,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,556c6633,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5677495a,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.2: PR #157 createdAt 2026-09-27T04:16Z; closeout commit
+violation,5677495a,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.2: PR #157 createdAt 2026-09-27T04:16Z; closeout commit
+violation,5713f5dd,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.8: PR #163 createdAt 2026-09-27T09:11Z; closeout commit
+violation,5713f5dd,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.8: PR #163 createdAt 2026-09-27T09:11Z; closeout commit
+violation,5713f5dd,docs/build/pr/P32.8.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,5713f5dd,docs/build/runs/P32.8.md,append-only,*,append-register,benign
+violation,5713f5dd,docs/build/runs/P32.8.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5713f5dd,docs/build/runs/P32.8.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,5713f5dd,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,58f90b03,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,594b8ad5,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,594b8ad5,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,597e0059,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,5b7fed0e,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,5b7fed0e,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5b7fed0e,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5b7fed0e,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,5b98004f,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,5b98004f,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5b98004f,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5b98004f,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,5b98004f,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,5b98004f,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5b98004f,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5bc2d9ba,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,5c9e76e6,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
+violation,5c9e76e6,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5c9e76e6,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,5c9e76e6,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,5c9e76e6,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5c9e76e6,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5c9e76e6,docs/build/pr/P24.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,5c9e76e6,docs/build/runs/P24.4.md,append-only,*,append-register,benign
+violation,5c9e76e6,docs/build/runs/P24.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5c9e76e6,docs/build/runs/P24.4.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,5c9e76e6,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,5c9e76e6,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5c9e76e6,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,5e7de921,docs/adr/ADR-117-presentation-analytics-emitted-by-the-spine-export.md,append-only,*,append-register,benign
+violation,5e7de921,docs/adr/ADR-117-presentation-analytics-emitted-by-the-spine-export.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5e7de921,docs/adr/ADR-117-presentation-analytics-emitted-by-the-spine-export.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,5efe4b9d,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,5efe4b9d,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5efe4b9d,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5efe4b9d,docs/build/pr/P32.20.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,5efe4b9d,docs/build/runs/P32.20.md,append-only,*,append-register,benign
+violation,5efe4b9d,docs/build/runs/P32.20.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5efe4b9d,docs/build/runs/P32.20.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5f4772d8,docs/adr/ADR-127-single-writer-closeout-protocol.md,record-dates,*,date-register,b:event-date; basis: P32.8: PR #163 createdAt 2026-09-27T09:11Z; closeout commit
+clean,5f4772d8,docs/tickets/199_P33.7__round10-repo-docs-refresh.md,append-only,*,append-register,benign
+clean,5f80ba19,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,5f80ba19,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5f80ba19,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5f80ba19,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.16a: PR #173 createdAt 2026-09-27T15:58Z; closeout comm
+violation,5f80ba19,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,5f80ba19,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,5f80ba19,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,5f80ba19,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,5f80ba19,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.16a: PR #173 createdAt 2026-09-27T15:58Z; closeout comm
+violation,6022d67f,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,6022d67f,docs/build/pr/P26.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,6022d67f,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,6022d67f,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,6022d67f,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,616b889c,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.5: PR #160 createdAt 2026-09-27T07:17Z; closeout commit
+violation,616b889c,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.5: PR #160 createdAt 2026-09-27T07:17Z; closeout commit
+violation,616b889c,docs/build/pr/P32.5.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,61701df3,docs/build/runs/P31.15.md,append-only,*,append-register,benign
+violation,61701df3,docs/build/runs/P31.15.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,61701df3,docs/build/runs/P31.15.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,65c6ffcc,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,65c6ffcc,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,65c6ffcc,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,65c6ffcc,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,65c6ffcc,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,65c6ffcc,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,65fee923,docs/build/readouts/ACCEPT-R8.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,65fee923,docs/build/readouts/ACCEPT-R8.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+clean,65fee923,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,663ca665,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,663ca665,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,663ca665,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,6673cd3f,docs/adr/ADR-033-the-layered-parsing-stack-and-the-parser-interface.md,append-only,*,append-register,benign
+violation,6673cd3f,docs/adr/ADR-033-the-layered-parsing-stack-and-the-parser-interface.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,6673cd3f,docs/adr/ADR-033-the-layered-parsing-stack-and-the-parser-interface.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,66ff6f12,docs/build/pr/P26.15.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,6982830b,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,698312f2,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,69e9b304,docs/tickets/P29.2__detector-records-request-loop.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,6a0c1888,docs/tickets/P21.4__first-jurisdiction-ingest-and-publish.md,append-only,*,append-register,transition-justified
+violation,6a4e2d5a,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,6bade66e,docs/adr/ADR-126-obligation-events-and-current-projection.md,record-dates,*,date-register,b:event-date; basis: P32.7: PR #162 createdAt 2026-09-27T08:37Z; closeout commit
+violation,6bade66e,docs/build/reports/obligations/coverage_assessments.jsonl,record-dates,*,date-register,b:event-date; basis: line written by 6bade66e (P33.1 wholesale regeneration)
+violation,6bade66e,docs/build/reports/obligations/events.jsonl,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,6bade66e,docs/tickets/DEFERRALS.md,*,*,append-register,transition-unjustified: Leading status token rewritten with a dated note + evidence in the same cell: D-
+violation,6bade66e,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P32.7: PR #162 createdAt 2026-09-27T08:37Z; closeout commit
+clean,6c8ec20a,docs/tickets/P21.5__infra-deposit-and-tiles.md,append-only,*,append-register,transition-justified
+violation,6cc5d9d8,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,6cc5d9d8,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+violation,6cc5d9d8,docs/build/LEDGER.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,6cc5d9d8,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,6cc5d9d8,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,6dd641be,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,6dd641be,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,6dd641be,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,6dd641be,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,6f0284c9,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,6f0284c9,docs/tickets/P29.1__contributor-identity-and-ops.md,append-only,*,append-register,transition-justified
+clean,6fcc3c10,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,70d7bdb9,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,713fc857,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,713fc857,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,713fc857,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,71f1daa8,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,729fb268,docs/adr/ADR-144-bounded-release-publication-unauthenticated-verification-and-rollback-rehearsal.md,record-dates,*,date-register,b:event-date; basis: P32.25: PR #182 createdAt 2026-09-28T04:36Z; closeout commi
+clean,729fb268,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,755dbd3f,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
+violation,755dbd3f,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,755dbd3f,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,755dbd3f,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,755dbd3f,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,755dbd3f,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,755dbd3f,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,755dbd3f,docs/build/pr/P26.17.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,755dbd3f,docs/build/runs/P26.17.md,append-only,*,append-register,benign
+violation,755dbd3f,docs/build/runs/P26.17.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,755dbd3f,docs/build/runs/P26.17.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,759fcbac,docs/adr/ADR-076-reingest-cadence-github-actions-scheduler-vs-prefect-dagster-and-the-cadence-vs-etiquette-design.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,759fcbac,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,759fcbac,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,759fcbac,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,761bbb30,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,761bbb30,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,761bbb30,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,761bbb30,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,761bbb30,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S3. 'proxy now' cells of D-P21.8-1/D-P21.9-1 rewritten on the 09-13 re-run; D-P2
+clean,7671b511,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
+violation,7671b511,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,7671b511,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,7671b511,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,7671b511,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,7671b511,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,7671b511,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,7671b511,docs/build/pr/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,7671b511,docs/build/runs/P26.16.md,*,*,append-register,loss: S3. The ticket's closed run ledger (closeout 376f65ae) had its '### Hosted execu
+clean,7671b511,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,7671b511,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,7671b511,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,772e2b52,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,773ae598,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,773ae598,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,773ae598,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,773ae598,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,773ae598,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,773ae598,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,778a5e2e,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.7: PR #162 createdAt 2026-09-27T08:37Z; closeout commit
+violation,778a5e2e,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.7: PR #162 createdAt 2026-09-27T08:37Z; closeout commit
+violation,778a5e2e,docs/build/pr/P32.7.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,778a5e2e,docs/build/runs/P32.7.md,append-only,*,append-register,benign
+violation,778a5e2e,docs/build/runs/P32.7.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,778a5e2e,docs/build/runs/P32.7.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,789b18f4,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,791e1bbd,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,794d789a,docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md,record-dates,*,date-register,b:event-date; basis: P32.6: PR #161 createdAt 2026-09-27T08:06Z; closeout commit
+clean,794d789a,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,799ab088,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,7a2ff9fa,docs/build/reports/obligations/events.jsonl,*,*,append-register,loss: S2. Wholesale regeneration + status mutation: 8 migration e0 events flipped from
+violation,7a2ff9fa,docs/build/reports/obligations/events.jsonl,record-dates,*,date-register,b:event-date; basis: line written by 7a2ff9fa (P33.1 wholesale regeneration)
+clean,7a2ff9fa,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,7a2ff9fa,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P33.1: PR #183 createdAt 2026-09-28T05:14Z; closeout commit
+clean,7b52f2b4,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
+violation,7b52f2b4,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,7b52f2b4,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,7b52f2b4,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,7c92c341,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,7c92c341,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,7c92c341,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,7d3ae4b8,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,7d8b8ab1,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,7ec51e34,docs/build/runs/P34.50.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,8158a6f1,docs/build/pr/P35.38a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,8158a6f1,docs/build/runs/P35.38a.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,81957c2c,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,83c60491,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,83c60491,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,83cd6668,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+clean,83cd6668,docs/tickets/P30.3__national-export-and-public-cutover.md,append-only,*,append-register,benign
+violation,8607f3fc,docs/build/pr/P34.2.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,8607f3fc,docs/build/runs/P34.2.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,8670a4da,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,8670a4da,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,8670a4da,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,889997df,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,89d27528,db/sqitch.plan,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,89d27528,docs/adr/ADR-044-the-usage-analytics-boundary-duckdb-parquet-substrate-uuid-period-join-partition-as-evidence-and-small-cell-suppression.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,8bbf6fde,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,8bbf6fde,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,8bbf6fde,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,8e1f6769,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,8e1f6769,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,8e1f6769,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,8e7bdfbe,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,8e7bdfbe,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,8ec2bcfb,docs/adr/ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md,append-only,*,append-register,benign
+violation,8ec2bcfb,docs/adr/ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,8ec2bcfb,docs/adr/ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,8ec2bcfb,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,8ec2bcfb,docs/build/runs/P32.12.md,append-only,*,append-register,benign
+violation,8ec2bcfb,docs/build/runs/P32.12.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,8ec2bcfb,docs/build/runs/P32.12.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,8ec2bcfb,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,8ec2bcfb,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,8ec2bcfb,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,901405c2,docs/tickets/P26.2__source-expansion.md,append-only,*,append-register,benign
+clean,90157ba6,docs/build/runs/P26.5.md,append-only,*,append-register,benign
+violation,90157ba6,docs/build/runs/P26.5.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,90157ba6,docs/build/runs/P26.5.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,90264c8a,docs/adr/ADR-118-per-compartment-vector-tiles-compression-and-points-json-retirement.md,record-dates,*,date-register,b:event-date; basis: P31.15: PR #152 createdAt 2026-09-26T15:16Z; closeout commi
+violation,90264c8a,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P31.15: PR #152 createdAt 2026-09-26T15:16Z; closeout commi
+clean,90264c8a,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,90264c8a,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,90264c8a,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,9042c564,docs/build/runs/P31.19.md,append-only,*,append-register,benign
+violation,9042c564,docs/build/runs/P31.19.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,9042c564,docs/build/runs/P31.19.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,91521187,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+clean,91521187,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+clean,919bde02,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,919bde02,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,919bde02,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,919bde02,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,919bde02,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,919bde02,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,922f7e6c,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,922f7e6c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,922f7e6c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,922f7e6c,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,922f7e6c,docs/build/runs/P26.10.md,append-only,*,append-register,benign
+violation,922f7e6c,docs/build/runs/P26.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,922f7e6c,docs/build/runs/P26.10.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,92c9c851,docs/tickets/P21.1__rights-review-and-registry-completion.md,append-only,*,append-register,transition-justified
+clean,93e222a9,docs/build/runs/P31.9.md,append-only,*,append-register,benign
+violation,93e222a9,docs/build/runs/P31.9.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,93e222a9,docs/build/runs/P31.9.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,93e222a9,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,93e222a9,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,93e222a9,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,93f04c51,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,95c8a73f,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,95c8a73f,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: upper bound = writing commit 95c8a73f
+violation,95c8a73f,docs/build/readouts/GATE-G3.md,*,*,append-register,"loss: S2. Pending readout overwritten on signing: 'Status: PENDING', 'an agent must no"
+violation,95c8a73f,docs/build/readouts/GATE-G3.md,record-dates,*,date-register,"b:event-date; signed readout: append a correction, never edit; basis: G3SIGN: co"
+violation,9659257a,docs/build/runs/P34.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,96f1e7a5,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,96f1e7a5,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,96f1e7a5,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,96f1e7a5,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,97231ca6,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,97231ca6,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,97231ca6,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,97231ca6,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,97880e09,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,97880e09,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,97880e09,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,9866efae,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,9866efae,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,99517730,docs/build/LEDGER.md,*,*,append-register,loss: S3. 'retries in-flight/queued' state overwritten in the P26.16 entry.
+clean,99517730,docs/build/runs/P26.16.md,append-only,*,append-register,benign
+violation,99517730,docs/build/runs/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,99517730,docs/build/runs/P26.16.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,99517730,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S3. D-SOURCES.12-1 retry-row wording overwritten.
+violation,99a7794b,docs/build/BUILD_INDEX.md,*,*,append-register,loss: S3. Row 113 interim hosted counts (@13:30Z) overwritten.
+violation,99a7794b,docs/build/LEDGER.md,*,*,append-register,"loss: S3. Interim reading '@13:30Z: 782,583' + retry state overwritten by '@15:30Z' in"
+violation,99a7794b,docs/build/pr/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,99a7794b,docs/build/runs/P26.16.md,append-only,*,append-register,benign
+violation,99a7794b,docs/build/runs/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,99a7794b,docs/build/runs/P26.16.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,99a7794b,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S3. D-SOURCES.12-1 interim wave counts (6/8) overwritten.
+violation,9ae9b26f,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,9ae9b26f,docs/build/runs/P32.13.md,append-only,*,append-register,benign
+clean,9ae9b26f,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,9bf11201,docs/adr/ADR-142-release-candidate-identity-deferred-evaluation-and-pointer-immutability.md,record-dates,*,date-register,b:event-date; basis: P32.23a: PR #180 createdAt 2026-09-28T02:11Z; closeout comm
+clean,9bf11201,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,9bf11201,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,9bf11201,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,9bf11201,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,9bf11201,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+violation,9bf11201,docs/build/LEDGER.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,9bf11201,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,9bf11201,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: S3DEFER: commit a33cd6ec 'operator defers S3 human-eval spi
+clean,a14869fd,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,a14869fd,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a14869fd,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a162c5d3,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,a162c5d3,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a162c5d3,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a1b9870a,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,a29d3748,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,a29d3748,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,a2c6711c,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,a2c92b79,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,a2c92b79,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a2c92b79,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a33cd6ec,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,a33cd6ec,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: S3DEFER: commit a33cd6ec 'operator defers S3 human-eval spi
+clean,a33cd6ec,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,a3653d76,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,a36dfbea,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,a36dfbea,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a36dfbea,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a36dfbea,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,a36dfbea,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,a36dfbea,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,a36dfbea,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a3bd725c,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,a49e205b,docs/build/readouts/GATE-ACCEPT.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,a49e205b,docs/build/readouts/GATE-ACCEPT.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+clean,a4b7eb9a,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,a583df05,docs/build/readouts/HUMAN-H1.md,append-only,*,append-register,benign
+violation,a583df05,docs/build/readouts/HUMAN-H1.md,readouts,*,reviewed,readout append-only finding under the completed rules (P34.7 review)
+clean,a583df05,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+clean,a583df05,docs/tickets/P21.1__rights-review-and-registry-completion.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.1__rights-review-and-registry-completion.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.1__rights-review-and-registry-completion.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a583df05,docs/tickets/P21.3__live-connector-wiring.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.3__live-connector-wiring.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.3__live-connector-wiring.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a583df05,docs/tickets/P21.4__first-jurisdiction-ingest-and-publish.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.4__first-jurisdiction-ingest-and-publish.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.4__first-jurisdiction-ingest-and-publish.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a583df05,docs/tickets/P21.5__infra-deposit-and-tiles.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.5__infra-deposit-and-tiles.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.5__infra-deposit-and-tiles.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a583df05,docs/tickets/P21.7__contribution-back-live.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.7__contribution-back-live.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.7__contribution-back-live.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a583df05,docs/tickets/P21.8__data-driven-and-coarse-international.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.8__data-driven-and-coarse-international.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.8__data-driven-and-coarse-international.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a583df05,docs/tickets/P21.9__stage5-pathway-connectors.md,append-only,*,append-register,benign
+violation,a583df05,docs/tickets/P21.9__stage5-pathway-connectors.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a583df05,docs/tickets/P21.9__stage5-pathway-connectors.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,a62b68fa,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,a62b68fa,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a62b68fa,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a62b68fa,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,a705a588,docs/adr/ADR-124-one-publication-eligibility-policy.md,record-dates,*,date-register,b:event-date; basis: P32.5: PR #160 createdAt 2026-09-27T07:17Z; closeout commit
+clean,a705a588,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,a711333d,docs/build/pr/P33.4.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,a78720ab,docs/adr/ADR-134-coordinated-investigation-workspace-state.md,record-dates,*,date-register,b:event-date; basis: P32.15: PR #171 createdAt 2026-09-27T14:13Z; closeout commi
+violation,a84dadfe,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+clean,a84dadfe,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,a97aaca2,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,a97aaca2,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a97aaca2,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a97aaca2,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,a97aaca2,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,a97aaca2,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a97aaca2,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a97aaca2,docs/build/pr/P32.22.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,a97aaca2,docs/build/runs/P32.22.md,append-only,*,append-register,benign
+violation,a97aaca2,docs/build/runs/P32.22.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,a97aaca2,docs/build/runs/P32.22.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,a9f48abf,docs/build/runs/P34.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,aa5c5194,docs/adr/ADR-135-isolated-durable-anonymous-correction-intake.md,record-dates,*,date-register,b:event-date; basis: P32.16: PR #172 createdAt 2026-09-27T15:05Z; closeout commi
+clean,aa5c5194,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,aa5c5194,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P32.16: PR #172 createdAt 2026-09-27T15:05Z; closeout commi
+clean,ab5604ba,docs/build/runs/P32.9.md,append-only,*,append-register,benign
+violation,ab5604ba,docs/build/runs/P32.9.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ab5604ba,docs/build/runs/P32.9.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,ab5604ba,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,ac93df43,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,ad1f8abd,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,ad20f593,docs/build/pr/P25.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,ad20f593,docs/build/runs/P25.10.md,append-only,*,append-register,benign
+violation,ad20f593,docs/build/runs/P25.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ad20f593,docs/build/runs/P25.10.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,b051732c,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,b051732c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b051732c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,b051732c,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,b051732c,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,b051732c,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b051732c,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,b051732c,docs/build/reports/obligations/coverage_assessments.jsonl,append-only,*,append-register,benign
+clean,b051732c,docs/build/runs/P33.8.md,append-only,*,append-register,benign
+violation,b051732c,docs/build/runs/P33.8.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b051732c,docs/build/runs/P33.8.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,b1250f62,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,b1250f62,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,b1250f62,docs/build/LEDGER.md,append-only,*,reviewed,register classed this cell benign under B1-era heuristics; the completed modes legitimately flag it — clean row withdrawn by review (P34.7). region-mode finding under the completed
+waived,b1250f62,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,b1250f62,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+clean,b1250f62,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,b1250f62,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b1250f62,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,b1250f62,docs/tickets/P23.4__accounts-credentials-hosting.md,append-only,*,append-register,benign
+clean,b1250f62,docs/tickets/P24.1__gcp-hosted-deployment.md,append-only,*,append-register,benign
+violation,b132bbbb,docs/build/reports/obligations/events.jsonl,*,*,append-register,"loss: S2. Wholesale regeneration: all 89 prior events rewritten (source_commit 89, rec"
+clean,b132bbbb,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+violation,b132bbbb,docs/tickets/00_MANIFEST.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b132bbbb,docs/tickets/00_MANIFEST.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,b2692ede,docs/build/runs/P34.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,b2d02c52,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,b43a5241,docs/tickets/P20.2__spec-reconciliation.md,append-only,*,append-register,transition-justified
+violation,b43a5241,docs/tickets/P20.2__spec-reconciliation.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b43a5241,docs/tickets/P20.2__spec-reconciliation.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,b468627c,docs/adr/ADR-122-role-semantics-count-scope-and-conservative-organization-identity.md,record-dates,*,date-register,b:event-date; basis: P32.3: PR #158 createdAt 2026-09-27T05:27Z; closeout commit
+violation,b468627c,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P32.3: PR #158 createdAt 2026-09-27T05:27Z; closeout commit
+violation,b4bd0068,docs/tickets/P29.3__targeted-source-breadth.md,*,*,append-register,loss: S2. Executing ticket rewrote its own ACs: 'ingestion_permitted=false until HG-03
+violation,b542f236,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S2. Transitions to WONTFIX/DONE (operator dispositions 2026-09-16) replaced whol
+clean,b660d1aa,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,b6ca7658,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,b87c279c,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,b87c279c,docs/tickets/P25.4__live-data-driven-and-international.md,*,*,append-register,"loss: S2. Executed (interactive, BUILD_INDEX row 91 'landed 2026-09-15') contract rewr"
+violation,b87c279c,docs/tickets/P25.5__live-pathways-france-belgium-ccops.md,*,*,append-register,loss: S2. Executed contract (first impl 7c9ab116 2026-09-15T23:05Z) rewritten 2026-09-
+violation,b884ae73,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,b9b5ee9a,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+clean,b9ebc7f0,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,b9ebc7f0,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b9ebc7f0,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,b9ebc7f0,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+violation,b9ebc7f0,docs/build/pr/P26.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,b9ebc7f0,docs/build/runs/P26.10.md,append-only,*,append-register,benign
+violation,b9ebc7f0,docs/build/runs/P26.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,b9ebc7f0,docs/build/runs/P26.10.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,ba09c69b,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+clean,ba09c69b,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,ba09c69b,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ba09c69b,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,bb6cfffe,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,bb8dbbfb,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,bb8dbbfb,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,bc18a3bc,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,bc18a3bc,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,bc18a3bc,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,bc18a3bc,docs/build/runs/P31.16.md,append-only,*,append-register,benign
+violation,bd31c9e8,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,bd31c9e8,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,be125944,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,be3f6296,docs/tickets/P25.1__live-fetch-operationalization.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,be7bab69,docs/adr/ADR-117-presentation-analytics-emitted-by-the-spine-export.md,record-dates,*,date-register,b:event-date; basis: P31.14: PR #151 createdAt 2026-09-26T14:33Z; closeout commi
+violation,be7bab69,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,be7bab69,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,be7bab69,docs/build/LEDGER.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,be7bab69,docs/tickets/DEFERRALS.md,*,*,append-register,transition-unjustified: Leading status token rewritten with a dated note + evidence in the same cell: D-
+violation,be7bab69,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P31.14: PR #151 createdAt 2026-09-26T14:33Z; closeout commi
+violation,bf94f0ba,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,bf94f0ba,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,bf94f0ba,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,bf94f0ba,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,bfc67d08,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,bfc67d08,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,bfc67d08,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,bfc67d08,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+clean,c10a46f9,docs/adr/README.md,append-only,*,append-register,benign
+violation,c180c748,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S3. 'proxy now' cells of D-P21.4-1/-3 rewritten on the 09-13 re-run (e.g. 'OSM-i
+violation,c22519bd,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,c2676758,docs/build/runs/P34.1.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,c2ea37ae,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,c2ea37ae,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,c2ea37ae,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,c31380fb,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.9: PR #164 createdAt 2026-09-27T09:51Z; closeout commit
+violation,c31380fb,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.9: PR #164 createdAt 2026-09-27T09:51Z; closeout commit
+violation,c31380fb,docs/build/pr/P32.9.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,c31380fb,docs/build/runs/P32.9.md,append-only,*,append-register,benign
+violation,c31380fb,docs/build/runs/P32.9.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,c31380fb,docs/build/runs/P32.9.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,c37daa71,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S3. 'proxy now' cells of D-P21.7-1/-2 rewritten on the 09-13 re-run (prior proxy
+violation,c4aafa20,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: H4PAUSE: commit c4aafa20 'record orchestrator pause at HUMA
+violation,c5a1f3ff,docs/build/LEDGER.md,gate-records,*,reviewed,gate-records hedge finding under the completed rules (P34.7 review)
+violation,c5a1f3ff,docs/tickets/221_P34.18__personal-handle-source-id-rename.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,c6efd78b,docs/build/runs/P27.10.md,append-only,*,append-register,benign
+violation,c6efd78b,docs/build/runs/P27.10.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,c6efd78b,docs/build/runs/P27.10.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,c77bd45e,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,c77bd45e,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,c77bd45e,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,c77bd45e,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+violation,c8d2856e,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.6: PR #161 createdAt 2026-09-27T08:06Z; closeout commit
+violation,c8d2856e,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.6: PR #161 createdAt 2026-09-27T08:06Z; closeout commit
+violation,c8fb59f9,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,c8fb59f9,docs/build/runs/P32.21.md,append-only,*,append-register,benign
+violation,c8fb59f9,docs/build/runs/P32.21.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,c8fb59f9,docs/build/runs/P32.21.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,c9fef83b,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+clean,cacbfeba,docs/adr/README.md,append-only,*,append-register,benign
+violation,cba41b2b,docs/build/BUILD_INDEX.md,*,*,append-register,loss: S3. Row 113 interim hosted counts (@15:30Z) overwritten.
+violation,cba41b2b,docs/build/LEDGER.md,*,*,append-register,"loss: S3. Interim reading '@15:30Z: 993,503' + 'retries launched 15:31Z' overwritten i"
+violation,cba41b2b,docs/build/pr/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,cba41b2b,docs/build/runs/P26.16.md,append-only,*,append-register,benign
+violation,cba41b2b,docs/build/runs/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,cba41b2b,docs/build/runs/P26.16.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,cba41b2b,docs/tickets/DEFERRALS.md,*,*,append-register,"loss: S3. D-SOURCES.12-1 interim counts (+558,152; retries launched) overwritten."
+violation,cbc0a536,docs/build/pr/P31.11.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,cbc0a536,docs/build/runs/P31.11.md,append-only,*,append-register,benign
+violation,cbc0a536,docs/build/runs/P31.11.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,cbc0a536,docs/build/runs/P31.11.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,cbe5fd48,docs/tickets/00_MANIFEST.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.1__capstone-gap-analysis.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.2__capstone-composed-verification.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.3__capstone-closure.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.4__gate-accept.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.5__backlog-and-readiness.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.6__spec-reconciliation.md,append-only,*,append-register,transition-justified
+clean,cbe5fd48,docs/tickets/P23.7__integration-plan.md,append-only,*,append-register,transition-justified
+violation,cc86bd0b,db/sqitch.plan,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,d05959dc,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,d20f3a0b,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,d20f3a0b,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,d20f3a0b,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,d2ec5364,docs/tickets/P21.8__data-driven-and-coarse-international.md,append-only,*,append-register,transition-justified
+clean,d527afd4,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,d527afd4,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,d527afd4,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,d527afd4,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,d6c562e5,docs/build/readouts/HUMAN-H4.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,d6c562e5,docs/build/readouts/HUMAN-H5.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+clean,d76c22eb,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,d76c22eb,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P32.7: PR #162 createdAt 2026-09-27T08:37Z; closeout commit
+waived,d76c22eb,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,"register attributes this stamp's introduction to this commit, but it was already present in the parent — the grown row re-carries it and no new stamp is added here to flag (P34.7 review)"
+violation,d83093be,docs/build/runs/P34.5.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,d8bcd3ab,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,d8bcd3ab,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,d8bcd3ab,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,d8bcd3ab,docs/build/pr/P22.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,d8bcd3ab,docs/build/runs/P22.3.md,append-only,*,append-register,benign
+violation,d8bcd3ab,docs/build/runs/P22.3.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,d8bcd3ab,docs/build/runs/P22.3.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,d8bcd3ab,docs/tickets/00_MANIFEST.md,append-only,*,append-register,benign
+violation,d8bcd3ab,docs/tickets/00_MANIFEST.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,d8bcd3ab,docs/tickets/00_MANIFEST.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,d8bcd3ab,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,d8bcd3ab,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,d8bcd3ab,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,d8bcd3ab,docs/tickets/P22.3__build-memory-v2-migration.md,append-only,*,append-register,benign
+violation,d8bcd3ab,docs/tickets/P22.3__build-memory-v2-migration.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,d8bcd3ab,docs/tickets/P22.3__build-memory-v2-migration.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,d8bcd3ab,docs/tickets/P23.1__integrate-and-release-v0-1-0.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P23.2__legal-home-and-governance.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P23.3__counsel-signoff.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P23.4__accounts-credentials-hosting.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P23.5__okc-document-connectors.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P23.6__go-public-dns-cutover.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.1__gcp-hosted-deployment.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.2__reingest-cadence.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.3__observability-alerting.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.4__ci-composed-hardening.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.5__housekeeping-backlog.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.6__second-jurisdiction.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.7__ccops-disclosure-connector.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.8__golive-readiness-delta.md,append-only,*,append-register,benign
+clean,d8bcd3ab,docs/tickets/P24.9__operator-signs-golive-deviations.md,append-only,*,append-register,benign
+violation,da146260,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.24: PR #181 createdAt 2026-09-28T03:08Z; closeout commi
+violation,da146260,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.24: PR #181 createdAt 2026-09-28T03:08Z; closeout commi
+clean,dabc1b09,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,dac2a8a6,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,dac2a8a6,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,dac2a8a6,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,dc7c73e3,docs/adr/README.md,append-only,*,append-register,benign
+violation,dc8688ba,docs/tickets/DEFERRALS.md,*,*,append-register,loss: S3. D-CI.1-1 (DONE) note reworded: 'nightly + `workflow_dispatch` of nightly.yml
+violation,dce0d067,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,ddf3ad29,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+violation,de8d34f9,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,de8d34f9,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,de8d34f9,docs/tickets/DEFERRALS.md,append-only,*,reviewed,DEFERRALS status flip without a dated note — correctly flagged under completed status-date rule (P34.7 review)
+waived,de8d34f9,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,dee14aa1,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review) record-shape: the row was added with a PR placeho
+clean,dee5bbad,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,dee5bbad,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,dee5bbad,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,df7b1278,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+clean,df7b1278,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,df8c5ab1,docs/adr/ADR-136-research-dossier-schema-portfolio-completion-and-eleventh-artifact-class.md,record-dates,*,date-register,b:event-date; basis: P32.17: PR #174 createdAt 2026-09-27T16:35Z; closeout commi
+clean,df8c5ab1,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+clean,e1146d62,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,e1146d62,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,e1146d62,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,e1cedcad,connectors/src/connectors/data/sources.toml,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,e1cedcad,docs/build/BUILD_INDEX.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,e1cedcad,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+clean,e1cedcad,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,e1cedcad,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,e1cedcad,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,e1cedcad,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,e1cedcad,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,e1cedcad,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,e2175c93,docs/build/LEDGER.md,*,*,append-register,loss: S1. Deleted the whole 53-row GATE DECISIONS table (2026-09-08..09-16: HG-14 sign
+violation,e4bd612e,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P32.25: PR #182 createdAt 2026-09-28T04:36Z; closeout commi
+violation,e4bd612e,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P32.25: PR #182 createdAt 2026-09-28T04:36Z; closeout commi
+violation,e4be1b84,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: G3PAUSE: commit e4be1b84 'record orchestrator pause at GATE
+violation,e62f7096,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,e6c03ea5,docs/tickets/P00.1__repo-skeleton.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P01.1__ontology-as-code.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P02.1__claim-spine.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P02.2__evidence-store.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P05.2__curation-ui.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P08.3__contradiction-object.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P09.1__coverage.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P10.1__task-engine.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P10.3__records-request-gen.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P15.3__map-network.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P16.1__contributors.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,e6c03ea5,docs/tickets/P18.1__international-framework.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,e8bc0179,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,e8bc0179,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P32.10: PR #165 createdAt 2026-09-27T10:12Z; closeout commi
+waived,e8bc0179,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,"register attributes this stamp's introduction to this commit, but it was already present in the parent — the grown row re-carries it and no new stamp is added here to flag (P34.7 review)"
+violation,e8f8764d,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape finding under the completed sequence check; the register did not evaluate shapes (P34.7 review)
+violation,e91b8f6a,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,e91b8f6a,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: the row was added with a PR placeholder before closeout discipline existed — correctly flagged under completed semantics (P34.7 review)
+violation,e91b8f6a,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,e99e05b1,docs/adr/ADR-138-tulsa-dossier-packet-template-executed-and-honest-unknowns.md,record-dates,*,date-register,b:event-date; basis: P32.19: PR #176 createdAt 2026-09-27T17:56Z; closeout commi
+clean,e99e05b1,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,e99e05b1,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,ea479fe8,docs/adr/ADR-074-okc-document-connectors-okc-procurement-okcpd-policy-ok-statute-over-the-sig-parsing-layers-with-the-part-viii-guard.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+clean,ea479fe8,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,ea479fe8,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ea479fe8,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,ea479fe8,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,eb72be5f,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,eb72be5f,docs/build/LEDGER.md,record-dates,*,date-register,b:stale-chain-date; past-dated; runs/P21.5.md:23 'Environment clock read 2026-09
+violation,eb72be5f,docs/build/readouts/GATE-G1.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,eb72be5f,docs/build/readouts/HUMAN-H1.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,eb72be5f,docs/build/readouts/HUMAN-H2.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,eb72be5f,docs/build/readouts/HUMAN-H3.md,readouts,*,reviewed,a readout written before the guard-sentence convention — correctly flagged under completed G4b (P34.7 review)
+violation,eb9a23d0,docs/build/pr/P26.15.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,ebd34ce1,docs/build/runs/P32.1.md,append-only,*,append-register,benign
+violation,ebd34ce1,docs/build/runs/P32.1.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ebd34ce1,docs/build/runs/P32.1.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,ec7c3924,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,ec7c3924,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ec7c3924,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,ec7c3924,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+violation,eccbd0a2,docs/build/LEDGER.md,append-only,*,position-scan,inserted inside GATE DECISIONS (B4 G2 amendment 1)
+clean,ed993ee7,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,ed993ee7,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,ed993ee7,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,ed993ee7,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: an act stamp more than 48h before its commit without a retro marker (R2) — correctly flagged (P34.7 review)
+violation,ef7772fe,docs/tickets/260_GATE-G4__11a-check-in.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,f02deb01,docs/build/runs/P34.1.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,f249fb38,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shape: an index row written before the completed column schema — correctly flagged under completed semantics (P34.7 review)
+clean,f2adf0f2,docs/tickets/P28.5__refresh-surface-materialized-graph.md,append-only,*,append-register,transition-justified
+violation,f3884a2f,docs/tickets/P27.2__maximize-publishable-scope.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+violation,f52bc7ac,docs/build/BUILD_INDEX.md,*,*,append-register,loss: S3. Row 113 interim hosted counts (@12Z) overwritten.
+violation,f52bc7ac,docs/build/LEDGER.md,*,*,append-register,"loss: S3. Interim hosted reading '@12Z: 644,487 (+209,136)' overwritten by '@13:30Z' i"
+violation,f52bc7ac,docs/build/pr/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+clean,f52bc7ac,docs/build/runs/P26.16.md,append-only,*,append-register,benign
+violation,f52bc7ac,docs/build/runs/P26.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,f52bc7ac,docs/build/runs/P26.16.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,f52bc7ac,docs/tickets/DEFERRALS.md,*,*,append-register,"loss: S3. D-SOURCES.12-1 interim wave counts (4/8, +209,136) overwritten."
+clean,f6641b06,docs/build/LEDGER.md,append-only,*,append-register,transition-justified
+violation,f6641b06,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,f6641b06,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,f6641b06,docs/build/runs/P31.16.md,append-only,*,append-register,benign
+violation,f6641b06,docs/build/runs/P31.16.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,f6641b06,docs/build/runs/P31.16.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,f6f7973e,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,f6f7973e,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,f6f7973e,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,f73a997e,docs/adr/ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+clean,f73a997e,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,f8856ed8,docs/adr/ADR-121-typed-assertions-and-actual-capture-bindings.md,record-dates,*,date-register,b:event-date; basis: P32.2: PR #157 createdAt 2026-09-27T04:16Z; closeout commit
+clean,f8856ed8,docs/tickets/DEFERRALS.md,append-only,*,append-register,benign
+violation,f8856ed8,docs/tickets/DEFERRALS.md,record-dates,*,reviewed,record-dates: the stamp is later than its commit (R1) — correctly flagged; the register's class did not cover this cell (P34.7 review)
+violation,fa84bce8,docs/adr/ADR-128-preregistered-blinded-human-evaluation-campaigns.md,record-dates,*,date-register,b:event-date; basis: P32.9: PR #164 createdAt 2026-09-27T09:51Z; closeout commit
+clean,fbb47a9c,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,fbb47a9c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,fbb47a9c,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,fbb47a9c,docs/build/BUILD_INDEX.md,record-dates,*,date-register,b:event-date; basis: P31.14: PR #151 createdAt 2026-09-26T14:33Z; closeout commi
+clean,fbb47a9c,docs/build/LEDGER.md,append-only,*,append-register,benign
+violation,fbb47a9c,docs/build/LEDGER.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,fbb47a9c,docs/build/LEDGER.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+violation,fbb47a9c,docs/build/LEDGER.md,record-dates,*,date-register,b:event-date; basis: P31.14: PR #151 createdAt 2026-09-26T14:33Z; closeout commi
+clean,fc81cea5,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,fc81cea5,docs/tickets/DEFERRALS.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,fc81cea5,docs/tickets/DEFERRALS.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)
+clean,fd35e7b2,docs/build/BUILD_INDEX.md,append-only,*,append-register,benign
+violation,fd35e7b2,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)
+waived,fd35e7b2,docs/build/BUILD_INDEX.md,append-only,*,reviewed,register benign classification withdrawn by review — the completed modes flag this cell; see the sibling violation rows (P34.7)

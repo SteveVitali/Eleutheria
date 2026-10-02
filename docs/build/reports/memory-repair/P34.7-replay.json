@@ -1,0 +1,3953 @@
+{
+  "schema": "memory-guard-replay/1",
+  "range": "a33177c7..HEAD",
+  "commits": [
+    {
+      "commit": "10be37ce103986042d02b35a6fc4bc77f3688f00",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "56ee8d6c1c75b713d9be8cc4dfd45dc21d2858e4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c2b3dcec8e167bdc94e233c2cc2891442059a368",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "22f76abf2fb34146af9100a838fe59730e06ed44",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "551f602fc4298bf615fe8afcc23deeafb5124f7a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "375f0f0b17cea280e35a51ad0b017c1cbcd7285d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "35cc3aabfd66d8b9571f2148f3f1fdd8bf3a150a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3a78f6cdcfc7a359ea5c20d49a2c4d5bc3864f19",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b7fd7bfb266c1d0e34a2991bae917648018e70d3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b15cab127083880e8e56042f33262c3b63fd4fca",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "48d19157f4e85debf5c5d7aa171e9f1432e1ee0b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c10a46f989219911c44faf67a862362a6f292d3d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "37f85ff1a2fc18a47f6a6a1807e662d3a55b70bc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4bdb9b85e0efa4446d1341cc3133c311cc6bd0eb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f7e6b421646ffe6abee77e493bc7d00d484738d9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b3b4df0bbc139454c93ba661f577841d737bb0b2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b1b9965d990787112c8297e2b51c87e5907a0887",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cacbfeba4a704aa1bf538d4f56e06489d03c72e4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6673cd3fdf76949086e1a1862379815030db4151",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 9,
+        "append-only[append-position]": 29
+      }
+    },
+    {
+      "commit": "dc7c73e3713281ce0c91ae4be993a1dfa27ac820",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2faf380de81d67a2a104750d5c7edf3851e5c92b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d8656629d856d60e30c5822043d53aaadc472171",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "74d1658d4e38b359ee7114963bef7af07f4f9714",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a9826aa71d9f60015b8c4b488bc5d517bd18b05a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bc71c0d59e81d2f14b4f527f5607cc3224abe065",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a95fa638422f5866756d1756a354a4a1626d1291",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "15d7e37ea5e40dbe6839b2e3986c351279549d6e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b0b91da452a6b0f223e77f59731dbbd908aff944",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dcf02f1c8f945c510e3172694d7a42a3484018b3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "249f567bd5fa35e10f46c70cb0beea55e77df6e9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f62d200427e69278c61f48f9611dc90627dbb97c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ce9cde1f87b552796038745a92a31785a5abe73e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "388e851b83230077810e034d2273fb715680194f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ea8fdc6c48637e7e74a925e53060f0871e00c283",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d663089991d6138dad75e8805080604239f5c077",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4493b1497585c14085f41006cbbbb1e705d924ed",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cb2df2d9ff63f4ac75667d0140f247dd2d31f79b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "fdddec04ed6053644f175513b76b45259126f83b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "99d246c7b1126e8e38cdb6bd4fd10a90b8abd36d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "43d5b1669a0e6227927183ad13a8a5f8c4608c62",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b8f5da8a07553808d1b708a545b4a84600ebb350",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2b361f18e4b1b964a84fe466b6ef8a737d988acd",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "02fb3fbab303ece5430394f5fdea6e91b80d3124",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e914ede0d284ee4a91ee09ea3b3858641510dcac",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c79fdbdb5681275c148aa2ed515c0ce02970dd94",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bca8ad1fca42ebdf7353584fbb04168a193c21e1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "29b3a28b425f367111fdb47550863ab43998b97d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b6fa41477051aaed74cb9be1831a62d3455f66f1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1baf05f66301e01655b84012e3820a66c2399515",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "33aaf02e3f6fba13b45cfd9361da12fd6b9bb960",
+      "exit": 1,
+      "rules": {
+        "record-shape[round-banner]": 63
+      }
+    },
+    {
+      "commit": "4ffae4fbbf21e0801a5c8276c00a00e71a7635c6",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a5f18adb0af845c4bc75253b2a14f3cb69338961",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4682f9d21278bd0fcba687006c54b0dd0499d7b5",
+      "exit": 1,
+      "rules": {
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "89d275287fc06bc9238882de81266f68db5ddc6a",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 26,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "7ef6be6c5255c7470f4deb9ff32f62b592decec7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b43a524132c3acb57443b5dbf184277e1a3e128e",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 1,
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "e6c03ea579f9bf59eb51d1b12548f79134a195b2",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 24
+      }
+    },
+    {
+      "commit": "aad1a55e6d4c134ab650e7bf4836883b644dda25",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "036b7db4773b4c234ee033f3240592e5c25b889e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d06fe14ad1b6af2145650792136f530601e21035",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "92c9c851ba7e97ed93f7fdc21e73dc6f9b44728c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "28e46800e9632b0ecc46ba891d9b27eaab417445",
+      "exit": 1,
+      "rules": {
+        "record-shape[round-banner]": 2
+      }
+    },
+    {
+      "commit": "1256adc6c0552b3c61ed4108e5e297a2b1e3beb3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "305f94d5afda7cc83bfc713faa4d8d02eea39f1a",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "6a0c188893f0e93cdbde100d2aabc6b6a2283c4d",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "6c8ec20adb3053b74eb90060add69aec45c1be7f",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "0f90fa06a5f0ab1d7822e54f2eb4bc9f53bd2190",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "2981ce8c96209e8e64b954be3d4bcc6ea5367f28",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "d2ec536417b946387f8524e2b88dbed57a1aee9d",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "8d8deb4e4ae3ae8ef5d7e7403a7930ebd99fcd84",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "a1bba93ce37f6d3c96ffb6e59d79fb09bfe6e578",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bb5b1cc0095da509c2cd08b0b94dd154c533b105",
+      "exit": 3,
+      "rules": {}
+    },
+    {
+      "commit": "5cf0315e6624c085964341ddc0abd6486861c41a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "625d802ca00da5c2bd7601b83ed57ddd0c90d3df",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4d5a5d27dbb89e993d3c0207abce324c4920f7de",
+      "exit": 1,
+      "rules": {
+        "record-shape[round-banner]": 1
+      }
+    },
+    {
+      "commit": "ceb286c53549b189f874cf85249954ed28f4ba30",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cbe5fd488988d4eff025ac7873a45ad89c5f6287",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "32bea406f9deda1094e19bdad0da11f6b64e4c85",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 4,
+        "append-only[append-position]": 2
+      }
+    },
+    {
+      "commit": "d8bcd3abe38afd9f294c285230f8ff50d7280581",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5,
+        "append-only[append-position]": 3,
+        "append-only[frozen]": 2
+      }
+    },
+    {
+      "commit": "b1250f62939c135f987e94a5e8635daef5505cc4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "append-only[append-position]": 1,
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "eb72be5f223de1d728d7575e30100f01c51de9ed",
+      "exit": 1,
+      "rules": {
+        "readouts[G4b-guard]": 4,
+        "record-dates[R2]": 14
+      }
+    },
+    {
+      "commit": "e1cedcad7f4f589a32df9c672dbd5cefb8b632f6",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[row-annotate]": 1,
+        "append-only[append-position]": 1,
+        "record-dates[R2]": 18
+      }
+    },
+    {
+      "commit": "a62b68fa16e27ecf75771ddba40581dbb6dbd78a",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "679ed16c8edd75d6e67a1ce2b62ebb3c5468ed71",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ea479fe8dc0bd9d806263da8f2b74414be38056a",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1,
+        "record-dates[R2]": 2
+      }
+    },
+    {
+      "commit": "d20f3a0b822b1ad22695acb724643faec12611e7",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "97231ca65be8bf8dccf33b1a2397db7fa9b329f4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "422d605b35ea38de5f6960a58d76c7bfd7fdee6f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "773ae5987217c66287fc1a02ed773b5acdeed0f1",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[row-annotate]": 1,
+        "append-only[append-position]": 1,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "159b5aec69c8207402f679cf175d547a2eed8c73",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "c180c7489d6424ae40b601bd573eab4b94bfc3ed",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 3
+      }
+    },
+    {
+      "commit": "3a4aa69676bf0c919f45c9396244b04c580966d5",
+      "exit": 1,
+      "rules": {
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "06c1d574822dae7f9e716162c29ee609ed11d70f",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "3259ca81ee515dcd4aebb065e005648f510b6e36",
+      "exit": 1,
+      "rules": {
+        "readouts[readout]": 1,
+        "readouts[G4b-guard]": 1,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "ad1f8abd5d5999267bd353e3248eae7791899850",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e91b8f6a23f3e149e4655a780620d610525d7ebd",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "c37daa7113794e5305680e6cdaa34a25d0ffba17",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 2
+      }
+    },
+    {
+      "commit": "2a5d01e0d2998f28279e0544118b4cef886ec0f2",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "aa5699fad40c5dcecc1e16a585326c60fcb892a1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "761bbb30b98acc08a70f014098df968c6e3286df",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[append-position]": 2,
+        "append-only[row-annotate]": 2,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "2ecec80ed227c4742943c2aed1ee9f8c38477842",
+      "exit": 1,
+      "rules": {
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "7c92c3419e7832f5b0ed8e7842366e272ff65046",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "record-dates[R2]": 3
+      }
+    },
+    {
+      "commit": "d0e5da08b89a3e792ee33dbf26e83177890df899",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "759fcbac32ec2a186df0534b0d7054e337feaff5",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "record-dates[R2]": 4
+      }
+    },
+    {
+      "commit": "a2c6711cecc95b6cc4ae0a751ad9fb1ea3605a3a",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "f77803dfa5403aae71ba187e18fc6bc35db1890d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "791e1bbd20a76eabed5983e77124dc9b157b65b3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ba56f2638f16d4c3b54df4f493bf5cbcfbd1c311",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5c9e76e68da53d36ce1b3fc6f5386bd71ef92234",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 13,
+        "append-only[row-annotate]": 2
+      }
+    },
+    {
+      "commit": "dc8688ba54d300cacf958e73a6ebb40656f27daf",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "a583df05b80a70e476e7c1c068d3418b6f005e70",
+      "exit": 1,
+      "rules": {
+        "readouts[readout]": 1,
+        "append-only[frozen]": 33,
+        "append-only[append-position]": 33
+      }
+    },
+    {
+      "commit": "3e826aa57030c2f86bc172478fec120200a83e23",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "488ac7c5eef0d64750a20cc90b04ed0b6a94ed9a",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "5bc2d9bab2650110b883f9fbdb7c15c3d20e8393",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "4efd5838ad75a80fb9d6cb2ed69eb1b4ddc569a6",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "9866efaefc0e5d765556b27282c7b7de424364f1",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "919bde02808c8946d67c2806eb6874d476d27a08",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "83c60491c8a91ac518bc11afb7a2b44de0104850",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "556c6633248dee35705c0bcfed2a2b66d17b9bf7",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "a49e205b419a79e0251ef3959d9203327a18a80a",
+      "exit": 1,
+      "rules": {
+        "readouts[G4b-guard]": 1,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "21a8ef972ad7b8b70be6f4ffee05fc59cd338647",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "8e1f67693353c99d2a4e815b056e54987b0c4b74",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "393684adac96752825d675090da7d06757e924b3",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 2
+      }
+    },
+    {
+      "commit": "8670a4dac70b6d38388e81e50b1cba51f37672d2",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "be3f629620049f448e0e20b24d02437403fb2533",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 4
+      }
+    },
+    {
+      "commit": "03450cb8548fc501898c4a6221e1661fd4798e27",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "ed993ee789c2cf112bb50fd966d48f3e9c8dd88e",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1,
+        "record-dates[R2]": 2
+      }
+    },
+    {
+      "commit": "3884186576193fc9b8c7c52f566b70f918c01df1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "97880e099461a49fa2e6aaf13cf226d9baf72931",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "2e534ee6e457eb1d72bae48f54e61b1ee7660117",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7a1a17d4232de8bebb9fdeb43eee14230e07ff2f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "af064511ff6e4be5502185b79af9fd4d0f5f0cee",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e2d524640f3932f1c0bfe79b83f4fae16590ba43",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7c9ab11639ecdebab62ecc2cec9cf89f069e1f9b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "36e644ee080559492ef7ae2c954c03c340a85ac4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7975a90ac6e6f0607d1a1fc9a79c70b4fed53413",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b87c279c75ea33e18617d19d39e97574b1a1dbb4",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 11,
+        "append-only[append-position]": 19
+      }
+    },
+    {
+      "commit": "f59cacaf0ac4d06ecc6a764a346f69db71768c31",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7b52f2b4c64c84951d88e1c0bfbf5af510a4af74",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "40e7b197e75f49f39d8e0293834c45f41e1adff3",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "4c58f4076cc8767aba200f2573fa85a5e201f21f",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[row-annotate]": 2,
+        "append-only[append-position]": 2,
+        "append-only[status-date]": 3
+      }
+    },
+    {
+      "commit": "698312f205cda354bacd5e03ae456c44c2a698ee",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bb6cfffed9ddf39431ad90625dcf723077f866dd",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b15c606784386dad0b14eda18968fe27995e3513",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ec06f73175b06cf802363cda513b4fb947e56515",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d527afd412115e3945974fef514a3a6eb6e565e6",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 3,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "594b8ad5d3ed47bfc8e9ad236d17136da8fcb78a",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "d07da419e41324a89efb39f44f77e8c9759755b7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dac2a8a64df611fbd44d133255628e5c2724fdd4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "14990030b918364259857dc22fc156a83ae71713",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "dee5bbadf340175a154013550231528061d71dee",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "ad20f593b10297a9c6166c95558de89fe277a808",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 36
+      }
+    },
+    {
+      "commit": "b542f23658d2968ca7dc398fbbb4b3cac0bef94f",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 7
+      }
+    },
+    {
+      "commit": "901405c26f5c6a83ca443bc8e38d0ac11c0af57d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a809f7ec16306327cd285d11338a4f5a101def59",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f7f8600a7204bf842b377bd7791d7935163e48eb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "85188f0ac304b47d6e4bd63641803a2a48a2ec0a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a36dfbeac8b02a78436455b9b393673e6b462ef7",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1,
+        "append-only[status-date]": 2
+      }
+    },
+    {
+      "commit": "ec7c3924f4aa4413ce7f36a0377581ac042286a3",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "6df07fa5171d550ab61d95b9b30c3cbda31a96de",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5b98004fae26e49aa1967de66389a0667d837989",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[pr]": 1,
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "f6f7973eefa2dac475520acb6288517ff1dc04ce",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "6022d67f37d40a3e9faf05a8d393030acfb76286",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[append-only]": 2,
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "c2ea37ae204dffbd27c2fe524ce07f04430a652f",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "90157ba68433a4d114b0059b968e085352d84720",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3
+      }
+    },
+    {
+      "commit": "2755ec535ebf34f899612791099ceb883f25e3ba",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "99aa596befa441d87ef7beab9cc646a901732eb5",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5873930ac69ac7fa040db35cea9a572cad567f4c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9fbe120f974a21b14426bb7ad00e89f21bb72424",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "be12594488fb7ec63baf5aab5a0e4a2a71875e6b",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "e031ad00fa4032e8559edfa5e80045ef328f9be8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e1146d62d6375001504e6a5a368feaf4186c1a92",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "6b87e92cd40868fb2266d989a6873e8134193e64",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7d8b8ab1dd0e539acf64a0e54d8fb42f3b89e366",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "8bbf6fded416745cf230564e20d76450a84c33bc",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "2dbaec60d2740b1f3dbb1df91371f017a39eaa77",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bf94f0ba1f2353a872300190aaa2986ea5a2dd2e",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1,
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "6dd641be25d9c1733b9b94e492b6ff30d5c9abb0",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "747528ba98401ecf3f1ce6786237cdac19e86a51",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e62f7096d3b831368f084e3b1b7ef15d7e8216d2",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "46f49025e5d2a6fac40c98fedd0a47e8daa4e1ab",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dee14aa1303110673de0edf9d23ba10d0362c2d6",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "b9ebc7f07a953151bad95f4b418b69346042e8b6",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5,
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "922f7e6c6d37b8e421cc746e7b2a5960f17fc20e",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "d0a3ee6a2433796ad1bc0df7cb18b5e0de54e9d4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5d3a93b54f8eaf905580b1f63b666aa1e791d873",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "67ccc3112f56849981ffacfe8fff116b91319068",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "597e005995eb2cdd5f851e4b866446fa6cfbd9d7",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "1155e06463b9d110a9a0ed708df2ab9e0635690c",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "c58c8f230f63c5ed9a908e611002cd4af88c581b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ecd1cac2cb11c4dd4c500b32928bdb2946b9964b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3819b63c03433cce1190ccf47331656b53474106",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "141efa97d55ea4ae441aef2a3348e261920b9fa3",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "9b8ac9cee79519611d317b2bae1d04e25fa9261e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "14674060d4e7e639d7cd8d69a834b98a6f070357",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "6a4e2d5a233268a8f3210a2d8e9473871cd0ee26",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "ecc31c528800e24ee83aa6b1f3a3a8bcfde2aecc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "67b8b811bafd3c33c815a81e99739b122ea683c2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b2d02c52296960c5d6d19517932cf2543ef42984",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "9c5e2ea99342ea0e6dfc80f39a9196a71ac54590",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "af8b878366dec5d683b5d1a548b777d3fca2ded7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "666fc31b3b16d09d91f9dec1feb453f560aaa718",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dce0d0671b16fda307aa182e2eae069f1ac4f45d",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "18b426fc544dea21c039e6761b4c134d00b2ef0a",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "66ff6f124bc18c819db9ba7d3b7e8256b96d2926",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "eb9a23d0bc6676c99caa86e4176b3016dc7cd480",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "66dec819e60324d7d49412ca71edcfbf81296c1d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e2175c932faa2def417ee373f90b5d8933909aa7",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 56
+      }
+    },
+    {
+      "commit": "f0e514691cab8ff2958ca1dbe34a6a5c4d9e67cc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0f17374d1127d1e472e36050f8f3db2c2d6bf370",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7c26b00543cfc80a8bffb6bd2e0ffc6627e88f75",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c54994edeba54fdc78d4482487aa0e3577dbf76a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b2078cdb1ab6ef5afab1105874d3f91906701536",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "376f65ae3dbd292ffe19235a0704e04421684ea7",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "append-only[row-annotate]": 2,
+        "append-only[frozen-snapshot]": 2
+      }
+    },
+    {
+      "commit": "7671b511f7395a82049420b664a11b4d79158056",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 33,
+        "record-shape[columns]": 1,
+        "append-only[row-annotate]": 2,
+        "append-only[frozen-snapshot]": 4
+      }
+    },
+    {
+      "commit": "f52bc7ac1afb354b14779ae450dc022284866753",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 29,
+        "record-shape[columns]": 1,
+        "append-only[row-annotate]": 1,
+        "append-only[frozen-snapshot]": 2
+      }
+    },
+    {
+      "commit": "99a7794b2a500739ec09cc101d01f912da19a7b6",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 29,
+        "record-shape[columns]": 1,
+        "append-only[row-annotate]": 1,
+        "append-only[frozen-snapshot]": 2
+      }
+    },
+    {
+      "commit": "cba41b2beb462da57352db0af16bcccde23f0ff2",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 21,
+        "record-shape[columns]": 1,
+        "append-only[row-annotate]": 1,
+        "append-only[frozen-snapshot]": 2
+      }
+    },
+    {
+      "commit": "99517730a53e48b6d5efc2a521e12e5404626976",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 11,
+        "append-only[row-annotate]": 1,
+        "append-only[frozen-snapshot]": 2
+      }
+    },
+    {
+      "commit": "165aef44c378296b6a5e3d002058be09c1c2c63c",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5
+      }
+    },
+    {
+      "commit": "a2c92b79fae8ed2c45509066318cb7866ab495a6",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "a162c5d3f08da7a3b6329a336d6fabe3a7c3bed6",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "de8d34f9cba8fb06821917ea7e37d7a822d5968e",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1,
+        "append-only[status-date]": 1
+      }
+    },
+    {
+      "commit": "755dbd3fc73746d205cbc92cfc7374c18e8224ef",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 21,
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "0fc617d82e095cf848e2e85c394a939245556ceb",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "a0a476a36868f3f0757306a8226b215c9fbb982b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0ea9be1505abb4badc276c0a09606c62630877b3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "323b34461be912313c70672edaca8083e2a15bfc",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1,
+        "append-only[frozen-snapshot]": 2,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "7d3ae4b886f81934b9ec9d7a40e35711f37d177d",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "d05959dc7cfca76d7edd9cb3a0b4ac47e59d46fb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0cb794c7f627dcd3d29b78732736b1162d2ea37b",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "5b7fed0e63b6e9d5ff8848e8e3bcbd3b536e891c",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "a6a2b566d9291b98af215e1697c85c5f9899c307",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8d5638557e23491bb879131617a24a15924630ea",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6982830b519a4e0b0d861713086044216bf13acf",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "2a52e341822418352abd0aed1f72594a22555fa4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b1c3cb42bfd365ae010906aaa66c4b402a92cf2b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a4b7eb9ae1f27a48a68ec94cddbd9d5bb4e84141",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f3884a2f59f959f479c48cfebede7b8702f88487",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 20
+      }
+    },
+    {
+      "commit": "ac93df43c2c7f3e8f7e880c1e0dc453ec6fd8ef0",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "70137cef7e1b809e2afbde63c7a09f265d001afa",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "789b18f46754c578bd9508a04edd68ae86ef437f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "96f1e7a59bab77790a811f5723ea6fd7393b8b02",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "93f04c517454a1b3a67a2cdbe1c814bad16cd38f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "70d7bdb9ea392b844752a1f7f647bbed25a41c72",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "4f8c748dcdc5030f85bb5c31e6d1fdee1dcab3bb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d83e765968fb3894ded6ff5d6328742e8566bb7a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b6ca76583dcdaee870bfc7fc11c3c920c3bc9386",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "31964ab88c9a418fef390d1b84f18d3f146ed450",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3be415cd094be256aab447705c24d825afbcf983",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "d86857a0e8035510b4c9b6249813c787dbfe1987",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f249fb383f2d5df8595c21a6b2d7a020086ee656",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "307161ee33879c2e9584dd2dfdb8233a071baf58",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 4
+      }
+    },
+    {
+      "commit": "4a29dae09c74788b88178e0954cf948ed953bfc9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2500c5b12dd0b978c1dd125cfed3bcb491c09e19",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "3d3eeb753eb0f94fa7d286497f0d433ad6e5a46f",
+      "exit": 1,
+      "rules": {
+        "append-only[status-date]": 1
+      }
+    },
+    {
+      "commit": "c22519bd5f222f58305cd370907684576b1cf98a",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "ddf3ad29afcc0c3e98fdc39c9649d8e2d858e4a4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "4234053408797b58db2ba3633363cae1ff4f4f43",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f2b95c403ffb4626bb3ff0bdf774ab0b7e6ec92f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c6efd78b255ca06d10c7ffae62a701f648e65069",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3
+      }
+    },
+    {
+      "commit": "9a0483e11b1a2eea3811ff2ff56613acbe7c2943",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bb8dbbfb252f97cab481788f60d4ea6ed4f0b986",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "e5b9cd14813ab89388fc0a0508aadc6b08b7caf5",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cc86bd0b7d98318291e3a13c2a4e25cb07326010",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "e8dfc9f160918a17eaf9be618930535611e63e73",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6730591b668db4afffec5b9dae7f448341689d80",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "82029bc17406a7efae8d3422225a99352106b4e4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0da05b3f90c3ab861c2ee225607a632a5f9e5c8f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "89f825e9f8c7c9215cf1ff4ba7c9b9faff38ee8e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "58f90b0343ca98fc6e07c6150178f3fec848c3ab",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "f2adf0f253a9eb4152a580c4214182a4456cfbc8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "48c78145e067d8cc61f7cc98da8bcb41a7ac0127",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7cabde536b762b714e45d1c35b658998aa2abbf1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f314af8933c7951aea2bba919362e8056441536d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "708d70652b4ba8af1a0121703ab8cfc11cd45d2d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0bf4f5c51d1407d88dae6f85e3a1b88034cb3cf0",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 4
+      }
+    },
+    {
+      "commit": "6f0284c9a0ff8786e0e74b2dfd56e54327b9b684",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "799ab088c64be82f8e8a4c38fe937ebdd97ebc4b",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "65c6ffcc5606cadfe7f9c58980af740dca2c2479",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "eccbd0a250f60d32287ec1e1e416d06324a7fc93",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "69e9b304997e4dbe485e240281e682d24e3092a1",
+      "exit": 1,
+      "rules": {
+        "append-only[amendment]": 10
+      }
+    },
+    {
+      "commit": "1462ddc7464a52e891fa82132574c8e08fe4ea10",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ba09c69b14ef0d8d81c684170bd98e56a4aa3455",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 2,
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "b4bd00688dedc73139c0a4b41bccd3a4a62252ac",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 3,
+        "append-only[append-position]": 3
+      }
+    },
+    {
+      "commit": "3addc79f43470d79d4287874c9e0d074be6aacec",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "efdc67b49444a7c0923ca950847908183c56eb25",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c9fef83b15eb6210229b5ad4228c3d61d898e832",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 4
+      }
+    },
+    {
+      "commit": "b9b5ee9a22916e71be1005862808b1fa93295c15",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9b353af35d7b12b7b06c1792fe736e9d141b9ff2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3c0900129d5a177f8a37c976a419533d083b0837",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "398160c3037b46764ee54ee38240fe819653f69d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "fc81cea5a41e9de64daf50a3ed47462e33c1abd5",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 5
+      }
+    },
+    {
+      "commit": "ebb90d9b7ab8d210f0d2757cd54d2d3b701599bf",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "83cd666805c3e9631375335b9911cb8b0cc57ffd",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "6e2fb016125472525c37298e8ab3cc004ee5c4aa",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "419342b09a59eb58b7fb7f03276489f60db658fd",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "772e2b527beb16631cd63ceb334b7e52d37c8fee",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dbc6d553a534b456fc11279a01fe0acea42c1779",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "084ddad99130ad48b4019ba1061590efb468a3f9",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5
+      }
+    },
+    {
+      "commit": "84597f1d4c75fb454c15a168bd7ee7667b0b4b97",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "29b75f82fe6b7575fe0da91cff4dad5d8f8f1959",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "7db63484444f4e8a26930266a9dc6aa23a4eba3c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3050aa9328953a0ce8461c67d9080977aadf010c",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "4266db6ff0e2c052552a25d090035246e7c4d7f2",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "889997df676226703e58b2b4ccf66ff2a1b97c72",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "32ee3e814fdb65917894f3e6115538db684c2ffa",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "71e91a7bcb2073d5eda4fc20c51feb3bc029071d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "950d4ebc672b947c1642005ad0ce1f36d0a6989e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "73e3c8d93a692391b34de4a8fe172b212828d396",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "713fc85745cc90e5e1cdc2fc278325d67174f1bf",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 3
+      }
+    },
+    {
+      "commit": "2a6f2496d69b4c518d0e6d70f0188c50952ec717",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "065d8aa0ffb62ee82e3e5b86cbed39ec727378b1",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "65fee923e9d2e7a369f93577553d337e3a542571",
+      "exit": 1,
+      "rules": {
+        "readouts[G4b-guard]": 1,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "df7b12781763451e00566a8856647d465c3c6b75",
+      "exit": 1,
+      "rules": {
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "0a715fcc3dd5e19d136953ba347efa5d01d1d453",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1,
+        "readouts[readout]": 5,
+        "append-only[status-date]": 1
+      }
+    },
+    {
+      "commit": "a84dadfe669e9af8ee6c79ab4865d475b1f4c762",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 14
+      }
+    },
+    {
+      "commit": "fe0d4d344f7d9261ca1575a51d519bc0ad7d0f70",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "10025fbe1fd8a54359bf964f4c37ffff2e7deeb8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "663ca665f2062fd72ab82f4dd900098ceeaef639",
+      "exit": 1,
+      "rules": {
+        "append-only[status-date]": 2
+      }
+    },
+    {
+      "commit": "b6b84fcc799c8ace60ff9886dfd69d2067d10161",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1155bf5c7b830a544fc8f34499b2fab268d748c2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d6ecb70ada20b7c4638f49b5ee84c8f9513c9e62",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a3bd725c88da576d234f6af0f158f5d27aa90953",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0746fc1c667f444357b865ba2409023fdc1765d2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "700bc1a2f94c9d9fe6cc53c9ac560dcbb470c8e6",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0848d2eee0a6682c2935bdbd8811a85ad58a637b",
+      "exit": 1,
+      "rules": {
+        "append-only[status-date]": 1
+      }
+    },
+    {
+      "commit": "ffccd244ea6d21e82124d15870fd66f9f951c3f0",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a1b9870ab188e389b57956a103c72428fb9ec6d1",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "18355040ccc8da315fbf9d475d3158e5faa722b8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "71f1daa8a3c0ca8048761e605f59303b3a4a4a25",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1378296866fc735b0a7a4180b6ae1733893ba1d3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "915211872dfd78f3c155c7a5e553850828089810",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "34406ffc33f84f0762bf96f1f5918adce15bf646",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a29d3748a8f24e5c65f5bff2c223b2d8b1a262fd",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "434f2f78636968e811d56ef1ec5f492d5fc4ab6a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "fa0d67a8c026051e768dea0b5cf1c73d4347fdaf",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d41f973703b93c84086dda56c75fd845487ce5bc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "184e3644adea6766a4e20b7c5354edf8c0c39e6e",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "976a1949161202f2f826e1bbf52ac02c0cbebd09",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "40b530332f6b130506591ed245501475d9f9e72d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "45c4a59fc76acb7b3361eff1a7508fb828cf2e49",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[status-date]": 2
+      }
+    },
+    {
+      "commit": "fd35e7b227d871ce2046cb2ac05e9209849a8cf4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "ff82b41eec5e8f1b6177f0b0284909b463643eaf",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "062306e70d3d09844e86d72c34e7db34d8f70f66",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "dabc1b09c14ebaee1464fb3c4a9918bf96924a4e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a14869fd68ff10221852a9f97cad7ffbec6174c0",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "dd82324cb84f7cae1a0cbddf953570eaa347f982",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6e58828ccb70e10358afe16a8512216ef054a988",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3373af44830e3c28c2c99657d3fb1c68a13629bb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ba3dca61729103c35334e18b6127993fcb8b4787",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0e57e6461d6a5db2e8e0042464750ce2ea65db5e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6fcc3c10b115c2ed4fe129cf5f2d235446c5dae8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e3b7a5e097d7326ffaecc9821791ee230a50d7fe",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7ba28a404bf1362f2867303a7a5fe34d1fc83b4c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "93e222a944b41b0bef2944b4255328769b71244d",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "append-only[status-date]": 1
+      }
+    },
+    {
+      "commit": "3357f8e7e1d9e41ddb9999f3ad99ba4021c3121b",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5
+      }
+    },
+    {
+      "commit": "b884ae7310f30f90f25879f60f07843edcf09250",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "4dc4c80a948936abd7c3edb40733fe252d7c7d08",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 9,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "4608f0568346bbbf107031cae9e4b4cd878b22b1",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "4e0dd07092726f351b7bcbdf3004c3698833ba0f",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1,
+        "append-only[append-only]": 2,
+        "append-only[frozen-snapshot]": 4,
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "3881e5212a0e127cdeec677808918997ebc83fef",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a43ca56101fbe37926b7db4e8256da361f6eec85",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7676429173fc5f2169b42c92f3f5a377dab6c5a1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f9e548f652d21847c1afe600c1f2fa41cafb40fb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cbc0a5362861efeb9148f9327275b699d7086307",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 9
+      }
+    },
+    {
+      "commit": "daf83934a7f1d79b3ce3290799452d6888067ce7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b660d1aaff1567e18bdbe05c3a114139899866ae",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "26d5ceeeab741c5e70246871342ab3da65e24f9d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "401f6faa379f20d321149d991e5c3d2bed3c465f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "be7bab6902f5065bb196cd2671c7862dbf3d00f5",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "append-only[row-annotate]": 1,
+        "append-only[append-only]": 1,
+        "append-only[frozen-snapshot]": 2,
+        "record-dates[R1]": 4,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "fbb47a9c8e3896d6767401273c2817de50bf3120",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "5e7de921113fda6634a420b92bee88c700631c5c",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 1,
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "90264c8a891c849b9f3bed3abf9616e365db10ac",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "61701df303c3f06182734a2e174e24a3b1a877d7",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "bd31c9e868c13d19e2ce6cd7c2c955180f67d19c",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "bc18a3bcdc17182407851d9c9e7cc671bde9012b",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "f6641b06d6985255298bd43eb25516a901eaaf0b",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1,
+        "append-only[append-only]": 3
+      }
+    },
+    {
+      "commit": "81957c2c626e4885444ce8400752abe6754df439",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "5c0648812053c43ca4c2574ffb200ee6db5e5675",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4836930548192860181d5cf0c6ebdb1be593a691",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3fd710418d0adc78110cf1669c300edd94aec5aa",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 33
+      }
+    },
+    {
+      "commit": "4cc7e13ca3e9a9cfa9cd3cee4131f11113cc1c03",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "bfc67d082b6c5b70ce2f5756a47203eda6fe14d1",
+      "exit": 1,
+      "rules": {
+        "append-only[row-annotate]": 1,
+        "append-only[frozen-snapshot]": 2,
+        "record-dates[R2]": 1
+      }
+    },
+    {
+      "commit": "9042c5647beca7dc1314506310a915641ae9b328",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "08d87c4dc22d4c7c505aa19fe28bcf36e84cfe7a",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "d6c562e5f360acc2cea654a416c343ced85ae4be",
+      "exit": 1,
+      "rules": {
+        "readouts[G4b-guard]": 2
+      }
+    },
+    {
+      "commit": "c8d72cc329f6b295967e2cca7633c19de188c4a7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a3653d76cb4866631f18e8faf84b145c85ef57eb",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ebd34ce10e9b1cd33cb22df20a11a21ac966581d",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "3921aab0851f767a331ee2b92e85879679da6046",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0c46b3f0ca20dcfca73249336e5cabfbd8b66023",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6f9fab738d48a83f8932cfe9d444ab6a484ef965",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f8856ed8267b1aa2d42c45c929ed837a719027a5",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "5677495a567c299fe8d95d4231eb4bc76767435f",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "6b970335d61e281bac0bc54b39ac16f808642ddc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2f4193081020771ce81ed6f39a0370ecd6830989",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b468627cec84d186eef2a0a7d17e3d01d55a23ab",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "393ffb4c8644fd242cc3be7ad02be7d1926fc204",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "2a329e37b04b6c15299c58e7e3b8cee3b7ee6ece",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "348764c445bd7650e7386c2293afc6a29df6a660",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "18bda1645a3df0acbb0e8af5ec74b45dc9a31599",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "03ac3b0664b21eee241fbcb97bf7a6867ab175fa",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R1]": 3
+      }
+    },
+    {
+      "commit": "a705a5880d19847600454092b1262a56e98021b6",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "616b889c19b587871483930ca358eb35712a2dcf",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "794d789a8cc034b454b3552a79a659dbad5fbc74",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "c8d2856e725cd26c18624d72ace41e15ea6390e0",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "6bade66ea020bc854a3ac59f6af6f80ed0bdbf8d",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 181
+      }
+    },
+    {
+      "commit": "778a5e2e854cbb579968396b18e343b6899d5a59",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "5f4772d8faf37622f28082d3a0c90471e7d4890c",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "5713f5dd2a8c64b6fd21f906c9ea9308ebd59bf7",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "f5a21263e70111e5a548640d2290a14ca39a3dd6",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "fa84bce87e69d6bb53ed6b81803a96c7bdb78c9f",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "ab5604ba8c887d76d3d8d606957621ba0122c0a0",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3
+      }
+    },
+    {
+      "commit": "c31380fbad1d7ec383d3cf48a52dbd4bf0cf52f4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "1b4e5c3641e04220f090a819c82da8bc4546d722",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "13ade2b240a22eb11a623d3c58ba685d019ae1d0",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b132bbbb8e36951fb5f3a8ec8a392cbb6449fc99",
+      "exit": 1,
+      "rules": {
+        "append-only[prefix]": 1,
+        "append-only[chain]": 89,
+        "append-only[append-only]": 1,
+        "record-dates[R1]": 3
+      }
+    },
+    {
+      "commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+      "exit": 1,
+      "rules": {
+        "record-shape[seq]": 1
+      }
+    },
+    {
+      "commit": "e65748c0c4a3e04c90daf0674e359e662bf3e6a3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "30d401dc98eb7ff286b69520216cdfda0ae8f0c7",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "append-only[prefix]": 1,
+        "append-only[chain]": 90,
+        "record-dates[R1]": 3
+      }
+    },
+    {
+      "commit": "f73a997ee1c0f842ed6543f053ff6def9ce9e196",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "8ec2bcfb692b3cf9118998feb1211810d88f2e1b",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen]": 1,
+        "append-only[append-position]": 1,
+        "record-shape[columns]": 1,
+        "append-only[append-only]": 2,
+        "append-only[row-annotate]": 1
+      }
+    },
+    {
+      "commit": "4eafb9d9e08b015d84e7d95cb06a01b1fb7d40e1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9ae9b26fb5f3765ee0af12e183c600706898b873",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "0ed6c9ddf81a2f89dfcc70ddf081fe60aee40365",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3c9ea94941bd4e0a4a744a8627ba7b3a7e953f53",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a78720abe2a3181f5adc7f944dc71ff82dfdc2f2",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "4dd5a038fe1a92d1953535fe2955d5ce9d11797d",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "aa5c519411dac6543939b0d28b4e097333b3b6ee",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "0669f65d700b8eceb8b50f698a089b06424228ad",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "6cc5d9d8eabd1e35efc185ac51d6df399db892e1",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1,
+        "record-dates[R1]": 3
+      }
+    },
+    {
+      "commit": "5f80ba19958524baa09cfde98f80f14914cfa279",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "record-shape[columns]": 1,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "df8c5ab189c721257164e3432063a559b034bceb",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "2c588cd653775a914be591bd0857819160ca6b27",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "30f8638e199af6415167718c01c63a8c2052b6ef",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1,
+        "record-dates[R1]": 4
+      }
+    },
+    {
+      "commit": "0f2e0711a695302c92601407fe946cadb70ecc46",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "e99e05b1666ee6160771b641774c68b43e8aa4ce",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "3e26a2dc9c726d93b655369d7b9995f3d91d969c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8e7bdfbe1e24a5d0ef659918c587dc91ea4e6f05",
+      "exit": 1,
+      "rules": {
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "5efe4b9dca6413ca508449730eb59a1bf745f6ee",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 6
+      }
+    },
+    {
+      "commit": "04895cdc3e7a0caf5fff111cd27f9c5081cebd2e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c8fb59f983a9d6d728e21e39a983c1788b81ffc6",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "append-only[append-only]": 4
+      }
+    },
+    {
+      "commit": "10547fff2072e1a9f9481dc8d7adf2a972031091",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2404edb0293c80e2329e607c79d5b9adb0622882",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "a97aaca26e341fc9063d4dbe8dc191f41a7e30cf",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 4,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "c4aafa20a504582943e49a3e1bc8b6fd015df3d4",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "a33cd6ec33cf33d69f15d282b8d69aec24dcbfc4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "9bf1120165ce42df1f13255229de7f6888af2178",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1,
+        "record-dates[R1]": 4
+      }
+    },
+    {
+      "commit": "22b773f8e6173eecbd4a102415fb00ef2b53d343",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 4,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "1c926c95fbd6d66c412762a0034d4dc42126ed1d",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "da146260cb1978cee7ebc8043b4c475216462cb6",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "e4be1b846458564bea84f97457e16630354ceaad",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "95c8a73f477c7483f5a8f5157d1425b5c3f9cccb",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1,
+        "readouts[readout]": 6,
+        "readouts[G4b-guard]": 1,
+        "readouts[G4b-prose]": 10,
+        "readouts[G4b-tick]": 3,
+        "readouts[G4b-verbatim]": 1,
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "729fb268ec0ae149ed473c3864e7e083e5c216f6",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 1
+      }
+    },
+    {
+      "commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "7a2ff9fa54f05280f12d4ce29eada230d2a550dc",
+      "exit": 1,
+      "rules": {
+        "append-only[prefix]": 1,
+        "append-only[chain]": 90,
+        "record-dates[R1]": 182
+      }
+    },
+    {
+      "commit": "08b3135f06611e28b882c0ec6af79c14914f512a",
+      "exit": 1,
+      "rules": {
+        "record-dates[R1]": 2
+      }
+    },
+    {
+      "commit": "efa389f942366473cb2131ca4fbaf18445eb67d9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ad0bd843b140cf006c7db06ae1bb8f7cbc049ef6",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2f2204999e2f3a41f6493c56d7492fbc40bd5e14",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d76c22eb647b076cab546ea6c83079caa9b2f048",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e8bc0179720e6b52498d0db63df7b46c357c226f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4b35ad7c46d5c30539f9d6aa6fc2d46704366342",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cf1f87116e680579f50310fc915b1fdf3a4fbd1d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4127dbf3ac05bad87f92fe4abaf23a727c338bc4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 1,
+        "readouts[readout]": 4,
+        "readouts[G4b-guard]": 1,
+        "readouts[G4b-prose]": 8,
+        "readouts[G4b-tick]": 1,
+        "readouts[G4b-verbatim]": 1
+      }
+    },
+    {
+      "commit": "45dcc789bb80af0f6378345bfbfb9a9e2c65da69",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a711333d9ad92bfa08c738bdd95e9a85a5aa119c",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "71e8bc83dd4e138c800969807dfa6cd0db3a5c0c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "bf98abb5f5e423721131b948a7fc41c0722623dd",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d7cbc68e27067ec939a7325273d4b4d5195521ac",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "474f69f4ac377467dacf329134f82b0d9a5ddd72",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "6e93b0980fa4954a1c58b1515771847a17ee3723",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "150d6f17bf913544f9449df6c7c7e5b11fd8c39f",
+      "exit": 1,
+      "rules": {
+        "record-shape[columns]": 1,
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "37fca3785194bb937cea5e6b57f2a5c6648dc55e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "000fdff012a05e27a77f3ac12474df961346b5a3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c77bd45e86075e1568d8f4bdeb3b697856028695",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "record-shape[columns]": 1,
+        "record-shape[pr]": 1
+      }
+    },
+    {
+      "commit": "b051732c3c6ed11d7ebb2343a4414f2fc281fd2a",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3,
+        "record-shape[columns]": 1
+      }
+    },
+    {
+      "commit": "1703734a897ec89edd34e65a4e78c43927d7bb20",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "251827b0bd13d262b6d2444f7dff1c2971383757",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a23fca8a83996af587c09f070683edf5d6e3d296",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "72b83f24c11620616967d59150ddd4760eda3c70",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b210aa95c5dd737c315b58023a5d26a05a2b0192",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "884915a2c3db184d59d085872c45019ad0107c56",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6266f393201d90f4c5580413a116889ee0e2de16",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c7c773e840b2acc17ce07cdc1a442a3b4baa8c2e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ce45d5483c8e84c83c948a712bc94c5bbeb2bdd4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "81050955ee04e49915d19e89d6072a799afeeeb2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "15975da7668ae3c8663bea47bdb420674a86c611",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4df1552f617b0e8ffbe29f871d17421eaf00628a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5a0015dba82ab15fcae068f1798cd8b19577b90d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "fddfc1b4e44d16b3986ac48adc7ba7bf8806053a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7642f8d1a33ba985c9494cda05c0b2e12fc35c9e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c28756d901d5b741a46064b55791ba40c2db46f7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e5725b7beedc2ae35308eb6c52fdcabce33fe4f4",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4aff9a481ca6ee76616425fcffe47c5c61204f6b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dfe34ad9cdeb98daf87a597790eb0613d540eb0d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e8e6df2517336cdd5888d93f71e4d92876d9ba52",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "888930ffe424a1d842a44ac8a0397258ef4f3bd3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2cf03075425fbf7715a65cd8581c1cba4bc2f984",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "63d6a4043c9b927d02f484e770cab30c06eb4ff8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1b9b57b28a26f510df24db521f77f3415cfc7a65",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "41ab9521414266bb5420b820f8a4aa6d17d926c8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "56c5315806470c24124ccf71c1918698abca9ba3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b437d35766fbcab621b205aaf892ba523319ee18",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0c46a2dec0252cb6b80a8f97112f47580b0aa240",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "12147ba3b5cf17eafed85940889c7aa0e68e1299",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "89b833f2e6678edafd38493d1e42885bc63e82b9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f6715db63e43017ec3419a853850394822819d88",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "038e25b931ea80c01446b59c6640cfcb0c0ec865",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "07ef0142c9d072260849dda56e9afd52252ee4cc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "02dbe1baf351a9ceadb81e6fdec11b6996a51fa9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5004160e083096ba00ecbd54ab826af5d7dfe743",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e24cc41c2c11dc1545861ae59e4060c572fd8493",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4181a0ac7e8e048029dea347fdfd3286cc31ddea",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "93fc4d676b981c127ec20babf1137ea8ddf23662",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "07657ccb743538db5a503768a000ffe0d933c1c8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2f5ebee3ed721c11559ad9020540f8fd41882d00",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5d675149d06de387c972d48a8f743513d0091761",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "914124cbbf4a1013a1710f6cb1ca3714c341fcb0",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1dfd9019271542a7e793488b139df17be67888a8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7a8b33162feb4f0a5f927868ca2fac3db600cc52",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "82d68bb7f0c2f0ea8216c68c045638fe85a0f14c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a4db72287c49d811e075ffaad8b3cf2b6cb73d0a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8e25b48eaad9a695cf27325ea9553a30c5082ca8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f156514647cacb8f0c68d6b9578dc04a6d609a5b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "fc1c8aed2d2b9645f80bfb40311c2985d1b6737c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "921d2c0c1285ff105dc78245a6129242fec846c6",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e69f3fdeab4a91248a1d32b0b42a6c6a79ad90b8",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "81425a0619c2c6abc147ff9b14cf43779d0cbd83",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "74d12d5032fc53380d922368ebb56f4234f15a59",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "665a36962f8f9c7dc9b718a463acdf0a60a48da7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "95340b509e37e5d718a4e34ad35103e5980bce93",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c5dd458c6fb7e3b3e78f6741b315e1668236fd0c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d42db278a8dc70796bdfb015d0985da015cce831",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9975984dab61110cb3cacdbf619f634871158f90",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d591516444259f0d68137a4c5be42ebf2d4c47d3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "51f2a3e891427bc0585311fda1370ed3c05ee05c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b6b3d9705ad505695e20d9175401292a41d21d8a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a3ef8aedc19b6395f910d81adb416bb1ceb0b572",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "010c0c227cdd8acd391255623f617b8ecde6f57d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4423c9ee77be699f4bdbd306a381f0e9a4b8c9c5",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "950abeaf5542daff2e33b78993e482ca85cab86e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3d1384c0eff2e3078a6c8e7b050812ee1ab37e32",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "befad2270a60aa4a373b791884493a41c64b5d4f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e34faf7c600d088e3f84e2ccd4856d82d341eafc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a1bc4dad57db32b7c77b6eb121710de7b6b47141",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f55d64c32912fe9ce6785d60198eb5501db1820b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "973cc7f2f3fdbc3b951c99720d0ae0e7fc5e18ab",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0ac165e1a25624b0cd455bfde01b880a5a829dc3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c20ef8bf0135986a757620ba60f19d5039214010",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0a8a6296a0d1f387ae766c21f19c74e90a274f61",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9262a9591495b0de9526e6a2177288e02c31f692",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c3e37654961e36556880beb45abf74119ff84f6e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4b294aa492c017fda5180d2c79a8b946c5c12ede",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cc9dc56207345d763542cb25bfc6f699bf5a4f13",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3208c8e0bf0edac09341f3cda42dfe3831fae866",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e5936f967158444aef97cbb2d1325d507193fa43",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1f132a9c638d9e9b79fd956e1faf8ab1ee582e25",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "de0b3591d83fce97db116f31f4bc7b02f3c78980",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "43f8249495a48ef900fb275ddbfa75674b7d3f78",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "619b7d85b180a52c342dbd0fecb6e4a0e70b73c6",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b1b515469b976251e811c7914fe739f57c335960",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "91c8de999cc5dd291c88d2293781df8ee3b6540c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4a5e19a54a8eeb1463270eb50269842175c7607c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1cbe5b218ec613d67bd6c14e8cf881b9dfbdb9cf",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2f05e203349eb1adb3101161afc8b3423085b5aa",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "35a4dc16091f0446e6735c39bc468e122ffdfe03",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "787160ee28779d720534b8584ac08b984383f38f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0e6c8ec1a0299282d116a836ccdafa86bcb2776c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "88fc299d375fa784b844795c3d9bdbc70db990ad",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8ce834c2fc9d4ec90e661b54655fbc9ce6ba6397",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f66b245037372838260b204d5b28d9b7a4993686",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4685a0cb536843852921d2e2eb14e1eb5e5bd148",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "b4f52e4d36f7d1f0be85cce8e212b4e0d1ae7cfd",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "23094c8cd9877004c2b59980349e8102e523fdc3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c5a137585a0229bd72d5a77a204ad212cbcc142f",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "375a87284e5e207fd1759910133a191bd3240042",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "dbc049733dc9423c5ef7beeb9be360ad0e03b5ab",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "850805aa9cdc1307cf87ce45cfb448407bc81876",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4a921bb9868b799c82f6a9a160eb38c0f0f91605",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "02bf5d568c074adaed04254808f70a9bf7e070cc",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "41cc055495a202fe34dc5c8ce0cf89dab4a2bf1c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9720b96c9e5762b4feeb92aafbc5118c3e78c57b",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "044ffd0baa9c6defdd3c434d8735163eeaed8bef",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "e2ab1897578182e2bf461cae8c010c25ce66cfd1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "412cb337ffe2b809d2d639658cf9ca3656f019b0",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6d988aebb0913ff2fccc8b7fd0557e1bfcd11da5",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4b346d51f5ead398ac72780018574c6ad63cfa2e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "87128d435ac83298571d3059df39f8e8e20aa728",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "6548768aef1015120ccc19ea6c2d426cbda565ec",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ae83ad0712c7091c1c004915bfa33531b5113b07",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a2f53ff630d0909432798a413d5fbcbcaa734ea9",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "06724e3b95f143e22f79cffa0d58a3a7a3108d3a",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "22324540d6da00f6539bfcc0fc8ec6f81a12810d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "0802635028b72a6cff0c57d8eaec7257392256a2",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4cd43ce0af8c0b40fdb5e7c536ee82baee52ae59",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c1382e8396b0ea90bda169e97d91db2b84896783",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cf9453b25df271083c61c9d3a47a39038be88eab",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "cac65a171a958f99f3c4a21dd1e34f8b51b3a450",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "4b5c5398c7a8a4fde46d487e11b36f397ff54c36",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f68a3c96270b926bce476a10e5ec0e8e267967b0",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8ccda04efec4d8ce1d458e23fc206801c766f7a7",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "838bdfa115e95650f2a522c0d650ec1fd3ed26db",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7b3eeb49d20fa6099f81bb48a6445b2e7f088943",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "03effc4d03dd584d742b451f0ecf97dadd4d69d3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f333b03e73cbb8db8d935d2a2f9ca5bbaf89b5b3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "3374008b3106aa9fbeaa902770cc9099bbb86bc2",
+      "exit": 1,
+      "rules": {
+        "append-only[amendment]": 4,
+        "append-only[frozen]": 7,
+        "append-only[append-position]": 7
+      }
+    },
+    {
+      "commit": "d8ea72ef9637579f7c755b3b43fd5dc3cda18910",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "ef7772fe7c02628f8dad9dc4d0fc0cc13809ea70",
+      "exit": 1,
+      "rules": {
+        "append-only[amendment]": 5
+      }
+    },
+    {
+      "commit": "c5a1f3ff15dd7ac68f800d75d1e49d0d46bcab38",
+      "exit": 1,
+      "rules": {
+        "gate-records[G4a-hedge]": 1,
+        "append-only[frozen]": 1,
+        "append-only[append-position]": 1
+      }
+    },
+    {
+      "commit": "6e66455aa854ccff71d432a40c024e73200688b1",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a4b8aed9377622759c5a66c9b3ee7221d2986211",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "f96461dd78807b04f707646170690caab1c8d05e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "2fb3ff5d9dc8f44117c6a86ec6d25090ef496c5d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a7951049dd71d42c1f2927c16c3fa9bcedb00c38",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1e718a0d04e0fe2fef753f16e67518c1016714ac",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c2676758c033d36c11e7efe9c7bed51ed9368e7c",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 5
+      }
+    },
+    {
+      "commit": "f02deb01c2ae66ec3142822a33507913e54bddcb",
+      "exit": 1,
+      "rules": {
+        "append-only[frozen-after-close]": 40
+      }
+    },
+    {
+      "commit": "089ce66b388e6f6893458fa2acb68b0fb72af4be",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2,
+        "append-only[frozen-after-close]": 5
+      }
+    },
+    {
+      "commit": "5510d9d04c163b5812170223c75e5589cd0d128c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9880b5ee0e2975d8db355e8d2a175f21b84aadea",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9dbb26f3d39b6e8e446600091b7fd9233de8c95c",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8607f3fc801120285a8e22db321dcfd02ac5fa67",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 8
+      }
+    },
+    {
+      "commit": "065c0c665d6d8587f263a3ae3b69ce0bee255ca3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "c2b6bad86a8c48be91b048a1d97e9aa3c616d887",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "49b9c785bf06a64ba25bb091a75ddcb6e0d2826e",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "8158a6f16ce73070e15fb73cbd8401745e3f1f13",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 9
+      }
+    },
+    {
+      "commit": "4314abbd9243d71027bdc50b465ec350e330e69e",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1
+      }
+    },
+    {
+      "commit": "26864e11a704f1d99df45d8e5f437e180cf07893",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "97ede3e6ce8247e9486fa51c09d28e2a2ed10754",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "a9f48abf294f21359aa54932d80a43ab5333353e",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 4
+      }
+    },
+    {
+      "commit": "b2692edeff54a330e7bfcba63d8508ce768585c4",
+      "exit": 1,
+      "rules": {
+        "append-only[append-position]": 13
+      }
+    },
+    {
+      "commit": "52eb2788a0f6e67a5844dfa8454ad570814a1e8c",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 4,
+        "append-only[append-position]": 6
+      }
+    },
+    {
+      "commit": "f79abbd26be9a10bd1d84caf0d0cac766c53af35",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "87a1ffe12e40ea059b7b834363f102a8552ac9e3",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "9659257a081566df439438b615858141b6708c2f",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3
+      }
+    },
+    {
+      "commit": "495f4302f027b2f664088353222043c707bcb737",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 1,
+        "append-only[append-position]": 6
+      }
+    },
+    {
+      "commit": "0f2a2a0bc5d369ab44fe6249fcbae49db82f454d",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "d83093bece338f607aa97bfec49c978e023f1331",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 3
+      }
+    },
+    {
+      "commit": "e570917cdc34490dc75341cbbcadb2c7193f1a23",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "1056c60cdd6e2faec5c3b4dac0d1dada371f1c74",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "257428a05a4c2fddaef3924a670eab806581b301",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "327fc579b54ec0ce4b8feb27d8cb5a95bc925483",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 2
+      }
+    },
+    {
+      "commit": "48e40c71f9bffa9bbc492ec975de00f66735d032",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "5afb92a4a2ee5541daa34873d42b43c3ac675941",
+      "exit": 0,
+      "rules": {}
+    },
+    {
+      "commit": "7ec51e34af8959a895109e61e8af03609e5b5060",
+      "exit": 1,
+      "rules": {
+        "append-only[append-only]": 10
+      }
+    },
+    {
+      "commit": "31b9c615e7e2c5f93d3af85d2af2753021e453dd",
+      "exit": 0,
+      "rules": {}
+    }
+  ],
+  "judged": 651,
+  "violating": 259,
+  "vacuous": 7,
+  "oracle": "tests/unit/fixtures/memory_guard/replay_expected.csv",
+  "disagreements": {
+    "missing": [],
+    "unexpected": [],
+    "clean-breached": []
+  }
+}
