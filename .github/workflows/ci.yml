@@ -71,6 +71,21 @@ jobs:
       - name: Build-memory layout gate (check-build-memory.sh)
         run: bash scripts/docs/check-build-memory.sh .
 
+      # P34.9 (B3 §6 V1–V13, G5/G11): the ledger contract — orient budget,
+      # CURRENT STATE vocabularies, named paths, stale tokens, PHASE LOG /
+      # BUILD_INDEX / RETURN PASS / GATE DECISIONS well-formedness — is checked,
+      # not trusted; a check that evaluated none of a non-empty candidate set is
+      # vacuous (exit 3, red). Named explicitly for the same visibility reason.
+      - name: Ledger-contract gate (ledger_contract.py)
+        run: python3 docs/build/tools/ledger_contract.py check --json docs/build/logs/ledger-contract.json
+
+      # P34.9 (B4 V9): the committed current-state projection is verified
+      # against its recorded input digests — drift, a known inconsistency, or an
+      # obligation landing naming no chain/BACKLOG row is red. Also inside
+      # `make docs-check` (docs-check-projection); explicit for visibility.
+      - name: Current-state projection verify (current_projection.py)
+        run: python3 docs/build/tools/current_projection.py verify
+
       # BM-HIST-01 (SEED-02): the lines this PR adds or removes in build-memory
       # records — record dates, append-only regions, record shape, gate records,
       # readouts. check-history.sh hands off to docs/build/tools/memory_guard.py.

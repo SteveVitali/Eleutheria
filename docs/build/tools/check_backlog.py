@@ -101,10 +101,12 @@ def _fail(msg: str) -> None:
     sys.exit(1)
 
 
-def risk_deferred_ids() -> list[str]:
+def risk_deferred_ids() -> tuple[list[str], int]:
     """RISK ids under a deferred-class ``### `` heading (id cell may carry a
-    ``→ BL-nnn`` cross-ref suffix, which is stripped)."""
+    ``→ BL-nnn`` cross-ref suffix, which is stripped). Returns (ids, table-row
+    candidates) — the G11 candidates/evaluated pair (P34.9)."""
     ids: list[str] = []
+    candidates = 0
     in_deferred = False
     for line in RISK.read_text().splitlines():
         if line.startswith("### "):
@@ -114,36 +116,67 @@ def risk_deferred_ids() -> list[str]:
             in_deferred = False
             continue
         if in_deferred and line.startswith("|"):
+            candidates += 1
             m = re.match(r"\|\s*(RISK-[A-Za-z0-9-]+)", line)
             if m:
                 ids.append(m.group(1))
-    return ids
+    return ids, candidates
 
 
-def ld_ids() -> list[str]:
-    """LD-/LH- ids that head a table row in LEDGER_DEFERRALS.md."""
+def ld_ids() -> tuple[list[str], int]:
+    """LD-/LH- ids that head a table row in LEDGER_DEFERRALS.md. Returns
+    (ids, table-row candidates) — the G11 pair (P34.9)."""
     ids: list[str] = []
+    candidates = 0
     for line in LD.read_text().splitlines():
-        m = re.match(r"\|\s*(L[DH]-[A-Za-z0-9]+)\s*\|", line)
-        if m:
-            ids.append(m.group(1))
-    return ids
+        if line.startswith("|") and not line.startswith("|---"):
+            candidates += 1
+            m = re.match(r"\|\s*(L[DH]-[A-Za-z0-9]+)\s*\|", line)
+            if m:
+                ids.append(m.group(1))
+    return ids, candidates
 
 
-def adr_revisit_ids() -> list[str]:
-    """ADR ids whose file carries a ``## Revisit trigger`` section."""
+def adr_revisit_ids() -> tuple[list[str], int]:
+    """ADR ids whose file carries a ``## Revisit trigger`` section. Returns
+    (ids, file candidates) — the G11 pair (P34.9)."""
     ids: list[str] = []
+    candidates = 0
     for path in sorted(ADR_DIR.glob("ADR-*.md")):
+        candidates += 1
         if "## Revisit trigger" in path.read_text():
             m = re.match(r"(ADR-\d+)", path.name)
             if m:
                 ids.append(m.group(1))
-    return ids
+    return ids, candidates
 
 
 # DEFERRALS statuses that still owe work — the same owed set as audit_current_state.OWED_STATUSES
 # and the vendored check-build-memory.sh rule-5 scan (OPEN, PARTIAL).
 DEFERRAL_OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
+# The full canonical leading-token set (G11, P34.9): a `| D-… |` row whose last
+# cell begins with none of these was offered to the checker but not evaluated.
+DEFERRAL_ALL_STATUSES = DEFERRAL_OWED_STATUSES | frozenset(
+    {"DONE", "WONTFIX", "ACCEPTED-SKELETON", "DEFERRED-AGAIN"}
+)
+
+
+def deferral_eval_counts(path: pathlib.Path) -> tuple[int, int]:
+    """(candidates, evaluated) for DEFERRALS: ``| D-… |`` rows offered vs rows
+    whose last cell's first word is a canonical status."""
+    candidates = evaluated = 0
+    if not path.is_file():
+        return candidates, evaluated
+    for line in path.read_text().splitlines():
+        m = _DEFERRAL_ROW.match(line)
+        if not m:
+            continue
+        candidates += 1
+        cells = [c.strip() for c in line.split("|")]
+        words = cells[-2].split() if len(cells) >= 2 else []
+        if words and words[0].upper() in DEFERRAL_ALL_STATUSES:
+            evaluated += 1
+    return candidates, evaluated
 _DEFERRAL_ROW = re.compile(r"^\|\s*(D-[A-Z0-9][A-Za-z0-9._-]*)\s*\|")
 _BL_HOME = re.compile(r"BL-\d{3}")
 
@@ -348,9 +381,9 @@ def main() -> int:
             else:
                 owner[src] = r["bl_id"]
 
-    risk_ids = risk_deferred_ids()
-    ld = ld_ids()
-    adr = adr_revisit_ids()
+    risk_ids, risk_cand = risk_deferred_ids()
+    ld, ld_cand = ld_ids()
+    adr, adr_cand = adr_revisit_ids()
 
     if len(set(risk_ids)) != len(risk_ids):
         _fail("duplicate RISK id under a deferred-class heading")
@@ -393,6 +426,31 @@ def main() -> int:
     register = trigger_register(ADR_TRIGGERS)
     trigger_problems = adr_home_problems(adr, owner, bl_status, register)
     risk_dupes = risk_id_duplicates(RISK)
+    # G11 (P34.9): every input universe reports candidates/evaluated, and a
+    # universe that offered rows but evaluated none is vacuous — exit 3.
+    d_cand, d_eval = deferral_eval_counts(DEFERRALS)
+    print(
+        f"candidates: backlog-rows {len(rows)} · deferral-rows {d_cand} · "
+        f"risk-rows {risk_cand} · ld-rows {ld_cand} · adr-files {adr_cand}"
+    )
+    print(
+        f"evaluated: backlog-rows {len(rows)} · deferral-rows {d_eval} · "
+        f"risk-rows {len(risk_ids)} · ld-rows {len(ld)} · adr-files {len(adr)}"
+    )
+    vacuous = []
+    if d_cand > 0 and d_eval == 0:
+        vacuous.append(f"deferral-rows (0 of {d_cand})")
+    if risk_cand > 0 and len(risk_ids) == 0:
+        vacuous.append(f"risk-rows (0 of {risk_cand})")
+    if ld_cand > 0 and len(ld) == 0:
+        vacuous.append(f"ld-rows (0 of {ld_cand})")
+    if vacuous:
+        print(
+            f"check_backlog: VACUOUS — {', '.join(vacuous)} evaluated none of a "
+            "non-empty candidate set (G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     print(f"risk deferred rows: {risk_mapped}/{len(risk_ids)}")
     print(f"ADR revisit triggers: {adr_mapped}/{len(adr)}")
     print(f"LD rows: {ld_mapped}/{len(ld)}")

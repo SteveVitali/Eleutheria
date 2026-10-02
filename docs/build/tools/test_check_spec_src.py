@@ -65,12 +65,16 @@ def test_appendix_f_ids_parses_rows() -> None:
 
 
 def test_assembled_reproduces_committed_spec_bytes() -> None:
-    # the live tree must reproduce byte-for-byte (this is the deterministic AC)
-    assert mod.assembled() == mod.SPEC.read_text()
+    # the live tree must reproduce byte-for-byte (this is the deterministic AC);
+    # assembled() also reports which files it read (P34.9 G11 counts)
+    built, read_files, unreadable = mod.assembled()
+    assert unreadable == []
+    assert built == mod.SPEC.read_text()
 
 
 def test_main_passes_on_the_committed_tree() -> None:
-    assert mod.main() == 0
+    # main() takes an argv list (P34.9 added --root); empty = the repo default
+    assert mod.main([]) == 0
 
 
 if __name__ == "__main__":

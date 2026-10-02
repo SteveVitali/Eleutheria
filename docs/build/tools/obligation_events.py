@@ -1536,7 +1536,13 @@ def check(root: pathlib.Path) -> int:
     raw_event_lines = (
         [ln for ln in _epath.read_text().splitlines() if ln.strip()]
         if _epath.is_file()
-        else None
+        else []
+    )
+    _apath = root / ASSESSMENTS_PATH
+    raw_assessment_lines = (
+        [ln for ln in _apath.read_text().splitlines() if ln.strip()]
+        if _apath.is_file()
+        else []
     )
     for e in errs:
         diags.append(diag("events/malformed", "error", EVENTS_PATH, "—", "jsonl", e))
@@ -1545,15 +1551,31 @@ def check(root: pathlib.Path) -> int:
         diags.append(diag("coverage/malformed", "error", ASSESSMENTS_PATH, "—", "jsonl", e))
     diags += check_event_chain(root, events, assessments, raw_event_lines)
     diags += check_assessments(root, assessments)
+    # G11 (P34.9): the jsonl lines are the candidates; parsed records are what
+    # was evaluated. Lines offered and nothing parsed → vacuous, exit 3.
+    candidates = len(raw_event_lines) + len(raw_assessment_lines)
+    evaluated = len(events) + len(assessments)
+    if candidates > 0 and evaluated == 0:
+        print(
+            f"check: VACUOUS — {candidates} record line(s) offered, 0 parsed "
+            "(G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     if not diags:
         print(
             f"check: green — {len(events)} events ({sum(1 for e in events if e.get('kind') == 'transition')} transitions), "
-            f"{len(assessments)} coverage assessments, chains and cells consistent"
+            f"{len(assessments)} coverage assessments, chains and cells consistent "
+            f"(candidates {candidates}, evaluated {evaluated})"
         )
         return 0
     for d in diags:
         print(f"{d['severity']:8} {d['check']:34} {d['obligation']:20} {d['message']}")
-    print(f"check: {len(diags)} diagnostics", file=sys.stderr)
+    print(
+        f"check: {len(diags)} diagnostics "
+        f"(candidates {candidates}, evaluated {evaluated})",
+        file=sys.stderr,
+    )
     return 1
 
 

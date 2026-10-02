@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d1f1df2db5ec568e01ef4324307bd22ad56f83a6",
+  "input_commit": "7feae0fd9ffdbdf2c9d1f430dfc8dc4ea6937d4c",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -762,11 +762,11 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "fd0e62ab1871168eb30df2aea9697f2693e028ecaea8fc708fb951448726e2d7"
+      "sha256": "a6459c2e27be3c6cb67820b3baae6bf646d2953df785fa881f42f14183f5745c"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "bd4d6d8adfe3d95e3bbdf24e32e5bc94e2fd9bfc15baba442a765ae45b53a96a"
+      "sha256": "bb3f6f81ed206c80534c52947bd24403907dc9e30df884444fcdf3d87b5b6b59"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -822,7 +822,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "95ef30e4673106b28f2aaf2b6e7566604925b2c449a36f3ba8b594d4b029eb95"
+      "sha256": "3f16730afd9ceeb70be328095f07c7738dea0a3789fc0cc9e93b7bcfd60f6637"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1602,7 +1602,11 @@
     },
     {
       "path": "docs/build/runs/P34.8.md",
-      "sha256": "609e2199a023045f86c5ac1ecf62e114fa3bc8fb2b27feb75f036f4195e3b9d1"
+      "sha256": "d706f3345cc5c2104e4c713495148916962991ad1d2418b45ea43e8c20077305"
+    },
+    {
+      "path": "docs/build/runs/P34.9.md",
+      "sha256": "380c5a1b1024cd5b4f36b4510adb0022f8709a501ed39213af02c319f7876c68"
     },
     {
       "path": "docs/build/runs/P35.38a.md",

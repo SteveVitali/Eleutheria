@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -125,7 +125,7 @@ verify-gen: gen
 ## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
 ## history guard, the spec-source checker and the coverage-matrix checker — all
 ## stdlib python3, so the uv-less CI `docs` job runs them too.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -173,9 +173,49 @@ docs-check-spec:
 	python3 docs/build/tools/check_spec_src.py
 
 ## Coverage-matrix checker (P19.2): row count, ids defined in the spec, enums,
-## routing and evidence rules of docs/build/COVERAGE_MATRIX.csv.
+## routing and evidence rules of docs/build/COVERAGE_MATRIX.csv. P34.9 (B4 V9):
+## the backlog checker rides here — BACKLOG.md regeneration, deferral/risk/LD
+## home invariants, ADR revisit-trigger coverage.
 docs-check-matrix:
 	python3 docs/build/tools/check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv
+	python3 docs/build/tools/check_backlog.py
+
+## Ledger-contract validator (P34.9; B3 §6 V1–V6, V8, V11 and B4 V12–V13): the
+## control LEDGER's contract is checked, not trusted — orient budget, CURRENT
+## STATE vocabularies, named paths, stale tokens, PHASE LOG/BUILD_INDEX/RETURN
+## PASS/GATE DECISIONS well-formedness, run-ledger harness trailers, manifest
+## rounds, orient probe. Exits 1 violations / 2 usage / 3 vacuous (G11).
+docs-check-ledger:
+	python3 docs/build/tools/ledger_contract.py check --json docs/build/logs/ledger-contract.json
+
+## Current-state audit (P32.7/P34.9; B4 V9): cross-checks the control records —
+## manifest↔LEDGER↔DEFERRALS↔COVERAGE↔ADR consistency. --require-reconciled keeps
+## the diagnostic report advisory (P32.7 stayed advisory until the P34.9
+## reconcile set was recorded) while failing on any conflict not covered by
+## docs/build/reports/obligations/reconciliations.json or a recorded
+## migration-anchor interpretation. JSON+MD reports go to gitignored logs.
+docs-check-audit:
+	python3 docs/build/tools/audit_current_state.py --require-reconciled \
+	  --json docs/build/logs/audit-current-state.json \
+	  --md-out docs/build/logs/audit-current-state.md
+
+## Current-state projection freshness (P34.1/P34.9; B4 V9): `verify` recomputes
+## the recorded input digests, regenerates the payload in-memory, and fails on
+## drift, a known inconsistency, or an obligation landing naming no manifest
+## chain row / BACKLOG row. The obligation-event ledger (P34.7/P34.8) is checked
+## first — the projection must never render over a broken chain.
+docs-check-projection:
+	python3 docs/build/tools/obligation_events.py check
+	python3 docs/build/tools/current_projection.py verify
+
+## Planning-ledger freshness (P34.9; B4 V14): the vendored --planning mode
+## judges each docs/build/planning/*/META_PLAN.md — updatedAt never older than
+## the newest change-log stamp, lastCompleted a done row, nextUnit not done.
+docs-check-planning:
+	@set -e; found=0; for p in docs/build/planning/*/META_PLAN.md; do \
+	  [ -e "$$p" ] || continue; found=1; \
+	  bash scripts/docs/check-build-memory.sh . --planning "$$p"; \
+	done; [ "$$found" = "1" ] || { echo "docs-check-planning: no planning ledgers under docs/build/planning/" >&2; exit 3; }
 
 ## OM-01 commit-trailer check (SEED-02b; plan §3.3, A-21): every commit of
 ## CHANGE_RANGE carries a recognised harness trailer or is an operator commit.
