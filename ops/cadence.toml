@@ -764,3 +764,20 @@ cron = "9 6 21 * *"              # day 21, 06:09 UTC
 job = "sig-ingest-fema-hsgp-allocations"
 scheduler = "sig-sched-fema-hsgp-allocations"
 note = "USAspending assistance-listing 97.067 prime-award slices (bounded 2-page reviewed window); funding evidence only — funded ≠ deployed."
+
+# --- P34.6 (SIG-OPS-001, ADR-175): the monthly logical export -----------------
+# Declared here — cadence.toml is the ops schedule of record. The DEPLOYER is
+# the scheduler of record (P35.1a); until then this row is the OM-19 queue
+# entry and `logical-export.sh --apply export --go "<in-ticket go>"` runs it
+# manually. The [[maintenance]] table is NOT consumed by scheduled-ops.sh's
+# [[sources]]/[[batches]] readers (they read only their own tables).
+[[maintenance]]
+id = "pg-logical-export"
+cadence = "monthly"
+cron = "0 12 1 * *"              # day 1, 12:00 UTC — outside the 03:00-10:00Z
+                                 # batch band the export's sig-pg load must not
+                                 # enter (G1's Sunday-09:00 sketch predates the
+                                 # band rule); a fixed day beats GCP cron's
+                                 # dom+dow OR semantics for "first Sunday".
+procedure = "ops/gcp/logical-export.sh --apply export --go <verbatim in-ticket go>"
+note = "Monthly `gcloud sql export sql` of the sig database to gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/ — the logical export that lives OUTSIDE the Cloud SQL instance lifecycle (ADR-175). Queued under D-P34.6-2 until the first in-ticket go; P35.1a is the scheduler of record for the recurring trigger."

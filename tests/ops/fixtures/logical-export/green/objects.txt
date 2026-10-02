@@ -1,0 +1,10 @@
+gs://example-proj-sig-backups/pg/:
+    145203  2026-09-15T12:49:56Z  gs://example-proj-sig-backups/pg/sig-20260915T124956Z.sql
+    147432  2026-09-15T12:52:52Z  gs://example-proj-sig-backups/pg/sig-20260915T125252Z.sql
+gs://example-proj-sig-backups/pg/seed-2026-09-15/:
+    145203  2026-10-03T12:00:00Z  gs://example-proj-sig-backups/pg/seed-2026-09-15/sig-20260915T124956Z.sql
+    147432  2026-10-03T12:00:00Z  gs://example-proj-sig-backups/pg/seed-2026-09-15/sig-20260915T125252Z.sql
+      480  2026-10-03T12:00:05Z  gs://example-proj-sig-backups/pg/seed-2026-09-15/README.md
+gs://example-proj-sig-backups/pg/monthly/2026-10/:
+   1832210  2026-10-03T12:05:00Z  gs://example-proj-sig-backups/pg/monthly/2026-10/sig-20261003T120500Z.sql
+TOTAL: 6 objects, 2688994 bytes (2.56 MiB)

@@ -1,0 +1,24 @@
+{
+  "schema": "sig.restore-drill/1",
+  "at": "2026-10-02T12:00:00Z",
+  "clone_instance": "sig-pg-drill-20261002t1210z",
+  "clone_started_at": "2026-10-02T11:40:00Z",
+  "verified_at": "2026-10-02T12:05:00Z",
+  "rto_seconds": 1500.0,
+  "rpo_seconds": 240.0,
+  "newest_instant": "2026-10-02T11:56:00Z",
+  "tables": [
+    {"table": "claim", "source_at_t": 5, "clone_at_t": 4, "bounded_by_t": true, "equal": false},
+    {"table": "claim_evidence", "source_at_t": 5, "clone_at_t": 5, "bounded_by_t": true, "equal": true}
+  ],
+  "watermark_equal": false,
+  "watermark_source": {"claim": {"row_count": 5, "closed_count": 5, "latest_instant": "2026-10-02T11:56:00Z"}},
+  "watermark_clone": {"claim": {"row_count": 4, "closed_count": 4, "latest_instant": "2026-10-02T11:50:00Z"}},
+  "sqitch_equal": false,
+  "sqitch_tip_source": [{"change": "baseline", "change_id": "id-1"}, {"change": "p34_5", "change_id": "id-2"}],
+  "sqitch_tip_clone": [{"change": "baseline", "change_id": "id-1"}],
+  "postgis_source": "3.4.0",
+  "postgis_clone": null,
+  "api_smoke": {"health": 200, "coverage": 500},
+  "reproduced": false
+}

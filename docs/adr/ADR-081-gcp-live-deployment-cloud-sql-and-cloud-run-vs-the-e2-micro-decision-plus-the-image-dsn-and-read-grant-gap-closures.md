@@ -46,3 +46,7 @@ at scale, restore-point procedure, monthly logical export, deletion protection) 
 own `Qualified by ADR-175` line here (plan §7, S6R-24); release versioning is row P34.23 (REL-10) and semver
 tags are the operator's only (B-10; plan §5.8). The decision above stays in force until that answer lands;
 this ADR's body is unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Qualified by ADR-175 (2026-10-02)
