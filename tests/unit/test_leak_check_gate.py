@@ -19,7 +19,10 @@ import sys
 from support import REPO_ROOT
 
 NODE = "tests/connectors/test_secrets.py::test_gcp_project_id_is_env_resolved_not_committed"
-SENTINEL = "sig-leak-check-sentinel-9e7d"  # a value that is NOT committed anywhere
+# The sentinel value must never appear literally in a tracked file — the scan
+# searches tracked files for the exact `SIG_GCP_PROJECT` value, so building it
+# from parts keeps it a genuine non-committed needle.
+SENTINEL = "sig-leak-check-" + "sentinel" + "-9e7d"  # NOT committed anywhere
 
 
 def _pytest(env_extra: dict[str, str | None]) -> subprocess.CompletedProcess[str]:

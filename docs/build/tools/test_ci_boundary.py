@@ -193,10 +193,10 @@ chainTip:        r11/p34-1   # the Round-11 chain tip
 | date | gate | question | answer | decided by | consequence | kind |
 |---|---|---|---|---|---|---|
 {waivers}
-## PHASE LOG — Round 11
+## PHASE LOG — Round 11 (append-only, newest last; the only append target)
 
 - 2026-10-01 — P34.1 done — PR #202
-"""
+{phase_entry}"""
 
 
 @pytest.fixture
@@ -213,7 +213,9 @@ def env(tmp_path: Path):
     (repo / "docs/build/tools/record_policy/ci_flakes.toml").write_text(
         "# test fixture allow-list — empty\n", encoding="utf-8"
     )
-    (repo / "docs/build/LEDGER.md").write_text(LEDGER.format(waivers=""), encoding="utf-8")
+    (repo / "docs/build/LEDGER.md").write_text(
+        LEDGER.format(waivers="", phase_entry=""), encoding="utf-8"
+    )
     (repo / "README").write_text("x\n")
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "base")
@@ -235,8 +237,15 @@ def env(tmp_path: Path):
         def set(self, fx: dict[str, object]) -> None:
             fixture.write_text(json.dumps(fx), encoding="utf-8")
 
-        def ledger(self, waiver_rows: str = "", tip: str = "r11/p34-1") -> None:
-            text = LEDGER.format(waivers=waiver_rows).replace("r11/p34-1   #", f"{tip}   #")
+        def ledger(
+            self,
+            waiver_rows: str = "",
+            tip: str = "r11/p34-1",
+            phase_entry: str = "",
+        ) -> None:
+            text = LEDGER.format(waivers=waiver_rows, phase_entry=phase_entry).replace(
+                "r11/p34-1   #", f"{tip}   #"
+            )
             (repo / "docs/build/LEDGER.md").write_text(text, encoding="utf-8")
 
         def run(self, *args: str, gh: str | None = None) -> tuple[int, dict, str, list[list[str]]]:
@@ -802,8 +811,11 @@ def test_a_chain_merge_is_recorded_not_blocked(env) -> None:
     assert "merges:1" in line
 
 
-def test_a_tip_not_descending_from_main_is_red(env) -> None:
-    """chain_descends: false — the chain was rebased off `main` (OM-17)."""
+def test_a_tip_not_descending_from_main_is_recorded(env) -> None:
+    """chain_descends: false is *recorded* (`descends:no`), not a red — the
+    operator merges the chain late, so the tip normally trails main's head.
+    The red conditions are an off-stack merge in the window and a broken stack
+    link (OM-03/OM-17)."""
     env.set(standard(env.local))
     # Move origin/main to a commit the tip does not contain.
     git(env.root, "checkout", "-q", "--orphan", "other-root")
@@ -812,8 +824,46 @@ def test_a_tip_not_descending_from_main_is_red(env) -> None:
     git(env.root, "update-ref", "refs/remotes/origin/main", other)
     git(env.root, "checkout", "-q", "r11/p34-1")
     rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
-    assert rc == 3 and doc["kind"] == "stack" and "does not descend" in line
+    assert rc == 0, line
     assert doc["external"]["chain_descends"] is False
+    assert "descends:no" in line and "blockedOn" not in line
+
+
+def test_a_merge_before_the_boundary_timestamp_is_not_since_it(env) -> None:
+    """The merge window is a timestamp, not a date: when the last PHASE LOG
+    entry names its boundary time, a merge earlier that day predates it and is
+    not part of the delta (the contract's 'since the last boundary')."""
+    env.ledger(
+        phase_entry="- 2026-10-01 — P34.1 done — PR #201 green "
+        "(`ci: pass #201@abc1234`; ci_boundary 22:18:48Z)\n"
+    )
+    fx = standard(env.local)
+    fx["merged_prs"] = [
+        {
+            "number": 154,
+            "headRefName": "devin/p31-19-round9-closeout",
+            "headRefOid": "e" * 40,
+            "baseRefName": "main",
+            # Earlier the same calendar day as the boundary — before it.
+            "mergedAt": "2026-10-01T04:26:00Z",
+        },
+        {
+            "number": 200,
+            "headRefName": "r11/p34-0",
+            "headRefOid": "f" * 40,
+            "baseRefName": "main",
+            "mergedAt": "2026-10-01T23:00:00Z",  # after the boundary — in the window
+        },
+    ]
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 0, line
+    ext = doc["external"]
+    assert ext["since"] == "2026-10-01T22:18:48Z"
+    assert [m["number"] for m in ext["merged_since"]] == [200], (
+        "the pre-boundary merge is outside the window; the chain merge is recorded"
+    )
+    assert "merges:1" in line
 
 
 def test_a_stack_link_broken_by_rebase_is_red(env) -> None:
@@ -849,7 +899,8 @@ def test_ledger_parsers() -> None:
     spec.loader.exec_module(cb)
     text = (
         LEDGER.format(
-            waivers='| 2026-10-01T12:00:00Z | g | q | "waive docs" | operator | c | waiver |\n'
+            waivers='| 2026-10-01T12:00:00Z | g | q | "waive docs" | operator | c | waiver |\n',
+            phase_entry="",
         )
         + "\n## GATE DECISIONS (legacy)\n\n| date | gate | q | a | by | consequence |\n"
         + "|---|---|---|---|---|---|\n"
