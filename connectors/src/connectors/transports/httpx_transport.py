@@ -40,7 +40,7 @@ from dataclasses import dataclass, field
 import httpx
 from policy.crawler import assert_no_circumvention
 
-from ..net import RobotsResult, now_utc
+from ..net import DEFAULT_CONTACT_URL, RobotsResult, now_utc
 from ..stages import FetchResult
 
 #: Default connect/read timeout for a single request (seconds). Overpass queries
@@ -63,13 +63,16 @@ DEFAULT_BACKOFF_SECONDS = 1.0
 MAX_BACKOFF_SECONDS = 300.0
 
 
-def default_user_agent(homepage: str = "https://sig-project.org") -> str:
+def default_user_agent(homepage: str = DEFAULT_CONTACT_URL) -> str:
     """The fallback crawler UA when policy supplies none (``SIG/<version> (+url)``).
 
     :class:`~connectors.net.PoliteFetcher` normally builds the UA from the
     connector identity; this is the standalone fallback the spec names
     (``SIG/<version> (+https://<homepage>)``) for a transport used without a
-    fetcher (e.g. robots pre-flight).
+    fetcher (e.g. robots pre-flight). The default ``homepage`` is
+    :data:`~connectors.net.DEFAULT_CONTACT_URL` — the owned explanation page
+    (P35.38a / ADR-168 Decision 6), never an unowned domain or a personal
+    identifier.
     """
     from .. import __version__
 

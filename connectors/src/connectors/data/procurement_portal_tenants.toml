@@ -42,7 +42,8 @@
 # [[platform_census]] arrays.
 
 # 2026.09.18 (P26.10 / SOURCES.9): initial registry. Live probes 2026-09-18 with
-# the shared `procurement/1.0.0 (+https://sig-project.org/data-collection)` UA:
+# the shared `procurement/1.0.0 (+<contact URL>)` UA (the contact URL later moved
+# to the owned surveillancegraph.org explanation page — P35.38a):
 #   * bidnet — agency storefronts enumerated off each purchasing group's public
 #     `/participating-buyers` page (server-rendered tenant list); each
 #     storefront serves its own open/closed/awarded solicitation indexes and

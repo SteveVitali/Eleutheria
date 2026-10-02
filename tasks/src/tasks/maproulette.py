@@ -36,6 +36,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Protocol
 
+from connectors.net import DEFAULT_CONTACT_URL
 from policy.sensitivity import SensitivityClass, geo_tier_for
 
 if TYPE_CHECKING:
@@ -216,7 +217,9 @@ class HttpxMapRouletteTransport:
 
     client: httpx.Client | None = None
     timeout: float = 60.0
-    user_agent: str = "SIG-contribution-back (+https://sig-project.org)"
+    # The UA carries the shared owned contact URL (P35.38a / ADR-168 D6) —
+    # imported, never a repeated literal.
+    user_agent: str = f"SIG-contribution-back (+{DEFAULT_CONTACT_URL})"
 
     def _headers(self, api_key: str) -> dict[str, str]:
         return {

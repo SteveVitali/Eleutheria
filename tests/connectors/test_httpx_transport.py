@@ -224,6 +224,18 @@ def test_default_user_agent_carries_a_contact_url() -> None:
     assert ua.startswith("SIG/") and "+https://" in ua
 
 
+def test_default_user_agent_fallback_names_the_owned_contact_url() -> None:
+    # P35.38a / ADR-168 D6: the robots pre-flight fallback carries the shared
+    # owned explanation URL — imported, not a second literal — and never an
+    # e-mail or a personal identifier (A-17 / C-8).
+    from connectors.net import DEFAULT_CONTACT_URL
+
+    ua = default_user_agent()
+    assert ua.endswith(f"(+{DEFAULT_CONTACT_URL})")
+    assert "@" not in ua
+    assert "sig-project.org" not in ua
+
+
 def test_a_body_sends_a_post_with_the_body_bytes() -> None:
     # USAspending's sub-award search is POST-only (§23.6): a non-None ``body``
     # makes the request a POST carrying the body, never a GET.

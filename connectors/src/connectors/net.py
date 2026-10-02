@@ -55,10 +55,13 @@ from policy.crawler import assert_no_circumvention, robots_access_permits
 from .api_allowlist import api_allow_reason
 from .stages import FetchResult
 
-#: The contact URL the UA carries (Crawler Conduct Rule 1, SIG-INGEST-011). The
-#: path avoids the token "crawler": some API WAFs (e.g. the Overpass front-end)
-#: reject any User-Agent containing it with HTTP 406 (ADR-083 / P25 live finding).
-DEFAULT_CONTACT_URL = "https://sig-project.org/data-collection"
+#: The contact URL the UA carries (Crawler Conduct Rule 1, SIG-INGEST-011):
+#: the owned explanation page on the project's domain (P35.38a; ADR-168
+#: Decision 6-7, Q-E2-03/B-6 — the unowned predecessor domain was never bought,
+#: and the UA never names the operator's personal identifiers). The path avoids
+#: the token "crawler": some API WAFs (e.g. the Overpass front-end) reject any
+#: User-Agent containing it with HTTP 406 (ADR-083 / P25 live finding).
+DEFAULT_CONTACT_URL = "https://surveillancegraph.org/data-collection/"
 
 #: Conservative default minimum seconds between requests to one host when the
 #: source publishes no crawl-delay (SIG-INGEST-011 / Rule 3).

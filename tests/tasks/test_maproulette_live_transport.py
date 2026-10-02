@@ -94,6 +94,18 @@ def test_live_push_still_refuses_while_unregistered() -> None:
         client.push(challenge=challenge, jurisdiction="okc", tasks=[_task()], registered=False)
 
 
+def test_contribution_back_user_agent_names_the_owned_contact_url() -> None:
+    # P35.38a / ADR-168 D6: the contribution-back UA carries the shared owned
+    # explanation URL (imported, not a second literal) — never the unowned
+    # domain and never a personal identifier or e-mail (A-17 / C-8).
+    from connectors.net import DEFAULT_CONTACT_URL
+
+    ua = HttpxMapRouletteTransport().user_agent
+    assert ua == f"SIG-contribution-back (+{DEFAULT_CONTACT_URL})"
+    assert "@" not in ua
+    assert "sig-project.org" not in ua
+
+
 def test_keyless_client_stays_dry_run_even_with_a_transport() -> None:
     # No key ⇒ dry-run, no network, regardless of a wired transport (HG-08 dormant).
     client = MapRouletteClient(

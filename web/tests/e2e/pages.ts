@@ -31,6 +31,10 @@ export const SHELL_PAGES = [
   "/coverage-metrics/",
   "/editorial-standards/",
   "/style-guide/",
+  // P35.38a: the crawler contact/explanation page the User-Agent names
+  // (SIG-INGEST-036 rule 1). T0 — ships zero <script> like every other
+  // non-island public page.
+  "/data-collection/",
 ] as const;
 
 // The seven outline surfaces + the required eighth (the corrections log), asserted to
