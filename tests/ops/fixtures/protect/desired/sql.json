@@ -1,0 +1,17 @@
+{
+  "name": "sig-pg",
+  "state": "RUNNABLE",
+  "settings": {
+    "deletionProtectionEnabled": true,
+    "retainBackupsOnDelete": true,
+    "maintenanceWindow": {"day": 7, "hour": 9},
+    "storageAutoResize": true,
+    "storageAutoResizeLimit": "40",
+    "dataDiskSizeGb": "15",
+    "backupConfiguration": {
+      "enabled": true,
+      "startTime": "05:00",
+      "pointInTimeRecoveryEnabled": true
+    }
+  }
+}

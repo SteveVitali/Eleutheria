@@ -1,0 +1,8 @@
+{
+  "name": "example-proj-sig-restricted",
+  "location": "US-CENTRAL1",
+  "storageClass": "STANDARD",
+  "versioning": null,
+  "lifecycle": null,
+  "softDeletePolicy": {"retentionDurationSeconds": "604800"}
+}
