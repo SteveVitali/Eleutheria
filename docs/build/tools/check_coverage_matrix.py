@@ -29,7 +29,7 @@ from pathlib import Path
 # plus the 1 P27.4 fold-back id (SIG-EXPORT-013 — ADR-090 export share),
 # plus the 2 P27.6 fold-back ids (SIG-UI-048 — ADR-090 UI share; SIG-UI-049 — ADR-093),
 # plus the 1 P27.9 fold-back id (SIG-UI-050 — ADR-091 §40 public-island no-JS-fallback share).
-EXPECTED_ROWS = 677
+EXPECTED_ROWS = 715  # 677 prior + 38 Round-10 planned obligations
 HEADER = [
     "id", "level", "spec_section", "class", "verdict", "evidence",
     "owning_tickets", "tests", "adrs", "risk_rows", "routing", "note",
@@ -46,6 +46,36 @@ VERDICTS = {"MET", "MET-DIFFERENTLY", "PARTIAL", "MISSING", "AT-RISK-INTEGRATION
 # pathway ingestion); the enum is extended to include them (recorded in
 # CAPSTONE_GAP_ANALYSIS.md method). ``P19.4:L`` is intentionally NOT allowed.
 ROUTINGS = {
+    # Round-10 planned owners; explicit enum, never arbitrary routing.
+    "P32.22a",
+    "P32.1",
+    "P32.2",
+    "P32.3",
+    "P32.4",
+    "P32.5",
+    "P32.6",
+    "P32.7",
+    "P32.8",
+    "P32.9",
+    "P32.10",
+    "P32.11",
+    "P32.12",
+    "P32.13",
+    "P32.14",
+    "P32.15",
+    "P32.16",
+    "P32.16a",
+    "P32.17",
+    "P32.18",
+    "P32.19",
+    "P32.20",
+    "P32.21",
+    "P32.22",
+    "P32.23",
+    "P32.23a",
+    "P32.24",
+    "P32.25",
+    "P33.8",
     "—", "P19.3", "P19.4:S", "P19.4:M",
     "P21.1", "P21.2", "P21.3", "P21.4", "P21.5", "P21.6", "P21.7", "P21.8", "P21.9",
     "P20.1:backlog", "P20.2:spec", "accepted",

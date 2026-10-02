@@ -1,0 +1,76 @@
+{
+  "schema": "sig.six_stream_research_baseline/v1",
+  "observed_date": "2026-09-25",
+  "git_head": "0e57e6461d6a5db2e8e0042464750ce2ea65db5e",
+  "state": {
+    "projectStatus": "IN-PROGRESS",
+    "nextTicket": "P31.8",
+    "lastCompleted": "P31.7",
+    "canonicalSpec": "docs/build/reports/DECISION_MEMO.md",
+    "chainTip": "devin/p31-7-claim-re-sightings",
+    "round": "9"
+  },
+  "files": {
+    "AGENTS.md": {
+      "sha256": "195f968549fdee2d3f3d8642b8f52fa0d08cc54de027a2cab9ed0695787fb6b4",
+      "bytes": 12392,
+      "lines": 178
+    },
+    "README.md": {
+      "sha256": "425d3771f336fb2e0f3f8dae0c9f37635f25a3491ba62aed21d8f1751d4bde32",
+      "bytes": 12809,
+      "lines": 184
+    },
+    "docs/build/LEDGER.md": {
+      "sha256": "3b0d021dd59125f8a45d7dc37dcf708cce33f5a7d53cb6032c93340ab459f0c9",
+      "bytes": 382423,
+      "lines": 386
+    },
+    "docs/build/BUILD_INDEX.md": {
+      "sha256": "68b0d33a095642d9105b72d9173705f7bf45f9b14b68beccbfa702610ff58bbf",
+      "bytes": 173244,
+      "lines": 221
+    },
+    "docs/tickets/DEFERRALS.md": {
+      "sha256": "3308fd34ec039fe3338214abfbbddc3f423a4e29217b5459f48b99c40661088a",
+      "bytes": 227036,
+      "lines": 537
+    },
+    "docs/tickets/00_MANIFEST.md": {
+      "sha256": "815b61c217b37b7530534f50e553a7f900fea8787cb0db863cc58e9781d24879",
+      "bytes": 89358,
+      "lines": 414
+    },
+    "docs/build/COVERAGE_MATRIX.csv": {
+      "sha256": "a4f889dc2fbbaf9295a89da967cbc448f67eb9edaca80fd10560dc0078368cfa",
+      "bytes": 160631,
+      "lines": 678
+    },
+    "docs/build/BACKLOG.csv": {
+      "sha256": "0ec763f74cc3850fcf0fd0fba177e441601890f89c82a864def968f98865ccc1",
+      "bytes": 17741,
+      "lines": 58
+    },
+    "docs/research/_meta/spec_src/BUILD.sh": {
+      "sha256": "cb803d9c8427a53fe72196c9fdd093a1970fb0f4a742ae9b2f32cd7ebcf63078",
+      "bytes": 282,
+      "lines": 10
+    },
+    "scripts/docs/check-build-memory.sh": {
+      "sha256": "ea680af1a75cb5feae8d5db5abd1662c280250091b477daa6e92eacafba2c369",
+      "bytes": 19643,
+      "lines": 396
+    },
+    "docs/build/tools/check_spec_src.py": {
+      "sha256": "a6829ef89cf6e99e0f23e7b0410a8fcee063bfa03558bd710f4f07661386070b",
+      "bytes": 7470,
+      "lines": 185
+    },
+    "docs/build/tools/check_coverage_matrix.py": {
+      "sha256": "f36dd2276c13cffba41860ac712d10d487dd22e1a09e301c948d8aaed6b9c945",
+      "bytes": 6371,
+      "lines": 148
+    }
+  },
+  "scope": "Read-only pinned checkout snapshot; not a hosted-database observation; no uncommitted active-session changes copied."
+}

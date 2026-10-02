@@ -2,11 +2,11 @@
 ## Canonical Design and Implementation Specification
 
 **Document:** `docs/2_canonical_design_spec.md`
-**Version:** 1.0.0
+**Version:** 1.1.0 (additive §55 extension; 2026-09-25)
 **Status:** Canonical. This document is the authoritative contract for implementation.
 **Supersedes as an implementation authority:** `docs/1_deep_research_overview.md` (which remains
 the authoritative statement of *intent* and against which this document is proven a strict superset).
-**Spec date:** 2026-08-20
+**Spec date:** 2026-08-20 (original); additive Round-10 extension 2026-09-25
 
 ---
 
@@ -114,6 +114,12 @@ every `SIG-*` id referenced anywhere in this document is either defined or liste
 | `GOV` | Governance, takedown, continuity |
 | `ENG` | Engineering practice, repo, testing, CI |
 | `OPS` | Deployment, observability, cost (currently carried under `SIG-ENG-*` in Part IX; `SIG-OPS-*` is reserved for future use) |
+| `TRUST` | End-to-end evidence integrity and release activation (§55) |
+| `DOS` | Evidence-complete dossier portfolio (§55) |
+| `EVAL` | Independent evaluation and measured eligibility (§55) |
+| `FIND` | Released discovery, citations and correction journeys (§55) |
+| `ACQ` | Gap-driven source acquisition (§55) |
+| `MEM` | Current build memory and reliable closeout (§55) |
 
 ## 0.4 The execution model
 
