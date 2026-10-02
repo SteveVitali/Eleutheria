@@ -25,6 +25,23 @@ memory here.
 Everything here is a **historical record**: corrected by a new entry, never by editing an old one.
 Run `bash scripts/docs/check-build-memory.sh .` (or the skill's `check-build-memory.sh`) to validate.
 
+## Tool index
+
+- `tools/audit_current_state.py` (P32.1) — read-only current-state auditor; input digests + caller-provided report paths.
+- `tools/obligation_events.py` (P32.7) — `obligation-event/1` + `coverage-assessment/1` checker/shadow writer.
+- `tools/current_projection.py` (P32.7) — deterministic `current-projection/1` generator/verifier.
+- `tools/closeout_protocol.py` + `tools/CLOSEOUT_WRITER_PROTOCOL.md` (P32.8, ADR-127) — the `closeout-op/1`
+  single-writer closeout protocol: expected-state preconditions, scoped advisory lock + stale recovery,
+  idempotent reconciliation keyed to ticket/implementation/PR; **shadow mode** — entry-point enforcement is
+  the operator-approved `D-R10-MEMORY-1` cutover.
+
+## Changelog
+
+- **v2.1 (P32.8, ADR-127): validator reports carry checked-input identity** — `build-memory-check/2` records
+  `{repo, commit, dirty, input_digest}`, writes to a caller-selected or unique report path (the shared
+  `/tmp/build-memory-check.json` destination is removed), emits uniform `{check, severity, file, obligation,
+  evidence, message}` records, and records `summary.exit` agreeing with the process exit code.
+
 ## Migration to v2 (P22.3, ADR-073)
 
 Move/rename only; **no file's contents were edited** (invariants P1-P3). Three moves happened:

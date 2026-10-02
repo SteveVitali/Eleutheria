@@ -131,6 +131,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-124](ADR-124-one-publication-eligibility-policy.md) | — | — | — |
 | [ADR-125](ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md) | — | — | — |
 | [ADR-126](ADR-126-obligation-events-and-current-projection.md) | — | — | — |
+| [ADR-127](ADR-127-single-writer-closeout-protocol.md) | — | — | — |
 
 ## Notes
 
