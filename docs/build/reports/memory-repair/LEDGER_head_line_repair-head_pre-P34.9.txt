@@ -1,0 +1,1 @@
+> - **Repair head.** P34.1's post-closeout repair (coverage row SIG-ENG-046 `MISSING`→`MET-ENGINEERED(D-P34.1-1)`, routing →P38.1a; `audit_current_state` evidence-column fix for the Round-11 index shape) sits at head f02deb01 — `ci: pass #193@f02deb0` 5/5 head-bound (22:58:53Z); see the PHASE LOG addendum and `docs/build/runs/P34.1.md`.
