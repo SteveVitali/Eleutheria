@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress since GATE-B (C10, 2026-10-01; GATE DECISIONS `### Round 11`): the PHASE LOG ends with P35.38a's entry (PR #196, `ci: pass` on head 49b9c785); next is P34.3 (row 204).
