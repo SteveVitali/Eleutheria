@@ -623,8 +623,8 @@ _dsn() {
 
 _load_password() {
   if [ -z "${SIG_PG_PASSWORD:-}" ]; then
-    SIG_PG_PASSWORD="$(gcloud secrets versions access latest \
-      --secret="$SIG_SECRET_PG_PASSWORD" --project="$SIG_GCP_PROJECT" 2>/dev/null)" || {
+    SIG_PG_PASSWORD=$(gcloud secrets versions access latest \
+      --secret="$SIG_SECRET_PG_PASSWORD" --project="$SIG_GCP_PROJECT" 2>/dev/null) || {
       echo "restore-drill.sh: could not read Secret Manager $SIG_SECRET_PG_PASSWORD" >&2
       echo "  (export SIG_PG_PASSWORD or grant secrets access; it stays in memory)" >&2
       exit 4; }
