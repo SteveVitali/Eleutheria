@@ -190,10 +190,21 @@
 --     * Slot: captures_artifact
 --     * Slot: captured_at
 --     * Slot: content_digest
+--     * Slot: ocfl_object_id Description: The OCFL object the capture's bytes were committed under.
+--     * Slot: ocfl_version Description: The immutable OCFL version this occurrence IS — a binding pins this version, never a mutable inventory head.
+--     * Slot: source_uri
+--     * Slot: blob_digest Description: The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).
+--     * Slot: capture_classification
+--     * Slot: byte_size
+--     * Slot: media_type
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: Extraction Description: A run that extracted claims from a capture (§10.2).
 --     * Slot: from_capture
 --     * Slot: extraction_method
+--     * Slot: extractor_name
+--     * Slot: extractor_version
+--     * Slot: normalizer_version
+--     * Slot: extraction_config_digest Description: The versioned config identity the extraction ran under.
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: Claim Description: An append-only assertion (subject, predicate, value, ...) — the substance of the graph (§10.3, L1). Physical append-only table is P02.
 --     * Slot: subject
@@ -204,6 +215,61 @@
 --     * Slot: absence_kind
 --     * Slot: evidence_role
 --     * Slot: supersedes
+--     * Slot: object_type
+--     * Slot: object_entity_ref Description: The resolved entity an entity_ref object names; never a person (Part VIII).
+--     * Slot: unit Description: REQUIRED when object_type is quantity (§10.3.5).
+--     * Slot: raw_context Description: The citation anchor within the artifact (P2), as structured text.
+--     * Slot: normalization_id
+--     * Slot: normalization_version
+--     * Slot: valid_edtf
+--     * Slot: observed_edtf
+--     * Slot: observed_at_kind
+--     * Slot: observed_unknown_reason Description: REQUIRED when observed_at is absent — an absent observation time always says why.
+--     * Slot: source_reliability
+--     * Slot: reliability_provisional
+--     * Slot: claim_directness
+--     * Slot: artifact_integrity
+--     * Slot: legacy_source_tier Description: An upstream's own Tier A-F label, passthrough only — never used in resolution (§10.4).
+--     * Slot: claim_polarity
+--     * Slot: rank
+--     * Slot: review_status
+--     * Slot: sensitivity_tier Description: The §42 sensitivity tier; absent never silently lowers.
+--     * Slot: assertion_rationale
+--     * Slot: revises_claim
+--     * Slot: retraction_of
+--     * Slot: correction_reason Description: REQUIRED when revises_claim is set (§16.6).
+--     * Slot: assertion_map_id Description: The named versioned mapping the row's defaults were derived under (sig.assertion.map.v1).
+--     * Slot: assertion_map_basis Description: The explicit basis string recording how each absent field was derived.
+--     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
+-- # Class: ClaimEvidence Description: One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured artifact the extraction consumed, with its typed locator and binding classification (SIG-TRUST-002).
+--     * Slot: claim
+--     * Slot: capture
+--     * Slot: extraction
+--     * Slot: role
+--     * Slot: locator_kind Description: The kind of the typed locator row (locator fields live in the physical jsonb row).
+--     * Slot: extraction_config_digest
+--     * Slot: extractor_version
+--     * Slot: binding_status
+--     * Slot: bound_at Description: When the binding was asserted — distinct from the capture's retrieval time.
+--     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
+-- # Class: ClaimQualifier Description: One typed qualifier statement on a claim (§16.5): the six FIELD_MAP §3 categories — instrument lifecycle, execution evidence, money/currency/ period, actor roles, capability/modality, clause applicability.
+--     * Slot: claim
+--     * Slot: qualifier_id Description: A registered predicate id — unregistered keys quarantine, never guessed.
+--     * Slot: unit
+--     * Slot: valid_from Description: The qualifier's own applicability valid time (e.g. an instrument's effective period).
+--     * Slot: valid_to
+--     * Slot: jurisdiction Description: The applicability jurisdiction the qualifier scopes to.
+--     * Slot: rank
+--     * Slot: extraction
+--     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
+-- # Class: AssertionQuarantine Description: The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001): unknown predicates/types and binding failures land here with reason and full payload — never silently dropped, never public-readable.
+--     * Slot: reason
+--     * Slot: connector_name
+--     * Slot: source_ref
+--     * Slot: subject_ref
+--     * Slot: predicate_id
+--     * Slot: received_at
+--     * Slot: payload_digest Description: The content-keyed idempotency identity (a re-run is +0).
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: Resolution Description: A stored current-best decision record (§16.4, L3), not a view.
 --     * Slot: subject
@@ -435,6 +501,9 @@
 -- # Class: RecordsRequest_released_documents
 --     * Slot: RecordsRequest_id Description: Autocreated FK slot
 --     * Slot: released_documents
+-- # Class: Claim_derived_from_claim_ids
+--     * Slot: Claim_id Description: Autocreated FK slot
+--     * Slot: derived_from_claim_ids_id
 -- # Class: Edge_sources
 --     * Slot: Edge_id Description: Autocreated FK slot
 --     * Slot: sources Description: At least one supporting claim (§12.1.4, SIG-CHART-013).
@@ -537,9 +606,36 @@ CREATE TABLE "Claim" (
 	absence_kind VARCHAR(19),
 	evidence_role VARCHAR(16),
 	supersedes TEXT,
+	object_type VARCHAR(12),
+	object_entity_ref TEXT,
+	unit TEXT,
+	raw_context TEXT,
+	normalization_id TEXT,
+	normalization_version TEXT,
+	valid_edtf TEXT,
+	observed_edtf TEXT,
+	observed_at_kind VARCHAR(13),
+	observed_unknown_reason TEXT,
+	source_reliability VARCHAR(2),
+	reliability_provisional BOOLEAN,
+	claim_directness VARCHAR(2),
+	artifact_integrity VARCHAR(2),
+	legacy_source_tier TEXT,
+	claim_polarity VARCHAR(7),
+	rank VARCHAR(10),
+	review_status VARCHAR(16),
+	sensitivity_tier INTEGER,
+	assertion_rationale TEXT,
+	revises_claim TEXT,
+	retraction_of TEXT,
+	correction_reason TEXT,
+	assertion_map_id TEXT,
+	assertion_map_basis TEXT,
 	id TEXT NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY(supersedes) REFERENCES "Claim" (id)
+	FOREIGN KEY(supersedes) REFERENCES "Claim" (id),
+	FOREIGN KEY(revises_claim) REFERENCES "Claim" (id),
+	FOREIGN KEY(retraction_of) REFERENCES "Claim" (id)
 );
 CREATE INDEX "ix_Claim_id" ON "Claim" (id);
 
@@ -719,6 +815,20 @@ CREATE TABLE "EvidenceArtifact" (
 );
 CREATE INDEX "ix_EvidenceArtifact_id" ON "EvidenceArtifact" (id);
 
+CREATE TABLE "AssertionQuarantine" (
+	reason VARCHAR(23),
+	connector_name TEXT,
+	source_ref TEXT,
+	subject_ref TEXT,
+	predicate_id TEXT,
+	received_at DATETIME,
+	payload_digest TEXT,
+	id TEXT NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY(source_ref) REFERENCES "Source" (id)
+);
+CREATE INDEX "ix_AssertionQuarantine_id" ON "AssertionQuarantine" (id);
+
 CREATE TABLE "Jurisdiction_parent_jurisdiction" (
 	"Jurisdiction_id" TEXT,
 	parent_jurisdiction_id TEXT,
@@ -800,6 +910,16 @@ CREATE TABLE "AccountabilityEvent_source_classes" (
 );
 CREATE INDEX "ix_AccountabilityEvent_source_classes_AccountabilityEvent_id" ON "AccountabilityEvent_source_classes" ("AccountabilityEvent_id");
 CREATE INDEX "ix_AccountabilityEvent_source_classes_source_classes" ON "AccountabilityEvent_source_classes" (source_classes);
+
+CREATE TABLE "Claim_derived_from_claim_ids" (
+	"Claim_id" TEXT,
+	derived_from_claim_ids_id TEXT,
+	PRIMARY KEY ("Claim_id", derived_from_claim_ids_id),
+	FOREIGN KEY("Claim_id") REFERENCES "Claim" (id),
+	FOREIGN KEY(derived_from_claim_ids_id) REFERENCES "Claim" (id)
+);
+CREATE INDEX "ix_Claim_derived_from_claim_ids_Claim_id" ON "Claim_derived_from_claim_ids" ("Claim_id");
+CREATE INDEX "ix_Claim_derived_from_claim_ids_derived_from_claim_ids_id" ON "Claim_derived_from_claim_ids" (derived_from_claim_ids_id);
 
 CREATE TABLE "Edge_sources" (
 	"Edge_id" TEXT,
@@ -971,6 +1091,13 @@ CREATE TABLE "EvidenceCapture" (
 	captures_artifact TEXT,
 	captured_at DATETIME,
 	content_digest TEXT,
+	ocfl_object_id TEXT,
+	ocfl_version TEXT,
+	source_uri TEXT,
+	blob_digest TEXT,
+	capture_classification VARCHAR(9),
+	byte_size INTEGER,
+	media_type TEXT,
 	id TEXT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY(captures_artifact) REFERENCES "EvidenceArtifact" (id)
@@ -1133,6 +1260,10 @@ CREATE INDEX "ix_RecordsRequest_id" ON "RecordsRequest" (id);
 CREATE TABLE "Extraction" (
 	from_capture TEXT,
 	extraction_method TEXT,
+	extractor_name TEXT,
+	extractor_version TEXT,
+	normalizer_version TEXT,
+	extraction_config_digest TEXT,
 	id TEXT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY(from_capture) REFERENCES "EvidenceCapture" (id)
@@ -1263,6 +1394,40 @@ CREATE TABLE "ConfigurationState" (
 	FOREIGN KEY(deployment) REFERENCES "Deployment" (id)
 );
 CREATE INDEX "ix_ConfigurationState_id" ON "ConfigurationState" (id);
+
+CREATE TABLE "ClaimEvidence" (
+	claim TEXT,
+	capture TEXT,
+	extraction TEXT,
+	role VARCHAR(16),
+	locator_kind VARCHAR(10),
+	extraction_config_digest TEXT,
+	extractor_version TEXT,
+	binding_status VARCHAR(16),
+	bound_at DATETIME,
+	id TEXT NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY(claim) REFERENCES "Claim" (id),
+	FOREIGN KEY(capture) REFERENCES "EvidenceCapture" (id),
+	FOREIGN KEY(extraction) REFERENCES "Extraction" (id)
+);
+CREATE INDEX "ix_ClaimEvidence_id" ON "ClaimEvidence" (id);
+
+CREATE TABLE "ClaimQualifier" (
+	claim TEXT,
+	qualifier_id TEXT,
+	unit TEXT,
+	valid_from TEXT,
+	valid_to TEXT,
+	jurisdiction TEXT,
+	rank VARCHAR(10),
+	extraction TEXT,
+	id TEXT NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY(claim) REFERENCES "Claim" (id),
+	FOREIGN KEY(extraction) REFERENCES "Extraction" (id)
+);
+CREATE INDEX "ix_ClaimQualifier_id" ON "ClaimQualifier" (id);
 
 CREATE TABLE "Deployment_technology" (
 	"Deployment_id" TEXT,

@@ -302,6 +302,7 @@ attributes:
     - Organization
     - Deployment
     - LegalInstrument
+    - ClaimQualifier
     range: Jurisdiction
   identifier:
     name: identifier
@@ -341,6 +342,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   valid_to:
@@ -349,6 +351,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   succession:
@@ -465,6 +468,7 @@ attributes:
     - Organization
     - Deployment
     - LegalInstrument
+    - ClaimQualifier
     range: Jurisdiction
   identifier:
     name: identifier
@@ -509,6 +513,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   valid_to:
@@ -518,6 +523,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   succession:

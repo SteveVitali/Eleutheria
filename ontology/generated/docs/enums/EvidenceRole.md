@@ -35,6 +35,7 @@ URI: [sig:enum/EvidenceRole](https://ontology.sig-project.org/schema/enum/Eviden
 | Name | Description |
 | ---  | --- |
 | [evidence_role](../slots/evidence_role.md) |  |
+| [role](../slots/role.md) |  |
 
 
 

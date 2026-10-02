@@ -203,11 +203,11 @@ def test_a_killed_run_resumes_to_the_uninterrupted_final_state(clean_dsn: str) -
 
         calls = 0
 
-        def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+        def assert_claims(self, claims: Sequence[Mapping[str, Any]], *, capture=None) -> None:
             type(self).calls += 1
             if type(self).calls == 4:
                 raise Killed("mid-flush")
-            super().assert_claims(claims)
+            super().assert_claims(claims, capture=capture)
 
     captures = InMemoryCaptureStore()  # persistent across executions (the GCS mount)
     with pytest.raises(Killed):

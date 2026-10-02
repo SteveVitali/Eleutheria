@@ -20,6 +20,7 @@ URI: [sig:slot/role](https://ontology.sig-project.org/schema/slot/role)
 
 | Name | Description | Modifies Slot |
 | --- | --- | --- |
+| [ClaimEvidence](../classes/ClaimEvidence.md) | One claim↔capture evidence link (§16 |  no  |
 | [RoleAssignment](../classes/RoleAssignment.md) | Assigns one of the fourteen roles (§12 |  no  |
 
 
@@ -33,21 +34,13 @@ URI: [sig:slot/role](https://ontology.sig-project.org/schema/slot/role)
 
 | Property | Value |
 | --- | --- |
-| Range | [Role](../enums/Role.md) |
-| Domain Of | [RoleAssignment](../classes/RoleAssignment.md) |
+| Range | [String](../types/String.md) |
+| Domain Of | [ClaimEvidence](../classes/ClaimEvidence.md), [RoleAssignment](../classes/RoleAssignment.md) |
 
 ### Cardinality and Requirements
 
 | Property | Value |
 | --- | --- |
-| Required | Yes |
-### Slot Characteristics
-
-| Property | Value |
-| --- | --- |
-| Owner | [RoleAssignment](../classes/RoleAssignment.md) |
-
-
 
 
 
@@ -61,13 +54,6 @@ URI: [sig:slot/role](https://ontology.sig-project.org/schema/slot/role)
 ## Identifier and Mapping Information
 
 
-
-
-
-### Schema Source
-
-
-* from schema: https://ontology.sig-project.org/schema/sig
 
 
 
@@ -87,13 +73,10 @@ URI: [sig:slot/role](https://ontology.sig-project.org/schema/slot/role)
 <details>
 ```yaml
 name: role
-from_schema: https://ontology.sig-project.org/schema/sig
-rank: 1000
-owner: RoleAssignment
 domain_of:
+- ClaimEvidence
 - RoleAssignment
-range: Role
-required: true
+range: string
 
 ```
 </details></div>

@@ -299,6 +299,62 @@
             "title": "ArtifactType",
             "type": "string"
         },
+        "AssertionQuarantine": {
+            "additionalProperties": false,
+            "description": "The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001): unknown predicates/types and binding failures land here with reason and full payload \u2014 never silently dropped, never public-readable.",
+            "properties": {
+                "connector_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "payload_digest": {
+                    "description": "The content-keyed idempotency identity (a re-run is +0).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "predicate_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "reason": {
+                    "$ref": "#/$defs/QuarantineReason"
+                },
+                "received_at": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "source_ref": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "subject_ref": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "AssertionQuarantine",
+            "type": "object"
+        },
         "AuditSourceType": {
             "description": "Audit source type \u2014 these are NOT interchangeable (\u00a711.16, \u00a723.7).",
             "enum": [
@@ -333,6 +389,17 @@
                 "legal_process_required"
             ],
             "title": "Automaticity",
+            "type": "string"
+        },
+        "BindingStatus": {
+            "description": "How a claim\u2194capture evidence link was bound (SIG-TRUST-002). The honest classifications \u2014 a link is never presented as byte-anchored provenance it is not.",
+            "enum": [
+                "actual_capture",
+                "replayed",
+                "document_only",
+                "legacy_synthetic"
+            ],
+            "title": "BindingStatus",
             "type": "string"
         },
         "CandidateAsset": {
@@ -427,12 +494,67 @@
             "title": "CapabilityScope",
             "type": "string"
         },
+        "CaptureClassification": {
+            "description": "What an evidence_capture row actually is (SIG-TRUST-002). 'legacy' is the honest default for rows whose provenance predates the classification.",
+            "enum": [
+                "actual",
+                "synthetic",
+                "legacy"
+            ],
+            "title": "CaptureClassification",
+            "type": "string"
+        },
         "Claim": {
             "additionalProperties": false,
             "description": "An append-only assertion (subject, predicate, value, ...) \u2014 the substance of the graph (\u00a710.3, L1). Physical append-only table is P02.",
             "properties": {
                 "absence_kind": {
                     "$ref": "#/$defs/AbsenceKind"
+                },
+                "artifact_integrity": {
+                    "$ref": "#/$defs/ArtifactIntegrity"
+                },
+                "assertion_map_basis": {
+                    "description": "The explicit basis string recording how each absent field was derived.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "assertion_map_id": {
+                    "description": "The named versioned mapping the row's defaults were derived under (sig.assertion.map.v1).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "assertion_rationale": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "claim_directness": {
+                    "$ref": "#/$defs/ClaimDirectness"
+                },
+                "claim_polarity": {
+                    "$ref": "#/$defs/ClaimPolarity"
+                },
+                "correction_reason": {
+                    "description": "REQUIRED when revises_claim is set (\u00a716.6).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "derived_from_claim_ids": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
                 },
                 "evidence_role": {
                     "$ref": "#/$defs/EvidenceRole"
@@ -441,7 +563,62 @@
                     "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
                     "type": "string"
                 },
+                "legacy_source_tier": {
+                    "description": "An upstream's own Tier A-F label, passthrough only \u2014 never used in resolution (\u00a710.4).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "normalization_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "normalization_version": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "object_entity_ref": {
+                    "description": "The resolved entity an entity_ref object names; never a person (Part VIII).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "object_type": {
+                    "$ref": "#/$defs/ClaimObjectType"
+                },
+                "observed_at_kind": {
+                    "$ref": "#/$defs/ObservedAtKind"
+                },
+                "observed_edtf": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "observed_unknown_reason": {
+                    "description": "REQUIRED when observed_at is absent \u2014 an absent observation time always says why.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "predicate": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "rank": {
+                    "$ref": "#/$defs/ClaimRank"
+                },
+                "raw_context": {
+                    "description": "The citation anchor within the artifact (P2), as structured text.",
                     "type": [
                         "string",
                         "null"
@@ -453,6 +630,37 @@
                         "null"
                     ]
                 },
+                "reliability_provisional": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "retraction_of": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "review_status": {
+                    "$ref": "#/$defs/ReviewStatus"
+                },
+                "revises_claim": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sensitivity_tier": {
+                    "description": "The \u00a742 sensitivity tier; absent never silently lowers.",
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "source_reliability": {
+                    "$ref": "#/$defs/SourceReliability"
+                },
                 "subject": {
                     "type": [
                         "string",
@@ -460,6 +668,19 @@
                     ]
                 },
                 "supersedes": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "unit": {
+                    "description": "REQUIRED when object_type is quantity (\u00a710.3.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_edtf": {
                     "type": [
                         "string",
                         "null"
@@ -492,6 +713,167 @@
                 "D6"
             ],
             "title": "ClaimDirectness",
+            "type": "string"
+        },
+        "ClaimEvidence": {
+            "additionalProperties": false,
+            "description": "One claim\u2194capture evidence link (\u00a716.5) \u2014 P32.2 binds the ACTUAL captured artifact the extraction consumed, with its typed locator and binding classification (SIG-TRUST-002).",
+            "properties": {
+                "binding_status": {
+                    "$ref": "#/$defs/BindingStatus"
+                },
+                "bound_at": {
+                    "description": "When the binding was asserted \u2014 distinct from the capture's retrieval time.",
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "capture": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "claim": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "extraction": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "extraction_config_digest": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "extractor_version": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "locator_kind": {
+                    "$ref": "#/$defs/LocatorKind",
+                    "description": "The kind of the typed locator row (locator fields live in the physical jsonb row)."
+                },
+                "role": {
+                    "$ref": "#/$defs/EvidenceRole"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "ClaimEvidence",
+            "type": "object"
+        },
+        "ClaimObjectType": {
+            "description": "The declared shape of a claim's object \u2014 declared, never inferred (\u00a710.3.5).",
+            "enum": [
+                "literal",
+                "entity_ref",
+                "vocab_term",
+                "quantity",
+                "money",
+                "geometry",
+                "duration",
+                "interval",
+                "document_ref"
+            ],
+            "title": "ClaimObjectType",
+            "type": "string"
+        },
+        "ClaimPolarity": {
+            "description": "Whether the claim affirms or denies its predicate (\u00a710.3).",
+            "enum": [
+                "affirms",
+                "denies"
+            ],
+            "title": "ClaimPolarity",
+            "type": "string"
+        },
+        "ClaimQualifier": {
+            "additionalProperties": false,
+            "description": "One typed qualifier statement on a claim (\u00a716.5): the six FIELD_MAP \u00a73 categories \u2014 instrument lifecycle, execution evidence, money/currency/ period, actor roles, capability/modality, clause applicability.",
+            "properties": {
+                "claim": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "extraction": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "jurisdiction": {
+                    "description": "The applicability jurisdiction the qualifier scopes to.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "qualifier_id": {
+                    "description": "A registered predicate id \u2014 unregistered keys quarantine, never guessed.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "rank": {
+                    "$ref": "#/$defs/ClaimRank"
+                },
+                "unit": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from": {
+                    "description": "The qualifier's own applicability valid time (e.g. an instrument's effective period).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "ClaimQualifier",
+            "type": "object"
+        },
+        "ClaimRank": {
+            "description": "Wikidata-style rank among competing claims of a (subject, predicate).",
+            "enum": [
+                "preferred",
+                "normal",
+                "deprecated"
+            ],
+            "title": "ClaimRank",
             "type": "string"
         },
         "CohortApplicability": {
@@ -1211,6 +1593,22 @@
             "additionalProperties": false,
             "description": "A content-addressed capture of an artifact at a time (\u00a710.2, L0).",
             "properties": {
+                "blob_digest": {
+                    "description": "The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "byte_size": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "capture_classification": {
+                    "$ref": "#/$defs/CaptureClassification"
+                },
                 "captured_at": {
                     "format": "date-time",
                     "type": [
@@ -1233,6 +1631,32 @@
                 "id": {
                     "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
                     "type": "string"
+                },
+                "media_type": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ocfl_object_id": {
+                    "description": "The OCFL object the capture's bytes were committed under.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "ocfl_version": {
+                    "description": "The immutable OCFL version this occurrence IS \u2014 a binding pins this version, never a mutable inventory head.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "source_uri": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 }
             },
             "required": [
@@ -1258,7 +1682,26 @@
             "additionalProperties": false,
             "description": "A run that extracted claims from a capture (\u00a710.2).",
             "properties": {
+                "extraction_config_digest": {
+                    "description": "The versioned config identity the extraction ran under.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
                 "extraction_method": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "extractor_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "extractor_version": {
                     "type": [
                         "string",
                         "null"
@@ -1273,6 +1716,12 @@
                 "id": {
                     "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
                     "type": "string"
+                },
+                "normalizer_version": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
                 }
             },
             "required": [
@@ -1822,6 +2271,19 @@
             "title": "LegalProceeding",
             "type": "object"
         },
+        "LocatorKind": {
+            "description": "The six addressable ways a claim's evidence link points into the captured bytes it was extracted from (\u00a724.1, SIG-PARSE-003). Unknown kinds fail closed \u2014 never silently re-anchored to the whole document.",
+            "enum": [
+                "page",
+                "bbox",
+                "cell",
+                "row",
+                "byte_range",
+                "dom_path"
+            ],
+            "title": "LocatorKind",
+            "type": "string"
+        },
         "Mobility": {
             "description": "Physical asset mobility (\u00a711.8).",
             "enum": [
@@ -1833,6 +2295,17 @@
                 "unknown"
             ],
             "title": "Mobility",
+            "type": "string"
+        },
+        "ObservedAtKind": {
+            "description": "How the observation time is known (T2, \u00a79.4).",
+            "enum": [
+                "exact",
+                "approximate",
+                "bounded_above",
+                "unknown"
+            ],
+            "title": "ObservedAtKind",
             "type": "string"
         },
         "ObservedVia": {
@@ -2480,6 +2953,23 @@
             "title": "ProvenanceEdge",
             "type": "object"
         },
+        "QuarantineReason": {
+            "description": "Why an assertion failed closed into assertion_quarantine (SIG-TRUST-001). Distinct reasons keep extractor failure separate from an unsupported locator and an unknown type separate from a missing binding.",
+            "enum": [
+                "bad_digest",
+                "unknown_predicate",
+                "unknown_object_type",
+                "unknown_value_kind",
+                "missing_capture_binding",
+                "unsupported_locator",
+                "extractor_failure",
+                "version_mismatch",
+                "missing_required_field",
+                "unknown_qualifier"
+            ],
+            "title": "QuarantineReason",
+            "type": "string"
+        },
         "RecordsPlatform": {
             "description": "Records-request platform (\u00a711.19).",
             "enum": [
@@ -2678,6 +3168,18 @@
                 "never_resolve"
             ],
             "title": "ResolutionStrategy",
+            "type": "string"
+        },
+        "ReviewStatus": {
+            "description": "The claim's review state (append-only; a review lands as a new claim).",
+            "enum": [
+                "unreviewed",
+                "machine_accepted",
+                "human_verified",
+                "disputed",
+                "retracted"
+            ],
+            "title": "ReviewStatus",
             "type": "string"
         },
         "Role": {

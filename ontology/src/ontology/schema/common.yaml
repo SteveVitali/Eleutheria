@@ -761,3 +761,90 @@ enums:
       M: {description: "Medium."}
       H: {description: "High."}
       C: {description: "Constitutional/statutory special category."}
+
+  # --- P32.2 typed-assertion / capture-binding vocabularies (SIG-TRUST-001/002,
+  #     FIELD_MAP docs/build/reports/p32.2-assertions/) -------------------------
+  ClaimObjectType:
+    description: The declared shape of a claim's object — declared, never inferred (§10.3.5).
+    permissible_values:
+      literal: {}
+      entity_ref: {}
+      vocab_term: {}
+      quantity: {description: "REQUIRES unit (claim_unit_required)."}
+      money: {}
+      geometry: {}
+      duration: {}
+      interval: {}
+      document_ref: {}
+  ClaimPolarity:
+    description: Whether the claim affirms or denies its predicate (§10.3).
+    permissible_values:
+      affirms: {}
+      denies: {}
+  ClaimRank:
+    description: Wikidata-style rank among competing claims of a (subject, predicate).
+    permissible_values:
+      preferred: {}
+      normal: {}
+      deprecated: {}
+  ReviewStatus:
+    description: The claim's review state (append-only; a review lands as a new claim).
+    permissible_values:
+      unreviewed: {}
+      machine_accepted: {}
+      human_verified: {}
+      disputed: {}
+      retracted: {}
+  ObservedAtKind:
+    description: How the observation time is known (T2, §9.4).
+    permissible_values:
+      exact: {}
+      approximate: {}
+      bounded_above: {}
+      unknown: {}
+  LocatorKind:
+    description: >-
+      The six addressable ways a claim's evidence link points into the captured
+      bytes it was extracted from (§24.1, SIG-PARSE-003). Unknown kinds fail
+      closed — never silently re-anchored to the whole document.
+    permissible_values:
+      page: {}
+      bbox: {}
+      cell: {}
+      row: {}
+      byte_range: {}
+      dom_path: {}
+  BindingStatus:
+    description: >-
+      How a claim↔capture evidence link was bound (SIG-TRUST-002). The honest
+      classifications — a link is never presented as byte-anchored provenance
+      it is not.
+    permissible_values:
+      actual_capture: {description: "Typed locator into the actual captured bytes consumed."}
+      replayed: {description: "A replay binding to the ORIGINAL capture occurrence."}
+      document_only: {description: "The explicit document-scoped limitation — no finer anchor exists."}
+      legacy_synthetic: {description: "The pre-P32.2 per-run synthetic capture path; honest legacy."}
+  CaptureClassification:
+    description: >-
+      What an evidence_capture row actually is (SIG-TRUST-002). 'legacy' is the
+      honest default for rows whose provenance predates the classification.
+    permissible_values:
+      actual: {description: "A byte-bearing capture of a real source URI."}
+      synthetic: {description: "The connector sink's per-(source, genre, run) placeholder."}
+      legacy: {description: "Pre-classification rows whose class is unverifiable."}
+  QuarantineReason:
+    description: >-
+      Why an assertion failed closed into assertion_quarantine (SIG-TRUST-001).
+      Distinct reasons keep extractor failure separate from an unsupported
+      locator and an unknown type separate from a missing binding.
+    permissible_values:
+      bad_digest: {}
+      unknown_predicate: {}
+      unknown_object_type: {}
+      unknown_value_kind: {}
+      missing_capture_binding: {}
+      unsupported_locator: {}
+      extractor_failure: {}
+      version_mismatch: {description: "The binding's OCFL version disagrees with the stored occurrence."}
+      missing_required_field: {}
+      unknown_qualifier: {}

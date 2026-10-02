@@ -27,7 +27,13 @@ URI: [sig:class/Extraction](https://ontology.sig-project.org/schema/class/Extrac
       Entity <|-- Extraction
         click Entity href "../../classes/Entity/"
       
+      Extraction : extraction_config_digest
+        
       Extraction : extraction_method
+        
+      Extraction : extractor_name
+        
+      Extraction : extractor_version
         
       Extraction : from_capture
         
@@ -41,6 +47,8 @@ URI: [sig:class/Extraction](https://ontology.sig-project.org/schema/class/Extrac
 
         
       Extraction : id
+        
+      Extraction : normalizer_version
         
       
 ```
@@ -60,10 +68,22 @@ URI: [sig:class/Extraction](https://ontology.sig-project.org/schema/class/Extrac
 | ---  | --- | --- | --- |
 | [from_capture](../slots/from_capture.md) | 0..1 <br/> [EvidenceCapture](../classes/EvidenceCapture.md) |  | direct |
 | [extraction_method](../slots/extraction_method.md) | 0..1 <br/> [String](../types/String.md) |  | direct |
+| [extractor_name](../slots/extractor_name.md) | 0..1 <br/> [String](../types/String.md) |  | direct |
+| [extractor_version](../slots/extractor_version.md) | 0..1 <br/> [String](../types/String.md) |  | direct |
+| [normalizer_version](../slots/normalizer_version.md) | 0..1 <br/> [String](../types/String.md) |  | direct |
+| [extraction_config_digest](../slots/extraction_config_digest.md) | 0..1 <br/> [String](../types/String.md) | The versioned config identity the extraction ran under | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The entity's stable minted identity (L2 identity only, §8 | [Entity](../classes/Entity.md) |
 
 
 
+
+
+## Usages
+
+| used by | used in | type | used |
+| ---  | --- | --- | --- |
+| [ClaimEvidence](../classes/ClaimEvidence.md) | [extraction](../slots/extraction.md) | range | [Extraction](../classes/Extraction.md) |
+| [ClaimQualifier](../classes/ClaimQualifier.md) | [extraction](../slots/extraction.md) | range | [Extraction](../classes/Extraction.md) |
 
 
 
@@ -130,6 +150,37 @@ attributes:
     domain_of:
     - Extraction
     range: string
+  extractor_name:
+    name: extractor_name
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Extraction
+    range: string
+  extractor_version:
+    name: extractor_version
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Extraction
+    - ClaimEvidence
+    range: string
+  normalizer_version:
+    name: normalizer_version
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Extraction
+    range: string
+  extraction_config_digest:
+    name: extraction_config_digest
+    description: The versioned config identity the extraction ran under.
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Extraction
+    - ClaimEvidence
+    range: string
 
 ```
 </details>
@@ -159,6 +210,41 @@ attributes:
     owner: Extraction
     domain_of:
     - Extraction
+    range: string
+  extractor_name:
+    name: extractor_name
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: Extraction
+    domain_of:
+    - Extraction
+    range: string
+  extractor_version:
+    name: extractor_version
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: Extraction
+    domain_of:
+    - Extraction
+    - ClaimEvidence
+    range: string
+  normalizer_version:
+    name: normalizer_version
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: Extraction
+    domain_of:
+    - Extraction
+    range: string
+  extraction_config_digest:
+    name: extraction_config_digest
+    description: The versioned config identity the extraction ran under.
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: Extraction
+    domain_of:
+    - Extraction
+    - ClaimEvidence
     range: string
   id:
     name: id

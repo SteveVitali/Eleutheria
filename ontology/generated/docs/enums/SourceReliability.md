@@ -35,6 +35,7 @@ URI: [sig:enum/SourceReliability](https://ontology.sig-project.org/schema/enum/S
 | Name | Description |
 | ---  | --- |
 | [reliability](../slots/reliability.md) |  |
+| [source_reliability](../slots/source_reliability.md) |  |
 
 
 

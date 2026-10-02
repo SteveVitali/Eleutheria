@@ -122,28 +122,43 @@ class OcflCaptureStore:
             files,
             message=f"live capture of {source_uri}",
         )
+        # The version THIS put committed is the capture's pinned occurrence —
+        # carried on the ref so a claim's evidence binding names the version
+        # the extraction consumed, and a replay reads that same version rather
+        # than whatever head later versions moved to (SIG-TRUST-002).
+        version = self._head_version(digest)
         return CaptureRef(
             digest=digest,
             media_type=media_type,
             source_uri=source_uri,
             byte_size=len(data),
             retrieved_at=retrieved_at,
+            ocfl_object_id=object_id,
+            ocfl_version=version,
         )
 
-    def get(self, digest: str) -> bytes:
-        """Read the captured bytes back by content multihash (OCFL resolve)."""
+    def get(self, digest: str, *, version: str | None = None) -> bytes:
+        """Read the captured bytes back by content multihash (OCFL resolve).
+
+        ``version`` (P32.2) pins the immutable occurrence version — a replay
+        reads the version the original extraction consumed, never whatever a
+        later re-fetch moved ``head`` to. ``None`` keeps the back-compat
+        current-head resolve.
+        """
         return self._store.resolve(
-            capture_object_id(digest), self._head_version(digest), CAPTURE_LOGICAL_PATH
+            capture_object_id(digest), version or self._head_version(digest), CAPTURE_LOGICAL_PATH
         )
 
     def has(self, digest: str) -> bool:
         """Whether a capture with this content multihash is archived."""
         return self._store.object_exists(capture_object_id(digest))
 
-    def metadata(self, digest: str) -> dict:
+    def metadata(self, digest: str, *, version: str | None = None) -> dict:
         """The retrieval metadata sidecar for an archived capture (audit path)."""
         raw = self._store.resolve(
-            capture_object_id(digest), self._head_version(digest), METADATA_LOGICAL_PATH
+            capture_object_id(digest),
+            version or self._head_version(digest),
+            METADATA_LOGICAL_PATH,
         )
         return json.loads(raw)
 

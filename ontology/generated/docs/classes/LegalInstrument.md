@@ -188,6 +188,7 @@ attributes:
     - Organization
     - Deployment
     - LegalInstrument
+    - ClaimQualifier
     range: Jurisdiction
   citation:
     name: citation
@@ -282,6 +283,7 @@ attributes:
     - Organization
     - Deployment
     - LegalInstrument
+    - ClaimQualifier
     range: Jurisdiction
   citation:
     name: citation

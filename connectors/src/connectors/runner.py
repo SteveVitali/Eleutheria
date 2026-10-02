@@ -1248,7 +1248,8 @@ def replay_ingest(
     if run_ids:
         rows = conn.execute(
             "SELECT c.run_id::text, c.target_key, c.capture_digest, c.source_uri,"
-            " c.media_type, c.byte_size, c.retrieved_at"
+            " c.media_type, c.byte_size, c.retrieved_at,"
+            " c.ocfl_object_id, c.ocfl_version"
             " FROM ingest_run_capture c"
             " WHERE c.run_id::text = ANY(%s::text[])"
             " ORDER BY c.run_id, c.target_key",
@@ -1257,7 +1258,8 @@ def replay_ingest(
     else:
         rows = conn.execute(
             "SELECT c.run_id::text, c.target_key, c.capture_digest, c.source_uri,"
-            " c.media_type, c.byte_size, c.retrieved_at"
+            " c.media_type, c.byte_size, c.retrieved_at,"
+            " c.ocfl_object_id, c.ocfl_version"
             " FROM ingest_run_capture c"
             " JOIN ingest_run r ON r.run_id = c.run_id"
             " WHERE r.connector_name = %s AND NOT r.is_replay"
@@ -1270,7 +1272,7 @@ def replay_ingest(
     # the same content-addressed object, and replaying it twice adds nothing.
     seen: set[str] = set()
     marks: list[dict[str, Any]] = []
-    for run_id, target_key, digest, uri, media, size, retrieved in rows:
+    for run_id, target_key, digest, uri, media, size, retrieved, obj, ver in rows:
         if str(digest) in seen:
             continue
         seen.add(str(digest))
@@ -1283,6 +1285,8 @@ def replay_ingest(
                 "media_type": str(media),
                 "byte_size": int(size or 0),
                 "retrieved_at": retrieved,
+                "ocfl_object_id": str(obj) if obj else None,
+                "ocfl_version": str(ver) if ver else None,
             }
         )
     replayed_from = sorted({m["run_id"] for m in marks})
@@ -1299,6 +1303,12 @@ def replay_ingest(
             source_uri=mark["source_uri"],
             byte_size=mark["byte_size"],
             retrieved_at=mark["retrieved_at"],
+            ocfl_object_id=mark["ocfl_object_id"],
+            ocfl_version=mark["ocfl_version"],
+            # The replayed capture's provenance is the ORIGINAL acquisition
+            # run's — the binding carries it so the stored occurrence keeps its
+            # original retrieved_by_run_id (SIG-TRUST-002).
+            original_run_id=mark["run_id"],
         )
         marks_by_digest.setdefault(ref.digest, mark)
         if captures.has(ref.digest):
@@ -1355,6 +1365,8 @@ def replay_ingest(
             byte_size=capture.byte_size,
             retrieved_at=capture.retrieved_at,
             records=len(claims),
+            ocfl_object_id=capture.ocfl_object_id,
+            ocfl_version=capture.ocfl_version,
         )
 
     outcome = asserting_replay(connector, ctx, refs, on_capture=_mark_flushed)

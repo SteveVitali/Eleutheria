@@ -30,6 +30,12 @@ URI: [sig:enum/ClaimDirectness](https://ontology.sig-project.org/schema/enum/Cla
 
 
 
+## Slots
+
+| Name | Description |
+| ---  | --- |
+| [claim_directness](../slots/claim_directness.md) |  |
+
 
 
 

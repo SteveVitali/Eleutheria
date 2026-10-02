@@ -196,8 +196,8 @@ landing here. Regenerate this file after any backlog edit:
 
 ## P32+
 
-- **BL-058** — Round 10: six-stream integrity and useful investigation program; actual source/human/publication outcomes remain gated · _deferred-feature_ · L · status=open · gate HG-03;HG-11;HG-14
-  - sources: ADR-120
+- **BL-058** — Round 10: six-stream integrity and useful investigation program; actual source/human/publication outcomes remain gated; ADR-121 (P32.2 S1: the sig.assertion/1 typed envelope + sig.assertion.map.v1 with explicit default bases; actual evidence_capture occurrences keyed (artifact, digest, retrieved_at) — one deduplicated blob, many immutable occurrences, version-pinned replay binding the original occurrence; binding statuses actual_capture/replayed/document_only/legacy_synthetic + capture_classification actual/synthetic/legacy; fail-closed assertion_quarantine; append-only claim_evidence; /v1/entity serves registered facts past unregistered predicates via unregistered_predicates — SIG-TRUST-001/002, closes the route half of D-P31.1-3) · _deferred-feature_ · L · status=open · gate HG-03;HG-11;HG-14
+  - sources: ADR-120 ADR-121
 
 ## P25+ unscheduled (post-Round-4 manifest — the next planning round owns these)
 
@@ -234,4 +234,4 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 
 Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against the tree — none is landed, none is owned by a remaining manifest ticket (rows 84–87 are JURIS.2/CCOPS.1/REC.1/GATE-ACCEPT). `P25+` = the planning round after this manifest, replacing the stale `P22+` bucket (the P22 pass closed unscheduled). Rows conditioned on real post-go-live state are additionally promoted to `docs/tickets/DEFERRALS.md` (D-META.1-*; the BL row stays the normalized-debt record).
 
-- **BL-058** — Round 10: six-stream integrity and useful investigation program; actual source/human/publication outcomes remain gated · _deferred-feature_ · L · sources: ADR-120
+- **BL-058** — Round 10: six-stream integrity and useful investigation program; actual source/human/publication outcomes remain gated; ADR-121 (P32.2 S1: the sig.assertion/1 typed envelope + sig.assertion.map.v1 with explicit default bases; actual evidence_capture occurrences keyed (artifact, digest, retrieved_at) — one deduplicated blob, many immutable occurrences, version-pinned replay binding the original occurrence; binding statuses actual_capture/replayed/document_only/legacy_synthetic + capture_classification actual/synthetic/legacy; fail-closed assertion_quarantine; append-only claim_evidence; /v1/entity serves registered facts past unregistered predicates via unregistered_predicates — SIG-TRUST-001/002, closes the route half of D-P31.1-3) · _deferred-feature_ · L · sources: ADR-120 ADR-121

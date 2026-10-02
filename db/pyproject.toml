@@ -17,6 +17,9 @@ dependencies = [
     # (SIG-STORE-029); `db.analytics` reuses the interop multihash (SIG-EVID-002).
     # `evidence` is a leaf package (no sig-* deps), so this adds no import cycle.
     "sig-evidence",
+    # `parsing` is likewise a leaf (pypdf only): the typed-assertion adapter
+    # validates locators through its single-source LocatorKind contract (P32.2).
+    "sig-parsing",
 ]
 
 [project.scripts]
@@ -24,6 +27,7 @@ sig-db = "db.cli:main"
 
 [tool.uv.sources]
 sig-evidence = { workspace = true }
+sig-parsing = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

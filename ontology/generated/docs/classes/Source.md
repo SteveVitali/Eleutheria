@@ -71,6 +71,7 @@ URI: [sig:class/Source](https://ontology.sig-project.org/schema/class/Source)
 | used by | used in | type | used |
 | ---  | --- | --- | --- |
 | [EvidenceArtifact](../classes/EvidenceArtifact.md) | [published_by](../slots/published_by.md) | range | [Source](../classes/Source.md) |
+| [AssertionQuarantine](../classes/AssertionQuarantine.md) | [source_ref](../slots/source_ref.md) | range | [Source](../classes/Source.md) |
 
 
 

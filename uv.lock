@@ -2558,6 +2558,7 @@ dependencies = [
     { name = "duckdb" },
     { name = "psycopg", extra = ["binary"] },
     { name = "sig-evidence" },
+    { name = "sig-parsing" },
 ]
 
 [package.metadata]
@@ -2565,6 +2566,7 @@ requires-dist = [
     { name = "duckdb", specifier = ">=1.0.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "sig-evidence", editable = "evidence" },
+    { name = "sig-parsing", editable = "parsing" },
 ]
 
 [[package]]

@@ -154,7 +154,7 @@ class LedgerSink:
     def logical_run(self) -> str | None:
         return self._logical_run
 
-    def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+    def assert_claims(self, claims: Sequence[Mapping[str, Any]], *, capture=None) -> None:
         self._state.asserted_batches.append(len(claims))
         for claim in claims:
             if claim.get("record_kind", "claim") != "claim":
@@ -274,10 +274,10 @@ def test_a_captured_but_unflushed_page_is_reprocessed_from_the_stored_capture(
     baseline, baseline_state = _uninterrupted(permitted_source, ingest_run)
 
     class DiesInFlush(LedgerSink):
-        def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+        def assert_claims(self, claims: Sequence[Mapping[str, Any]], *, capture=None) -> None:
             if len(self._state.asserted_batches) == 4:  # page 4: captured, then killed
                 raise Killed("mid-flush")
-            super().assert_claims(claims)
+            super().assert_claims(claims, capture=capture)
 
     state = LedgerState()
     captures = InMemoryCaptureStore()  # a persistent store (e.g. the GCS mount)
@@ -501,7 +501,7 @@ class _CountingSink:
     def __init__(self) -> None:
         self.count = 0
 
-    def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+    def assert_claims(self, claims: Sequence[Mapping[str, Any]], *, capture=None) -> None:
         self.count += len(claims)
 
 

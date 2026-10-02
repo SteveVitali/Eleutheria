@@ -182,8 +182,8 @@ attributes:
   role:
     name: role
     from_schema: https://ontology.sig-project.org/schema/edges
-    rank: 1000
     domain_of:
+    - ClaimEvidence
     - RoleAssignment
     range: Role
     required: true
@@ -225,9 +225,9 @@ attributes:
   role:
     name: role
     from_schema: https://ontology.sig-project.org/schema/edges
-    rank: 1000
     owner: RoleAssignment
     domain_of:
+    - ClaimEvidence
     - RoleAssignment
     range: Role
     required: true
@@ -297,6 +297,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   valid_to:
@@ -306,6 +307,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   valid_from_kind:
