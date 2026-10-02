@@ -1,0 +1,11 @@
+{
+  "name": "example-proj-sig-backups",
+  "lifecycle": {
+    "rule": [
+      {"action": {"type": "Delete"},
+       "condition": {"age": 100, "matchesPrefix": ["pg/monthly/"]}},
+      {"action": {"type": "Delete"},
+       "condition": {"age": 30, "matchesPrefix": ["pg/adhoc/"]}}
+    ]
+  }
+}

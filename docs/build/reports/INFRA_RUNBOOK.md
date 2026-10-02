@@ -191,3 +191,62 @@ Rollback per mutation (printed by the script):
 Evidence lands in the gitignored `docs/build/logs/cost-guard/` (pre/post
 captures with sha256s). The test budget's alert e-mail receipt is the
 operator's human check (`D-P34.5-1`) — an agent never asserts receipt.
+
+## 9. Restore drill at scale + restore point + logical export (P34.6; SIG-OPS-001, ADR-175)
+
+Three scripts own the durable-restore half of the protection story.
+`ops/gcp/restore-drill.sh` runs the at-scale drill: a point-in-time
+`gcloud sql instances clone sig-pg → sig-pg-drill-<STAMP>` at `T = now−10 min`,
+then append-only row-count parity at T on BOTH instances through the Cloud SQL
+Auth Proxy (`sig-ops cloudsql-drill` — the `ops/src/ops/cloudsql_drill.py`
+engine), a local `sig-api serve` smoke (`/health` + one `/v1/coverage` call),
+measured RTO (clone submit → verified) and RPO (T − `max(lower(claim.sys_period))`),
+and finally a **name-checked delete** that can only ever name
+`sig-pg-drill(-b)?-<YYYYmmddtHHMMz>` — `sig-pg` is refused outright, as is any
+hand-typed name outside that shape. The record lands as `record.json`
+(`sig.restore-drill/1`) under the gitignored `docs/build/logs/restore-drill/`.
+
+`ops/gcp/restore-point.sh` is the scripted AR-2: `sqlpoint` proves an on-demand
+`sig-pg` backup `SUCCESSFUL` (the caller stops on a non-zero exit — the same
+stop rule `protect.sh` enforces), and `bucketpoint gs://<src>…` mirrors named
+objects into `gs://<project>-sig-restricted/restore-point/<STAMP>/` with a
+written manifest (refuses any source outside this project's `sig-*` buckets).
+
+`ops/gcp/logical-export.sh` owns the monthly `gcloud sql export sql` into
+`gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/` — the logical export that
+survives the instance's lifecycle — plus the bucket lifecycle (Delete
+`pg/monthly/*` at 100 d so the three newest monthly exports are always kept;
+Delete `pg/adhoc/*` at 30 d) and the seed-dump relabel-by-copy into
+`pg/seed-2026-09-15/` (originals never deleted). None of those three legs is on
+the S5-3 list: every apply action other than `prestate` requires
+`--go "<verbatim in-ticket go>"` and the queued rows live in
+`docs/tickets/DEFERRALS.md` (`D-P34.6-2/3/4`).
+
+| goal | command |
+|---|---|
+| print the drill plan (no ADC, no network) | `ops/gcp/restore-drill.sh --check` (bare, or per leg: `prestate\|clone\|counts\|smoke\|deleteclone\|fullrestore`) |
+| capture pre-state JSON + sha256 (read-only, any time) | `ops/gcp/restore-drill.sh --apply prestate` |
+| leg 1 — the whole PITR drill (prestate → clone → counts → smoke → deleteclone → poststate → verify) | `ops/gcp/restore-drill.sh --apply all` |
+| run just the delete on a known drill instance (name-checked) | `ops/gcp/restore-drill.sh --apply deleteclone sig-pg-drill-<STAMP>` |
+| leg 3 — the full-backup variant (QUEUED; needs `--go`) | `ops/gcp/restore-drill.sh --apply fullrestore --go "<verbatim go>"` |
+| verify the drill outcome (live reads) | `ops/gcp/restore-drill.sh --verify` |
+| verify offline against recorded JSON | `ops/gcp/restore-drill.sh --verify --from-state <dir>` |
+| the AR-2 restore point on sig-pg alone | `ops/gcp/restore-point.sh --apply sqlpoint` |
+| bucket mirror into sig-restricted | `ops/gcp/restore-point.sh --apply bucketpoint gs://<project>-sig-backups/pg/monthly/` |
+| export/lifecycle/relabel plans + the queued applies | `ops/gcp/logical-export.sh --check` / `--apply <leg> --go "<verbatim go>"` |
+| verify the export/lifecycle/relabel outcome | `ops/gcp/logical-export.sh --verify [--from-state <dir>]` |
+
+Stop rules (automatic — the contract's voided-by): a non-SUCCESSFUL newest
+backup voids the authorisation (exit 5); a red `sig-probe` sweep voids it
+unless `--probe-note` records the judgment that the red is the known class; a
+running `sig-materialize` refuses the clone (fail-closed on an unreadable
+check); and inside 03:00–10:00Z every mutation refuses (exit 42). The clone leg
+is NOT bound by AR-3 (it is a separate instance); the export leg IS (it loads
+sig-pg's single vCPU). The `counts` leg needs `cloud-sql-proxy` on PATH and the
+PG password in `SIG_PG_PASSWORD` (or Secret Manager `sig-pg-password`, read
+into memory only — never a file, never argv).
+
+The monthly cadence is declared as the `[[maintenance]]` row in
+`ops/cadence.toml` (`pg-logical-export`, day 1 at 12:00 UTC — outside the band;
+GCP cron's dom+dow OR semantics rule out "first Sunday"). P35.1a's scheduler of
+record deploys the trigger; until then the row is the queue entry.

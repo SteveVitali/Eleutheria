@@ -76,5 +76,10 @@
 | D-P34.5-1 | OPEN | the operator | the alert e-mail landing (expected within ~a day of creation — the $0.01 threshold is already exceeded by month-to-date spend) | the operator records receipt (date + which e-mail) in `docs/build/runs/P34.5.md`; the recorded string feeds `--fired-confirmed`; `ops/gcp/cost-guard.sh --verify… |
 | D-P34.5-2 | OPEN | the operator (OP-12) | any time — `sig_billing_export` is already live; the console link is a human step (Billing → Billing export → BigQuery export → EDIT SETTINGS → dataset sig_bill… | `ops/gcp/cost-guard.sh --apply exportcheck` prints the row count once `gcp_billing_export_v1_<billing-account>` exists (within ~a day of linking); the first `me… |
 | D-P34.5-3 | OPEN | the OM-19 leg-runner or a re-run of this row | `exportcheck` reporting ≥1 row in `gcp_billing_export_v1_<billing-account>` for month `2026-10`; re-run prompt `implement-spec spec=docs/tickets/206_P34.5__cost… | the ledger's `pending` rows replaced by `measured` (GCP, export-sourced) and `operator-reported` (non-GCP) rows; the ~$90–100 inference row stays as `estimate` … |
+| D-P34.6-2 | OPEN | engineering | BL-084 | `ops/gcp/logical-export.sh --verify` prints `export:monthly-export-object` OK; the object exists at `gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/` and survi… |
+| D-P34.6-3 | OPEN | engineering | BL-084 | `ops/gcp/logical-export.sh --verify` prints `export:lifecycle-monthly-100d` + `export:lifecycle-adhoc-30d` OK |
+| D-P34.6-4 | OPEN | engineering | BL-084 | `ops/gcp/logical-export.sh --verify` prints `export:seed-prefix` OK; `gcloud storage ls gs://<project>-sig-backups/pg/` still lists both originals |
+| D-P34.6-5 | OPEN | engineering | GATE-G4 | the same `sig.restore-drill/1` record with `sig-pg-drill-b-<stamp>` as `clone_instance`; `--verify` `0 DRIFT` |
+| D-P34.6-6 | OPEN | engineering | P34.46 | `ops/gcp/restore-drill.sh --apply clone/counts/…` re-run post-deploy; the record's `sqitch_equal` must stay true (the clone carries the new tip) |
 
 ← back: CURRENT.md

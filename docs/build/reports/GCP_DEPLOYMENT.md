@@ -146,6 +146,13 @@ import. Removed those clauses (explicit `GRANT ON ALL TABLES` retained); re-expo
 re-import then reproduced counts exactly. Keep the schema free of
 `ALTER DEFAULT PRIVILEGES` for restorability (ADR-081).
 
+**P34.6 relabel (ADR-175):** the two `pg/sig-20260915*.sql` objects this drill
+left in `sig-backups` are SEED dumps, not monthly exports — they are relabelled
+by COPY under `pg/seed-2026-09-15/` (originals preserved; see
+`ops/gcp/logical-export.sh relabel`, queued under `D-P34.6-4`) so the
+`pg/monthly/` and `pg/adhoc/` lifecycle rules never treat them as exports. The
+at-scale successor drill is `ops/gcp/restore-drill.sh`.
+
 ## Data + published artifacts (2026-09-15)
 
 - **Seeded** jurisdictions into the hosted spine: `okc` (5 claims / 3 entities) +
