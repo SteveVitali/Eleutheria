@@ -57,6 +57,52 @@ function sigExportTiles() {
   };
 }
 
+// P34.10 (SIG-OPS-003, G1 §3.2 item 1): the DEFAULT build emits only the
+// allow-listed public surface (`ops/public_routes.toml`). Every route that must
+// never ship to a public origin lives outside `src/pages/` under
+// `src/internal/` — the authenticated curation shell `/curate/**` (ADR-068, a
+// loopback-only app surface, never public), the withdrawn surfaces
+// (`/contribution-back/` per C-12, `/visual-language/` per A-0.3 = b), and the
+// not-yet-approved namespaces (`/releases/`, `/research-dossier/` — the former
+// is also owned by the release pipeline, exactly one generator per G2 0b).
+// They are injected ONLY when `SIG_BUILD_INTERNAL=1` — the web e2e suite sets it
+// (its tests exercise the internal surface); a publishable build never carries
+// them, and `sig-ops publish-web` independently refuses a tree that does.
+const INTERNAL_ROUTES = [
+  ["/curate", "curate/index.astro"],
+  ["/curate/submit", "curate/submit.astro"],
+  ["/curate/tasks", "curate/tasks.astro"],
+  ["/curate/contradictions", "curate/contradictions.astro"],
+  ["/curate/revert", "curate/revert.astro"],
+  ["/curate/[id]", "curate/[id].astro"],
+  ["/releases", "releases/index.astro"],
+  ["/research-dossier", "research-dossier/index.astro"],
+  ["/research-dossier/[slug]", "research-dossier/[slug].astro"],
+  ["/research-dossier/[slug].json", "research-dossier/[slug].json.ts"],
+  ["/contribution-back", "contribution-back.astro"],
+  ["/visual-language", "visual-language.astro"],
+];
+
+function sigInternalRoutes() {
+  const enabled = !["", "0", "false"].includes(
+    (process.env.SIG_BUILD_INTERNAL ?? "").trim().toLowerCase(),
+  );
+  return {
+    name: "sig-internal-routes",
+    hooks: {
+      "astro:config:setup": ({ injectRoute }) => {
+        if (!enabled) return;
+        for (const [pattern, file] of INTERNAL_ROUTES) {
+          injectRoute({
+            pattern,
+            entrypoint: fileURLToPath(new URL(`./src/internal/${file}`, import.meta.url)),
+          });
+        }
+      },
+    },
+  };
+}
+
 // The public SIG web shell (Phase 15). Astro is a zero-JS-by-default static-first
 // framework: with no explicit `client:*` directive on a component, the built page
 // ships no client JavaScript at all (SIG-UI-036). Archivability is therefore
@@ -72,7 +118,7 @@ export default defineConfig({
   // `client:*` directive, which in the public surface is exactly the three named
   // islands (map / network / search). Every other page still ships zero `<script>`
   // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react(), sigExportTiles()],
+  integrations: [react(), sigExportTiles(), sigInternalRoutes()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

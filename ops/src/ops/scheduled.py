@@ -38,12 +38,13 @@ import tomllib
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import partial
 from pathlib import Path
 from typing import Any
 
 from .alerts import scrub_secrets, utcnow
 from .gcs import GcsBucket
-from .observe import ProbeResult, _timed, http_ok, pg_ready
+from .observe import ProbeResult, _timed, http_absent, http_ok, pg_ready
 
 #: ``ops/cadence.toml`` next to ``src/`` — found in the repo checkout. In the
 #: image the package lives in site-packages, so ``load_cadence`` also tries
@@ -66,12 +67,14 @@ class TargetSpec:
     ``url_env`` names an environment variable carrying the deployed base URL
     (run.app hostnames move with redeploys); ``path`` is appended to it.
     ``url`` is a recorded literal that may carry a ``{project}`` placeholder
-    filled from ``SIG_GCP_PROJECT``. A target whose URL cannot be resolved is
-    skipped — reported, never probed against a placeholder.
+    filled from ``SIG_GCP_PROJECT``; ``path`` is appended to it the same way
+    (a literal origin + a route — the ``http-absent`` denied-route shape).
+    A target whose URL cannot be resolved is skipped — reported, never probed
+    against a placeholder.
     """
 
     name: str
-    kind: str  # "http" | "cloudsql"
+    kind: str  # "http" | "cloudsql" | "http-absent" (P34.10: ok iff 404)
     url: str = ""
     url_env: str = ""
     path: str = ""
@@ -274,6 +277,11 @@ def resolve_targets(
             if "{project}" in url:
                 skipped.append(spec.name)
                 continue
+            # A literal URL carries the origin; `path` names the route on it
+            # (the http-absent targets pair a literal origin with a denied
+            # route — probing the bare origin would never check the route).
+            if spec.path:
+                url = url.rstrip("/") + spec.path
         if url:
             out.append((spec.name, url))
         else:
@@ -287,14 +295,21 @@ def probe_hosted(
     now: str | None = None,
     check_http: Callable[..., bool] | None = None,
     check_pg: Callable[[str], bool] | None = None,
+    check_absent: Callable[[str], tuple[bool, str]] | None = None,
     http_timeout: float | None = None,
 ) -> list[ProbeResult]:
     """Probe the hosted stack once — one :class:`ProbeResult` per target.
 
     ``targets`` are ``(name, kind, url_or_dsn)`` triples. The check callables are
     injectable so the sweep is deterministic in tests; the defaults are the same
-    ``http_ok``/``pg_ready`` the local ``probe`` verb uses — one probe
-    implementation, no drift between the local and hosted sweeps.
+    ``http_ok``/``pg_ready``/``http_absent`` the rest of the ops surface uses —
+    one probe implementation, no drift between the local and hosted sweeps.
+
+    ``kind == "http-absent"`` (P34.10, SIG-OPS-003) inverts the health
+    assertion: ``ok`` requires the route to answer **404** — anything served
+    (200/3xx/403) means a denied route is PRESENT on a public origin, and an
+    unreachable origin is a failure too (absence cannot be proven against a
+    dead origin). The observed status rides in ``detail`` for the audit log.
 
     ``http_timeout`` (default ``$SIG_PROBE_HTTP_TIMEOUT`` or 15s) applies only
     to the default ``http_ok`` check: the hosted surfaces scale to zero, so a
@@ -308,18 +323,28 @@ def probe_hosted(
             timeout = float(os.environ.get("SIG_PROBE_HTTP_TIMEOUT", "15"))
         check_http = lambda u, _t=timeout: http_ok(u, timeout=_t)  # noqa: E731
     check_pg = check_pg or pg_ready
+    if check_absent is None:
+        check_absent = http_absent
     ts = now or utcnow()
     results: list[ProbeResult] = []
     for name, kind, url in targets:
-        check = (lambda u=url: check_pg(u)) if kind == "cloudsql" else (lambda u=url: check_http(u))
-        ok, latency = _timed(check)
+        if kind == "http-absent":
+            assert check_absent is not None
+            (ok, note), latency = _timed(partial(check_absent, url))
+            detail = note if note else ("" if ok else "denied route present")
+        else:
+            check = (
+                (lambda u=url: check_pg(u)) if kind == "cloudsql" else (lambda u=url: check_http(u))
+            )
+            ok, latency = _timed(check)
+            detail = "" if ok else "unreachable"
         results.append(
             ProbeResult(
                 service=name,
                 ok=ok,
                 latency_ms=latency,
                 ts=ts,
-                detail="" if ok else "unreachable",
+                detail=detail,
             )
         )
     return results

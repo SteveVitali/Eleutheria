@@ -155,6 +155,49 @@ def test_probe_hosted_probes_every_resolved_target() -> None:
     assert seen == ["https://api.example/", "postgresql://x"]
 
 
+def test_probe_hosted_http_absent_inverts_the_health_assertion() -> None:
+    """P34.10 / SIG-OPS-003: an http-absent target is GREEN only on a 404.
+    A served route (present) and an unreachable origin both record not-ok —
+    the leak tripwire the hand rsync lacked."""
+    targets = [
+        ("absent-apex-curate", "http-absent", "https://apex.example/curate/"),
+        ("absent-web-intake", "http-absent", "https://web.example/intake/"),
+        ("absent-bucket-demo", "http-absent", "https://bucket.example/task/new/demo_roundtrip/"),
+    ]
+    answers = {
+        "https://apex.example/curate/": (True, "absent (HTTP 404)"),
+        "https://web.example/intake/": (False, "present (HTTP 200)"),
+        "https://bucket.example/task/new/demo_roundtrip/": (
+            False,
+            "unreachable (connection refused)",
+        ),
+    }
+
+    rows = S.probe_hosted(
+        targets,
+        now="2026-10-03T00:00:00Z",
+        check_absent=lambda url: answers[url],
+    )
+    assert [r.ok for r in rows] == [True, False, False]
+    assert rows[0].detail == "absent (HTTP 404)"
+    assert rows[1].detail == "present (HTTP 200)"  # a denied route reachable → not ok
+    assert "unreachable" in rows[2].detail  # a dead origin proves no absence
+
+
+def test_cadence_carries_http_absent_targets_for_every_denied_route() -> None:
+    """Every [[denied]] route in ops/public_routes.toml has committed
+    http-absent probe rows; the 6-hourly sweep picks them up."""
+    import tomllib
+
+    with open(REPO_ROOT / "ops" / "public_routes.toml", "rb") as fh:
+        denied = [d["path"] for d in tomllib.load(fh).get("denied", [])]
+    assert denied, "the allow-list must carry denied routes (P34.10)"
+    cadence = S.load_cadence(CADENCE)
+    absent_paths = {t.path for t in cadence.probe_targets if t.kind == "http-absent"}
+    for route in denied:
+        assert route in absent_paths, f"no http-absent probe covers {route}"
+
+
 def test_resolve_targets_env_then_template_then_skip() -> None:
     config = S.load_cadence(CADENCE)
     env = {
@@ -190,8 +233,13 @@ def test_resolve_targets_skips_unresolvable_never_placeholders() -> None:
     config = S.load_cadence(CADENCE)
     resolved, skipped = S.resolve_targets(config, {})
     names = {n for n, _ in resolved}
-    assert names == set()  # nothing env-resolvable, no {project}
-    assert set(skipped) == {s.name for s in config.probe_targets}
+    # P34.10: the apex-domain `http-absent` targets carry the committed canonical
+    # origin literal (surveillancegraph.org) — they resolve with no env at all;
+    # every other target still skips rather than probing a placeholder.
+    assert names and all(n.startswith("absent-apex-") for n in names)
+    urls = dict(resolved)
+    assert all("surveillancegraph.org" in urls[n] for n in names)
+    assert set(skipped) == {s.name for s in config.probe_targets} - names
 
 
 def test_hosted_pg_dsn_assembles_from_env_parts() -> None:
@@ -425,12 +473,14 @@ def test_cli_probe_hosted_appends_log_and_uploads(
     store = FakeGcs()
     monkeypatch.setattr(cli, "_gcs_bucket", lambda _a: store.bucket_client())
     monkeypatch.setattr("ops.scheduled.http_ok", lambda url, **k: True)
+    monkeypatch.setattr("ops.scheduled.http_absent", lambda url, **k: (True, "absent (HTTP 404)"))
     # The cloudsql target is unconfigured here -> honestly skipped, not probed.
     code = cli.main(["probe-hosted"])
     assert code == 0
     lines = (tmp_path / "probes.jsonl").read_text().splitlines()
     services = {json.loads(ln)["service"] for ln in lines}
     assert "sig-api-coverage-okc" in services and "sig-pg-cloudsql" not in services
+    assert "absent-apex-curate" in services  # P34.10: denied-route probes sweep too
     sweep_names = [n for n in store.objects if n.startswith("ops/probes/")]
     assert len(sweep_names) == 1
 
@@ -442,10 +492,42 @@ def test_cli_probe_hosted_down_target_fires_recorded_alert(
     monkeypatch.setenv("SIG_ALERT_LOG", str(tmp_path / "alerts.jsonl"))
     monkeypatch.setenv("SIG_PROBE_API_URL", "https://api.test")
     monkeypatch.setattr("ops.scheduled.http_ok", lambda url, **k: "dead" not in url)
+    # P34.10: keep the absent-route sweep deterministic (no live origins).
+    monkeypatch.setattr("ops.scheduled.http_absent", lambda url, **k: (True, "absent (HTTP 404)"))
     code = cli.main(["probe-hosted", "--alert", "--extra-target", "dead=https://dead.invalid/"])
     assert code == 6  # an alert fired
     alerts = (tmp_path / "alerts.jsonl").read_text().splitlines()
     assert any("dead" in ln for ln in alerts)
+
+
+def test_cli_probe_hosted_a_present_denied_route_fires_an_alert(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A denied route answering non-404 on a public origin is a PRESENT failure
+    the recorded alert names — the tripwire the hand rsync never had."""
+    monkeypatch.setenv("SIG_PROBE_LOG", str(tmp_path / "probes.jsonl"))
+    monkeypatch.setenv("SIG_ALERT_LOG", str(tmp_path / "alerts.jsonl"))
+    monkeypatch.setenv("SIG_GCP_PROJECT", "proj-x")
+    for var in (
+        "SIG_PROBE_API_URL",
+        "SIG_PROBE_WEB_URL",
+        "SIG_PG_USER",
+        "SIG_PG_DB",
+        "SIG_CLOUDSQL_CONNECTION",
+        "SIG_PROBE_DSN",
+    ):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setattr("ops.scheduled.http_ok", lambda url, **k: True)
+    monkeypatch.setattr(
+        "ops.scheduled.http_absent",
+        lambda url, **k: (
+            (False, "present (HTTP 200)") if "curate" in url else (True, "absent (HTTP 404)")
+        ),
+    )
+    code = cli.main(["probe-hosted", "--alert"])
+    assert code == 6
+    alerts = (tmp_path / "alerts.jsonl").read_text().splitlines()
+    assert any("absent-apex-curate" in ln for ln in alerts)
 
 
 def test_cli_probe_history_folds_a_local_log(

@@ -1,0 +1,109 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed allow-list for the public web surface (P34.10 / SIG-OPS-003,
+# durable fix for S0 F-02; the hand-rsync failure that re-published /curate/**
+# is recorded in G1 §3.2). This file is DATA, not code — it is the only record
+# of which routes a public build may carry.
+#
+# `sig-ops publish-web` refuses to sync a built tree whose top-level entries are
+# not all listed under [allowlist].top_level. It also refuses any page carrying
+# an internal/demo marker (`data-testid="curate-auth-banner"`, a form action on
+# a loopback host, a `demo_` task slug). A route added to `web/src/pages/` that
+# nobody lists here fails the publish — the allow-list edit IS the publish
+# decision.
+#
+# Deliberately NOT listed (never public; probed absent post-publish):
+#   curate/             the authenticated curation shell (ADR-068) — internal
+#   contribution-back/  withdrawn (C-12)
+#   visual-language/    withdrawn (A-0.3 = b; removed by republish #1)
+#   releases/           not approved; /releases/index.html is owned by the
+#                       release pipeline (exactly one generator, G2 0b)
+#   research-dossier/   not approved
+#   intake/             the non-operational receiver — never a public route
+#   r/ entity/ conf/ compat_index.json release.json
+#                       release-pipeline namespaces — never web-build output and
+#                       never deleted by the site sync (PROTECTED_PREFIXES)
+
+[allowlist]
+# Every top-level entry (directory or file) of the synced web tree must appear
+# here. Order is for humans; the check is a set membership.
+top_level = [
+  "index.html",          # the homepage
+  "404.html",            # reserved for a future 404 page
+  ".sig-release.json",   # the publish's own release record (rewritten each run)
+  "robots.txt",
+  "_astro",              # Astro's hashed build assets (css/js islands)
+  "tiles",               # per-compartment PMTiles (export-mode builds only)
+  "corrections",
+  "coverage-metrics",
+  "data-collection",     # the crawler contact page (P35.38a, S6c)
+  "data-freshness",
+  "dispute",
+  "dossier",
+  "editorial-standards",
+  "evidence",
+  "map",
+  "methodology",
+  "network",
+  "research-queue",
+  "search",
+  "style-guide",
+  "task",                # /task/new/<slug> — real task pages; demo_* refused
+  "watch",
+]
+
+# The subset of top_level that MUST be emitted by every public build — the
+# "every listed prefix exists" half of the check (an allow-list that names
+# routes a broken build silently dropped must not pass). Conditional entries
+# are deliberately absent here: 404.html is reserved for a future page,
+# .sig-release.json is written by the publish itself AFTER this assertion, and
+# tiles/ exists only in export-mode builds.
+required = [
+  "index.html",
+  "robots.txt",
+  "_astro",
+  "corrections",
+  "coverage-metrics",
+  "data-collection",
+  "data-freshness",
+  "dispute",
+  "dossier",
+  "editorial-standards",
+  "evidence",
+  "map",
+  "methodology",
+  "network",
+  "research-queue",
+  "search",
+  "style-guide",
+  "task",
+  "watch",
+]
+
+# Routes that must NEVER exist on a public origin. `sig-ops publish-web --apply`
+# probes each of them (404 required) on every public origin after the sync, and
+# the 6-hourly `sig-probe` sweep carries them as `http-absent` targets
+# (ops/cadence.toml). A probe that finds one PRESENT fails the publish and fires
+# the recorded alert — the leak detector the hand-rsync run was missing.
+[[denied]]
+path = "/curate/"
+note = "authenticated curation shell (ADR-068) — internal, never public"
+
+[[denied]]
+path = "/curate/submit/"
+note = "the curation submit surface — the route the hand rsync leaked"
+
+[[denied]]
+path = "/task/new/demo_roundtrip/"
+note = "one demo page canary — demo_* task slugs are never publishable"
+
+[[denied]]
+path = "/releases/"
+note = "not approved; the release pipeline owns /releases/index.html (G2 0b)"
+
+[[denied]]
+path = "/research-dossier/"
+note = "not approved"
+
+[[denied]]
+path = "/intake/"
+note = "the correction-intake receiver is non-operational — never a public route"

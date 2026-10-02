@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "8a87d03c83d719f4cc3b4111af3b69e1a9b56984",
+  "input_commit": "4709e5f14b2fa48ded4806c27eba4598fe1775ff",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -762,7 +762,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "b4681d0cb5b96f252f437a1acf57837d16341ac1da31d649b2e25153551d526b"
+      "sha256": "a24ede35ca7e3924641a5ab7b4ba82a8ea520029212efa46bb802b88e758ec70"
     },
     {
       "path": "docs/build/LEDGER.md",
