@@ -624,7 +624,7 @@ def test_future_statutory_disclosure_is_registered_with_commencement_date() -> N
     # commencement date; non-compliance after the due date is detectable.
     rec = get("future_statutory_disclosure_2027")
     assert rec.ingestion_permitted is False
-    assert "2027-04-01" in rec.notes
+    assert "2027-04-01" in rec.notes  # future-ok: real-world: statutory first-reports deadline
 
 
 # --- fixture provenance ---------------------------------------------------------

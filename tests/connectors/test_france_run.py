@@ -54,7 +54,7 @@ def test_raa_shadow_run_emits_the_prefectoral_instrument() -> None:
     assert inst["value"] == "fr.arrete_prefectoral"
     # The five-year renewable sunset is derived (CSI L252), not stored.
     sunset = next(c for c in report.claims if c.get("predicate_id") == "sunset_date")
-    assert sunset["value"] == "2031-02-01"
+    assert sunset["value"] == "2031-02-01"  # future-ok: real-world: recorded arrêté sunset
     assert report.diff is not None and report.diff.changed_count == 0
 
 

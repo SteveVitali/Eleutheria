@@ -27,10 +27,10 @@ SCRIPT = REPO_ROOT / "ops" / "gcp" / "protect.sh"
 FIXTURES = Path(__file__).parent / "fixtures" / "protect"
 
 # The live window: mutations never inside 03:00–10:00Z; sig-pg legs additionally
-# never inside an AR-3 window (2026-10-06T00:00Z–10-13T12:00Z et al.) nor while
+# never inside an AR-3 window (from 2026-10-06T00:00Z; future-ok: scheduled: AR-3),
 # sig-materialize runs.
 INSIDE_DAILY_BAND = "2026-10-02T05:00:00Z"
-INSIDE_AR3 = "2026-10-08T12:00:00Z"  # AR-3 window 10-06T00:00Z → 10-13T12:00Z
+INSIDE_AR3 = "2026-10-08T12:00:00Z"  # AR-3 window — future-ok: scheduled: AR-3 window
 OPEN_WINDOW = "2026-10-03T12:00:00Z"  # outside both
 
 _STUB_GCLOUD = """#!/usr/bin/env bash

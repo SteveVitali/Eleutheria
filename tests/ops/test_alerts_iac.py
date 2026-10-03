@@ -39,7 +39,7 @@ from ops import monitoring_defs as md  # noqa: E402
 
 INSIDE_BAND = "2026-10-02T05:00:00Z"  # 03:00–10:00Z never-band
 OPEN_WINDOW = "2026-10-03T12:00:00Z"  # outside band + AR-3
-INSIDE_AR3 = "2026-10-08T12:00:00Z"  # AR-3 window, outside the band
+INSIDE_AR3 = "2026-10-08T12:00:00Z"  # AR-3 window — future-ok: scheduled: AR-3 window
 
 GREEN_EXEC = [{"status": {"conditions": [{"type": "Completed", "status": "True"}]}}]
 RED_EXEC = [

@@ -1769,14 +1769,14 @@ retrieval_date = 2026-09-22
 # ===========================================================================
 
 [sources.future_statutory_disclosure_2027]
-name = "State statutory disclosure — first reports due 2027-04-01"
+name = "State statutory disclosure — first reports due 2027-04-01"  # future-ok: real-world: statutory first-reports deadline
 source_kind = "government_portal"
 homepage_url = ""
 default_tier = "R1"
 custody_posture = "MIRROR"
 compact_status = "not_contacted"
 robots_policy = "not_applicable"
-notes = "SIG-INGEST-050: enacted statute mandating public posting of nine items mapping onto SIG's deployment schema; first reports due 2027-04-01. Registered early so the connector can be specified against the field list; absence before the due date is a lawful not_applicable coverage state; non-compliance after is an AccountabilityEvent (SIG-INGEST-049e)."
+notes = "SIG-INGEST-050: enacted statute mandating public posting of nine items mapping onto SIG's deployment schema; first reports due 2027-04-01. Registered early so the connector can be specified against the field list; absence before the due date is a lawful not_applicable coverage state; non-compliance after is an AccountabilityEvent (SIG-INGEST-049e)."  # future-ok: real-world: statutory first-reports deadline
 
 # ===========================================================================
 # I. International (§22.6 I)

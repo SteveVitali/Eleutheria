@@ -16,7 +16,7 @@
  *   - unresearched + no-evidence-found + unresolved gaps (SIG-UI-012, §9.5);
  *   - material figures with full reconciliations (SIG-UI-014), incl. a lower bound;
  *   - the three action blocks with the Appendix-D auto-renewal deadline
- *     (expiry 2027-04-02, 90-day notice → decision date 2027-01-02) (SIG-UI-014a/b);
+ *     (expiry 2027-04-02, 90-day notice → decision date 2027-01-02) (SIG-UI-014a/b); future-ok: real-world: recorded contract dates
  *   - `unknown` values rendered explicitly, never omitted (SIG-UI-015).
  */
 
@@ -106,7 +106,7 @@ export const OKC_DOSSIER: Dossier = {
   },
   termination: {
     // The Appendix-D auto-renewal case: the decision date, not the expiry, is what
-    // matters — 2027-04-02 minus a 90-day notice window is 2027-01-02 (SIG-UI-014b).
+    // matters — 2027-04-02 minus a 90-day notice window is 2027-01-02 (SIG-UI-014b). future-ok: real-world: recorded contract dates
     auto_renews: true,
     notice_window_days: 90,
     expiry_date: "2027-04-02",
@@ -173,7 +173,7 @@ export const OKC_DOSSIER: Dossier = {
       section_id: "cost_and_expiry",
       rows: [
         { label: "Contract value (annual)", value: null, note: "Not disclosed in the released contract." },
-        { label: "Contract expiry", value: "2027-04-02", documentUrl: "/v1/claim/contract" },
+        { label: "Contract expiry", value: "2027-04-02", documentUrl: "/v1/claim/contract" },  // future-ok: real-world: recorded contract expiry
       ],
     },
     {

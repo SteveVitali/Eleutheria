@@ -147,7 +147,7 @@ def test_candidate_builds_one_unpublished_release(conn, tmp_path):
         audit=stage["audit"],
         apply_report=stage["apply_report"],
         registry_dir=registry,
-        as_of="2026-10-19",
+        as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
         code_commit="test-commit",
     )
 
@@ -279,7 +279,7 @@ def test_candidate_pointer_bytes_unchanged_with_existing_pointer(conn, tmp_path)
         snapshot=stage["snapshot"],
         out_dir=tmp_path / "candidate",
         registry_dir=registry,
-        as_of="2026-10-19",
+        as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
     )
     assert (registry / "latest.json").read_bytes() == latest_bytes
     ptr = manifest["publication_pointer"]
@@ -298,7 +298,7 @@ def test_candidate_export_read_only_and_compartments(conn, tmp_path):
         conn,
         snapshot=stage["snapshot"],
         out_dir=tmp_path / "candidate",
-        as_of="2026-10-19",
+        as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
     )
     # every emitted compartment artifact carries a licence + checksum; the
     # ODbL separation rule was exercised by the export gate itself
@@ -334,7 +334,7 @@ def test_candidate_refuses_a_missing_population_claim(conn, tmp_path):
             conn,
             snapshot=snapshot,
             out_dir=tmp_path / "candidate",
-            as_of="2026-10-19",
+            as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
         )
     assert exc.value.code == "changed_input"
     # nothing was staged when the frame check failed
@@ -354,7 +354,7 @@ def test_candidate_refuses_drifted_eligibility_semantics(conn, tmp_path):
             conn,
             snapshot=snapshot,
             out_dir=tmp_path / "candidate",
-            as_of="2026-10-19",
+            as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
         )
     assert exc.value.code == "changed_input"
 
@@ -392,7 +392,7 @@ def test_candidate_refuses_when_a_real_disposition_changes_eligibility(conn, tmp
             conn,
             snapshot=stage["snapshot"],
             out_dir=tmp_path / "candidate",
-            as_of="2026-10-19",
+            as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
         )
     assert exc.value.code == "changed_input"
     assert "eligibility" in str(exc.value).lower()
@@ -412,6 +412,6 @@ def test_candidate_refuses_on_activated_shadow_policy(conn, tmp_path):
             snapshot=stage["snapshot"],
             out_dir=tmp_path / "candidate",
             shadow_report=shadow,
-            as_of="2026-10-19",
+            as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
         )
     assert exc.value.code == "activated_policy"

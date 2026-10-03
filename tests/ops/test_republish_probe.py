@@ -248,13 +248,15 @@ def test_probe_run_record_shape_and_partial_verdict(tmp_path: Path, cadence: Pat
         cadence_path=cadence,
         env={},
         handle_list=tmp_path / "absent.txt",
-        now="2026-10-05T12:00:00Z",
+        now="2026-10-05T12:00:00Z",  # future-ok: synthetic: probe fixture
         check_absent=lambda url: (True, "404"),
-        release={"release_id": "web-2026-10-05"},
+        release={"release_id": "web-2026-10-05"},  # future-ok: synthetic: probe fixture
     )
     assert record["version"] == PROBE_RUN_VERSION == "sig.probe-run/1"
-    assert record["generated_at"] == "2026-10-05T12:00:00Z"
-    assert record["release"]["release_id"] == "web-2026-10-05"
+    assert record["generated_at"] == "2026-10-05T12:00:00Z"  # future-ok: synthetic: probe fixture
+    assert (
+        record["release"]["release_id"] == "web-2026-10-05"  # future-ok: synthetic: probe fixture
+    )
     # absence pass + handle skipped + tiles skipped + attribution skipped
     assert record["overall"] == "partial"
     assert record["checks"]["absence"]["verdict"] == "pass"

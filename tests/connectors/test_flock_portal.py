@@ -197,7 +197,7 @@ def test_portal_compartment_alone_exports_under_cc_by_sa() -> None:
 
 def test_observed_at_is_the_upstream_snapshot_date_not_fetch_time() -> None:
     # SIG-INGEST-030c: observed_at is the upstream data_last_updated (2026-08-15),
-    # NOT the transport's retrieved_at (2027-01-01).
+    # NOT the transport's retrieved_at (2027-01-01). future-ok: synthetic: fixture retrieved_at
     _, report = _run_over("snapshot_2026_08.json")
     dated = [c for c in _claims(report) if "observed_at" in c]
     assert dated

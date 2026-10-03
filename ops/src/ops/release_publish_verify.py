@@ -1,14 +1,23 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""P32.25 / ADR-144 (SIG-TRUST-009) — publish and verify the accepted release
-with rollback, inside the bounded staging namespace.
+"""P32.25 / ADR-144 (SIG-TRUST-009) — publish and verify a gate-accepted
+release with rollback, inside the bounded staging namespace.
 
-The subject is *exactly* the GATE-G3-accepted P32.23a candidate — publication
-``p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587`` — never a
-rebuilt release: the preflight pins the committed packet to the signed inputs
-(identity, frozen snapshot, descriptor, release manifest, ruleset, deferred
-evaluation) before anything is activated.
+The subject is the candidate packet named on the command line: its
+publication id, descriptor, manifest digests, identity, frozen snapshot,
+ruleset, data-release id and as-of cuts are read from its
+``CANDIDATE_MANIFEST.json`` (P34.22a / ADR-146 D4 — no candidate pin is a
+code constant and there is no production default for ``--candidate``). The
+signed gate readout is the publish authority: it must name the manifest's
+publication, identity and frozen snapshot, or the run refuses before it
+moves a single pointer. When the packet directory carries a recorded
+supersession (``CORRECTION.md`` § Supersession record naming the
+publication — as the p32.23a rehearsal candidate does, withdrawn by the
+operator's B-4 answer), the proof reports *rehearsal evidence of a
+superseded candidate — no publish authorised*: the machinery is still
+proven over the committed bytes, but the run never exits as a production
+verification.
 
 Phases:
 
@@ -53,6 +62,7 @@ import socket
 import threading
 import tomllib
 import urllib.request
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
@@ -81,20 +91,104 @@ from policy.eligibility import (
 from exports import release as rel
 
 # --------------------------------------------------------------------------- #
-# The GATE-G3-accepted pins — the publish may only move these exact bytes.    #
+# The candidate's pins are read from the packet's own CANDIDATE_MANIFEST.json #
+# (P34.22a / ADR-146 D4 — the superseded rehearsal candidate stays a record   #
+# in docs/build/reports/, never a code constant). The signed gate readout is  #
+# the publish authority that binds the manifest's pins to a decision.         #
 # --------------------------------------------------------------------------- #
 
-PUBLICATION_ID = "p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587"
-IDENTITY_DIGEST = "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f"
-FROZEN_SNAPSHOT_DIGEST = "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99"
-DESCRIPTOR_SHA256 = "17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587"
-RELEASE_MANIFEST_SHA256 = "3966c7657b7b30b379c50608e6cb6d35f90b29bd03b0f336716bca48fc9a23ce"
-EXPORT_MANIFEST_SHA256 = "sha256:0e0ca9908173b9afa78c5b90dd42f99f8bbed4819c46b37e5a055ed443c21b6b"
-RULESET_VERSION = "provisional-ruleset/1"
-DATA_RELEASE_ID = "sig-2026-10-19-518afbaf"
-AS_OF_WORLD = "2026-10-19"
-AS_OF_BELIEF = "2026-10-19"
-ARTIFACT_COUNT = 18
+
+@dataclass(frozen=True)
+class CandidatePins:
+    """The release pins of the candidate named on the command line, read from
+    its ``CANDIDATE_MANIFEST.json`` (``release.*`` + ``candidate.*``)."""
+
+    publication_id: str
+    identity_digest: str
+    frozen_snapshot_digest: str
+    descriptor_sha256: str  # bare hex — the manifest carries the sha256: prefix
+    release_manifest_sha256: str
+    export_manifest_sha256: str
+    ruleset_version: str
+    data_release_id: str
+    as_of_world: str
+    as_of_belief: str
+
+    def as_dict(self) -> dict[str, str]:
+        return asdict(self)
+
+
+def pins_from_manifest(manifest: dict[str, Any]) -> CandidatePins:
+    """Extract the candidate's release pins from a parsed
+    ``CANDIDATE_MANIFEST.json``. Fail-closed: a missing or empty pin is a
+    ``PublishVerificationError`` — the publish never runs on guessed pins."""
+    cand = manifest.get("candidate") or {}
+    release = manifest.get("release") or {}
+    descriptor = release.get("descriptor") or {}
+    raw: dict[str, Any] = {
+        "publication_id": release.get("publication_id"),
+        "identity_digest": cand.get("identity_digest"),
+        "frozen_snapshot_digest": cand.get("frozen_snapshot_digest"),
+        "descriptor_sha256": release.get("descriptor_sha256"),
+        "release_manifest_sha256": release.get("release_manifest_sha256"),
+        "export_manifest_sha256": release.get("export_manifest_sha256"),
+        "ruleset_version": cand.get("ruleset_version"),
+        "data_release_id": descriptor.get("data_release_id"),
+        "as_of_world": descriptor.get("as_of_world"),
+        "as_of_belief": descriptor.get("as_of_belief"),
+    }
+    missing = [k for k, v in raw.items() if not isinstance(v, str) or not v]
+    if missing:
+        raise PublishVerificationError(
+            f"the candidate manifest is missing release pins: {missing} — "
+            "the packet named on the command line must declare them all"
+        )
+    return CandidatePins(
+        publication_id=raw["publication_id"],
+        identity_digest=raw["identity_digest"],
+        frozen_snapshot_digest=raw["frozen_snapshot_digest"],
+        descriptor_sha256=str(raw["descriptor_sha256"]).removeprefix("sha256:"),
+        release_manifest_sha256=raw["release_manifest_sha256"],
+        export_manifest_sha256=raw["export_manifest_sha256"],
+        ruleset_version=raw["ruleset_version"],
+        data_release_id=raw["data_release_id"],
+        as_of_world=raw["as_of_world"],
+        as_of_belief=raw["as_of_belief"],
+    )
+
+
+def pins_from_candidate_dir(candidate_dir: Path | str) -> CandidatePins:
+    """The pins of the packet named on the command line."""
+    return pins_from_manifest(_read_json(Path(candidate_dir) / "CANDIDATE_MANIFEST.json"))
+
+
+#: What a run over a superseded candidate reports — the machinery is proven
+#: over the committed bytes, never authorised as a production publish.
+SUPERSEDED_POSTURE = "rehearsal evidence of a superseded candidate (B-4) — no publish authorised"
+STAGING_POSTURE = (
+    "rehearsal evidence — bounded staging namespace only; no production "
+    "publish is authorised by this run"
+)
+
+
+def _supersession_record(candidate_dir: Path, publication_id: str) -> str | None:
+    """The recorded supersession for this publication, when the packet
+    directory carries one — a ``CORRECTION.md`` § Supersession record naming
+    the publication id (SEED-08's record for the rehearsal candidate).
+    Returns the record's headline, or ``None`` when nothing supersedes it."""
+    corr = candidate_dir / "CORRECTION.md"
+    if not corr.exists():
+        return None
+    text = corr.read_text(encoding="utf-8")
+    if "Supersession record" not in text or publication_id not in text:
+        return None
+    for line in text.splitlines():
+        if "Supersession record" in line:
+            headline = line.lstrip("# -*").strip()
+            if headline:
+                return headline
+    return f"supersession recorded for {publication_id[:24]}…"
+
 
 #: The committed P32.24 acceptance corpus — a labelled rehearsal stand-in for
 #: "whatever pointer production holds at rollback time". It is NOT a
@@ -112,7 +206,6 @@ PRIOR_RENDERER = "p32.24"
 PRIOR_ENTITY_WITHHOLD = "ent-acc-dep-41"  # corpus entity — deny target
 PRIOR_CLAIM_WITHHOLD = "cl-acc-denied-claim"  # corpus claim — denies its carriers
 
-DEFAULT_CANDIDATE = Path("docs/build/reports/p32.23a-release-candidate")
 DEFAULT_PRIOR_EXPORT = Path(
     "docs/build/reports/p32.24-investigation-journey-verification/corpus_export"
 )
@@ -223,8 +316,9 @@ def _integrity_manifest(release_dir: Path) -> dict[str, Any]:
 def preflight(
     candidate_dir: Path,
     gate_readout: Path | str,
+    pins: CandidatePins,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Verify the committed packet pins exactly the GATE-G3-accepted candidate
+    """Verify the packet's declared pins agree with the gate-signed record
     and that every release byte matches the approved digests. Raises
     ``PublishVerificationError`` on drift — the publish refuses before it moves
     a single pointer."""
@@ -238,30 +332,30 @@ def preflight(
     text = gate_readout.read_text(encoding="utf-8") if gate_readout.exists() else ""
     gate_ok = (
         "SIGNED" in text
-        and PUBLICATION_ID in text
-        and IDENTITY_DIGEST in text
-        and FROZEN_SNAPSHOT_DIGEST in text
+        and pins.publication_id in text
+        and pins.identity_digest in text
+        and pins.frozen_snapshot_digest in text
     )
     if not gate_ok:
         raise PublishVerificationError(
-            f"GATE-G3 readout at {gate_readout} does not record a SIGNED acceptance "
-            f"of {PUBLICATION_ID} — there is no publish authority"
+            f"the gate readout at {gate_readout} does not record a SIGNED acceptance "
+            f"of {pins.publication_id} — there is no publish authority"
         )
     checks.append(
         _check(
             "PF.gate_signed",
             "pass",
-            "GATE-G3 readout records SIGNED acceptance of the exact candidate "
+            "the gate readout records SIGNED acceptance of the exact candidate "
             "(publication + identity + frozen snapshot pinned in the readout)",
             evidence={"readout": str(gate_readout)},
         )
     )
 
-    # -- the packet's own pins must equal the accepted values --------------- #
+    # -- the manifest's declared pins + the accepted publish posture -------- #
     cman = _read_json(candidate_dir / "CANDIDATE_MANIFEST.json")
     cand = cman.get("candidate") or {}
     release = cman.get("release") or {}
-    pins = {
+    declared = {
         "publication_id": release.get("publication_id"),
         "descriptor_sha256": (release.get("descriptor_sha256") or "").removeprefix("sha256:"),
         "release_manifest_sha256": release.get("release_manifest_sha256"),
@@ -274,14 +368,18 @@ def preflight(
         "published": cand.get("published"),
         "validation_state": release.get("validation_state"),
     }
+    # The identity fields must equal the pins the command line loaded (the
+    # external authority binding them is the SIGNED readout above); the
+    # posture fields must be the accepted values — nothing else may publish
+    # under this run.
     expected = {
-        "publication_id": PUBLICATION_ID,
-        "descriptor_sha256": DESCRIPTOR_SHA256,
-        "release_manifest_sha256": RELEASE_MANIFEST_SHA256,
-        "export_manifest_sha256": EXPORT_MANIFEST_SHA256,
-        "identity_digest": IDENTITY_DIGEST,
-        "frozen_snapshot_digest": FROZEN_SNAPSHOT_DIGEST,
-        "ruleset_version": RULESET_VERSION,
+        "publication_id": pins.publication_id,
+        "descriptor_sha256": pins.descriptor_sha256,
+        "release_manifest_sha256": pins.release_manifest_sha256,
+        "export_manifest_sha256": pins.export_manifest_sha256,
+        "identity_digest": pins.identity_digest,
+        "frozen_snapshot_digest": pins.frozen_snapshot_digest,
+        "ruleset_version": pins.ruleset_version,
         "evaluation_status": "deferred",
         "evaluation_mode": "shadow",
         "published": False,
@@ -289,21 +387,22 @@ def preflight(
     }
     drift: dict[str, Any] = {}
     for key, want in expected.items():
-        got = pins.get(key)
+        got = declared.get(key)
         if got != want:
             drift[key] = {"expected": want, "found": got}
     if drift:
         raise PublishVerificationError(
-            f"the candidate packet is NOT the GATE-G3-accepted candidate — drift: {drift}"
+            "the candidate packet's declared pins or publish posture drift "
+            f"from what the command line loaded and the gate accepted — {drift}"
         )
     checks.append(
         _check(
             "PF.candidate_pinned",
             "pass",
-            "CANDIDATE_MANIFEST pins exactly the accepted publication, "
-            "descriptor, manifests, identity, snapshot, ruleset and deferred "
-            "evaluation — nothing else can be published by this run",
-            evidence=pins,
+            "CANDIDATE_MANIFEST declares the loaded publication, descriptor, "
+            "manifests, identity, snapshot, ruleset and the accepted deferred-"
+            "evaluation posture — nothing else can be published by this run",
+            evidence=declared,
         )
     )
 
@@ -312,13 +411,11 @@ def preflight(
     if report.state != "complete":
         raise PublishVerificationError(f"candidate release fails validation: {report.failures[:5]}")
     manifest = _integrity_manifest(release_dir)
-    if manifest.get("publication_id") != PUBLICATION_ID:
+    if manifest.get("publication_id") != pins.publication_id:
         raise PublishVerificationError("integrity manifest names a different publication")
+    if str(manifest.get("descriptor_sha256") or "") != pins.descriptor_sha256:
+        raise PublishVerificationError("integrity manifest names a different descriptor digest")
     artifacts = manifest.get("artifacts") or []
-    if len(artifacts) != ARTIFACT_COUNT:
-        raise PublishVerificationError(
-            f"integrity manifest lists {len(artifacts)} artifacts, expected {ARTIFACT_COUNT}"
-        )
     digests: list[dict[str, Any]] = []
     for art in artifacts:
         digest, size = _file_digest(release_dir / str(art["path"]))
@@ -444,13 +541,16 @@ def preflight(
         )
     )
 
-    pins_out = {
-        **expected,
+    pins_evidence = {
+        **declared,
+        "data_release_id": pins.data_release_id,
+        "as_of_world": pins.as_of_world,
+        "as_of_belief": pins.as_of_belief,
         "artifact_count": len(artifacts),
         "artifact_digests": digests,
         "release_dir": str(release_dir),
     }
-    return checks, pins_out
+    return checks, pins_evidence
 
 
 # --------------------------------------------------------------------------- #
@@ -461,6 +561,7 @@ def preflight(
 def publish(
     candidate_dir: Path,
     registry_dir: Path,
+    pins: CandidatePins,
     *,
     now: datetime | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -512,8 +613,8 @@ def publish(
     transition_ok = (
         before is None
         and after is not None
-        and after.get("publication_id") == PUBLICATION_ID
-        and after.get("manifest_sha256") == RELEASE_MANIFEST_SHA256
+        and after.get("publication_id") == pins.publication_id
+        and after.get("manifest_sha256") == pins.release_manifest_sha256
     )
     checks.append(
         _check(
@@ -521,7 +622,7 @@ def publish(
             "pass" if transition_ok else "fail",
             "latest.json flipped atomically: absent (no prior release — this is "
             "the first immutable namespace) → "
-            f"{PUBLICATION_ID[:20]}… with the pinned manifest digest",
+            f"{pins.publication_id[:20]}… with the pinned manifest digest",
             evidence={
                 "before": before,
                 "before_bytes_sha256": _sha256(before_bytes) if before_bytes else None,
@@ -536,8 +637,8 @@ def publish(
     pubs = cat.get("publications") or []
     cat_ok = (
         len(pubs) == 1
-        and pubs[0].get("publication_id") == PUBLICATION_ID
-        and pubs[0].get("manifest_sha256") == RELEASE_MANIFEST_SHA256
+        and pubs[0].get("publication_id") == pins.publication_id
+        and pubs[0].get("manifest_sha256") == pins.release_manifest_sha256
         and pubs[0].get("record_count") == 0
     )
     checks.append(
@@ -564,7 +665,7 @@ def publish(
             landing="docs/build/readouts/GATE-G3.md" if post.state != "complete" else None,
         )
     )
-    receipt = registry_dir / "activations" / f"{PUBLICATION_ID}.json"
+    receipt = registry_dir / "activations" / f"{pins.publication_id}.json"
     checks.append(
         _check(
             "P.activation_receipt",
@@ -631,6 +732,7 @@ def _http_reads(staged: Path, routes: list[str]) -> list[dict[str, Any]]:
 def verify_surface(
     registry_dir: Path,
     candidate_dir: Path | str,
+    pins: CandidatePins,
     *,
     config_path: Path = DEFAULT_CONFIG,
 ) -> list[dict[str, Any]]:
@@ -660,8 +762,8 @@ def verify_surface(
     # no undeclared file under the release routes — the overlay additions are
     # the only allowed extras
     overlay_ok = {
-        f"releases/{PUBLICATION_ID}/catalog_entry.json",
-        f"releases/{PUBLICATION_ID}/integrity_manifest.json",
+        f"releases/{pins.publication_id}/catalog_entry.json",
+        f"releases/{pins.publication_id}/integrity_manifest.json",
         "releases/index.html",
         "releases/catalog.json",
         "compat_index.json",
@@ -702,8 +804,8 @@ def verify_surface(
     # -- unauthenticated HTTP reads over the staged tree -------------------- #
     routes = [str(a["path"]) for a in artifacts]
     routes += [
-        f"r/{PUBLICATION_ID}/c/web/evidence/{_evidence_uuid(artifacts)}/",
-        f"releases/{PUBLICATION_ID}/",
+        f"r/{pins.publication_id}/c/web/evidence/{_evidence_uuid(artifacts)}/",
+        f"releases/{pins.publication_id}/",
         "releases/index.html",
         "releases/catalog.json",
         "compat_index.json",
@@ -735,9 +837,9 @@ def verify_surface(
     )
 
     # -- citations: immutable routes + honest selectors --------------------- #
-    landing = (staged / f"releases/{PUBLICATION_ID}/index.html").read_text(encoding="utf-8")
+    landing = (staged / f"releases/{pins.publication_id}/index.html").read_text(encoding="utf-8")
     sel_now = rel.resolve_selector(
-        registry_dir, as_of_world=AS_OF_WORLD, as_of_belief=None, ruleset=RULESET_VERSION
+        registry_dir, as_of_world=pins.as_of_world, as_of_belief=None, ruleset=pins.ruleset_version
     )
     sel_current = rel.resolve_selector(
         registry_dir, as_of_world=None, as_of_belief=None, ruleset=None
@@ -748,17 +850,17 @@ def verify_surface(
     compat = registry_dir / "staged" / "compat_index.json"
     compat_entries = (_read_json(compat).get("entries") or []) if compat.exists() else []
     cit_ok = (
-        PUBLICATION_ID in landing
+        pins.publication_id in landing
         and "cite this URL" in landing
         and sel_now.get("status") == "redirect"
-        and sel_now.get("publication_id") == PUBLICATION_ID
+        and sel_now.get("publication_id") == pins.publication_id
         and sel_current.get("status") == "current"
-        and sel_current.get("publication_id") == PUBLICATION_ID
+        and sel_current.get("publication_id") == pins.publication_id
         and sel_old.get("status") == "unavailable"
         and any(
-            e.get("publication_id") == PUBLICATION_ID
-            and e.get("as_of_world") == AS_OF_WORLD
-            and e.get("ruleset_version") == RULESET_VERSION
+            e.get("publication_id") == pins.publication_id
+            and e.get("as_of_world") == pins.as_of_world
+            and e.get("ruleset_version") == pins.ruleset_version
             for e in compat_entries
         )
     )
@@ -792,7 +894,7 @@ def verify_surface(
         if (staged / "entity").exists()
         else []
     )
-    cat_entry = _read_json(staged / f"releases/{PUBLICATION_ID}/catalog_entry.json")
+    cat_entry = _read_json(staged / f"releases/{pins.publication_id}/catalog_entry.json")
     rec_ok = cat_entry.get("record_count") == 0 and not entity_routes and not stubs
     checks.append(
         _check(
@@ -814,8 +916,8 @@ def verify_surface(
     # -- search: the honest 404, never a current-spine fallback ------------- #
     store = ReleaseSearchStore(registry_dir)
     search_cases = [
-        (PUBLICATION_ID, "sig_graph", 404, "unknown_compartment"),
-        (PUBLICATION_ID, "osm_physical", 404, "unknown_compartment"),
+        (pins.publication_id, "sig_graph", 404, "unknown_compartment"),
+        (pins.publication_id, "osm_physical", 404, "unknown_compartment"),
         (
             "p-0000000000000000000000000000000000000000000000000000000000000000",
             "sig_graph",
@@ -894,7 +996,7 @@ def verify_surface(
         if conf.exists()
         else []
     )
-    sample_route = f"r/{PUBLICATION_ID}/c/web/evidence/{_evidence_uuid(artifacts)}/"
+    sample_route = f"r/{pins.publication_id}/c/web/evidence/{_evidence_uuid(artifacts)}/"
     access = route_access(registry_dir, sample_route)
     w_ok = not withdrawals and not deny_lines and access.get("permitted") is True
     checks.append(
@@ -941,7 +1043,7 @@ def verify_surface(
     )
 
     # -- disclosures on the published surface -------------------------------- #
-    descriptor = _read_json(staged / f"releases/{PUBLICATION_ID}/descriptor.json")
+    descriptor = _read_json(staged / f"releases/{pins.publication_id}/descriptor.json")
     forbidden: list[str] = []
     scanned = 0
     for p in staged.rglob("*"):
@@ -953,7 +1055,7 @@ def verify_surface(
             if phrase.lower() in body.lower():
                 forbidden.append(f"{p.relative_to(staged)}: {phrase}")
     disclosure_ok = (
-        descriptor.get("ruleset_version") == RULESET_VERSION
+        descriptor.get("ruleset_version") == pins.ruleset_version
         and "provisional-ruleset/1" in landing
         and not forbidden
     )
@@ -1111,6 +1213,7 @@ def rehearse_rollback(
     candidate_dir: Path,
     prior_export_dir: Path,
     rehearsal_root: Path,
+    pins: CandidatePins,
     *,
     now: datetime | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -1126,7 +1229,7 @@ def rehearse_rollback(
     cand_manifest = _integrity_manifest(cand_release_src)
     cand_artifacts = {str(a["path"]): a for a in cand_manifest.get("artifacts") or []}
     evidence_uuid = _evidence_uuid(list(cand_artifacts.values()))
-    evidence_route = f"r/{PUBLICATION_ID}/c/web/evidence/{evidence_uuid}/"
+    evidence_route = f"r/{pins.publication_id}/c/web/evidence/{evidence_uuid}/"
     evidence_file = f"{evidence_route}index.html"
     second_artifact = next(a["path"] for a in cand_artifacts.values() if a["path"] != evidence_file)
 
@@ -1187,7 +1290,7 @@ def rehearse_rollback(
         for marker in ("tombstone", "withheld", "withdrawn", "safety_withdrawal")
     )
     r1_ok = (
-        pre_latest.get("publication_id") == PUBLICATION_ID
+        pre_latest.get("publication_id") == pins.publication_id
         and post_latest.get("publication_id") == PRIOR_RELEASE_ID
         and post_latest.get("rolled_back") is True
         and denied_prior.get("permitted") is False
@@ -1203,7 +1306,7 @@ def rehearse_rollback(
             "R.prior_release",
             "pass" if r1_ok else "fail",
             "prior-release rollback restores the pointer atomically: latest "
-            f"{PUBLICATION_ID[:16]}… → {PRIOR_RELEASE_ID[:16]}…; the candidate's "
+            f"{pins.publication_id[:16]}… → {PRIOR_RELEASE_ID[:16]}…; the candidate's "
             "non-denied bytes still serve byte-identically at their immutable "
             "routes (old citations preserved), current withdrawals keep "
             "denying under the rollback (artifact tombstone + entity deny), "
@@ -1242,7 +1345,7 @@ def rehearse_rollback(
         and len(reg2.catalog().get("publications") or []) == 1
         and evidence_bytes == cand_artifacts[evidence_file]["sha256"]
         and "<strong>(latest)</strong>" not in index_html
-        and PUBLICATION_ID in index_html
+        and pins.publication_id in index_html
         and cleared.get("cleared") is True
     )
     checks.append(
@@ -1353,13 +1456,13 @@ def rehearse_rollback(
 # --------------------------------------------------------------------------- #
 
 
-def live_return_pass() -> dict[str, Any]:
+def live_return_pass(pins: CandidatePins) -> dict[str, Any]:
     """The production obligations this run explicitly does NOT claim — the
     staged proof is evidence for the return pass, never a substitute."""
     return {
         "schema": RETURN_PASS_SCHEMA,
         "status": "prepared_not_executed",
-        "subject_publication_id": PUBLICATION_ID,
+        "subject_publication_id": pins.publication_id,
         "what_this_run_proved": [
             "atomic publish of the exact GATE-G3-accepted artifact set in the "
             "bounded staging namespace (validate-first, pointer-last)",
@@ -1463,11 +1566,13 @@ def render_markdown(proof: dict[str, Any]) -> str:
         f"({c.get('pass', 0)} pass, {c.get('fail', 0)} fail, "
         f"{c.get('deferred', 0)} deferred, {c.get('not_applicable', 0)} n/a)",
         "",
-        "The subject is exactly the GATE-G3-accepted P32.23a fixture candidate "
-        "— this is a **bounded/staging-namespace** proof of the publish + "
-        "verify + rollback machinery over that artifact set. **No production "
-        "exposure is claimed**: nothing was served publicly, no intake "
-        "operation ran, no synthetic submission was sent, and the "
+        f"**Subject:** `{proof['subject']['publication_id']}` — {proof['subject']['posture']}",
+        "",
+        "The subject is the gate-accepted candidate packet named on the "
+        "command line — this is a **bounded/staging-namespace** proof of the "
+        "publish + verify + rollback machinery over that artifact set. **No "
+        "production exposure is claimed**: nothing was served publicly, no "
+        "intake operation ran, no synthetic submission was sent, and the "
         "deferred-evaluation posture is carried, not resolved.",
         "",
         "## Accepted pins",
@@ -1531,7 +1636,7 @@ def render_markdown(proof: dict[str, Any]) -> str:
 
 def run(
     *,
-    candidate_dir: Path = DEFAULT_CANDIDATE,
+    candidate_dir: Path,
     out_dir: Path,
     prior_export_dir: Path = DEFAULT_PRIOR_EXPORT,
     gate_readout: Path | str = DEFAULT_GATE_READOUT,
@@ -1539,27 +1644,53 @@ def run(
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Execute the whole bounded publish + verification + rehearsal and write
-    the committed evidence packet into ``out_dir``."""
+    the committed evidence packet into ``out_dir``. ``candidate_dir`` is a
+    required argument — the publish verifies the candidate named on the
+    command line; there is no production default."""
+    candidate_dir = Path(candidate_dir)
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     base_now = now or datetime.now(UTC)
 
+    pins = pins_from_candidate_dir(candidate_dir)
+
     checks: list[dict[str, Any]] = []
-    pf_checks, pins = preflight(candidate_dir, gate_readout)
+    pf_checks, pins_evidence = preflight(candidate_dir, gate_readout, pins)
     checks += pf_checks
 
+    # -- the recorded posture: a superseded candidate is rehearsal evidence -- #
+    supersession = _supersession_record(candidate_dir, pins.publication_id)
+    checks.append(
+        _check(
+            "PF.publish_authority",
+            "deferred" if supersession else "pass",
+            (
+                SUPERSEDED_POSTURE
+                if supersession
+                else "no supersession record names this candidate — the "
+                "bounded staging rehearsal proceeds under the gate's "
+                "recorded signature"
+            ),
+            owner="P35.12" if supersession else None,
+            landing=(
+                "the true-dated candidate (release identity v2, FEA-06)" if supersession else None
+            ),
+            evidence={"supersession_record": supersession},
+        )
+    )
+
     registry_dir = out_dir / "staging_registry"
-    p_checks, publish_record = publish(candidate_dir, registry_dir, now=base_now)
+    p_checks, publish_record = publish(candidate_dir, registry_dir, pins, now=base_now)
     checks += p_checks
 
-    checks += verify_surface(registry_dir, candidate_dir, config_path=Path(config_path))
+    checks += verify_surface(registry_dir, candidate_dir, pins, config_path=Path(config_path))
 
     r_checks, rehearsal_record = rehearse_rollback(
-        candidate_dir, prior_export_dir, out_dir / "rehearsal", now=base_now
+        candidate_dir, prior_export_dir, out_dir / "rehearsal", pins, now=base_now
     )
     checks += r_checks
 
-    return_pass = live_return_pass()
+    return_pass = live_return_pass(pins)
     counts = _counts(checks)
     verdict = "fail" if counts.get("fail") else "pass"
     proof = {
@@ -1569,16 +1700,17 @@ def run(
         "requirement": "SIG-TRUST-009",
         "executed_at": base_now.isoformat(),
         "live_verification": False,
+        "subject": {
+            "publication_id": pins.publication_id,
+            "candidate_dir": str(candidate_dir),
+            "superseded": supersession is not None,
+            "supersession_record": supersession,
+            "posture": SUPERSEDED_POSTURE if supersession else STAGING_POSTURE,
+        },
         "accepted": {
-            "publication_id": PUBLICATION_ID,
-            "identity_digest": IDENTITY_DIGEST,
-            "frozen_snapshot_digest": FROZEN_SNAPSHOT_DIGEST,
-            "descriptor_sha256": DESCRIPTOR_SHA256,
-            "release_manifest_sha256": RELEASE_MANIFEST_SHA256,
-            "export_manifest_sha256": EXPORT_MANIFEST_SHA256,
-            "ruleset_version": RULESET_VERSION,
+            **pins.as_dict(),
             "evaluation": {"status": "deferred", "mode": "shadow", "applied": []},
-            "artifact_count": pins["artifact_count"],
+            "artifact_count": pins_evidence["artifact_count"],
         },
         "publish": publish_record,
         "checks": checks,
@@ -1587,10 +1719,10 @@ def run(
         "rehearsal": rehearsal_record,
         "return_pass": return_pass,
         "boundary": (
-            "bounded/staging namespace over the exact GATE-G3-accepted "
-            "fixture candidate — NO production exposure, intake operation, "
-            "evaluation decision, human verification, merge, tag, or "
-            "push-main is claimed"
+            "bounded/staging namespace over the gate-accepted candidate "
+            "packet named on the command line — NO production exposure, "
+            "intake operation, evaluation decision, human verification, "
+            "merge, tag, or push-main is claimed"
         ),
     }
     (out_dir / "PUBLISH_PROOF.json").write_text(
@@ -1610,9 +1742,10 @@ def run(
 def _readme(proof: dict[str, Any]) -> str:
     return f"""# P32.25 — accepted release publish + public verification + rollback rehearsal
 
-Bounded/staging-namespace proof that the GATE-G3-accepted P32.23a fixture
-candidate — publication `{PUBLICATION_ID}` — publishes atomically, verifies
-over unauthenticated reads, and rolls back cleanly. **No production exposure
+Bounded/staging-namespace proof that the gate-accepted candidate packet —
+publication `{proof["subject"]["publication_id"]}` — publishes atomically,
+verifies over unauthenticated reads, and rolls back cleanly.
+**{proof["subject"]["posture"]}** **No production exposure
 is claimed** (`live_verification=false`).
 
 - `PUBLISH_PROOF.json` — `sig.release-publish-verification/1`: the accepted

@@ -282,7 +282,7 @@ def test_future_dated_replay_is_not_the_effective_disposition(conn: object) -> N
         eid,
         Disposition.WITHHOLD,
         ReasonCategory.SAFETY_WITHDRAWAL,
-        decided_at="2999-01-01T00:00:00+00:00",
+        decided_at="2999-01-01T00:00:00+00:00",  # future-ok: synthetic: sentinel decided_at
     )
     history = dispositions_for(conn, TargetKind.ENTITY, [eid])
     assert [d.disposition for d in history] == [Disposition.WITHHOLD]

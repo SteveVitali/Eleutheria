@@ -505,10 +505,11 @@ def _pack_records() -> list[dict[str, Any]]:
     records.append(
         _pack_claim(
             predicate="contract_end_date",
-            value="2027-06-30",
+            value="2027-06-30",  # future-ok: real-world: recorded OKC renewal end
             literal=(
-                "The one-year renewal runs through 2027-06-30 and returns to "
-                "the council before another renewal"
+                "The one-year renewal runs through "
+                "2027-06-30 and returns to the council "  # future-ok: real-world: contract end
+                "before another renewal"
             ),
             source_url=_KGOU_URL,
             source_id=_COUNCIL,

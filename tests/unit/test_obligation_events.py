@@ -128,7 +128,7 @@ def _assessment(
         "evidence_refs": refs,
         "limitations": "—",
         "assessor": "test",
-        "assessed_at": "2026-10-14",
+        "assessed_at": "2026-10-14",  # future-ok: synthetic: fixture ledger
         "supersedes": supersedes,
         "seq": seq,
     }
@@ -338,7 +338,11 @@ def test_cell_divergence_fails_until_cell_updated(tmp_path: pathlib.Path) -> Non
     root.joinpath("docs/tickets/DEFERRALS.md").write_text(
         DEFERRALS.replace(
             _row("D-T9.1-1", "V", "OPEN cites BL-001"),
-            _row("D-T9.1-1", "V", "DONE 2026-10-14 (event D-T9.1-1:e1; was OPEN)"),
+            _row(
+                "D-T9.1-1",
+                "V",
+                "DONE 2026-10-14 (event D-T9.1-1:e1; was OPEN)",  # future-ok: synthetic: fixture
+            ),
         )
     )
     diags = obligation_events.check_event_chain(root, events)
@@ -656,14 +660,22 @@ def test_migrate_defaults_recorded_at_to_utc_clock(tmp_path: pathlib.Path) -> No
 
 def test_migrate_rejects_future_recorded_at(tmp_path: pathlib.Path) -> None:
     root = _tree(tmp_path)
-    assert obligation_events.migrate(root, "2999-01-01") == 1
+    assert (
+        obligation_events.migrate(root, "2999-01-01") == 1  # future-ok: synthetic: sentinel fixture
+    )
     assert not (root / obligation_events.EVENTS_PATH).exists()
 
 
 def test_append_rejects_future_dates(tmp_path: pathlib.Path) -> None:
     root = _tree(tmp_path)
     assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
-    ev = _transition("D-T9.1-1", 1, "D-T9.1-1:e0", "DONE", recorded_at="2999-01-01")
+    ev = _transition(
+        "D-T9.1-1",
+        1,
+        "D-T9.1-1:e0",
+        "DONE",
+        recorded_at="2999-01-01",  # future-ok: synthetic: sentinel fixture
+    )
     f = tmp_path / "ev.json"
     f.write_text(json.dumps(ev))
     assert obligation_events.append_event(root, f) == 1

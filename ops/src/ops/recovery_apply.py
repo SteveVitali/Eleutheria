@@ -787,7 +787,8 @@ def freeze_snapshot(
             "human evaluation is owed (HUMAN-H4); zero labels exist in this frame",
             "the final post-evaluation release candidate is P32.23a's — never this artifact",
             "D-R10-LIVE-1 stays OPEN — the production bounded apply has not run",
-            "D-P31.4-1's reserved 2026-10-10 batch-05 verification is unchanged",
+            "D-P31.4-1's reserved "
+            "2026-10-10 batch-05 verification is unchanged",  # future-ok: scheduled: D-P31.4-1
         ],
     }
     snapshot["snapshot_digest"] = (
@@ -1079,7 +1080,8 @@ def write_apply_return_pass(
             "the final post-evaluation release candidate is P32.23a's (HUMAN-H4 → "
             "P32.22a → HUMAN-H5 → P32.23 → P32.23a first)",
             "any approved safety demotion must be scoped HERE before the apply runs",
-            "D-P31.4-1's 2026-10-10 batch-05 replay is untouched",
+            "D-P31.4-1's "
+            "2026-10-10 batch-05 replay is untouched",  # future-ok: scheduled: D-P31.4-1
         ],
     }
     packet_path = out / "LIVE_RETURN_PASS.json"

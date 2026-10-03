@@ -91,10 +91,10 @@ def test_portfolio_is_green_with_no_failed_check(portfolio: dict) -> None:
 
 def test_portfolio_pins_the_candidate_it_verified(portfolio: dict) -> None:
     subj = portfolio["subject"]
-    assert (
-        subj["publication_id"]
-        == "p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587"
-    )
+    # the expectation is derived from the committed manifest — the code
+    # carries no pin of its own (P34.22a)
+    manifest = json.loads((CANDIDATE / "CANDIDATE_MANIFEST.json").read_text())
+    assert subj["publication_id"] == manifest["release"]["publication_id"]
     assert subj["evaluation"]["status"] == "deferred"
     assert subj["evaluation"]["decision"] is None
     assert subj["published"] is False
@@ -139,7 +139,8 @@ def test_candidate_surface_reports_the_honest_zero(portfolio: dict) -> None:
 def test_eval_and_human_sessions_stay_deferred(portfolio: dict) -> None:
     ev = _check(portfolio, "B.eval_deferred")
     assert ev["status"] == "deferred"
-    assert "2026-10-19" in ev["detail"]
+    assert "a33cd6ec" in ev["detail"]
+    assert "recorded" in ev["detail"]
     ux = _check(portfolio, "UX.independent_sessions")
     assert ux["status"] == "deferred"
     assert ux["evidence_kind"] == "independent_human"

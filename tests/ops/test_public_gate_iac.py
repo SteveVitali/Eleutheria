@@ -26,8 +26,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "ops" / "gcp" / "public-gate.sh"
 
-INSIDE_DAILY_BAND = "2026-10-05T05:00:00Z"
-OPEN_WINDOW = "2026-10-05T12:00:00Z"
+INSIDE_DAILY_BAND = "2026-10-05T05:00:00Z"  # future-ok: synthetic: gate window fixture
+OPEN_WINDOW = "2026-10-05T12:00:00Z"  # future-ok: synthetic: gate window fixture
 GO = "yes — the A-0.2 go, recorded verbatim in GATE DECISIONS"
 
 _POLICY = {

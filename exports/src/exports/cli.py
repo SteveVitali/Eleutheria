@@ -539,7 +539,7 @@ def _france_request() -> dict[str, object]:
                             "jurisdiction": "01",
                             "citation": "Code de la sécurité intérieure, art. L251-1 à L255-1",
                             "effective_from": "2026-02-01",
-                            "sunset_date": "2031-02-01",
+                            "sunset_date": "2031-02-01",  # future-ok: real-world: recorded sunset
                             "sunset_date_derived": True,
                         },
                     }
