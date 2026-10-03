@@ -2,9 +2,8 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The shell's pages, plus one representative task-intake page. Kept in one place so
+// The shell's pages. Kept in one place so
 // the a11y sweep and the no-JS checks cover the same surface.
-import { absenceTaskHref } from "../../src/lib/task";
 
 // The standard shell-layout pages: each carries the primary nav and the citation
 // affordance (SIG-UI-035). The dossier page is one of these; its PRINT export is a
@@ -64,18 +63,13 @@ export const RESEARCH_SLUG = "okc-alpr";
 export const RESEARCH_PAGE = `/research-dossier/${RESEARCH_SLUG}/`;
 export const RESEARCH_JSON = `/research-dossier/${RESEARCH_SLUG}.json`;
 
-// One pre-generated task-intake page (SIG-UI-007), built with the same href helper
-// the hatches use, so it always matches a page `getStaticPaths` generated. The
-// sharing-partners gap is UNRESOLVED (P34.11 / F-422: a contested sharing edge is
-// recorded — 'not researched' would contradict the record itself).
-export const TASK_PAGE = absenceTaskHref({
-  subject_id: "agency:okcpd",
-  predicate_id: "sharing_partners",
-  absence_kind: "UNRESOLVED",
-  predicate_label: "Data-sharing partners",
-});
+// P34.12 (K11 §5.5 / RQ-00, F-113/F-274): the fixture `/task/new/<slug>/`
+// intake pages are RETIRED — they claimed a research task "has been generated"
+// from a gap when nothing had been, and `getStaticPaths` shipped demo fixture
+// pages. There is deliberately no TASK_PAGE in the sweep any more; the real
+// `/task/<handle>/` surface arrives with RQ-03 (K13 §7.1 W2).
 
-export const ALL_PAGES = [...SHELL_PAGES, TASK_PAGE] as const;
+export const ALL_PAGES = [...SHELL_PAGES] as const;
 
 // The jurisdiction-conditional dossiers (FR-GDPR / BE-GDPR), localised and with the
 // public-employee name withheld at build time (SIG-PUB-017, §44). Included in the a11y
@@ -108,8 +102,8 @@ export const FRESHNESS_SORT_PAGES = [
   "/data-freshness/volatility/",
 ] as const;
 
-// The full a11y surface for the axe sweep: the shell-layout pages, a task-intake
-// page, the jurisdiction-conditional dossiers, the standalone dossier print export,
+// The full a11y surface for the axe sweep: the shell-layout pages,
+// the jurisdiction-conditional dossiers, the standalone dossier print export,
 // the freshness sort routes, and the curation pages (WCAG 2.2 AA everywhere,
 // SIG-UI-037 + P21.6).
 export const A11Y_PAGES = [

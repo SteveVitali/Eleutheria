@@ -85,7 +85,7 @@ test.describe("belief-pinned permalink + citation on every page (SIG-UI-035, AC6
   }
 });
 
-test.describe("absence hatch → research task, end to end (SIG-UI-007, AC4)", () => {
+test.describe("absence hatch — a named absence, never a mock task page (P34.12 / K11 §5.5)", () => {
   test("exactly one hatch texture class is used for every absence", async ({ page }) => {
     await page.goto("/visual-language/");
     // The absence-kind demonstration table shows exactly one hatch per kind (SIG-UI-007).
@@ -107,17 +107,20 @@ test.describe("absence hatch → research task, end to end (SIG-UI-007, AC4)", (
     expect(allHatch).toBe(true);
   });
 
-  test("clicking a gap generates a research task in the GENERATED state", async ({ page }) => {
+  test("a gap renders a named absence — no /task/new/ link, no 'has been generated' copy (RQ-00)", async ({
+    page,
+  }) => {
     await page.goto("/visual-language/");
-    const firstHatch = page.getByTestId("absence-hatch").first();
-    await firstHatch.click();
-    await expect(page).toHaveURL(/\/task\/new\//);
-    const task = page.getByTestId("generated-task");
-    await expect(task).toBeVisible();
-    await expect(task).toHaveAttribute("data-task-status", "generated");
-    await expect(page.getByTestId("task-field-status")).toHaveText("generated");
-    await expect(page.getByTestId("task-field-subject")).toContainText("agency:okcpd");
-    await expect(page.getByTestId("task-field-absence")).toContainText("NOT_RESEARCHED");
+    const hatch = page.getByTestId("absence-hatch").first();
+    // The hatch is a NAMED absence (kind + subject/predicate), not a link: the
+    // fixture /task/new/ intake pages are retired — clicking a gap must never
+    // have implied a task was generated (F-113/F-274).
+    await expect(hatch).not.toHaveAttribute("href", /.*/);
+    await expect(hatch).toHaveAttribute("data-absence-kind", /.+/);
+    await expect(hatch).toHaveAttribute("data-absence-subject", /.+/);
+    await expect(hatch).toHaveAttribute("data-absence-predicate", /.+/);
+    await expect(page.locator('a[href^="/task/"]')).toHaveCount(0);
+    await expect(page.getByText(/has been generated/i)).toHaveCount(0);
   });
 });
 

@@ -27,6 +27,7 @@ from exports.shaping import (
     parse_shaping_claims,
 )
 from exports.spine_export import (
+    NOT_YET_CLASSIFIED,
     build_spine_export,
     contradictions_visible_metric,
     resolved_site_counts,
@@ -35,6 +36,7 @@ from exports.spine_export import (
 )
 from rdflib import Graph
 from support import REPO_ROOT
+from tasks.vocabulary import Disposition
 
 SCHEMA = json.loads(
     (REPO_ROOT / "docs" / "build" / "reports" / "public_surface_contracts.schema.json").read_text(
@@ -569,6 +571,127 @@ def test_supplementary_rows_flow_through_when_present() -> None:
     assert len(queue) == 1
     assert queue[0]["closing_condition"] == "≥1 coordinate claim exists for subjX"
     jsonschema.validate(queue, _sub(SCHEMA["properties"]["research_queue"]))
+
+
+# --- P34.12 (K11 RQ-00 / C3 NEW-10): catalog-true queue shaping --------------- #
+
+
+def test_research_queue_card_carries_task_id_and_catalog_classification() -> None:
+    """A task whose type IS in the §33.2 catalog gets the catalog's assignee
+    class, effort estimate, geographic scope and permitted dispositions — plus
+    its own `task_id` (the export used to discard it and invent
+    `contributor`/`unknown`/`[]` placeholders)."""
+    export = _build(
+        _site("A", "35.46", "-97.51", "Oklahoma"),
+        raw_over={
+            "research_tasks": [
+                (
+                    "task-0001",
+                    "missing_physical_devices",
+                    "agency:okc",
+                    "Oklahoma City",
+                    5.0,
+                    "generated",
+                    None,
+                    "The mapped-device count reaches the active-device count.",
+                    "det/1",
+                ),
+            ],
+        },
+    )
+    queue = _web(export, "research_queue")
+    assert len(queue) == 1
+    card = queue[0]
+    assert card["task_id"] == "task-0001"
+    assert card["assignee_class"] == "field_mapper"  # catalog row, not "contributor"
+    assert card["effort_estimate"] == "moderate"  # catalog row, not "unknown"
+    # the SCOPE vocabulary, not the jurisdiction name
+    assert card["geographic_scope"] == "jurisdiction"
+    assert card["jurisdiction"] == "Oklahoma City"
+    vocabulary = {d.value for d in Disposition}
+    assert card["dispositions"], "dispositions must never be []"
+    assert set(card["dispositions"]) <= vocabulary
+    # SIG-TASK-009's searched-found-nothing outcome stays reachable.
+    assert "resolved_no_evidence_exists" in card["dispositions"]
+    jsonschema.validate(queue, _sub(SCHEMA["properties"]["research_queue"]))
+
+
+def test_research_queue_unclassified_type_is_honestly_not_yet_classified() -> None:
+    """A task whose type the catalog does not know (legacy/hand-inserted row)
+    emits `not yet classified` — never an invented class — and the FULL §33.4
+    disposition vocabulary, since every outcome is legal for it."""
+    export = _build(
+        _site("A", "35.46", "-97.51", "Oklahoma"),
+        raw_over={
+            "research_tasks": [
+                (
+                    "task-0002",
+                    "geolocate_devices",  # not a §33.2 catalog slug
+                    "subjX",
+                    "jurY",
+                    5.0,
+                    "generated",
+                    None,
+                    "≥1 coordinate claim exists for subjX",
+                    "det/1",
+                    "contradiction",
+                    "trigger-9",
+                ),
+            ],
+        },
+    )
+    card = _web(export, "research_queue")[0]
+    assert card["task_id"] == "task-0002"
+    assert card["assignee_class"] == NOT_YET_CLASSIFIED == "not yet classified"
+    assert card["effort_estimate"] == NOT_YET_CLASSIFIED
+    assert card["geographic_scope"] == NOT_YET_CLASSIFIED
+    assert card["jurisdiction"] == "jurY"
+    assert set(card["dispositions"]) == {d.value for d in Disposition}
+    # The trigger citation (P29.2) survives the reshape.
+    assert card["trigger"] == {"kind": "contradiction", "ref": "trigger-9"}
+    jsonschema.validate(
+        _web(export, "research_queue"), _sub(SCHEMA["properties"]["research_queue"])
+    )
+
+
+def test_research_queue_never_emits_the_retired_placeholders() -> None:
+    """Whatever the rows carry, `contributor` and `unknown` can never come back
+    as assignee/effort values (NEW-10)."""
+    export = _build(
+        _site("A", "35.46", "-97.51", "Oklahoma"),
+        raw_over={
+            "research_tasks": [
+                (
+                    "task-0003",
+                    "missing_physical_devices",
+                    "s1",
+                    None,
+                    1.0,
+                    "generated",
+                    None,
+                    "closing",
+                    "det/1",
+                ),
+                (
+                    "task-0004",
+                    "geolocate_devices",
+                    "s2",
+                    None,
+                    2.0,
+                    "generated",
+                    None,
+                    "closing",
+                    "d/2",
+                ),
+            ],
+        },
+    )
+    for card in _web(export, "research_queue"):
+        assert card["assignee_class"] != "contributor"
+        assert card["effort_estimate"] != "unknown"
+        assert card["dispositions"] != []
+        # A missing jurisdiction is honestly unscoped — the filter labels it.
+        assert card["jurisdiction"] == ""
 
 
 def test_corrections_entry_names_both_assertions_and_gates_the_prior() -> None:

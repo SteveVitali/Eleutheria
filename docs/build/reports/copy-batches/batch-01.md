@@ -100,6 +100,13 @@
 | XD-03 | exports/web_dossier.py | Infrastructure map | 85e5272bd7063b11f5a2b208ce17d0593e75688da3be96f665e8246159e78112 | pending |
 | XC-01 | exports/spine_export.py | recorded contradictions | d9ad443d30fbd63cc8a60c2e2491e04e15c79d1455ef2c71987641ef46503b08 | pending |
 | XC-02 | exports/spine_export.py | This page shows only the recorded count; SIG does not publish a contradiction browser. | 475087caa6d404c136dd87585451c61a0a0fe887a972da6ec6b6c399cf087722 | pending |
+| HW-10 | component/HowWeKnowThis | These totals describe the {pageName}'s own evidence, not the whole record. | 334535f8afc75bcc1a78527cd3a510f2b70b8d30c6fd386329ec37520f7cfc1f | pending |
+| RQ-01 | lib/research-queue.ts | not yet classified | bb563272ba6e0dd5a84d94137f0156a345d8f3d0041bd9d54046978086209c48 | pending |
+| XC-03 | exports/spine_export.py | not yet classified | bb563272ba6e0dd5a84d94137f0156a345d8f3d0041bd9d54046978086209c48 | pending |
+<!-- P34.12: T-01's page (/task/new/) is RETIRED — the row stays (append-only
+     history of the drafted sentence) but can never ship: no page renders it.
+     The P34.11 binding test carries T-01 in a RETIRED set, not in the
+     carried-somewhere check. -->
 
 ## Confirmation log
 

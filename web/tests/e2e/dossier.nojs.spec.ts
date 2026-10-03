@@ -19,15 +19,17 @@ test("the dossier renders all twelve sections and the gap list without JS (SIG-U
   await expect(page.getByTestId("incompleteness-banner")).toBeVisible();
 });
 
-test("a gap hatch is a real GET link that resolves to a task without JS (SIG-UI-007)", async ({
+test("a gap hatch is a named absence without JS — no mock task page (P34.12 / K11 §5.5)", async ({
   page,
 }) => {
   await page.goto(DOSSIER_PAGE);
   const hatch = page.getByTestId("what-we-dont-know-summary").getByTestId("absence-hatch").first();
-  const href = await hatch.getAttribute("href");
-  expect(href).toMatch(/^\/task\/new\//);
-  await page.goto(href!);
-  await expect(page.getByTestId("generated-task")).toBeVisible();
+  // The fixture /task/new/ intake pages are retired (RQ-00): the hatch is a
+  // named absence, not a link, and no page may claim a task "has been generated".
+  await expect(hatch).toBeVisible();
+  await expect(hatch).not.toHaveAttribute("href", /.*/);
+  await expect(hatch).toHaveAttribute("data-absence-kind", /.+/);
+  await expect(page.locator('a[href^="/task/"]')).toHaveCount(0);
 });
 
 test("a reconciliation opens without JS via native <details> (SIG-UI-014)", async ({ page }) => {

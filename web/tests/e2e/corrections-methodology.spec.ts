@@ -45,6 +45,51 @@ test.describe("research queue (§39.7, SIG-UI-031)", () => {
     await page.goto("/research-queue/");
     await expect(page.getByTestId("no-leaderboard-note")).toBeVisible();
   });
+
+  test("every task card carries a UNIQUE id and every jurisdiction filter anchor resolves (P34.12 / RQ-00)", async ({
+    page,
+  }) => {
+    await page.goto("/research-queue/");
+    // No duplicate DOM ids across the whole page (the pre-P34.12 cards all shared
+    // their jurisdiction's id).
+    const dupes = await page.evaluate(() => {
+      const counts = new Map<string, number>();
+      for (const el of Array.from(document.querySelectorAll("[id]"))) {
+        const id = el.getAttribute("id")!;
+        counts.set(id, (counts.get(id) ?? 0) + 1);
+      }
+      return Array.from(counts).filter(([, n]) => n > 1).map(([id]) => id);
+    });
+    expect(dupes).toEqual([]);
+    // Every filter link names an element that exists — and it is a task card's.
+    const filters = page.getByTestId("jurisdiction-filter");
+    const hrefs = await filters.locator("a").evaluateAll((els) =>
+      els.map((e) => e.getAttribute("href")),
+    );
+    expect(hrefs.length).toBeGreaterThan(0);
+    for (const href of hrefs) {
+      expect(href).toMatch(/^#/);
+      const target = page.locator(href!);
+      await expect(target).toHaveCount(1);
+      await expect(target).toHaveAttribute("data-testid", "task-card");
+    }
+    // A card id derives from the task, not the jurisdiction: two cards in one
+    // jurisdiction (the fixture's two Oklahoma City tasks) carry distinct ids.
+    const okcCards = page.locator("[data-testid='task-card'][data-jurisdiction='Oklahoma City']");
+    const okcIds = await okcCards.evaluateAll((els) => els.map((e) => e.getAttribute("id")));
+    expect(new Set(okcIds).size).toBe(okcIds.length);
+    expect(okcIds.every((id) => id?.startsWith("task-"))).toBe(true);
+  });
+
+  test("the provenance module names the page it describes (P34.12 / C3 NEW-13)", async ({ page }) => {
+    await page.goto("/research-queue/");
+    const scope = page.getByTestId("hwkt-scope");
+    await expect(scope).toContainText("research queue");
+    await expect(scope).toContainText("not the whole record");
+    // A page-scoped module names its own page too — never anonymous "this page".
+    await page.goto("/corrections/");
+    await expect(page.getByTestId("hwkt-scope")).toContainText("corrections log");
+  });
 });
 
 test.describe("public corrections log (§39.8, SIG-UI-032)", () => {
