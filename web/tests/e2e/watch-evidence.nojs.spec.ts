@@ -44,3 +44,24 @@ test("a sealed capture is metadata-only without JS (SIG-UI-030)", async ({ page 
   await expect(page.getByTestId("document-text")).toHaveCount(0);
   await expect(page.getByTestId("capture-digest")).toContainText("sha256:");
 });
+
+test("the interim artifact list renders grouped by source, zero-JS (P34.20, K8 NEW-6)", async ({
+  page,
+}) => {
+  await page.goto("/evidence/");
+  // Every fixture artifact is listed, grouped by source.
+  await expect(page.getByTestId("artifact-group").first()).toBeVisible();
+  await expect(page.getByTestId("artifact-item")).toHaveCount(8);
+  // A synthetic capture is a run record — never presented as a stored capture
+  // (SIG-EVUI-D04).
+  const runRecords = page.getByTestId("run-record-label");
+  await expect(runRecords).toHaveCount(2);
+  await expect(runRecords.first()).toHaveText("run record — SIG did not store this document");
+  // The upstream link is labelled as the source's own link, recorded as a claim
+  // — never presented as a capture (K8 NEW-9).
+  await expect(page.getByTestId("upstream-link").first()).toHaveText(
+    "the source's own link (recorded as a claim)",
+  );
+  // The page ships no client JavaScript (SIG-UI-036).
+  await expect(page.locator("script")).toHaveCount(0);
+});

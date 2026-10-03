@@ -352,6 +352,7 @@ class _WebBuild:
     dist: Path
     returncode: int
     data_source: str
+    export_dir: Path | None = None
 
 
 def _require_web_env() -> Path:
@@ -876,3 +877,193 @@ def test_s8_web_build_consumes_rendered_tiles(web_build_from_export: _WebBuild) 
     layers = metadata["vector_layers"]
     assert layers and layers[0]["sig:license"] == "ODbL-1.0", "ODbL layer metadata preserved"
     assert "openstreetmap" in metadata["attribution"].lower(), "OSM attribution preserved (§42)"
+
+
+# --- P34.20: the empty-surface export build -------------------------------------
+
+
+@pytest.fixture(scope="session")
+def web_build_empty_surfaces(
+    tmp_path_factory: pytest.TempPathFactory, web_build_from_export: _WebBuild
+) -> _WebBuild:
+    """P34.20 (K7 NEW-1 / K8 NEW-6 / SIG-EVUI-D05+D08): an export-mode build
+    over export bytes whose watch and evidence surfaces are EMPTY — the shape
+    the 09-27 public build carries. Same ``sig-exports build --jurisdiction
+    okc`` + fixture-overlay recipe as ``web_build_from_export`` (depended on so
+    the earlier export tests run against their own build first — the shared
+    ``web/dist`` is the convention the other session fixtures already use),
+    then rewrites the three inputs that decide emptiness: ``watch.json`` →
+    ``[]``, ``evidence.json`` claim_views → ``[]`` (the published artifacts
+    stay — the interim list is the page content), and
+    ``analytics/decision_point.json`` → ``null`` so the recommender/citation
+    empty states render too.
+    """
+    import json
+
+    web_dir = _require_web_env()
+    src_dir = tmp_path_factory.mktemp("okc_export_empty")
+    built = subprocess.run(
+        ["sig-exports", "build", "--jurisdiction", "okc", "--out", str(src_dir)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert built.returncode == 0, f"sig-exports build failed: {built.stderr}"
+    overlay = subprocess.run(
+        ["npm", "--prefix", str(web_dir), "run", "export:fixtures", "--", str(src_dir)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert overlay.returncode == 0, f"fixture overlay failed: {overlay.stderr}"
+
+    # The empty surfaces: no watch items, no claim views, no decision point.
+    (src_dir / "web" / "watch.json").write_text("[]", encoding="utf-8")
+    evidence_path = src_dir / "web" / "evidence.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    evidence["claim_views"] = []
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    dp_path = src_dir / "web" / "analytics" / "decision_point.json"
+    dp = json.loads(dp_path.read_text(encoding="utf-8"))
+    dp["decision_point"] = None
+    dp_path.write_text(json.dumps(dp), encoding="utf-8")
+
+    proc = subprocess.run(
+        ["npm", "--prefix", str(web_dir), "run", "build"],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+        env={
+            **os.environ,
+            "SIG_DATA_SOURCE": "export",
+            "SIG_EXPORT_DIR": str(src_dir),
+        },
+    )
+    return _WebBuild(
+        dist=web_dir / "dist",
+        returncode=proc.returncode,
+        data_source="export-empty",
+        export_dir=src_dir,
+    )
+
+
+def _empty_state_block(html: str, surface: str) -> str:
+    import re
+
+    m = re.search(
+        r'<div class="sig-empty"[^>]*data-surface="' + surface + r'"[^>]*>(.*?)</div>\s*</div>',
+        html,
+        re.S,
+    )
+    assert m, f"no empty-state block for surface={surface!r} in the built page"
+    return m.group(1)
+
+
+@pytest.mark.parametrize("page", ["watch", "evidence"])
+def test_p34_20_export_build_names_the_cause_never_a_research_gap(
+    web_build_empty_surfaces: _WebBuild, page: str
+) -> None:
+    """AC1 — on the export build, /watch/ and /evidence/ never say "research
+    gap" and never offer the research queue as the remedy."""
+    import re
+
+    assert web_build_empty_surfaces.returncode == 0
+    html = (web_build_empty_surfaces.dist / page / "index.html").read_text(encoding="utf-8")
+    assert "research gap" not in html.lower(), (
+        f"/{page}/ must not call a pipeline gap a research gap"
+    )
+    # No empty-state action may route to the research queue.
+    for href in re.findall(r'data-testid="empty-state-cta"[^>]*href="([^"]+)"', html):
+        assert href != "/research-queue/", f"/{page}/ offers the research queue as a remedy"
+
+
+def test_p34_20_export_build_watch_empty_states_have_five_parts(
+    web_build_empty_surfaces: _WebBuild,
+) -> None:
+    """AC1/K14 §6.4 — every cause-class empty state on /watch/ renders all
+    five parts: state label, missing+why, nearby, action, when-it-may-change."""
+    assert web_build_empty_surfaces.returncode == 0
+    html = (web_build_empty_surfaces.dist / "watch" / "index.html").read_text(encoding="utf-8")
+    for surface in ("watch", "watchSubscriptions", "recommender", "citations"):
+        block = _empty_state_block(html, surface)
+        for part in ("state", "missing", "nearby", "action", "change"):
+            assert f'data-testid="empty-state-{part}"' in block, (
+                f"{surface} empty state is missing the {part} part"
+            )
+
+
+def test_p34_20_export_build_evidence_lists_artifacts_grouped_by_source(
+    web_build_empty_surfaces: _WebBuild,
+) -> None:
+    """AC2 — the /evidence/ interim artifact list: every artifact in
+    evidence.json is listed, grouped by source, run-record labels on synthetic
+    captures, and zero client scripts."""
+    assert web_build_empty_surfaces.returncode == 0
+    html = (web_build_empty_surfaces.dist / "evidence" / "index.html").read_text(encoding="utf-8")
+    # the evidenceIndex empty state carries the five parts too
+    block = _empty_state_block(html, "evidenceIndex")
+    for part in ("state", "missing", "nearby", "action", "change"):
+        assert f'data-testid="empty-state-{part}"' in block
+    # every artifact in evidence.json lists — the count is derived from the
+    # export bytes the build consumed, never pinned (OM-15)
+    import json
+
+    assert web_build_empty_surfaces.export_dir is not None
+    expected = len(
+        json.loads(
+            (web_build_empty_surfaces.export_dir / "web" / "evidence.json").read_text(
+                encoding="utf-8"
+            )
+        )["artifacts"]
+    )
+    assert expected > 0, "the fixture export must carry artifacts to list"
+    items = html.count('data-testid="artifact-item"')
+    assert items == expected, f"listed rows {items} != evidence.json artifacts {expected}"
+    # synthetic captures are run records, never presented as captures — every
+    # `capture_classification = 'synthetic'` artifact carries the exact label
+    synthetic = sum(
+        1
+        for a in json.loads(
+            (web_build_empty_surfaces.export_dir / "web" / "evidence.json").read_text(
+                encoding="utf-8"
+            )
+        )["artifacts"]
+        if a.get("capture_classification") == "synthetic"
+    )
+    assert synthetic > 0, "the fixture export must carry a synthetic capture"
+    assert html.count('data-testid="run-record-label"') == synthetic
+    assert html.count("run record — SIG did not store this document") == synthetic
+    # an upstream link is the source's own link, recorded as a claim (K8 NEW-9)
+    assert 'data-testid="upstream-link"' in html
+    assert "own link (recorded as a claim)" in html
+    # zero-JS (SIG-UI-036)
+    assert "<script" not in html, "/evidence/ must ship no script tags"
+
+
+def test_p34_20_export_build_carries_no_fixture_capture_diff(
+    web_build_empty_surfaces: _WebBuild,
+) -> None:
+    """AC6 / SIG-EVUI-D05 — no fixture capture diff reaches an export build:
+    the committed fixture identifiers and the diff route are absent."""
+    dist = web_build_empty_surfaces.dist
+    assert web_build_empty_surfaces.returncode == 0
+    offenders: list[str] = []
+    for path in dist.rglob("*.html"):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for marker in (
+            'data-testid="capture-diff"',
+            "capture:portal-okcpd-2026-06",
+            "capture:portal-okcpd-2026-08",
+            "capture:contract-okcpd-alpr-v1",
+            "/evidence/active-device-count/",
+            "/evidence/operator-roster-size/",
+        ):
+            if marker in text:
+                offenders.append(f"{path.relative_to(dist)}: {marker}")
+    assert not offenders, "fixture capture-diff data reached the export build:\n" + "\n".join(
+        offenders
+    )
+    # no claim-view routes exist at all (claim_views was empty)
+    evidence_dir = dist / "evidence"
+    routes = [p for p in evidence_dir.iterdir() if p.is_dir()] if evidence_dir.exists() else []
+    assert routes == [], f"unexpected evidence claim routes: {routes}"

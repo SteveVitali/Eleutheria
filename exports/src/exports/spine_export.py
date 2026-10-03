@@ -164,13 +164,36 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     ),
     # publishable evidence_artifact metadata (§39.6) — the evidence surface. Bytes
     # never travel; sealed captures stay metadata-only (§17.5).
+    # P34.20 (K8 NEW-6 / SIG-EVUI-D08): the /evidence/ interim artifact list
+    # groups the published artifacts by source, so the row carries the registry
+    # name plus the capture class the honest label turns on — a `synthetic`
+    # capture renders as "run record — SIG did not store this document"
+    # (SIG-EVUI-D04), never as a capture. `upstream_url` is the source's own
+    # link ONLY where the artifact's effective rights (P27.2/ADR-095 latest
+    # decision) are redistributable — the S-6 scrub, emitted as data the page
+    # labels as a recorded claim, never as a stored capture. P32.5/ADR-124:
+    # the shared {PUB_ARTIFACT_GATE} — a withheld artifact never lists.
     "evidence_artifacts": (
         "evidence_artifact",
-        "SELECT artifact_id::text, source_id, title, artifact_type, stable_locator,"
-        "       primary_or_secondary, capture_status, published_at_edtf"
-        "  FROM evidence_artifact"
-        " WHERE sensitivity_tier = 0 AND capture_status = 'captured'"
-        " ORDER BY artifact_id",
+        "{EFFECTIVE}" + "SELECT ea.artifact_id::text, ea.source_id, ea.title, ea.artifact_type,"
+        "       ea.stable_locator, ea.primary_or_secondary, ea.capture_status,"
+        "       ea.published_at_edtf, sr.name AS source_name,"
+        "       (SELECT ec.capture_classification FROM evidence_capture ec"
+        "          WHERE ec.artifact_id = ea.artifact_id"
+        "          ORDER BY ec.retrieved_at DESC, ec.capture_id"
+        "          LIMIT 1) AS capture_classification,"
+        "       CASE WHEN rr.redistributable = 'yes'"
+        "            THEN COALESCE(ea.url, CASE WHEN ea.stable_locator ~ '^https?://'"
+        "                                 THEN ea.stable_locator END)"
+        "            ELSE NULL END AS upstream_url"
+        "  FROM evidence_artifact ea"
+        "  LEFT JOIN source_registry sr ON sr.source_id = ea.source_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = ea.source_id AND ld.prior_rights_id = ea.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, ea.rights_id)"
+        " WHERE ea.sensitivity_tier = 0 AND ea.capture_status = 'captured'"
+        "   AND {PUB_ARTIFACT_GATE}"
+        " ORDER BY ea.artifact_id",
     ),
     # correction claims (§39.8) — new rows with revises_claim / retraction_of; the
     # prior value stays citable at its belief-time (history never rewritten).
@@ -333,6 +356,24 @@ _MATERIALIZED_SEAMS: tuple[tuple[str, str, Any], ...] = (
         read_materialized_accountability_links,
     ),
 )
+
+
+#: Raw keys the web-surface builders read for which NO spine query produces a
+#: result — declared, never silently absent. P34.20 (K7 NEW-1 /
+#: SIG-EVUI-D08): the static producer check
+#: (``tests/unit/test_p34_20_producer_check.py``) fails any ``raw`` read whose
+#: key is neither produced (``EXPORT_QUERIES`` ∪ ``shaping.QUERIES`` ∪
+#: ``_MATERIALIZED_SEAMS``) nor declared here with its cause class, so a
+#: surface can never silently render from a key a query was expected to fill —
+#: the empty state then names a REAL cause ("no producer"), never a vague
+#: "research gap".
+DECLARED_UNPRODUCED_READ_KEYS: dict[str, str] = {
+    # §39.5 contract watch — the spine has no materialized contract-watch
+    # producer yet (renewal/decision tracking lands in a later family). The
+    # watch surface reads it and honestly degrades to the "not connected yet"
+    # empty state.
+    "contract_watch": "no_producer",
+}
 
 
 def _has_materialize_column(cur: Any, table: str) -> bool:
@@ -1177,26 +1218,51 @@ def _watch(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
 
 def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
     """Surface 8 — EvidenceArtifact[] + ClaimView[] (§39.6). Metadata only; sealed
-    captures never carry bytes (§17.5)."""
+    captures never carry bytes (§17.5).
+
+    P34.20 (K8 NEW-6): the row also carries the registry ``source_name``, the
+    honest ``capture_classification`` (synthetic captures are run records —
+    SIG-EVUI-D04), and the S-6-scrubbed ``upstream_url`` (the source's own
+    link, present only where the query's effective-rights gate allows it).
+    """
     artifacts: list[dict[str, Any]] = []
     for r in raw.get("evidence_artifacts") or []:
-        artifact_id, source_id, title, artifact_type, locator, direct, capture_status, published = r
-        artifacts.append(
-            {
-                "artifact_id": str(artifact_id),
-                "subject_id": "",
-                "title": title or str(artifact_id),
-                "source": str(source_id),
-                "artifact_type": str(artifact_type),
-                "directness": str(direct),
-                "currency": str(published or ""),
-                "touches_open_contradiction": False,
-                "answers_open_task": False,
-                "capture_status": str(capture_status),
-                "permalink": str(locator),
-                "as_of": as_of,
-            }
-        )
+        (
+            artifact_id,
+            source_id,
+            title,
+            artifact_type,
+            locator,
+            direct,
+            capture_status,
+            published,
+            source_name,
+            capture_class,
+            upstream_url,
+        ) = r
+        artifact: dict[str, Any] = {
+            "artifact_id": str(artifact_id),
+            "subject_id": "",
+            "title": title or str(artifact_id),
+            "source": str(source_id),
+            "artifact_type": str(artifact_type),
+            "directness": str(direct),
+            "currency": str(published or ""),
+            "touches_open_contradiction": False,
+            "answers_open_task": False,
+            "capture_status": str(capture_status),
+            "permalink": str(locator),
+            "as_of": as_of,
+        }
+        # Optional, additive fields — absent means "not known / not allowed",
+        # never a fabricated value.
+        if source_name:
+            artifact["source_name"] = str(source_name)
+        if capture_class:
+            artifact["capture_classification"] = str(capture_class)
+        if upstream_url:
+            artifact["upstream_url"] = str(upstream_url)
+        artifacts.append(artifact)
     return {"artifacts": artifacts, "claim_views": []}
 
 

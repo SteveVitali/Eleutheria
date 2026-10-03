@@ -7,8 +7,15 @@
 // standard). It renders absence as a VISIBLE, EXPLAINED gap — never a blank section
 // and never a fabricated zero — using the single absence texture (the hatch) so the
 // vocabulary is consistent with every per-field gap. It always carries a clickable
-// task affordance (a plain GET link, no JavaScript — SIG-UI-036/037): a gap is an
+// affordance (a plain GET link, no JavaScript — SIG-UI-036/037): a gap is an
 // invitation, not a dead end. The copy is supplied by `lib/empty.ts` (pure, tested).
+//
+// P34.20 (K14 §6.4, SIG-EVUI-D08): surfaces carrying `copy.parts` render the
+// cause-class five-part pattern — a typed state label, what is missing and why
+// (the named cause), what exists nearby, what the visitor can do, and when it
+// may change. These states name a real cause; they never say "research gap"
+// and never route the visitor to the research queue as the remedy for a
+// pipeline gap.
 import { emptyState } from "../lib/empty";
 import type { EmptySurface } from "../lib/empty";
 
@@ -19,15 +26,50 @@ interface Props {
 
 const { surface } = Astro.props;
 const copy = emptyState(surface);
+const parts = copy.parts;
 ---
 
-<div class="sig-empty" role="note" data-testid="empty-state" data-surface={surface}>
+<div
+  class="sig-empty"
+  role="note"
+  data-testid="empty-state"
+  data-surface={surface}
+  data-cause-class={parts ? "true" : "false"}
+>
   <span class="sig-empty__hatch" aria-hidden="true"></span>
   <div class="sig-empty__body">
-    <p class="sig-empty__heading">{copy.heading}</p>
-    <p class="sig-empty__text">{copy.body}</p>
-    <p class="sig-empty__cta">
-      <a data-testid="empty-state-cta" href={copy.cta.href}>{copy.cta.label}</a>
-    </p>
+    {
+      parts ? (
+        <>
+          <p class="sig-empty__heading" data-testid="empty-state-state" data-copy={parts.batchIds.state}>
+            {parts.state}
+          </p>
+          <p class="sig-empty__text" data-testid="empty-state-missing" data-copy={parts.batchIds.missing}>
+            {parts.missing}
+          </p>
+          <p class="sig-empty__text" data-testid="empty-state-nearby" data-copy={parts.batchIds.nearby}>
+            {parts.nearby}
+          </p>
+          <p class="sig-empty__cta" data-testid="empty-state-action">
+            <a data-testid="empty-state-cta" data-copy={parts.batchIds.action} href={parts.action.href}>
+              {parts.action.label}
+            </a>
+          </p>
+          <p class="sig-empty__text sig-empty__change" data-testid="empty-state-change" data-copy={parts.batchIds.change}>
+            {parts.change}
+          </p>
+        </>
+      ) : (
+        <>
+          <p class="sig-empty__heading">{copy.heading}</p>
+          <p class="sig-empty__text">{copy.body}</p>
+          <p class="sig-empty__cta">
+            <a data-testid="empty-state-cta" href={copy.cta.href}>
+              {copy.cta.label}
+            </a>
+          </p>
+        </>
+      )
+    }
   </div>
 </div>

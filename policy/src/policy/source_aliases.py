@@ -155,8 +155,8 @@ class SourceAliases:
 
         Consecutive identifier runs separated by single spaces are tried as
         n-grams (longest first, up to 3) against the phrase map, so a recorded
-        ``OKCPD Chief Bacy`` attribution resolves as a unit before the bare
-        ``Bacy`` token is redacted. Single runs consult the token map, then the
+        ``the OKCPD chief`` attribution resolves as a unit before the bare
+        ``the chief`` token is redacted. Single runs consult the token map, then the
         owner-token redaction map, then a ``-``-segment pass so a handle
         embedded mid-compound is still neutralised.
         """

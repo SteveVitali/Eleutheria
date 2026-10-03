@@ -19,6 +19,13 @@
  * single absence texture and the accessible structure; this module is pure data +
  * logic so the honesty rules are unit-testable independently of any style (mirrors
  * `epistemic.ts`).
+ *
+ * P34.20 (K14 §6.4, SIG-EVUI-D08): surfaces whose emptiness has a NAMED cause —
+ * the watch, its subscriptions, the recommender, the citation list and the
+ * evidence index — carry a `parts` record instead of a generic body: the
+ * five-part cause-class pattern, which names the real cause, never calls it a
+ * "research gap", and never points at the research queue as the remedy for a
+ * pipeline gap the queue cannot close (F-409/F-410).
  */
 
 /** The public research queue — where an open gap becomes an actionable task (§39.7). */
@@ -27,6 +34,32 @@ export const RESEARCH_QUEUE_CTA = {
   label: "See the research queue",
 } as const;
 
+/**
+ * The K14 §6.4 cause-class five-part empty-state pattern (P34.20,
+ * SIG-EVUI-D08). A surface whose emptiness has a named real cause renders all
+ * five parts — a typed state label, what is missing and WHY (the cause class,
+ * never a vague "research gap"), what exists nearby, what the visitor can do,
+ * and when it may change — instead of the generic heading+body+queue-CTA.
+ */
+export interface EmptyStateParts {
+  /** 1 — state label: a typed kind, never a bare "empty". */
+  state: string;
+  /** 2 — what is missing, and why: the named cause class. */
+  missing: string;
+  /** 3 — what exists nearby. */
+  nearby: string;
+  /** 4 — what the visitor can do (an honest affordance, never the queue as remedy). */
+  action: { href: string; label: string };
+  /** 5 — when it may change. */
+  change: string;
+  /**
+   * The copy-batch row ids (`batch-02.md`, B-2) each part's sentence is
+   * tracked under — rendered as `data-copy` attributes so the publish gate
+   * refuses a pending sentence (`ops/publish.py#check_publishable_copy`).
+   */
+  batchIds: { state: string; missing: string; nearby: string; action: string; change: string };
+}
+
 export interface EmptyStateCopy {
   /** A short, honest heading — states that the surface is empty, not that reality is. */
   heading: string;
@@ -34,6 +67,22 @@ export interface EmptyStateCopy {
   body: string;
   /** The clickable task affordance (a gap is an invitation, not a dead end). */
   cta: { href: string; label: string };
+  /**
+   * K14 §6.4 cause-class expansion — present only on surfaces whose emptiness
+   * has a named cause. When set, `EmptyState.astro` renders the five parts;
+   * `heading`/`body`/`cta` mirror `state`/`missing`/`action` so a naive
+   * consumer still renders honest copy.
+   */
+  parts?: EmptyStateParts;
+}
+
+/**
+ * Build a cause-class entry: the five parts are the source of truth; the
+ * legacy heading/body/cta fields derive from them so the two render paths
+ * can never drift apart.
+ */
+function causeClass(parts: EmptyStateParts): EmptyStateCopy {
+  return { heading: parts.state, body: parts.missing, cta: parts.action, parts };
 }
 
 /** The aggregate surfaces that can legitimately render empty at national scale. */
@@ -125,26 +174,55 @@ const COPY: Record<EmptySurface, EmptyStateCopy> = {
     body: "SIG has published no counted quantities for this build. It never publishes a total, and the absence of a metric is not a measurement of zero (SIG-METRIC-010).",
     cta: RESEARCH_QUEUE_CTA,
   },
-  watch: {
-    heading: "No contracts on the watch yet",
-    body: "SIG is tracking no upcoming procurement or renewal decisions for this build. An empty watch means SIG has not documented an upcoming decision, not that none is pending.",
-    cta: RESEARCH_QUEUE_CTA,
-  },
-  watchSubscriptions: {
-    heading: "No jurisdictions to subscribe to yet",
-    body: "A per-jurisdiction subscription appears once SIG is tracking a dated decision there. None are tracked yet.",
-    cta: RESEARCH_QUEUE_CTA,
-  },
-  recommender: {
-    heading: "No evidence to rank yet",
-    body: "SIG has published no evidence artifacts for the upcoming decision. Their absence is a research gap, not a judgement that no evidence exists.",
-    cta: RESEARCH_QUEUE_CTA,
-  },
-  citations: {
-    heading: "No citation list yet",
-    body: "The citation list is built from the ranked evidence; with no evidence published there is nothing to cite yet.",
-    cta: RESEARCH_QUEUE_CTA,
-  },
+  watch: causeClass({
+    state: "No upcoming decisions are tracked yet.",
+    missing:
+      "The watch is not yet connected to SIG's procurement and agenda data, so no upcoming decision appears here.",
+    nearby:
+      "SIG does hold some dated records (for example federal solicitations) that will appear here once it is.",
+    action: { href: "/dossier/", label: "Browse the dossiers" },
+    change:
+      "The watch fills in with a release once the procurement and agenda feeds are connected.",
+    batchIds: { state: "EW-01", missing: "EW-02", nearby: "EW-03", action: "EW-04", change: "EW-05" },
+  }),
+  watchSubscriptions: causeClass({
+    state: "No jurisdictions to subscribe to yet.",
+    missing:
+      "A per-jurisdiction feed appears once the watch tracks a dated decision there; none are tracked yet.",
+    nearby: "The watch section above names the cause — the feeds come up with it.",
+    action: { href: "/dossier/", label: "Browse the dossiers" },
+    change: "Feeds appear with a release once decisions are tracked.",
+    batchIds: { state: "EW-06", missing: "EW-07", nearby: "EW-08", action: "EW-04", change: "EW-09" },
+  }),
+  recommender: causeClass({
+    state: "No evidence ranked yet.",
+    missing:
+      "Nothing is ranked for an upcoming decision — the watch is not yet tracking one, and SIG's artifacts are not yet linked to stored documents.",
+    nearby: "The published artifacts this release carries are listed on the evidence page.",
+    action: { href: "/evidence/", label: "See the published artifacts" },
+    change: "Ranked evidence appears with a release once a dated decision is tracked.",
+    batchIds: {
+      state: "EW-10",
+      missing: "EW-11",
+      nearby: "EW-12",
+      action: "EW-13",
+      change: "EW-14",
+    },
+  }),
+  citations: causeClass({
+    state: "No citation list yet.",
+    missing: "The citation list is built from the ranked evidence; nothing is ranked yet.",
+    nearby: "The published artifacts this release carries are listed on the evidence page.",
+    action: { href: "/evidence/", label: "See the published artifacts" },
+    change: "The list appears when evidence is ranked for a decision.",
+    batchIds: {
+      state: "EW-15",
+      missing: "EW-16",
+      nearby: "EW-12",
+      action: "EW-13",
+      change: "EW-17",
+    },
+  }),
   corrections: {
     heading: "No corrections recorded yet",
     body: "SIG has recorded no corrections for this build. This is an honest empty log, not a claim that nothing has ever needed correcting.",
@@ -165,11 +243,22 @@ const COPY: Record<EmptySurface, EmptyStateCopy> = {
     body: "SIG has not yet published a reviewed research dossier — the evidence-complete twelve-question portfolio. Absence here means none has passed review, not that the questions have no answers; the inventory overviews remain at the dossier index.",
     cta: { href: "/dossier/", label: "Browse the dossier index" },
   },
-  evidenceIndex: {
-    heading: "No claims with a full evidence view yet",
-    body: "SIG has published no claims whose full evidence view is available for this build. Their absence is a research gap, not evidence that no claims exist.",
-    cta: RESEARCH_QUEUE_CTA,
-  },
+  evidenceIndex: causeClass({
+    state: "No document views yet.",
+    missing:
+      "SIG has not yet linked a claim to a stored document it can publish, so no full evidence view is available for this build.",
+    nearby: "The artifacts the release does carry are listed below, grouped by source.",
+    action: { href: "/sources/", label: "See the sources" },
+    change:
+      "Document views appear with a release once claims are bound to publishable documents.",
+    batchIds: {
+      state: "EW-18",
+      missing: "EW-19",
+      nearby: "EW-20",
+      action: "EW-21",
+      change: "EW-22",
+    },
+  }),
   dossierGaps: {
     heading: "No record in SIG",
     body: "SIG has recorded no open gap here. This reflects what has been reviewed so far; it is not a guarantee the record is complete.",
