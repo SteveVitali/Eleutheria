@@ -40,6 +40,8 @@ __all__ = [
     "frame_from_review_items",
     "read_campaign",
     "read_samples",
+    "eval_units_from_campaign",
+    "run_shadow_evaluation",
     "preregister_campaign",
     "write_manifest",
     "write_samples",
@@ -716,3 +718,185 @@ def campaign_watermark(conn: Any, campaign_id: str, *, role: str | None = _CUSTO
         (campaign_id,),
     ).fetchall()
     return label_watermark([{"label_digest": r[0]} for r in rows])
+
+
+# ---------------------------------------------------------------------------
+# P32.10 — evaluation materialization + the shadow gate readout (SIG-EVAL-003/4)
+# ---------------------------------------------------------------------------
+def _current_labels(
+    conn: Any, campaign_id: str
+) -> dict[str, dict[tuple[str, str], dict[str, Any]]]:
+    """The chain-tip label per (sample, reviewer, round), read through the
+    RELEASED view — sealed_final labels are absent until an authorized
+    release row exists; absence is the seal, not a lookup."""
+    rows = conn.execute(
+        "SELECT sample_id, reviewer_id, label_round, label, packet_digest,"
+        " label_seq FROM human_eval_label_released WHERE campaign_id = %s",
+        (campaign_id,),
+    ).fetchall()
+    current: dict[str, dict[tuple[str, str], dict[str, Any]]] = {}
+    for sid, reviewer, rnd, label, pkt, seq in rows:
+        per_sample = current.setdefault(sid, {})
+        key = (str(reviewer), str(rnd))
+        if key not in per_sample or per_sample[key]["label_seq"] < seq:
+            per_sample[key] = {"label": label, "packet_digest": pkt, "label_seq": seq}
+    return current
+
+
+def _current_adjudications(conn: Any, campaign_id: str) -> dict[str, dict[str, Any]]:
+    """The chain-tip adjudication per sample (released view; the superseded
+    rows stay but only the highest seq is current)."""
+    rows = conn.execute(
+        "SELECT sample_id, label, adjudication_seq FROM human_eval_adjudication_released "
+        "WHERE campaign_id = %s",
+        (campaign_id,),
+    ).fetchall()
+    current: dict[str, dict[str, Any]] = {}
+    for sid, label, seq in rows:
+        if sid not in current or current[sid]["seq"] < seq:
+            current[sid] = {"label": label, "seq": seq}
+    return current
+
+
+def _release_scopes(conn: Any, campaign_id: str) -> tuple[str, ...] | None:
+    """The recorded release scopes, or ``None`` when the role cannot read the
+    release table (unknown is handled by the evaluator, never assumed)."""
+    try:
+        rows = conn.execute(
+            "SELECT scope FROM human_eval_release WHERE campaign_id = %s",
+            (campaign_id,),
+        ).fetchall()
+    except Exception:
+        return None
+    return tuple(sorted(str(r[0]) for r in rows))
+
+
+def eval_units_from_campaign(
+    conn: Any,
+    campaign_id: str,
+    *,
+    tier_of_pair: Mapping[str, int] | None = None,
+    scope_of_pair: Mapping[str, str] | None = None,
+    role: str | None = _ADMIN,
+) -> dict[str, Any]:
+    """Materialize :class:`resolution.evaluator.EvalUnit` rows for a campaign.
+
+    The outcome per sample is resolved from the *released* label and
+    adjudication surfaces ONLY — a sealed_final unit whose labels are still
+    sealed materializes ``sealed=True, outcome='missing'`` and stays in every
+    strict denominator:
+
+    * the current adjudication wins when one exists
+      (``unresolved`` stays ``unresolved``);
+    * else the two independent labels per ``human_eval.consensus``: two equal
+      definite judgments give the label; any disagreement, any
+      ``insufficient_evidence``, or a single in-flight label gives
+      ``unresolved`` (it proceeds to adjudication — never guessed);
+    * else ``missing``.
+
+    ``packet_ok`` is False when the label's recorded ``packet_digest`` differs
+    from the sample's current packet digest — a stale-packet label can never
+    certify. ``tier_of_pair``/``scope_of_pair`` map the frozen candidate's
+    auto-tier (and hypothesis scope) onto ``pair_id``; pairs absent from the
+    map keep ``tier=None`` (reported in the estimand rows, matched to no gate).
+    """
+    from .evaluator import EvalUnit
+    from .human_eval import consensus
+
+    _connect(conn, role)
+    samples = _read_samples(conn, campaign_id)
+    labels = _current_labels(conn, campaign_id)
+    adjudications = _current_adjudications(conn, campaign_id)
+    scopes = _release_scopes(conn, campaign_id)
+    pkt_rows = conn.execute(
+        "SELECT sample_id, packet_digest FROM human_eval_packet WHERE campaign_id = %s",
+        (campaign_id,),
+    ).fetchall()
+    packet_digests = {str(r[0]): str(r[1]) for r in pkt_rows}
+
+    units: list[EvalUnit] = []
+    for s in samples:
+        sid = str(s["sample_id"])
+        sealed_final = s["partition"] == "sealed_final"
+        adj = adjudications.get(sid)
+        current = labels.get(sid, {})
+        outcome = "missing"
+        packet_ok = True
+        if adj is not None:
+            outcome = (
+                "insufficient_evidence"
+                if adj["label"] == "insufficient_evidence"
+                else str(adj["label"])
+            )
+        elif current:
+            cons = consensus([v["label"] for v in current.values()])
+            # Two equal definite judgments give the label; an in-flight
+            # single label, a disagreement, or any insufficient_evidence is
+            # unresolved until adjudication — never guessed.
+            outcome = cons if cons in ("same", "different") else "unresolved"
+            pkt = packet_digests.get(sid)
+            if pkt and any(v["packet_digest"] != pkt for v in current.values()):
+                packet_ok = False
+        sealed = sealed_final and outcome == "missing"
+        pair_id = str(s["pair_id"])
+        units.append(
+            EvalUnit(
+                sample_id=sid,
+                estimand=str(s["estimand"]),
+                stratum_id=str(s["stratum_id"]),
+                partition=str(s["partition"]),
+                dependency_group_id=str(s["dependency_group_id"]),
+                outcome=outcome,
+                reference_provenance="human",
+                tier=(tier_of_pair or {}).get(pair_id),
+                scope=(scope_of_pair or {}).get(pair_id, "snapshot"),
+                weight=float(s["weight"]) if s.get("weight") is not None else None,
+                selection_probability=float(s["selection_probability"]),
+                sealed=sealed,
+                packet_ok=packet_ok,
+            )
+        )
+    return {
+        "campaign_id": campaign_id,
+        "units": units,
+        "release_scopes": scopes,
+    }
+
+
+def run_shadow_evaluation(
+    conn: Any,
+    campaign_id: str,
+    *,
+    design: Any,
+    tier_of_pair: Mapping[str, int] | None = None,
+    scope_of_pair: Mapping[str, str] | None = None,
+    historical: Sequence[Any] = (),
+    role: str | None = _ADMIN,
+) -> Any:
+    """Materialize the campaign's released-label units and run the shadow
+    evaluation — the report-only confidence gate (P32.10).
+
+    ``design`` is the preregistered :class:`SamplingDesign` (it MUST match the
+    campaign's frozen design digests — the caller constructs it from the
+    preregistration record). ``manifest_verified`` is recomputed live here;
+    contamination/candidate-digest checks are caller inputs the offline
+    runner wires when the frozen artifacts are present. Nothing is applied:
+    the returned :class:`EvaluationReport` carries recommendations only.
+    """
+    from .evaluator import evaluate
+
+    mat = eval_units_from_campaign(
+        conn, campaign_id, tier_of_pair=tier_of_pair, scope_of_pair=scope_of_pair, role=role
+    )
+    verification = verify_manifest(conn, campaign_id, role=role)
+    return evaluate(
+        units=mat["units"],
+        design=design,
+        manifest_verified=bool(verification["verified"]),
+        release_scopes=mat["release_scopes"] or (),
+        historical=tuple(historical),
+        notes=(
+            f"manifest digest: {verification['computed_manifest_digest']}",
+            f"campaign {campaign_id} materialized from released views only",
+        ),
+    )

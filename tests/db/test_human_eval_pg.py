@@ -738,6 +738,118 @@ def test_p31_operational_review_is_untouched(conn: object, eval_campaign: dict) 
 
 
 # --------------------------------------------------------------------------- #
+# P32.10 — evaluation materialization + the shadow gate (SIG-EVAL-003/004)    #
+# --------------------------------------------------------------------------- #
+def _gate_design() -> object:
+    from resolution.evaluator import HypothesisSpec, SamplingDesign, StratumSpec
+
+    return SamplingDesign(
+        design_id="des-pg",
+        kind="stratified_srs",
+        equal_probability=True,
+        independent_unit="item",
+        independence_basis="",
+        family_alpha=0.05,
+        hypotheses=(HypothesisSpec(1, "snapshot", 0.05, cells=(StratumSpec("s1", 10),)),),
+        seed="s1",
+        target_population="tier-1 auto-positive edges",
+    )
+
+
+def test_eval_units_missing_and_sealed_stay_in_denominators(
+    conn: object, eval_campaign: dict
+) -> None:
+    from resolution.human_eval_pg import eval_units_from_campaign
+
+    mat = eval_units_from_campaign(conn, CAMPAIGN, role=None)
+    units = {u.sample_id: u for u in mat["units"]}
+    assert units["hev-dev"].outcome == "missing"
+    assert not units["hev-dev"].sealed
+    assert units["hev-dev"].reference_provenance == "human"
+    # The sealed unit's labels are absent under the released surface — it
+    # materializes sealed=True and STAYS in every denominator.
+    assert units["hev-sealed"].outcome == "missing"
+    assert units["hev-sealed"].sealed
+    assert not units["hev-sealed"].is_terminal
+
+
+def test_eval_units_consensus_adjudication_and_seal(conn: object, eval_campaign: dict) -> None:
+    from resolution.human_eval_pg import eval_units_from_campaign
+
+    _label(conn, "hev-dev", "rev-a", label="same", role=None)
+    _label(conn, "hev-dev", "rev-b", label="same", round_="independent_2", role=None)
+    # A sealed label exists but is invisible under the released surface.
+    _label(conn, "hev-sealed", "rev-c", label="different", role=None)
+    record_adjudication(
+        conn,
+        campaign_id=CAMPAIGN,
+        sample_id="hev-sealed",
+        adjudicator_id="adj-1",
+        phase="resolution",
+        label="unresolved",
+        reason="genuinely undecidable",
+        evidence_refs=[],
+        role="sig_eval_custodian",
+    )
+    conn.execute("RESET ROLE")
+
+    mat = eval_units_from_campaign(conn, CAMPAIGN, role=None)
+    units = {u.sample_id: u for u in mat["units"]}
+    assert units["hev-dev"].outcome == "same"  # two agreeing definite labels
+    assert units["hev-dev"].is_success
+    assert units["hev-sealed"].sealed and units["hev-sealed"].outcome == "missing"
+
+    # A 'final' release exposes the sealed rows; the adjudication wins and
+    # 'unresolved' stays unresolved — never forced to a verdict.
+    record_release(
+        conn,
+        campaign_id=CAMPAIGN,
+        scope="final",
+        authorized_by="P32.23-gate",
+        detail={},
+        role="sig_eval_custodian",
+    )
+    conn.execute("RESET ROLE")
+    mat2 = eval_units_from_campaign(conn, CAMPAIGN, role=None)
+    sealed = {u.sample_id: u for u in mat2["units"]}["hev-sealed"]
+    assert sealed.outcome == "unresolved"
+    assert not sealed.sealed
+    assert not sealed.is_success
+    conn.rollback()
+
+
+def test_run_shadow_evaluation_certifies_nothing_and_keeps_missing(
+    conn: object, eval_campaign: dict
+) -> None:
+    from resolution.human_eval_pg import run_shadow_evaluation
+
+    _label(conn, "hev-dev", "rev-a", label="same", role=None)
+    _label(conn, "hev-dev", "rev-b", label="same", round_="independent_2", role=None)
+    report = run_shadow_evaluation(
+        conn,
+        CAMPAIGN,
+        design=_gate_design(),
+        tier_of_pair={"hev-dev-pair": 1, "hev-sealed-pair": 1},
+        role=None,
+    )
+    gate = report.gates[0]
+    assert report.policy_mode == "shadow"
+    assert report.applied == ()
+    # one labeled dev unit + one still-sealed unit → incomplete, never a pass
+    assert gate.drawn == 2
+    assert gate.successes == 1
+    assert gate.sealed == 1
+    assert gate.verdict == "incomplete"
+    assert "sealed_units" in gate.reasons
+    # the manifest was recomputed live over the prepared rows
+    assert report.manifest_verified
+    # estimands keep their separate rows; labelability counts 1 decisive of 2
+    lab = report.estimands["labelability"]
+    assert lab.denominator == 2 and lab.numerator == 1
+    conn.rollback()
+
+
+# --------------------------------------------------------------------------- #
 # Reversibility — the change deploys and reverts without touching history      #
 # --------------------------------------------------------------------------- #
 @pytest.fixture(scope="module")
