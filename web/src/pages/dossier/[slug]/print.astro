@@ -19,6 +19,7 @@ import ActionBlocks from "../../../components/ActionBlocks.astro";
 import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
 import { getDossiers } from "../../../lib/data";
+import { displayJurisdiction, dossierDisplayTitle } from "../../../lib/jurisdictions";
 import { defaultDescription } from "../../../lib/meta";
 
 export function getStaticPaths() {
@@ -27,6 +28,12 @@ export function getStaticPaths() {
 
 const { dossier } = Astro.props;
 validateDossier(dossier);
+
+// P34.14 (QW-8, F-105): the print form leads with the place's name too, code
+// secondary — a printed ID/MN dossier still discloses its mix (K4 NEW-1).
+const jurisdiction = displayJurisdiction(dossier.jurisdiction);
+const pageTitle = dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction);
+const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ") : null;
 
 const SECTIONS_PER_PAGE = 3;
 const origin = Astro.site ? Astro.site.origin : undefined;
@@ -45,11 +52,11 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{dossier.subject_label} — SIG dossier (print)</title>
+    <title>{pageTitle} — SIG dossier (print)</title>
     {/* P34.13 (QW-11): the same unique-description template as BaseLayout
         (copy-batch row MD-01) so the print document carries its own meta
         description, plus the shared favicon. */}
-    <meta name="description" content={defaultDescription(`${dossier.subject_label} — SIG dossier (print)`)} />
+    <meta name="description" content={defaultDescription(`${pageTitle} — SIG dossier (print)`)} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
   </head>
@@ -68,8 +75,14 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
       <div class="sig-print-page" data-testid="print-page">
         {idx === 0 && (
           <header class="sig-print-header">
-            <h1>{dossier.subject_label}</h1>
-            <p class="sig-dossier-jurisdiction">{dossier.jurisdiction}</p>
+            <h1>{pageTitle}</h1>
+            <p class="sig-dossier-jurisdiction">{jurisdiction.label}</p>
+            {combinesList && (
+              <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-02">This dossier combines {combinesList}.</p>
+            )}
+            {!jurisdiction.known && (
+              <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-07">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+            )}
             <IncompletenessBanner dossier={dossier} />
             <section aria-labelledby="print-summary-gaps">
               <h2 id="print-summary-gaps">What we don't know (summary)</h2>
