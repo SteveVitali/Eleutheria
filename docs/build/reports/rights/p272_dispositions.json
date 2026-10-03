@@ -136,7 +136,7 @@
     },
     {
       "source_id": "decp_fr",
-      "spdx": "LicenceOuverte-2.0",
+      "spdx": "etalab-2.0",
       "attribution": "DECP \u2014 donn\u00e9es essentielles de la commande publique (data.gouv.fr)",
       "redistributable": "yes",
       "derivative_permitted": "yes",
@@ -188,7 +188,7 @@
     },
     {
       "source_id": "camreg_sheffield_gb",
-      "spdx": "OGL-3.0",
+      "spdx": "OGL-UK-3.0",
       "attribution": "Sheffield City Council CCTV and traffic camera registry (Open Government Licence v3.0)",
       "redistributable": "yes",
       "derivative_permitted": "yes",

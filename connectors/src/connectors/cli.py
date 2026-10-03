@@ -67,6 +67,16 @@ def build_parser() -> argparse.ArgumentParser:
     rekeyp.add_argument("--handles", default=None, help="gitignored handle-list path")
     rekeyp.add_argument("--report", default=None, help="report output path (gitignored)")
     rekeyp.add_argument("--restricted-out", default=None, help="restricted map path (gitignored)")
+    acl = sub.add_parser(
+        "attribution-correction-list",
+        help=(
+            "P34.21a / ADR-194: emit the committed source-attribution corrections "
+            "artifact `sig-db attribution-corrections` consumes — one row per "
+            "rights-reviewed registry source; --out writes the committed file, "
+            "else the document prints to stdout"
+        ),
+    )
+    acl.add_argument("--out", default=None, help="output path (default: print to stdout)")
     rev = sub.add_parser(
         "review-status",
         help="per-source rights-review gate breakdown + flip-ready count (P21.1)",
@@ -390,6 +400,18 @@ def main(argv: list[str] | None = None) -> int:
         return _export_check()
     if args.command == "review-status":
         return _review_status(args.source)
+    if args.command == "attribution-correction-list":
+        import json as _json
+        from pathlib import Path as _Path
+
+        from .corrections import corrections_list, write_corrections_list
+
+        if args.out:
+            path = write_corrections_list(_Path(args.out))
+            print(f"wrote {path}")
+        else:
+            print(_json.dumps(corrections_list(), indent=2, sort_keys=True))
+        return 0
     if args.command == "rekey-personal-ids":
         from . import personal_id_rekey
 

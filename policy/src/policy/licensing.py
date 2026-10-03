@@ -389,6 +389,49 @@ def compartments() -> dict[str, dict[str, Any]]:
     return load_table("licenses")["compartments"]
 
 
+#: Canonical URLs for the well-known licences SIG publishes (the licences.toml
+#: ``license_url`` fact wins where declared; these are the canonical upstream
+#: texts for the licences that carry none). ``LicenseRef-*`` expressions have no
+#: spdx.org page — a fabricated SPDX URL would 404, so they resolve ``None``
+#: unless their ``[licenses.*]`` row declares ``license_url``.
+_LICENCE_URLS: dict[str, str] = {
+    "Apache-2.0": "https://www.apache.org/licenses/LICENSE-2.0",
+    "CC-BY-3.0": "https://creativecommons.org/licenses/by/3.0/",
+    "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
+    "CC-BY-SA-2.0": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "CC-BY-SA-4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "MIT": "https://opensource.org/license/mit",
+    "AGPL-3.0": "https://www.gnu.org/licenses/agpl-3.0.html",
+    "ODbL-1.0": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "OGL-Canada-2.0": "https://spdx.org/licenses/OGL-Canada-2.0.html",
+    "OGL-UK-3.0": ("https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"),
+    "etalab-2.0": "https://spdx.org/licenses/etalab-2.0.html",
+}
+
+
+def license_url(license_id: str, registry: Mapping[str, Any] | None = None) -> str | None:
+    """The canonical URL a consumer may read the licence at — or ``None``.
+
+    P34.21a (E2-12): every published licence carries a *valid* URL — the
+    ``license_url`` fact in ``licenses.toml`` where declared, else the known
+    canonical text, else the SPDX detail page for a real SPDX id. A
+    ``LicenseRef-*`` expression has no SPDX page: with no declared
+    ``license_url`` it resolves ``None`` and the caller emits the honest
+    absence (plus the per-source ``terms_url`` the rows carry), never a
+    fabricated spdx.org link that 404s.
+    """
+    facts = _registry(registry)["licenses"].get(license_id, {})
+    declared = str(facts.get("license_url") or "").strip()
+    if declared:
+        return declared
+    if license_id in _LICENCE_URLS:
+        return _LICENCE_URLS[license_id]
+    if license_id.startswith("LicenseRef-"):
+        return None
+    return f"https://spdx.org/licenses/{license_id}.html"
+
+
 def downstream_obligations(
     record: RightsRecord, registry: Mapping[str, Any] | None = None
 ) -> dict[str, Any]:
@@ -405,6 +448,7 @@ def downstream_obligations(
     out: dict[str, Any] = {
         "source_id": record.source_id,
         "license": governing,
+        "license_url": license_url(governing, registry),
         "attribution_required": bool(facts.get("attribution_required", True)),
         "attribution": record.attribution,
         "share_alike": bool(facts.get("share_alike", False)),

@@ -646,7 +646,7 @@ cadence = "monthly"
 cron = "0 4 30 * *"
 job = "sig-ingest-camreg-sheffield-gb"
 scheduler = "sig-sched-camreg-sheffield-gb"
-note = "Sheffield CitiWatch/CCTV layer via utility.arcgis.com usrsvcs (212 cams); OGL-3.0 → ogl_uk3 compartment."
+note = "Sheffield CitiWatch/CCTV layer via utility.arcgis.com usrsvcs (212 cams); OGL-UK-3.0 → ogl_uk3 compartment."
 
 # P26.13 (SOURCES.12): catalog-sweep camreg rows — same monthly registry
 # refresh for the GL-GATE-06-resolved rows only. camreg_stalbert_ab gets no
@@ -666,7 +666,7 @@ cadence = "monthly"
 cron = "0 14 28 * *"
 job = "sig-ingest-camreg-nottingham-gb"
 scheduler = "sig-sched-camreg-nottingham-gb"
-note = "Nottingham CCTV FeatureServer/83 (562 cams); OGL-3.0 → ogl_uk3 compartment."
+note = "Nottingham CCTV FeatureServer/83 (562 cams); OGL-UK-3.0 → ogl_uk3 compartment."
 
 [[sources]]
 id = "camreg_york_gb"
@@ -674,7 +674,7 @@ cadence = "monthly"
 cron = "0 16 28 * *"
 job = "sig-ingest-camreg-york-gb"
 scheduler = "sig-sched-camreg-york-gb"
-note = "City of York CCTV MapServer/26 (222 cams); OGL-3.0 → ogl_uk3 compartment."
+note = "City of York CCTV MapServer/26 (222 cams); OGL-UK-3.0 → ogl_uk3 compartment."
 
 [[sources]]
 id = "camreg_glasgow_gb"
@@ -682,7 +682,7 @@ cadence = "monthly"
 cron = "0 18 28 * *"
 job = "sig-ingest-camreg-glasgow-gb"
 scheduler = "sig-sched-camreg-glasgow-gb"
-note = "Glasgow OPEN_DATA/CCTV MapServer/0 (441 cams); OGL-3.0 → ogl_uk3 compartment."
+note = "Glasgow OPEN_DATA/CCTV MapServer/0 (441 cams); OGL-UK-3.0 → ogl_uk3 compartment."
 
 [[sources]]
 id = "camreg_northayrshire_gb"
@@ -690,7 +690,7 @@ cadence = "monthly"
 cron = "0 20 28 * *"
 job = "sig-ingest-camreg-northayrshire-gb"
 scheduler = "sig-sched-camreg-northayrshire-gb"
-note = "North Ayrshire CCTV Locations MapServer/12 (108 cams); OGL-3.0 → ogl_uk3 compartment."
+note = "North Ayrshire CCTV Locations MapServer/12 (108 cams); OGL-UK-3.0 → ogl_uk3 compartment."
 
 [[sources]]
 id = "camreg_lambeth_gb"
@@ -698,7 +698,7 @@ cadence = "monthly"
 cron = "0 22 28 * *"
 job = "sig-ingest-camreg-lambeth-gb"
 scheduler = "sig-sched-camreg-lambeth-gb"
-note = "Lambeth parking CCTV MapServer/0 (35 cams); OGL-3.0 → ogl_uk3 compartment; BNG fields, outSR=4326 geometry."
+note = "Lambeth parking CCTV MapServer/0 (35 cams); OGL-UK-3.0 → ogl_uk3 compartment; BNG fields, outSR=4326 geometry."
 
 [[sources]]
 id = "camreg_peel_on"

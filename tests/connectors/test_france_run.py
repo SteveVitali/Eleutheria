@@ -168,7 +168,7 @@ def test_france_document_targets_registered_but_declarationcamera_stays_gated() 
 
 def test_all_france_sources_are_flipped_on_the_counsel_basis() -> None:
     # Counsel approved ingestion for the whole cohort (HG-02, 2026-09-15):
-    # raa_prefectures (ODbL-1.0) + decp_fr (LicenceOuverte-2.0, ADR-084) on their
+    # raa_prefectures (ODbL-1.0) + decp_fr (etalab-2.0, ADR-084) on their
     # confirmed licences; madada + declarationcamera_be on the derived-facts
     # basis (LicenseRef-DerivedFacts-Citations — request metadata / register
     # facts only, never user-authored request text; redistributable=false).

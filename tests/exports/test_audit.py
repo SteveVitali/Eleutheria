@@ -282,7 +282,7 @@ def _raw_with_decisions() -> dict[str, object]:
         ("LicenseRef-PublicRecord-FactualCompilation", "yes", "yes", 372_869),
         ("CC0-1.0", "yes", "yes", 300_000),
         ("CC-BY-4.0", "yes", "yes", 150_000),
-        ("LicenceOuverte-2.0", "yes", "yes", 14_462),
+        ("etalab-2.0", "yes", "yes", 14_462),
         ("ODbL-1.0", "yes", "yes", 5_929),
         ("LicenseRef-MuckRock-API-ToS", "no", "no", 6),
         (None, "UNDETERMINED", "UNDETERMINED", 200),
@@ -334,7 +334,7 @@ def test_effective_markdown_section_and_decision_trail() -> None:
     md = _audit_effective().to_markdown()
     assert "Effective rights" in md
     assert "post-decision" in md
-    assert "LicenceOuverte-2.0" in md
+    assert "etalab-2.0" in md
     assert "ted_eu" in md and "maintainer (delegated)" in md  # the decision trail is verbatim
     assert "rights_decision" in md  # the mechanism is named
 

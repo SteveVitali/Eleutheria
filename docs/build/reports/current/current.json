@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "77787fa2bc3f6e5ec1b0d32e159c704d66a947e1",
-  "manifest_inputs": 945,
+  "input_commit": "ba33476ffd636a745296e52f210d08c5a0d45aff",
+  "manifest_inputs": 947,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.21a",
-    "lastCompleted": "P34.20",
+    "nextTicket": "P34.21b",
+    "lastCompleted": "P34.21a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.20-watch-and-evidence-empty-state-truth",
+    "chainTip": "r11/P34.21a-attribution-gate-sink-rights-and-backfill",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-03T16:47:13Z"
+    "updatedAt": "2026-10-03T19:27:03Z"
   },
   "counts": {
-    "obligations": 148,
-    "owed": 82,
-    "open": 79,
+    "obligations": 149,
+    "owed": 83,
+    "open": 80,
     "partial": 3,
     "terminal": 66,
-    "events": 620,
+    "events": 621,
     "transitions": 18,
     "coverage_assessments": 192,
     "coverage_historical_rows": 777,
@@ -7004,6 +7004,50 @@
           "anchor": {
             "row_line": 1080,
             "row_sha256": "78ec23db4c773c2563157f01ab110d23ddd0a021500c7151ed53c63cb38d4949",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.21a-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.21a-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner (r11/P34.21a-live-1) or the operator",
+      "landing": "the L1 hosted backfill leg (date -u >= 2026-10-13T12:00Z outside 03:00-06:30Z + S5-3 pre-authorisation unexpired/un-voided + live:P34.3 data protection + AR-2 restore point + pre-state capture + <=24 h probe record)",
+      "backlog_home": "BL-084",
+      "item": "The L1 hosted backfill — `sig-db attribution-corrections --dsn <sig-pg> --corrections docs/build/reports/rights/p34_21a_corrections.json --apply` on the production claim spine: new `rights_record` rows (one per corrected source) plus source-scoped `rights_decision` rows correcting the F-387 mis/empty attributions; INSERT only, never `UPDATE`/`DELETE`; the dry run's counts are recorded first",
+      "unblocked_by": "owner: the OM-19 leg-runner (`r11/P34.21a-live-1` from the chain tip) or the operator; trigger: ALL of — `date -u` ≥ 2026-10-13T12:00Z and outside 03:00–06:30Z (preferred 14:00–20:00Z weekdays) · the S5-3 pre-authorisation unexpired and un-voided (re-checked at the leg, OM-20) · `live:P34.3` data protection live · an AR-2 on-demand backup SUCCESSFUL + pre-state captured (spine watermark, per-table counts, the count of attribution-required rows with empty attribution — the 09-27 read was 61,603 empty + 3,272 wrong-upstream) · a `probe-run/1` record ≤ 24 h old",
+      "verify": "re-run `implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (scope: leg L1 hosted backfill only, on branch `r11/P34.21a-live-1`); verify = dry-run counts recorded → `--apply` → hosted read-back: 0 attribution-required claims whose effective record has empty attribution, the wrong-upstream rows now crediting their own source, `n_tup_upd`/`n_tup_del` on spine tables unchanged, a second `--apply` writing 0 rows",
+      "proxy": "the command is dry-run-by-default and INSERT-only — an accidental early run writes nothing without `--apply`, and a wrong `--apply` rolls forward by superseding `rights_decision` rows (the effective record is the latest decision); the repo-tip sink already writes per-source rights, so a delayed leg only delays the hosted correction, never produces new wrong credits",
+      "line": 1093,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.21a-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.21a-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.21a",
+          "owner": "the OM-19 leg-runner (r11/P34.21a-live-1) or the operator",
+          "landing": "the L1 hosted backfill leg (date -u >= 2026-10-13T12:00Z outside 03:00-06:30Z + S5-3 pre-authorisation unexpired/un-voided + live:P34.3 data protection + AR-2 restore point + pre-state capture + <=24 h probe record)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-03",
+          "recorded_at": "2026-10-03",
+          "source_commit": "13919de4f190af599a1958164038a4ad21eb4595",
+          "reason": "migration anchor appended by P34.21a (row 223) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1093,
+            "row_sha256": "b7f31baa2ea37632e2ef790c2825d4cb4f309ba5ff8bc0ae34dfa7f4178e3bb6",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -14995,10 +15039,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "d0551ce97ec14f42d97793794f2bc7456e06be7738719e30a1940b0bcd4026c3",
+  "manifest_sha256": "71895d1dab6221903408d1b673e389ba354768e8b16f58260b27476868dbb4d6",
   "current_md": {
     "lines": 74,
-    "bytes": 13042,
+    "bytes": 13058,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

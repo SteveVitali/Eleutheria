@@ -145,9 +145,9 @@ _LICENCE_MAP = [
     ("open government licence - canada", "OGL-Canada-2.0"),
     ("open government license - canada", "OGL-Canada-2.0"),
     ("open government licence - city of ottawa", "LicenseRef-Ottawa-ODL-2.0"),
-    ("open government licence", "OGL-3.0"),
-    ("open government license", "OGL-3.0"),
-    ("uk-ogl", "OGL-3.0"),
+    ("open government licence", "OGL-UK-3.0"),
+    ("open government license", "OGL-UK-3.0"),
+    ("uk-ogl", "OGL-UK-3.0"),
     ("ogl", None),  # bare "OGL" is ambiguous — gated
     ("creative commons attribution 4.0", "CC-BY-4.0"),
     ("creative commons attribution 3.0", "CC-BY-3.0"),
@@ -157,16 +157,16 @@ _LICENCE_MAP = [
     ("cc by 3.0", "CC-BY-3.0"),
     ("cc-by-sa-4.0", "CC-BY-SA-4.0"),
     ("cc-by-sa-2.0", "CC-BY-SA-2.0"),
-    ("licence ouverte", "LicenceOuverte-2.0"),
+    ("licence ouverte", "etalab-2.0"),
     ("odbl", "ODbL-1.0"),
     ("open database license", "ODbL-1.0"),
 ]
 
 #: CKAN licence ids → SPDX (data.gov.uk / ODL registry ids).
 _CKAN_LICENCE_MAP = {
-    "uk-ogl": "OGL-3.0",
-    "OGL-UK-3.0": "OGL-3.0",
-    "ogl": "OGL-3.0",
+    "uk-ogl": "OGL-UK-3.0",
+    "OGL-3.0": "OGL-UK-3.0",
+    "ogl": "OGL-UK-3.0",
     "cc-by": "CC-BY-4.0",
     "cc-by-4.0": "CC-BY-4.0",
     "cc-by-3.0": "CC-BY-3.0",
@@ -755,8 +755,8 @@ _REVIEW_NON_REGISTRY: list[tuple[re.Pattern[str], str]] = [
 #: Extra licence-text patterns the review pass applies over the FULL
 #: licence_verbatim (the qualify map is deliberately narrower).
 _REVIEW_LICENCE_MAP = [
-    ("open-government-licence", "OGL-3.0"),  # nationalarchives URL form
-    ("nationalarchives.gov.uk/doc/open-government", "OGL-3.0"),
+    ("open-government-licence", "OGL-UK-3.0"),  # nationalarchives URL form
+    ("nationalarchives.gov.uk/doc/open-government", "OGL-UK-3.0"),
     ("licenses/by-sa/2.0", "CC-BY-SA-2.0"),
     ("licenses/by-sa/4.0", "CC-BY-SA-4.0"),
     ("licenses/by/4.0", "CC-BY-4.0"),

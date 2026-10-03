@@ -35,6 +35,16 @@ from datetime import date
 #: platforms, so a release artifact is diffable and its digest is reproducible.
 _JSON_KW: dict[str, object] = {"sort_keys": True, "separators": (",", ":"), "ensure_ascii": False}
 
+#: The publication-basis label every export descriptor carries (E2 H-6; OM-08,
+#: ADR-167/ADR-182). The exact sentence is the agent-drafted label the copy batch
+#: confirms for republish #2 — never a counsel claim: no counsel exists. The same
+#: string lands in ``manifest.json``, ``datapackage.json`` and ``LICENCES.json``.
+PUBLICATION_BASIS = (
+    "Published on the operator's own determination (no counsel). No lawyer's "
+    "written opinion has been obtained; nothing here states that this "
+    "publication has been cleared by counsel."
+)
+
 
 def canonical_json(obj: object) -> bytes:
     """Serialise ``obj`` to the canonical, byte-stable JSON encoding (UTF-8, newline)."""
@@ -180,6 +190,9 @@ class Manifest:
             "release_id": self.build_spec.release_id(),
             "reproducibility_inputs": self.build_spec.reproducibility_inputs(),
             "content_key": self.build_spec.content_key(),
+            # P34.21a (E2 H-6, OM-08, ADR-167/ADR-182): the publication-basis
+            # label — the operator's own determination, never a counsel claim.
+            "publication_basis": PUBLICATION_BASIS,
             "artifacts": [a.as_json() for a in self._sorted()],
         }
 

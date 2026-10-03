@@ -37,11 +37,12 @@ def _seed_predicate(cur, predicate_id: str) -> None:
     )
 
 
-def _rights(cur, spdx: str, redistributable: str) -> str:
+def _rights(cur, spdx: str, redistributable: str, attribution: str | None = None) -> str:
     cur.execute(
-        "INSERT INTO rights_record(spdx_expression,redistributable,"
-        "derivative_permitted,retrieval_date) VALUES(%s,%s,%s,'2026-01-01') RETURNING rights_id",
-        (spdx, redistributable, redistributable),
+        "INSERT INTO rights_record(spdx_expression,attribution_text,redistributable,"
+        "derivative_permitted,retrieval_date) VALUES(%s,%s,%s,%s,'2026-01-01') "
+        "RETURNING rights_id",
+        (spdx, attribution, redistributable, redistributable),
     )
     return cur.fetchone()[0]
 
@@ -119,7 +120,9 @@ def seeded_export(conn) -> dict:
         _seed_predicate(cur, pred)
 
     cc0 = _rights(cur, "CC0-1.0", "yes")
-    odbl = _rights(cur, "ODbL-1.0", "yes")
+    # P34.21a (E2-12): an attribution-required licence carries its upstream
+    # credit — the ODbL source names the OSM credit its rows draw on.
+    odbl = _rights(cur, "ODbL-1.0", "yes", attribution="© OpenStreetMap contributors")
     undet = _rights(cur, "LicenseRef-Unknown", "UNDETERMINED")
 
     run_cc0 = _run(cur, "camreg_cc0")

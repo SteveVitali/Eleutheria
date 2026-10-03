@@ -356,6 +356,17 @@ def record_resightings(batch: DuplicateBatch) -> None:
 
 #: Maps a claim record to the entity its object names, or ``None`` for a literal.
 ObjectResolver = Callable[[Mapping[str, Any]], "EntityRef | None"]
+
+#: P34.21a / ADR-194: an optional per-source rights lookup the sink consults when
+#: a claim omits rights fields (the connectors' ``sources.toml`` registry through
+#: ``connectors.sinks.make_claim_sink``). The resolver returns a mapping with any
+#: of ``spdx`` / ``attribution`` / ``terms_url`` / ``redistributable`` /
+#: ``derivative_permitted`` for the named source — or ``None`` when the source is
+#: unknown (the claim's own fields then stand alone). Claim-carried fields always
+#: win: the registry fills ABSENT fields, it never overwrites what a connector
+#: asserted (assertion-time provenance). Replays and callers that never wire a
+#: resolver keep the assertion-only behaviour.
+RightsResolver = Callable[[str], "Mapping[str, Any] | None"]
 #: Receives each chunk's already-present claims (see :class:`DuplicateBatch`).
 DuplicateHook = Callable[[DuplicateBatch], None]
 
@@ -706,6 +717,7 @@ class PgClaimSink:
         object_resolver: ObjectResolver | None = None,
         logical_run: str | None = None,
         extra_parameters: Mapping[str, str] | None = None,
+        rights_resolver: RightsResolver | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -740,10 +752,19 @@ class PgClaimSink:
         # lineage — the run ids its captures came from). Keys the sink already
         # owns (execution_id / run_record_uri / logical_run) cannot be shadowed.
         self._extra_parameters = dict(extra_parameters or {})
+        # P34.21a / ADR-194: the per-source rights lookup consulted when a claim
+        # omits rights fields (wired by ``connectors.sinks.make_claim_sink`` from
+        # ``sources.toml``; absent → assertion-only behaviour, e.g. replays).
+        self._rights_resolver = rights_resolver
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         self._strategy_ready = False
-        self._rights_by_spdx: dict[str, str] = {}
+        # (source_id, spdx, attribution, terms_url) -> rights_id. P34.21a: the
+        # key is per SOURCE + rights tuple — never SPDX alone, which is the F-387
+        # defect (the first record for a licence was reused for every source
+        # sharing it, mis-crediting e.g. non-DeFlock rows to "DeFlock community
+        # map").
+        self._rights_by_key: dict[tuple[str, str, str | None, str | None], str] = {}
         self._known_predicates: set[str] = set()
         # (scheme, value) -> entity_id, filled through the identity guard.
         self._entity_by_key: dict[tuple[str, str], str] = {}
@@ -946,30 +967,99 @@ class PgClaimSink:
             self._known_predicates.add(predicate)
             self._journal.append((self._known_predicates, predicate))
 
-    def _rights_id(self, spdx: str, attribution: str | None) -> str:
-        spdx = spdx or "UNDETERMINED"
-        cached = self._rights_by_spdx.get(spdx)
+    def _rights_id(
+        self,
+        source_id: str,
+        spdx: str,
+        attribution: str | None,
+        terms_url: str | None = None,
+    ) -> str:
+        """Resolve (and record) the rights record for one source's claims.
+
+        P34.21a / ADR-194 (E2-12, F-387): the key is ``(source_id, spdx,
+        attribution, terms_url)`` — never SPDX alone. The pre-P34.21a sink keyed
+        on ``spdx`` only, so the FIRST ``rights_record`` seen for a licence was
+        reused for every source sharing it: the 3,272 CC-BY rows credited to
+        "DeFlock community map" are that defect's record. Two sources sharing a
+        licence but carrying different attribution/terms now mint distinct
+        records; two sources whose (spdx, attribution, terms) genuinely agree
+        still dedupe onto one record — the key scopes the LOOKUP, and
+        ``rights_record`` itself remains source-agnostic by design (the
+        source linkage lives on the claim/artifact/registry rows).
+
+        A claim's own fields are assertion-time provenance and always win; when
+        a field is absent the optional ``rights_resolver`` fills it from the
+        source registry (e.g. a claim that asserted no attribution records the
+        registry's reviewed credit rather than an empty one). A record is
+        matched on its full tuple (``IS NOT DISTINCT FROM`` for the nullables)
+        so replays resolve idempotently; a non-matching tuple inserts a new
+        ``rights_record`` — INSERT-only, ``ON CONFLICT``-free because the
+        natural key has no unique constraint (dedup is the match-first read).
+        """
+        registry = self._rights_resolver(source_id) if self._rights_resolver else None
+        registry = dict(registry) if registry else {}
+        spdx = str(spdx or registry.get("spdx") or "UNDETERMINED")
+        attribution = (
+            attribution
+            if attribution is not None
+            else (
+                None if registry.get("attribution") in (None, "") else str(registry["attribution"])
+            )
+        )
+        terms_url = (
+            terms_url
+            if terms_url is not None
+            else (None if registry.get("terms_url") in (None, "") else str(registry["terms_url"]))
+        )
+        key = (source_id, spdx, attribution, terms_url)
+        cached = self._rights_by_key.get(key)
         if cached is not None:
             return cached
-        # Reuse an existing rights_record for this licence if one is already stored
-        # (idempotent across replays); else insert one.
+        if spdx == "UNDETERMINED":
+            # An unresolved licence stays honestly undecided so an ADR-095 /
+            # ADR-194 decision can LIFT it later; stamping 'no' would read as
+            # "reviewed, not publishable" — a different, wrong record.
+            redistributable = derivative = "UNDETERMINED"
+        else:
+            # The resolver supplies rights_record-vocabulary strings
+            # ('yes'/'no'/'review_required'/'UNDETERMINED'); an absent/unknown
+            # value keeps the sink's original permissive stamp for asserted
+            # licences (back-compat — unresourced sinks behave exactly as
+            # before).
+            _decided = {"yes", "no", "review_required", "UNDETERMINED"}
+            redistributable = (
+                str(registry["redistributable"])
+                if str(registry.get("redistributable")) in _decided
+                else "yes"
+            )
+            derivative = (
+                str(registry["derivative_permitted"])
+                if str(registry.get("derivative_permitted")) in _decided
+                else "yes"
+            )
+        # Reuse an existing rights_record for this exact tuple if one is already
+        # stored (idempotent across replays and across sources whose rights
+        # genuinely agree); else insert one.
         row = self._conn.execute(
             "SELECT rights_id FROM rights_record WHERE spdx_expression = %s "
+            "AND attribution_text IS NOT DISTINCT FROM %s "
+            "AND terms_url IS NOT DISTINCT FROM %s "
+            "AND redistributable = %s AND derivative_permitted = %s "
             "ORDER BY rights_id LIMIT 1",
-            (spdx,),
+            (spdx, attribution, terms_url, redistributable, derivative),
         ).fetchone()
         if row is not None:
-            self._remember(self._rights_by_spdx, spdx, str(row[0]))
+            self._remember(self._rights_by_key, key, str(row[0]))
             return str(row[0])
-        redistributable = "UNDETERMINED" if spdx == "UNDETERMINED" else "yes"
         inserted = self._conn.execute(
             "INSERT INTO rights_record"
             "(spdx_expression, attribution_text, redistributable, derivative_permitted,"
-            " retrieval_date) VALUES (%s, %s, %s, %s, %s) RETURNING rights_id",
-            (spdx, attribution, redistributable, redistributable, date.today()),
+            " terms_url, retrieval_date) VALUES (%s, %s, %s, %s, %s, %s)"
+            " RETURNING rights_id",
+            (spdx, attribution, redistributable, derivative, terms_url, date.today()),
         ).fetchone()
         assert inserted is not None
-        self._remember(self._rights_by_spdx, spdx, str(inserted[0]))
+        self._remember(self._rights_by_key, key, str(inserted[0]))
         return str(inserted[0])
 
     @property
@@ -1320,12 +1410,20 @@ class PgClaimSink:
         predicate = typed.predicate
 
         value = claim.get("value")
-        spdx = str(claim.get("license") or claim.get("spdx") or "UNDETERMINED")
-        attribution = claim.get("source_attribution") or claim.get("attribution")
         source_id = str(claim.get("source_id") or self._connector_name)
+        spdx = str(claim.get("license") or claim.get("spdx") or "")
+        attribution = claim.get("source_attribution") or claim.get("attribution")
+        terms_url = claim.get("terms_url") or claim.get("source_terms_url")
 
         genre = str(claim.get("evidence_genre") or "connector_run")
-        rights_id = self._rights_id(spdx, attribution)
+        # P34.21a / ADR-194: rights resolve per SOURCE, not per licence — the
+        # (source, spdx, attribution, terms) tuple is the record's identity.
+        rights_id = self._rights_id(
+            source_id,
+            spdx,
+            None if attribution is None else str(attribution),
+            None if terms_url is None else str(terms_url),
+        )
         if predicate not in self._known_predicates:
             self._pending_predicates.setdefault(predicate, _value_datatype(value))
         run_id = self._ensure_run()

@@ -179,6 +179,15 @@ def _fixture_records(doc: Mapping[str, Any]) -> list[dict[str, Any]]:
         ):
             if key in row:
                 rec[key] = row[key]
+        # P34.21a (E2-12): a licence-bearing row carries its upstream credit at
+        # assertion time — the export attribution gate refuses an
+        # attribution-required row whose credit is empty, which is exactly the
+        # F-387 defect. The fixture's ODbL rows emulate OSM-derived records and
+        # name the OSM credit; the fixture's own rows name the fixture document.
+        if row.get("license") == "ODbL-1.0":
+            rec["source_attribution"] = "© OpenStreetMap contributors"
+        elif row.get("license"):
+            rec["source_attribution"] = "P33.2 composed fixture (deterministic registry export)"
         rec["locator"] = {"kind": "row", "row": i}
         rec["extraction_method"] = "deterministic"
         out.append(rec)

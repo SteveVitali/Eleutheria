@@ -669,23 +669,31 @@ def slim_geojson_for_tiles(geojson_bytes: bytes) -> bytes:
 
 
 def render_compartment_sites_pmtiles(
-    compartment: str, geojson_bytes: bytes, license_id: str
+    compartment: str,
+    geojson_bytes: bytes,
+    license_id: str,
+    *,
+    attribution: str | None = None,
 ) -> tuple[bytes, str]:
     """Render one compartment's sites.geojson → PMTiles bytes (+ renderer name).
 
     Shared by the spine export (``build_spine_export``) and the jurisdiction bundle
     path (``sig-exports build --jurisdiction``): ODbL keeps its OSM notice (§42.3);
     every other compartment carries its own SPDX id — never a borrowed "CC-BY-4.0"
-    label on a CC-BY-SA archive. The feature properties are slimmed to
+    label on a CC-BY-SA archive. P34.21a (E2-12): an explicit ``attribution``
+    (the drawn sources' own credit from the compartment's rights records) is
+    stamped verbatim; absent one, the licence-level SIG line stands as the
+    fallback. The feature properties are slimmed to
     :data:`TILE_RENDER_PROPERTIES` first — the full sites.geojson row (claim_ids,
     source_ids, licence list, envelopes) is a *downloadable* shape, not a tile-render
     one. The renderer writes through a temp file (``render_pmtiles_file`` uses
     tippecanoe when present, else the pure-Python encoder); both render the z0–z14
     pyramid.
     """
-    attribution = (
-        ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else f"© The SIG project — {license_id}"
-    )
+    if attribution is None or license_id == "ODbL-1.0":
+        attribution = (
+            ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else f"© The SIG project — {license_id}"
+        )
     with tempfile.TemporaryDirectory() as tmp:
         src = Path(tmp) / "sites.geojson"
         src.write_bytes(slim_geojson_for_tiles(geojson_bytes))
