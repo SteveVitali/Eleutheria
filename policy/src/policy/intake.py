@@ -25,6 +25,7 @@ Two hard rules this module exists to hold (S4 research §8, §55.5):
 
 from __future__ import annotations
 
+import json
 import re
 import unicodedata
 from dataclasses import dataclass
@@ -51,11 +52,14 @@ __all__ = [
     "limits",
     "moderation_events",
     "normalize_report",
+    "proposal_limits",
     "public_state",
     "redactable_fields",
     "screen_part_viii",
     "validate_evidence_url",
     "validate_moderation_detail",
+    "validate_proposal",
+    "validate_publish_linkage",
 ]
 
 
@@ -446,7 +450,15 @@ _EVENT_DETAIL_KEYS: dict[str, frozenset[str]] = {
     "assigned": frozenset({"assignee", "note"}),
     "review_requested": frozenset({"note"}),
     "disposition_proposed": frozenset(
-        {"outcome", "reason", "note", "public_response", "public_response_publish", "legal_hold"}
+        {
+            "outcome",
+            "reason",
+            "note",
+            "proposal",
+            "public_response",
+            "public_response_publish",
+            "legal_hold",
+        }
     ),
     "disposition_approved": frozenset(
         {
@@ -533,6 +545,20 @@ def validate_moderation_detail(event: str, detail: dict[str, Any] | None) -> dic
                     {"approves_seq": "the event_seq of the proposal being approved"}
                 )
             out["approves_seq"] = seq
+        if event == "disposition_proposed":
+            # The P32.16a bridge input (SIG-FIND-008): an applying outcome MUST
+            # carry the structured proposal; a refusal carries none — denial
+            # never mutates the graph.
+            raw_proposal = detail.get("proposal")
+            if outcome == "refuse":
+                if raw_proposal is not None:
+                    raise IntakeFieldError(
+                        {"proposal": "a refusal carries no application proposal"}
+                    )
+            elif raw_proposal is None:
+                raise IntakeFieldError({"proposal": f"a {outcome} disposition requires a proposal"})
+            else:
+                out["proposal"] = validate_proposal(outcome, raw_proposal)
         # A response published to the reporter must survive the same Part VIII
         # screen — it is bounded reviewer-authored text headed for a receipt.
         if response is not None and screen_part_viii(response) is not None:
@@ -545,4 +571,224 @@ def validate_moderation_detail(event: str, detail: dict[str, Any] | None) -> dic
             raise IntakeFieldError({"fields": f"subset of {sorted(redactable_fields())} required"})
         out["fields"] = sorted(set(raw))
 
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# The P32.16a structured proposal + publication linkage (SIG-FIND-008)
+# --------------------------------------------------------------------------- #
+def _proposal_contract() -> dict[str, Any]:
+    prop = contract().get("proposal")
+    if not isinstance(prop, dict) or "required" not in prop or "allowed" not in prop:
+        raise IntakeContractError("intake_receiver.toml is missing the [proposal] section")
+    return prop
+
+
+def proposal_limits() -> dict[str, int]:
+    return {k: int(v) for k, v in _proposal_contract()["limits"].items()}
+
+
+def _bounded(value: Any, cap: int) -> str:
+    return _nfc(str(value).strip())[:cap]
+
+
+def _check_digest(value: Any, name: str) -> str:
+    digest = _bounded(value, int(proposal_limits()["digest_hex_chars"]) + 8)
+    if re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+        raise IntakeFieldError({name: "a 64-hex sha256 fingerprint is required"})
+    return digest
+
+
+def _check_target_id(kind: str, value: Any) -> str:
+    lim = proposal_limits()
+    tid = _bounded(value, lim["target_id_max_chars"] + 8)
+    if len(tid) > lim["target_id_max_chars"]:
+        raise IntakeFieldError({"target_id": "exceeds the target-id bound"})
+    if kind == "release_artifact":
+        # The ADR-132 immutable release namespace — the same shape the
+        # report's publication_id field carries.
+        if re.fullmatch(r"p-[0-9a-f]{64}", tid) is None:
+            raise IntakeFieldError({"target_id": "a p-<64 hex> release namespace is required"})
+    elif re.fullmatch(r"[0-9a-fA-F-]{8,128}", tid) is None:
+        raise IntakeFieldError({"target_id": "a bounded uuid/hex reference is required"})
+    return tid
+
+
+def _validate_proposal_value(raw: Any) -> dict[str, Any]:
+    """The proposed claim value columns — allowlisted keys, bounded text."""
+    contract_keys = frozenset(str(k) for k in _proposal_contract()["value_keys"])
+    if not isinstance(raw, dict) or not raw:
+        raise IntakeFieldError({"value": "an object of claim value columns is required"})
+    unknown = set(raw) - contract_keys
+    if unknown:
+        raise IntakeFieldError(
+            {
+                "value": f"unknown value columns {sorted(unknown)} "
+                "(spatial/document types are out of bridge scope)"
+            }
+        )
+    out: dict[str, Any] = {}
+    lim = proposal_limits()
+    for key in ("value_text", "unit", "object_entity"):
+        if raw.get(key) is not None:
+            out[key] = _bounded(raw[key], lim["value_text_max_chars"])
+    for key in ("value_num", "value_bool"):
+        if raw.get(key) is not None:
+            out[key] = raw[key]
+    if raw.get("value_json") is not None:
+        vj = raw["value_json"]
+        if not isinstance(vj, (dict, list)):
+            raise IntakeFieldError({"value": "value_json must be a JSON object/array"})
+        out["value_json"] = vj
+    if not out:
+        raise IntakeFieldError({"value": "at least one value column is required"})
+    # The unsafe-payload screen runs at proposal write AND at apply — a
+    # corrected value may never carry plate/person-shaped content (Part VIII).
+    for key, val in out.items():
+        if isinstance(val, str) and screen_part_viii(val) is not None:
+            raise IntakeFieldError(
+                {
+                    "value": "matches the Part VIII refusal screen — "
+                    "describe institutional facts only"
+                }
+            )
+        if key == "value_json" and screen_part_viii(json.dumps(val)) is not None:
+            raise IntakeFieldError({"value": "matches the Part VIII refusal screen"})
+    return out
+
+
+def _validate_proposal_scope(raw: Any) -> dict[str, Any]:
+    if raw is None:
+        return {}
+    allowed = frozenset(str(k) for k in _proposal_contract()["scope_keys"])
+    if not isinstance(raw, dict):
+        raise IntakeFieldError({"scope": "an object of claim scope overrides"})
+    unknown = set(raw) - allowed
+    if unknown:
+        raise IntakeFieldError({"scope": f"unknown scope keys {sorted(unknown)}"})
+    lim = proposal_limits()
+    out: dict[str, Any] = {}
+    for key in ("valid_from", "valid_to", "observed_at"):
+        if raw.get(key) is not None:
+            out[key] = _bounded(raw[key], 64)
+    if raw.get("raw_context") is not None:
+        rc = raw["raw_context"]
+        if len(json.dumps(rc)) > lim["raw_context_max_chars"]:
+            raise IntakeFieldError({"scope": "raw_context exceeds its bound"})
+        out["raw_context"] = rc
+    return out
+
+
+def validate_proposal(outcome: str, proposal: Any) -> dict[str, Any]:
+    """Validate + sanitize one structured application proposal (fail closed).
+
+    The bridge input contract (P32.16a / SIG-FIND-008): per-outcome required
+    and allowed keys come from `intake_receiver.toml [proposal]` — data, not
+    code. A proposal only ever describes *what the reviewer asks to write*;
+    nothing here asserts a fact, and applying still requires the separate
+    explicit `disposition_approved` event.
+    """
+    prop = _proposal_contract()
+    required = {k: frozenset(str(x) for x in v) for k, v in prop["required"].items()}
+    allowed = {k: frozenset(str(x) for x in v) for k, v in prop["allowed"].items()}
+    if outcome not in required:
+        raise IntakeFieldError({"proposal": f"{outcome!r} is not an applying outcome"})
+    if not isinstance(proposal, dict):
+        raise IntakeFieldError({"proposal": "an object is required"})
+    unknown = set(proposal) - allowed[outcome]
+    if unknown:
+        raise IntakeFieldError({f"proposal.{k}": "unknown proposal key" for k in sorted(unknown)})
+    missing = required[outcome] - {k for k, v in proposal.items() if v is not None}
+    if missing:
+        raise IntakeFieldError(
+            {f"proposal.{k}": "required for this outcome" for k in sorted(missing)}
+        )
+    lim = proposal_limits()
+    out: dict[str, Any] = {}
+
+    kind = _bounded(proposal.get("target_kind"), 32)
+    kinds = frozenset(str(k) for k in prop["target_kinds"])
+    if kind not in kinds:
+        raise IntakeFieldError({"target_kind": f"must be one of {sorted(kinds)}"})
+    if outcome in {"correct", "annotate"} and kind != "claim":
+        raise IntakeFieldError({"target_kind": "a correct/annotate outcome targets a claim"})
+    out["target_kind"] = kind
+    out["target_id"] = _check_target_id(kind, proposal.get("target_id"))
+
+    for name in ("claim_digest", "evidence_digest"):
+        if proposal.get(name) is not None:
+            out[name] = _check_digest(proposal[name], name)
+
+    if proposal.get("predicate_id") is not None:
+        pred = _bounded(proposal["predicate_id"], lim["predicate_id_max_chars"])
+        if len(pred) > lim["predicate_id_max_chars"] or not re.fullmatch(r"[a-z0-9_.-]+", pred):
+            raise IntakeFieldError({"predicate_id": "a bounded predicate id slug"})
+        out["predicate_id"] = pred
+
+    if proposal.get("value") is not None:
+        out["value"] = _validate_proposal_value(proposal["value"])
+    if proposal.get("scope") is not None:
+        out["scope"] = _validate_proposal_scope(proposal["scope"])
+
+    if proposal.get("correction_reason") is not None:
+        cr = _bounded(proposal["correction_reason"], 500)
+        if screen_part_viii(cr) is not None:
+            raise IntakeFieldError({"correction_reason": "matches the Part VIII refusal screen"})
+        out["correction_reason"] = cr
+
+    if outcome in {"suppress", "delete"}:
+        rc = _bounded(proposal.get("reason_category"), 64)
+        cats = frozenset(str(c) for c in prop["reason_categories"])
+        if rc not in cats:
+            raise IntakeFieldError({"reason_category": f"must be one of {sorted(cats)}"})
+        out["reason_category"] = rc
+        allowed_disp = frozenset(str(d) for d in prop["suppress_dispositions"])
+        if outcome == "suppress":
+            disp = _bounded(proposal.get("disposition") or "withhold", 32)
+            if disp not in allowed_disp:
+                raise IntakeFieldError({"disposition": f"must be one of {sorted(allowed_disp)}"})
+        else:
+            disp = _bounded(proposal.get("disposition") or "withdraw", 32)
+            if disp != "withdraw":
+                raise IntakeFieldError(
+                    {
+                        "disposition": "a delete outcome always withdraws — "
+                        "byte-level deletion stays the separately gated process"
+                    }
+                )
+        out["disposition"] = disp
+
+    return out
+
+
+def validate_publish_linkage(
+    *, publication_id: Any = None, correction_ref: Any = None, tombstone: Any = None
+) -> dict[str, str]:
+    """Validate the post-publication linkage the bridge records on a
+    `published` event (SIG-FIND-008): a resolvable release identity, a
+    public corrections-log pointer, or an explicit safe tombstone — never a
+    silently empty record."""
+    lim = proposal_limits()
+    out: dict[str, str] = {}
+    if publication_id is not None:
+        pub = _bounded(publication_id, lim["target_id_max_chars"])
+        if re.fullmatch(r"p-[0-9a-f]{64}", pub) is None:
+            raise IntakeFieldError({"publication_id": "a p-<64 hex> release namespace (ADR-132)"})
+        out["publication_id"] = pub
+    if correction_ref is not None:
+        ref = _bounded(correction_ref, lim["correction_ref_max_chars"])
+        if not ref:
+            raise IntakeFieldError({"correction_ref": "empty"})
+        out["correction_ref"] = ref
+    if tombstone is not None:
+        tb = _bounded(tombstone, lim["tombstone_max_chars"])
+        if not tb:
+            raise IntakeFieldError({"tombstone": "empty"})
+        if screen_part_viii(tb) is not None:
+            raise IntakeFieldError({"tombstone": "matches the Part VIII refusal screen"})
+        out["tombstone"] = tb
+    if not out:
+        raise IntakeFieldError(
+            {"linkage": "a publication_id, correction_ref, or tombstone is required"}
+        )
     return out

@@ -168,12 +168,21 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     ),
     # correction claims (§39.8) — new rows with revises_claim / retraction_of; the
     # prior value stays citable at its belief-time (history never rewritten).
+    # P32.16a (SIG-FIND-008): the entry now names BOTH assertions — oc is the
+    # superseded/retracted claim the entry revises — and previous_value /
+    # previous_belief_date populate only when the prior row itself is publicly
+    # eligible (tier 0 + current policy). A gated prior yields
+    # previous_withheld=true — the safe tombstone, never a leak.
     "corrections": (
         "claim",
         "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id, c.raw_value,"
         "       c.correction_reason, c.revises_claim::text, c.retraction_of::text,"
-        "       lower(c.sys_period)"
+        "       lower(c.sys_period), oc.claim_id::text, oc.raw_value,"
+        "       lower(oc.sys_period),"
+        "       (oc.claim_id IS NOT NULL AND oc.sensitivity_tier = 0"
+        "        AND {OLD_CLAIM_GATE}) AS old_eligible"
         "  FROM claim c"
+        "  LEFT JOIN claim oc ON oc.claim_id = COALESCE(c.revises_claim, c.retraction_of)"
         " WHERE (c.revises_claim IS NOT NULL OR c.retraction_of IS NOT NULL)"
         "   AND c.sensitivity_tier = 0 AND upper_inf(c.sys_period)"
         # P32.5/ADR-124: a currently-withheld claim does not surface as a public
@@ -250,6 +259,10 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
     has_orgs = _table_present(cur, "organization")
     entity_gate = entity_eligible_sql("ei.entity_id") if (has_registry and has_orgs) else "true"
     claim_gate = claim_eligible_sql("c") if has_registry else "true"
+    # The same selector against the superseded side of a correction (`oc` —
+    # never aliased `o`, which collides with the `organization o` subquery the
+    # entity gate expands inline).
+    old_claim_gate = claim_eligible_sql("oc") if has_registry else "true"
     task_gate = entity_eligible_sql("rt.subject_id") if (has_registry and has_orgs) else "true"
     # P32.13: the artifact twin of the same rule — one selector, never a
     # second eligibility definition.
@@ -266,6 +279,7 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
                 sql.replace("{EFFECTIVE}", effective)
                 .replace("{PUB_ENTITY_GATE}", entity_gate)
                 .replace("{PUB_CLAIM_GATE}", claim_gate)
+                .replace("{OLD_CLAIM_GATE}", old_claim_gate)
                 .replace("{PUB_TASK_GATE}", task_gate)
                 .replace("{PUB_ARTIFACT_GATE}", artifact_gate)
                 .replace("upper_inf(c.sys_period)", belief_filter)
@@ -1176,7 +1190,24 @@ def _corrections(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     value stays citable at its belief-time (SIG-GOV-005)."""
     out: list[dict[str, Any]] = []
     for r in raw.get("corrections") or []:
-        claim_id, subject_id, predicate_id, raw_value, reason, revises, retraction, recorded = r
+        (
+            claim_id,
+            subject_id,
+            predicate_id,
+            raw_value,
+            reason,
+            revises,
+            retraction,
+            recorded,
+            old_id,
+            old_value,
+            old_belief,
+            old_eligible,
+        ) = r
+        old_id = str(old_id) if old_id else ""
+        # The prior assertion's value/date surface only when that row is itself
+        # publicly eligible — otherwise the entry carries the withheld marker.
+        show_old = bool(old_id) and bool(old_eligible)
         out.append(
             {
                 "id": str(claim_id),
@@ -1188,9 +1219,19 @@ def _corrections(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
                 "reported_by": "anonymous",
                 "category": "retraction" if retraction else "revision",
                 "outcome": "applied",
-                "previous_value": "",
+                # P32.16a (SIG-FIND-008): old/new assertion identity — the entry
+                # points to BOTH the superseded claim and this successor.
+                "previous_claim_id": old_id,
+                "revises_claim": str(revises or ""),
+                "retraction_of": str(retraction or ""),
+                "previous_value": str(old_value or "") if show_old else "",
                 "corrected_value": str(raw_value or ""),
-                "previous_belief_date": "",
+                "previous_belief_date": (
+                    old_belief.date().isoformat()
+                    if show_old and hasattr(old_belief, "date")
+                    else ""
+                ),
+                "previous_withheld": bool(old_id) and not show_old,
                 "subject_path": f"/dossier/{subject_id}",
             }
         )

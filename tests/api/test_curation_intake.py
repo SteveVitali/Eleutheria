@@ -249,6 +249,130 @@ def test_moderation_never_touches_canonical_state() -> None:
     assert not hasattr(store, "insert_claim")
 
 
+# --------------------------------------------------------------------------- #
+# The application bridge endpoints (P32.16a / SIG-FIND-008)
+# --------------------------------------------------------------------------- #
+def _suppress_proposal() -> dict:
+    return {
+        "target_kind": "claim",
+        "target_id": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+        "reason_category": "suppressed",
+        "disposition": "withhold",
+    }
+
+
+def _propose_and_approve(
+    client: TestClient, receipt: str, outcome: str = "suppress", proposal=None
+) -> None:
+    detail = {"outcome": outcome, "reason": "verified"}
+    if proposal is not None:
+        detail["proposal"] = proposal
+    p = client.post(
+        f"/v1/curation/intake/{receipt}/events",
+        json={"event": "disposition_proposed", "detail": detail},
+        headers=_REVIEWER,
+    )
+    assert p.status_code == 201, p.text
+    a = client.post(
+        f"/v1/curation/intake/{receipt}/events",
+        json={
+            "event": "disposition_approved",
+            "detail": {"outcome": outcome, "reason": "verified"},
+        },
+        headers=_CURATOR,
+    )
+    assert a.status_code == 201, a.text
+
+
+def test_apply_routes_mounted_with_store() -> None:
+    client, store = _client()
+    receipt = _seed_report(store, key="appr01")
+    # The apply surface lives on the curation app — auth-gated like every
+    # curation write, and only when an application-capable store is wired.
+    assert client.post(f"/v1/curation/intake/{receipt}/apply", json={}).status_code == 401
+    assert (
+        client.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=_REVIEWER).status_code
+        == 403  # the curator scope is required — review ≠ apply
+    )
+
+
+def test_apply_requires_approval_first() -> None:
+    client, store = _client()
+    receipt = _seed_report(store, key="appr02")
+    resp = client.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=_CURATOR)
+    assert resp.status_code == 409
+    assert resp.json()["detail"]["code"] == "no_current_approval"
+
+
+def test_apply_happy_path_and_reconcile() -> None:
+    client, store = _client()
+    receipt = _seed_report(store, key="appr03")
+    _propose_and_approve(client, receipt, proposal=_suppress_proposal())
+    resp = client.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=_CURATOR)
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["applied"] is True and body["reconciled"] is False
+    assert body["outcome"] == "suppress"
+    assert body["application_id"] and body["operation_id"]
+    # Retry — the same approved operation reconciles to the same receipt.
+    again = client.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=_CURATOR)
+    assert again.status_code == 201
+    assert again.json()["reconciled"] is True
+    assert again.json()["application_id"] == body["application_id"]
+    # The `applied` lifecycle event carries the same ids — all distinct from
+    # the approval/proposal references.
+    detail = client.get(f"/v1/curation/intake/{receipt}", headers=_REVIEWER).json()
+    applied_events = [e for e in detail["events"] if e["event"] == "applied"]
+    assert len(applied_events) == 1
+    assert applied_events[0]["detail"]["application_id"] == body["application_id"]
+    assert detail["lifecycle_event"] == "applied"
+
+
+def test_apply_refuse_outcome_rejected() -> None:
+    client, store = _client()
+    receipt = _seed_report(store, key="appr04")
+    _propose_and_approve(client, receipt, outcome="refuse", proposal=None)
+    resp = client.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=_CURATOR)
+    assert resp.status_code == 409
+    assert resp.json()["detail"]["code"] == "outcome_not_appliable"
+
+
+def test_published_linkage_after_apply() -> None:
+    client, store = _client()
+    receipt = _seed_report(store, key="appr05")
+    _propose_and_approve(client, receipt, proposal=_suppress_proposal())
+    # Publish before apply is refused.
+    assert (
+        client.post(
+            f"/v1/curation/intake/{receipt}/published",
+            json={"publication_id": "p-" + "a" * 64},
+            headers=_CURATOR,
+        ).status_code
+        == 409
+    )
+    client.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=_CURATOR)
+    pub = client.post(
+        f"/v1/curation/intake/{receipt}/published",
+        json={"publication_id": "p-" + "b" * 64},
+        headers=_CURATOR,
+    )
+    assert pub.status_code == 201, pub.text
+    detail = pub.json()["detail"]
+    assert detail["publication_id"] == "p-" + "b" * 64
+    assert "correction_ref" in detail  # the applied result is the log pointer
+    # An invalid release namespace is refused.
+    client2, store2 = _client()
+    receipt2 = _seed_report(store2, key="appr06")
+    _propose_and_approve(client2, receipt2, proposal=_suppress_proposal())
+    client2.post(f"/v1/curation/intake/{receipt2}/apply", json={}, headers=_CURATOR)
+    bad = client2.post(
+        f"/v1/curation/intake/{receipt2}/published",
+        json={"publication_id": "release-xyz"},
+        headers=_CURATOR,
+    )
+    assert bad.status_code == 422
+
+
 def test_receiver_role_isolation_is_schema_level() -> None:
     """The PG-side proof lives in tests/db/test_intake_pg.py; here we pin the
     boundary object: the receiver protocol exposes no event-writing methods."""

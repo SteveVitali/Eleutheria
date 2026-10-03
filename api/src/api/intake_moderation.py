@@ -32,6 +32,7 @@ from __future__ import annotations
 from typing import Any
 
 from db.intake import IntakeReviewerStore
+from db.intake_apply import IntakeApplicationStore, IntakeApplyError
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from policy.governance import intake_categories
@@ -48,8 +49,17 @@ def _category_meta() -> dict[str, dict[str, Any]]:
     return {str(c["id"]): c for c in intake_categories()}
 
 
-def build_intake_moderation_router(store: IntakeReviewerStore) -> APIRouter:
-    """Assemble ``/v1/curation/intake/*`` over the reviewer store (fail closed)."""
+def build_intake_moderation_router(
+    store: IntakeReviewerStore,
+    apply_store: IntakeApplicationStore | None = None,
+) -> APIRouter:
+    """Assemble ``/v1/curation/intake/*`` over the reviewer store (fail closed).
+
+    ``apply_store`` wires the P32.16a authorized bridge (SIG-FIND-008): the
+    ``/apply`` and ``/published`` endpoints exist only when an
+    application-capable store is supplied — the curation process is the
+    delivery target, and the bridge role's DB grants are the write boundary.
+    """
     router = APIRouter(prefix="/v1/curation/intake")
 
     @router.get("")
@@ -176,5 +186,78 @@ def build_intake_moderation_router(store: IntakeReviewerStore) -> APIRouter:
             {"receipt_id": receipt_id, "event": event, "event_seq": seq, "actor": actor},
             status_code=201,
         )
+
+    if apply_store is not None:
+
+        @router.post("/{receipt_id}/apply")
+        async def apply_approved(
+            request: Request,
+            receipt_id: str,
+            contributor: Contributor = Depends(authenticated_contributor),
+        ) -> JSONResponse:
+            """Apply the currently-approved proposal through the canonical
+            disposition path (P32.16a / SIG-FIND-008). The curator scope is the
+            same two-key gate `disposition_approved` carries; the approval
+            event itself is the authority record the bridge validates.
+            ``operation_id`` (optional) keys reconciliation — a retry returns
+            the same applied receipt."""
+            _require_scope(contributor, WriteScope.HUMAN_ASSERTION)
+            try:
+                body = await request.json()
+            except Exception:
+                body = {}
+            if body is not None and not isinstance(body, dict):
+                raise HTTPException(status_code=422, detail="a JSON object is required")
+            operation_id = (body or {}).get("operation_id")
+            if operation_id is not None and not isinstance(operation_id, str):
+                raise HTTPException(status_code=422, detail="operation_id must be a string")
+            try:
+                result = apply_store.apply(
+                    receipt_id, actor=contributor.handle, operation_id=operation_id
+                )
+            except IntakeApplyError as exc:
+                status = 404 if exc.code == "unknown_receipt" else 409
+                raise HTTPException(
+                    status_code=status,
+                    detail={"code": exc.code, "detail": str(exc)},
+                ) from exc
+            return JSONResponse(result, status_code=201)
+
+        @router.post("/{receipt_id}/published")
+        async def mark_published(
+            request: Request,
+            receipt_id: str,
+            contributor: Contributor = Depends(authenticated_contributor),
+        ) -> JSONResponse:
+            """Record the post-publication linkage — the immutable release
+            namespace (``p-<64 hex>``, ADR-132) and/or the public
+            corrections-log pointer, or a safe tombstone. Applied ≠ published:
+            the receiver's coarse state stays `decided` until this lands."""
+            _require_scope(contributor, WriteScope.HUMAN_ASSERTION)
+            try:
+                body = await request.json()
+            except Exception:
+                raise HTTPException(status_code=422, detail="a JSON body is required") from None
+            if not isinstance(body, dict):
+                raise HTTPException(status_code=422, detail="a JSON object is required")
+            try:
+                result = apply_store.mark_published(
+                    receipt_id,
+                    actor=contributor.handle,
+                    publication_id=body.get("publication_id"),
+                    correction_ref=body.get("correction_ref"),
+                    tombstone=body.get("tombstone"),
+                )
+            except IntakeApplyError as exc:
+                status = (
+                    404
+                    if exc.code == "unknown_receipt"
+                    else (422 if exc.code == "invalid_linkage" else 409)
+                )
+                raise HTTPException(
+                    status_code=status,
+                    detail={"code": exc.code, "detail": str(exc)},
+                ) from exc
+            return JSONResponse(result, status_code=201)
 
     return router

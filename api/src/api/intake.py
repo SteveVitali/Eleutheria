@@ -48,10 +48,12 @@ import secrets
 import tomllib
 import uuid
 from collections.abc import Mapping
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from db.intake import IntakeReceiverStore, PgIntakeReceiverStore
+from db.intake_apply import APPLYABLE_OUTCOMES, IntakeApplyError, derive_operation_id
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from starlette.routing import Route
@@ -265,6 +267,8 @@ class MemoryIntakeStore:
         self._idem: dict[str, str] = {}
         self._digests: dict[str, bytes] = {}
         self.events: list[dict[str, Any]] = []
+        # P32.16a: simulated applied receipts (PG truth is intake.application).
+        self.applications: list[dict[str, Any]] = []
 
     def insert_report(
         self,
@@ -410,6 +414,190 @@ class MemoryIntakeStore:
         )
 
     def close(self) -> None:
+        return None
+
+    # -- the application bridge interface (P32.16a / SIG-FIND-008) ------------ #
+    # Simulates PgIntakeApplicationStore's contract: the approval event is the
+    # authority record, operation_id is the idempotency key. No canonical
+    # writes happen here — the memory double only tracks lifecycle + receipts.
+    def apply(
+        self, receipt_id: str, *, actor: str, operation_id: str | None = None
+    ) -> dict[str, Any]:
+        row = self.detail(receipt_id)
+        if row is None:
+            raise IntakeApplyError("unknown_receipt", "unknown receipt")
+        events = row["events"]
+        latest = next((e for e in reversed(events) if pint.is_lifecycle_event(e["event"])), None)
+        # Retry-after-commit: an `applied`-latest report's committed
+        # application row IS the operation — reconcile to it. A superseded
+        # approval comes back through re-proposal → re-approval and derives a
+        # new operation_id, so it falls through to the approval gate.
+        if latest is not None and latest["event"] == "applied":
+            prior_app = next(
+                (a for a in reversed(self.applications) if a["report_id"] == row["report_id"]),
+                None,
+            )
+            if prior_app is not None:
+                if operation_id is not None and operation_id != prior_app["operation_id"]:
+                    raise IntakeApplyError(
+                        "operation_id_conflict",
+                        "operation_id names a different application — reconcile, never overwrite",
+                    )
+                return {
+                    **prior_app,
+                    "receipt_id": receipt_id,
+                    "applied": True,
+                    "reconciled": True,
+                }
+        if latest is None or latest["event"] != "disposition_approved":
+            raise IntakeApplyError(
+                "no_current_approval",
+                "the latest lifecycle event is not an approval",
+            )
+        outcome = str((latest["detail"] or {}).get("outcome") or "")
+        if outcome not in APPLYABLE_OUTCOMES:
+            raise IntakeApplyError("outcome_not_appliable", f"outcome {outcome!r} does not apply")
+        op_id = operation_id or derive_operation_id(
+            row["report_id"], int(latest["event_seq"]), outcome
+        )
+        prior = next((a for a in self.applications if a["operation_id"] == op_id), None)
+        if prior is not None:
+            if (
+                prior["report_id"] != row["report_id"]
+                or int(prior["approval_seq"]) != int(latest["event_seq"])
+                or prior["outcome"] != outcome
+            ):
+                raise IntakeApplyError(
+                    "operation_id_conflict",
+                    "operation_id already names a different application — "
+                    "reconcile, never overwrite",
+                )
+            return {**prior, "receipt_id": receipt_id, "applied": True, "reconciled": True}
+        seq = (latest["detail"] or {}).get("approves_seq")
+        proposal_event = next(
+            (
+                e
+                for e in events
+                if seq is not None
+                and int(e["event_seq"]) == int(seq)
+                and e["event"] == "disposition_proposed"
+            ),
+            None,
+        )
+        if proposal_event is None:
+            raise IntakeApplyError(
+                "approval_without_proposal",
+                "the approval does not name a live disposition_proposed",
+            )
+        try:
+            proposal = pint.validate_proposal(
+                outcome, (proposal_event["detail"] or {}).get("proposal") or {}
+            )
+        except pint.IntakeFieldError as exc:
+            raise IntakeApplyError("invalid_proposal", str(exc)) from exc
+        app = {
+            "application_id": str(uuid.uuid4()),
+            "report_id": row["report_id"],
+            "operation_id": op_id,
+            "approval_seq": int(latest["event_seq"]),
+            "proposal_seq": int(proposal_event["event_seq"]),
+            "outcome": outcome,
+            "approved_by": latest["actor"],
+            "applied_by": actor,
+            "target_kind": proposal["target_kind"],
+            "target_claim_id": (
+                proposal["target_id"] if proposal["target_kind"] == "claim" else None
+            ),
+            "target_id": proposal["target_id"],
+            "result_claim_id": (str(uuid.uuid4()) if outcome in ("correct", "annotate") else None),
+            "disposition_id": (str(uuid.uuid4()) if outcome in ("suppress", "delete") else None),
+            "ingest_run_id": None,
+            "detail": {},
+            "applied_at": datetime.now(UTC).isoformat(),
+        }
+        self.applications.append(app)
+        self.record_event(
+            receipt_id,
+            "applied",
+            actor,
+            {
+                "application_id": app["application_id"],
+                "operation_id": op_id,
+                "outcome": outcome,
+                "approval_seq": app["approval_seq"],
+                "target_kind": proposal["target_kind"],
+                "target_id": proposal["target_id"],
+            },
+        )
+        return {
+            **app,
+            "receipt_id": receipt_id,
+            "applied": True,
+            "reconciled": False,
+        }
+
+    def mark_published(
+        self,
+        receipt_id: str,
+        *,
+        actor: str,
+        publication_id: str | None = None,
+        correction_ref: str | None = None,
+        tombstone: str | None = None,
+    ) -> dict[str, Any]:
+        row = self.detail(receipt_id)
+        if row is None:
+            raise IntakeApplyError("unknown_receipt", "unknown receipt")
+        events = row["events"]
+        latest = next((e for e in reversed(events) if pint.is_lifecycle_event(e["event"])), None)
+        if latest is not None and latest["event"] == "published":
+            return {
+                "receipt_id": receipt_id,
+                "event": "published",
+                "event_seq": int(latest["event_seq"]),
+                "detail": latest["detail"],
+                "reconciled": True,
+            }
+        if latest is None or latest["event"] != "applied":
+            raise IntakeApplyError("not_applied", "publication linkage requires an applied report")
+        linkage: dict[str, str] = {}
+        if publication_id is not None or correction_ref is not None or tombstone is not None:
+            try:
+                linkage = pint.validate_publish_linkage(
+                    publication_id=publication_id,
+                    correction_ref=correction_ref,
+                    tombstone=tombstone,
+                )
+            except pint.IntakeFieldError as exc:
+                raise IntakeApplyError("invalid_linkage", str(exc)) from exc
+        app = next((a for a in self.applications if a["report_id"] == row["report_id"]), None)
+        if app is None:
+            raise IntakeApplyError("no_application", "no applied receipt exists")
+        detail = {
+            "application_id": app["application_id"],
+            "operation_id": app["operation_id"],
+            **linkage,
+        }
+        if "correction_ref" not in detail:
+            detail["correction_ref"] = str(app["result_claim_id"] or app["disposition_id"])
+        if "publication_id" not in detail and "tombstone" not in detail:
+            detail["tombstone"] = "release identity not yet linked"
+        seq = self.record_event(receipt_id, "published", actor, detail)
+        return {
+            "receipt_id": receipt_id,
+            "event": "published",
+            "event_seq": seq,
+            "detail": detail,
+            "reconciled": False,
+        }
+
+    def application(self, receipt_id: str) -> dict[str, Any] | None:
+        for r in self.reports.values():
+            if r["receipt_id"] == receipt_id:
+                for a in self.applications:
+                    if a["report_id"] == r["report_id"]:
+                        return dict(a)
+                return None
         return None
 
 

@@ -14,7 +14,7 @@ absence for empty spine tables; PMTiles per compartment; and byte-determinism.
 from __future__ import annotations
 
 import json
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import jsonschema
@@ -479,6 +479,59 @@ def test_supplementary_rows_flow_through_when_present() -> None:
     assert len(queue) == 1
     assert queue[0]["closing_condition"] == "≥1 coordinate claim exists for subjX"
     jsonschema.validate(queue, _sub(SCHEMA["properties"]["research_queue"]))
+
+
+def test_corrections_entry_names_both_assertions_and_gates_the_prior() -> None:
+    """P32.16a (SIG-FIND-008): the log names old + new claim ids; a gated prior
+    surfaces as the withheld tombstone — its value/date never re-published."""
+    recorded = datetime(2026, 9, 20, tzinfo=UTC)
+    old_belief = datetime(2026, 5, 1, tzinfo=UTC)
+    corr_row = (
+        "new-claim-1",  # c.claim_id
+        "A",  # c.subject_id
+        "camera_count",  # c.predicate_id
+        "225",  # c.raw_value (the corrected value)
+        "verified against the cited contract",  # c.correction_reason
+        "old-claim-1",  # c.revises_claim
+        None,  # c.retraction_of
+        recorded,  # lower(c.sys_period)
+        "old-claim-1",  # oc.claim_id
+        "213",  # oc.raw_value
+        old_belief,  # lower(oc.sys_period)
+        True,  # old_eligible — the prior row is itself publicly eligible
+    )
+    gated_row = (
+        "new-claim-2",
+        "A",
+        "camera_model",
+        "AXIS Q3527",
+        "safety withdrawal reviewed",
+        None,
+        "old-claim-2",  # a retraction entry
+        recorded,
+        "old-claim-2",
+        "withheld-model",
+        old_belief,
+        False,  # the prior row is gated → withheld tombstone, never the value
+    )
+    export = _build(
+        _site("A", "35.46", "-97.51", "Oklahoma"),
+        raw_over={"corrections": [corr_row, gated_row]},
+    )
+    log = {e["id"]: e for e in _web(export, "corrections")}
+    rev = log["new-claim-1"]
+    assert rev["category"] == "revision"
+    assert rev["previous_claim_id"] == "old-claim-1"
+    assert rev["revises_claim"] == "old-claim-1"
+    assert rev["previous_value"] == "213"
+    assert rev["corrected_value"] == "225"
+    assert rev["previous_belief_date"] == "2026-05-01"
+    assert rev["previous_withheld"] is False
+    ret = log["new-claim-2"]
+    assert ret["category"] == "retraction" and ret["retraction_of"] == "old-claim-2"
+    assert ret["previous_withheld"] is True
+    assert ret["previous_value"] == "" and ret["previous_belief_date"] == ""
+    jsonschema.validate(list(log.values()), _sub(SCHEMA["properties"]["corrections"]))
 
 
 # --- tiles, manifest, provenance, determinism ------------------------------- #

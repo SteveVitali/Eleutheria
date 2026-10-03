@@ -172,9 +172,14 @@ to = ["disposition_proposed"]
 from = "disposition_proposed"
 to = ["disposition_approved", "disposition_proposed"]
 
+# An approval is superseded by a new proposal — a stale/refused apply is
+# recoverable: the reviewer re-proposes (the approval no longer counts — the
+# apply gate requires the LATEST lifecycle event to be the approval), a new
+# approval names the new proposal, and the new apply derives a new
+# operation_id. `applied`/`published` are still bridge-role events only.
 [[events.transitions]]
 from = "disposition_approved"
-to = ["closed"]
+to = ["applied", "disposition_proposed", "closed"]
 
 [[events.transitions]]
 from = "applied"
@@ -227,3 +232,73 @@ state = "resolved"
 [[public_status.map]]
 lifecycle = "closed"
 state = "closed"
+
+# ---------------------------------------------------------------------------
+# P32.16a (SIG-FIND-008): the structured proposal a `disposition_proposed`
+# event carries on its `proposal` key — the input the authorized bridge
+# validates before applying through the canonical disposition path. A `refuse`
+# outcome carries NO proposal: denial never mutates the graph. These bounds
+# and allowlists cap what a reviewer may ask the bridge to write; the bridge
+# re-validates every field against live spine state at apply time.
+# ---------------------------------------------------------------------------
+[proposal]
+# The disposition registry's target kinds (publication_disposition CHECK).
+target_kinds = ["claim", "entity", "artifact", "release_artifact"]
+# The claim value columns a proposed correction may populate (claim columns;
+# value_geom is deliberately absent — spatial corrections are out of the
+# bridge's first scope and fail closed at apply).
+value_keys = [
+  "value_text", "value_num", "value_bool", "value_json", "object_entity", "unit",
+]
+# Optional claim scope overrides on `scope` (default: inherit the old claim).
+scope_keys = ["valid_from", "valid_to", "observed_at", "raw_context"]
+# The dispositions a `suppress` outcome may narrow to; `delete` always lands
+# `withdraw` (the strongest non-destructive gate — byte-level deletion stays
+# the separately gated two-person process).
+suppress_dispositions = ["withhold", "restrict"]
+# The reason categories a suppression disposition may carry
+# (policy.eligibility.ReasonCategory minus the auto flags).
+reason_categories = [
+  "withheld_after_review", "rights_withdrawal", "safety_withdrawal",
+  "policy_restriction", "suppressed",
+]
+
+[proposal.limits]
+target_id_max_chars = 128
+predicate_id_max_chars = 128
+value_text_max_chars = 4000
+raw_context_max_chars = 4000
+digest_hex_chars = 64
+tombstone_max_chars = 500
+correction_ref_max_chars = 500
+
+# Required proposal keys per outcome — the reviewer MUST pin the exact claim
+# state (claim_digest) and live evidence binding set (evidence_digest) they
+# reviewed so the bridge can refuse stale/changed records. Value proposals
+# name the corrected value; suppression proposals name target + reason.
+[proposal.required]
+correct = ["target_kind", "target_id", "claim_digest", "evidence_digest", "value"]
+annotate = [
+  "target_kind", "target_id", "claim_digest", "evidence_digest",
+  "predicate_id", "value",
+]
+suppress = ["target_kind", "target_id", "reason_category"]
+delete = ["target_kind", "target_id", "reason_category"]
+
+[proposal.allowed]
+correct = [
+  "target_kind", "target_id", "claim_digest", "evidence_digest",
+  "predicate_id", "value", "scope", "correction_reason",
+]
+annotate = [
+  "target_kind", "target_id", "claim_digest", "evidence_digest",
+  "predicate_id", "value", "scope", "correction_reason",
+]
+suppress = [
+  "target_kind", "target_id", "claim_digest", "evidence_digest",
+  "reason_category", "disposition",
+]
+delete = [
+  "target_kind", "target_id", "claim_digest", "evidence_digest",
+  "reason_category", "disposition",
+]

@@ -68,12 +68,22 @@ PARTNER_ORG_SCHEMES = frozenset(
     }
 )
 
+#: The curator-handle scheme (P32.16a / ADR-135 follow-up, SIG-FIND-008). One
+#: pseudonymous curator handle keys exactly one `person` entity — §11.3 makes
+#: Person precisely "SIG's own attributable curators" beside named public
+#: officials. The intake-application bridge resolves the approving curator's
+#: handle through the guard so the correction claim's ``asserted_by`` is stable
+#: across applications and never duplicated under concurrent applies. The
+#: handle is an attributable *role* identity (it signs dispositions), not a
+#: legal name — the entity carries the handle identifier only.
+CURATOR_HANDLE_SCHEME = "sig.curator.handle"
+
 #: The identity-bearing schemes the guard keys. The backfill in the sqitch changes
 #: keys exactly these (``entity_identity_key`` the subjects, ``partner_org_identity_key``
 #: the partner organisations). A new scheme joins by a code change here, plus a
 #: backfill of its existing identifiers. The guard refuses any other scheme, so an
 #: attribute scheme (``us.state``) can never be keyed by mistake.
-GUARDED_SCHEMES = frozenset({SUBJECT_SCHEME} | PARTNER_ORG_SCHEMES)
+GUARDED_SCHEMES = frozenset({SUBJECT_SCHEME, CURATOR_HANDLE_SCHEME} | PARTNER_ORG_SCHEMES)
 
 Key = tuple[str, str]  # (scheme, value)
 
@@ -216,6 +226,7 @@ def resolve_identities(
 
 
 __all__ = [
+    "CURATOR_HANDLE_SCHEME",
     "GUARDED_SCHEMES",
     "PARTNER_NAME_SCHEME",
     "PARTNER_NAME_SCOPED_SCHEME",
