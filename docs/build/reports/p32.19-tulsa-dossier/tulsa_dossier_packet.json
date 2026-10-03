@@ -1,0 +1,766 @@
+{
+  "as_of": {
+    "belief": "2026-10-01",
+    "world": "2026-10-01"
+  },
+  "correction_route": "/corrections/",
+  "declared": {
+    "partial": [
+      {
+        "question": "q1",
+        "rationale": "the operator (Tulsa Police Department) is evidenced by its own enacted policies, but the buyer and funder are not — the MOU's Licensor/Licensee fields are recorded present_but_empty and no procurement instrument exists in the pack"
+      },
+      {
+        "question": "q6",
+        "rationale": "the governing instruments are evidenced (TPD policies 113C/113E as enacted, effective-dated agency policy; the MOU's offered terms), but the authority chain beyond department policy — ordinance, contract, appropriation or council action authorizing the program and the MOU's referenced separate City agreement — is undocumented in the pack"
+      },
+      {
+        "question": "q7",
+        "rationale": "the only numeric period (12 months) is scoped verbatim to manually entered LPR data; 113E records the general retention rule as reviewed-absent — configured retention for non-manual scans stays unresolved"
+      },
+      {
+        "question": "q8",
+        "rationale": "the sharing rule is evidenced (Chief of Police or designee approval required), but the actual sharing actors and mode are not — no executed agreement, roster or observed share exists in the pack; the MOU's offered purpose is terms only"
+      }
+    ]
+  },
+  "dossier_id": "tulsa-tpd-alpr",
+  "follow_ups": [
+    {
+      "action": "obtain the executed camera-integration MOU(s) and the procurement instrument — the parties the template's blank Licensor/Licensee fields would name, and the program's buyer/funder",
+      "closing_condition": "captured bytes of an executed instrument naming the parties/buyer, or a recorded absence over named sources keeps buyer/funder unknown",
+      "question": "q1"
+    },
+    {
+      "action": "open the Commercial Corridor Safety Guide page and establish the date and scope of its camera-count passage; obtain TPD's camera inventory/count for the two ALPR product families",
+      "closing_condition": "a scoped, dated count is captured and rendered with its count_scope, or the lead is exhausted and the absence is documented with named sources",
+      "question": "q3"
+    },
+    {
+      "action": "capture the TPD Flock page (registration vs live integration vs RTIC context) and obtain any executed camera-integration MOU or sharing agreement",
+      "closing_condition": "captured bytes or an executed instrument establish what external/configured access exists — registration, integration and pooled access stay distinct — or a recorded absence keeps external access unknown",
+      "question": "q4"
+    },
+    {
+      "action": "search the City clerk/council agenda corpus (Tulsa's already-identified Granicus family) by contract number and the finance purchase-order/renewal records for the executed City–Flock instrument; the drafted Oklahoma Open Records Act request (FOLLOW_UP_DRAFTS.json) is the fallback route",
+      "closing_condition": "an executed instrument is captured (contract number, parties, value, term), or the named sources' documented absence keeps procurement unknown",
+      "question": "q5"
+    },
+    {
+      "action": "obtain the instrument authorizing the program beyond department policy — the City agreement the MOU's terms reference, any ordinance or council authorization",
+      "closing_condition": "captured authorizing instrument(s), or a documented absence keeps the authority chain partial",
+      "question": "q6"
+    },
+    {
+      "action": "verify on the TPD policies index that the 2023 113C/113E files are the current enforceable versions, and obtain the configured retention for non-manual ALPR scans (product configuration or a general retention rule)",
+      "closing_condition": "the index confirms current versions and a configured retention document is captured, or the scope caveat stays declared",
+      "question": "q7"
+    },
+    {
+      "action": "obtain executed sharing agreements, the partner roster, and any sharing-mode records behind the Chief-of-Police approval rule",
+      "closing_condition": "captured executed instruments/roster establish the actual sharing actors and mode, or a documented absence keeps them unknown",
+      "question": "q8"
+    },
+    {
+      "action": "search council records, the city auditor, and RTIC governance corpora for any oversight review of the ALPR program",
+      "closing_condition": "an oversight artifact is captured, or the search's absence is documented with named sources",
+      "question": "q10"
+    }
+  ],
+  "notes": [
+    "live_verification=false: every record replays committed fixture bytes; no live fetch, no rights flip, no gate completion",
+    "the MOU is a TEMPLATE: its offered terms emit D6 claims only; its Licensor/Licensee/Date/Signature fields are present_but_empty field-states — no executed contract, no named participants, no actual sharing edge is asserted",
+    "policy effective dates (2023-07-07 / 2023-10-04) are document dates distinct from the 2026-10-01 replay/retrieval date; the 2023 files are not asserted to be the current versions; the two instruments' distinct stated dates surface under the same-scope conflict rule — both rendered, never collapsed to one timeline",
+    "unsupported counts, spend, partners and use are unknown with documented search basis + precise follow-up — never zero and never inferred affirmative",
+    "follow-up requests are DRAFTED, never sent — records_requests_sent is 0 (FOLLOW_UP_DRAFTS.json)"
+  ],
+  "records": [
+    {
+      "access_mode": "document",
+      "byte_size": 922,
+      "capture_digest": "bcnagbpplwmrflkoxpxea4cnmecr6xm6ji2bvp5ixcy5d6ufgf4z442vrhrsfksogoxftyvri5is5fbn356hzrjgm6hxuk7zoyyak7j3bam",
+      "connector": "dossier_documents",
+      "document_genre_derived": "unknown",
+      "document_id": "tulsa-mou-template",
+      "evidence_genre": "template",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_tulsa",
+      "source_uri": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a policy value the document states verbatim (precedence, approval, access-handling rules) where no narrower predicate exists",
+      "claim_directness": "D6",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "tulsa-mou-template",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+      },
+      "evidence_genre": "template",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "written_policy_value",
+      "raw_value": "Camera Integration Memorandum of Understanding",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "written_policy",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "camera integration memorandum of understanding",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a permitted/prohibited use the instrument states, verbatim — scoped to the instrument's own subject",
+      "claim_directness": "D6",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "tulsa-mou-template",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+      },
+      "evidence_genre": "template",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "use_restriction",
+      "raw_value": "data shall be used solely for legitimate law enforcement purposes",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "use_restriction",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "legitimate law enforcement purposes only",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the buying party the instrument names, for its coverage window",
+      "claim_directness": "D6",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "tulsa-mou-template",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+      },
+      "evidence_genre": "template",
+      "field_state": "present_but_empty",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "Licensor:",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "buyer",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "buyer",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the selling/prime party the instrument names, for its coverage window",
+      "claim_directness": "D6",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "tulsa-mou-template",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+      },
+      "evidence_genre": "template",
+      "field_state": "present_but_empty",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "Licensee:",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "seller",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "seller",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the signature date the instrument's signature block states, verbatim — presence of one party's date is not full execution (see execution_state)",
+      "claim_directness": "D6",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "tulsa-mou-template",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+      },
+      "evidence_genre": "template",
+      "field_state": "present_but_empty",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "Date:",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "signed_date",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "signed_date",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 937,
+      "capture_digest": "bcnaig3acww6ixcoao5gwohjxj3vvzy23botq2ngolm2ajqvp7c33cfmksie2y6j7t4ifd4nv7ew3oeybt2eqyc23lgwu577dvtgdihjllq",
+      "connector": "dossier_documents",
+      "document_genre_derived": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "evidence_genre": "agency_policy",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_tulsa",
+      "source_uri": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the effective/approval date the document displays — the document's own declared date, never its retrieval date",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "effective_from",
+      "raw_value": "Effective Date: July 7, 2023",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "effective_from",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "valid_from": "2023-07-07",
+      "valid_from_kind": "exact",
+      "value": "2023-07-07",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the technology/product the document describes — distinct products stay distinct (a fixed ALPR line and an in-car line are not one product)",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q2",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "technology",
+      "raw_value": "fixed ALPR cameras provided by Flock Safety",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "technology",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "Flock Safety fixed ALPR",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the technology/product the document describes — distinct products stay distinct (a fixed ALPR line and an in-car line are not one product)",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q2",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "technology",
+      "raw_value": "Axon Fleet 3 in-car ALPR systems",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "technology",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "Axon Fleet 3 in-car ALPR",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the retention rule the document states for its declared scope; a future-effective statement keeps its stated effective date — never the capture date",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "retention_period",
+      "raw_context": "manually entered LPR data",
+      "raw_value": "manually entered LPR data shall be retained for no longer than 12 months",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "retention_period",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "12 months",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a permitted/prohibited use the instrument states, verbatim — scoped to the instrument's own subject",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "use_restriction",
+      "raw_value": "access to the system is restricted to authorized personnel",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "use_restriction",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "authorized personnel only",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the body the document names as enacting/approving, verbatim",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "enacting_body",
+      "raw_value": "Tulsa Police Department",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "enacting_body",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "Tulsa Police Department",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 874,
+      "capture_digest": "bcnaoe2ggfcixg77zar65yjqglpvarpuc3rbdv4x65fnq7ece3luiesw26yjrcf7g3ut2o2vjypvdoccxpfltfppidjijize3ldnushzgrq",
+      "connector": "dossier_documents",
+      "document_genre_derived": "policy_document",
+      "document_id": "tulsa-policy-113e",
+      "evidence_genre": "agency_policy",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_tulsa",
+      "source_uri": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the effective/approval date the document displays — the document's own declared date, never its retrieval date",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113e",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "effective_from",
+      "raw_value": "Effective Date: October 4, 2023",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "effective_from",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "valid_from": "2023-10-04",
+      "valid_from_kind": "exact",
+      "value": "2023-10-04",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a sharing rule the instrument states, verbatim — a restriction on one party is not a prohibition on every actor",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113e",
+      "dossier_field": "q8",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "sharing_restriction",
+      "raw_value": "sharing of ALPR data requires the approval of the Chief of Police or designee",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "sharing_restriction",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "Chief of Police or designee approval required",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a permitted/prohibited use the instrument states, verbatim — scoped to the instrument's own subject",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113e",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "use_restriction",
+      "raw_value": "used only for legitimate law enforcement purposes and official business",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "use_restriction",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "legitimate law enforcement purposes and official business only",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the retention rule the document states for its declared scope; a future-effective statement keeps its stated effective date — never the capture date",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113e",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "field_state": "absent",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "uniform numeric retention period",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_field": "retention_period",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "value": "retention_period",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the operating agency named on the face of its own enacted ALPR policy (113C) — an operator attribution, never evidence of an executed procurement, a buyer, a funder, or the MOU's unnamed parties",
+      "connector": "ops.tulsa_dossier_packet",
+      "document_genre": "policy_document",
+      "document_id": "tulsa-policy-113c",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+      },
+      "evidence_genre": "agency_policy",
+      "geo_tier": 0,
+      "object_type": "organization",
+      "observed_at": "2026-10-01",
+      "predicate_id": "asset_operator",
+      "raw_value": "Tulsa Police Department",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_tulsa",
+      "source_id": "dossier_tulsa",
+      "subject_id": "sig:deployment:tulsa-tpd-alpr",
+      "valid_from": "2023-07-07",
+      "valid_from_kind": "exact",
+      "value": "Tulsa Police Department"
+    }
+  ],
+  "restricted": [],
+  "review": {
+    "note": "no independent reviewer exists on this build — D-R10-HUMAN-1 OPEN; the mark is honest, never fabricated",
+    "status": "not_run"
+  },
+  "schema": "sig.dossier-packet/1",
+  "search_log": [
+    {
+      "note": "operator evidenced by TPD's own enacted policy; MOU party fields recorded present_but_empty — buyer/funder not evidenced",
+      "outcome": "found",
+      "question": "q1",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-policy-113c",
+        "tulsa-mou-template"
+      ]
+    },
+    {
+      "note": "two distinct ALPR products named verbatim — Flock Safety fixed and Axon Fleet 3 in-car, kept separate",
+      "outcome": "found",
+      "question": "q2",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-policy-113c"
+      ]
+    },
+    {
+      "note": "no device count anywhere in the captured pack; the S2 Commercial Corridor Safety Guide excerpt is a count LEAD only (date/scope unestablished) — follow-up opens it",
+      "outcome": "searched_not_found",
+      "question": "q3",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-mou-template",
+        "tulsa-policy-113c",
+        "tulsa-policy-113e",
+        "https://www.cityoftulsa.org/government/departments/planning-and-neighborhoods/community-planning/commercial-corridor-safety-guide/",
+        "S2 research bounded search 2026-09-25 (tulsapolice.org, cityoftulsa.org; named leads left as follow-ups, not citations)"
+      ]
+    },
+    {
+      "note": "the captured corpus holds only the MOU's offered purpose clause — terms, never configured access; the TPD Flock page's registration-vs-integration distinction is a reviewed lead, uncaptured",
+      "outcome": "searched_not_found",
+      "question": "q4",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-mou-template",
+        "tulsa-policy-113c",
+        "tulsa-policy-113e",
+        "https://www.tulsapolice.org/flock-safety",
+        "S2 research bounded search 2026-09-25 (tulsapolice.org, cityoftulsa.org; named leads left as follow-ups, not citations)"
+      ]
+    },
+    {
+      "note": "bounded searches found no executed Tulsa City Flock purchase contract; the MOU's Date/signature fields are present_but_empty — 'searched, not found', never 'no contract exists'",
+      "outcome": "searched_not_found",
+      "question": "q5",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-mou-template",
+        "tulsa-policy-113c",
+        "tulsa-policy-113e",
+        "S2 research bounded search 2026-09-25 (tulsapolice.org, cityoftulsa.org; named leads left as follow-ups, not citations)"
+      ]
+    },
+    {
+      "note": "enacting body + the two policies' stated effective dates + the MOU's offered terms; authority beyond department policy declared partial",
+      "outcome": "found",
+      "question": "q6",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-mou-template",
+        "tulsa-policy-113c",
+        "tulsa-policy-113e"
+      ]
+    },
+    {
+      "note": "12-month period scoped to manually entered data verbatim; 113E's uniform period reviewed absent (field-state, never a fabricated value); use restrictions captured from all three documents",
+      "outcome": "found",
+      "question": "q7",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-policy-113c",
+        "tulsa-policy-113e",
+        "tulsa-mou-template"
+      ]
+    },
+    {
+      "note": "approval-based sharing rule evidenced from 113E; no executed sharing instrument, roster or observed share in the pack",
+      "outcome": "found",
+      "question": "q8",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-mou-template",
+        "tulsa-policy-113c",
+        "tulsa-policy-113e"
+      ]
+    },
+    {
+      "note": "each policy's stated effective date is its own document's declared date (113C 2023-07-07, 113E 2023-10-04) — two instruments, both values co-visible under the same-scope rule, never promoted to retrieval dates; version-currentness not proven by the captured files",
+      "outcome": "found",
+      "question": "q9",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-policy-113c",
+        "tulsa-policy-113e"
+      ]
+    },
+    {
+      "note": "no oversight artifact exists in the captured pack and the bounded research pass found none — follow-up names the oversight corpora to check",
+      "outcome": "searched_not_found",
+      "question": "q10",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "tulsa-mou-template",
+        "tulsa-policy-113c",
+        "tulsa-policy-113e",
+        "S2 research bounded search 2026-09-25 (tulsapolice.org, cityoftulsa.org; named leads left as follow-ups, not citations)"
+      ]
+    }
+  ],
+  "subject": {
+    "entity_id": "sig:deployment:tulsa-tpd-alpr",
+    "jurisdiction": "Tulsa, Oklahoma (us.state_abbr:OK)",
+    "jurisdiction_slug": "tulsa-ok",
+    "label": "Tulsa — Tulsa Police Department ALPR program (Flock Safety fixed + Axon Fleet 3 in-car)",
+    "slug": "tulsa-tpd-alpr"
+  }
+}

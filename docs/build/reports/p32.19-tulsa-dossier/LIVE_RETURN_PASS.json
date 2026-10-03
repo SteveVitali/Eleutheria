@@ -1,0 +1,64 @@
+{
+  "bounded_questions": [
+    "actual bytes of the three reviewed documents — do the emitted policy/term/field-state claims match real captures",
+    "the TPD Flock page's registration-vs-integration distinction and the operation-since date (captured, not a research note)",
+    "whether the 2023 113C/113E files are the current enforceable versions per the published policies index",
+    "the Commercial Corridor Safety Guide count lead opened with its date and scope established",
+    "the executed City–Flock instrument via the clerk/council agenda corpus (Granicus family, already identified) or finance purchase-order/renewal records — and the MOU's executed parties"
+  ],
+  "deferral": "D-P32.19-1",
+  "non_goals": [
+    "no source rights flip inside this packet",
+    "no operator-gate completion",
+    "no records request sent (drafted_not_sent stays)",
+    "no publication or public release"
+  ],
+  "packet_id": "tulsa-dossier-live-pass",
+  "preconditions": [
+    "HG-03 source/rights review per target (published-URL ownership screen)",
+    "Part VIII preflight — no plate/trip/person data is ever captured",
+    "resource bounds identical to the replay path (2 protocols, page/byte caps)",
+    "the drafted records request is reviewed before any filing — sending is a separate operator act, never this pass's output"
+  ],
+  "reason_deferred": "live_verification=false: D-R10-SOURCES-1 stays OPEN — source/evidence-use review and the HG-03 rights decision are pending",
+  "schema": "sig.dossier-live-return-pass/1",
+  "status": "prepared_not_executed",
+  "targets": [
+    {
+      "doc_id": "tulsa-mou-template",
+      "goal": "actual byte capture replacing the committed stand-in",
+      "kind": "clause_fields",
+      "url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+    },
+    {
+      "doc_id": "tulsa-policy-113c",
+      "goal": "actual byte capture replacing the committed stand-in",
+      "kind": "clause_fields",
+      "url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+    },
+    {
+      "doc_id": "tulsa-policy-113e",
+      "goal": "actual byte capture replacing the committed stand-in",
+      "kind": "clause_fields",
+      "url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+    },
+    {
+      "doc_id": "tpd-flock-page",
+      "goal": "capture the TPD Flock page — operation-since date, registration-vs-integration distinction, RTIC context (reviewed lead; not a fixture)",
+      "kind": "document_page",
+      "url": "https://www.tulsapolice.org/flock-safety"
+    },
+    {
+      "doc_id": "tpd-policies-index",
+      "goal": "verify the captured 2023 113C/113E files are the current enforceable policy versions",
+      "kind": "document_page",
+      "url": "https://www.tulsapolice.org/policies-and-procedures"
+    },
+    {
+      "doc_id": "tulsa-corridor-safety-guide",
+      "goal": "open the device-count lead and establish its date/scope before any count is used — an excerpt is never a count",
+      "kind": "document_page",
+      "url": "https://www.cityoftulsa.org/government/departments/planning-and-neighborhoods/community-planning/commercial-corridor-safety-guide/"
+    }
+  ]
+}
