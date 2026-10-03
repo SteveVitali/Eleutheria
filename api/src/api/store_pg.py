@@ -74,6 +74,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
+import policy.disclosure as policy_disclosure
 import psycopg
 from db.dispositions import (
     TargetKind,
@@ -833,15 +834,21 @@ class PgReadStore:
         ).fetchall()
         out: list[RightsRecord] = []
         for r in rows:
+            # P34.19 (F-403, ADR-183): express-terms sources carry their
+            # captured terms + publication basis from the committed policy
+            # disclosure table — the DB rights rows predate the fields, so the
+            # decoration is applied here, additively (read-only).
             out.append(
-                RightsRecord(
-                    source_id=str(r[0]),
-                    spdx=str(r[1]),
-                    attribution=str(r[2] or ""),
-                    redistributable=(str(r[3]) == "yes"),
-                    derivative_permitted=(str(r[4]) == "yes"),
-                    terms_url=str(r[5] or ""),
-                    retrieval_date=r[6] or date(1970, 1, 1),
+                policy_disclosure.apply_to_record(
+                    RightsRecord(
+                        source_id=str(r[0]),
+                        spdx=str(r[1]),
+                        attribution=str(r[2] or ""),
+                        redistributable=(str(r[3]) == "yes"),
+                        derivative_permitted=(str(r[4]) == "yes"),
+                        terms_url=str(r[5] or ""),
+                        retrieval_date=r[6] or date(1970, 1, 1),
+                    )
                 )
             )
         return out

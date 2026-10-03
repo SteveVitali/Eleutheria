@@ -45,6 +45,17 @@ class RightsRecord:
     #: licence of a share-alike upstream this content is plausibly derived from,
     #: even where ``spdx`` itself declares something more permissive.
     upstream_license: str | None = None
+    #: P34.19 (F-403, ADR-183): the source's captured terms, verbatim, for
+    #: express-terms sources the operator chose to keep public. Empty when the
+    #: source carries no captured express terms.
+    captured_terms_verbatim: str = ""
+    #: Pointer to the capture evidence (artifact + item id) the verbatim text
+    #: was read from.
+    captured_terms_evidence: str = ""
+    #: The recorded basis on which the source's rows are published (e.g.
+    #: ``operator-accepted express terms (ADR-183)``). Empty when no express
+    #: acceptance applies.
+    publication_basis: str = ""
 
     def __post_init__(self) -> None:
         if not self.source_id:

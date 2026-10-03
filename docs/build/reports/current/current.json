@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "c2aaee27a2c5e76730dd541f6ae7e9f3a1346085",
-  "manifest_inputs": 940,
+  "input_commit": "fa791feff9483e9e3dc5d82d3c61482700366f1c",
+  "manifest_inputs": 941,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.19",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-03T08:51:24Z"
   },
   "counts": {
-    "obligations": 145,
-    "owed": 79,
-    "open": 76,
+    "obligations": 146,
+    "owed": 80,
+    "open": 77,
     "partial": 3,
     "terminal": 66,
-    "events": 617,
+    "events": 618,
     "transitions": 18,
     "coverage_assessments": 191,
     "coverage_historical_rows": 777,
@@ -6872,6 +6872,50 @@
           "anchor": {
             "row_line": 1044,
             "row_sha256": "4e6ae0785836d71c2be3ab92b1f7ef9b10abed1e89b69894a2aac14d60690843",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.19-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.19-1:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "P34.46",
+      "backlog_home": "BL-084",
+      "item": "The hosted API-side F-337 suppression — append-only `publication_disposition` rows (SIG-GOV-007: `disposition='withdraw'`, `kind='rights_withdrawal'`, authority citing `sig.publication-withdrawals/1`) on the hosted claim spine for the committed withdrawal targets — the nine F-337 Atlas face-recognition claims (`policy/src/policy/data/publication_withdrawals.json`), plus the Miami fail-closed candidate pending host-side narrowing — so the hosted `/v1/search`, `/v1/entity/<id>` and `/v1/claim/<id>` stops serving them",
+      "unblocked_by": "owner: the P34.46 API roll (or the OM-19 leg-runner once a go lands); trigger: the recorded verbatim in-ticket operator go for the API-side F-337 suppression",
+      "verify": "re-run: (1) read-only confirm the current exposure (`/v1/claim/<claim_id>` on each committed target); (2) narrow the Miami candidates — join `claim_qualifier`/`raw_context` or the claims' `claim_evidence` captures to the upstream AOS locator (`raw_context` carries `aos_id`): the claim linked to AOS000960 is suppressed, the claim linked to AOS005165 is NOT written (the `candidate_claim_ids` entry exists only for fail-closed safety until this join runs); (3) INSERT the `publication_disposition` rows — one per suppressed claim id, disposition `withdraw`, kind `rights_withdrawal`, authority the withdrawal entry's `authority` string — append-only, never UPDATE/DELETE; (4) verify `/v1/search`, `/v1/entity`, `/v1/claim` no longer serve the nine rows; the restore path is a superseding disposition row, never a delete",
+      "proxy": "the committed `sig.publication-withdrawals/1` list plus the export/API-layer matching (`policy.withdrawals`, `_apply_publication_withdrawals`, `web/src/lib/withdrawals.ts`) mean every artifact BUILT after this lands already excludes the rows — engine-verified by `tests/exports/test_p34_19_express_terms.py`; the remaining API exposure is recorded, not hidden",
+      "line": 1056,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.19-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.19-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.19",
+          "owner": "engineering",
+          "landing": "P34.46",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-03",
+          "recorded_at": "2026-10-03",
+          "source_commit": "fa791feff9483e9e3dc5d82d3c61482700366f1c",
+          "reason": "migration anchor appended by P34.19 (row 219) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1056,
+            "row_sha256": "c67a56cd4e10265256a9e39b74cd6e104d21e1de76397f3c83e7d50575f7f34f",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -14848,7 +14892,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "0c3dd3ccd8b171bcb76f422612c45891f56171919e7e8edd5845911378910386",
+  "manifest_sha256": "bc942efe1e8084e50bb315fd2957188b0623f5b69e5b9f8a28a111ae2ca0913e",
   "current_md": {
     "lines": 74,
     "bytes": 12989,
