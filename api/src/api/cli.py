@@ -40,6 +40,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Optional PostgreSQL read role to SET ROLE to (e.g. sig_read_public); RLS stays on.",
     )
+    serve.add_argument(
+        "--release-registry",
+        default=None,
+        help="Path to the activated release registry (staged/ + withdrawals.json) — "
+        "enables /v1/releases/<pub>/compartments/<comp>/search over the verified "
+        "per-compartment FTS5 indexes (P32.14, SIG-FIND-003).",
+    )
 
     # The AUTHENTICATED curation surface (§34, ADR-068). A SEPARATE process from
     # `serve`, bound to a non-public interface, mounted only when SIG_CURATION_ENABLED=1
@@ -65,7 +72,13 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _serve(host: str, port: int, dsn: str | None = None, role: str | None = None) -> int:
+def _serve(
+    host: str,
+    port: int,
+    dsn: str | None = None,
+    role: str | None = None,
+    release_registry: str | None = None,
+) -> int:
     import uvicorn
 
     from .app import create_app
@@ -84,7 +97,12 @@ def _serve(host: str, port: int, dsn: str | None = None, role: str | None = None
     # even the first /v1/contradiction request is warm (a no-op for stores whose
     # surfaces are already materialised).
     store.warmup()
-    uvicorn.run(create_app(store), host=host, port=port)
+    release_search = None
+    if release_registry:
+        from .release_search import ReleaseSearchStore
+
+        release_search = ReleaseSearchStore(release_registry)
+    uvicorn.run(create_app(store, release_search), host=host, port=port)
     return 0
 
 
@@ -117,7 +135,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "serve":
-        return _serve(args.host, args.port, args.dsn, args.role)
+        return _serve(args.host, args.port, args.dsn, args.role, args.release_registry)
     if args.command == "serve-curation":
         return _serve_curation(args.host, args.port, args.dsn, args.role)
     parser.print_help()

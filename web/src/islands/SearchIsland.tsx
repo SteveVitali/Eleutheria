@@ -6,10 +6,11 @@
  * The client-side search / filter island (P27.9, DECISION-SPA = B, ADR-097).
  *
  * PROGRESSIVE ENHANCEMENT, NOT REPLACEMENT (SIG-UI-050): this island hydrates ONLY
- * on `/search/`; the static browse index below it (links to the dossier index, the
- * map and the per-source freshness table) is the no-JS / screen-reader path
- * (SIG-UI-037) and is never removed. Search over Postgres FTS is the eventual server
- * path (SIG-UI-040); this island filters the already-published index in the browser.
+ * on `/search/`; the released-corpus GET forms and the static browse index
+ * (SIG-FIND-003, ADR-133 — the verified per-compartment FTS5 index, never a
+ * current-only Postgres fallback) are the no-JS / screen-reader path
+ * (SIG-UI-037) and are never removed. This island filters the listed index in
+ * the browser — a convenience, never the corpus (SIG-UI-040).
  *
  * Accessibility (WCAG 2.2 AA): a labelled text input, an `aria-live` result count,
  * and results as native links (keyboard-operable, no custom widget).
@@ -52,7 +53,7 @@ export default function SearchIsland({ items }: SearchIslandProps): ReactElement
   return (
     <div className="sig-search-island" data-testid="search-island">
       <label htmlFor="sig-search-input">
-        <strong>Search the published record</strong> — dossiers, map sites and sources
+        <strong>Filter the listed index</strong> — dossiers, listed sites and sources
       </label>
       <br />
       <input
@@ -96,8 +97,9 @@ export default function SearchIsland({ items }: SearchIslandProps): ReactElement
 
       {matches.length === 0 && (
         <p data-testid="search-empty">
-          No match. Nothing found is not evidence of absence — try the full browse index below, or
-          the <a href="/research-queue/">research queue</a>.
+          No match in this list. Nothing found here is not evidence of absence — try the
+          released-corpus search above, the full browse index below, or the{" "}
+          <a href="/research-queue/">research queue</a>.
         </p>
       )}
     </div>

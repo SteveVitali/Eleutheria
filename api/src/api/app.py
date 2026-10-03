@@ -14,7 +14,7 @@ storage, and the contract is versioned via the ``/v1`` prefix and the app versio
 
 from __future__ import annotations
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
 from starlette.routing import Route
 
@@ -30,6 +30,7 @@ from .dereference import (
 )
 from .models import HealthResponse, TermsResponse
 from .prohibitions import assert_no_prohibited_routes, route_paths
+from .release_search import KNOWN_PARAMS, ReleaseSearchStore, render_search_html
 from .routes import build_router, get_store
 from .store import ReadStore, StoreUnavailable
 from .terms import acceptable_use_terms
@@ -39,7 +40,7 @@ from .terms import acceptable_use_terms
 API_VERSION = "1.0.0"
 
 
-def create_app(store: ReadStore) -> FastAPI:
+def create_app(store: ReadStore, release_search: ReleaseSearchStore | None = None) -> FastAPI:
     """Build the read-API app over ``store`` (SIG-API-001).
 
     Raises :class:`api.prohibitions.ProhibitedEndpointError` at construction if a
@@ -56,7 +57,70 @@ def create_app(store: ReadStore) -> FastAPI:
         ),
     )
     app.state.store = store
+    app.state.release_search = release_search
     app.include_router(build_router())
+
+    # --- /v1/releases/{pub}/compartments/{comp}/search -------------------------
+    # P32.14 (SIG-FIND-003, ADR-133): released-corpus search over the verified
+    # immutable per-compartment FTS5 index. JSON by default; a browser GET (or
+    # format=html) selects the complete no-JS representation. No current-only
+    # PG fallback exists beneath released pages — cold/missing indexes answer
+    # an explicit 503, withdrawn namespaces 410.
+    from exports.search_index import SearchIndexError, parse_params
+
+    @app.get("/v1/releases/{publication_id}/compartments/{compartment}/search")
+    def released_search(
+        request: Request,
+        publication_id: str,
+        compartment: str,
+        q: str | None = Query(default=None),
+        kind: str | None = Query(default=None),
+        jurisdiction: str | None = Query(default=None),
+        source: str | None = Query(default=None),
+        location: str | None = Query(default=None),
+        technology: str | None = Query(default=None),
+        # `limit` is bounded inside parse_params so every rejection shares
+        # the same explicit {detail, code} error shape.
+        limit: int | None = Query(default=None),
+        cursor: str | None = Query(default=None),
+        format: str | None = Query(default=None),
+        accept: str | None = Header(default=None),
+    ) -> Response:
+        rstore: ReleaseSearchStore | None = request.app.state.release_search
+        if rstore is None:
+            raise SearchIndexError(
+                503,
+                "release_search_unconfigured",
+                "released-corpus search is not configured on this service",
+            )
+        unknown = sorted(set(request.query_params.keys()) - KNOWN_PARAMS)
+        params = parse_params(
+            q=q,
+            kind=kind,
+            jurisdiction=jurisdiction,
+            source=source,
+            location=location,
+            technology=technology,
+            limit=limit,
+            cursor=cursor,
+            extra=unknown,
+        )
+        result = rstore.search(publication_id, compartment, params)
+        wants_html = format == "html" or (format is None and "text/html" in (accept or ""))
+        if wants_html:
+            return HTMLResponse(
+                render_search_html(rstore, publication_id, compartment, params, result)
+            )
+        return JSONResponse(result)
+
+    @app.exception_handler(SearchIndexError)
+    def _search_index_error(_request: Request, exc: SearchIndexError) -> JSONResponse:
+        headers = {"Retry-After": "5"} if exc.status == 503 else None
+        return JSONResponse(
+            status_code=exc.status,
+            content={"detail": exc.detail, "code": exc.code, **exc.extra},
+            headers=headers,
+        )
 
     # --- /id/{type}/{uuid} — dereferenceable identifiers (SIG-API-008) --------
     @app.get("/id/{id_type}/{uuid}")

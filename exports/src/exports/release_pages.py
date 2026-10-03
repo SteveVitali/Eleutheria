@@ -518,3 +518,156 @@ def error_page(*, title: str, detail: str) -> bytes:
         body=f"<p>{_e(detail)}</p>",
         publication_id=None,
     )
+
+
+# --------------------------------------------------------------------------- #
+# P32.14 (SIG-FIND-003, ADR-133): the no-JS released-corpus search page.
+# Served dynamically by the read API from the verified per-compartment FTS5
+# index — the static browse/record pages remain the complete offline path.
+# Zero JavaScript; every dynamic string escaped; ≤50 rows per page.
+# --------------------------------------------------------------------------- #
+
+
+def search_page(
+    *,
+    action: str,
+    publication_id: str,
+    compartment: str,
+    licence: str,
+    params: Mapping[str, Any],
+    facet_options: Mapping[str, Sequence[tuple[str, int]]],
+    result: Mapping[str, Any],
+) -> bytes:
+    """The complete no-JS search page for one released compartment.
+
+    ``params`` echoes the normalized request (``q`` + facet filters);
+    ``result`` is the bounded search response dict (≤50 rows). The form is a
+    plain GET — a browser navigates with ``Accept: text/html`` so content
+    negotiation selects this representation, no scripting required.
+    """
+    q = str(params.get("q") or "")
+    filters = dict(params.get("filters") or {})
+    limit = int(params.get("limit") or 50)
+
+    def _select(name: str, label: str, options: Sequence[tuple[str, int]]) -> str:
+        opts = [f'<option value="">{_e(label)} — any</option>']
+        for value, count in options:
+            sel = " selected" if filters.get(name) == value else ""
+            opts.append(f'<option value="{_e(value)}"{sel}>{_e(value)} ({_e(count)})</option>')
+        return f'<label>{_e(label)} <select name="{_e(name)}">{"".join(opts)}</select></label>'
+
+    loc_value = filters.get("location") or "any"
+    loc_opts = "".join(
+        f'<option value="{_e(v)}"{" selected" if loc_value == v else ""}>{_e(v)}</option>'
+        for v in ("any", "public-point", "no-public-point")
+    )
+    controls = "".join(
+        _select(name, label, facet_options.get(name, ()))
+        for name, label in (
+            ("kind", "Record kind"),
+            ("jurisdiction", "Jurisdiction"),
+            ("source", "Source"),
+            ("technology", "Technology"),
+        )
+    )
+    form = f"""
+<form method="get" action="{_e(action)}">
+  <p><label>Search <input type="search" name="q" value="{_e(q)}" size="40"
+      maxlength="200" placeholder="words or an exact identifier"></label>
+     <label>Rows <select name="limit">
+       {
+        "".join(
+            f'<option value="{n}"{" selected" if limit == n else ""}>{n}</option>'
+            for n in (10, 25, 50)
+        )
+    }
+     </select></label>
+     <label>Location <select name="location">{loc_opts}</select></label></p>
+  <p>{controls}</p>
+  <p><button type="submit">Search this compartment</button></p>
+</form>
+"""
+
+    rows: list[str] = []
+    for hit in result.get("results") or []:
+        label = hit.get("label") or f"Unnamed {_e(hit.get('record_key'))}"
+        jur = hit.get("jurisdiction") or "unreported"
+        loc = hit.get("location") or ""
+        srcs = ", ".join(str(s) for s in (hit.get("sources") or []))
+        rows.append(
+            "<tr>"
+            f'<td><a href="{_e(hit.get("href"))}">{_e(label)}</a>'
+            f'<br><code class="mut">{_e(hit.get("record_key"))}</code></td>'
+            f"<td>{_e(hit.get('kind'))}</td>"
+            f"<td>{_e(jur)}</td>"
+            f"<td>{_e(loc)}</td>"
+            f"<td>{_e(srcs)}</td>"
+            "</tr>"
+        )
+    scope = result.get("scope") or {}
+    qd = result.get("query") or {}
+    exact = " — exact identifier lookup" if qd.get("exact_id") else ""
+    summary = (
+        f'<p class="mut">{_e(len(result.get("results") or []))} row(s) on this page'
+        f"{_e(exact)} · {_e(scope.get('indexed_records'))} indexed / "
+        f"{_e(scope.get('eligible_records'))} eligible released records in this "
+        "compartment. A page is a bound, not the corpus size — follow "
+        "&ldquo;next&rdquo; to continue; total counts are not computed.</p>"
+    )
+    if rows:
+        table = (
+            "<table><thead><tr><th>Record</th><th>Kind</th><th>Jurisdiction</th>"
+            "<th>Location</th><th>Sources</th></tr></thead>"
+            f"<tbody>{''.join(rows)}</tbody></table>"
+        )
+    else:
+        table = (
+            "<p><em>No released records in this compartment match — this is a "
+            "recorded absence, not missing research and not a failed query.</em></p>"
+        )
+    cur = result.get("next_cursor")
+    if cur:
+        import urllib.parse
+
+        qp: dict[str, str] = {}
+        if q:
+            qp["q"] = q
+        for name in ("kind", "jurisdiction", "source", "location", "technology"):
+            if filters.get(name):
+                qp[name] = filters[name]
+        qp["limit"] = str(limit)
+        qp["cursor"] = str(cur)
+        nav = (
+            f'<p><a href="{_e(action)}?{_e(urllib.parse.urlencode(qp))}">'
+            "next 50 &rarr;</a> · "
+            f'<a href="{_e(action)}">start over</a></p>'
+        )
+    else:
+        nav = f'<p><a href="{_e(action)}">start over</a></p>'
+
+    body = f"""
+<p><span class="k">Compartment</span> {_e(compartment)} ·
+   <span class="k">Licence</span> {_e(licence)} ·
+   <span class="k">Scope</span> {_e(scope.get("indexed_records"))} released records</p>
+{form}
+{summary}
+{table}
+{nav}
+<p class="mut">Search is lexical retrieval over one licence compartment — a
+page order is the stable label+type+id sort, not a relevance score or a
+probability of truth. Withdrawn records are denied under the current
+publication policy even inside this fixed release. Cross-compartment search
+is deliberately not federated: run one compartment at a time, or use the
+complete static browse pages under
+<code>/r/{_e(publication_id)}/c/{_e(compartment)}/</code> (no service
+required).</p>
+"""
+    return _layout(
+        title=f"Search {compartment}",
+        body=body,
+        publication_id=publication_id,
+        footer_note=(
+            "Dynamic released-search route — the same eligible corpus the "
+            "static browse pages enumerate."
+        ),
+    )

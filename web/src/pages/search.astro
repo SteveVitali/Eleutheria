@@ -3,23 +3,47 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The search / filter surface (§40, SIG-UI-040/047 island; P27.9, ADR-097). The
-// OPT-IN interactive island filters the already-published index (dossiers, map
-// sites, sources) in the browser; with JavaScript disabled it degrades to the static
-// BROWSE index below (real GET links to the dossier index, the map and the per-source
-// freshness table) — progressive enhancement, never replacement (SIG-UI-037/050).
+// The search / filter surface (§40, SIG-UI-040/047 island; P27.9, ADR-097;
+// P32.14, ADR-133 / SIG-FIND-003). Released-corpus search is the primary path:
+// one no-JS GET form per licence compartment pins an immutable release and
+// asks the read API's verified FTS5 index — plus complete static browse pages
+// that need no service at all. The OPT-IN island stays a quick filter over the
+// listed index (never the whole corpus); with JavaScript disabled the forms,
+// browse links and island degrade honestly (SIG-UI-037/050).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SearchIsland from "../islands/SearchIsland";
 import type { SearchItem } from "../islands/SearchIsland";
-import { getDossierIndex, getMapSites, getFreshness, capRows } from "../lib/data";
+import {
+  getDossierIndex,
+  getMapSites,
+  getFreshness,
+  getReleaseSearchTargets,
+  getEntityCompartments,
+  capRows,
+} from "../lib/data";
 import "../styles/islands.css";
 
 const dossiers = getDossierIndex();
 const sites = getMapSites();
 const sources = getFreshness();
+const targets = getReleaseSearchTargets();
+const latest = targets.length > 0 ? targets[targets.length - 1] : null;
+
+// Specific released-record hrefs where a real activated release maps them —
+// a listed site resolves to /r/<pub>/c/<comp>/entity/<type>/<id>/, never a
+// generic /map/ link when its record is citable.
+const entityComps = latest ? getEntityCompartments() : new Map();
+const siteHref = (id: string): string => {
+  if (!latest) return "/map/";
+  const m = entityComps.get(id);
+  return m
+    ? `/r/${latest.publicationId}/c/${m.compartment}/entity/${m.entityType}/${id}/`
+    : "/map/";
+};
 
 // Cap the map-site rows fed to the client index so the page stays within budget at
-// national scale (tens of thousands of sites); the full set is on /map/ and the API.
+// national scale (tens of thousands of sites); the FULL corpus is searched by the
+// released-corpus forms + static browse pages above.
 const cappedSites = capRows(sites);
 
 const INDEX: SearchItem[] = [
@@ -33,7 +57,7 @@ const INDEX: SearchItem[] = [
     kind: "site" as const,
     label: s.label,
     sublabel: s.jurisdiction,
-    href: "/map/",
+    href: siteHref(s.id),
   })),
   ...sources.map((r) => ({
     kind: "source" as const,
@@ -46,15 +70,64 @@ const INDEX: SearchItem[] = [
 
 <BaseLayout title="Search" path="/search/">
   <p>
-    Search the published record — dossiers, map sites and sources. The interactive
-    filter below is an <strong>optional enhancement</strong>; everything it searches is
-    also reachable by browsing, so the record is usable with no client JavaScript
-    (SIG-UI-037).
+    Search the <strong>full eligible released corpus</strong> — every record an
+    immutable release publishes, in its own licence compartment — or filter the
+    listed index interactively. Both work without client JavaScript
+    (SIG-UI-037): the forms are plain GETs and the static browse pages
+    enumerate every released record.
   </p>
+
+  <!-- P32.14 (SIG-FIND-003): released-corpus search — the complete corpus, one
+       compartment at a time, pinned to an immutable namespace. -->
+  {targets.length > 0 ? (
+    <section aria-labelledby="release-search-heading" data-testid="release-search">
+      <h2 id="release-search-heading">Search an immutable release</h2>
+      {targets.map((t) => (
+        <div data-testid="release-search-target">
+          <p>
+            Release <a href={t.landingHref}><code>{t.publicationId}</code></a> —{" "}
+            {t.recordCount} released records across{" "}
+            {t.compartments.length} licence compartment{t.compartments.length === 1 ? "" : "s"}.
+          </p>
+          {t.compartments.map((c) => (
+            <div class="sig-release-search__compartment" data-testid="release-search-compartment">
+              <h3>
+                <code>{c.compartment}</code>{" "}
+                <span class="sig-island__note">
+                  {c.license} — {c.recordCount} records
+                </span>
+              </h3>
+              <form method="get" action={c.searchHref} data-testid="release-search-form">
+                <input type="hidden" name="format" value="html" />
+                <label>
+                  Words or an exact identifier{" "}
+                  <input type="search" name="q" maxlength={200} size={36} />
+                </label>{" "}
+                <button type="submit">Search this compartment</button>
+              </form>
+              <p>
+                <a href={c.overviewHref}>Complete browse</a> — every record,
+                paginated, with no service required.
+              </p>
+            </div>
+          ))}
+        </div>
+      ))}
+    </section>
+  ) : (
+    <section data-testid="release-search-empty">
+      <h2>Search an immutable release</h2>
+      <p>
+        <em>No immutable release is activated for this surface yet</em> — the
+        released-corpus search forms appear here once a release is activated.
+        The browse index below still lists the published surface.
+      </p>
+    </section>
+  )}
 
   <!-- The OPT-IN search island (P27.9, ADR-097). Hydrates only here; empty with JS off. -->
   <section class="sig-island" aria-labelledby="search-island-heading" data-testid="search-island-section">
-    <h2 id="search-island-heading">Interactive search</h2>
+    <h2 id="search-island-heading">Quick filter — the listed index</h2>
     <SearchIsland client:only="react" items={INDEX} />
   </section>
 
@@ -75,11 +148,16 @@ const INDEX: SearchItem[] = [
       <li>
         <a href="/network/">Network explorer</a> and the <a href="/research-queue/">research queue</a> for what is not yet researched.
       </li>
+      <li>
+        <a href="/releases/">Immutable releases</a> — complete browse of every
+        activated release, record by record, compartment by compartment.
+      </li>
     </ul>
     {cappedSites.truncated && (
       <p class="sig-island__note" data-testid="search-cap-note">
-        The interactive filter covers the first {cappedSites.shown} of {cappedSites.total} mapped
-        sites; the full set is on the <a href="/map/">map</a> and in the export bundle / API.
+        The interactive filter covers {cappedSites.shown} of {cappedSites.total} listed
+        sites — a sample, never the corpus. Every eligible record is reachable through
+        the released-corpus search and the compartment browse pages.
       </p>
     )}
   </section>
