@@ -3,36 +3,56 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The public dispute/correction submission page (§45.1, SIG-UI-033). Reachable in one
-// click from any claim on every page (the base layout renders the link everywhere).
-// Static, zero-JS: it states the five intake categories, the published handling
-// priority (privacy-harm and safety above all others, SIG-GOV-003), that no identity
-// is required except a legal demand needing standing (SIG-GOV-002), and the permitted
-// outcomes incl. refusal with published reasoning (SIG-GOV-004). Correction preserves
-// history (SIG-GOV-005); a subject may also attach a response (SIG-GOV-010).
+// The public dispute/correction page (§45.1, SIG-UI-033), linked from every page
+// via the base layout. P34.17 / R1.2 (WV-05, ADR-180; WV-08, ADR-186; B-8; C4
+// NEW-20): intake is plain e-mail — the operator's address, injected at publish
+// via SIG_DISPUTE_EMAIL and never committed to a file (OP-10); senders disclose
+// the address they send from; NO response time is promised; the published
+// handling order is privacy-harm and safety reports first, then factual
+// corrections, then everything else. The "one click" / "anonymous" promises and
+// the requirement ids are gone; every sentence is a sha256-pinned pending row in
+// copy batch #1 (`data-copy`) or an allowed N-string (`data-notice`).
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { categoriesByPriority, intakeAvailability, INTAKE_FORM_PATH, INTAKE_STATUS_PATH } from "../lib/corrections";
+import { categoriesByPriority, intakeAvailability } from "../lib/corrections";
+import { disputeIntakeEmail, INTAKE_EMAIL_MARKER } from "../lib/intake";
 
 const categories = categoriesByPriority();
 const intake = intakeAvailability();
+const email = disputeIntakeEmail();
+// The address is DATA injected at publish (OP-10), never drafted copy: the
+// batch row pins the template with the `{intakeAddress}` placeholder verbatim
+// (the `{permalink}` precedent).
+const intakeAddress = email ?? "the operator's address";
 ---
 
 <BaseLayout title="Dispute or correct a record" path="/dispute/">
-  <p>
-    Anyone can ask SIG to correct, annotate, suppress, or remove a record — or dispute
-    an accurate one and attach a response. This channel is reachable in one click from
-    any claim on the site.
+  <p data-copy="DP-01">
+    Anyone can ask SIG to correct, annotate, suppress, or remove a record — or
+    dispute an accurate one and attach a response.
   </p>
 
-  <h2 id="priority-heading">How submissions are prioritized</h2>
-  <p data-testid="priority-note">
-    <strong>Privacy-harm and safety claims are handled before all others, including
-    factual corrections</strong> (SIG-GOV-003). You do <strong>not</strong> need to
-    identify yourself — the only exception is a legal demand that requires standing
-    (SIG-GOV-002).
+  <h2 id="intake-heading" data-copy="DP-17">How to report</h2>
+  <p
+    data-testid="intake-channel"
+    {...{ [INTAKE_EMAIL_MARKER]: email ? "set" : "unset" }}
+    data-copy="DP-02"
+  >
+    Reports and corrections arrive by e-mail to {intakeAddress}.
+  </p>
+  <p data-copy="DP-03 DP-06">
+    Senders disclose the address they send from. SIG promises no response time.
+  </p>
+  <p data-copy="DP-04" data-testid="do-not-send">
+    Do not send licence plate numbers or personal details about other people.
   </p>
 
-  <h2 id="categories-heading">What are you reporting?</h2>
+  <h2 id="priority-heading" data-copy="DP-18">Handling order</h2>
+  <p data-testid="priority-note" data-copy="DP-05">
+    SIG handles reports in this order: privacy-harm and safety reports first, then
+    factual corrections, then everything else.
+  </p>
+
+  <h2 id="categories-heading" data-copy="DP-19">What are you reporting?</h2>
   <ul class="sig-dispute-categories" aria-labelledby="categories-heading">
     {categories.map((c) => (
       <li
@@ -42,41 +62,34 @@ const intake = intakeAvailability();
         data-requires-identity={c.requiresIdentity ? "true" : "false"}
       >
         <strong>{c.label}</strong> — {c.description}
-        {c.priorityBand === 0 && <span data-testid="prioritized"> (prioritized above all others)</span>}
-        {c.requiresIdentity && <span data-testid="requires-identity"> (may require standing)</span>}
+        {c.priorityBand === 0 && <span data-testid="prioritized" data-copy="DP-15"> (handled first)</span>}
+        {c.requiresIdentity && <span data-testid="requires-identity" data-copy="DP-16"> (may require standing)</span>}
       </li>
     ))}
   </ul>
 
-  <h2 id="outcomes-heading">What can happen</h2>
+  <h2 id="outcomes-heading" data-copy="DP-20">What can happen</h2>
   <ul class="sig-dispute-outcomes" aria-labelledby="outcomes-heading">
-    <li><strong>Correct</strong> — a new, corrected assertion is appended; the prior value is preserved and stays citable (SIG-GOV-005).</li>
-    <li><strong>Annotate</strong> — a response is attached alongside the claim, even when the claim is accurate (SIG-GOV-010).</li>
-    <li><strong>Suppress</strong> — removed from public view, retained internally under seal (SIG-GOV-007).</li>
-    <li><strong>Delete</strong> — reserved for material SIG must not hold at all; a content-free tombstone records that a deletion occurred (SIG-GOV-008).</li>
-    <li data-testid="refusal-outcome"><strong>Refuse</strong> — declined, with published reasoning. Refusal is a real, exercisable option (SIG-GOV-004).</li>
+    <li data-copy="DP-08"><strong>Correct</strong> — a new, corrected assertion is appended; the prior value is preserved and stays citable.</li>
+    <li data-copy="DP-09"><strong>Annotate</strong> — a response is attached alongside the claim, even when the claim is accurate.</li>
+    <li data-copy="DP-10"><strong>Suppress</strong> — removed from public view, retained internally under seal.</li>
+    <li data-copy="DP-11"><strong>Delete</strong> — reserved for material SIG must not hold at all; a content-free tombstone records that a deletion occurred.</li>
+    <li data-testid="refusal-outcome" data-copy="DP-12"><strong>Refuse</strong> — declined, with published reasoning. Refusal is a real, exercisable option.</li>
   </ul>
 
-  <h2 id="submit-heading">Submit</h2>
+  <h2 id="submit-heading" data-copy="DP-21">The report form</h2>
   <p data-testid="intake-availability" data-operational={intake.operational ? "true" : "false"}>
-    <strong>The durable anonymous receiver is not yet operating.</strong>{" "}
-    {intake.note}
+    <span data-notice="N-2">Not operating yet.</span>{" "}
+    <span data-copy="DP-07">{intake.note}</span>
   </p>
-  <p>
-    When it opens — on this same site at <code>{INTAKE_FORM_PATH}</code> — a plain
-    HTML form (no account, no email, no scripts, no uploads) will take: the category
-    above, an optional release/record/claim reference, a bounded description, up to
-    three public https evidence links, and — for a legal demand only — an optional
-    contact. You will get a durable receipt id and a one-purpose status token to
-    check progress at <code>{INTAKE_STATUS_PATH}</code>. Reports that carry licence
-    plates, people's names or identifying details are refused automatically before
-    anything is stored (Part VIII); accepted reports go only to a private staffed
-    review queue — a report is never an automatic correction, suppression or
-    takedown vote.
+  <p data-copy="DP-13">
+    Until then, e-mail is the channel — it carries the same categories and the
+    same outcomes as the form will. A report is never an automatic correction,
+    suppression or takedown vote.
   </p>
-  <p>
-    Every reviewed disposition and its outcome is counted in the public{" "}
-    <a href="/corrections/">corrections log's transparency report</a> (SIG-GOV-011).
-    A correction, once made, appears there in full.
+  <p data-copy="DP-14">
+    Dispositions and their outcomes are counted in the public{" "}
+    <a href="/corrections/">corrections log's transparency report</a>. A
+    correction, once made, appears there in full.
   </p>
 </BaseLayout>

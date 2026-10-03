@@ -30,8 +30,14 @@ VALID_STATUSES = {"pending", "confirmed"}
 # MD-01, WM-01, NF-01/02, FB-01/02, GN-01, TR-01/02), P34.14 appended
 # (JD-01…JD-07) and P34.15 appended (MP-01…MP-15, NW-01…NW-03, WS-01 —
 # same batch, same checks).
+# The DC-* rows belong to P35.38a; P34.17 added DC-20 (superseding DC-19),
+# MB-01/02 (the /methodology/ basis label — GC-04/05's pinned texts), ES-01…05
+# and SG-01 (the editorial-standards rewrite + the style-guide register
+# sentence). The wave's other rows (DP/OC/ST/SL-05+/PB/RS/DL/TR-03+) bind on
+# pages with placeholder-bearing elements this suite does not model —
+# `tests/unit/test_p34_17_copy_batch.py` covers them.
 P34_ID = re.compile(
-    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS)-\d+$"
+    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS|DC|MB|ES|SG)-\d+$"
 )
 
 # Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
@@ -39,6 +45,12 @@ P34_ID = re.compile(
 # history that can never ship — kept in the batch (append-only) but bound to
 # nothing. Asserted retired, never silently dropped.
 RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
+
+# Rows P34.17 superseded with corrected sentences (the batch is append-only —
+# the old rows stay recorded, bound to nothing): CL-03 → CL-06 (the
+# requirement id dropped from public copy), M-20 → M-43 (the "frozen holdout"
+# claim withdrawn). Asserted superseded, never silently dropped.
+SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19"}
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {
@@ -56,6 +68,9 @@ ASTRO_PAGES = {
     "/403/": "web/src/pages/403.astro",
     "/410/": "web/src/pages/410.astro",
     "/terms/": "web/src/pages/terms.astro",
+    "/data-collection/": "web/src/pages/data-collection.astro",
+    "/editorial-standards/": "web/src/pages/editorial-standards.astro",
+    "/style-guide/": "web/src/pages/style-guide.astro",
     "component/HowWeKnowThis": "web/src/components/HowWeKnowThis.astro",
     "component/Citation": "web/src/components/Citation.astro",
     "component/WhatWeDontKnow": "web/src/components/WhatWeDontKnow.astro",
@@ -267,8 +282,12 @@ def test_every_p34_row_is_carried_somewhere() -> None:
     for rel in ["web/src/pages/index.astro"]:
         for ids in re.findall(r'copy: "([^"]+)"', _source(rel)):
             carried.update(ids.split())
-    orphans = set(rows) - carried - set(RETIRED_ROWS)
+    orphans = set(rows) - carried - set(RETIRED_ROWS) - SUPERSEDED_ROWS
     assert not orphans, f"batch rows never carried by any surface: {sorted(orphans)}"
+    # A superseded row is only excused because a successor row replaced its
+    # binding (P34.17) — and it must not be rendered.
+    for rid in SUPERSEDED_ROWS:
+        assert rid not in carried, f"superseded row {rid} is still bound by an element"
     # A retired row is only excused because its page no longer exists.
     for rid, page_file in RETIRED_ROWS.items():
         assert rid in rows, f"retired row {rid} must stay in the batch (append-only)"

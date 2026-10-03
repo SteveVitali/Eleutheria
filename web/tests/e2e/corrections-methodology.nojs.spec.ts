@@ -46,10 +46,12 @@ test("methodology / freshness / coverage are static and linked from the dossier 
   await expect(page.getByTestId("population-note").first()).toBeVisible();
 });
 
-test("editorial standards render the three cases + hostile review without JS (SIG-UI-042/045)", async ({ page }) => {
+test("editorial standards render the three cases + the truthful review state without JS (SIG-UI-042/045)", async ({ page }) => {
+  // P34.17 / ADR-179 (WV-04): no fabricated review — the page records that the
+  // hostile-reader review was never performed (notice N-1).
   await page.goto("/editorial-standards/");
   await expect(page.getByTestId("editorial-case")).toHaveCount(3);
-  await expect(page.getByTestId("release-status")).toHaveAttribute("data-releasable", "true");
+  await expect(page.getByTestId("review-status")).toContainText("Not yet performed.");
   await page.goto("/style-guide/");
   await expect(page.getByTestId("register-rule")).toHaveCount(6);
 });

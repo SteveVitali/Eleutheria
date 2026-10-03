@@ -16,7 +16,11 @@
  *     as the exact conformant copy the spec specifies;
  *   - the **hostile-reader review** model (SIG-UI-042): a recorded review committed
  *     with the dossier template version, with a release-blocking rule that every
- *     finding be dispositioned.
+ *     finding be dispositioned. P34.17 / ADR-179 (WV-04): the release block is
+ *     WAIVED for this round — a review that was never performed is recorded as
+ *     "not yet performed" and ships truthfully instead of failing the build; a
+ *     *recorded* review still cannot ship with open findings or fewer than two
+ *     reviewers.
  */
 
 // --- The six register rules (SIG-UI-043) -------------------------------------
@@ -213,12 +217,15 @@ export function openFindings(review: HostileReaderReview): ReviewFinding[] {
 }
 
 /**
- * The release gate (SIG-UI-042): release is BLOCKED until every finding is
- * dispositioned, and the review must have two independent reviewers. Throws
- * otherwise — a template version whose hostile-reader review has open findings can
- * never be rendered/released. This is the executable form of the SIG-UI-042 gate.
+ * The release gate (SIG-UI-042, as waived by WV-04 / ADR-179): a review that was
+ * never performed is the honest `null` state and passes — the build records
+ * "not yet performed" instead of fabricating a review. A review that EXISTS must
+ * still have two independent reviewers and no undispositioned finding; the
+ * waiver lets the *absence* ship truthfully, it does not let a *failed* review
+ * ship. Throws otherwise.
  */
-export function assertReviewReleasable(review: HostileReaderReview): void {
+export function assertReviewReleasable(review: HostileReaderReview | null): void {
+  if (review === null) return;
   if (review.reviewers.length < 2) {
     throw new Error(
       `hostile-reader review for ${review.template_version} needs two independent reviewers (SIG-UI-042); got ${review.reviewers.length}`,

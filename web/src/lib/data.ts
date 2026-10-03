@@ -61,6 +61,7 @@ import {
   TERMS_DISCLOSURE_FIXTURE,
   type TermsDisclosure,
 } from "./terms-disclosure";
+import { SOURCES_FIXTURE, sourceLicenceTable, type SourceLicenceRow } from "./sources";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -82,7 +83,6 @@ import {
   RESEARCH_QUEUE_PROVENANCE,
   JURISDICTION_CLAIMS,
   QUEUE_AS_OF,
-  HOSTILE_READER_REVIEW,
   GENERATED_RATIONALE_TEMPLATES,
 } from "./corrections-methodology-fixture";
 import {
@@ -106,9 +106,22 @@ export function dataSource(): DataSource {
   return process.env.SIG_DATA_SOURCE === "export" ? "export" : "fixtures";
 }
 
-/** The repository root, resolved from this module's URL (web/src/lib/data.ts → root). */
+/**
+ * The repository root. `import.meta.url` is not stable across bundling: in the
+ * prerender worker this module is a chunk under `web/dist/.prerender/chunks/`,
+ * so a fixed `../../../` lands at `web/`, not the workspace root. Walk up until
+ * the `uv.lock` workspace marker is found; that file exists only at the root.
+ */
 function repoRoot(): string {
-  return fileURLToPath(new URL("../../../", import.meta.url));
+  let dir = fileURLToPath(new URL(".", import.meta.url));
+  for (;;) {
+    if (existsSync(`${dir}uv.lock`)) return dir.endsWith("/") ? dir : `${dir}/`;
+    const parent = dir.replace(/[^/]+\/?$/, "");
+    if (parent === dir || parent === "") {
+      throw new Error(`repoRoot: walked above ${dir} without finding uv.lock`);
+    }
+    dir = parent;
+  }
 }
 
 /**
@@ -117,7 +130,13 @@ function repoRoot(): string {
  * (`docs/build/tools/run_okc.sh`) uses.
  */
 export function exportDir(): string {
-  return process.env.SIG_EXPORT_DIR ?? `${repoRoot()}exports/out/okc`;
+  const override = process.env.SIG_EXPORT_DIR;
+  if (override !== undefined && override !== "") {
+    // `npm --prefix web` runs scripts with cwd=web/, so a repo-relative
+    // `SIG_EXPORT_DIR` must be anchored at the repo root, not the cwd.
+    return override.startsWith("/") ? override : `${repoRoot()}${override}`;
+  }
+  return `${repoRoot()}exports/out/okc`;
 }
 
 /**
@@ -540,14 +559,37 @@ export function getEntityCompartments(): Map<
 export function getTermsDisclosure(): TermsDisclosure {
   if (dataSource() === "fixtures") return TERMS_DISCLOSURE_FIXTURE;
   const path = `${exportDir()}/web/terms_disclosure.json`;
-  if (!existsSync(path)) {
+  if (existsSync(path)) {
+    const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
+    if (!isTermsDisclosure(parsed)) {
+      throw new Error(`${path}: not a valid sig.terms-disclosure/1 artifact`);
+    }
+    return parsed;
+  }
+  // P34.17: the 09-27 release predates the export-side artifact. When the
+  // export lacks it BUT actually carries express-terms rows (the
+  // `operator_accepted` compartment is present and non-empty), fall back to the
+  // committed policy table (`policy/data/express_terms.json`, ADR-183's
+  // sig.express-terms-disclosure/1 record) — same terms verbatim, same basis —
+  // so the disclosure is never absent where it applies. An export genuinely
+  // without express-terms rows still returns the honest empty list.
+  const accepted = `${exportDir()}/operator_accepted/sites.jsonl`;
+  if (!existsSync(accepted) || readFileSync(accepted, "utf-8").trim() === "") {
     return { ...TERMS_DISCLOSURE_FIXTURE, sources: [] };
   }
-  const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
-  if (!isTermsDisclosure(parsed)) {
-    throw new Error(`${path}: not a valid sig.terms-disclosure/1 artifact`);
+  const policyPath = `${repoRoot()}policy/src/policy/data/express_terms.json`;
+  const policy = JSON.parse(readFileSync(policyPath, "utf-8")) as {
+    basis?: unknown;
+    sources?: unknown;
+  };
+  if (!policy.basis || !Array.isArray(policy.sources)) {
+    throw new Error(`${policyPath}: not a valid sig.express-terms-disclosure/1 record`);
   }
-  return parsed;
+  return {
+    schema: "sig.terms-disclosure/1",
+    basis: policy.basis as TermsDisclosure["basis"],
+    sources: policy.sources as TermsDisclosure["sources"],
+  };
 }
 
 // --------------------------------------------------------------------------- //
@@ -570,6 +612,12 @@ export interface SiteMetadata {
   asOf: AsOfEcho;
   /** The reconciliation ruleset version the citation pins to (SIG-UI-035). */
   rulesetVersion: string;
+  /**
+   * The release id the site was built from (the export manifest's `release_id`)
+   * — P34.17's interim release stamp prints it on every page. `null` in
+   * fixtures mode (a development build has no release).
+   */
+  releaseId: string | null;
 }
 
 /** The reproducibility inputs the export manifest carries (a subset; §38.1 BuildSpec). */
@@ -615,7 +663,7 @@ export function getCompartmentTileSources(): CompartmentTileSource[] {
 
 export function getSiteMetadata(): SiteMetadata {
   if (dataSource() === "fixtures") {
-    return { asOf: AS_OF, rulesetVersion: RULESET_VERSION };
+    return { asOf: AS_OF, rulesetVersion: RULESET_VERSION, releaseId: null };
   }
   const path = `${exportDir()}/manifest.json`;
   let raw: string;
@@ -660,6 +708,10 @@ export function getSiteMetadata(): SiteMetadata {
       belief_pinned: true,
     },
     rulesetVersion: repro.ruleset_version,
+    releaseId:
+      typeof (parsed as { release_id?: unknown }).release_id === "string"
+        ? ((parsed as { release_id: string }).release_id)
+        : null,
   };
 }
 
@@ -888,14 +940,41 @@ export function getQueueAsOf(): string {
   return QUEUE_AS_OF;
 }
 
-/** The recorded hostile-reader review for the editorial-standards page (§41, SIG-UI-042). */
-export function getHostileReaderReview(): HostileReaderReview {
-  return HOSTILE_READER_REVIEW;
+/**
+ * The recorded hostile-reader review for the editorial-standards page (§41,
+ * SIG-UI-042). P34.17 / ADR-179 (WV-04): the committed fixture review was a
+ * fabricated two-reviewer record and is removed; the truth is that the review
+ * was NEVER PERFORMED, so the seam returns `null` and the page renders the
+ * "not yet performed" notice rather than a review card. Export mode reads
+ * `web/hostile_reader_review.json` when a future reviewed export emits one —
+ * an absent artifact is honest absence, never a fabricated record. A review
+ * that DOES exist still has to clear `assertReviewReleasable` at the page.
+ */
+export function getHostileReaderReview(): HostileReaderReview | null {
+  if (dataSource() === "fixtures") return null;
+  const path = `${exportDir()}/web/hostile_reader_review.json`;
+  if (!existsSync(path)) return null;
+  const parsed = JSON.parse(readFileSync(path, "utf-8")) as HostileReaderReview;
+  if (!Array.isArray(parsed?.findings) || !Array.isArray(parsed?.reviewers)) {
+    throw new Error(`${path}: not a valid hostile-reader review record`);
+  }
+  return parsed;
 }
 
 /** The generated rationale templates the style guide gates against the register rules (SIG-UI-046). */
 export function getRationaleTemplates(): readonly string[] {
   return GENERATED_RATIONALE_TEMPLATES;
+}
+
+/**
+ * P34.17 (R1.8-as-reassigned): the per-source licence table behind `/sources/`,
+ * aggregated from the export's own compartment `sites.jsonl` `_rights` blocks —
+ * the licence and credit shown are exactly what the published download bytes
+ * carry. Fixtures mode returns the small demonstration set.
+ */
+export function getSourceLicenceTable(): SourceLicenceRow[] {
+  if (dataSource() === "fixtures") return SOURCES_FIXTURE;
+  return sourceLicenceTable(exportDir());
 }
 
 // --- Reference / component-demo pages (SIG-UI-037). These render the API-wire-contract

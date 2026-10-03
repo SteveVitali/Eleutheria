@@ -126,6 +126,13 @@ kind = "http-absent"
 url = "https://surveillancegraph.org"
 path = "/intake/"
 
+
+[[probes.targets]]
+name = "absent-apex-visual-language"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/visual-language/"   # withdrawn fixture surface — removed by republish #1 (P34.17, A-0.3)
+
 [[probes.targets]]
 name = "absent-web-curate"
 kind = "http-absent"
@@ -168,6 +175,13 @@ kind = "http-absent"
 url_env = "SIG_PROBE_WEB_URL"
 path = "/intake/"
 
+
+[[probes.targets]]
+name = "absent-web-visual-language"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/visual-language/"   # withdrawn fixture surface — removed by republish #1 (P34.17, A-0.3)
+
 [[probes.targets]]
 name = "absent-bucket-curate"
 kind = "http-absent"
@@ -209,6 +223,13 @@ name = "absent-bucket-intake"
 kind = "http-absent"
 url = "https://storage.googleapis.com/{project}-sig-web"
 path = "/intake/"
+
+[[probes.targets]]
+name = "absent-bucket-visual-language"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/visual-language/"   # withdrawn fixture surface — removed by republish #1 (P34.17, A-0.3)
+
 
 [runs]
 # Every scheduled ingest execution appends one run row here:

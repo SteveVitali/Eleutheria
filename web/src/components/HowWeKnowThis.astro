@@ -24,7 +24,7 @@ interface Props {
   /**
    * The page's own name, used by the page-scoped scope line (P34.12 / C3
    * NEW-13): a page-specific summary names the page it describes ("These
-   * totals describe the research queue's own evidence…"), never an anonymous
+   * totals describe the research queue's own evidence…"), never an unattributed
    * "this page". Optional for back-compat: an unnamed page-scoped module still
    * renders the generic page line.
    */
@@ -56,7 +56,7 @@ const range = provenance.date_range;
     <span class="sig-visually-hidden" data-copy="HW-13"> — this page</span>
   )}</h2>
   <!-- P34.12 (C3 NEW-13): a page-scoped module names the page it describes
-       (the `pageName` prop), never an anonymous "this page". -->
+       (the `pageName` prop), never an unnamed "this page". -->
   {scope === "site" ? (
     <p class="sig-hwkt__scope" data-testid="hwkt-scope" data-copy="HW-01">
       Site-wide — these totals describe the whole published record, not this page alone.
