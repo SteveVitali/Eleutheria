@@ -75,6 +75,11 @@ const provenance = Astro.props.provenance ?? getSiteProvenance();
 // its actual scope so site-wide totals are never read as dossier/page figures.
 const provenanceScope = Astro.props.provenance !== undefined ? "page" : "site";
 const lang = Astro.props.lang ?? "en";
+// P34.17 (A-20 + H-6): the interim release stamp's rendered values are DATA —
+// batch rows pin the sentence templates with the placeholders verbatim (the
+// `{permalink}` precedent).
+const releaseId = siteMeta.releaseId;
+const asOfWorld = asOf.as_of_world;
 
 // The canonical origin the belief-pinned permalink resolves against (P27.6; DNS
 // cut-over is P27.10). `Astro.site` is set in astro.config.mjs; the literal fallback
@@ -104,6 +109,9 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
       { href: "/data-freshness/", label: "Data freshness" },
       { href: "/research-queue/", label: "Research queue" },
       { href: "/corrections/", label: "Corrections" },
+      // P34.17: the interim sources/licences page and the status page.
+      { href: "/sources/", label: "Sources" },
+      { href: "/status/", label: "Status" },
     ],
   },
   {
@@ -164,5 +172,30 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
         </>
       )}
     </main>
+    <footer class="sig-footer">
+      <!-- P34.17: the interim release stamp (A-20 honesty — the site is a dated
+           snapshot; the API may be newer) + the publication-basis label (H-6 /
+           ADR-167 — the recorded no-legal-review posture). Both ship as pending
+           copy-batch rows; the sentences render on every chrome=full page. The
+           stamp is omitted on chrome=minimal error/forwarder pages. -->
+      {chrome === "full" && (releaseId ? (
+        <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-01 RS-02">
+          This site shows release {releaseId}, data as of {asOfWorld}.
+          The public API is updated continuously and may show newer records.
+        </p>
+      ) : (
+        <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-03 RS-02">
+          This is a development build.
+          The public API is updated continuously and may show newer records.
+        </p>
+      ))}
+      {chrome === "full" && (
+        <p class="sig-footer__basis" data-testid="publication-basis" data-copy="PB-01 PB-02">
+          Published on the maintainer's own rights and publication decisions. No
+          lawyer's written opinion has been obtained; nothing here states that
+          this publication has been cleared by counsel.
+        </p>
+      )}
+    </footer>
   </body>
 </html>

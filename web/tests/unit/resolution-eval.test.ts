@@ -6,10 +6,13 @@ import { describe, expect, it } from "vitest";
 import { RESOLUTION_EVAL } from "../../src/lib/resolution-eval";
 
 describe("resolution eval — SIG measuring its own method (§32.5, P28.4)", () => {
-  it("preserves the PROVISIONAL disclosure verbatim and cites its deferral", () => {
+  it("carries the honest development-evidence disclosure and cites its deferral", () => {
+    // P34.17 / R1.4: the disclosure states the truth — AI- and agent-produced
+    // labels, no person labelled them — never a "human-verified" claim.
     expect(RESOLUTION_EVAL.provisional).toBe(true);
-    expect(RESOLUTION_EVAL.disclosure).toContain("PROVISIONAL");
-    expect(RESOLUTION_EVAL.disclosure).toContain("D-R6.1-EVAL");
+    expect(RESOLUTION_EVAL.disclosure).toContain("Development evidence only");
+    expect(RESOLUTION_EVAL.disclosure).toContain("no person labelled them");
+    expect(RESOLUTION_EVAL.disclosure).not.toMatch(/human.verified/i);
     expect(RESOLUTION_EVAL.deferral).toBe("D-R6.1-EVAL");
   });
 

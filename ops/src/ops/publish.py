@@ -789,6 +789,86 @@ def assert_public_tree_content(dist: Path) -> None:
         )
 
 
+#: The committed copy batch (B-2 / P34.11): every sentence a public page renders
+#: under a ``data-copy`` marker is a sha256-pinned row in this file. P34.17 makes
+#: republish #1 refuse to ship a pending sentence — the publish is the last line
+#: that can enforce the batch-confirmation rule in code (GATE-G4 / copy batch #1).
+DEFAULT_COPY_BATCH_PATH = Path("docs/build/reports/copy-batches/batch-01.md")
+
+#: ``data-copy="HO-02 HO-03"`` — the whitespace-separated row ids an element binds.
+_DATA_COPY_ATTR = re.compile(r'data-copy="([^"]+)"')
+
+#: P34.17 / R1.2 (B-8 + OP-10): the dispute page names the operator's e-mail
+#: address — injected at build time via ``SIG_DISPUTE_EMAIL``, never committed —
+#: and carries ``data-intake-email="unset"`` when it was not injected. A
+#: publishable tree must never ship the unset marker.
+_INTAKE_EMAIL_UNSET = 'data-intake-email="unset"'
+
+
+def load_copy_batch_statuses(batch_path: Path) -> dict[str, str]:
+    """Parse ``id → status`` from the copy-batch table (same shape the
+    ``tests/unit/test_p34_11_copy_batch.py`` binding suite reads)."""
+    statuses: dict[str, str] = {}
+    for line in batch_path.read_text(encoding="utf-8").splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.split("|")]
+        cells = cells[1:-1] if cells and cells[0] == "" else cells
+        if len(cells) != 5:
+            continue
+        rid, _page, _text, _sha, status = cells
+        if rid in ("id", "—") or set(rid) <= {"-", ":"}:
+            continue
+        statuses[rid] = status
+    return statuses
+
+
+def check_publishable_copy(dist: Path, batch_path: Path | None = None) -> list[str]:
+    """The republish-#1 copy gate (P34.17 / B-2): every ``data-copy`` sentence
+    rendered in the tree must resolve to a ``confirmed`` copy-batch row, and the
+    dispute page must carry an injected intake address. Returns the violations —
+    a publish MUST refuse when the list is non-empty.
+
+    Rows bound to elements that are not in this tree (governance-doc rows,
+    retired-page rows) are irrelevant — only rendered sentences are checked.
+    ``data-notice`` strings (N-1…N-7) are exempt by the recorded notice
+    allowance.
+    """
+    resolved = (
+        batch_path
+        if batch_path is not None
+        else Path(__file__).resolve().parents[3] / DEFAULT_COPY_BATCH_PATH
+    )
+    if not resolved.is_file():
+        return [f"the copy batch is absent: {resolved} — copy status cannot be proven"]
+    statuses = load_copy_batch_statuses(resolved)
+    violations: list[str] = []
+    for path in _iter_files(dist):
+        if path.suffix != ".html":
+            continue
+        rel = path.relative_to(dist).as_posix()
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for m in _DATA_COPY_ATTR.finditer(text):
+            for rid in m.group(1).split():
+                status = statuses.get(rid)
+                if status is None:
+                    violations.append(
+                        f"{rel}: data-copy id {rid!r} has no row in the copy batch "
+                        "(untracked sentence)"
+                    )
+                elif status != "confirmed":
+                    violations.append(
+                        f"{rel}: data-copy id {rid!r} is '{status}' in the copy batch — "
+                        "only operator-confirmed sentences may ship"
+                    )
+        if rel == "dispute/index.html" and _INTAKE_EMAIL_UNSET in text:
+            violations.append(
+                f"{rel}: {_INTAKE_EMAIL_UNSET} — the dispute page was built without "
+                "SIG_DISPUTE_EMAIL; it must name the operator's e-mail address (B-8)"
+            )
+    return violations
+
+
 def tree_manifest(root: Path, *, exclude: frozenset[str] = frozenset()) -> list[tuple[str, str]]:
     """``(relpath, sha256)`` for every file under ``root`` except ``exclude``."""
     rows: list[tuple[str, str]] = []
@@ -987,6 +1067,10 @@ class PublishWebResult:
     export_tree: Path | None = None
     export_plan: SyncPlan | None = None
     absent_probes: tuple[ProbeResult, ...] = ()
+    #: P34.17 / B-2: rendered sentences whose copy-batch row is missing or not
+    #: ``confirmed`` (plus an unset dispute-intake address). A dry run prints
+    #: them as warnings; ``--apply`` refuses.
+    copy_violations: tuple[str, ...] = ()
 
     def as_lines(self) -> list[str]:
         mode = "APPLIED" if self.applied else "DRY-RUN (nothing synced)"
@@ -1017,6 +1101,14 @@ class PublishWebResult:
                 f"  absence probes: {ok}/{len(self.absent_probes)} denied routes "
                 "confirmed absent (HTTP 404) on the public origins"
             )
+        if self.copy_violations:
+            lines.append(
+                f"  copy gate: {len(self.copy_violations)} rendered sentence(s) not "
+                "operator-confirmed in the copy batch — --apply would REFUSE (B-2):"
+            )
+            lines.extend(f"    {v}" for v in self.copy_violations[:50])
+            if len(self.copy_violations) > 50:
+                lines.append(f"    … and {len(self.copy_violations) - 50} more")
         return lines
 
 
@@ -1035,6 +1127,7 @@ def run_publish_web(
     data_release: str | None = None,
     image_digests: Sequence[str] = (),
     absent_verify: Callable[[], Sequence[ProbeResult]] | None = None,
+    copy_batch_path: str | Path | None = None,
 ) -> PublishWebResult:
     """The one publish path (SIG-OPS-003/004): assert → record → sync → verify.
 
@@ -1057,6 +1150,15 @@ def run_publish_web(
     allowlist = load_allowlist(allowlist_path)
     assert_allowlisted_tree(dist, allowlist)
     assert_public_tree_content(dist)
+    # P34.17 / B-2: the copy gate — every rendered `data-copy` sentence must be
+    # an operator-confirmed batch row and /dispute/ must name the injected
+    # address. Dry run reports the violations so the pre-go check is complete;
+    # --apply refuses.
+    copy_violations = tuple(
+        check_publishable_copy(
+            dist, Path(copy_batch_path).resolve() if copy_batch_path is not None else None
+        )
+    )
     if release_tree is not None:
         assert_release_tree(release_tree)
     if export_tree is not None and not export_tree.is_dir():
@@ -1086,6 +1188,12 @@ def run_publish_web(
 
     probes: tuple[ProbeResult, ...] = ()
     if apply:
+        if copy_violations:
+            raise PublishError(
+                "publish refused — republish #1 ships only operator-confirmed "
+                "copy (B-2 / copy batch #1) and a named dispute address:\n  "
+                + "\n  ".join(copy_violations)
+            )
         if bucket is None:
             raise PublishError(
                 "publish-web --apply needs a destination bucket (--bucket, "
@@ -1143,6 +1251,7 @@ def run_publish_web(
         export_tree=export_tree,
         export_plan=export_plan,
         absent_probes=probes,
+        copy_violations=copy_violations,
     )
 
 

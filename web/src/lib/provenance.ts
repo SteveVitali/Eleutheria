@@ -125,5 +125,8 @@ export const DEFAULT_PROVENANCE: ProvenanceSummary = {
   source_independence_count: 3,
   date_range: { earliest: "2025-03-25", latest: "2026-08-20" },
   rules_applied: ["resolver-ruleset-2026.07", "HIGHEST_TIER_WINS"],
-  human_review_status: "partially_reviewed",
+  // P34.17 (R1.4/R1.5): the honest fixture posture — no human review has been
+  // performed, so the demo provenance says "unreviewed", never a review that
+  // did not happen.
+  human_review_status: "unreviewed",
 };

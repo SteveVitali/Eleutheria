@@ -36,11 +36,15 @@ const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
 ---
 
 <BaseLayout title="Corrections log" path="/corrections/" provenance={CORRECTIONS_PROVENANCE} provenanceName="corrections log">
-  <p data-copy="CL-01 CL-03 CL-04">
+  <p data-copy="CL-01 CL-06 CL-04">
     Every correction SIG makes is public. A correction is a <strong>new assertion</strong>,
     never a deletion: the earlier value is preserved, and each entry names the belief
-    date at which it stood (SIG-GOV-005). Each entry states{" "}
+    date at which it stood. Each entry states{" "}
     <strong>what changed, when, why, and who reported it</strong>.
+  </p>
+  <p data-copy="CL-07">
+    Reports and corrections arrive by e-mail — the{" "}
+    <a href="/dispute/">dispute page</a> states the address and the handling order.
   </p>
   {logStart && (
     <p class="sig-log-start" data-testid="log-start" data-copy="CL-02">

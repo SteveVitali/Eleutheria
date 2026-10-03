@@ -136,14 +136,27 @@ test.describe("dispute/correction submission path (SIG-UI-033, §45)", () => {
     }
   });
 
-  test("prioritizes privacy/safety above all and needs no identity except legal demand", async ({ page }) => {
+  test("publishes the WV-08 handling order and no identity requirement except legal demand", async ({ page }) => {
+    // P34.17 / R1.2 (WV-05 + WV-08): the published order — privacy-harm and
+    // safety reports first, then factual corrections, then everything else —
+    // with NO response-time promise, and no "anonymous" claim (e-mail senders
+    // disclose their address). The legal-demand category still notes standing.
     await page.goto("/dispute/");
-    await expect(page.getByTestId("priority-note")).toContainText("before all others");
+    const note = page.getByTestId("priority-note");
+    await expect(note).toContainText("privacy-harm and safety reports first");
+    await expect(note).toContainText("then factual corrections");
+    await expect(page.getByTestId("priority-note")).not.toContainText("minute");
+    await expect(page.locator("body")).not.toContainText("anonymous");
+    await expect(page.locator("body")).not.toContainText("one click");
     const prioritized = page.locator("[data-testid='dispute-category'][data-priority-band='0']");
     await expect(prioritized).toHaveCount(2);
     const needsId = page.locator("[data-testid='dispute-category'][data-requires-identity='true']");
     await expect(needsId).toHaveCount(1);
     await expect(needsId).toHaveAttribute("data-category", "legal_demand");
+    // The intake channel is e-mail — the publish build injects the operator's
+    // address (SIG_DISPUTE_EMAIL); a publishable tree must never carry "unset".
+    await expect(page.getByTestId("intake-channel")).toHaveAttribute("data-intake-email", /^(set|unset)$/);
+    await expect(page.getByTestId("intake-channel")).toContainText("e-mail");
   });
 
   test("refusal is a published, exercisable outcome (SIG-GOV-004)", async ({ page }) => {
@@ -151,7 +164,7 @@ test.describe("dispute/correction submission path (SIG-UI-033, §45)", () => {
     await expect(page.getByTestId("refusal-outcome")).toBeVisible();
   });
 
-  test("the receiver is honestly described as built but not yet operating (P32.16)", async ({
+  test("the receiver is honestly described as not operating (P32.16)", async ({
     page,
   }) => {
     await page.goto("/dispute/");
@@ -159,7 +172,8 @@ test.describe("dispute/correction submission path (SIG-UI-033, §45)", () => {
     // The page must never advertise an unstaffed/unapproved receiver — the
     // flip is a later reviewed change gated on D-R10-PUBLISH-1 + staffing.
     await expect(notice).toHaveAttribute("data-operational", "false");
-    await expect(notice).toContainText("not yet operating");
+    // P34.17: notice string N-2 ("Not operating yet.") states the truth.
+    await expect(notice).toContainText("Not operating yet");
     // It must also never present a fake submission path.
     await expect(page.locator("form")).toHaveCount(0);
   });
@@ -227,8 +241,11 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     await expect(metrics.first()).toBeVisible();
     await expect(page.getByTestId("resolution-eval")).toContainText("0.714"); // Cohen's κ
     await expect(page.getByTestId("resolution-eval")).toContainText("0.976"); // B-cubed F1
-    // The provisional-eval disclosure is preserved (D-R6.1-EVAL, OPEN).
-    await expect(page.getByTestId("resolution-eval-provisional")).toContainText("PROVISIONAL");
+    // P34.17 / R1.4: the disclosure is honest development evidence — no person
+    // labelled the sets — never a "human-verified" claim or a P/R/F1 1.000 row.
+    await expect(page.getByTestId("resolution-eval-provisional")).toContainText("Development evidence only");
+    await expect(page.getByTestId("resolution-eval")).not.toContainText("human-verified");
+    await expect(page.getByTestId("resolution-eval")).not.toContainText("R 1.000");
     // P30.2b (ADR-105): the unit is defined — a resolved site is a cluster of records of the
     // same physical device, N of M; a value decision is never counted as one.
     const definition = page.getByTestId("resolved-site-definition");
@@ -254,15 +271,17 @@ test.describe("editorial standards (§41, SIG-UI-042/043/045/046)", () => {
     ).toContainText("not a record of surveillance being removed");
   });
 
-  test("the hostile-reader review is recorded and every finding dispositioned (SIG-UI-042)", async ({ page }) => {
+  test("the hostile-reader review is recorded truthfully as not yet performed (SIG-UI-042, WV-04)", async ({ page }) => {
+    // P34.17 / ADR-179: the fabricated two-reviewer "Releasable" record is gone;
+    // the page states the review was never performed (notice N-1) and no review
+    // card or findings render.
     await page.goto("/editorial-standards/");
-    await expect(page.getByTestId("review-reviewers")).toContainText(";"); // two reviewers
-    await expect(page.getByTestId("release-status")).toHaveAttribute("data-releasable", "true");
-    await expect(page.getByTestId("release-status")).toHaveAttribute("data-open-findings", "0");
-    const findings = page.getByTestId("review-finding");
-    await expect(findings.first()).toBeVisible();
-    // No finding is left open.
-    await expect(page.locator("[data-testid='review-finding'][data-disposition='open']")).toHaveCount(0);
+    await expect(page.getByTestId("review-status")).toContainText("Not yet performed.");
+    await expect(page.getByTestId("review-finding")).toHaveCount(0);
+    await expect(page.getByTestId("review-reviewers")).toHaveCount(0);
+    // The fabricated claims stay gone: no "Releasable" status anywhere.
+    await expect(page.locator("body")).not.toContainText("Releasable");
+    await expect(page.locator("body")).not.toContainText("Reviewer A");
   });
 
   test("the style guide codifies the six register rules; generated text is bound (SIG-UI-043/046)", async ({ page }) => {

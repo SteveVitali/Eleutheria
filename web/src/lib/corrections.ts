@@ -16,11 +16,14 @@
  *     helper keeps its `priorValuePermalink` name for the wire contract, but the copy
  *     never calls the link a "permalink" before real `/s/` pins exist.)
  *
- *   - **The dispute/correction submission path (SIG-UI-033, §45.1)** — reachable in one
- *     click from any claim on every page. It accepts the five §45.1 categories, does
- *     NOT require identifying the submitter (SIG-GOV-002, except a legal demand needing
- *     standing), and states the published handling priority (SIG-GOV-003): privacy-harm
- *     and safety claims are prioritized above all others, including factual corrections.
+ *   - **The dispute/correction submission path (SIG-UI-033, §45.1)** — linked from
+ *     every page through the base layout. It accepts the five §45.1 categories by
+ *     e-mail (WV-05 / ADR-180: the anonymous-receiver intake requirement is
+ *     waived — senders disclose the address they send from), promises NO
+ *     response time, and publishes the handling order (WV-08 / ADR-186: SIG-GOV-003's
+ *     SLA clause is waived; the priority clause is met by the published order —
+ *     privacy-harm and safety reports first, then factual corrections, then
+ *     everything else).
  *
  * This ticket *surfaces and submits* — the correction-as-new-assertion storage
  * semantics (§45 backend, SIG-STORE-020/SIG-TIME-009) are owned upstream and are out
@@ -48,8 +51,10 @@ export interface SubmissionCategoryMeta {
   /** Plain-language description of what this category is for. */
   description: string;
   /**
-   * Whether submitting requires identifying the submitter. Only a legal demand may,
-   * and only where it requires standing (SIG-GOV-002); everything else is anonymous.
+   * Whether the category's substance may require identifying the submitter.
+   * Only a legal demand may — where it requires standing (SIG-GOV-002, waived in
+   * part by WV-05: under e-mail intake EVERY sender discloses the address they
+   * send from; nothing here promises anonymity).
    */
   requiresIdentity: boolean;
   /**
@@ -105,17 +110,17 @@ export function categoriesByPriority(): SubmissionCategoryMeta[] {
   );
 }
 
-// --- The one-click submission path (SIG-UI-033) ------------------------------
+// --- The submission path (SIG-UI-033) ----------------------------------------
 
 /** The canonical path of the public dispute/correction intake page. */
 export const DISPUTE_PATH = "/dispute/";
 
 /**
- * The one-click submission href for a specific claim (SIG-UI-033). It carries the
+ * The submission href for a specific claim (SIG-UI-033). It carries the
  * subject/predicate the claim is about (and the belief-time it was seen at) so the
  * intake page can pre-fill "what this is about" — a plain GET, no client JavaScript
  * (SIG-UI-036/037). With no arguments it is the generic intake link every page
- * carries in its footer, so the channel is one click from anywhere.
+ * carries, so the channel is one link away from anywhere.
  */
 export function disputeHref(about?: { subject_id?: string; predicate_id?: string; as_of_belief?: string }): string {
   if (!about) return DISPUTE_PATH;
@@ -145,12 +150,14 @@ export const CORRECTION_OUTCOMES = [
 ] as const;
 export type CorrectionOutcome = (typeof CORRECTION_OUTCOMES)[number];
 
+// P34.17 (R1.2 / C4 NEW-20): requirement ids are internal machinery — the public
+// copy names the behaviour, never the id. Batch rows OC-01…OC-05 pin the text.
 export const CORRECTION_OUTCOME_META: Record<CorrectionOutcome, string> = {
   corrected: "A new, corrected assertion was appended; the prior value is preserved.",
-  annotated: "A response or annotation was attached alongside the claim (SIG-GOV-010).",
-  suppressed: "Removed from public view, retained internally under seal (SIG-GOV-007).",
-  deleted: "Deleted entirely; a content-free tombstone records that a deletion occurred (SIG-GOV-008).",
-  refused: "Declined, with published reasoning (SIG-GOV-004).",
+  annotated: "A response or annotation was attached alongside the claim.",
+  suppressed: "Removed from public view, retained internally under seal.",
+  deleted: "Deleted entirely; a content-free tombstone records that a deletion occurred.",
+  refused: "Declined, with published reasoning.",
 };
 
 /**
@@ -255,7 +262,7 @@ export function orderedCorrections(entries: readonly CorrectionEntry[]): Correct
   return [...entries].sort((a, b) => b.corrected_at.localeCompare(a.corrected_at) || a.id.localeCompare(b.id));
 }
 
-// --- The durable anonymous receiver (P32.16, ADR-135, SIG-FIND-006) ----------
+// --- The durable receiver (P32.16, ADR-135, SIG-FIND-006) --------------------
 
 /** The path the separate receiver process serves its no-JS report form on. */
 export const INTAKE_FORM_PATH = "/intake/new";
@@ -279,15 +286,18 @@ export interface IntakeAvailability {
  * BUILT (`sig-api serve-intake`, durable receipts, private moderation queue)
  * but NOT YET OPERATING — a flip happens only in a later reviewed change with
  * the operating packet approved, so the descriptor is a constant, not a probe
- * (a static page must never promise a liveness it cannot see).
+ * (a static page must never promise a liveness it cannot see). P34.17 / WV-05
+ * (ADR-180): the receiver is no longer described as "anonymous" — under
+ * e-mail-only intake senders disclose the address they send from.
  */
 export function intakeAvailability(): IntakeAvailability {
   return {
     operational: false,
+    // Batch row DP-07 pins this sentence (B-2). No gate names in public copy
+    // (C4 NEW-20): the approvals are described, not named.
     note:
-      "The durable anonymous receiver is built but not yet operating — it opens " +
-      "only after a staffed moderation owner, the retention schedule and the " +
-      "public-exposure decision are approved (GATE-G3). This page will never " +
-      "advertise an unstaffed receiver.",
+      "An online report form is not operating yet — it opens only after a staffed " +
+      "moderation owner, a ratified retention schedule and the public-exposure " +
+      "decision are approved.",
   };
 }
