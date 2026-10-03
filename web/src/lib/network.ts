@@ -274,9 +274,10 @@ export interface CentralityStatistic {
   value: number;
   /**
    * The measured ER-quality disclosure, or `null` when the statistic does not rest
-   * on a probabilistic entity-resolution eval (P31.14: the export-emitted degree
-   * centrality runs over spine entities minted by deterministic identity
-   * resolution — the disclosure string states that, rather than inventing numbers).
+   * on a probabilistic entity-resolution eval — the disclosure string then says
+   * what the figure does rest on rather than inventing numbers (P34.15: the
+   * withdrawn "deterministic identity resolution … exact" claim must not be
+   * re-stated here either).
    */
   er_quality: ErQuality | null;
   /** The inline disclosure text shown AT the statistic (never a footnote). */

@@ -219,3 +219,84 @@ describe("workspaceHref", () => {
     expect(href).toBe("/map/?v=1&focus=x&view=list");
   });
 });
+
+// --- P34.15 (K6 NEW-1): parsed-but-ignored parameters are announced ---------
+
+describe("which parsed parameters each view applies (K6 NEW-1)", () => {
+  it("parseWorkspaceState reports every contract param present in the input", async () => {
+    const { present } = parseWorkspaceState(
+      "v=1&release=p-x&collection=&q=flock&kind=dossier&jurisdiction=ok&technology=alpr&source=atlas&location=any&focus=a:b:c&view=map&page=2",
+    );
+    expect(present).toEqual([
+      "release",
+      "collection",
+      "q",
+      "kind",
+      "jurisdiction",
+      "technology",
+      "source",
+      "location",
+      "focus",
+      "view",
+      "page",
+    ]);
+    expect(parseWorkspaceState("v=1&view=list").present).toEqual(["view"]);
+    expect(parseWorkspaceState("").present).toEqual([]);
+  });
+
+  it("unappliedParams names exactly the params a view ignores — each view's ignored set", async () => {
+    const { unappliedParams, APPLIED_PARAMS } = await import(
+      "../../src/lib/workspace-state"
+    );
+    // Search applies q/kind/focus/release; the map adds collection; the network
+    // only focus/release — every other NAMED param is announced as ignored.
+    expect(unappliedParams(["jurisdiction", "technology", "source", "location"], "list")).toEqual([
+      "jurisdiction",
+      "technology",
+      "source",
+      "location",
+    ]);
+    expect(unappliedParams(["jurisdiction", "technology", "source", "location"], "map")).toEqual([
+      "jurisdiction",
+      "technology",
+      "source",
+      "location",
+    ]);
+    expect(
+      unappliedParams(["collection", "q", "kind", "jurisdiction", "location", "page"], "network"),
+    ).toEqual(["collection", "q", "kind", "jurisdiction", "location", "page"]);
+    // An applied facet is never flagged.
+    expect(unappliedParams(["q", "kind", "focus", "release"], "list")).toEqual([]);
+    expect(unappliedParams(["collection", "focus"], "map")).toEqual([]);
+    expect(unappliedParams(["focus"], "network")).toEqual([]);
+    // The view param is applied on every surface (the path decides).
+    for (const v of WORKSPACE_VIEWS) {
+      expect(unappliedParams(["view"], v)).toEqual([]);
+      expect(APPLIED_PARAMS[v]).toContain("view");
+    }
+  });
+
+  it("the notice names the ignored params in reader terms (batch row WS-01)", async () => {
+    const { facetNoticeText, IGNORED_FACET_NOTICE } = await import(
+      "../../src/lib/workspace-state"
+    );
+    expect(IGNORED_FACET_NOTICE).toContain("{facets}");
+    expect(facetNoticeText(["jurisdiction"])).toBe(
+      "This address names a jurisdiction filter, which this view does not apply — they do not filter what is shown.",
+    );
+    expect(facetNoticeText(["technology", "source", "location"])).toBe(
+      "This address names a technology filter, a source filter and a location filter, which this view does not apply — they do not filter what is shown.",
+    );
+    // A param with no friendly label still surfaces by name — never silently dropped.
+    expect(facetNoticeText(["wat"])).toContain('"wat"');
+  });
+
+  it("a fixture URL's ignored facet resolves to a notice on every island", async () => {
+    const { unappliedParams } = await import("../../src/lib/workspace-state");
+    const { present } = parseWorkspaceState("v=1&jurisdiction=US-OK&view=map");
+    // The full chain the islands run: parse → unapplied → notice.
+    for (const view of ["map", "network", "list"] as const) {
+      expect(unappliedParams(present, view)).toEqual(["jurisdiction"]);
+    }
+  });
+});

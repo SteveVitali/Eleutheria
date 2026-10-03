@@ -127,6 +127,35 @@
 | JD-05 | /search/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
 | JD-06 | / | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
 | JD-07 | /dossier/[slug]/print/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| MP-01 | /map/ | The surveillance-infrastructure map. | 12aff29a27641cab7020fd119b1e7d4b86fa3c23c53842ecd7e4e66f261eb59f | pending |
+| MP-02 | /map/ | Everything the map shows is also in the tables below — they are the equivalent, not a fallback; the interactive map is an opt-in enhancement that loads only when JavaScript runs. | 67f6d63f004d51fd5edbaa40a4fdda4ee93001806fe05255ba8bb1cc18b50644 | pending |
+| MP-03 | /map/ | The tiles are self-hosted static vector archives — no third-party tile CDN is required. | 270eb5c4ae17c74f0c14b3d45bcca350ff0aef33ad867ed19f510ea9c5017edd | pending |
+| MP-04 | /map/ | Layers with no records in this build are not listed. | e7e3bfa354472e33636741ba6f1f375b58e67c3ee0bccf1a04a028feaa55a52b | pending |
+| MP-05 | /map/ | Records | 47a84e92d5b225ee185aff8a30bafb3240a41b84c740bcaeac43772dd7f2fd37 | pending |
+| MP-07 | /map/ | Located records (tabular equivalent) | 2bc1ccefb36c0461c7c1a42ed19af5c60298b78890d9c3b2a44b3dfe987777cb | pending |
+| MP-08 | /map/ | Record | bfdd510698ef3ccbf17f2c67fc47790e1ba72894fb74fe284bbc136b47ef73e6 | pending |
+| MP-09 | /map/ | Showing the first {locatableRows.shown} of {locatableRows.total} located records | a626dba9ae581d2fd948bc6c721e1719fdd3dc5e57ad0ea2690750957e4d3671 | pending |
+| MP-10 | /map/ | Records without a published point | e31851bcc8a602c15a3eae5d1339c520d805fdf724fa8e347935d20f5415933b | pending |
+| MP-11 | /map/ | {j.count} record(s) with no published point. | 5b3267efa4d964896c061d251eceebd7519e383e68fa8b4746a59c981f64967d | pending |
+| MP-12 | /map/ | — {contested} contested; see the {j.jurisdiction} dossier. | 254d212030a35e9678e655f477c36682e4e015afbc22edbc0be17fc32ceff128 | pending |
+| MP-13 | /map/ | — {contested} contested. | 1d2873f6fe6e2a67ea76a369b86d7981fc9db2f3d2e3fcfc4e1bdebacf5e3284 | pending |
+| MP-14 | /map/ | Records with no coordinates — or whose sensitivity tier forbids publishing a point — are not dropped. | 98809f22f8abccd0ae846ad2e63ba601c575c3c80443e083fc7cb277bbec2ecf | pending |
+| MP-15 | /map/ | They appear as jurisdiction-level indicators, so the map does not systematically understate capability (SIG-UI-020). | e1fbd1e4b704366c7adf702d6997aae397fd717f1bb5b0c44b96a2ffff408299 | pending |
+| MP-06 | lib/map.ts | suppressed | f63d5b6b4de4fca716f2be8a179211b92682dc2e030b7063aea1d4a210f40033 | pending |
+| NW-01 | /network/ | SIG has not merged organisations across sources — one agency can appear more than once in these lists. | b8407ad50425890711a7e3d256741339dc7fe76aa36ce455fb489e1656a57cdc | pending |
+| NW-02 | /network/ | No centrality or hub ranking is published; the resolution review that would make one honest has not passed its gate. | ea36b45843d56aff5111119c735e0587a3b14b26598079b42263d73d728f46fd | pending |
+| NW-03 | lib/empty.ts | Network statistics are only as good as entity resolution; SIG publishes none until the resolution review that would make one honest has passed its gate. Their absence is not a measurement of zero. | a14feda910497bd8567d0fc2df6e25562668118b780c88474fccc992f8960692 | pending |
+| WS-01 | lib/workspace-state.ts | This address names {facets}, which this view does not apply — they do not filter what is shown. | 8abde874a4456f5a5687983935170b1ae1a712159a46970daf628b5c4969515c | pending |
+<!-- P34.15 (QW-12, K1 NEW-20, K12b NEW-7, K2 NEW-6, K6 NEW-1): the map's
+     "records" vocabulary and dropped-layer/suppressed-count honesty, the
+     contested-count → dossier lead, the network's merged-organisations and
+     withdrawn-ranking sentences, and the islands' ignored-parameter notice.
+     `{locatableRows.shown}`/`{j.count}`/`{contested}`/`{j.jurisdiction}` are
+     rendered template placeholders (the `{combinesList}` precedent — the row
+     pins the sentence shape); `{facets}` resolves in facetNoticeText to the
+     reader-facing parameter names. MP-06 pins the constant a value-suppressed
+     bin prints where its count would stand; NW-03 pins the (currently
+     unrendered) centrality empty-state body. pending — added 2026-10-03. -->
 <!-- P34.14 (QW-8, K4 NEW-1): the mixed-bucket sentence and the unmapped-code
      flag. `{combinesList}` is a rendered template placeholder (the HW-09
      `{provenance.denominator}` precedent — the row pins the sentence shape)

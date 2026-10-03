@@ -109,6 +109,29 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
     await expect(page.getByTestId("workspace-issues")).toBeVisible();
     await expect(page.getByTestId("workspace-issues")).toContainText(/version "9"/);
   });
+
+  test("an unsupported facet shows the notice on each island (P34.15, K6 NEW-1)", async ({
+    page,
+  }) => {
+    // The `jurisdiction` facet parses and round-trips, but no island applies
+    // it — each view must say so visibly rather than render an unfiltered
+    // view as if the filter held.
+    for (const path of ["/map/", "/network/", "/search/"]) {
+      await page.goto(`${path}?v=1&jurisdiction=US-OK`);
+      const notice = page.getByTestId("facet-not-applied");
+      await expect(notice).toBeVisible();
+      await expect(notice).toContainText("jurisdiction filter");
+      await expect(notice).toContainText(/does not apply/i);
+    }
+    // And the network announces a facet it does not apply even when others hold.
+    await page.goto("/network/?v=1&q=alpr&focus=agency:ocso");
+    const notice = page.getByTestId("facet-not-applied");
+    await expect(notice).toContainText("text query");
+    await expect(notice).not.toContainText("selected record");
+    // No ignored facet → no notice.
+    await page.goto("/map/?v=1&focus=device:okc-001&view=map");
+    await expect(page.getByTestId("facet-not-applied")).toHaveCount(0);
+  });
 });
 
 test.describe("map island — focus + compartment switch (SIG-FIND-004)", () => {

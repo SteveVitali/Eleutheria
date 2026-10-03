@@ -38,7 +38,7 @@ import { LEVERAGE_METRIC_FIXTURE, type LeverageMetric } from "./leverage-fixture
 
 // The per-surface contract types (P27.1) the getters below are typed against.
 import type { MapAsset, DensityBin } from "./map";
-import type { NetworkNode, NetworkEdge, AccessPath, CentralityStatistic } from "./network";
+import type { NetworkNode, NetworkEdge, AccessPath } from "./network";
 import type { FreshnessRow, CoverageMetric } from "./metrics";
 import type { ContractWatchItem } from "./watch";
 import type { EvidenceArtifact, DecisionPoint } from "./recommender";
@@ -62,7 +62,6 @@ import {
   NETWORK_NODES,
   NETWORK_EDGES,
   ACCESS_PATHS,
-  CENTRALITY_STATS,
   FOCUS_ENTITY_ID,
 } from "./map-network-fixture";
 import {
@@ -760,18 +759,13 @@ export function getMapDensityBins(): DensityBin[] {
   return DENSITY_BINS;
 }
 
-/** Centrality/hub statistics for the network explorer (degree over the typed access edges, P31.14). */
-export function getNetworkCentrality(): CentralityStatistic[] {
-  if (dataSource() === "export") {
-    return readAnalytics("centrality", (env, path) => {
-      if (!Array.isArray(env.statistics)) throw new Error(`${path}: expected a "statistics" array`);
-      return env.statistics as CentralityStatistic[];
-    });
-  }
-  return CENTRALITY_STATS;
-}
-
-/** The entity the network explorer centers its ego view on by default (SIG-UI-022). */
+/**
+ * The entity the network explorer centers its ego view on by default (SIG-UI-022).
+ * P34.15 (SIG-IDENT-030 by abstention): the centrality `statistics` list is
+ * deliberately NOT read — the ranking is withdrawn until organisation entity
+ * resolution passes its gate; the artifact's `focus` block remains the pick's
+ * stated mechanism (highest undirected degree, ties lexical).
+ */
 export function getNetworkFocusEntityId(): string {
   if (dataSource() === "export") {
     return readAnalytics("centrality", (env, path) => {

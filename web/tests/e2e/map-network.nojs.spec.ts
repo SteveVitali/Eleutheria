@@ -10,13 +10,43 @@ import { test, expect } from "@playwright/test";
 
 test("map has a populated tabular equivalent without JS (SIG-UI-037)", async ({ page }) => {
   await page.goto("/map/");
-  // The located-assets table and the coverage-bins table both carry rows.
+  // The located-records table and the coverage-bins table both carry rows.
   await expect(page.getByTestId("map-asset-row").first()).toBeVisible();
   await expect(page.getByTestId("coverage-bin").first()).toBeVisible();
-  // The jurisdiction indicators for point-less assets are present (SIG-UI-020).
+  // The jurisdiction indicators for point-less records are present (SIG-UI-020).
   await expect(page.getByTestId("jurisdiction-indicator").first()).toBeVisible();
   // OSM attribution is in the static HTML (every context, incl. no-JS/print).
   await expect(page.getByTestId("map-attribution")).toContainText("OpenStreetMap");
+});
+
+test("map counts records, drops empty legend entries, prints no suppressed count (P34.15, QW-12)", async ({
+  page,
+}) => {
+  await page.goto("/map/");
+  // The record vocabulary is in the static HTML — never "devices"/"assets" totals.
+  await expect(page.getByRole("heading", { name: "Located records (tabular equivalent)" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Records without a published point" })).toBeVisible();
+  // Only data-bearing layer controls are listed — the coverage-bound point
+  // control is the only one this build carries.
+  await expect(page.getByTestId("layer-control")).toHaveCount(1);
+  await expect(page.getByTestId("layers-not-listed")).toBeVisible();
+  // A value-suppressed bin prints the word, never a figure.
+  const suppressed = page.locator(
+    "[data-testid='coverage-bin'] >> text=suppressed",
+  );
+  await expect(suppressed.first()).toBeVisible();
+});
+
+test("contested locations roll up to a count that leads to the dossier (P34.15, K12b NEW-7)", async ({
+  page,
+}) => {
+  await page.goto("/map/");
+  const contested = page.getByTestId("jurisdiction-contested");
+  await expect(contested).toHaveCount(1); // Oklahoma City: one UNRESOLVED-location record
+  const link = contested.getByTestId("contested-dossier-link");
+  await expect(link).toHaveAttribute("href", "/dossier/oklahoma-city/");
+  const res = await link.click().then(() => page.url());
+  expect(res).toContain("/dossier/oklahoma-city/");
 });
 
 test("low-coverage ≠ low-density is encoded in the static HTML (SIG-UI-018)", async ({ page }) => {
@@ -37,14 +67,19 @@ test("network has a populated list equivalent without JS (SIG-UI-037)", async ({
   await expect(page.getByTestId("hop-evidence").first()).toContainText("evidence:");
 });
 
-test("every centrality statistic discloses ER quality inline without JS (SIG-UI-023)", async ({
+test("no centrality statistic or 'exact' identity claim renders (P34.15, K2 NEW-6, SIG-IDENT-030)", async ({
   page,
 }) => {
   await page.goto("/network/");
-  const stats = page.getByTestId("centrality-stat");
-  const count = await stats.count();
-  expect(count).toBeGreaterThan(0);
-  for (let i = 0; i < count; i += 1) {
-    await expect(stats.nth(i).getByTestId("er-disclosure")).toContainText(/entity resolution/i);
-  }
+  // The ranking is withdrawn — an abstention note, never a zero measurement
+  // and never the retired "deterministic identity resolution … exact" claim.
+  await expect(page.getByTestId("centrality-stat")).toHaveCount(0);
+  await expect(page.getByTestId("er-disclosure")).toHaveCount(0);
+  await expect(page.getByTestId("centrality-withdrawn")).toBeVisible();
+  await expect(page.getByTestId("centrality-withdrawn")).toContainText(
+    /not merged organisations/i,
+  );
+  await expect(page.locator("body")).not.toContainText(
+    /deterministic identity resolution|never an estimate/i,
+  );
 });

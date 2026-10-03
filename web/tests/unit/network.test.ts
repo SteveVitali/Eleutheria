@@ -27,13 +27,23 @@ import {
 import type { AccessPath, ErQuality } from "../../src/lib/network";
 import {
   ACCESS_PATHS,
-  CENTRALITY_STATS,
-  ER_QUALITY,
   HEADLINE_PATH,
   NETWORK_EDGES,
   NETWORK_NODES,
   SPECULATIVE_PATH,
 } from "../../src/lib/map-network-fixture";
+
+// A test-only ER-quality disclosure for exercising the SIG-UI-023 machinery —
+// deliberately NOT a shipped fixture value (P34.15: the fabricated ER eval and
+// the statistics it decorated are withdrawn until the gate passes).
+const TEST_ER: ErQuality = {
+  pairwise_precision: 0.97,
+  pairwise_recall: 0.91,
+  f1: 0.94,
+  bcubed_precision: 0.95,
+  bcubed_recall: 0.89,
+  holdout_version: "test-holdout",
+};
 
 describe("ego network with expansion is the default (SIG-UI-022)", () => {
   it("defaults to ego, never a global graph", () => {
@@ -89,21 +99,30 @@ describe("three access edge types, distinct + independently filterable (SIG-UI-0
 
 describe("inline ER-quality disclosure on EVERY centrality statistic (SIG-UI-023)", () => {
   it("cannot build a statistic without a valid ER-quality disclosure", () => {
-    const bad = { ...ER_QUALITY, f1: 1.4 } as ErQuality;
+    const bad = { ...TEST_ER, f1: 1.4 } as ErQuality;
     expect(() => centralityStatistic("x", "degree", 0.5, bad)).toThrow(/SIG-UI-023/);
-    const noHoldout = { ...ER_QUALITY, holdout_version: "" } as ErQuality;
+    const noHoldout = { ...TEST_ER, holdout_version: "" } as ErQuality;
     expect(() => centralityStatistic("x", "degree", 0.5, noHoldout)).toThrow(/SIG-UI-023/);
   });
 
-  it("every fixture statistic carries a non-empty inline disclosure at the statistic", () => {
-    expect(CENTRALITY_STATS.length).toBeGreaterThan(0);
-    for (const s of CENTRALITY_STATS) {
-      expect(s.disclosure).toBeTruthy();
-      expect(s.disclosure.toLowerCase()).toContain("entity resolution");
-      expect(s.disclosure).toContain("F1");
-      expect(s.er_quality?.holdout_version).toBeTruthy();
-    }
-    expect(() => assertErDisclosures(CENTRALITY_STATS)).not.toThrow();
+  it("a built statistic carries a non-empty inline disclosure at the statistic", () => {
+    // The contract stands for the statistic's return: P34.15 withdraws the
+    // figures (SIG-IDENT-030 by abstention) but keeps the type's disclosure
+    // guarantee — a statistic that cannot say its ER quality cannot be built.
+    const s = centralityStatistic("rtcc:okc", "degree", 0.62, TEST_ER);
+    expect(s.disclosure).toBeTruthy();
+    expect(s.disclosure.toLowerCase()).toContain("entity resolution");
+    expect(s.disclosure).toContain("F1");
+    expect(s.er_quality?.holdout_version).toBeTruthy();
+    expect(() => assertErDisclosures([s])).not.toThrow();
+  });
+
+  it("the committed fixtures ship no centrality statistic (P34.15 withdrawal)", async () => {
+    // The fixture module exports no CENTRALITY_STATS and no fabricated ER eval —
+    // re-adding either is a regression of the SIG-IDENT-030 abstention.
+    const fixture = await import("../../src/lib/map-network-fixture");
+    expect("CENTRALITY_STATS" in fixture).toBe(false);
+    expect("ER_QUALITY" in fixture).toBe(false);
   });
 });
 

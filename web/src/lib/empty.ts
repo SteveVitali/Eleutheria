@@ -102,7 +102,7 @@ const COPY: Record<EmptySurface, EmptyStateCopy> = {
   },
   centrality: {
     heading: "No centrality statistics yet",
-    body: "Network statistics are only as good as entity resolution; SIG publishes none until there is a network to measure. Their absence is not a measurement of zero.",
+    body: "Network statistics are only as good as entity resolution; SIG publishes none until the resolution review that would make one honest has passed its gate. Their absence is not a measurement of zero.",
     cta: RESEARCH_QUEUE_CTA,
   },
   accessEdges: {

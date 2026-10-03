@@ -20,7 +20,6 @@ import {
   getMapDensityBins,
   getMapSites,
   getNetwork,
-  getNetworkCentrality,
   getNetworkFocusEntityId,
   getQueueAsOf,
   getResearchQueue,
@@ -186,15 +185,9 @@ let analyticsBundle: string;
 const ANALYTICS_BINS = [
   { h3: "8326c2fffffffff", jurisdiction: "Oklahoma", deviceCount: 3, coverage: "low" },
 ];
-const ANALYTICS_STATS = [
-  {
-    node_id: "n-okcpd",
-    metric: "degree",
-    value: 4,
-    er_quality: null,
-    disclosure: "Degree over the typed access edges — not a probabilistic ER eval.",
-  },
-];
+// P34.15 (SIG-IDENT-030 by abstention): the centrality artifact carries NO
+// statistics — the `focus` block is the only part the surfaces read.
+const ANALYTICS_STATS: never[] = [];
 const ANALYTICS_DECISION = {
   decision_type: "renewal",
   subject_id: "c1",
@@ -266,7 +259,6 @@ describe("P31.14 web data layer — export mode reads web/analytics/*.json", () 
     process.env.SIG_DATA_SOURCE = "export";
     process.env.SIG_EXPORT_DIR = analyticsBundle;
     expect(getMapDensityBins()).toEqual(ANALYTICS_BINS);
-    expect(getNetworkCentrality()).toEqual(ANALYTICS_STATS);
     expect(getNetworkFocusEntityId()).toBe("n-okcpd");
     expect(getDecisionPoint()).toEqual(ANALYTICS_DECISION);
     // P34.11 (QW-6): the site summary additionally carries the artifact's own
@@ -284,7 +276,6 @@ describe("P31.14 web data layer — export mode FAILS LOUD on a missing analytic
   // throw (never a demo constant, never a silent empty state).
   const cases: [string, () => unknown][] = [
     ["getMapDensityBins", getMapDensityBins],
-    ["getNetworkCentrality", getNetworkCentrality],
     ["getNetworkFocusEntityId", getNetworkFocusEntityId],
     ["getDecisionPoint", getDecisionPoint],
     ["getSiteProvenance", getSiteProvenance],
@@ -325,7 +316,6 @@ describe("P31.14 web data layer — fixtures mode still serves the committed con
   it("the analytics getters return their fixture values in fixtures mode", () => {
     process.env.SIG_DATA_SOURCE = "fixtures";
     expect(getMapDensityBins().length).toBeGreaterThan(0);
-    expect(getNetworkCentrality().length).toBeGreaterThan(0);
     expect(getNetworkFocusEntityId()).toBeTruthy();
     expect(getDecisionPoint()).not.toBeNull();
     expect(getJurisdictionClaims().length).toBeGreaterThan(0);

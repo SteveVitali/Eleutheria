@@ -31,6 +31,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import {
   clearFocusOutOfScope,
+  facetNoticeText,
   recordRoutes,
   viewHref,
   WORKSPACE_VIEWS,
@@ -68,7 +69,7 @@ const VIEW_LABELS: Record<string, string> = {
 };
 
 export default function SearchIsland({ items, release }: SearchIslandProps): ReactElement {
-  const { state, issues, update } = useWorkspaceState("list", { release });
+  const { state, issues, ignored, update } = useWorkspaceState("list", { release });
   // The text field mirrors state.q (deep links, Back/Forward) but stays a
   // controlled local input while typing; committed to the URL on change via
   // `replace` so keystrokes do not flood history.
@@ -151,6 +152,11 @@ export default function SearchIsland({ items, release }: SearchIslandProps): Rea
       {issues.length > 0 && (
         <p className="sig-island__note" role="status" data-testid="workspace-issues">
           {issues.join(" ")}
+        </p>
+      )}
+      {ignored.length > 0 && (
+        <p className="sig-island__note" role="status" data-testid="facet-not-applied">
+          {facetNoticeText(ignored)}
         </p>
       )}
 

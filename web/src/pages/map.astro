@@ -3,8 +3,8 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The infrastructure map (§39.3). The shipped page is static and zero-JS
-// (SIG-UI-036): the layer catalog, the coverage-bound point control, the
+// The infrastructure map (§39.3). The shipped page is static-first (SIG-UI-036):
+// the data-bearing layers, the coverage-bound point control, the
 // low-coverage≠low-density encoding, the national-zoom bins, and the no-coordinate
 // jurisdiction indicators all render server-side, and the TABULAR EQUIVALENT below
 // is the source of truth and the no-JS/screen-reader path (SIG-UI-037). The map is
@@ -12,8 +12,12 @@
 // compartment (P31.15, ADR-R9-TILES) with per-source attribution and NO basemap
 // (Q8) — the style is at /map/style.json (SIG-UI-038, SIG-GEO-012/013); the
 // maplibre-gl runtime reaches the page only inside the `/map` island allowance
-// (SIG-UI-047), so archivability and the zero-JS budget hold. The combined,
+// (SIG-UI-047), so archivability and the island budget hold. The combined,
 // licence-mixed /map/points.json is retired (Q9 — R8-1 ending).
+// P34.15 (QW-12/K1 NEW-20/K12b NEW-7): the tables count RECORDS (never "devices"),
+// legend entries with no records are dropped, a value-suppressed bin prints no
+// count, and contested locations roll up to a per-jurisdiction count that leads
+// to the dossier — never a dead task link.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
 import EmptyState from "../components/EmptyState.astro";
@@ -27,8 +31,13 @@ import {
   POINT_LAYER_ID,
   COVERAGE_LAYER_ID,
   DEFAULT_SHARING_EDGE_VIEW,
+  binCountLabel,
+  contestedCount,
   coverageEncoding,
   islandPoints,
+  jurisdictionSlug,
+  layerControlsWithData,
+  layersWithData,
   boundedJurisdictionIndicators,
   partitionByLocatability,
   readsAsDensity,
@@ -36,6 +45,7 @@ import {
 } from "../lib/map";
 import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
 import {
+  getDossiers,
   getMapSites,
   getMapDensityBins,
   getCompartmentTileSources,
@@ -45,6 +55,7 @@ import {
   capRows,
   getSiteMetadata,
 } from "../lib/data";
+import { dossierPath } from "../lib/dossier";
 import { beliefPinnedPermalink } from "../lib/citation";
 import MapIsland from "../islands/MapIsland";
 import "../styles/islands.css";
@@ -75,6 +86,45 @@ const assetsByJurisdiction = summariseBy(locatable, (a) => a.jurisdiction);
 const boundControl = LAYER_CONTROLS.find(
   (c) => c.governs.includes(POINT_LAYER_ID) && c.governs.includes(COVERAGE_LAYER_ID),
 )!;
+
+// P34.15 (QW-12): a legend entry implies data — controls and layer labels are
+// listed ONLY when a layer they name carries records in this build. Today the
+// map draws device points/indicators (physical_devices) and the coverage
+// underlay; every other §39.3 layer has no records yet and is not listed.
+const DATA_LAYER_IDS: ReadonlySet<string> = new Set([
+  ...(MAP_ASSETS.length > 0 ? [POINT_LAYER_ID] : []),
+  ...(bins.length > 0 ? [COVERAGE_LAYER_ID] : []),
+]);
+const visibleControls = layerControlsWithData(LAYER_CONTROLS, DATA_LAYER_IDS);
+const layersDropped = visibleControls.length < LAYER_CONTROLS.length;
+const observedWithData = layersWithData(OBSERVED_LAYERS, DATA_LAYER_IDS);
+const derivedWithData = layersWithData(DERIVED_LAYERS, DATA_LAYER_IDS);
+
+// P34.15 (K12b NEW-7): the retired per-record "⚠ Unresolved" affordances (dead
+// /task/new/ links) become a per-jurisdiction contested count that leads to the
+// dossier — only where a dossier with the jurisdiction's slug exists, so the
+// count never links to a 404. The count covers ALL of the indicator's records,
+// not just the inline-listed cap. A partial export tree without dossiers.json
+// degrades to the count without the link — never a build failure, never a 404.
+const DOSSIER_SLUGS = new Set(
+  (() => {
+    try {
+      return getDossiers().map((d) => d.slug);
+    } catch {
+      return [] as string[];
+    }
+  })(),
+);
+const CONTESTED_BY_JURISDICTION = new Map(
+  jurisdictionIndicators.map((j) => [
+    j.jurisdiction,
+    contestedCount(j.assetIds, ASSET_BY_ID),
+  ]),
+);
+const dossierSlugFor = (jurisdiction: string): string | null => {
+  const slug = jurisdictionSlug(jurisdiction);
+  return DOSSIER_SLUGS.has(slug) ? slug : null;
+};
 
 // A tiny static bin strip so the low-coverage≠low-density encoding is visible.
 const cell = 64;
@@ -113,12 +163,11 @@ const mapCitationHref = beliefPinnedPermalink({
 ---
 
 <BaseLayout title="Infrastructure map" path="/map/">
-  <p>
-    The surveillance-infrastructure map. It renders as static content with no client
-    JavaScript and is <strong>served from self-hosted static vector tiles</strong>, so
-    it has no hard dependency on a third-party tile CDN. <strong>Everything the map
-    shows is also in the tables below</strong> — they are the equivalent, not a
-    fallback.
+  <p data-copy="MP-01 MP-02 MP-03">
+    The surveillance-infrastructure map. Everything the map shows is also in the
+    tables below — they are the equivalent, not a fallback; the interactive map
+    is an opt-in enhancement that loads only when JavaScript runs. The tiles
+    are self-hosted static vector archives — no third-party tile CDN is required.
   </p>
 
   <ViewSwitch view="map" release={LATEST?.publicationId ?? null} />
@@ -151,7 +200,7 @@ const mapCitationHref = beliefPinnedPermalink({
   <!-- Layers (SIG-UI-016): observed layers, plus DERIVED layers flagged distinct. -->
   <h2 id="layers-heading">Layers</h2>
   <ul class="sig-layer-controls" data-testid="map-layer-controls" aria-labelledby="layers-heading">
-    {LAYER_CONTROLS.map((c) => {
+    {visibleControls.map((c) => {
       const bound = c.id === boundControl.id;
       return (
         <li
@@ -172,15 +221,22 @@ const mapCitationHref = beliefPinnedPermalink({
       );
     })}
   </ul>
+  {layersDropped && (
+    <p class="sig-island__note" data-testid="layers-not-listed" data-copy="MP-04">Layers with no records in this build are not listed.</p>
+  )}
 
   <details class="sig-recon">
     <summary>Observed vs derived layers (SIG-GEO-006)</summary>
     <div class="sig-recon__body">
-      <p><strong>Observed</strong> (a record): {OBSERVED_LAYERS.map((l) => l.label).join(", ")}.</p>
-      <p>
-        <strong>Derived</strong> (a model, drawn distinctly and separately toggled):{" "}
-        {DERIVED_LAYERS.map((l) => l.label).join(", ")}.
-      </p>
+      {observedWithData.length > 0 && (
+        <p><strong>Observed</strong> (a record): {observedWithData.map((l) => l.label).join(", ")}.</p>
+      )}
+      {derivedWithData.length > 0 && (
+        <p>
+          <strong>Derived</strong> (a model, drawn distinctly and separately toggled):{" "}
+          {derivedWithData.map((l) => l.label).join(", ")}.
+        </p>
+      )}
     </div>
   </details>
 
@@ -213,13 +269,15 @@ const mapCitationHref = beliefPinnedPermalink({
             stroke={render.coverage.hatched ? "var(--sig-epi-absence-ink)" : "var(--sig-rule)"}
             stroke-dasharray={render.coverage.hatched ? "3 2" : undefined}
           >
-            <title>{`${bin.jurisdiction}: ${bin.deviceCount} device(s), coverage ${bin.coverage}`}</title>
+            <title>{coverageEncoding(bin.coverage).valueSuppressed
+              ? `${bin.jurisdiction}: record count suppressed, coverage ${bin.coverage}`
+              : `${bin.jurisdiction}: ${bin.deviceCount} record(s), coverage ${bin.coverage}`}</title>
           </rect>
           <text x={i * cell + cell / 2} y={cell + 12} text-anchor="middle" font-size="9">
             {bin.coverage}
           </text>
           <text x={i * cell + cell / 2} y={cell + 26} text-anchor="middle" font-size="9">
-            {readsAsDensity(bin) ? `${bin.deviceCount} dev` : "unknown"}
+            {binCountLabel(bin)}
           </text>
         </g>
       ))}
@@ -238,7 +296,7 @@ const mapCitationHref = beliefPinnedPermalink({
       <tr>
         <th scope="col">H3 cell</th>
         <th scope="col">Jurisdiction</th>
-        <th scope="col">Devices</th>
+        <th scope="col" data-copy="MP-05">Records</th>
         <th scope="col">Coverage</th>
         <th scope="col">Reads as</th>
       </tr>
@@ -254,7 +312,7 @@ const mapCitationHref = beliefPinnedPermalink({
         >
           <th scope="row"><code>{bin.h3}</code></th>
           <td>{bin.jurisdiction}</td>
-          <td>{bin.deviceCount}</td>
+          <td>{binCountLabel(bin)}</td>
           <td>{coverageEncoding(bin.coverage).label}</td>
           <td>{readsAsDensity(bin) ? "a density signal" : "we don't know (coverage too low)"}</td>
         </tr>
@@ -264,7 +322,7 @@ const mapCitationHref = beliefPinnedPermalink({
   </div>
 
   <!-- The tabular equivalent for the asset points + jurisdiction indicators. -->
-  <h2 id="assets-heading">Located assets (tabular equivalent)</h2>
+  <h2 id="assets-heading" data-copy="MP-07">Located records (tabular equivalent)</h2>
   {locatable.length === 0 ? (
     <EmptyState surface="mapAssets" />
   ) : (
@@ -279,7 +337,7 @@ const mapCitationHref = beliefPinnedPermalink({
       </ul>
       {locatableRows.truncated && (
         <p class="sig-table-note" data-testid="assets-truncation-note">
-          Showing the first {locatableRows.shown} of {locatableRows.total} located assets
+          <span data-copy="MP-09">Showing the first {locatableRows.shown} of {locatableRows.total} located records</span>
           {LATEST ? (
             <>
               {" "}— every released record remains navigable in the{" "}
@@ -300,7 +358,7 @@ const mapCitationHref = beliefPinnedPermalink({
       <table class="sig-table" aria-labelledby="assets-heading">
         <thead>
       <tr>
-        <th scope="col">Asset</th>
+        <th scope="col" data-copy="MP-08">Record</th>
         <th scope="col">Jurisdiction</th>
         <th scope="col">Tier</th>
         <th scope="col">Latitude</th>
@@ -331,19 +389,28 @@ const mapCitationHref = beliefPinnedPermalink({
     </>
   )}
 
-  <!-- No-coordinate assets: jurisdiction indicators, never dropped (SIG-UI-020). -->
-  <h2 id="nocoord-heading">Assets without a published point</h2>
-  <p>
-    Assets with no coordinates — or whose sensitivity tier forbids publishing a point —
-    are <strong>not dropped</strong>. They appear as jurisdiction-level indicators, so
-    the map does not systematically understate capability (SIG-UI-020).
+  <!-- No-coordinate records: jurisdiction indicators, never dropped (SIG-UI-020). -->
+  <h2 id="nocoord-heading" data-copy="MP-10">Records without a published point</h2>
+  <p data-copy="MP-14 MP-15">
+    Records with no coordinates — or whose sensitivity tier forbids publishing a
+    point — are <strong>not dropped</strong>. They appear as jurisdiction-level
+    indicators, so the map does not systematically understate capability
+    (SIG-UI-020).
   </p>
   {jurisdictionIndicators.length === 0 && <EmptyState surface="mapIndicators" />}
   <ul class="sig-jurisdiction-indicators">
-    {boundIndicators.map((j) => (
+    {boundIndicators.map((j) => {
+      const contested = CONTESTED_BY_JURISDICTION.get(j.jurisdiction) ?? 0;
+      const dossierSlug = dossierSlugFor(j.jurisdiction);
+      return (
       <li data-testid="jurisdiction-indicator" data-count={j.count}>
-        <strong>{j.jurisdiction}</strong>: {j.count} asset{j.count === 1 ? "" : "s"} with no
-        published point.
+        <strong>{j.jurisdiction}</strong>: <span data-copy="MP-11">{j.count} record(s) with no published point.</span>
+        {contested > 0 && dossierSlug !== null && (
+          <span class="sig-jurisdiction-contested" data-testid="jurisdiction-contested" data-count={contested} data-copy="MP-12"> — {contested} contested; see the <a href={dossierPath(dossierSlug)} data-testid="contested-dossier-link">{j.jurisdiction} dossier</a>.</span>
+        )}
+        {contested > 0 && dossierSlug === null && (
+          <span class="sig-jurisdiction-contested" data-testid="jurisdiction-contested" data-count={contested} data-copy="MP-13"> — {contested} contested.</span>
+        )}
         <ul>
           {j.listedIds.map((id) => {
             const asset = ASSET_BY_ID.get(id)!;
@@ -384,7 +451,8 @@ const mapCitationHref = beliefPinnedPermalink({
           </p>
         )}
       </li>
-    ))}
+      );
+    })}
   </ul>
 
   <h2 id="sharing-heading">Sharing edges</h2>
