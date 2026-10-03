@@ -414,6 +414,34 @@ export function getReleaseSearchTargets(): ReleaseSearchTarget[] {
 }
 
 /**
+ * The publication the investigation workspace defaults `release=` to (P32.15,
+ * SIG-FIND-004): the last activated entry in the catalog, or null when no
+ * release is activated (an honest "none", never a fabricated namespace).
+ */
+export function getLatestReleaseTarget(): ReleaseSearchTarget | null {
+  const targets = getReleaseSearchTargets();
+  return targets.length ? targets[targets.length - 1]! : null;
+}
+
+/**
+ * entity_id → the SPECIFIC released-record route `/r/<pub>/c/<comp>/entity/
+ * <type>/<id>/` (ADR-132) — shared by every surface that links a listed item to
+ * its citable record (SIG-FIND-004). `null` when no activated release maps the
+ * id — callers keep a generic fallback, never invent a route.
+ */
+export function releasedRecordHref(
+  target: ReleaseSearchTarget | null,
+  entityComps: Map<string, { compartment: string; entityType: string }>,
+  entityId: string,
+): string | null {
+  if (!target) return null;
+  const m = entityComps.get(entityId);
+  return m
+    ? `/r/${target.publicationId}/c/${m.compartment}/entity/${m.entityType}/${entityId}/`
+    : null;
+}
+
+/**
  * `entity_id → {compartment, entity_type}` for every released record — used to
  * give the interactive island SPECIFIC record hrefs (never `/map/`). Export
  * mode scans each compartment's `sites.jsonl` (the same bound projection the

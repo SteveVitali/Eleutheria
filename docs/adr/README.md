@@ -138,6 +138,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-131](ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md) | — | — | — |
 | [ADR-132](ADR-132-immutable-release-namespaces-and-acyclic-integrity.md) | — | — | — |
 | [ADR-133](ADR-133-per-compartment-immutable-corpus-search-indexes.md) | — | — | — |
+| [ADR-134](ADR-134-coordinated-investigation-workspace-state.md) | — | — | — |
 
 ## Notes
 

@@ -4,7 +4,8 @@
 
 /**
  * The interactive infrastructure-map island (P27.9, DECISION-SPA = B, ADR-097 —
- * exercising SIG-UI-047, the MAY-level MapLibre progressive-enhancement island).
+ * exercising SIG-UI-047, the MAY-level MapLibre progressive-enhancement island;
+ * P32.15 shared workspace state, SIG-FIND-004, ADR-134).
  *
  * PROGRESSIVE ENHANCEMENT, NOT REPLACEMENT (SIG-UI-050): this island hydrates ONLY
  * on `/map/`; the tabular equivalent below it in the page is the source of truth and
@@ -23,12 +24,20 @@
  * in its payload at all (they stay the jurisdiction indicators the static page
  * lists).
  *
+ * Shared URL state (`sig.workspace-state/1`): `release`, `collection` (the
+ * compartment switch — toggling updates BOTH the drawn sources and the licence
+ * attribution line), `focus` (the selected record — a self-describing record_key
+ * resolves its released `/r/<pub>/c/<comp>/entity/<type>/<id>.json`, a bare
+ * island id resolves the inline points), and the List/Connections view links.
+ * The viewport (`z`/`lat`/`lon`) is transient (S4 §8) — never written to the URL.
+ * Centering uses `jumpTo` (no auto-pan animation; reduced-motion safe).
+ *
  * Archivability (SIG-UI-038): the renderer is self-hosted maplibre-gl with NO
  * third-party tile CDN; the ODbL / SIG attribution is shown per source (§42.3, a
  * licence obligation).
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import {
   Map as MapLibreMap,
@@ -55,6 +64,20 @@ import {
 } from "../lib/map-tiles";
 import type { CompartmentTileSource } from "../lib/map-tiles";
 import type { IslandPoint } from "../lib/map";
+import {
+  evidenceAnchorHref,
+  recordRoutes,
+  splitRecordKey,
+  viewHref,
+  WORKSPACE_VIEWS,
+} from "../lib/workspace-state";
+import { useWorkspaceState } from "./workspace";
+
+/** One switchable licence compartment (tile archive or release compartment). */
+export interface CompartmentOption {
+  id: string;
+  license: string;
+}
 
 export interface MapIslandProps {
   /** The per-licence-compartment PMTiles archives the export ships (empty in fixtures). */
@@ -70,9 +93,14 @@ export interface MapIslandProps {
   attribution: string;
   /** The belief-pinned citation permalink for the surface (SIG-UI-035). */
   citationHref: string;
+  /** The latest activated publication id for this build, or null (none). */
+  release: string | null;
+  /** The licence compartments the workspace switch governs. */
+  compartments: readonly CompartmentOption[];
 }
 
 const GEOJSON_SOURCE = "sig-infrastructure";
+const FOCUS_SOURCE = "sig-focus";
 
 function escapeHtml(s: string): string {
   return s
@@ -90,7 +118,7 @@ interface TileFeatureProps {
   precision?: string;
 }
 
-/** The popup carries the epistemic disclosure fields + the citation (SIG-UI-035, §19.4). */
+/** The popup carries the epistemic disclosure fields + the citation (SIG-UI-035). */
 function popupHtml(a: IslandPoint, citationHref: string): string {
   return (
     `<div class="sig-map-popup">` +
@@ -126,17 +154,57 @@ const SITE_PAINT = {
   "circle-stroke-width": 1,
 };
 
+const VIEW_LABELS: Record<string, string> = {
+  list: "List",
+  map: "Map",
+  network: "Connections",
+};
+
+interface FocusPane {
+  id: string;
+  label: string;
+  detail: string;
+  /** Released-record routes when `focus` is a record_key under a pinned release. */
+  recordPageHref?: string;
+  evidenceHref?: string;
+  compartmentHref?: string;
+  /** Where the focus resolves in the current view ("not in this view" is honest). */
+  located: boolean;
+}
+
 export default function MapIsland({
   tiles,
   points,
   pointCount,
   attribution,
   citationHref,
+  release,
+  compartments,
 }: MapIslandProps): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const tileLayerCompartments = useRef<string[]>([]);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [drawn, setDrawn] = useState(false);
+  const [focusPane, setFocusPane] = useState<FocusPane | null>(null);
+  const { state, issues, update } = useWorkspaceState("map", { release });
+
+  // The effective compartment selection: an ABSENT `collection` means all;
+  // an explicit `collection=` means none — "0 of N compartments" is a real
+  // state, not a silent default (sig.workspace-state/1, ADR-134).
+  const allCompartmentIds = useMemo(() => compartments.map((c) => c.id), [compartments]);
+  const activeCompartments = useMemo(
+    () =>
+      state.collectionSpecified ? new Set(state.collection) : new Set(allCompartmentIds),
+    [state.collection, state.collectionSpecified, allCompartmentIds],
+  );
+  const activeAttribution = useMemo(() => {
+    const lines = compartments
+      .filter((c) => activeCompartments.has(c.id))
+      .map((c) => compartmentAttribution(c.license));
+    return [...new Set(lines)].join(" · ");
+  }, [compartments, activeCompartments]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -158,6 +226,7 @@ export default function MapIsland({
       // Keyboard operability (WCAG 2.2 AA): arrow-pan / +- zoom are on by default;
       // the container is focusable and named below so a keyboard user can drive it.
     });
+    mapRef.current = map;
     map.addControl(new NavigationControl({ visualizePitch: false }), "top-right");
     map.addControl(
       new AttributionControl({ compact: false, customAttribution: attribution }),
@@ -189,6 +258,7 @@ export default function MapIsland({
               paint: SITE_PAINT,
             });
             tileLayerIds.push(layerId);
+            tileLayerCompartments.current.push(t.compartment);
             drawnSourceIds.push(sourceId);
           } catch {
             /* a failing archive degrades honestly; other compartments still draw */
@@ -277,6 +347,22 @@ export default function MapIsland({
             "circle-stroke-width": 1,
           },
         });
+        // The focus marker: a distinct ring, fed by the workspace `focus` state.
+        map.addSource(FOCUS_SOURCE, {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [] },
+        });
+        map.addLayer({
+          id: "sig-focus-ring",
+          type: "circle",
+          source: FOCUS_SOURCE,
+          paint: {
+            "circle-color": "rgba(0,0,0,0)",
+            "circle-radius": 12,
+            "circle-stroke-color": "hsl(28deg 80% 40%)",
+            "circle-stroke-width": 3,
+          },
+        });
 
         drawnSourceIds = [GEOJSON_SOURCE];
         const byId = new Map(points.map((a) => [a.id, a]));
@@ -336,6 +422,8 @@ export default function MapIsland({
 
     return () => {
       map.remove();
+      mapRef.current = null;
+      tileLayerCompartments.current = [];
       try {
         removeProtocol("pmtiles");
       } catch {
@@ -345,18 +433,269 @@ export default function MapIsland({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Compartment switch → data AND attribution (SIG-FIND-004): each mounted tile
+  // layer toggles with the selection; the attribution line below recomputes.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    for (const compartment of tileLayerCompartments.current) {
+      const layerId = compartmentLayerId(compartment);
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(
+          layerId,
+          "visibility",
+          activeCompartments.has(compartment) ? "visible" : "none",
+        );
+      }
+    }
+  }, [activeCompartments, ready]);
+
+  // Focus resolution (SIG-FIND-004): a `focus` record_key is self-describing —
+  // its released-record JSON is fetched and the pane links the record/evidence
+  // anchors; a bare island id resolves the inline points. An unresolvable focus
+  // stays navigable — the pane says so honestly and still links what it can.
+  useEffect(() => {
+    const focus = state.focus;
+    const map = mapRef.current;
+    if (!ready) return;
+    const setMarker = (lat: number | null, lon: number | null) => {
+      const src = map?.getSource(FOCUS_SOURCE) as { setData?: (d: unknown) => void } | undefined;
+      if (!src?.setData) return;
+      src.setData(
+        lat !== null && lon !== null
+          ? {
+              type: "FeatureCollection",
+              features: [
+                {
+                  type: "Feature",
+                  geometry: { type: "Point", coordinates: [lon, lat] },
+                  properties: {},
+                },
+              ],
+            }
+          : { type: "FeatureCollection", features: [] },
+      );
+    };
+    if (focus === null) {
+      setFocusPane(null);
+      setMarker(null, null);
+      return;
+    }
+    let cancelled = false;
+    const rel = state.release ?? release;
+    const routes = rel ? recordRoutes(rel, focus) : null;
+
+    // Bare island id first — cheap and works with no release pinned.
+    const point = points.find((p) => p.id === focus);
+    if (point) {
+      map?.jumpTo({ center: [point.lon, point.lat], zoom: Math.max(map.getZoom(), 9) });
+      setMarker(point.lat, point.lon);
+      setFocusPane({
+        id: focus,
+        label: point.label,
+        detail: `${point.jurisdiction} · ${point.precision}`,
+        recordPageHref: routes?.pageHref,
+        compartmentHref: routes?.compartmentHref,
+        located: true,
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    if (routes) {
+      setFocusPane({
+        id: focus,
+        label: focus,
+        detail: "Loading the released record…",
+        recordPageHref: routes.pageHref,
+        compartmentHref: routes.compartmentHref,
+        located: false,
+      });
+      fetch(routes.jsonHref)
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then((record) => {
+          if (cancelled) return;
+          const label =
+            (record?.label?.text as string | null | undefined) ??
+            (record?.entity_id as string | undefined) ??
+            focus;
+          const jurisdiction = (record?.jurisdiction?.id as string | undefined) ?? "";
+          const loc = record?.location as
+            | { kind?: string; lat?: number; lon?: number; precision?: string }
+            | undefined;
+          const lat = typeof loc?.lat === "number" ? loc.lat : null;
+          const lon = typeof loc?.lon === "number" ? loc.lon : null;
+          if (lat !== null && lon !== null) {
+            map?.jumpTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 9) });
+            setMarker(lat, lon);
+          } else {
+            setMarker(null, null);
+          }
+          const artifact = (record?.evidence_refs as { artifact_id?: string | null }[] | undefined)
+            ?.map((e) => e.artifact_id)
+            .find((a): a is string => typeof a === "string");
+          const parts = splitRecordKey(focus);
+          setFocusPane({
+            id: focus,
+            label,
+            detail:
+              `${jurisdiction ? `${jurisdiction} · ` : ""}${String(record?.entity_type ?? "record")}` +
+              (loc?.precision ? ` · ${loc.precision}` : "") +
+              (lat === null ? " · no published point" : ""),
+            recordPageHref: routes.pageHref,
+            evidenceHref:
+              artifact && parts ? evidenceAnchorHref(rel!, parts.compartment, artifact) : undefined,
+            compartmentHref: routes.compartmentHref,
+            located: lat !== null && lon !== null,
+          });
+        })
+        .catch(() => {
+          if (cancelled) return;
+          // The record could not be loaded from this surface (fixtures mode has no
+          // /r/ tree, or the release is not staged here) — the pane stays honest
+          // and still links the canonical routes.
+          setFocusPane({
+            id: focus,
+            label: focus,
+            detail:
+              "The released record could not be loaded from this surface — the record page is the authoritative route.",
+            recordPageHref: routes.pageHref,
+            compartmentHref: routes.compartmentHref,
+            located: false,
+          });
+        });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    // Not a record key, not an island point — say so, never fabricate.
+    setFocusPane({
+      id: focus,
+      label: focus,
+      detail: "This record is not in the current map view.",
+      located: false,
+    });
+    setMarker(null, null);
+    return () => {
+      cancelled = true;
+    };
+  }, [state.focus, state.release, release, ready, points]);
+
+  const toggleCompartment = (id: string) => {
+    const next = new Set(activeCompartments);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    // Full selection canonicalises back to the absent (all-compartments)
+    // default; every other selection — including the EMPTY one — is explicit.
+    const full = next.size === allCompartmentIds.length;
+    update({ collection: full ? [] : [...next], collectionSpecified: !full });
+  };
+
   return (
-    <div
-      className="sig-map-island__canvas"
-      role="application"
-      aria-roledescription="interactive map"
-      aria-label="Interactive surveillance-infrastructure map (progressive enhancement; the full data is in the table below)"
-      data-testid="map-island"
-      data-ready={ready ? "true" : "false"}
-      data-failed={failed ? "true" : "false"}
-      data-drawn={drawn ? "true" : "false"}
-      data-point-count={pointCount}
-      ref={containerRef}
-    />
+    <div data-testid="map-island-root">
+      <nav className="sig-view-links" aria-label="Investigation views" data-testid="island-view-links">
+        {WORKSPACE_VIEWS.map((v) =>
+          v === state.view ? (
+            <strong key={v} aria-current="page">{VIEW_LABELS[v]}</strong>
+          ) : (
+            <a key={v} href={viewHref(state, v)} data-testid={`view-link-${v}`}>
+              {VIEW_LABELS[v]}
+            </a>
+          ),
+        )}
+      </nav>
+      {issues.length > 0 && (
+        <p className="sig-island__note" role="status" data-testid="workspace-issues">
+          {issues.join(" ")}
+        </p>
+      )}
+
+      {compartments.length > 0 && (
+        <fieldset className="sig-island__compartments" data-testid="map-compartments">
+          <legend>Licence compartments</legend>
+          {compartments.map((c) => (
+            <label key={c.id}>
+              <input
+                type="checkbox"
+                data-testid={`map-compartment-${c.id}`}
+                checked={activeCompartments.has(c.id)}
+                onChange={() => toggleCompartment(c.id)}
+              />{" "}
+              <code>{c.id}</code> <span className="sig-island__note">({c.license})</span>
+            </label>
+          ))}
+        </fieldset>
+      )}
+      <p className="sig-island__note" data-testid="map-compartment-attribution">
+        {activeCompartments.size === allCompartmentIds.length
+          ? `All ${allCompartmentIds.length} licence compartment${allCompartmentIds.length === 1 ? "" : "s"}`
+          : `${activeCompartments.size} of ${allCompartmentIds.length} licence compartments`}
+        {activeAttribution ? ` — ${activeAttribution}` : ""}.
+        {state.release ? (
+          <>
+            {" "}Release <code data-testid="workspace-release">{state.release}</code>.
+          </>
+        ) : null}
+      </p>
+
+      <div
+        className="sig-map-island__canvas"
+        role="application"
+        aria-roledescription="interactive map"
+        aria-label="Interactive surveillance-infrastructure map (progressive enhancement; the full data is in the table below)"
+        data-testid="map-island"
+        data-ready={ready ? "true" : "false"}
+        data-failed={failed ? "true" : "false"}
+        data-drawn={drawn ? "true" : "false"}
+        data-point-count={pointCount}
+        ref={containerRef}
+      />
+
+      {focusPane && (
+        <section className="sig-island__focus" data-testid="map-focus-pane" aria-label="Selected record">
+          <h3>Selected record</h3>
+          <p>
+            <strong>{focusPane.label}</strong>
+            {focusPane.detail ? <span className="sig-island__note"> — {focusPane.detail}</span> : null}
+          </p>
+          <p>
+            {focusPane.recordPageHref && (
+              <>
+                <a href={focusPane.recordPageHref} data-testid="focus-record-link">
+                  Open the released record
+                </a>
+                {" · "}
+              </>
+            )}
+            {focusPane.evidenceHref && (
+              <>
+                <a href={focusPane.evidenceHref} data-testid="focus-evidence-link">
+                  Open evidence page
+                </a>
+                {" · "}
+              </>
+            )}
+            {focusPane.compartmentHref && (
+              <>
+                <a href={focusPane.compartmentHref}>Compartment browse</a>
+                {" · "}
+              </>
+            )}
+            <a href={viewHref(state, "list")} data-testid="focus-list-link">List</a>
+            {" · "}
+            <a href={viewHref(state, "network")} data-testid="focus-network-link">Connections</a>
+            {" · "}
+            <button type="button" onClick={() => update({ focus: null })}>
+              Clear selection
+            </button>
+          </p>
+        </section>
+      )}
+    </div>
   );
 }

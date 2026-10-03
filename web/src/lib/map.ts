@@ -363,6 +363,36 @@ export interface JurisdictionIndicator {
 }
 
 /**
+ * Per-jurisdiction bound on the unlocated-asset ids enumerated inline on the
+ * static page (P32.15, SIG-FIND-005). An unbounded enumeration made the shipped
+ * HTML exceed its own budget; beyond the cap the jurisdiction's records remain
+ * fully navigable through the released compartment browse (the same bound the
+ * P32.14 search/browse pagination uses).
+ */
+export const MAX_INDICATOR_ASSETS = 50;
+
+/** An indicator row after inline bounding: the true `count` is never reduced —
+ * only the *enumerated* ids are capped, and `truncated` says so honestly. */
+export interface BoundedJurisdictionIndicator {
+  jurisdiction: string;
+  count: number;
+  listedIds: string[];
+  truncated: boolean;
+}
+
+export function boundedJurisdictionIndicators(
+  indicators: readonly JurisdictionIndicator[],
+  max: number = MAX_INDICATOR_ASSETS,
+): BoundedJurisdictionIndicator[] {
+  return indicators.map((j) => ({
+    jurisdiction: j.jurisdiction,
+    count: j.count,
+    listedIds: j.assetIds.slice(0, max),
+    truncated: j.assetIds.length > max,
+  }));
+}
+
+/**
  * Whether an asset has a publishable point. False when it has no coordinates OR its
  * tier forbids publishing geometry (tier 3, §19.4) — either way it becomes a
  * jurisdiction indicator, never a dropped row (SIG-UI-020).

@@ -126,6 +126,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "has configured access to",
     support: "CONFIRMED",
     evidence_count: 3,
+    evidence: ["claim:okc-rtcc-mou", "claim:rtcc-config-screenshot", "claim:okc-rtcc-feed-list"],
   },
   {
     from: "rtcc:okc",
@@ -134,6 +135,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "has configured access to",
     support: "STRONGLY_SUPPORTED",
     evidence_count: 2,
+    evidence: ["claim:rtcc-flock-integration", "claim:flock-contract-2025"],
   },
   {
     from: "vendor:flock",
@@ -142,6 +144,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "has configured access to",
     support: "PROBABLE",
     evidence_count: 1,
+    evidence: ["claim:flock-ocso-share"],
   },
   {
     from: "agency:ocso",
@@ -150,6 +153,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "has configured access to",
     support: "PROBABLE",
     evidence_count: 1,
+    evidence: ["claim:ocso-tulsa-share"],
   },
   {
     from: "agency:tulsa",
@@ -158,6 +162,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "has configured access to",
     support: "WEAKLY_SUPPORTED",
     evidence_count: 1,
+    evidence: ["claim:tulsa-fusion-mou"],
   },
   {
     from: "agency:okcpd",
@@ -166,6 +171,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "was observed querying",
     support: "STRONGLY_SUPPORTED",
     evidence_count: 2,
+    evidence: ["claim:audit-log-2026-03", "claim:query-export-2026-04"],
   },
   {
     from: "agency:okcpd",
@@ -174,6 +180,7 @@ export const NETWORK_EDGES: NetworkEdge[] = [
     relation: "declares a sharing MOU with",
     support: "CONFIRMED",
     evidence_count: 1,
+    evidence: ["claim:okc-ocso-mou-doc"],
   },
 ];
 
