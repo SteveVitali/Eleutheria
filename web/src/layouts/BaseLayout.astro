@@ -21,11 +21,19 @@ import "../styles/epistemic.css";
 import type { AsOfEcho } from "../lib/fixtures";
 import type { ProvenanceSummary } from "../lib/provenance";
 import { getSiteMetadata, getSiteProvenance } from "../lib/data";
+import { defaultDescription } from "../lib/meta";
 
 interface Props {
   title: string;
   /** The canonical path for the belief-pinned permalink (SIG-UI-035). */
   path: string;
+  /**
+   * The page's meta description (P34.13 / QW-11). Defaults to the shared
+   * template — the page TITLE plus the record's name — so every built page
+   * carries a unique description while titles stay unique. The template
+   * itself is copy-batch row MD-01 (B-2).
+   */
+  description?: string;
   asOf?: AsOfEcho;
   rulesetVersion?: string;
   /** The page's "How we know this" provenance (SIG-UI-044); defaults site-wide. */
@@ -37,11 +45,25 @@ interface Props {
    * evidence…" so the label says WHICH page's totals these are.
    */
   provenanceName?: string;
+  /**
+   * `minimal` renders only the page slot — no "How we know this", dispute or
+   * citation module (P34.13 / QW-11): the branded error pages and the /terms
+   * forwarder are chrome-light by design.
+   */
+  chrome?: "full" | "minimal";
+  /**
+   * `true` marks the page noindex AND excludes it from the sitemap (P34.13 /
+   * QW-11): error pages and the /terms forwarder are never canonical content.
+   */
+  noindex?: boolean;
   /** The BCP-47 document language (SIG-UI localisation); defaults to English. */
   lang?: string;
 }
 
 const { title, path } = Astro.props;
+const description = Astro.props.description ?? defaultDescription(title);
+const chrome = Astro.props.chrome ?? "full";
+const noindex = Astro.props.noindex ?? false;
 const siteMeta = getSiteMetadata();
 const asOf = Astro.props.asOf ?? siteMeta.asOf;
 const rulesetVersion = Astro.props.rulesetVersion ?? siteMeta.rulesetVersion;
@@ -100,18 +122,19 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} · SIG</title>
-    <meta
-      name="description"
-      content="Surveillance Infrastructure Graph — an open, temporally versioned, claim-level-provenance record of public surveillance infrastructure."
-    />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <!-- P34.13 (QW-11): the SIG favicon — the wordmark's three-letter mark on
+         the ink square, served from /favicon.svg (a file the allow-list names). -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={new URL(path, Astro.site ?? CANONICAL_ORIGIN).href} />
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>
     <header class="sig-header">
       <div class="sig-header__bar">
-        <a class="sig-wordmark" href="/" aria-label="SIG — home">
-          <span class="sig-wordmark__mark" aria-hidden="true">SIG</span>
+        <a class="sig-wordmark" href="/" aria-label="SIG Surveillance Infrastructure Graph — home">
+          <span class="sig-wordmark__mark" aria-hidden="true">SIG</span>{" "}
           <span class="sig-wordmark__full">Surveillance Infrastructure Graph</span>
         </a>
         <nav class="sig-nav" aria-label="Primary">
@@ -133,9 +156,13 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
     <main id="main">
       <h1>{title}</h1>
       <slot />
-      <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} />
-      <DisputeLink />
-      <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
+      {chrome === "full" && (
+        <>
+          <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} />
+          <DisputeLink />
+          <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
+        </>
+      )}
     </main>
   </body>
 </html>

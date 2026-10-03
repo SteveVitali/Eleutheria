@@ -1,0 +1,16 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P34.13 (QW-11, RI-52): the branded 403 — built as a static page; the nginx
+// `error_page 403` wiring that serves it is P34.40's dark roll (recorded owed).
+// astro.config.mjs's sigChrome integration also emits a flat /403.html copy so
+// the eventual error_page mapping matches the 404 convention.
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Access refused" path="/403/" chrome="minimal" noindex={true}>
+  <p data-copy="FB-01">This address is not open to the public record.</p>
+  <p><a data-copy="FB-02" href="/">Go to the home page</a></p>
+</BaseLayout>

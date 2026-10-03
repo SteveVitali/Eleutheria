@@ -26,8 +26,9 @@ BATCH_PATH = REPO_ROOT / "docs/build/reports/copy-batches/batch-01.md"
 VALID_STATUSES = {"pending", "confirmed"}
 
 # The batch ids P34.11 authored (the DC-* rows belong to P35.38a) plus the rows
-# P34.12 appended (HW-10, RQ-01, XC-03 — same batch, same checks).
-P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ)-\d+$")
+# P34.12 appended (HW-10, RQ-01, XC-03) and P34.13 appended (HW-11…HW-13,
+# MD-01, WM-01, NF-01/02, FB-01/02, GN-01, TR-01/02 — same batch, same checks).
+P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM)-\d+$")
 
 # Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
 # fixture route is gone, so T-01 ("Return to the dossier index.") is recorded
@@ -44,6 +45,10 @@ ASTRO_PAGES = {
     "/corrections/": "web/src/pages/corrections.astro",
     "/watch/": "web/src/pages/watch.astro",
     "/methodology/": "web/src/pages/methodology.astro",
+    "/404.html": "web/src/pages/404.astro",
+    "/403/": "web/src/pages/403.astro",
+    "/410/": "web/src/pages/410.astro",
+    "/terms/": "web/src/pages/terms.astro",
     "component/HowWeKnowThis": "web/src/components/HowWeKnowThis.astro",
     "component/Citation": "web/src/components/Citation.astro",
     "component/WhatWeDontKnow": "web/src/components/WhatWeDontKnow.astro",
@@ -56,6 +61,8 @@ LITERAL_PAGES = {
     "lib/dossier-fixture.ts": "web/src/lib/dossier-fixture.ts",
     "lib/corrections-methodology-fixture.ts": "web/src/lib/corrections-methodology-fixture.ts",
     "lib/research-queue.ts": "web/src/lib/research-queue.ts",
+    "lib/meta.ts": "web/src/lib/meta.ts",
+    "component/BaseLayout": "web/src/layouts/BaseLayout.astro",
     "exports/web_dossier.py": "exports/src/exports/web_dossier.py",
     "exports/spine_export.py": "exports/src/exports/spine_export.py",
 }

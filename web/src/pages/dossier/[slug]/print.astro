@@ -19,6 +19,7 @@ import ActionBlocks from "../../../components/ActionBlocks.astro";
 import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
 import { getDossiers } from "../../../lib/data";
+import { defaultDescription } from "../../../lib/meta";
 
 export function getStaticPaths() {
   return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
@@ -45,16 +46,24 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{dossier.subject_label} — SIG dossier (print)</title>
+    {/* P34.13 (QW-11): the same unique-description template as BaseLayout
+        (copy-batch row MD-01) so the print document carries its own meta
+        description, plus the shared favicon. */}
+    <meta name="description" content={defaultDescription(`${dossier.subject_label} — SIG dossier (print)`)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
   </head>
   <body>
     <div class="sig-print-toolbar" role="note">
       <p>
-        Print or save this page as a PDF (your browser's Print dialog → “Save as PDF”).
+        Print or save this page as a PDF (your browser's Print dialog → “Save as PDF”).{" "}
         <a href={dossierPath(dossier.slug)}>Back to the interactive dossier.</a>
       </p>
     </div>
 
+    {/* P34.13 (QW-13, RI-49): the standalone document had NO main landmark —
+        the print content now sits inside one. */}
+    <main id="main">
     {pages.map((chunk, idx) => (
       <div class="sig-print-page" data-testid="print-page">
         {idx === 0 && (
@@ -93,10 +102,11 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
           <span class="sig-print-footer__asof">
             As of world <time datetime={dossier.asOf.as_of_world}>{dossier.asOf.as_of_world}</time>,
             belief <time datetime={dossier.asOf.as_of_belief}>{dossier.asOf.as_of_belief}</time>
-          </span>
+          </span>{" "}
           <a class="sig-print-footer__permalink" data-testid="print-permalink" href={link}>{link}</a>
         </footer>
       </div>
     ))}
+    </main>
   </body>
 </html>

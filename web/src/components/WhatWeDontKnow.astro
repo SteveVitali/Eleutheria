@@ -40,11 +40,15 @@ const { gaps, variant } = Astro.props;
         predicate_label={g.label}
       />
       {g.kind === "NO_EVIDENCE_FOUND" && g.sources_searched && (
-        <span class="sig-gaps__searched">
-          Sources searched: {g.sources_searched.join(", ")}.
-        </span>
+        <>
+          {" "}
+          <span class="sig-gaps__searched">
+            Sources searched: {g.sources_searched.join(", ")}.
+          </span>
+        </>
       )}
-      {g.note && <span class="sig-gaps__note">{g.note}</span>}
+      {g.note && <span class="sig-gaps__note"> — {g.note}</span>}
+      {" "}
       <span class="sig-visually-hidden">{ABSENCE_KIND_META[g.kind].meaning}</span>
     </li>
   ))}

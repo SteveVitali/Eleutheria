@@ -4,9 +4,9 @@
 
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
-import { cpSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { join } from "node:path";
+import { join, relative, sep } from "node:path";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES): in
 // `export` mode the static build CONSUMES the rendered vector tiles the export
@@ -103,6 +103,59 @@ function sigInternalRoutes() {
   };
 }
 
+// P34.13 (QW-11): the chrome quick-fixes that belong to the BUILD, not a page —
+// (a) the canonical-only sitemap (RI-51): walk the emitted pages and list a URL
+// only when it is its OWN canonical — print pages canonicalise to their dossier
+// and so never appear, and every URL resolves on the canonical origin — plus
+// noindex pages never appear at all; (b) the flat /403.html + /410.html copies
+// matching the /404.html error-page convention (the nginx `error_page` wiring
+// that serves them is P34.40's dark roll — this row only builds the pages).
+function sigChrome() {
+  return {
+    name: "sig-chrome",
+    hooks: {
+      "astro:build:done": ({ dir }) => {
+        const distDir = fileURLToPath(dir);
+        for (const code of ["403", "410"]) {
+          const page = join(distDir, code, "index.html");
+          if (existsSync(page)) cpSync(page, join(distDir, `${code}.html`));
+        }
+        const INTERNAL_SEGMENTS = new Set(
+          INTERNAL_ROUTES.map(([pattern]) => pattern.split("/")[1]).concat(["task"]),
+        );
+        const origin = "https://surveillancegraph.org";
+        const urls = [];
+        const walk = (d) => {
+          for (const entry of readdirSync(d, { withFileTypes: true })) {
+            const full = join(d, entry.name);
+            if (entry.isDirectory()) {
+              walk(full);
+            } else if (entry.name === "index.html") {
+              const html = readFileSync(full, "utf-8");
+              if (html.includes('name="robots" content="noindex"')) continue;
+              const m = html.match(/<link rel="canonical" href="([^"]+)"/);
+              if (!m) continue;
+              const rel = `${relative(distDir, full).split(sep).join("/").replace(/index\.html$/, "")}`;
+              const own = `${origin}/${rel}`;
+              if (m[1] === own) urls.push(m[1]);
+            }
+          }
+        };
+        walk(distDir);
+        const publicUrls = urls
+          .filter((u) => !INTERNAL_SEGMENTS.has(new URL(u).pathname.split("/")[1]))
+          .sort();
+        const sitemap =
+          `<?xml version="1.0" encoding="UTF-8"?>\n` +
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+          publicUrls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n") +
+          `\n</urlset>\n`;
+        writeFileSync(join(distDir, "sitemap.xml"), sitemap);
+      },
+    },
+  };
+}
+
 // The public SIG web shell (Phase 15). Astro is a zero-JS-by-default static-first
 // framework: with no explicit `client:*` directive on a component, the built page
 // ships no client JavaScript at all (SIG-UI-036). Archivability is therefore
@@ -118,7 +171,7 @@ export default defineConfig({
   // `client:*` directive, which in the public surface is exactly the three named
   // islands (map / network / search). Every other page still ships zero `<script>`
   // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react(), sigExportTiles(), sigInternalRoutes()],
+  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

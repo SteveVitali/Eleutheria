@@ -28,7 +28,14 @@
 # here. Order is for humans; the check is a set membership.
 top_level = [
   "index.html",          # the homepage
-  "404.html",            # reserved for a future 404 page
+  "404.html",            # the branded 404 (P34.13 / QW-11) — nginx maps error_page 404 onto it
+  "403",                 # the branded 403 page (P34.13; its error_page wiring is P34.40's)
+  "403.html",            # flat copy for the P34.40 error_page mapping
+  "410",                 # the branded 410 page (P34.13; ditto)
+  "410.html",            # flat copy for the P34.40 error_page mapping
+  "favicon.svg",         # the SIG favicon (P34.13 / QW-11)
+  "sitemap.xml",         # the canonical-only sitemap (P34.13 / QW-11)
+  "terms",               # /terms → the API terms, with N-7 beside it (P34.13 / QW-11)
   ".sig-release.json",   # the publish's own release record (rewritten each run)
   "robots.txt",
   "_astro",              # Astro's hashed build assets (css/js islands)
@@ -54,14 +61,23 @@ top_level = [
 # The subset of top_level that MUST be emitted by every public build — the
 # "every listed prefix exists" half of the check (an allow-list that names
 # routes a broken build silently dropped must not pass). Conditional entries
-# are deliberately absent here: 404.html is reserved for a future page,
-# .sig-release.json is written by the publish itself AFTER this assertion,
-# tiles/ exists only in export-mode builds, and task/ is absent since P34.12 —
-# the fixture `/task/new/` intake pages are retired (K11 §5.5 / RQ-00); the
-# real `/task/<handle>/` namespace returns with RQ-03 and stays allow-listed
-# in the meantime so its landing needs no allow-list edit.
+# are deliberately absent here: .sig-release.json is written by the publish
+# itself AFTER this assertion, tiles/ exists only in export-mode builds, and
+# task/ is absent since P34.12 — the fixture `/task/new/` intake pages are
+# retired (K11 §5.5 / RQ-00); the real `/task/<handle>/` namespace returns
+# with RQ-03 and stays allow-listed in the meantime so its landing needs no
+# allow-list edit. The P34.13 chrome entries (404/403/410 pages + flat copies,
+# favicon, sitemap, /terms) are emitted by every build.
 required = [
   "index.html",
+  "404.html",
+  "403",
+  "403.html",
+  "410",
+  "410.html",
+  "favicon.svg",
+  "sitemap.xml",
+  "terms",
   "robots.txt",
   "_astro",
   "corrections",

@@ -33,9 +33,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   <h2 data-copy="DC-07">How the crawler identifies itself</h2>
   <p data-copy="DC-08 DC-09">
-    Every request carries a User-Agent header of the form
+    Every request carries a User-Agent header of the form{" "}
     <code>name/version (+https://surveillancegraph.org/data-collection/)</code>,
-    where <code>name</code> is the connector doing the fetch — for example
+    where <code>name</code> is the connector doing the fetch — for example{" "}
     <code>osm/1.0.0</code> or the project fallback <code>SIG</code>. SIG never
     impersonates a browser and never rotates or disguises its agent to get past
     a block.
@@ -43,11 +43,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   <h2 data-copy="DC-10">How robots.txt is treated</h2>
   <p data-copy="DC-11 DC-12 DC-13">
-    For every host it fetches, SIG retrieves and records the host's
+    For every host it fetches, SIG retrieves and records the host's{" "}
     <code>robots.txt</code> and classifies the answer per RFC 9309. Under a
-    recorded operator decision (GL-GATE-08 — ADR-088 and ADR-168), a
+    recorded operator decision (GL-GATE-08 — ADR-088 and ADR-168), a{" "}
     <code>Disallow</code>, or a policy that cannot be retrieved, does not by
-    itself stop the fetch; the fetch is marked
+    itself stop the fetch; the fetch is marked{" "}
     <code>robots_disregarded</code> in SIG's record, so the refusal stays
     visible instead of being silently bypassed. Robots.txt is not the access
     control: the binding check is a fail-closed rights review per source, and a

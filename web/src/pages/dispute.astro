@@ -59,7 +59,7 @@ const intake = intakeAvailability();
 
   <h2 id="submit-heading">Submit</h2>
   <p data-testid="intake-availability" data-operational={intake.operational ? "true" : "false"}>
-    <strong>The durable anonymous receiver is not yet operating.</strong>
+    <strong>The durable anonymous receiver is not yet operating.</strong>{" "}
     {intake.note}
   </p>
   <p>
@@ -75,7 +75,7 @@ const intake = intakeAvailability();
     takedown vote.
   </p>
   <p>
-    Every reviewed disposition and its outcome is counted in the public
+    Every reviewed disposition and its outcome is counted in the public{" "}
     <a href="/corrections/">corrections log's transparency report</a> (SIG-GOV-011).
     A correction, once made, appears there in full.
   </p>
