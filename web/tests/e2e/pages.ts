@@ -65,11 +65,13 @@ export const RESEARCH_PAGE = `/research-dossier/${RESEARCH_SLUG}/`;
 export const RESEARCH_JSON = `/research-dossier/${RESEARCH_SLUG}.json`;
 
 // One pre-generated task-intake page (SIG-UI-007), built with the same href helper
-// the hatches use, so it always matches a page `getStaticPaths` generated.
+// the hatches use, so it always matches a page `getStaticPaths` generated. The
+// sharing-partners gap is UNRESOLVED (P34.11 / F-422: a contested sharing edge is
+// recorded — 'not researched' would contradict the record itself).
 export const TASK_PAGE = absenceTaskHref({
   subject_id: "agency:okcpd",
   predicate_id: "sharing_partners",
-  absence_kind: "NOT_RESEARCHED",
+  absence_kind: "UNRESOLVED",
   predicate_label: "Data-sharing partners",
 });
 

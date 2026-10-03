@@ -70,6 +70,15 @@ test.describe("public corrections log (§39.8, SIG-UI-032)", () => {
     await expect(page.getByTestId("transparency-by-category")).toBeVisible();
     await expect(page.getByTestId("outcome-count-refused")).toContainText("refused");
   });
+
+  test("the log states its own start date, never implying it ran forever (P34.11 / QW-14)", async ({
+    page,
+  }) => {
+    await page.goto("/corrections/");
+    const start = page.getByTestId("log-start");
+    await expect(start).toBeVisible();
+    await expect(start.locator("time")).toHaveAttribute("datetime", /\d{4}-\d{2}-\d{2}/);
+  });
 });
 
 test.describe("dispute/correction submission path (SIG-UI-033, §45)", () => {
@@ -149,10 +158,13 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     await expect(resolved).toContainText("observation-level records");
     await expect(resolved).toContainText("dedup ratio");
     await expect(resolved.getByTestId("coverage-denominator")).toContainText("observation-level sites");
-    // Contradictions stay VISIBLE (§3.1): the materialized §31 contradiction object is
-    // surfaced as an honest counted quantity (both evidence sides retained).
+    // Contradictions stay recorded (§3.1): the materialized §31 contradiction object is
+    // surfaced as an honest counted quantity (both evidence sides retained). P34.11
+    // (K12b NEW-17): the label no longer claims a browsable contradiction surface —
+    // the metric says what exists (a count) and names what does not (a browser).
     const contradictions = page.locator('[data-metric-id="contradictions_visible"]');
-    await expect(contradictions).toContainText("contradictions kept visible");
+    await expect(contradictions).toContainText("recorded contradictions");
+    await expect(contradictions).toContainText("does not publish a contradiction browser");
     await expect(contradictions.getByTestId("coverage-denominator")).toContainText("both evidence sides retained");
   });
 

@@ -4,11 +4,13 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 // The national landing page (§39, SIG-UI-049 / ADR-093). Static-first, zero client
-// JS (SIG-UI-036). A real overview of the national dataset: honest headline counts
-// with NAMED denominators and NO total (§32, SIG-METRIC-009/010), the jurisdiction
-// reach, entry points into the product surfaces, and the epistemic framing ("absence
-// is not evidence of absence"). Every number flows through the single data seam
-// (ADR-066): committed fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+// JS (SIG-UI-036). Key figures FIRST (P34.11 / QW-9): honest headline counts with
+// NAMED denominators and NO total (§32, SIG-METRIC-009/010), then the framing, the
+// jurisdiction reach, and entry points into the product surfaces. No capability the
+// release does not show is promised (K14 NEW-11): absent features are marked as
+// being built, never described as present. Every number flows through the single
+// data seam (ADR-066): committed fixtures by default, real export bytes under
+// SIG_DATA_SOURCE=export.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
@@ -27,12 +29,15 @@ const sourceCount = getFreshness().length;
 
 // The product entry points (SIG-UI-049 / ADR-093): the four surfaces a first-time
 // reader starts from. Kept distinct from the "how to read" epistemic framing below.
-const ENTRY_POINTS = [
+// Each body states only what the built surface shows (K14 NEW-11). `copy` carries
+// the copy-batch row ids when the body is agent-drafted copy (B-2).
+const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }[] = [
   {
     href: "/dossier/",
     title: "Local dossiers",
     body:
-      "The project's primary public artifact: per-jurisdiction — what is deployed, who can see it, what it costs, when it must be decided, and what SIG does not know. Each prints to a council-ready PDF.",
+      "The project's primary public artifact: per-jurisdiction — what is deployed, who can see it, what SIG knows about its cost and decision dates, and what SIG does not know. Each dossier also has a print view.",
+    copy: "HO-10 HO-11",
   },
   {
     href: "/map/",
@@ -49,21 +54,16 @@ const ENTRY_POINTS = [
   {
     href: "/watch/",
     title: "Renewal watch",
-    body: "Upcoming contract and authorization decisions, with the evidence a reader needs before each one.",
+    body: "The contract and authorization decision dates SIG is tracking, and the evidence ranked for the next one.",
+    copy: "HO-12",
   },
 ];
 ---
 
 <BaseLayout title="Surveillance Infrastructure Graph" path="/">
-  <p class="sig-lede">
-    SIG is an open, vendor-agnostic, temporally versioned record of public
-    surveillance infrastructure — what is deployed, where and by whom, how it is
-    connected and governed, and exactly which sources support or contradict every
-    material claim. SIG <strong>reports</strong>; it does not endorse.
-  </p>
-
-  <!-- Headline counts: NAMED denominators, NO population total (§32, SIG-METRIC-010). -->
-  <section aria-labelledby="counts-heading" class="sig-landing-section">
+  <!-- Key figures first (P34.11 / QW-9): NAMED denominators, NO population total
+       (§32, SIG-METRIC-010). -->
+  <section aria-labelledby="counts-heading" class="sig-landing-section" data-testid="counts-section">
     <h2 id="counts-heading">What the record covers today</h2>
     <p>
       Every figure below names <strong>what it is counted against</strong>. SIG never
@@ -100,6 +100,13 @@ const ENTRY_POINTS = [
     </p>
   </section>
 
+  <p class="sig-lede" data-copy="HO-02 HO-03">
+    SIG is an open, vendor-agnostic, temporally versioned record of public
+    surveillance infrastructure — what is deployed, where and by whom, how it is
+    connected and governed, and the evidence behind each published figure. SIG
+    <strong>reports</strong>; it does not endorse.
+  </p>
+
   <!-- Jurisdiction reach: the local dossier made discoverable at scale. -->
   <section aria-labelledby="reach-heading" class="sig-landing-section">
     <h2 id="reach-heading">Jurisdiction reach</h2>
@@ -127,7 +134,7 @@ const ENTRY_POINTS = [
         <li class="sig-entry" data-testid="entry-point">
           <a class="sig-entry__link" href={e.href}>
             <span class="sig-entry__title">{e.title}</span>
-            <span class="sig-entry__body">{e.body}</span>
+            <span class="sig-entry__body" data-copy={e.copy}>{e.body}</span>
           </a>
         </li>
       ))}
@@ -144,12 +151,10 @@ const ENTRY_POINTS = [
       <strong>Absence of a row is not evidence of absence</strong> — it is a place SIG
       has not yet researched, and you can turn it into a research task in one click.
     </p>
-    <p>
-      The <a href="/visual-language/">epistemic visual language</a> is the reference for
-      every field, glyph, marker, and gap. Every page also exposes a belief-pinned
-      permalink and a citation you can hand to a council member or cite in a filing: a
-      citation captured today re-resolves to the same belief even after SIG corrects
-      itself.
+    <p data-copy="HO-20 HO-21">
+      The <a href="/methodology/">methodology page</a> explains the fields, glyphs,
+      and gaps in plain terms. Every page also carries a link recording the
+      belief-time and ruleset it was built from, and a citation line you can quote.
     </p>
   </section>
 </BaseLayout>

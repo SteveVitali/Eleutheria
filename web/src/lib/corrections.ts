@@ -11,9 +11,10 @@
  *   - **The public corrections log (SIG-UI-032)** — the required *eighth* surface the
  *     outline omits. Every correction is listed with **what changed, when, why, and
  *     who reported it**. A correction is a NEW assertion, never a deletion
- *     (SIG-GOV-005): the erroneous value is preserved, so a citation made *before* the
- *     correction still re-resolves at its pinned belief-time. The log therefore carries
- *     the belief-pinned permalink of the value *as it stood* alongside each entry.
+ *     (SIG-GOV-005): the erroneous value is preserved, so each entry carries a link
+ *     recording the belief date at which the earlier value stood. (P34.11 / QW-5: the
+ *     helper keeps its `priorValuePermalink` name for the wire contract, but the copy
+ *     never calls the link a "permalink" before real `/s/` pins exist.)
  *
  *   - **The dispute/correction submission path (SIG-UI-033, §45.1)** — reachable in one
  *     click from any claim on every page. It accepts the five §45.1 categories, does
@@ -154,9 +155,9 @@ export const CORRECTION_OUTCOME_META: Record<CorrectionOutcome, string> = {
 
 /**
  * One entry in the public corrections log (SIG-UI-032). It records the four required
- * facts — WHAT changed, WHEN, WHY, and WHO reported it — plus the outcome and the
- * belief-pinned permalink of the value as it stood *before* the correction, so a
- * citation made before the correction stays reproducible (SIG-GOV-005, SIG-UI-035).
+ * facts — WHAT changed, WHEN, WHY, and WHO reported it — plus the outcome and a link
+ * recording the belief date at which the earlier value stood (SIG-GOV-005,
+ * SIG-UI-035).
  */
 export interface CorrectionEntry {
   id: string;
@@ -195,9 +196,10 @@ export interface CorrectionEntry {
 }
 
 /**
- * The belief-pinned permalink to the value AS IT STOOD before this correction. Pinned
- * to the prior belief-date, it re-resolves to the erroneous value — proving the
- * correction did not rewrite history (SIG-GOV-005, SIG-TIME-008).
+ * The link to the value AS IT STOOD before this correction, pinned to the prior
+ * belief-date — recording what the page said then, proving the correction did not
+ * rewrite history (SIG-GOV-005, SIG-TIME-008). (QW-5: the name stays for the wire;
+ * the claim stays honest — a selector link, not an immutable pin.)
  */
 export function priorValuePermalink(
   entry: CorrectionEntry,

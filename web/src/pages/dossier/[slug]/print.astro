@@ -6,16 +6,17 @@
 // The dossier print / PDF path (SIG-UI-013): a document suitable for handing to a
 // council member. It is a standalone, zero-JS page (not the interactive shell
 // layout) that paginates the twelve §39.2 sections into `.sig-print-page` blocks,
-// EACH carrying a footer with the as-of date and the belief-pinned permalink — so
-// every page of the printed PDF is self-identifying and citable (SIG-UI-013/035).
-// Browser "Print → Save as PDF" from this route yields the council-ready document;
-// the reconciliations print expanded (a paper reader cannot click) via print CSS.
+// EACH carrying a footer with the as-of date and a link recording the build's
+// as-of pair and ruleset — so every page of the printed PDF is self-identifying
+// (SIG-UI-013/035). Browser "Print → Save as PDF" from this route yields the
+// document; the reconciliations print expanded (a paper reader cannot click)
+// via print CSS.
 import "../../../styles/epistemic.css";
 import IncompletenessBanner from "../../../components/IncompletenessBanner.astro";
 import WhatWeDontKnow from "../../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../../components/DossierSection.astro";
 import ActionBlocks from "../../../components/ActionBlocks.astro";
-import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier } from "../../../lib/dossier";
+import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
 import { getDossiers } from "../../../lib/data";
 
@@ -28,13 +29,7 @@ validateDossier(dossier);
 
 const SECTIONS_PER_PAGE = 3;
 const origin = Astro.site ? Astro.site.origin : undefined;
-const permalink = dossierPermalink(dossier, origin);
-
-const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "legal_regime"> = {
-  cost_and_expiry: "termination",
-  accountability_events: "authorization",
-  policy: "legal_regime",
-};
+const link = dossierPermalink(dossier, origin);
 
 // Chunk the twelve sections into fixed-size pages; page 1 also carries the header,
 // the incompleteness banner, and the "what we don't know" summary.
@@ -74,26 +69,32 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
           </header>
         )}
 
-        {chunk.map((section) => (
-          <section data-section-id={section.section_id}>
-            <h2>{SECTION_TITLES[section.section_id]}</h2>
-            {section.section_id === "what_we_dont_know" ? (
-              <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" />
-            ) : (
-              <DossierSection section={section} />
-            )}
-            {ACTION_FOR_SECTION[section.section_id] && (
-              <ActionBlocks dossier={dossier} which={ACTION_FOR_SECTION[section.section_id]!} />
-            )}
-          </section>
-        ))}
+        {chunk.map((section) => {
+          const action = SECTION_ACTION_BLOCKS[section.section_id];
+          const noRecord =
+            section.section_id !== "what_we_dont_know" && sectionIsEmpty(section) && !action;
+          return (
+            <section data-section-id={section.section_id}>
+              <h2>{SECTION_TITLES[section.section_id]}</h2>
+              {section.section_id === "what_we_dont_know" ? (
+                <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" />
+              ) : (
+                <DossierSection section={section} />
+              )}
+              {action && <ActionBlocks dossier={dossier} which={action} />}
+              {noRecord && (
+                <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
+              )}
+            </section>
+          );
+        })}
 
         <footer class="sig-print-footer" data-testid="print-footer">
           <span class="sig-print-footer__asof">
             As of world <time datetime={dossier.asOf.as_of_world}>{dossier.asOf.as_of_world}</time>,
             belief <time datetime={dossier.asOf.as_of_belief}>{dossier.asOf.as_of_belief}</time>
           </span>
-          <a class="sig-print-footer__permalink" data-testid="print-permalink" href={permalink}>{permalink}</a>
+          <a class="sig-print-footer__permalink" data-testid="print-permalink" href={link}>{link}</a>
         </footer>
       </div>
     ))}

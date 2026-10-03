@@ -211,10 +211,14 @@ def _okc_dossier() -> dict[str, Any]:
             },
             {
                 "label": "Data-sharing partners",
-                "kind": "NOT_RESEARCHED",
+                # UNRESOLVED, not NOT_RESEARCHED: a contested 'shares data with'
+                # edge to the Oklahoma County Sheriff is recorded in this slice —
+                # "not researched" would contradict the record itself (F-422).
+                "kind": "UNRESOLVED",
                 "subject_id": "agency:okcpd",
                 "predicate_id": "sharing_partners",
-                "note": "SIG has not yet researched which agencies OKCPD shares ALPR data with.",
+                "note": "A 'shares data with' edge to the Oklahoma County Sheriff is "
+                "recorded but contested; the full partner list is not established.",
             },
             {
                 "label": "Retention window (days)",
@@ -276,7 +280,8 @@ def _okc_dossier() -> dict[str, Any]:
                     {
                         "label": "Data-sharing partners",
                         "value": None,
-                        "absence": "NOT_RESEARCHED",
+                        # UNRESOLVED (F-422): a contested sharing edge is recorded.
+                        "absence": "UNRESOLVED",
                         "subject_id": "agency:okcpd",
                         "predicate_id": "sharing_partners",
                     },
@@ -327,13 +332,13 @@ def _okc_dossier() -> dict[str, Any]:
                     {
                         "label": "Independently mapped devices",
                         "value": 31,
-                        "note": "A lower bound (OSM/ODbL). See the reference map for locations "
-                        "at published precision.",
+                        "note": "A lower bound (OSM/ODbL). See the infrastructure map for "
+                        "locations at published precision.",
                     },
                     {
-                        "label": "Reference map",
-                        "value": "/reference-map/",
-                        "documentUrl": "/reference-map/",
+                        "label": "Infrastructure map",
+                        "value": "/map/",
+                        "documentUrl": "/map/",
                     },
                 ],
             },

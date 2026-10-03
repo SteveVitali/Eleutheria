@@ -743,7 +743,9 @@ export function getSiteProvenance(): ProvenanceSummary | undefined {
   return readAnalytics("provenance", (env, path) => {
     const summary = (env.surfaces as Record<string, unknown> | undefined)?.site;
     if (summary == null) throw new Error(`${path}: provenance carries no surfaces.site summary`);
-    return summary as ProvenanceSummary;
+    // P34.11 (QW-6): carry the artifact's own named denominator through, so the
+    // module can say exactly what its site-wide totals are counted against.
+    return { ...(summary as ProvenanceSummary), denominator: env.denominator };
   });
 }
 
