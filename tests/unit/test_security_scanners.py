@@ -307,7 +307,7 @@ def test_npm_gate_allows_a_live_allow_list_entry(tmp_path: Path) -> None:
         '[[allow]]\nid = "A-1"\npackage = "vulnerable-dep"\n'
         'advisories = ["GHSA-xxxx-yyyy-zzzz"]\nscope = "dev-only"\n'
         'reason = "dev-only tooling"\ntracking = "D-P34.2-1"\n'
-        'expires = "2999-01-01"\n',
+        'expires = "2999-01-01"\n',  # future-ok: synthetic: far-future expires fixture
     )
     audit = _audit(tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])})
     proc = _gate(tmp_path, audit)
@@ -333,7 +333,7 @@ def test_npm_gate_dev_only_entry_is_void_when_the_package_ships(tmp_path: Path) 
         tmp_path,
         '[[allow]]\nid = "A-1"\npackage = "vulnerable-dep"\n'
         'advisories = ["GHSA-xxxx-yyyy-zzzz"]\nscope = "dev-only"\n'
-        'reason = "x"\ntracking = "D-1"\nexpires = "2999-01-01"\n',
+        'reason = "x"\ntracking = "D-1"\nexpires = "2999-01-01"\n',  # future-ok: synthetic: fixture
     )
     full = _audit(tmp_path, {"vulnerable-dep": _vuln([("GHSA-xxxx-yyyy-zzzz", "high")])})
     prod = _audit(

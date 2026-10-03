@@ -90,10 +90,11 @@ EVIDENCE_KINDS = ("automated_conformance", "agent_walkthrough", "independent_hum
 CHECK_STATUSES = ("pass", "fail", "deferred", "not_applicable", "verified_by_test")
 EDGE_KINDS = ("configured_access", "observed_use", "declared_policy")
 
-CANDIDATE_PUBLICATION = "p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587"
-CANDIDATE_IDENTITY = "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f"
-CANDIDATE_SNAPSHOT = "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99"
-CANDIDATE_RULESET = "provisional-ruleset/1"
+#: The candidate's pins are read from the CANDIDATE_MANIFEST.json of the
+#: packet named on the command line (P34.22a / ADR-146 D4) — this module
+#: never embeds a publication id, identity digest, snapshot digest or
+#: ruleset of any candidate: the superseded rehearsal candidate stays a
+#: record in docs/build/reports/, not a code constant.
 
 COMP_A = "sig_graph"
 COMP_B = "osm_physical"
@@ -737,13 +738,18 @@ def _candidate_checks(candidate_dir: Path) -> list[dict[str, Any]]:
     integrity = _read_json(integrity_path) if integrity_path and integrity_path.exists() else {}
     descriptor_path = next(rel_dir.glob("releases/*/descriptor.json"), None)
     descriptor = _read_json(descriptor_path) if descriptor_path and descriptor_path.exists() else {}
+    # The candidate's pins are read from the packet's own manifest (P34.22a):
+    # the check asserts the manifest, the on-disk integrity manifest and the
+    # descriptor agree — the code pins no candidate identity of its own.
     ident_ok = (
-        str(integrity.get("publication_id")) == pub
+        bool(pub)
+        and bool(cand.get("identity_digest"))
+        and bool(cand.get("frozen_snapshot_digest"))
+        and bool(cand.get("ruleset_version"))
+        and str(integrity.get("publication_id")) == pub
         and f"sha256:{integrity.get('descriptor_sha256')}"
         == str((manifest.get("release") or {}).get("descriptor_sha256"))
-        and descriptor.get("ruleset_version") == cand.get("ruleset_version") == CANDIDATE_RULESET
-        and cand.get("identity_digest") == CANDIDATE_IDENTITY
-        and pub == CANDIDATE_PUBLICATION
+        and descriptor.get("ruleset_version") == cand.get("ruleset_version")
     )
     checks.append(
         _check(
@@ -789,7 +795,8 @@ def _candidate_checks(candidate_dir: Path) -> list[dict[str, Any]]:
             f"review_only={cand.get('review_only')}",
             evidence=[str(manifest_path), str(candidate_dir / "DISCLOSURE.json")],
             expected_answer="No final evaluation exists — the S3 spine is "
-            "deferred by operator choice (2026-10-19); every figure on the "
+            "deferred by the operator's recorded decision (the GATE "
+            "DECISIONS row, commit a33cd6ec; ADR-146); every figure on the "
             "candidate is provisional/review-only.",
             owner="D-R10-HUMAN-1",
             landing="the S3 human-evaluation spine (HUMAN-H4 → P32.22a → "
@@ -1422,7 +1429,8 @@ def _journey_b_checks(
             "deferred",
             "any claim that a configured edge equals observed access, or a "
             "certified resolved-site interpretation, requires the final human "
-            "evaluation — operator-deferred 2026-10-19",
+            "evaluation — deferred by the operator's recorded S3 decision "
+            "(GATE DECISIONS, commit a33cd6ec; ADR-146)",
             evidence=["docs/tickets/DEFERRALS.md#D-R10-HUMAN-1"],
             owner="D-R10-HUMAN-1",
             landing="the S3 human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23)",
@@ -1871,7 +1879,8 @@ def _assemble(
                 "mode": "shadow",
                 "decision": None,
                 "note": "the S3 human-evaluation spine is deferred wholesale "
-                "by operator choice (2026-10-19) — this portfolio never "
+                "by the operator's recorded decision (GATE DECISIONS, "
+                "commit a33cd6ec; ADR-146) — this portfolio never "
                 "simulates a final decision",
             },
             "published": cand.get("published"),

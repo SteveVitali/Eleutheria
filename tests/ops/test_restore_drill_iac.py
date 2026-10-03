@@ -31,7 +31,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 INSIDE_DAILY_BAND = "2026-10-02T05:00:00Z"
 INSIDE_AR3 = "2026-10-03T12:00:00Z"  # Sat 2026-10-03, dom<=7 -> the AR-3 window
-OPEN_WINDOW = "2026-10-14T12:00:00Z"  # Wednesday, dom 14: outside both windows
+OPEN_WINDOW = "2026-10-14T12:00:00Z"  # dom 14, outside windows — future-ok: synthetic: drill
 CLONE = "sig-pg-drill-20261014t1210z"
 GO = "go (verbatim in-ticket) 2026-10-03: run the queued P34.6 export legs"
 

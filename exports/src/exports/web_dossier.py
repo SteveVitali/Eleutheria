@@ -269,7 +269,7 @@ def _okc_dossier() -> dict[str, Any]:
                     },
                     {
                         "label": "Contract expiry",
-                        "value": "2027-04-02",
+                        "value": "2027-04-02",  # future-ok: real-world: recorded contract expiry
                         "documentUrl": "/v1/claim/contract",
                     },
                 ],
@@ -507,7 +507,7 @@ def _france_dossier() -> dict[str, Any]:
                     },
                     {
                         "label": "Expiration de l'autorisation",
-                        "value": "2031-02-01",
+                        "value": "2031-02-01",  # future-ok: real-world: recorded arrêté sunset
                         "note": "Cinq ans, renouvelable (dérivé de la date d'effet).",
                     },
                 ],
@@ -592,7 +592,10 @@ def _france_dossier() -> dict[str, Any]:
                 "rows": [
                     {"label": "2025-04-01", "value": "Marché DECP notifié (lien)"},
                     {"label": "2026-02-01", "value": "Arrêté préfectoral en vigueur"},
-                    {"label": "2031-02-01", "value": "Expiration (renouvelable)"},
+                    {
+                        "label": "2031-02-01",  # future-ok: real-world: recorded arrêté sunset
+                        "value": "Expiration (renouvelable)",
+                    },
                 ],
             },
             {"section_id": "what_we_dont_know"},

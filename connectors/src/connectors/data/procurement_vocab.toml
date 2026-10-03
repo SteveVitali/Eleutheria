@@ -431,7 +431,7 @@ doc_order_fields    = ["startDateTime"]
 # calendar window — a dated slice, never a full-history crawl.
 index_path   = "/MeetingsCalendarView.aspx/GetCalendarMeetings"
 index_method = "post"
-index_body   = { calendarStartDate = "2025-01-01T00:00:00", calendarEndDate = "2026-12-31T23:59:59" }
+index_body   = { calendarStartDate = "2025-01-01T00:00:00", calendarEndDate = "2026-12-31T23:59:59" }  # future-ok: scheduled: reviewed index calendar-window bound
 items_key    = "d"
 # The human-readable meeting page (link, not bytes) — {tenant} is the pub-*
 # slug, {matter_id} the meeting's ID guid. P26.6 probe (2026-09-17): the

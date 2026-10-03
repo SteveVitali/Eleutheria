@@ -543,7 +543,8 @@ def test_check_pilot_accepts_a_closure_only_with_recorded_evidence(readout, entr
     run.parent.mkdir(parents=True)
     run.write_text("# run\n")
     closed = (
-        "| D-P32.21-1 | P | x | y | z | w | p | DONE 2026-10-10 (runs/P34.9.md) — was: OPEN |\n"
+        "| D-P32.21-1 | P | x | y | z | w | p | DONE "
+        "2026-10-10 (runs/P34.9.md) — was: OPEN |\n"  # future-ok: synthetic: row
     )
 
     # OPEN and PARTIAL rows are owed homes.

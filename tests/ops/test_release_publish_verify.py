@@ -35,6 +35,26 @@ PRIOR = (
 GATE = REPO / "docs" / "build" / "readouts" / "GATE-G3.md"
 
 
+def _manifest() -> dict:
+    """The committed candidate manifest — the expectations below are derived
+    from it (P34.22a: tests move from pinned values to manifest-derived)."""
+    return json.loads((CANDIDATE / "CANDIDATE_MANIFEST.json").read_text())
+
+
+@pytest.fixture(scope="module")
+def pins() -> rpv.CandidatePins:
+    return rpv.pins_from_candidate_dir(CANDIDATE)
+
+
+def _integrity_artifacts() -> list[dict]:
+    manifest = json.loads(
+        next(
+            (CANDIDATE / "candidate_release" / "releases").glob("*/integrity_manifest.json")
+        ).read_text()
+    )
+    return manifest["artifacts"]
+
+
 @pytest.fixture(scope="module")
 def proof(tmp_path_factory) -> dict:
     """One shared bounded-publish run — every assertion reads the SAME
@@ -61,16 +81,46 @@ def _check(proof: dict, check_id: str) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def test_preflight_pins_exactly_the_accepted_candidate(proof: dict) -> None:
+def test_preflight_pins_exactly_the_accepted_candidate(
+    proof: dict, pins: rpv.CandidatePins
+) -> None:
     chk = _check(proof, "PF.candidate_pinned")
     assert chk["status"] == "pass"
-    pins = proof["accepted"]
-    assert pins["publication_id"] == rpv.PUBLICATION_ID
-    assert pins["identity_digest"] == rpv.IDENTITY_DIGEST
-    assert pins["frozen_snapshot_digest"] == rpv.FROZEN_SNAPSHOT_DIGEST
-    assert pins["ruleset_version"] == "provisional-ruleset/1"
-    assert pins["evaluation"] == {"status": "deferred", "mode": "shadow", "applied": []}
-    assert pins["artifact_count"] == rpv.ARTIFACT_COUNT
+    accepted = proof["accepted"]
+    manifest = _manifest()
+    release = manifest["release"]
+    cand = manifest["candidate"]
+    assert accepted["publication_id"] == pins.publication_id == release["publication_id"]
+    assert accepted["identity_digest"] == pins.identity_digest == cand["identity_digest"]
+    assert (
+        accepted["frozen_snapshot_digest"]
+        == pins.frozen_snapshot_digest
+        == cand["frozen_snapshot_digest"]
+    )
+    assert accepted["ruleset_version"] == "provisional-ruleset/1"
+    assert accepted["data_release_id"] == release["descriptor"]["data_release_id"]
+    assert accepted["as_of_world"] == release["descriptor"]["as_of_world"]
+    assert accepted["as_of_belief"] == release["descriptor"]["as_of_belief"]
+    assert accepted["evaluation"] == {
+        "status": "deferred",
+        "mode": "shadow",
+        "applied": [],
+    }
+    assert accepted["artifact_count"] == len(_integrity_artifacts())
+
+
+def test_proof_reports_the_superseded_candidate_posture(proof: dict) -> None:
+    """P34.22a / B-4: pointed at the p32.23a packet the run reports rehearsal
+    evidence of a superseded candidate — never a production verification."""
+    assert proof["subject"]["superseded"] is True
+    assert proof["subject"]["posture"] == rpv.SUPERSEDED_POSTURE
+    assert "superseded" in proof["subject"]["posture"]
+    assert "no publish authorised" in proof["subject"]["posture"]
+    chk = _check(proof, "PF.publish_authority")
+    assert chk["status"] == "deferred"
+    assert "superseded candidate" in chk["detail"]
+    readme = (Path(proof["publish"]["registry"]).parent / "README.md").read_text()
+    assert "no publish authorised" in readme
 
 
 def test_gate_readout_is_the_publish_authority(proof: dict) -> None:
@@ -79,35 +129,35 @@ def test_gate_readout_is_the_publish_authority(proof: dict) -> None:
 
 def test_preflight_refuses_a_different_candidate(tmp_path: Path) -> None:
     """A packet claiming a different publication id can never be published by
-    this run — the pins are the GATE-G3 inputs, not whatever a directory
-    contains."""
+    this run — the gate-signed readout is the publish authority: a manifest
+    naming a publication the readout does not has no publish authority."""
     tampered = tmp_path / "packet"
     shutil.copytree(CANDIDATE, tampered)
     cman_path = tampered / "CANDIDATE_MANIFEST.json"
     cman = json.loads(cman_path.read_text())
     cman["release"]["publication_id"] = "p-not-the-accepted-one"
     cman_path.write_text(json.dumps(cman))
-    with pytest.raises(rpv.PublishVerificationError, match="NOT the GATE-G3"):
-        rpv.preflight(tampered, GATE)
+    with pytest.raises(rpv.PublishVerificationError, match="publish authority"):
+        rpv.preflight(tampered, GATE, rpv.pins_from_candidate_dir(tampered))
 
 
-def test_preflight_refuses_tampered_bytes(tmp_path: Path) -> None:
+def test_preflight_refuses_tampered_bytes(tmp_path: Path, pins: rpv.CandidatePins) -> None:
     tampered = tmp_path / "packet"
     shutil.copytree(CANDIDATE, tampered)
     victim = next((tampered / "candidate_release" / "r").rglob("index.html"))
     victim.write_bytes(victim.read_bytes() + b"tampered")
     with pytest.raises(rpv.PublishVerificationError):
-        rpv.preflight(tampered, GATE)
+        rpv.preflight(tampered, GATE, pins)
 
 
-def test_preflight_refuses_without_a_signed_gate(tmp_path: Path) -> None:
+def test_preflight_refuses_without_a_signed_gate(tmp_path: Path, pins: rpv.CandidatePins) -> None:
     unsigned = tmp_path / "GATE-G3.md"
     unsigned.write_text("# GATE-G3\nStatus: pending\n")
-    with pytest.raises(rpv.PublishVerificationError, match="no publish authority"):
-        rpv.preflight(CANDIDATE, unsigned)
+    with pytest.raises(rpv.PublishVerificationError, match="publish authority"):
+        rpv.preflight(CANDIDATE, unsigned, pins)
 
 
-def test_a_dossier_claiming_completion_is_refused(tmp_path: Path) -> None:
+def test_a_dossier_claiming_completion_is_refused(tmp_path: Path, pins: rpv.CandidatePins) -> None:
     tampered = tmp_path / "packet"
     shutil.copytree(CANDIDATE, tampered)
     dp = tampered / "candidate_export" / "web" / "research_dossiers.json"
@@ -115,7 +165,7 @@ def test_a_dossier_claiming_completion_is_refused(tmp_path: Path) -> None:
     doc["dossiers"][0]["completeness"]["pilot_complete"] = True
     dp.write_text(json.dumps(doc))
     with pytest.raises(rpv.PublishVerificationError, match="pilot completion"):
-        rpv.preflight(tampered, GATE)
+        rpv.preflight(tampered, GATE, pins)
 
 
 # ---------------------------------------------------------------------------
@@ -123,22 +173,22 @@ def test_a_dossier_claiming_completion_is_refused(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_pointer_flips_after_full_validation(proof: dict) -> None:
+def test_pointer_flips_after_full_validation(proof: dict, pins: rpv.CandidatePins) -> None:
     assert _check(proof, "P.validate_first")["status"] == "pass"
     pointer = proof["publish"]["pointer"]
     assert pointer["before"] is None
-    assert pointer["after"]["publication_id"] == rpv.PUBLICATION_ID
-    assert pointer["after"]["manifest_sha256"] == rpv.RELEASE_MANIFEST_SHA256
+    assert pointer["after"]["publication_id"] == pins.publication_id
+    assert pointer["after"]["manifest_sha256"] == pins.release_manifest_sha256
     assert _check(proof, "P.staged_revalidates")["status"] == "pass"
     assert _check(proof, "P.activation_receipt")["status"] == "pass"
 
 
-def test_publish_refuses_a_non_fresh_registry(tmp_path: Path) -> None:
+def test_publish_refuses_a_non_fresh_registry(tmp_path: Path, pins: rpv.CandidatePins) -> None:
     reg = tmp_path / "registry"
     reg.mkdir()
     (reg / "stale.txt").write_text("x")
     with pytest.raises(rpv.PublishVerificationError, match="not empty"):
-        rpv.publish(CANDIDATE, reg)
+        rpv.publish(CANDIDATE, reg, pins)
 
 
 # ---------------------------------------------------------------------------
@@ -171,8 +221,8 @@ def test_unauthenticated_reads_match_approved_digests(proof: dict) -> None:
     ev = chk["evidence"]
     assert ev["non_200"] == []
     assert ev["digest_mismatches"] == []
-    # every one of the 18 manifest artifacts + the directory/overlay routes
-    assert ev["gets"] >= rpv.ARTIFACT_COUNT + 5
+    # every manifest artifact + the directory/overlay routes
+    assert ev["gets"] >= len(_integrity_artifacts()) + 5
     digests = _check(proof, "V.digests")["evidence"]
     assert digests["mismatches"] == [] and digests["undeclared"] == []
 
@@ -319,9 +369,14 @@ def test_cli_wiring() -> None:
     from ops.cli import build_parser
 
     parser = build_parser()
-    args = parser.parse_args(["release-publish", "--out", "x"])
+    # --candidate is required — no production default exists (P34.22a)
+    with pytest.raises(SystemExit):
+        parser.parse_args(["release-publish", "--out", "x"])
+    args = parser.parse_args(
+        ["release-publish", "--out", "x", "--candidate", "docs/build/reports/x"]
+    )
     assert args.command == "release-publish"
-    assert args.candidate.endswith("p32.23a-release-candidate")
+    assert args.candidate == "docs/build/reports/x"
 
 
 def test_committed_packet_is_untouched_by_the_run(proof: dict) -> None:

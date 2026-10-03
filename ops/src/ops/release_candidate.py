@@ -4,10 +4,14 @@
 """The post-evaluation release candidate (P32.23a, SIG-TRUST-010, ADR-142).
 
 This module builds **one unpublished release candidate** from the frozen
-P32.22 repaired-input snapshot. The operator's 2026-10-19 choice deferred the
-whole S3 human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23), so
-there is **no final evaluation decision**: the candidate is built under the
-active PROVISIONAL resolution policy and every surface that describes it
+P32.22 repaired-input snapshot. The operator's recorded S3 deferral — the
+GATE DECISIONS row "S3 human-evaluation spine — DEFERRED wholesale by the
+operator" (commit ``a33cd6ec``; the stamped chain date was never a clock
+reading — ADR-146's appended correction records the true time,
+2026-09-28T01:15:49Z) — deferred the whole S3 human-evaluation spine
+(HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23), so there is **no final
+evaluation decision**: the candidate is built under the active
+PROVISIONAL resolution policy and every surface that describes it
 carries that deferral.
 
 The contract this module keeps:
@@ -99,17 +103,26 @@ PROVISIONAL_RULESET = "provisional-ruleset/1"
 EVAL_POLICY = "eval-confidence/1"
 EVAL_STATUS = "deferred"
 
+#: The deferral reference names the recorded decision, never a hand-typed
+#: date (P34.22a / ADR-146 D4): the GATE DECISIONS row "S3 human-evaluation
+#: spine — DEFERRED wholesale by the operator" was recorded in commit
+#: ``a33cd6ec``; the date once stamped on it was a chain date, and its true
+#: time is kept only in ADR-146's appended correction table. The note text
+#: below carries no ISO date literal by construction — a test asserts it.
 EVAL_DEFERRAL_NOTE = (
-    "2026-10-19 operator choice: the S3 human-evaluation spine "
-    "(HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) is deferred wholesale. There is "
-    "NO final evaluation decision — this candidate is built under the active "
-    "PROVISIONAL resolution policy, with the deferral disclosed everywhere the "
-    "candidate is described."
+    "operator's recorded S3 deferral (the GATE DECISIONS row — commit "
+    "a33cd6ec; the stamped date was never a clock reading and its true "
+    "time is recorded only in ADR-146's appended correction table): the "
+    "S3 human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) is "
+    "deferred wholesale. There is NO final evaluation decision — this "
+    "candidate is built under the active PROVISIONAL resolution policy, "
+    "with the deferral disclosed everywhere the candidate is described."
 )
 
 EVAL_DISCLOSURE = (
     "PROVISIONAL EVALUATION BASIS — review-only. The S3 human-evaluation spine "
-    "is deferred wholesale by explicit operator choice (2026-10-19): there is "
+    "is deferred wholesale by the operator's recorded decision (the GATE "
+    "DECISIONS row, commit a33cd6ec; ADR-146): there is "
     "no final evaluation decision. The camera-site auto-write tiers and the "
     "historical 0.98 point-gate remain PROVISIONAL-active (D-R6.1-EVAL stays "
     "OPEN) and eval-confidence/1 stays mode=shadow with applied=[] — nothing "
@@ -122,7 +135,8 @@ EVAL_DISCLOSURE = (
 
 DEFAULT_NOTE = (
     "release candidate — provisional ruleset on the frozen repaired-input "
-    "snapshot; evaluation deferred (2026-10-19, no final evaluation decision); "
+    "snapshot; evaluation deferred (the operator's recorded S3 deferral — "
+    "GATE DECISIONS, commit a33cd6ec; no final evaluation decision); "
     "unpublished"
 )
 DEFAULT_SPINE_LABEL = (

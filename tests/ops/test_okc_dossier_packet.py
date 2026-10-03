@@ -289,7 +289,10 @@ def test_partner_degree_is_not_a_device_count() -> None:
 
 def test_decision_window_and_temporal_kinds() -> None:
     d = _dossier()
-    assert d["decision_windows"]["next_decision_date"] == "2027-06-30"
+    assert (
+        d["decision_windows"]["next_decision_date"]
+        == "2027-06-30"  # future-ok: real-world: recorded OKC renewal end
+    )
     q9 = next(a for a in d["answers"] if a["question"] == "q9")
     preds = {x["predicate"] for x in q9["assertions"]}
     assert {"as_of", "posted_date", "lifecycle_transition", "contract_end_date"} <= preds
