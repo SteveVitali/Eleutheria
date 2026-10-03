@@ -13,8 +13,7 @@
  * Oklahoma City demo case the rest of the shell renders (Appendix B/D).
  */
 
-import type { CentralityStatistic, ErQuality, NetworkEdge, NetworkNode, AccessPath } from "./network";
-import { centralityStatistic } from "./network";
+import type { NetworkEdge, NetworkNode, AccessPath } from "./network";
 import type { DensityBin, MapAsset } from "./map";
 
 // --- Map: physical assets across sensitivity tiers + jurisdictions ---------
@@ -70,6 +69,20 @@ export const MAP_ASSETS: MapAsset[] = [
     lat: null,
     lon: null,
     precision: "operating-area only (mobile asset, SIG-GEO-004)",
+  },
+  {
+    id: "device:okc-006",
+    label: "Reported camera — conflicting coordinates",
+    jurisdiction: "Oklahoma City",
+    tier: 2,
+    lat: null,
+    lon: null,
+    precision: "conflicting evidence — no defensible point",
+    // P34.15 (K12b NEW-7): a CONTESTED location — evidence exists and disagrees
+    // (the export emits the same absence for point_status="conflicted"). The
+    // jurisdiction indicator rolls it into the contested count that leads to
+    // the dossier, replacing the retired per-record dead task link.
+    locationAbsence: "UNRESOLVED",
   },
   {
     id: "device:tulsa-001",
@@ -184,27 +197,14 @@ export const NETWORK_EDGES: NetworkEdge[] = [
   },
 ];
 
-/** The ER quality all this graph's centrality figures disclose (SIG-UI-023). */
-export const ER_QUALITY: ErQuality = {
-  pairwise_precision: 0.97,
-  pairwise_recall: 0.91,
-  f1: 0.94,
-  bcubed_precision: 0.95,
-  bcubed_recall: 0.89,
-  holdout_version: "er-holdout-2026.06",
-};
-
 /**
- * The centrality/hub statistics on the explorer. Built through `centralityStatistic`,
- * so each is structurally guaranteed to carry its inline ER-quality disclosure — a
- * statistic that could not disclose its ER quality could not be constructed at all
- * (SIG-UI-023, SIG-IDENT-030).
+ * P34.15 (K2 NEW-6, D-K2-2, SIG-IDENT-030 by abstention): no centrality
+ * statistic and no fabricated ER eval ships in the fixtures — organisation
+ * entity resolution has not passed its gate, so neither the figures nor the
+ * invented precision/recall numbers that once decorated them are published.
+ * The `CentralityStatistic`/`ErQuality` machinery stays in `network.ts` for
+ * the gate's return — its structural disclosure contract is unchanged.
  */
-export const CENTRALITY_STATS: CentralityStatistic[] = [
-  centralityStatistic("rtcc:okc", "betweenness", 0.62, ER_QUALITY),
-  centralityStatistic("vendor:flock", "degree", 0.5, ER_QUALITY),
-  centralityStatistic("agency:okcpd", "hub_score", 0.44, ER_QUALITY),
-];
 
 /**
  * Access-path closures from OKC PD. A 2-hop live path is a publishable finding; a

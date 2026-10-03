@@ -289,7 +289,10 @@ def _m_edges(*edges: tuple[str, str, str]) -> list[dict]:
     ]
 
 
-def test_centrality_is_degree_over_the_typed_access_edges() -> None:
+def test_no_centrality_statistic_is_emitted_but_the_focus_pick_keeps_its_rule() -> None:
+    """P34.15 (D-K2-2, SIG-IDENT-030 by abstention): the degree statistic is
+    withdrawn — `statistics` is deliberately empty — while the ego-focus pick
+    stays a stated mechanism over the same typed access edges."""
     export = _export(
         _site("A", "35.46", "-97.51", "Oklahoma"),
         materialized={
@@ -303,28 +306,32 @@ def test_centrality_is_degree_over_the_typed_access_edges() -> None:
     )
     payload = _analytic(export, "centrality")
     assert "degree" in payload["measure"]
-    stats = {s["node_id"]: s for s in payload["statistics"]}
-    assert stats["e1"]["value"] == 2
-    assert stats["e2"]["value"] == 1
-    assert stats["e3"]["value"] == 1
-    assert "e4" not in stats and "e5" not in stats
-    # The focus rule is named and deterministic (max degree, lexical tie-break).
+    assert payload["statistics"] == []
+    # The focus rule is named and deterministic (max degree, lexical tie-break) —
+    # a presentation mechanism, not a published ranking.
     assert payload["focus"]["entity_id"] == "e1"
     assert payload["focus"]["degree"] == 2
     assert payload["focus"]["rule"]
     assert "2 typed access edges" in payload["denominator"]
 
 
-def test_centrality_stats_carry_the_disclosure_not_a_fabricated_er_eval() -> None:
+def test_the_artifact_never_claims_exact_or_deterministic_identity() -> None:
+    """P34.15 (K2 NEW-6): the withdrawn "deterministic identity resolution …
+    exact … never an estimate" disclosure must not reappear anywhere in the
+    emitted artifact."""
     export = _export(
         _site("A", "35.46", "-97.51", "Oklahoma"),
         materialized={"materialized_edges": _m_edges(("e1", "e2", "observed_use"))},
     )
-    for stat in _analytic(export, "centrality")["statistics"]:
-        # er_quality is the HONEST null — the stat does not rest on a probabilistic
-        # ER eval — with the inline disclosure saying so (SIG-UI-023).
-        assert stat["er_quality"] is None
-        assert stat["disclosure"]
+    payload = _analytic(export, "centrality")
+    assert payload["statistics"] == []
+    body = json.dumps(payload)
+    for phrase in (
+        "deterministic identity resolution",
+        "exact for the exported graph",
+        "never an estimate",
+    ):
+        assert phrase not in body
 
 
 def test_centrality_focus_tie_resolves_lexically() -> None:

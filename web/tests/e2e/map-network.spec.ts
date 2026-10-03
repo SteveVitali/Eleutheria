@@ -47,12 +47,12 @@ test.describe("infrastructure map (§39.3)", () => {
     await page.goto("/map/");
     const indicators = page.getByTestId("jurisdiction-indicator");
     await expect(indicators.first()).toBeVisible();
-    // Every asset is either a located row or inside a jurisdiction indicator.
+    // Every record is either a located row or inside a jurisdiction indicator.
     const located = await page.getByTestId("map-asset-row").count();
     const rolledUp = await indicators.evaluateAll((els) =>
       els.reduce((n, e) => n + Number(e.getAttribute("data-count") ?? 0), 0),
     );
-    expect(located + rolledUp).toBe(6); // MAP_ASSETS.length
+    expect(located + rolledUp).toBe(7); // MAP_ASSETS.length
   });
 
   test("served from static PMTiles v3 with OSM attribution, no third-party CDN (SIG-GEO-012/013)", async ({
@@ -79,18 +79,21 @@ test.describe("network explorer (§39.4)", () => {
     await expect(page.getByTestId("network-view")).toHaveAttribute("data-default-view", "ego");
   });
 
-  test("every centrality statistic carries an inline ER-quality disclosure (SIG-UI-023)", async ({
+  test("no centrality statistic is rendered — the ranking is withdrawn (P34.15, K2 NEW-6)", async ({
     page,
   }) => {
     await page.goto("/network/");
-    const stats = page.getByTestId("centrality-stat");
-    const count = await stats.count();
-    expect(count).toBeGreaterThan(0);
-    for (let i = 0; i < count; i += 1) {
-      const disclosure = stats.nth(i).getByTestId("er-disclosure");
-      await expect(disclosure).toBeVisible();
-      await expect(disclosure).toContainText(/entity resolution/i);
-    }
+    // SIG-IDENT-030 by abstention: no statistic, no disclosure element, and no
+    // "exact"/"deterministic identity resolution" claim anywhere on the page.
+    await expect(page.getByTestId("centrality-stat")).toHaveCount(0);
+    await expect(page.getByTestId("er-disclosure")).toHaveCount(0);
+    await expect(page.getByTestId("centrality-withdrawn")).toBeVisible();
+    await expect(page.locator("body")).not.toContainText(
+      /deterministic identity resolution|exact for the exported graph|never an estimate/i,
+    );
+    // The island carries no statistic rendering either.
+    await expect(page.getByTestId("graph-island-centrality")).toHaveCount(0);
+    await expect(page.getByTestId("graph-island-er-disclosure")).toHaveCount(0);
   });
 
   test("three access edge types are distinct and not merged by default (SIG-UI-024)", async ({

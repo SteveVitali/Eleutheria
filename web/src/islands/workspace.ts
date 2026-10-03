@@ -14,6 +14,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   parseWorkspaceState,
+  unappliedParams,
   workspaceHref,
 } from "../lib/workspace-state";
 import type { WorkspaceState, WorkspaceView } from "../lib/workspace-state";
@@ -22,6 +23,12 @@ export interface WorkspaceRuntime {
   state: WorkspaceState;
   /** Visible-failure notes from the last parse (unknown versions/values). */
   issues: string[];
+  /**
+   * The contract parameters the address names but this view does NOT apply
+   * (P34.15, K6 NEW-1): the island MUST announce them visibly — an ignored
+   * facet never passes for a filter that held.
+   */
+  ignored: readonly string[];
   /** Merge a patch and record it: `push` for a navigation the Back button can
    *  undo, `replace` for refining the current entry (e.g. live query text). */
   update: (patch: Partial<WorkspaceState>, mode?: "push" | "replace") => void;
@@ -41,9 +48,13 @@ export function useWorkspaceState(
     return { parsed, state: { ...parsed.state, view } };
   };
 
-  const [{ state, issues }, setCurrent] = useState(() => {
+  const [{ state, issues, ignored }, setCurrent] = useState(() => {
     const r = read();
-    return { state: r.state, issues: r.parsed.issues };
+    return {
+      state: r.state,
+      issues: r.parsed.issues,
+      ignored: unappliedParams(r.parsed.present, view),
+    };
   });
   const defaultsRef = useRef(defaults);
   defaultsRef.current = defaults;
@@ -54,7 +65,11 @@ export function useWorkspaceState(
         release: defaultsRef.current.release ?? null,
         view,
       });
-      setCurrent({ state: { ...parsed.state, view }, issues: parsed.issues });
+      setCurrent({
+        state: { ...parsed.state, view },
+        issues: parsed.issues,
+        ignored: unappliedParams(parsed.present, view),
+      });
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -73,5 +88,5 @@ export function useWorkspaceState(
     [view],
   );
 
-  return { state, issues, update };
+  return { state, issues, ignored, update };
 }

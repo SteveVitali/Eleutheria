@@ -4,10 +4,13 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 // The network explorer (§39.4). Static, zero-JS (SIG-UI-036): the default ego
-// network, the inline ER-quality disclosure on every centrality statistic, the three
-// distinct + separately-listed access edge types, and the access-path closures all
-// render server-side. The LIST EQUIVALENT (the edge lists and the hop lists) is the
-// source of truth and the no-JS/screen-reader path (SIG-UI-037).
+// network, the three distinct + separately-listed access edge types, and the
+// access-path closures all render server-side. The LIST EQUIVALENT (the edge lists
+// and the hop lists) is the source of truth and the no-JS/screen-reader path
+// (SIG-UI-037). P34.15 (K2 NEW-6, D-K2-2, SIG-IDENT-030 by abstention): the
+// centrality statistic and the "deterministic identity resolution … exact" claim
+// are WITHDRAWN — organisation entity resolution has not passed its gate, so the
+// page publishes no ranking and says why.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SupportGlyph from "../components/SupportGlyph.astro";
 import EmptyState from "../components/EmptyState.astro";
@@ -32,7 +35,6 @@ import {
 } from "../lib/network";
 import {
   getNetwork,
-  getNetworkCentrality,
   getNetworkFocusEntityId,
   getLatestReleaseTarget,
   capRows,
@@ -40,10 +42,11 @@ import {
 import NetworkIsland from "../islands/NetworkIsland";
 import "../styles/islands.css";
 
-// The sharing network + its centrality analytics flow through the single data seam
+// The sharing network + its ego-focus pick flow through the single data seam
 // (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+// P34.15: no centrality statistic is read — the ranking is withdrawn
+// (SIG-IDENT-030 by abstention); the focus entity is a presentation mechanism only.
 const { nodes: NETWORK_NODES, edges: NETWORK_EDGES, accessPaths: ACCESS_PATHS } = getNetwork();
-const CENTRALITY_STATS = getNetworkCentrality();
 const FOCUS_ENTITY_ID = getNetworkFocusEntityId();
 
 const labelOf = (id: string) => NETWORK_NODES.find((n) => n.id === id)?.label ?? id;
@@ -99,7 +102,6 @@ others.forEach((n, i) => {
       client:only="react"
       nodes={NETWORK_NODES}
       edges={NETWORK_EDGES}
-      centrality={CENTRALITY_STATS}
       focusEntityId={FOCUS_ENTITY_ID}
       release={LATEST?.publicationId ?? null}
     />
@@ -162,24 +164,18 @@ others.forEach((n, i) => {
   </section>
   )}
 
-  <!-- Centrality/hub statistics — each with its ER-quality disclosure INLINE. -->
+  <!-- Centrality/hub statistics — WITHDRAWN (P34.15, D-K2-2, SIG-IDENT-030 by
+       abstention): the old "deterministic identity resolution … exact" claim
+       overstated organisation resolution; SIG abstains from publishing a ranking
+       until the resolution gate passes. When it does, every returned statistic
+       still carries its ER-quality disclosure INLINE (SIG-UI-023 — the
+       `CentralityStatistic` type keeps that contract structural). -->
   <h2 id="centrality-heading">Centrality &amp; hub statistics</h2>
-  <p>
-    If entity resolution is imperfect, so is every network statistic — so each figure
-    carries its ER-quality disclosure <strong>at the statistic, not in a footnote</strong>{" "}
-    (SIG-UI-023).
+  <p data-copy="NW-01 NW-02" data-testid="centrality-withdrawn">
+    SIG has not merged organisations across sources — one agency can appear more
+    than once in these lists. No centrality or hub ranking is published; the
+    resolution review that would make one honest has not passed its gate.
   </p>
-  {CENTRALITY_STATS.length === 0 && <EmptyState surface="centrality" />}
-  <ul class="sig-centrality">
-    {CENTRALITY_STATS.map((s) => (
-      <li class="sig-centrality__item" data-testid="centrality-stat" data-metric={s.metric}>
-        <span class="sig-centrality__value">
-          <strong>{labelOf(s.node_id)}</strong> — {s.metric.replace(/_/g, " ")}: {s.value.toFixed(2)}
-        </span>{" "}
-        <span class="sig-centrality__er" data-testid="er-disclosure">{s.disclosure}</span>
-      </li>
-    ))}
-  </ul>
 
   <!-- The three access edge types: distinct legend + three unmerged lists. -->
   <h2 id="access-heading">Access edges</h2>

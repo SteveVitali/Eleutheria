@@ -29,7 +29,6 @@ import {
   NETWORK_EDGES,
   ACCESS_PATHS,
   DENSITY_BINS,
-  CENTRALITY_STATS,
   FOCUS_ENTITY_ID,
 } from "../src/lib/map-network-fixture";
 import {
@@ -207,7 +206,9 @@ analytic(
     `${NETWORK_EDGES.length} typed access edges between ${NETWORK_NODES.length} entities in the exported sharing network`,
     {
       measure: "undirected degree over the typed access edges (fixture values)",
-      statistics: CENTRALITY_STATS,
+      // P34.15 (SIG-IDENT-030 by abstention): no centrality statistic is emitted —
+      // the `focus` block is a presentation mechanism, not a published ranking.
+      statistics: [],
       focus: {
         entity_id: FOCUS_ENTITY_ID,
         degree: null,

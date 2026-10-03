@@ -76,10 +76,10 @@ test.describe("interactive network island (AC1)", () => {
     await page.goto("/network/");
     const island = page.getByTestId("network-island");
     await expect(island).toBeVisible();
-    // The centrality detail carries the inline ER-quality disclosure (SIG-UI-023).
-    await expect(page.getByTestId("graph-island-er-disclosure").first()).toContainText(
-      /entity resolution/i,
-    );
+    // P34.15 (SIG-IDENT-030 by abstention): no centrality statistic renders —
+    // the detail panel shows edges, never the withdrawn ranking.
+    await expect(page.getByTestId("graph-island-er-disclosure")).toHaveCount(0);
+    await expect(page.getByTestId("graph-island-centrality")).toHaveCount(0);
     // Selecting a different node re-focuses (aria-pressed moves to it).
     const nodes = page.getByTestId("graph-island-node");
     const count = await nodes.count();
