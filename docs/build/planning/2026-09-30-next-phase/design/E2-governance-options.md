@@ -714,7 +714,7 @@ public rows** under `LicenseRef-OperatorAccepted-DBRight` (E1-11; E1 NEW-13; E4 
 - **(b) Revert:** return all 94 sources to UNDETERMINED (fail closed) until evidenced per-source review. This removes
   21,682 public rows and a map layer; costs 47–188 h of operator review plus counsel for flagged clauses; and takes
   months.
-- **(c) Hybrid:** (a) plus a targeted re-decision now of the out-of-rule and counsel-flagged rows (`camreg_aikner`,
+- **(c) Hybrid:** (a) plus a targeted re-decision now of the out-of-rule and counsel-flagged rows (`camreg_und_001`,
   `camreg_calgary_ab`, Lexington, MD iMAP, and any DBRight row with no captured terms), using E4-style per-source
   packets. Q-19 is answered with the same guardrails.
 

@@ -7,7 +7,7 @@
 into a running spine so the composed stack has real, resolvable data to serve —
 the scope-qualified counts (P32.3 / SIG-TRUST-004) the dossier must keep
 distinct: DeFlock's **299 metro**, the agency's **90 active city-limits**, and
-Bacy's **~100 privately-owned city-limits** — a scope partition, NOT a
+the OKCPD chief's **~100 privately-owned city-limits** — a scope partition, NOT a
 contradiction; the "~190" city figure is an explicitly derived approximate sum,
 never a claim.
 
@@ -51,7 +51,7 @@ _AGENCY = "agency:okc:okcpd"
 #: ``evidence_origin``=``seed_fixture`` qualifier — seeded material is labelled
 #: so no read surface presents it as primary live evidence — and every count
 #: carries ``count_scope`` (+``count_scope_detail`` where it refines the scope):
-#: DeFlock's 299 is a METRO count, Bacy's ~100 is PRIVATELY-OWNED cameras inside
+#: DeFlock's 299 is a METRO count, the OKCPD chief's ~100 is PRIVATELY-OWNED cameras inside
 #: CITY LIMITS, and the agency's 90 is CITY-LIMITS agency-operated — different
 #: scopes, so they are NOT a contradiction. The "~190" city figure a reader
 #: derives from 90 + ~100 is an explicitly derived approximate sum
@@ -87,7 +87,7 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "evidence_genre": "community_map",
         "qualifiers": _okc_qualifiers("metro"),
     },
-    # Chief Bacy's statement — ~100 PRIVATELY-OWNED cameras inside CITY LIMITS
+    # the OKCPD chief's statement — ~100 PRIVATELY-OWNED cameras inside CITY LIMITS
     # (the sourced input the "~190" derived city sum adds to the agency's 90 —
     # the sum itself is derived, not claimed).
     {
@@ -96,9 +96,9 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "value": 100,
         "raw_value": "businesses own around 100 within city limits",
         "observed_at": "2026-08-18",
-        "source_id": "bacy",
+        "source_id": "okc_council_statement",
         "spdx": "CC-BY-4.0",
-        "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+        "attribution": "the OKCPD chief, city council 2026-08-18",
         "evidence_genre": "news_article",
         "qualifiers": _okc_qualifiers("city_limits", "privately_owned"),
     },
@@ -109,9 +109,9 @@ _OKC_CLAIMS: list[dict[str, Any]] = [
         "value": 90,
         "raw_value": "OKCPD has 90 cameras",
         "observed_at": "2026-08-18",
-        "source_id": "bacy",
+        "source_id": "okc_council_statement",
         "spdx": "CC-BY-4.0",
-        "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+        "attribution": "the OKCPD chief, city council 2026-08-18",
         "evidence_genre": "official_statement",
         "qualifiers": _okc_qualifiers("city_limits", "agency_operated"),
     },

@@ -87,6 +87,7 @@ from policy.licensing import (
     compute_export_license,
 )
 from policy.sensitivity import apply_tier
+from policy.source_aliases import load_source_aliases
 from reconcile.weight import predicate_meta
 from resolution.partner_identity import PARTNER_PREDICATES
 
@@ -1376,7 +1377,16 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
     Extracted for P27.4: the spine-export orchestrator needs the same parsed
     claims to licence-slice each site per (source, rights) pair — it must not
     re-derive the parse.
+
+    P34.18 / ADR-178 (S0 RI-01): the keyed-digest alias table projects every
+    retired identifier — source id, and any handle-bearing token inside a
+    subject/claim id or value — to its neutral public form at this single seam
+    (claims keep their recorded ids; resolution is an export-time projection,
+    never a spine rewrite, SIG-STORE-011). A ``camera_operator`` value that
+    digests onto the suppressed set is marked non-publishable (the full
+    predicate fix is P35.26's).
     """
+    aliases = load_source_aliases()
     claims: list[ShapingClaim] = []
     for r in rows:
         (
@@ -1423,24 +1433,36 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
         else:
             observed_instant = None
             observed_basis = "undated"
+        # P34.18: a suppressed camera_operator value is not publishable.
+        if (
+            predicate_id == "camera_operator"
+            and publication_permitted
+            and (
+                aliases.is_suppressed_value("" if value_text is None else str(value_text))
+                or aliases.is_suppressed_value("" if raw_value is None else str(raw_value))
+            )
+        ):
+            publication_permitted = False
         claims.append(
             ShapingClaim(
-                claim_id=str(claim_id),
-                subject_id=str(subject_id),
+                claim_id=aliases.resolve_text(str(claim_id)),
+                subject_id=aliases.resolve_text(str(subject_id)),
                 predicate_id=str(predicate_id),
                 value_kind=str(value_kind),
-                value_text=None if value_text is None else str(value_text),
+                value_text=None if value_text is None else aliases.resolve_text(str(value_text)),
                 value_num=None if value_num is None else float(value_num),
-                raw_value="" if raw_value is None else str(raw_value),
+                raw_value="" if raw_value is None else aliases.resolve_text(str(raw_value)),
                 observed_at=observed_date,
                 sensitivity_tier=int(sensitivity_tier),
-                source_id=None if source_id is None else str(source_id),
+                source_id=None if source_id is None else aliases.resolve_text(str(source_id)),
                 connector_name=None if connector_name is None else str(connector_name),
                 effective_rights_id=str(effective_rights_id),
                 effective_spdx=str(spdx),
                 effective_redistributable=str(redistributable),
                 effective_derivative_permitted=str(derivative_permitted),
-                effective_attribution="" if attribution is None else str(attribution),
+                effective_attribution=""
+                if attribution is None
+                else aliases.resolve_text(str(attribution)),
                 effective_terms_url="" if terms_url is None else str(terms_url),
                 occurrence_capture_id=None
                 if occurrence_capture_id is None

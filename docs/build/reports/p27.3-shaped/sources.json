@@ -19,7 +19,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_aikner",
+      "source": "camreg_und_001",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -107,7 +107,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_bargabos",
+      "source": "camreg_und_002",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -203,7 +203,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_cclemire",
+      "source": "camreg_und_003",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -219,7 +219,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_cheicylia",
+      "source": "camreg_und_004",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -251,7 +251,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_cphang",
+      "source": "camreg_und_005",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -307,7 +307,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_duganmeyer",
+      "source": "camreg_und_006",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -363,7 +363,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_fifia",
+      "source": "camreg_und_007",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -395,7 +395,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_freese_dm",
+      "source": "camreg_und_008",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -467,7 +467,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_gvanmaren",
+      "source": "camreg_und_009",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -475,7 +475,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_helberg",
+      "source": "camreg_und_010",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -531,7 +531,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_jelenic",
+      "source": "camreg_und_011",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -563,7 +563,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_keshan",
+      "source": "camreg_und_012",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -579,7 +579,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_kosman",
+      "source": "camreg_und_013",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -587,7 +587,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_kunying",
+      "source": "camreg_und_014",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -603,7 +603,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_langan",
+      "source": "camreg_und_015",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -619,7 +619,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_lenhardt",
+      "source": "camreg_und_016",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -715,7 +715,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_mhebert",
+      "source": "camreg_und_017",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -795,7 +795,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_nurnazihah",
+      "source": "camreg_und_018",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -803,7 +803,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_nyc_jgrayson_ny",
+      "source": "camreg_us_ny_001",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -811,7 +811,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_nyc_weltia_ny",
+      "source": "camreg_us_ny_002",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -835,7 +835,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_olsson",
+      "source": "camreg_und_019",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -971,7 +971,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_rjcoleman",
+      "source": "camreg_und_020",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -987,7 +987,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_ruslan",
+      "source": "camreg_und_021",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1011,7 +1011,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_schellinger",
+      "source": "camreg_und_022",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1035,7 +1035,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_sfoss",
+      "source": "camreg_und_023",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1099,7 +1099,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_sweeney",
+      "source": "camreg_und_024",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1107,7 +1107,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_tblose",
+      "source": "camreg_und_025",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1227,7 +1227,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_vidya",
+      "source": "camreg_und_026",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1259,7 +1259,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_whatley",
+      "source": "camreg_und_027",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1283,7 +1283,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_yazid",
+      "source": "camreg_und_028",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1323,7 +1323,7 @@
     {
       "last_content_change": "",
       "last_successful_run": "",
-      "source": "camreg_zyinger",
+      "source": "camreg_und_029",
       "stale_entity_count": 0,
       "status": "degraded",
       "volatility_class": "unknown"
@@ -1452,7 +1452,7 @@
       "claims": 201,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_aikner",
+      "source_id": "camreg_und_001",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1573,7 +1573,7 @@
       "claims": 27,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_bargabos",
+      "source_id": "camreg_und_002",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1705,7 +1705,7 @@
       "claims": 6,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_cclemire",
+      "source_id": "camreg_und_003",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1727,7 +1727,7 @@
       "claims": 279,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_cheicylia",
+      "source_id": "camreg_und_004",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1771,7 +1771,7 @@
       "claims": 15,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_cphang",
+      "source_id": "camreg_und_005",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1848,7 +1848,7 @@
       "claims": 162,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_duganmeyer",
+      "source_id": "camreg_und_006",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1925,7 +1925,7 @@
       "claims": 57,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_fifia",
+      "source_id": "camreg_und_007",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -1969,7 +1969,7 @@
       "claims": 2136,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_freese_dm",
+      "source_id": "camreg_und_008",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2068,7 +2068,7 @@
       "claims": 36,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_gvanmaren",
+      "source_id": "camreg_und_009",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2079,7 +2079,7 @@
       "claims": 249,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_helberg",
+      "source_id": "camreg_und_010",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2156,7 +2156,7 @@
       "claims": 1459,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_jelenic",
+      "source_id": "camreg_und_011",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2200,7 +2200,7 @@
       "claims": 596,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_keshan",
+      "source_id": "camreg_und_012",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2222,7 +2222,7 @@
       "claims": 36,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_kosman",
+      "source_id": "camreg_und_013",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2233,7 +2233,7 @@
       "claims": 15,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_kunying",
+      "source_id": "camreg_und_014",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2255,7 +2255,7 @@
       "claims": 3,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_langan",
+      "source_id": "camreg_und_015",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2277,7 +2277,7 @@
       "claims": 225,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_lenhardt",
+      "source_id": "camreg_und_016",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2409,7 +2409,7 @@
       "claims": 48,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_mhebert",
+      "source_id": "camreg_und_017",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2519,7 +2519,7 @@
       "claims": 2034,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_nurnazihah",
+      "source_id": "camreg_und_018",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2530,7 +2530,7 @@
       "claims": 772,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_nyc_jgrayson_ny",
+      "source_id": "camreg_us_ny_001",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2541,7 +2541,7 @@
       "claims": 860,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_nyc_weltia_ny",
+      "source_id": "camreg_us_ny_002",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2574,7 +2574,7 @@
       "claims": 2028,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_olsson",
+      "source_id": "camreg_und_019",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2761,7 +2761,7 @@
       "claims": 120,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_rjcoleman",
+      "source_id": "camreg_und_020",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2783,7 +2783,7 @@
       "claims": 28,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_ruslan",
+      "source_id": "camreg_und_021",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2816,7 +2816,7 @@
       "claims": 1128,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_schellinger",
+      "source_id": "camreg_und_022",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2849,7 +2849,7 @@
       "claims": 20920,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_sfoss",
+      "source_id": "camreg_und_023",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2937,7 +2937,7 @@
       "claims": 256,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_sweeney",
+      "source_id": "camreg_und_024",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -2948,7 +2948,7 @@
       "claims": 200,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_tblose",
+      "source_id": "camreg_und_025",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -3113,7 +3113,7 @@
       "claims": 6,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_vidya",
+      "source_id": "camreg_und_026",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -3157,7 +3157,7 @@
       "claims": 103,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_whatley",
+      "source_id": "camreg_und_027",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -3190,7 +3190,7 @@
       "claims": 304,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_yazid",
+      "source_id": "camreg_und_028",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",
@@ -3245,7 +3245,7 @@
       "claims": 36,
       "last_content_change": null,
       "last_successful_run": null,
-      "source_id": "camreg_zyinger",
+      "source_id": "camreg_und_029",
       "stale_count": 0,
       "staleness_not_evaluable": 0,
       "status": "degraded",

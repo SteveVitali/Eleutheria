@@ -4905,7 +4905,7 @@
       "owner": "P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26)",
       "landing": "P36.2",
       "backlog_home": "BL-086",
-      "item": "Re-decide the out-of-rule rights rows under ADR-169's guardrails: `camreg_aikner`, `camreg_calgary_ab`, `camreg_lexington_ky` (indemnify-and-defend terms) and the Maryland iMAP terms rows `dot_511_md` and `camreg_md_opendata` — capture each source's terms verbatim, write one E4-style line per source, and put an HG-03 line to the operator for each (keep under the operator-accepted basis, or decline)",
+      "item": "Re-decide the out-of-rule rights rows under ADR-169's guardrails: `camreg_und_001`, `camreg_calgary_ab`, `camreg_lexington_ky` (indemnify-and-defend terms) and the Maryland iMAP terms rows `dot_511_md` and `camreg_md_opendata` — capture each source's terms verbatim, write one E4-style line per source, and put an HG-03 line to the operator for each (keep under the operator-accepted basis, or decline)",
       "unblocked_by": "owner: P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26) · trigger: P36.2's dispatch (11C); the lines ride the 11C check-in packet at the latest (S6R-28)",
       "verify": "each source's terms captured verbatim, its HG-03 line answered by the operator, and `sources.toml` recording the outcome; then a transition citing them",
       "proxy": "the rows stay published under ADR-169's withdrawal-on-objection guardrail",

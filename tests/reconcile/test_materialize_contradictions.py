@@ -130,7 +130,7 @@ def test_contradiction_row_refuses_an_unevidenced_contradiction() -> None:
 
 def test_count_reconciliation_299_vs_190_materializes(  # noqa: N802 the 299-vs-190 pattern
 ) -> None:
-    # The canonical 299-vs-190 pattern: DeFlock ~299 vs Chief Bacy ~190 on claimed count.
+    # The canonical 299-vs-190 pattern: DeFlock ~299 vs the OKCPD chief ~190 on claimed count.
     claims = [
         _count("claimed", 299, R="R4", genre="news_article", observed=date(2026, 8, 3)),
         _count("claimed", 190, R="R2", genre="council_minutes", observed=date(2026, 8, 18)),

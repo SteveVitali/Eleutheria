@@ -44,7 +44,7 @@ Observed churn on the registered surface:
   churn across 4,957 subjects**: consistent with SLOW/3y, and far from
   contradicting it.
 - `claimed_device_count` shows the corpus's one genuine cross-source
-  disagreement: the OKC Flock deployment is claimed `190` by `bacy`
+  disagreement: the OKC Flock deployment is claimed `190` by `okc_council_statement`
   (observed 2026-08-18) and `299` by `deflock` (observed 2026-08-20). Relative
   spread 0.365 — **above** the FAST numeric tolerance (0.15), so under the
   defaults these claims stand off rather than silently picking the newer one.

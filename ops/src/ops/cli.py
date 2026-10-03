@@ -870,6 +870,19 @@ def build_parser() -> argparse.ArgumentParser:
     )
     rsrv_check.add_argument("--registry", required=True)
     rsrv_check.add_argument("--route", required=True)
+
+    rroute = sub.add_parser(
+        "renamed-routes",
+        help="P34.18 / ADR-178: generate conf/renamed_sources.conf — the nginx "
+        "exact-match barrier that serves the neutral N-5 page on retired "
+        "identifier routes (never a redirect that would repeat a handle)",
+    )
+    rroute.add_argument(
+        "--out",
+        required=True,
+        help="output conf path (e.g. <staged>/conf/renamed_sources.conf)",
+    )
+    rroute.add_argument("--dry-run", action="store_true", help="count rules only; write nothing")
     rplan.add_argument(
         "--out",
         required=True,
@@ -3097,6 +3110,13 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_release_candidate(args)
     if args.command == "release-serve":
         return _cmd_release_serve(args)
+    if args.command == "renamed-routes":
+        from . import renamed_routes
+
+        argv_tail = ["--out", args.out]
+        if getattr(args, "dry_run", False):
+            argv_tail.append("--dry-run")
+        return renamed_routes.main(argv_tail)
     if args.command == "journey-verify":
         return _cmd_journey_verify(args)
     if args.command == "journey-intake":

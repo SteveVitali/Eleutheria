@@ -284,7 +284,7 @@
    "snapshot": {
     "distance_m": 0.7,
     "left": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "353",
      "jurisdiction": "unresolved"
@@ -623,14 +623,14 @@
    "snapshot": {
     "distance_m": 9.5,
     "left": {
-     "source": "camreg_nyc_jgrayson_ny",
+     "source": "camreg_us_ny_001",
      "operator": "New York City Department of Transportation (republished layer)",
      "ref": "76",
      "name": "FDR Dr @ 96 Street",
      "jurisdiction": "NY"
     },
     "right": {
-     "source": "camreg_nyc_weltia_ny",
+     "source": "camreg_us_ny_002",
      "operator": "New York City (republished layer)",
      "ref": "140",
      "name": "FDR Drive @ 96 Street",
@@ -970,7 +970,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "167",
      "jurisdiction": "unresolved"
@@ -1165,7 +1165,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "273",
      "name": "SH20B Waokauri Creek",
@@ -1207,7 +1207,7 @@
    "snapshot": {
     "distance_m": 6.1,
     "left": {
-     "source": "camreg_cheicylia",
+     "source": "camreg_und_004",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "13",
      "jurisdiction": "unresolved"
@@ -1501,7 +1501,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "232",
      "name": "Petone",
@@ -1985,7 +1985,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "248",
      "name": "SH1 Massey St East",
@@ -2082,7 +2082,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "365",
      "jurisdiction": "unresolved"
@@ -2177,7 +2177,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "171",
      "jurisdiction": "unresolved"
@@ -2224,7 +2224,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "49",
      "jurisdiction": "unresolved"
@@ -2272,7 +2272,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "510",
      "name": "SHR-CAM-009",
@@ -2559,7 +2559,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "310",
      "name": "Red Lion Corner N",
@@ -2607,7 +2607,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "30",
      "name": "BR-CAM-010",
@@ -2707,7 +2707,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "202",
      "name": "HOU-CAM-002",
@@ -2802,7 +2802,7 @@
    "snapshot": {
     "distance_m": 1.7,
     "left": {
-     "source": "camreg_duganmeyer",
+     "source": "camreg_und_006",
      "operator": "University-community-published ALPR camera registry",
      "ref": "17",
      "jurisdiction": "unresolved"
@@ -3489,7 +3489,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "282",
      "name": "Ngauranga SH1 SH2",
@@ -3778,7 +3778,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "123",
      "name": "BR-CAM-176",
@@ -3927,7 +3927,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "226",
      "name": "Johnsonville South",
@@ -4209,7 +4209,7 @@
    "snapshot": {
     "distance_m": 0.4,
     "left": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "509",
      "jurisdiction": "unresolved"
@@ -4306,7 +4306,7 @@
    "snapshot": {
     "distance_m": 0.0,
     "left": {
-     "source": "camreg_duganmeyer",
+     "source": "camreg_und_006",
      "operator": "University-community-published ALPR camera registry",
      "ref": "40",
      "jurisdiction": "unresolved"
@@ -4409,7 +4409,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "243",
      "name": "SH1 Ohaupo Rd South",
@@ -4511,7 +4511,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "610",
      "name": "SH1 Bombay",
@@ -4649,7 +4649,7 @@
    "snapshot": {
     "distance_m": 1.1,
     "left": {
-     "source": "camreg_duganmeyer",
+     "source": "camreg_und_006",
      "operator": "University-community-published ALPR camera registry",
      "ref": "38",
      "jurisdiction": "unresolved"
@@ -4850,7 +4850,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "617",
      "name": "Southbrook Retail N",
@@ -4994,7 +4994,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "235",
      "name": "SH1 Cobham Dr Nth",
@@ -5140,7 +5140,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "208",
      "name": "SH20 13 Plunket Ave",
@@ -5427,7 +5427,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "249",
      "name": "Te Rapa Rd North",
@@ -5574,7 +5574,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "108",
      "jurisdiction": "unresolved"
@@ -5811,14 +5811,14 @@
    "snapshot": {
     "distance_m": 10.3,
     "left": {
-     "source": "camreg_nyc_jgrayson_ny",
+     "source": "camreg_us_ny_001",
      "operator": "New York City Department of Transportation (republished layer)",
      "ref": "69",
      "name": "FDR @ 111 ST",
      "jurisdiction": "NY"
     },
     "right": {
-     "source": "camreg_nyc_weltia_ny",
+     "source": "camreg_us_ny_002",
      "operator": "New York City (republished layer)",
      "ref": "144",
      "name": "FDR Drive @ 111 Street",
@@ -6248,7 +6248,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "207",
      "jurisdiction": "unresolved"
@@ -6343,7 +6343,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "273",
      "jurisdiction": "unresolved"
@@ -6731,7 +6731,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "132",
      "name": "BR-CAM-185",
@@ -7314,7 +7314,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "136",
      "name": "BR-CAM-189",
@@ -7611,7 +7611,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "274",
      "name": "SH20A Montgomerie Rd",
@@ -7709,7 +7709,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "304",
      "name": "Main North Styx  Nth",
@@ -7759,7 +7759,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "302",
      "name": "Brougham Waltham",
@@ -7801,7 +7801,7 @@
    "snapshot": {
     "distance_m": 4.2,
     "left": {
-     "source": "camreg_duganmeyer",
+     "source": "camreg_und_006",
      "operator": "University-community-published ALPR camera registry",
      "ref": "3",
      "jurisdiction": "unresolved"
@@ -8144,7 +8144,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "608",
      "name": "Desert Road Summit",
@@ -8241,7 +8241,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "360",
      "jurisdiction": "unresolved"
@@ -8289,7 +8289,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "596",
      "name": "Curletts Ped Xing N",
@@ -8624,7 +8624,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "255",
      "name": "Caversham Upgrade",
@@ -9108,7 +9108,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "162",
      "name": "BR-CAM-215",
@@ -9256,7 +9256,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "234",
      "name": "SH1 Waiouru",
@@ -9344,14 +9344,14 @@
    "snapshot": {
     "distance_m": 0.5,
     "left": {
-     "source": "camreg_nyc_jgrayson_ny",
+     "source": "camreg_us_ny_001",
      "operator": "New York City Department of Transportation (republished layer)",
      "ref": "1",
      "name": "11 Ave @ 34 ST",
      "jurisdiction": "NY"
     },
     "right": {
-     "source": "camreg_nyc_weltia_ny",
+     "source": "camreg_us_ny_002",
      "operator": "New York City (republished layer)",
      "ref": "75",
      "name": "11 Avenue @ 34 Street",
@@ -9633,7 +9633,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "470",
      "name": "NS-CAM-021",
@@ -9825,7 +9825,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "57",
      "jurisdiction": "unresolved"
@@ -10625,14 +10625,14 @@
    "snapshot": {
     "distance_m": 1.7,
     "left": {
-     "source": "camreg_nyc_jgrayson_ny",
+     "source": "camreg_us_ny_001",
      "operator": "New York City Department of Transportation (republished layer)",
      "ref": "176",
      "name": "West St @ 14 St",
      "jurisdiction": "NY"
     },
     "right": {
-     "source": "camreg_nyc_weltia_ny",
+     "source": "camreg_us_ny_002",
      "operator": "New York City (republished layer)",
      "ref": "52",
      "name": "West Street at W. 14 St",
@@ -10826,7 +10826,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "435",
      "jurisdiction": "unresolved"
@@ -10972,7 +10972,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "201",
      "name": "SH20 6 Gloucester Pk",
@@ -11072,7 +11072,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "204",
      "name": "HOU-CAM-004",
@@ -11548,7 +11548,7 @@
    "snapshot": {
     "distance_m": 1.4,
     "left": {
-     "source": "camreg_schellinger",
+     "source": "camreg_und_022",
      "operator": "ArcGIS community-published camera registry",
      "ref": "138",
      "name": "Walden / Poplar",
@@ -11602,7 +11602,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "121",
      "name": "BR-CAM-174",
@@ -11940,7 +11940,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "251",
      "jurisdiction": "unresolved"
@@ -12035,7 +12035,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "121",
      "jurisdiction": "unresolved"
@@ -12183,7 +12183,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "468",
      "name": "NS-CAM-017",
@@ -12226,14 +12226,14 @@
    "snapshot": {
     "distance_m": 0.9,
     "left": {
-     "source": "camreg_nyc_jgrayson_ny",
+     "source": "camreg_us_ny_001",
      "operator": "New York City Department of Transportation (republished layer)",
      "ref": "38",
      "name": "Broadway @ 169 Street",
      "jurisdiction": "NY"
     },
     "right": {
-     "source": "camreg_nyc_weltia_ny",
+     "source": "camreg_us_ny_002",
      "operator": "New York City (republished layer)",
      "ref": "166",
      "name": "Broadway @ 169 Street",
@@ -13070,7 +13070,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "270",
      "name": "SH16 Hobsonville",
@@ -13167,7 +13167,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "260",
      "jurisdiction": "unresolved"
@@ -13505,7 +13505,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "261",
      "name": "SH73 Curletts Rd",
@@ -13652,7 +13652,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "297",
      "jurisdiction": "unresolved"
@@ -13692,7 +13692,7 @@
    "snapshot": {
     "distance_m": 1.2,
     "left": {
-     "source": "camreg_schellinger",
+     "source": "camreg_und_022",
      "operator": "ArcGIS community-published camera registry",
      "ref": "268",
      "name": "E Amherst / Berkshire",
@@ -13747,7 +13747,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "560",
      "jurisdiction": "unresolved"
@@ -14230,7 +14230,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "203",
      "name": "SH20 8 Rimu Rd",
@@ -14570,7 +14570,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "176",
      "name": "SH18 11 George Deane",
@@ -14620,7 +14620,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "175",
      "name": "SH18 10 Greenhithe",
@@ -14718,7 +14718,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "171",
      "name": "SH18 6 Tauhinu BRG",
@@ -14861,7 +14861,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "159",
      "name": "BR-CAM-212",
@@ -15007,7 +15007,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "215",
      "name": "SH1 Alpurt Web cam",
@@ -15294,7 +15294,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "472",
      "name": "NS-CAM-023",
@@ -15535,7 +15535,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "286",
      "name": "Brougham Ensors",
@@ -16397,7 +16397,7 @@
    "snapshot": {
     "distance_m": 26.7,
     "left": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "308",
      "jurisdiction": "unresolved"
@@ -16492,7 +16492,7 @@
    "snapshot": {
     "distance_m": 1.3,
     "left": {
-     "source": "camreg_duganmeyer",
+     "source": "camreg_und_006",
      "operator": "University-community-published ALPR camera registry",
      "ref": "41",
      "jurisdiction": "unresolved"
@@ -16889,7 +16889,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "596",
      "name": "Curletts Ped Xing N",
@@ -16939,7 +16939,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "258",
      "name": "SH73 Blenheim Rd",
@@ -17182,7 +17182,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "676",
      "jurisdiction": "unresolved"
@@ -17278,7 +17278,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "249",
      "name": "Te Rapa Rd North",
@@ -17416,14 +17416,14 @@
    "snapshot": {
     "distance_m": 6.0,
     "left": {
-     "source": "camreg_nyc_jgrayson_ny",
+     "source": "camreg_us_ny_001",
      "operator": "New York City Department of Transportation (republished layer)",
      "ref": "17",
      "name": "8 Avenue @ 42 Street",
      "jurisdiction": "NY"
     },
     "right": {
-     "source": "camreg_nyc_weltia_ny",
+     "source": "camreg_us_ny_002",
      "operator": "New York City (republished layer)",
      "ref": "84",
      "name": "8 Avenue @ 42 Street",
@@ -17710,7 +17710,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "208",
      "name": "HOU-CAM-009",
@@ -17999,7 +17999,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "296",
      "name": "Marshland North",
@@ -18184,7 +18184,7 @@
    "snapshot": {
     "distance_m": 1.0,
     "left": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "352",
      "jurisdiction": "unresolved"
@@ -18427,7 +18427,7 @@
    "snapshot": {
     "distance_m": 0.8,
     "left": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "538",
      "jurisdiction": "unresolved"
@@ -18481,7 +18481,7 @@
      "jurisdiction": "MO"
     },
     "right": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "546",
      "jurisdiction": "unresolved"
@@ -19389,7 +19389,7 @@
    "snapshot": {
     "distance_m": 0.0,
     "left": {
-     "source": "camreg_duganmeyer",
+     "source": "camreg_und_006",
      "operator": "University-community-published ALPR camera registry",
      "ref": "37",
      "jurisdiction": "unresolved"
@@ -20074,7 +20074,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "59",
      "name": "BR-CAM-042",
@@ -20271,7 +20271,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "603",
      "name": "SH29 Kaimai Eastern",
@@ -20561,7 +20561,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "466",
      "name": "NS-CAM-015",
@@ -20950,7 +20950,7 @@
    "snapshot": {
     "distance_m": 0.3,
     "left": {
-     "source": "camreg_whatley",
+     "source": "camreg_und_027",
      "operator": "ArcGIS community-published camera registry",
      "ref": "13",
      "jurisdiction": "unresolved"
@@ -21433,7 +21433,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "22",
      "name": "BR-CAM-002",
@@ -22783,7 +22783,7 @@
      "jurisdiction": "NZ"
     },
     "right": {
-     "source": "camreg_sfoss",
+     "source": "camreg_und_023",
      "operator": "ArcGIS community-published camera registry",
      "ref": "606",
      "name": "SH29 Western Summit",
@@ -23074,7 +23074,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "506",
      "name": "SHR-CAM-005",
@@ -24724,7 +24724,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "507",
      "name": "SHR-CAM-006",
@@ -25487,7 +25487,7 @@
    "snapshot": {
     "distance_m": 5.7,
     "left": {
-     "source": "camreg_olsson",
+     "source": "camreg_und_019",
      "operator": "ArcGIS community-published CCTV registry",
      "ref": "573",
      "jurisdiction": "unresolved"
@@ -25688,7 +25688,7 @@
      "jurisdiction": "LA"
     },
     "right": {
-     "source": "camreg_freese_dm",
+     "source": "camreg_und_008",
      "operator": "ArcGIS community-published ITS camera registry",
      "ref": "529",
      "name": "SHR-CAM-029",

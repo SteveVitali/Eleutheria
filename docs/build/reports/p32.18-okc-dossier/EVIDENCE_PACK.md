@@ -23,7 +23,7 @@ Packet `sig.dossier-packet/1` / dossier `okc-flock-alpr` — as-of 2026-10-02 (w
 | `okc-statute-47-7-606-1` | committed transcription fixture (ok_statute) | 47 O.S. §7-606.1 — insurance-enforcement restriction scoped to the UVED program; NOT generalized to the OKCPD Flock program |
 | `okc-ops-manual-5-118` | committed transcription fixture (okcpd_policy) | sharing restriction + the manual's own scope (vehicle-mounted readers) — policy evidence, applicability recorded |
 | `okc-contract-c241032` | committed transcription fixture (okc_procurement) | vendor Flock Safety; contract C241032; $270,000/yr; 90 units |
-| `okc-p06-evidence-fixture` | P06.1 committed evidence fixture | journalism/council statements (D6) + the corrected-seed scope partition — DeFlock 299 metro, Bacy ~100 private city-limits, 90 active agency-operated, ~190 derived |
+| `okc-p06-evidence-fixture` | P06.1 committed evidence fixture | journalism/council statements (D6) + the corrected-seed scope partition — DeFlock 299 metro, the chief ~100 private city-limits, 90 active agency-operated, ~190 derived |
 
 ## Digest, signature and temporal uncertainty (recorded, not resolved)
 

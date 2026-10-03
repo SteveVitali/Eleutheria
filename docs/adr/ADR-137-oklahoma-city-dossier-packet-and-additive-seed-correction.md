@@ -14,7 +14,7 @@ flagship count confusion is resolved **without rewriting history**, and
 every gap is recorded rather than smoothed over. The pre-P32.3 seed wrote
 five flagship rows that P32.3 fixed in `ops/seed.py` but that live spines
 still hold in legacy form: DeFlock's 299 carrying a `news_article` genre
-with no declared universe, Bacy's row asserting **190 as a source claim**
+with no declared universe, the OKCPD chief's row asserting **190 as a source claim**
 (the source only ever said "businesses own around 100 within city
 limits"), and every count missing its §29.3 `count_scope`. A destructive
 fix would violate append-only (P1–P3, §16); doing nothing leaves the
@@ -47,7 +47,7 @@ live acquisition is a recorded deferral, never an executed fetch.**
    closes over every rendered fact.
 2. **The scope partition is data, not prose.** Every count claim carries
    `count_scope` (+`count_scope_detail`) so the dossier renders DeFlock's
-   299 (metro, community map), the official 90 (city-owned), Bacy's ~100
+   299 (metro, community map), the official 90 (city-owned), the OKCPD chief's ~100
    (city-limits, privately-owned), the agency's 90 (city-limits,
    agency-operated, *active*), and the contract's 90 (city-limits,
    contracted units) **co-visible with scope labels — never a
@@ -154,3 +154,10 @@ new scope universe or count-basis predicate requires the crosswalk/vocab
 to grow; or the seed-correction packet is folded into a generic
 multi-jurisdiction correction surface — revisit under a new ADR or a
 scoped amendment, never an in-place edit.
+
+---
+*Status note (2026-10-03, P34.18 / ADR-178, S0 RI-01): a personal surname in
+this ADR's body text was redacted to its institutional office ("the OKCPD
+chief") under the Part VIII personal-data protection re-key; the recorded
+decision is unchanged. Git history retains the original string — see the
+P34.18 correction note (`docs/governance/identifier-rekey-note.md`).*

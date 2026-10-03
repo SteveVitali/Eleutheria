@@ -302,14 +302,14 @@
         "sha256": "1ff91af878646d87c97556a20b0da8f790d98fd50ddb486d1587532a0f746a8e"
       },
       {
-        "byte_size": 335519,
+        "byte_size": 335604,
         "compartment": "web",
         "license": "CC-BY-4.0",
         "media_type": "application/json",
         "name": "research_dossiers.json",
         "path": "web/research_dossiers.json",
         "row_count": null,
-        "sha256": "d82ff1dfe52fe6f4eb998cc7b3bb777313055153ee842a58c8975a4de99643a1"
+        "sha256": "8a746e9a02bd7ce4a5cd0767ff72692558d79e6bf9aa3712361932efa8474376"
       },
       {
         "byte_size": 3,

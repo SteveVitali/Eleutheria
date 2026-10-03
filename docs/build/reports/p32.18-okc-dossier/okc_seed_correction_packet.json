@@ -42,13 +42,13 @@
       }
     },
     {
-      "correction_id": "bacy-190-derived-not-sourced",
+      "correction_id": "okc-council-190-derived-not-sourced",
       "correction_reason": "derived_sum_recorded_as_source_claim",
       "note": "190 was never an observation; the correction keeps the sourced ~100 and the packet's derived_labels record the ~190 roll-up explicitly.",
       "replacement_records": [
         {
           "assertion_rationale": "the source asserted 'businesses own around 100 within city limits' — ~100 PRIVATELY-OWNED cameras; the 190 the legacy row recorded is a derived sum (90 + ~100), never a sourced figure. The correction asserts the sourced literal and labels it journalism (D6), city-limits scope, private ownership.",
-          "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+          "attribution": "the OKCPD chief, city council 2026-08-18",
           "claim_directness": "D6",
           "evidence_genre": "news_article",
           "observed_at": "2026-08-18",
@@ -69,32 +69,32 @@
             }
           ],
           "raw_value": "businesses own around 100 within city limits",
-          "source_id": "bacy",
+          "source_id": "okc_council_statement",
           "spdx": "CC-BY-4.0",
           "subject_id": "sig:deployment:okc-okcpd-flock",
           "value": 100
         }
       ],
       "target_record": {
-        "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+        "attribution": "the OKCPD chief, city council 2026-08-18",
         "evidence_genre": "news_article",
         "observed_at": "2026-08-18",
         "predicate_id": "claimed_device_count",
         "raw_value": "businesses own around 100 within city limits",
-        "source_id": "bacy",
+        "source_id": "okc_council_statement",
         "spdx": "CC-BY-4.0",
         "subject_id": "sig:deployment:okc-okcpd-flock",
         "value": 190
       }
     },
     {
-      "correction_id": "bacy-90-active-scope",
+      "correction_id": "okc-council-90-active-scope",
       "correction_reason": "scope_unlabelled",
       "note": "90 active ≠ 90 owned ≠ 90 contracted — separate predicates kept separate.",
       "replacement_records": [
         {
           "assertion_rationale": "the agency's 90 is an ACTIVE count over city-limits, agency-operated readers — declared so it never collapses with the city-owned 90 or the metro 299",
-          "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+          "attribution": "the OKCPD chief, city council 2026-08-18",
           "claim_directness": "D6",
           "evidence_genre": "official_statement",
           "observed_at": "2026-08-18",
@@ -115,19 +115,19 @@
             }
           ],
           "raw_value": "OKCPD has 90 cameras",
-          "source_id": "bacy",
+          "source_id": "okc_council_statement",
           "spdx": "CC-BY-4.0",
           "subject_id": "sig:deployment:okc-okcpd-flock",
           "value": 90
         }
       ],
       "target_record": {
-        "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+        "attribution": "the OKCPD chief, city council 2026-08-18",
         "evidence_genre": "official_statement",
         "observed_at": "2026-08-18",
         "predicate_id": "active_device_count",
         "raw_value": "OKCPD has 90 cameras",
-        "source_id": "bacy",
+        "source_id": "okc_council_statement",
         "spdx": "CC-BY-4.0",
         "subject_id": "sig:deployment:okc-okcpd-flock",
         "value": 90

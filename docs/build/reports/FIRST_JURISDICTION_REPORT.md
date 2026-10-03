@@ -33,7 +33,7 @@ Loaded by `sig-ops seed --jurisdiction okc` (append-only via `PgClaimSink`):
   `contracted_device_count` 90; `mapped_device_count` 31 — OSM/ODbL).
 - **Evidence:** one L0 artifact/capture/extraction chain per source per run (append-only).
 - **Contradictions:** 1 material — `claimed_device_count` **299 (DeFlock, 2026-08-20)
-  vs 190 (Chief Bacy, 2026-08-18)**, resolver verdict `UNRESOLVED`/`CONTESTED`, both
+  vs 190 (the OKCPD chief, 2026-08-18)**, resolver verdict `UNRESOLVED`/`CONTESTED`, both
   values retained (never collapsed — §3.1). Confirmed live on the API:
   `/v1/resolution/sig:deployment:okc-okcpd-flock/claimed_device_count`.
 - **Tasks:** the unresolved contradiction surfaces a research task (compute-on-read,

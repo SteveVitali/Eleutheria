@@ -332,7 +332,7 @@ def test_correction_packet_is_additive_not_destructive() -> None:
     # The legacy flagship records are TARGETS, never rewrites: the packet
     # carries the exact pre-P32.3 rows plus appended replacements.
     targets = {c["correction_id"]: c["target_record"] for c in pkt["corrections"]}
-    assert targets["bacy-190-derived-not-sourced"]["value"] == 190
+    assert targets["okc-council-190-derived-not-sourced"]["value"] == 190
     assert targets["deflock-299-metro-scope"]["evidence_genre"] == "news_article"
     # Every correction names its reason (the §16.6 CHECK requires one).
     assert all(c["correction_reason"] for c in pkt["corrections"])
@@ -346,14 +346,17 @@ def test_correction_replacements_carry_scope_and_origin() -> None:
         return {q["qualifier_id"]: q["value"] for q in r["qualifiers"]}
 
     assert quals(repl["deflock-299-metro-scope"])["count_scope"] == "metro"
-    assert quals(repl["bacy-190-derived-not-sourced"])["count_scope"] == "city_limits"
-    assert quals(repl["bacy-190-derived-not-sourced"])["count_scope_detail"] == "privately_owned"
-    assert quals(repl["bacy-90-active-scope"])["count_scope_detail"] == "agency_operated"
+    assert quals(repl["okc-council-190-derived-not-sourced"])["count_scope"] == "city_limits"
+    assert (
+        quals(repl["okc-council-190-derived-not-sourced"])["count_scope_detail"]
+        == "privately_owned"
+    )
+    assert quals(repl["okc-council-90-active-scope"])["count_scope_detail"] == "agency_operated"
     assert quals(repl["contract-90-scope"])["count_scope"] == "city_limits"
     # Fixture origin is labelled on every replacement.
     assert all(quals(r)["evidence_origin"] == "seed_fixture" for r in repl.values())
-    # The bacy replacement asserts the SOURCED ~100 — never the derived 190.
-    assert repl["bacy-190-derived-not-sourced"]["value"] == 100
+    # The okc_council_statement replacement asserts the SOURCED ~100 — never the derived 190.
+    assert repl["okc-council-190-derived-not-sourced"]["value"] == 100
     # ODbL licence compartment preserved verbatim on the OSM row.
     assert repl["osm-31-metro-scope"]["spdx"] == "ODbL-1.0"
 

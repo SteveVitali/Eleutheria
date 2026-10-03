@@ -543,12 +543,12 @@ def _pack_records() -> list[dict[str, Any]]:
             "source_url": _DEFLOCK_URL,
             "genre": "community_map",
         },
-        "bacy-190-derived-not-sourced": {
+        "okc-council-190-derived-not-sourced": {
             "literal": "businesses own around 100 within city limits",
             "source_url": _JR_URL,
             "genre": "news_article",
         },
-        "bacy-90-active-scope": {
+        "okc-council-90-active-scope": {
             "literal": "OKCPD has 90 cameras",
             "source_url": _JR_URL,
             "genre": "official_statement",
@@ -897,7 +897,7 @@ def evidence_pack_markdown(packet: Mapping[str, Any] | None = None) -> str:
         "vendor Flock Safety; contract C241032; $270,000/yr; 90 units |",
         f"| `{_PACK_DOC_ID}` | P06.1 committed evidence fixture | journalism/council "
         "statements (D6) + the corrected-seed scope partition — DeFlock 299 metro, "
-        "Bacy ~100 private city-limits, 90 active agency-operated, ~190 derived |",
+        "the chief ~100 private city-limits, 90 active agency-operated, ~190 derived |",
         "",
         "## Digest, signature and temporal uncertainty (recorded, not resolved)",
         "",

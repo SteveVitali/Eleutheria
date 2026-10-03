@@ -290,7 +290,7 @@ observed_count = 35
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "OGL-3.0"
-notes = "ArcGIS Hub item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner opendata@lambeth.gov.uk) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. CCTV_NUMBER/CAMERA_LOCATION fields, point geometry (native 27700; outSR=4326)."
+notes = "ArcGIS Hub item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner [account withheld]) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. CCTV_NUMBER/CAMERA_LOCATION fields, point geometry (native 27700; outSR=4326)."
 
 [[targets]]
 id = "peel_on_redlight_cameras"
@@ -376,7 +376,7 @@ observed_count = 80
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-StAlbert-ODL-1.0"
-notes = "ArcGIS Hub item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner open@stalbert.ca) names 'City of St. Albert Open Government License' but the grant text could not be captured verbatim — data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists → GATED unresolved_rights (D-SOURCES.12-1). ZoneNo/speedLimit/Location fields, point geometry. FLIPPED 2026-09-18 (GL-GATE-07)."
+notes = "ArcGIS Hub item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner [account withheld]) names 'City of St. Albert Open Government License' but the grant text could not be captured verbatim — data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists → GATED unresolved_rights (D-SOURCES.12-1). ZoneNo/speedLimit/Location fields, point geometry. FLIPPED 2026-09-18 (GL-GATE-07)."
 
 [[targets]]
 id = "chicago_il_speed_cameras"
@@ -766,7 +766,7 @@ observed_count = 92
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 9fa192edd1bb4040a842f4ac908c3f00 'CCTV_Locations' (owner gis_admin2@gbc, 92 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 9fa192edd1bb4040a842f4ac908c3f00 'CCTV_Locations' (owner [account withheld], 92 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "achd_id_traffic_cameras"
@@ -846,7 +846,7 @@ observed_count = 230
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item b55c7017a4ae4a3e96d204f90f93fce2 'External: CCTV' (owner Harley.Davidson@bedford.gov.uk_bedford_borough, 230 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item b55c7017a4ae4a3e96d204f90f93fce2 'External: CCTV' (owner [account withheld], 230 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "ebrgis_la_traffic_cameras"
@@ -1011,8 +1011,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item d55477395f4c41ad8288d45df8c3f00e 'Traffic Cameras' (owner PlymouthCityCouncil, 43 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "sweeney_cctv_replacement"
-source_id = "camreg_sweeney"
+id = "camreg_und_024_cctv_replacement"
+source_id = "camreg_und_024"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services-eu1.arcgis.com/wdfNi1bRjans3E0y/arcgis/rest/services/Replacement_CCTV_System_Camera_Locations/FeatureServer/0"
@@ -1024,7 +1024,7 @@ observed_count = 65
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item de3248c897b645c6a825c6c56b42b6c5 'Replacement CCTV System Camera Locations' (owner Naomi.Sweeney, 65 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item de3248c897b645c6a825c6c56b42b6c5 'Replacement CCTV System Camera Locations' (owner [account withheld], 65 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "apram_pt_cctv"
@@ -1040,7 +1040,7 @@ observed_count = 242
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item e4ebd2812c4b472c8f4ef60eef4f84b9 'CCTV_v17Jul' (owner ruiferreira@apram.pt, 242 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item e4ebd2812c4b472c8f4ef60eef4f84b9 'CCTV_v17Jul' (owner [account withheld], 242 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "dover_gb_cctv"
@@ -1056,7 +1056,7 @@ observed_count = 62
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item eb7a4722e25f4fefaf49e0e2e42a40c8 'CCTV_view' (owner andy.garwood@dover.gov.uk_DoverDC, 62 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item eb7a4722e25f4fefaf49e0e2e42a40c8 'CCTV_view' (owner [account withheld], 62 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "yorku_camera"
@@ -1235,8 +1235,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 68589ded0afc49d494e7a209b50c0483 'PennDOT CCTV' (owner josche.psp, 1494 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "ruslan_cctv_s"
-source_id = "camreg_ruslan"
+id = "camreg_und_021_cctv_s"
+source_id = "camreg_und_021"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services.arcgis.com/wLDmHsvxROjaiPKt/arcgis/rest/services/CCTV_S/FeatureServer/0"
@@ -1248,11 +1248,11 @@ observed_count = 7
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 776c96fa7597423da691513f9fa05a66 'CCTV_S' (owner ruslanmarkevych1_UCP_UFR_LSH, 7 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 776c96fa7597423da691513f9fa05a66 'CCTV_S' (owner [account withheld], 7 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "cphang_surveillance_sites"
-source_id = "camreg_cphang"
+id = "camreg_und_005_surveillance_sites"
+source_id = "camreg_und_005"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services.arcgis.com/EDxZDh4HqQ1a9KvA/arcgis/rest/services/Surveillance_Sites/FeatureServer/0"
@@ -1264,7 +1264,7 @@ observed_count = 5
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 81d052e49e5c4ac8972506a6740adb03 'Surveillance Sites' (owner cphang, 5 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 81d052e49e5c4ac8972506a6740adb03 'Surveillance Sites' (owner [account withheld], 5 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "salisbury_nc_traffic_cameras"
@@ -1296,7 +1296,7 @@ observed_count = 1646
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "ODbL-1.0"
-notes = "Arcgis item 992729c4ef72407584a2cbb52bbf1dcf 'cctv_london' (owner apope@esriuk.com_EsriUkeducation, 1646 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
+notes = "Arcgis item 992729c4ef72407584a2cbb52bbf1dcf 'cctv_london' (owner [account withheld], 1646 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
 
 [[targets]]
 id = "ut_udot_cctv_layer"
@@ -1312,7 +1312,7 @@ observed_count = 1437
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 9cdb054f4f334d9485991625973f437a 'CCTV' (owner coreyunger@utah.gov_uplan, 1437 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 9cdb054f4f334d9485991625973f437a 'CCTV' (owner [account withheld], 1437 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "raleigh_nc_cameras"
@@ -1328,7 +1328,7 @@ observed_count = 39
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 9f4a2984d9044a8099411ebfd18cba81 'Camera' (owner Cleveland.Lassiter@raleighnc.gov_ral, 39 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 9f4a2984d9044a8099411ebfd18cba81 'Camera' (owner [account withheld], 39 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "jmh_us_mpd_flock"
@@ -1360,7 +1360,7 @@ observed_count = 89
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item a1b558f7ea3f4a459d24ee92654f5e6e 'ALPR_Checkpoints' (owner kzhu05@stanford.edu_Stanford, 89 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item a1b558f7ea3f4a459d24ee92654f5e6e 'ALPR_Checkpoints' (owner [account withheld], 89 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "nzta_nz_cameras_layer"
@@ -1456,7 +1456,7 @@ observed_count = 120
 verified = 2026-09-18
 object_id_field = "F__OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item cbe1f0e312994a21ae16ad8f841caf8d 'DDOT Traffic Cameras (Firefly)' (owner albe9057@esri.com_esrifederal, 120 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item cbe1f0e312994a21ae16ad8f841caf8d 'DDOT Traffic Cameras (Firefly)' (owner [account withheld], 120 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "trafficops_ca_d5_cctv"
@@ -1504,7 +1504,7 @@ observed_count = 500
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item e3b39af538fd42ac88fd756cccbad853 'Surveillance_Towers' (owner kzhu05@stanford.edu_Stanford, 500 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item e3b39af538fd42ac88fd756cccbad853 'Surveillance_Towers' (owner [account withheld], 500 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "osm_surveillance_alpr_nationwide"
@@ -1520,7 +1520,7 @@ observed_count = 19044
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "ODbL-1.0"
-notes = "Arcgis item e7cc29c2f5dc495ab6e1f0daebef0ce4 'alpr_locations_nationwide' (owner ethapa7@stanford.edu_Stanford, 19044 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
+notes = "Arcgis item e7cc29c2f5dc495ab6e1f0daebef0ce4 'alpr_locations_nationwide' (owner [account withheld], 19044 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
 
 [[targets]]
 id = "lawrence_ks_traffic_cameras"
@@ -1555,8 +1555,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item ef4667361e43428a808d4e12e55f7408 'FL511 Traffic Cameras' (owner daniel.rydl, 4627 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "duganmeyer_flock_alprs"
-source_id = "camreg_duganmeyer"
+id = "camreg_und_006_flock_alprs"
+source_id = "camreg_und_006"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/UA_Flock_ALPRs___7_Sep_2025/FeatureServer/0"
@@ -1568,7 +1568,7 @@ observed_count = 54
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 1396d889c2734c57a93184470a11c7f4 'UA Flock ALPRs _ 7 Sep 2025' (owner duganmeyer_uagis, 54 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 1396d889c2734c57a93184470a11c7f4 'UA Flock ALPRs _ 7 Sep 2025' (owner [account withheld], 54 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "nzta_nz_harleyp_cameras"
@@ -1603,8 +1603,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 2244c0706b4a4ea68c02cd1711d2ddf3 'DC Traffic Cameras' (owner AdminModelLE, 339 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "mhebert_safety_alpr_view"
-source_id = "camreg_mhebert"
+id = "camreg_und_017_safety_alpr_view"
+source_id = "camreg_und_017"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/ug7Y0GY6kYE0tf0p/arcgis/rest/services/PublicSafetyCamerasALPR_view/FeatureServer/0"
@@ -1616,11 +1616,11 @@ observed_count = 16
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 22be1b5f269b441ba5f4963c4f4ac665 'PublicSafetyCamerasALPR_view' (owner mhebert, 16 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 22be1b5f269b441ba5f4963c4f4ac665 'PublicSafetyCamerasALPR_view' (owner [account withheld], 16 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "kosman_traffic_cameras"
-source_id = "camreg_kosman"
+id = "camreg_und_013_traffic_cameras"
+source_id = "camreg_und_013"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/Sb0rgSd67ecLKIvl/arcgis/rest/services/Traffic_Cameras/FeatureServer/0"
@@ -1632,7 +1632,7 @@ observed_count = 9
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 234686a8453d406bab8f1a2ab5870ce5 'Traffic_Cameras' (owner sean.kosman, 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 234686a8453d406bab8f1a2ab5870ce5 'Traffic_Cameras' (owner [account withheld], 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "uofmd_md_cctv"
@@ -1667,8 +1667,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 3c232823551e496a95d70a9a6f9cb87f 'Camera Locations' (owner baydonp1_UMBC, 12 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "sfoss_cameras"
-source_id = "camreg_sfoss"
+id = "camreg_und_023_cameras"
+source_id = "camreg_und_023"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/Cameras/FeatureServer/0"
@@ -1680,7 +1680,7 @@ observed_count = 5230
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 460290f9870d4d8692048a87221f2080 'Cameras' (owner sfoss_solutions, 5230 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 460290f9870d4d8692048a87221f2080 'Cameras' (owner [account withheld], 5230 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "kcmo_mo_traffic_cameras"
@@ -1699,8 +1699,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 498f44acc19145b98f5f180d0451774c 'Kansas City Traffic Camera Locations' (owner ccurran_PS_DBS, 236 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "yazid_cctv_phase1"
-source_id = "camreg_yazid"
+id = "camreg_und_028_cctv_phase1"
+source_id = "camreg_und_028"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/nVWwjvpMI42bNRMF/arcgis/rest/services/CCTV_Phase1_160420/FeatureServer/0"
@@ -1712,7 +1712,7 @@ observed_count = 76
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 4d528bdf8dab4956885c527b41732ae4 'CCTV Phase 1' (owner yazid.ahmat, 76 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 4d528bdf8dab4956885c527b41732ae4 'CCTV Phase 1' (owner [account withheld], 76 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "guildford_gb_cctv2015"
@@ -1731,8 +1731,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 4e1c6cf7573948ef885ecd262d5d262b 'CCTV2015' (owner rgsguildford, 150 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "aikner_traffic_cameras"
-source_id = "camreg_aikner"
+id = "camreg_und_001_traffic_cameras"
+source_id = "camreg_und_001"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/h2m1c333osM48uoI/arcgis/rest/services/Traffic_Cameras/FeatureServer/0"
@@ -1744,7 +1744,7 @@ observed_count = 67
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 509475945f494a37bcbeefee139a6ecc 'Traffic Cameras' (owner aikner_mrrigis, 67 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 509475945f494a37bcbeefee139a6ecc 'Traffic Cameras' (owner [account withheld], 67 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "denver_co_alpr_cameras"
@@ -1811,8 +1811,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 98f20bb967e44216ba521a707236763e 'GDOT Live Traffic Cameras' (owner rbagby_gema, 3216 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "langan_camera"
-source_id = "camreg_langan"
+id = "camreg_und_015_camera"
+source_id = "camreg_und_015"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/wXxzXUPXryxeZXDC/arcgis/rest/services/Camera/FeatureServer/1"
@@ -1824,7 +1824,7 @@ observed_count = 1
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 98fa8eeae92946dbadb62b821e756522 'Camera' (owner Langan_pmcbride, 1 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 98fa8eeae92946dbadb62b821e756522 'Camera' (owner [account withheld], 1 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "trafficops_ca_hs_cctv"
@@ -1952,7 +1952,7 @@ observed_count = 526
 verified = 2026-09-18
 object_id_field = "ObjectId"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item ec493f52acd64bc1b9e75b2dbc5fb696 'Existing CCTV' (owner SCheshko@azdot.gov_adot, 526 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item ec493f52acd64bc1b9e75b2dbc5fb696 'Existing CCTV' (owner [account withheld], 526 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "ucsd_traffic_camera"
@@ -1971,8 +1971,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item f2f32627862a4238b680464819db587b 'Traffic_camera' (owner xis024_UCSDOnline, 1305 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "schellinger_bpd_cameras"
-source_id = "camreg_schellinger"
+id = "camreg_und_022_bpd_cameras"
+source_id = "camreg_und_022"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/LzrWVkqmsSNxFa4e/arcgis/rest/services/BPD_Surveillance_Cameras/FeatureServer/0"
@@ -1984,7 +1984,7 @@ observed_count = 282
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item fbb79a6d3cf94464a6b657a59e8cedf1 'BPD Surveillance Cameras' (owner kjschellinger, 282 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item fbb79a6d3cf94464a6b657a59e8cedf1 'BPD Surveillance Cameras' (owner [account withheld], 282 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "indonesia_id_cctv_fix"
@@ -2003,8 +2003,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 0977f811c1ab494b9a1c31614fda7863 'cctv fix' (owner esri_id, 40 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "helberg_camera"
-source_id = "camreg_helberg"
+id = "camreg_und_010_camera"
+source_id = "camreg_und_010"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services2.arcgis.com/pP7n227NBPZORcvr/arcgis/rest/services/camera/FeatureServer/0"
@@ -2016,7 +2016,7 @@ observed_count = 84
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 0fa13d7ceac549e5869f30800d2b2a2c 'camera' (owner helberg2, 84 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 0fa13d7ceac549e5869f30800d2b2a2c 'camera' (owner [account withheld], 84 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "indonesia_id_tmc_bekasi"
@@ -2067,8 +2067,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 5d2bd8ccc5f74ea7b7574f126cacd1cc 'Active Flock Cameras' (owner LPDGISAdmin, 30 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "zyinger_camera_3"
-source_id = "camreg_zyinger"
+id = "camreg_und_029_camera_3"
+source_id = "camreg_und_029"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services2.arcgis.com/wx8u046p68e0iGuj/arcgis/rest/services/CAMERA_3/FeatureServer/0"
@@ -2080,7 +2080,7 @@ observed_count = 12
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 718e480ad69e466fbebf3b11c0684f9e 'CAMERA_3' (owner zyinger, 12 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 718e480ad69e466fbebf3b11c0684f9e 'CAMERA_3' (owner [account withheld], 12 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "kirkland_wa_traffic_cameras"
@@ -2096,11 +2096,11 @@ observed_count = 57
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 7fc8ba9051684d0aabc228038758c10b 'Traffic Cameras - Symbology' (owner JNeville@kirklandwa.gov_kirklandwa, 57 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 7fc8ba9051684d0aabc228038758c10b 'Traffic Cameras - Symbology' (owner [account withheld], 57 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "rjcoleman_cameras"
-source_id = "camreg_rjcoleman"
+id = "camreg_und_020_cameras"
+source_id = "camreg_und_020"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services2.arcgis.com/emqdvAOVfTSmahz0/arcgis/rest/services/Cameras/FeatureServer/0"
@@ -2112,11 +2112,11 @@ observed_count = 30
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 871da848d25940e890d811ee20280f79 'Cameras' (owner rjcoleman, 30 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 871da848d25940e890d811ee20280f79 'Cameras' (owner [account withheld], 30 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "bargabos_cctv_camera"
-source_id = "camreg_bargabos"
+id = "camreg_und_002_cctv_camera"
+source_id = "camreg_und_002"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services2.arcgis.com/2gKap7KMz7fy1U4a/arcgis/rest/services/CCTV_Camera/FeatureServer/0"
@@ -2128,7 +2128,7 @@ observed_count = 9
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 8ebed01d37c9486fae407a8e6623e8f4 'CCTV Camera' (owner allison.bargabos, 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 8ebed01d37c9486fae407a8e6623e8f4 'CCTV Camera' (owner [account withheld], 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "indonesia_id_cctv_gunungagung"
@@ -2256,7 +2256,7 @@ observed_count = 50
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item d2dad98935c9481f97141ec963d5b582 'License Plate Recognition System' (owner johnu@cityofpalmdesert.org_CPD, 50 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item d2dad98935c9481f97141ec963d5b582 'License Plate Recognition System' (owner [account withheld], 50 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "chattanooga_tn_safety_cameras_2"
@@ -2371,8 +2371,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 34506a54ef124f2c9062e707a96bd74a 'Baltimore ATVES Commercial Vehicle Camera' (owner baltimore_city, 7 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "jelenic_camera_point"
-source_id = "camreg_jelenic"
+id = "camreg_und_011_camera_point"
+source_id = "camreg_und_011"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services3.arcgis.com/tTLePKkSyuiAmfEy/arcgis/rest/services/Camera/FeatureServer/0"
@@ -2384,7 +2384,7 @@ observed_count = 365
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 38ad4086df4e4ba285792c207fc37da4 'Camera Point' (owner j.jelenic@unsw.edu.au, 365 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 38ad4086df4e4ba285792c207fc37da4 'Camera Point' (owner [account withheld], 365 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "cwarcgis_camera"
@@ -2467,8 +2467,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 6c9b08a2bb6c40df94e4dec6f2e02cd8 'Baltimore ATVES Red Light Camera' (owner baltimore_city, 180 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "cheicylia_cctv"
-source_id = "camreg_cheicylia"
+id = "camreg_und_004_cctv"
+source_id = "camreg_und_004"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services3.arcgis.com/VFq4ZNL4ohXxN8gl/arcgis/rest/services/CCTV/FeatureServer/0"
@@ -2480,7 +2480,7 @@ observed_count = 1052
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 7d7654bc257f40d0aa7aebf71ae971b8 'CCTV' (owner cheicyliagrevelyn, 1052 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 7d7654bc257f40d0aa7aebf71ae971b8 'CCTV' (owner [account withheld], 1052 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "keizer_or_cameras"
@@ -2547,8 +2547,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item c56aedd0f83f4515ad641eac5e975b93 'CCTV Locations' (owner kevint_caledon, 42 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "fifia_cctv"
-source_id = "camreg_fifia"
+id = "camreg_und_007_cctv"
+source_id = "camreg_und_007"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services3.arcgis.com/VFq4ZNL4ohXxN8gl/arcgis/rest/services/CCTV_/FeatureServer/0"
@@ -2560,7 +2560,7 @@ observed_count = 19
 verified = 2026-09-18
 object_id_field = "OBJECTID_1"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item d03b77e0286d4d82b76c76de32c36b27 'CCTV_' (owner fifiawahyucaesari, 19 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item d03b77e0286d4d82b76c76de32c36b27 'CCTV_' (owner [account withheld], 19 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "sarasota_fl_traffic_cameras"
@@ -2576,7 +2576,7 @@ observed_count = 253
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item e153fe4453104b11b8a5a17599bd8478 'Cartegraph Traffic Cameras View' (owner djacques@scgov.net, 253 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item e153fe4453104b11b8a5a17599bd8478 'Cartegraph Traffic Cameras View' (owner [account withheld], 253 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "oosgis_nl_camera"
@@ -2688,7 +2688,7 @@ observed_count = 11
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 188b6ca940a14029a0aceb1aad25e553 'PolyU_CCTV' (owner rng@esrichina.hk, 11 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 188b6ca940a14029a0aceb1aad25e553 'PolyU_CCTV' (owner [account withheld], 11 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "webappfme_traffic_cameras"
@@ -2723,8 +2723,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 2dfd6bae23ac4ae9b3e24112a82c2277 'Camera' (owner m.decraemer_Gistel, 19 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "nurnazihah_cctv"
-source_id = "camreg_nurnazihah"
+id = "camreg_und_018_cctv"
+source_id = "camreg_und_018"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services5.arcgis.com/2ZRAaoTSJbQ20ceg/arcgis/rest/services/CCTV_/FeatureServer/0"
@@ -2736,7 +2736,7 @@ observed_count = 342
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 32b4a83b129646ad985081f5ba654696 'CCTV ' (owner NURNAZIHAH, 342 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 32b4a83b129646ad985081f5ba654696 'CCTV ' (owner [account withheld], 342 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "bettendorf_ia_traffic_cameras"
@@ -2835,8 +2835,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 94b17026e83d49d58b41fd75933166db 'Traffic Cameras' (owner SurreyGIS, 703 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "nurnazihah_cctv_pg"
-source_id = "camreg_nurnazihah"
+id = "camreg_und_018_cctv_pg"
+source_id = "camreg_und_018"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services5.arcgis.com/2ZRAaoTSJbQ20ceg/arcgis/rest/services/CCTV_PG/FeatureServer/0"
@@ -2848,7 +2848,7 @@ observed_count = 342
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item d930ff08f1364a979016fda955d51842 'CCTV_PG' (owner NURNAZIHAH, 342 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item d930ff08f1364a979016fda955d51842 'CCTV_PG' (owner [account withheld], 342 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "polyu_hk_police_cctv"
@@ -2864,7 +2864,7 @@ observed_count = 11
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item ec5a347fc84547e3aa52a9fd71f104d9 'Police_CCTV' (owner rng@esrichina.hk, 11 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item ec5a347fc84547e3aa52a9fd71f104d9 'Police_CCTV' (owner [account withheld], 11 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "thailand_th_warroom_map_cctv"
@@ -2960,11 +2960,11 @@ observed_count = 79
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 0fca25174cba4605938cac79c3331640 'MNDOT Traffic Cameras' (owner armstkp0@minneapolisparks.org_minneapolisparks, 79 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 0fca25174cba4605938cac79c3331640 'MNDOT Traffic Cameras' (owner [account withheld], 79 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "olsson_cctv"
-source_id = "camreg_olsson"
+id = "camreg_und_019_cctv"
+source_id = "camreg_und_019"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services6.arcgis.com/gyy0H6zBnh9CbWoj/arcgis/rest/services/CCTV/FeatureServer/0"
@@ -2976,11 +2976,11 @@ observed_count = 677
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 106e6ceef3c14fb6bceddeb07eb5d8a5 'CCTV' (owner tluce@olsson.com_olsson, 677 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 106e6ceef3c14fb6bceddeb07eb5d8a5 'CCTV' (owner [account withheld], 677 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "gvanmaren_cctv_cameras"
-source_id = "camreg_gvanmaren"
+id = "camreg_und_009_cctv_cameras"
+source_id = "camreg_und_009"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services6.arcgis.com/oQnbmhWcCuy4gMUa/arcgis/rest/services/CCTV_cameras/FeatureServer/6"
@@ -2992,7 +2992,7 @@ observed_count = 9
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 119f3f9304f94b74af62f20798d3c52d 'CCTV_cameras' (owner gvanmaren_3dgis, 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 119f3f9304f94b74af62f20798d3c52d 'CCTV_cameras' (owner [account withheld], 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "smart_sky_camera"
@@ -3024,7 +3024,7 @@ observed_count = 46
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 1cb8e713aaf346cd86a1d59a1ae78709 'CCTV' (owner Andrew@EastDun, 46 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 1cb8e713aaf346cd86a1d59a1ae78709 'CCTV' (owner [account withheld], 46 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "friendswood_tx_flock_alpr"
@@ -3043,8 +3043,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 248d8ce7280c4d48b3d91d1c870fc1da 'City of Friendswood - Flock Safety ALPR Project ' (owner FWD_Admin, 29 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "kunying_cctv"
-source_id = "camreg_kunying"
+id = "camreg_und_014_cctv"
+source_id = "camreg_und_014"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services6.arcgis.com/ZQ3vYRJIbpufErto/arcgis/rest/services/CCTV/FeatureServer/0"
@@ -3056,11 +3056,11 @@ observed_count = 5
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 25a5a95fcbd645d0b5cfe08522209591 'CCTV' (owner kunying@idt, 5 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 25a5a95fcbd645d0b5cfe08522209591 'CCTV' (owner [account withheld], 5 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "nyc_weltia_ny_traffic_cameras"
-source_id = "camreg_nyc_weltia_ny"
+id = "camreg_us_ny_002_traffic_cameras"
+source_id = "camreg_us_ny_002"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services6.arcgis.com/ic35UUORHLupAbxq/arcgis/rest/services/TrafficCameras_NYC/FeatureServer/0"
@@ -3075,8 +3075,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item 9e90790daf7e4f0592da37a1bda10417 'Traffic Cameras NYC' (owner Weltia_DS_INFINITY, 215 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "cclemire_safety_cameras"
-source_id = "camreg_cclemire"
+id = "camreg_und_003_safety_cameras"
+source_id = "camreg_und_003"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services6.arcgis.com/hB1x0Y8Ll0UGJqLi/arcgis/rest/services/Public_Safety_cameras_view_level_1/FeatureServer/0"
@@ -3088,11 +3088,11 @@ observed_count = 2
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item aa12417a64b04fcbb07e67435c84086d 'Public Safety cameras view level 1' (owner cclemire2, 2 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item aa12417a64b04fcbb07e67435c84086d 'Public Safety cameras view level 1' (owner [account withheld], 2 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "vidya_cctv"
-source_id = "camreg_vidya"
+id = "camreg_und_026_cctv"
+source_id = "camreg_und_026"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services6.arcgis.com/hdfh5OsOlUgKLttT/arcgis/rest/services/CCTV/FeatureServer/0"
@@ -3104,7 +3104,7 @@ observed_count = 2
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item bce5d44e878d4d71b5895a89ecfac9c7 'CCTV' (owner vidya_aa, 2 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item bce5d44e878d4d71b5895a89ecfac9c7 'CCTV' (owner [account withheld], 2 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "univmb_mb_visible_cameras"
@@ -3152,7 +3152,7 @@ observed_count = 3651
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 0d71f303829e4639a08b8f1bc3f9b047 'FDOT Traffic Cameras' (owner msweeney@esri.com_government, 3651 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 0d71f303829e4639a08b8f1bc3f9b047 'FDOT Traffic Cameras' (owner [account withheld], 3651 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "esriukpolice_gb_cctv"
@@ -3168,11 +3168,11 @@ observed_count = 12
 verified = 2026-09-18
 object_id_field = "FID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 1cdab839cdaa4e789ca155a8d6323cab 'CCTV_locations' (owner RBaxendale@esriuk.com_esriukpolice, 12 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 1cdab839cdaa4e789ca155a8d6323cab 'CCTV_locations' (owner [account withheld], 12 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "lenhardt_security_cameras"
-source_id = "camreg_lenhardt"
+id = "camreg_und_016_security_cameras"
+source_id = "camreg_und_016"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services7.arcgis.com/ffy1QvCbgGDG2ZGG/arcgis/rest/services/UofR_Security_Cameras_(Public)/FeatureServer/0"
@@ -3184,7 +3184,7 @@ observed_count = 75
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 22d52fc22ec440a78813debcf2d1c21a 'UofR Security Cameras (Public)' (owner julia_lenhardt_urops, 75 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 22d52fc22ec440a78813debcf2d1c21a 'UofR Security Cameras (Public)' (owner [account withheld], 75 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "txdot_rep_tx_cameras"
@@ -3232,7 +3232,7 @@ observed_count = 91
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 55f2d14f468c4d35b1870bf8469b2c96 'Traffic Camera' (owner KWKLEIN@redmond.gov_CityofRedmond, 91 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 55f2d14f468c4d35b1870bf8469b2c96 'Traffic Camera' (owner [account withheld], 91 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "mark43_cctv"
@@ -3283,8 +3283,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item a426098dc7584c98b815c985ea76a632 'CCTV Locations' (owner Camilo_GIS_For_Schools, 31 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "whatley_camera_locations"
-source_id = "camreg_whatley"
+id = "camreg_und_027_camera_locations"
+source_id = "camreg_und_027"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services7.arcgis.com/snkPZPJHBqHjJ0On/arcgis/rest/services/Camera_Locations/FeatureServer/0"
@@ -3296,7 +3296,7 @@ observed_count = 32
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item b28ca74f76ad4b7cb31d380f7679c49f 'Camera Locations' (owner christopher.whatley5, 32 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item b28ca74f76ad4b7cb31d380f7679c49f 'Camera Locations' (owner [account withheld], 32 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "brea_ca_camera_locations"
@@ -3331,8 +3331,8 @@ license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item d5e2555c03574fbe93e300c404a38813 'CCTV' (owner GMH_GA_emc, 3 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
-id = "freese_dm_its_cctv"
-source_id = "camreg_freese_dm"
+id = "camreg_und_008_its_cctv"
+source_id = "camreg_und_008"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services7.arcgis.com/N8Xgw6w8Sn4Lq0oN/arcgis/rest/services/ITS_CCTV/FeatureServer/35"
@@ -3344,7 +3344,7 @@ observed_count = 535
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item d6d80e7f82884caaaeea1e0eed5d595b 'ITS_CCTV' (owner Alanna.Jajeh@freese.com_DM, 535 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item d6d80e7f82884caaaeea1e0eed5d595b 'ITS_CCTV' (owner [account withheld], 535 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "brea_ca_camera_switch_inventory"
@@ -3379,8 +3379,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item fc73440e889f4e33b0a57d7c9158a70c 'CCTV_point' (owner Infocemosa, 326 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "keshan_camera_rev3"
-source_id = "camreg_keshan"
+id = "camreg_und_012_camera_rev3"
+source_id = "camreg_und_012"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services8.arcgis.com/IUrxBucPZdcGDYjw/arcgis/rest/services/Camera_rev3/FeatureServer/0"
@@ -3392,7 +3392,7 @@ observed_count = 149
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 3a72754fa9004f9ca5774bb23c6f3504 'Camera_rev3' (owner KeshanMoodley, 149 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 3a72754fa9004f9ca5774bb23c6f3504 'Camera_rev3' (owner [account withheld], 149 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "avctransport_surveillance_2026"
@@ -3411,8 +3411,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 48a727929e6f4350b71be361d5002d4c 'Surveillance_2026' (owner avctransport, 9 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "tblose_camera_intersections"
-source_id = "camreg_tblose"
+id = "camreg_und_025_camera_intersections"
+source_id = "camreg_und_025"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services8.arcgis.com/5EsWsFkU1FzqtfTb/arcgis/rest/services/Camera_Intersections/FeatureServer/0"
@@ -3424,7 +3424,7 @@ observed_count = 50
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item 650c53bb6fb24aa1aecba07847f1e2fb 'Camera Intersections' (owner tblose_scb, 50 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item 650c53bb6fb24aa1aecba07847f1e2fb 'Camera Intersections' (owner [account withheld], 50 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "sensenet_camera_view"
@@ -3456,7 +3456,7 @@ observed_count = 18
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
-notes = "Arcgis item afab7c664cf14139a8384e752c083143 'CCTV' (owner darragh.murphy@lisburncastlereagh.gov.uk, 18 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
+notes = "Arcgis item afab7c664cf14139a8384e752c083143 'CCTV' (owner [account withheld], 18 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
 id = "tulane_la_cctv_cameras"
@@ -3472,7 +3472,7 @@ observed_count = 167
 verified = 2026-09-18
 object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item cdf8cc99704d441fae13608702a6a74d 'CCTV cameras' (owner crestrepo@tulane.edu_tulane, 167 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item cdf8cc99704d441fae13608702a6a74d 'CCTV cameras' (owner [account withheld], 167 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "jcfd3_or_roxyann_camera"
@@ -3523,8 +3523,8 @@ license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 5590d73396564488b5d627079be0ee5a 'Bangla_Camera' (owner vStar2018, 448 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
 [[targets]]
-id = "nyc_jgrayson_nycdot_cameras"
-source_id = "camreg_nyc_jgrayson_ny"
+id = "camreg_us_ny_001_nycdot_cameras"
+source_id = "camreg_us_ny_001"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services9.arcgis.com/FF3qnCUixr5w9JQi/arcgis/rest/services/NYCDOT_Traffic_Cameras/FeatureServer/0"
@@ -3536,7 +3536,7 @@ observed_count = 193
 verified = 2026-09-18
 object_id_field = "OBJECTID_1"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
-notes = "Arcgis item 900bea850d98407ead83b9b0ec392a2a 'NYCDOT Traffic Cameras' (owner jgrayson@esri.com_geoxc, 193 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
+notes = "Arcgis item 900bea850d98407ead83b9b0ec392a2a 'NYCDOT Traffic Cameras' (owner [account withheld], 193 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
 [[targets]]
 id = "bouhan_jp_camera"
@@ -3819,7 +3819,7 @@ notes = "GL-GATE-07 disposition: geocoder output layer (Loc_name/Match_addr/USER
 id = "p2616_surveillance_results_1cd1fdb0"
 platform = "arcgis"
 url = "https://services-eu1.arcgis.com/d6WajiXkixlJUEtR/arcgis/rest/services/survey123_ec7d4a9fff184bf0b2f1905e8644b228_results/FeatureServer/0"
-agency = "guy.mcgrath@ucd.ie_UCDIrelandEU"
+agency = "(account withheld)"
 status = "excluded_content"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: wildlife-disease survey results (species, symptoms, phone_number_353) — reporter contact + ecological records"
@@ -3918,7 +3918,7 @@ notes = "GL-GATE-07 disposition: registrant records (primary/alt contact names, 
 id = "p2616_live_view_cameras_d3f7dae5"
 platform = "arcgis"
 url = "https://services.arcgis.com/pA2nEVnB6tquxgOW/arcgis/rest/services/Live_View_Cameras/FeatureServer/0"
-agency = "nlucchetti@utah.gov_uplan"
+agency = "(account withheld)"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (dot_511_ut:ut_udot_live_view_cameras); no duplicate wiring."
@@ -4062,7 +4062,7 @@ notes = "GL-GATE-07 disposition: 'HanksPhotoPoints' field-photo points, not a ca
 id = "p2616_camera_trap_f00a1eee"
 platform = "arcgis"
 url = "https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/Camera_Trap/FeatureServer/0"
-agency = "Phong.DoanNN@wwf.org.vn_panda"
+agency = "(account withheld)"
 status = "non_target_domain"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: WWF wildlife camera-trap stations (Stations/Traps/baseline fields) — ecological monitoring"
@@ -4107,7 +4107,7 @@ notes = "GL-GATE-07 disposition: operations log (type_of_service, pilot_on_duty,
 id = "p2616_traffic_cameras_20251022_52d16704"
 platform = "arcgis"
 url = "https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Traffic_Cameras_(20251022)/FeatureServer/0"
-agency = "orhan.cakir@ucalgary.ca_ucalgary"
+agency = "(account withheld)"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (camreg_calgary_ab); no duplicate wiring."
@@ -4116,7 +4116,7 @@ notes = "GL-GATE-07 disposition: covered — this endpoint is already a register
 id = "p2616_traffic_cameras_calgary_5eaf2647"
 platform = "arcgis"
 url = "https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Traffic_Cameras_calgary/FeatureServer/0"
-agency = "ecem.meric@ucalgary.ca_ucalgary"
+agency = "(account withheld)"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (camreg_calgary_ab); no duplicate wiring."
@@ -4125,7 +4125,7 @@ notes = "GL-GATE-07 disposition: covered — this endpoint is already a register
 id = "p2616_traffic_cameras_in_calgary_62dff351"
 platform = "arcgis"
 url = "https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Traffic_Cameras_in_Calgary/FeatureServer/0"
-agency = "deliya.wani@ucalgary.ca_ucalgary"
+agency = "(account withheld)"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (camreg_calgary_ab); no duplicate wiring."
@@ -4161,7 +4161,7 @@ notes = "GL-GATE-07 disposition: install-survey form results (type_of_camera, pr
 id = "p2616_traffic_cameras_nw_calgary_cfcbae84"
 platform = "arcgis"
 url = "https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Traffic%20Cameras%20NW%20Calgary/FeatureServer/0"
-agency = "josh.bhui@ucalgary.ca_ucalgary"
+agency = "(account withheld)"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (camreg_calgary_ab); no duplicate wiring."
@@ -4179,7 +4179,7 @@ notes = "GL-GATE-07 disposition: agency-technology adoption records (AOSNUMBER/A
 id = "p2616_cctv_cleaning_00422d2f"
 platform = "arcgis"
 url = "https://services3.arcgis.com/tTLePKkSyuiAmfEy/arcgis/rest/services/survey123_b0721891a04a4178869a060706b133a3/FeatureServer/0"
-agency = "j.jelenic@unsw.edu.au"
+agency = "(account withheld)"
 status = "non_target_domain"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: sewer-CCTV cleaning log (camera_cleaned/date_and_time) — pipe-inspection operations, not surveillance cameras"
@@ -4188,7 +4188,7 @@ notes = "GL-GATE-07 disposition: sewer-CCTV cleaning log (camera_cleaned/date_an
 id = "p2616_cctv_2ad5ac40"
 platform = "arcgis"
 url = "https://services3.arcgis.com/0sHiTyKr3p44oPQh/arcgis/rest/services/CCTV/FeatureServer/0"
-agency = "aforrest@tcrsd.org"
+agency = "(account withheld)"
 status = "non_target_domain"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: sewer-district CCTV video inspections (videoDesc/insp_date/hyperlink) — pipe inspection records, not surveillance cameras"
@@ -4269,7 +4269,7 @@ notes = "GL-GATE-07 disposition: citizen problem reports (pocfullname/pocphone/p
 id = "p2616_cctv_cameras_c81a35ca"
 platform = "arcgis"
 url = "https://services5.arcgis.com/fxnFqGOVRzV4g6ac/arcgis/rest/services/CCTV_Cameras/FeatureServer/1"
-agency = "bbabanko@gmu.edu_mygmu"
+agency = "(account withheld)"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (camreg_washington_dc); no duplicate wiring."
@@ -4341,7 +4341,7 @@ notes = "GL-GATE-07 disposition: Scott Township sewer-CCTV inspection points (PI
 id = "p2616_surveillance_technologies_66c13c41"
 platform = "arcgis"
 url = "https://services7.arcgis.com/2hYXmwteFLemN5bW/arcgis/rest/services/Surveillance_Technologies/FeatureServer/0"
-agency = "sslee133@ucla.edu_gisucla"
+agency = "(account withheld)"
 status = "non_target_domain"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: agency-technology inventory rows (AOSNUMBER/Agency/Technology/Vendor/Links) — deployments by agency, not camera locations"
@@ -4359,7 +4359,7 @@ notes = "GL-GATE-07 disposition: Scott Township sewer-CCTV inspection points (PI
 id = "p2616_ca_automated_license_plate_r_f2ab6e80"
 platform = "arcgis"
 url = "https://services7.arcgis.com/2hYXmwteFLemN5bW/arcgis/rest/services/CA_Automated_License_Plate_Reader_Technology_Deployment_/FeatureServer/0"
-agency = "ivandelgado@ucla.edu_gisucla"
+agency = "(account withheld)"
 status = "non_target_domain"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: agency-level ALPR technology deployment records (UCLA research-compiled), not camera locations"

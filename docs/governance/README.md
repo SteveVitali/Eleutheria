@@ -20,7 +20,7 @@ adopt the spec's policy, they do not redefine it.
 
 ## The policies
 
-Ten documents. **Status** is taken from each document itself: *adopted* (a first-class policy
+Eleven documents. **Status** is taken from each document itself: *adopted* (a first-class policy
 in force), *protocol adopted; not yet run* (the procedure is fixed but its human step is gated),
 *published* (a live, machine-checked page), *template* (a recorded template/instrument a
 per-instance run fills in), *prepared; not ratified* (an operator packet for a built-but-gated
@@ -39,3 +39,4 @@ advice).
 | [Stage-0 outreach letter](stage0-outreach-letter.md) | the published template for first contact with every federation-compact project — addressed to an organisational channel, never a person (Part VIII §0.7); the outcome is recorded before any connector is written | template | §35.1 | SIG-CONTRIB-012/012a/013 |
 | [Intake receiver operating packet](intake-receiver-operating-packet.md) | the operator packet for the durable anonymous correction receiver: the gate statement (`operational=false` until every row is green), privilege matrix, honest-statement rules — the receiver is **built, not operating** | prepared; not ratified (D-P32.16-1) | §55.5 | SIG-FIND-006 |
 | [Publication opinion drafts](publication-opinion-drafts.md) | the four scoped HG-02 publication-law questions answered as drafted analyses the operator adopted in place of counsel — each row publish-permitting or conditioned, supersedeable by real counsel | operator-adopted analyses (D-LEGAL.1-1) | §42–§46 | (HG-02; no requirement id) |
+| [Identifier re-key correction note](identifier-rekey-note.md) | the dated correction note for the P34.18 personal-handle identifier re-key: what changed, what the spine and git history retain, neutral old-citation handling | adopted (P34.18 / ADR-178) | §0.7 (Part VIII) | SIG-PUB-002, SIG-STORE-011 |

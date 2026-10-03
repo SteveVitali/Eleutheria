@@ -53,7 +53,7 @@ No landed ADR was edited; no status line was appended (SEED-11d's); the ADR inde
    table and OPEN in a later summary table of the same file — for T4/SEED-14 (noted in ADR-170).
 4. **Requirement id typo in plan §6.3:** "SIG-CONTRIB-012/012a/013/030a" — the spec has no SIG-CONTRIB-030a; the id is
    SIG-INGEST-030a, and E2-09 also names SIG-INGEST-029 (both included in ADR-171). SEED-12 should use the right ids.
-5. **Q-E2-13 option c** also named re-deciding the out-of-rule / counsel-flagged rows (`camreg_aikner`,
+5. **Q-E2-13 option c** also named re-deciding the out-of-rule / counsel-flagged rows (`camreg_und_001`,
    `camreg_calgary_ab`, Lexington, MD iMAP); no row in `PD/data/round11_plan.csv` does it after A-7/A-8. Recorded in
    ADR-169 as a labelled agent observation; the orchestrator decides whether a row or an operator line is owed.
 6. **E4-R4a/R4b catalog cells:** `recommendation` carries an S4c draft ("b — capture the terms; NOT flipped this round")

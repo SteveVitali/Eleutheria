@@ -84,9 +84,9 @@ _LEGACY_CLAIMS: tuple[dict[str, Any], ...] = (
         "value": 190,
         "raw_value": "businesses own around 100 within city limits",
         "observed_at": "2026-08-18",
-        "source_id": "bacy",
+        "source_id": "okc_council_statement",
         "spdx": "CC-BY-4.0",
-        "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+        "attribution": "the OKCPD chief, city council 2026-08-18",
         "evidence_genre": "news_article",
     },
     {
@@ -95,9 +95,9 @@ _LEGACY_CLAIMS: tuple[dict[str, Any], ...] = (
         "value": 90,
         "raw_value": "OKCPD has 90 cameras",
         "observed_at": "2026-08-18",
-        "source_id": "bacy",
+        "source_id": "okc_council_statement",
         "spdx": "CC-BY-4.0",
-        "attribution": "OKCPD Chief Bacy, city council 2026-08-18",
+        "attribution": "the OKCPD chief, city council 2026-08-18",
         "evidence_genre": "official_statement",
     },
     {
@@ -233,7 +233,7 @@ def correction_packet() -> dict[str, Any]:
             ),
         },
         {
-            "correction_id": "bacy-190-derived-not-sourced",
+            "correction_id": "okc-council-190-derived-not-sourced",
             "target_record": t[_BACY_190],
             "replacement_records": [
                 _replacement(
@@ -258,7 +258,7 @@ def correction_packet() -> dict[str, Any]:
             ),
         },
         {
-            "correction_id": "bacy-90-active-scope",
+            "correction_id": "okc-council-90-active-scope",
             "target_record": t[_ACTIVE_90],
             "replacement_records": [
                 _replacement(

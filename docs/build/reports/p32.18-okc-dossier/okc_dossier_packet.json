@@ -1290,8 +1290,8 @@
       "raw_value": "businesses own around 100 within city limits",
       "record_kind": "claim",
       "sensitivity_class": "C1",
-      "source_attribution": "bacy",
-      "source_id": "bacy",
+      "source_attribution": "okc_council_statement",
+      "source_id": "okc_council_statement",
       "spdx": "CC-BY-4.0",
       "subject_id": "sig:deployment:okc-okcpd-flock",
       "value": 100
@@ -1335,8 +1335,8 @@
       "raw_value": "OKCPD has 90 cameras",
       "record_kind": "claim",
       "sensitivity_class": "C1",
-      "source_attribution": "bacy",
-      "source_id": "bacy",
+      "source_attribution": "okc_council_statement",
+      "source_id": "okc_council_statement",
       "spdx": "CC-BY-4.0",
       "subject_id": "sig:deployment:okc-okcpd-flock",
       "value": 90
