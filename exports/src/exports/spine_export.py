@@ -72,6 +72,9 @@ from resolution.camera_sites_pg import read_resolved_site_runs
 from tasks.catalog import catalog as _task_catalog
 from tasks.vocabulary import Disposition
 
+from policy import disclosure as policy_disclosure
+from policy import withdrawals as policy_withdrawals
+
 from . import analytics, provo
 from . import compartments as C
 from .audit import _LATEST_DECISION_CTE
@@ -1633,6 +1636,139 @@ def _slugify(text: str) -> str:
 # --------------------------------------------------------------------------- #
 
 
+def _apply_publication_withdrawals(
+    claims: Sequence[ShapingClaim],
+) -> tuple[list[ShapingClaim], list[dict[str, Any]]]:
+    """Drop committed publication-withdrawal targets (P34.19, F-337, SIG-GOV-007).
+
+    The committed ``sig.publication-withdrawals/1`` list names the claims that
+    leave every public artifact — leak-provenance refusals and other
+    ``rights_withdrawal`` entries. Matching is fail-closed
+    (``candidate_claim_ids`` suppress alongside ``claim_ids`` until a host-side
+    rerun narrows them); unmatched claims pass through untouched. Returns the
+    kept claims plus one loud exclusion record per dropped claim.
+    """
+    kept: list[ShapingClaim] = []
+    dropped: list[dict[str, Any]] = []
+    for claim in claims:
+        # A listed claim id is suppressed; so is ANY claim about a listed
+        # subject entity (the withdrawal's public-artifact semantics —
+        # "suppress matching claims and their subject entities" — fail
+        # closed both directions; the spine record itself is untouched).
+        entry = policy_withdrawals.withdrawal_for_claim(
+            str(claim.claim_id)
+        ) or policy_withdrawals.withdrawal_for_entity(str(claim.subject_id))
+        if entry is None:
+            kept.append(claim)
+            continue
+        dropped.append(
+            {
+                "surface": "all",
+                "source_id": claim.source_id,
+                "entity_id": claim.subject_id,
+                "claim_id": str(claim.claim_id),
+                "upstream_id": entry["upstream_id"],
+                "reason": entry["reason"],
+                "authority": entry["authority"],
+            }
+        )
+    return kept, dropped
+
+
+def _base_source_id(slice_key: str) -> str:
+    """The source id a ``source@rights`` multi-rights slice key counts under."""
+    return slice_key.split("@", 1)[0]
+
+
+def _terms_disclosure_payload(
+    rows_by_compartment: Mapping[str, list[C.ExportRow]],
+    *,
+    as_of: str,
+    generated_at: str,
+) -> dict[str, Any] | None:
+    """The ``web/terms_disclosure.json`` payload (sig.terms-disclosure/1).
+
+    Every affected source this export actually carries is listed with its
+    captured terms verbatim + the ADR-183 publication basis; the per-source
+    row counts are computed from the built slices (never copied from the
+    acceptance narrative). ``None`` when no affected source has rows (a
+    fixture or scoped export without them emits no artifact — honest absence).
+    """
+    table = policy_disclosure.express_terms()
+    counts: dict[str, int] = {}
+    for rows in rows_by_compartment.values():
+        for row in rows:
+            base = _base_source_id(row.source_id)
+            counts[base] = counts.get(base, 0) + 1
+    sources = [
+        {**entry, "export_row_count": counts[entry["source_id"]]}
+        for entry in table["sources"]
+        if counts.get(entry["source_id"], 0) > 0
+    ]
+    if not sources:
+        return None
+    return {
+        "schema": "sig.terms-disclosure/1",
+        "as_of": as_of,
+        "generated_at": generated_at,
+        "basis": table["basis"],
+        "sources": sources,
+    }
+
+
+def _compartment_attribution(
+    compartment: str,
+    rows: Sequence[C.ExportRow],
+    *,
+    generated_at: str,
+) -> dict[str, Any] | None:
+    """The ``<compartment>/ATTRIBUTION.json`` payload for an affected compartment.
+
+    File-level rights disclosure (SIG-LIC-001/011): each express-terms source
+    whose rows sit in this compartment is named with its captured terms
+    verbatim and the operator-accepted publication basis. ``None`` when the
+    compartment carries no affected source (no artifact written).
+    """
+    per_source: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        base = _base_source_id(row.source_id)
+        entry = policy_disclosure.disclosure_for(base)
+        if entry is None:
+            continue
+        rec = per_source.setdefault(
+            base,
+            {
+                "source_id": base,
+                "name": entry["name"],
+                "spdx": entry["spdx_registry"],
+                "terms_url": entry["terms_url"],
+                "captured_terms_verbatim": entry["captured_terms_verbatim"],
+                "captured_terms_evidence": entry["captured_terms_evidence"],
+                "publication_basis": entry["publication_basis"],
+                "slice_source_ids": [],
+                "rows": 0,
+            },
+        )
+        rec["rows"] = int(rec["rows"]) + 1
+        if row.source_id not in rec["slice_source_ids"]:
+            rec["slice_source_ids"].append(row.source_id)
+    if not per_source:
+        return None
+    return {
+        "schema": "sig.compartment-attribution/1",
+        "compartment": compartment,
+        "generated_at": generated_at,
+        "note": (
+            "Express-terms disclosure (P34.19, ADR-183): these sources' rows are "
+            "published under the operator's recorded acceptance of the express-terms "
+            "risk; the captured terms below are verbatim. Scheduled refreshes of the "
+            "same sources are covered (SB-2); a new source with a non-commercial "
+            "clause follows A-9 (facts and pointers only)."
+        ),
+        "sources": [per_source[k] for k in sorted(per_source)],
+    }
+
+
 def _table(name: str, rows: Sequence[C.ExportRow], *, kind: str, compartment: str) -> C.ExportTable:
     return C.ExportTable(name=name, rows=tuple(rows), kind=kind, compartment=compartment)
 
@@ -1678,6 +1814,21 @@ def build_spine_export(
         claims = _claims_from_dataset(dataset)
 
     source_names = {str(r[0]): str(r[1]) for r in (raw.get("source_names") or [])}
+
+    # --- P34.19 (F-337, SIG-GOV-007): committed publication withdrawals -------
+    # Every public surface derives from ``claims`` (the sites slice, record
+    # claims, tiles, search) or from ``dataset.sites`` (map, dossiers, coverage,
+    # analytics), so suppressing the committed withdrawal targets at BOTH seams
+    # — before any surface is built — keeps every artifact consistent. The
+    # dropped claims are recorded loudly in exclusions.json; the withdrawal is
+    # the claim, never the agency's whole deployment record.
+    claims, withdrawn_claims = _apply_publication_withdrawals(claims)
+    withdrawn_entities = policy_withdrawals.withdrawn_entity_ids()
+    if withdrawn_entities:
+        dataset = replace(
+            dataset,
+            sites=tuple(s for s in dataset.sites if s.entity_id not in withdrawn_entities),
+        )
 
     # --- the materialized graph (P28.1-P28.4, ADR-101) --------------------------
     # Read from ``raw`` (populated by ``run_spine_export`` inside the read-only snapshot);
@@ -1747,7 +1898,11 @@ def build_spine_export(
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
         "dossiers": dossiers,
-        "map": _map_layer(dataset, resolved=resolved_counts, exclude=slices.refused_subjects),
+        "map": _map_layer(
+            dataset,
+            resolved=resolved_counts,
+            exclude=slices.refused_subjects | withdrawn_entities,
+        ),
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
         "network": (
@@ -1782,7 +1937,10 @@ def build_spine_export(
     # label says so (ADR-106). The other surfaces carry SIG's aggregate framing (counts,
     # freshness, coverage) and stay SIG CC-BY-4.0.
     mapped = {
-        site.entity_id for site in dataset.sites if site.entity_id not in slices.refused_subjects
+        site.entity_id
+        for site in dataset.sites
+        if site.entity_id not in slices.refused_subjects
+        and site.entity_id not in withdrawn_entities
     }
     web_licenses = {
         f"{_WEB_DIR}/map.json": surface_license(
@@ -1827,6 +1985,33 @@ def build_spine_export(
         web_licenses[path] = str(payload["license"])
         web_compartments[path] = comp
 
+    # --- P34.19 (F-403, ADR-183): express-terms disclosure ----------------------
+    # Each express-terms source the operator chose to keep public discloses its
+    # captured terms verbatim + the accepted publication basis: file-level in a
+    # per-compartment ``ATTRIBUTION.json`` (P34.21a generalises the mechanism to
+    # every compartment file) and machine-readable in ``web/terms_disclosure.json``
+    # for P34.17's interim sources-and-licences page. Row counts are computed
+    # from THIS export's slices — never copied from the acceptance narrative.
+    comp_licenses = {pt.compartment: pt.license for pt in bundle.placed}
+    disclosure = _terms_disclosure_payload(
+        slices.rows_by_compartment,
+        as_of=dataset.as_of,
+        generated_at=generated_at,
+    )
+    if disclosure is not None:
+        path = f"{_WEB_DIR}/terms_disclosure.json"
+        web_artifacts[path] = _web_bytes(disclosure)
+        web_licenses[path] = _SIG_SPDX
+        web_compartments[path] = _WEB_COMPARTMENT
+    for comp, rows in sorted(slices.rows_by_compartment.items()):
+        payload = _compartment_attribution(comp, rows, generated_at=generated_at)
+        if payload is None:
+            continue
+        path = f"{comp}/ATTRIBUTION.json"
+        web_artifacts[path] = _web_bytes(payload)
+        web_licenses[path] = str(comp_licenses.get(comp, _SIG_SPDX))
+        web_compartments[path] = comp
+
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
     # (published_path, compartment, license, bytes)
@@ -1859,9 +2044,14 @@ def build_spine_export(
         "generated_at": generated_at,
         "note": note,
         "refused": site_exclusions,
+        # P34.19 (F-337, SIG-GOV-007): the committed publication-withdrawal
+        # targets dropped before any surface was built — recorded loudly, one
+        # row per suppressed claim.
+        "withdrawn": withdrawn_claims,
         "totals": {
             "refused_slices": len(site_exclusions),
             "refused_rows": sum(int(e["rows"]) for e in site_exclusions),
+            "withdrawn_claims": len(withdrawn_claims),
         },
     }
 

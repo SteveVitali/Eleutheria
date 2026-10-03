@@ -402,7 +402,7 @@ def downstream_obligations(
     reg = _registry(registry)["licenses"]
     governing = effective_license(record, registry)
     facts = reg.get(governing, {})
-    return {
+    out: dict[str, Any] = {
         "source_id": record.source_id,
         "license": governing,
         "attribution_required": bool(facts.get("attribution_required", True)),
@@ -411,3 +411,11 @@ def downstream_obligations(
         "terms_url": record.terms_url,
         "upstream_license": record.upstream_license,
     }
+    # P34.19 (F-403, ADR-183): express-terms sources the operator chose to keep
+    # public carry their captured terms verbatim and the publication basis on
+    # every row — additive keys, absent for unaffected sources.
+    if getattr(record, "captured_terms_verbatim", ""):
+        out["captured_terms_verbatim"] = record.captured_terms_verbatim
+        out["captured_terms_evidence"] = getattr(record, "captured_terms_evidence", "")
+        out["publication_basis"] = getattr(record, "publication_basis", "")
+    return out

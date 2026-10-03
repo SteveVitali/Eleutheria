@@ -180,6 +180,10 @@ def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
         retrieval_date=retrieval if isinstance(retrieval, date) else date(2026, 8, 20),
         ai_training_permitted=bool(r.get("ai_training_permitted", False)),
         upstream_license=r.get("upstream_license"),
+        # P34.19 (F-403, ADR-183): express-terms disclosure fields, optional.
+        captured_terms_verbatim=str(r.get("captured_terms_verbatim", "")),
+        captured_terms_evidence=str(r.get("captured_terms_evidence", "")),
+        publication_basis=str(r.get("publication_basis", "")),
     )
 
 

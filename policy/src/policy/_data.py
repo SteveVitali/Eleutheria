@@ -24,3 +24,19 @@ def load_table(name: str) -> dict[str, Any]:
     resource = files("policy").joinpath("data", f"{name}.toml")
     with resource.open("rb") as fh:
         return tomllib.load(fh)
+
+
+@cache
+def load_json_table(name: str) -> dict[str, Any]:
+    """Return the parsed JSON data table `<name>.json` shipped with the package.
+
+    JSON is used where a table must carry long verbatim captures (embedded
+    markup, quotes) — P34.19's express-terms disclosure and publication
+    withdrawals live here so they stay *data, not code* (SIG-LIC-004a) and can
+    be read verbatim by the TypeScript web layer without a TOML dependency.
+    """
+    import json
+
+    resource = files("policy").joinpath("data", f"{name}.json")
+    with resource.open("r", encoding="utf-8") as fh:
+        return json.load(fh)

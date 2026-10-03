@@ -52,6 +52,15 @@ import { RELEASE_CATALOG_FIXTURE } from "./releases-fixture";
 import type { ReleaseCatalog } from "./releases";
 import type { MapSite, GraphNode, GraphEdge, EntityFixture, AsOfEcho } from "./fixtures";
 import { AS_OF, RULESET_VERSION } from "./fixtures";
+// P34.19 (F-337/F-403): the committed publication-withdrawal list + the
+// express-terms disclosure contract — every export-mode payload keyed on a
+// suppressed claim/entity/upstream id is filtered by ONE shared list.
+import { dropWithdrawn, isWithdrawn } from "./withdrawals";
+import {
+  isTermsDisclosure,
+  TERMS_DISCLOSURE_FIXTURE,
+  type TermsDisclosure,
+} from "./terms-disclosure";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -134,6 +143,7 @@ export function getDossiers(): Dossier[] {
   if (!Array.isArray(parsed)) {
     throw new Error(`${path}: expected a JSON array of dossiers, got ${typeof parsed}`);
   }
+  const exportDossiers = dropWithdrawn(parsed as Dossier[]);
   // The export carries the real jurisdiction (OKC). The FR/BE dossiers are the
   // SIG-PUB-017 publication-adapter *demonstrations* the shell ships regardless of
   // data source (they show the jurisdiction-conditional withholding, not export
@@ -141,7 +151,7 @@ export function getDossiers(): Dossier[] {
   // P30.3: the SIG-PUB-017 jurisdiction DEMONSTRATIONS (Paris / Brussels fixture dossiers)
   // carry demo facts; a real-data build never lists them as dossiers (§3.1). The P27.5
   // fixture-export harness ships them as an optional presentation artifact instead.
-  return [...(parsed as Dossier[]), ...jurisdictionDemos()];
+  return [...exportDossiers, ...jurisdictionDemos()];
 }
 
 /** The SIG-PUB-017 demo dossiers in export mode: only when the bundle ships them (P30.3). */
@@ -268,7 +278,7 @@ export function getMapSites(): MapAsset[] {
     if (!Array.isArray(assets)) {
       throw new Error(`${path}: expected an object with an "assets" array (map layer)`);
     }
-    return assets as MapAsset[];
+    return dropWithdrawn(assets as MapAsset[]);
   });
 }
 
@@ -311,7 +321,9 @@ export function getCoverage(): CoverageMetric[] {
 /** Surface 7 — the renewal/contract watch (§39.5). Export: `web/watch.json`. */
 export function getWatch(): ContractWatchItem[] {
   if (dataSource() === "fixtures") return WATCH_ITEMS;
-  return readExportArtifact("watch.json", (p, path) => requireArray(p, path) as ContractWatchItem[]);
+  return readExportArtifact("watch.json", (p, path) =>
+    dropWithdrawn(requireArray(p, path) as ContractWatchItem[]),
+  );
 }
 
 /** Surface 8 — the evidence recommender + viewer (§39.5a/§39.6). Export: `web/evidence.json`. */
@@ -330,8 +342,10 @@ export function getEvidence(): EvidenceData {
       throw new Error(`${path}: expected an object with an "artifacts" array`);
     }
     return {
-      artifacts: o.artifacts as EvidenceArtifact[],
-      claimViews: (Array.isArray(o.claim_views) ? o.claim_views : []) as ClaimView[],
+      artifacts: dropWithdrawn(o.artifacts as EvidenceArtifact[]),
+      claimViews: dropWithdrawn(
+        (Array.isArray(o.claim_views) ? o.claim_views : []) as ClaimView[],
+      ),
     };
   });
 }
@@ -339,7 +353,9 @@ export function getEvidence(): EvidenceData {
 /** Surface 9 — the public corrections log (§39.8). Export: `web/corrections.json`. */
 export function getCorrections(): CorrectionEntry[] {
   if (dataSource() === "fixtures") return CORRECTIONS;
-  return readExportArtifact("corrections.json", (p, path) => requireArray(p, path) as CorrectionEntry[]);
+  return readExportArtifact("corrections.json", (p, path) =>
+    dropWithdrawn(requireArray(p, path) as CorrectionEntry[]),
+  );
 }
 
 /** Surface 10 — the research queue (§39.7). Export: `web/research_queue.json`. */
@@ -347,7 +363,7 @@ export function getResearchQueue(): ResearchTaskCard[] {
   if (dataSource() === "fixtures") return RESEARCH_QUEUE;
   return readExportArtifact(
     "research_queue.json",
-    (p, path) => requireArray(p, path) as ResearchTaskCard[],
+    (p, path) => dropWithdrawn(requireArray(p, path) as ResearchTaskCard[]),
   );
 }
 
@@ -364,7 +380,7 @@ export function getDossierIndex(): DossierIndexRow[] {
     }));
   }
   return readExportArtifact("dossier_index.json", (p, path) => {
-    const rows = requireArray(p, path) as DossierIndexRow[];
+    const rows = dropWithdrawn(requireArray(p, path) as DossierIndexRow[]);
     // The export emits the real jurisdictions; the SIG-PUB-017 FR/BE demonstration
     // dossiers ship regardless of data source (as getDossiers appends them), so the
     // index echoes them too and the surface is identical in both modes.
@@ -497,7 +513,8 @@ export function getEntityCompartments(): Map<
       const t = line.trim();
       if (!t) continue;
       const row = JSON.parse(t) as { entity_id?: unknown; entity_type?: unknown };
-      if (typeof row.entity_id === "string") {
+      // P34.19 (F-337): a withdrawn subject has no released record — no route.
+      if (typeof row.entity_id === "string" && !isWithdrawn(row.entity_id)) {
         out.set(row.entity_id, {
           compartment: entry,
           entityType: typeof row.entity_type === "string" ? row.entity_type : "deployment",
@@ -506,6 +523,31 @@ export function getEntityCompartments(): Map<
     }
   }
   return out;
+}
+
+/**
+ * The express-terms disclosure (P34.19, F-403, ADR-183) — `sig.terms-disclosure/1`.
+ *
+ *   - `fixtures` mode — the demo fixture (one synthetic source, clearly marked).
+ *   - `export` mode — `<exportDir>/web/terms_disclosure.json`, emitted by
+ *     `sig-exports` when the export carries an affected source's rows.
+ *
+ * A MISSING artifact is honest absence — an export scoped to sources without
+ * express-terms rows emits none — and reads as an empty source list (the
+ * interim sources-and-licences page then states "no express-terms sources in
+ * this export"), never a fabricated entry.
+ */
+export function getTermsDisclosure(): TermsDisclosure {
+  if (dataSource() === "fixtures") return TERMS_DISCLOSURE_FIXTURE;
+  const path = `${exportDir()}/web/terms_disclosure.json`;
+  if (!existsSync(path)) {
+    return { ...TERMS_DISCLOSURE_FIXTURE, sources: [] };
+  }
+  const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
+  if (!isTermsDisclosure(parsed)) {
+    throw new Error(`${path}: not a valid sig.terms-disclosure/1 artifact`);
+  }
+  return parsed;
 }
 
 // --------------------------------------------------------------------------- //
