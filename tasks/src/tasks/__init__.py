@@ -59,6 +59,14 @@ Contribution back to the ecosystem (§35, P16.2):
   hashtag wired to the §7 leverage metric, the contribution-path licence gate
   applied before a suggestion is rendered, per-project correction channels, and the
   Organised Editing activity disclosure (SIG-CONTRIB-014/015/016d/016e/016f/016g/018).
+
+Acquisition — the gap-driven reviewed source queue (§55.6, P32.11):
+
+* :mod:`tasks.acquisition` — the reviewed candidate queue seeded from the
+  committed research inventory: candidate passports, discovery provenance,
+  lineage/mirror and duplicate detection, the hard-gated versioned score model,
+  three separate rights lanes, Part VIII preflight, and operator review packets
+  (SIG-ACQ-001/002, ADR-130). Seeding approves nothing; no source is flipped.
 """
 
 __version__ = "0.0.0"

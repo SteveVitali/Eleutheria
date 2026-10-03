@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "b132bbbb8e36951fb5f3a8ec8a392cbb6449fc99",
-  "manifest_inputs": 506,
+  "input_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+  "manifest_inputs": 508,
   "control": {
     "projectStatus": "IN-PROGRESS",
     "nextTicket": "P32.11",
@@ -72,7 +72,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 35,
@@ -116,7 +116,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 36,
@@ -160,7 +160,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 37,
@@ -204,7 +204,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 38,
@@ -248,7 +248,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 39,
@@ -292,7 +292,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 40,
@@ -338,7 +338,7 @@
           ],
           "observed_at": "2026-09-16",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the cell itself records DONE 2026-09-16 — the operator decided GO at the go-public checkpoint, the GCP cut-over ran and was verified anonymously, and the custom-domain leg was skipped-by-operator (recorded, not silently dropped). Recorded interpretation: terminal DONE; the leading OPEN was stale.",
           "anchor": {
             "row_line": 41,
@@ -384,7 +384,7 @@
           ],
           "observed_at": "2026-09-16",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the dated DONE tokens are per-leg discharges — Zenodo deposit (2026-09-15), the GCS object-store push, and the live egress report — while the Software Heritage save-now leg was DECLINED-BY-OPERATOR because the repository is private and that leg reopens if visibility flips, and a non-GCS object-store push remains 'if desired'. Recorded interpretation: PARTIAL — the owed residue is an operator decision, not engineering.",
           "anchor": {
             "row_line": 42,
@@ -428,7 +428,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 43,
@@ -472,7 +472,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 44,
@@ -516,7 +516,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 45,
@@ -560,7 +560,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 47,
@@ -604,7 +604,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 71,
@@ -648,7 +648,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 72,
@@ -692,7 +692,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 73,
@@ -736,7 +736,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 74,
@@ -780,7 +780,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 75,
@@ -824,7 +824,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 76,
@@ -868,7 +868,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 89,
@@ -912,7 +912,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 90,
@@ -956,7 +956,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 101,
@@ -1000,7 +1000,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 103,
@@ -1044,7 +1044,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 116,
@@ -1088,7 +1088,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 118,
@@ -1132,7 +1132,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 129,
@@ -1176,7 +1176,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 130,
@@ -1220,7 +1220,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 131,
@@ -1266,7 +1266,7 @@
           ],
           "observed_at": "2026-09-19",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the cell records DONE 2026-09-19 (P26.17) — RESOLVED-BY-GL-GATE-08: the operator's recorded PrimeGov/robots disposition removed the gate, so the owed ADR-083-style API-mode justification is moot. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 132,
@@ -1310,7 +1310,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 145,
@@ -1354,7 +1354,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 146,
@@ -1398,7 +1398,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 147,
@@ -1442,7 +1442,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 160,
@@ -1486,7 +1486,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 161,
@@ -1530,7 +1530,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 176,
@@ -1574,7 +1574,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 177,
@@ -1618,7 +1618,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 178,
@@ -1662,7 +1662,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 179,
@@ -1706,7 +1706,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 192,
@@ -1750,7 +1750,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 210,
@@ -1794,7 +1794,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 226,
@@ -1838,7 +1838,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 247,
@@ -1882,7 +1882,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 261,
@@ -1926,7 +1926,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 275,
@@ -1970,7 +1970,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 288,
@@ -2014,7 +2014,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 305,
@@ -2058,7 +2058,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 317,
@@ -2102,7 +2102,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 318,
@@ -2146,7 +2146,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 331,
@@ -2190,7 +2190,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 332,
@@ -2234,7 +2234,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 333,
@@ -2278,7 +2278,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 334,
@@ -2322,7 +2322,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 335,
@@ -2366,7 +2366,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 336,
@@ -2410,7 +2410,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 337,
@@ -2454,7 +2454,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 338,
@@ -2498,7 +2498,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 339,
@@ -2545,7 +2545,7 @@
           ],
           "observed_at": "2026-09-26",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the cell records DONE 2026-09-26 — all eight accountability-breadth sources landed: P31.12 wired+landed the first four and P31.13 the remaining four under digest-pinned hosted jobs (+0 re-runs, rights_decision rows recorded, materialize +0). Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 340,
@@ -2589,7 +2589,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 355,
@@ -2633,7 +2633,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 356,
@@ -2677,7 +2677,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 366,
@@ -2721,7 +2721,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 367,
@@ -2765,7 +2765,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 368,
@@ -2809,7 +2809,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 378,
@@ -2853,7 +2853,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 379,
@@ -2897,7 +2897,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 388,
@@ -2941,7 +2941,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 389,
@@ -2985,7 +2985,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 390,
@@ -3029,7 +3029,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 391,
@@ -3073,7 +3073,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 392,
@@ -3117,7 +3117,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 393,
@@ -3161,7 +3161,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 394,
@@ -3205,7 +3205,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 403,
@@ -3249,7 +3249,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 404,
@@ -3293,7 +3293,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 405,
@@ -3337,7 +3337,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 406,
@@ -3384,7 +3384,7 @@
           ],
           "observed_at": "2026-10-11",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the cell records DONE 2026-10-11 (P32.4 / ADR-123) — _spine_watermark now reads the trigger-maintained spine_watermark table (bounded by construction); invalidation verified for all three classes on real PG18; the p31-scale-local fixture met the named budget. Composed/hosted latency evidence is reserved to the P32.24/P33.2 e2e rows, which this closure explicitly does not claim. Recorded interpretation: DONE.",
           "anchor": {
             "row_line": 465,
@@ -3428,7 +3428,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 466,
@@ -3475,7 +3475,7 @@
           ],
           "observed_at": "2026-09-28",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the cell records DONE 2026-09-28 (P32.2, route half; ADR-121 §6) — the entity route resolves each predicate independently; unknown predicates land on an explicit unregistered_predicates field while registered facts flow through the eligibility policy. Recorded interpretation: DONE; composed/hosted verification stays P33.2's.",
           "anchor": {
             "row_line": 467,
@@ -3519,7 +3519,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 491,
@@ -3563,7 +3563,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 500,
@@ -3607,7 +3607,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 508,
@@ -3654,7 +3654,7 @@
           ],
           "observed_at": "2026-10-12",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "the cell records DONE 2026-10-12 (P32.5 / ADR-124) — publication-eligibility/1 + the publication_disposition registry withhold publication_review_required organisations from every public surface until a recorded allow; the flag was NOT declared moot and the owed operator action is recorded in ADR-124. Recorded interpretation: DONE.",
           "anchor": {
             "row_line": 509,
@@ -3698,7 +3698,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 580,
@@ -3742,11 +3742,11 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 581,
-            "row_sha256": "a9b04ca10c618a3e04440d4d4b97262ee9382b363236ea5c653a860df9bbb3bb",
+            "row_sha256": "148ae4858c80671bd97f4917d5223896eb84522eedd09c94cafa8168dcb86d88",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3786,7 +3786,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 582,
@@ -3830,7 +3830,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 583,
@@ -3874,7 +3874,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 584,
@@ -3918,7 +3918,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 585,
@@ -3962,7 +3962,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 623,
@@ -4006,7 +4006,7 @@
           ],
           "observed_at": "2026-09-27",
           "recorded_at": "2026-09-27",
-          "source_commit": "42bb286af6875d7a8beaf7ffeb33f8add89be2c3",
+          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 624,
@@ -8201,14 +8201,14 @@
           "label": "historical/csv"
         },
         "SIG-ACQ-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "tasks/src/tasks/acquisition.py:1;tasks/src/tasks/data/acquisition_queue.toml:1;docs/build/reports/acquisition/queue.md:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ACQ-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "tasks/src/tasks/acquisition.py:1;tasks/src/tasks/data/acquisition_queue.toml:1;docs/build/reports/acquisition/queue.md:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8694,7 +8694,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "4de9d09ea239e213a9b2c37290bf24e2b78eac4d02e93d1a73a6b2e66c1d084d",
+  "manifest_sha256": "e5b0568a8b2adb191765fee113da2d2ef3f7dfe9e22fed92d0e2645cae8ebf02",
   "current_md": {
     "lines": 117,
     "bytes": 14219,

@@ -1,0 +1,502 @@
+# SPDX-License-Identifier: Apache-2.0
+# The gap-driven reviewed acquisition queue (P32.11, §55.6, SIG-ACQ-001/002,
+# ADR-130). This table is DATA, not code (SIG-ENG-001): every candidate is a row
+# reviewed on its own. Provenance fields (URLs, accessed_on, review_status,
+# novelty, claims, unknowns, effort, priority) come verbatim from the committed
+# research inventory named below — they are LEADS, never review or permission.
+#
+# Invariants enforced by tasks.acquisition + tests:
+#   * NO rights lane may carry `decision = "decided"` here without a recorded
+#     decision_ref/decided_by/decided_on — the queue cannot mint approvals.
+#     Seeding approves nothing.
+#   * `municipal_publication` is an OBSERVATION, never a licence decision:
+#     municipal/state publication is not auto-CC0.
+#   * A candidate with `lineage_class` in {same_bytes, republished_document,
+#     derived_summary, new_version, amends, response_to} must have I = 0 — a
+#     mirror never scores as independent corroboration.
+#   * `links` kind `same_source` means the candidate IS an existing registry row
+#     (improvement under that row; a P31-owned row refuses re-onboarding);
+#     `related` is dedupe-aware context only.
+#   * Dimension values are ordinal 0..3 (absent = unknown → unscored, never a
+#     silent default). They are ESTIMATES under `assessment.version`; a reviewer
+#     may supersede them under a new version — never edit a landed version in
+#     place (§20 data versioning).
+
+schema = "acquisition-queue/1"
+research_inventory = "docs/build/planning/2026-09-25-six-streams/data/source-candidates.csv"
+scoring_version = "acq-score/1"
+
+# The shared assessment header for the seed set: an engineering ESTIMATE derived
+# from the CSV's declared fields (rank→G, claims_supported→R, novelty/publisher→I,
+# structure→U, dates→T, jurisdiction→J, effort→E, review_status/access→A,
+# sensitive exposure→S). estimated, NOT measured; supersede under a new version.
+assessment = { version = "acq-seed/1", assessor = "engineering-seed (acq-seed/1 — ordinal values derived from the S5 research row fields, pending reviewer assessment)", assessed_on = 2026-09-25, measured = false }
+
+# ---------------------------------------------------------------------------
+# P0 dossier band (ranks 1–5) — the three S2 portfolio cities
+# ---------------------------------------------------------------------------
+
+[candidates.SRC-001]
+authority = "City of Oklahoma City"
+gap = "P0 dossier: whether OKC’s Flock amendment distinguishes owned vs partner-sourced cameras and what retention/registration terms now apply"
+content_window = "Oct 2024 council memo + Amendment 2 (FY2025 policy cycle)"
+target_predicates = ["governance.policy", "lifecycle.amendment", "retention.period", "identity.partner"]
+links = [
+  { id = "okc_procurement", kind = "related", note = "existing OKC purchasing target deepened, not replaced" },
+  { id = "okc_council", kind = "related", note = "council action provenance for the amendment" },
+  { id = "okcpd_policy", kind = "related", note = "policy corpus the amendment updates" },
+]
+lineage_class = "independent_account"
+lineage_group = "okc-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 3, R = 3, I = 2, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
+dimension_evidence = "P0 dossier (G=3) closing owned-vs-partner + retention gap (R=3); same OKC publisher as permitted rows (I=2); 2-page memo+amendment (U=2); announced retention change (T=2); S2 city (J=3); effort M (E=2); intermittent 403 (A=2); no personal fields flagged (S=0)"
+extra_questions = [
+  "Are the council memo and the amendment one acquisition under common City provenance, or two documents with distinct review scopes?",
+]
+
+[candidates.SRC-002]
+authority = "City of Tulsa / Tulsa Police Department"
+gap = "P0 dossier: Tulsa ALPR vendor (Flock vs Axon), registration-vs-integration terms, retention, and executed-contract provenance"
+content_window = "current TPD policy set + 2024–2025 contract records"
+target_predicates = ["contract.procurement", "governance.policy", "retention.period", "identity.vendor_role"]
+links = [
+  { id = "granicus", kind = "related", note = "Tulsa Granicus tenant discovery exists — agenda copies are republished, not independent" },
+]
+lineage_class = "independent_account"
+lineage_group = "tulsa-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 3, R = 3, I = 3, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
+dimension_evidence = "P0 dossier (G=3); fixed Flock-vs-Axon + registration-vs-integration + policy terms (R=3); net-new TPD publisher (I=3); HTML+MOU+policy docs (U=2); current policies page (T=2); S2 city (J=3); effort M (E=2); executed contract not found in bounded search (A=2); none flagged (S=0)"
+extra_questions = [
+  "Is an executed City of Tulsa–Flock contract publicly posted, or must it be obtained through the records channel (operator-gated D-R7.2-SEND)?",
+  "Is the blank MOU template evidence of structure only — can any executed party be asserted?",
+]
+
+[candidates.SRC-003]
+authority = "City of San Diego (SDPD)"
+gap = "P0 dossier: SDPD surveillance-tech inventory and subscription/service access (vs local hardware) distinctions"
+content_window = "annual transparency reports through 2025"
+target_predicates = ["inventory.technology", "access.subscription", "oversight.report", "governance.policy"]
+lineage_class = "independent_account"
+lineage_group = "san-diego-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 3, R = 2, I = 3, U = 3, T = 3, J = 3, E = 2, A = 2, S = 0 }
+dimension_evidence = "P0 dossier (G=3); agency-described tech + subscription access distinctions (R=2); net-new City publisher distinct from county/port tenants (I=3); index + annual reports structure (U=3); annual reporting periods (T=3); S2 city (J=3); effort M (E=2); linked use policy 403 (A=2); none flagged (S=0)"
+extra_questions = [
+  "Do the report excerpts mirror the same SDPD origin across years — group as one municipal lineage while keeping year/revision identity?",
+]
+
+[candidates.SRC-004]
+authority = "City of San Diego (Purchasing / contracts)"
+gap = "P0 dossier: City of San Diego prime/subcontractor procurement chain and amounts (buyer/prime/sub/product)"
+content_window = "FY2024 goods/services contract table"
+target_predicates = ["contract.procurement", "identity.vendor_role", "funding.amount"]
+lineage_class = "independent_account"
+lineage_group = "san-diego-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 3, R = 3, I = 3, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
+dimension_evidence = "P0 dossier (G=3); buyer/prime/subcontractor/product chain (R=3); no matching procurement row (I=3); 85-page Ubicquia PDF selected sections (U=2); FY2024 table (T=2); S2 city (J=3); effort M (E=2); excerpts + signature review pending (A=2); none flagged (S=0)"
+extra_questions = [
+  "Is the executed Ubicquia agreement's signature page publicly posted, and does the posted PDF include all vendor exhibits (which carry separate rights)?",
+]
+
+[candidates.SRC-005]
+authority = "City of San Diego Privacy Advisory Board"
+gap = "P0 dossier: San Diego Privacy Advisory Board recommendations targeted at surveillance technology and their adoption context"
+content_window = "2025 recommendation index"
+target_predicates = ["oversight.recommendation", "governance.review", "lifecycle.adoption"]
+lineage_class = "independent_account"
+lineage_group = "san-diego-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 3, R = 2, I = 3, U = 1, T = 2, J = 3, E = 2, A = 3, S = 0 }
+dimension_evidence = "P0 dossier (G=3); recommendation existence + targeted review (R=2); distinct PAB oversight publisher (I=3); index + search excerpt only (U=1); 2025 recommendation (T=2); S2 city (J=3); effort M (E=2); direct PDF open failed (A=3); none flagged (S=0)"
+extra_questions = [
+  "What approved acquisition path retrieves the full PAB recommendation (direct open exceeded tool limits) — bounded retry, alternate index copy, or operator action?",
+]
+
+# ---------------------------------------------------------------------------
+# P1 local / pilot band (ranks 6–12)
+# ---------------------------------------------------------------------------
+
+[candidates.SRC-006]
+authority = "Oklahoma Office of Management and Enterprise Services (OMES)"
+gap = "P1: Oklahoma statewide contract channel for surveillance-equipment vendors (contract ids, vendors, procurement channel)"
+content_window = "current statewide contract register"
+target_predicates = ["contract.procurement", "identity.vendor", "funding.channel"]
+lineage_class = "independent_account"
+lineage_group = "oklahoma-state"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 2, R = 3, I = 3, U = 3, T = 2, J = 2, E = 2, A = 2, S = 0 }
+dimension_evidence = "P1 local (G=2); state contract IDs/vendors/procurement channel (R=3); no OMES row (I=3); official contract-search index (U=3); statewide contracts current (T=2); Oklahoma state (J=2); effort M (E=2); index+excerpts only, portal terms unreviewed (A=2); none flagged (S=0)"
+
+[candidates.SRC-007]
+authority = "Oklahoma District Attorneys Council (DAC — UVED program)"
+gap = "P0 dossier: UVED program administrator and the legal authority chain including the applicable statute version"
+content_window = "current program pages + displayed 2027-01-01 statute version"
+target_predicates = ["legal.authority", "program.administration", "temporal.applicability"]
+links = [
+  { id = "ok_statute", kind = "related", note = "existing OKC statute target — same legal provenance family, distinct program/authority review" },
+]
+lineage_class = "independent_account"
+lineage_group = "oklahoma-state"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 3, R = 3, I = 2, U = 2, T = 2, J = 2, E = 2, A = 1, S = 0 }
+dimension_evidence = "P0 dossier (G=3); program administrator + legal-version authority chain (R=3); overlaps existing statute target — distinct program (I=2); two official pages (U=2); displayed version effective 2027-01-01 (T=2); Oklahoma state (J=2); effort M (E=2); opened_text (A=1); CSV: no personal records (S=0)"
+extra_questions = [
+  "Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?",
+]
+
+[candidates.SRC-008]
+authority = "Oklahoma Attorney General's office (Safe Oklahoma grant)"
+gap = "P1: Safe Oklahoma grant program — eligible surveillance-tech categories and award leads"
+content_window = "FY2026 funding cycle"
+target_predicates = ["funding.program", "funding.award", "identity.recipient"]
+links = [
+  { id = "usaspending", kind = "related", note = "potential overlap with federal/state award records — dedupe before claiming a new funding edge" },
+]
+lineage_class = "independent_account"
+lineage_group = "oklahoma-state"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 2, R = 2, I = 3, U = 1, T = 2, J = 2, E = 2, A = 2, S = 0 }
+dimension_evidence = "P1 local (G=2); program + eligible technology categories, award leads only (R=2); no program row (I=3); program page + grant-system links (U=1); FY2026 funding (T=2); Oklahoma state (J=2); effort M (E=2); report availability unknown (A=2); none flagged (S=0)"
+extra_questions = [
+  "Are Safe Oklahoma award reports publicly posted, or does award discovery require the OGX grant-system records path?",
+]
+
+[candidates.SRC-009]
+authority = "Oklahoma District Attorneys Council (JAG-LLE)"
+gap = "P1: JAG-LLE federal→state→local funding-chain eligibility and equipment rules (dedup vs USAspending)"
+content_window = "current program guidance"
+target_predicates = ["funding.award", "identity.recipient", "procurement.equipment"]
+links = [
+  { id = "usaspending", kind = "related", note = "state/local allocation deepens USAspending — crosswalk federal award, state pass-through and local order; avoid grant double counting" },
+]
+lineage_class = "independent_account"
+lineage_group = "oklahoma-state"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 2, R = 3, I = 2, U = 2, T = 2, J = 2, E = 2, A = 1, S = 0 }
+dimension_evidence = "P1 local (G=2); federal→state→local funding chain eligibility (R=3); deepens existing USAspending (I=2); official eligibility/equipment guidance (U=2); current program page (T=2); Oklahoma state (J=2); effort M (E=2); opened_text (A=1); none flagged (S=0)"
+extra_questions = [
+  "How is a USAspending federal award de-duplicated against state pass-through and local order records — which record establishes an actual purchase?",
+]
+
+[candidates.SRC-010]
+authority = "Sourcewell (Minnesota local government unit / service cooperative)"
+gap = "P1: Sourcewell master cooperative contract → vendor → participation → ordering path for public-safety tech"
+content_window = "current master-agreement term (112-page contract)"
+target_predicates = ["contract.cooperative", "identity.vendor_role", "procurement.order"]
+links = [
+  { id = "sourcewell", kind = "same_source", note = "reference-only row already exists — promotion/deepening under it, never a new row" },
+]
+lineage_class = "independent_account"
+lineage_group = "sourcewell-cooperative"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 2, R = 3, I = 1, U = 3, T = 2, J = 1, E = 2, A = 1, S = 0 }
+dimension_evidence = "P1 bounded pilot (G=2); master identifier→vendor→participation→ordering chain (R=3); existing reference row — same publisher (I=1); index + structured 112-page contract (U=3); contract current (T=2); US/Canada participants (J=1); effort M (E=2); opened_selected_text (A=1); none flagged (S=0)"
+extra_questions = [
+  "Do Sourcewell's posted terms permit capture of contract documents — a state/local cooperative is NOT a federal public-domain assumption (CSV: Sourcewell state/local status and vendor exhibits require rights review)?",
+  "When a council packet mirrors the master contract, which provenance is preserved — group one origin contract and keep local addenda as separate documents?",
+]
+
+[candidates.SRC-011]
+authority = "California State Auditor"
+gap = "P1: California State Auditor ALPR audit — findings, agency survey answers, recommendations"
+content_window = "2019–2020 audit (historical baseline)"
+target_predicates = ["oversight.audit", "governance.finding", "usage.disclosure"]
+lineage_class = "independent_account"
+lineage_group = "california-state-auditor"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 2, R = 3, I = 3, U = 3, T = 1, J = 1, E = 1, A = 2, S = 0 }
+dimension_evidence = "P1 bounded pilot (G=2); independent audit + agency survey + recommendations (R=3); no auditor row (I=3); structured report/survey tables (U=3); 2019–2020 historical (T=1); California (J=1); effort L-M (E=1); search excerpts only, open access unverified (A=2); none flagged (S=0)"
+extra_questions = [
+  "Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified — and under what attribution may findings be quoted?",
+]
+
+[candidates.SRC-012]
+authority = "Seattle Office of Inspector General (OIG)"
+gap = "P1: Seattle OIG annual surveillance usage reviews and agency responses"
+content_window = "annual reviews, latest report period"
+target_predicates = ["oversight.review", "agency.response", "usage.report"]
+links = [
+  { id = "ccops_seattle", kind = "related", note = "existing Legistar/camera sources — OIG reports are a distinct oversight publisher" },
+  { id = "camreg_seattle_wa", kind = "related", note = "existing Seattle camera registry coverage" },
+]
+lineage_class = "independent_account"
+lineage_group = "seattle-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 2, R = 3, I = 3, U = 2, T = 2, J = 1, E = 1, A = 2, S = 0 }
+dimension_evidence = "P1 alternative (G=2); annual reviews + agency response lineage (R=3); distinct OIG publisher in existing city (I=3); reports index (U=2); annual reviews (T=2); Seattle (J=1); effort L-M (E=1); search excerpts only (A=2); none flagged (S=0)"
+extra_questions = [
+  "Which report period, publication date and agency response does each review establish — and is the latest operational state left to the newest review only?",
+]
+
+# ---------------------------------------------------------------------------
+# P2 band (ranks 13–25)
+# ---------------------------------------------------------------------------
+
+[candidates.SRC-013]
+authority = "City of San José (Digital Privacy / IT)"
+gap = "P2: San José privacy decisions and algorithm-register entries for surveillance tech"
+content_window = "current register"
+target_predicates = ["governance.assessment", "lifecycle.approval", "inventory.algorithm"]
+links = [
+  { id = "legistar", kind = "related", note = "existing San José Legistar tenant — privacy/algorithm records are a distinct collection" },
+]
+lineage_class = "independent_account"
+lineage_group = "san-jose-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 2, U = 3, T = 2, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 (G=1); named-system assessments + approval context (R=2); existing city coverage, new publisher (I=2); register structure (U=3); current register (T=2); San José (J=1); effort M (E=2); excerpts only (A=2); none flagged (S=0)"
+extra_questions = [
+  "Does each register entry repeat one underlying assessment — keep technology-specific lineage so assessments are not double counted?",
+]
+
+[candidates.SRC-014]
+authority = "City of Norman / Norman Police Department"
+gap = "P2: Norman police ALPR policy text and its version/amendment state (incl. third-party manual content)"
+content_window = "2024 manual (currency unverified)"
+target_predicates = ["governance.policy", "retention.period", "document.version"]
+links = [
+  { id = "powerdms_public_portals", kind = "related", note = "generic PowerDMS capability exists — no specific Norman policy row" },
+]
+lineage_class = "independent_account"
+lineage_group = "norman-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 2, U = 2, T = 1, J = 2, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 local alternative (G=1); policy + local document lead (R=2); no specific policy row (I=2); 2024 manual section (U=2); historical manual, current unverified (T=1); Norman OK (J=2); effort M (E=2); excerpts + Lexipol notice (A=2); none flagged (S=0)"
+extra_questions = [
+  "Does the posted Norman manual carry third-party Lexipol-licensed boilerplate (separate literal vs derivative rights), and is the posted 2024 manual the current enforceable version?",
+]
+
+[candidates.SRC-015]
+authority = "NYC Department of Investigation — OIG-NYPD"
+gap = "P2: NYC OIG-NYPD surveillance oversight findings, recommendations and NYPD responses"
+content_window = "2024 assessment + 2025 response"
+target_predicates = ["oversight.finding", "agency.response", "governance.recommendation"]
+links = [
+  { id = "ccops_nyc_post", kind = "related", note = "existing POST source — DOI/OIG is a distinct oversight publisher" },
+  { id = "procportal_nyc_ny", kind = "related", note = "existing NYC procurement coverage" },
+]
+lineage_class = "independent_account"
+lineage_group = "nyc-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 3, I = 3, U = 2, T = 2, J = 1, E = 1, A = 2, S = 0 }
+dimension_evidence = "P2 (G=1); oversight findings + recommendations + NYPD response (R=3); DOI distinct from existing NYC sources (I=3); official index (U=2); 2024 assessment + 2025 response (T=2); NYC (J=1); effort L-M (E=1); excerpts only (A=2); none flagged (S=0)"
+
+[candidates.SRC-016]
+authority = "NYC Comptroller"
+gap = "P2: NYC Comptroller contract-registration and audit lifecycle actions on surveillance contracts"
+content_window = "2025 registration/audit actions"
+target_predicates = ["contract.lifecycle", "oversight.audit", "funding.review"]
+links = [
+  { id = "ccops_nyc_post", kind = "related", note = "existing NYC POST source — Comptroller is a distinct authority" },
+  { id = "procportal_nyc_ny", kind = "related", note = "complements the procurement portal — registration decision is a lifecycle event, not procurement copy" },
+]
+lineage_class = "independent_account"
+lineage_group = "nyc-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 3, I = 3, U = 2, T = 3, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 (G=1); independent review + precise contract-registration status (R=3); distinct Comptroller publisher (I=3); reports + newsroom records (U=2); 2025 actions — current (T=3); NYC (J=1); effort M (E=2); excerpts + rights pending (A=2); none flagged (S=0)"
+extra_questions = [
+  "Does a registration refusal terminate deployment — keep the audit finding, agency response and registration decision as separate lifecycle artifacts?",
+]
+
+[candidates.SRC-017]
+authority = "Chicago Office of Inspector General"
+gap = "P2: Chicago OIG ShotSpotter evaluation methodology, findings and follow-up"
+content_window = "2021 evaluation (historical)"
+target_predicates = ["oversight.evaluation", "usage.efficacy", "governance.finding"]
+links = [
+  { id = "procportal_chicago_il", kind = "related", note = "existing Chicago procurement coverage — OIG evaluation is distinct oversight" },
+  { id = "camreg_chicago_il", kind = "related", note = "existing Chicago camera registry coverage" },
+]
+lineage_class = "independent_account"
+lineage_group = "chicago-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 3, U = 2, T = 1, J = 1, E = 1, A = 2, S = 0 }
+dimension_evidence = "P2 (G=1); historical oversight methodology/findings (R=2); OIG distinct publisher (I=3); evaluation summary (U=2); 2021 historical (T=1); Chicago (J=1); effort L-M (E=1); excerpts only (A=2); none flagged (S=0)"
+
+[candidates.SRC-018]
+authority = "San Francisco Bay Area Rapid Transit District (BART)"
+gap = "P2: BART surveillance impact reports, policies and board decisions"
+content_window = "reports through the Sept 2026 meeting cycle"
+target_predicates = ["oversight.report", "governance.policy", "lifecycle.decision"]
+lineage_class = "independent_account"
+lineage_group = "bart-district"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 3, U = 2, T = 3, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 (G=1); transit governance + report lineage (R=2); no BART row (I=3); official index + meeting notice (U=2); Sept 2026 meeting — current (T=3); Bay Area CA (J=1); effort M (E=2); excerpts + rights pending (A=2); none flagged (S=0)"
+extra_questions = [
+  "Is a posted proposed impact report evidence of proposal only — never of an approved system or a vote outcome?",
+]
+
+[candidates.SRC-019]
+authority = "City of Berkeley"
+gap = "P2: Berkeley surveillance-ordinance reporting, policy versions and sharing MOUs"
+content_window = "2025 annual report + 2026 MOU set"
+target_predicates = ["governance.policy", "sharing.mou", "oversight.report"]
+links = [
+  { id = "ccops_berkeley", kind = "same_source", note = "existing unpermitted row — deepening under it; do not create a duplicate source" },
+]
+lineage_class = "independent_account"
+lineage_group = "berkeley-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 1, U = 2, T = 2, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 alternative (G=1); governance versioning + MOU discovery + cross-agency roles (R=2); existing ccops_berkeley corpus (I=1); policy index + MOU collection (U=2); 2025 report + 2026 MOUs (T=2); Berkeley (J=1); effort M (E=2); excerpts only (A=2); none flagged (S=0)"
+extra_questions = [
+  "Can the existing unpermitted ccops_berkeley row be deepened under the recorded review, or does the 2025/2026 material (incl. possible Lexipol content) need its own HG-03 review?",
+]
+
+[candidates.SRC-020]
+authority = "City of Boston"
+gap = "P2: Boston annual surveillance report and per-technology supplements"
+content_window = "2024 report + subsequent supplements"
+target_predicates = ["oversight.report", "governance.supplement", "inventory.technology"]
+links = [
+  { id = "ccops_boston", kind = "same_source", note = "existing unpermitted row — report/supplement deepening under it" },
+]
+lineage_class = "independent_account"
+lineage_group = "boston-municipal"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 1, U = 2, T = 2, J = 1, E = 1, A = 2, S = 0 }
+dimension_evidence = "P2 alternative (G=1); bounded technology/policy annual-report discovery (R=2); existing ccops_boston corpus (I=1); report TOC + supplements (U=2); 2024 report + later supplement versions (T=2); Boston (J=1); effort L-M (E=1); excerpts only (A=2); none flagged (S=0)"
+extra_questions = [
+  "Can the existing unpermitted ccops_boston row be deepened under the recorded review, or does the 2024 report + supplements need their own HG-03 review — and which sections are selected?",
+]
+
+[candidates.SRC-021]
+authority = "Santa Clara County (privacy/oversight office)"
+gap = "P2: Santa Clara County ordinance-driven surveillance impact assessments and oversight reviews"
+content_window = "annual review cycle"
+target_predicates = ["governance.assessment", "oversight.review", "privacy.impact"]
+lineage_class = "independent_account"
+lineage_group = "santa-clara-county"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 3, U = 2, T = 2, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 (G=1); ordinance-driven assessment + review chain (R=2); no matching county row (I=3); official index (U=2); annual review references (T=2); Santa Clara County (J=1); effort M (E=2); excerpts + rights pending (A=2); none flagged (S=0)"
+
+[candidates.SRC-022]
+authority = "U.S. DOJ Office of Community Oriented Policing Services (COPS)"
+gap = "P2: COPS award documents — recipient/purpose/award-id for surveillance-tech funding (dedup vs USAspending)"
+content_window = "current program-year awards"
+target_predicates = ["funding.award", "identity.recipient", "program.purpose"]
+links = [
+  { id = "usaspending", kind = "related", note = "COPS award detail complements USAspending — federal award and local acceptance/order may be the same transaction; dedupe" },
+]
+lineage_class = "independent_account"
+lineage_group = "us-federal-doj-cops"
+municipal_publication = false
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 3, I = 2, U = 3, T = 2, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 funding pilot alternative (G=1); award→recipient→purpose→award-ID links (R=3); distinct COPS detail, federal-family overlap with USAspending (I=2); year-labelled document landing (U=3); current program docs (T=2); US federal+local (J=1); effort M (E=2); excerpts only, awards unread (A=2); none flagged (S=0)"
+extra_questions = [
+  "Is a COPS document a US-federal work (17 U.S.C. §105) including any contractor attachments — per-artifact authorship review required?",
+  "Where does the award→order→deployment chain stop being evidenced — an award is not deployed equipment?",
+]
+
+[candidates.SRC-023]
+authority = "U.S. Department of Homeland Security"
+gap = "P2: DHS privacy impact assessments for commercial LPR — federal acquisition/access governance context"
+content_window = "June 2021 PIA (revision unverified)"
+target_predicates = ["governance.assessment", "privacy.impact", "program.context"]
+links = [
+  { id = "dhs_oig_reports", kind = "related", note = "P31.12-owned OIG family — the PIA is a distinct document family, never a duplicate of the P31 rows" },
+  { id = "dhs_fusion_center_assessments", kind = "related", note = "P31.12-owned fusion assessments — distinct from privacy impact assessments" },
+]
+lineage_class = "independent_account"
+lineage_group = "us-federal-dhs"
+municipal_publication = false
+preflight = { status = "not_assessed" }
+dimensions = { G = 1, R = 2, I = 1, U = 2, T = 1, J = 1, E = 2, A = 2, S = 0 }
+dimension_evidence = "P2 after P31 (G=1); federal acquisition/access governance context (R=2); same agency family as P31-owned DHS rows (I=1); PDF excerpts (U=2); June 2021 historical (T=1); US federal (J=1); effort M (E=2); excerpts only, revision unverified (A=2); none flagged (S=0)"
+extra_questions = [
+  "Is the June 2021 PIA the latest revision, and is a PIA a federal work (§105) including any third-party appendices — per-artifact review?",
+]
+
+[candidates.SRC-024]
+authority = "U.S. Defense Logistics Agency (LESO / 1033 program)"
+gap = "P2: DLA LESO/1033 equipment holdings vs transfers for surveillance-relevant items"
+content_window = "quarterly snapshots"
+target_predicates = ["inventory.equipment", "transfer.event", "agency.holding"]
+lineage_class = "independent_account"
+lineage_group = "us-federal-dla"
+municipal_publication = false
+preflight = { status = "screening_required", flags = ["personal_identifier"], notes = "CSV: exclude weapons unrelated to SIG and personal fields; file schema not yet inspected — screen before any capture" }
+dimensions = { G = 1, R = 2, I = 3, U = 3, T = 2, J = 1, E = 2, A = 2, S = 1 }
+dimension_evidence = "P2 structured alternative (G=1); agency acquisition/holding leads, narrowly scoped (R=2); no DLA/LESO row (I=3); quarterly structured index (U=3); quarterly snapshots (T=2); US counties/agencies (J=1); effort M-H (E=2); excerpts + schema uninspected (A=2); personal fields flagged (S=1)"
+extra_questions = [
+  "What is the holdings-versus-transfers semantics per quarterly snapshot, and does the release include personal fields that must be excluded before capture?",
+]
+
+[candidates.SRC-025]
+authority = "U.S. Federal Aviation Administration"
+gap = "P2: FAA Part 107 waiver records — organization/authorization/validity for public-safety drone programs"
+content_window = "current waiver table"
+target_predicates = ["authorization.waiver", "identity.organization", "temporal.validity"]
+links = [
+  { id = "faa_drone_waivers", kind = "same_source", note = "existing reference-only row — deepening under it (issued-waiver records + public-safety program explanation)" },
+]
+lineage_class = "independent_account"
+lineage_group = "us-federal-faa"
+municipal_publication = false
+preflight = { status = "screening_required", flags = ["personal_identifier"], notes = "CSV: responsible-person fields must be excluded before capture" }
+dimensions = { G = 1, R = 3, I = 1, U = 3, T = 2, J = 1, E = 2, A = 2, S = 1 }
+dimension_evidence = "P2 (G=1); named-organization authorization + issue/expiry leads (R=3); existing faa_drone_waivers row (I=1); waiver table + program page (U=3); current waivers (T=2); US public-safety subset (J=1); effort M (E=2); excerpts only (A=2); responsible-person fields flagged (S=1)"
+extra_questions = [
+  "Which waiver fields identify responsible persons, and are they excluded before capture — is the waiver an authorization lead only, never evidence of actual flights?",
+]
+
+[candidates.SRC-026]
+authority = "UK Government (GOV.UK — Algorithmic Transparency Recording Standard)"
+gap = "P3: UK ATRS structured records — systems/suppliers/risk for the public-safety subset"
+content_window = "current published records"
+target_predicates = ["inventory.system", "identity.supplier", "governance.risk"]
+links = [
+  { id = "uk_surveillance_camera_commissioner", kind = "related", note = "P31.12-owned UK row — ATRS is a distinct structured family, never a duplicate" },
+]
+lineage_class = "independent_account"
+lineage_group = "uk-government"
+municipal_publication = true
+preflight = { status = "not_assessed" }
+dimensions = { G = 0, R = 3, I = 3, U = 3, T = 2, J = 0, E = 2, A = 2, S = 0 }
+dimension_evidence = "P3 later geographic expansion (G=0); structured system/purpose/supplier/risk (R=3); distinct ATRS family vs P31-owned UK row (I=3); record index + standard hub (U=3); current records (T=2); outside current geographic need (J=0); effort M (E=2); excerpts only (A=2); none flagged (S=0)"
+extra_questions = [
+  "Does OGL cover each record including third-party exceptions per artifact, and how are non-public-safety records scoped out?",
+]
+
+[candidates.SRC-027]
+authority = "City of San Diego (SDPD — ALPR network audit)"
+gap = "P3: San Diego ALPR network-audit existence/period metadata and safe-aggregate feasibility (metadata only — per-query workbooks prohibited)"
+content_window = "2024–2026 audit labels"
+target_predicates = ["audit.metadata", "aggregate.count", "sharing.network"]
+lineage_class = "derived_summary"
+lineage_group = "san-diego-municipal"
+municipal_publication = true
+preflight = { status = "prohibited_until_review", flags = ["license_plate", "personal_identifier"], notes = "Per-query audit workbooks may contain plates, person-level queries and officer identities — redacted label insufficient; acquisition prohibited until explicit content-admissibility + rights decision (metadata-only research path only)" }
+dimensions = { G = 0, R = 1, I = 0, U = 1, T = 2, J = 3, E = 3, A = 3, S = 3 }
+dimension_evidence = "P3 metadata only (G=0); existence-of-links + period metadata only (R=1); derived aggregate over same SDPD audit lineage — not independent corroboration (I=0); index labels only (U=1); 2024–2026 audit labels (T=2); S2 city (J=3); effort H (E=3); files not fetched, acquisition prohibited (A=3); plates/queries/officer identities (S=3)"
+extra_questions = [
+  "Can a safe annual aggregate satisfy the dossier without transporting the per-query workbook at all — and who makes the explicit content-admissibility and rights decision?",
+]
