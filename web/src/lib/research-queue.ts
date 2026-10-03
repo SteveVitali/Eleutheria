@@ -49,6 +49,17 @@ export const GEOGRAPHIC_SCOPES = ["jurisdiction", "region", "global"] as const;
 export type GeographicScope = (typeof GEOGRAPHIC_SCOPES)[number];
 
 /**
+ * The honest label a task's classification fields carry when its task type is
+ * NOT in the §33.2 catalog (a legacy/hand-inserted row, or catalog drift).
+ * P34.12 (K11 RQ-00, C3 NEW-10): the queue never invents a `contributor`
+ * assignee or an `unknown` effort — an unclassified field says exactly that.
+ * The literal is mirrored verbatim by the export shaper
+ * (`exports/src/exports/spine_export.py::NOT_YET_CLASSIFIED`) — the two are the
+ * same contract, kept in lockstep by test.
+ */
+export const NOT_YET_CLASSIFIED = "not yet classified";
+
+/**
  * The disposition vocabulary richer than "done" (§33.4, SIG-TASK-008). The queue
  * must be able to *shrink*: without `resolved_no_evidence_exists` and the blocked/
  * deferred outcomes, a task can only ever close by success and the backlog only
@@ -91,6 +102,13 @@ export const SEARCHED_FOUND_NOTHING: Disposition = "resolved_no_evidence_exists"
  * `task_type` are the `(task_type, subject)` de-duplication key (SIG-TASK-007).
  */
 export interface ResearchTaskCard {
+  /**
+   * The task's own id (the `research_task` row id), emitted by the export since
+   * P34.12 (K11 RQ-00 / NEW-10: the export previously discarded it). Optional —
+   * a card produced by an older export still parses, and `taskAnchor` falls
+   * back to the `(task_type, subject_id)` dedup key (SIG-TASK-007).
+   */
+  task_id?: string;
   task_type: string;
   subject_id: string;
   subject_label: string;
@@ -98,12 +116,22 @@ export interface ResearchTaskCard {
   closing_condition: string;
   /** The specific evidence sought (the document/observation to obtain). */
   evidence_sought: string;
-  assignee_class: AssigneeClass;
-  effort_estimate: EffortEstimate;
-  geographic_scope: GeographicScope;
+  /**
+   * A catalog assignee class (§33.1), or `not yet classified` when the task's
+   * type is not in the catalog — never an invented class like `contributor`.
+   */
+  assignee_class: AssigneeClass | typeof NOT_YET_CLASSIFIED;
+  /** A catalog effort band, or `not yet classified` — never `unknown`. */
+  effort_estimate: EffortEstimate | typeof NOT_YET_CLASSIFIED;
+  /** A catalog queue-assignment scope, or `not yet classified`. */
+  geographic_scope: GeographicScope | typeof NOT_YET_CLASSIFIED;
   /** The jurisdiction the task is scoped to, for geographic filtering (§33.5). */
   jurisdiction: string;
-  /** The outcomes this task may reach — a subset of the §33.4 vocabulary by assignee. */
+  /**
+   * The outcomes this task may reach — the catalog task type's permitted
+   * §33.4 outcomes; for an unclassified type, the FULL §33.4 vocabulary (every
+   * outcome is legal), never `[]` merely because no current disposition is set.
+   */
   dispositions: Disposition[];
   priority: number;
   /**
@@ -146,6 +174,58 @@ export function dispositionsFor(assignee: AssigneeClass): Disposition[] {
 /** Whether a task can conclude "searched, found nothing" (writes a coverage record). */
 export function canRecordNoEvidence(card: ResearchTaskCard): boolean {
   return card.dispositions.includes(SEARCHED_FOUND_NOTHING);
+}
+
+// --- Task anchors (P34.12 / K11 RQ-00: unique ids, no dead anchors) ----------
+
+/**
+ * The DOM id a task card renders under: `task-<task_id>` when the card carries
+ * its task id, else `task-<task_type>--<subject_id>` — the SIG-TASK-007 dedup
+ * key, which is unique per open task by contract (duplicate suppression is BY
+ * `(task_type, subject)`). Sanitized to an HTML-safe id; two cards NEVER share
+ * the jurisdiction-derived id (the pre-P34.12 defect that produced duplicate
+ * DOM ids and ambiguous anchors).
+ */
+export function taskAnchor(card: ResearchTaskCard): string {
+  const raw = card.task_id ?? `${card.task_type}--${card.subject_id}`;
+  return `task-${raw.replace(/[^a-zA-Z0-9-]+/g, "-")}`;
+}
+
+/**
+ * Fail LOUD if two rendered cards would share an anchor (K11 RQ-00). A
+ * collision means the data broke the `(task_type, subject)` uniqueness
+ * contract — the page refuses to render over it rather than emitting
+ * ambiguous duplicate ids.
+ */
+export function assertUniqueTaskAnchors(cards: readonly ResearchTaskCard[]): void {
+  const seen = new Map<string, ResearchTaskCard>();
+  for (const card of cards) {
+    const anchor = taskAnchor(card);
+    const prior = seen.get(anchor);
+    if (prior !== undefined) {
+      throw new Error(
+        `research queue: two cards share the anchor ${anchor} ` +
+          `((${prior.task_type}, ${prior.subject_id}) and (${card.task_type}, ${card.subject_id})) — ` +
+          "a task-id/dedup-key collision can never render as a duplicate DOM id",
+      );
+    }
+    seen.set(anchor, card);
+  }
+}
+
+/**
+ * The jurisdiction → live anchor map for the filter list (K11 RQ-00): each
+ * jurisdiction links to the anchor of the FIRST rendered card carrying it, so
+ * every `href="#…"` in the filter resolves to an element that exists on the
+ * page. Derived from the rendered rows — a jurisdiction whose cards are all
+ * beyond the row cap is simply not listed (no dead anchors).
+ */
+export function jurisdictionAnchors(cards: readonly ResearchTaskCard[]): Map<string, string> {
+  const anchors = new Map<string, string>();
+  for (const card of cards) {
+    if (!anchors.has(card.jurisdiction)) anchors.set(card.jurisdiction, taskAnchor(card));
+  }
+  return anchors;
 }
 
 // --- Geographic filtering (§33.5, SIG-TASK-010) ------------------------------

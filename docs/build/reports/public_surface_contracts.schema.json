@@ -383,6 +383,7 @@
       "type": "object",
       "required": ["task_type", "subject_id", "subject_label", "closing_condition", "evidence_sought", "assignee_class", "effort_estimate", "geographic_scope", "jurisdiction", "dispositions", "priority"],
       "properties": {
+        "task_id": { "type": "string", "description": "The research_task row id — the card's unique stable identity (P34.12 / K11 RQ-00). Optional: emitted since P34.12; absent from older exports, which stay valid." },
         "task_type": { "type": "string" },
         "subject_id": { "type": "string" },
         "subject_label": { "type": "string" },

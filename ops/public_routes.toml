@@ -47,7 +47,7 @@ top_level = [
   "research-queue",
   "search",
   "style-guide",
-  "task",                # /task/new/<slug> — real task pages; demo_* refused
+  "task",                # /task/<handle>/ — real task pages (RQ-03); /task/new/ is DENIED
   "watch",
 ]
 
@@ -55,8 +55,11 @@ top_level = [
 # "every listed prefix exists" half of the check (an allow-list that names
 # routes a broken build silently dropped must not pass). Conditional entries
 # are deliberately absent here: 404.html is reserved for a future page,
-# .sig-release.json is written by the publish itself AFTER this assertion, and
-# tiles/ exists only in export-mode builds.
+# .sig-release.json is written by the publish itself AFTER this assertion,
+# tiles/ exists only in export-mode builds, and task/ is absent since P34.12 —
+# the fixture `/task/new/` intake pages are retired (K11 §5.5 / RQ-00); the
+# real `/task/<handle>/` namespace returns with RQ-03 and stays allow-listed
+# in the meantime so its landing needs no allow-list edit.
 required = [
   "index.html",
   "robots.txt",
@@ -75,7 +78,6 @@ required = [
   "research-queue",
   "search",
   "style-guide",
-  "task",
   "watch",
 ]
 
@@ -91,6 +93,10 @@ note = "authenticated curation shell (ADR-068) — internal, never public"
 [[denied]]
 path = "/curate/submit/"
 note = "the curation submit surface — the route the hand rsync leaked"
+
+[[denied]]
+path = "/task/new/"
+note = "retired by P34.12 (K11 §5.5 / RQ-00, F-113/F-274): the fixture intake pages claimed a task 'has been generated' when nothing had been — the whole prefix is refused, not just demo_* slugs"
 
 [[denied]]
 path = "/task/new/demo_roundtrip/"

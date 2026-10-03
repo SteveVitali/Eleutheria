@@ -69,6 +69,8 @@ from reconcile.materialize import (
     read_materialized_resolutions,
 )
 from resolution.camera_sites_pg import read_resolved_site_runs
+from tasks.catalog import catalog as _task_catalog
+from tasks.vocabulary import Disposition
 
 from . import analytics, provo
 from . import compartments as C
@@ -1242,9 +1244,29 @@ def _corrections(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+#: The honest label a queue card carries in its classification fields when the
+#: task's ``task_type`` is not in the §33.2 catalog (a legacy/hand-inserted
+#: row, or catalog drift). P34.12 (K11 RQ-00, C3 NEW-10): never an invented
+#: ``contributor`` assignee, never an ``unknown`` effort. Mirrored verbatim by
+#: the web surface (``web/src/lib/research-queue.ts``), kept in lockstep by
+#: ``tests/exports/test_spine_export.py``.
+NOT_YET_CLASSIFIED = "not yet classified"
+
+
 def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     """Surface 10 — ResearchTaskCard[] (§39.7). Every task has a testable closing
-    condition (SIG-TASK-002)."""
+    condition (SIG-TASK-002).
+
+    P34.12 (K11 RQ-00): the card carries the task's own ``task_id`` and its
+    classification comes from the §33.2 catalog — the ``TaskType`` registry
+    entry for the row's ``task_type`` supplies ``assignee_class``,
+    ``effort_estimate``, ``geographic_scope`` and the permitted ``dispositions``
+    (SIG-TASK-001/008). A type the catalog does not know emits
+    ``not yet classified`` for those fields plus the FULL §33.4 disposition
+    vocabulary — an unclassified task may reach any legal outcome, and `[]`
+    would claim it can never leave the queue.
+    """
+    registry = _task_catalog()
     out: list[dict[str, Any]] = []
     for r in raw.get("research_tasks") or []:
         task_id, task_type, subject_id, jurisdiction_id, priority, status, disp, closing, _det = r[
@@ -1254,17 +1276,29 @@ def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
         # detector run wrote the row, absent (None) for a legacy/hand-inserted row.
         trigger_kind = r[9] if len(r) > 9 else None
         trigger_ref = r[10] if len(r) > 10 else None
+        spec = registry.get(str(task_type)) if str(task_type) in registry else None
         card: dict[str, Any] = {
+            "task_id": str(task_id),
             "task_type": str(task_type),
             "subject_id": str(subject_id or task_id),
             "subject_label": str(subject_id or task_id),
             "closing_condition": str(closing),
             "evidence_sought": str(task_type),
-            "assignee_class": "contributor",
-            "effort_estimate": "unknown",
-            "geographic_scope": str(jurisdiction_id or ""),
+            "assignee_class": (
+                spec.assignee_class.value if spec is not None else NOT_YET_CLASSIFIED
+            ),
+            "effort_estimate": (
+                spec.effort_estimate.value if spec is not None else NOT_YET_CLASSIFIED
+            ),
+            "geographic_scope": (
+                spec.geographic_scope.value if spec is not None else NOT_YET_CLASSIFIED
+            ),
             "jurisdiction": str(jurisdiction_id or ""),
-            "dispositions": [str(disp)] if disp else [],
+            "dispositions": (
+                [d.value for d in spec.dispositions]
+                if spec is not None
+                else [d.value for d in Disposition]
+            ),
             "priority": float(priority) if priority is not None else 0.0,
         }
         if trigger_kind:

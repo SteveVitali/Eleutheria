@@ -12,9 +12,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import {
+  assertUniqueTaskAnchors,
   claimStatusFor,
+  jurisdictionAnchors,
   orderQueue,
   queueJurisdictions,
+  taskAnchor,
   tasksForJurisdiction,
   DISPOSITION_META,
   SEARCHED_FOUND_NOTHING,
@@ -35,14 +38,21 @@ const QUEUE_AS_OF = getQueueAsOf();
 const RESEARCH_QUEUE_PROVENANCE = getResearchQueueProvenance();
 
 const ordered = orderQueue(RESEARCH_QUEUE, JURISDICTION_CLAIMS, QUEUE_AS_OF);
-const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
 // National-scale guard (P27.5 capRows, SIG-UI-037): at ~240k open tasks a real export
 // cannot render every card into one zero-JS page — bound the cards and state the
 // honest total; the full queue ships in the export's web/research_queue.json.
 const capped = capRows(ordered);
+// P34.12 (K11 RQ-00): unique ids + live anchors. Every rendered card carries a
+// UNIQUE id derived from its task id (asserted — a collision fails the build),
+// and the jurisdiction filter lists only jurisdictions that have a rendered
+// card, each linked to that card's anchor — never a dead `#jurisdiction-…`
+// duplicate (the pre-P34.12 defect, NEW-10).
+assertUniqueTaskAnchors(capped.rows);
+const jurisdictions = queueJurisdictions(capped.rows);
+const anchors = jurisdictionAnchors(capped.rows);
 ---
 
-<BaseLayout title="Research queue" path="/research-queue/" provenance={RESEARCH_QUEUE_PROVENANCE}>
+<BaseLayout title="Research queue" path="/research-queue/" provenance={RESEARCH_QUEUE_PROVENANCE} provenanceName="research queue">
   <p>
     The research queue turns every open gap into <strong>actionable work</strong>. Each
     task states what would <strong>close</strong> it, what <strong>evidence</strong> is
@@ -54,14 +64,15 @@ const capped = capRows(ordered);
     contributions — volume incentives produce low-quality submissions at scale (SIG-TASK-012).
   </p>
 
-  <!-- Geographic filtering (§33.5): the queue's jurisdictions, each a same-page anchor. -->
+  <!-- Geographic filtering (§33.5): the queue's rendered jurisdictions, each
+       linking to the live anchor of its first rendered card (P34.12). -->
   <h2 id="filter-heading">Filter by jurisdiction</h2>
   {jurisdictions.length === 0 && <EmptyState surface="researchFilter" />}
   <ul class="sig-queue-filter" aria-labelledby="filter-heading">
     {jurisdictions.map((j) => (
       <li data-testid="jurisdiction-filter" data-jurisdiction={j}>
-        <a href={`#jurisdiction-${j.replace(/[^a-zA-Z0-9]+/g, "-")}`}>{j === "" ? "Unscoped" : j}</a>
-        {" — "}{tasksForJurisdiction(RESEARCH_QUEUE, j).length} task(s)
+        <a href={`#${anchors.get(j)}`}>{j === "" ? "Unscoped" : j}</a>
+        {" — "}{tasksForJurisdiction(capped.rows, j).length} task(s)
       </li>
     ))}
   </ul>
@@ -82,7 +93,8 @@ const capped = capRows(ordered);
         <li
           class="sig-task-card"
           data-testid="task-card"
-          id={`jurisdiction-${card.jurisdiction.replace(/[^a-zA-Z0-9]+/g, "-")}`}
+          id={taskAnchor(card)}
+          {...(card.task_id ? { "data-task-id": card.task_id } : {})}
           data-task-type={card.task_type}
           data-jurisdiction={card.jurisdiction}
           data-scope={card.geographic_scope}

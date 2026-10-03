@@ -59,4 +59,6 @@ test("the 'How we know this' module is in the static HTML of every page (SIG-UI-
   const module = page.getByTestId("how-we-know-this");
   await expect(module).toBeVisible();
   await expect(module.locator("[data-component]")).toHaveCount(6);
+  // P34.12 (C3 NEW-13): the page-scoped label names its page in the static HTML.
+  await expect(module.getByTestId("hwkt-scope")).toContainText("research queue");
 });

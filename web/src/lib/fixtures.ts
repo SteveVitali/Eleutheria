@@ -14,9 +14,7 @@
  * where a records-request contract says 42 and a portal snapshot says 38.
  */
 
-import { ABSENCE_KINDS, ABSENCE_KIND_META } from "./epistemic";
 import type { Agreement, Currency, ResolutionStatus, Support, AbsenceKind, CompetingClaim } from "./epistemic";
-import type { AbsenceTaskParams } from "./task";
 
 /**
  * The §37.1 resolution envelope carried by every material fact (SIG-API-002). This
@@ -281,45 +279,6 @@ export const REFERENCE_GRAPH_NODES: GraphNode[] = [
   { id: "agency:okcpd", label: "Oklahoma City PD" },
   { id: "agency:ocso", label: "Oklahoma County Sheriff" },
   { id: "vendor:flock", label: "Flock Safety (vendor)" },
-];
-
-/**
- * Every taskable absence the shell links a hatch to. The intake route
- * (`pages/task/new/[slug].astro`) generates one static page per entry via
- * `getStaticPaths`, so every clickable hatch resolves to a real page with no
- * client JavaScript (SIG-UI-007, SIG-UI-036/037). Pages render hatches from this
- * registry so a link can never point at an ungenerated page.
- */
-export const TASKABLE_ABSENCES: AbsenceTaskParams[] = [
-  // One demonstrator per absence kind, for the visual-language reference table.
-  ...ABSENCE_KINDS.map((k) => ({
-    subject_id: "agency:okcpd",
-    predicate_id: `demo_${k.toLowerCase()}`,
-    absence_kind: k,
-    predicate_label: ABSENCE_KIND_META[k].label,
-  })),
-  // The reference-map site whose location SIG has not confirmed.
-  {
-    subject_id: "device:okc-003",
-    predicate_id: "location",
-    absence_kind: "NOT_RESEARCHED",
-    predicate_label: "Location",
-  },
-  // The OKCPD entity-level gaps. sharing_partners is UNRESOLVED — a contested
-  // 'shares data with' edge is recorded, so "not researched" would be a false claim
-  // (F-422).
-  {
-    subject_id: "agency:okcpd",
-    predicate_id: "sharing_partners",
-    absence_kind: "UNRESOLVED",
-    predicate_label: "Data-sharing partners",
-  },
-  {
-    subject_id: "agency:okcpd",
-    predicate_id: "retention_days",
-    absence_kind: "NO_EVIDENCE_FOUND",
-    predicate_label: "Retention window (days)",
-  },
 ];
 
 export const REFERENCE_GRAPH_EDGES: GraphEdge[] = [

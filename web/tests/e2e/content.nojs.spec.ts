@@ -7,7 +7,10 @@
 // populated tabular equivalent, the reference graph has a populated list
 // equivalent, the epistemic fields render, the citation permalink is present, and
 // the absence hatch is a real link. Since the shell ships zero client JS, disabling
-// it must change nothing — this test is what guarantees that stays true.
+// it must change nothing — this test is what guarantees that stays true. The
+// absence hatch is a named absence (P34.12 retired the fixture /task/new/
+// pages it used to link to — SIG-UI-007's task affordance lands for real with
+// RQ-03's /task/<handle>/ pages).
 import { test, expect } from "@playwright/test";
 
 test("reference map has a populated tabular equivalent without JS (SIG-UI-037)", async ({
@@ -57,13 +60,15 @@ test("citation permalink is present without JS (SIG-UI-035)", async ({ page }) =
   expect(href).toContain("ruleset=");
 });
 
-test("absence hatch is a real GET link that resolves without JS (SIG-UI-007)", async ({ page }) => {
+test("absence hatch is a named absence without JS — never a link to a mock task (P34.12)", async ({
+  page,
+}) => {
   await page.goto("/visual-language/");
   const hatch = page.getByTestId("absence-hatch").first();
-  const href = await hatch.getAttribute("href");
-  expect(href).toMatch(/^\/task\/new\//);
-  // Follow it as a plain navigation (no click handler / JS): the task is generated.
-  await page.goto(href!);
-  await expect(page.getByTestId("generated-task")).toBeVisible();
-  await expect(page.getByTestId("task-field-status")).toHaveText("generated");
+  await expect(hatch).toBeVisible();
+  await expect(hatch).not.toHaveAttribute("href", /.*/);
+  await expect(hatch).toHaveAttribute("data-absence-kind", /.+/);
+  // The retired intake route does not exist: the build emits no /task/new/ page.
+  const res = await page.goto("/task/new/anything/");
+  expect(res?.status()).toBe(404);
 });

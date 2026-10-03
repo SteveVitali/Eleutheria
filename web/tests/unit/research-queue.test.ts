@@ -5,16 +5,21 @@
 import { describe, expect, it } from "vitest";
 import {
   ASSIGNEE_CLASSES,
+  assertUniqueTaskAnchors,
   canRecordNoEvidence,
   claimIsActive,
   claimStatusFor,
+  DISPOSITIONS,
   dispositionsFor,
+  jurisdictionAnchors,
+  NOT_YET_CLASSIFIED,
   orderQueue,
   queueJurisdictions,
   SEARCHED_FOUND_NOTHING,
+  taskAnchor,
   tasksForJurisdiction,
 } from "../../src/lib/research-queue";
-import type { JurisdictionClaim } from "../../src/lib/research-queue";
+import type { JurisdictionClaim, ResearchTaskCard } from "../../src/lib/research-queue";
 import {
   JURISDICTION_CLAIMS,
   QUEUE_AS_OF,
@@ -104,5 +109,91 @@ describe("queue ordering (no volume leaderboard, SIG-TASK-012)", () => {
     // Ordering is a stable function of the tasks/claims only — it carries no
     // contributor identity or volume ranking.
     expect(ordered.length).toBe(RESEARCH_QUEUE.length);
+  });
+});
+
+// P34.12 / K11 RQ-00 (C3 NEW-10, NEW-13): unique card ids, live anchors, the
+// catalog disposition vocabulary, and "not yet classified" instead of invented
+// contributor/unknown placeholders — asserted over fixture AND export-shaped
+// cards (the export path is what produced the placeholders; see
+// exports/src/exports/spine_export.py::_research_queue).
+describe("queue truth fixes (P34.12 / K11 RQ-00)", () => {
+  // A card shaped like an export row for a task type the catalog does not know —
+  // the shape `_research_queue` now emits instead of contributor/unknown/[].
+  const UNCLASSIFIED: ResearchTaskCard = {
+    task_id: "7c9e2b54-0000-4000-8000-0000000000aa",
+    task_type: "geolocate_devices", // not a §33.2 catalog slug
+    subject_id: "subjX",
+    subject_label: "subjX",
+    closing_condition: "≥1 coordinate claim exists for subjX",
+    evidence_sought: "geolocate_devices",
+    assignee_class: NOT_YET_CLASSIFIED,
+    effort_estimate: NOT_YET_CLASSIFIED,
+    geographic_scope: NOT_YET_CLASSIFIED,
+    jurisdiction: "",
+    dispositions: [...DISPOSITIONS], // unclassified → the full legal vocabulary
+    priority: 5.0,
+  };
+
+  it("every card anchor is unique — a shared jurisdiction never collides", () => {
+    const ordered = orderQueue(RESEARCH_QUEUE, JURISDICTION_CLAIMS, QUEUE_AS_OF);
+    expect(() => assertUniqueTaskAnchors(ordered)).not.toThrow();
+    const anchors = ordered.map(taskAnchor);
+    expect(new Set(anchors).size).toBe(anchors.length);
+    // Two cards share the fixture's Oklahoma City jurisdiction — their ids differ.
+    const okc = ordered.filter((c) => c.jurisdiction === "Oklahoma City");
+    expect(okc.length).toBeGreaterThan(1);
+    expect(new Set(okc.map(taskAnchor)).size).toBe(okc.length);
+  });
+
+  it("the anchor derives from the task identity, never the jurisdiction", () => {
+    const card = RESEARCH_QUEUE[0]!;
+    expect(taskAnchor(card)).toBe(`task-${card.task_id}`);
+    // A card without a task_id (older export) falls back to the dedup key
+    // (sanitized to an HTML-safe id).
+    const { task_id: _id, ...noId } = card;
+    const fallback = taskAnchor(noId);
+    expect(fallback).not.toBe(taskAnchor(card));
+    expect(fallback).toMatch(/^task-/);
+    expect(fallback).toContain("missing-physical-devices"); // task_type
+    expect(fallback).toContain("okcpd"); // subject_id
+  });
+
+  it("a colliding anchor fails the build — never a silent duplicate id", () => {
+    const a = RESEARCH_QUEUE[0]!;
+    const dupe = { ...a };
+    expect(() => assertUniqueTaskAnchors([a, dupe])).toThrow(/share the anchor/);
+  });
+
+  it("every jurisdiction filter target is a live anchor on a rendered card", () => {
+    const ordered = orderQueue(RESEARCH_QUEUE, JURISDICTION_CLAIMS, QUEUE_AS_OF);
+    const rendered = new Set(ordered.map(taskAnchor));
+    const anchors = jurisdictionAnchors(ordered);
+    expect(new Set(anchors.keys())).toEqual(new Set(ordered.map((c) => c.jurisdiction)));
+    for (const target of anchors.values()) expect(rendered.has(target)).toBe(true);
+  });
+
+  it("card dispositions always come from the §33.4 vocabulary — never []", () => {
+    for (const card of [...RESEARCH_QUEUE, UNCLASSIFIED]) {
+      expect(card.dispositions.length).toBeGreaterThan(0);
+      for (const d of card.dispositions) expect(DISPOSITIONS).toContain(d);
+    }
+    // An unclassified task may reach ANY legal outcome — including
+    // searched-found-nothing (SIG-TASK-009).
+    expect(UNCLASSIFIED.dispositions).toEqual([...DISPOSITIONS]);
+    expect(canRecordNoEvidence(UNCLASSIFIED)).toBe(true);
+  });
+
+  it("no card ever emits the contributor/unknown placeholders (NEW-10)", () => {
+    for (const card of [...RESEARCH_QUEUE, UNCLASSIFIED]) {
+      expect(card.assignee_class).not.toBe("contributor");
+      expect(card.effort_estimate).not.toBe("unknown");
+      // The honest fallback is the named label, not another invented value.
+      for (const v of [card.assignee_class, card.effort_estimate, card.geographic_scope]) {
+        expect(
+          [...ASSIGNEE_CLASSES, "quick", "moderate", "substantial", "jurisdiction", "region", "global", NOT_YET_CLASSIFIED],
+        ).toContain(v);
+      }
+    }
   });
 });
