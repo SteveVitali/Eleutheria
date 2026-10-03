@@ -93,6 +93,8 @@ demonstrates that the harness computes and gates the median correctly; it is **n
 a real result. The authoritative status is *not yet run — gate pending HG-10*.
 
 The correctness of *jurisdiction-aware legal guidance* shown during the study is
-agentic and flagged for counsel review before launch (see the risk register);
+agentic ~~and flagged for counsel review before launch (see the risk
+register)~~ *(struck 2026-10-03 — see governance-and-code-of-conduct.md §
+Corrections; the counsel-review clauses are waived, ADR-182/ADR-167)*;
 the ≤10-minute onboarding gate itself is deterministic and re-checked in CI, so
 swapping in the real session's measurements re-checks SIG-CONTRIB-003 automatically.
