@@ -44,6 +44,11 @@ const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "lega
 
 <BaseLayout title={dossier.subject_label} path={dossierPath(dossier.slug)} lang={lang}>
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{dossier.jurisdiction}</p>
+  <p class="sig-dossier-kind" data-testid="dossier-kind">
+    Inventory overview — built automatically from published claims. For the
+    evidence-complete twelve-question review see{" "}
+    <a href="/research-dossier/">the research-dossier portfolio</a>.
+  </p>
 
   <IncompletenessBanner dossier={dossier} />
 

@@ -114,6 +114,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build.add_argument("--base-url", default="", help="Object-store base URL for the plan.")
     build.add_argument("--cdn-url", default="", help="CDN base URL for the plan.")
+    build.add_argument(
+        "--dossier-packets",
+        action="append",
+        default=None,
+        help="With --from-spine: a sig.dossier-packet/1 JSON path (repeatable); "
+        "the reviewed research-dossier portfolio is composed and emitted as "
+        "web/research_dossiers.json (P32.17, SIG-DOS-001/002).",
+    )
 
     deposit = subparsers.add_parser(
         "deposit",
@@ -363,6 +371,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     rcat.add_argument("--registry", required=True)
     rcat.add_argument("--out", required=True, help="Destination web/releases.json path.")
+
+    dossier = subparsers.add_parser(
+        "dossier-portfolio",
+        help="P32.17 (SIG-DOS-001/002): compose reviewed sig.dossier-packet/1 "
+        "records into the sig.dossier-portfolio/1 artifact — the "
+        "evidence-complete research dossiers with the fact-to-capture ledger, "
+        "search log, completion checklist, rubric gate and release validation — "
+        "written to <out>/web/research_dossiers.json plus a print/PDF HTML per "
+        "dossier. A release-invalid dossier exits non-zero (fail closed).",
+    )
+    dossier.add_argument(
+        "--packet",
+        action="append",
+        required=True,
+        help="A sig.dossier-packet/1 JSON file; repeat for every dossier.",
+    )
+    dossier.add_argument("--out", required=True, help="Output directory.")
 
     return parser
 
@@ -714,6 +739,7 @@ def _run_build_from_spine(
     as_of: str | None,
     belief: str | None,
     note: str,
+    dossier_packets: list[dict[str, object]] | None = None,
 ) -> int:
     """Build the real national export from the shaped spine (P27.4, read-only).
 
@@ -742,6 +768,7 @@ def _run_build_from_spine(
             belief=belief_instant,
             note=note,
             spine_label=spine_label,
+            dossier_packets=dossier_packets,
         )
     finally:
         conn.close()
@@ -1014,6 +1041,87 @@ def _run_audit(
     return 0
 
 
+def _load_packets(paths: list[str] | None) -> list[dict[str, object]]:
+    """Load `sig.dossier-packet/1` JSON files for the dossier-portfolio surface."""
+    packets: list[dict[str, object]] = []
+    for path in paths or []:
+        with open(path, encoding="utf-8") as fh:
+            packets.append(json.load(fh))
+    return packets
+
+
+def _run_dossier_portfolio(packet_paths: list[str], out_dir: str) -> int:
+    """Compose the reviewed dossier packets → the portfolio artifact + print HTML.
+
+    Fails closed: a packet that does not validate, or a dossier whose release
+    validation reports violations, exits non-zero with the reasons on stderr —
+    an unsupported affirmative claim or a hidden conflict can never be written
+    to a web artifact silently (SIG-DOS-001/002).
+    """
+    import os
+
+    from .research_dossier import (
+        build_dossier,
+        build_portfolio,
+        render_dossier_print_html,
+        render_portfolio_json,
+        validate_packet,
+    )
+
+    packets = _load_packets(packet_paths)
+    bad = [
+        (p, validate_packet(pk))
+        for p, pk in zip(packet_paths, packets, strict=False)
+        if validate_packet(pk)
+    ]
+    if bad:
+        for path, problems in bad:
+            print(f"{path}: invalid packet — {'; '.join(problems)}", file=sys.stderr)
+        return 2
+
+    dossiers = [build_dossier(p) for p in packets]
+    invalid = [d for d in dossiers if not d["release"]["valid"]]
+    if invalid:
+        # Fail closed (SIG-DOS-001/002): a release-invalid dossier is never
+        # written into a web artifact — the violations go to stderr so the
+        # reviewer sees exactly which fail-closed rule tripped.
+        for d in invalid:
+            for v in d["release"]["violations"]:
+                print(
+                    f"{d['dossier_id']} {v.get('question')}: {v['code']} — {v['detail']}",
+                    file=sys.stderr,
+                )
+        return 4
+
+    web_dir = os.path.join(out_dir, "web")
+    print_dir = os.path.join(web_dir, "research_dossier")
+    os.makedirs(print_dir, exist_ok=True)
+    portfolio = build_portfolio(packets)
+    with open(os.path.join(web_dir, "research_dossiers.json"), "wb") as fh:
+        fh.write(render_portfolio_json(portfolio))
+    for d in dossiers:
+        slug = str((d.get("subject") or {}).get("slug") or d["dossier_id"])
+        with open(os.path.join(print_dir, f"{slug}.print.html"), "w", encoding="utf-8") as fh:
+            fh.write(render_dossier_print_html(d))
+
+    summary = {
+        "out_dir": out_dir,
+        "research_dossiers": [
+            {
+                "dossier_id": d["dossier_id"],
+                "rubric": d["completeness"]["total"],
+                "mechanical_complete": d["completeness"]["mechanical_complete"],
+                "pilot_complete": d["completeness"]["pilot_complete"],
+                "release_valid": d["release"]["valid"],
+            }
+            for d in dossiers
+        ],
+        **portfolio["summary"],
+    }
+    sys.stdout.write(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    return 4 if invalid else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `exports` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -1031,15 +1139,20 @@ def main(argv: list[str] | None = None) -> int:
             if not args.dsn:
                 print("sig-exports build: --dsn is required with --from-spine")
                 return 2
+            packets = _load_packets(args.dossier_packets)
             return _run_build_from_spine(
                 args.dsn,
                 args.out,
                 as_of=args.as_of,
                 belief=args.belief,
                 note=args.note,
+                dossier_packets=packets or None,
             )
         if args.dsn is not None:
             print("sig-exports build: --dsn is only valid with --from-spine")
+            return 2
+        if args.dossier_packets:
+            print("sig-exports build: --dossier-packets is only valid with --from-spine")
             return 2
         return _run_build(
             args.request_json,
@@ -1050,6 +1163,8 @@ def main(argv: list[str] | None = None) -> int:
             args.cdn_url,
             jurisdiction=args.jurisdiction,
         )
+    if args.command == "dossier-portfolio":
+        return _run_dossier_portfolio(args.packet, args.out)
     if args.command == "deposit":
         return _run_deposit(args.in_dir, args.sandbox, args.dry_run, args.deposits_md)
     if args.command == "tiles":

@@ -55,6 +55,14 @@ SECTION_TITLES: dict[str, str] = dict(SECTION_ORDER)
 NOT_RESEARCHED = "not_researched"
 SEARCHED_NOT_FOUND = "searched_not_found"
 
+#: The dossier-kind marker (P32.17, SIG-DOS-003): the §39.2 inventory overview
+#: is visually + semantically distinct from the reviewed twelve-question
+#: ``research_dossier`` portfolio (`exports.research_dossier`). The marker rides
+#: the API form so a consumer can never mistake an inventory overview for a
+#: reviewed evidence-complete portfolio.
+KIND_INVENTORY_OVERVIEW = "inventory_overview"
+KIND_RESEARCH_DOSSIER = "research_dossier"
+
 
 @dataclass(frozen=True)
 class DocumentRef:
@@ -243,6 +251,7 @@ def render_json(dossier: Dossier) -> dict[str, object]:
     top level (the summary) AND inside the sections (SIG-UI-011)."""
     dossier.validate()
     return {
+        "kind": KIND_INVENTORY_OVERVIEW,
         "subject": dossier.subject_label,
         "jurisdiction": dossier.jurisdiction,
         "as_of": dossier.as_of.isoformat(),

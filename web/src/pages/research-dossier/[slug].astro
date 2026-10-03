@@ -1,0 +1,244 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The reviewed research dossier (P32.17, SIG-DOS-001/002) — one pre-generated
+// static page per dossier in `sig.dossier-portfolio/1`, zero client JS
+// (SIG-UI-036/037). Every answer renders its state, the assertions behind it
+// with scope qualifiers + original dates + capture citations (a same-scope
+// conflict shows BOTH values marked), the documented search basis + precise
+// follow-up on an unknown, the declared basis on a withheld/not-applicable
+// answer, and the independent checklist + rubric. Distinct from the §39.2
+// inventory overview at /dossier/.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getResearchDossierPortfolio } from "../../lib/data";
+import {
+  researchDossierPath,
+  researchDossierJsonPath,
+  researchDossierSlug,
+  rubricGateLine,
+  stateLabel,
+  type ResearchAssertion,
+} from "../../lib/research-dossier";
+
+export function getStaticPaths() {
+  return getResearchDossierPortfolio().dossiers.map((d) => ({
+    params: { slug: researchDossierSlug(d) },
+    props: { dossier: d },
+  }));
+}
+
+const dossier = Astro.props.dossier;
+const slug = researchDossierSlug(dossier);
+
+function dates(x: ResearchAssertion): string {
+  const parts: string[] = [];
+  if (x.valid_from || x.valid_to) parts.push(`valid ${x.valid_from ?? ""}–${x.valid_to ?? ""}`);
+  if (x.valid_edtf) parts.push(`valid ${x.valid_edtf}`);
+  if (x.observed_at) parts.push(`observed ${x.observed_at}`);
+  if (x.retrieved_date) parts.push(`retrieved ${x.retrieved_date}`);
+  return parts.join(" · ");
+}
+
+function locatorText(x: ResearchAssertion): string {
+  const loc = x.locator;
+  if (!loc) return "—";
+  const t = (loc as Record<string, unknown>).locator;
+  return typeof t === "string" ? t : JSON.stringify(loc);
+}
+---
+
+<BaseLayout title={`${dossier.subject.label} — research dossier`} path={researchDossierPath(slug)}>
+  <p class="sig-dossier-jurisdiction" data-testid="research-dossier-jurisdiction">
+    {dossier.subject.jurisdiction}
+  </p>
+  <p class="sig-kind" data-testid="research-dossier-kind">
+    <strong>Reviewed research dossier</strong> — an evidence-complete twelve-question
+    portfolio, distinct from the <a href="/dossier/">inventory overview</a>.
+    As-of world {dossier.as_of.world}, belief {dossier.as_of.belief}.
+  </p>
+
+  <section aria-labelledby="rubric-heading" data-testid="research-dossier-rubric">
+    <h2 id="rubric-heading">Completeness</h2>
+    <p>
+      Rubric <strong data-testid="rubric-score">{dossier.completeness.total}/{dossier.completeness.max}</strong>
+      — gate {rubricGateLine(dossier)} ·{" "}
+      {dossier.completeness.pilot_complete ? (
+        <strong data-testid="pilot-state">pilot complete</strong>
+      ) : (
+        <strong data-testid="pilot-state">incomplete</strong>
+      )}{" "}
+      · {dossier.review_status} independent review
+    </p>
+    {dossier.completeness.blocking.length > 0 && (
+      <ul data-testid="rubric-blocking">
+        {dossier.completeness.blocking.map((b) => <li>{b}</li>)}
+      </ul>
+    )}
+    <p>
+      <a href={researchDossierJsonPath(slug)} data-testid="api-link">JSON (API form)</a>
+    </p>
+  </section>
+
+  {dossier.answers.map((a) => (
+    <section aria-labelledby={`q-${a.question}`} data-testid="research-answer" data-question={a.question}>
+      <h2 id={`q-${a.question}`}>
+        {a.question} — {a.title}
+      </h2>
+      <p data-testid="answer-state">
+        state: <strong data-state={a.state}>{stateLabel(a.state)}</strong> · score {a.score}/3
+      </p>
+      <p>{a.summary}</p>
+
+      {a.state === "withheld" && a.declared && (
+        <p data-testid="answer-declared">
+          Declared withheld — {String(a.declared.basis ?? "")}: {String(a.declared.reason ?? "")}
+        </p>
+      )}
+      {a.state === "not_applicable" && a.declared && (
+        <p data-testid="answer-declared">
+          Declared not applicable — {String(a.declared.rationale ?? "")}
+        </p>
+      )}
+      {a.state === "derived" && a.declared && (
+        <p data-testid="answer-declared">
+          Derived — method {String(a.declared.method ?? "recorded")}
+          {Array.isArray(a.declared.inputs) && a.declared.inputs.length > 0 &&
+            ` from ${a.declared.inputs.length} input claim(s)`}
+        </p>
+      )}
+
+      {a.assertions.length > 0 && (
+        <table data-testid="answer-assertions">
+          <thead>
+            <tr>
+              <th>predicate</th><th>value</th><th>scope</th><th>dates</th>
+              <th>source · locator</th><th>capture</th>
+            </tr>
+          </thead>
+          <tbody>
+            {a.assertions.map((x) => (
+              <tr data-testid="answer-assertion" data-conflicting={x.conflicting ? "true" : "false"}>
+                <td>{x.predicate}</td>
+                <td>
+                  {x.value === null ? "(somevalue — redacted)" : String(x.value)}
+                  {x.unit ? ` ${x.unit}` : ""}
+                  {x.conflicting && <span aria-label="conflicting claim"> ≠</span>}
+                </td>
+                <td>
+                  {Object.keys(x.scope).length > 0
+                    ? Object.entries(x.scope).map(([k, v]) => `${k}=${v}`).join(", ")
+                    : "unscoped"}
+                </td>
+                <td>{dates(x) || "—"}</td>
+                <td>
+                  {x.source_id ?? "—"} · {locatorText(x)}
+                  {x.source_url && (
+                    <>
+                      {" "}
+                      <a href={x.source_url}>document</a>
+                    </>
+                  )}
+                </td>
+                <td>{x.capture_digest ? `${x.capture_digest.slice(0, 16)}…` : "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {a.search_basis && (
+        <p data-testid="answer-search-basis">
+          Search basis: {a.search_basis.outcome} — {a.search_basis.sources_searched.join(", ")}
+          {a.search_basis.searched_at && ` (searched ${a.search_basis.searched_at})`}
+          {a.search_basis.note && ` — ${a.search_basis.note}`}
+        </p>
+      )}
+      {a.follow_ups.map((t) => (
+        <p data-testid="answer-follow-up">
+          Follow-up: {t.action}
+          {t.closing_condition && ` — closes when ${t.closing_condition}`}
+        </p>
+      ))}
+    </section>
+  ))}
+
+  <section aria-labelledby="dont-know-heading" data-testid="research-dont-know">
+    <h2 id="dont-know-heading">What we don't know</h2>
+    {dossier.what_we_dont_know.length === 0 ? (
+      <p>No open unknowns recorded.</p>
+    ) : (
+      <ul>
+        {dossier.what_we_dont_know.map((g) => (
+          <li>
+            <strong>{g.question} — {g.title}:</strong> {g.detail}
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section aria-labelledby="ledger-heading" data-testid="research-ledger">
+    <h2 id="ledger-heading">Fact-to-capture ledger</h2>
+    <p>
+      Every rendered fact binds a claim digest to captured bytes at a locator — the
+      citation a reader can open. A withheld row keeps only the digest.
+    </p>
+    <table>
+      <thead>
+        <tr><th>question</th><th>fact</th><th>claim digest</th><th>capture</th><th>state</th></tr>
+      </thead>
+      <tbody>
+        {dossier.ledger.map((r) => (
+          <tr>
+            <td>{r.question}</td>
+            <td>{r.fact}</td>
+            <td>{r.claim_digest ? `${r.claim_digest.slice(0, 12)}…` : "—"}</td>
+            <td>{r.capture_digest ? `${r.capture_digest.slice(0, 12)}…` : "—"}</td>
+            <td>{r.state}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="windows-heading" data-testid="research-windows">
+    <h2 id="windows-heading">Decision windows</h2>
+    {dossier.decision_windows.windows.length === 0 ? (
+      <p>No dated decision points recorded.</p>
+    ) : (
+      <>
+        <ul>
+          {dossier.decision_windows.windows.map((w) => (
+            <li>
+              {w.predicate} = {w.value}
+              {(w.valid_from || w.valid_to) && ` (valid ${w.valid_from ?? ""}–${w.valid_to ?? ""})`}
+            </li>
+          ))}
+        </ul>
+        <p>Next decision date: {dossier.decision_windows.next_decision_date ?? "none recorded"}</p>
+      </>
+    )}
+  </section>
+
+  <section aria-labelledby="checklist-heading" data-testid="research-checklist">
+    <h2 id="checklist-heading">Completion checklist</h2>
+    <p>
+      The independent checklist — recomputed from the record, never trusting the
+      composer's own marks.
+    </p>
+    <table>
+      <thead><tr><th>item</th><th>status</th><th>detail</th></tr></thead>
+      <tbody>
+        {dossier.checklist.map((c) => (
+          <tr>
+            <td>{c.item}</td>
+            <td data-testid="checklist-status">{c.status}</td>
+            <td>{c.detail}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+</BaseLayout>
