@@ -1,0 +1,16 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P34.13 (QW-11, RI-52): the branded 404 — no bare nginx page. Astro emits this
+// route as /404.html; ops/web/nginx.conf already maps `error_page 404` onto it.
+// The page is chrome-light (no provenance/citation modules — there is nothing
+// here to cite) and noindex (never canonical content).
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Page not found" path="/404.html" chrome="minimal" noindex={true}>
+  <p data-copy="NF-01">This address does not name a page in the published record.</p>
+  <p><a data-copy="NF-02" href="/">Go to the home page</a></p>
+</BaseLayout>

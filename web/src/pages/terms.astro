@@ -1,0 +1,26 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P34.13 (QW-11, RI-15): `/terms` resolves on the site origin — the acceptable-
+// use terms themselves are served by the read API (SIG-API-013; robots.txt has
+// pointed at /terms since launch). The contract's recorded option is "the
+// redirect ships only with N-7 beside it": notice string N-7 states plainly
+// that the API's terms response is known to be wrong until P34.46 deploys the
+// fix, so this page carries N-7 verbatim (B-2 notice allowance until GATE-G4;
+// `data-notice` records which string) next to the link to the API terms. It is
+// a plain link — a meta-refresh redirect would hide the notice (a 0-delay
+// refresh) or breach WCAG 2.2.1 (a delayed one); a true 301 is server config
+// (P34.40's nginx roll, recorded owed). noindex: a forwarder, never content.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { apiTermsUrl } from "../lib/public-api";
+
+const termsUrl = apiTermsUrl();
+---
+
+<BaseLayout title="Terms of acceptable use" path="/terms/" chrome="minimal" noindex={true}>
+  <p data-notice="N-7">The API's dossier and terms responses are known to be wrong and are being corrected.</p>
+  <p data-copy="TR-01">The acceptable-use terms are served by the read API.</p>
+  <p><a data-copy="TR-02" href={termsUrl}>Open the API terms</a>.</p>
+</BaseLayout>

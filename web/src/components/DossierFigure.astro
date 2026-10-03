@@ -11,6 +11,7 @@
 // with its source, tier, date, and a link to the document at its locator.
 import SupportGlyph from "./SupportGlyph.astro";
 import ContestedMarker from "./ContestedMarker.astro";
+import { groupDigits } from "../lib/format";
 import type { Figure } from "../lib/dossier";
 
 interface Props {
@@ -33,8 +34,8 @@ const unresolved = !figure.reconciliation.claims.some(
 <details class="sig-recon" data-testid="dossier-figure" data-figure-key={figure.key} data-unresolved={String(unresolved)}>
   <summary>
     <span class="sig-recon__headline">
-      <span class="sig-recon__label">{figure.label}:</span>
-      <strong>{figure.value}{suffix}</strong>{lb}
+      <span class="sig-recon__label">{figure.label}:</span>{" "}
+      <strong>{groupDigits(String(figure.value))}{suffix}</strong>{lb}
       {unresolved && <> <span class="sig-recon__unresolved" data-testid="figure-unresolved">unresolved — no single value</span></>}
       {figure.contested && <> <ContestedMarker compact={true} /></>}
     </span>
@@ -42,7 +43,7 @@ const unresolved = !figure.reconciliation.claims.some(
   <div class="sig-recon__body">
     <SupportGlyph support={figure.support} evidenceCount={figure.evidenceCount} />
     <p class="sig-recon__rule">
-      <span class="sig-recon__rule-label">Rule that fired:</span>
+      <span class="sig-recon__rule-label">Rule that fired:</span>{" "}
       <code data-testid="recon-rule">{figure.reconciliation.rule}</code>
     </p>
     {figure.reconciliation.note && <p class="sig-recon__note">{figure.reconciliation.note}</p>}
@@ -65,7 +66,7 @@ const unresolved = !figure.reconciliation.claims.some(
           return (
             <tr data-testid="recon-claim" data-claim-id={c.claimId} data-winning={String(winning)}>
               <th scope="row">
-                {c.value}{suffix}
+                {groupDigits(String(c.value))}{suffix}
                 {winning && <span class="sig-recon__won"> (winning)</span>}
               </th>
               <td>{c.source}</td>

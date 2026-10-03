@@ -50,7 +50,7 @@ const axisLabels: Record<string, string> = {
   <p>
     The procurement/renewal watch turns passive history into <strong>actionable civic
     timing</strong>. Every alert keys on the <strong>decision date</strong> — the notice
-    deadline after which the contract renews by default — <strong>not the expiry date</strong>
+    deadline after which the contract renews by default — <strong>not the expiry date</strong>{" "}
     (SIG-UI-014b). Subscribe by jurisdiction and drop the deadline into your own calendar.
   </p>
 
@@ -71,7 +71,7 @@ const axisLabels: Record<string, string> = {
           data-contested={item.contested ? "true" : "false"}
         >
           <h3>
-            {item.subject_label}
+            {item.subject_label}{" "}
             {item.contested && <ContestedMarker compact />}
           </h3>
           <dl class="sig-watch-fields">
@@ -115,7 +115,7 @@ const axisLabels: Record<string, string> = {
   <ul class="sig-subscription-list" aria-labelledby="subscribe-heading">
     {jurisdictions.map((j) => (
       <li class="sig-subscription" data-testid="subscription" data-jurisdiction={j}>
-        <strong>{j}</strong> — {itemsForJurisdiction(WATCH_ITEMS, j).length} contract(s):
+        <strong>{j}</strong> — {itemsForJurisdiction(WATCH_ITEMS, j).length} contract(s):{" "}
         <a data-testid="ical-link" data-jurisdiction={j} href={watchICalPath(j)}>iCal (.ics)</a>
         {" · "}
         <a data-testid="rss-link" data-jurisdiction={j} href={watchRssPath(j)}>RSS (.xml)</a>
@@ -153,7 +153,7 @@ const axisLabels: Record<string, string> = {
         data-contested={r.contested ? "true" : "false"}
       >
         <p class="sig-recommendation__title">
-          <strong>{i + 1}. {r.artifact.title}</strong>
+          <strong>{i + 1}. {r.artifact.title}</strong>{" "}
           {r.contested && <ContestedMarker compact />}
           <span class="sig-recommendation__meta"> — {r.artifact.source} (directness {r.artifact.directness}, currency {r.artifact.currency}, {r.artifact.capture_status})</span>
         </p>
@@ -172,14 +172,14 @@ const axisLabels: Record<string, string> = {
   <h2 id="citations-heading">Citation list</h2>
   <p data-copy="W-05 W-06 W-07">
     Attach this to public comment. Every entry carries a link recording this build's
-    belief-time and as-of date.
+    belief-time and as-of date.{" "}
     <a data-testid="citation-export" href={CITATIONS_PATH}>Download as plain text</a>.
   </p>
   {citations.length === 0 && <EmptyState surface="citations" />}
   <ol class="sig-citation-list" data-testid="citation-list" aria-labelledby="citations-heading">
     {citations.map((c) => (
       <li data-testid="citation-entry" data-artifact-id={c.artifact_id} data-contested={c.contested ? "true" : "false"}>
-        <cite>{c.title}</cite>{c.contested && <ContestedMarker compact />} — {c.source}.
+        <cite>{c.title}</cite>{c.contested && <>{" "}<ContestedMarker compact /></>} — {c.source}.
         As of {c.as_of}. <a href={c.permalink}>{c.permalink}</a>
       </li>
     ))}

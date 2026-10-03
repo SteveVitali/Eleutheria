@@ -43,7 +43,18 @@ const range = provenance.date_range;
 ---
 
 <section class="sig-hwkt" data-testid="how-we-know-this" aria-labelledby="hwkt-heading">
-  <h2 id="hwkt-heading">How we know this</h2>
+  <!-- P34.13 (QW-13, RI-49): every dossier also carries its §39.2
+       "How we know this" section, so TWO same-named region landmarks landed
+       on one page. The visually-hidden suffix makes this landmark's
+       accessible name unique ("How we know this — site-wide") without
+       changing the visible heading. -->
+  <h2 id="hwkt-heading">How we know this{scope === "site" ? (
+    <span class="sig-visually-hidden" data-copy="HW-11"> — site-wide</span>
+  ) : pageName ? (
+    <span class="sig-visually-hidden" data-copy="HW-12"> — {pageName}</span>
+  ) : (
+    <span class="sig-visually-hidden" data-copy="HW-13"> — this page</span>
+  )}</h2>
   <!-- P34.12 (C3 NEW-13): a page-scoped module names the page it describes
        (the `pageName` prop), never an anonymous "this page". -->
   {scope === "site" ? (

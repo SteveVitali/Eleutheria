@@ -20,38 +20,44 @@ import { assertFreshnessRow, isNotRecorded } from "../../lib/metrics";
 import type { FreshnessRow } from "../../lib/metrics";
 import { getFreshness, capRows } from "../../lib/data";
 import { sortRows, sortHref, summariseBy } from "../../lib/tables";
+import { fmtInt } from "../../lib/format";
 import type { SortColumn } from "../../lib/tables";
 
 const BASE_PATH = "/data-freshness/";
 const DEFAULT_SORT = "source";
 
 // The columns the static table can be sorted by (each a pre-rendered route).
+// P34.13 (K12b NEW-11, F-17): the "stale entities" and "volatility class" sorts
+// returned the identical alphabetical table — a sort affordance that does
+// nothing is a false promise, so both routes and links are REMOVED until a real
+// ordering exists (UX9-2). Source and status sorts are kept: they genuinely
+// re-order the rows. Stale counts and volatility classes still render as table
+// columns — only the sort affordance is gone.
 const COLUMNS: SortColumn<FreshnessRow>[] = [
   { key: "source", label: "Source", value: (r) => r.source },
   { key: "status", label: "Status", value: (r) => r.status },
-  { key: "stale", label: "Stale entities", value: (r) => r.stale_entity_count, direction: "desc" },
-  { key: "volatility", label: "Volatility class", value: (r) => r.volatility_class },
 ];
 
 // One pre-rendered page per sort order: the base path (default sort) plus one route
 // per non-default key. Sorting is therefore a plain GET, archivable and no-JS.
+// (The key list is local: Astro hoists getStaticPaths into its own chunk, where
+// frontmatter bindings like COLUMNS are out of scope.)
 export function getStaticPaths() {
-  const COLS = [
-    { key: "source" },
-    { key: "status" },
-    { key: "stale" },
-    { key: "volatility" },
-  ];
+  const SORT_KEYS = ["source", "status"];
   return [
     { params: { sort: undefined }, props: { sortKey: "source" } },
-    ...COLS.filter((c) => c.key !== "source").map((c) => ({
-      params: { sort: c.key },
-      props: { sortKey: c.key },
+    ...SORT_KEYS.filter((k) => k !== "source").map((k) => ({
+      params: { sort: k },
+      props: { sortKey: k },
     })),
   ];
 }
 
 const { sortKey } = Astro.props as { sortKey: string };
+
+// P34.13 (QW-11): a sort route is a distinct page — it carries a distinct title
+// (every built page's title is unique; the sort title is copy-batch `title`
+// row for /data-freshness/status/, B-2). The base route keeps "Data freshness".
 
 // The freshness rows flow through the single data seam (ADR-066): fixtures by default,
 // real export bytes under SIG_DATA_SOURCE=export.
@@ -67,7 +73,10 @@ const { rows: sortedRows, active } = sortRows(ALL_ROWS, COLUMNS, sortKey, (r) =>
 const freshnessRows = capRows(sortedRows);
 ---
 
-<BaseLayout title="Data freshness" path={BASE_PATH}>
+<BaseLayout
+  title={sortKey === "source" ? "Data freshness" : `Data freshness — sorted by ${sortKey}`}
+  path={sortKey === "source" ? BASE_PATH : `${BASE_PATH}${sortKey}/`}
+>
   <p>
     How current is each source? Freshness is measured <strong>relative to predicate
     volatility</strong>, not in absolute days — a two-year-old contract date is fresh; a
@@ -90,36 +99,39 @@ const freshnessRows = capRows(sortedRows);
       <ul class="sig-table-summary" data-testid="freshness-summary" aria-labelledby="summary-heading">
         {byStatus.map((b) => (
           <li data-testid="summary-status" data-status={b.label}>
-            <span class="sig-table-summary__count">{b.count}</span> {b.label}
+            <span class="sig-table-summary__count">{fmtInt(b.count)}</span> {b.label}
           </li>
         ))}
       </ul>
       <p class="sig-table-note">
         Volatility classes:{" "}
         {byVolatility.map((b, i) => (
-          <span>{i > 0 ? " · " : ""}<strong>{b.count}</strong> {b.label}</span>
+          <span>{i > 0 ? " · " : ""}<strong>{fmtInt(b.count)}</strong> {b.label}</span>
         ))}.
       </p>
 
       <!-- Static-link sorting: each is a pre-rendered route (no client JS). -->
       <nav class="sig-sort" aria-label="Sort the freshness table" data-testid="freshness-sort">
-        <span class="sig-sort__label">Sort by:</span>
-        {COLUMNS.map((c) => (
-          <a
-            class="sig-sort__link"
-            data-testid="sort-link"
-            data-sort-key={c.key}
-            href={sortHref(BASE_PATH, c.key, DEFAULT_SORT)}
-            aria-current={c.key === active.key ? "true" : "false"}
-          >
-            {c.label}{c.direction === "desc" ? " (most first)" : ""}
-          </a>
+        <span class="sig-sort__label">Sort by:</span>{" "}
+        {COLUMNS.map((c, i) => (
+          <>
+            {i > 0 && " "}
+            <a
+              class="sig-sort__link"
+              data-testid="sort-link"
+              data-sort-key={c.key}
+              href={sortHref(BASE_PATH, c.key, DEFAULT_SORT)}
+              aria-current={c.key === active.key ? "true" : "false"}
+            >
+              {c.label}{c.direction === "desc" ? " (most first)" : ""}
+            </a>
+          </>
         ))}
       </nav>
 
       {freshnessRows.truncated && (
         <p class="sig-table-note" data-testid="freshness-truncation-note">
-          Showing the first {freshnessRows.shown} of {freshnessRows.total} sources (sorted by {active.label.toLowerCase()});
+          Showing the first {fmtInt(freshnessRows.shown)} of {fmtInt(freshnessRows.total)} sources (sorted by {active.label.toLowerCase()});
           the full set is in the export bundle and the API (SIG-UI-037).
         </p>
       )}
@@ -148,7 +160,7 @@ const freshnessRows = capRows(sortedRows);
                   ? <span class="sig-not-recorded" data-testid="not-recorded">not recorded</span>
                   : <time datetime={row.last_content_change}>{row.last_content_change}</time>}</td>
                 <td data-testid="freshness-status">{row.status}</td>
-                <td data-testid="stale-count">{row.stale_entity_count}</td>
+                <td data-testid="stale-count">{fmtInt(row.stale_entity_count)}</td>
                 <td>{row.volatility_class}</td>
               </tr>
             ))}

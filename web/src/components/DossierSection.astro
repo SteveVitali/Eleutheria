@@ -10,6 +10,7 @@
 // interactive dossier page and the print export so the two never drift.
 import DossierFigure from "./DossierFigure.astro";
 import AbsenceHatch from "./AbsenceHatch.astro";
+import { groupDigits } from "../lib/format";
 import { rowDisplayValue } from "../lib/dossier";
 import type { Section } from "../lib/dossier";
 
@@ -48,7 +49,7 @@ const rows = section.rows ?? [];
               }
               data-testid={r.withheld ? "dossier-row-withheld" : "dossier-row-value"}
             >
-              {rowDisplayValue(r)}
+              {groupDigits(rowDisplayValue(r))}
             </span>
             {r.documentUrl && (
               <>

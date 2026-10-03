@@ -103,6 +103,28 @@
 | HW-10 | component/HowWeKnowThis | These totals describe the {pageName}'s own evidence, not the whole record. | 334535f8afc75bcc1a78527cd3a510f2b70b8d30c6fd386329ec37520f7cfc1f | pending |
 | RQ-01 | lib/research-queue.ts | not yet classified | bb563272ba6e0dd5a84d94137f0156a345d8f3d0041bd9d54046978086209c48 | pending |
 | XC-03 | exports/spine_export.py | not yet classified | bb563272ba6e0dd5a84d94137f0156a345d8f3d0041bd9d54046978086209c48 | pending |
+| title | /404.html | Page not found | a469ab4ca4e55bf547566e9ebfa1b809c933207e9d558156bc0c4252b17533fe | pending |
+| NF-01 | /404.html | This address does not name a page in the published record. | 4bf6a31cea6b0b3cdd530bb9d4edf0f544c14284521d5179de8018e49937e036 | pending |
+| NF-02 | /404.html | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
+| title | /403/ | Access refused | 07edbc210200672dd22b8675ff412e2dfb0bdb32cd35bf98f215643a2969b360 | pending |
+| FB-01 | /403/ | This address is not open to the public record. | 1c53fb5591a3cb3bd20d3db1adf0b367f3ce267d630b06302ad5cbafaca29e8b | pending |
+| FB-02 | /403/ | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
+| title | /410/ | Page removed | 07bfb4386863abf77f91715a0bc1ae0a6ee8db3a005d952e9161e6b0a4f8367e | pending |
+| GN-01 | /410/ | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
+| title | /terms/ | Terms of acceptable use | cd9c8f9815b668373aa0e899adeed724126616c1fa133c171edaa919c4739a18 | pending |
+| TR-01 | /terms/ | The acceptable-use terms are served by the read API. | e22ca2017eb209fce805f46a746b5acb626149dafa14c854d1fdea25379ca6b4 | pending |
+| TR-02 | /terms/ | Open the API terms | c9e30377375fad6ba26cb3435ab8eb4f6f6cfbc354828fd0f66f39f7e09aef8c | pending |
+| title | /data-freshness/status/ | Data freshness — sorted by status | d71bef933ccd036a923cf641eb9417338d97a523423285f20db56f0b53906fe7 | pending |
+| HW-11 | component/HowWeKnowThis | — site-wide | 38e27b025baf2b029337868415e2ada529c1d2a9ed169219699b18283740862a | pending |
+| HW-12 | component/HowWeKnowThis | — {pageName} | 75431417c85a646c90b86306a022e7efc5b7cd89833e41808e5786632f577d1b | pending |
+| HW-13 | component/HowWeKnowThis | — this page | 2abeefadfd80aed1a6c7c4cb12b9e6730d153cccf440e66b800bfb978370c329 | pending |
+| MD-01 | lib/meta.ts | ${title} — Surveillance Infrastructure Graph (SIG) | b0f3d7cd012e8c848f0b0b5a39e533fbcdbb63229dfad78d2f33082486f11d52 | pending |
+| WM-01 | component/BaseLayout | SIG Surveillance Infrastructure Graph — home | 626b082b24a64831515e39f3f6830f963e38e56f3a291f870ce0e4312e116463 | pending |
+<!-- P34.13: the 410 body and the /terms notice are notice strings N-6 and N-7
+     verbatim — they ship by sha256 under B-2's notice allowance (until
+     GATE-G4), not as batch rows; `data-notice` records which string each is.
+     The /terms forwarder is noindex chrome; its redirect target is the API's
+     /terms (SIG-API-013), not site copy. -->
 <!-- P34.12: T-01's page (/task/new/) is RETIRED — the row stays (append-only
      history of the drafted sentence) but can never ship: no page renders it.
      The P34.11 binding test carries T-01 in a RETIRED set, not in the

@@ -52,7 +52,7 @@ const diff = showDiff ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
     data-contested={contested ? "true" : "false"}
   >
     <p>
-      <strong>Claim:</strong> {view.claim_label} = <strong>{String(view.value)}</strong>
+      <strong>Claim:</strong> {view.claim_label} = <strong>{String(view.value)}</strong>{" "}
       {contested && <ContestedMarker compact />}
     </p>
 
@@ -96,7 +96,7 @@ const diff = showDiff ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
       <ul class="sig-conflicting" data-testid="conflicting-claims">
         {view.conflicting_claims.map((c) => (
           <li data-testid="conflicting-claim" data-claim-id={c.claimId}>
-            <strong>{String(c.value)}</strong> — {c.source} ({c.tier}, {c.date}).
+            <strong>{String(c.value)}</strong> — {c.source} ({c.tier}, {c.date}).{" "}
             <a href={c.documentUrl}>document</a>
             {c.differentQuantityNote && <p class="sig-different-quantity">{c.differentQuantityNote}</p>}
           </li>

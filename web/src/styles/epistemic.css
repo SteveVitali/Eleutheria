@@ -81,6 +81,17 @@ a {
   color: var(--sig-focus);
 }
 
+/* P34.13 (QW-13, RI-49 / DR-C4-14): long identifiers — UUIDs, content digests,
+   ruleset ids, H3 cells, permalinks — must WRAP inside their container instead
+   of forcing 800-px-wide overflow at 320-px reflow. break-word only fires when
+   the word would otherwise overflow; normal wrapping is unchanged. */
+code,
+.sig-cite__permalink,
+.sig-print-footer__permalink {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 :focus-visible {
   outline: 3px solid var(--sig-focus);
   outline-offset: 2px;
