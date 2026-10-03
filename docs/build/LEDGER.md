@@ -32,7 +32,7 @@ Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before t
 ```
 projectStatus:   IN_PROGRESS                             # Round 11 running since GATE-B (C10)
 nextTicket:      P34.14                             # row 216 — Jurisdiction display names (interim)
-lastCompleted:   P34.13                             # row 215 (PR #209, open; ci: pass @b053c0c; chrome + format + a11y quick fixes — branded 404/403/410, favicon, canonical sitemap, unique titles/descriptions, /terms + N-7, label-in-name, unique landmarks, print main, wrapped ids, unglued text, grouped digits, real sorts only)
+lastCompleted:   P34.13                             # row 215 (PR #209, open; ci: pass @b053c0c; chrome/format/a11y fixes — branded error pages, favicon, canonical sitemap, unique meta, /terms, landmarks, grouped digits, real sorts)
 blockedOn:       (nothing)                          # real blocks only; a pending gate is a RETURN PASS row
 pauseRequested:  false                               # set at C10 (GATE-B go)
 returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.50 # landed tickets with owed legs; legs: RETURN PASS — current
