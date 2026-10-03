@@ -12,12 +12,18 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
 import { getDossierIndex } from "../../lib/data";
 import { dossierPath, dossierPrintPath } from "../../lib/dossier";
+import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
 
-// Sorted by jurisdiction then subject for a stable, browseable order at scale.
+// P34.14 (QW-8, F-105): names lead — the index sorts by the place's NAME so a
+// reader browsing names finds them, and every row shows "Name (CODE)" with the
+// code secondary. A bare code the lookup does not know fails loud (AC4/AC5).
 const dossiers = [...getDossierIndex()].sort(
   (a, b) =>
-    a.jurisdiction.localeCompare(b.jurisdiction) || a.subject_label.localeCompare(b.subject_label),
+    displayJurisdiction(a.jurisdiction).name.localeCompare(
+      displayJurisdiction(b.jurisdiction).name,
+    ) || a.subject_label.localeCompare(b.subject_label),
 );
+const hasUnmapped = dossiers.some((d) => !displayJurisdiction(d.jurisdiction).known);
 ---
 
 <BaseLayout title="Dossiers" path="/dossier/">
@@ -36,12 +42,15 @@ const dossiers = [...getDossierIndex()].sort(
   </p>
 
   {dossiers.length === 0 && <EmptyState surface="dossierIndex" />}
+  {hasUnmapped && (
+    <p class="sig-jurisdiction-unmapped" data-testid="dossier-index-unmapped" data-copy="JD-04">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+  )}
   <ul class="sig-dossier-index" role="list" data-testid="dossier-index">
     {dossiers.map((d) => (
       <li class="sig-dossier-index__item" data-testid="dossier-index-item" data-slug={d.slug}>
         <a class="sig-dossier-index__link" href={dossierPath(d.slug)}>
-          <span class="sig-dossier-index__subject">{d.subject_label}</span>{" "}
-          <span class="sig-dossier-index__place">{d.jurisdiction}</span>
+          <span class="sig-dossier-index__subject">{dossierDisplayTitle(d.subject_label, d.jurisdiction)}</span>{" "}
+          <span class="sig-dossier-index__place">{displayJurisdiction(d.jurisdiction).label}</span>
         </a>{" "}
         <span class="sig-dossier-index__meta">
           as of {d.asOf.as_of_world}

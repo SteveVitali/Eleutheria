@@ -24,6 +24,7 @@ import {
   releasedRecordHref,
   capRows,
 } from "../lib/data";
+import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
 import "../styles/islands.css";
 
 const dossiers = getDossierIndex();
@@ -52,17 +53,22 @@ const siteFocusId = (id: string): string => {
 // released-corpus forms + static browse pages above.
 const cappedSites = capRows(sites);
 
+// P34.14 (QW-8, F-105): labels and sublabels lead with the place's NAME and
+// keep the code secondary ("Name (CODE)") — a name typed into the filter now
+// matches the row (the label carries it). The FTS5 index in released search
+// bytes still keys on codes; naming those is the exporter's job (P34.21b), and
+// the static browse pages lead with names the same way.
 const INDEX: SearchItem[] = [
   ...dossiers.map((d) => ({
     kind: "dossier" as const,
-    label: d.subject_label,
-    sublabel: d.jurisdiction,
+    label: dossierDisplayTitle(d.subject_label, d.jurisdiction),
+    sublabel: displayJurisdiction(d.jurisdiction).label,
     href: `/dossier/${d.slug}/`,
   })),
   ...cappedSites.rows.map((s) => ({
     kind: "site" as const,
     label: s.label,
-    sublabel: s.jurisdiction,
+    sublabel: displayJurisdiction(s.jurisdiction).label,
     href: siteHref(s.id),
     focusId: siteFocusId(s.id),
   })),
@@ -73,6 +79,12 @@ const INDEX: SearchItem[] = [
     href: "/data-freshness/",
   })),
 ];
+
+// A bare code the lookup does not know shows its loud "Unspecified jurisdiction"
+// label in the rows above AND the flag below — the reason plus a task link (AC5).
+const hasUnmapped =
+  dossiers.some((d) => !displayJurisdiction(d.jurisdiction).known) ||
+  cappedSites.rows.some((s) => !displayJurisdiction(s.jurisdiction).known);
 ---
 
 <BaseLayout title="Search" path="/search/">
@@ -85,6 +97,10 @@ const INDEX: SearchItem[] = [
   </p>
 
   <ViewSwitch view="list" release={latest?.publicationId ?? null} />
+
+  {hasUnmapped && (
+    <p class="sig-jurisdiction-unmapped" data-testid="search-unmapped" data-copy="JD-05">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+  )}
 
   <!-- P32.14 (SIG-FIND-003): released-corpus search — the complete corpus, one
        compartment at a time, pinned to an immutable namespace. -->

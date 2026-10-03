@@ -26,9 +26,10 @@ BATCH_PATH = REPO_ROOT / "docs/build/reports/copy-batches/batch-01.md"
 VALID_STATUSES = {"pending", "confirmed"}
 
 # The batch ids P34.11 authored (the DC-* rows belong to P35.38a) plus the rows
-# P34.12 appended (HW-10, RQ-01, XC-03) and P34.13 appended (HW-11…HW-13,
-# MD-01, WM-01, NF-01/02, FB-01/02, GN-01, TR-01/02 — same batch, same checks).
-P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM)-\d+$")
+# P34.12 appended (HW-10, RQ-01, XC-03), P34.13 appended (HW-11…HW-13,
+# MD-01, WM-01, NF-01/02, FB-01/02, GN-01, TR-01/02) and P34.14 appended
+# (JD-01…JD-07 — same batch, same checks).
+P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD)-\d+$")
 
 # Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
 # fixture route is gone, so T-01 ("Return to the dossier index.") is recorded
@@ -42,6 +43,7 @@ ASTRO_PAGES = {
     "/dossier/": "web/src/pages/dossier/index.astro",
     "/dossier/[slug]/": "web/src/pages/dossier/[slug].astro",
     "/dossier/[slug]/print/": "web/src/pages/dossier/[slug]/print.astro",
+    "/search/": "web/src/pages/search.astro",
     "/corrections/": "web/src/pages/corrections.astro",
     "/watch/": "web/src/pages/watch.astro",
     "/methodology/": "web/src/pages/methodology.astro",

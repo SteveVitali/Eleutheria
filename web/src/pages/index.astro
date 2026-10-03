@@ -17,6 +17,7 @@ import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { fmtInt, groupDigits } from "../lib/format";
 import { dossierPath } from "../lib/dossier";
+import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
 
 const coverage = getCoverage();
 // Enforce the §32.5 honesty constraints at build time: a landing metric with a
@@ -117,11 +118,16 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
       with one:
     </p>
     {dossierIndex.length === 0 && <EmptyState surface="landingReach" />}
+    {/* P34.14 (QW-8, F-105): the reach list leads with the place's name too —
+        the code stays secondary, and an unmapped code fails loud (AC5). */}
+    {dossierIndex.some((d) => !displayJurisdiction(d.jurisdiction).known) && (
+      <p class="sig-jurisdiction-unmapped" data-testid="reach-unmapped" data-copy="JD-06">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+    )}
     <ul class="sig-jurisdiction-reach" role="list">
       {dossierIndex.map((d) => (
         <li>
-          <a href={dossierPath(d.slug)}>{d.subject_label}</a>
-          <span class="sig-jurisdiction-reach__place"> — {d.jurisdiction}</span>
+          <a href={dossierPath(d.slug)}>{dossierDisplayTitle(d.subject_label, d.jurisdiction)}</a>
+          <span class="sig-jurisdiction-reach__place"> — {displayJurisdiction(d.jurisdiction).label}</span>
         </li>
       ))}
     </ul>
