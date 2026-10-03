@@ -79,5 +79,6 @@
 | D-P34.6-6 | OPEN | engineering | P34.46 | `ops/gcp/restore-drill.sh --apply clone/counts/…` re-run post-deploy; the record's `sqitch_equal` must stay true (the clone carries the new tip) |
 | D-P34.50-1 | OPEN | the operator (OP-09) | the operator's execution sitting by GATE-G4, before P35.5's R2 leg | post-switch: `dig +noall +answer surveillancegraph.org NS` returns the Cloudflare pair, `dig … A` → `136.81.80.102`, `dig +dnssec … A` carries the `ad` flag wit… |
 | D-P34.7-1 | OPEN | the operator's merge + the P38.1a audit | the first `nightly` cron tick or `workflow_dispatch` run after this PR merges | `gh run list --workflow nightly.yml` shows the completed run; its `nightly-*` report artifact carries `replay` with judged > 0 and the oracle comparison at 0 mi… |
+| D-P34.11-1 | OPEN | the upstream http-cache-semantics/astro release that clears the range, or the P34/P35 toolchain row that moves the builder | a http-cache-semantics release >4.2.0 (or an astro release without the dep) — failing that, before the entry expires 2026-11-30 | `bash scripts/ci/npm_audit_gate.sh --out docs/build/logs` green with the entry REMOVED (the gate already notes when an entry covers no current finding); `npm --… |
 
 ← back: CURRENT.md
