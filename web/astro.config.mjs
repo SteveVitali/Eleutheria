@@ -6,7 +6,7 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { join, relative, sep } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES): in
 // `export` mode the static build CONSUMES the rendered vector tiles the export
@@ -25,7 +25,13 @@ function sigExportTiles() {
       "astro:build:done": ({ dir }) => {
         if (process.env.SIG_DATA_SOURCE !== "export") return;
         const repoRoot = fileURLToPath(new URL("../", import.meta.url));
-        const exportDir = process.env.SIG_EXPORT_DIR ?? join(repoRoot, "exports/out/okc");
+        const override = process.env.SIG_EXPORT_DIR;
+        // `npm --prefix web` runs scripts with cwd=web/, so a repo-relative
+        // SIG_EXPORT_DIR must be anchored at the repo root, not the cwd.
+        const exportDir =
+          override !== undefined && override !== ""
+            ? resolve(repoRoot, override)
+            : join(repoRoot, "exports/out/okc");
         const tilesDir = join(exportDir, "web", "tiles");
         const destDir = join(fileURLToPath(dir), "tiles");
         const manifestPath = join(exportDir, "manifest.json");

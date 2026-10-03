@@ -13,10 +13,8 @@ import {
   openFindings,
 } from "../../src/lib/editorial";
 import type { HostileReaderReview } from "../../src/lib/editorial";
-import {
-  GENERATED_RATIONALE_TEMPLATES,
-  HOSTILE_READER_REVIEW,
-} from "../../src/lib/corrections-methodology-fixture";
+import { GENERATED_RATIONALE_TEMPLATES } from "../../src/lib/corrections-methodology-fixture";
+import { getHostileReaderReview } from "../../src/lib/data";
 
 describe("the six register rules (SIG-UI-043)", () => {
   it("codifies exactly six rules, numbered 1..6", () => {
@@ -74,19 +72,41 @@ describe("the three example editorial cases (SIG-UI-045)", () => {
   });
 });
 
-describe("hostile-reader review release gate (SIG-UI-042)", () => {
-  it("the committed review has two reviewers and every finding dispositioned → releasable", () => {
-    expect(HOSTILE_READER_REVIEW.reviewers.length).toBeGreaterThanOrEqual(2);
-    expect(allFindingsDispositioned(HOSTILE_READER_REVIEW)).toBe(true);
-    expect(openFindings(HOSTILE_READER_REVIEW)).toEqual([]);
-    expect(() => assertReviewReleasable(HOSTILE_READER_REVIEW)).not.toThrow();
+describe("hostile-reader review release gate (SIG-UI-042, waived per WV-04/ADR-179)", () => {
+  // A locally-constructed review exercises the gate — there is no committed
+  // review fixture (P34.17: the fabricated two-reviewer "Releasable" record
+  // was removed; the honest state is absence).
+  const RECORDED: HostileReaderReview = {
+    template_version: "dossier-v1",
+    reviewed_dossier: "/dossier/oklahoma-city/",
+    reviewers: ["reader one", "reader two"],
+    review_date: "2026-09-01",
+    findings: [
+      {
+        id: "hr-1",
+        challenge: "This sentence implies the contract was enforced.",
+        disposition: "accepted_revised",
+        resolution: "Reworded to state only what the record shows.",
+      },
+    ],
+  };
+
+  it("a review that was never performed is the honest null state — the gate passes it", () => {
+    expect(getHostileReaderReview()).toBeNull();
+    expect(() => assertReviewReleasable(null)).not.toThrow();
+  });
+
+  it("a recorded review with two reviewers and every finding dispositioned → releasable", () => {
+    expect(allFindingsDispositioned(RECORDED)).toBe(true);
+    expect(openFindings(RECORDED)).toEqual([]);
+    expect(() => assertReviewReleasable(RECORDED)).not.toThrow();
   });
 
   it("blocks release when any finding is undispositioned", () => {
     const withOpen: HostileReaderReview = {
-      ...HOSTILE_READER_REVIEW,
+      ...RECORDED,
       findings: [
-        ...HOSTILE_READER_REVIEW.findings,
+        ...RECORDED.findings,
         { id: "hr-open", challenge: "An unresolved objection.", disposition: null, resolution: "" },
       ],
     };
@@ -96,7 +116,7 @@ describe("hostile-reader review release gate (SIG-UI-042)", () => {
   });
 
   it("blocks release when there are fewer than two independent reviewers", () => {
-    const solo: HostileReaderReview = { ...HOSTILE_READER_REVIEW, reviewers: ["only one"] };
+    const solo: HostileReaderReview = { ...RECORDED, reviewers: ["only one"] };
     expect(() => assertReviewReleasable(solo)).toThrow(/two independent reviewers/);
   });
 });

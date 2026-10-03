@@ -53,6 +53,8 @@ top_level = [
   "network",
   "research-queue",
   "search",
+  "sources",             # the interim sources-and-licences page (P34.17 / R1.8)
+  "status",              # the public status page (P34.17 / R1.10)
   "style-guide",
   "task",                # /task/<handle>/ — real task pages (RQ-03); /task/new/ is DENIED
   "watch",
@@ -93,6 +95,8 @@ required = [
   "network",
   "research-queue",
   "search",
+  "sources",
+  "status",
   "style-guide",
   "watch",
 ]
@@ -129,3 +133,7 @@ note = "not approved"
 [[denied]]
 path = "/intake/"
 note = "the correction-intake receiver is non-operational — never a public route"
+
+[[denied]]
+path = "/visual-language/"
+note = "withdrawn (A-0.3 = b): fixture facts never public — removed by republish #1 (P34.17); internal build only"

@@ -209,6 +209,104 @@
      The P34.11 binding test carries T-01 in a RETIRED set, not in the
      carried-somewhere check. -->
 
+<!-- P34.17 (the honesty wave): the dispute/corrections rewrite (B-8 e-mail
+     intake, WV-05, WV-08's published order with no time promise, C4 NEW-20 —
+     no requirement ids in copy), the truthful hostile-reader absence
+     (ADR-179), the register sentence without a counsel/board reading, the
+     methodology development-evidence disclosure + publication-basis label
+     (H-6 — PB-01/MB-01 pin GC-04's text, PB-02/MB-02 pin GC-05's; the sha256s
+     must equal efee2089…/f62f9e98…), the interim release stamp (A-20), the
+     footer dispute link, the new /status/ page (N-7 + currency), the /sources/
+     licence table labels (SL-01…SL-04 were P34.19's), the /terms/ legal-home
+     sentence (TR-03 = ADR-165's E2-04 drafted wording verbatim), and DC-20.
+     `{intakeAddress}`, `{releaseId}` and `{asOfWorld}` are rendered template
+     placeholders (the `{permalink}` precedent) — the injected operator
+     address and release values are DATA, not drafted copy. DP-07 and
+     OC-01…OC-05 are literal rows bound to `web/src/lib/corrections.ts`.
+     SUPERSEDED (kept, append-only, bound to nothing): CL-03 → CL-06 (the
+     requirement id dropped), M-20 → M-43 (the "frozen holdout" claim), DC-19 →
+     DC-20 (the dispute page now names the contact address). All pending —
+     none ships until the operator confirms it verbatim at a copy-batch sitting
+     (B-2); `sig-ops publish-web` refuses a pending sentence in the tree.
+     added 2026-10-03. -->
+| title | /dispute/ | Dispute or correct a record | a04bfebf57e010475aa09c31e44b4d2637f928a30eb80fb06dd8b2eab37330c0 | pending |
+| DP-01 | /dispute/ | Anyone can ask SIG to correct, annotate, suppress, or remove a record — or dispute an accurate one and attach a response. | f32c43da5255e94e8dd862376d760b7f3afdbac48f9aed708be17a1b2c465987 | pending |
+| DP-17 | /dispute/ | How to report | 2ee208947047ae0ba02b0655a4b405b2f0552ec8fa28ed8c077f770b21bb37e4 | pending |
+| DP-02 | /dispute/ | Reports and corrections arrive by e-mail to {intakeAddress}. | c07aba28bc06f8483773a8ca2a5dba6808416db9f4e90c173ff80b30f7e78e5b | pending |
+| DP-03 | /dispute/ | Senders disclose the address they send from. | f4698409e5262dd7cc04cd03ee9ed35dd01c9a16b6b63de93c2c6400e3644056 | pending |
+| DP-06 | /dispute/ | SIG promises no response time. | 4f54dfc91ffacf12c94d3eecace3704eb8f3560736d32cfa9a8b1baa3f7d589c | pending |
+| DP-04 | /dispute/ | Do not send licence plate numbers or personal details about other people. | 6a99d2cbc1dd46d3206319c75bbc98d075ffdf3d7d72bdda036d0d9a81b7291c | pending |
+| DP-18 | /dispute/ | Handling order | f6ddc8855156e0120669dd7a98233f50e77ed8231e440785e8e3757d181bffbf | pending |
+| DP-05 | /dispute/ | SIG handles reports in this order: privacy-harm and safety reports first, then factual corrections, then everything else. | 2a9c1c3ae27314276fe1dc7f5584ce8e1937c68daf1afc8c1b040ffff1446845 | pending |
+| DP-19 | /dispute/ | What are you reporting? | 98ba943343164139af7cba397417f0d11f637603c4325cbd591b94629a8fe996 | pending |
+| DP-15 | /dispute/ | (handled first) | 81555b13619b02d489e6594b1829b2c1b4904031540f897cd532b45e7a560001 | pending |
+| DP-16 | /dispute/ | (may require standing) | f9381a797b894d216298a314f18e6153682b3663c065987a2b1bf9e9cd412a69 | pending |
+| DP-20 | /dispute/ | What can happen | 2dec45f7e5bd11d76a5105833939580f17420367fbb5aa3dc959ca79b56f31aa | pending |
+| DP-08 | /dispute/ | Correct — a new, corrected assertion is appended; the prior value is preserved and stays citable. | be882729a7b7a53ee73667bc40cf5de545732f069008f3a431e4e8e2ea21e763 | pending |
+| DP-09 | /dispute/ | Annotate — a response is attached alongside the claim, even when the claim is accurate. | 7081c212773b05ada56b5c7e7ed6157abcdbd0b1dfe645ff9546b72f140e5290 | pending |
+| DP-10 | /dispute/ | Suppress — removed from public view, retained internally under seal. | da6beda42e61a6ef4a728c5bed06f8086214d004485074b59386b87d8cd6350f | pending |
+| DP-11 | /dispute/ | Delete — reserved for material SIG must not hold at all; a content-free tombstone records that a deletion occurred. | 0be80e6969c22c0abdf82a3acb60cea849b49f6777338b34f1eee2665aaa0b00 | pending |
+| DP-12 | /dispute/ | Refuse — declined, with published reasoning. Refusal is a real, exercisable option. | a15014902733cf64ab89d45572e5e1c61f7e06d3e459f69a82213ff5d8e46e6e | pending |
+| DP-21 | /dispute/ | The report form | b9e121b7aae5730bc88a862491166c46f80390556666480c624e105896dec489 | pending |
+| DP-13 | /dispute/ | Until then, e-mail is the channel — it carries the same categories and the same outcomes as the form will. A report is never an automatic correction, suppression or takedown vote. | 9536c4e80df78e7c8a4a9c79d384f4c39619f56cc8466bc519e4331c07e14879 | pending |
+| DP-14 | /dispute/ | Dispositions and their outcomes are counted in the public corrections log's transparency report. A correction, once made, appears there in full. | 3d58406b98498647864f2d2d1aecc0d9f015716d2b9762c121f99e27e8cf5955 | pending |
+| DP-07 | lib/corrections.ts | An online report form is not operating yet — it opens only after a staffed moderation owner, a ratified retention schedule and the public-exposure decision are approved. | 0a4b850bd3a79e9b703fdc0e3f1c286dc6a4e19ea793203d1190af9d4f0e7312 | pending |
+| OC-01 | lib/corrections.ts | A new, corrected assertion was appended; the prior value is preserved. | a1a94a5039a90579e6c68c14419d2268deb5c037b35eab510d9cbbd3863aa679 | pending |
+| OC-02 | lib/corrections.ts | A response or annotation was attached alongside the claim. | ecf79dbe42c7f36c44d400ef4bb50177357d35f22a2530d1bfbb1ae41c4b1de6 | pending |
+| OC-03 | lib/corrections.ts | Removed from public view, retained internally under seal. | 974c23c888e0aa77fbf1acf32f7a6326423ce03d652b84884a9efb521b25c3de | pending |
+| OC-04 | lib/corrections.ts | Deleted entirely; a content-free tombstone records that a deletion occurred. | da7f8788394889b5b475dd59aa2b09daf8872e7dedd2c50cd714ed7534a9c402 | pending |
+| OC-05 | lib/corrections.ts | Declined, with published reasoning. | 3411cbf6f496d0a2ae1cf8e7c13274f3613d7e0d3ff2176ba582b3ceb91bdad6 | pending |
+| title | /corrections/ | Corrections log | 146309a25c86310d99f2444bfafca0efcc44273f0cc8777137f9de14eb8d5b28 | pending |
+| CL-06 | /corrections/ | A correction is a new assertion, never a deletion: the earlier value is preserved, and each entry names the belief date at which it stood. | 7c51a07865ff040d611e6e3715485fe693444f9de421cfec3e6014b17cd17555 | pending |
+| CL-07 | /corrections/ | Reports and corrections arrive by e-mail — the dispute page states the address and the handling order. | 2050d5f0e26370c4ba67a6ba431041ea9fe6f320017d3e5b3a1bc1cb701dddda | pending |
+| title | /editorial-standards/ | Editorial standards | ad5fad9228634cbd5e8ea56612d0e83d5e65a0e9d83dfa218a8bc7abefecadb6 | pending |
+| ES-01 | /editorial-standards/ | SIG's editorial standards are what make its record usable as evidence. The style guide codifies the register rules; this page records the worked example cases and the state of the hostile-reader review that gates each dossier template version. | bc4bdf5284b21d9a98ccf6966ad2f43c6865b7492e12025df2070695ae142695 | pending |
+| ES-02 | /editorial-standards/ | Conformant copy for the three hardest cases: | 8fe375d25c7a770bd7ed3cf6461a22079f618958da12849f25f6f75bc72c2933 | pending |
+| ES-03 | /editorial-standards/ | Before a dossier template version is released, the standards call for two independent readers to read a real rendered dossier from the documented organization's point of view and log every sentence they would challenge. No such reading has taken place; a previously published record describing one was incorrect and has been removed. | d1e7154665655a0dae9e96a31de14c676869d98f276af96efba1bffefd3c6f84 | pending |
+| ES-04 | /editorial-standards/ | The release block is waived for this round; the waiver and its reason are recorded in the project's decision log. | 9c4c62a5f4abb4379800e9793089105c186b73f87d0ee2013537c700829ecd63 | pending |
+| ES-05 | /editorial-standards/ | The recorded review, its findings, and their disposition are committed alongside the template version. | 15006d109e8422f0399a299f9a7abf17a6dba3c62723c73dfcf6eca0457d0145 | pending |
+| title | /style-guide/ | Editorial style guide | 1c752cf2357ea435cd30d988b2e03839f058a059d84171fbaf28371494bda72f | pending |
+| SG-01 | /style-guide/ | SIG's register is what makes the work usable as evidence: a reader whose own organization is documented should find the dossier accurate, neutral, and hard to attack. These six rules govern every published sentence — including generated rationale text, which is published text and is held to exactly the same standard. | 7924ad7804ee015e5e4ba3d745df6c39a6bd683c98d00d0587de3cd05e36d590 | pending |
+| HO-30 | / | and it is listed in the research queue. | ffa9d272ee091080d406cc11212ce8246ff133efc69d172e22e41a1beef3b1f3 | pending |
+| M-40 | /methodology/ | Matching quality: development evidence only. | 97290b55142bb53f7e4e1af9cbc635a133dadd3a173767b57f8680086affacca | pending |
+| M-41 | /methodology/ | The label sets these rules were tuned on were produced by an AI model and by agents; no person labelled them. | f7d32e9341729e35a0e63aeee305e767b1c4ab42c9b22236d258a1bc4e0f689a | pending |
+| M-42 | /methodology/ | SIG is changing the merge rules so that only copies of one upstream record are merged. | d69beb3b08230a1c108736aba5673ef7143d71b78335517c587d530f463f641e | pending |
+| M-43 | /methodology/ | These measure SIG's method, on the named holdout each row names — never a device population and never a capture–recapture estimate. | ec9d8d6633d887f551a108296b4ae567bec7f58977990e57653b6677742f2e48 | pending |
+| MB-01 | /methodology/ | Published on the maintainer's own rights and publication decisions. | efee2089e2fa2a2532d5ce21a55acab761a8829be02ac7ed579e6b8aa194201f | pending |
+| MB-02 | /methodology/ | No lawyer's written opinion has been obtained; nothing here states that this publication has been cleared by counsel. | f62f9e984c0d6d7b7a6f5065cef480d666a8da59b2a73e15c762dbf347333b4f | pending |
+| RS-01 | component/BaseLayout | This site shows release {releaseId}, data as of {asOfWorld}. | 19d18b7a3ff034f1779796c385b2e4f3c22a8b870929c2a39242bc163e02cb7f | pending |
+| RS-02 | component/BaseLayout | The public API is updated continuously and may show newer records. | 2e646c8d6b0d06258a65760e833ad34e4e8660608d234d2e9400941a122c4e90 | pending |
+| RS-03 | component/BaseLayout | This is a development build. | 5ae20730cc116cd2b2aad7adf249e783613a81769da4a38228267cbd8aaa9698 | pending |
+| PB-01 | component/BaseLayout | Published on the maintainer's own rights and publication decisions. | efee2089e2fa2a2532d5ce21a55acab761a8829be02ac7ed579e6b8aa194201f | pending |
+| PB-02 | component/BaseLayout | No lawyer's written opinion has been obtained; nothing here states that this publication has been cleared by counsel. | f62f9e984c0d6d7b7a6f5065cef480d666a8da59b2a73e15c762dbf347333b4f | pending |
+| DL-01 | component/DisputeLink | Something wrong, or a privacy or safety concern? Dispute or correct this record — reports arrive by e-mail. | 192aa8eb68086abceaae5d26e88f7c5ea8cb1db6981c40901db3143f32be040d | pending |
+| title | /status/ | Status | 920e413c7d411b61ef3e8c63b1cb6ad058d5f95f8b481dbafe60248387d8c355 | pending |
+| ST-02 | /status/ | This page names what is known to be wrong right now and how it is being corrected. | 5f1ce8898ad72dd270284fd8ae498f580a5393c9eeadfe390c6716402dcd85be | pending |
+| ST-07 | /status/ | The API | f869fbbc138cf69b93d7d7618940351fc5c10365a5e70a4d416221e90da3ddec | pending |
+| ST-03 | /status/ | The fix ships as part of a later release; the wrong answers stay live until then, marked here rather than hidden. | 1142c28161a0d785b6adee5bc51f7f214b1bd80d581733a77b1a4444abc3b2c4 | pending |
+| ST-08 | /status/ | How current this site is | a5ba4964578efad3529accdb9cc14492df70b046b4bc38f4eac8969e75e0551a | pending |
+| ST-04 | /status/ | This site shows release {releaseId}, data as of {asOfWorld}. The public API is updated continuously and may show newer records. | b7c50fafbb13c268f0ff1cb65fd5a2fe29c7bf7b67067aab0be7d8ef5a4ee626 | pending |
+| ST-05 | /status/ | This is a development build. The public API is updated continuously and may show newer records. | 3e6bb805ad38f2dfc38290bdaaa3503cf04d0d9a09f48b63df964b02a3256785 | pending |
+| ST-09 | /status/ | Reports | dacca3cba3f346a40893112b8670f453650a81138e3705c0034d2392024b9797 | pending |
+| ST-06 | /status/ | Corrections and safety reports arrive by e-mail — the dispute page states the address and the handling order. SIG promises no response time. | 1f5163266bbccf5fc5481c734e1740a8aa9663196007e71e4ad5961e6b86616b | pending |
+| SL-05 | /sources/ | Some credits are wrong or missing where the licence requires one; the correction notice above marks them, and the next data release replaces them. | 0bf6b500ba3b72a529cece789ce7b877729726074c71c381b9d6745efdc05876 | pending |
+| SL-06 | /sources/ | Source | 0e570ca6fabe24f94e52c1833f3ffd25567022beb826fa16891f3322051bc221 | pending |
+| SL-07 | /sources/ | Licence | f3ec8e880a46c8a6fb105396ee5400124f828934a9dd68c668f796cf6d47b1c8 | pending |
+| SL-08 | /sources/ | Rows | 101f2ff3de22441fcab3e15ca0b09ac3428642cf628558f16fa404fc3137baea | pending |
+| SL-09 | /sources/ | Credit | fb1875d0a5e85f29f239c293e5837e234fa07068b040fd11c2078c28df7d72d4 | pending |
+| SL-10 | /sources/ | Terms | ede5489964834a514b61c7a4a8370be2452dd4a7d807180f14991ccc11ad2430 | pending |
+| SL-11 | /sources/ | No source in this export carries express-terms rows. | 1d6b431c01aa81d4423d7783930495a57f4f53f3f519e1e641cd7d3da771d3b2 | pending |
+| SL-12 | /sources/ | Sources and licences | 6adf604fbf18a253bb12576a4d3acb2b7063cc4b12c616c01d7e2dec5fde0181 | pending |
+| SL-13 | /sources/ | Express-terms sources | aa1d616f6da77da61b01f4878398df5d8eb659519866a7fa6f87e43e837e167d | pending |
+| SL-14 | /sources/ | terms | 51d2361f4faea3bc8f9facdbc7d99abb555596a2e51f7b25fd3b41c93587e616 | pending |
+| SL-15 | /sources/ | express terms below | cfcefd516480abf1874f09eed8797c254f37f4a5c1fc8b8a405338f2fd8caaad | pending |
+| SL-16 | /sources/ | Captured terms (verbatim) | e1d2fdad5d193bd747caff5998a7a7e86ddfb69c96161542bbd85f04cb6dd7c0 | pending |
+| SL-17 | /sources/ | Terms page | 057b2bd7d6e3873ce19870eb5990d16bd072dcac4aaa430cc100152f098bfdc3 | pending |
+| SL-18 | /sources/ | public rows | 4f8ae65b9e79eac15474e29b3d000e9559cc24d17b3cf70af495cbec80655622 | pending |
+| SL-19 | /sources/ | rows in this export | 5f285b2ea8a9a93acb17cd852cb4478aab4e53ca25b4fd4ae5b7cff98cc94f01 | pending |
+| TR-03 | /terms/ | SIG is currently run by an individual maintainer, not by an organization. It has no fiscal sponsor or incorporated legal entity yet. | 278a8979b859186856c836555c81bf28671f1ab8599e1eec45f0dcdf0f4721b8 | pending |
+| DC-20 | /data-collection/ | The dispute page names the contact address and states its own operating status. | 807abbdea05119fd2521ee1c2573421053639107963ffcd561c342cbe16a8bcf | pending |
+
 ## Confirmation log
 
 <!-- The operator's verbatim confirmation lands here at the copy-batch sitting:

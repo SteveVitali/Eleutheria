@@ -1,0 +1,111 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The interim sources-and-licences page (P34.17 / R1.8 as reassigned by A-8):
+// P34.19's express-terms disclosure ships here instead of a withdrawal, and a
+// source whose credit is wrong or missing shows notice N-4 until P34.21b's
+// attribution re-export. The licence table is derived at build time from the
+// export's own compartment rows (getSourceLicenceTable), so it can never drift
+// from what the published downloads carry. Static, zero-JS.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getSourceLicenceTable, getTermsDisclosure } from "../lib/data";
+import { fmtInt } from "../lib/format";
+
+const sources = getSourceLicenceTable();
+const disclosure = getTermsDisclosure();
+const correctedCount = sources.filter((s) => s.creditUnderCorrection).length;
+const expressSources = new Set(disclosure.sources.map((s) => s.source_id));
+---
+
+<BaseLayout title="Sources and licences" path="/sources/">
+  <p data-copy="SL-02">
+    Every source SIG publishes rows from is listed with the licence its rows are
+    filed under; a source whose express terms the operator accepted the risk of
+    republishing shows its captured terms verbatim and the basis on which SIG
+    publishes them.
+  </p>
+
+  <h2 id="licences-heading" data-copy="SL-12">Sources and licences</h2>
+  <table class="sig-sources" aria-labelledby="licences-heading">
+    <thead>
+      <tr>
+        <th scope="col" data-copy="SL-06">Source</th>
+        <th scope="col" data-copy="SL-07">Licence</th>
+        <th scope="col" data-copy="SL-08">Rows</th>
+        <th scope="col" data-copy="SL-09">Credit</th>
+        <th scope="col" data-copy="SL-10">Terms</th>
+      </tr>
+    </thead>
+    <tbody>
+      {sources.map((s) => (
+        <tr data-testid="source-row" data-source-id={s.sourceId} data-credit-status={s.creditUnderCorrection ? "under-correction" : "ok"}>
+          <td><code>{s.sourceId}</code></td>
+          <td>{s.licenses.join(", ")}</td>
+          <td>{fmtInt(s.rows)}</td>
+          <td>
+            {s.creditUnderCorrection ? (
+              <span data-notice="N-4" data-testid="credit-notice">Attribution for this source is being corrected; see the source's own terms.</span>
+            ) : (
+              s.attribution ?? "—"
+            )}
+          </td>
+          <td>
+            {s.termsUrl ? <a href={s.termsUrl} rel="external" data-copy="SL-14">terms</a> : "—"}
+            {expressSources.has(s.sourceId) && <> (<a href="#express-terms-heading" data-copy="SL-15">express terms below</a>)</>}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  {correctedCount > 0 && (
+    <p data-copy="SL-05">
+      Some credits are wrong or missing where the licence requires one; the
+      correction notice above marks them, and the next data release replaces
+      them.
+    </p>
+  )}
+
+  <h2 id="express-terms-heading" data-copy="SL-13">Express-terms sources</h2>
+  {disclosure.sources.length === 0 ? (
+    <p data-copy="SL-11">No source in this export carries express-terms rows.</p>
+  ) : (
+    <>
+      <p data-copy="SL-03">
+        Published under the operator's recorded acceptance of the express-terms
+        risk (ADR-183); the source's captured terms appear verbatim.
+      </p>
+      <p data-copy="SL-04">
+        Scheduled refreshes of these sources are covered by the same acceptance
+        (SB-2); a new source carrying a non-commercial clause is added
+        facts-and-pointers only (A-9).
+      </p>
+      <!-- DATA, not drafted copy: the operator's adopted sentence verbatim from
+           the sig.terms-disclosure record (the basis itself, B-2 exempt as the
+           operator's recorded words). -->
+      <p class="sig-basis">{disclosure.basis.adopted_sentence}</p>
+      <ul class="sig-express-sources" aria-labelledby="express-terms-heading">
+        {disclosure.sources.map((s) => (
+          <li data-testid="express-source" data-source-id={s.source_id}>
+            <h3>{s.name} <code>({s.source_id})</code></h3>
+            <p>
+              <a href={s.terms_url} rel="external" data-copy="SL-17">Terms page</a>
+              {s.public_row_count != null && <> — {fmtInt(s.public_row_count)} <span data-copy="SL-18">public rows</span></>}
+              {s.export_row_count != null && s.export_row_count !== s.public_row_count && (
+                <> — {fmtInt(s.export_row_count)} <span data-copy="SL-19">rows in this export</span></>
+              )}
+            </p>
+            <details>
+              <summary data-copy="SL-16">Captured terms (verbatim)</summary>
+              <!-- The literal captured bytes — rendered as text, never markup
+                   (the capture may carry the source's own HTML). -->
+              <pre class="sig-captured-terms">{s.captured_terms_verbatim}</pre>
+            </details>
+            <p>{s.publication_basis}</p>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</BaseLayout>

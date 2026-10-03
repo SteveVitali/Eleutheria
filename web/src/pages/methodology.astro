@@ -62,7 +62,13 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
     SIG resolves many overlapping observations into single entities ("this camera seen by
     three sources is one camera"). A project that does this <strong>must publish how well
     its resolver measures against ground truth</strong> — and must say plainly when that
-    ground truth is provisional. These are the current holdout metrics.
+    ground truth is provisional. These are the current measurements.
+  </p>
+  <p data-testid="holdout-provenance" data-copy="M-40 M-41 M-42">
+    Matching quality: development evidence only. The label sets these rules
+    were tuned on were produced by an AI model and by agents; no person
+    labelled them. SIG is changing the merge rules so that only copies of one
+    upstream record are merged.
   </p>
   <p data-testid="resolved-site-definition">
     <strong>What a "resolved site" is.</strong> An <em>observation-level record</em> is one
@@ -92,14 +98,22 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
       </li>
     ))}
   </ul>
-  <p data-copy="M-20 M-21">
-    These measure <em>SIG's method</em>, on a named, frozen holdout — never a device
-    population and never a capture–recapture estimate. The full report and its
-    generator are committed with the build.
+  <p data-copy="M-43 M-21">
+    These measure <em>SIG's method</em>, on the named holdout each row names —
+    never a device population and never a capture–recapture estimate. The full
+    report and its generator are committed with the build.
   </p>
   <p data-copy="M-30">
     The SIG-authored data SIG offers upstream to OpenStreetMap is dual-licensed
     CC0-1.0 for that purpose.
+  </p>
+  <!-- P34.17 / H-6 (ADR-167): the publication-basis label — the same pinned
+       sentences as the footer (batch rows PB-01/PB-02 carry the page-scoped
+       binding; the text is the operator's recorded no-counsel posture). -->
+  <p class="sig-basis" data-testid="publication-basis" data-copy="MB-01 MB-02">
+    Published on the maintainer's own rights and publication decisions. No
+    lawyer's written opinion has been obtained; nothing here states that this
+    publication has been cleared by counsel.
   </p>
 
   <h2>Freshness and coverage</h2>
