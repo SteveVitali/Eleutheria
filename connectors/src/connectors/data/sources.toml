@@ -7491,3 +7491,44 @@ redistributable = true
 derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=718e480ad69e466fbebf3b11c0684f9e"
 retrieval_date = 2026-09-18
+
+# --- P32.12 pilot-dossier document sources (ticket 172, SIG-ACQ-003) -----------
+# Three NEW source-family rows served by the shared `dossier_documents`
+# connector (bounded clause_fields/index_listing handlers over committed
+# fixtures in tests/connectors/fixtures/dossier/). ALL THREE STAY
+# ingestion_permitted=false: the published-URL/ownership screen is not yet
+# verified (deferral D-R10-SOURCES-1 remains OPEN — no review is fabricated),
+# and fixture success is an engineering check, never a rights decision.
+
+[sources.dossier_okc]
+name = "City of Oklahoma City — ALPR dossier documents (usage page, council memo, amendment)"
+source_kind = "government_portal"
+homepage_url = "https://www.okc.gov/departments/police"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
+notes = "P32.12 pilot dossier family: OKC official ALPR/Flock documents — city usage page, council memo, contract amendment. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."
+
+[sources.dossier_tulsa]
+name = "Tulsa Police Department — ALPR dossier documents (policies 113C/113E, MOU template)"
+source_kind = "government_portal"
+homepage_url = "https://www.tulsapolice.org/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
+notes = "P32.12 pilot dossier family: TPD ALPR policy documents + camera-integration MOU template (a template asserts structure only — never an executed instrument). NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."
+
+[sources.dossier_san_diego]
+name = "City of San Diego — surveillance-technology dossier documents (ASR, Ubicquia agreement, indexes)"
+source_kind = "government_portal"
+homepage_url = "https://www.sandiego.gov/police/data-transparency"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
+notes = "P32.12 pilot dossier family: SDPD Annual Surveillance Report (Vigilant subscription — hosted access, never local hardware), the Ubicquia public-safety agreement, and the technology/PAB index pages. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."

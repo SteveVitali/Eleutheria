@@ -1,0 +1,551 @@
+{
+  "okc-council-memo-2026-08": [
+    {
+      "field": "lifecycle",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "lifecycle_transition",
+      "raw_value": "Amendment 1 / Renewal 3"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_amount",
+      "raw_value": "$270,000"
+    },
+    {
+      "field": "coverage_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "period",
+      "raw_value": "July 2026 through June 2027"
+    },
+    {
+      "field": "posted_date",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "posted_date",
+      "raw_value": "Memo Date: August 18, 2026"
+    }
+  ],
+  "okc-flock-amendment-2026": [
+    {
+      "field": "amends",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "amends_contract",
+      "raw_value": "Amendment 1 to Contract Number C241032"
+    },
+    {
+      "field": "lifecycle",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "lifecycle_transition",
+      "raw_value": "Amendment 1 to Contract Number C241032"
+    },
+    {
+      "field": "sharing_restriction",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "sharing_restriction",
+      "raw_value": "Company shall not disclose Customer Data to any federal law enforcement agency"
+    },
+    {
+      "field": "use_restriction",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "use_restriction",
+      "raw_value": "except as required by compulsory legal process"
+    },
+    {
+      "field": "written_policy",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "written_policy_value",
+      "raw_value": "in the event of conflict, this Amendment controls"
+    },
+    {
+      "field": "signed_date",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "Vendor Signature Date:"
+    },
+    {
+      "field": "execution_state",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "Date:"
+    }
+  ],
+  "okc-flock-usage-2026": [
+    {
+      "field": "claimed_count",
+      "locator": {
+        "end": 218,
+        "kind": "byte_range",
+        "start": 193
+      },
+      "predicate": "claimed_device_count",
+      "raw_value": "90 city-owned LPR readers"
+    },
+    {
+      "field": "partner_degree",
+      "locator": {
+        "end": 284,
+        "kind": "byte_range",
+        "start": 264
+      },
+      "predicate": "sharing_partner_degree",
+      "raw_value": "109 partner agencies"
+    },
+    {
+      "field": "as_of",
+      "locator": {
+        "end": 241,
+        "kind": "byte_range",
+        "start": 220
+      },
+      "predicate": "as_of",
+      "raw_value": "as of August 18, 2026"
+    },
+    {
+      "field": "retention_period",
+      "locator": {
+        "end": 365,
+        "kind": "byte_range",
+        "start": 298
+      },
+      "predicate": "retention_period",
+      "raw_value": "retention changing from 30 days to 7 days effective October 1, 2026"
+    },
+    {
+      "field": "retention_exception",
+      "locator": {
+        "end": 423,
+        "kind": "byte_range",
+        "start": 367
+      },
+      "predicate": "use_restriction",
+      "raw_value": "except when the data is part of an ongoing investigation"
+    }
+  ],
+  "sd-asr-2025-vigilant": [
+    {
+      "field": "access_edge",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "configured_access_edge",
+      "raw_value": "subscription access to the Vigilant LEARN database"
+    },
+    {
+      "field": "pooled_lookup",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "pooled_lookup_participation",
+      "raw_value": "a shared national database of ALPR scans"
+    },
+    {
+      "field": "data_scope",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "data_system_scope",
+      "raw_value": "hosted vendor database shared across subscribing agencies"
+    },
+    {
+      "field": "vendor",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "vendor",
+      "raw_value": "Vigilant Solutions, a Motorola Solutions company"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Vigilant LEARN"
+    },
+    {
+      "field": "report_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "period",
+      "raw_value": "Annual Surveillance Report 2025"
+    },
+    {
+      "field": "retention_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "retention_period",
+      "raw_value": "ALPR data is retained for no more than 60 days"
+    }
+  ],
+  "sd-pab-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 282,
+        "kind": "byte_range",
+        "start": 220
+      },
+      "predicate": "document",
+      "raw_value": "PAB Recommendation on the 2025 ALPR Annual Surveillance Report"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 282,
+        "kind": "byte_range",
+        "start": 220
+      },
+      "predicate": "title",
+      "raw_value": "PAB Recommendation on the 2025 ALPR Annual Surveillance Report"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "end": 340,
+        "kind": "byte_range",
+        "start": 326
+      },
+      "predicate": "document",
+      "raw_value": "Annual Reports"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 340,
+        "kind": "byte_range",
+        "start": 326
+      },
+      "predicate": "title",
+      "raw_value": "Annual Reports"
+    }
+  ],
+  "sd-technology-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 211,
+        "kind": "byte_range",
+        "start": 199
+      },
+      "predicate": "document",
+      "raw_value": "ALPR Program"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 211,
+        "kind": "byte_range",
+        "start": 199
+      },
+      "predicate": "title",
+      "raw_value": "ALPR Program"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "end": 328,
+        "kind": "byte_range",
+        "start": 297
+      },
+      "predicate": "document",
+      "raw_value": "2025 Annual Surveillance Report"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 328,
+        "kind": "byte_range",
+        "start": 297
+      },
+      "predicate": "title",
+      "raw_value": "2025 Annual Surveillance Report"
+    },
+    {
+      "field": "posted_date",
+      "locator": {
+        "end": 353,
+        "kind": "byte_range",
+        "start": 335
+      },
+      "predicate": "posted_date",
+      "raw_value": "Posted: 2026-02-15"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "end": 429,
+        "kind": "byte_range",
+        "start": 414
+      },
+      "predicate": "document",
+      "raw_value": "ALPR Use Policy"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 429,
+        "kind": "byte_range",
+        "start": 414
+      },
+      "predicate": "title",
+      "raw_value": "ALPR Use Policy"
+    }
+  ],
+  "sd-ubicquia-agreement-2023": [
+    {
+      "field": "buyer",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "buyer",
+      "raw_value": "City of San Diego"
+    },
+    {
+      "field": "seller",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "seller",
+      "raw_value": "Ubicquia, Inc."
+    },
+    {
+      "field": "vendor",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "vendor",
+      "raw_value": "Flock Safety, Inc."
+    },
+    {
+      "field": "contract_value",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contract_value",
+      "raw_value": "not to exceed $11,662,500"
+    },
+    {
+      "field": "contracted_count",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contracted_device_count",
+      "raw_value": "up to 500 units"
+    },
+    {
+      "field": "coverage_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "period",
+      "raw_value": "five (5) year term"
+    },
+    {
+      "field": "signed_date",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "signed_date",
+      "raw_value": "Vendor Date: 12/15/2023"
+    },
+    {
+      "field": "execution_state",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "City Date:"
+    }
+  ],
+  "tulsa-mou-template": [
+    {
+      "field": "written_policy",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "written_policy_value",
+      "raw_value": "Camera Integration Memorandum of Understanding"
+    },
+    {
+      "field": "use_restriction",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "use_restriction",
+      "raw_value": "data shall be used solely for legitimate law enforcement purposes"
+    },
+    {
+      "field": "buyer",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "Licensor:"
+    },
+    {
+      "field": "seller",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "Licensee:"
+    },
+    {
+      "field": "signed_date",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "Date:"
+    }
+  ],
+  "tulsa-policy-113c": [
+    {
+      "field": "effective_from",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "effective_from",
+      "raw_value": "Effective Date: July 7, 2023"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "fixed ALPR cameras provided by Flock Safety"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Axon Fleet 3 in-car ALPR systems"
+    },
+    {
+      "field": "retention_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "retention_period",
+      "raw_value": "manually entered LPR data shall be retained for no longer than 12 months"
+    },
+    {
+      "field": "use_restriction",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "use_restriction",
+      "raw_value": "access to the system is restricted to authorized personnel"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Tulsa Police Department"
+    }
+  ],
+  "tulsa-policy-113e": [
+    {
+      "field": "effective_from",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "effective_from",
+      "raw_value": "Effective Date: October 4, 2023"
+    },
+    {
+      "field": "sharing_restriction",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "sharing_restriction",
+      "raw_value": "sharing of ALPR data requires the approval of the Chief of Police or designee"
+    },
+    {
+      "field": "use_restriction",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "use_restriction",
+      "raw_value": "used only for legitimate law enforcement purposes and official business"
+    },
+    {
+      "field": "retention_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "uniform numeric retention period"
+    }
+  ]
+}

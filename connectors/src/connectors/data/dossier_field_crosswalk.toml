@@ -1,0 +1,405 @@
+# SPDX-License-Identifier: Apache-2.0
+# The frozen named-target crosswalk for the pilot-dossier document adapters
+# (P32.12, §55.6, SIG-ACQ-003). This table is DATA, not code (SIG-ENG-001): it
+# maps each reviewed source field/span a `clause_fields`/`index_listing` target
+# may configure onto the EXISTING predicate, qualifier, organisation role,
+# valid-time semantics and dossier rubric field it becomes. A field referenced
+# by a configured target that has no row here — or a `required` field whose row
+# is `needs_amendment` — FAILS `check_crosswalk()` (review fails closed); the
+# route for an unmapped field is a scoped schema amendment recorded on the row,
+# never an ad-hoc ontology addition (§3.1).
+#
+# Consumed vocabularies (all existing — this file extends none of them):
+#   * predicates        — ontology/vocab/predicates.yaml (validated at load)
+#   * qualifier ids     — the §29.3 qualifier predicates (count_scope,
+#                         count_scope_detail, evidence_origin)
+#   * object_role       — db.organization_roles.OrganizationRole, checked
+#                         against role_for_predicate (a publisher can never
+#                         mint an operational role — SIG-TRUST-003)
+#   * dossier_field     — the S2 rubric's twelve questions q1..q12
+#   * valid_time        — {publication, effective, coverage, as_of, none}:
+#                         which date the field's claim may carry in valid_*
+#                         (publication = the document's stated posting date;
+#                         effective = the document's own stated effective date;
+#                         coverage = the instrument's coverage window; as_of =
+#                         the record's declared data-currency date; none =
+#                         no valid-time promotion — observed_at still records
+#                         capture time)
+#   * state             — {answered, present_but_empty, absent, redacted}
+#
+# Slugs cite the P32.11 `target_predicates` expectation slugs
+# (tasks/src/tasks/data/acquisition_queue.toml).
+
+schema = "dossier-field-crosswalk/1"
+version = "dossier-field-crosswalk/1"
+
+dossier_fields = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12"]
+valid_time_kinds = ["publication", "effective", "coverage", "as_of", "none"]
+field_states = ["answered", "present_but_empty", "absent", "redacted"]
+
+# --- parties / roles (q1 operator/buyer/funder, q5 procurement) --------------
+# Object-role semantics come from db.organization_roles (P32.3): the entity-ref
+# twin minted at link() carries exactly this role, scoped to the asserting
+# source's jurisdiction — a candidate, never a merged identity (SIG-TRUST-004).
+
+[fields.buyer]
+slug = "contract.procurement"
+predicate = "buyer"
+object_role = "buyer"
+dossier_field = "q1"
+valid_time = "coverage"
+applicability = "the buying party the instrument names, for its coverage window"
+required = false
+status = "mapped"
+
+[fields.seller]
+slug = "contract.procurement"
+predicate = "seller"
+object_role = "vendor"
+dossier_field = "q1"
+valid_time = "coverage"
+applicability = "the selling/prime party the instrument names, for its coverage window"
+required = false
+status = "mapped"
+
+[fields.vendor]
+slug = "identity.vendor_role"
+predicate = "vendor"
+object_role = "vendor"
+dossier_field = "q1"
+valid_time = "coverage"
+applicability = "the product/sub-vendor the document names, for its coverage window — a named role, never an operational relationship"
+required = false
+status = "mapped"
+
+# --- procurement facts (q5) --------------------------------------------------
+
+[fields.contract_value]
+slug = "funding.amount"
+predicate = "contract_value"
+object_type = "quantity"
+unit = "USD"
+dossier_field = "q5"
+valid_time = "coverage"
+applicability = "the stated contract value; an award ceiling stays a ceiling — never expenditure (the verbatim literal is preserved in raw_value)"
+required = false
+status = "mapped"
+
+[fields.funding_amount]
+slug = "funding.amount"
+predicate = "funding_amount"
+object_type = "quantity"
+unit = "USD"
+dossier_field = "q5"
+valid_time = "coverage"
+applicability = "the funding amount the document states for the covered period — an appropriation/renewal figure, never a payment observation"
+required = false
+status = "mapped"
+
+[fields.contracted_count]
+slug = "contract.procurement"
+predicate = "contracted_device_count"
+dossier_field = "q3"
+valid_time = "coverage"
+applicability = "the unit count the instrument contracts for; the count's universe rides in count_scope/count_scope_detail qualifiers — a contracted unit is not an active sensor"
+required = false
+status = "mapped"
+
+[fields.signed_date]
+slug = "contract.procurement"
+predicate = "signed_date"
+dossier_field = "q5"
+valid_time = "effective"
+applicability = "the signature date the instrument's signature block states, verbatim — presence of one party's date is not full execution (see execution_state)"
+required = false
+status = "mapped"
+
+[fields.contract_start]
+slug = "contract.procurement"
+predicate = "contract_start_date"
+dossier_field = "q5"
+valid_time = "effective"
+applicability = "the term start the instrument states"
+required = false
+status = "mapped"
+
+[fields.contract_end]
+slug = "contract.procurement"
+predicate = "contract_end_date"
+dossier_field = "q5"
+valid_time = "effective"
+applicability = "the term end the instrument states"
+required = false
+status = "mapped"
+
+[fields.coverage_period]
+slug = "contract.procurement"
+predicate = "period"
+dossier_field = "q5"
+valid_time = "coverage"
+applicability = "the period the record covers, verbatim"
+required = false
+status = "mapped"
+
+[fields.products]
+slug = "inventory.technology"
+predicate = "products"
+dossier_field = "q2"
+valid_time = "coverage"
+applicability = "the products the instrument names, verbatim"
+required = false
+status = "mapped"
+
+[fields.renewal_options]
+slug = "contract.procurement"
+predicate = "renewal_options"
+dossier_field = "q5"
+valid_time = "coverage"
+applicability = "the renewal options the instrument states, verbatim"
+required = false
+status = "mapped"
+
+[fields.amends]
+slug = "lifecycle.amendment"
+predicate = "amends_contract"
+dossier_field = "q5"
+valid_time = "effective"
+applicability = "the earlier instrument this document amends, verbatim identifier — an amendment links instruments; it does not execute them"
+required = false
+status = "mapped"
+
+[fields.lifecycle]
+slug = "lifecycle.amendment"
+predicate = "lifecycle_transition"
+dossier_field = "q9"
+valid_time = "effective"
+applicability = "the lifecycle label the document declares (renewal/amendment), verbatim — a declared label, never a collapsed executed boolean"
+required = false
+status = "mapped"
+
+# --- governance / policy (q6 authority, q7 retention, q8 sharing) -------------
+
+[fields.retention_period]
+slug = "retention.period"
+predicate = "retention_period"
+dossier_field = "q7"
+valid_time = "effective"
+applicability = "the retention rule the document states for its declared scope; a future-effective statement keeps its stated effective date — never the capture date"
+required = true
+status = "mapped"
+
+[fields.retention_exception]
+slug = "retention.period"
+predicate = "use_restriction"
+dossier_field = "q7"
+valid_time = "effective"
+applicability = "the exception/carve-out clause paired with the retention rule, verbatim — an exception is preserved as its own stated rule, never folded silently into the period"
+required = false
+status = "mapped"
+
+[fields.use_restriction]
+slug = "governance.policy"
+predicate = "use_restriction"
+dossier_field = "q7"
+valid_time = "effective"
+applicability = "a permitted/prohibited use the instrument states, verbatim — scoped to the instrument's own subject"
+required = false
+status = "mapped"
+
+[fields.sharing_restriction]
+slug = "governance.policy"
+predicate = "sharing_restriction"
+dossier_field = "q8"
+valid_time = "effective"
+applicability = "a sharing rule the instrument states, verbatim — a restriction on one party is not a prohibition on every actor"
+required = false
+status = "mapped"
+
+[fields.legal_authority]
+slug = "legal.authority"
+predicate = "legal_authority"
+dossier_field = "q6"
+valid_time = "effective"
+applicability = "the authority basis the document cites, verbatim — program-specific authority is not a universal licence"
+required = false
+status = "mapped"
+
+[fields.citation]
+slug = "legal.authority"
+predicate = "citation"
+dossier_field = "q6"
+valid_time = "none"
+applicability = "a legal citation the document states, verbatim"
+required = false
+status = "mapped"
+
+[fields.enacting_body]
+slug = "governance.policy"
+predicate = "enacting_body"
+dossier_field = "q6"
+valid_time = "none"
+applicability = "the body the document names as enacting/approving, verbatim"
+required = false
+status = "mapped"
+
+[fields.effective_from]
+slug = "governance.policy"
+predicate = "effective_from"
+dossier_field = "q9"
+valid_time = "effective"
+applicability = "the effective/approval date the document displays — the document's own declared date, never its retrieval date"
+required = false
+status = "mapped"
+
+[fields.written_policy]
+slug = "governance.policy"
+predicate = "written_policy_value"
+dossier_field = "q6"
+valid_time = "effective"
+applicability = "a policy value the document states verbatim (precedence, approval, access-handling rules) where no narrower predicate exists"
+required = false
+status = "mapped"
+
+[fields.authorization_state]
+slug = "governance.policy"
+predicate = "authorization_state"
+dossier_field = "q6"
+valid_time = "effective"
+applicability = "the authorization condition the document states, verbatim"
+required = false
+status = "mapped"
+
+# --- inventory / access (q2 tech, q3 owned inventory, q4 external access) ------
+
+[fields.technology]
+slug = "inventory.technology"
+predicate = "technology"
+dossier_field = "q2"
+valid_time = "coverage"
+applicability = "the technology/product the document describes — distinct products stay distinct (a fixed ALPR line and an in-car line are not one product)"
+required = true
+status = "mapped"
+
+[fields.claimed_count]
+slug = "inventory.technology"
+predicate = "claimed_device_count"
+dossier_field = "q3"
+valid_time = "as_of"
+applicability = "the device count the document claims; the count universe rides in count_scope/count_scope_detail — never generalized beyond the stated scope"
+required = false
+status = "mapped"
+
+[fields.partner_degree]
+slug = "identity.partner"
+predicate = "sharing_partner_degree"
+dossier_field = "q8"
+valid_time = "as_of"
+applicability = "the partner-agency degree (count) the document reports — an aggregate number, never a device count and never named sharing edges"
+required = false
+status = "mapped"
+
+[fields.access_edge]
+slug = "access.subscription"
+predicate = "configured_access_edge"
+dossier_field = "q4"
+valid_time = "coverage"
+applicability = "configured access to an external/hosted system the document reports — subscription or access is never local hardware"
+required = true
+status = "mapped"
+
+[fields.pooled_lookup]
+slug = "access.subscription"
+predicate = "pooled_lookup_participation"
+dossier_field = "q4"
+valid_time = "coverage"
+applicability = "participation in a pooled/hosted lookup arrangement the document reports — access to shared data, not sensor ownership"
+required = false
+status = "mapped"
+
+[fields.data_scope]
+slug = "access.subscription"
+predicate = "data_system_scope"
+dossier_field = "q4"
+valid_time = "coverage"
+applicability = "the data-system scope the document describes (e.g. vendor_cloud_shared for a pooled hosted database)"
+required = false
+status = "mapped"
+
+[fields.as_of]
+slug = "temporal.applicability"
+predicate = "as_of"
+dossier_field = "q9"
+valid_time = "as_of"
+applicability = "the data-currency date the record declares — an 'as of' is not an effective date and not the retrieval date"
+required = false
+status = "mapped"
+
+# --- document / index rows (q9 timeline, q10 oversight) ------------------------
+
+[fields.document]
+slug = "oversight.report"
+predicate = "document"
+dossier_field = "q10"
+valid_time = "none"
+applicability = "a document the index lists (existence + link), verbatim label — a listing proves the index carried the link, not the document's contents"
+required = false
+status = "mapped"
+
+[fields.title]
+slug = "oversight.report"
+predicate = "title"
+dossier_field = "q10"
+valid_time = "none"
+applicability = "the listed document's label, verbatim — a version/year inside a label stays text, never a promoted effective date"
+required = false
+status = "mapped"
+
+[fields.posted_date]
+slug = "oversight.report"
+predicate = "posted_date"
+dossier_field = "q9"
+valid_time = "publication"
+applicability = "a posting/publication date the index displays — never promoted to effective"
+required = false
+status = "mapped"
+
+[fields.report_period]
+slug = "oversight.report"
+predicate = "period"
+dossier_field = "q9"
+valid_time = "coverage"
+applicability = "the reporting period an oversight/report document covers, verbatim"
+required = false
+status = "mapped"
+
+# --- field-completeness bookkeeping (q12 unresolved evidence) ------------------
+# The handler emits these mechanically for every configured field whose state
+# is not `answered` — mandated != populated recorded, never fabricated.
+
+[fields.field_state]
+slug = "provenance.field_state"
+predicate = "disclosure_field_state"
+dossier_field = "q12"
+valid_time = "none"
+applicability = "the field's disclosure state on the reviewed document — answered / present_but_empty / absent; redaction is carried by a somevalue claim, not this row"
+required = false
+status = "mapped"
+
+# --- the routed scoped amendment ----------------------------------------------
+# `execution_state` (was the instrument's execution verified — parties signed,
+# dates present, blanks?) has NO existing predicate: the §11.17/§11.11 surface
+# records lifecycle *labels* but not a reviewer-assessed execution verdict, and
+# S2 forbids inferring execution from a signature block. The field is admitted
+# here as `needs_amendment` with the scoped proposal recorded — it emits only a
+# disclosure_field_state row (the field is present/absent on the document),
+# never a value claim. The amendment route is a vocabulary proposal for a
+# future schema ticket; this file does not mint it (§3.1, SIG-ACQ-003).
+
+[fields.execution_state]
+slug = "contract.procurement"
+dossier_field = "q5"
+valid_time = "none"
+applicability = "the reviewed execution state of the instrument on the captured bytes — signature presence alone never asserts execution"
+required = false
+status = "needs_amendment"
+amendment = "scoped vocab proposal (dossier-field-crosswalk/1, 2026-10): add predicate `instrument_execution_state` over a closed ExecutionState enum {verified_executed, partially_signed, unsigned_template, not_visually_verified}; value is a reviewer assessment, never an inferred state. Owner: the next schema/vocab ticket that consumes this field."

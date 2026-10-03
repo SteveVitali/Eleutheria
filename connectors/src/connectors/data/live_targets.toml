@@ -1201,3 +1201,208 @@ organizations = [ "Biometrics and Surveillance Camera Commissioner", "Home Offic
 technologies = [ "facial recognition" ]
 source_class = "primary_record"
 review_note = "The Commissioner's final combined annual report (April 2022 – March 2023): the statutory PoFA 2012 s21(1)/s35(1) report on oversight of public-space surveillance cameras and biometric material, incl. the live-facial-recognition oversight gap the abolition creates. 'Biometrics and Surveillance Camera Commissioner' is a role-shaped name — partner_identity refuses it, so it lands as the text claim it is; 'Home Office' mints the entity ref."
+
+# --- P32.12 pilot-dossier targets (ticket 172, SIG-ACQ-003) --------------------
+# The reviewed field maps the `dossier_documents` connector reads. Every target
+# names its kind (clause_fields | index_listing), the declared artifact genre
+# (ADR-122 — validated against predicates.yaml by check_crosswalk), the dossier
+# subject, and per-field: the crosswalk field id, the verbatim literal that MUST
+# appear in the captured bytes (an absent literal is recorded ContentDrift),
+# the typed value, optional field state (answered | present_but_empty | absent |
+# redacted), optional qualifiers, and optional valid_* per the row's valid_time
+# class. Sources stay ingestion_permitted=false — these rows are the reviewed
+# target registry the FIXTURE runs replay over, not a live-fetch authorisation.
+
+[dossier_okc]
+kind = "dossier_documents"
+
+# Oklahoma City's official ALPR/Flock usage page — agency-stated counts +
+# future-effective retention change with its carve-out.
+[[dossier_okc.targets]]
+id = "okc-flock-usage-2026"
+doc_id = "okc-flock-usage-2026"
+url = "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+kind = "clause_fields"
+subject_id = "sig:deployment:okc-okcpd-flock"
+document_genre = "official_statement"
+review_note = "City's own published usage statement (official_statement): counts carry their declared universe in count_scope qualifiers; the retention clause's stated effective date (2026-10-01) rides valid_from — a future-effective provision is never asserted as currently operative; the exception clause is preserved verbatim, never folded into the period."
+fields = [
+  { field = "claimed_count", literal = "90 city-owned LPR readers", value = 90, qualifiers = [ { qualifier_id = "count_scope", value = "city_owned" }, { qualifier_id = "count_scope_detail", value = "city-owned LPR readers" }, { qualifier_id = "evidence_origin", value = "agency_statement" } ] },
+  { field = "partner_degree", literal = "109 partner agencies", value = 109, qualifiers = [ { qualifier_id = "count_scope", value = "partner_agencies" }, { qualifier_id = "count_scope_detail", value = "partner agencies, not devices" } ] },
+  { field = "as_of", literal = "as of August 18, 2026", value = "2026-08-18" },
+  { field = "retention_period", literal = "retention changing from 30 days to 7 days effective October 1, 2026", value = "7 days", valid_from = "2026-10-01", context = "except when the data is part of an ongoing investigation" },
+  { field = "retention_exception", literal = "except when the data is part of an ongoing investigation", value = "data in an ongoing investigation may be retained past the stated period" },
+]
+
+# The August 2026 council memo — a posted governance document (publication
+# date), describing the amendment it accompanies (never executing it).
+[[dossier_okc.targets]]
+id = "okc-council-memo-2026-08"
+doc_id = "okc-council-memo-2026-08"
+url = "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+kind = "clause_fields"
+subject_id = "contract:okc-flock-c241032"
+document_genre = "agenda_document"
+review_note = "Council memo is posted (posted_date = publication), not enacted — its dates describe the instrument it covers; lifecycle stays the declared label (amendment/renewal), never a collapsed executed boolean."
+fields = [
+  { field = "lifecycle", literal = "Amendment 1 / Renewal 3", value = "amendment 1 / renewal 3" },
+  { field = "funding_amount", literal = "$270,000", value = 270000 },
+  { field = "coverage_period", literal = "July 2026 through June 2027", value = "July 2026 - June 2027", valid_from = "2026-07-01", valid_to = "2027-06-30" },
+  { field = "posted_date", literal = "Memo Date: August 18, 2026", value = "2026-08-18", valid_from = "2026-08-18" },
+]
+
+# The executed-instrument amendment itself — genre `contract` (never
+# `executed_contract`: the signature block is incomplete on the captured text,
+# so execution is asserted only as a field-state, never as a fact).
+[[dossier_okc.targets]]
+id = "okc-flock-amendment-2026"
+doc_id = "okc-flock-amendment-2026"
+url = "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+kind = "clause_fields"
+subject_id = "contract:okc-flock-c241032-amendment-1"
+document_genre = "contract"
+review_note = "Amendment 1 to contract C241032. The amendment links instruments (amends_contract) without asserting execution; the actor-specific federal-disclosure restriction and its compulsory-process carve-out are preserved verbatim; the signature DATE line exists but the value line is incomplete (present_but_empty)."
+fields = [
+  { field = "amends", literal = "Amendment 1 to Contract Number C241032", value = "C241032" },
+  { field = "lifecycle", literal = "Amendment 1 to Contract Number C241032", value = "amendment" },
+  { field = "sharing_restriction", literal = "Company shall not disclose Customer Data to any federal law enforcement agency", value = "no disclosure of customer data to federal law enforcement" },
+  { field = "use_restriction", literal = "except as required by compulsory legal process", value = "disclosure restriction does not apply where compulsory legal process requires" },
+  { field = "written_policy", literal = "in the event of conflict, this Amendment controls", value = "in the event of conflict, this Amendment controls over the Agreement" },
+  { field = "signed_date", label = "Vendor Signature Date:", state = "present_but_empty" },
+  { field = "execution_state", label = "Date:", state = "present_but_empty" },
+]
+
+[dossier_tulsa]
+kind = "dossier_documents"
+
+# Tulsa's camera-integration MOU — a TEMPLATE: every emitted claim is stamped
+# claim_directness = D6 and the template_execution_guard bars party/signature/
+# value/term predicates; blanks are recorded field-states, never facts.
+[[dossier_tulsa.targets]]
+id = "tulsa-mou-template"
+doc_id = "tulsa-mou-template"
+url = "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+kind = "clause_fields"
+subject_id = "sig:deployment:tulsa-tpd-alpr"
+document_genre = "template"
+review_note = "A blank MOU proves structure only (S2): its executed-instrument fields are recorded as present_but_empty field-states; the terms that exist on the page (purpose, use restriction) emit D6 claims under non-execution predicates."
+fields = [
+  { field = "written_policy", literal = "Camera Integration Memorandum of Understanding", value = "camera integration memorandum of understanding" },
+  { field = "use_restriction", literal = "data shall be used solely for legitimate law enforcement purposes", value = "legitimate law enforcement purposes only" },
+  { field = "buyer", label = "Licensor:", state = "present_but_empty" },
+  { field = "seller", label = "Licensee:", state = "present_but_empty" },
+  { field = "signed_date", label = "Date:", state = "present_but_empty" },
+]
+
+# TPD Policy 113C (fixed + in-car ALPR) — the technologies stay distinct; the
+# retention clause is scoped to manually entered data only (S2 caution).
+[[dossier_tulsa.targets]]
+id = "tulsa-policy-113c"
+doc_id = "tulsa-policy-113c"
+url = "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+kind = "clause_fields"
+subject_id = "sig:deployment:tulsa-tpd-alpr"
+document_genre = "agency_policy"
+review_note = "Policy 113C names two distinct ALPR products (Flock fixed + Axon Fleet 3 in-car) — kept distinct claims; its retention clause is scoped to manually entered data and never generalized to every scan (raw_context carries the scope verbatim)."
+fields = [
+  { field = "effective_from", literal = "Effective Date: July 7, 2023", value = "2023-07-07", valid_from = "2023-07-07" },
+  { field = "technology", literal = "fixed ALPR cameras provided by Flock Safety", value = "Flock Safety fixed ALPR" },
+  { field = "technology", literal = "Axon Fleet 3 in-car ALPR systems", value = "Axon Fleet 3 in-car ALPR" },
+  { field = "retention_period", literal = "manually entered LPR data shall be retained for no longer than 12 months", value = "12 months", context = "manually entered LPR data" },
+  { field = "use_restriction", literal = "access to the system is restricted to authorized personnel", value = "authorized personnel only" },
+  { field = "enacting_body", literal = "Tulsa Police Department", value = "Tulsa Police Department" },
+]
+
+# TPD Policy 113E — approval-based sharing, no uniform numeric retention
+# period (the reviewed absence is recorded as a field-state, never a value).
+[[dossier_tulsa.targets]]
+id = "tulsa-policy-113e"
+doc_id = "tulsa-policy-113e"
+url = "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+kind = "clause_fields"
+subject_id = "sig:deployment:tulsa-tpd-alpr"
+document_genre = "agency_policy"
+review_note = "113E governs use/sharing: sharing requires Chief of Police approval; it supplies no uniform numeric retention period — reviewed 'absent' emits a disclosure_field_state (searched the whole capture, found nothing), never a fabricated period."
+fields = [
+  { field = "effective_from", literal = "Effective Date: October 4, 2023", value = "2023-10-04", valid_from = "2023-10-04" },
+  { field = "sharing_restriction", literal = "sharing of ALPR data requires the approval of the Chief of Police or designee", value = "Chief of Police or designee approval required" },
+  { field = "use_restriction", literal = "used only for legitimate law enforcement purposes and official business", value = "legitimate law enforcement purposes and official business only" },
+  { field = "retention_period", state = "absent", label = "uniform numeric retention period" },
+]
+
+[dossier_san_diego]
+kind = "dossier_documents"
+
+# SDPD Annual Surveillance Report 2025 — the Vigilant LEARN subscription:
+# hosted database access, never local hardware (access_mode = "subscription"
+# mechanically bars device/deployment predicates).
+[[dossier_san_diego.targets]]
+id = "sd-asr-2025-vigilant"
+doc_id = "sd-asr-2025-vigilant"
+url = "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+kind = "clause_fields"
+subject_id = "sig:deployment:sdpd-vigilant"
+document_genre = "official_statement"
+access_mode = "subscription"
+review_note = "The ASR reports subscription access to the hosted Vigilant LEARN database — configured_access_edge + pooled lookup, never a device count or deployment (subscription_hardware_guard); the report's own coverage year rides `period`."
+fields = [
+  { field = "access_edge", literal = "subscription access to the Vigilant LEARN database", value = true },
+  { field = "pooled_lookup", literal = "a shared national database of ALPR scans", value = true },
+  { field = "data_scope", literal = "hosted vendor database shared across subscribing agencies", value = "vendor_cloud_shared" },
+  { field = "vendor", literal = "Vigilant Solutions, a Motorola Solutions company", value = "Vigilant Solutions" },
+  { field = "technology", literal = "Vigilant LEARN", value = "Vigilant LEARN" },
+  { field = "report_period", literal = "Annual Surveillance Report 2025", value = "2025" },
+  { field = "retention_period", literal = "ALPR data is retained for no more than 60 days", value = "60 days" },
+]
+
+# The Ubicquia public-safety agreement — genre `contract` (never
+# `executed_contract`: only the vendor signature date appears on the captured
+# text; city execution is not visually verified and is recorded as a
+# field-state routed through the scoped `execution_state` amendment).
+[[dossier_san_diego.targets]]
+id = "sd-ubicquia-agreement-2023"
+doc_id = "sd-ubicquia-agreement-2023"
+url = "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+kind = "clause_fields"
+subject_id = "contract:sandiego-ubicquia-ps"
+document_genre = "contract"
+review_note = "Executed-instrument facts the text supports: parties (buyer City of San Diego / prime Ubicquia / sub-vendor Flock Safety terms incorporated), the not-to-exceed value (a ceiling, never expenditure), the contracted unit count (contracted ≠ installed), the five-year term. The vendor signature date is verbatim; the city date line is blank — execution_state routes the scoped amendment."
+fields = [
+  { field = "buyer", literal = "City of San Diego", value = "City of San Diego" },
+  { field = "seller", literal = "Ubicquia, Inc.", value = "Ubicquia, Inc." },
+  { field = "vendor", literal = "Flock Safety, Inc.", value = "Flock Safety, Inc." },
+  { field = "contract_value", literal = "not to exceed $11,662,500", value = 11662500 },
+  { field = "contracted_count", literal = "up to 500 units", value = 500, qualifiers = [ { qualifier_id = "count_scope", value = "contracted_units" }, { qualifier_id = "count_scope_detail", value = "streetlight ALPR units, contracted not installed" } ] },
+  { field = "coverage_period", literal = "five (5) year term", value = "5 years" },
+  { field = "signed_date", literal = "Vendor Date: 12/15/2023", value = "2023-12-15" },
+  { field = "execution_state", label = "City Date:", state = "present_but_empty" },
+]
+
+# The public technology index page — a listing proves the index carried the
+# link; titles stay verbatim text, years are never promoted to effective dates.
+[[dossier_san_diego.targets]]
+id = "sd-technology-index"
+doc_id = "sd-technology-index"
+url = "https://www.sandiego.gov/police/data-transparency/technology"
+kind = "index_listing"
+subject_id = "sig:deployment:sdpd-alpr"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "ALPR Program", url_contains = "technology?tech=alpr" },
+  { label_contains = "2025 Annual Surveillance Report", url_contains = "sdpd-annual-surveillance-report-2025", posted_date = "Posted: 2026-02-15" },
+  { label_contains = "ALPR Use Policy", url_contains = "alpr-use-policy" },
+]
+
+# The Privacy Advisory Board reports index — the ALPR recommendation is listed
+# (existence + link); a listing never asserts the document's contents.
+[[dossier_san_diego.targets]]
+id = "sd-pab-index"
+doc_id = "sd-pab-index"
+url = "https://www.sandiego.gov/pab/reports"
+kind = "index_listing"
+subject_id = "sig:deployment:sdpd-alpr"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "PAB Recommendation on the 2025 ALPR Annual Surveillance Report", url_contains = "pab-final-recommendation-alpr-2025" },
+  { label_contains = "Annual Reports", url_contains = "pab/annual-reports" },
+]
