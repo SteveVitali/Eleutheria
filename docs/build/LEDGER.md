@@ -1,6 +1,7 @@
 # SIG — build ledger (orchestrate-build machine state; committed build memory v2, ADR-073)
 <!-- Archived comments: LEDGER.md lines 2–19 before P34.10's closeout (the eighteen Archived-head/Archived-line pointer comments — the R01–R10 head, SEED-10's placeholder, and every per-closeout State/head line through pre-P34.9; 4,934 B), byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_comments_pre-P34.10.txt, sha256 a245dd7dbfaafc0876c5b49e40ab6acad3aceb5474d937293e7076246683efa2 (P34.10, 2026-10-02 — per the Archived-head precedent; each pointer remains verbatim in the repair file). -->
 <!-- Archived line: the head State line before P34.10's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-P34.10.txt, sha256 28775c24cd4d29bd452a8b0b52aaf1120597e468194baabc4cfe5aecc86706b4 -->
+<!-- Archived line: the head State line before P34.11's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-P34.11.txt, sha256 e81f1ffcbcbd663b83e25014b78678353e8cff7ffb3e31eee7f87a2885be22a0 -->
 
 Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before the ledger was committed); committed as build memory v2 by P22.3 (ADR-073); head replaced for Round 11 by SEED-10 on branch `r11/seed` at 2026-10-01T08:14:19Z (B3 §3.2). The manifest is the plan; this file holds state and the append-only records.
 
