@@ -353,32 +353,192 @@ export function dossierJsonPath(slug: string): string {
 }
 
 /**
- * The count of DISTINCT unresearched fields the incompleteness banner names
- * (SIG-UI-012): every `NOT_RESEARCHED` gap plus every section row that is a
- * `NOT_RESEARCHED` absence, deduplicated by `(subject_id, predicate_id)` so a field
- * elevated to the "what we don't know" headline AND shown in its section is counted
- * once. "No evidence found" is NOT unresearched — SIG looked — so it is excluded.
+ * The count of DISTINCT unresearched fields (the `NOT_RESEARCHED` subset of
+ * {@link dossierUnknowns}): every `NOT_RESEARCHED` gap plus every section row that
+ * is a `NOT_RESEARCHED` absence, deduplicated by `(subject_id, predicate_id)` so a
+ * field elevated to the "what we don't know" headline AND shown in its section is
+ * counted once. "No evidence found" is NOT unresearched — SIG looked — so it is
+ * excluded. Kept as its own counter (and wire name) because SIG-UI-012 names the
+ * unresearched subset specifically.
  */
 export function unresearchedFieldCount(dossier: Dossier): number {
-  const keys = new Set<string>();
+  return dossierUnknowns(dossier).notResearched;
+}
+
+/**
+ * Which §39.2 section carries which action block (SIG-UI-014a/b). Shared by the
+ * dossier page, the print export, and the unknown/empty-section counters so the
+ * three can never disagree about where an action block supplies content.
+ */
+export const SECTION_ACTION_BLOCKS: Record<
+  string,
+  "authorization" | "termination" | "legal_regime"
+> = {
+  cost_and_expiry: "termination",
+  accountability_events: "authorization",
+  policy: "legal_regime",
+};
+
+/** The exact sentence an empty dossier section renders — it asserts NO absence kind. */
+export const NO_RECORD_IN_SIG = "No record in SIG.";
+
+/** A section body is empty when it carries neither rows nor figures. */
+export function sectionIsEmpty(section: Section): boolean {
+  return (section.rows ?? []).length === 0 && (section.figures ?? []).length === 0;
+}
+
+/**
+ * Every field the dossier page cannot answer, broken down honestly (QW-7 /
+ * F-136 / F-100). The incompleteness banner must count EVERY unknown, not only
+ * the `NOT_RESEARCHED` subset: a bare `null` row rendered as "unknown", a null
+ * action-block field, and an `UNRESOLVED` disagreement are all fields with no
+ * recorded answer, and the banner must say so. Kinds:
+ *
+ *   - `notResearched`    — `NOT_RESEARCHED` gaps + absence rows (never looked);
+ *   - `noEvidenceFound`  — `NO_EVIDENCE_FOUND` gaps + absence rows (searched,
+ *                          nothing found — still an unknown answer);
+ *   - `unresolved`       — `UNRESOLVED` gaps + absence rows (evidence disagrees);
+ *   - `unknown`          — bare `null` values with no recorded absence kind
+ *                          (the data supports no kind — none is asserted, QW-7);
+ *   - `withheld`         — values withheld under publication policy (counted
+ *                          separately: the value exists but is not shown —
+ *                          NOT part of `total`);
+ *   - `emptySections`    — §39.2 sections with no rows, no figures, and no
+ *                          action block (or "what we don't know" with no gaps).
+ *
+ * `EVIDENCE_OF_ABSENCE` is a positive finding (the field HAS an answer: "does
+ * not exist"), so it is never counted as an unknown. Fields are deduplicated by
+ * `(subject_id, predicate_id)` across gaps and rows; when a field is recorded
+ * under more than one kind the most-informative kind wins
+ * (`NO_EVIDENCE_FOUND` > `UNRESOLVED` > `NOT_RESEARCHED`), so a field is called
+ * "not researched" only when nothing more specific is recorded.
+ */
+export interface DossierUnknowns {
+  total: number;
+  notResearched: number;
+  noEvidenceFound: number;
+  unresolved: number;
+  /** Bare `null` values (rows AND action-block fields) with no recorded kind. */
+  unknown: number;
+  /** Values withheld under publication policy — counted separately from `total`. */
+  withheld: number;
+  emptySections: number;
+}
+
+// Per-kind precedence for the dedup: the most-informative recorded kind wins.
+const _UNKNOWN_KIND_RANK: Record<string, number> = {
+  NOT_RESEARCHED: 0,
+  UNRESOLVED: 1,
+  NO_EVIDENCE_FOUND: 2,
+};
+
+export function dossierUnknowns(dossier: Dossier): DossierUnknowns {
+  // kind-keyed dedup over gaps + absence rows + bare-null rows, by field key.
+  const kinds = new Map<string, string>();
+  const bump = (key: string, kind: string) => {
+    const prev = kinds.get(key);
+    if (prev === undefined || (_UNKNOWN_KIND_RANK[kind] ?? -1) > (_UNKNOWN_KIND_RANK[prev] ?? -1)) {
+      kinds.set(key, kind);
+    }
+  };
+  let withheld = 0;
   for (const g of dossier.gaps) {
-    if (g.kind === "NOT_RESEARCHED") keys.add(`${g.subject_id}\u0000${g.predicate_id}`);
+    if (g.kind !== "EVIDENCE_OF_ABSENCE") {
+      bump(`${g.subject_id}\u0000${g.predicate_id}`, g.kind);
+    }
   }
   for (const s of dossier.sections) {
     for (const r of s.rows ?? []) {
-      if (r.absence === "NOT_RESEARCHED") {
-        keys.add(`${r.subject_id ?? dossier.slug}\u0000${r.predicate_id ?? r.label}`);
+      const key = `${r.subject_id ?? dossier.slug}\u0000${r.predicate_id ?? r.label}`;
+      if (r.absence) {
+        if (r.absence !== "EVIDENCE_OF_ABSENCE") bump(key, r.absence);
+      } else if (r.withheld) {
+        withheld += 1;
+      } else if (r.value === null) {
+        bump(key, "UNKNOWN");
       }
     }
   }
-  return keys.size;
+  // The action-block fields (SIG-UI-014a): each null renders "unknown" on the
+  // page, so each is an unknown field — never defaulted to an invented value.
+  const actionNulls: [string, unknown][] = [
+    ["authorization.approving_body", dossier.authorization.approving_body],
+    ["authorization.vote", dossier.authorization.vote],
+    ["authorization.consent_agenda", dossier.authorization.consent_agenda],
+    ["authorization.public_comment", dossier.authorization.public_comment],
+    ["authorization.date", dossier.authorization.date],
+    ["termination.auto_renews", dossier.termination.auto_renews],
+    ["termination.notice_window_days", dossier.termination.notice_window_days],
+    ["termination.expiry_date", dossier.termination.expiry_date],
+    [
+      "termination.next_decision_date",
+      resolveTermination(dossier.termination).next_decision_date,
+    ],
+    ["legal_regime.state_statute", dossier.legal_regime.state_statute],
+    ["legal_regime.local_ordinance", dossier.legal_regime.local_ordinance],
+  ];
+  for (const [field, v] of actionNulls) {
+    if (v === null) bump(`${dossier.slug}\u0000${field}`, "UNKNOWN");
+  }
+  if (dossier.legal_regime.disclosure_duties.length === 0) {
+    bump(`${dossier.slug}\u0000legal_regime.disclosure_duties`, "UNKNOWN");
+  }
+  const counts: Record<string, number> = {};
+  for (const kind of kinds.values()) counts[kind] = (counts[kind] ?? 0) + 1;
+  const notResearched = counts["NOT_RESEARCHED"] ?? 0;
+  const noEvidenceFound = counts["NO_EVIDENCE_FOUND"] ?? 0;
+  const unresolved = counts["UNRESOLVED"] ?? 0;
+  const unknown = counts["UNKNOWN"] ?? 0;
+  const emptySections = dossier.sections.filter(
+    (s) =>
+      sectionIsEmpty(s) &&
+      !SECTION_ACTION_BLOCKS[s.section_id] &&
+      !(s.section_id === "what_we_dont_know" && dossier.gaps.length > 0),
+  ).length;
+  return {
+    total: notResearched + noEvidenceFound + unresolved + unknown,
+    notResearched,
+    noEvidenceFound,
+    unresolved,
+    unknown,
+    withheld,
+    emptySections,
+  };
 }
 
-/** The explicit incompleteness banner (SIG-UI-012): count + the absence rule. */
+/**
+ * The explicit incompleteness banner (SIG-UI-012): the count of EVERY field the
+ * dossier cannot answer — broken down by the kind of unknown the record
+ * actually carries — plus the empty-section count and the absence rule. No kind
+ * is asserted for a bare unknown the data does not label (QW-7, F-136).
+ */
 export function incompletenessBanner(dossier: Dossier): string {
-  const n = unresearchedFieldCount(dossier);
+  const u = dossierUnknowns(dossier);
+  const parts: string[] = [];
+  if (u.notResearched > 0) {
+    parts.push(`${u.notResearched} not researched`);
+  }
+  if (u.noEvidenceFound > 0) {
+    parts.push(`${u.noEvidenceFound} searched with nothing found`);
+  }
+  if (u.unresolved > 0) {
+    parts.push(`${u.unresolved} unresolved`);
+  }
+  if (u.unknown > 0) {
+    parts.push(`${u.unknown} recorded simply as unknown`);
+  }
+  const breakdown = parts.length > 0 ? ` — ${parts.join(", ")}` : "";
+  const sections =
+    u.emptySections > 0
+      ? ` ${u.emptySections} section${u.emptySections === 1 ? "" : "s"} hold no record in SIG.`
+      : "";
+  const withheld =
+    u.withheld > 0
+      ? ` ${u.withheld} further field${u.withheld === 1 ? "" : "s"} withheld under publication policy.`
+      : "";
   return (
-    `This dossier has ${n} unresearched field${n === 1 ? "" : "s"}. ` +
+    `This dossier has ${u.total} field${u.total === 1 ? "" : "s"} with no recorded value` +
+    `${breakdown}.${sections}${withheld} ` +
     "The absence of a row is not evidence of absence."
   );
 }
@@ -432,6 +592,20 @@ export function renderDossierJson(dossier: Dossier, origin?: string): Record<str
     permalink,
     incompleteness_banner: incompletenessBanner(dossier),
     unresearched_field_count: unresearchedFieldCount(dossier),
+    // P34.11 (QW-7): the banner counts EVERY unknown, not only NOT_RESEARCHED —
+    // additive wire fields; `unresearched_field_count` keeps its SIG-UI-012 meaning.
+    unknown_field_count: dossierUnknowns(dossier).total,
+    unknown_fields: (() => {
+      const u = dossierUnknowns(dossier);
+      return {
+        not_researched: u.notResearched,
+        no_evidence_found: u.noEvidenceFound,
+        unresolved: u.unresolved,
+        unknown: u.unknown,
+        withheld: u.withheld,
+      };
+    })(),
+    empty_section_count: dossierUnknowns(dossier).emptySections,
     // "What we don't know" is a headline feature, at the summary top level AND
     // rendered inside its section on the page/print (SIG-UI-011).
     what_we_dont_know: dossier.gaps.map((g) => ({

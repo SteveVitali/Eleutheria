@@ -3,10 +3,11 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The belief-pinned permalink + "cite this page" affordance every page carries
-// (SIG-UI-035, SIG-TIME-008). The permalink pins BOTH as-of axes and the ruleset
-// version, so a citation captured today re-resolves to the same belief after a
-// later correction. Rendered as plain text + a copyable block — no JavaScript.
+// The citation affordance every page carries (SIG-UI-035, SIG-TIME-008). The link
+// records BOTH as-of axes and the ruleset version in its query string — it is a
+// link, not an immutable pin (P34.11 / QW-5: no "permalink"/"reproducible" claim
+// before true /s/ release pins exist). Rendered as plain text + a copyable block —
+// no JavaScript.
 import { beliefPinnedPermalink, citationText, releasePermalink, releaseCitationText } from "../lib/citation";
 import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
 import type { AsOfEcho } from "../lib/fixtures";
@@ -56,8 +57,8 @@ const releaseCite = releaseInput ? releaseCitationText(releaseInput) : null;
       <a data-testid="permalink" href={permalink}>{permalink}</a>
     </p>
   ) : (
-    <p>
-      Belief-pinned permalink (reproducible after SIG corrects itself):
+    <p data-copy="CC-01">
+      Link (records the as-of pair and ruleset of this build):
       <a
         class="sig-cite__permalink"
         data-testid="permalink"

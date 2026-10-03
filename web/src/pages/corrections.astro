@@ -6,9 +6,10 @@
 // The public corrections log (§39.8, SIG-UI-032) — the required EIGHTH surface the
 // outline omits. Static, zero-JS: every correction lists what changed, when, why, and
 // who reported it, with the outcome (correct / annotate / suppress / delete / refuse,
-// SIG-GOV-004) and a belief-pinned permalink to the value AS IT STOOD, so a citation
-// made before the correction stays reproducible (SIG-GOV-005). Ends with the
-// transparency report — counts by category and outcome, including refusals (SIG-GOV-011).
+// SIG-GOV-004) and a link recording the belief date at which the earlier value stood
+// (SIG-GOV-005). The page also states the log's start date (P34.11 / QW-14). Ends
+// with the transparency report — counts by category and outcome, including refusals
+// (SIG-GOV-011).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DisputeLink from "../components/DisputeLink.astro";
 import EmptyState from "../components/EmptyState.astro";
@@ -29,15 +30,24 @@ const CORRECTIONS_PROVENANCE = getCorrectionsProvenance();
 const origin = Astro.site?.origin;
 const entries = orderedCorrections(CORRECTIONS);
 const report = transparencyReport(CORRECTIONS);
+// The log's start date (QW-14): the earliest recorded correction, shown so the log
+// never reads as if it existed from the project's first day.
+const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
 ---
 
 <BaseLayout title="Corrections log" path="/corrections/" provenance={CORRECTIONS_PROVENANCE}>
-  <p>
+  <p data-copy="CL-01 CL-03 CL-04">
     Every correction SIG makes is public. A correction is a <strong>new assertion</strong>,
-    never a deletion: the earlier value is preserved, so a citation captured before a
-    correction re-resolves to what it said then (SIG-GOV-005). Each entry states
+    never a deletion: the earlier value is preserved, and each entry names the belief
+    date at which it stood (SIG-GOV-005). Each entry states
     <strong>what changed, when, why, and who reported it</strong>.
   </p>
+  {logStart && (
+    <p class="sig-log-start" data-testid="log-start" data-copy="CL-02">
+      This log begins <time datetime={logStart}>{logStart}</time>; its counts
+      cover only corrections recorded since that date.
+    </p>
+  )}
 
   <DisputeLink />
 
@@ -89,10 +99,11 @@ const report = transparencyReport(CORRECTIONS);
             in its place.
           </p>
         ) : (
-          <p class="sig-correction__prior">
-            The value as it stood is still citable:
+          <p class="sig-correction__prior" data-copy="CL-05">
+            The earlier value is preserved on the append-only record; this link
+            records the belief date at which it stood:
             <a data-testid="prior-permalink" href={priorValuePermalink(e, RULESET_VERSION, origin)}>
-              belief-pinned permalink ({e.previous_belief_date})
+              belief {e.previous_belief_date}
             </a>.
           </p>
         )}

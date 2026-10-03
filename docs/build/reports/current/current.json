@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "78b27de5c9d04e3a2d733777b5b59dd038192c53",
-  "manifest_inputs": 934,
+  "input_commit": "668898fba53eaaddca6e705d18c5419b09685477",
+  "manifest_inputs": 935,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.11",
-    "lastCompleted": "P34.10",
+    "nextTicket": "P34.12",
+    "lastCompleted": "P34.11",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.50",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.10-one-allow-listed-publish-path",
+    "chainTip": "r11/P34.11-honest-home-dossier-coverage-copy-v2",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-02T23:05:51Z"
   },
   "counts": {
-    "obligations": 143,
-    "owed": 77,
-    "open": 74,
+    "obligations": 144,
+    "owed": 78,
+    "open": 75,
     "partial": 3,
     "terminal": 66,
-    "events": 615,
+    "events": 616,
     "transitions": 18,
     "coverage_assessments": 191,
     "coverage_historical_rows": 777,
@@ -6783,6 +6783,51 @@
           "anchor": {
             "row_line": 1042,
             "row_sha256": "09890a18fe0378d53f80e76f8b1e05e12ee90a34958ee9a57bd8432226379cb0",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.11-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.11-1:e0",
+      "kind": "V",
+      "owner": "the upstream http-cache-semantics/astro release that clears the range, or the P34/P35 toolchain row that moves the builder",
+      "landing": "a http-cache-semantics release >4.2.0 (or an astro release without the dep) — failing that, before the entry expires 2026-11-30",
+      "backlog_home": "BL-084",
+      "item": "The `http-cache-semantics` advisory allow entry in `record_policy/npm_audit_allow.toml` (`GHSA-ch52-4w7c-c8xp`, scope `prod`) retires: a release `>4.2.0` lands and the entry is removed — or astro moves its tree off the vulnerable range",
+      "unblocked_by": "owner: the upstream `http-cache-semantics`/`astro` release that clears the range, or the P34/P35 toolchain row that moves the builder; trigger: a `http-cache-semantics` release `>4.2.0` (or an astro release without the dep) — failing that, before the entry's `expires` makes the gate fail loudly",
+      "verify": "`bash scripts/ci/npm_audit_gate.sh --out docs/build/logs` green with the entry REMOVED (the gate already notes when an entry covers no current finding); `npm --prefix web audit --omit=dev` shows no `http-cache-semantics` finding",
+      "proxy": "the per-PR production gate is exactly the job that caught this; the dated `expires` and the \"entry covers no current finding\" note keep the grant from going stale silently",
+      "line": 1043,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.11-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.11-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.11",
+          "owner": "the upstream http-cache-semantics/astro release that clears the range, or the P34/P35 toolchain row that moves the builder",
+          "landing": "a http-cache-semantics release >4.2.0 (or an astro release without the dep) — failing that, before the entry expires 2026-11-30",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/tools/record_policy/npm_audit_allow.toml"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "42a9d142f422903ef1ea07031ea3770235ef0240",
+          "reason": "migration anchor appended by P34.11 (row 213) for the row it added — appended, never migrate; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1043,
+            "row_sha256": "7db10bcf51445594128500ea2bbebdba00157b4659f44e17e74bb31c29440cf5",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -14759,10 +14804,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "87d4f4ef499b18893911b628a50ef18e3fddc1f1a8859d683e7a7211d3e3bfbe",
+  "manifest_sha256": "a641ac2417f7c565898a186944db964a6b3045ee5e147ab34901d4d587ab8273",
   "current_md": {
     "lines": 74,
-    "bytes": 12984,
+    "bytes": 12991,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

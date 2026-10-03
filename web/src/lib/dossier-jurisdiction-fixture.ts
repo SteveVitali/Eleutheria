@@ -19,7 +19,11 @@ import { AS_OF, RULESET_VERSION } from "./fixtures";
 import type { Dossier, Section } from "./dossier";
 
 /** The twelve §39.2 sections in order, filled with minimal jurisdiction rows. */
-function baseSections(officerLabel: string, originJurisdiction: string): Section[] {
+function baseSections(
+  officerLabel: string,
+  originJurisdiction: string,
+  sharingSubjectId: string,
+): Section[] {
   return [
     {
       section_id: "at_a_glance",
@@ -38,7 +42,9 @@ function baseSections(officerLabel: string, originJurisdiction: string): Section
     },
     {
       section_id: "who_else_can_see",
-      rows: [{ label: "Data-sharing partners", value: null, absence: "NOT_RESEARCHED" }],
+      // sharing_partners carries its subject/predicate so the unknown-count
+      // deduplicates it against the same field's gap entry (one field, one count).
+      rows: [{ label: "Data-sharing partners", value: null, absence: "NOT_RESEARCHED", subject_id: sharingSubjectId, predicate_id: "sharing_partners" }],
     },
     {
       section_id: "configuration_and_retention",
@@ -108,7 +114,7 @@ export const FR_DOSSIER: Dossier = {
       predicate_id: "sharing_partners",
     },
   ],
-  sections: baseSections("Agent signataire de l'arrêté", "FR"),
+  sections: baseSections("Agent signataire de l'arrêté", "FR", "org:prefpol-paris"),
 };
 
 /** Belgium (BE-GDPR): the signing officer's name is withheld under BE-GDPR. */
@@ -142,7 +148,7 @@ export const BE_DOSSIER: Dossier = {
       predicate_id: "sharing_partners",
     },
   ],
-  sections: baseSections("Ondertekenende ambtenaar", "BE"),
+  sections: baseSections("Ondertekenende ambtenaar", "BE", "org:pz-brussel"),
 };
 
 /** The jurisdiction-conditional dossiers the shell statically generates. */
