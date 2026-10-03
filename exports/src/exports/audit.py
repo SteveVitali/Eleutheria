@@ -162,7 +162,12 @@ QUERIES: dict[str, str] = {
 _LATEST_DECISION_CTE = (
     "WITH latest_decision AS ("
     "  SELECT DISTINCT ON (rd.source_id, rd.prior_rights_id)"
-    "         rd.source_id, rd.prior_rights_id, rd.rights_id"
+    "         rd.source_id, rd.prior_rights_id, rd.rights_id,"
+    # P34.21b (E2-12): the decision's own stamp + basis ride along so a reader
+    # can name the attribution corrections the export carries (the dated
+    # correction note on /sources/); additive columns — readers that only use
+    # ld.rights_id are unchanged.
+    "         rd.decided_at, rd.basis"
     "    FROM rights_decision rd"
     "   ORDER BY rd.source_id, rd.prior_rights_id, rd.decided_at DESC, rd.decision_id DESC"
     ") "

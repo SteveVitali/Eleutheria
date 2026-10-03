@@ -33,6 +33,7 @@ the validation test (`tests/ops/test_gcp_iac.py`) shells `terraform validate` wh
 | `web.sh` | P31.15 (ADR-R9-TILES): the repo-owned `sig-web` image + service path — `image` (Cloud Build `../web/Dockerfile`: nginx + compiled Brotli + `../web/nginx.conf`) · `service` (the hand-made service spec read live, then upserted on the pinned digest with the `<project>-sig-web` gcsfuse mount → `/mnt/sig-web`) · `describe` (the live spec). The roll itself is P31.16's |
 | `protect.sh` | P34.3 (SIG-OPS-002, SIG-STORE-048): the five pre-authorised data-protection mutations — `sig-pg` deletion protection + retain-backups-on-delete, SUN 09:00Z maintenance window, 40 GB autoresize cap; versioning + noncurrent lifecycle on `sig-restricted` (90 d) / `sig-public` / `sig-web` (30 d); `allUsers` off `sig-web`. Idempotent (live-read → SKIP), window-gated (never 03:00–10:00Z; `sig-pg` legs also never inside AR-3 or while `sig-materialize` runs), AR-2 backup first, per-action rollback on the stop rules. `--verify [--from-state DIR]` is the read-only outcome diff |
 | `alerts.sh` | P34.4 (QA-3/QA-4/QA-5, QA-8 disable): the alert-set legs — create the TLS-expiry (21 d) + `SIG-ALERT` log-match policies, re-roll `sig-probe` onto the HEAD-built image (targets baked from `../cadence.toml`), extend the failed-job policy to `sig-probe` after its green sweep, disable `reingest.yml`. The alert set lives as committed REST-shape defs in `../monitoring/` (ADR-192); `--verify [--from-state DIR]` diffs them against live (`sig-ops monitoring-defs verify`). Same window guard as `protect.sh` |
+| `public-gate.sh` | P34.21b leg L1 (queued — see the runbook section below): remove anonymous read/list on the `sig-public` 09-27 tree, keeping only the derived fetch targets + the tombstone note conditioned-in. Dry-run by default; `--apply` needs the verbatim A-0.2 go (`SIG_PUBLIC_GATE_GO`), the saved+sha256-verified pre-state, `live:P34.3` (versioning+UBLA on), and the open window. Never deletes an object (SIG-OPS-004) — rollback is `set-iam-policy` with the saved JSON |
 | `../Dockerfile` | the Cloud Run API + export image (built + pushed by `sig-ops deploy` / `export.sh`) — also carries `sig-ops` for the scheduled jobs and the pinned tippecanoe the tile renderer uses |
 | `../web/Dockerfile` | the `sig-web` image: `nginx:1.27.5-alpine` + `ngx_http_brotli_*` compiled from sha256-verified sources against the exact nginx version (Alpine's packaged module is ABI-incompatible) + the repo-owned `../web/nginx.conf` |
 
@@ -131,3 +132,107 @@ re-runs `bash ops/gcp/provision.sh --apply` and `sig-ops deploy --target gcp`.
 > cut-over + TLS 2026-09-23, national publish 2026-09-24 (`LAUNCH_RECORD_2026-09-24.md`),
 > republish 2026-09-27 (`REPUBLISH_LIVE_2026-09-27.md`) — the public surface serves at
 > `https://surveillancegraph.org`.
+
+## P34.21b — the attribution re-export + republish #2 legs (QUEUED, not run)
+
+> **Appended 2026-10-03 (P34.21b).** The two production legs below are
+> **engineered, tested, and queued** — each needs its own verbatim operator go
+> and they were **not executed** by the P34.21b build. See the ticket
+> (`docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md`) and the
+> run ledger (`docs/build/runs/P34.21b.md`); the queued legs are
+> `D-P34.21b-1` / `D-P34.21b-2` in `docs/tickets/DEFERRALS.md`.
+
+### L1 — remove anonymous read/list on the sig-public 09-27 tree (`public-gate.sh`)
+
+**Why:** the 2026-09-27 published tree carries the E2-12 misattribution; the
+public fetch surface stays up through prefix-scoped IAM conditions, everything
+else loses anonymous read/list, and a tombstone note object says why
+(SIG-OPS-004 — nothing is deleted).
+
+**Prerequisites (all, before `--apply`):**
+
+- the operator's verbatim A-0.2 go for L1 (the "No, wait for P34.21" answer is
+  the scope decision, not the go) exported as `SIG_PUBLIC_GATE_GO`;
+- `live:P34.3` — `sig-public` versioning + uniform bucket-level access on (the
+  saved `describe` must prove it — the script refuses otherwise);
+- outside the daily 03:00–10:00Z band (`SIG_PUBLIC_GATE_NOW` is the test seam);
+- a **committed read-only listing** of the tree first (the `list` action prints
+  the prefix summary of the capture below);
+- ADC: `gcloud auth application-default login` + `SIG_GCP_PROJECT`.
+
+**Procedure:**
+
+```bash
+# 1. read-only pre-state (describe + get-iam-policy + full listing, sha256 each)
+bash ops/gcp/public-gate.sh --apply prestate          # writes an evidence dir
+
+# 2. read the capture: prefix summary + the derived fetch-target exclusions
+bash ops/gcp/public-gate.sh list --prestate <dir>
+bash ops/gcp/public-gate.sh prefixes --prestate <dir>  # + --fetch-targets FILE
+                                                        # + --exclude <prefix>
+
+# 3. the exact diff — unconditional anon → conditioned legacyObjectReader keeps
+bash ops/gcp/public-gate.sh plan --prestate <dir>      # prints the rollback line
+
+# 4. the gated apply (window + live:P34.3 + verbatim go + saved pre-state)
+SIG_PUBLIC_GATE_GO="<the operator's recorded words>" \
+  bash ops/gcp/public-gate.sh --apply apply --prestate <dir> [--tombstone-id TB-01]
+
+# 5. the read-only outcome check (live, or --from-state <dir> offline)
+bash ops/gcp/public-gate.sh --verify
+```
+
+The exclusion set derives from `ops/cadence.toml`'s sig-public probe targets
+(`LICENCES.json`, `manifest.json`, the compartment `sites.csv`), any
+`--fetch-targets`/`--exclude` additions, and the `tombstones/` prefix itself —
+each line records its `# reason=`. Anonymous **list** cannot be conditioned per
+prefix on a bucket-level access mode (a list call's resource is the bucket
+itself), so anonymous list is removed wholesale; the kept **GET** access rides
+a `p34-21b-live-prefixes` IAM condition on `roles/storage.legacyObjectReader`.
+
+**Rollback:** `gcloud storage buckets set-iam-policy gs://<bucket> <saved iam JSON>`
+— printed beside every plan. The tombstone object is additive; removing it is a
+separate operator call, never this script's.
+
+**Tombstone text:** default is the N-6 notice string ("This page has been
+removed while a correction is made." — the notice-allowance); `--tombstone-id
+TB-01` ships the batch-02 sentence instead, but only while its row reads
+`confirmed` (B-2 — an agent never types the sentence it ships).
+
+### L2 — the re-export + republish #2
+
+**Prerequisites (all, before the leg):**
+
+- `live:P34.21a` — the hosted attribution backfill applied
+  (`D-P34.21a-1` closed with evidence);
+- `live:P34.18` — the hosted source-id rename applied (`D-P34.18-L2` closed);
+- copy batch #2 rows for the sentences the republish ships are **confirmed**
+  (SL-20; TB-01 if it rides) — pending rows refuse `publish-web --apply`;
+- a **`sig-ops republish-probe` record no older than 24 h** with no failed leg:
+  `sig-ops republish-probe --export-dir <export> --public-dir <public root>
+  --bucket-listing <capture> --tile-url <pmtiles> --out probe.json`;
+- the operator's verbatim republish go; outside 03:00–10:00Z.
+
+**Order (append-only — prior prefixes and release trees are never deleted):**
+
+1. `SIG_EXPORT_AS_OF=<new stamp> bash ops/gcp/export.sh --apply run` — writes a
+   **new** `exports/national/<as-of>/` prefix on sig-restricted; prior prefixes
+   are never touched (the script carries no delete path — pinned by
+   `tests/ops/test_p34_21b_export_legs.py`).
+2. `bash ops/gcp/export.sh --apply fetch` — pull the new prefix to
+   `exports/out/national`.
+3. `sig-ops publish-web --export-dir exports/out/national --apply` — the one
+   repository-owned publish path: export-mode site build, partition + clean
+   proof, copy-batch + attribution gates, the public sync that **never deletes
+   release trees**, then the post-sync absence probes.
+4. Retain every prior release tree (the publish never deletes; versioning +
+   noncurrent lifecycle keep older generations recoverable).
+5. Verify: the probe set from step-4 of the runbook above re-run against live,
+   plus `sig-ops republish-probe` for the record; rollback rides bucket
+   versioning/prior generations — never a delete.
+
+**Rerun prompt for both legs:**
+
+```
+implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true
+```
