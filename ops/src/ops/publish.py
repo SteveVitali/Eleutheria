@@ -789,11 +789,14 @@ def assert_public_tree_content(dist: Path) -> None:
         )
 
 
-#: The committed copy batch (B-2 / P34.11): every sentence a public page renders
-#: under a ``data-copy`` marker is a sha256-pinned row in this file. P34.17 makes
-#: republish #1 refuse to ship a pending sentence — the publish is the last line
-#: that can enforce the batch-confirmation rule in code (GATE-G4 / copy batch #1).
-DEFAULT_COPY_BATCH_PATH = Path("docs/build/reports/copy-batches/batch-01.md")
+#: The committed copy batches (B-2 / P34.11): every sentence a public page renders
+#: under a ``data-copy`` marker is a sha256-pinned row in a ``batch-*.md`` file
+#: under this directory. P34.17 makes republish #1 refuse to ship a pending
+#: sentence — the publish is the last line that can enforce the batch-
+#: confirmation rule in code (GATE-G4 / copy batch #1). P34.20: the gate scans
+#: EVERY committed batch, not just the first — a pending row in batch-02+ is
+#: ``pending`` (refused at --apply), never a false ``untracked`` report.
+DEFAULT_COPY_BATCH_DIR = Path("docs/build/reports/copy-batches")
 
 #: ``data-copy="HO-02 HO-03"`` — the whitespace-separated row ids an element binds.
 _DATA_COPY_ATTR = re.compile(r'data-copy="([^"]+)"')
@@ -833,15 +836,25 @@ def check_publishable_copy(dist: Path, batch_path: Path | None = None) -> list[s
     retired-page rows) are irrelevant — only rendered sentences are checked.
     ``data-notice`` strings (N-1…N-7) are exempt by the recorded notice
     allowance.
+
+    ``batch_path`` pins a single batch file; unset, the gate reads EVERY
+    ``batch-*.md`` under the committed batches directory (P34.20 — a pending
+    row in any batch still refuses ``--apply``).
     """
-    resolved = (
-        batch_path
-        if batch_path is not None
-        else Path(__file__).resolve().parents[3] / DEFAULT_COPY_BATCH_PATH
-    )
-    if not resolved.is_file():
-        return [f"the copy batch is absent: {resolved} — copy status cannot be proven"]
-    statuses = load_copy_batch_statuses(resolved)
+    batches: list[Path]
+    if batch_path is not None:
+        batches = [batch_path]
+    else:
+        batch_dir = Path(__file__).resolve().parents[3] / DEFAULT_COPY_BATCH_DIR
+        batches = sorted(batch_dir.glob("batch-*.md")) if batch_dir.is_dir() else []
+    if not batches or any(not b.is_file() for b in batches):
+        return [
+            f"no copy batch found ({batch_path or DEFAULT_COPY_BATCH_DIR}) — "
+            "copy status cannot be proven"
+        ]
+    statuses: dict[str, str] = {}
+    for batch in batches:
+        statuses.update(load_copy_batch_statuses(batch))
     violations: list[str] = []
     for path in _iter_files(dist):
         if path.suffix != ".html":

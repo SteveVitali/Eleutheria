@@ -7,15 +7,32 @@
 // available — each links to the document with its supporting span highlighted, the
 // provenance chain, the conflicting claims, the capture diff, and (for sealed
 // captures) the metadata-only representation. Static, zero-JS (SIG-UI-036/037).
+//
+// P34.20 (K8 NEW-6, F-416): while no claim is bound to a publishable document
+// view, the page ALSO carries the interim artifact list — the published
+// artifacts from evidence.json grouped by source, with the honest run-record
+// label on synthetic captures (SIG-EVUI-D04) and the source's own link where
+// the export's S-6 gate emitted one (K8 NEW-9).
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContestedMarker from "../../components/ContestedMarker.astro";
 import EmptyState from "../../components/EmptyState.astro";
 import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
+import {
+  ARTIFACTS_EMPTY,
+  ARTIFACTS_HEADING,
+  ARTIFACTS_INTRO,
+  RUN_RECORD_LABEL,
+  UPSTREAM_LINK_LABEL,
+  artifactTypeLabel,
+  artifactsBySource,
+  isRunRecord,
+} from "../../lib/evidence-artifacts";
 import { getEvidence } from "../../lib/data";
 
-// The evidence claim-views flow through the single data seam (ADR-066): fixtures by
-// default, real export bytes under SIG_DATA_SOURCE=export.
-const CLAIM_VIEWS = getEvidence().claimViews;
+// The evidence claim-views + published artifacts flow through the single data
+// seam (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+const { artifacts, claimViews: CLAIM_VIEWS } = getEvidence();
+const ARTIFACT_GROUPS = artifactsBySource(artifacts);
 ---
 
 <BaseLayout title="Evidence viewer" path="/evidence/">
@@ -36,4 +53,24 @@ const CLAIM_VIEWS = getEvidence().claimViews;
       </li>
     ))}
   </ul>
+
+  <h2 id="artifacts-heading" data-copy="EW-23">{ARTIFACTS_HEADING}</h2>
+  <p data-copy="EW-24">{ARTIFACTS_INTRO}</p>
+  {ARTIFACT_GROUPS.length === 0 && <p data-testid="artifacts-empty" data-copy="EW-27">{ARTIFACTS_EMPTY}</p>}
+  {ARTIFACT_GROUPS.map((group) => (
+    <section data-testid="artifact-group" data-source-id={group.sourceId}>
+      <h3>{group.sourceName} ({group.artifacts.length})</h3>
+      <ul class="sig-artifact-list" aria-label={group.sourceName}>
+        {group.artifacts.map((artifact) => (
+          <li data-testid="artifact-item" data-artifact-id={artifact.artifact_id} data-run-record={isRunRecord(artifact) ? "true" : "false"}>
+            {artifact.title} — {artifactTypeLabel(artifact.artifact_type)}
+            {isRunRecord(artifact) && <> — <em data-testid="run-record-label" data-copy="EW-25">{RUN_RECORD_LABEL}</em></>}
+            {artifact.upstream_url && (
+              <> — <a data-testid="upstream-link" data-copy="EW-26" href={artifact.upstream_url} rel="external">{UPSTREAM_LINK_LABEL}</a></>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </BaseLayout>

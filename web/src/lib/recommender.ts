@@ -92,6 +92,26 @@ export interface EvidenceArtifact {
   permalink: string;
   /** The artifact's as-of date for the citation list (SIG-UI-027c). */
   as_of: string;
+  /**
+   * P34.20 (K8 NEW-6): the registry display name of `source`, emitted by the
+   * export (`source_registry.name`). Absent falls back to the source id —
+   * never a fabricated name.
+   */
+  source_name?: string;
+  /**
+   * P34.20 (K8 NEW-6 / SIG-EVUI-D04): the honest capture class
+   * (`"actual" | "synthetic" | "legacy"`, evidence_capture). A `synthetic`
+   * artifact lists as a run record — never presented as a stored capture.
+   * Absent means the artifact carries no capture row (honest "unclassified").
+   */
+  capture_classification?: "actual" | "synthetic" | "legacy";
+  /**
+   * P34.20 (K8 NEW-9, S-6): the source's own link — the artifact's recorded
+   * URL, emitted ONLY where the export's effective-rights gate allows
+   * redistribution. The page labels it as a recorded claim; it is never a
+   * stored capture.
+   */
+  upstream_url?: string;
 }
 
 // --- SIG-UI-027b: the neutrality guard (structural) --------------------------
