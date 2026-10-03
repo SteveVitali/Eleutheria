@@ -847,7 +847,7 @@ def test_s8_web_build_renders_from_export_bytes(web_build_from_export: _WebBuild
     assert "190" in html, "the OKCPD chief's ~190 claim must be on the export-built dossier"
     assert "Claimed device count" in html, "the claimed-count figure must render"
     # Both sources and both dates — every number links claim → evidence (§3.1).
-    assert "DeFlock" in html and "the chief" in html, "both competing sources must be shown"
+    assert "DeFlock" in html and "OKCPD chief" in html, "both competing sources must be shown"
     assert "2026-08-20" in html and "2026-08-18" in html, "both claim dates must be shown"
 
 
