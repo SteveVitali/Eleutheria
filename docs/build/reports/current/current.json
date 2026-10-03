@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "3c37471a5e60eccb2920a8a1d936da51e45b9522",
+  "input_commit": "51bdbe46a0ffc12f02c18b29507aa21cc70335cd",
   "manifest_inputs": 936,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-02T23:05:51Z"
   },
   "counts": {
-    "obligations": 144,
-    "owed": 78,
-    "open": 75,
+    "obligations": 145,
+    "owed": 79,
+    "open": 76,
     "partial": 3,
     "terminal": 66,
-    "events": 616,
+    "events": 617,
     "transitions": 18,
     "coverage_assessments": 191,
     "coverage_historical_rows": 777,
@@ -6828,6 +6828,50 @@
           "anchor": {
             "row_line": 1043,
             "row_sha256": "7db10bcf51445594128500ea2bbebdba00157b4659f44e17e74bb31c29440cf5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.13-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.13-1:e0",
+      "kind": "F",
+      "owner": "P34.40 (the dark roll)",
+      "landing": "P34.40's nginx error_page change",
+      "backlog_home": "BL-084",
+      "item": "nginx `error_page` wiring for the branded 403/410 pages (and the `/task/` 403 → 404 mapping per G1's route table), plus a true 301/302 for `/terms` → the API terms",
+      "unblocked_by": "owner: P34.40 (the dark roll); trigger: P34.40's nginx change",
+      "verify": "`ops/web/nginx.conf` maps `error_page 403`/`410` onto the branded assets, `/task/` 403 → 404, and `/terms` returns a real 3xx to the API terms — verified in the composed e2e after the roll",
+      "proxy": "the branded /403.html + /410.html assets and the noindex `/terms/` forwarder page already ship in the allow-listed build and are covered by the axe + zero-JS sweeps",
+      "line": 1044,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.13-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.13-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.13",
+          "owner": "P34.40 (the dark roll)",
+          "landing": "P34.40's nginx error_page change",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "51bdbe46a0ffc12f02c18b29507aa21cc70335cd",
+          "reason": "migration anchor appended by P34.13 (row 215) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1044,
+            "row_sha256": "4e6ae0785836d71c2be3ab92b1f7ef9b10abed1e89b69894a2aac14d60690843",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -14804,7 +14848,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "706faf81c80c90e09de50cb3b194b86ad54cfe3044de17bb662faf68f167e426",
+  "manifest_sha256": "67ec378bc774886c210dc1f8c253fdeccb420b9a166ced9f79b385e4dd7f0b5a",
   "current_md": {
     "lines": 74,
     "bytes": 12981,
