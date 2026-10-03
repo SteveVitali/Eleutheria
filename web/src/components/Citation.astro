@@ -7,7 +7,7 @@
 // (SIG-UI-035, SIG-TIME-008). The permalink pins BOTH as-of axes and the ruleset
 // version, so a citation captured today re-resolves to the same belief after a
 // later correction. Rendered as plain text + a copyable block — no JavaScript.
-import { beliefPinnedPermalink, citationText } from "../lib/citation";
+import { beliefPinnedPermalink, citationText, releasePermalink, releaseCitationText } from "../lib/citation";
 import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
 import type { AsOfEcho } from "../lib/fixtures";
 
@@ -16,9 +16,12 @@ interface Props {
   title: string;
   asOf?: AsOfEcho;
   rulesetVersion?: string;
+  /** P32.13 (SIG-FIND-001/002): when the page backs a released record, the
+   * citation-grade form is the immutable release URL. */
+  release?: { publicationId: string; recordPath: string };
 }
 
-const { path, title } = Astro.props;
+const { path, title, release } = Astro.props;
 const asOf = Astro.props.asOf ?? AS_OF;
 const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
 // The canonical (archival) origin comes from Astro's `site` config, so a real
@@ -26,20 +29,44 @@ const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
 const input = { path, title, asOf, rulesetVersion, ...(Astro.site ? { origin: Astro.site.origin } : {}) };
 const permalink = beliefPinnedPermalink(input);
 const cite = citationText(input);
+const releaseInput = release
+  ? { publicationId: release.publicationId, recordPath: release.recordPath, title, asOf, rulesetVersion, ...(Astro.site ? { origin: Astro.site.origin } : {}) }
+  : null;
+const releaseLink = releaseInput ? releasePermalink(releaseInput) : null;
+const releaseCite = releaseInput ? releaseCitationText(releaseInput) : null;
 ---
 
 <section class="sig-cite" data-testid="citation" aria-labelledby="cite-heading">
   <h2 id="cite-heading">Cite this page</h2>
-  <p>
-    Belief-pinned permalink (reproducible after SIG corrects itself):
-    <a
-      class="sig-cite__permalink"
-      data-testid="permalink"
-      rel="bookmark"
-      href={permalink}
-      >{permalink}</a
-    >
-  </p>
+  {releaseLink && releaseCite ? (
+    <p>
+      Immutable release citation (the released bytes never change):
+      <a
+        class="sig-cite__permalink"
+        data-testid="release-permalink"
+        rel="bookmark"
+        href={releaseLink}
+        >{releaseLink}</a
+      >
+    </p>
+    <p class="sig-cite__text" data-testid="release-citation-text">{releaseCite}</p>
+    <p class="sig-cite__legacy">
+      Historical-selector URL (legacy — resolved through the release
+      compatibility index, never an immutable citation):
+      <a data-testid="permalink" href={permalink}>{permalink}</a>
+    </p>
+  ) : (
+    <p>
+      Belief-pinned permalink (reproducible after SIG corrects itself):
+      <a
+        class="sig-cite__permalink"
+        data-testid="permalink"
+        rel="bookmark"
+        href={permalink}
+        >{permalink}</a
+      >
+    </p>
+  )}
   <p>
     As of world <time datetime={asOf.as_of_world}>{asOf.as_of_world}</time>,
     belief <time datetime={asOf.as_of_belief}>{asOf.as_of_belief}</time>;

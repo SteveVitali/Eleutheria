@@ -17,6 +17,8 @@ import argparse
 import json
 import os
 import sys
+from datetime import datetime
+from pathlib import Path
 
 from . import __version__
 
@@ -246,6 +248,113 @@ def build_parser() -> argparse.ArgumentParser:
         default="cloudflare-r2",
         help="Egress provider for the SIG-EXPORT-008 gate (default cloudflare-r2, zero-egress).",
     )
+
+    release = subparsers.add_parser(
+        "release",
+        help="P32.13 (SIG-FIND-001/002): immutable release namespaces, record "
+        "routes, validation, activation, rollback, withdrawals, and the legacy "
+        "historical-selector resolver — OFFLINE tooling only; publication "
+        "stays with GATE-G3.",
+    )
+    rsub = release.add_subparsers(dest="release_command", required=True)
+
+    rbuild = rsub.add_parser("build", help="Build an immutable release from an export dir.")
+    rbuild.add_argument("--export-dir", required=True)
+    rbuild.add_argument("--out", required=True)
+    rbuild.add_argument(
+        "--renderer-revision",
+        required=True,
+        help="The renderer code revision (a git sha) bound into the descriptor — "
+        "an intentional identity input, never auto-detected.",
+    )
+    rbuild.add_argument("--page-size", type=int, default=50)
+
+    rval = rsub.add_parser("validate", help="Re-verify a built release's integrity manifest.")
+    rval.add_argument("--release", required=True)
+
+    ract = rsub.add_parser(
+        "activate", help="Validate + stage + flip the latest pointer (idempotent)."
+    )
+    ract.add_argument("--registry", required=True)
+    ract.add_argument("--release", required=True)
+
+    rback = rsub.add_parser(
+        "rollback", help="Flip the latest pointer to an earlier activated release."
+    )
+    rback.add_argument("--registry", required=True)
+    rback.add_argument("--publication", required=True)
+
+    rwith = rsub.add_parser(
+        "withdraw",
+        help="Append a P32.5 disposition row to the withdrawal registry and "
+        "re-apply the barrier to the staged tree.",
+    )
+    rwith.add_argument("--registry", required=True)
+    rwith.add_argument(
+        "--target-kind",
+        required=True,
+        choices=["entity", "claim", "artifact", "release_artifact"],
+    )
+    rwith.add_argument("--target-id", required=True)
+    rwith.add_argument(
+        "--disposition",
+        required=True,
+        choices=["allow", "withhold", "restrict", "withdraw"],
+    )
+    rwith.add_argument(
+        "--reason",
+        required=True,
+        choices=[
+            "pending_publication_review",
+            "withheld_after_review",
+            "rights_withdrawal",
+            "safety_withdrawal",
+            "policy_restriction",
+            "suppressed",
+        ],
+    )
+    rwith.add_argument("--authority", required=True)
+    rwith.add_argument(
+        "--decided-at",
+        default=None,
+        help="Replay/migration input only — an already-recorded instant; a "
+        "fresh write stamps its own time.",
+    )
+    rwith.add_argument("--evidence-claim-id", default=None)
+
+    rapply = rsub.add_parser(
+        "apply-withdrawals",
+        help="Re-apply the current withdrawal registry to a staged tree.",
+    )
+    rapply.add_argument("--registry", required=True)
+    rapply.add_argument("--staged", required=True)
+
+    rres = rsub.add_parser(
+        "resolve",
+        help="Resolve a legacy ?as_of_world=&as_of_belief=&ruleset= selector to "
+        "a real activated release — or an honest invalid/unavailable/ambiguous.",
+    )
+    rres.add_argument("--registry", required=True)
+    rres.add_argument("--as-of-world", default=None)
+    rres.add_argument("--as-of-belief", default=None)
+    rres.add_argument("--ruleset", default=None)
+    rres.add_argument("--path", default=None, help="Optional record path to map.")
+
+    rcheck = rsub.add_parser(
+        "check-access",
+        help="The serving barrier check for one route (current dispositions).",
+    )
+    rcheck.add_argument("--registry", required=True)
+    rcheck.add_argument("--route", required=True)
+
+    rmeas = rsub.add_parser(
+        "measure",
+        help="Build + measure generation/storage cost over a real export dir.",
+    )
+    rmeas.add_argument("--export-dir", required=True)
+    rmeas.add_argument("--out", required=True)
+    rmeas.add_argument("--renderer-revision", required=True)
+
     return parser
 
 
@@ -952,5 +1061,110 @@ def main(argv: list[str] | None = None) -> int:
         return _run_shape(args.dsn, args.as_of, args.note, args.out)
     if args.command == "push":
         return _run_push(args.in_dir, args.store, args.endpoint_url, args.provider)
+    if args.command == "release":
+        return _run_release(args)
     parser.print_help()
     return 0
+
+
+def _run_release(args: argparse.Namespace) -> int:
+    """The P32.13 release verbs — all offline; non-zero exits carry the
+    refusal reason on stdout (never a partial/silent success)."""
+    from . import release as rel
+
+    verb = args.release_command
+    if verb == "build":
+        build = rel.build_release(
+            args.export_dir,
+            args.out,
+            renderer_revision=args.renderer_revision,
+            page_size=args.page_size,
+        )
+        print(json.dumps(build.report, indent=2))
+        return 0
+    if verb == "validate":
+        report = rel.validate_release(args.release)
+        print(
+            json.dumps(
+                {
+                    "publication_id": report.publication_id,
+                    "state": report.state,
+                    "failures": report.failures,
+                    "artifacts_checked": report.artifacts_checked,
+                },
+                indent=2,
+            )
+        )
+        return 0 if report.state == "complete" else 4
+    if verb == "activate":
+        try:
+            act = rel.activate(args.registry, args.release)
+        except rel.ReleaseError as e:
+            print(f"sig-exports release activate: refused — {e}")
+            return 4
+        print(json.dumps(act, indent=2))
+        return 0
+    if verb == "rollback":
+        try:
+            out = rel.rollback(args.registry, args.publication)
+        except rel.ReleaseError as e:
+            print(f"sig-exports release rollback: refused — {e}")
+            return 4
+        print(json.dumps(out, indent=2))
+        return 0
+    if verb == "withdraw":
+        from policy.eligibility import (
+            Disposition,
+            ReasonCategory,
+            TargetKind,
+            new_disposition,
+        )
+
+        decided = datetime.fromisoformat(args.decided_at) if args.decided_at else None
+        rec = new_disposition(
+            target_kind=TargetKind(args.target_kind),
+            target_id=args.target_id,
+            disposition=Disposition(args.disposition),
+            reason_category=ReasonCategory(args.reason),
+            authority=args.authority,
+            decided_at=decided,
+            evidence_claim_id=args.evidence_claim_id,
+        )
+        rel.record_withdrawal(args.registry, [rec])
+        print(f"recorded {args.disposition} on {args.target_kind}:{args.target_id}")
+        return 0
+    if verb == "apply-withdrawals":
+        registry = rel.ReleaseRegistry(Path(args.registry))
+        out = rel.apply_withdrawals(Path(args.staged), registry.withdrawals())
+        print(json.dumps(out, indent=2))
+        return 0
+    if verb == "resolve":
+        out = rel.resolve_selector(
+            args.registry,
+            as_of_world=args.as_of_world,
+            as_of_belief=args.as_of_belief,
+            ruleset=args.ruleset,
+            path=args.path,
+        )
+        print(json.dumps(out, indent=2))
+        code = {
+            "current": 0,
+            "redirect": 0,
+            "invalid": 2,
+            "unavailable": 4,
+            "ambiguous": 3,
+        }
+        return code.get(str(out.get("status")), 5)
+    if verb == "check-access":
+        out = rel.route_access(args.registry, args.route)
+        print(json.dumps(out, indent=2))
+        return 0 if out.get("permitted") else 4
+    if verb == "measure":
+        out = rel.measure_build(
+            args.export_dir,
+            args.out,
+            renderer_revision=args.renderer_revision,
+        )
+        print(json.dumps(out, indent=2))
+        return 0
+    return 2

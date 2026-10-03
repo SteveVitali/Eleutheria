@@ -136,6 +136,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-129](ADR-129-design-aware-resolution-evaluation-and-shadow-confidence-gates.md) | — | — | — |
 | [ADR-130](ADR-130-acquisition-reviewed-queue.md) | — | — | — |
 | [ADR-131](ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md) | — | — | — |
+| [ADR-132](ADR-132-immutable-release-namespaces-and-acyclic-integrity.md) | — | — | — |
 
 ## Notes
 

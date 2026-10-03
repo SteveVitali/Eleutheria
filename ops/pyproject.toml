@@ -20,6 +20,10 @@ dependencies = [
     # typed locators the parsing contract defines (SIG-PARSE-003).
     "sig-evidence",
     "sig-parsing",
+    # P32.13 (SIG-FIND-001/002, ADR-132): the release-serving barrier reuses
+    # the exports release tooling (staged-tree withdrawal application +
+    # route access check) so the serving layer never defines a second rule.
+    "sig-exports",
     "psycopg[binary]>=3.2",
     # P21.5: the Software Heritage "save code now" request (SIG-GOV-022) speaks HTTP
     # over httpx (already in the workspace); no token needed for public repos.
@@ -36,6 +40,7 @@ sig-connectors = { workspace = true }
 sig-policy = { workspace = true }
 sig-evidence = { workspace = true }
 sig-parsing = { workspace = true }
+sig-exports = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

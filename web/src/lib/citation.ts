@@ -53,3 +53,45 @@ export function citationText(input: CitationInput): string {
     `ruleset ${input.rulesetVersion}. Retrieved from ${permalink}`
   );
 }
+
+// --------------------------------------------------------------------------- //
+// P32.13 (SIG-FIND-001/002, ADR-132): the immutable release citation form.
+//
+// The belief-pinned query string above is the LEGACY selector: the static host
+// does not interpret `?as_of_*` params — it resolves only through the release
+// compatibility index (SIG-FIND-002). The citation-grade form is the released
+// record URL itself: an immutable namespace whose bytes never change.
+// --------------------------------------------------------------------------- //
+
+export interface ReleaseRef {
+  /** The activated publication namespace, e.g. "p-<64 hex>". */
+  publicationId: string;
+  /** The released record path inside the namespace, e.g.
+   * "/r/p-<…>/c/sig_graph/entity/deployment/<uuid>/". */
+  recordPath: string;
+  title: string;
+  asOf: AsOfEcho;
+  rulesetVersion: string;
+  origin?: string;
+}
+
+/**
+ * The immutable release permalink — the only citation form that resolves the
+ * exact released bytes offline and with JavaScript disabled. "Latest" and
+ * query-string selectors are conveniences, never citations.
+ */
+export function releasePermalink(ref: ReleaseRef): string {
+  const origin = ref.origin ?? DEFAULT_ORIGIN;
+  return `${origin}${ref.recordPath}`;
+}
+
+/** The release-form citation string (reporting register, SIG-UI-043). */
+export function releaseCitationText(ref: ReleaseRef): string {
+  const permalink = releasePermalink(ref);
+  return (
+    `Surveillance Infrastructure Graph (SIG), "${ref.title}", release ` +
+    `${ref.publicationId} (as of world ${ref.asOf.as_of_world}, belief ` +
+    `${ref.asOf.as_of_belief}, ruleset ${ref.rulesetVersion}). ` +
+    `Retrieved from ${permalink}`
+  );
+}

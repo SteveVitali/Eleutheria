@@ -3,7 +3,12 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 import { describe, expect, it } from "vitest";
-import { beliefPinnedPermalink, citationText } from "../../src/lib/citation";
+import {
+  beliefPinnedPermalink,
+  citationText,
+  releasePermalink,
+  releaseCitationText,
+} from "../../src/lib/citation";
 import {
   AS_OF,
   DEVICE_COUNT_BELIEF_CLAIMS,
@@ -35,6 +40,41 @@ describe("belief-pinned permalink + citation (SIG-UI-035)", () => {
     expect(cite).toContain(AS_OF.as_of_belief);
     expect(cite).toContain(RULESET_VERSION);
     expect(cite).toContain(beliefPinnedPermalink(INPUT));
+  });
+});
+
+describe("immutable release citations (P32.13, SIG-FIND-001/002)", () => {
+  const PUB = "p-" + "ab".repeat(32);
+  const REF = {
+    publicationId: PUB,
+    recordPath: `/r/${PUB}/c/sig_graph/entity/deployment/ent-1/`,
+    title: "A released site record",
+    asOf: AS_OF,
+    rulesetVersion: RULESET_VERSION,
+  };
+
+  it("the release permalink is the immutable namespace URL — no query string", () => {
+    const url = releasePermalink(REF);
+    expect(url).toBe(`https://surveillancegraph.org${REF.recordPath}`);
+    expect(url).not.toContain("as_of_world");
+    expect(url).not.toContain("?");
+  });
+
+  it("the release citation names the publication, both cuts, ruleset, URL", () => {
+    const cite = releaseCitationText(REF);
+    expect(cite).toContain(PUB);
+    expect(cite).toContain(AS_OF.as_of_world);
+    expect(cite).toContain(AS_OF.as_of_belief);
+    expect(cite).toContain(RULESET_VERSION);
+    expect(cite).toContain(releasePermalink(REF));
+  });
+
+  it("the legacy belief-pinned selector is NOT an immutable citation", () => {
+    // the query-string form pins a selector — resolved only through the
+    // compat index; it never resolves released bytes directly
+    const legacy = beliefPinnedPermalink(INPUT);
+    expect(legacy).toContain("?");
+    expect(legacy).not.toContain("/r/p-");
   });
 });
 
