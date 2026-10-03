@@ -121,3 +121,15 @@ seed-commit dbc04973
 seed-commit 375a8728
 seed-commit 23094c8c
 seed-commit b4f52e4d
+
+# ── P34.18 / ADR-178 (S0 RI-01; B-3, OD-17, OD-20) ────────────────────────────────────────────
+# Commit a58fa2fa is the verifier-backed bulk re-key the ticket's acceptance criterion demands
+# (zero handle-list entries in the repo tip's tracked files): a Part VIII personal-data redaction
+# across protected records — run ledgers, pr ledgers, the LEDGER PHASE LOG, DEFERRALS rows,
+# planning records, and two landed-ADR body strings — each redaction recorded in-place and
+# disclosed by the dated correction note (docs/governance/identifier-rekey-note.md); the appended
+# ADR notes land as conforming `## Status updates` sections. Its verifier is
+# docs/build/tools/handle_crawl_check.py (0 hits, counts only). Same mechanism as the Stage-B
+# seeds: a one-off corrective commit whose append-only findings are sanctioned, keyed by prefix
+# so no later commit can borrow it.
+seed-commit a58fa2fa

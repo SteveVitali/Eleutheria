@@ -202,9 +202,10 @@ ADR (after the fact, by the method S6 used).
   aggregator changing its licence or stopping publication.
 - The operator revokes or narrows GL-GATE-07 (a new gate decision and a new ADR).
 
----
-*Status note (2026-10-03, P34.18 / ADR-178, S0 RI-01): a handle-bearing source
-identifier quoted in this ADR's body was re-keyed to its neutral id under the
-Part VIII personal-data protection re-key; the recorded decision is unchanged.
-Git history retains the original string — see the P34.18 correction note
-(`docs/governance/identifier-rekey-note.md`).*
+## Status updates
+
+- 2026-10-03 (P34.18 / ADR-178, S0 RI-01): a handle-bearing source identifier
+  quoted in this ADR's body was re-keyed to its neutral id under the Part VIII
+  personal-data protection re-key; the recorded decision is unchanged. Git
+  history retains the original string — see the P34.18 correction note
+  (`docs/governance/identifier-rekey-note.md`).

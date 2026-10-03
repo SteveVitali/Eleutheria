@@ -155,9 +155,10 @@ to grow; or the seed-correction packet is folded into a generic
 multi-jurisdiction correction surface — revisit under a new ADR or a
 scoped amendment, never an in-place edit.
 
----
-*Status note (2026-10-03, P34.18 / ADR-178, S0 RI-01): a personal surname in
-this ADR's body text was redacted to its institutional office ("the OKCPD
-chief") under the Part VIII personal-data protection re-key; the recorded
-decision is unchanged. Git history retains the original string — see the
-P34.18 correction note (`docs/governance/identifier-rekey-note.md`).*
+## Status updates
+
+- 2026-10-03 (P34.18 / ADR-178, S0 RI-01): a personal surname in this ADR's
+  body text was redacted to its institutional office ("the OKCPD chief") under
+  the Part VIII personal-data protection re-key; the recorded decision is
+  unchanged. Git history retains the original string — see the P34.18
+  correction note (`docs/governance/identifier-rekey-note.md`).
