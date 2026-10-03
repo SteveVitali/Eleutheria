@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "bdb6dac063074d6efd947b3a39b8e94a84d99860",
+  "input_commit": "6fdb91eefdaeff1c8408830619cec5cc2ff4fbb0",
   "manifest_inputs": 948,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -33,7 +33,7 @@
     "terminal": 66,
     "events": 623,
     "transitions": 18,
-    "coverage_assessments": 192,
+    "coverage_assessments": 193,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -9845,7 +9845,7 @@
         },
         "SIG-PUB-002": {
           "verdict": "PARTIAL",
-          "evidence": "policy/src/policy/publication.py:8;policy/src/policy/source_aliases.py;connectors/src/connectors/personal_id_rekey.py;exports/src/exports/shaping.py;docs/build/runs/P34.18.md",
+          "evidence": "policy/src/policy/publication.py:8;policy/src/policy/source_aliases.py;connectors/src/connectors/personal_id_rekey.py;exports/src/exports/shaping.py;docs/build/runs/P34.18.md;ops/src/ops/republish_probe.py;docs/build/runs/P34.21b.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13185,6 +13185,16 @@
         "assessment_id": "SIG-PUB-002:r11-1"
       },
       {
+        "requirement_id": "SIG-PUB-002",
+        "domain": "public",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-03",
+        "code_revision": "r11/P34.21b-attribution-re-export-and-republish-2 @ 6fdb91eefdaeff1c8408830619cec5cc2ff4fbb0",
+        "limitations": "the republish probe is engineered and verified at implementation domain: sig.probe-run/1 carries the absence leg, the count-only handle crawl over repo/export/tiles/build trees plus a downloaded sig-public listing (matched handles never printed), the ranged tile sample and the attribution sample, with honest 'skipped' legs and a <=24 h freshness requirement. Not yet met at the public domain: the re-export + republish #2 that serves the re-keyed pages is the queued leg D-P34.21b-2 (verbatim republish go, D-P34.21a-1/D-P34.18-1 DONE, batch-02 confirmed, probe <=24 h, window); P34.47's live crawl must still prove no handle surfaces on the served site; the hosted rename D-P34.18-1 also remains open",
+        "supersedes": "SIG-PUB-002:r11-1",
+        "assessment_id": "SIG-PUB-002:r11-2"
+      },
+      {
         "requirement_id": "SIG-PUB-007",
         "domain": "public",
         "verdict": "AT-RISK-INTEGRATION",
@@ -14649,6 +14659,11 @@
           "assessed_at": "2026-10-03"
         },
         {
+          "requirement": "SIG-PUB-002",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-03"
+        },
+        {
           "requirement": "SIG-PUB-007",
           "verdict": "AT-RISK-INTEGRATION",
           "assessed_at": "2026-10-01"
@@ -15127,10 +15142,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "4af36249e1f15cbd9db36acd3de85de42618338aad440044dc9fbc6a17ed791b",
+  "manifest_sha256": "1343203c9f246b3f0bd316a501e75bcf45e727b493be865f51771022cfa10086",
   "current_md": {
     "lines": 74,
-    "bytes": 13063,
+    "bytes": 13097,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
