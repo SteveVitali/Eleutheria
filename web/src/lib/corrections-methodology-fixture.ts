@@ -167,7 +167,7 @@ export const CORRECTIONS: CorrectionEntry[] = [
     previous_value: "block-level coordinates published",
     corrected_value: "coordinates suppressed (jurisdiction-centroid only)",
     previous_belief_date: "2026-07-20",
-    subject_path: "/visual-language/#reference-map",
+    subject_path: "/map/",
   },
   {
     id: "corr-2026-07-28-refused",
@@ -328,11 +328,14 @@ export const COVERAGE_METRICS: CoverageMetric[] = [
   {
     id: "contradictions_visible",
     kind: "counted_quantity",
-    label: "contradictions kept visible",
+    // P34.11 (K12b NEW-17 / F-22): "contradictions kept visible" claimed a
+    // browsability the site does not have — the claim is withdrawn; only the
+    // recorded count is shown. The same label/note ships in spine_export.py.
+    label: "recorded contradictions",
     value: "1 open of 1 recorded contradictions",
     denominator: "of 1 recorded contradictions in the materialized graph (both evidence sides retained, §31)",
     population_note:
-      "Contradictions are never silently reconciled (§3.1); both disagreeing sides are retained. This counts recorded contradictions, not an estimate of every disagreement that exists.",
+      "Contradictions are never silently reconciled (§3.1); both disagreeing sides are retained. This counts recorded contradictions, not an estimate of every disagreement that exists. This page shows only the recorded count; SIG does not publish a contradiction browser.",
     is_population_total: false,
   },
 ];

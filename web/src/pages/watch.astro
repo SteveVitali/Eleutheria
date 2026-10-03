@@ -170,9 +170,9 @@ const axisLabels: Record<string, string> = {
 
   <!-- Exportable citation list (SIG-UI-027c). -->
   <h2 id="citations-heading">Citation list</h2>
-  <p>
-    Attach this to public comment. Every entry carries a belief-pinned permalink and
-    an as-of date, so a citation stays reproducible after SIG corrects itself.
+  <p data-copy="W-05 W-06 W-07">
+    Attach this to public comment. Every entry carries a link recording this build's
+    belief-time and as-of date.
     <a data-testid="citation-export" href={CITATIONS_PATH}>Download as plain text</a>.
   </p>
   {citations.length === 0 && <EmptyState surface="citations" />}

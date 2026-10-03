@@ -54,6 +54,13 @@ export interface DateRange {
  * INDEPENDENT source classes (the count the support glyph rests on, SIG-UI-003).
  */
 export interface ProvenanceSummary {
+  /**
+   * The named denominator the totals are counted against (§32, SIG-METRIC-009)
+   * — e.g. the export's site summary denominator. Optional: a summary that does
+   * not carry one is still valid; the scope label in the component already says
+   * whether the totals are site-wide or page-specific (P34.11 / QW-6).
+   */
+  denominator?: string;
   /** Artifact counts — how many evidence artifacts stand behind the page. */
   artifact_count: number;
   /** Tier distribution — count of supporting claims by evidence tier. */

@@ -21,19 +21,18 @@ const dossiers = [...getDossierIndex()].sort(
 ---
 
 <BaseLayout title="Dossiers" path="/dossier/">
-  <p class="sig-lede">
+  <p class="sig-lede" data-copy="DI-02 DI-03">
     A dossier is SIG's primary public artifact for a jurisdiction: what is deployed, who
     can see it, what it costs, when it must be decided, and — as a headline, not an
-    appendix — <strong>what SIG does not know</strong>. Every dossier prints to a
-    council-ready PDF and carries a belief-pinned citation.
+    appendix — <strong>what SIG does not know</strong>. Each dossier has a print view,
+    and the page records the belief-time and ruleset it was built from.
   </p>
-  <p>
+  <p data-copy="DI-04 DI-05 DI-06">
     This index lists every jurisdiction SIG has researched to a publishable standard.
     It is not a census: a jurisdiction absent here is one SIG has not yet published,
     <strong>not</strong> one with no surveillance infrastructure. These are{" "}
-    <strong>inventory overviews</strong>, built automatically from published claims —
-    the reviewed, evidence-complete twelve-question portfolios are at{" "}
-    <a href="/research-dossier/">the research-dossier index</a>.
+    <strong>inventory overviews</strong>, built automatically from published claims; the
+    reviewed, evidence-complete twelve-question portfolio form is being built.
   </p>
 
   {dossiers.length === 0 && <EmptyState surface="dossierIndex" />}

@@ -41,6 +41,10 @@ const rulesetVersion = Astro.props.rulesetVersion ?? siteMeta.rulesetVersion;
 // P30.3: a real-data build's site-wide default is derived from the export itself — never
 // the committed OKC demo summary (`DEFAULT_PROVENANCE` stays the fixtures-mode default).
 const provenance = Astro.props.provenance ?? getSiteProvenance();
+// P34.11 (QW-6, F-05/F-132): when a page supplies its own provenance summary it is
+// page-specific; the site-wide default is the fallback. The module is labelled with
+// its actual scope so site-wide totals are never read as dossier/page figures.
+const provenanceScope = Astro.props.provenance !== undefined ? "page" : "site";
 const lang = Astro.props.lang ?? "en";
 
 // The canonical origin the belief-pinned permalink resolves against (P27.6; DNS
@@ -71,13 +75,11 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
       { href: "/data-freshness/", label: "Data freshness" },
       { href: "/research-queue/", label: "Research queue" },
       { href: "/corrections/", label: "Corrections" },
-      { href: "/contribution-back/", label: "Contribution back" },
     ],
   },
   {
     label: "Reference",
     links: [
-      { href: "/visual-language/", label: "Visual language" },
       { href: "/editorial-standards/", label: "Editorial standards" },
       { href: "/style-guide/", label: "Style guide" },
     ],
@@ -124,7 +126,7 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
     <main id="main">
       <h1>{title}</h1>
       <slot />
-      <HowWeKnowThis provenance={provenance} />
+      <HowWeKnowThis provenance={provenance} scope={provenanceScope} />
       <DisputeLink />
       <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
     </main>

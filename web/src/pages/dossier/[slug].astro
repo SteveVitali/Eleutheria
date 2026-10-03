@@ -16,7 +16,7 @@ import IncompletenessBanner from "../../components/IncompletenessBanner.astro";
 import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
-import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier } from "../../lib/dossier";
+import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../lib/dossier";
 import { getDossiers } from "../../lib/data";
 
 export function getStaticPaths() {
@@ -33,21 +33,13 @@ const dossier = applyPublicationPolicy(Astro.props.dossier);
 validateDossier(dossier);
 const lang = dossierLang(dossier);
 const SECTION_TITLES = sectionTitlesFor(lang);
-
-// Which action block is rendered under which section (SIG-UI-014a/b).
-const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "legal_regime"> = {
-  cost_and_expiry: "termination",
-  accountability_events: "authorization",
-  policy: "legal_regime",
-};
 ---
 
 <BaseLayout title={dossier.subject_label} path={dossierPath(dossier.slug)} lang={lang}>
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{dossier.jurisdiction}</p>
-  <p class="sig-dossier-kind" data-testid="dossier-kind">
-    Inventory overview — built automatically from published claims. For the
-    evidence-complete twelve-question review see{" "}
-    <a href="/research-dossier/">the research-dossier portfolio</a>.
+  <p class="sig-dossier-kind" data-testid="dossier-kind" data-copy="D-01 D-02">
+    Inventory overview — built automatically from published claims. The
+    evidence-complete reviewed-portfolio form is being built.
   </p>
 
   <IncompletenessBanner dossier={dossier} />
@@ -67,17 +59,23 @@ const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "lega
     <a href={dossierJsonPath(dossier.slug)} data-testid="api-link">JSON (API form)</a>
   </p>
 
-  {dossier.sections.map((section) => (
-    <section aria-labelledby={`sec-${section.section_id}`} data-testid="dossier-section" data-section-id={section.section_id}>
-      <h2 id={`sec-${section.section_id}`}>{SECTION_TITLES[section.section_id]}</h2>
-      {section.section_id === "what_we_dont_know" ? (
-        <WhatWeDontKnow gaps={dossier.gaps} variant="section" />
-      ) : (
-        <DossierSection section={section} />
-      )}
-      {ACTION_FOR_SECTION[section.section_id] && (
-        <ActionBlocks dossier={dossier} which={ACTION_FOR_SECTION[section.section_id]!} />
-      )}
-    </section>
-  ))}
+  {dossier.sections.map((section) => {
+    const action = SECTION_ACTION_BLOCKS[section.section_id];
+    const noRecord =
+      section.section_id !== "what_we_dont_know" && sectionIsEmpty(section) && !action;
+    return (
+      <section aria-labelledby={`sec-${section.section_id}`} data-testid="dossier-section" data-section-id={section.section_id}>
+        <h2 id={`sec-${section.section_id}`}>{SECTION_TITLES[section.section_id]}</h2>
+        {section.section_id === "what_we_dont_know" ? (
+          <WhatWeDontKnow gaps={dossier.gaps} variant="section" />
+        ) : (
+          <DossierSection section={section} />
+        )}
+        {action && <ActionBlocks dossier={dossier} which={action} />}
+        {noRecord && (
+          <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
+        )}
+      </section>
+    );
+  })}
 </BaseLayout>

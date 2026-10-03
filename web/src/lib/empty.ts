@@ -171,8 +171,8 @@ const COPY: Record<EmptySurface, EmptyStateCopy> = {
     cta: RESEARCH_QUEUE_CTA,
   },
   dossierGaps: {
-    heading: "No open gaps recorded for this dossier",
-    body: "SIG has recorded no unresearched fields here. This reflects what has been reviewed so far; it is not a guarantee the record is complete.",
+    heading: "No record in SIG",
+    body: "SIG has recorded no open gap here. This reflects what has been reviewed so far; it is not a guarantee the record is complete.",
     cta: RESEARCH_QUEUE_CTA,
   },
 };

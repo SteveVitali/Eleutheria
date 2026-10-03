@@ -269,7 +269,9 @@ describe("P31.14 web data layer — export mode reads web/analytics/*.json", () 
     expect(getNetworkCentrality()).toEqual(ANALYTICS_STATS);
     expect(getNetworkFocusEntityId()).toBe("n-okcpd");
     expect(getDecisionPoint()).toEqual(ANALYTICS_DECISION);
-    expect(getSiteProvenance()).toEqual(SITE_PROVENANCE);
+    // P34.11 (QW-6): the site summary additionally carries the artifact's own
+    // named denominator so the module can say what its totals are counted against.
+    expect(getSiteProvenance()).toEqual({ ...SITE_PROVENANCE, denominator: "n named units (test)" });
     expect(getCorrectionsProvenance()).toEqual({ artifact_count: 2 });
     expect(getResearchQueueProvenance()).toEqual({ artifact_count: 1 });
     expect(getJurisdictionClaims()).toEqual([{ jurisdiction_id: "j1" }]);
