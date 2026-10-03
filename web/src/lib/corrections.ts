@@ -239,3 +239,40 @@ export function transparencyReport(entries: readonly CorrectionEntry[]): Transpa
 export function orderedCorrections(entries: readonly CorrectionEntry[]): CorrectionEntry[] {
   return [...entries].sort((a, b) => b.corrected_at.localeCompare(a.corrected_at) || a.id.localeCompare(b.id));
 }
+
+// --- The durable anonymous receiver (P32.16, ADR-135, SIG-FIND-006) ----------
+
+/** The path the separate receiver process serves its no-JS report form on. */
+export const INTAKE_FORM_PATH = "/intake/new";
+/** The path the separate receiver process serves its receipt-check page on. */
+export const INTAKE_STATUS_PATH = "/intake/status";
+
+export interface IntakeAvailability {
+  /**
+   * Whether the durable receiver is accepting reports. It is gated on a staffed
+   * moderation owner + retention ratification + the public-exposure decision
+   * (GATE-G3 / HG-11, D-R10-PUBLISH-1) — this page must NEVER advertise an
+   * unstaffed or unapproved receiver as operational (S4 §8).
+   */
+  operational: boolean;
+  /** One-sentence honest state for the public page. */
+  note: string;
+}
+
+/**
+ * The receiver's current availability, as honest public copy. The receiver is
+ * BUILT (`sig-api serve-intake`, durable receipts, private moderation queue)
+ * but NOT YET OPERATING — a flip happens only in a later reviewed change with
+ * the operating packet approved, so the descriptor is a constant, not a probe
+ * (a static page must never promise a liveness it cannot see).
+ */
+export function intakeAvailability(): IntakeAvailability {
+  return {
+    operational: false,
+    note:
+      "The durable anonymous receiver is built but not yet operating — it opens " +
+      "only after a staffed moderation owner, the retention schedule and the " +
+      "public-exposure decision are approved (GATE-G3). This page will never " +
+      "advertise an unstaffed receiver.",
+  };
+}

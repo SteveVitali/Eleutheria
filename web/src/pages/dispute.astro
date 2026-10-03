@@ -11,9 +11,10 @@
 // outcomes incl. refusal with published reasoning (SIG-GOV-004). Correction preserves
 // history (SIG-GOV-005); a subject may also attach a response (SIG-GOV-010).
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { categoriesByPriority } from "../lib/corrections";
+import { categoriesByPriority, intakeAvailability, INTAKE_FORM_PATH, INTAKE_STATUS_PATH } from "../lib/corrections";
 
 const categories = categoriesByPriority();
+const intake = intakeAvailability();
 ---
 
 <BaseLayout title="Dispute or correct a record" path="/dispute/">
@@ -57,8 +58,24 @@ const categories = categoriesByPriority();
   </ul>
 
   <h2 id="submit-heading">Submit</h2>
+  <p data-testid="intake-availability" data-operational={intake.operational ? "true" : "false"}>
+    <strong>The durable anonymous receiver is not yet operating.</strong>
+    {intake.note}
+  </p>
   <p>
-    Every submission and its outcome is counted in the public
+    When it opens — on this same site at <code>{INTAKE_FORM_PATH}</code> — a plain
+    HTML form (no account, no email, no scripts, no uploads) will take: the category
+    above, an optional release/record/claim reference, a bounded description, up to
+    three public https evidence links, and — for a legal demand only — an optional
+    contact. You will get a durable receipt id and a one-purpose status token to
+    check progress at <code>{INTAKE_STATUS_PATH}</code>. Reports that carry licence
+    plates, people's names or identifying details are refused automatically before
+    anything is stored (Part VIII); accepted reports go only to a private staffed
+    review queue — a report is never an automatic correction, suppression or
+    takedown vote.
+  </p>
+  <p>
+    Every reviewed disposition and its outcome is counted in the public
     <a href="/corrections/">corrections log's transparency report</a> (SIG-GOV-011).
     A correction, once made, appears there in full.
   </p>

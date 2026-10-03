@@ -64,3 +64,39 @@ oe_page = ""
 # (docs/build/reports/CONTRIBUTION_BACK_LIVE.md) records what ran live + the exact
 # re-run command (P29.1 wired the transport activation-ready; D-P21.7-1).
 maproulette_challenge = ""
+
+[intake]
+# The anonymous correction receiver gate (P32.16, ADR-135, §55.5 SIG-FIND-006).
+# The receiver is a separate public-facing process (`sig-api serve-intake`)
+# that can never write claims, review decisions or publication dispositions
+# (its `sig_intake_receiver` role holds no such grants — proven in
+# tests/db/test_intake_pg.py).
+#
+# `enabled` is NOT read here — SIG_INTAKE_ENABLED=1 mounts the surface for
+# staging (routes exist; new reports refuse `receiver_not_operating`).
+#
+# `operational` is the committed half of the operating gate: accepting reports
+# requires this flag true AND SIG_INTAKE_OPERATIONAL=1 AND the two env secrets
+# (SIG_INTAKE_FORM_SECRET / SIG_INTAKE_ABUSE_SECRET — HG-09, never committed).
+# It STAYS false until GATE-G3 (D-R10-PUBLISH-1) approves public exposure and a
+# staffed owner is named — an unstaffed receiver is never advertised as
+# operational (S4 §8). See docs/governance/intake-receiver-operating-packet.md.
+operational = false
+# The named human owner responsible for the moderation queue + escalation
+# coverage. Empty = unstaffed; must be filled before `operational` flips.
+owner = ""
+# Whether a reviewer rotation actually covers the published response SLAs.
+staffed = false
+# The retention schedule the operator ratified (S4 §8): payloads until 30 days
+# after final disposition, with a 90-day review/reminder ceiling; extensions
+# only via a recorded legal_hold intake event by an authorized reviewer.
+# `sig-api intake-purge` applies it; these values mirror
+# policy/data/intake_receiver.toml [retention] (the code reads the policy
+# table — this row is the operator-facing record that they match).
+retention_days_after_disposition = 30
+retention_ceiling_days = 90
+# Abuse limits are code-of-record in policy/data/intake_receiver.toml [abuse]:
+# 5 accepted reports/hour per rotating abuse pseudonym (burst 3), global
+# 100/hour, ≤24h pseudonym TTL, no durable IP/UA storage. Infra log retention
+# (load balancer/proxy/monitoring) is OUTSIDE this repo — the operating packet
+# lists the exclusions the operator must prove before any privacy claim.

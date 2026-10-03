@@ -1,0 +1,229 @@
+# SPDX-License-Identifier: Apache-2.0
+# The anonymous correction receiver contract table (P32.16 / ADR-135, §55.5
+# SIG-FIND-006; S4 research §8 "Real anonymous correction intake"). Data, not
+# code: the field allowlist, per-field bounds, Part VIII screens, receipt/event
+# vocabulary, status transitions, abuse limits and retention windows are rows the
+# receiver/moderation code reads — changing a bound or a vocabulary entry is a
+# data change, never a code change. The §45.1 categories, SLAs and permitted
+# outcomes stay in `takedown.toml` (one source of truth — consumed, not forked).
+
+[contract]
+version = "intake-receiver/1"
+
+# The exact POST /intake/v1/reports field allowlist (S4 §8). Anything else is a
+# rejected unknown field — never persisted, never logged.
+fields = [
+  "form_token",
+  "idempotency_key",
+  "category",
+  "publication_id",
+  "record_key",
+  "claim_ids",
+  "description",
+  "evidence_urls",
+  "contact_for_legal_demand",
+]
+
+[limits]
+# Whole-body ceiling (S4 §8: "a 16KB total body limit").
+body_bytes = 16384
+# description: "plain text, 20–4000 Unicode code points".
+description_min_chars = 20
+description_max_chars = 4000
+# Up to 10 public claim ids, 3 public https evidence references.
+claim_ids_max = 10
+claim_id_max_chars = 128
+evidence_urls_max = 3
+evidence_url_max_chars = 2048
+# record_key is the sig.published-record/1 shape <compartment>:<type>:<id>,
+# bounded so it can never carry prose.
+record_key_max_chars = 200
+# Optional legal-demand contact — minimization: only the legal_demand category
+# may carry it (SIG-GOV-002); short, retained separately/restricted.
+contact_max_chars = 512
+# idempotency_key: a random per-form nonce (16–128 chars, token alphabet).
+idempotency_key_min_chars = 16
+idempotency_key_max_chars = 128
+# Moderator-authored public response on an approved disposition.
+public_response_max_chars = 1000
+# Reviewer note / sanitized reason ceiling.
+event_note_max_chars = 2000
+
+[patterns]
+# publication_id is the immutable release namespace (ADR-132): p-<64 hex>.
+publication_id = '^p-[0-9a-f]{64}$'
+# record_key = <compartment>:<type>:<id>, three lowercase-slug segments.
+record_key = '^[a-z0-9_-]{1,64}:[a-z0-9_-]{1,64}:[a-z0-9_-]{1,96}$'
+# receipt_id = rct-<32 lowercase hex> (128-bit; unguessable, never sequential).
+receipt_id = '^rct-[0-9a-f]{32}$'
+# idempotency_key alphabet — the generated form nonce or a caller nonce.
+idempotency_key = '^[A-Za-z0-9_-]{16,128}$'
+
+[part_viii]
+# Forbidden content tokens — the same Part VIII §0.7 law the connector
+# vocabularies carry (okc_documents_vocab.toml et al.): no plate / per-trip /
+# per-person / per-search data is ever stored. A match refuses the field BEFORE
+# persistence; the payload is never written anywhere, not even quarantine.
+forbidden_tokens = [
+  "license plate", "licence plate", "plate number", "license_plate", "plate_number",
+  "per-person", "per_person", "per person",
+  "per-trip", "per_trip", "per trip",
+  "travel history", "travel_history", "trip history", "individual travel",
+  "per-search", "per_search", "per search", "hotlist hit", "hotlist_hit",
+  "home address", "home_address",
+]
+
+# Person-shaped / identifier-shaped patterns (best-effort DLP — the research is
+# explicit that no DLP promise is made: every stored body stays quarantined and
+# reviewer-facing only). A match refuses the field before persistence.
+person_shaped_patterns = [
+  '\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b',            # email-shaped
+  '\b\d{3}[-. ]\d{3}[-. ]\d{4}\b',                        # phone-shaped
+  '\b\d{3}-\d{2}-\d{4}\b',                                # SSN-shaped
+  '\b[A-Z]{1,3}[- ]?[0-9]{3,4}[A-Z]?\b',                  # plate-shaped
+  '\b[A-Z][a-z]+ [A-Z][a-z]+ [0-9]{1,5} [A-Z][a-z]+\b',   # name + house-number street
+]
+
+[receipt]
+# The receipt capability (S4 §8 "Receipt capability"): the public receipt id and
+# the one-purpose bearer status token. >=128-bit secrets; only a keyed digest is
+# stored; lookups compare in constant time and failed lookups are rate-limited.
+id_bytes = 16            # rct-<32 hex> = 128 bits of entropy
+token_bytes = 32         # 256-bit bearer status token (url-safe base64)
+digest_bytes = 32        # sha256
+failed_lookup_limit = 10 # failed status lookups per abuse pseudonym per hour
+
+[form_token]
+# The expiring anti-replay form token (S4 §8). HMAC-signed {nonce, iat}; a
+# browser reload re-POSTs the same token and the nonce doubles as the
+# idempotency key, so a no-JS resubmit is idempotent by construction.
+ttl_seconds = 7200
+version = "v1"
+
+[abuse]
+# Starting rates (S4 §8 — "tunable proposals, not empirical guarantees").
+# Per rotating abuse pseudonym: token bucket capacity 3, refill 5/hour.
+per_pseudonym_burst = 3
+per_pseudonym_per_hour = 5
+# Global circuit breaker: 100 accepted reports/hour, then backpressure.
+global_per_hour = 100
+# The abuse pseudonym is HMAC(normalized ingress address, daily-rotated
+# secret) with a maximum 24h TTL. Raw IPs/UA fingerprints/cookies are NEVER
+# persisted. The pseudonym is still potentially personal data — do not call it
+# anonymous (S4 §8).
+pseudonym_ttl_seconds = 86400
+# Status lookups: failed attempts per pseudonym per hour (receipt-capability
+# brute-force guard). Successful lookups are not bucketed.
+failed_lookup_window_seconds = 3600
+
+[retention]
+# Payload retention (S4 §8): until 30 days after final disposition, with a
+# 90-day review/reminder ceiling; extension/legal hold is an authorized
+# reviewer act recorded as an intake event. The operator must ratify this
+# schedule before launch — no new retention authority is inferred.
+payload_days_after_disposition = 30
+payload_ceiling_days = 90
+# Intake event rows are the restricted audit spine — retained while the
+# deployment operates (they carry no raw body/contact/IP by construction).
+# Ephemeral abuse pseudonyms live at most 24h in volatile memory only —
+# nothing to purge in storage.
+
+[events]
+# The append-only intake event vocabulary (S4 §8 step 2 — "received, triaged,
+# assigned, review requested, disposition proposed, disposition approved,
+# applied, published, closed" — plus the two housekeeping kinds redaction and
+# expunge produce). `applied`/`published` are RESERVED for the P32.16a bridge:
+# no role in this ticket may write them.
+lifecycle = [
+  "received",
+  "triaged",
+  "assigned",
+  "review_requested",
+  "disposition_proposed",
+  "disposition_approved",
+  "applied",
+  "published",
+  "closed",
+]
+housekeeping = ["redacted", "expunged"]
+
+# Which lifecycle event each state may advance to (fail-closed transition
+# table). `received` may fast-path to disposition_proposed (an immediate
+# refusal is a legitimate review act, SIG-GOV-004). `closed` is reachable only
+# AFTER a decided disposition — a report is never silently closed without an
+# outcome on record.
+[[events.transitions]]
+from = "received"
+to = ["triaged", "disposition_proposed"]
+
+[[events.transitions]]
+from = "triaged"
+to = ["assigned", "review_requested", "disposition_proposed"]
+
+[[events.transitions]]
+from = "assigned"
+to = ["review_requested", "disposition_proposed", "assigned"]
+
+[[events.transitions]]
+from = "review_requested"
+to = ["disposition_proposed"]
+
+[[events.transitions]]
+from = "disposition_proposed"
+to = ["disposition_approved", "disposition_proposed"]
+
+[[events.transitions]]
+from = "disposition_approved"
+to = ["closed"]
+
+[[events.transitions]]
+from = "applied"
+to = ["published", "closed"]
+
+[[events.transitions]]
+from = "published"
+to = ["closed"]
+
+[[events.transitions]]
+from = "closed"
+to = []
+
+[public_status]
+# The coarse public projection (S4 §8: status reveals "only coarse status and
+# an approved response"). Raw body, contact, URLs, network identifiers and
+# private reviewer rationale NEVER appear in this mapping.
+[[public_status.map]]
+lifecycle = "received"
+state = "received"
+
+[[public_status.map]]
+lifecycle = "triaged"
+state = "under_review"
+
+[[public_status.map]]
+lifecycle = "assigned"
+state = "under_review"
+
+[[public_status.map]]
+lifecycle = "review_requested"
+state = "under_review"
+
+[[public_status.map]]
+lifecycle = "disposition_proposed"
+state = "under_review"
+
+[[public_status.map]]
+lifecycle = "disposition_approved"
+state = "decided"
+
+[[public_status.map]]
+lifecycle = "applied"
+state = "decided"
+
+[[public_status.map]]
+lifecycle = "published"
+state = "resolved"
+
+[[public_status.map]]
+lifecycle = "closed"
+state = "closed"
