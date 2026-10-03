@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.
-> input_commit: `77787fa2bc3f6e5ec1b0d32e159c704d66a947e1` · inputs hashed: 945 · wall-clock receipt: `receipt.json`
+> input_commit: `13919de4f190af599a1958164038a4ad21eb4595` · inputs hashed: 947 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
 - projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.21a` · lastCompleted `P34.20`
-- chainTip `r11/P34.20-watch-and-evidence-empty-state-truth` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.50` · updatedAt `2026-10-03T16:47:13Z`
+- chainTip `r11/P34.20-watch-and-evidence-empty-state-truth` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.50` · updatedAt `2026-10-03T19:06:34Z`
 
 ## Obligations
 
-- 148 obligations · **82 owed** (79 OPEN, 3 PARTIAL) · 66 terminal
-- 620 events (18 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 149 obligations · **83 owed** (80 OPEN, 3 PARTIAL) · 66 terminal
+- 621 events (18 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 82 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 83 rows)
 
 ## Known inconsistencies (preserved, never synthesized)
 

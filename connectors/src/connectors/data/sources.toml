@@ -1886,7 +1886,7 @@ last_verified = 2026-09-15
 ingestion_permitted = true
 notes = "National open procurement data. FLIPPED 2026-09-15 (GL-GATE-03, operator-approved): `fr-lo` (Licence Ouverte 2.0) confirmed via the data.gouv.fr API 2026-09-15 and accepted into the SPDX set (ADR-084). The France cohort gate is now PER-SOURCE (operator decision 2026-09-15): rights-resolved France sources may flip."
 [sources.decp_fr.rights]
-spdx = "LicenceOuverte-2.0"
+spdx = "etalab-2.0"
 attribution = "DECP — données essentielles de la commande publique (data.gouv.fr)"
 redistributable = true
 derivative_permitted = true
@@ -3308,9 +3308,9 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_sheffield_gb.md"
-notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras' licenseInfo declares the Open Government Licence (OGL v3.0) verbatim. 212 cameras observed; OGL-3.0 → ogl_uk3 compartment."
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras' licenseInfo declares the Open Government Licence (OGL v3.0) verbatim. 212 cameras observed; OGL-UK-3.0 → ogl_uk3 compartment."
 [sources.camreg_sheffield_gb.rights]
-spdx = "OGL-3.0"
+spdx = "OGL-UK-3.0"
 attribution = "Sheffield City Council CCTV and traffic camera registry (Open Government Licence v3.0)"
 redistributable = true
 derivative_permitted = true
@@ -3710,7 +3710,7 @@ rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_nottingham_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item df2bf0314b184b449ff595df02e320cf 'CCTV Cameras' (owner nccgisteam) declares the Open Government Licence v3.0 verbatim. 562 cameras observed."
 [sources.camreg_nottingham_gb.rights]
-spdx = "OGL-3.0"
+spdx = "OGL-UK-3.0"
 attribution = "Nottingham City Council. Contains OS data © Crown copyright [and database right] [year]."
 redistributable = true
 derivative_permitted = true
@@ -3736,7 +3736,7 @@ rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_york_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 25888f6f64e64cc6a938115a8f12f333 'CCTV' (owner gis_CYC) cites the Open Government Licence v3.0 under the OS derived-data exemption verbatim. 222 cameras observed."
 [sources.camreg_york_gb.rights]
-spdx = "OGL-3.0"
+spdx = "OGL-UK-3.0"
 attribution = "© Crown copyright and database rights 2017 Ordnance Survey 100020818 (City of York Council CCTV)"
 redistributable = true
 derivative_permitted = true
@@ -3762,7 +3762,7 @@ rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_glasgow_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 669df23dcc5d48bb98ad1b5d180927c6 'CCTV' (owner GlasgowGIS) declares the Open Government Licence v3.0 verbatim (One Scotland Mapping Agreement / OS attribution noted). 441 cameras observed."
 [sources.camreg_glasgow_gb.rights]
-spdx = "OGL-3.0"
+spdx = "OGL-UK-3.0"
 attribution = "Glasgow City Council — contains Ordnance Survey data © Crown copyright and database right 2022 (OGL v3.0)"
 redistributable = true
 derivative_permitted = true
@@ -3788,7 +3788,7 @@ rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_northayrshire_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 082112796ccd448bb1abba9e9603e9f0 'CCTV Locations' (owner NAC_OpenData) declares the Open Government Licence v3.0 verbatim with the required attribution statement. 108 cameras observed."
 [sources.camreg_northayrshire_gb.rights]
-spdx = "OGL-3.0"
+spdx = "OGL-UK-3.0"
 attribution = "Copyright North Ayrshire Council, contains Ordnance Survey data © Crown copyright and database right (2018)"
 redistributable = true
 derivative_permitted = true
@@ -3814,7 +3814,7 @@ rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_lambeth_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner [account withheld]) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. 35 cameras observed."
 [sources.camreg_lambeth_gb.rights]
-spdx = "OGL-3.0"
+spdx = "OGL-UK-3.0"
 attribution = "London Borough of Lambeth parking CCTV camera registry (OGL v3.0)"
 redistributable = true
 derivative_permitted = true

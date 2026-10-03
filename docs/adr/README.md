@@ -191,6 +191,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-191](ADR-191-lighthouse-three-run-median.md) | Lighthouse performance gate samples three runs, asserts the median (P34.2) | P34.2 (Round 11 / P34, row 202; requirement SIG-MEM-007; cited: | accepted (engineering; `live_verification=false` — CI policy, verified |
 | [ADR-192](ADR-192-monitoring-alert-set-as-committed-definitions.md) | The production alert set lives as committed REST-shape definitions (P34.4) | P34.4 (Round 11 / P34, row 205; requirements SIG-OPS-006 partial, | accepted (engineering; the live legs are window-queued — D-P34.4-1) |
 | [ADR-193](ADR-193-cost-guard-budget-scope-and-spend-ledger.md) | Cost guard: project-scoped ceiling budget, test-threshold lifecycle, spend ledger conventions (P34.5) | P34.5 (Round 11 / P34, row 206; requirement SIG-OPS-009; answers | accepted (the apply legs ran live 2026-10-02; the test-budget |
+| [ADR-194](ADR-194-source-scoped-rights-records-and-attribution-corrections.md) | Source-scoped rights records and append-only attribution corrections (P34.21a) | P34.21a (Round 11 / P34, row 223; answers E2-12; fixes defect F-387) | accepted |
 
 ## Notes
 

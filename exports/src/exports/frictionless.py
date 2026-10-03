@@ -15,21 +15,28 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
 
-from .manifest import Artifact, BuildSpec, canonical_json
-
-#: SPDX id -> canonical licence URL, for the descriptor licence fields.
-_LICENSE_URLS: dict[str, str] = {
-    "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
-    "CC-BY-SA-4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
-    "CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "ODbL-1.0": "https://opendatacommons.org/licenses/odbl/1-0/",
-    "Apache-2.0": "https://www.apache.org/licenses/LICENSE-2.0",
-}
+from .manifest import PUBLICATION_BASIS, Artifact, BuildSpec, canonical_json
 
 
-def license_url(spdx: str) -> str:
-    """The canonical URL for an SPDX id (falls back to an SPDX detail URL)."""
-    return _LICENSE_URLS.get(spdx, f"https://spdx.org/licenses/{spdx}.html")
+def license_url(spdx: str) -> str | None:
+    """The canonical licence URL (P34.21a), or ``None`` for an internal LicenseRef.
+
+    Delegates to :func:`policy.licensing.license_url`: the ``license_url`` fact in
+    ``licenses.toml`` wins, then the canonical map, then the SPDX detail page —
+    never a fabricated SPDX URL for a ``LicenseRef-*`` (it would 404).
+    """
+    from policy.licensing import license_url as _url
+
+    return _url(spdx)
+
+
+def _license_entry(license_id: str) -> dict[str, object]:
+    """A Frictionless ``licenses`` entry — ``path`` only when a real URL exists."""
+    url = license_url(license_id)
+    entry: dict[str, object] = {"name": license_id}
+    if url:
+        entry["path"] = url
+    return entry
 
 
 def _resource(artifact: Artifact) -> dict[str, object]:
@@ -43,7 +50,7 @@ def _resource(artifact: Artifact) -> dict[str, object]:
         "mediatype": artifact.media_type,
         "bytes": artifact.byte_size,
         "hash": f"sha256:{artifact.sha256}",
-        "licenses": [{"name": artifact.license, "path": license_url(artifact.license)}],
+        "licenses": [_license_entry(artifact.license)],
     }
 
 
@@ -60,7 +67,10 @@ def data_package(artifacts: Sequence[Artifact], build_spec: BuildSpec) -> bytes:
         "id": build_spec.concept_id(),
         "version": build_spec.release_id(),
         "created": build_spec.as_of_snapshot.isoformat(),
-        "licenses": [{"name": lic, "path": license_url(lic)} for lic in licenses],
+        # P34.21a (E2 H-6, OM-08, ADR-167/ADR-182): the publication-basis label,
+        # the same string manifest.json and LICENCES.json carry.
+        "publication_basis": PUBLICATION_BASIS,
+        "licenses": [_license_entry(lic) for lic in licenses],
         "resources": [_resource(a) for a in sorted(artifacts, key=lambda a: a.path)],
     }
     return canonical_json(descriptor)
@@ -88,7 +98,7 @@ def ro_crate(artifacts: Sequence[Artifact], build_spec: BuildSpec) -> bytes:
             "name": f"SIG evidence bundle {build_spec.release_id()}",
             "datePublished": build_spec.as_of_snapshot.isoformat(),
             "version": build_spec.release_id(),
-            "license": [{"@id": license_url(lic)} for lic in licenses],
+            "license": [{"@id": license_url(lic) or lic} for lic in licenses],
             "hasPart": [{"@id": a.path} for a in sorted_artifacts],
         },
     ]
@@ -101,7 +111,7 @@ def ro_crate(artifacts: Sequence[Artifact], build_spec: BuildSpec) -> bytes:
                 "encodingFormat": a.media_type,
                 "contentSize": a.byte_size,
                 "sha256": a.sha256,
-                "license": {"@id": license_url(a.license)},
+                "license": {"@id": license_url(a.license) or a.license},
             }
         )
     return canonical_json({"@context": "https://w3id.org/ro/crate/1.1/context", "@graph": graph})

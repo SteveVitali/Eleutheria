@@ -51,12 +51,15 @@ relicensable_to = ["CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "ODbL-1.0"]
 # non-share-alike; per Etalab's own guidance it is CC-BY-compatible, but SIG
 # records it under its own expression rather than silently mapping (ADR-084):
 # `relicensable_to` is deliberately just itself until HG-02 counsel confirms
-# the CC-BY-4.0 compatibility mapping.
-[licenses."LicenceOuverte-2.0"]
+# the CC-BY-4.0 compatibility mapping. P34.21a: named under its SPDX id
+# `etalab-2.0` (the earlier `LicenceOuverte-2.0` expression is the recorded
+# identifier normalisation ADR-194 declares on the spine's stored records).
+[licenses."etalab-2.0"]
 kind = "data"
 share_alike = false
 attribution_required = true
-relicensable_to = ["LicenceOuverte-2.0"]
+license_url = "https://spdx.org/licenses/etalab-2.0.html"
+relicensable_to = ["etalab-2.0"]
 
 # CC-BY-SA-2.0 — the licence the IDOT Illinois Gateway traffic-camera layer is
 # published under (ArcGIS item 8a885da23dfb46caaa1827ad920fb5b1 licenseInfo,
@@ -91,7 +94,7 @@ relicensable_to = ["LicenseRef-DerivedFacts-Citations"]
 # City of Winnipeg open-data portal (data.winnipeg.ca dataset 42pk-2u2c licence
 # metadata, retrieved 2026-09-18). Attribution-only, non-share-alike; recorded
 # under its own expression rather than silently mapped to CC-BY-4.0 (the
-# LicenceOuverte-2.0 precedent) — the relicensable_to set stays self-only until
+# etalab-2.0 precedent) — the relicensable_to set stays self-only until
 # HG-02 counsel confirms the CC-BY compatibility mapping.
 [licenses."OGL-Canada-2.0"]
 kind = "data"
@@ -99,15 +102,18 @@ share_alike = false
 attribution_required = true
 relicensable_to = ["OGL-Canada-2.0"]
 
-# OGL-3.0 — the UK Open Government Licence v3.0, declared verbatim on the
+# OGL-UK-3.0 — the UK Open Government Licence v3.0, declared verbatim on the
 # Sheffield City Council ArcGIS item c5b5971a1c1248faa95649d081849aa1
 # (retrieved 2026-09-18). Attribution-only, non-share-alike; self-relicensable
-# only pending counsel's compatibility mapping.
-[licenses."OGL-3.0"]
+# only pending counsel's compatibility mapping. P34.21a: named under its SPDX
+# id `OGL-UK-3.0` (the earlier `OGL-3.0` expression is the recorded identifier
+# normalisation ADR-194 declares on the spine's stored records).
+[licenses."OGL-UK-3.0"]
 kind = "data"
 share_alike = false
 attribution_required = true
-relicensable_to = ["OGL-3.0"]
+license_url = "https://spdx.org/licenses/OGL-UK-3.0.html"
+relicensable_to = ["OGL-UK-3.0"]
 
 # CC-BY-3.0 — Creative Commons Attribution 3.0 Unported, declared verbatim on
 # the Baltimore CitiWatch item b676679350764f56a990c25a8ce2bda0 (retrieved
@@ -130,6 +136,7 @@ relicensable_to = ["CC-BY-3.0"]
 kind = "data"
 share_alike = false
 attribution_required = true
+license_url = "https://ottawa.ca/en/city-hall/open-data"
 relicensable_to = ["LicenseRef-Ottawa-ODL-2.0"]
 
 # --- P26.13 (SOURCES.12) licences ---------------------------------------------
@@ -145,6 +152,7 @@ relicensable_to = ["LicenseRef-Ottawa-ODL-2.0"]
 kind = "data"
 share_alike = false
 attribution_required = true
+license_url = "https://data.peelregion.ca/pages/license"
 relicensable_to = ["LicenseRef-Peel-ODL-1.0"]
 
 # LicenseRef-StAlbert-ODL-1.0 — the "City of St. Albert Open Government
@@ -158,6 +166,7 @@ relicensable_to = ["LicenseRef-Peel-ODL-1.0"]
 kind = "data"
 share_alike = false
 attribution_required = true
+license_url = "https://data.stalbert.ca/pages/licence"
 relicensable_to = ["LicenseRef-StAlbert-ODL-1.0"]
 
 # ---------------------------------------------------------------------------
@@ -213,7 +222,7 @@ description = "Municipal camera registries under the Open Government Licence - C
 source = "City of Winnipeg"
 
 [compartments.ogl_uk3]
-license = "OGL-3.0"
+license = "OGL-UK-3.0"
 description = "UK council camera registries under the Open Government Licence v3.0 (P26.9)"
 source = "Sheffield City Council"
 
@@ -249,6 +258,7 @@ source = "City of St. Albert"
 kind = "data"
 share_alike = false
 attribution_required = true
+license_url = "https://supreme.justia.com/cases/federal/us/499/340/"
 relicensable_to = ["LicenseRef-PublicRecord-FactualCompilation"]
 
 # LicenseRef-OperatorAccepted-DBRight — the GL-GATE-07 basis for the non-US
@@ -282,13 +292,14 @@ source = "non-US municipal and community portals"
 kind = "data"
 share_alike = false
 attribution_required = true
+license_url = "https://www.muckrock.com/api/"
 relicensable_to = ["LicenseRef-MuckRock-API-ToS"]
 
 # decp_fr resolves to its declared Licence Ouverte 2.0 (ADR-084; reviewed
 # 2026-09-15), which needs its own compartment — recorded under its own
 # expression, self-relicensable only, so it can never silently fold into the
-# permissive CC-BY graph (the LicenceOuverte-2.0 precedent).
+# permissive CC-BY graph (the etalab-2.0 precedent).
 [compartments.france_licence_ouverte]
-license = "LicenceOuverte-2.0"
+license = "etalab-2.0"
 description = "French public procurement (DECP) under Licence Ouverte 2.0 (Etalab)"
 source = "data.gouv.fr / Etalab"

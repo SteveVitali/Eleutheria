@@ -953,11 +953,11 @@ def test_p26_13_targets_carry_license_spdx_and_jurisdiction_schemes() -> None:
     data on the row, not inferred at run time."""
     expected = {
         "camreg_washington_dc": ("CC-BY-4.0", "us.state_abbr"),
-        "camreg_nottingham_gb": ("OGL-3.0", "iso.3166_2"),
-        "camreg_york_gb": ("OGL-3.0", "iso.3166_2"),
-        "camreg_glasgow_gb": ("OGL-3.0", "iso.3166_2"),
-        "camreg_northayrshire_gb": ("OGL-3.0", "iso.3166_2"),
-        "camreg_lambeth_gb": ("OGL-3.0", "iso.3166_2"),
+        "camreg_nottingham_gb": ("OGL-UK-3.0", "iso.3166_2"),
+        "camreg_york_gb": ("OGL-UK-3.0", "iso.3166_2"),
+        "camreg_glasgow_gb": ("OGL-UK-3.0", "iso.3166_2"),
+        "camreg_northayrshire_gb": ("OGL-UK-3.0", "iso.3166_2"),
+        "camreg_lambeth_gb": ("OGL-UK-3.0", "iso.3166_2"),
         "camreg_peel_on": ("LicenseRef-Peel-ODL-1.0", "iso.3166_2"),
         "camreg_rochester_ny": ("ODbL-1.0", "us.state_abbr"),
         "camreg_goldcoast_au": ("CC-BY-4.0", "iso.3166_2"),

@@ -43,7 +43,7 @@ import {
   readsAsDensity,
   renderBin,
 } from "../lib/map";
-import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
+import { mapAttributionLine } from "../lib/map-tiles";
 import {
   getDossiers,
   getMapSites,
@@ -138,6 +138,9 @@ const cell = 64;
 // licence-mixed /map/points.json). A build with no archives (the fixtures) passes the
 // small inline fallback list instead.
 const TILE_SOURCES = getCompartmentTileSources();
+// P34.21a / E2-12: the attribution line names the upstream sources actually
+// drawn (each compartment's ATTRIBUTION.json), never the generic SIG line.
+const ATTRIBUTION_LINE = mapAttributionLine(TILE_SOURCES);
 const ISLAND_POINT_COUNT = locatable.filter((a) => a.lat !== null && a.lon !== null).length;
 const ISLAND_FALLBACK_POINTS = TILE_SOURCES.length === 0 ? islandPoints(locatable) : [];
 
@@ -151,7 +154,11 @@ const entityComps = LATEST ? getEntityCompartments() : new Map();
 const recordHref = (id: string): string | null =>
   releasedRecordHref(LATEST, entityComps, id);
 const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
-  ? TILE_SOURCES.map((t) => ({ id: t.compartment, license: t.license }))
+  ? TILE_SOURCES.map((t) => ({
+      id: t.compartment,
+      license: t.license,
+      attribution: t.attribution,
+    }))
   : (LATEST?.compartments.map((c) => ({ id: c.compartment, license: c.license })) ?? []);
 const meta = getSiteMetadata();
 const mapCitationHref = beliefPinnedPermalink({
@@ -183,7 +190,7 @@ const mapCitationHref = beliefPinnedPermalink({
         tiles={TILE_SOURCES}
         points={ISLAND_FALLBACK_POINTS}
         pointCount={ISLAND_POINT_COUNT}
-        attribution={MAP_ATTRIBUTION_LINE}
+        attribution={ATTRIBUTION_LINE}
         citationHref={mapCitationHref}
         release={LATEST?.publicationId ?? null}
         compartments={ISLAND_COMPARTMENTS}
@@ -192,7 +199,7 @@ const mapCitationHref = beliefPinnedPermalink({
       <p class="sig-island__note">No publishable points to draw at this belief; see the tabular equivalent below.</p>
     )}
     <p class="sig-island__note" data-testid="map-island-attribution">
-      {MAP_ATTRIBUTION_LINE}. Interactive rendering is a progressive enhancement;
+      {ATTRIBUTION_LINE}. Interactive rendering is a progressive enhancement;
       the tables below are the archivable equivalent (SIG-UI-037/038/050).
     </p>
   </section>
@@ -464,7 +471,7 @@ const mapCitationHref = beliefPinnedPermalink({
 
   <!-- OSM attribution in every rendering context, incl. print (SIG-GEO-013). -->
   <p class="sig-map-attribution" data-testid="map-attribution">
-    {MAP_ATTRIBUTION_LINE}. Tiles served as static PMTiles v3 —{" "}
+    {ATTRIBUTION_LINE}. Tiles served as static PMTiles v3 —{" "}
     <a href="/map/style.json">map style</a> (SIG-GEO-012, SIG-UI-038).
   </p>
 </BaseLayout>

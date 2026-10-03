@@ -36,6 +36,50 @@ SINK_KINDS = ("memory", "pg")
 ENV_COMMIT_CHUNK_SIZE = "SIG_COMMIT_CHUNK_SIZE"
 
 
+def _registry_rights(source_id: str) -> Mapping[str, Any] | None:
+    """The source's registry rights tuple, normalized to the spine vocabulary.
+
+    P34.21a / ADR-194: the ``rights_resolver`` wired onto the live
+    :class:`db.claim_sink.PgClaimSink` so a claim that omits rights fields
+    records the source's *own* reviewed (spdx, attribution, terms) — never an
+    empty or cross-source record (F-387). Claim-carried fields always win; this
+    only fills the gaps. An unregistered source resolves ``None`` and the claim
+    stands on its own fields (the loader gate has already decided it may run).
+    """
+    from .registry import get
+
+    try:
+        record = get(source_id)
+    except KeyError:
+        return None
+    rights = record.rights
+    # A recorded rights review (role + date) distinguishes "reviewed, not
+    # publishable" ('no') from "not yet reviewed" (UNDETERMINED) — the
+    # registry's `redistributable = false` default conflates the two. An
+    # unreviewed source keeps the honest undecided marker so a decision can
+    # lift it later; stamping 'no' would record a review that never happened.
+    reviewed = bool(record.rights_reviewed_by and record.rights_reviewed_on)
+    if rights.spdx == "UNDETERMINED":
+        redistributable = "UNDETERMINED"
+    elif rights.redistributable:
+        redistributable = "yes"
+    else:
+        redistributable = "no" if reviewed else "UNDETERMINED"
+    if rights.spdx == "UNDETERMINED":
+        derivative = "UNDETERMINED"
+    elif rights.derivative_permitted:
+        derivative = "yes"
+    else:
+        derivative = "no" if reviewed else "UNDETERMINED"
+    return {
+        "spdx": rights.spdx,
+        "attribution": rights.attribution,
+        "terms_url": rights.terms_url,
+        "redistributable": redistributable,
+        "derivative_permitted": derivative,
+    }
+
+
 def resolve_commit_chunk_size(
     explicit: int | None = None, env: Mapping[str, str] | None = None
 ) -> int | None:
@@ -90,6 +134,11 @@ def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: A
 
         kwargs.setdefault("object_resolver", record_object_ref)
         kwargs.setdefault("on_duplicates", record_resightings)
+        # P34.21a / ADR-194: the live sink resolves rights per SOURCE from the
+        # registry (a claim's own fields still win). A caller may pass its own
+        # ``rights_resolver``; replay sinks are built directly in runner.py and
+        # deliberately carry none — a replay re-records what was asserted.
+        kwargs.setdefault("rights_resolver", _registry_rights)
         return PgClaimSink.from_dsn(dsn, **kwargs)
     raise ValueError(f"unknown claim-sink kind {kind!r}; expected one of {SINK_KINDS}")
 

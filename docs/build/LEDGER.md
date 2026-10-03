@@ -56,7 +56,7 @@ autonomy:        checkpoint                         # Q-15 = a: pause at gates, 
 mergePolicy:     OPERATOR                           # agents never merge; the operator integrates (plan §12)
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10 (A-15, round 25)
-updatedAt:       2026-10-03T16:47:13Z
+updatedAt:       2026-10-03T19:06:34Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)

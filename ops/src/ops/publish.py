@@ -73,14 +73,10 @@ _WEB_DIR = "web"
 #: The per-compartment licence + attribution index written at the public root (ADR-106).
 LICENCE_INDEX = "LICENCES.json"
 
-#: The canonical licence URLs for the licences SIG publishes most (others resolve to SPDX).
-_LICENCE_URLS: dict[str, str] = {
-    "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
-    "CC-BY-SA-4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
-    "CC-BY-SA-2.0": "https://creativecommons.org/licenses/by-sa/2.0/",
-    "CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "ODbL-1.0": "https://opendatacommons.org/licenses/odbl/1-0/",
-}
+#: The canonical licence URLs for the licences SIG publishes — resolution lives
+#: in ``policy.licensing.license_url`` (licenses.toml ``license_url`` fact →
+#: canonical map → SPDX page; ``LicenseRef-*`` without a fact resolves ``None``
+#: and the index emits the honest absence, P34.21a / E2-12).
 
 #: The attribution line each licence's re-user must carry. ODbL-1.0 is the OpenStreetMap
 #: attribution (§42.3, SIG-GEO-013); every other compartment names SIG plus the per-row
@@ -90,8 +86,18 @@ _ATTRIBUTION: dict[str, str] = {
     "CC-BY-4.0": "© The SIG project — CC-BY-4.0",
 }
 _DEFAULT_ATTRIBUTION = (
-    "The SIG project, plus the per-row source attribution each record carries (SIG-EXPORT-006)"
+    "The SIG project, plus the per-source attribution each row's _rights block and the "
+    "compartment's ATTRIBUTION.json carry (SIG-EXPORT-006)"
 )
+
+
+#: The publication-basis label every public descriptor carries (E2 H-6; OM-08,
+#: ADR-167/ADR-182) — the single source of truth is ``exports.manifest.PUBLICATION_BASIS``;
+#: the same string lands in ``manifest.json``, ``datapackage.json`` and ``LICENCES.json``.
+def _publication_basis() -> str:
+    from exports.manifest import PUBLICATION_BASIS
+
+    return PUBLICATION_BASIS
 
 
 class PublishError(RuntimeError):
@@ -100,6 +106,64 @@ class PublishError(RuntimeError):
 
 class CompartmentLeak(PublishError):
     """A restricted/ODbL/UNDETERMINED artifact reached the public compartment (§42)."""
+
+
+class AttributionLeak(PublishError):
+    """An attribution-required row reached publication with no credit (E2-12/ADR-194)."""
+
+
+def _iter_jsonl_rows(root: Path) -> Iterable[tuple[str, int, dict[str, Any]]]:
+    """Every (relpath, line_no, row) of every ``*.jsonl`` file under ``root``."""
+    for path in sorted(root.rglob("*.jsonl")):
+        rel = str(path.relative_to(root))
+        for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(row, dict):
+                yield rel, i, row
+
+
+def attribution_violations(root: Path) -> list[str]:
+    """The E2-12 publish-time gate, file-tree form.
+
+    Scans every ``*.jsonl`` row under ``root`` for a ``_rights`` block that
+    declares ``attribution_required = true`` with an absent or whitespace-only
+    ``attribution`` — the same rule ``exports.compartments.enrich_rows``
+    applies at build. Returns the human-readable violation list
+    (``path:line source_id``); empty is the pass. Runs identically at export
+    preparation (the public partition) and at ``publish-web`` (the staged
+    export tree) so a defected bundle can never reach a public object.
+    """
+    violations: list[str] = []
+    for rel, line_no, row in _iter_jsonl_rows(root):
+        rights = row.get("_rights")
+        if not isinstance(rights, dict):
+            continue
+        if not rights.get("attribution_required", False):
+            continue
+        attribution = rights.get("attribution")
+        if attribution is None or not str(attribution).strip():
+            source = rights.get("source_id") or row.get("source_id") or "(unknown)"
+            violations.append(f"{rel}:{line_no} source_id={source}")
+    return violations
+
+
+def assert_attribution_complete(root: Path) -> None:
+    """Fail closed when a public row names no upstream to credit (E2-12 / ADR-194)."""
+    violations = attribution_violations(root)
+    if violations:
+        raise AttributionLeak(
+            f"attribution gate refused {root}: {len(violations)} public row(s) carry "
+            "attribution_required=true with empty attribution (E2-12 / ADR-194 — "
+            "SIG-CONTRIB-020 requires every claim's upstream to be named):\n  "
+            + "\n  ".join(violations[:50])
+            + ("\n  …" if len(violations) > 50 else "")
+        )
 
 
 # --- 1. the export-mode public build ------------------------------------------
@@ -446,8 +510,10 @@ def assert_public_clean(public_root: Path, registry: dict[str, Any] | None = Non
         )
 
 
-def _licence_url(license_id: str) -> str:
-    return _LICENCE_URLS.get(license_id, f"https://spdx.org/licenses/{license_id}.html")
+def _licence_url(license_id: str, registry: dict[str, Any] | None = None) -> str | None:
+    from policy.licensing import license_url
+
+    return license_url(license_id, registry)
 
 
 def write_licence_index(public_root: Path, registry: dict[str, Any] | None = None) -> Path:
@@ -480,7 +546,7 @@ def write_licence_index(public_root: Path, registry: dict[str, Any] | None = Non
             {
                 "compartment": compartment,
                 "license": license_id,
-                "license_url": _licence_url(license_id),
+                "license_url": _licence_url(license_id, reg),
                 "share_alike": bool(facts.get("share_alike", False)),
                 "attribution_required": bool(facts.get("attribution_required", True)),
                 "attribution": _ATTRIBUTION.get(license_id, _DEFAULT_ATTRIBUTION),
@@ -490,10 +556,13 @@ def write_licence_index(public_root: Path, registry: dict[str, Any] | None = Non
     doc = {
         "schema": "sig/public-licence-index/1.0.0",
         "release_id": manifest.get("release_id"),
+        "publication_basis": _publication_basis(),
         "note": (
             "Each compartment is a separate dataset under exactly one licence; compartments "
             "are never merged into one downloadable database. The public website is a produced "
-            "work drawing on all of them, with the attribution each licence requires."
+            "work drawing on all of them, with the attribution each licence requires. A "
+            "compartment whose licence is a project LicenseRef carries license_url=null — its "
+            "terms are the recorded basis named in its ATTRIBUTION.json and rows."
         ),
         "compartments": compartments,
     }
@@ -540,6 +609,10 @@ def run_public_prepare(
     res = restricted_root or (repo_root / "exports" / "out" / "restricted")
     partition = partition_export(resolved, pub, res, registry=registry)
     assert_public_clean(pub, registry=registry)
+    # E2-12 / ADR-194: the publish-time attribution gate at export preparation —
+    # an attribution-required public row carrying no credit refuses the build
+    # before LICENCES.json or any sync can bless it.
+    assert_attribution_complete(pub)
     write_licence_index(pub, registry=registry)
     assert_public_clean(pub, registry=registry)  # the index adds no data byte — re-proven
     assert_site_matches_partition(dist, pub)
@@ -1176,6 +1249,13 @@ def run_publish_web(
         assert_release_tree(release_tree)
     if export_tree is not None and not export_tree.is_dir():
         raise PublishError(f"--export-tree {export_tree} is not a directory")
+    # E2-12 / ADR-194: the same attribution gate the export build ran, re-applied
+    # to the exact bytes about to sync — an attribution-required row with empty
+    # credit refuses the publish before ANY write or sync happens.
+    if export_tree is not None:
+        assert_attribution_complete(export_tree)
+    else:
+        assert_attribution_complete(dist)
 
     commit = git_commit or _git_head()
     built_at = now or utcnow()

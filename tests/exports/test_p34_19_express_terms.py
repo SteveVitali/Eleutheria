@@ -189,8 +189,14 @@ def test_attribution_json_written_into_each_affected_compartment() -> None:
     export = _build(_affected_site())
     comp = _compartment_with(export, "camreg_trpa_us")
     attribution = _json(export, f"{comp}/ATTRIBUTION.json")
-    assert attribution["schema"] == "sig.compartment-attribution/1"
+    # P34.21a generalised the file to every source in the compartment (schema /2);
+    # the express-terms keys stay additive on the affected source.
+    assert attribution["schema"] == "sig.compartment-attribution/2"
     assert attribution["compartment"] == comp
+    assert attribution["license_url"]
+    assert attribution["publication_basis"].startswith(
+        "Published on the operator's own determination"
+    )
     entry = next(s for s in attribution["sources"] if s["source_id"] == "camreg_trpa_us")
     assert entry["captured_terms_verbatim"] == "CC BY-NC"
     assert entry["publication_basis"] == "operator-accepted express terms (ADR-183)"
@@ -202,11 +208,21 @@ def test_attribution_json_written_into_each_affected_compartment() -> None:
     assert paths[f"{comp}/ATTRIBUTION.json"].compartment == comp
 
 
-def test_unaffected_export_emits_no_disclosure_artifacts() -> None:
+def test_unaffected_export_emits_no_terms_disclosure_but_names_every_source() -> None:
     export = _build(_site("PLAIN", source_id="src_plain", spdx="CC0-1.0"))
     names = set(export.web_artifacts)
+    # P34.19: no express-terms source → no terms_disclosure.json (unchanged).
     assert "web/terms_disclosure.json" not in names
-    assert not any(n.endswith("ATTRIBUTION.json") for n in names)
+    # P34.21a: EVERY compartment still gets its ATTRIBUTION.json naming the
+    # sources whose rows it carries — an unaffected source simply carries no
+    # express-terms keys.
+    comp = _compartment_with(export, "src_plain")
+    attribution = _json(export, f"{comp}/ATTRIBUTION.json")
+    assert attribution["schema"] == "sig.compartment-attribution/2"
+    entry = next(s for s in attribution["sources"] if s["source_id"] == "src_plain")
+    assert "captured_terms_verbatim" not in entry
+    assert entry["attribution"] == "© src_plain"
+    assert entry["rows"] == 1
 
 
 def test_disclosure_covers_only_affected_sources_in_a_mixed_export() -> None:
@@ -214,9 +230,12 @@ def test_disclosure_covers_only_affected_sources_in_a_mixed_export() -> None:
     payload = _json(export, "web/terms_disclosure.json")
     assert {s["source_id"] for s in payload["sources"]} == {"camreg_trpa_us"}
     comp_plain = _compartment_with(export, "src_plain")
-    # an unaffected-only compartment keeps its pre-P34.19 shape (no new file)
+    # P34.21a: the unaffected compartment's ATTRIBUTION.json names its source
+    # but carries no express-terms keys — disclosure keys stay affected-only.
     if comp_plain != _compartment_with(export, "camreg_trpa_us"):
-        assert f"{comp_plain}/ATTRIBUTION.json" not in export.web_artifacts
+        plain = _json(export, f"{comp_plain}/ATTRIBUTION.json")
+        entry = next(s for s in plain["sources"] if s["source_id"] == "src_plain")
+        assert "captured_terms_verbatim" not in entry
 
 
 # --- F-337: the nine leak-tainted rows leave every artifact ----------------- #

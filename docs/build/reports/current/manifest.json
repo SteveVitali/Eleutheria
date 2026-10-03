@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "77787fa2bc3f6e5ec1b0d32e159c704d66a947e1",
+  "input_commit": "13919de4f190af599a1958164038a4ad21eb4595",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "9ee2a375c8ba8aa0a7424bfa84d5becc413f771b3c4b5b78003b33d09556be03"
+      "sha256": "08bdf862d8905f5b475f7f6096846d33d0dad5d7248a0951846fff38f40ae712"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -386,7 +386,7 @@
     },
     {
       "path": "docs/adr/ADR-095-append-only-rights-decision-log.md",
-      "sha256": "13f2143a9d845983589ddb76aa7efd18f652cc2388a04493b9eb28e309892d51"
+      "sha256": "d6b6deac7941a4f4c9de7bf5b81ab127dd9848967cc97e23017b07776d2e76d1"
     },
     {
       "path": "docs/adr/ADR-096-national-public-cutover-published-compartment.md",
@@ -753,12 +753,16 @@
       "sha256": "4f9fcc9ef528004295829675961c86cf43f956492fe2566dc9f5585b587c8afb"
     },
     {
+      "path": "docs/adr/ADR-194-source-scoped-rights-records-and-attribution-corrections.md",
+      "sha256": "a572c3ee1d978350358a9926d7b4f36530a94545bb818f719c8273ecfdd4025c"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "2cc3e1cbad3eca3484102604c379199bb0a855a05079a7d440dbdb8f8b68e5c6"
+      "sha256": "af9ca21fc0c8914f364b3355dce5befc3ac6ed4a0a85d03fdd4cb02ac1178acb"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "886aef9408ba1174ba8304eddc151e27f8658984ceca47f7397b389697ee296b"
+      "sha256": "51c889aa42b01cb80b1c8f3e31811ea0d98941526209c7cfac2e09e54e31b03c"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -770,7 +774,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "688cd4d9ed79546201d3402748dddf379190e2644c2a90c6bc24b7440d919dc9"
+      "sha256": "6c95b8e35b76afd92b31d0355f702ee4161a70e19dc7b342c3ce892a482b481e"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -826,7 +830,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "f7453c01f33dbe142e91a226dca0ea9fe544496d2392f4a2cdf7244b63789fc5"
+      "sha256": "b986a353f258291dd60bb7dfc22d21b61efdaf191caf9e0f855f2ac0014f077b"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1623,6 +1627,10 @@
     {
       "path": "docs/build/runs/P34.20.md",
       "sha256": "bfac7c2a2a4fea973480b256694cfbc546d949080429eea0bad76a7bd976f136"
+    },
+    {
+      "path": "docs/build/runs/P34.21a.md",
+      "sha256": "330420b7d0fc26ed6f4c82b8bf955cdbe9c7d24f8894048b311d84b0ac247085"
     },
     {
       "path": "docs/build/runs/P34.3.md",
@@ -3170,7 +3178,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "4374bbf70c84e9524d2c514a8a4b4fd6002e06b0b76629d5c234bb5fe6e37069"
+      "sha256": "6f5208ded0d4cb5cf99c175b1636ede45cc3309c3a8a57926b40e5427ba7f025"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
