@@ -446,7 +446,7 @@ LEDGER:174-180 (2026-09-22, *"Approve under GL-GATE-07"*) and LEDGER:143 (2026-0
 **Landed behaviour** (`code`, `live-read`). Registry: 236 permitted rows; 94 `LicenseRef-OperatorAccepted-DBRight`
 (93 reviewed 2026-09-18); 231 reviewed by `maintainer (delegated)`, 5 by `counsel (HG-02)` (operator-reported,
 E1-05). Execution beyond the recorded rule (NEW-13): the recorded rule is *US → PublicRecord; non-US → DBRight*,
-but `camreg_aikner` (an *"ArcGIS community-published"* registry, jurisdiction `sig.unresolved`, rows at New Jersey
+but `camreg_und_001` (an *"ArcGIS community-published"* registry, jurisdiction `sig.unresolved`, rows at New Jersey
 coordinates) was flipped as *"non-US/unresolved-jurisdiction"*; `camreg_calgary_ab` was flipped although its notes
 say the terms *"could not be captured verbatim this run"*. Public: `operator_accepted/sites.{csv,geojson,jsonl,
 jsonld,parquet,pmtiles,sqlite}` — **21,682 rows** downloadable (manifest 16:47:15Z) — and the `sig_operator_accepted`
@@ -477,7 +477,7 @@ sufficient"*; `:5576-5578` SIG-API-004; `:5668-5669` SIG-EXPORT-006 (per-row rig
 - Public downloads, first ~400 KB of each `sites.csv` (16:53:44Z): `rights_attribution` **empty** and
   `rights_terms_url` empty while `rights_attribution_required = True` in `operator_accepted` 834/834,
   `ogl_uk3` 870/870, `public_record` 885/885, `dot511_ccbysa2` 537/537; present in `ccby3` 771/771 and
-  `osm_physical` 858/858. The registry holds attribution text for such sources (e.g. `camreg_aikner`
+  `osm_physical` 858/858. The registry holds attribution text for such sources (e.g. `camreg_und_001`
   `rights.attribution`), so it is dropped between registry and export (`inference`).
 - `datapackage.json`: licences only, no source attribution; its licence URLs for `LicenseRef-OperatorAccepted-DBRight`
   and `OGL-3.0` return **404** at spdx.org (16:54:00Z; the SPDX id for OGL v3 is `OGL-UK-3.0`).

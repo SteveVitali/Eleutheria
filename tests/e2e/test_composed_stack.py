@@ -692,14 +692,14 @@ def test_s5_resolver_keeps_contradiction_visible() -> None:
             evidence=_ev(cid),
         )
 
-    # DeFlock ~299 vs Chief Bacy ~190 (the P06.1 slice's within-predicate
+    # DeFlock ~299 vs the OKCPD chief ~190 (the P06.1 slice's within-predicate
     # disagreement, tests/acceptance/okc_slice.py).
     deflock = _claim("deflock", 299, date(2026, 8, 20))
-    bacy = _claim("bacy", 190, date(2026, 8, 18))
+    okc_council_statement = _claim("okc_council_statement", 190, date(2026, 8, 18))
     resolved = RESOLVE(
         subject,
         predicate,
-        [deflock, bacy],
+        [deflock, okc_council_statement],
         as_of_world=date(2026, 9, 1),
         as_of_belief=date(2026, 9, 1),
     )
@@ -710,9 +710,9 @@ def test_s5_resolver_keeps_contradiction_visible() -> None:
     assert resolved.value is None, "a contested value must not be collapsed to one number"
     assert resolved.contradiction_state == "unresolved_conflict"
     assert resolved.agreement == "CONTESTED"
-    assert set(resolved.considered_claim_ids) == {"deflock", "bacy"}
+    assert set(resolved.considered_claim_ids) == {"deflock", "okc_council_statement"}
     # Both underlying values remain reachable from the record (no synthetic certainty).
-    assert {deflock.value, bacy.value} == {299, 190}
+    assert {deflock.value, okc_council_statement.value} == {299, 190}
 
 
 # =============================================================================
@@ -844,10 +844,10 @@ def test_s8_web_build_renders_from_export_bytes(web_build_from_export: _WebBuild
 
     # The contradiction is on the page, both values retained (never collapsed).
     assert "299" in html, "DeFlock's ~299 claim must be on the export-built dossier"
-    assert "190" in html, "Chief Bacy's ~190 claim must be on the export-built dossier"
+    assert "190" in html, "the OKCPD chief's ~190 claim must be on the export-built dossier"
     assert "Claimed device count" in html, "the claimed-count figure must render"
     # Both sources and both dates — every number links claim → evidence (§3.1).
-    assert "DeFlock" in html and "Bacy" in html, "both competing sources must be shown"
+    assert "DeFlock" in html and "OKCPD chief" in html, "both competing sources must be shown"
     assert "2026-08-20" in html and "2026-08-18" in html, "both claim dates must be shown"
 
 

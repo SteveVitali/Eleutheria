@@ -1,0 +1,23 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P34.18 / ADR-178 (S0 RI-01, DR-C6-01 option B-3): the N-5 page. Retired
+// source identifiers serve THIS page in place via the generated
+// `conf/renamed_*.conf` exact-match barrier — never a redirect, so neither the
+// response nor the location bar repeats the handle or discloses the old→new
+// mapping (the mapping stays in the restricted map). `data-notice` marks the
+// B-2 notice string. noindex: the page must never surface in search.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Identifier changed"
+  path="/sources/identifier-changed/"
+  chrome="minimal"
+  noindex={true}
+>
+  <p data-notice="N-5">This identifier has changed.</p>
+  <p><a data-copy="GN-02" href="/sources/">Go to the sources and licences page</a></p>
+</BaseLayout>

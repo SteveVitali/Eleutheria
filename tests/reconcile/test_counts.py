@@ -159,7 +159,7 @@ def _okc_claims() -> list[CountClaim]:
             structured_exact=True,
             scope="metro",
         ),
-        # within-predicate disagreement: DeFlock ~299 vs Chief Bacy ~190
+        # within-predicate disagreement: DeFlock ~299 vs the OKCPD chief ~190
         _claim(
             "claimed", 299, R="R4", genre="news_article", observed=date(2026, 8, 3), scope="metro"
         ),

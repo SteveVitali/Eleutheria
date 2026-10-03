@@ -165,7 +165,7 @@ def build_slice() -> SliceGraph:
     # comparability is scope-qualified, never guessed. The famous "~299 vs ~190"
     # pair is a scope PARTITION, not a contradiction: DeFlock's 299 covers the
     # METRO; the "~190" a reader derives is the city-limits roll-up of the
-    # agency's 90 active + Bacy's ~100 privately-owned — an explicitly DERIVED
+    # agency's 90 active + the OKCPD chief's ~100 privately-owned — an explicitly DERIVED
     # approximate sum (L4, labelled), not a claim.
     _OKC_JUR = "us.state_abbr:OK"
 
@@ -211,7 +211,7 @@ def build_slice() -> SliceGraph:
         cc(
             "active",
             90,
-            "okc-bacy-count-2026-08-18",
+            "okc-council-count-2026-08-18",
             date(2026, 8, 18),
             scope="city_limits",
             scope_detail="agency_operated",
@@ -237,12 +237,12 @@ def build_slice() -> SliceGraph:
             scope="metro",
             quote="299",
         ),
-        # Bacy's figure is ~100 PRIVATELY-OWNED cameras inside CITY LIMITS —
+        # the OKCPD chief's figure is ~100 PRIVATELY-OWNED cameras inside CITY LIMITS —
         # the sourced input the derived "~190" city sum adds to the agency's 90.
         cc(
             "claimed",
             100,
-            "okc-bacy-count-2026-08-18",
+            "okc-council-count-2026-08-18",
             date(2026, 8, 18),
             genre="news_article",
             scope="city_limits",

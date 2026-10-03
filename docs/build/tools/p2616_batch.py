@@ -574,12 +574,12 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "City of Salisbury, North Carolina",
         "NC", "us.state_abbr",
     ),
-    "camreg_nyc_weltia_ny": (
+    "camreg_us_ny_002": (
         "New York City traffic cameras (ArcGIS republish layer)",
         "New York City (republished layer)",
         "NY", "us.state_abbr",
     ),
-    "camreg_nyc_jgrayson_ny": (
+    "camreg_us_ny_001": (
         "NYCDOT traffic cameras (ArcGIS republish layer)",
         "New York City Department of Transportation (republished layer)",
         "NY", "us.state_abbr",
@@ -844,7 +844,7 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_freese_dm": (
+    "camreg_und_008": (
         "ITS CCTV camera layer (Freese DM ArcGIS registry)",
         "ArcGIS community-published ITS camera registry",
         "unresolved", "sig.unresolved",
@@ -874,7 +874,7 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_keshan": (
+    "camreg_und_012": (
         "Camera registry (KeshanMoodley ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
@@ -884,17 +884,17 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published ALPR camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_langan": (
+    "camreg_und_015": (
         "Camera registry (Langan ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_nurnazihah": (
+    "camreg_und_018": (
         "CCTV camera registries (NURNAZIHAH ArcGIS layers)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_sweeney": (
+    "camreg_und_024": (
         "Replacement CCTV system camera locations (ArcGIS registry)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
@@ -909,12 +909,12 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_aikner": (
+    "camreg_und_001": (
         "Traffic cameras (aikner_mrrigis ArcGIS registry)",
         "ArcGIS community-published traffic-camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_bargabos": (
+    "camreg_und_002": (
         "CCTV camera registry (ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
@@ -924,17 +924,17 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "York University community-published camera layer",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_cclemire": (
+    "camreg_und_003": (
         "Public-safety cameras view (ArcGIS registry)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_whatley": (
+    "camreg_und_027": (
         "Camera locations (ArcGIS registry)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_cphang": (
+    "camreg_und_005": (
         "Surveillance sites (ArcGIS registry)",
         "ArcGIS community-published surveillance-site registry",
         "unresolved", "sig.unresolved",
@@ -944,7 +944,7 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_duganmeyer": (
+    "camreg_und_006": (
         "Flock ALPR locations (UA GIS ArcGIS registry)",
         "University-community-published ALPR camera registry",
         "unresolved", "sig.unresolved",
@@ -974,7 +974,7 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published traffic-camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_helberg": (
+    "camreg_und_010": (
         "Camera registry (ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
@@ -984,22 +984,22 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_jelenic": (
+    "camreg_und_011": (
         "Camera point registry (UNSW ArcGIS layer)",
         "University-community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_lenhardt": (
+    "camreg_und_016": (
         "University security cameras public view (ArcGIS registry)",
         "University-community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_schellinger": (
+    "camreg_und_022": (
         "BPD surveillance cameras (ArcGIS registry)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_kunying": (
+    "camreg_und_014": (
         "CCTV camera registry (ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
@@ -1019,7 +1019,7 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_mhebert": (
+    "camreg_und_017": (
         "Public-safety / ALPR cameras view (ArcGIS registry)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
@@ -1029,22 +1029,22 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_rjcoleman": (
+    "camreg_und_020": (
         "Cameras registry (ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_ruslan": (
+    "camreg_und_021": (
         "CCTV_S camera registry (UCP/UFR ArcGIS layer)",
         "University-community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_kosman": (
+    "camreg_und_013": (
         "Traffic cameras (ArcGIS layer)",
         "ArcGIS community-published traffic-camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_sfoss": (
+    "camreg_und_023": (
         "Cameras registry (sfoss_solutions ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
@@ -1054,12 +1054,12 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_tblose": (
+    "camreg_und_025": (
         "Camera intersections registry (ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_olsson": (
+    "camreg_und_019": (
         "CCTV camera registry (olsson ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
@@ -1074,12 +1074,12 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "University-community-published traffic-camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_vidya": (
+    "camreg_und_026": (
         "CCTV camera registry (ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_yazid": (
+    "camreg_und_028": (
         "CCTV phase-1 registry (ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
@@ -1089,7 +1089,7 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_zyinger": (
+    "camreg_und_029": (
         "CAMERA_3 registry (ArcGIS layer)",
         "ArcGIS community-published camera registry",
         "unresolved", "sig.unresolved",
@@ -1104,17 +1104,17 @@ SOURCES: dict[str, tuple[str, str, str, str]] = {
         "ArcGIS community-published traffic-camera registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_cheicylia": (
+    "camreg_und_004": (
         "CCTV camera registry (ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_fifia": (
+    "camreg_und_007": (
         "CCTV_ camera registry (ArcGIS layer)",
         "ArcGIS community-published CCTV registry",
         "unresolved", "sig.unresolved",
     ),
-    "camreg_gvanmaren": (
+    "camreg_und_009": (
         "CCTV cameras asset registry (3D-GIS ArcGIS layer)",
         "ArcGIS community-published CCTV asset registry",
         "unresolved", "sig.unresolved",
@@ -1141,7 +1141,7 @@ WIRE: dict[str, tuple[str, str]] = {
     "cbe1f0e312994a21ae16ad8f841caf8d": ("camreg_dc_dot_dc", "dc_dot_firefly_cameras"),
     "be2ba9cae16c4a01b6dfb0ebcfcd4199": ("camreg_dc_dot_dc", "dc_dot_dfiorent_cameras"),
     "99799a7e7e164f229cec271da18165ae": ("camreg_sensenet", "sensenet_camera_view"),
-    "d6d80e7f82884caaaeea1e0eed5d595b": ("camreg_freese_dm", "freese_dm_its_cctv"),
+    "d6d80e7f82884caaaeea1e0eed5d595b": ("camreg_und_008", "camreg_und_008_its_cctv"),
     "a69da35b0c7f404890ba318f57d56349": ("camreg_ukm_my", "ukm_my_cctv"),
     "f9efbc77cd404122899fc9f93c1f0741": ("camreg_amber_kh", "amber_kh_trmc"),
     "1cb8e713aaf346cd86a1d59a1ae78709": ("camreg_eastdun_gb", "eastdun_gb_cctv"),
@@ -1168,13 +1168,13 @@ WIRE: dict[str, tuple[str, str]] = {
     "7fc8ba9051684d0aabc228038758c10b": ("camreg_kirkland_wa", "kirkland_wa_traffic_cameras"),
     "269df31cafd9463abfd46ecd24162ef6": ("camreg_txdot_rep_tx", "txdot_rep_tx_cameras"),
     "55f2d14f468c4d35b1870bf8469b2c96": ("camreg_redmond_wa", "redmond_wa_traffic_cameras"),
-    "3a72754fa9004f9ca5774bb23c6f3504": ("camreg_keshan", "keshan_camera_rev3"),
+    "3a72754fa9004f9ca5774bb23c6f3504": ("camreg_und_012", "camreg_und_012_camera_rev3"),
     "c2201ec5ea4a4b9c8ae02f6b681f91e5": ("camreg_lojic_ky", "lojic_ky_traffic_cameras"),
     "5d2bd8ccc5f74ea7b7574f126cacd1cc": ("camreg_lpd_flock", "lpd_flock_cameras"),
-    "98fa8eeae92946dbadb62b821e756522": ("camreg_langan", "langan_camera"),
-    "32b4a83b129646ad985081f5ba654696": ("camreg_nurnazihah", "nurnazihah_cctv"),
-    "d930ff08f1364a979016fda955d51842": ("camreg_nurnazihah", "nurnazihah_cctv_pg"),
-    "de3248c897b645c6a825c6c56b42b6c5": ("camreg_sweeney", "sweeney_cctv_replacement"),
+    "98fa8eeae92946dbadb62b821e756522": ("camreg_und_015", "camreg_und_015_camera"),
+    "32b4a83b129646ad985081f5ba654696": ("camreg_und_018", "camreg_und_018_cctv"),
+    "d930ff08f1364a979016fda955d51842": ("camreg_und_018", "camreg_und_018_cctv_pg"),
+    "de3248c897b645c6a825c6c56b42b6c5": ("camreg_und_024", "camreg_und_024_cctv_replacement"),
     "a0a6e71d55804d249535831ec98b4db0": ("camreg_wim_camera", "wim_camera"),
     "a817a48983f144e0943cf1d3fee15c08": ("camreg_nzta_nz", "nzta_nz_cameras_layer"),
     "bfd6920167a6491786a6a8729fa53e42": ("camreg_nzta_nz", "nzta_nz_eaglegis_cameras"),
@@ -1189,9 +1189,9 @@ WIRE: dict[str, tuple[str, str]] = {
     "541a1e1581e34e15ab63d057a869977b": ("camreg_denver_co", "denver_co_alpr_cameras"),
     "df45f0840d8640efbdfed569f0033e8c": ("camreg_monmap_mn", "monmap_mn_camera"),
     "20c6386650414867ad1fa29027164750": ("camreg_webappfme", "webappfme_traffic_cameras"),
-    "9e90790daf7e4f0592da37a1bda10417": ("camreg_nyc_weltia_ny", "nyc_weltia_ny_traffic_cameras"),
-    "509475945f494a37bcbeefee139a6ecc": ("camreg_aikner", "aikner_traffic_cameras"),
-    "8ebed01d37c9486fae407a8e6623e8f4": ("camreg_bargabos", "bargabos_cctv_camera"),
+    "9e90790daf7e4f0592da37a1bda10417": ("camreg_us_ny_002", "camreg_us_ny_002_traffic_cameras"),
+    "509475945f494a37bcbeefee139a6ecc": ("camreg_und_001", "camreg_und_001_traffic_cameras"),
+    "8ebed01d37c9486fae407a8e6623e8f4": ("camreg_und_002", "camreg_und_002_cctv_camera"),
     "10e0013f57d045cebc794610150a6dc4": ("camreg_yorku", "yorku_camera"),
     "eb7a4722e25f4fefaf49e0e2e42a40c8": ("camreg_dover_gb", "dover_gb_cctv"),
     "307dfd0020554c28959706d40ea0ba90": ("camreg_fl511_fl", "fl511_fl_akeddell_cameras"),
@@ -1214,8 +1214,8 @@ WIRE: dict[str, tuple[str, str]] = {
     "bb857cf90a454a5b98c043dce0b99ba4": ("camreg_indonesia_id", "indonesia_id_cctv"),
     "c6d7a160f907418caaa84c6fd3eebd48": ("camreg_indonesia_id", "indonesia_id_cctv_pelabuhan"),
     "cc134f6b2d574205870e356ce985d78a": ("camreg_indonesia_id", "indonesia_id_cctv_2"),
-    "7d7654bc257f40d0aa7aebf71ae971b8": ("camreg_cheicylia", "cheicylia_cctv"),
-    "d03b77e0286d4d82b76c76de32c36b27": ("camreg_fifia", "fifia_cctv"),
+    "7d7654bc257f40d0aa7aebf71ae971b8": ("camreg_und_004", "camreg_und_004_cctv"),
+    "d03b77e0286d4d82b76c76de32c36b27": ("camreg_und_007", "camreg_und_007_cctv"),
     "48a727929e6f4350b71be361d5002d4c": ("camreg_avctransport", "avctransport_surveillance_2026"),
     "ada7ca58962b4ab48ccd6853a893fc31": ("camreg_mueller_de", "mueller_de_camera_positionen"),
     "02625f728f714c78a5b3ad6aa06695b3": ("camreg_baltimore_atves_md", "baltimore_md_atves_speed_fixed"),
@@ -1224,12 +1224,12 @@ WIRE: dict[str, tuple[str, str]] = {
     "ebf52af4f690414e916190255850aaca": ("camreg_baltimore_atves_md", "baltimore_md_atves_speed_portable"),
     "3c232823551e496a95d70a9a6f9cb87f": ("camreg_umbc_md", "umbc_md_camera_locations"),
     "1562517848d94a4ba6f10bf3e2a64665": ("camreg_leon_fl", "leon_fl_traffic_cameras"),
-    "aa12417a64b04fcbb07e67435c84086d": ("camreg_cclemire", "cclemire_safety_cameras"),
+    "aa12417a64b04fcbb07e67435c84086d": ("camreg_und_003", "camreg_und_003_safety_cameras"),
     "498f44acc19145b98f5f180d0451774c": ("camreg_kcmo_mo", "kcmo_mo_traffic_cameras"),
     "c83d85929ead4c01b1d684594391cf09": ("camreg_portland_or", "portland_or_its_cameras"),
-    "b28ca74f76ad4b7cb31d380f7679c49f": ("camreg_whatley", "whatley_camera_locations"),
+    "b28ca74f76ad4b7cb31d380f7679c49f": ("camreg_und_027", "camreg_und_027_camera_locations"),
     "9cdb054f4f334d9485991625973f437a": ("dot_511_ut", "ut_udot_cctv_layer"),
-    "81d052e49e5c4ac8972506a6740adb03": ("camreg_cphang", "cphang_surveillance_sites"),
+    "81d052e49e5c4ac8972506a6740adb03": ("camreg_und_005", "camreg_und_005_surveillance_sites"),
     "cdf8cc99704d441fae13608702a6a74d": ("camreg_tulane_la", "tulane_la_cctv_cameras"),
     "46b1e00b2b2c494c805a0743c5e723a1": ("camreg_cwarcgis", "cwarcgis_camera"),
     "afab7c664cf14139a8384e752c083143": ("camreg_lisburn_gb", "lisburn_gb_cctv"),
@@ -1237,7 +1237,7 @@ WIRE: dict[str, tuple[str, str]] = {
     "mnkf-cu5c": ("camreg_pgcounty_md", "pgcounty_md_speed_cameras"),
     "4z3c-43ce": ("camreg_md_opendata", "md_opendata_traffic_cameras_4z3c"),
     "e153fe4453104b11b8a5a17599bd8478": ("camreg_sarasota_fl", "sarasota_fl_traffic_cameras"),
-    "1396d889c2734c57a93184470a11c7f4": ("camreg_duganmeyer", "duganmeyer_flock_alprs"),
+    "1396d889c2734c57a93184470a11c7f4": ("camreg_und_006", "camreg_und_006_flock_alprs"),
     "350fa8a11b8b4ba8adcf8b2b3f88ea62": ("camreg_uofmd_md", "uofmd_md_cctv"),
     "a86fc3d9aa4b4f579f826055af93d1dc": ("camreg_nola_safety_la", "nola_safety_la_cameras"),
     "7b5888a0ea584bd2a0a6e7aa33d70eb8": ("camreg_mark43", "mark43_cctv"),
@@ -1249,38 +1249,38 @@ WIRE: dict[str, tuple[str, str]] = {
     "bc2f36369f9e4137872afefcdc62735d": ("camreg_oem_camera", "oem_camera_gauge_locations"),
     "4a1feaa5dd214d0287aee6467c2da3c7": ("camreg_trpa_us", "trpa_us_smart_cameras"),
     "cbe977542c984003bbc99856219de1e5": ("camreg_trafficops_ca", "trafficops_ca_d5_cctv"),
-    "22be1b5f269b441ba5f4963c4f4ac665": ("camreg_mhebert", "mhebert_safety_alpr_view"),
+    "22be1b5f269b441ba5f4963c4f4ac665": ("camreg_und_017", "camreg_und_017_safety_alpr_view"),
     "d7cbf7e7cf724a9581b15058ee6f1453": ("camreg_mbrc_au", "mbrc_au_cctv_cameras"),
     "e61f3ed7f7ab4aef9d295395621292c2": ("camreg_oosgis_nl", "oosgis_nl_camera"),
     "45f4d8efb35c442f9fdaa50273b177bf": ("camreg_nitro", "nitro_camera_feeds"),
     "6f7185fd39d34ccb95a9545f778ed43c": ("camreg_riyadh_sa", "riyadh_sa_camera_control"),
     "4e1c6cf7573948ef885ecd262d5d262b": ("camreg_guildford_gb", "guildford_gb_cctv2015"),
-    "871da848d25940e890d811ee20280f79": ("camreg_rjcoleman", "rjcoleman_cameras"),
+    "871da848d25940e890d811ee20280f79": ("camreg_und_020", "camreg_und_020_cameras"),
     "188b6ca940a14029a0aceb1aad25e553": ("camreg_polyu_hk", "polyu_hk_cctv"),
     "ec5a347fc84547e3aa52a9fd71f104d9": ("camreg_polyu_hk", "polyu_hk_police_cctv"),
     "e4ebd2812c4b472c8f4ef60eef4f84b9": ("camreg_apram_pt", "apram_pt_cctv"),
-    "776c96fa7597423da691513f9fa05a66": ("camreg_ruslan", "ruslan_cctv_s"),
+    "776c96fa7597423da691513f9fa05a66": ("camreg_und_021", "camreg_und_021_cctv_s"),
     "e19e8d52e59240e4931c5ebb723533af": ("camreg_univmb_mb", "univmb_mb_visible_cameras"),
     "f748506cb3ea4ddf829a75e5ba1335f1": ("camreg_univmb_mb", "univmb_mb_surveillance_cameras"),
-    "234686a8453d406bab8f1a2ab5870ce5": ("camreg_kosman", "kosman_traffic_cameras"),
-    "460290f9870d4d8692048a87221f2080": ("camreg_sfoss", "sfoss_cameras"),
+    "234686a8453d406bab8f1a2ab5870ce5": ("camreg_und_013", "camreg_und_013_traffic_cameras"),
+    "460290f9870d4d8692048a87221f2080": ("camreg_und_023", "camreg_und_023_cameras"),
     "e0c87d29871a47588b37428608bcee6b": ("camreg_thailand_th", "thailand_th_sikhio_cctv"),
     "55f462a67d464524afd16ff5e60db0f4": ("camreg_thailand_th", "thailand_th_highway_cctv"),
     "9d11508207a347d7a3c6a3372278418c": ("camreg_thailand_th", "thailand_th_gispraksa_cctv"),
     "92e8dadae27246e1b69b1f98e3906191": ("camreg_thailand_th", "thailand_th_warroom_cctv"),
     "efbcd59267ac48ba9440905d7e9fe946": ("camreg_thailand_th", "thailand_th_warroom_map_cctv"),
-    "25a5a95fcbd645d0b5cfe08522209591": ("camreg_kunying", "kunying_cctv"),
+    "25a5a95fcbd645d0b5cfe08522209591": ("camreg_und_014", "camreg_und_014_cctv"),
     "959ee82bc06f4f79a387866e14762348": ("camreg_squan", "squan_stephen_camera"),
     "f222cfc603e7484295b8daa67b77a850": ("dot_511_ky", "ky_kytc_ext_cameras"),
     "98f20bb967e44216ba521a707236763e": ("dot_511_ga", "ga_gdot_live_cameras"),
-    "119f3f9304f94b74af62f20798d3c52d": ("camreg_gvanmaren", "gvanmaren_cctv_cameras"),
+    "119f3f9304f94b74af62f20798d3c52d": ("camreg_und_009", "camreg_und_009_cctv_cameras"),
     "a1b558f7ea3f4a459d24ee92654f5e6e": ("camreg_stanford_us", "stanford_us_alpr_checkpoints"),
     "e3b39af538fd42ac88fd756cccbad853": ("camreg_stanford_us", "stanford_us_surveillance_towers"),
     "9487d6220db7407fa37272a4e178298a": ("camreg_salisbury_nc", "salisbury_nc_traffic_cameras"),
     "2938f76af301480f8f153958a2aadf2f": ("camreg_uchicago", "uchicago_security_camera"),
     "825d7725a7a040f6ae6e15978bdf4bb9": ("camreg_thailand_th", "thailand_th_traffic_enforcement"),
     "f4b3928a3f504467b3827b8658544c63": ("camreg_ramallah_ps", "ramallah_ps_cameras"),
-    "900bea850d98407ead83b9b0ec392a2a": ("camreg_nyc_jgrayson_ny", "nyc_jgrayson_nycdot_cameras"),
+    "900bea850d98407ead83b9b0ec392a2a": ("camreg_us_ny_001", "camreg_us_ny_001_nycdot_cameras"),
     "bbc1c81f2821455080177b684e9fa7fb": ("camreg_brea_ca", "brea_ca_camera_locations"),
     "f774c086e4c54a44ba2fe5b2c32fa6fd": ("camreg_brea_ca", "brea_ca_camera_switch_inventory"),
     "398a99c974704bebb1008c3e9daa20b9": ("camreg_brea_ca", "brea_ca_lpr_cameras"),
@@ -1288,29 +1288,29 @@ WIRE: dict[str, tuple[str, str]] = {
     "a1373bba67a444878af07c52c65a5e91": ("camreg_jmh_us", "jmh_us_mpd_flock"),
     "d2dad98935c9481f97141ec963d5b582": ("camreg_palmdesert_ca", "palmdesert_ca_lpr"),
     "68589ded0afc49d494e7a209b50c0483": ("camreg_penndot_pa", "penndot_pa_cctv"),
-    "38ad4086df4e4ba285792c207fc37da4": ("camreg_jelenic", "jelenic_camera_point"),
-    "22d52fc22ec440a78813debcf2d1c21a": ("camreg_lenhardt", "lenhardt_security_cameras"),
+    "38ad4086df4e4ba285792c207fc37da4": ("camreg_und_011", "camreg_und_011_camera_point"),
+    "22d52fc22ec440a78813debcf2d1c21a": ("camreg_und_016", "camreg_und_016_security_cameras"),
     "9740206173524c11a0800d2f4aa31196": ("camreg_bouhan_jp", "bouhan_jp_camera"),
     "c56aedd0f83f4515ad641eac5e975b93": ("camreg_caledon_on", "caledon_on_cctv"),
-    "fbb79a6d3cf94464a6b657a59e8cedf1": ("camreg_schellinger", "schellinger_bpd_cameras"),
+    "fbb79a6d3cf94464a6b657a59e8cedf1": ("camreg_und_022", "camreg_und_022_bpd_cameras"),
     "a606368f7caa4ae2bc5de4599c27d416": ("camreg_trafficops_ca", "trafficops_ca_hs_cctv"),
     "63a8783964ca4fafa891bd38cb10deac": ("camreg_firemedic", "firemedic_traffic_camera"),
     "fe8ee8d36eb34bc6bdd49c3e447f5ffb": ("camreg_forwardalliance", "forwardalliance_cctv"),
     "634b19920c7e45c092455134055b9335": ("camreg_cotgeo", "cotgeo_traffic_camera"),
     "9fa192edd1bb4040a842f4ac908c3f00": ("camreg_gedling_gb", "gedling_gb_cctv_locations"),
     "e8c0a78e50084eb782607ce02c38501e": ("camreg_lawrence_ks", "lawrence_ks_traffic_cameras"),
-    "0fa13d7ceac549e5869f30800d2b2a2c": ("camreg_helberg", "helberg_camera"),
+    "0fa13d7ceac549e5869f30800d2b2a2c": ("camreg_und_010", "camreg_und_010_camera"),
     "4fc65d41686c4b5c84f7b466738c4ad5": ("camreg_ira", "ira_cctv"),
     "5269969b5f784cd2a2a519ccdc10149b": ("camreg_bettendorf_ia", "bettendorf_ia_traffic_cameras"),
-    "bce5d44e878d4d71b5895a89ecfac9c7": ("camreg_vidya", "vidya_cctv"),
+    "bce5d44e878d4d71b5895a89ecfac9c7": ("camreg_und_026", "camreg_und_026_cctv"),
     "b01d7c8ddd614d9785435b458037bfc0": ("camreg_ucsd", "ucsd_traffic_camera_wfl"),
     "f2f32627862a4238b680464819db587b": ("camreg_ucsd", "ucsd_traffic_camera"),
-    "4d528bdf8dab4956885c527b41732ae4": ("camreg_yazid", "yazid_cctv_phase1"),
+    "4d528bdf8dab4956885c527b41732ae4": ("camreg_und_028", "camreg_und_028_cctv_phase1"),
     "1aa6eddd4bab4e35b2f8b3f66d9f1977": ("camreg_yline", "yline_cctv_camera"),
-    "718e480ad69e466fbebf3b11c0684f9e": ("camreg_zyinger", "zyinger_camera_3"),
-    "106e6ceef3c14fb6bceddeb07eb5d8a5": ("camreg_olsson", "olsson_cctv"),
+    "718e480ad69e466fbebf3b11c0684f9e": ("camreg_und_029", "camreg_und_029_camera_3"),
+    "106e6ceef3c14fb6bceddeb07eb5d8a5": ("camreg_und_019", "camreg_und_019_cctv"),
     "c41e80757b5c49cbbf805492cd282166": ("camreg_townofws", "townofws_ase_cameras"),
-    "650c53bb6fb24aa1aecba07847f1e2fb": ("camreg_tblose", "tblose_camera_intersections"),
+    "650c53bb6fb24aa1aecba07847f1e2fb": ("camreg_und_025", "camreg_und_025_camera_intersections"),
     "5590d73396564488b5d627079be0ee5a": ("camreg_bangla_bd", "bangla_bd_camera"),
 }
 

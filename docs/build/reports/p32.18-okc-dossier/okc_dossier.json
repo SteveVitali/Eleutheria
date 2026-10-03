@@ -228,7 +228,7 @@
             "count_scope_detail": "agency_operated"
           },
           "source_field": null,
-          "source_id": "bacy",
+          "source_id": "okc_council_statement",
           "source_url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/",
           "unit": null,
           "valid_edtf": null,
@@ -279,7 +279,7 @@
             "count_scope_detail": "privately_owned"
           },
           "source_field": null,
-          "source_id": "bacy",
+          "source_id": "okc_council_statement",
           "source_url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/",
           "unit": null,
           "valid_edtf": null,
@@ -1992,7 +1992,7 @@
         "count_scope_detail": "agency_operated"
       },
       "source_field": null,
-      "source_id": "bacy",
+      "source_id": "okc_council_statement",
       "source_url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/",
       "state": "rendered",
       "valid_edtf": null,
@@ -2020,7 +2020,7 @@
         "count_scope_detail": "privately_owned"
       },
       "source_field": null,
-      "source_id": "bacy",
+      "source_id": "okc_council_statement",
       "source_url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/",
       "state": "rendered",
       "valid_edtf": null,
@@ -2939,7 +2939,7 @@
     }
   ],
   "source_families": [
-    "bacy",
+    "okc_council_statement",
     "deflock",
     "dossier_okc",
     "ok_statute",

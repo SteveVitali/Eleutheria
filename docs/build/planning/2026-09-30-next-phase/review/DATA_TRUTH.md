@@ -157,7 +157,7 @@ Evidence classes follow PROTOCOL §2.5. "Inference" is labelled wherever I inter
 
 The API was called for 11 scopes: `fl`, `tx`, `md`, `pt`, `gb-eng`, `au-act`, `ca`, `unresolved`, `il`, `ks` and `th`. Each
 `GET /v1/dossier/<slug>` returned 200 with the title `Dossier for <slug>`. All 11 responses contained **the same 25 subject ids**. They also
-contained the same 10 sources: `bacy, decp_fr, deflock, madada, ok_statute, okc-contract-c241032, okcpd_policy, osm, osm_overpass,
+contained the same 10 sources: `okc_council_statement, decp_fr, deflock, madada, ok_statute, okc-contract-c241032, okcpd_policy, osm, osm_overpass,
 raa_prefectures`. These are Oklahoma City, French procurement and OSM sources. The release says Florida rests on four Florida camera
 registries. The cause is in code: `api/src/api/store_pg.py:927-956`. When the scope is not an entity id, the handler falls back to "the first
 25 tier-0 subjects".

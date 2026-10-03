@@ -27,6 +27,7 @@ from dataclasses import replace
 from typing import Any
 
 from db.occurrences import BELIEF_NOW, occurrence_lateral
+from policy.source_aliases import load_source_aliases
 
 from .camera_sites import (
     CameraGoldPair,
@@ -276,6 +277,30 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
             targets[entity] = parts[2]
     if targets:
         out = [replace(r, target_id=targets.get(r.subject_id)) for r in out]
+    # P34.18 / ADR-178 (S0 RI-01): the keyed-digest alias projection — retired
+    # identifiers inside subject/source/target/claim refs resolve to neutral
+    # public ids at this read seam (records keep their recorded ids; this is a
+    # projection, never a spine rewrite). A suppressed account-handle operator
+    # value drops to None — the record carries no publishable operator rather
+    # than repeating a handle (the full predicate fix is P35.26's).
+    aliases = load_source_aliases()
+    if not aliases.empty:
+        out = [
+            replace(
+                r,
+                subject_id=aliases.resolve_text(r.subject_id),
+                source_id=aliases.resolve_text(r.source_id),
+                target_id=None if r.target_id is None else aliases.resolve_text(r.target_id),
+                claim_ids=tuple(aliases.resolve_text(c) for c in r.claim_ids),
+                external_ref=None
+                if r.external_ref is None
+                else aliases.resolve_text(r.external_ref),
+                operator=None
+                if (r.operator and aliases.is_suppressed_value(r.operator))
+                else r.operator,
+            )
+            for r in out
+        ]
     return out
 
 

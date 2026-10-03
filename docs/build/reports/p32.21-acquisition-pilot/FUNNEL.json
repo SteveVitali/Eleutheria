@@ -427,7 +427,7 @@
         "extraction": {
           "basis": "offline_replay",
           "claims_by_source": {
-            "bacy": 2,
+            "okc_council_statement": 2,
             "deflock": 1,
             "dossier_okc": 16,
             "ok_statute": 2,

@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "01037f582ee8aecc211673f1b3493befd7b3b41d",
-  "manifest_inputs": 942,
+  "input_commit": "75ac83dbaee941ed74ea96aedd4b3be9b60c1ec5",
+  "manifest_inputs": 944,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.18",
-    "lastCompleted": "P34.17",
+    "nextTicket": "P34.20",
+    "lastCompleted": "P34.18",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,23 +17,23 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.17-web-honesty-wave-and-republish-1-v2",
+    "chainTip": "r11/P34.18-personal-handle-source-id-rename",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-03T12:07:43Z"
+    "updatedAt": "2026-10-03T14:40:09Z"
   },
   "counts": {
-    "obligations": 147,
-    "owed": 81,
-    "open": 78,
+    "obligations": 148,
+    "owed": 82,
+    "open": 79,
     "partial": 3,
     "terminal": 66,
-    "events": 619,
+    "events": 620,
     "transitions": 18,
-    "coverage_assessments": 191,
+    "coverage_assessments": 192,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -4905,7 +4905,7 @@
       "owner": "P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26)",
       "landing": "P36.2",
       "backlog_home": "BL-086",
-      "item": "Re-decide the out-of-rule rights rows under ADR-169's guardrails: `camreg_aikner`, `camreg_calgary_ab`, `camreg_lexington_ky` (indemnify-and-defend terms) and the Maryland iMAP terms rows `dot_511_md` and `camreg_md_opendata` — capture each source's terms verbatim, write one E4-style line per source, and put an HG-03 line to the operator for each (keep under the operator-accepted basis, or decline)",
+      "item": "Re-decide the out-of-rule rights rows under ADR-169's guardrails: `camreg_und_001`, `camreg_calgary_ab`, `camreg_lexington_ky` (indemnify-and-defend terms) and the Maryland iMAP terms rows `dot_511_md` and `camreg_md_opendata` — capture each source's terms verbatim, write one E4-style line per source, and put an HG-03 line to the operator for each (keep under the operator-accepted basis, or decline)",
       "unblocked_by": "owner: P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26) · trigger: P36.2's dispatch (11C); the lines ride the 11C check-in packet at the latest (S6R-28)",
       "verify": "each source's terms captured verbatim, its HG-03 line answered by the operator, and `sources.toml` recording the outcome; then a transition citing them",
       "proxy": "the rows stay published under ADR-169's withdrawal-on-objection guardrail",
@@ -6960,6 +6960,50 @@
           "anchor": {
             "row_line": 1068,
             "row_sha256": "343ddd2e935d8b931558c4e07bc1aebc127caf6a5e99d20f40228db34bebcb3d",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.18-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.18-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner (r11/P34.18-live-2) or the operator",
+      "landing": "the L2 hosted rename leg (verbatim in-ticket go + date -u >= 2026-10-13T12:00Z outside 03:00-06:30Z + AR-2 restore point + pre-state capture + <=24 h probe record)",
+      "backlog_home": "BL-084",
+      "item": "The L2 hosted rename — the insert-only hosted writes ADR-178 names (neutral-id `source_registry` rows for the 32 re-keyed sources) plus the plaintext old→new map object written once to the ADR-178 location (`sig-restricted`, bucket versioning on; never committed, never in an export), followed by a read-back that the resolver maps every renamed hosted `source_id` (counts only)",
+      "unblocked_by": "owner: the OM-19 leg-runner (`r11/P34.18-live-2` from the chain tip) or the operator; trigger: ALL of — the verbatim in-ticket go in GATE DECISIONS · `date -u` ≥ 2026-10-13T12:00Z outside 03:00–06:30Z · AR-2 backup SUCCESSFUL + pre-state captured · a `probe-run/1` record ≤ 24 h",
+      "verify": "re-run `implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true` (scope: leg L2 only); verify = the hosted read-back maps every renamed `source_id` (counts only — never a printed handle) and `n_tup_upd`/`n_tup_del` on spine tables are unchanged (insert-only)",
+      "proxy": "the command is dry-run-by-default (`--apply` to write) and insert-only — rollback is a superseding row/the map object's prior generation, never `UPDATE`/`DELETE`; the alias projection already resolves old ids at read/export time so a delayed L2 never publishes a wrong answer, it only delays the hosted registry's own neutral ids",
+      "line": 1080,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.18-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.18-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.18",
+          "owner": "the OM-19 leg-runner (r11/P34.18-live-2) or the operator",
+          "landing": "the L2 hosted rename leg (verbatim in-ticket go + date -u >= 2026-10-13T12:00Z outside 03:00-06:30Z + AR-2 restore point + pre-state capture + <=24 h probe record)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-03",
+          "recorded_at": "2026-10-03",
+          "source_commit": "75ac83dbaee941ed74ea96aedd4b3be9b60c1ec5",
+          "reason": "migration anchor appended by P34.18 (row 221) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1080,
+            "row_sha256": "78ec23db4c773c2563157f01ab110d23ddd0a021500c7151ed53c63cb38d4949",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -9668,8 +9712,8 @@
           "label": "historical/csv"
         },
         "SIG-PUB-002": {
-          "verdict": "MET",
-          "evidence": "policy/src/policy/publication.py:8",
+          "verdict": "PARTIAL",
+          "evidence": "policy/src/policy/publication.py:8;policy/src/policy/source_aliases.py;connectors/src/connectors/personal_id_rekey.py;exports/src/exports/shaping.py;docs/build/runs/P34.18.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12999,6 +13043,16 @@
         "assessment_id": "SIG-OPS-012:r11-1"
       },
       {
+        "requirement_id": "SIG-PUB-002",
+        "domain": "public",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-03",
+        "code_revision": "r11/P34.18-personal-handle-source-id-rename @ 75ac83dbaee941ed74ea96aedd4b3be9b60c1ec5",
+        "limitations": "the re-key is engineered and verified at implementation domain: neutral ids at the repo tip, the sha256-digest alias table, read/export-time projection, the suppressed camera_operator, the noindex identifier-changed page and exact-match renamed routes (never a redirect); handle_crawl_check reports 0 hits on tracked surfaces; the restricted plaintext old->new map stays gitignored. Not yet met at the public domain: the hosted site still serves pages rendered under the old ids until P34.21b republish #2 lands and P34.47's live crawl proves no handle surfaces; the hosted L2 registry rename is deferred (D-P34.18-1) pending the verbatim operator go, the >= 2026-10-13T12:00Z window, the AR-2 restore point and a <=24 h probe record",
+        "supersedes": null,
+        "assessment_id": "SIG-PUB-002:r11-1"
+      },
+      {
         "requirement_id": "SIG-PUB-007",
         "domain": "public",
         "verdict": "AT-RISK-INTEGRATION",
@@ -14458,6 +14512,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-PUB-002",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-03"
+        },
+        {
           "requirement": "SIG-PUB-007",
           "verdict": "AT-RISK-INTEGRATION",
           "assessed_at": "2026-10-01"
@@ -14936,10 +14995,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "ef78d40eec0b398c792f19aa9648a10543e691549055de5b72301e68f3b7de20",
+  "manifest_sha256": "3897cb0f4d556ab176ecb7f1157fa8a1cd99074c412796becb599493c998b270",
   "current_md": {
     "lines": 74,
-    "bytes": 12998,
+    "bytes": 13037,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
