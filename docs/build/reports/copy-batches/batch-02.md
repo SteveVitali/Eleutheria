@@ -49,6 +49,8 @@ notice allowance (`data-notice`), not as a batch row.
 | EW-25 | /evidence/ | run record — SIG did not store this document | 6527be81f1aaf9909e213a9c4dcbd1cd8c89070a9ee0dd5651f3ec8ffb987f5b | pending |
 | EW-26 | /evidence/ | the source's own link (recorded as a claim) | a4c8ad96484190ab70a9c41a74dc65f00a131ecf23da3debb5caa79ef46604be | pending |
 | EW-27 | /evidence/ | No published artifacts in this release — the list appears once the export carries them. | ca58e07ca68745ac8be8b54ff787adc8131cd292264a0afb1d374d1fa92ffe7e | pending |
+| SL-20 | /sources/ | Corrected {correctedOn}: earlier downloads credited some rows to the wrong source. | 4ce52f1626dfcf196483636d14ac3ca22d28ce9fad870ddc599be2d0c9dd83f9 | pending |
+| TB-01 | object/sig-public | The download set published on 2026-09-27 is not served publicly: earlier downloads credited some rows to the wrong source; a corrected export replaces it. | a4137447e87bddb512a863a0e15f85dbbbff45c076e8c3c3746f8b8cb4ffb42d | pending |
 
 ## Confirmation log
 

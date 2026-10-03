@@ -1799,6 +1799,73 @@ def _terms_disclosure_payload(
     }
 
 
+#: P34.21b (E2-12 / ADR-194): the marker a ``rights_decision.basis`` carries
+#: when it is an attribution correction (``db.rights_corrections`` validates
+#: the recorded basis names ADR-194) — what distinguishes a correction from
+#: an ordinary rights-resolution decision in this export's effective set.
+_CORRECTION_BASIS_MARKER = "ADR-194"
+
+
+def _attribution_corrections_payload(
+    claims: Sequence[ShapingClaim],
+    *,
+    as_of: str,
+    generated_at: str,
+) -> dict[str, Any] | None:
+    """The ``web/attribution_corrections.json`` payload (sig.attribution-corrections/1).
+
+    One row per source whose rows this export resolves through an attribution-
+    correction ``rights_decision`` (the ADR-194 basis marker), carrying the
+    decision's ``decided_at`` — the dated correction note ``/sources/``
+    renders (E2-12: "earlier downloads credited some rows to the wrong
+    source"). Source ids are the claims' ALREADY-ALIASed (re-keyed) public
+    ids, so the note never repeats a retired identifier. ``None`` when no
+    carried claim resolves through a correction — honest absence (a fixture
+    or pre-backfill export emits no artifact and the page shows no note).
+    """
+    per_source: dict[str, dict[str, Any]] = {}
+    for claim in claims:
+        basis = claim.effective_decision_basis or ""
+        if _CORRECTION_BASIS_MARKER not in basis:
+            continue
+        if not claim.source_id or claim.effective_decision_decided_at is None:
+            continue
+        stamp = claim.effective_decision_decided_at.isoformat()
+        entry = per_source.setdefault(
+            claim.source_id, {"decided_at": "", "basis": "", "affected_rows": 0}
+        )
+        entry["affected_rows"] += 1
+        if stamp > entry["decided_at"]:
+            # the newest correction decision wins the stamp/basis pair — the
+            # append-only ordering the effective-rights join itself obeys.
+            entry["decided_at"] = stamp
+            entry["basis"] = basis
+    if not per_source:
+        return None
+    return {
+        "schema": "sig.attribution-corrections/1",
+        "as_of": as_of,
+        "generated_at": generated_at,
+        "note": (
+            "The append-only attribution corrections (E2-12 / ADR-194) this "
+            "export's effective rights resolve through — one row per corrected "
+            "source with the decision's decided_at, its recorded basis, and "
+            "the count of rows this export carries under it. Earlier downloads "
+            "of the same rows may carry the wrong credit; re-users must take "
+            "this export's per-row attribution."
+        ),
+        "corrections": [
+            {
+                "source_id": sid,
+                "decided_at": entry["decided_at"],
+                "basis": entry["basis"],
+                "affected_rows": entry["affected_rows"],
+            }
+            for sid, entry in sorted(per_source.items())
+        ],
+    }
+
+
 def _compartment_tile_attribution(
     rows: Sequence[C.ExportRow], index: Mapping[str, RightsRecord]
 ) -> str | None:
@@ -2159,6 +2226,19 @@ def build_spine_export(
         web_artifacts[path] = _web_bytes(payload)
         web_licenses[path] = comp_license
         web_compartments[path] = comp
+
+    # --- P34.21b (E2-12): the dated attribution-correction record ------------
+    # The /sources/ note renders only when THIS export's effective rights
+    # resolve through ADR-194 correction decisions — absent otherwise (a
+    # pre-backfill export shows no note, never a fabricated correction).
+    corrections = _attribution_corrections_payload(
+        claims, as_of=dataset.as_of, generated_at=generated_at
+    )
+    if corrections is not None:
+        path = f"{_WEB_DIR}/attribution_corrections.json"
+        web_artifacts[path] = _web_bytes(corrections)
+        web_licenses[path] = _SIG_SPDX
+        web_compartments[path] = _WEB_COMPARTMENT
 
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
