@@ -19,8 +19,13 @@
  * `claim_ids` until a host-side rerun narrows them (see `D-P34.19-1` in
  * `docs/tickets/DEFERRALS.md`).
  */
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+// The committed table is bundled at build time: a static JSON import is
+// resolved by the bundler against the SOURCE tree (`web/src/lib/` → repo
+// root), so it survives the prerender chunking that relocates runtime
+// `import.meta.url` into `dist/.prerender/chunks/` (a `readFileSync`
+// resolved there misses — the composed export-mode build fails closed).
+// The bytes still come from the ONE shared committed file, never a copy.
+import withdrawalsTableJson from "../../../policy/src/policy/data/publication_withdrawals.json";
 
 const WITHDRAWALS_SCHEMA = "sig.publication-withdrawals/1";
 
@@ -47,21 +52,15 @@ interface WithdrawalsTable {
   withdrawals: WithdrawalEntry[];
 }
 
-function tablePath(): string {
-  // web/src/lib/withdrawals.ts → repo root → policy data (committed table).
-  return fileURLToPath(
-    new URL("../../../policy/src/policy/data/publication_withdrawals.json", import.meta.url),
-  );
-}
-
 let cached: WithdrawalsTable | null = null;
 
 function loadTable(): WithdrawalsTable {
   if (cached) return cached;
-  const path = tablePath();
-  const parsed = JSON.parse(readFileSync(path, "utf-8")) as WithdrawalsTable;
+  const parsed = withdrawalsTableJson as WithdrawalsTable;
   if (parsed?.schema !== WITHDRAWALS_SCHEMA || !Array.isArray(parsed.withdrawals)) {
-    throw new Error(`${path}: not a valid ${WITHDRAWALS_SCHEMA} table`);
+    throw new Error(
+      `policy/src/policy/data/publication_withdrawals.json: not a valid ${WITHDRAWALS_SCHEMA} table`,
+    );
   }
   cached = parsed;
   return parsed;
