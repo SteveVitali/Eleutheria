@@ -9,11 +9,13 @@ from evidence.tiers import (
     SEALED_PUBLIC_FIELDS,
     CaptureMetadata,
     StorageTier,
+    bytes_available,
+    bytes_unavailable_reason,
     public_representation,
 )
 
 
-def _meta(tier: StorageTier) -> CaptureMetadata:
+def _meta(tier: StorageTier, *, classification: str | None = "actual") -> CaptureMetadata:
     return CaptureMetadata(
         capture_id="cap-1",
         source_id="portal",
@@ -26,6 +28,7 @@ def _meta(tier: StorageTier) -> CaptureMetadata:
         title="The contract",
         excerpt="secret body text",
         byte_size=1234,
+        capture_classification=classification,
     )
 
 
@@ -54,6 +57,24 @@ def test_public_exposes_full_metadata_and_excerpt() -> None:
     rep = public_representation(_meta(StorageTier.PUBLIC))
     assert rep["excerpt"] == "secret body text"
     assert rep["bytes_available"] is True
+
+
+def test_bytes_available_only_where_bytes_are_public() -> None:
+    """P34.25: bytes availability is claimed only for a public-tier capture
+    proven byte-bearing ('actual'); every other combination is False with a
+    safe machine-readable reason."""
+    for cls in ("synthetic", "legacy", None):
+        rep = public_representation(_meta(StorageTier.PUBLIC, classification=cls))
+        assert rep["bytes_available"] is False, cls
+        assert bytes_unavailable_reason(_meta(StorageTier.PUBLIC, classification=cls)) == (
+            f"classification:{cls or 'unclassified'}"
+        )
+    for tier in (StorageTier.RESTRICTED, StorageTier.SEALED):
+        meta = _meta(tier, classification="actual")
+        assert public_representation(meta)["bytes_available"] is False
+        assert bytes_unavailable_reason(meta) == f"tier:{tier.value}"
+    meta = _meta(StorageTier.PUBLIC, classification="actual")
+    assert bytes_available(meta) is True and bytes_unavailable_reason(meta) is None
 
 
 def test_audited_tiers() -> None:

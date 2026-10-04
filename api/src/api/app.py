@@ -20,6 +20,7 @@ from starlette.routing import Route
 
 from . import __version__
 from .alias_middleware import IdentifierAliasMiddleware
+from .basis_middleware import BasisLabelMiddleware
 from .dereference import (
     HTML_MEDIA_TYPE,
     JSONLD_MEDIA_TYPE,
@@ -32,7 +33,7 @@ from .dereference import (
 from .models import HealthResponse, TermsResponse
 from .prohibitions import assert_no_prohibited_routes, route_paths
 from .release_search import KNOWN_PARAMS, ReleaseSearchStore, render_search_html
-from .routes import build_router, get_store
+from .routes import ScopeNotAvailableError, build_router, get_store
 from .store import ReadStore, StoreUnavailable
 from .terms import acceptable_use_terms
 
@@ -41,12 +42,21 @@ from .terms import acceptable_use_terms
 API_VERSION = "1.0.0"
 
 
-def create_app(store: ReadStore, release_search: ReleaseSearchStore | None = None) -> FastAPI:
+def create_app(
+    store: ReadStore,
+    release_search: ReleaseSearchStore | None = None,
+    *,
+    release_id: str | None = None,
+) -> FastAPI:
     """Build the read-API app over ``store`` (SIG-API-001).
 
     Raises :class:`api.prohibitions.ProhibitedEndpointError` at construction if a
     SIG-API-012 forbidden surface is ever mounted — the app cannot be built in a
     prohibited state.
+
+    ``release_id`` is the promoted release this service is pinned to, where one
+    exists — the live-spine basis label discloses it on every response (P34.25,
+    A-20=a). ``None`` answers "not pinned", never a fabricated id.
     """
     app = FastAPI(
         title="SIG public read API",
@@ -59,6 +69,7 @@ def create_app(store: ReadStore, release_search: ReleaseSearchStore | None = Non
     )
     app.state.store = store
     app.state.release_search = release_search
+    app.state.basis_release_id = release_id
     app.include_router(build_router())
 
     # --- /v1/releases/{pub}/compartments/{comp}/search -------------------------
@@ -164,6 +175,20 @@ def create_app(store: ReadStore, release_search: ReleaseSearchStore | None = Non
             pool=state.pool,
         )
 
+    # A scope the store does not hold is a typed 404 (P34.25, C3 NEW-1) — never
+    # a substituted sample. The same {detail, code, **extra} error shape as
+    # SearchIndexError.
+    @app.exception_handler(ScopeNotAvailableError)
+    def _scope_not_available(_request: Request, exc: ScopeNotAvailableError) -> JSONResponse:
+        return JSONResponse(
+            status_code=404,
+            content={
+                "detail": "scope not available",
+                "code": "scope_not_available",
+                "scope": exc.scope,
+            },
+        )
+
     # A store that cannot answer (DB restarting, pool exhausted) is a 503 with a
     # retry hint, never a 500 (P31.1, D-P30.4-1).
     @app.exception_handler(StoreUnavailable)
@@ -195,4 +220,9 @@ def create_app(store: ReadStore, release_search: ReleaseSearchStore | None = Non
     # redact at the response boundary so nothing publicly renderable repeats a
     # handle. Output-side only; recorded ids still query.
     app.add_middleware(IdentifierAliasMiddleware)
+    # P34.25 / A-20=a (SIG-REL-010): the outermost wrapper stamps the
+    # ``live-spine`` basis label — an X-SIG-Basis header on EVERY response and
+    # a ``basis`` field on every JSON object body (errors included). Added last
+    # so the label survives the alias projection and every error handler.
+    app.add_middleware(BasisLabelMiddleware)
     return app

@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "72e4bb50669c530d639421b528b0cdc8ef04b982",
+  "input_commit": "7129ba8af9ecf43962da5d138aebca95a6d8f0f3",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -774,15 +774,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "4f0c9a4eab7cb703a679a00348be66fdb327c524b60b12b90a3f1bfb85f9d42d"
+      "sha256": "04e2846d6b611cb681e3033f0055bfc0bd835d4739443b90eadd74c8774de9e2"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "4361016ab8489e4e61b432f85214d8bdef1eed5dc2fb2e36c841044526112c27"
+      "sha256": "610d7ba72b2cc42310fc34a371669264c5093d86bc78d4f9c76812a34005aac8"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "b5fd4bc3440b0276a5b02c9071c7b21f346e435dab84dfdd3b536a41be35078d"
+      "sha256": "75312344b0aa377399df64638aedf5c11ffc38af899e63104be452e9068d4a9c"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -834,11 +834,11 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "cd8f24b83b4a4a218f7f081c02c3a1a4563f9ece3a71546ad08adc8608706080"
+      "sha256": "6d3733a6433e518420c171740d85f73e1e7447c79c3f666b5b022beaeb300f8a"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "e037f53fc5cca0567f07fab724b260bb9f5e90a811f6dfffba0c673ca0922ada"
+      "sha256": "9e53252e4217b80ac9c629aff55be86bab634fb64c9a1c9d9bbe88dbebdf3b9e"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1659,6 +1659,10 @@
     {
       "path": "docs/build/runs/P34.24a.md",
       "sha256": "8d7a4ce0d4fea50239ddbde386719d77afc6cdbb1b34fec3de4c034760f5f6b8"
+    },
+    {
+      "path": "docs/build/runs/P34.25.md",
+      "sha256": "0888015e80c904501d02bac3163e90c79fea57329f9936f606efa3f15ab8689a"
     },
     {
       "path": "docs/build/runs/P34.3.md",
@@ -3206,7 +3210,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "9fda3fd41d98ad0cd3c06b5b3281bad04df06661f8cea6a7390554a33216a319"
+      "sha256": "66189d67b8dd0733bd804d5e7ea543c6f65e9447088a23bbe06c6c95c9679f87"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

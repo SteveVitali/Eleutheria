@@ -68,6 +68,21 @@ from .store import (
 )
 from .tiers import AccessTier, assert_public_visibility, tier_dependency
 
+
+class ScopeNotAvailableError(Exception):
+    """A dossier/coverage scope the store does not hold (P34.25).
+
+    Mapped to a 404 with a typed body — ``{"detail": "scope not available",
+    "code": "scope_not_available", "scope": scope}`` — by the handler
+    :func:`api.app.create_app` installs. The API must never substitute an
+    arbitrary sample for a scope it cannot answer (C3 NEW-1).
+    """
+
+    def __init__(self, scope: str) -> None:
+        super().__init__(scope)
+        self.scope = scope
+
+
 #: A searchable term has a run of SEARCH_MIN_QUERY_LENGTH letters/digits (P31.1,
 #: ADR-108): the shortest term the trigram index can serve.
 _SEARCHABLE = re.compile(rf"[^\W_]{{{SEARCH_MIN_QUERY_LENGTH}}}")
@@ -124,7 +139,8 @@ def build_router() -> APIRouter:
             ) from exc
         rights = store.rights_for(tuple(sorted({c.source_id for c in claims if c.source_id})))
         cov = coverage_statement(
-            f"{subject_id}:{predicate_id}", store.coverage_for(f"{subject_id}:{predicate_id}")
+            f"{subject_id}:{predicate_id}",
+            store.coverage_for(f"{subject_id}:{predicate_id}") or [],
         )
         asof.apply_cache(response)
         return ResolutionResponse(
@@ -165,7 +181,7 @@ def build_router() -> APIRouter:
                 facts=[],
                 attribution=[],
                 location=None,
-                coverage=coverage_statement(entity_id, store.coverage_for(entity_id)),
+                coverage=coverage_statement(entity_id, store.coverage_for(entity_id) or []),
                 as_of=asof.echo(),
                 publication=_tombstone(record.publication),
             )
@@ -199,7 +215,7 @@ def build_router() -> APIRouter:
             facts=facts,
             attribution=attribution_for(rights),
             location=_geo_point(record),
-            coverage=coverage_statement(entity_id, store.coverage_for(entity_id)),
+            coverage=coverage_statement(entity_id, store.coverage_for(entity_id) or []),
             as_of=asof.echo(),
             unregistered_predicates=unregistered,
         )
@@ -255,7 +271,7 @@ def build_router() -> APIRouter:
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
     ) -> EvidenceResponse:
-        from evidence.tiers import public_representation
+        from evidence.tiers import bytes_unavailable_reason, public_representation
 
         meta = store.capture(artifact_id, capture_id)
         if meta is None:
@@ -263,6 +279,9 @@ def build_router() -> APIRouter:
         # public_representation IS the tier gate for a capture (SIG-EVID-009/010):
         # sealed → metadata only, no bytes; restricted → redacted excerpt. The
         # bytes are gated separately and never reach this surface (SIG-API-012).
+        # P34.25: bytes_available is claimed only where the bytes are public —
+        # a public-tier capture not recorded byte-bearing does not claim it,
+        # and the safe reason is disclosed.
         rep = public_representation(meta)
         asof.apply_cache(response)
         return EvidenceResponse(
@@ -273,6 +292,7 @@ def build_router() -> APIRouter:
             representation=rep,
             coverage=empty_coverage(f"evidence:{artifact_id}/{capture_id}"),
             as_of=asof.echo(),
+            bytes_unavailable_reason=bytes_unavailable_reason(meta),
         )
 
     # --- /search (collection: licence + coverage) -----------------------------
@@ -345,13 +365,15 @@ def build_router() -> APIRouter:
     ) -> DossierResponse:
         record = store.dossier(scope)
         if record is None:
-            raise HTTPException(status_code=404, detail="dossier not found")
+            # P34.25 (C3 NEW-1): an unheld scope is a typed 404, never an
+            # arbitrary unrelated subject set.
+            raise ScopeNotAvailableError(scope)
         asof.apply_cache(response)
         return DossierResponse(
             scope=record.scope,
             title=record.title,
             sections=list(record.sections),
-            coverage=coverage_statement(scope, store.coverage_for(scope)),
+            coverage=coverage_statement(scope, store.coverage_for(scope) or []),
             license=license_statement(store.rights_for(record.source_ids)),
             as_of=asof.echo(),
         )
@@ -365,9 +387,14 @@ def build_router() -> APIRouter:
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
     ) -> CoverageResponse:
+        records = store.coverage_for(scope)
+        if records is None:
+            # P34.25 (C3 NEW-1): an unheld scope is a typed 404, never an
+            # empty-but-"complete" statement.
+            raise ScopeNotAvailableError(scope)
         asof.apply_cache(response)
         return CoverageResponse(
-            coverage=coverage_statement(scope, store.coverage_for(scope)),
+            coverage=coverage_statement(scope, records),
             as_of=asof.echo(),
         )
 

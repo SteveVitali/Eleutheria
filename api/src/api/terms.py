@@ -5,8 +5,9 @@
 
 Terms that prohibit re-identification but state no remedy are decorative
 (SIG-API-013). These terms therefore pair each prohibition with an explicit
-consequence: access revocation and referral, consistent with the Part VIII
-categorical exclusions (§43.2) and the no-per-person-query posture (SIG-API-012).
+consequence: access revocation and credential invalidation, consistent with
+the Part VIII categorical exclusions (§43.2) and the no-per-person-query
+posture (SIG-API-012).
 """
 
 from __future__ import annotations
@@ -25,13 +26,14 @@ _PROHIBITIONS: tuple[str, ...] = (
     "Automated access exceeding the tier's published rate limit.",
 )
 
+# P34.25 (E2 H-5): the earlier text named an "editorial board" and "counsel"
+# that do not exist. Per the B-2 copy rule the false sentences are removed and
+# nothing new is added — the remaining remedy clauses are unchanged.
 _REMEDY = (
     "Violation is a material breach of these terms. The remedy is immediate "
-    "revocation of API access (all tiers and issued keys), invalidation of "
-    "affected credentials, and — where the violation is an attempted "
-    "re-identification of an individual — referral to the SIG editorial board "
-    "and, where applicable, to counsel. Continued or automated abuse may be "
-    "blocked at the network layer without notice."
+    "revocation of API access (all tiers and issued keys) and invalidation of "
+    "affected credentials. Continued or automated abuse may be blocked at the "
+    "network layer without notice."
 )
 
 _TIER_DESCRIPTIONS: dict[str, str] = {
