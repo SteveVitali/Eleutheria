@@ -274,7 +274,71 @@ def test_non_done_entry_is_exempt(env) -> None:
     assert rc == 0, out
 
 
+def test_correction_kind_entry_is_exempt(env) -> None:
+    """A declared `correction` entry records a record event, not a head-bound
+    CI read — no `ci:` field is owed even when the payload carries no
+    pause/blocked marker (P34.27: the restoration corrections were flagged
+    before the kind slot was consulted)."""
+    env.add_file(
+        "docs/build/LEDGER.md",
+        LEDGER.format(sha7=SHA_HEAD[:7])
+        + "\n- 2026-10-02 — P34.27 correction — restored the removed wording "
+        "verbatim from 7671b511^; nothing is re-decided\n",
+    )
+    env.set(fx())
+    rc, out, _ = env.run("--diff-base", "HEAD~1")
+    assert rc == 0, out
+
+
+def test_ticket_kind_mentioning_correction_still_owes_ci(env) -> None:
+    """Kind, not vocabulary: a landing entry whose payload happens to contain
+    the word 'correction' is still a `done`/`ticket` record and fails without
+    a `ci:` field."""
+    env.add_file(
+        "docs/build/LEDGER.md",
+        LEDGER.format(sha7=SHA_HEAD[:7])
+        + "\n- 2026-10-02 — P34.9 ticket — r11/y · PR #200 · landed the "
+        "append-only correction\n",
+    )
+    env.set(fx())
+    rc, out, _ = env.run("--diff-base", "HEAD~1")
+    assert rc == 3 and "no ci: field" in out
+
+
+def test_post_closeout_record_still_owes_ci(env) -> None:
+    """`post-closeout record` exists to record a head-bound read — exempting
+    it would let a vacuous record pass."""
+    env.add_file(
+        "docs/build/LEDGER.md",
+        LEDGER.format(sha7=SHA_HEAD[:7])
+        + "\n- 2026-10-02 — P34.9 post-closeout record — closeout head "
+        "deadbee 5/5 green\n",
+    )
+    env.set(fx())
+    rc, out, _ = env.run("--diff-base", "HEAD~1")
+    assert rc == 3 and "no ci: field" in out
+
+
 # ── --all scope (nightly) ────────────────────────────────────────────────────
+
+
+def test_all_scope_finds_the_section_under_its_real_heading(env) -> None:
+    """The live heading carries a parenthetical (`## PHASE LOG — Round 11
+    (append-only, newest last; the only append target)`); a section regex
+    pinned to the bare text finds nothing and `--all` can only report
+    vacuous — never a verification."""
+    (env.root / "docs/build/LEDGER.md").write_text(
+        LEDGER.format(sha7=SHA_HEAD[:7]).replace(
+            "## PHASE LOG — Round 11\n",
+            "## PHASE LOG — Round 11 (append-only, newest last; the only append target)\n",
+        ),
+        encoding="utf-8",
+    )
+    env.git("add", "-A")
+    env.git("commit", "-q", "-m", "heading")
+    env.set(fx())
+    rc, out, _ = env.run("--all")
+    assert rc == 0 and "candidates=2" in out, out
 
 
 def test_all_scope_verifies_phase_log_and_run_ledger(env) -> None:
