@@ -274,6 +274,13 @@ class EvidenceResponse(_Model):
     a ``restricted`` capture yields metadata with a redacted excerpt. This is the
     designed public representation (SIG-EVID-009/010), not a tier bypass — the
     bytes are gated separately and never reach this surface.
+
+    ``bytes_available`` is claimed only where the bytes are actually public
+    (P34.25): a public-tier capture that is not recorded byte-bearing (the
+    P32.2 ``capture_classification`` marker) does not claim it, and
+    ``bytes_unavailable_reason`` says why (``tier:<value>`` when the storage
+    tier withholds the bytes, ``classification:<value>`` when the capture is
+    not proven byte-bearing; ``None`` when the bytes are public).
     """
 
     artifact_id: str
@@ -283,6 +290,7 @@ class EvidenceResponse(_Model):
     representation: dict[str, Any]
     coverage: CoverageStatement
     as_of: AsOfEcho
+    bytes_unavailable_reason: str | None = None
 
 
 class EntityRef(_Model):
