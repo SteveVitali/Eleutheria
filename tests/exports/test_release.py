@@ -197,7 +197,7 @@ def _write_export(root: Path, *, n_records: int = 3, two_compartments: bool = Tr
         "reproducibility_inputs": {
             "as_of_belief": "2026-09-27",
             "as_of_snapshot": "2026-09-27",
-            "resolver_version": "0.0.0",
+            "resolver_version": "0.1.0+g00000000",
             "ruleset_version": "p27.3/1.0.0",
         },
     }

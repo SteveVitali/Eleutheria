@@ -46,6 +46,8 @@ Importing the package imports the connectors so they appear in the registry
 (``connectors.stages.registered_connectors``) and the CLI.
 """
 
+from importlib.metadata import version as _dist_version
+
 # Importing the source-specific connectors registers them (SIG-INGEST-021). Kept
 # at the bottom so the framework modules above are fully initialised first, and
 # imported for the registration side effect only.
@@ -72,4 +74,4 @@ from . import procurement as procurement  # noqa: E402,F401
 from . import records as records  # noqa: E402,F401
 from . import statute_seed as statute_seed  # noqa: E402,F401
 
-__version__ = "0.0.0"
+__version__ = _dist_version("sig-connectors")

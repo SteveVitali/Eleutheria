@@ -125,6 +125,18 @@ jobs:
           fi
           python3 docs/build/tools/check_trailers.py --range "$base...$head" --json docs/build/logs/trailer-check.json
 
+      # SIG-REL-014 (P34.23, G3 §9.4): a public-behaviour change cannot merge
+      # without a CHANGELOG entry — a PR touching the §9.4 path set
+      # (web/src/pages|layouts, api routes/app/models, exports
+      # release*/spine_export/manifest, the two ops tomls, policy/**,
+      # ontology/src/**) must change CHANGELOG.md, unless a commit in the
+      # range carries a `Changelog: none (<reason>)` trailer. Exit 1
+      # (violation), 3 (vacuous) and 5 (unknown) are all red. PR-only: a
+      # landed head was already judged at PR time.
+      - name: CHANGELOG discipline gate (SIG-REL-014)
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+        run: python3 docs/build/tools/changelog_gate.py --range "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" --json docs/build/logs/changelog-gate.json
+
       # G3b recorded-CI verifier (P34.2, SIG-MEM-007, B4 §G3b): every `ci:` line
       # this change ADDS is verified against the live GitHub records — each
       # recorded run id resolves to a run whose head_sha carries the recorded

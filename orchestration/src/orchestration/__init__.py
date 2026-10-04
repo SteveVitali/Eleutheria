@@ -3,4 +3,6 @@
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """SIG `orchestration` package (skeleton — no domain logic yet; see §47)."""
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-orchestration")

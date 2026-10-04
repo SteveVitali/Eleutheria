@@ -643,12 +643,15 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
                         "check-build-memory.sh",
                         "verify_recorded_ci.py",
                         "npm_audit_gate.sh",
+                        "changelog_gate.py",
                     )
                 ):
                     # Checked by name, not verbatim: range/out args legitimately
                     # differ locally — the verifier's diff base (branch base vs
-                    # the PR's recorded base sha) and the gate driver's --out
-                    # dir (gitignored docs/build/logs vs the workspace root).
+                    # the PR's recorded base sha), the changelog gate's span
+                    # (PR base…head shas vs the local branch range), and the
+                    # gate driver's --out dir (gitignored docs/build/logs vs
+                    # the workspace root).
                     tool = next(
                         t
                         for t in (
@@ -656,6 +659,7 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
                             "check-build-memory.sh",
                             "verify_recorded_ci.py",
                             "npm_audit_gate.sh",
+                            "changelog_gate.py",
                         )
                         if t in line
                     )

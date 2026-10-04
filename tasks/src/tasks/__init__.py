@@ -69,4 +69,6 @@ Acquisition — the gap-driven reviewed source queue (§55.6, P32.11):
   (SIG-ACQ-001/002, ADR-130). Seeding approves nothing; no source is flipped.
 """
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-tasks")

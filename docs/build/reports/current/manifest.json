@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "6402d1b25ba3865511ae344348f76ac13e5b4f17",
+  "input_commit": "2e357211d03eeb1233df404b114bd694184c1f85",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "08bdf862d8905f5b475f7f6096846d33d0dad5d7248a0951846fff38f40ae712"
+      "sha256": "98537db7664fbf5757386b3322ea042baa0b2c659c2c031e7e462598ddc16174"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -757,12 +757,16 @@
       "sha256": "a572c3ee1d978350358a9926d7b4f36530a94545bb818f719c8273ecfdd4025c"
     },
     {
+      "path": "docs/adr/ADR-195-versioning-discipline-one-version-source.md",
+      "sha256": "97c2d3836a107c342f55d53de2732b07f17cc93736e050aaf6872e95f0033667"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "af9ca21fc0c8914f364b3355dce5befc3ac6ed4a0a85d03fdd4cb02ac1178acb"
+      "sha256": "4a6d0c91061f95f07990a56532c26738766357cd1dc59f11a1c70266ab2136a4"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "51c889aa42b01cb80b1c8f3e31811ea0d98941526209c7cfac2e09e54e31b03c"
+      "sha256": "49577233a177a381a5411dc9ab2940775087ea7acac051de65bf0ba34752dad1"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1643,6 +1647,10 @@
     {
       "path": "docs/build/runs/P34.22b.md",
       "sha256": "5accaa2613d093aaa42a0d9e5fd5103ca8b0832acf52347237be36044e352f9f"
+    },
+    {
+      "path": "docs/build/runs/P34.23.md",
+      "sha256": "51ca49afb127cc08e8b8ad6bc9e49d37c91e87e9b15b48e0400f38c841e0c2d2"
     },
     {
       "path": "docs/build/runs/P34.3.md",

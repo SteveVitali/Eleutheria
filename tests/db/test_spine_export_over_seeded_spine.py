@@ -16,10 +16,13 @@ import coupling.
 from __future__ import annotations
 
 import json
+import re
 
 import pytest
 from exports.compartments import assert_separated
 from exports.spine_export import run_spine_export
+
+import resolution
 
 
 def _seed_predicate(cur, predicate_id: str) -> None:
@@ -184,6 +187,15 @@ def seeded_export(conn) -> dict:
 
 def test_spine_export_over_seeded_spine(conn, seeded_export) -> None:
     export = run_spine_export(conn, as_of="2026-09-23", note="seeded", spine_label="seeded")
+
+    # SIG-REL-014 (P34.23, G3 §3.2 ★): the default resolver_version is the
+    # resolution package version + the tree's commit — never the exports
+    # placeholder the pre-REL-10 manifests carried.
+    assert re.fullmatch(
+        r"\d+\.\d+\.\d+\+g[0-9a-f]{8}",
+        export.bundle.build_spec.resolver_version,
+    ), export.bundle.build_spec.resolver_version
+    assert export.bundle.build_spec.resolver_version.startswith(f"{resolution.__version__}+g")
 
     # The fail-closed licence gate holds: ODbL apart from the CC-BY graph.
     assert_separated(export.bundle.placed)
