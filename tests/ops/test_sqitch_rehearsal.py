@@ -277,11 +277,14 @@ def test_sample_loop_records_an_error_and_recovers(tmp_path: Path) -> None:
 
 
 def test_parse_deploy_log_gives_per_change_seconds() -> None:
+    """sqitch's real completion format (App::Sqitch v1.6.1): a `Deploying
+    changes to` header, then `  + <change> …. ok` completions — the 2026-10-04
+    live leg's actual shape."""
     lines = [
-        f"{_at(0)}\tDeploying claim_assertion_bindings",
-        f"{_at(4)}\tDeploying partner_org_scoped_identity_key",
-        f"{_at(40)}\tDeploying recovery_apply",
-        f"{_at(95)}\tDeploy successful",
+        f"{_at(0)}\tDeploying changes to db:pg://sig@host.docker.internal:5442/sig",
+        f"{_at(4)}\t  + claim_assertion_bindings ................... ok",
+        f"{_at(40)}\t  + partner_org_scoped_identity_key ............ ok",
+        f"{_at(95)}\t  + recovery_apply ............................. ok",
     ]
     parsed = sr.parse_deploy_log(iter(lines))
     changes = parsed["changes"]
@@ -294,17 +297,69 @@ def test_parse_deploy_log_gives_per_change_seconds() -> None:
     assert changes[1]["seconds"] == 36.0
     assert changes[2]["seconds"] == 55.0
     assert parsed["wall_seconds"] == 95.0
+    assert parsed["deploy_failed"] is None
+    assert parsed["reverted"] == []
+
+
+def test_parse_deploy_log_records_a_verify_failure_and_the_revert() -> None:
+    """A failed `+` line marks the change failed and the following
+    `Reverting to`/`  - <change>` section is kept separate — the 2026-10-04
+    leg's real path: intake_storage's verify erred, sqitch reverted to the
+    clone head, `Deploy failed`."""
+    lines = [
+        f"{_at(0)}\tDeploying changes to db:pg://sig@host:5442/sig",
+        f"{_at(4)}\t  + claim_assertion_bindings ................... ok",
+        f"{_at(9)}\t  + intake_storage ............................. "
+        'psql:verify/intake_storage.sql:80: ERROR:  permission denied to set role "x"',
+        f'{_at(10)}\tVerify script "verify/intake_storage.sql" failed.',
+        f"{_at(11)}\tnot ok",
+        f"{_at(12)}\tReverting to camera_site_human_decisions",
+        f"{_at(15)}\t  - claim_assertion_bindings ................... ok",
+        f"{_at(16)}\tDeploy failed",
+    ]
+    parsed = sr.parse_deploy_log(iter(lines))
+    assert parsed["deploy_failed"] is True
+    assert parsed["revert_to"] == "camera_site_human_decisions"
+    assert [c["status"] for c in parsed["changes"]] == ["ok", "failed"]
+    assert parsed["changes"][1]["change"] == "intake_storage"
+    assert "permission denied" in (parsed["changes"][1]["output_tail"] or "")
+    assert [r["change"] for r in parsed["reverted"]] == ["claim_assertion_bindings"]
+    assert parsed["reverted"][0]["status"] == "ok"
+
+
+def test_parse_deploy_log_flips_a_split_completion_to_ok() -> None:
+    """The live log split one revert completion: `  - name …. 1` then `ok`
+    on the next stamped line — psql output interleaved between the dots and
+    the ok. The pending row flips to ok, never reads as a failure."""
+    lines = [
+        f"{_at(0)}\tDeploying changes to db:pg://sig@host:5442/sig",
+        f"{_at(3)}\t  + c1 .......................................... ok",
+        f"{_at(4)}\tReverting to head",
+        f"{_at(5)}\t  - c1 .......................................... 1",
+        f"{_at(6)}\tok",
+    ]
+    parsed = sr.parse_deploy_log(iter(lines))
+    assert parsed["reverted"][0]["status"] == "ok"
+    assert parsed["deploy_failed"] is None
 
 
 def test_parse_deploy_log_tolerates_unstamped_lines() -> None:
     lines = [
         "noise without a tab",
-        f"{_at(0)}\tDeploying c1",
+        f"{_at(0)}\tDeploying changes to db:pg://sig@h:1/d",
         f"{_at(10)}\tdone",
     ]
     parsed = sr.parse_deploy_log(iter(lines))
-    assert len(parsed["changes"]) == 1
+    assert parsed["changes"] == []
     assert parsed["wall_seconds"] == 10.0
+
+
+def test_lock_sample_joins_activity_on_datid() -> None:
+    """Regression pin for the 2026-10-04 live defect: pg_stat_activity must
+    join on ``a.datid = l.database`` (oid = oid); the datname/database join
+    is `name = oid` — an UndefinedFunction on every sample."""
+    assert "a.datid = l.database" in sr.LOCK_SAMPLE_SQL
+    assert "a.datname = l.database" not in sr.LOCK_SAMPLE_SQL
 
 
 # --- lock-episode grouping ------------------------------------------------------------
@@ -567,7 +622,9 @@ def test_cli_record_assembles_from_the_measured_parts(
         "\n".join(json.dumps(_lock_sample(s)) for s in (0.0, 0.25, 0.5)) + "\n"
     )
     (tmp_path / "deploy.log").write_text(
-        f"{_at(0)}\tDeploying c44\n{_at(30)}\tDeploying c45\n{_at(70)}\tdone\n"
+        f"{_at(0)}\tDeploying changes to db:pg://sig@h:1/d\n"
+        f"{_at(30)}\t  + c44 ......................................... ok\n"
+        f"{_at(70)}\t  + c45 ......................................... ok\n"
     )
     out = tmp_path / "record.json"
     rc = _cli(

@@ -106,16 +106,18 @@ RELATION_SIZES_SQL = (
 )
 
 #: ACCESS EXCLUSIVE relation locks — the measurement the whole rehearsal
-#: exists for. Joined to pg_stat_activity so the holding backend's query
-#: head attributes the lock to the deploying change (the deploy runs as the
-#: same `sig` user, so its query text is visible).
+#: exists for. Joined to pg_stat_activity on ``a.datid = l.database`` (oid
+#: = oid — a datname/database join is `name = oid`, which does not exist;
+#: found by the 2026-10-04 live leg) so the holding backend's query head
+#: attributes the lock to the deploying change (the deploy runs as the same
+#: `sig` user, so its query text is visible).
 LOCK_SAMPLE_SQL = (
     "SELECT l.pid, l.mode, l.granted, c.relname, "
     "  a.query_start, a.state, left(a.query, 200) AS query "
     "FROM pg_locks l "
     "JOIN pg_class c ON c.oid = l.relation "
     "JOIN pg_namespace n ON n.oid = c.relnamespace "
-    "LEFT JOIN pg_stat_activity a ON a.pid = l.pid AND a.datname = l.database "
+    "LEFT JOIN pg_stat_activity a ON a.pid = l.pid AND a.datid = l.database "
     "WHERE l.locktype = 'relation' AND l.mode = 'AccessExclusiveLock' "
     "  AND n.nspname NOT IN ('pg_catalog', 'information_schema')"
 )
@@ -329,22 +331,39 @@ def sample_loop(
 
 # ---- deploy-log timing ----------------------------------------------------------
 
-_DEPLOY_RE = re.compile(r"^Deploying\s+(?P<change>\S+)")
+#: sqitch's real completion lines (App::Sqitch v1.6.1): a deploy change ends
+#: ``  + <change> …. ok`` (tail carries the verify error on failure) and a
+#: revert ends ``  - <change> …. ok``; the run starts on ``Deploying changes
+#: to <target>``, ``Reverting to <change>`` marks the revert point, and a
+#: bare ``not ok`` confirms the failure.
+_DEPLOY_HEADER_RE = re.compile(r"^Deploying changes to\b")
+_DEPLOY_CHANGE_RE = re.compile(r"^\s*\+\s+(?P<change>\S+)\s*\.{2,}\s*(?P<tail>.*)$")
+_REVERT_CHANGE_RE = re.compile(r"^\s*-\s+(?P<change>\S+)\s*\.{2,}\s*(?P<tail>.*)$")
+_REVERT_TO_RE = re.compile(r"^Reverting to\s+(?P<change>\S+)")
 
 
 def parse_deploy_log(lines: Iterable[str]) -> dict[str, Any]:
     """Per-change wall times from a timestamped ``sqitch deploy`` log.
 
-    The shell stamps every sqitch output line ``<ISO>\t<text>``; each
-    ``Deploying <change>`` marks that change's start and the previous
-    change's end. The last change ends at the last stamped line. Changes
-    are identified by their sqitch output, not the plan file, so a skipped
-    or failed change is visible as absent.
+    The shell stamps every sqitch output line ``<ISO>\t<text>``. Each
+    ``+ <change> …. ok`` line is that change's completion — its duration is
+    the gap to the previous completion (or to the ``Deploying changes``
+    header for the first). A tail other than ``ok`` means the change's
+    verify failed; ``- <change>`` lines after ``Reverting to`` are revert
+    completions, kept separate so a failed deploy's timings stay honest.
+    Changes are identified by sqitch's own output, not the plan file — a
+    skipped or failed change is visible as absent.
     """
-    events: list[tuple[datetime, str]] = []
+    changes: list[dict[str, Any]] = []
+    reverted: list[dict[str, Any]] = []
+    in_revert = False
+    deploy_failed = False
+    revert_to: str | None = None
+    started: datetime | None = None
+    prev: datetime | None = None
     last_ts: datetime | None = None
-    for line in lines:
-        line = line.rstrip("\n")
+    for raw in lines:
+        line = raw.rstrip("\n")
         if "\t" not in line:
             continue
         stamp, text = line.split("\t", 1)
@@ -352,29 +371,54 @@ def parse_deploy_log(lines: Iterable[str]) -> dict[str, Any]:
         if ts is None:
             continue
         last_ts = ts
-        match = _DEPLOY_RE.match(text.strip())
-        if match:
-            events.append((ts, match.group("change")))
-    changes: list[dict[str, Any]] = []
-    for i, (ts, change) in enumerate(events):
-        end = events[i + 1][0] if i + 1 < len(events) else last_ts
-        changes.append(
-            {
-                "change": change,
-                "started_at": _iso(ts),
-                "ended_at": _iso(end) if end is not None else None,
-                "seconds": round((end - ts).total_seconds(), 3) if end else None,
-            }
-        )
-    started = events[0][0] if events else None
-    ended = last_ts if events else None
+        stripped = text.strip()
+        if _DEPLOY_HEADER_RE.match(stripped):
+            started = started or ts
+            prev = prev or ts
+            continue
+        revert_mark = _REVERT_TO_RE.match(stripped)
+        if revert_mark:
+            in_revert = True
+            revert_to = revert_mark.group("change")
+            prev = ts
+            continue
+        match = (_REVERT_CHANGE_RE if in_revert else _DEPLOY_CHANGE_RE).match(text)
+        if not match:
+            if stripped == "not ok" or stripped.startswith("Deploy failed"):
+                deploy_failed = True
+            elif stripped == "ok":
+                # sqitch can split a completion across lines — the change
+                # name+dots, some psql output, then `ok` alone on the next
+                # stamped line (seen live on the 2026-10-04 leg). The
+                # pending row flips to ok; it is never a failure.
+                pending = reverted[-1] if in_revert else (changes[-1] if changes else None)
+                if pending is not None and pending["status"] == "failed":
+                    pending["status"] = "ok"
+            continue
+        tail = match.group("tail").strip()
+        row = {
+            "change": match.group("change"),
+            "ended_at": _iso(ts),
+            "seconds": round((ts - prev).total_seconds(), 3) if prev else None,
+            "status": "ok" if tail == "ok" else "failed",
+            "output_tail": tail[:200] if tail != "ok" else None,
+        }
+        if in_revert:
+            reverted.append(row)
+        else:
+            changes.append(row)
+        prev = ts
+    deploy_failed = deploy_failed or any(c["status"] == "failed" for c in changes)
     return {
         "started_at": _iso(started),
-        "ended_at": _iso(ended),
-        "wall_seconds": round((ended - started).total_seconds(), 3)
-        if started is not None and ended is not None
+        "ended_at": _iso(last_ts),
+        "wall_seconds": round((last_ts - started).total_seconds(), 3)
+        if started is not None and last_ts is not None
         else None,
+        "deploy_failed": deploy_failed or None,
+        "revert_to": revert_to,
         "changes": changes,
+        "reverted": reverted,
     }
 
 
