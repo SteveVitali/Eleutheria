@@ -57,7 +57,14 @@ _CORRECTION_BASIS = (
 
 @dataclass(frozen=True)
 class CorrectionRow:
-    """One list row — mirrors ``db.rights_corrections.AttributionCorrection``."""
+    """One list row — mirrors ``db.rights_corrections.AttributionCorrection``.
+
+    ``reviewed_on`` / ``retrieval_date`` carry the source's EFFECTIVE dates
+    (P34.22b / ADR-146): when the registry declares a ``date_corrections``
+    entry for the field, the corrected ``true`` date is what a reader shows —
+    and ``date_corrections`` echoes the correction provenance (recorded →
+    true, evidence commit, ADR) so the correction is never silent.
+    """
 
     source_id: str
     spdx: str
@@ -71,6 +78,7 @@ class CorrectionRow:
     retrieval_date: str
     review_packet: str | None
     spdx_aliases: tuple[str, ...]
+    date_corrections: tuple[dict[str, str], ...] = ()
 
     def as_json(self) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -89,6 +97,8 @@ class CorrectionRow:
             out["review_packet"] = self.review_packet
         if self.spdx_aliases:
             out["spdx_aliases"] = list(self.spdx_aliases)
+        if self.date_corrections:
+            out["date_corrections"] = list(self.date_corrections)
         return out
 
 
@@ -132,6 +142,11 @@ def corrections_list() -> dict[str, Any]:
         # the P34.21a renames); aliases name the *recorded* malformed ids the
         # spine's stored rows may carry — the normalisation map, declared.
         aliases = tuple(old for old, new in sorted(SPDX_NORMALISATIONS.items()) if new == spdx)
+        # P34.22b / ADR-146: the shown dates are the EFFECTIVE ones — the
+        # recorded values stay in the registry, corrected additively, and the
+        # correction provenance echoes onto the row.
+        effective_reviewed_on = rec.effective_date("rights_reviewed_on") or reviewed_on
+        effective_retrieval = rec.effective_date("rights.retrieval_date") or (rights.retrieval_date)
         corrections.append(
             CorrectionRow(
                 source_id=rec.id,
@@ -141,11 +156,21 @@ def corrections_list() -> dict[str, Any]:
                 derivative_permitted=_decided(rights.derivative_permitted, reviewed=reviewed),
                 terms_url=rights.terms_url,
                 reviewed_by=rec.rights_reviewed_by,
-                reviewed_on=reviewed_on.isoformat(),
+                reviewed_on=effective_reviewed_on.isoformat(),
                 basis=_CORRECTION_BASIS,
-                retrieval_date=rights.retrieval_date.isoformat(),
+                retrieval_date=effective_retrieval.isoformat(),
                 review_packet=rec.review_packet or None,
                 spdx_aliases=aliases,
+                date_corrections=tuple(
+                    {
+                        "field": c.field,
+                        "recorded": c.recorded.isoformat(),
+                        "true": c.true.isoformat(),
+                        "evidence": c.evidence,
+                        "adr": c.adr,
+                    }
+                    for c in rec.date_corrections
+                ),
             )
         )
     return {

@@ -45,7 +45,11 @@ test("qualifiers, original dates, and capture citations are in the HTML (SIG-DOS
 }) => {
   await page.goto(RESEARCH_PAGE);
   const body = await page.content();
-  expect(body).toContain("retrieved 2026-10-01"); // the capture date
+  // P34.22b / B4 G1 R4: the stand-in posture is rendered, never a fabricated
+  // retrieval date — assertions cite the fixture's authoring commit instead.
+  expect(body).toContain("stand-in"); // the capture-kind label
+  expect(body).toContain("committed 2026-10-04"); // the fixture's real authoring day
+  expect(body).not.toContain("retrieved 2026-"); // no fabricated capture date
   expect(body).toContain("valid 2026-07-01"); // the document's own date
   expect(body).toContain("cap-okc-usage-2026".slice(0, 16)); // the capture digest citation
 });

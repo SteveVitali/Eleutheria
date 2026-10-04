@@ -14,9 +14,9 @@ fails if the behaviour it names is removed:
   oversight are ``unknown`` with named sources searched, a search date and a
   precise follow-up — never a fabricated affirmative and never a silent zero;
 * **policy effective ≠ retrieval date** — the stated 2023-07-07/2023-10-04
-  effective dates stay document dates; the replay's 2026-10-01
-  retrieved/observed date stays the capture date; the 2023 files are never
-  asserted to be the current versions;
+  effective dates stay document dates; the replay's retrieved/observed stamps
+  carry each fixture's real authoring commit (git-derived, P34.22b); the
+  2023 files are never asserted to be the current versions;
 * **scope honesty** — the only numeric retention period is scoped verbatim to
   manually entered LPR data; 113E's absent uniform period stays an
   ``absent`` field-state; two distinct ALPR products never collapse to one;
@@ -29,6 +29,7 @@ fails if the behaviour it names is removed:
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 from exports.research_dossier import (
@@ -53,7 +54,10 @@ def test_packet_is_valid_sig_dossier_packet() -> None:
     assert validate_packet(packet) == []
     assert packet["dossier_id"] == tp.DOSSIER_ID
     assert packet["subject"]["entity_id"] == tp.DEPLOYMENT
-    assert packet["as_of"] == {"world": "2026-10-01", "belief": "2026-10-01"}
+    # P34.22b: the as-of pair is the evidence anchor — the newest fixture
+    # authoring commit — never a typed replay date.
+    anchor_day = datetime.fromisoformat(packet["capture"]["anchor"]).date().isoformat()
+    assert packet["as_of"] == {"world": anchor_day, "belief": anchor_day}
 
 
 def test_packet_records_bind_every_claim_to_captured_bytes() -> None:
@@ -69,7 +73,17 @@ def test_packet_records_bind_every_claim_to_captured_bytes() -> None:
         assert c.get("document_id") in artifacts, f"{c['predicate_id']} cites a missing document"
         assert c.get("evidence", {}).get("locator"), f"{c['predicate_id']} has no locator"
         assert c["evidence"].get("source_url")
-        assert c["evidence"].get("retrieved_date")
+        # P34.22b: a replayed record carries the fixture commit date as its
+        # retrieval stamp; a hand-authored stand-in carries none.
+        if c.get("capture_kind") == "stand-in":
+            assert not c["evidence"].get("retrieved_date"), (
+                f"{c['predicate_id']}: a stand-in was never retrieved"
+            )
+            assert c["evidence"].get("fixture_committed_at")
+        else:
+            assert c["evidence"].get("retrieved_date"), (
+                f"{c['predicate_id']}: a fixture replay carries the commit date"
+            )
 
 
 def test_three_dossier_documents_replayed_verbatim() -> None:
@@ -229,7 +243,9 @@ def test_q3_inventory_unknown_with_scoped_lead() -> None:
     assert q3["state"] == "unknown"
     assert q3["search_basis"]["outcome"] == "searched_not_found"
     assert q3["search_basis"]["sources_searched"]
-    assert q3["search_basis"]["searched_at"]
+    # P34.22b: the search stamp is the evidence anchor, never a typed date.
+    anchor_day = datetime.fromisoformat(d["capture"]["anchor"]).date().isoformat()
+    assert q3["search_basis"]["searched_at"] == anchor_day
     assert any(f.get("action") and f.get("closing_condition") for f in q3["follow_ups"])
 
 
@@ -323,10 +339,16 @@ def test_q9_effective_dates_are_document_dates_co_visible() -> None:
     pairs = {(x["value"], x["document_id"]) for x in q9["assertions"]}
     assert ("2023-07-07", "tulsa-policy-113c") in pairs
     assert ("2023-10-04", "tulsa-policy-113e") in pairs
+    # P34.22b: each claim's replay stamps equal its OWN fixture's authoring
+    # commit — the stated effective date is never promoted to a capture date.
+    commits = {
+        doc: datetime.fromisoformat(fx["committed_at"]).date().isoformat()
+        for doc, fx in d["capture"]["fixtures"].items()
+    }
     for x in q9["assertions"]:
         assert x["valid_from"] == x["value"]  # stated date rides the valid window
-        assert x["observed_at"] == "2026-10-01"  # the replay/capture date
-        assert x["retrieved_date"] == "2026-10-01"
+        assert x["observed_at"] == commits[x["document_id"]]  # the fixture commit
+        assert x["retrieved_date"] == commits[x["document_id"]]
         assert x["valid_from"] != x["retrieved_date"]
 
 

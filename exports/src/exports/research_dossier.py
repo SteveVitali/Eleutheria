@@ -50,6 +50,7 @@ import hashlib
 import html
 import json
 from collections.abc import Mapping, Sequence
+from datetime import UTC, date, datetime, time
 from typing import Any
 
 from db.claim_sink import content_digest
@@ -73,6 +74,7 @@ __all__ = [
     "render_portfolio_json",
     "render_dossier_print_html",
     "validate_packet",
+    "capture_chronology_violations",
 ]
 
 PACKET_SCHEMA = "sig.dossier-packet/1"
@@ -236,6 +238,149 @@ _DECISION_PREDICATES: frozenset[str] = frozenset(
 _FIELD_STATE_PREDICATE = "disclosure_field_state"
 _FIELD_STATE_UNRESOLVED: frozenset[str] = frozenset({"absent", "present_but_empty", "redacted"})
 
+# --------------------------------------------------------------------------- #
+# Capture chronology (P34.22b / B4 G1 R4 — ADR-146)
+#
+# A packet that declares a ``capture`` block is a stand-in/fixture packet:
+# ``capture.fixtures`` maps every cited ``document_id`` to the committed bytes
+# it replays and the bytes' real authoring commit time. The rules below are
+# the release-side re-check of the builders' emit-time refusals — a hand-edited
+# packet cannot launder a fabricated capture date past the dossier gate.
+# --------------------------------------------------------------------------- #
+
+#: Record fields that assert a retrieval/capture happened. A ``stand-in``
+#: record (hand-authored over committed bytes) must never carry one; a
+#: ``fixture_replay`` record carries the fixture's commit time, bounded below.
+_RETRIEVAL_FIELDS: tuple[str, ...] = ("retrieved_at", "retrieved_date")
+
+#: Record-level stamps bounded by the fixture's authoring commit: the replay's
+#: observation/search marks can never postdate the bytes they were read from.
+_BOUNDED_FIELDS: tuple[str, ...] = _RETRIEVAL_FIELDS + ("observed_at", "searched_at")
+
+#: The declared authoring stamps a stand-in record may carry — checked equal-
+#: or-earlier against the manifest's commit bound when both are present.
+_DECLARED_AUTHORING_FIELDS: tuple[str, ...] = ("committed_at", "fixture_committed_at")
+
+
+def _stamp_dt(value: Any) -> datetime | None:
+    """Parse an ISO date/datetime stamp; a bare date reads as midnight UTC."""
+    if value is None:
+        return None
+    s = str(value).strip()
+    if not s:
+        return None
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except ValueError:
+        try:
+            dt = datetime.combine(date.fromisoformat(s), time.min, UTC)
+        except ValueError:
+            return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=UTC)
+    return dt
+
+
+def capture_chronology_violations(
+    packet: Mapping[str, Any], *, now: datetime | None = None
+) -> list[str]:
+    """The B4 G1 R4 chronology check over a stand-in/fixture packet ([] = clean).
+
+    * ``as_of.world``/``belief`` may not postdate the check time — a packet
+      cannot assert the world later than its own build (``now`` defaults to
+      the real clock; the builder's build-time refusal is the emit-side twin).
+    * ``capture.fixtures[doc].committed_at`` must parse; a record bound to a
+      document the manifest does not declare may carry no capture stamps.
+    * Every ``retrieved_*``/``observed_at``/``searched_at`` stamp on a record
+      (top level or under ``evidence``) must be ≤ its fixture's declared
+      commit — the replay carries the bytes' authoring time, never later.
+    * A ``capture_kind == "stand-in"`` record carries NO retrieval field
+      (nothing was retrieved); its declared ``committed_at`` /
+      ``fixture_committed_at`` may not exceed the manifest bound.
+    * ``scenario_as_of`` is exempt by construction: it is a labelled scenario
+      frame, never a capture date.
+    """
+    problems: list[str] = []
+    capture = packet.get("capture") or {}
+    fixtures = capture.get("fixtures") or {}
+    declared: dict[str, datetime] = {}
+    if isinstance(fixtures, Mapping):
+        for doc_id, fx in fixtures.items():
+            committed = _stamp_dt((fx or {}).get("committed_at"))
+            if committed is None:
+                problems.append(f"capture.fixtures[{doc_id!r}] declares no parseable committed_at")
+                continue
+            declared[str(doc_id)] = committed
+    anchor = _stamp_dt(capture.get("anchor"))
+    if anchor is None and declared:
+        anchor = max(declared.values())
+    declared_packet = bool(declared) or bool(fixtures)
+
+    now = now or datetime.now(UTC)
+    as_of = packet.get("as_of") or {}
+    for key in ("world", "belief"):
+        stamp = _stamp_dt(as_of.get(key))
+        if stamp is not None and stamp.date() > now.date():
+            problems.append(
+                f"as_of.{key} {as_of.get(key)!r} is after the build time "
+                f"{now.date().isoformat()} — the packet cannot assert the world "
+                "later than its own build"
+            )
+    if anchor is not None:
+        for i, entry in enumerate(packet.get("search_log") or ()):
+            searched = _stamp_dt(entry.get("searched_at"))
+            if searched is not None and searched > anchor:
+                problems.append(
+                    f"search_log[{i}].searched_at {entry.get('searched_at')!r} is "
+                    f"after the evidence anchor {anchor.isoformat()}"
+                )
+
+    for i, record in enumerate(packet.get("records") or ()):
+        if not isinstance(record, Mapping):
+            continue
+        doc = str(record.get("document_id") or "")
+        label = f"records[{i}] ({record.get('record_kind') or 'record'}:{doc or 'no-doc'})"
+        kind = str(record.get("capture_kind") or "")
+        bound = declared.get(doc)
+        if declared_packet and doc and doc not in declared:
+            problems.append(
+                f"{label}: document_id {doc!r} is not a declared capture.fixtures entry"
+            )
+        evidence = record.get("evidence") or {}
+        stamps: list[tuple[str, Any]] = [
+            (f, v)
+            for f in _BOUNDED_FIELDS
+            for v in (record.get(f), evidence.get(f))
+            if v is not None
+        ]
+        if kind == "stand-in":
+            for f, v in stamps:
+                if f in _RETRIEVAL_FIELDS:
+                    problems.append(
+                        f"{label}: capture_kind 'stand-in' carries {f}={v!r} — "
+                        "a stand-in is hand-authored bytes and was never retrieved"
+                    )
+        for f, v in stamps:
+            dt = _stamp_dt(v)
+            if dt is None:
+                problems.append(f"{label}: {f}={v!r} is not a parseable ISO stamp")
+                continue
+            if bound is not None and dt > bound:
+                problems.append(
+                    f"{label}: {f} {v!r} is after fixture {doc!r} commit "
+                    f"{bound.isoformat()} — a replay never postdates its bytes"
+                )
+        for f in _DECLARED_AUTHORING_FIELDS:
+            for v in (record.get(f), evidence.get(f)):
+                dt = _stamp_dt(v)
+                if dt is not None and bound is not None and dt > bound:
+                    problems.append(
+                        f"{label}: declared {f} {v!r} is after fixture {doc!r} "
+                        f"commit {bound.isoformat()}"
+                    )
+    return problems
+
+
 #: Predicates where a claim asserts THE value of a measured thing — two of these
 #: in the same scope + period disagreeing IS a conflict (§29/S2). Verbatim
 #: clause predicates (use_restriction, written_policy_value, products, titles,
@@ -303,6 +448,9 @@ def validate_packet(packet: Mapping[str, Any]) -> list[str]:
     status = str(review.get("status") or "not_run")
     if status not in {"not_run", "pending", "completed"}:
         problems.append(f"review.status {status!r} is not a legal mark")
+    # P34.22b / B4 G1 R4: the stand-in chronology re-check — declared fixture
+    # commits bound every capture stamp the packet carries.
+    problems.extend(capture_chronology_violations(packet))
     return problems
 
 
@@ -396,6 +544,10 @@ def _assertion(claim: Mapping[str, Any], capture: Mapping[str, Any] | None) -> d
         "capture_digest": (capture or {}).get("capture_digest"),
         "capture_method": (capture or {}).get("method"),
         "access_mode": (capture or {}).get("access_mode"),
+        # P34.22b: the capture posture survives normalization — a stand-in /
+        # fixture-replay provenance is rendered, never silently dropped.
+        "capture_kind": claim.get("capture_kind") or (capture or {}).get("capture_kind"),
+        "committed_at": (capture or {}).get("committed_at") or evidence.get("fixture_committed_at"),
         "source_id": claim.get("source_id"),
         "source_url": evidence.get("source_url"),
         "retrieved_date": evidence.get("retrieved_date"),
@@ -970,6 +1122,12 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
             "jurisdiction_slug": subject.get("jurisdiction_slug"),
         },
         "as_of": dict(packet.get("as_of") or {}),
+        "scenario_as_of": (
+            dict(packet["scenario_as_of"]) if packet.get("scenario_as_of") else None
+        ),
+        # P34.22b: the packet's declared capture provenance (fixture manifest +
+        # anchor) survives composition so readers see the stand-in posture.
+        "capture": dict(packet.get("capture") or {}),
         "source_families": sorted({str(c.get("source_id")) for c in claims if c.get("source_id")}),
         "review_status": review_status,
         "review": dict(packet.get("review") or {"status": "not_run"}),
@@ -1014,6 +1172,8 @@ def _ledger_row(
         "source_url": a.get("source_url"),
         "locator": a.get("locator"),
         "retrieved_date": a.get("retrieved_date"),
+        "capture_kind": a.get("capture_kind"),
+        "committed_at": a.get("committed_at"),
         "extraction_method": a.get("extraction_method"),
         "scope": a.get("scope"),
         "applicability": a.get("rationale"),
@@ -1361,6 +1521,30 @@ def _e(text: object) -> str:
     return html.escape("" if text is None else str(text))
 
 
+def _capture_stamp_label(x: Mapping[str, Any]) -> str:
+    """The dates-cell label for an assertion's capture stamp (P34.22b).
+
+    A ``fixture_replay`` assertion's retrieval stamp is the fixture's real
+    authoring commit — labelled as a stand-in replay, never a bare
+    "retrieved". A ``stand-in`` assertion carries no retrieval date; the
+    fixture's commit is shown as the authoring provenance instead, so the
+    absence of a retrieval date is explained, not silent.
+    """
+    kind = str(x.get("capture_kind") or "")
+    retrieved = x.get("retrieved_date")
+    if retrieved:
+        if kind == "fixture_replay":
+            return f"stand-in replay {_e(retrieved)} (fixture commit)"
+        if kind == "stand-in":
+            return f"stand-in {_e(retrieved)}"
+        return f"retrieved {_e(retrieved)}"
+    if kind in {"stand-in", "fixture_replay"}:
+        committed = str(x.get("committed_at") or "")
+        day = committed[:10] if committed else ""
+        return f"stand-in — committed {_e(day)}".rstrip(" —")
+    return ""
+
+
 def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
     """The standalone print/PDF form (SIG-DOS-003): qualifiers, scope labels,
     original dates + their kind, citations (capture digest + locator), competing
@@ -1379,13 +1563,29 @@ def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
     for idx, chunk in enumerate(chunks):
         parts = ["<div class='page'>"]
         if idx == 0:
+            provenance = ""
+            cap = dossier.get("capture") or {}
+            if cap.get("kind"):
+                n_fx = len(cap.get("fixtures") or {})
+                provenance = (
+                    f"<p class='basis'>capture: {_e(cap.get('kind'))} — {n_fx} "
+                    f"committed fixture(s); evidence anchor "
+                    f"{_e(cap.get('anchor'))}; live_verification="
+                    f"{_e(cap.get('live_verification'))}</p>"
+                )
+            scenario = dossier.get("scenario_as_of") or {}
+            if scenario.get("world"):
+                provenance += (
+                    f"<p class='basis'>scenario frame: {_e(scenario.get('world'))} "
+                    f"— {_e(scenario.get('basis'))}</p>"
+                )
             parts.append(
                 f"<h1>{_e(dossier['subject']['label'])}</h1>"
                 f"<p class='kind'>Reviewed research dossier — evidence-complete "
                 f"portfolio (not the inventory overview)</p>"
                 f"<p class='score'>Rubric {comp['total']}/{comp['max']} — "
                 f"pilot_complete: {_e(comp['pilot_complete'])} · blocking: "
-                f"{_e('; '.join(comp['blocking']) or 'none')}</p>"
+                f"{_e('; '.join(comp['blocking']) or 'none')}</p>" + provenance
             )
         for a in chunk:
             parts.append(f"<h2>{_e(a['question'])} — {_e(a['title'])}</h2>")
@@ -1407,11 +1607,7 @@ def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
                                 if x.get("valid_from") or x.get("valid_to")
                                 else ""
                             ),
-                            (
-                                f"retrieved {_e(x.get('retrieved_date'))}"
-                                if x.get("retrieved_date")
-                                else ""
-                            ),
+                            _capture_stamp_label(x),
                             (
                                 f"observed {_e(x.get('observed_at'))}"
                                 if x.get("observed_at")

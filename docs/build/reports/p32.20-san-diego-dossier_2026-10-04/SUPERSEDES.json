@@ -1,0 +1,65 @@
+{
+  "artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "51138448196fd1220df25afb660e49394689a84d85cabd561d3537b945f911e5"
+    },
+    "FOLLOW_UP_DRAFTS.json": {
+      "sha256": "d20d568d9a7f272d91117cac4e77c40b9ca20e40ccdcdc853944be592b9a8862"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "8f3f899744432ae90dcd4285011b479cba60e0061c3928f8853908c967565dee"
+    },
+    "PART_VIII_PREFLIGHT.json": {
+      "sha256": "6b0af4964d379597598ccc2ff5c0a6918905ae7feb62fb182eb97010aeb4397e"
+    },
+    "san_diego_dossier.json": {
+      "sha256": "42f5f56801d5c55ca2c10f62cb8676e0be48a17f8256023301b1775ddcc23e88"
+    },
+    "san_diego_dossier.print.html": {
+      "sha256": "e03686b5c96c49e3d891487148f4749a85d20456a094031df13013c7518f4d66"
+    },
+    "san_diego_dossier_packet.json": {
+      "sha256": "886c211b89087dfa5082dc3aa6aa84f0cd41ddaf968f42d39f107573be95e702"
+    },
+    "san_diego_dossier_portfolio.json": {
+      "sha256": "5b494703e1d686e96039388ad5b4e4d4f79bba3df713ddc9db45f69772f06929"
+    }
+  },
+  "basis": "ADR-146 D2 + B1 \u00a75.5 \u2014 the superseded run's bytes are historical evidence and keep them (their digests are recorded below and cited elsewhere); the fixed builders regenerate the same artifact set here with clock-true dates (git-derived fixture commits, declared stand-ins, no fabricated retrieval dates).",
+  "generated_by": "sig-ops dossier-packet-san-diego",
+  "notes": "CORRECTION.md lives with the superseded dir and gains the pointer line naming this successor.",
+  "schema": "sig.supersedes-manifest/1",
+  "superseded_artifacts": {
+    "CORRECTION.md": {
+      "sha256": "04955d2b9f07f1da8675ac3954750062ea66d76839b223da0dc20932b4de0df4"
+    },
+    "EVIDENCE_PACK.md": {
+      "sha256": "598d5e080bdacbf309e101e02c2bb591c2f65f470f2a405fe81593019e58c2ca"
+    },
+    "FOLLOW_UP_DRAFTS.json": {
+      "sha256": "6fd0485a08ba829444ca4d7285717278dac67a97de410f30dd8d1d4ddefe4fc2"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "8f3f899744432ae90dcd4285011b479cba60e0061c3928f8853908c967565dee"
+    },
+    "PART_VIII_PREFLIGHT.json": {
+      "sha256": "873c4da036a09a1419c86a753e11a757124cad1be106061778c43550ab366ef3"
+    },
+    "san_diego_dossier.json": {
+      "sha256": "92dfca7bfa69413ceb0adabe99284ab1de001e85f5647387696d4f6953cce240"
+    },
+    "san_diego_dossier.print.html": {
+      "sha256": "08a439fc2527725f5485db099bfa45304c6dbf803532d4349b7f3bee70d9cac5"
+    },
+    "san_diego_dossier_packet.json": {
+      "sha256": "3e6602787b1b6f5dd0149266c6bccad7936945aed84b4026e3f8c7c52a209270"
+    },
+    "san_diego_dossier_portfolio.json": {
+      "sha256": "f8fb2c9aa9482708981c5e5fd9e9e896d384428af07fe4e31db8d8867cde5e73"
+    }
+  },
+  "supersedes": "../p32.20-san-diego-dossier/",
+  "supersedes_ticket": "P32.20",
+  "ticket": "P34.22b",
+  "written": "2026-10-04T02:01:04Z"
+}

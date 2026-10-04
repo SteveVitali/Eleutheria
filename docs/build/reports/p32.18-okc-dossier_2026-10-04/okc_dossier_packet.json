@@ -1,0 +1,1640 @@
+{
+  "as_of": {
+    "belief": "2026-10-03",
+    "world": "2026-10-03"
+  },
+  "capture": {
+    "anchor": "2026-10-03T14:11:51+00:00",
+    "fixtures": {
+      "okc-contract-c241032": {
+        "commit": "ea479fe8",
+        "committed_at": "2026-09-13T20:21:05+00:00",
+        "path": "tests/connectors/fixtures/okc/okc_procurement.json"
+      },
+      "okc-council-memo-2026-08": {
+        "commit": "f73a997e",
+        "committed_at": "2026-09-27T12:06:40+00:00",
+        "path": "tests/connectors/fixtures/dossier/okc_council_memo_2026.pdf"
+      },
+      "okc-flock-amendment-2026": {
+        "commit": "f73a997e",
+        "committed_at": "2026-09-27T12:06:40+00:00",
+        "path": "tests/connectors/fixtures/dossier/okc_amendment_1_2026.pdf"
+      },
+      "okc-flock-usage-2026": {
+        "commit": "f73a997e",
+        "committed_at": "2026-09-27T12:06:40+00:00",
+        "path": "tests/connectors/fixtures/dossier/okc_usage_page.html"
+      },
+      "okc-ops-manual-5-118": {
+        "commit": "ea479fe8",
+        "committed_at": "2026-09-13T20:21:05+00:00",
+        "path": "tests/connectors/fixtures/okc/okcpd_policy.json"
+      },
+      "okc-p06-evidence-fixture": {
+        "commit": "a58fa2fa",
+        "committed_at": "2026-10-03T14:11:51+00:00",
+        "path": "tests/acceptance/fixtures/okc_sources.json"
+      },
+      "okc-statute-47-7-606-1": {
+        "commit": "ea479fe8",
+        "committed_at": "2026-09-13T20:21:05+00:00",
+        "path": "tests/connectors/fixtures/okc/ok_statute.json"
+      }
+    },
+    "kind": "fixture_replay",
+    "live_verification": false
+  },
+  "correction_route": "/corrections/",
+  "declared": {
+    "derived": [
+      {
+        "inputs": [
+          "112606649c31704696318a8b9a3cb39f7f3960de4f2de1649e15e8aa52202fcc",
+          "13a59174e95e26f81d744526d709fa15e77ec2e433ce2c385ea6c7545c01908e"
+        ],
+        "method": "reconcile.count_scope.derive_approximate_sum over the two disjoint city_limits claims (agency-operated 90 + privately-owned ~100)",
+        "note": "'~190' is a DERIVED approximate city-limits total — never a sourced figure. Inputs are disjoint sub-populations; double-counting is possible and recorded as an assumption.",
+        "question": "q3",
+        "value": {
+          "approximate": true,
+          "assumptions": [
+            "the two inputs are disjoint city-limits populations — the agency's operated readers and privately-owned cameras are not double-counted",
+            "the ~100 private figure is an approximate journalism statement, so the sum is approximate, never a measured total"
+          ],
+          "basis": "derived_total",
+          "derived": true,
+          "input_bases": [
+            "active",
+            "claimed"
+          ],
+          "inputs": [
+            90,
+            100
+          ],
+          "label": "~190",
+          "layer": "L4",
+          "note": "'~190' is a DERIVED approximate city-limits total — 90 agency-operated + ~100 privately-owned, same scope, same period. It is L4, never an observation, and never a claim value.",
+          "scope": "city_limits (us.state_abbr:OK)"
+        }
+      }
+    ],
+    "partial": [
+      {
+        "question": "q6",
+        "rationale": "authority/applicability is traceable but unresolved: 47 O.S. §7-606.1 constrains the UVED insurance-enforcement program; whether it binds OKCPD's Flock use is unverified — the city page alone cannot support that legal conclusion, and the manual's §5-118 scope is vehicle-mounted readers"
+      },
+      {
+        "question": "q8",
+        "rationale": "the 109 figure is an aggregate partner-agency degree — the roster itself was refused on record ('No, ma'am'); mode and per-agency scope stay partial"
+      }
+    ]
+  },
+  "dossier_id": "okc-flock-alpr",
+  "follow_ups": [
+    {
+      "action": "capture the executed signature pages of Amendment 1 to C241032 in the bounded live pass",
+      "closing_condition": "captured bytes show both parties' signature/date blocks, or a recorded absence keeps execution unverified",
+      "question": "q5"
+    },
+    {
+      "action": "obtain the UVED program's applicability determination — whether 47 O.S. §7-606.1 constrains OKCPD's Flock program or only the DAC insurance-enforcement program it governs",
+      "closing_condition": "an authoritative instrument or agency statement ties the statute to OKCPD Flock use (or bounds it), reviewed under HG-03",
+      "question": "q6"
+    },
+    {
+      "action": "re-capture the official usage page after the stated 2026-10-01 retention effective date",
+      "closing_condition": "captured bytes show the implemented retention rule (the announced change observed operating) or the stated text remains announced-only",
+      "question": "q7"
+    },
+    {
+      "action": "obtain the partner-agency roster and sharing mode for the 109-degree aggregate (refused on record)",
+      "closing_condition": "a captured roster/mode document, or a persisted recorded refusal",
+      "question": "q8"
+    },
+    {
+      "action": "search council audit/PAB/CCOPS oversight corpora for any review of the ALPR program",
+      "closing_condition": "an oversight artifact is captured, or the search's absence is documented with named sources",
+      "question": "q10"
+    }
+  ],
+  "notes": [
+    "live_verification=false: every record replays committed fixture bytes; no live fetch, no rights flip, no gate completion",
+    "the official page's '90 readers' is city-OWNED; journalism's '90 active' and the contract's '90 cameras' are different predicates/scopes — kept distinct, never collapsed",
+    "the UVED statute is scoped legal material: it governs the insurance-enforcement program; application to OKCPD Flock use stays unresolved"
+  ],
+  "records": [
+    {
+      "access_mode": "document",
+      "byte_size": 444,
+      "capture_digest": "bcnamnoklnmhz4rddujrv57uivhjcdyqzv6be3hjslormwl3tl4qwk2oss453m7olysjdtsdpowawrne4g7nharfwgrhdf3kx7dowmpt4hu",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre_derived": "unknown",
+      "document_id": "okc-flock-usage-2026",
+      "evidence_genre": "official_statement",
+      "media_type": "text/html",
+      "method": "html_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-09-27",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_okc",
+      "source_uri": "https://www.okc.gov/departments/police/flock-safety-lpr-usage",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the device count the document claims; the count universe rides in count_scope/count_scope_detail — never generalized beyond the stated scope",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "okc-flock-usage-2026",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 218,
+          "kind": "byte_range",
+          "start": 193
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "claimed_device_count",
+      "qualifiers": [
+        {
+          "qualifier_id": "count_scope",
+          "value": "city_owned"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "city-owned LPR readers"
+        },
+        {
+          "qualifier_id": "evidence_origin",
+          "value": "agency_statement"
+        }
+      ],
+      "raw_value": "90 city-owned LPR readers",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "claimed_count",
+      "source_id": "dossier_okc",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": 90,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the partner-agency degree (count) the document reports — an aggregate number, never a device count and never named sharing edges",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "okc-flock-usage-2026",
+      "dossier_field": "q8",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 284,
+          "kind": "byte_range",
+          "start": 264
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "sharing_partner_degree",
+      "qualifiers": [
+        {
+          "qualifier_id": "count_scope",
+          "value": "partner_agencies"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "partner agencies, not devices"
+        }
+      ],
+      "raw_value": "109 partner agencies",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "partner_degree",
+      "source_id": "dossier_okc",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": 109,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the data-currency date the record declares — an 'as of' is not an effective date and not the retrieval date",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "okc-flock-usage-2026",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 241,
+          "kind": "byte_range",
+          "start": 220
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "as_of",
+      "raw_value": "as of August 18, 2026",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "as_of",
+      "source_id": "dossier_okc",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "2026-08-18",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the retention rule the document states for its declared scope; a future-effective statement keeps its stated effective date — never the capture date",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "okc-flock-usage-2026",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 365,
+          "kind": "byte_range",
+          "start": 298
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "retention_period",
+      "raw_context": "except when the data is part of an ongoing investigation",
+      "raw_value": "retention changing from 30 days to 7 days effective October 1, 2026",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "retention_period",
+      "source_id": "dossier_okc",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "valid_from": "2026-10-01",
+      "valid_from_kind": "exact",
+      "value": "7 days",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the exception/carve-out clause paired with the retention rule, verbatim — an exception is preserved as its own stated rule, never folded silently into the period",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "unknown",
+      "document_id": "okc-flock-usage-2026",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 423,
+          "kind": "byte_range",
+          "start": 367
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "use_restriction",
+      "raw_value": "except when the data is part of an ongoing investigation",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "retention_exception",
+      "source_id": "dossier_okc",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "data in an ongoing investigation may be retained past the stated period",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 931,
+      "capture_digest": "bcnaol6wye4ttw7lbce4hoqkkdaivd4tagnkhkr3glbx3vykih64fso64zeixxivvzppiijbbxe6jrp55ujsrniaqeyr6h3b5c4mahtr32e",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre_derived": "procurement_record",
+      "document_id": "okc-council-memo-2026-08",
+      "evidence_genre": "agenda_document",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-09-27",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_okc",
+      "source_uri": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the lifecycle label the document declares (renewal/amendment), verbatim — a declared label, never a collapsed executed boolean",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "okc-council-memo-2026-08",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+      },
+      "evidence_genre": "agenda_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "lifecycle_transition",
+      "raw_value": "Amendment 1 / Renewal 3",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "lifecycle",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032",
+      "value": "amendment 1 / renewal 3",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the funding amount the document states for the covered period — an appropriation/renewal figure, never a payment observation",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "okc-council-memo-2026-08",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+      },
+      "evidence_genre": "agenda_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "object_type": "quantity",
+      "observed_at": "2026-09-27",
+      "predicate_id": "funding_amount",
+      "raw_value": "$270,000",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "funding_amount",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032",
+      "unit": "USD",
+      "value": 270000,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the period the record covers, verbatim",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "okc-council-memo-2026-08",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+      },
+      "evidence_genre": "agenda_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "period",
+      "raw_value": "July 2026 through June 2027",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "coverage_period",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032",
+      "valid_from": "2026-07-01",
+      "valid_from_kind": "exact",
+      "valid_to": "2027-06-30",
+      "valid_to_kind": "exact",
+      "value": "July 2026 - June 2027",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a posting/publication date the index displays — never promoted to effective",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "okc-council-memo-2026-08",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+      },
+      "evidence_genre": "agenda_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "posted_date",
+      "raw_value": "Memo Date: August 18, 2026",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "posted_date",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032",
+      "valid_from": "2026-08-18",
+      "valid_from_kind": "exact",
+      "value": "2026-08-18",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 1068,
+      "capture_digest": "bcnag5e56hd5r7dfvvlk357ctoff7dx6xcscidw2xaxaz52sxfqqgu7v2j67mvboququ2cj2lcijs364jtoohawc76enukbnh5dz5h4tx4m",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre_derived": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "evidence_genre": "contract",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-09-27",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_okc",
+      "source_uri": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the earlier instrument this document amends, verbatim identifier — an amendment links instruments; it does not execute them",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "amends_contract",
+      "raw_value": "Amendment 1 to Contract Number C241032",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "amends",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "C241032",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the lifecycle label the document declares (renewal/amendment), verbatim — a declared label, never a collapsed executed boolean",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "lifecycle_transition",
+      "raw_value": "Amendment 1 to Contract Number C241032",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "lifecycle",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "amendment",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a sharing rule the instrument states, verbatim — a restriction on one party is not a prohibition on every actor",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q8",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "sharing_restriction",
+      "raw_value": "Company shall not disclose Customer Data to any federal law enforcement agency",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "sharing_restriction",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "no disclosure of customer data to federal law enforcement",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a permitted/prohibited use the instrument states, verbatim — scoped to the instrument's own subject",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "use_restriction",
+      "raw_value": "except as required by compulsory legal process",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "use_restriction",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "disclosure restriction does not apply where compulsory legal process requires",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a policy value the document states verbatim (precedence, approval, access-handling rules) where no narrower predicate exists",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "written_policy_value",
+      "raw_value": "in the event of conflict, this Amendment controls",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "written_policy",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "in the event of conflict, this Amendment controls over the Agreement",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the signature date the instrument's signature block states, verbatim — presence of one party's date is not full execution (see execution_state)",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "field_state": "present_but_empty",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "Vendor Signature Date:",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "signed_date",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "signed_date",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "field 'execution_state' has no existing-predicate mapping; the scoped amendment is recorded on the crosswalk row (scoped vocab proposal (dossier-field-crosswalk/1, 2026-10): add predicate `instrument_execution_state` over a closed ExecutionState enum {verified_executed, par)",
+      "capture_kind": "fixture_replay",
+      "connector": "dossier_documents",
+      "document_genre": "policy_document",
+      "document_id": "okc-flock-amendment-2026",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-09-27",
+        "source_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+      },
+      "evidence_genre": "contract",
+      "field_state": "present_but_empty",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-09-27",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "Date:",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_okc",
+      "source_field": "execution_state",
+      "source_id": "dossier_okc",
+      "subject_id": "contract:okc-flock-c241032-amendment-1",
+      "value": "execution_state",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okc_procurement",
+      "document_genre": "procurement_record",
+      "document_id": "okc-contract-c241032",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_table",
+        "locator": {
+          "column": 0,
+          "kind": "cell",
+          "row": 1
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/finance/purchasing"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "vendor_name",
+      "raw_value": "Flock Safety",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_procurement",
+      "source_id": "okc_procurement",
+      "subject_id": "contract:okc_procurement:C241032",
+      "value": "Flock Safety",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okc_procurement",
+      "document_genre": "procurement_record",
+      "document_id": "okc-contract-c241032",
+      "dossier_field": "q2",
+      "evidence": {
+        "extraction_method": "pdf_table",
+        "locator": {
+          "column": 1,
+          "kind": "cell",
+          "row": 1
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/finance/purchasing"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "product_name",
+      "raw_value": "ALPR camera program (Master Agreement)",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_procurement",
+      "source_id": "okc_procurement",
+      "subject_id": "contract:okc_procurement:C241032",
+      "value": "ALPR camera program (Master Agreement)",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okc_procurement",
+      "document_genre": "procurement_record",
+      "document_id": "okc-contract-c241032",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_table",
+        "locator": {
+          "column": 2,
+          "kind": "cell",
+          "row": 1
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/finance/purchasing"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "contract_number",
+      "raw_value": "C241032",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_procurement",
+      "source_id": "okc_procurement",
+      "subject_id": "contract:okc_procurement:C241032",
+      "value": "C241032",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okc_procurement",
+      "document_genre": "procurement_record",
+      "document_id": "okc-contract-c241032",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_table",
+        "locator": {
+          "column": 3,
+          "kind": "cell",
+          "row": 1
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/finance/purchasing"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "contract_amount",
+      "raw_value": "$270,000",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_procurement",
+      "source_id": "okc_procurement",
+      "subject_id": "contract:okc_procurement:C241032",
+      "value": 270000.0,
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okc_procurement",
+      "document_genre": "procurement_record",
+      "document_id": "okc-contract-c241032",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "pdf_table",
+        "locator": {
+          "column": 4,
+          "kind": "cell",
+          "row": 1
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/finance/purchasing"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "quantity",
+      "qualifiers": [
+        {
+          "qualifier_id": "count_scope",
+          "value": "city_limits"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "contracted_units"
+        },
+        {
+          "qualifier_id": "evidence_origin",
+          "value": "shadow_fixture"
+        }
+      ],
+      "raw_value": "90",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_procurement",
+      "source_id": "okc_procurement",
+      "subject_id": "contract:okc_procurement:C241032",
+      "value": 90,
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "access_mode": "committed_fixture",
+      "byte_size": 1386,
+      "capture_digest": "bcnadubksduuhzyywfancroisfb3wzu7xgorxhxuk3guaay7se37d33vh3lvohdqq6v4hlmmquj7d5g3mmq4dkup4bcnvuvwcsgvwcfgm6m",
+      "capture_kind": "stand-in",
+      "committed_at": "2026-09-13T20:21:05+00:00",
+      "connector": "okc_procurement",
+      "document_id": "okc-contract-c241032",
+      "document_stated_retrieved_date": "2026-09-01",
+      "evidence_genre": "procurement_record",
+      "fixture_commit": "ea479fe8",
+      "fixture_path": "tests/connectors/fixtures/okc/okc_procurement.json",
+      "media_type": "application/json",
+      "method": "fixture_transcription",
+      "note": "digest is over the committed reviewed-transcription fixture bytes, not a live capture — the row carries the fixture's real authoring commit, never a retrieval date (D-R10-SOURCES-1 owns the actual-fetch obligation)",
+      "record_kind": "evidence_artifact",
+      "sensitivity_class": "C1",
+      "source_id": "okc_procurement",
+      "source_uri": "https://www.okc.gov/departments/finance/purchasing"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okcpd_policy",
+      "document_genre": "policy_document",
+      "document_id": "okc-ops-manual-5-118",
+      "dossier_field": "q8",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "end": 218,
+          "kind": "byte_range",
+          "start": 34
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/police"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "sharing_restriction",
+      "raw_value": "will not be shared as part of a law enforcement information database",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okcpd_policy",
+      "source_id": "okcpd_policy",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "will not be shared as part of a law enforcement information database",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "okcpd_policy",
+      "document_genre": "policy_document",
+      "document_id": "okc-ops-manual-5-118",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "end": 218,
+          "kind": "byte_range",
+          "start": 34
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.okc.gov/departments/police"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "use_restriction",
+      "raw_value": "covers vehicle-mounted readers, not static cameras",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okcpd_policy",
+      "source_id": "okcpd_policy",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "covers vehicle-mounted readers, not static cameras",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "access_mode": "committed_fixture",
+      "byte_size": 1540,
+      "capture_digest": "bcnapwpreim3d6ym7jc5723pj4tsbup63fymrjosvc4kzf557kv3v5nf37h4v4tlanerxmse4zzyu36o5b6ni6miubeawthn5mx57rhpwni",
+      "capture_kind": "stand-in",
+      "committed_at": "2026-09-13T20:21:05+00:00",
+      "connector": "okcpd_policy",
+      "document_id": "okc-ops-manual-5-118",
+      "document_stated_retrieved_date": "2026-09-01",
+      "evidence_genre": "policy_document",
+      "fixture_commit": "ea479fe8",
+      "fixture_path": "tests/connectors/fixtures/okc/okcpd_policy.json",
+      "media_type": "application/json",
+      "method": "fixture_transcription",
+      "note": "digest is over the committed reviewed-transcription fixture bytes, not a live capture — the row carries the fixture's real authoring commit, never a retrieval date (D-R10-SOURCES-1 owns the actual-fetch obligation)",
+      "record_kind": "evidence_artifact",
+      "sensitivity_class": "C1",
+      "source_id": "okcpd_policy",
+      "source_uri": "https://www.okc.gov/departments/police"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "ok_statute",
+      "document_genre": "policy_document",
+      "document_id": "okc-statute-47-7-606-1",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "end": 141,
+          "kind": "byte_range",
+          "start": 29
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKST47"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "statutory_citation",
+      "raw_value": "47 O.S. § 7-606.1",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "ok_statute",
+      "source_id": "ok_statute",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "47 O.S. § 7-606.1",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "capture_kind": "fixture_replay",
+      "connector": "ok_statute",
+      "document_genre": "policy_document",
+      "document_id": "okc-statute-47-7-606-1",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "end": 141,
+          "kind": "byte_range",
+          "start": 29
+        },
+        "retrieved_date": "2026-09-01",
+        "source_url": "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKST47"
+      },
+      "geo_tier": 0,
+      "observed_at": "2026-09-01",
+      "predicate_id": "use_restriction",
+      "raw_value": "limited to insurance enforcement",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "ok_statute",
+      "source_id": "ok_statute",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "limited to insurance enforcement",
+      "vocab_version": "2026.09.10"
+    },
+    {
+      "access_mode": "committed_fixture",
+      "byte_size": 1363,
+      "capture_digest": "bcnahazrkd4qp7mfdjnuugfyb2xay5zvqfnuzicazxfhh3ywfmmglssc4fkg5exlzm6zbmdrquskpzoex2c7oa5wikv2yvmzi73u3gsthbq",
+      "capture_kind": "stand-in",
+      "committed_at": "2026-09-13T20:21:05+00:00",
+      "connector": "ok_statute",
+      "document_id": "okc-statute-47-7-606-1",
+      "document_stated_retrieved_date": "2026-09-01",
+      "evidence_genre": "policy_document",
+      "fixture_commit": "ea479fe8",
+      "fixture_path": "tests/connectors/fixtures/okc/ok_statute.json",
+      "media_type": "application/json",
+      "method": "fixture_transcription",
+      "note": "digest is over the committed reviewed-transcription fixture bytes, not a live capture — the row carries the fixture's real authoring commit, never a retrieval date (D-R10-SOURCES-1 owns the actual-fetch obligation)",
+      "record_kind": "evidence_artifact",
+      "sensitivity_class": "C1",
+      "source_id": "ok_statute",
+      "source_uri": "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKST47"
+    },
+    {
+      "assertion_rationale": "council record names the buying party — a journalism-reported statement (D6), corroborated by the procurement record",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 1855,
+          "kind": "byte_range",
+          "start": 1806
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "buyer",
+      "raw_value": "the city's contract with ALPR vendor Flock Safety",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "City of Oklahoma City"
+    },
+    {
+      "assertion_rationale": "the deployed technology class as the journalism states it — fixed ALPR, distinct from vehicle-mounted readers",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "news_article",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q2",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 3584,
+          "kind": "byte_range",
+          "start": 3528
+        },
+        "source_url": "https://www.oklahoman.com/story/news/local/2026/08/03/okc-council-will-vote-on-police-contract-for-flock-cameras/90958514007/"
+      },
+      "evidence_genre": "news_article",
+      "geo_tier": 0,
+      "observed_at": "2026-08-03",
+      "predicate_id": "technology",
+      "raw_value": "90 active ALPR cameras operated under the OKCPD contract",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:oklahoman",
+      "source_id": "src:oklahoman",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "automatic license plate reader (ALPR), fixed camera network"
+    },
+    {
+      "assertion_rationale": "the stated external-access change: announced withdrawal from the vendor's pooled/nationwide lookup network — a stated intent, never an observed removal",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q4",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 2280,
+          "kind": "byte_range",
+          "start": 2228
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "pooled_lookup_participation",
+      "raw_value": "removing its data from a nationwide sharing platform",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "nationwide sharing platform — removal announced 2026-08-18"
+    },
+    {
+      "assertion_rationale": "the hosted/pooled system's declared reach — a network-scope statement, never a count of OKC's deployment",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q4",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 5677,
+          "kind": "byte_range",
+          "start": 5587
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "data_system_scope",
+      "raw_value": "Flock's network spans more than 5,000 agencies and 100,000 cameras sharing data nationwide",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "vendor_cloud_shared — stated national network (5,000+ agencies claimed)"
+    },
+    {
+      "assertion_rationale": "the journalism's actor-scoped reading: the restriction binds one party's disclosure — it is not a prohibition on every City-authorized share",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q8",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 2130,
+          "kind": "byte_range",
+          "start": 2022
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "sharing_restriction",
+      "raw_value": "an amendment that gives Oklahoma City, rather than Flock, the sole power to share data with federal agencies",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "the amendment gives Oklahoma City sole power to share data with federal agencies"
+    },
+    {
+      "assertion_rationale": "the announced retention change as a stated transition — kept verbatim so the announced effective date stays a stated date",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 2223,
+          "kind": "byte_range",
+          "start": 2171
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "written_policy_value",
+      "raw_value": "reducing the data retention period from 30 to 7 days",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "retention period reduced from 30 days to 7 days (stated 2026-08-18)"
+    },
+    {
+      "assertion_rationale": "the stated renewal horizon — a stated date, never an observed end",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 2376,
+          "kind": "byte_range",
+          "start": 2282
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "contract_end_date",
+      "raw_value": "The one-year renewal runs through 2027-06-30 and returns to the council before another renewal",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "2027-06-30"
+    },
+    {
+      "assertion_rationale": "the oversight body's recorded institutional response — the vote split and the opposition are stated facts, not findings",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "council_minutes",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 1975,
+          "kind": "byte_range",
+          "start": 1900
+        },
+        "source_url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback"
+      },
+      "evidence_genre": "council_minutes",
+      "geo_tier": 0,
+      "observed_at": "2026-08-19",
+      "predicate_id": "authorization_state",
+      "raw_value": "council members Cooper, Hamon, and Pennington voted no after public comment",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "src:okc-council",
+      "source_id": "src:okc-council",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": "renewal approved 5–3 by council vote 2026-08-18, public opposition on record"
+    },
+    {
+      "assertion_rationale": "the DeFlock figure is a community-map observation over the OKC METRO — neither a city-limits count nor a news article; the correction relabels genre and declares the metro count universe",
+      "capture_kind": "stand-in",
+      "connector": "ops.dossier_packet",
+      "document_genre": "community_map",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 4208,
+          "kind": "byte_range",
+          "start": 4179
+        },
+        "source_url": "https://deflockokc.com/"
+      },
+      "evidence_genre": "community_map",
+      "geo_tier": 0,
+      "observed_at": "2026-08-20",
+      "predicate_id": "claimed_device_count",
+      "qualifiers": [
+        {
+          "jurisdiction": "us.state_abbr:OK",
+          "qualifier_id": "count_scope",
+          "value": "metro"
+        },
+        {
+          "qualifier_id": "evidence_origin",
+          "value": "seed_fixture"
+        }
+      ],
+      "raw_value": "299 across the OKC metro area",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "deflock",
+      "source_id": "deflock",
+      "spdx": "CC-BY-4.0",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": 299
+    },
+    {
+      "assertion_rationale": "the source asserted 'businesses own around 100 within city limits' — ~100 PRIVATELY-OWNED cameras; the 190 the legacy row recorded is a derived sum (90 + ~100), never a sourced figure. The correction asserts the sourced literal and labels it journalism (D6), city-limits scope, private ownership.",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "news_article",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 2965,
+          "kind": "byte_range",
+          "start": 2921
+        },
+        "source_url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/"
+      },
+      "evidence_genre": "news_article",
+      "geo_tier": 0,
+      "observed_at": "2026-08-18",
+      "predicate_id": "claimed_device_count",
+      "qualifiers": [
+        {
+          "jurisdiction": "us.state_abbr:OK",
+          "qualifier_id": "count_scope",
+          "value": "city_limits"
+        },
+        {
+          "qualifier_id": "evidence_origin",
+          "value": "seed_fixture"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "privately_owned"
+        }
+      ],
+      "raw_value": "businesses own around 100 within city limits",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_council_statement",
+      "source_id": "okc_council_statement",
+      "spdx": "CC-BY-4.0",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": 100
+    },
+    {
+      "assertion_rationale": "the agency's 90 is an ACTIVE count over city-limits, agency-operated readers — declared so it never collapses with the city-owned 90 or the metro 299",
+      "capture_kind": "stand-in",
+      "claim_directness": "D6",
+      "connector": "ops.dossier_packet",
+      "document_genre": "official_statement",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 2913,
+          "kind": "byte_range",
+          "start": 2893
+        },
+        "source_url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "observed_at": "2026-08-18",
+      "predicate_id": "active_device_count",
+      "qualifiers": [
+        {
+          "jurisdiction": "us.state_abbr:OK",
+          "qualifier_id": "count_scope",
+          "value": "city_limits"
+        },
+        {
+          "qualifier_id": "evidence_origin",
+          "value": "seed_fixture"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "agency_operated"
+        }
+      ],
+      "raw_value": "OKCPD has 90 cameras",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc_council_statement",
+      "source_id": "okc_council_statement",
+      "spdx": "CC-BY-4.0",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": 90
+    },
+    {
+      "assertion_rationale": "the contracted unit count declares its universe: contracted units are not active sensors and not owned hardware",
+      "capture_kind": "stand-in",
+      "connector": "ops.dossier_packet",
+      "document_genre": "contract",
+      "document_id": "okc-p06-evidence-fixture",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "fixture_transcription",
+        "fixture_committed_at": "2026-10-03T14:11:51+00:00",
+        "locator": {
+          "end": 923,
+          "kind": "byte_range",
+          "start": 902
+        },
+        "source_url": "https://deflockokc.com/the-case.html"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "observed_at": "2023-01-01",
+      "predicate_id": "contracted_device_count",
+      "qualifiers": [
+        {
+          "jurisdiction": "us.state_abbr:OK",
+          "qualifier_id": "count_scope",
+          "value": "city_limits"
+        },
+        {
+          "qualifier_id": "evidence_origin",
+          "value": "seed_fixture"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "agency_operated"
+        }
+      ],
+      "raw_value": "a year for 90 cameras",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "okc-contract-c241032",
+      "source_id": "okc-contract-c241032",
+      "spdx": "CC-BY-4.0",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "value": 90
+    },
+    {
+      "access_mode": "committed_fixture",
+      "byte_size": 7441,
+      "capture_digest": "bcnaa6v2z35pxf3vszq76ktb4gxdlj67km3ijjaotn6heor6njlapccaqdam7vnsme37aqfkphbiu3ozggjt76p4l7vtlpb4b44jpsirzqq",
+      "capture_kind": "stand-in",
+      "committed_at": "2026-10-03T14:11:51+00:00",
+      "connector": "ops.dossier_packet",
+      "document_id": "okc-p06-evidence-fixture",
+      "evidence_genre": "evidence_fixture",
+      "fixture_commit": "a58fa2fa",
+      "fixture_path": "tests/acceptance/fixtures/okc_sources.json",
+      "media_type": "application/json",
+      "method": "fixture_transcription",
+      "note": "digest is over the committed reviewed-transcription fixture bytes, not a live capture — the row carries the fixture's real authoring commit, never a retrieval date (D-R10-SOURCES-1 owns the actual-fetch obligation)",
+      "record_kind": "evidence_artifact",
+      "sensitivity_class": "C1",
+      "source_id": "ops.dossier_packet",
+      "source_uri": "https://deflockokc.com/the-case.html"
+    }
+  ],
+  "restricted": [],
+  "review": {
+    "note": "no independent reviewer exists on this build — D-R10-HUMAN-1 OPEN; the mark is honest, never fabricated",
+    "status": "not_run"
+  },
+  "scenario_as_of": {
+    "basis": "the day after the stated 2026-10-01 retention effective date — the announced-vs-operative scenario frame; a declared scenario, never a capture or observation date",
+    "belief": "2026-10-02",
+    "world": "2026-10-02"
+  },
+  "schema": "sig.dossier-packet/1",
+  "search_log": [
+    {
+      "note": "buyer/vendor named by the procurement record + council report",
+      "outcome": "found",
+      "question": "q1",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-contract-c241032",
+        "okc-p06-evidence-fixture"
+      ]
+    },
+    {
+      "note": "technology class from the usage page + journalism (fixed ALPR)",
+      "outcome": "found",
+      "question": "q2",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-flock-usage-2026",
+        "okc-council-memo-2026-08",
+        "okc-flock-amendment-2026",
+        "okc-p06-evidence-fixture"
+      ]
+    },
+    {
+      "note": "count universe partitioned: metro community map / city-owned official / private journalism / contracted units — different scopes, co-visible",
+      "outcome": "found",
+      "question": "q3",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-flock-usage-2026",
+        "okc-council-memo-2026-08",
+        "okc-flock-amendment-2026",
+        "okc-statute-47-7-606-1",
+        "okc-ops-manual-5-118",
+        "okc-contract-c241032",
+        "okc-p06-evidence-fixture"
+      ]
+    },
+    {
+      "note": "external access stated: nationwide sharing platform + withdrawal announcement — configured access, never local hardware ownership",
+      "outcome": "found",
+      "question": "q4",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-p06-evidence-fixture",
+        "okc-flock-usage-2026"
+      ]
+    },
+    {
+      "note": "renewal funding $270,000 + covered period + unsigned-signature field states recorded (execution unverified)",
+      "outcome": "found",
+      "question": "q5",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-flock-usage-2026",
+        "okc-council-memo-2026-08",
+        "okc-flock-amendment-2026",
+        "okc-contract-c241032"
+      ]
+    },
+    {
+      "note": "statute + manual scope + amendment precedence captured; applicability to the Flock program deliberately partial",
+      "outcome": "found",
+      "question": "q6",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-statute-47-7-606-1",
+        "okc-ops-manual-5-118",
+        "okc-contract-c241032",
+        "okc-flock-amendment-2026"
+      ]
+    },
+    {
+      "note": "city page states 7-day retention effective 2026-10-01 with the investigation exception preserved verbatim",
+      "outcome": "found",
+      "question": "q7",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-flock-usage-2026",
+        "okc-council-memo-2026-08",
+        "okc-flock-amendment-2026",
+        "okc-p06-evidence-fixture"
+      ]
+    },
+    {
+      "note": "109 partner agencies (aggregate degree), the refused roster, the actor-scoped federal-disclosure restriction + law-enforcement-only policy lane",
+      "outcome": "found",
+      "question": "q8",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-flock-usage-2026",
+        "okc-council-memo-2026-08",
+        "okc-flock-amendment-2026",
+        "okc-statute-47-7-606-1",
+        "okc-ops-manual-5-118",
+        "okc-contract-c241032",
+        "okc-p06-evidence-fixture"
+      ]
+    },
+    {
+      "note": "lifecycle labels, posted/as-of dates and the stated renewal horizon — publication/effective/as-of kinds kept distinct",
+      "outcome": "found",
+      "question": "q9",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-flock-usage-2026",
+        "okc-council-memo-2026-08",
+        "okc-flock-amendment-2026",
+        "okc-p06-evidence-fixture"
+      ]
+    },
+    {
+      "note": "the council's recorded response (5–3 vote, public opposition) — no audit/oversight report exists in the evidence pack",
+      "outcome": "found",
+      "question": "q10",
+      "searched_at": "2026-10-03",
+      "sources_searched": [
+        "okc-p06-evidence-fixture",
+        "okc-council-memo-2026-08"
+      ]
+    }
+  ],
+  "seed_correction_packet": "okc-seed-count-scopes",
+  "subject": {
+    "entity_id": "sig:deployment:okc-okcpd-flock",
+    "jurisdiction": "Oklahoma City, Oklahoma (us.state_abbr:OK)",
+    "jurisdiction_slug": "oklahoma-city-ok",
+    "label": "Oklahoma City — OKCPD Flock Safety ALPR program",
+    "slug": "okc-flock-alpr"
+  }
+}
