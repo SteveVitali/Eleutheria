@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "7ad254355afcfd4f34a29db90fcba767a7084434",
+  "input_commit": "f650e00e74f364199aaedcfa5608a0b20131b9ac",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "98537db7664fbf5757386b3322ea042baa0b2c659c2c031e7e462598ddc16174"
+      "sha256": "5920818a0923b4bcbddf5324f52403cd3fc076aee8fb274460e737f9b3f36bc6"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -761,12 +761,16 @@
       "sha256": "97c2d3836a107c342f55d53de2732b07f17cc93736e050aaf6872e95f0033667"
     },
     {
+      "path": "docs/adr/ADR-196-sqitch-lifecycle-verify-contract-and-extension-ownership.md",
+      "sha256": "1203456633e4964adb109a0c40270eb2b1dd5386ef909207a90b09be86bf2851"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "4a6d0c91061f95f07990a56532c26738766357cd1dc59f11a1c70266ab2136a4"
+      "sha256": "4e9f90b4143b7735d32e9b822a9665334fdae9622d8a40d0ea1494b24fa3d579"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "49577233a177a381a5411dc9ab2940775087ea7acac051de65bf0ba34752dad1"
+      "sha256": "f399fcc0d19a285830f12d5c2be6849ff01b1cbe0bf985139dbbea9f714bb56f"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1651,6 +1655,10 @@
     {
       "path": "docs/build/runs/P34.23.md",
       "sha256": "cc7bbc28fe5cb7e071e42655d77802cad1ff290dd0f38422f816cc53fe9352c9"
+    },
+    {
+      "path": "docs/build/runs/P34.24a.md",
+      "sha256": "fba2952345965849dc8878147c444a1309db3a1c32d8e25988bdf11b1dbfe039"
     },
     {
       "path": "docs/build/runs/P34.3.md",

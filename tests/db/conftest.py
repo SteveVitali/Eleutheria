@@ -13,6 +13,26 @@ sqitch is run from its official image on a shared Docker network, so the host
 needs only Docker (no local Perl/sqitch). If the Docker daemon is unreachable the
 tests skip — unless SIG_REQUIRE_DB_TESTS is set (CI sets it), in which case a
 missing daemon is a hard failure so the suite can never silently no-op.
+
+P34.24a / ADR-196 lifecycle hygiene:
+
+- The sqitch image is pinned **by digest** — a mutable `sqitch/sqitch:<tag>`
+  reference fails `tests/unit/test_sqitch_hygiene.py`.
+- The database the plan deploys into is created ``TEMPLATE template0``
+  (`create_plan_database`), not the postgis image's initdb database. The image
+  pre-installs postgis + postgis_topology + postgis_tiger_geocoder +
+  fuzzystrmatch into its own database, where the plan's `CREATE EXTENSION IF
+  NOT EXISTS` is a silent no-op and `revert/extensions.sql` drops objects the
+  plan never owned (the D-P32.16a-1 defect). A template0 database starts with
+  **no** extensions, so the plan owns exactly the extensions it creates — the
+  deployment shape the claim spine actually runs under.
+- `run_sqitch` deploys with `--verify`, so the whole plan's verify scripts run
+  against the running engine on every harness use — the stale-verify defect
+  class (D-P32.10a-1) can no longer hide behind a deploy-only harness.
+
+The container/sqitch helpers are module-level so the sibling harnesses
+(`tests/e2e`, `tests/api`, `tests/resolution`) reuse them through
+`_load_db_conftest()` instead of drifting copies.
 """
 
 from __future__ import annotations
@@ -20,6 +40,7 @@ from __future__ import annotations
 import os
 import time
 from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
@@ -28,9 +49,18 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DB_DIR = REPO_ROOT / "db"
 
 PG_IMAGE = "postgis/postgis:18-3.6"
-SQITCH_IMAGE = "sqitch/sqitch:latest"
+# P34.24a / ADR-196: pinned by digest — the mutable `latest` tag's resolution
+# at writing (docker pull + docker inspect 2026-10-04; App::Sqitch v1.6.1).
+SQITCH_IMAGE = (
+    "sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3"
+)
 PG_USER = "sig"
 PG_PASSWORD = "sig"
+# The image's own initdb database — postgis (and its dependents) land here and
+# are NOT plan-owned; sqitch never deploys into it.
+PG_ADMIN_DB = "postgres"
+# The database the sqitch plan deploys into — created TEMPLATE template0, so
+# the plan owns every extension it creates (ADR-196).
 PG_DB = "sig"
 
 
@@ -50,14 +80,94 @@ def _require_or_skip(reason: str) -> None:
     pytest.skip(reason)
 
 
-@pytest.fixture(scope="session")
-def sig_database() -> Iterator[dict[str, object]]:
-    """Start PG18+PostGIS, deploy the sqitch plan, yield connection params."""
-    if not _docker_reachable():
-        _require_or_skip("the Docker daemon is not reachable")
-
-    import docker
+def wait_ready(host: str, port: int, *, dbname: str = PG_ADMIN_DB, timeout: float = 120.0) -> None:
+    """Block until postgres is stable — the image restarts once after initdb,
+    so require two consecutive real connections a second apart (a single probe
+    can pass inside the restart window and a later sqitch connect then fails)."""
     import psycopg
+
+    deadline = time.time() + timeout
+    last_err: Exception | None = None
+    ok = 0
+    while time.time() < deadline:
+        try:
+            with psycopg.connect(
+                host=host,
+                port=port,
+                user=PG_USER,
+                password=PG_PASSWORD,
+                dbname=dbname,
+                connect_timeout=3,
+            ):
+                ok += 1
+                if ok >= 2:
+                    return
+        except Exception as exc:  # noqa: BLE001 - retry loop
+            last_err = exc
+            ok = 0
+        time.sleep(1)
+    raise RuntimeError(f"Postgres never became ready: {last_err}")
+
+
+def create_plan_database(
+    host: str, port: int, dbname: str = PG_DB, *, template: str = "template0"
+) -> None:
+    """Drop+create `dbname` from `template0` (ADR-196).
+
+    A template0 database carries **no** extensions — unlike the postgis image's
+    initdb database or `template_postgis` — so `deploy/extensions.sql` really
+    installs postgis + btree_gist and the plan owns exactly what it creates.
+    The connect goes to `PG_ADMIN_DB` (the image's own database); `dbname` is an
+    internal constant, rendered as a quoted identifier.
+    """
+    import psycopg
+    from psycopg import sql
+
+    with psycopg.connect(
+        host=host,
+        port=port,
+        user=PG_USER,
+        password=PG_PASSWORD,
+        dbname=PG_ADMIN_DB,
+        autocommit=True,
+    ) as admin:
+        admin.execute(sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(dbname)))
+        admin.execute(
+            sql.SQL("CREATE DATABASE {} TEMPLATE {}").format(
+                sql.Identifier(dbname), sql.Identifier(template)
+            )
+        )
+
+
+def run_sqitch(network: str, *argv: str, dbname: str = PG_DB) -> bytes:
+    """Run one sqitch command against `dbname` from the pinned image.
+
+    The plan directory is mounted read-only; the sqitch registry lives in the
+    database. Raises `docker.errors.ContainerError` (loud) on a non-zero exit.
+    """
+    import docker
+
+    client = docker.from_env()
+    return client.containers.run(
+        SQITCH_IMAGE,
+        command=[*argv, f"db:pg://{PG_USER}:{PG_PASSWORD}@db:5432/{dbname}"],
+        network=network,
+        working_dir="/repo",
+        volumes={str(DB_DIR): {"bind": "/repo", "mode": "ro"}},
+        environment={"PGPASSWORD": PG_PASSWORD},
+        remove=True,
+        stdout=True,
+        stderr=True,
+    )
+
+
+@contextmanager
+def pg_container() -> Iterator[tuple[str, str, int]]:
+    """Start PG18+PostGIS on its own throwaway network; yield (network, host, port).
+
+    The image's own database is `PG_ADMIN_DB` — the sqitch plan is never
+    deployed there; callers create plan databases via `create_plan_database`.
+    """
     from testcontainers.core.container import DockerContainer
     from testcontainers.core.network import Network
 
@@ -67,7 +177,7 @@ def sig_database() -> Iterator[dict[str, object]]:
         DockerContainer(PG_IMAGE)
         .with_env("POSTGRES_USER", PG_USER)
         .with_env("POSTGRES_PASSWORD", PG_PASSWORD)
-        .with_env("POSTGRES_DB", PG_DB)
+        .with_env("POSTGRES_DB", PG_ADMIN_DB)
         .with_exposed_ports(5432)
         .with_network(network)
         .with_network_aliases("db")
@@ -76,41 +186,22 @@ def sig_database() -> Iterator[dict[str, object]]:
     try:
         host = container.get_container_host_ip()
         port = int(container.get_exposed_port(5432))
+        wait_ready(host, port)
+        yield network.name, host, port
+    finally:
+        container.stop()
+        network.remove()
 
-        # Wait for a genuine connection (the image restarts once after init).
-        deadline = time.time() + 120
-        last_err: Exception | None = None
-        while time.time() < deadline:
-            try:
-                with psycopg.connect(
-                    host=host,
-                    port=port,
-                    user=PG_USER,
-                    password=PG_PASSWORD,
-                    dbname=PG_DB,
-                    connect_timeout=3,
-                ):
-                    break
-            except Exception as exc:  # noqa: BLE001 - retry loop
-                last_err = exc
-                time.sleep(1)
-        else:
-            raise RuntimeError(f"Postgres never became ready: {last_err}")
 
-        # Apply the schema with sqitch, on the shared network so it reaches `db`.
-        client = docker.from_env()
-        client.containers.run(
-            SQITCH_IMAGE,
-            command=["deploy", f"db:pg://{PG_USER}:{PG_PASSWORD}@db:5432/{PG_DB}"],
-            network=network.name,
-            working_dir="/repo",
-            volumes={str(DB_DIR): {"bind": "/repo", "mode": "ro"}},
-            environment={"PGPASSWORD": PG_PASSWORD},
-            remove=True,
-            stdout=True,
-            stderr=True,
-        )
+@pytest.fixture(scope="session")
+def sig_database() -> Iterator[dict[str, object]]:
+    """Start PG18+PostGIS, deploy the sqitch plan, yield connection params."""
+    if not _docker_reachable():
+        _require_or_skip("the Docker daemon is not reachable")
 
+    with pg_container() as (network, host, port):
+        create_plan_database(host, port, PG_DB)
+        run_sqitch(network, "deploy", "--verify", dbname=PG_DB)
         yield {
             "host": host,
             "port": port,
@@ -118,9 +209,6 @@ def sig_database() -> Iterator[dict[str, object]]:
             "password": PG_PASSWORD,
             "dbname": PG_DB,
         }
-    finally:
-        container.stop()
-        network.remove()
 
 
 @pytest.fixture

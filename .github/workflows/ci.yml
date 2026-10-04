@@ -199,6 +199,13 @@ jobs:
           # too, the same value the `security` job's dedicated step gets.
           SIG_GCP_PROJECT: ${{ vars.SIG_GCP_PROJECT }}
 
+      # P34.24a / ADR-196 (SIG-ENG-045): the whole-plan sqitch lifecycle gate —
+      # a template0 database, deploy -> verify -> revert -y -> clean-state
+      # asserts -> redeploy -> verify, from the digest-pinned sqitch image.
+      # The step log is the cited evidence for D-P32.10a-1 / D-P32.16a-1.
+      - name: Sqitch whole-plan round trip
+        run: make test-sqitch-roundtrip
+
       - name: Generated artifacts match a fresh generation
         run: make verify-gen
 
