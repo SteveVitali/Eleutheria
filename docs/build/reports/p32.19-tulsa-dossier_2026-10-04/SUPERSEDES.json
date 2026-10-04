@@ -1,0 +1,59 @@
+{
+  "artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "9b3c740b1c9956b33685be3d7e0b874f03c8a42114bda1990634952f58f64fb2"
+    },
+    "FOLLOW_UP_DRAFTS.json": {
+      "sha256": "076b049165380de817db0a1b7febe75fe7415ad1d526a53359f2b5d50df10391"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "4bba0668d172394d048e44972e5ea4399667df23856069f3ed76ce9c29bfa1dc"
+    },
+    "tulsa_dossier.json": {
+      "sha256": "b33830f848265ecf05f4c736d0cc0c252a0ecef16a333267317835b09c88401b"
+    },
+    "tulsa_dossier.print.html": {
+      "sha256": "e5df8277c454a7d1a73954a641660fe6c7b7ec4169856bf44e8c92bce36ad809"
+    },
+    "tulsa_dossier_packet.json": {
+      "sha256": "19f166577ec13afbe48bcfc835dae7d9102460c9a89ff44675064357f33c49ea"
+    },
+    "tulsa_dossier_portfolio.json": {
+      "sha256": "01dd842b39ff1f80a05becede4f47b7010f2d1532dfe54739488e1389c1b1efd"
+    }
+  },
+  "basis": "ADR-146 D2 + B1 \u00a75.5 \u2014 the superseded run's bytes are historical evidence and keep them (their digests are recorded below and cited elsewhere); the fixed builders regenerate the same artifact set here with clock-true dates (git-derived fixture commits, declared stand-ins, no fabricated retrieval dates).",
+  "generated_by": "sig-ops dossier-packet-tulsa",
+  "notes": "CORRECTION.md lives with the superseded dir and gains the pointer line naming this successor.",
+  "schema": "sig.supersedes-manifest/1",
+  "superseded_artifacts": {
+    "CORRECTION.md": {
+      "sha256": "39f2dde910a59b93d7805fae93424878822a6bd16784f38558da94cd8e7d8f40"
+    },
+    "EVIDENCE_PACK.md": {
+      "sha256": "1db749a039e9a6b7430bb84470cc5fb4d0c85a9151abc09767d1c38989b008d9"
+    },
+    "FOLLOW_UP_DRAFTS.json": {
+      "sha256": "7c96d288e6b76dffee0664c26d46865d45dbb566a8c9a25690ac4232523dd275"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "4bba0668d172394d048e44972e5ea4399667df23856069f3ed76ce9c29bfa1dc"
+    },
+    "tulsa_dossier.json": {
+      "sha256": "baea772801a89de8814be2d92f4bc421c627f9b5c0def90f6ddf4af7fcb9f880"
+    },
+    "tulsa_dossier.print.html": {
+      "sha256": "f37477f8429ba6c47e02c2c81bc36ee6f4b30aad4f2cbe41dd12ca1356f651d5"
+    },
+    "tulsa_dossier_packet.json": {
+      "sha256": "c15d2fa422572cbab5fd2b9a9a75110e29b211de9f98f7eb72c5d93c471b0abc"
+    },
+    "tulsa_dossier_portfolio.json": {
+      "sha256": "b460d2d081c5490a3fcbb5955b7fa0ab1f26c4ec1f10d17094004a4867fd5232"
+    }
+  },
+  "supersedes": "../p32.19-tulsa-dossier/",
+  "supersedes_ticket": "P32.19",
+  "ticket": "P34.22b",
+  "written": "2026-10-04T02:01:04Z"
+}

@@ -2362,12 +2362,21 @@
     {
       "attribution": "FoggedLens / DeFlock",
       "basis": "E2-12 / ADR-194 attribution correction (P34.21a): the source's own reviewed rights signature corrected onto its claims \u2014 the F-387 record defect mis-keyed rights on SPDX alone; nothing here re-licenses a resolved record.",
+      "date_corrections": [
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights_reviewed_on",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        }
+      ],
       "derivative_permitted": "yes",
       "redistributable": "yes",
       "retrieval_date": "2026-08-20",
       "review_packet": "docs/build/reports/rights/deflock_repo.md",
       "reviewed_by": "maintainer (delegated)",
-      "reviewed_on": "2026-09-10",
+      "reviewed_on": "2026-09-13",
       "source_id": "deflock_repo",
       "spdx": "MIT",
       "terms_url": "https://github.com/FoggedLens/deflock/blob/main/LICENSE"
@@ -2722,12 +2731,35 @@
     {
       "attribution": "State of Oklahoma statutes (OSCN; public domain)",
       "basis": "E2-12 / ADR-194 attribution correction (P34.21a): the source's own reviewed rights signature corrected onto its claims \u2014 the F-387 record defect mis-keyed rights on SPDX alone; nothing here re-licenses a resolved record.",
+      "date_corrections": [
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "last_verified",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights_reviewed_on",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights.retrieval_date",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        }
+      ],
       "derivative_permitted": "yes",
       "redistributable": "yes",
-      "retrieval_date": "2026-09-10",
+      "retrieval_date": "2026-09-13",
       "review_packet": "docs/build/reports/rights/ok_statute.md",
       "reviewed_by": "maintainer (delegated)",
-      "reviewed_on": "2026-09-10",
+      "reviewed_on": "2026-09-13",
       "source_id": "ok_statute",
       "spdx": "CC0-1.0",
       "terms_url": "https://www.oscn.net/"
@@ -2735,12 +2767,35 @@
     {
       "attribution": "Oklahoma City Council (public record)",
       "basis": "E2-12 / ADR-194 attribution correction (P34.21a): the source's own reviewed rights signature corrected onto its claims \u2014 the F-387 record defect mis-keyed rights on SPDX alone; nothing here re-licenses a resolved record.",
+      "date_corrections": [
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "last_verified",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights_reviewed_on",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights.retrieval_date",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        }
+      ],
       "derivative_permitted": "yes",
       "redistributable": "yes",
-      "retrieval_date": "2026-09-10",
+      "retrieval_date": "2026-09-13",
       "review_packet": "docs/build/reports/rights/okc_council.md",
       "reviewed_by": "maintainer (delegated)",
-      "reviewed_on": "2026-09-10",
+      "reviewed_on": "2026-09-13",
       "source_id": "okc_council",
       "spdx": "CC0-1.0",
       "terms_url": "https://oklahomacityok.portal.civicclerk.com/"
@@ -2748,12 +2803,35 @@
     {
       "attribution": "City of Oklahoma City (public record)",
       "basis": "E2-12 / ADR-194 attribution correction (P34.21a): the source's own reviewed rights signature corrected onto its claims \u2014 the F-387 record defect mis-keyed rights on SPDX alone; nothing here re-licenses a resolved record.",
+      "date_corrections": [
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "last_verified",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights_reviewed_on",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights.retrieval_date",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        }
+      ],
       "derivative_permitted": "yes",
       "redistributable": "yes",
-      "retrieval_date": "2026-09-10",
+      "retrieval_date": "2026-09-13",
       "review_packet": "docs/build/reports/rights/okc_procurement.md",
       "reviewed_by": "maintainer (delegated)",
-      "reviewed_on": "2026-09-10",
+      "reviewed_on": "2026-09-13",
       "source_id": "okc_procurement",
       "spdx": "CC0-1.0",
       "terms_url": "https://www.okc.gov/"
@@ -2761,12 +2839,35 @@
     {
       "attribution": "Oklahoma City Police Department (public record)",
       "basis": "E2-12 / ADR-194 attribution correction (P34.21a): the source's own reviewed rights signature corrected onto its claims \u2014 the F-387 record defect mis-keyed rights on SPDX alone; nothing here re-licenses a resolved record.",
+      "date_corrections": [
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "last_verified",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights_reviewed_on",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights.retrieval_date",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        }
+      ],
       "derivative_permitted": "yes",
       "redistributable": "yes",
-      "retrieval_date": "2026-09-10",
+      "retrieval_date": "2026-09-13",
       "review_packet": "docs/build/reports/rights/okcpd_policy.md",
       "reviewed_by": "maintainer (delegated)",
-      "reviewed_on": "2026-09-10",
+      "reviewed_on": "2026-09-13",
       "source_id": "okcpd_policy",
       "spdx": "CC0-1.0",
       "terms_url": "https://www.okc.gov/"
@@ -2823,12 +2924,28 @@
     {
       "attribution": "\u00a9 OpenStreetMap contributors",
       "basis": "E2-12 / ADR-194 attribution correction (P34.21a): the source's own reviewed rights signature corrected onto its claims \u2014 the F-387 record defect mis-keyed rights on SPDX alone; nothing here re-licenses a resolved record.",
+      "date_corrections": [
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "last_verified",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        },
+        {
+          "adr": "ADR-146",
+          "evidence": "e1cedcad",
+          "field": "rights_reviewed_on",
+          "recorded": "2026-09-10",
+          "true": "2026-09-13"
+        }
+      ],
       "derivative_permitted": "yes",
       "redistributable": "yes",
       "retrieval_date": "2026-08-20",
       "review_packet": "docs/build/reports/rights/osm_overpass.md",
       "reviewed_by": "maintainer (delegated)",
-      "reviewed_on": "2026-09-10",
+      "reviewed_on": "2026-09-13",
       "source_id": "osm_overpass",
       "spdx": "ODbL-1.0",
       "terms_url": "https://www.openstreetmap.org/copyright"

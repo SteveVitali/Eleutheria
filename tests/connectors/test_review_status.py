@@ -142,6 +142,9 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # --- flip-ready + loadable counts (post RIGHTS.1 + P25 flips, GL-GATE-03) ------
 # The OKC critical subset was flipped 2026-09-10 (okc_procurement/okc_council/
 # okcpd_policy/ok_statute + osm_overpass/deflock_repo) = 6 loadable. Then 2026-09-15:
+# date correction (P34.22b / ADR-146; appended, never rewritten): the 2026-09-10
+# above was the Round-3 chain date — the flips actually landed 2026-09-13
+# (commit e1cedcad; runs/P21.5.md:23). True date 2026-09-13.
 # two resolved-licence sources (P25.3: eff_atlas_of_surveillance CC-BY-4.0,
 # osm_element_history ODbL) and four B-pass operator-approved flips (usaspending
 # CC0-1.0, fbi_cde_agency_registry CC0-1.0, eff_data_driven CC-BY-4.0, muckrock
@@ -264,6 +267,9 @@ def test_review_status_single_source_shows_five_gate_fields(
         assert field in out
     # osm_overpass was flipped 2026-09-10 (GL-GATE-03): now loadable, no longer
     # flip-ready (the flag is true), all five gate fields green.
+    # date correction (P34.22b / ADR-146; appended, never rewritten): the
+    # 2026-09-10 above was the Round-3 chain date — the flip actually landed
+    # 2026-09-13 (commit e1cedcad; runs/P21.5.md:23). True date 2026-09-13.
     assert "ingestion_permitted=True" in out
     assert "flip-ready: False" in out
     assert "loadable now: True" in out

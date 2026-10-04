@@ -1,0 +1,62 @@
+{
+  "bounded_questions": [
+    "actual bytes of the usage page — do the 90/109/retention claims match",
+    "the amendment's signature/execution state on real captured pages",
+    "the post-2026-10-01 retention rule operating (announced vs implemented)",
+    "the purchasing index route to the executed C241032 instrument",
+    "the OSCN statutory version effective for the UVED program window"
+  ],
+  "deferral": "D-P32.18-1",
+  "non_goals": [
+    "no source rights flip inside this packet",
+    "no operator-gate completion",
+    "no publication or public release"
+  ],
+  "packet_id": "okc-dossier-live-pass",
+  "preconditions": [
+    "HG-03 source/rights review per target (published-URL ownership screen)",
+    "Part VIII preflight — no plate/trip/person data is ever captured",
+    "resource bounds identical to the replay path (2 protocols, page/byte caps)"
+  ],
+  "reason_deferred": "live_verification=false: D-R10-SOURCES-1 stays OPEN — source/evidence-use review and the HG-03 rights decision are pending",
+  "schema": "sig.dossier-live-return-pass/1",
+  "status": "prepared_not_executed",
+  "targets": [
+    {
+      "doc_id": "okc-flock-usage-2026",
+      "goal": "actual byte capture replacing the committed stand-in",
+      "kind": "clause_fields",
+      "url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+    },
+    {
+      "doc_id": "okc-council-memo-2026-08",
+      "goal": "actual byte capture replacing the committed stand-in",
+      "kind": "clause_fields",
+      "url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+    },
+    {
+      "doc_id": "okc-flock-amendment-2026",
+      "goal": "actual byte capture replacing the committed stand-in",
+      "kind": "clause_fields",
+      "url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+    },
+    {
+      "doc_id": "okc-statute-47-7-606-1",
+      "goal": "verify the effective statutory version on the live OSCN page",
+      "kind": "document_page",
+      "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
+    },
+    {
+      "doc_id": "okc-ops-manual-5-118",
+      "goal": "capture the 6th-edition manual §5-118 pages (real PDF)",
+      "kind": "document_page",
+      "url": "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf"
+    },
+    {
+      "doc_id": "okc-purchasing-index",
+      "goal": "locate the executed-contract record for C241032 (edge WAF may refuse — record the refusal)",
+      "kind": "document_page",
+      "url": "https://www.okc.gov/departments/finance/purchasing"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "0dd2f42f76feafd93566763f33381ab92f488c7d579be7e8be068b772e10394e"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "0a2b4d9705479fb5773071e2f44fd4f0327a2e3fc968649c94b0ec07ce71e3d0"
+    },
+    "okc_dossier.json": {
+      "sha256": "ba951ee7432ea2bdf212b1c5815c5aedfc8a2da6cd548c5a321633fcef7a4ddb"
+    },
+    "okc_dossier.print.html": {
+      "sha256": "78f1dd4bbe2175316c0ca1a3f872a8fe086335db98d8a584bcd2d94d18f1e0aa"
+    },
+    "okc_dossier_packet.json": {
+      "sha256": "e9e555d304850a849bbf873a7d7f1260a48ef2f38bcbb90ffa3df10dbd1988be"
+    },
+    "okc_dossier_portfolio.json": {
+      "sha256": "e0fd0feffb7d0413cad59139c6eb0ca94ee7da5747b08df1a701fc1111a4ad86"
+    },
+    "okc_seed_correction_packet.json": {
+      "sha256": "c8cee267752c90a3b5e0e21a48561bb322039aab3cfa2fc5cab7fd6073073af2"
+    }
+  },
+  "basis": "ADR-146 D2 + B1 \u00a75.5 \u2014 the superseded run's bytes are historical evidence and keep them (their digests are recorded below and cited elsewhere); the fixed builders regenerate the same artifact set here with clock-true dates (git-derived fixture commits, declared stand-ins, no fabricated retrieval dates).",
+  "generated_by": "sig-ops dossier-packet",
+  "notes": "CORRECTION.md lives with the superseded dir and gains the pointer line naming this successor.",
+  "schema": "sig.supersedes-manifest/1",
+  "superseded_artifacts": {
+    "CORRECTION.md": {
+      "sha256": "ad5d9cfa32ae7fc78a05ade021b0146ec977fdef553910a2dc41e3607e4d1ae3"
+    },
+    "EVIDENCE_PACK.md": {
+      "sha256": "41b671d681c87b668228cb554ced1bab8a36ab92f9f5244b2055c2455cefa3d8"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "0a2b4d9705479fb5773071e2f44fd4f0327a2e3fc968649c94b0ec07ce71e3d0"
+    },
+    "okc_dossier.json": {
+      "sha256": "4aada23e143c77666388ac2255332aa45246fc26a59042378486b2ab13f1ef9d"
+    },
+    "okc_dossier.print.html": {
+      "sha256": "284b4a653f8c7852a67431e55f8838a6c5dd1d78faa51bc9445d6e16af015767"
+    },
+    "okc_dossier_packet.json": {
+      "sha256": "c6bef549494f7a8723d5e1a247b674600653101e678cce94e60d26d10a31fb3a"
+    },
+    "okc_dossier_portfolio.json": {
+      "sha256": "0c2e61878abdf956e5f84fe29c8d09ccf974fb6a09db850a6005a864c4d2e64a"
+    },
+    "okc_seed_correction_packet.json": {
+      "sha256": "c8cee267752c90a3b5e0e21a48561bb322039aab3cfa2fc5cab7fd6073073af2"
+    }
+  },
+  "supersedes": "../p32.18-okc-dossier/",
+  "supersedes_ticket": "P32.18",
+  "ticket": "P34.22b",
+  "written": "2026-10-04T02:01:04Z"
+}
