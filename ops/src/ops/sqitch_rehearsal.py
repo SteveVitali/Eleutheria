@@ -518,6 +518,22 @@ def lock_summary(
     }
 
 
+def unusable_lock_summary(summary: dict[str, Any]) -> dict[str, Any]:
+    """Blank the claim_evidence headline when the sampler saw nothing.
+
+    A run whose every sample errored produced zero episodes — but a
+    ``max_observed_s`` of ``0.0`` would read as "measured: no lock", a
+    fabricated zero. Unmeasured is ``None`` (the bounds_note's rule).
+    """
+    out = dict(summary)
+    out["claim_evidence"] = {
+        "episodes": 0,
+        "max_observed_s": None,
+        "max_upper_bound_s": None,
+    }
+    return out
+
+
 def registry_change_timings(
     pre_tip: Sequence[Mapping[str, Any]],
     post_tip: Sequence[Mapping[str, Any]],
@@ -692,7 +708,11 @@ def build_record(
             "samples": len(samples),
             "sample_errors": sum(1 for s in samples if "error" in s),
             "episodes": episodes,
-            **lock_summary(episodes),
+            **(
+                unusable_lock_summary(lock_summary(episodes))
+                if not [s for s in samples if "error" not in s]
+                else lock_summary(episodes)
+            ),
         },
         "index_builds": list(index_builds.values()),
         "temp_disk": {
@@ -750,4 +770,5 @@ __all__ = [
     "snapshot",
     "sqitch_tip",
     "tip_sha256",
+    "unusable_lock_summary",
 ]

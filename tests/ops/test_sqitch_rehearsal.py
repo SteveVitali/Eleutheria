@@ -565,10 +565,39 @@ def test_build_record_keeps_unseen_numbers_null_never_fabricated() -> None:
         source=None,
     )
     assert rec["locks"]["episodes"] == []
-    assert rec["locks"]["claim_evidence"]["max_observed_s"] == 0.0
+    assert rec["locks"]["claim_evidence"]["max_observed_s"] is None
+    assert rec["locks"]["claim_evidence"]["max_upper_bound_s"] is None
     assert rec["verify"] is None
     assert rec["source_no_write"] is None
     assert rec["temp_disk"]["temp_bytes_delta"] == (1 << 22)
+
+
+def test_build_record_blanks_the_headline_when_every_sample_errored() -> None:
+    """P34.24b attempt-1 shape: 214/214 samples carried an error (the
+    pre-fix sampler SQL). Zero observed episodes is fact, but a
+    max_observed_s of 0.0 would fabricate 'no lock was held' — the
+    headline must be null."""
+    errored = [
+        {"at": _at(i), "error": "UndefinedFunction: operator does not exist: name = oid"}
+        for i in range(4)
+    ]
+    rec = sr.build_record(
+        meta=_meta(),
+        pre=_pre_snapshot(),
+        post=_post_snapshot(),
+        samples=errored,
+        deploy={"exit": 2},
+        verify=None,
+        source=None,
+    )
+    assert rec["locks"]["samples"] == 4
+    assert rec["locks"]["sample_errors"] == 4
+    assert rec["locks"]["n_episodes"] == 0
+    assert rec["locks"]["claim_evidence"] == {
+        "episodes": 0,
+        "max_observed_s": None,
+        "max_upper_bound_s": None,
+    }
 
 
 # --- the CLI surface ------------------------------------------------------------
