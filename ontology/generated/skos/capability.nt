@@ -1,0 +1,416 @@
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <http://www.w3.org/2004/02/skos/core#notation> "alert.gunshot.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Gunshot alert (own)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <https://ontology.sig-project.org/schema/capabilityClass> "alerting" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <https://ontology.sig-project.org/schema/object> "gunshot" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.gunshot.own> <https://ontology.sig-project.org/schema/verb> "alert" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <http://www.w3.org/2004/02/skos/core#notation> "alert.hotlist.custom" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <http://www.w3.org/2004/02/skos/core#prefLabel> "Hotlist alert (custom)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <https://ontology.sig-project.org/schema/capabilityClass> "alerting" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <https://ontology.sig-project.org/schema/object> "hotlist" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <https://ontology.sig-project.org/schema/scope> "custom" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.custom> <https://ontology.sig-project.org/schema/verb> "alert" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <http://www.w3.org/2004/02/skos/core#notation> "alert.hotlist.federal" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <http://www.w3.org/2004/02/skos/core#prefLabel> "Hotlist alert (federal)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <https://ontology.sig-project.org/schema/capabilityClass> "alerting" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <https://ontology.sig-project.org/schema/object> "hotlist" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <https://ontology.sig-project.org/schema/scope> "federal" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.federal> <https://ontology.sig-project.org/schema/verb> "alert" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <http://www.w3.org/2004/02/skos/core#notation> "alert.hotlist.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Hotlist alert (own)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <https://ontology.sig-project.org/schema/capabilityClass> "alerting" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <https://ontology.sig-project.org/schema/object> "hotlist" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.own> <https://ontology.sig-project.org/schema/verb> "alert" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <http://www.w3.org/2004/02/skos/core#notation> "alert.hotlist.state" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <http://www.w3.org/2004/02/skos/core#prefLabel> "Hotlist alert (state)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <https://ontology.sig-project.org/schema/capabilityClass> "alerting" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <https://ontology.sig-project.org/schema/object> "hotlist" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <https://ontology.sig-project.org/schema/scope> "state" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.hotlist.state> <https://ontology.sig-project.org/schema/verb> "alert" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <http://www.w3.org/2004/02/skos/core#notation> "alert.push_to.partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "Push alerts to partner"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <https://ontology.sig-project.org/schema/capabilityClass> "alerting" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <https://ontology.sig-project.org/schema/object> "push_to" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <https://ontology.sig-project.org/schema/scope> "partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/alert.push_to.partner> <https://ontology.sig-project.org/schema/verb> "alert" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <http://www.w3.org/2004/02/skos/core#notation> "audit.case_code.required" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <http://www.w3.org/2004/02/skos/core#prefLabel> "Require case code for audit"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <https://ontology.sig-project.org/schema/capabilityClass> "governance" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <https://ontology.sig-project.org/schema/negative> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <https://ontology.sig-project.org/schema/object> "case_code" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <https://ontology.sig-project.org/schema/scope> "required" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/audit.case_code.required> <https://ontology.sig-project.org/schema/verb> "audit" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <http://www.w3.org/2004/02/skos/core#notation> "control.ptz.private_camera" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <http://www.w3.org/2004/02/skos/core#prefLabel> "Steer a private PTZ camera"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <https://ontology.sig-project.org/schema/capabilityClass> "live_operations" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <https://ontology.sig-project.org/schema/object> "ptz" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <https://ontology.sig-project.org/schema/scope> "private_camera" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/control.ptz.private_camera> <https://ontology.sig-project.org/schema/verb> "control" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <http://www.w3.org/2004/02/skos/core#notation> "disclose.audit.public" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <http://www.w3.org/2004/02/skos/core#prefLabel> "Disclose audit publicly"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <https://ontology.sig-project.org/schema/capabilityClass> "export_disclosure" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <https://ontology.sig-project.org/schema/object> "audit" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <https://ontology.sig-project.org/schema/salience> "L" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <https://ontology.sig-project.org/schema/scope> "public" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.audit.public> <https://ontology.sig-project.org/schema/verb> "disclose" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <http://www.w3.org/2004/02/skos/core#notation> "disclose.bulk.to_vendor" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <http://www.w3.org/2004/02/skos/core#prefLabel> "Disclose bulk to vendor"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <https://ontology.sig-project.org/schema/capabilityClass> "export_disclosure" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <https://ontology.sig-project.org/schema/object> "bulk" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <https://ontology.sig-project.org/schema/scope> "to_vendor" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.bulk.to_vendor> <https://ontology.sig-project.org/schema/verb> "disclose" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <http://www.w3.org/2004/02/skos/core#notation> "disclose.results.to_federal" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <http://www.w3.org/2004/02/skos/core#prefLabel> "Disclose results to federal"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <https://ontology.sig-project.org/schema/capabilityClass> "export_disclosure" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <https://ontology.sig-project.org/schema/object> "results" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <https://ontology.sig-project.org/schema/scope> "to_federal" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_federal> <https://ontology.sig-project.org/schema/verb> "disclose" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <http://www.w3.org/2004/02/skos/core#notation> "disclose.results.to_partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "Disclose results to partner"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <https://ontology.sig-project.org/schema/capabilityClass> "export_disclosure" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <https://ontology.sig-project.org/schema/object> "results" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <https://ontology.sig-project.org/schema/scope> "to_partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/disclose.results.to_partner> <https://ontology.sig-project.org/schema/verb> "disclose" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <http://www.w3.org/2004/02/skos/core#notation> "dispatch.uas.autonomous" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <http://www.w3.org/2004/02/skos/core#prefLabel> "Dispatch autonomous UAS"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <https://ontology.sig-project.org/schema/capabilityClass> "live_operations" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <https://ontology.sig-project.org/schema/object> "uas" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <https://ontology.sig-project.org/schema/scope> "autonomous" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/dispatch.uas.autonomous> <https://ontology.sig-project.org/schema/verb> "dispatch" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <http://www.w3.org/2004/02/skos/core#notation> "extract.cloud.account" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <http://www.w3.org/2004/02/skos/core#prefLabel> "Cloud-account extraction"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <https://ontology.sig-project.org/schema/capabilityClass> "acquisition" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <https://ontology.sig-project.org/schema/object> "cloud" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <https://ontology.sig-project.org/schema/scope> "account" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.cloud.account> <https://ontology.sig-project.org/schema/verb> "extract" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <http://www.w3.org/2004/02/skos/core#notation> "extract.device.logical" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <http://www.w3.org/2004/02/skos/core#prefLabel> "Logical device extraction"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <https://ontology.sig-project.org/schema/capabilityClass> "acquisition" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <https://ontology.sig-project.org/schema/object> "device" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <https://ontology.sig-project.org/schema/scope> "logical" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.logical> <https://ontology.sig-project.org/schema/verb> "extract" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <http://www.w3.org/2004/02/skos/core#notation> "extract.device.physical" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <http://www.w3.org/2004/02/skos/core#prefLabel> "Physical device extraction"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <https://ontology.sig-project.org/schema/capabilityClass> "acquisition" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <https://ontology.sig-project.org/schema/object> "device" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <https://ontology.sig-project.org/schema/scope> "physical" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/extract.device.physical> <https://ontology.sig-project.org/schema/verb> "extract" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <http://www.w3.org/2004/02/skos/core#notation> "intercept.content.subject" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <http://www.w3.org/2004/02/skos/core#prefLabel> "Intercept content (subject)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <https://ontology.sig-project.org/schema/capabilityClass> "acquisition" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <https://ontology.sig-project.org/schema/object> "content" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <https://ontology.sig-project.org/schema/scope> "subject" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/intercept.content.subject> <https://ontology.sig-project.org/schema/verb> "intercept" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <http://www.w3.org/2004/02/skos/core#notation> "locate.handset.rf" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <http://www.w3.org/2004/02/skos/core#prefLabel> "Locate handset by RF"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <https://ontology.sig-project.org/schema/capabilityClass> "acquisition" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <https://ontology.sig-project.org/schema/object> "handset" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <https://ontology.sig-project.org/schema/scope> "rf" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/locate.handset.rf> <https://ontology.sig-project.org/schema/verb> "locate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <http://www.w3.org/2004/02/skos/core#notation> "resell.derived.commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <http://www.w3.org/2004/02/skos/core#prefLabel> "Resell derived data (commercial)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <https://ontology.sig-project.org/schema/capabilityClass> "export_disclosure" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <https://ontology.sig-project.org/schema/object> "derived" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <https://ontology.sig-project.org/schema/scope> "commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/resell.derived.commercial> <https://ontology.sig-project.org/schema/verb> "resell" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <http://www.w3.org/2004/02/skos/core#notation> "restrict.external_sharing.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Restrict external sharing"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <https://ontology.sig-project.org/schema/capabilityClass> "governance" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <https://ontology.sig-project.org/schema/negative> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <https://ontology.sig-project.org/schema/object> "external_sharing" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.external_sharing.own> <https://ontology.sig-project.org/schema/verb> "restrict" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <http://www.w3.org/2004/02/skos/core#notation> "restrict.federal_sharing.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Restrict federal sharing"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <https://ontology.sig-project.org/schema/capabilityClass> "governance" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <https://ontology.sig-project.org/schema/negative> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <https://ontology.sig-project.org/schema/object> "federal_sharing" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.federal_sharing.own> <https://ontology.sig-project.org/schema/verb> "restrict" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <http://www.w3.org/2004/02/skos/core#notation> "restrict.immigration_query.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Restrict immigration queries"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <https://ontology.sig-project.org/schema/capabilityClass> "governance" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <https://ontology.sig-project.org/schema/negative> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <https://ontology.sig-project.org/schema/object> "immigration_query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.immigration_query.own> <https://ontology.sig-project.org/schema/verb> "restrict" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <http://www.w3.org/2004/02/skos/core#notation> "restrict.offense_category.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Restrict by offence category"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <https://ontology.sig-project.org/schema/capabilityClass> "governance" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <https://ontology.sig-project.org/schema/negative> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <https://ontology.sig-project.org/schema/object> "offense_category" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.offense_category.own> <https://ontology.sig-project.org/schema/verb> "restrict" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <http://www.w3.org/2004/02/skos/core#notation> "restrict.reproductive_query.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Restrict reproductive-health queries"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <https://ontology.sig-project.org/schema/capabilityClass> "governance" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <https://ontology.sig-project.org/schema/negative> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <https://ontology.sig-project.org/schema/object> "reproductive_query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/restrict.reproductive_query.own> <https://ontology.sig-project.org/schema/verb> "restrict" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <http://www.w3.org/2004/02/skos/core#notation> "search.face.commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search faces (commercial)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <https://ontology.sig-project.org/schema/object> "face" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <https://ontology.sig-project.org/schema/scope> "commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.commercial> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <http://www.w3.org/2004/02/skos/core#notation> "search.face.national" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search faces (national)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <https://ontology.sig-project.org/schema/object> "face" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <https://ontology.sig-project.org/schema/scope> "national" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.national> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <http://www.w3.org/2004/02/skos/core#notation> "search.face.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search faces (own)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <https://ontology.sig-project.org/schema/object> "face" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.own> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <http://www.w3.org/2004/02/skos/core#notation> "search.face.partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search faces (partner)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <https://ontology.sig-project.org/schema/object> "face" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <https://ontology.sig-project.org/schema/scope> "partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.partner> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <http://www.w3.org/2004/02/skos/core#notation> "search.face.state" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search faces (state)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <https://ontology.sig-project.org/schema/object> "face" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <https://ontology.sig-project.org/schema/scope> "state" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.face.state> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <http://www.w3.org/2004/02/skos/core#notation> "search.location_history.commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search location history (commercial)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <https://ontology.sig-project.org/schema/object> "location_history" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <https://ontology.sig-project.org/schema/scope> "commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.commercial> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <http://www.w3.org/2004/02/skos/core#notation> "search.location_history.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search location history (own)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <https://ontology.sig-project.org/schema/object> "location_history" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.own> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <http://www.w3.org/2004/02/skos/core#notation> "search.location_history.subject" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search location history (subject)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <https://ontology.sig-project.org/schema/object> "location_history" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <https://ontology.sig-project.org/schema/scope> "subject" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.location_history.subject> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <http://www.w3.org/2004/02/skos/core#notation> "search.person_records.commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search person records (commercial)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <https://ontology.sig-project.org/schema/object> "person_records" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <https://ontology.sig-project.org/schema/salience> "C" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <https://ontology.sig-project.org/schema/scope> "commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.person_records.commercial> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (commercial)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <https://ontology.sig-project.org/schema/scope> "commercial" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.commercial> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.national" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (national)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <https://ontology.sig-project.org/schema/scope> "national" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.national> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (own)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <https://ontology.sig-project.org/schema/scope> "own" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.own> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (partner)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <https://ontology.sig-project.org/schema/scope> "partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.partner> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.region" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (region)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <https://ontology.sig-project.org/schema/scope> "region" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.region> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.state" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (state)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <https://ontology.sig-project.org/schema/scope> "state" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.state> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <http://www.w3.org/2004/02/skos/core#notation> "search.plate.subject" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search plates (subject)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <https://ontology.sig-project.org/schema/object> "plate" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <https://ontology.sig-project.org/schema/scope> "subject" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.plate.subject> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <http://www.w3.org/2004/02/skos/core#notation> "search.records.region" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <http://www.w3.org/2004/02/skos/core#prefLabel> "Search records (region)"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <https://ontology.sig-project.org/schema/capabilityClass> "query" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <https://ontology.sig-project.org/schema/object> "records" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <https://ontology.sig-project.org/schema/scope> "region" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/search.records.region> <https://ontology.sig-project.org/schema/verb> "search" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <http://www.w3.org/2004/02/skos/core#notation> "view.cad.partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "View partner CAD"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <https://ontology.sig-project.org/schema/capabilityClass> "live_operations" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <https://ontology.sig-project.org/schema/object> "cad" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <https://ontology.sig-project.org/schema/scope> "partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.cad.partner> <https://ontology.sig-project.org/schema/verb> "view" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <http://www.w3.org/2004/02/skos/core#notation> "view.livestream.officer" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <http://www.w3.org/2004/02/skos/core#prefLabel> "View officer livestream"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <https://ontology.sig-project.org/schema/capabilityClass> "live_operations" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <https://ontology.sig-project.org/schema/object> "livestream" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <https://ontology.sig-project.org/schema/scope> "officer" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.officer> <https://ontology.sig-project.org/schema/verb> "view" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <http://www.w3.org/2004/02/skos/core#notation> "view.livestream.partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "View partner livestream"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <https://ontology.sig-project.org/schema/capabilityClass> "live_operations" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <https://ontology.sig-project.org/schema/object> "livestream" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <https://ontology.sig-project.org/schema/scope> "partner" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.partner> <https://ontology.sig-project.org/schema/verb> "view" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <http://www.w3.org/2004/02/skos/core#notation> "view.livestream.private_camera" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <http://www.w3.org/2004/02/skos/core#prefLabel> "View private-camera livestream"@en .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <https://ontology.sig-project.org/schema/capabilityClass> "live_operations" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <https://ontology.sig-project.org/schema/object> "livestream" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <https://ontology.sig-project.org/schema/scope> "private_camera" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0/view.livestream.private_camera> <https://ontology.sig-project.org/schema/verb> "view" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0> <http://purl.org/dc/terms/description> "Immutable once published (SIG-STORE-036)." .
+<https://ontology.sig-project.org/vocab/capability/1.0.0> <http://purl.org/dc/terms/title> "SIG capability vocabulary" .
+<https://ontology.sig-project.org/vocab/capability/1.0.0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#ConceptScheme> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0> <http://www.w3.org/2002/07/owl#versionIRI> <https://ontology.sig-project.org/vocab/capability/1.0.0> .
+<https://ontology.sig-project.org/vocab/capability/1.0.0> <http://www.w3.org/2002/07/owl#versionInfo> "1.0.0" .
