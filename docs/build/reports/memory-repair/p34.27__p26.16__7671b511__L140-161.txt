@@ -1,0 +1,22 @@
+content-keyed insert dedupes to +0. **The +0 itself is owed hosted** —
+see the hosted limitation below.
+
+### Hosted execution — NOT run (infrastructure, recorded not claimed)
+
+The hosted apply path is unavailable in this context, same posture as
+recorded on P26.8–P26.15:
+
+- `gcloud auth application-default print-access-token` →
+  `…/application_default_credentials.json is not a valid json file`
+  (corrupt ADC file; D-ACCT.1-1 / HG-12 — the operator's account
+  ``<operator account — redacted per the D3 precedent, P34.27>`` is present but ADC is broken).
+- Local Docker daemon unresponsive → no composed PG, no image build;
+  `--sink pg` has no reachable spine.
+
+So the sweep ran `--sink memory`: **claims were emitted and counted
+locally; the hosted claim-spine delta, GCS run-row copies, hosted
+idempotent rerun, and the `sig-ingest-camreg-batch-*` job apply are owed
+to the first credentialed window** — the cadence rows are committed data,
+`scheduled-ops.sh apply` + the 8 job/scheduler upserts are mechanical.
+Nothing hosted is claimed; the local run rows + captures are the honest
+record. Spine delta locally: +2,033,676 emitted claims (pre-dedupe).

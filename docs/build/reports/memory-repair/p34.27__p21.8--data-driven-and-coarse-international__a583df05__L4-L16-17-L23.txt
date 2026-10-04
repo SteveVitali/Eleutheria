@@ -1,0 +1,4 @@
+- **Phase:** 21 — Operationalization (`docs/build/DECISION_MEMO.md` §3 row 62)
+- `docs/build/SCOPING_ID_LISTS.md` L1 (the INGEST-043* ids), `docs/build/COVERAGE_MATRIX.csv` rows `routing=P21.8`, `docs/build/BACKLOG.csv` rows `landing=P21.8`; `docs/build/RIGHTS_REVIEW_INDEX.md`; ADR-034, ADR-056.
+- Anchors (re-confirm): `connectors/src/connectors/{stages.py:336, pipeline.py, records.py, coarse_international.py:16, data/sources.toml, data/records_vocab.toml}`; the `run` CLI and `HttpxTransport` (P21.3); `resolution/` cascade entry points (P03.2 — `grep -n "def cascade\|normalize_org_name" resolution/src/resolution/*.py`); `tasks/src/tasks/records_request.py`; `docs/build/rights/_TEMPLATE.md` (P21.1).
+4. **Run what is permitted:** flipped sources → live run into the composed PG with fetch records; others → fixture replay; `docs/build/ECOSYSTEM_CONNECTORS.md` (per source: ids satisfied, fixtures, live state, claims produced).

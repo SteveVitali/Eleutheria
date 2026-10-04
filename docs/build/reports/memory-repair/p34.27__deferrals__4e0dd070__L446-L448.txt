@@ -1,0 +1,2 @@
+| `D-P30.2b-1` | OPEN | engineering + reviewers | review decisions do not yet feed clustering; 11,625 proposals, 0 decisions | BL-057, no chain row |
+| `D-P30.2b-3` | OPEN | engineering | within-source duplicate layers (constraint (a)) | BL-057, no chain row |

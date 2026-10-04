@@ -1,0 +1,1 @@
+- [ ] each source is either fetched live (gate cleared) with typed/evidenced claims, OR its gate is recorded and the live run refuses (exit 3) — never a bypass *(deterministic)*
