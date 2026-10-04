@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "34f6894590895be08b6dba1f0343750d5794a71c",
+  "input_commit": "3828bf8dcfe7bf9b4c6c19673332fb1ca779be02",
   "manifest_inputs": 954,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -33,7 +33,7 @@
     "terminal": 68,
     "events": 625,
     "transitions": 20,
-    "coverage_assessments": 193,
+    "coverage_assessments": 194,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -11568,8 +11568,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-045": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "scripts/ci/sqitch_roundtrip.sh;db/verify/shared_temporal_contract.sql;tests/db/conftest.py;.github/workflows/ci.yml;Makefile;docs/build/runs/P34.24a.md;docs/adr/ADR-196-sqitch-lifecycle-verify-contract-and-extension-ownership.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12253,6 +12253,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.24a); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-045:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-045",
+        "domain": "composed-db",
+        "verdict": "MET",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.24a-sqitch-hygiene-and-round-trip-ci @ 87564ac7401ed2ef4f5478cd9996cc96eaab618c",
+        "limitations": "offline + composed-DB domain: the whole plan deploys, verifies, reverts and redeploys cleanly on a template0 database, proven locally (docs/build/logs/sqitch-roundtrip-20261004T070815Z.log) and on every PR via the python-job `Sqitch whole-plan round trip` step (PR #225 run 37186259271, 2026-10-04T07:43Z, all green); plan lines 44-52 keep their stamped dates (C-10) and the defective verify was repaired by tag+rework, never in-place; the hosted head read is NOT claimed — no verbatim operator go, P34.24b reads it from the PITR clone; whole-plan revert is defined only on a database the plan owns (ADR-196: ambient-extension databases are deploy-only)",
+        "supersedes": "SIG-ENG-045:r11-1",
+        "assessment_id": "SIG-ENG-045:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-046",
@@ -14281,6 +14291,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-045",
+          "verdict": "MET",
+          "assessed_at": "2026-10-04"
+        },
+        {
           "requirement": "SIG-PUB-012",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
@@ -15192,10 +15207,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "31a07901589c3b055f3926b5c5cb7cf5cccd4553da48eef6ecb9f9927ed6c038",
+  "manifest_sha256": "24e43a8eb953c15b3ba6168cb6f298c8e57b6d203f4bb30b275c4edc7b7389ca",
   "current_md": {
     "lines": 74,
-    "bytes": 13091,
+    "bytes": 13121,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
