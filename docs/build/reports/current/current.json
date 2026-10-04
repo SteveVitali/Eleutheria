@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "1c1b1b831c3bcb38da20349e0c214821fab11e60",
+  "input_commit": "5bbfa2f05eb19663b7ca4a4c06194d7a73c7edbc",
   "manifest_inputs": 956,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.24b",
-    "lastCompleted": "P34.25",
+    "nextTicket": "P34.26",
+    "lastCompleted": "P34.24b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.25-api-honesty-code",
+    "chainTip": "r11/P34.24b-sqitch-l44-52-clone-rehearsal",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -33,7 +33,7 @@
     "terminal": 68,
     "events": 627,
     "transitions": 20,
-    "coverage_assessments": 195,
+    "coverage_assessments": 197,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -12355,6 +12355,26 @@
         "assessment_id": "SIG-ENG-045:r11-2"
       },
       {
+        "requirement_id": "SIG-ENG-045",
+        "domain": "composed-db",
+        "verdict": "MET-ENGINEERED(D-P34.24b-1)",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.24b-sqitch-l44-52-clone-rehearsal @ 5bbfa2f05eb19663b7ca4a4c06194d7a73c7edbc",
+        "limitations": "composed-db stays met (the r11-2 round-trip evidence stands) — but the P34.24b clone rehearsal proved the tip does NOT verify on the Cloud SQL production shape: verify/intake_storage.sql:80 SET LOCAL ROLE sig_intake_receiver is denied (sig is no superuser, holds no membership; same SET ROLE class in intake_application_bridge/recovery_apply verifies, inference). Deploy exits 2, reverts cleanly; six tip changes never attempted. The engineered layer is met; the owed hosted leg is D-P34.24b-1 (a new appended verify-role fix before P34.46).",
+        "supersedes": "SIG-ENG-045:r11-2",
+        "assessment_id": "SIG-ENG-045:r11-3"
+      },
+      {
+        "requirement_id": "SIG-ENG-045",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.24b-sqitch-l44-52-clone-rehearsal @ 5bbfa2f05eb19663b7ca4a4c06194d7a73c7edbc",
+        "limitations": "first hosted-domain reading, from two PITR clones of sig-pg (2026-10-04): the plan tip does NOT deploy and verify on the production shape — deploy exits 2 at verify/intake_storage.sql:80 (SET LOCAL ROLE sig_intake_receiver denied; the sig login is no superuser and holds no membership in the deploy-created NOLOGIN role). Sqitch reverted cleanly both times and sqitch verify passes on the reverted head. Proven hosted: the clone lifecycle, claim_evidence ACCESS EXCLUSIVE 13.344s observed / 13.844s bound, temp delta +272.9MB, sig-pg read-only, L44-52 byte-identical. Unproven hosted: the deploy completing at all — owed as D-P34.24b-1.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-045:r11-4"
+      },
+      {
         "requirement_id": "SIG-ENG-046",
         "domain": "implementation",
         "verdict": "MISSING",
@@ -14401,6 +14421,11 @@
           "assessed_at": "2026-10-04"
         },
         {
+          "requirement": "SIG-ENG-045",
+          "verdict": "MET-ENGINEERED(D-P34.24b-1)",
+          "assessed_at": "2026-10-04"
+        },
+        {
           "requirement": "SIG-PUB-012",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
@@ -14463,6 +14488,11 @@
           "requirement": "SIG-ENG-024",
           "verdict": "AT-RISK-INTEGRATION",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-ENG-045",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-04"
         },
         {
           "requirement": "SIG-EPIS-009",
@@ -15312,10 +15342,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "63f2aded43aa1aa5f29c295666433e621e54694a1482eafd4a16c12d60974113",
+  "manifest_sha256": "a262ac564ce1d243fdfd312820787907369121a12355b1f1eee600a3a1b4c0c1",
   "current_md": {
     "lines": 74,
-    "bytes": 13157,
+    "bytes": 13259,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
