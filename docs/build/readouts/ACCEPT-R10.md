@@ -32,3 +32,31 @@ Authority: repository operator. Date: 2026-09-28.
 - **C-3 — the operator's own words, adopted at GATE-P**, a present statement of 2026-10-01T04:54:19Z, never a 2026-09-16, 09-24 or 09-28 statement (TS-19): *"The 'counsel' determinations of 2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer all the human review steps and proceed' was my decision to defer the human review legs."* — agent-drafted, adopted by the operator at 2026-10-01T04:54:19Z (GATE-P log round 19, line C-3, option "Adopt both sentences (Recommended)"); sha256 `1461ae213fac4749cd26d24d1ca22de1db893686d1b0fdef88cb64c296eca6c6`.
 - **Related records.** BUILD_INDEX row 195 (retro-indexed by SEED-09); the addendum at the end of `docs/build/CAPSTONE_CLOSURE.md`; the annotation at the end of `docs/build/readouts/GATE-G3.md`.
 <!-- agent-drafted:end -->
+
+## Readout history (restored from `4127dbf3^`)
+
+<!-- P34.27 (B2): `4127dbf3` (2026-09-28T18:47:37Z) replaced the pending readout
+     below in place — the signing commit replaced the pending readout in place (Round-10 closure accepted as presented). The removed lines are restored verbatim;
+     the current record stands unchanged. sha256:
+     `docs/build/reports/memory-repair/restorations_p34.27.csv`.
+     An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval. -->
+
+> # GATE-ACCEPT — pending readout
+> Status: PENDING. No approval, human work or publication is asserted.
+> - [ ] Actual signed/readout decision exists; no agent signs or assumes silence is approval.
+> Authority, actual date, input/campaign/release digests, evidence, deviations and decision: **not yet recorded**.
+> An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.
+
+## Annotations (append-only)
+
+- **2026-10-04 — P34.27 (B2; grandfathered readout):** this readout predates
+  the guard-sentence convention; the sentence is appended, never retrofitted
+  into the record — *An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.* The `Status:` line is not edited.
+
+- **2026-10-04 — P34.27 (GATE-B required annotation):** commit `4a2ce75d`
+  (2026-09-30T21:01:36Z) reset this file to PENDING on a side branch
+  (`devin/p33-3-capstone-closure`, PR #185). The chain's record stands:
+  SIGNED plus the B7 annotation plus the C-13 “Superseded” decision —
+  per the operator's GB-Q9(ii) answer, “Keep the chain's record
+  (Recommended)”. No operator words beyond the quoted answer are
+  asserted; the `Status:` line is not edited.

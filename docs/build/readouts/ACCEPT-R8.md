@@ -87,3 +87,23 @@
 - **DATE CORRECTION (ADR-146; register rec 245).** Line 54's "(2026-10-05)" for P31.15 / ADR-118: recorded 2026-10-05 → true 2026-09-26T15:16Z (retro: P31.15's PR #152 `createdAt`; closeout `90264c8a` 2026-09-26T15:16:28Z). The status appendix (lines 52–76) was written in the Devin CLI session `carefree-caption` (model `swe-2-high`; B7 §3 S7).
 - **C-3 — the operator's own words, adopted at GATE-P**, a present statement of 2026-10-01T04:54:19Z, never a 2026-09-16, 09-24 or 09-28 statement (TS-19): *"The 'counsel' determinations of 2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer all the human review steps and proceed' was my decision to defer the human review legs."* — agent-drafted, adopted by the operator at 2026-10-01T04:54:19Z (GATE-P log round 19, line C-3, option "Adopt both sentences (Recommended)"); sha256 `1461ae213fac4749cd26d24d1ca22de1db893686d1b0fdef88cb64c296eca6c6`.
 <!-- agent-drafted:end -->
+
+## Readout history (restored from `0a715fcc^`)
+
+<!-- P34.27 (B2): `0a715fcc` (2026-09-24T17:52:55Z) replaced the pending readout
+     below in place — the signed readout replaced the pending draft in place (R8-1…R8-7 disposition signed). The removed lines are restored verbatim;
+     the current record stands unchanged. sha256:
+     `docs/build/reports/memory-repair/restorations_p34.27.csv`.
+     An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval. -->
+
+> # Readout — Round 8 (GO-LIVE) accepted-deviations delta — PENDING operator signature
+> - **Prepared by:** P30.4 (GO-LIVE.4, post-launch closeout), 2026-09-24. **Signed by:** — (**pending**; the *(restored as-of `0a715fcc^`)*
+>   signature is the operator's, and no agent signs it).
+> > *(pending)* Operator (project maintainer), date — Reviewed the Round-8 accepted-deviations delta R8-1 …
+> > R8-7. Disposition: ______ (accept all / send back rows: ______).
+
+## Annotations (append-only)
+
+- **2026-10-04 — P34.27 (B2; grandfathered readout):** this readout predates
+  the guard-sentence convention; the sentence is appended, never retrofitted
+  into the record — *An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.* The `Status:` line is not edited.
