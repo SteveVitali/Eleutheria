@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "e29e8c137ec850816cdec1bd137a272648a4c712",
+  "input_commit": "d9e32bc2522bf0307adaaad7460bb3878c204752",
   "manifest_inputs": 957,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.26",
-    "lastCompleted": "P34.24b",
+    "nextTicket": "P34.27",
+    "lastCompleted": "P34.26",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.24b-sqitch-l44-52-clone-rehearsal",
+    "chainTip": "r11/P34.26-adr-124-allow-dispositions",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-04T06:04:21Z"
+    "updatedAt": "2026-10-04T16:35Z"
   },
   "counts": {
     "obligations": 153,
@@ -33,7 +33,7 @@
     "terminal": 68,
     "events": 627,
     "transitions": 20,
-    "coverage_assessments": 197,
+    "coverage_assessments": 199,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -13805,6 +13805,26 @@
         "assessment_id": "SIG-TRUST-004:r11-1"
       },
       {
+        "requirement_id": "SIG-TRUST-006",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.26-adr-124-allow-dispositions @ d9e32bc2522bf0307adaaad7460bb3878c204752",
+        "limitations": "first hosted-domain reading — one read-only leg over sig-pg (2026-10-04T15:42-16:01Z, wholly outside the daily 03:00-06:30Z band, no running sig-materialize execution in pg_stat_activity or the Cloud Run job list): Cloud SQL proxy to 127.0.0.1:5441 + `SET ROLE sig_read_public` + `default_transaction_read_only=on` + `statement_timeout=60s` — zero writes by construction. Re-measured, never pinned: 1,559 publication_review_required organisations (K2 NEW-1's '969' was its snapshot), flagged-org edge denominator 43,662 distinct (subject, organisation) pairs (K2's 42,488), top-50 degree share 92.5999% (K2's '96.5%'). Proven hosted: the committed census reads the real flagged set and types every row's ADR-159 outcome. Result: ZERO tier 0-1 registry matches (Census of Governments 0 / SAM UEI 0 / Wikidata QID 0 — flagged orgs carry only sig.org.name, the withheld label, counted never listed), 5 person-name screen flags as counts only, the publication_disposition registry absent on the hosted head (sqitch tip camera_site_human_decisions) — all 1,559 rows typed 'not yet reviewed', allow-list.json carries 0 entries. Unproven hosted: the disposition table itself, any recorded allow, the API's pending_publication_review absence on the live spine — owed as D-R11-ADR124-1 (P34.46 applies; P37.46a/b widen matching by construction).",
+        "supersedes": null,
+        "assessment_id": "SIG-TRUST-006:r11-2"
+      },
+      {
+        "requirement_id": "SIG-TRUST-006",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-R11-ADR124-1)",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.26-adr-124-allow-dispositions @ d9e32bc2522bf0307adaaad7460bb3878c204752",
+        "limitations": "engineered + fixture-verified, not applied: ADR-159's one eligibility rule now has a scripted consumer — `sig-ops disposition record --allow --from <sig.disposition-list/1>` (dry-run default; --apply + required --authority + --decided-by; DSN env-only; INSERT-only through db.dispositions.record_disposition; typed refusals for person entity / non-organisation / missing target / withdrawn-suppressed / existing deny / no tier 0-1 registry match / unpermitted identifier provenance / person-name screen fail; the screen runs over the canonical label + matched registry name + literal party values; persons always refused; no operator review queue) and the read-only `sig-ops disposition census` (sig.org-census/1: degree, edge share, materialized degree, permitted external identifiers only, label_identifier_count instead of label values, registry match, screen result as COUNT, current effective disposition, typed ADR-159 outcome). 36 pure + 8 Docker-PG tests green incl. append-only probes, a vendor-listing no-identifier organisation keeping its flag (SIG-ONTO-013), a person-shaped label refused despite a permitted match, a recorded deny honoured, and screened-label absence asserted in every committed artifact. NOT met at hosted/public: publication_disposition is not yet deployed on the hosted head (camera_site_human_decisions), no allow is recorded, allow-list.json carries 0 entries — the apply leg plus the live typed-absence read are D-R11-ADR124-1 (P34.46 with the Round-10 schema; P37.46a/b widen registry matching). This row ships no production mutation.",
+        "supersedes": null,
+        "assessment_id": "SIG-TRUST-006:r11-1"
+      },
+      {
         "requirement_id": "SIG-TRUST-007",
         "domain": "hosted",
         "verdict": "MET-ENGINEERED(D-R10-LIVE-1)",
@@ -14378,6 +14398,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-TRUST-006",
+          "verdict": "MET-ENGINEERED(D-R11-ADR124-1)",
+          "assessed_at": "2026-10-04"
+        },
+        {
           "requirement": "SIG-UI-010",
           "verdict": "MET",
           "assessed_at": "2026-10-01"
@@ -14673,6 +14698,11 @@
           "requirement": "SIG-TRUST-004",
           "verdict": "MET-ENGINEERED(D-P32.3-1)",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-TRUST-006",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-04"
         },
         {
           "requirement": "SIG-TRUST-007",
@@ -15342,10 +15372,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "29b3d4c8d871b0c65e7848dce272890d5a8c3e28c828a77d4133fba41100cebd",
+  "manifest_sha256": "19e323903a0e4a03c05c17090a13701ee063137b0252b4ec411581d2f5223918",
   "current_md": {
     "lines": 74,
-    "bytes": 13259,
+    "bytes": 13346,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
