@@ -1,0 +1,4 @@
+  ok). The true remainder is the **68 probe-error rows** (DNS/SSL/503/
+  no-layer ArcGIS + CKAN failures) — infrastructure, carried to P26.17
+  (GL-GATE-08 scope), plus the hosted-apply piece under
+  D-ACCT.1-1/HG-12. Row updated to `PARTIAL`.

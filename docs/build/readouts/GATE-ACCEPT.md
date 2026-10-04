@@ -65,3 +65,9 @@ per `docs/build/INTEGRATION_PLAN.md §(d)`.
 > Operator (project maintainer), 2026-09-13 — Reviewed the Round 3–4 go-live accepted-deviations
 > delta (CAPSTONE_CLOSURE §(b) Addendum 2). **Confirmed: no change** — the 77-row ACCEPTED list is
 > current and accepted; 0 new deviations, 0 sent back. GATE-ACCEPT PASSED.
+## Annotations (append-only)
+
+- **2026-10-04 — P34.27 (B2; grandfathered readout):** this readout
+  predates the guard-sentence convention; the sentence is appended,
+  never retrofitted into the record — *An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.*
+  The `Status:` line is not edited.

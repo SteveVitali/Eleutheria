@@ -1,0 +1,3 @@
+- [ ] N targeted accountability/governance-weighted sources added (rights-packeted, `ingestion_permitted=false` until HG-03) *(deterministic)*
+- [ ] each yielding source dedups INTO the resolved graph (P28.1) + carries an evidenced licence (P27.2) *(deterministic + live-gated)*
+- [ ] per-source outcomes recorded honestly; cadence + ladder updated; `make check` + build-memory green *(deterministic)*

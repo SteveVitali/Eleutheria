@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "dc1945147e7f30956a6432b079c0f799225947ef",
+  "input_commit": "63da1561abda06a6e8fd15ef399c136b2a39a0f2",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -774,7 +774,7 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "b7390ca098660d048d98478ca99646a84dcac4210819550e1098fe0a76109e9e"
+      "sha256": "1790b6bfb4e7c6e43d7a9ef4eb25ae97e745078b9633c30c340b341b5f0dd278"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -782,43 +782,43 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "ed3292cd81ac9ad07ebac6ce5171fa823c39d35f2f94a0e592594f1d6315f730"
+      "sha256": "982d1c3077f793727ac76c761d0b2b0e1fdb120866096ad1b7b5797e14d7f12b"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
-      "sha256": "25082fef9b4a3beab5f5e198907edc51d2b682fd41175974d123aed304854850"
+      "sha256": "632c8b12907df48b76f1a5d4eb8574e8870ef908f0dab217383cf33fe66a452d"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R8.md",
-      "sha256": "7738d6144bcec9895697d59fdd198c72b2294d9b638350305e3f1053aa6137c4"
+      "sha256": "ed3c9dde9ee373092c6d831893ddd4207b8c3588509949a23f334bae77f64924"
     },
     {
       "path": "docs/build/readouts/GATE-ACCEPT.md",
-      "sha256": "828bc79789426594ddacc7067a255f6bad08e5d8da715a9ddeb5f6607bf7a4cf"
+      "sha256": "6ce0a252f08dda2f1525acea9b5971eef433a99e5c365075333c3ce3da74d4ab"
     },
     {
       "path": "docs/build/readouts/GATE-G1.md",
-      "sha256": "e0866f2813e43d893d21fb56d6511d211bb67317a4599833336758d80d269a54"
+      "sha256": "e3de19e0ea435850a74e442a0f4345a2a7e13481830b4e4edf2b4793d2625a5a"
     },
     {
       "path": "docs/build/readouts/GATE-G2.md",
-      "sha256": "d2195b5923c118286429f7dfa9aab92f6111ae94d2c09d0a5a2e1119835e3c2e"
+      "sha256": "8cd603fb408f7ea09165c51b70279cff4dfd4727267c2a98e7e67a1bf5b1a64b"
     },
     {
       "path": "docs/build/readouts/GATE-G3.md",
-      "sha256": "29e4c4658c01133081476ecfa3859c4807edc5f8c629e8ae2e31635d82065011"
+      "sha256": "d50f8955924e0dba1f865e322fc6e51cf6dfc1fba092364657fec6613e164547"
     },
     {
       "path": "docs/build/readouts/HUMAN-H1.md",
-      "sha256": "65cb0473d630c033bd49d52864c86d2052926af593abcd831154c1bc4931bac3"
+      "sha256": "f9e86a2913d39e59adf383477268b28250d42bacd7aa001674317731a6ef56f9"
     },
     {
       "path": "docs/build/readouts/HUMAN-H2.md",
-      "sha256": "4942b8bc02a7e2a0a674b653b3814b1f60c308928d693122a87609a097fe13e0"
+      "sha256": "d652b9fa28dd710d3591d9f4d7450de0701625a0e71f769046d50126c9341e2e"
     },
     {
       "path": "docs/build/readouts/HUMAN-H3.md",
-      "sha256": "92ce7cfe51e5c777e9f4741ea502f0ceff1f91fd5fa9f17a872af9525cffb003"
+      "sha256": "1b492810b4a234c97f114b5b66ccc50b99bb40bc5cc3e5cdd20b2b3495eb3fb0"
     },
     {
       "path": "docs/build/readouts/HUMAN-H4.md",
@@ -838,7 +838,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "d85928c43cc4a0eec9d8e98fc9da0eb4eaadfd959c9ed6fa5424cc2346be335a"
+      "sha256": "4a54cbd57dde3e15c8c5b31c3804dba8ce2628375b6c5ca0357e903e9b066735"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1230,7 +1230,7 @@
     },
     {
       "path": "docs/build/runs/P26.16.md",
-      "sha256": "6e925918b93b439be0c08ef463804bd4e02ccb2b7b672da8bba26e25366d8d5a"
+      "sha256": "5240f234a1f2c8a7af2b352b9652b25a8c34e88c40a5303168d968df597c2972"
     },
     {
       "path": "docs/build/runs/P26.17.md",
@@ -1406,7 +1406,7 @@
     },
     {
       "path": "docs/build/runs/P31.16.md",
-      "sha256": "cfe9408ee4d404a4534f2c69f46f5e799139c7f1349bd683bc2d0ce1e6496eae"
+      "sha256": "097557be5bfc7c78a157b57272b07f43ef067590d7dbdb3e3fbaa6642a2e9d99"
     },
     {
       "path": "docs/build/runs/P31.19.md",
@@ -1673,6 +1673,10 @@
       "sha256": "947489ce6d06f245436ddc5e578a550703ad317b37056a7c05d7027be4a3b36e"
     },
     {
+      "path": "docs/build/runs/P34.27.md",
+      "sha256": "fd4932dfe59d441f4f0aecfab22b78665981b9ed9846196c935a55abf47221b6"
+    },
+    {
       "path": "docs/build/runs/P34.3.md",
       "sha256": "0fec5c5513fd5050711c762ee6a2cc8ea822ca5ab829245e1698f63b26554fce"
     },
@@ -1810,7 +1814,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "1e1f9107b577c5b50bd3253e17367c8c4bc37ea6ed009584b2843b9cb4dcd79b"
+      "sha256": "c5c6d77aa26c6e61ee2f05818bc6c22a054d6ad87005ee2523742e734f504328"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -3218,7 +3222,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "5b83e9d5d5d3a3df73e6610ad66fc168cead48f44b9ecd3853fa2928ee7e740a"
+      "sha256": "babe42ad40cfb13aa42d2fe17e70c4fb097765cc34feff7b2aca7d2cc7f2a280"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
@@ -3438,7 +3442,7 @@
     },
     {
       "path": "docs/tickets/P21.1__rights-review-and-registry-completion.md",
-      "sha256": "c3c8412ac2ae9b56b856ee28e50ee46819203d4c372cbf8e41f597ada0d9955d"
+      "sha256": "9ed0bd4154602b6ab50a813258efd12364796637d4ead6c3590c373333953bb5"
     },
     {
       "path": "docs/tickets/P21.2__persist-annotation-layer.md",
@@ -3446,15 +3450,15 @@
     },
     {
       "path": "docs/tickets/P21.3__live-connector-wiring.md",
-      "sha256": "a2efbc9a3a55738ddefac868aa64231b3731afc366ab1cdc2022813090f123fb"
+      "sha256": "765af3a3cad9aed6343b555341dbe1127a5c6b052b7edf8abdfb6d9f2f00b30a"
     },
     {
       "path": "docs/tickets/P21.4__first-jurisdiction-ingest-and-publish.md",
-      "sha256": "8139393f3801b6dbe6db0130e6f4b2315382ca1055a56aafa8d9655818bf2578"
+      "sha256": "2dbfba01fa32ca5e2065aaf04582f1d3460194bc7719cac5f898041cc6928073"
     },
     {
       "path": "docs/tickets/P21.5__infra-deposit-and-tiles.md",
-      "sha256": "4c2ea2146d7a37f4965857a132f65852c020e7e0c8f9d97f2306d6b5ee915e99"
+      "sha256": "520a3247b5cbd1e1fff7544bda983dbe080d99190f6cf7e2c223963b15baeaa4"
     },
     {
       "path": "docs/tickets/P21.6__curation-web-ui.md",
@@ -3462,15 +3466,15 @@
     },
     {
       "path": "docs/tickets/P21.7__contribution-back-live.md",
-      "sha256": "91823f5b9950b4e5fb8a5856cc69db89571fabf8d2f5121e2aebe8dd79445259"
+      "sha256": "6981c9f2866ef0e01efe6a45514081a226b98a155f1284e2f7a9c98d2ccbd656"
     },
     {
       "path": "docs/tickets/P21.8__data-driven-and-coarse-international.md",
-      "sha256": "2179687e21cbc85cb313447314334688a93081d8372de6e3ea9fb06b7c900b1d"
+      "sha256": "d50236c8a1ee2f447d150db6cb2b9bfb6db6caa59bfa2c62e7ee9642a6685e3c"
     },
     {
       "path": "docs/tickets/P21.9__stage5-pathway-connectors.md",
-      "sha256": "9ff22e5c6737e3ab76ff52290edd51053247530cb08a49704b8ccf869a811edb"
+      "sha256": "18e048f0209315262d10cc9b24c9089aca6b105fba3b8f6965c4508d212fa51b"
     },
     {
       "path": "docs/tickets/P22.1__repo-docs-refresh.md",
@@ -3482,7 +3486,7 @@
     },
     {
       "path": "docs/tickets/P22.3__build-memory-v2-migration.md",
-      "sha256": "033410281edd8846efd55e118743f8f51a5cf8bdacb7e2029b7a33034d91c4d3"
+      "sha256": "d0d5ed73b788fcba08ecc846413407f1cafa76228c41cbc2b96ee2e9fa281a44"
     },
     {
       "path": "docs/tickets/P23.1__integrate-and-release-v0-1-0.md",
@@ -3550,7 +3554,7 @@
     },
     {
       "path": "docs/tickets/P25.1__live-fetch-operationalization.md",
-      "sha256": "a3e0ed3f86c8d7933161227b1ffe544f45713632c36d494f4b0adde31048429a"
+      "sha256": "1b452e4a419474239fa19928367d508a2e77d6cee1087286c60f1490789d2f7b"
     },
     {
       "path": "docs/tickets/P25.2__live-records-and-procurement.md",
@@ -3562,11 +3566,11 @@
     },
     {
       "path": "docs/tickets/P25.4__live-data-driven-and-international.md",
-      "sha256": "32f411a6bac58959aad7e4df9038d05429caef72d3db2795c2bb07253f016994"
+      "sha256": "20a184f88c0de68c4a26cd530d07e3a2488b4032c8f640a958617d617c58ce64"
     },
     {
       "path": "docs/tickets/P25.5__live-pathways-france-belgium-ccops.md",
-      "sha256": "1038f659b562a14921b70eec131fd9a079c949901fe14265527d1d02c5401059"
+      "sha256": "4aa50ea8c341e6892f90f3bebbf2c446004fd32e7922d1cc413c43ffd0b74a4a"
     },
     {
       "path": "docs/tickets/P25.6__unmapped-source-triage.md",
@@ -3734,7 +3738,7 @@
     },
     {
       "path": "docs/tickets/P29.3__targeted-source-breadth.md",
-      "sha256": "9fed616d6339d48d8656a2ae980f0cef1a2bdee049e39f15462676a74818db06"
+      "sha256": "04f19d4b73b6541dba92d5b8bd982216f91d43a574087722792584200030b446"
     },
     {
       "path": "docs/tickets/P30.1__osm-land-and-settled-reaudit.md",

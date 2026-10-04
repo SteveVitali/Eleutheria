@@ -26,3 +26,20 @@ not a block). No DEFERRALS row is scoped to release (DEFERRALS rule 4 satisfied)
 - *Agent record (labelled): written by Claude Code, harness `claude-code/claude-opus-5-5/subagent`, Round-11 Stage-B unit SEED-08.* The text above is unchanged; this changes no status.
 - **DC-RO-01.** Line 5's disposition date is a Round-3 "chain date": recorded 2026-09-10 → true 2026-09-13T19:40:01Z (retro: the writing commit `eb72be5f`; `docs/build/runs/P21.5.md` line 23: "Environment clock read 2026-09-13; chain date for this re-run = 2026-09-10"). Register rec 1019.
 - **Harness and model (B7 §3 S4).** The disposition was written in the Devin CLI session `polydactyl-author` with model `claude-opus-4-8-medium` (retro: B7 §1–§3). It applied a disposition the orchestrator recorded under the resume prompt's rule 3, not an answer given at this gate's pause. The annotation of the restored GATE DECISIONS block in `docs/build/LEDGER.md` (SEED-06) classes this gate's restored entry R37 as clock-false.
+
+## Readout history (restored from `3259ca81^`)
+
+<!-- P34.27 (B2): `3259ca81` (2026-09-13T20:57:19Z) rewrote the
+     'What would pass it' criterion line in place — the signed
+     outcome reads 'cleared', not PASSED (the recorded outcome
+     stands). The removed criterion line is restored verbatim;
+     the current record is not changed. -->
+
+> The operator performs the merge/tag/release, records the outcome here as PASSED with the `v0.1.0`
+
+## Annotations (append-only)
+
+- **2026-10-04 — P34.27 (B2; grandfathered readout):** this readout
+  predates the guard-sentence convention; the sentence is appended,
+  never retrofitted into the record — *An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.*
+  The `Status:` line is not edited.

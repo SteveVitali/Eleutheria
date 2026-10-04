@@ -58,13 +58,41 @@ CI_RE = re.compile(r"ci:\s*(pass-after-rerun|pass)\s+#(\d+)@([0-9a-fA-F]{7,40})\
 #: One job's segment inside the parens: `web 36938225132`, `docs waived`, or the
 #: re-run pair `web a1 fail LH-PERF-1 run 36938225132` + `a2 pass`.
 RUN_ID_RE = re.compile(r"\brun\s+(\d+)|^[A-Za-z][\w-]*\s+(\d{6,})\s*$")
-SECTION_RE = re.compile(r"(?ms)^##\s+PHASE LOG — Round 11\s*$(.*?)(?=^#{2,3}\s|\Z)")
+#: The Round-11 section heading carries a parenthetical (`## PHASE LOG —
+#: Round 11 (append-only, newest last; the only append target)`) — match the
+#: heading's tail loosely so the section is found (P34.27: the literal `\s*$`
+#: matched no real heading and `--all` could only ever report vacuous).
+SECTION_RE = re.compile(r"(?ms)^##\s+PHASE LOG — Round 11\b[^\n]*$(.*?)(?=^#{2,3}\s|\Z)")
 BULLET_RE = re.compile(r"(?m)^\s*-\s+(.+)$")
 TICKET_RE = re.compile(r"\b(P\d+\.\d+[a-z]?)\b")
 #: A PHASE LOG *entry* (vs a note bullet): `- <date> — …`.
 ENTRY_RE = re.compile(r"^\s*\d{4}-\d{2}-\d{2}\s*—")
+#: The entry head's `<id> <kind>` slot: `- <date> — <id> <kind> — <payload>`
+#: (BM-LEDGER-06; the kind vocabulary is record_policy/phase_log_kinds.txt).
+ENTRY_HEAD_RE = re.compile(r"^\s*\d{4}-\d{2}-\d{2}\s*—\s*\S+\s+(.+?)\s*—")
 #: Markers that make a PHASE LOG entry a non-`done` record (no `ci:` owed).
 NON_DONE = ("blockedon", "pause", "paused", "held", "gate", "abandoned", "reverted")
+#: Declared non-landing kinds (record_policy/phase_log_kinds.txt, V4): a
+#: `correction`/`restored`/`round`/… entry records a record event, not a
+#: head-bound CI read, so it owes no `ci:` field. `done`/`ticket` land code
+#: and the `post-closeout …`/`orchestrator repair` kinds exist to record a
+#: head-bound read — those still owe one. The substring markers above stay
+#: as the fallback for heads that do not parse (P34.27: the first correction
+#: entries with no incidental marker were flagged before this list existed).
+NON_CI_KINDS = frozenset(
+    {
+        "blocked",
+        "inserted",
+        "split",
+        "gate",
+        "pause",
+        "round",
+        "correction",
+        "restored",
+        "interruption",
+        "harness-switch",
+    }
+)
 
 
 class UsageParser(argparse.ArgumentParser):
@@ -158,6 +186,29 @@ CI_TOKEN_RE = re.compile(r"(?<![\w/-])ci:\s*(?:pass-after-rerun|pass|blockedOn|f
 CI_FIELD_RE = re.compile(r"^\s*[-*>|]?\s*ci:\s*(?:pass-after-rerun|pass|blockedOn|fail)")
 
 
+def entry_kind(text: str) -> str | None:
+    """The bare declared kind of a `- <date> — <id> <kind> —` entry head, or
+    None when the head does not parse. ` #<n>` ordinals, ` + <note>`
+    annotations and ` (v<n>)` suffixes strip to the bare kind
+    (phase_log_kinds.txt)."""
+    m = ENTRY_HEAD_RE.match(text)
+    if not m:
+        return None
+    kind = re.sub(r"\s+#\d+\b.*$", "", m.group(1))
+    kind = re.sub(r"\s*\+\s*.*$", "", kind)
+    kind = re.sub(r"\s*\(v\d+\)\s*$", "", kind)
+    return kind.strip().lower() or None
+
+
+def non_done_entry(text: str) -> bool:
+    """An entry that owes no `ci:` field: a declared non-landing kind
+    (NON_CI_KINDS) or a legacy pause/blocked marker substring."""
+    kind = entry_kind(text)
+    if kind is not None and kind in NON_CI_KINDS:
+        return True
+    return any(k in text.lower() for k in NON_DONE)
+
+
 def has_stray_ci(line: str, *, bullet: bool = False, claim_file: bool = False) -> bool:
     """A `ci:`-shaped fragment that is not a parseable field — a claim we cannot
     audit. Checked only where `ci:` fields are records: PHASE LOG bullets (every
@@ -214,7 +265,7 @@ def collect_all(repo: Path, ledger_text: str) -> tuple[list[Claim], list[str]]:
     for bullet in phase_log_bullets(ledger_text):
         found = parse_ci_line(bullet, "LEDGER PHASE LOG (Round 11)")
         claims.extend(found)
-        if ENTRY_RE.match(bullet) and not found and not any(k in bullet.lower() for k in NON_DONE):
+        if ENTRY_RE.match(bullet) and not found and not non_done_entry(bullet):
             missing.append(f"PHASE LOG entry with no ci: field: {bullet.strip()[:100]}")
         if has_stray_ci(bullet, bullet=True):
             missing.append(f"unparseable ci: fragment: {bullet.strip()[:100]}")
@@ -245,7 +296,7 @@ def collect_diff(repo: Path, base: str) -> tuple[list[Claim], list[str]]:
         body = re.sub(r"^\s*-\s+", "", line)
         entry = path.endswith("LEDGER.md") and bool(ENTRY_RE.match(body))
         if entry:
-            if not found and not any(k in line.lower() for k in NON_DONE):
+            if not found and not non_done_entry(body):
                 missing.append(f"added PHASE LOG entry with no ci: field: {line[:100]}")
         if has_stray_ci(
             line, bullet=entry, claim_file=bool(CLAIM_FILE_RE.search(path))

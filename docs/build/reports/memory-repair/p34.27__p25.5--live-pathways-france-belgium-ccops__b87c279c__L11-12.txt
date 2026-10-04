@@ -1,0 +1,2 @@
+- **Gate status:** HG-03/HG-04 per source **and** design/counsel gates: FR/CSS/forensics pathways stay design-gated (Part VIII/counsel); `decp_fr` LO 2.0→SPDX mapping is counsel-needed (HG-02); `madada` compact `not_contacted`.
+- **Live stage:** operator-gated; several sources stay gated pending counsel/outreach.
