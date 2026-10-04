@@ -62,6 +62,9 @@ def test_the_okc_government_rows_are_flipped_with_review_metadata() -> None:
     # RIGHTS.1 flip re-run (GL-GATE-03, 2026-09-10): the four OKC government-record
     # rows now carry a resolved public-domain rights block (CC0-1.0, the registry-
     # accepted expression) + full review metadata, and are flipped loadable.
+    # date correction (P34.22b / ADR-146; appended, never rewritten): the
+    # 2026-09-10 above was the Round-3 chain date — the re-run actually ran on
+    # 2026-09-13 (commit e1cedcad; runs/P21.5.md:23). True date 2026-09-13.
     from datetime import date
 
     for sid in _OKC_FLIPPED_GOV_ROWS:

@@ -98,6 +98,42 @@ RELIABILITY_TIERS: frozenset[str] = frozenset({"R1", "R2", "R3", "R4", "R5", "R6
 
 
 @dataclass(frozen=True)
+class DateCorrection:
+    """An additive correction to a recorded registry date (P34.22b / ADR-146).
+
+    The recorded ``sources.toml`` value is never rewritten (ADR-146 D2: no
+    committed artifact is edited to fix a date); the correction sits beside it
+    and a reader prefers :meth:`SourceRecord.effective_date` — which returns
+    the ``true`` date — when it shows the date. ``field`` names the corrected
+    field: ``"last_verified"``, ``"rights_reviewed_on"`` or
+    ``"rights.retrieval_date"`` (a dotted name addresses the nested rights
+    block). ``evidence`` names the commit whose committer time evidences the
+    true date; ``adr`` names the correcting decision record.
+    """
+
+    field: str
+    recorded: date
+    true: date
+    evidence: str
+    adr: str
+
+    def __post_init__(self) -> None:
+        if not self.field:
+            raise ValueError("a date correction requires a field")
+        if not self.evidence:
+            raise ValueError(f"date correction for {self.field!r} requires evidence")
+        if not self.adr:
+            raise ValueError(f"date correction for {self.field!r} requires an adr")
+
+
+#: The registry fields a ``[[sources.<id>.date_corrections]]`` entry may
+#: correct — the three date fields the rights-record surfaces carry.
+CORRECTABLE_DATE_FIELDS: frozenset[str] = frozenset(
+    {"last_verified", "rights_reviewed_on", "rights.retrieval_date"}
+)
+
+
+@dataclass(frozen=True)
 class SourceRecord:
     """A single source registry row (§10.3.1, SIG-INGEST-023).
 
@@ -141,6 +177,31 @@ class SourceRecord:
     rights_reviewed_on: date | None = None
     #: Path (repo-relative) to the source's rights-review packet under docs/build/rights/.
     review_packet: str = ""
+    #: Additive date corrections (P34.22b / ADR-146): the recorded fields above
+    #: are never rewritten; a reader showing one prefers ``effective_date``.
+    date_corrections: tuple[DateCorrection, ...] = ()
+
+    def correction_for(self, field: str) -> DateCorrection | None:
+        """The declared correction for ``field``, or None."""
+        return next((c for c in self.date_corrections if c.field == field), None)
+
+    def recorded_date(self, field: str) -> date | None:
+        """The field's recorded value — what the registry row literally says."""
+        if field == "last_verified":
+            return self.last_verified
+        if field == "rights_reviewed_on":
+            return self.rights_reviewed_on
+        if field == "rights.retrieval_date":
+            return self.rights.retrieval_date
+        raise KeyError(f"source {self.id!r}: unknown date field {field!r}")
+
+    def effective_date(self, field: str) -> date | None:
+        """The date a reader shows: the corrected ``true`` date when a
+        correction exists (ADR-146), else the recorded value."""
+        correction = self.correction_for(field)
+        if correction is not None:
+            return correction.true
+        return self.recorded_date(field)
 
     def __post_init__(self) -> None:
         if not self.id:
@@ -157,6 +218,29 @@ class SourceRecord:
                 f"source {self.id!r} carries a rights record for "
                 f"{self.rights.source_id!r}; they must match (SIG-LIC-001)."
             )
+        seen: set[str] = set()
+        for correction in self.date_corrections:
+            if correction.field in seen:
+                raise ValueError(
+                    f"source {self.id!r}: duplicate date correction for "
+                    f"{correction.field!r} — corrections are additive but "
+                    "never ambiguous"
+                )
+            seen.add(correction.field)
+            if correction.field not in CORRECTABLE_DATE_FIELDS:
+                raise ValueError(
+                    f"source {self.id!r}: date correction names uncorrectable "
+                    f"field {correction.field!r} (correctable: "
+                    f"{sorted(CORRECTABLE_DATE_FIELDS)})"
+                )
+            if correction.recorded != self.recorded_date(correction.field):
+                raise ValueError(
+                    f"source {self.id!r}: date correction for "
+                    f"{correction.field!r} records {correction.recorded}, but "
+                    f"the row carries {self.recorded_date(correction.field)} — "
+                    "a correction names the recorded value it corrects "
+                    "(ADR-146), never invents one"
+                )
 
 
 def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
@@ -187,6 +271,39 @@ def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
     )
 
 
+def _date_corrections_from_row(source_id: str, row: dict[str, Any]) -> tuple[DateCorrection, ...]:
+    """Parse the optional ``date_corrections`` array (P34.22b / ADR-146).
+
+    Fail-closed: a malformed entry — wrong shape, a non-date value, a missing
+    evidence/adr field — raises rather than silently dropping a correction.
+    The ``recorded`` value's fidelity to the row is checked by
+    :class:`SourceRecord`'s own validation.
+    """
+    out: list[DateCorrection] = []
+    for i, entry in enumerate(row.get("date_corrections") or ()):
+        if not isinstance(entry, dict):
+            raise ValueError(f"source {source_id!r}: date_corrections[{i}] is not a table")
+        try:
+            field = str(entry["field"])
+            recorded = entry["recorded"]
+            true = entry["true"]
+            evidence = str(entry["evidence"])
+            adr = str(entry["adr"])
+        except KeyError as exc:
+            raise ValueError(
+                f"source {source_id!r}: date_corrections[{i}] lacks {exc} — "
+                "an entry is {field, recorded, true, evidence, adr}"
+            ) from exc
+        if not isinstance(recorded, date) or not isinstance(true, date):
+            raise ValueError(
+                f"source {source_id!r}: date_corrections[{i}] recorded/true must be TOML dates"
+            )
+        out.append(
+            DateCorrection(field=field, recorded=recorded, true=true, evidence=evidence, adr=adr)
+        )
+    return tuple(out)
+
+
 def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
     last_verified = row.get("last_verified")
     return SourceRecord(
@@ -214,6 +331,7 @@ def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
             reviewed_on if isinstance(reviewed_on := row.get("rights_reviewed_on"), date) else None
         ),
         review_packet=str(row.get("review_packet", "")),
+        date_corrections=_date_corrections_from_row(source_id, row),
     )
 
 

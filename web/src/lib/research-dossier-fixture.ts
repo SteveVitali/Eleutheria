@@ -11,6 +11,13 @@
  *   q11/q12 derived (the mechanical profile/chain answers).
  * Values and digests are fixture-shaped, not real claims — the e2e/unit surface
  * is identical in `fixtures` and `export` modes.
+ *
+ * P34.22b (B4 G1 R4): this fixture is a hand-authored STAND-IN — every
+ * assertion carries `capture_kind: "stand-in"` and NO `retrieved_date`
+ * (nothing was ever retrieved); `committed_at` carries this file's real
+ * authoring day instead. The `capture` block binds each document_id to the
+ * committed bytes it stands in for. `as_of`/`searched_at` are the authoring
+ * day, never a fabricated capture date.
  */
 
 import type { ResearchDossier, ResearchDossierPortfolio } from "./research-dossier";
@@ -18,6 +25,20 @@ import type { ResearchDossier, ResearchDossierPortfolio } from "./research-dossi
 const DIGEST_A = "a1".padEnd(64, "0");
 const DIGEST_B = "b2".padEnd(64, "0");
 const CAPTURE_OKC = "cap-okc-usage-2026";
+
+/**
+ * The stand-in's authoring day (the day these bytes were written into the
+ * committed fixture — `date -u` at authoring; the file's own git commit is
+ * the same day). The `commit` sha is intentionally absent: a fixture cannot
+ * name the commit that introduces it.
+ */
+const AUTHORED = "2026-10-04";
+
+const STAND_IN_FIXTURE = {
+  path: "web/src/lib/research-dossier-fixture.ts",
+  commit: null,
+  committed_at: AUTHORED,
+};
 
 export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
   schema: "sig.research-dossier/1",
@@ -29,7 +50,17 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
     jurisdiction: "Oklahoma City, Oklahoma",
     jurisdiction_slug: "oklahoma-city",
   },
-  as_of: { world: "2026-10-01", belief: "2026-10-01" },
+  as_of: { world: AUTHORED, belief: AUTHORED },
+  capture: {
+    kind: "stand-in",
+    live_verification: false,
+    anchor: AUTHORED,
+    fixtures: {
+      "okc-flock-amendment-2026": STAND_IN_FIXTURE,
+      "okc-flock-usage-2026": STAND_IN_FIXTURE,
+      "okc-council-memo-2026-08": STAND_IN_FIXTURE,
+    },
+  },
   source_families: ["dossier_admin", "dossier_contracts", "dossier_usage"],
   review_status: "not_run",
   review: { status: "not_run", reviewer_role: "independent semantic reviewer" },
@@ -54,7 +85,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "signature block" },
         },
         {
@@ -68,7 +100,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "signature block" },
         },
       ],
@@ -93,7 +126,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_usage",
           source_url: "https://fixture/okc-usage",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "device table" },
         },
       ],
@@ -118,7 +152,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_usage",
           source_url: "https://fixture/okc-usage",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "device table" },
           conflicting: true,
         },
@@ -132,7 +167,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: "cap-okc-memo-2026-08",
           source_id: "dossier_admin",
           source_url: "https://fixture/okc-memo",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "page 2" },
           conflicting: true,
         },
@@ -174,7 +210,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "payment schedule" },
         },
       ],
@@ -198,7 +235,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: "cap-okc-memo-2026-08",
           source_id: "dossier_admin",
           source_url: "https://fixture/okc-memo",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "preamble" },
         },
       ],
@@ -222,7 +260,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "clause 4" },
         },
       ],
@@ -261,7 +300,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           capture_digest: CAPTURE_OKC,
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
-          retrieved_date: "2026-10-01",
+          capture_kind: "stand-in",
+          committed_at: AUTHORED,
           locator: { locator: "recitals" },
         },
       ],
@@ -274,13 +314,13 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       state: "unknown",
       score: 1,
       summary:
-        "Unknown — SIG searched the council agenda index and the auditor's publication list on 2026-10-01 and found no oversight event record.",
+        `Unknown — SIG searched the council agenda index and the auditor's publication list on ${AUTHORED} and found no oversight event record.`,
       assertions: [],
       search_basis: {
         question: "q10",
         sought: "a council, audit, or oversight record for the deployment",
         sources_searched: ["dossier_admin", "dossier_policy"],
-        searched_at: "2026-10-01",
+        searched_at: AUTHORED,
         outcome: "searched_not_found",
         note: "recorded search; not a finding that no event occurred",
       },
@@ -327,7 +367,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       capture_digest: CAPTURE_OKC,
       locator: { locator: "signature block" },
       source_url: "https://fixture/okc-amendment",
-      retrieved_date: "2026-10-01",
+      capture_kind: "stand-in",
+      committed_at: AUTHORED,
       state: "rendered",
     },
     {
@@ -338,7 +379,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       capture_digest: CAPTURE_OKC,
       locator: { locator: "device table" },
       source_url: "https://fixture/okc-usage",
-      retrieved_date: "2026-10-01",
+      capture_kind: "stand-in",
+      committed_at: AUTHORED,
       state: "rendered",
     },
     {
@@ -349,7 +391,8 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       capture_digest: "cap-okc-memo-2026-08",
       locator: { locator: "page 2" },
       source_url: "https://fixture/okc-memo",
-      retrieved_date: "2026-10-01",
+      capture_kind: "stand-in",
+      committed_at: AUTHORED,
       state: "rendered",
     },
     {
@@ -369,7 +412,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       question: "q10",
       sought: "a council, audit, or oversight record for the deployment",
       sources_searched: ["dossier_admin", "dossier_policy"],
-      searched_at: "2026-10-01",
+      searched_at: AUTHORED,
       outcome: "searched_not_found",
       note: "recorded search",
     },
@@ -434,7 +477,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
     {
       question: "q10",
       title: "Accountability events and oversight",
-      detail: "searched_not_found — dossier_admin, dossier_policy (searched 2026-10-01)",
+      detail: `searched_not_found — dossier_admin, dossier_policy (searched ${AUTHORED})`,
     },
   ],
   release: { valid: true, violations: [] },
