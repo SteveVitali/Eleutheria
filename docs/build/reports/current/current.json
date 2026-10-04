@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "5abf0650e63076fdadb65dfcbc3bd4e43bfa0476",
+  "input_commit": "c7126103728410baddc91120f17d1a5b86be513e",
   "manifest_inputs": 958,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.27",
-    "lastCompleted": "P34.26",
+    "nextTicket": "P34.28",
+    "lastCompleted": "P34.27",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.26-adr-124-allow-dispositions",
+    "chainTip": "r11/P34.27-remaining-append-only-restorations",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-04T17:41Z"
+    "updatedAt": "2026-10-04T20:07Z"
   },
   "counts": {
     "obligations": 153,
@@ -15497,10 +15497,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "ddd9ba02f19112a71d56d44fafff482cede5d71a7b1e5c644c0ef65ba9112324",
+  "manifest_sha256": "7fbd632c6b1d9e22bd9d3f16a8042619de21698eea440cf072510f51274595d3",
   "current_md": {
     "lines": 74,
-    "bytes": 13346,
+    "bytes": 13354,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
