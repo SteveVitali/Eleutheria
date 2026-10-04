@@ -42,4 +42,6 @@ rather than fails when the model is unavailable, emitting no lowered-standard cl
 gold-accuracy floor below which it is demoted to human-only (SIG-LLM-006).
 """
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-parsing")

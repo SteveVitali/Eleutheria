@@ -18,4 +18,6 @@ spine (§32). This package makes negative space queryable rather than editorial:
   confidence, and the speculative label that keeps a long chain out of headlines.
 """
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-inference")

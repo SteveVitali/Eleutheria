@@ -69,6 +69,7 @@ ci-local: sync
 	echo "ci-local: build-memory history + trailer range $$range"; \
 	bash scripts/docs/check-build-memory.sh . --range "$$range" --json docs/build/logs/build-memory-history.json && \
 	python3 docs/build/tools/check_trailers.py --range "$$range" --json docs/build/logs/trailer-check.json && \
+	python3 docs/build/tools/changelog_gate.py --range "$$range" --json docs/build/logs/changelog-gate.json && \
 	{ base="$${range%%...*}"; \
 	  echo "ci-local: recorded-CI verifier over $$base"; \
 	  python3 docs/build/tools/verify_recorded_ci.py --diff-base "$$base" --json docs/build/logs/recorded-ci-verify.json; }

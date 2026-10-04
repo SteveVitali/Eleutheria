@@ -39,4 +39,6 @@ model-assisted extractions from the upstream ``parsing`` stage — logging ``mod
 queue writes to the graph; LLM output reaches only the queue (SIG-LLM-002).
 """
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-resolution")

@@ -200,8 +200,12 @@ def _supersession_record(candidate_dir: Path, publication_id: str) -> str | None
 #: its staged tree was tombstoned (4 record routes carried sig.tombstone/1
 #: bytes while the manifest pinned the record digests); P32.25 restored those
 #: bytes via this same deterministic rebuild, and exports.release now breaks
-#: hardlinks before tombstone writes (ADR-144).
-PRIOR_RELEASE_ID = "p-81f1986aac5cb18b29f2dae0458f74d8b639f6efc1a9de35abc38167b126d2dd"
+#: hardlinks before tombstone writes (ADR-144). P34.23 (ADR-195) re-pinned the
+#: id: the descriptor's renderer.version now reports the real package version
+#: (0.1.0, importlib.metadata) instead of the pre-REL-10 "0.0.0" placeholder,
+#: which deterministically recomputes the publication id — p-81f1… was the
+#: placeholder-version build, p-fd7b… the same corpus under the truthful one.
+PRIOR_RELEASE_ID = "p-fd7ba6a2940cbf1aa9f24c7234de2ad92189eabbdacdc8ae8f683b2f1585f477"
 PRIOR_RENDERER = "p32.24"
 PRIOR_ENTITY_WITHHOLD = "ent-acc-dep-41"  # corpus entity — deny target
 PRIOR_CLAIM_WITHHOLD = "cl-acc-denied-claim"  # corpus claim — denies its carriers
