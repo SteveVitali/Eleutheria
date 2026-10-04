@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "7129ba8af9ecf43962da5d138aebca95a6d8f0f3",
-  "manifest_inputs": 955,
+  "input_commit": "105046a857f1870948956be4db7245772de86497",
+  "manifest_inputs": 956,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.24b",
-    "lastCompleted": "P34.25",
+    "nextTicket": "P34.26",
+    "lastCompleted": "P34.24b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.25-api-honesty-code",
+    "chainTip": "r11/P34.24b-sqitch-l44-52-clone-rehearsal",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -26,14 +26,14 @@
     "updatedAt": "2026-10-04T06:04:21Z"
   },
   "counts": {
-    "obligations": 152,
-    "owed": 84,
-    "open": 81,
+    "obligations": 153,
+    "owed": 85,
+    "open": 82,
     "partial": 3,
     "terminal": 68,
-    "events": 626,
+    "events": 627,
     "transitions": 20,
-    "coverage_assessments": 195,
+    "coverage_assessments": 197,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -7236,6 +7236,52 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.24b-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.24b-1:e0",
+      "kind": "F",
+      "owner": "the sqitch fix row ahead of P34.46 (a new appended change)",
+      "landing": "before P34.46's schema deploy — its go/no-go cannot pass a tip that fails at intake_storage",
+      "backlog_home": "BL-084",
+      "item": "The Cloud SQL verify-role fix: `verify/intake_storage.sql:80` fails `SET LOCAL ROLE sig_intake_receiver` on the production-shaped clone — the Cloud SQL `sig` login is not a superuser and holds no membership in the deploy-created `NOLOGIN` role (the same `SET ROLE` mechanism appears in `verify/intake_application_bridge.sql` and `verify/recovery_apply.sql`, so the class repeats downstream). The fix is a NEW appended sqitch change after line 58 (grant the verify/deploy login the membership it needs, or another mechanism that row chooses) — C-10 keeps L44–52 byte-frozen, so the repair can never be an in-place edit",
+      "unblocked_by": "owner: the sqitch fix row ahead of P34.46 (a new appended change; P34.46's L1 re-rehearsal is the consumer); trigger: before P34.46's schema deploy — its go/no-go cannot pass a tip that fails at `intake_storage`",
+      "verify": "on a fresh `sig-pg-drill-l44-*` clone through `ops/gcp/restore-drill.sh --apply clone/rehearse/deleteclone`, `sqitch deploy --verify` to the plan tip exits 0 and `sqitch verify` exits 0; `record.json` shows all L44–52 + rework changes `ok` with per-change timings",
+      "proxy": "the failure cannot pass silently — it exits the deploy 2 and reverts (both rehearsal records pin the class and the measured prefix: max `ACCESS EXCLUSIVE` on `claim_evidence` 13.344 s observed / 13.844 s bound, temp delta ~272.9 MB, deploy-to-failure 86.5–109.0 s), so the fix row's re-rehearsal has a diff baseline",
+      "line": 1108,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.24b-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.24b-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.24b",
+          "owner": "the sqitch fix row ahead of P34.46 (a new appended change)",
+          "landing": "before P34.46's schema deploy — its go/no-go cannot pass a tip that fails at intake_storage",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/p34.24b-l44-52-rehearsal/REHEARSAL.md",
+            "docs/build/runs/P34.24b.md"
+          ],
+          "observed_at": "2026-10-04",
+          "source_commit": "1c1b1b831c3bcb38da20349e0c214821fab11e60",
+          "reason": "migration anchor appended by P34.24b (row 230) for the row it added — appended, never migrate; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; the rehearsal found verify/intake_storage.sql:80 SET LOCAL ROLE sig_intake_receiver fails on the Cloud SQL-shaped clone (sig is not a superuser, no membership) — fix = a new appended change, never an in-place edit (C-10)",
+          "anchor": {
+            "row_line": 1108,
+            "row_sha256": "e8c3e8c351e1ac83c69940a68138005b7e42fe0a9b9237050abfa8f0b8edc0ea",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-04"
+        }
+      ]
     }
   ],
   "coverage": {
@@ -12309,6 +12355,26 @@
         "assessment_id": "SIG-ENG-045:r11-2"
       },
       {
+        "requirement_id": "SIG-ENG-045",
+        "domain": "composed-db",
+        "verdict": "MET-ENGINEERED(D-P34.24b-1)",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.24b-sqitch-l44-52-clone-rehearsal @ 5bbfa2f05eb19663b7ca4a4c06194d7a73c7edbc",
+        "limitations": "composed-db stays met (the r11-2 round-trip evidence stands) — but the P34.24b clone rehearsal proved the tip does NOT verify on the Cloud SQL production shape: verify/intake_storage.sql:80 SET LOCAL ROLE sig_intake_receiver is denied (sig is no superuser, holds no membership; same SET ROLE class in intake_application_bridge/recovery_apply verifies, inference). Deploy exits 2, reverts cleanly; six tip changes never attempted. The engineered layer is met; the owed hosted leg is D-P34.24b-1 (a new appended verify-role fix before P34.46).",
+        "supersedes": "SIG-ENG-045:r11-2",
+        "assessment_id": "SIG-ENG-045:r11-3"
+      },
+      {
+        "requirement_id": "SIG-ENG-045",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.24b-sqitch-l44-52-clone-rehearsal @ 5bbfa2f05eb19663b7ca4a4c06194d7a73c7edbc",
+        "limitations": "first hosted-domain reading, from two PITR clones of sig-pg (2026-10-04): the plan tip does NOT deploy and verify on the production shape — deploy exits 2 at verify/intake_storage.sql:80 (SET LOCAL ROLE sig_intake_receiver denied; the sig login is no superuser and holds no membership in the deploy-created NOLOGIN role). Sqitch reverted cleanly both times and sqitch verify passes on the reverted head. Proven hosted: the clone lifecycle, claim_evidence ACCESS EXCLUSIVE 13.344s observed / 13.844s bound, temp delta +272.9MB, sig-pg read-only, L44-52 byte-identical. Unproven hosted: the deploy completing at all — owed as D-P34.24b-1.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-045:r11-4"
+      },
+      {
         "requirement_id": "SIG-ENG-046",
         "domain": "implementation",
         "verdict": "MISSING",
@@ -14355,6 +14421,11 @@
           "assessed_at": "2026-10-04"
         },
         {
+          "requirement": "SIG-ENG-045",
+          "verdict": "MET-ENGINEERED(D-P34.24b-1)",
+          "assessed_at": "2026-10-04"
+        },
+        {
           "requirement": "SIG-PUB-012",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
@@ -14417,6 +14488,11 @@
           "requirement": "SIG-ENG-024",
           "verdict": "AT-RISK-INTEGRATION",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-ENG-045",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-04"
         },
         {
           "requirement": "SIG-EPIS-009",
@@ -15266,10 +15342,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c086c7e375f8f2ab659c15350b47bc7e1ff8e48be884a3e591029436a8394890",
+  "manifest_sha256": "546c8de31c328696091f7159a989870d10b72ef4033cc358efe9015d8650e1dc",
   "current_md": {
     "lines": 74,
-    "bytes": 13157,
+    "bytes": 13259,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

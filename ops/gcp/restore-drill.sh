@@ -41,13 +41,23 @@
 #   smoke         local `sig-api serve --dsn <clone>` over the proxy:
 #                 /health 200 + one /v1/coverage/<scope> call; merged into
 #                 record.json
+#   rehearse      P34.24b (S5-3): the L44-52 deploy rehearsal ON THE CLONE —
+#                 source pg_stat_database pre-snapshot (sig-pg read-only) ->
+#                 clone sqitch.changes head + pre-snapshot (the hosted-head
+#                 read) -> pg_locks/index sampler -> pinned sqitch deploy
+#                 --verify to the plan tip with lock_timeout=1200000ms ->
+#                 sqitch verify -> post-snapshots -> sig.sqitch-rehearsal/1
+#                 record.json. Never an argument that can name sig-pg.
 #   deleteclone NAME   the name-checked delete — refuses sig-pg outright and
-#                 any name not matching sig-pg-drill(-b)?-<YYYYmmddtHHMMz>
+#                 any name not matching sig-pg-drill(-b|-l44)?-<YYYYmmddtHHMMz>
 #   fullrestore   leg 3 (queued): create an empty sig-pg-drill-b-<STAMP> and
 #                 `gcloud sql backups restore` the newest AUTOMATED backup into
 #                 it. Requires --go "<verbatim in-ticket go or GATE listing>".
 #   all           prestate -> clone -> counts -> smoke -> deleteclone ->
-#                 post-state -> --verify
+#                 post-state -> --verify   (`rehearse` — P34.24b's deploy
+#                 measurement — is a separate action run between `counts`
+#                 and `deleteclone`, never part of `all`: the parity drill
+#                 and the deploy rehearsal are different contracts)
 #
 # Env:
 #   SIG_GCP_PROJECT        required for apply/live-verify (lib.sh require_project)
@@ -68,7 +78,9 @@
 #   --go "<verbatim go>"   required on `fullrestore` (leg 3 is not on the S5-3
 #                          list) and refused without it
 #   --clone-name NAME      continue an existing drill instance (counts/smoke/
-#                          deleteclone)
+#                          deleteclone); on `clone` it names the new instance
+#                          — still name-checked (P34.24b's
+#                          sig-pg-drill-l44-<stamp>)
 #   --at T                 override the restore point (ISO-8601; counts)
 #
 # Cleanup/rollback: the drill instance is always disposable — `deleteclone`
@@ -104,7 +116,7 @@ case "${1:-}" in
   --check|--dry-run) MODE="check"; shift ;;
   -h|--help) _usage 0 ;;
   "") MODE="check" ;;
-  prestate|clone|counts|smoke|deleteclone|fullrestore|all) MODE="check" ;;
+  prestate|clone|counts|smoke|rehearse|deleteclone|fullrestore|all) MODE="check" ;;
   *) echo "restore-drill.sh: unknown mode '$1'" >&2; _usage 64 ;;
 esac
 
@@ -130,7 +142,7 @@ while [ $# -gt 0 ]; do
       [ $# -ge 2 ] || { echo "restore-drill.sh: --at needs an ISO-8601 instant" >&2; exit 64; }
       AT="$2"; shift 2 ;;
     --at=*) AT="${1#--at=}"; shift ;;
-    prestate|clone|counts|smoke|deleteclone|fullrestore|all)
+    prestate|clone|counts|smoke|rehearse|deleteclone|fullrestore|all)
       [ "$ACTION" = "all" ] || { echo "restore-drill.sh: only one ACTION" >&2; exit 64; }
       ACTION="$1"; shift ;;
     sig-pg*|*)
@@ -155,6 +167,24 @@ _derive_names() {
 _sha256() {
   if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | awk '{print $1}';
   else shasum -a 256 "$1" | awk '{print $1}'; fi
+}
+
+# The repo-pinned sqitch image (same digest as materialize.sh and
+# scripts/ci/sqitch_roundtrip.sh — a mutable tag fails test_sqitch_hygiene).
+SQITCH_IMAGE="sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3"
+
+_stamp_lines() {
+  # Prefix every stdin line with the UTC instant it arrived — the deploy
+  # log's per-change timing surface. Millisecond stamps via python (BSD
+  # date has no %3N); unbuffered so the stamp matches the arrival, not the
+  # flush.
+  python3 -u -c '
+import sys, datetime
+for line in sys.stdin:
+    ts = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    sys.stdout.write(ts + "\t" + line)
+    sys.stdout.flush()
+'
 }
 
 _iso_now() {
@@ -473,11 +503,34 @@ PLAN:   merge {api_smoke:{health,coverage}} into record.json; kill the server
 EOF
 }
 
+plan_rehearse() {
+  cat <<EOF
+PLAN: P34.24b rehearsal ON THE CLONE ONLY (S5-3; sig-pg is read-only):
+PLAN:   name check (assert_drill_name) -> window guard (03:00-10:00Z,
+PLAN:     sig-materialize) -> proxies: sig-pg :<base> (read-only counters),
+PLAN:     the clone :<base+1>
+PLAN:   source pg_stat_database pre-snapshot + operations list (AC4)
+PLAN:   clone sqitch.changes head + sizes/counters pre-snapshot — the
+PLAN:     hosted-head read (deliverable 2 / P34.24a's deferred leg)
+PLAN:   uv run python -m ops sqitch-rehearsal sample (pg_locks ACCESS
+PLAN:     EXCLUSIVE + pg_stat_progress_create_index @ <ms>, JSONL)
+PLAN:   docker run --rm $SQITCH_IMAGE deploy --verify
+PLAN:     db:pg://sig@host.docker.internal:<base+1>/<db>
+PLAN:     with PGOPTIONS=-c lock_timeout=1200000 (the FEA-07 ceiling);
+PLAN:     db/ mounted :ro (C-10 — the plan is read, never written)
+PLAN:   sqitch verify (second pass) -> clone post-snapshot -> source
+PLAN:     post-snapshot + operations list -> plan-hashes vs <base-ref>
+PLAN:   -> sig.sqitch-rehearsal/1 record.json in the drill evidence dir
+PLAN:   stop rule: a deploy/verify failure is still recorded; the clone
+PLAN:     is deleted by --apply deleteclone <name> either way (OM-18)
+EOF
+}
+
 plan_deleteclone() {
   cat <<EOF
 PLAN: name-checked delete (the cleanup the whole drill is judged by):
 PLAN:   assert_drill_name(<name>) — refuses $SIG_SQL_INSTANCE outright and any
-PLAN:     name outside sig-pg-drill(-b)?-<YYYYmmddtHHMMz> (exit 42)
+PLAN:     name outside sig-pg-drill(-b|-l44)?-<YYYYmmddtHHMMz> (exit 42)
 PLAN:   gcloud sql instances delete <name> --quiet ; poll gone
 PLAN:   post-state: gcloud sql instances list — no sig-pg-drill-* remains
 EOF
@@ -546,7 +599,10 @@ act_clone() {
 
   local stamp name existing
   stamp="$(date -u +%Y%m%dt%H%Mz)"
-  name="sig-pg-drill-${stamp}"
+  # --clone-name names a new clone too (P34.24b's sig-pg-drill-l44-<stamp>) —
+  # the name check below keeps the producer shapes the only creatable names.
+  name="${CLONE_NAME:-sig-pg-drill-${stamp}}"
+  _name_check "$name"
   existing="$(_newest_drill_instance)"
   if [ -n "$existing" ]; then
     if [ "$existing" = "$name" ]; then
@@ -697,6 +753,149 @@ PY
   fi
   [ "$cov" = "200" ] || {
     echo "restore-drill.sh: clone api /v1/coverage/national not 200 ($cov)" >&2; exit 5; }
+}
+
+act_rehearse() {
+  # P34.24b: the L44-52 deploy rehearsal ON THE CLONE. The only mutation is
+  # the clone-side `sqitch deploy`; sig-pg is read for the no-write evidence
+  # (pg_stat_database + the operations list) and never otherwise.
+  _drill_dir_load
+  [ -n "$_DRILL_NAME" ] || _DRILL_NAME="${CLONE_NAME:-$(_newest_drill_instance)}"
+  [ -n "$_DRILL_NAME" ] || {
+    echo "restore-drill.sh: no drill instance — pass --clone-name or run clone first" >&2; exit 66; }
+  _name_check "$_DRILL_NAME"   # the deploy's target can only ever be a drill instance
+  assert_window                # the deploy mutates the clone — band + materialize guard
+  [ -n "$_DRILL_DIR" ] || { _drill_dir_init; _drill_dir_save; }
+  _load_password
+
+  local base="${SIG_DRILL_PROXY_PORT:-5441}" cport rdir sampler rc vrc t0 t1 v0 v1 bref
+  cport=$((base + 1))
+  _proxy_start "$SIG_SQL_INSTANCE" "$base"     # sig-pg — read-only counters only
+  _proxy_start "$_DRILL_NAME" "$cport"
+
+  rdir="$_DRILL_DIR/rehearsal"; mkdir -p "$rdir"
+
+  echo "rehearse: source pg_stat_database pre-snapshot (sig-pg, read-only)"
+  (export SIG_REHEARSAL_DSN="$(_dsn "$base")"; cd "$REPO_ROOT" \
+    && uv run python -m ops sqitch-rehearsal snapshot \
+       --instance "$_DRILL_NAME" --out "$rdir/source-pre.json")
+  _read sql operations list --instance "$SIG_SQL_INSTANCE" \
+    --project "$SIG_GCP_PROJECT" --limit=10 --format=json \
+    > "$rdir/operations-before.json"
+
+  export SIG_REHEARSAL_DSN="$(_dsn "$cport")"
+  echo "rehearse: clone head + pre-snapshot — the hosted-head read ($_DRILL_NAME)"
+  (cd "$REPO_ROOT" && uv run python -m ops sqitch-rehearsal snapshot \
+    --instance "$_DRILL_NAME" --out "$rdir/head.json")
+
+  : > "$rdir/samples.jsonl"; rm -f "$rdir/.stop"
+  (cd "$REPO_ROOT" && uv run python -m ops sqitch-rehearsal sample \
+    --instance "$_DRILL_NAME" --out "$rdir/samples.jsonl" \
+    --stop-file "$rdir/.stop" --interval-ms "${SIG_REHEARSAL_SAMPLE_MS:-250}") &
+  sampler=$!
+  _proxy_pids+=("$sampler")
+
+  t0="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "rehearse: sqitch deploy --verify to the plan tip (lock_timeout=1200000ms, db/ read-only)"
+  set +e
+  SQITCH_PASSWORD="$SIG_PG_PASSWORD" \
+    docker run --rm -e SQITCH_PASSWORD -e "PGOPTIONS=-c lock_timeout=1200000" \
+    -v "$REPO_ROOT/db:/repo:ro" -w /repo \
+    "$SQITCH_IMAGE" deploy --verify \
+    "db:pg://sig@host.docker.internal:$cport/${SIG_PG_DB_NAME:-sig}" \
+    2>&1 | _stamp_lines | tee "$rdir/deploy.stamped.log"
+  rc=${PIPESTATUS[0]}
+  set -e
+  t1="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  touch "$rdir/.stop"; wait "$sampler" 2>/dev/null || true
+  echo "rehearse: deploy exit=$rc ($t0 -> $t1)"
+
+  v0="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  set +e
+  SQITCH_PASSWORD="$SIG_PG_PASSWORD" \
+    docker run --rm -e SQITCH_PASSWORD \
+    -v "$REPO_ROOT/db:/repo:ro" -w /repo \
+    "$SQITCH_IMAGE" verify \
+    "db:pg://sig@host.docker.internal:$cport/${SIG_PG_DB_NAME:-sig}" \
+    > "$rdir/verify.log" 2>&1
+  vrc=$?
+  set -e
+  v1="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "rehearse: sqitch verify exit=$vrc"
+
+  (cd "$REPO_ROOT" && uv run python -m ops sqitch-rehearsal snapshot \
+    --instance "$_DRILL_NAME" --out "$rdir/post.json")
+  echo "rehearse: source pg_stat_database post-snapshot (sig-pg, read-only)"
+  (export SIG_REHEARSAL_DSN="$(_dsn "$base")"; cd "$REPO_ROOT" \
+    && uv run python -m ops sqitch-rehearsal snapshot \
+      --instance "$_DRILL_NAME" --out "$rdir/source-post.json")
+  _read sql operations list --instance "$SIG_SQL_INSTANCE" \
+    --project "$SIG_GCP_PROJECT" --limit=10 --format=json \
+    > "$rdir/operations-after.json"
+
+  # C-10: the plan + its L44-52 sha256 vs the base ref — recorded, never touched.
+  bref="${SIG_REHEARSAL_BASE_REF:-HEAD}"
+  git -C "$REPO_ROOT" show "$bref:db/sqitch.plan" > "$rdir/base.plan" 2>/dev/null || {
+    echo "restore-drill.sh: cannot read $bref:db/sqitch.plan — base ref?" >&2; exit 4; }
+  (cd "$REPO_ROOT" && uv run python -m ops sqitch-rehearsal plan-hashes \
+    --plan db/sqitch.plan --base-plan "$rdir/base.plan" --out "$rdir/plan-hashes.json")
+
+  REH_DIR="$rdir" REH_RC="$rc" REH_T0="$t0" REH_T1="$t1" \
+  REH_V0="$v0" REH_V1="$v1" REH_VRC="$vrc" \
+  REH_NAME="$_DRILL_NAME" REH_T="${_DRILL_T:-}" REH_STARTED="${_DRILL_STARTED:-}" \
+  REH_BASE_REF="$bref" REH_MS="${SIG_REHEARSAL_SAMPLE_MS:-250}" \
+  REH_COMMIT="$(git -C "$REPO_ROOT" rev-parse HEAD)" \
+  python3 - <<'PY'
+import json, os
+d = os.environ["REH_DIR"]
+def load(p):
+    try:
+        return json.load(open(p))
+    except Exception:
+        return None
+def db_stats(p):
+    return (load(p) or {}).get("db_stats") or {}
+source = {
+    "before": db_stats(f"{d}/source-pre.json"),
+    "after": db_stats(f"{d}/source-post.json"),
+    "operations_before": load(f"{d}/operations-before.json"),
+    "operations_after": load(f"{d}/operations-after.json"),
+}
+json.dump(source, open(f"{d}/source.json", "w"), indent=2, sort_keys=True)
+json.dump(
+    {"exit": int(os.environ["REH_VRC"]),
+     "started_at": os.environ["REH_V0"], "ended_at": os.environ["REH_V1"]},
+    open(f"{d}/verify.json", "w"), indent=2, sort_keys=True)
+meta = {
+    "clone_instance": os.environ["REH_NAME"],
+    "clone_point_in_time": os.environ["REH_T"] or None,
+    "clone_started_at": os.environ["REH_STARTED"] or None,
+    "chain_tip_commit": os.environ["REH_COMMIT"],
+    "plan": load(f"{d}/plan-hashes.json"),
+    "deploy": {"exit": int(os.environ["REH_RC"]),
+               "started_at": os.environ["REH_T0"],
+               "ended_at": os.environ["REH_T1"]},
+    "sample_interval_s": float(os.environ["REH_MS"]) / 1000.0,
+    "cost_note": "≈ $0.15–0.40 (inference — one db-custom-1-3840 clone for the "
+                 "rehearsal duration; the contract's G2 step-1 estimate)",
+    "source_no_write_instance": "sig-pg",
+}
+json.dump(meta, open(f"{d}/meta.json", "w"), indent=2, sort_keys=True)
+print("rehearse: meta/verify/source assembled")
+PY
+
+  (cd "$REPO_ROOT" && uv run python -m ops sqitch-rehearsal record \
+    --meta "$rdir/meta.json" --pre "$rdir/head.json" --post "$rdir/post.json" \
+    --samples "$rdir/samples.jsonl" --deploy-log "$rdir/deploy.stamped.log" \
+    --verify "$rdir/verify.json" --source "$rdir/source.json" \
+    --out "$rdir/record.json")
+  echo "rehearse: record -> $rdir/record.json (deploy exit $rc, verify exit $vrc)"
+  if [ "$rc" != "0" ] || [ "$vrc" != "0" ]; then
+    echo "restore-drill.sh: the rehearsal recorded a deploy/verify failure —" >&2
+    echo "  the measurement stands; delete the clone and set blockedOn (OM-18):" >&2
+    echo "  restore-drill.sh --apply deleteclone $_DRILL_NAME" >&2
+    exit 5
+  fi
 }
 
 act_deleteclone() {
@@ -870,6 +1069,7 @@ case "$MODE" in
       clone)        plan_clone ;;
       counts)       plan_counts ;;
       smoke)        plan_smoke ;;
+      rehearse)     plan_rehearse ;;
       deleteclone)  plan_deleteclone ;;
       fullrestore)  plan_fullrestore ;;
       all)
@@ -897,6 +1097,7 @@ case "$MODE" in
       clone)        act_clone ;;
       counts)       act_counts ;;
       smoke)        act_smoke ;;
+      rehearse)     act_rehearse ;;
       deleteclone)  assert_window  # cleanup is still a mutation — gated like clone
                     act_deleteclone ;;
       fullrestore)  act_fullrestore ;;

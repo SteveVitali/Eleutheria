@@ -2,6 +2,8 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-ONTO-057 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-ONTO-057a | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-060 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-064 | public | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-065 | public | PARTIAL | 2026-10-01 | — |
