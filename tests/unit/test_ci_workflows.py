@@ -255,6 +255,19 @@ def test_ci_docs_job_runs_the_om01_trailer_check_on_every_event() -> None:
     assert (REPO_ROOT / "docs/build/tools/check_trailers.py").is_file()
 
 
+def test_ci_docs_job_runs_the_g4c_signed_gate_check_on_every_event() -> None:
+    """G4c (P34.28; SIG-SEC-010; OP-25): the signed-gate origin check judges the same
+    range as the trailer check — the PR range on pull_request, the push's commits on
+    push — and its failures are never downgraded (`!cancelled()`, no continue-on-error)."""
+    step = _docs_step("check_gate_signatures.py")
+    assert "check_gate_signatures.py --range" in step["run"]
+    assert step["if"] == "${{ !cancelled() }}" and not step.get("continue-on-error")
+    assert "github.event.pull_request.base.sha" in step["run"]
+    assert "github.event.before" in step["run"]
+    assert "git rev-parse HEAD^" in step["run"]
+    assert (REPO_ROOT / "docs/build/tools/check_gate_signatures.py").is_file()
+
+
 def test_make_docs_check_runs_the_round11_checkers() -> None:
     """B4 G7 item 1: the memory guard, spec-source and coverage-matrix checkers are part of
     `make docs-check` (which the docs job runs)."""
@@ -640,6 +653,7 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
                     t in line
                     for t in (
                         "check_trailers.py",
+                        "check_gate_signatures.py",
                         "check-build-memory.sh",
                         "verify_recorded_ci.py",
                         "npm_audit_gate.sh",
@@ -656,6 +670,7 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
                         t
                         for t in (
                             "check_trailers.py",
+                            "check_gate_signatures.py",
                             "check-build-memory.sh",
                             "verify_recorded_ci.py",
                             "npm_audit_gate.sh",

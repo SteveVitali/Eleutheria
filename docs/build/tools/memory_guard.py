@@ -1173,9 +1173,12 @@ class Judge:
         if path == DEFERRALS_REL:
             return "deferrals"
         if path.startswith("docs/build/readouts/"):
+            # any `*_TEMPLATE.md` basename is a template, not a readout (P34.28 generalised the
+            # bare `_TEMPLATE.md` exemption so `_GATE_TEMPLATE.md` / `_HUMAN_TEMPLATE.md` are
+            # templates too — a template is never judged as a live readout)
             return (
                 ""
-                if path.endswith("/_TEMPLATE.md")
+                if fnmatch.fnmatchcase(path.split("/")[-1], "*_TEMPLATE.md")
                 else ("readout" if path.endswith(".md") else "")
             )
         if path == INDEX_REL:
@@ -2015,13 +2018,30 @@ class Judge:
                     commit,
                 )
             elif not has_guard_head:
-                self.r.w(
+                # P34.28 (G4b, contract AC): the grandfather clause is retired at the M4 boundary
+                # — B4 §5 G4b-1 grandfathers a readout only *until* its `## Readout history
+                # (restored …)` section lands, and P34.27 appended the sentence to every such
+                # file. A restored readout missing the sentence is a violation; a genuinely
+                # pre-restoration readout (replayed history) still warns, as its record stood.
+                has_history = "Readout history (restored" in head_text or (
+                    "Readout history (restored" in base_text
+                )
+                (self.r.v if has_history else self.r.w)(
                     "readouts",
                     "G4b-guard",
                     path,
                     0,
-                    "a grandfathered readout lacks the guard sentence; it is added with its restored history "
-                    "(M4) (BM-INDEX-03)",
+                    "a readout lacks the guard sentence: 'An operator or authorized human record "
+                    "supplies the decision; an agent must not sign or assume silence is approval.' "
+                    + (
+                        "— its `## Readout history` is present, so the forward rule binds it "
+                        "permanently (P34.27 appended the sentence to every restored readout; "
+                        "BM-INDEX-03)"
+                        if has_history
+                        else "— it predates the convention (grandfathered pre-restoration; "
+                        "the sentence is appended, never retrofitted) (BM-INDEX-03)"
+                    ),
+                    commit,
                 )
             signing = (
                 new_status.split()[0].upper().rstrip(".,;") in READOUT_STATUSES
@@ -2091,15 +2111,69 @@ class Judge:
                 "(BM-INDEX-03)",
                 commit,
             )
-        gd_quotes, conf_quotes = gate_decision_quotes(self.c.at_head(LEDGER_REL) or "")
-        for q in decision_quotes:
-            if qnorm(q) not in gd_quotes:
+        ledger = self.c.at_head(LEDGER_REL) or ""
+        gd_quotes, conf_quotes = gate_decision_quotes(ledger)
+        # the signature names the record it repeats: `GATE DECISIONS row: …` must resolve to
+        # exactly one GATE DECISIONS row and the decision quote equals THAT row's answer — not
+        # merely any answer recorded anywhere in the region (ADR-147 rule 1: the readout's
+        # decision line is the operator's recorded quote verbatim; SIG-MEM-008)
+        refs = [
+            t
+            for hl, _, t in recs.added
+            if hl not in in_block and re.match(r"^\s*GATE DECISIONS row:", t)
+        ]
+        row_answers: set[str] | None = None
+        if decision_quotes:
+            if not refs:
                 self.r.v(
                     "readouts",
                     "G4b-verbatim",
                     path,
                     0,
-                    f'the operator decision "{q[:60]}" does not equal any GATE DECISIONS answer (DRAFT-MEM-5)',
+                    "the signature does not append a `GATE DECISIONS row: …` line naming the row "
+                    "it repeats — the readout's decision line is that row's answer (ADR-147 "
+                    "rule 1, SIG-MEM-008)",
+                    commit,
+                )
+            elif len(refs) > 1:
+                self.r.v(
+                    "readouts",
+                    "G4b-verbatim",
+                    path,
+                    0,
+                    f"the signature appends {len(refs)} `GATE DECISIONS row:` lines — the "
+                    "decision names exactly one row (ADR-147 rule 1, SIG-MEM-008)",
+                    commit,
+                )
+            else:
+                row = resolve_gd_row(refs[0], ledger)
+                if row is None:
+                    self.r.v(
+                        "readouts",
+                        "G4b-verbatim",
+                        path,
+                        0,
+                        f"`{refs[0].strip()[:70]}` names no unique GATE DECISIONS row at HEAD — "
+                        "the signature's record must resolve to exactly one row (SIG-MEM-008)",
+                        commit,
+                    )
+                else:
+                    row_answers = {qnorm(x) for x in quotes(row)}
+        for q in decision_quotes:
+            pool = row_answers if row_answers is not None else gd_quotes
+            if qnorm(q) not in pool:
+                self.r.v(
+                    "readouts",
+                    "G4b-verbatim",
+                    path,
+                    0,
+                    f'the operator decision "{q[:60]}" does not equal '
+                    + (
+                        "the named GATE DECISIONS row's answer"
+                        if row_answers is not None
+                        else "any GATE DECISIONS answer"
+                    )
+                    + " (DRAFT-MEM-5)",
                     commit,
                 )
             for rx in DELEGATION_RES:
@@ -3469,6 +3543,23 @@ def gate_decision_quotes(ledger: str) -> tuple[set[str], set[str]]:
                 if len(c) > kc and strip_markup(c[kc]).strip().lower() == "confirmation":
                     conf.update(qnorm(q) for q in quotes(row))
     return allq, conf
+
+
+def resolve_gd_row(ref: str, ledger: str) -> str | None:
+    """Resolve a signature-block `GATE DECISIONS row: …` line to a row: every `|`/whitespace
+    token of the ref must appear in the row's text on a token boundary; returns the row text
+    iff exactly one GATE DECISIONS row matches (else None — no row or an ambiguous name)."""
+    tokens = [t for t in re.split(r"[|\s]+", ref.split(":", 1)[-1]) if t]
+    if not tokens:
+        return None
+    hits: list[str] = []
+    for t in gd_tables(ledger.split("\n")):
+        for _, row in t.rows:
+            if all(
+                re.search(r"(?<![\w-])" + re.escape(tok) + r"(?![\w-])", row) for tok in tokens
+            ):
+                hits.append(row)
+    return hits[0] if len(hits) == 1 else None
 
 
 def date_correction_rows(csv_text: str | None) -> set[int]:

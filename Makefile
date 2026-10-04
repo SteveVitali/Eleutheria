@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -78,6 +78,7 @@ ci-local: sync
 	echo "ci-local: build-memory history + trailer range $$range"; \
 	bash scripts/docs/check-build-memory.sh . --range "$$range" --json docs/build/logs/build-memory-history.json && \
 	python3 docs/build/tools/check_trailers.py --range "$$range" --json docs/build/logs/trailer-check.json && \
+	python3 docs/build/tools/check_gate_signatures.py --range "$$range" --json docs/build/logs/gate-signature-check.json && \
 	python3 docs/build/tools/changelog_gate.py --range "$$range" --json docs/build/logs/changelog-gate.json && \
 	{ base="$${range%%...*}"; \
 	  echo "ci-local: recorded-CI verifier over $$base"; \
@@ -235,6 +236,19 @@ ifeq ($(strip $(CHANGE_RANGE)),)
 	@echo "docs-check-trailers: set CHANGE_RANGE=<base>...<head> (the commits to judge)" >&2; exit 2
 else
 	python3 docs/build/tools/check_trailers.py --range $(CHANGE_RANGE) --json docs/build/logs/trailer-check.json
+endif
+
+## G4c signed-gate origin check (P34.28; SIG-SEC-010; OP-25; ADR-147): every
+## gate-affecting record of CHANGE_RANGE — a signed-status `Status:` move, a
+## GATE DECISIONS decision/waiver/pre-authorization row, an
+## `ingestion_permitted` false→true flip — is covered by an operator-signed
+## commit or record, verified against `allowed_signers` at the base (fail-closed
+## while the OP-25 key is outstanding — D-P34.28-1). Needs CHANGE_RANGE.
+docs-check-gate-signatures:
+ifeq ($(strip $(CHANGE_RANGE)),)
+	@echo "docs-check-gate-signatures: set CHANGE_RANGE=<base>...<head> (the commits to judge)" >&2; exit 2
+else
+	python3 docs/build/tools/check_gate_signatures.py --range $(CHANGE_RANGE) --json docs/build/logs/gate-signature-check.json
 endif
 
 ## The CI.1 / GL-CI-01 scanning gates (ADR-078) — the same commands CI runs.

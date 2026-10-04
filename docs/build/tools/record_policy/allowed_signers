@@ -1,0 +1,21 @@
+# allowed_signers — the operator-only gate-signing keys (OP-25; SIG-SEC-010; A-16 "Key +
+# forward rule (Recommended)", GATE-P round 6, 2026-10-01T04:16:29Z; ADR-147 decision 6;
+# committed header-only by P34.28 on 2026-10-04).
+#
+# Format: OpenSSH `allowedSignersFile` — one `principals key-type base64-key [comment]` line
+# per key (`ssh-keygen` / `gpg.ssh.allowedSignersFile`). `#` lines are comments.
+#
+# Who writes here: the operator alone. The operator creates the key (passphrase- or
+# hardware-backed, never loaded into an agent-reachable agent) and supplies the *public* half
+# verbatim; an agent never generates, holds or loads it (OP-25 — the P34.28 wiring is
+# engineered, the key itself is operator work). The PR that adds a key line records the
+# operator's words quoting the fingerprint.
+#
+# Who reads here: `check_trailers.py` (OM-01 operator-signed commits) and
+# `check_gate_signatures.py` (G4c — readout Status moves into a signed status, GATE DECISIONS
+# decision/waiver/pre-authorization rows, `ingestion_permitted` false→true flips) — both read
+# the file AS IT IS AT THE RANGE BASE, so a change can never authorise its own signer.
+#
+# As of 2026-10-04 no key line is present: the file is intentionally header-only and every
+# gate-affecting record fails closed until the operator's key lands — DEFERRALS D-P34.28-1,
+# due before GATE-G4 (its packet lists OP-25 as outstanding).

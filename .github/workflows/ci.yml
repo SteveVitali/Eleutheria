@@ -125,6 +125,27 @@ jobs:
           fi
           python3 docs/build/tools/check_trailers.py --range "$base...$head" --json docs/build/logs/trailer-check.json
 
+      # G4c (P34.28; SIG-SEC-010; OP-25; ADR-147 decision 6; A-16 "Key + forward
+      # rule"): every gate-affecting record this change adds — a readout
+      # `Status:` moving to a signed status (HG-gate signature / Class-S go), a
+      # GATE DECISIONS decision|waiver|pre-authorization row, an
+      # `ingestion_permitted` false→true flip — must be covered by an
+      # operator-signed commit (or, for a flip, an operator-signed GATE
+      # DECISIONS row naming the source), verified against `allowed_signers`
+      # read AT THE BASE so a change cannot authorise its own signer. While the
+      # file is header-only — the OP-25 key outstanding — any such record is
+      # red (fail-closed; D-P34.28-1). Same range as the trailer check;
+      # exits 1/3/5 are all red.
+      - name: Signed-gate origin check (G4c, OP-25)
+        if: ${{ !cancelled() }}
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          python3 docs/build/tools/check_gate_signatures.py --range "$base...$head" --json docs/build/logs/gate-signature-check.json
+
       # SIG-REL-014 (P34.23, G3 §9.4): a public-behaviour change cannot merge
       # without a CHANGELOG entry — a PR touching the §9.4 path set
       # (web/src/pages|layouts, api routes/app/models, exports
