@@ -26,25 +26,8 @@ SELECT 1 / (CASE WHEN NOT EXISTS (
                         WHERE x.run_key = r.run_key)
   ) THEN 1 ELSE 0 END);
 
--- One watermark row per facet THIS change installs — the 27 named facets,
--- never a global count (D-P32.10a-1, ADR-196: a verify asserts what its own
--- change installed; a later change legitimately adds its own facet —
--- publication_dispositions adds 'publication_disposition', the 28th row).
-WITH expected(facet) AS (VALUES
-  ('claim'), ('claim_evidence'), ('claim_qualifier'), ('evidence_capture'),
-  ('evidence_artifact'), ('evidence_blob'), ('extraction'), ('ingest_run'),
-  ('ingest_run_capture'), ('ingest_run_completion'), ('rights_record'),
-  ('rights_decision'), ('source_registry'), ('entity'), ('entity_identifier'),
-  ('organization'), ('organization_relation'), ('relationship'),
-  ('resolution'), ('contradiction'), ('coverage_record'), ('research_task'),
-  ('review_item'), ('review_decision'), ('camera_site_run'),
-  ('camera_site_match'), ('camera_site_execution')
-)
-SELECT 1 / (CASE WHEN NOT EXISTS (
-    SELECT 1 FROM expected e
-     WHERE NOT EXISTS (SELECT 1 FROM spine_watermark w WHERE w.facet = e.facet)
-  ) THEN 1 ELSE 0 END);
--- The seeded counts agree with the real tables for a checked facet.
+-- One watermark row per watched facet; counts agree with the real tables.
+SELECT 1 / (CASE WHEN (SELECT count(*) FROM spine_watermark) = 27 THEN 1 ELSE 0 END);
 SELECT 1 / (CASE WHEN (SELECT row_count FROM spine_watermark WHERE facet = 'claim')
                     = (SELECT count(*) FROM claim) THEN 1 ELSE 0 END);
 SELECT 1 / (CASE WHEN (SELECT closed_count FROM spine_watermark WHERE facet = 'claim')

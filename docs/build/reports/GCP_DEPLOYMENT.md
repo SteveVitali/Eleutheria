@@ -65,7 +65,8 @@ gcloud sql databases create sig --instance=sig-pg --project "$SIG_GCP_PROJECT"
 ```bash
 cloud-sql-proxy --port 5433 "$SIG_GCP_PROJECT:us-central1:sig-pg" &   # ADC-authed
 # sqitch deploy (20 base changes + read_surface_grants) — sig owns the objects:
-docker run --rm -e PGPASSWORD="$PGPW" -v "$PWD/db:/repo:ro" -w /repo sqitch/sqitch:latest \
+docker run --rm -e PGPASSWORD="$PGPW" -v "$PWD/db:/repo:ro" -w /repo \
+  sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3 \
   deploy "db:pg://sig@host.docker.internal:5433/sig?sslmode=disable"
 # Grant the access_control group roles to the sig LOGIN role (deployment-specific;
 # the sig user is NOT a superuser on Cloud SQL, so RLS + grants apply):

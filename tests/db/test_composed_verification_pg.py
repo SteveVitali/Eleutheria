@@ -40,7 +40,11 @@ from ops import composed_verify as cv
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DB_DIR = REPO_ROOT / "db"
-SQITCH_IMAGE = "sqitch/sqitch:latest"
+# P34.24a / ADR-196: digest-pinned (the mutable `latest` tag's resolution at
+# writing — App::Sqitch v1.6.1); a mutable tag fails the hygiene guard.
+SQITCH_IMAGE = (
+    "sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3"
+)
 SCRATCH_DB = "sig_p332_composed"
 
 
@@ -75,11 +79,13 @@ def proof_out(sig_database: dict[str, object], tmp_path_factory: pytest.TempPath
 
     admin = psycopg.connect(_dsn(sig_database), autocommit=True)
     admin.execute(f"DROP DATABASE IF EXISTS {SCRATCH_DB}")
-    admin.execute(f"CREATE DATABASE {SCRATCH_DB}")
+    # ADR-196: template0 — the plan owns every extension it creates here.
+    admin.execute(f"CREATE DATABASE {SCRATCH_DB} TEMPLATE template0")
     docker.from_env().containers.run(
         SQITCH_IMAGE,
         command=[
             "deploy",
+            "--verify",
             f"db:pg://{sig_database['user']}:{sig_database['password']}@db:5432/{SCRATCH_DB}",
         ],
         network=_pg_container_network(sig_database),
