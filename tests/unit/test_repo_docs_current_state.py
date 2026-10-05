@@ -35,6 +35,17 @@ def _read(rel: str) -> str:
     return (REPO_ROOT / rel).read_text(encoding="utf-8")
 
 
+def _site_host() -> str:
+    """The canonical host, derived from the astro config's `site:` field so a
+    legitimate cutover never turns this test red (BM-TEST-01 — reference
+    resolution, not a literal pin)."""
+    match = re.search(
+        r'^\s*site:\s*"https?://([^"/]+)', _read("web/astro.config.mjs"), re.M
+    )
+    assert match, "web/astro.config.mjs no longer declares its canonical site"
+    return match.group(1)
+
+
 def _deferral_lead(oid: str) -> str:
     """The leading status token of one DEFERRALS row (the register's own word)."""
     for line in _read("docs/tickets/DEFERRALS.md").splitlines():
@@ -51,7 +62,7 @@ def test_refresh_report_exists() -> None:
 
 def test_readme_states_deployed_public_surface() -> None:
     readme = _read("README.md")
-    assert "surveillancegraph.org" in readme
+    assert _site_host() in readme, "README no longer names the canonical host"
     for stale in (
         "not a running service",
         "nothing is deployed",
@@ -82,7 +93,7 @@ def test_readme_round10_honest_bounds() -> None:
 def test_changelog_current_limitations_are_honest() -> None:
     changelog = _read("CHANGELOG.md")
     assert "no source has been fetched live" not in changelog
-    assert "surveillancegraph.org" in changelog
+    assert _site_host() in changelog, "CHANGELOG no longer names the canonical host"
     # The P22.3 relocation repaired: no live reference to the old pre-move path.
     assert "docs/build/PUBLICATION_CHECKLIST.md`" not in changelog
     assert "docs/build/FIRST_JURISDICTION_REPORT.md" not in changelog
