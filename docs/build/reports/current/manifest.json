@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "70ab52ac829f22b421802801132ec9431840a8df",
+  "input_commit": "bf1dc61eeab5080540b1cf385a8975ebce6c5fc5",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1766,7 +1766,7 @@
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",
-      "sha256": "8172e003da383b66206708d6b5cf05b1b4b119f98a94388efd05ee4b685c74e6"
+      "sha256": "c5c1bda946ffde66e5f67eac56ac03ac4026eeb5c8b55b5fa4b6b9bce50516db"
     },
     {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
@@ -1874,7 +1874,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "1e78ccec2de5bf141fcb083d6bf70290ef2724224e85ffece597d8df520ab5f6"
+      "sha256": "fc15043d30dfbfcbd408e7822901200dd1fd75173c339dd0a3b237f199d015ab"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -2302,27 +2302,27 @@
     },
     {
       "path": "docs/tickets/266_P35.6__acquisition-plumbing-and-verification-harness.md",
-      "sha256": "b773a853dd4eb102578765a1aaba34a6d47175e4a63e8e7e22437329717a8a77"
+      "sha256": "c01d4aac32d39049442d769d716487c38fef4441b16742675832fb7061468604"
     },
     {
       "path": "docs/tickets/267_P35.7__registry-and-tenant-label-corrections.md",
-      "sha256": "85558fb6d649997725382b9620fa193ed45e19200137bdccc156297361598746"
+      "sha256": "4327f200e86df4a9345e08dd0519ffaf131995737d67ab09a60c07afc9ff03bd"
     },
     {
       "path": "docs/tickets/268_P35.8__legistar-matter-pass-and-agenda-vocabulary.md",
-      "sha256": "814d1bb67bd978fa22850445e964b420cd008892c18104ded6e898420fbe3ac1"
+      "sha256": "6d7ee14373df7500e6cf2300ee743561edb0a2027b9463c166d08789f683eedf"
     },
     {
       "path": "docs/tickets/269_P35.9__usaspending-crol-vocabulary-and-filters.md",
-      "sha256": "a8c30b47b87bb88a40d120816c0788087daeba77e117e378712ba5d4a2b12ece"
+      "sha256": "7da9dc62a8ab6d80bca3412d159866e809802044546a12fd3f9e1b0319507002"
     },
     {
       "path": "docs/tickets/270_P35.10__state-alpr-statute-seed-2026.md",
-      "sha256": "8088ef4e3484243acaef58c6118c71f5ed07b6399af50662b8ec7c6467f51357"
+      "sha256": "72104a3c4d50951ce4e62ce6b4d58b39f6da271879f6df0230b0fe08d6f51ec9"
     },
     {
       "path": "docs/tickets/271_P35.11__wave-a-activation.md",
-      "sha256": "88e1dc91ccd900b11c2bae5977b98a2ca419972fd789f20702f5f97c4d10ade3"
+      "sha256": "2848bc30647c9f716a3574f80126ab35acb1029d6e328150250815d7f74db4b6"
     },
     {
       "path": "docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md",

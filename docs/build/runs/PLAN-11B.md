@@ -143,7 +143,105 @@ Findings / decisions:
   The final C1 record commit's own head-bound read lands in the same log;
   C13 reads the boundary again at closeout.
 
-### C2 — pending
+### C2 — 2026-10-05 (rows 266–271 + the 8b/8c placements)
+
+Started: 2026-10-05T16:58Z (first C2 file write; source: file mtime —
+investigation preceded it in the same context) · Closed: 2026-10-05T17:20Z
+(`date -u`; last C2 criterion = local verification green + the committed
+boundary record; the post-push head-bound CI read follows below).
+Context model: devin-desktop/swe-2-high/subagent.
+
+Scope (contract deliverable 2-in-part + deliverable 8b/8c placements):
+
+- Rewrite skeletons to full contracts: row 266 (P35.6, acquisition
+  plumbing and verification harness), 267 (P35.7, registry/tenant label
+  corrections M1–M7), 268 (P35.8, Legistar keyword-filtered paged matter
+  pass + agenda vocabulary), 269 (P35.9, USAspending/CROL vocabulary and
+  filters), 270 (P35.10, state ALPR statute seed 2026 + duty rows),
+  271 (P35.11, Wave-A activation).
+- Place the carried items: tribal S8 members `AP-T2-201` and
+  `AP-T2-210` → P35.11 (ADR-185 screened lane); `AP-T2-093` excluded,
+  stays `D-R11-LATER-09`; `D-R11-OSMUID-1` → Plan-extensions hand-off to
+  P37.1 (PLAN-11C); the ADR-171 outreach-owed set recorded in P35.6 and
+  P35.11.
+
+Findings / decisions (per row):
+
+- 266 (P35.6): deps `SEED-03;P35.1a`; no gate, no live stage, 1.0 run,
+  owns `F-330 (S1)` per the plan's `S0/S1` column. Carries the registry/target/cadence
+  generator (R2 ids, dataset-id dedupe, collision checks), the NEW-4
+  batch generator, `scheduled-ops.sh --paused`, per-row `task_timeout`,
+  cron OR-semantics lint, `out_fields`/ArcGIS allowlist RPM for
+  `dot_511`, and the `coverage-delta` + wave-verification CLIs. No live
+  acquisition is claimed — plumbing/harness only; `ingestion_permitted`
+  untouched.
+- 267 (P35.7): gate `I7-X4 [B-40] = approve` verbatim (2026-10-01T04:49:27Z);
+  0.5 run; six `jurisdiction` label fixes + `ncdot_runneals_mirror`
+  lineage marking + `faa_drone_waivers` homepage fix; key-stability check
+  before any rename.
+- 268 (P35.8): deps P35.6;P35.7; no gate; 1.0 run; `substringof`
+  keyword index query beside the unchanged recency query, paged to
+  exhaustion in OR-groups under the ~1,500-char URL bound, client-side
+  word-boundary precision filter, `agenda_content_vocab.toml` versioned
+  bump, legistar `task_timeout` 60m→3h, OUSD/Washoe tenant verification
+  (non-Legistar → ACQ-22/P37.50).
+- 269 (P35.9): deps P35.6; no gate; 0.5 run; 17/76-source term set,
+  `acq_keyword_terms` on `usa_spending`/`crol`, generic `portal_where`
+  (CROL `B00329`, Cook County; WA DES plain), pruned fallback,
+  award-notice description fan-out.
+- 270 (P35.10): deps P35.6; gate `I7-C9 [B-39] = a` verbatim; 0.5 run;
+  owns `F-374 (S1)`; seed refresh from recorded origins, duty rows,
+  50-state validation test.
+- 271 (P35.11): deps P35.7/P35.8/P35.9/P35.10/P34.3–P34.6/P34.46/P36.1a/
+  P35.38a; production-write OM-20 row; gate ING-GO-A verbatim at GATE-G4
+  else in-ticket pause; X3 posture recorded; window 2026-10-19→23
+  14:00–20:00Z, ≥ 48 h after P34.46; three legs (roll+`load-seed`+3
+  manual first runs one at a time / `+0` re-runs / resume schedules);
+  legistar trigger `0 5 20 * *` paused or roll delayed past its
+  2026-10-20 05:00Z fire; no overlap with `sig-materialize`.
+
+Placements (manifest `## Plan extensions` line appended 2026-10-05):
+
+- Tribal S8: `AP-T2-201` (`dot_511` arcgis_query, IND-TRIBAL) and
+  `AP-T2-210` (`dossier_documents`, IND-TRIBAL) → **P35.11** under
+  ADR-185 (screened lane, no outside contact, facts/citations or
+  screened metadata only, no-human-review disclosure);
+  `CG-LATER-tribal-data-governance-rule-i7-new-6` stays OPEN.
+- `AP-T2-093` (`doj_ctas_awards`, IND-P8/RB-05, not IND-TRIBAL): stays
+  `D-R11-LATER-09`; explicitly excluded from Wave A.
+- `D-R11-OSMUID-1` → hand-off to **P37.1** (row 344, the OSM
+  connector's next code change; PLAN-11C authors it). Caveat: P35.26's
+  11B OSM re-ingest may precede it — compensating controls are
+  `extract()`'s pre-claim discard + P34.49's seal; C13 may re-route.
+- Outreach-owed (ADR-171): SIG-CHART-033 / SIG-INGEST-029 /
+  SIG-INGEST-030a / SIG-CONTRIB-012 / SIG-CONTRIB-012a /
+  SIG-CONTRIB-013 / SIG-GOV-024 recorded as owed — unmet at launch
+  (D-R11-LATER-04) in P35.6 and P35.11; P35.7–P35.10 record why the set
+  does not apply. No outside contact made or implied.
+
+Local verification (P11, with recorded limits):
+
+- `make check` — **green** (ruff + format + mypy 313 files + pytest
+  6,957 items + verify-gen clean), run with the pre-existing PATH-ahead
+  fast-fail `docker` stub (`/tmp/sig-nodocker-bin/docker` = `exit 1`,
+  not committed) because the local Docker daemon stays wedged from C1
+  (`docker info` hangs / EOF): the Docker-gated `tests/db`,
+  `tests/e2e`, `test_web_iac` and pg-backend rows **skip** locally and
+  run in CI's `python`/`composed` jobs. `SIG_GCP_PROJECT` armed with
+  the sentinel `sig-local-sentinel` (OP-07 pattern).
+- `make docs-check` — green after the projection regen (below): no
+  skeleton/manifest violations on the rewritten rows; `memory_guard
+  --worktree` clean; `check_spec_src` 1,644/1,644 ids;
+  `check_coverage_matrix` 820/820; `obligation_events check` green;
+  `audit_current_state` 0 errors.
+- The committed `current` projection digests drifted on this context's
+  edits (the six contracts, the manifest line, this ledger); regenerated
+  with `current_projection.py generate` — `verify` fresh before commit.
+- `python3 docs/build/tools/memory_guard.py all --staged` — run green
+  before the commit (protected records appended only).
+
+Boundary (OM-05): `ci_boundary.py --pr 236` after push → recorded here;
+log `docs/build/logs/ci-PLAN-11B-C2.json` (gitignored).
 
 ### C3 — pending
 
@@ -174,20 +272,20 @@ filled per context.
 
 | clause | status | note |
 |---|---|---|
-| OM-01 harness/model recorded; commits trailered | ok (C1) | header + every C1 commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
-| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1) | header Started from `date -u` |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`) |
-| OM-06 every AC names its layer | ok (C1) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
+| OM-01 harness/model recorded; commits trailered | ok (C1, C2) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2) | header Started from `date -u`; C2 Started from file mtime (source named) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 boundary pending — see C2 section |
+| OM-06 every AC names its layer | ok (C1, C2) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
-| OM-13 protected records appended only | ok (C1) | memory_guard --worktree clean; coverage assessments/events appended, none migrated |
-| OM-15 no test asserts a living record's current value | ok (C1) | the one test touched is a fold-back count (820), an invariant of the committed spec — not a living-record read |
-| OM-07/08/09 gate records verbatim | n/a | no gate item decided by this row |
-| OM-16 size budget | ok (C1) | C1 = transparency family + 5 contracts + test/projection fixes; within a single context |
+| OM-13 protected records appended only | ok (C1, C2) | manifest Plan-extensions + ledger C2 section appended only; memory_guard --staged run pre-commit |
+| OM-15 no test asserts a living record's current value | ok (C1, C2) | no test touched by C2 |
+| OM-07/08/09 gate records verbatim | ok (C2) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4); nothing decided by this row |
+| OM-16 size budget | ok (C1, C2) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; within a single context |
 | OM-02 closeout is one commit after the PR exists | pending | C13 |
 | OM-19 windows / live legs | n/a | none for this row (each written contract carries its own) |
 | OM-20 pre-authorisation | n/a | not an OM-20 row |
-| OM-03 rows only from the ratified plan | ok | rows 261–265 are the ratified chain rows |
-| PR-1 branch from chainTip; PR base = previous branch | ok (C1) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
+| OM-03 rows only from the ratified plan | ok | rows 261–271 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber |
+| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
-| P11 local gate | ok (C1, with recorded limits) | `make docs-check` green incl. projection fresh 973/973; `make check` green with a PATH `docker` stub (daemon unreachable — `docker info` hangs) and `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI |
+| P11 local gate | ok (C1, C2, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI |
 | CI-8 CI config changed | no | |
