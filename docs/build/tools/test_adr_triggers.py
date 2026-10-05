@@ -58,6 +58,8 @@ BACKLOG = (
     "bl_id,title,type,sources,req_ids,package,blocks,landing,gate,size,status\n"
     "BL-001,a,process,ADR-001,,,,P01+,,S,open\n"
     "BL-002,b,process,ADR-002,,,,P01+,,S,open\n"
+    "BL-003,c,process,ADR-003,,,,P01+,,S,closed\n"
+    "BL-004,d,process,,,,,P01+,,S,accepted\n"
 )
 WHEN = "2026-10-01T16:00:00Z"
 Q_TEXT = "alias when volume grows"
@@ -208,6 +210,79 @@ def test_accepted_risk_rows_hash_their_recorded_text(tmp_path) -> None:
     rows = _rows()
     rows[2]["trigger_text"] = "alias when volume shrinks"
     assert any("does not match its trigger_text" in e for e in _errors(_tree(tmp_path, rows=rows)))
+
+
+def test_open_home_rule_follows_the_trigger_state(tmp_path) -> None:
+    """F3 NEW-3 / G8-3: open homes are always valid; an accepted monitor row never for
+    fired-unanswered; a closed row only for quiet/superseded (Q-29 carries no ADR owner)."""
+    closed_quiet = _rows()
+    closed_quiet[2].update({"home": "BL-003", "state": "quiet"})
+    assert _errors(_tree(tmp_path / "a", rows=closed_quiet)) == []
+    closed_fired = _rows()
+    closed_fired[2].update({"home": "BL-003", "state": "fired-answered(P01.2a)"})
+    assert any(
+        "is closed while the trigger is" in e
+        for e in _errors(_tree(tmp_path / "b", rows=closed_fired))
+    )
+    closed_superseded = _rows()
+    closed_superseded[2].update({"home": "BL-003", "state": "superseded(ADR-001)"})
+    assert _errors(_tree(tmp_path / "c", rows=closed_superseded)) == []
+    monitor_unanswered = _rows()
+    monitor_unanswered[2].update({"home": "BL-004", "state": "fired-unanswered"})
+    errs = _errors(_tree(tmp_path / "d", rows=monitor_unanswered))
+    assert any("accepted monitor row" in e for e in errs)
+
+
+def test_register_home_must_equal_the_backlog_owner(tmp_path) -> None:
+    """The register's `home` is the BACKLOG row whose `sources` name the ADR (check_backlog's
+    edge, judged from the register side)."""
+    rows = _rows()
+    rows[0]["home"] = "BL-002"  # ADR-001 is owned by BL-001
+    assert any(
+        "!= BACKLOG owner BL-001" in e for e in _errors(_tree(tmp_path, rows=rows))
+    )
+
+
+def test_probe_id_is_honoured_when_present(tmp_path) -> None:
+    rows = _rows()
+    rows[0]["probe_id"] = "PROBE-egress-01"
+    errors, stats = at.check(_tree(tmp_path / "a", rows=rows), waiver_lines=("WV-99",))
+    assert errors == []
+    assert stats["probes"] == 1
+    bad = _rows()
+    bad[0]["probe_id"] = "not a probe id"
+    assert any(
+        "probe_id" in e and "not a probe id token" in e
+        for e in _errors(_tree(tmp_path / "b", rows=bad))
+    )
+
+
+def test_round_tail_fails_stale_evaluation_and_unanswered_without_disposition(tmp_path) -> None:
+    rows = _rows()
+    rows[0]["last_evaluated"] = "2026-09-30T12:00:00Z"  # before a 2026-10-01 round start
+    errors, _ = at.check(
+        _tree(tmp_path / "a", rows=rows), waiver_lines=("WV-99",), round_tail="2026-10-01"
+    )
+    assert any("predates the round start" in e for e in errors)
+    unanswered = _rows()
+    unanswered[0].update({"state": "fired-unanswered", "evidence": "FIRED; no answer recorded"})
+    errors, _ = at.check(
+        _tree(tmp_path / "b", rows=unanswered), waiver_lines=("WV-99",), round_tail="2026-10-01"
+    )
+    assert any("S1" in e and "disposition" in e for e in errors)
+    routed = _rows()
+    routed[0].update(
+        {"state": "fired-unanswered", "evidence": "S1 disposition: routed to P01.2a"}
+    )
+    errors, _ = at.check(
+        _tree(tmp_path / "c", rows=routed), waiver_lines=("WV-99",), round_tail="2026-10-01"
+    )
+    assert errors == []
+    # outside round-tail mode the same unanswered row is not held to the disposition rule
+    errors, _ = at.check(
+        _tree(tmp_path / "d", rows=unanswered), waiver_lines=("WV-99",)
+    )
+    assert errors == []
 
 
 def test_committed_register_matches_the_adr_files() -> None:
