@@ -12,15 +12,20 @@ inside `--window` commits where C′ changed a declared living record, it:
      policy the lint uses,
   3. materialises C's test files into the C′ tree and runs exactly those
      tests under the *caller's* interpreter (`sys.executable -m pytest`), and
-  4. classifies every failure: the identical test still fails on C′ —
-     "pin-broken" (a living-record pin caught at the transition that broke
-     it); the test was edited or removed at C′ — "converted-in-head" (the
-     pin was being fixed in that commit, expected); a collection/environment
-     error — "infra" (counted, never a pin finding).
+  4. classifies every failure by comparing C's test source to HEAD: still
+     byte-identical at HEAD — "pin-broken" (a *live* pin: the replay proves a
+     legitimate record advance would break the test as it stands today —
+     the actionable nightly finding); edited at HEAD —
+     "converted-in-head" (the pin was already converted — resolved
+     history, not a finding); absent at HEAD — "removed-in-head";
+     a collection/environment error — "infra" (counted, never a pin
+     finding).
 
 A pin fails exactly at such a transition — the #165/#179/#185 shape — so a
-non-empty pin-broken set is a nightly failure (exit 1). A run with no
-transitions or no replayed tests is vacuous (exit 3), never green.
+non-empty pin-broken set is a nightly failure (exit 1): it means a pin lives
+at HEAD *now* and the replay shows the next legitimate advance breaks it.
+A run with no transitions or no replayed tests is vacuous (exit 3), never
+green.
 
 Note: package imports in replayed tests resolve from the caller's
 environment (the workspace at HEAD); build-memory paths resolve inside the
@@ -141,7 +146,9 @@ def _fn_segment(src: str, qualname: str) -> str | None:
     return None
 
 
-def replay_transition(root: Path, policy, trans: dict, work: Path, timeout: int) -> dict:
+def replay_transition(
+    root: Path, policy, trans: dict, work: Path, timeout: int, repo_head: str = "HEAD"
+) -> dict:
     base, head = trans["base"], trans["head"]
     result = {
         "base": base[:12],
@@ -208,7 +215,7 @@ def replay_transition(root: Path, policy, trans: dict, work: Path, timeout: int)
     result["tests_replayed"] = len(nodeids)
     for rel, qual, node in failed:
         src_c = _show(root, f"{base}:{rel}")
-        src_h = _show(root, f"{head}:{rel}")
+        src_h = _show(root, f"{repo_head}:{rel}")
         if src_h is None:
             cls = "removed-in-head"
         elif src_c is not None and _fn_segment(src_c, qual) != _fn_segment(src_h, qual):
@@ -225,10 +232,11 @@ def run(
     root = Path(root).resolve()
     policy = load_policy(policy_path or (root / POLICY_REL))
     trans = transitions(root, policy, window)
+    repo_head = _git(root, "rev-parse", "HEAD").strip()
     report = {
         "schema": SCHEMA,
         "root": str(root),
-        "head": _git(root, "rev-parse", "HEAD").strip(),
+        "head": repo_head,
         "window": window,
         "transitions": [],
         "totals": {
@@ -247,7 +255,7 @@ def run(
     )
     for t in trans[:max_transitions]:
         with tempfile.TemporaryDirectory() as td:
-            result = replay_transition(root, policy, t, Path(td), timeout)
+            result = replay_transition(root, policy, t, Path(td), timeout, repo_head)
         report["transitions"].append(result)
         report["totals"]["transitions_replayed"] += 1
         report["totals"]["tests_replayed"] += result["tests_replayed"]

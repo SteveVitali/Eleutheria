@@ -73,10 +73,13 @@ artifact's settled facts from living state.
    `docs/build/tools/living_record_backtest.py` (`living-backtest/1`)
    replays — read-only, via `git archive` into a temp tree — the
    living-reading tests of each first-parent commit C against the tree at the
-   next commit C′ that changed a declared living record. A failure where the
-   test is byte-identical at C and C′ is `pin-broken`; an edited test is
-   `converted-in-head`; a removed test is `removed-in-head`; collection errors
-   are `infra`. C′-only test files stay in the tree (the coverage checker
+   next commit C′ that changed a declared living record. Each failure is
+   classified by comparing C's test source to repo HEAD: still byte-identical
+   at HEAD is `pin-broken` — a *live* pin the replay proves a legitimate
+   advance would break today (the actionable finding); edited at HEAD is
+   `converted-in-head`; removed at HEAD is `removed-in-head` — resolved
+   history, never a gate finding; collection errors are `infra`. C′-only
+   test files stay in the tree (the coverage checker
    cites tests as evidence — deleting them fabricates a red). The nightly
    runs the stage `continue-on-error`, feeds `nightly_report.py`'s gate, and
    uploads the text + JSON report; `fetch-depth: 0` supplies the full

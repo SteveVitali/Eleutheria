@@ -57,6 +57,28 @@ def test_invariant():
     assert "nextTicket:" in text
 """
 
+CONV_TEST = """
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_converted_pin():
+    text = (ROOT / "docs" / "build" / "LEDGER.md").read_text()
+    assert "nextTicket: P9.1" in text
+"""
+
+FIXED_CONV_TEST = """
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_converted_pin():
+    text = (ROOT / "docs" / "build" / "LEDGER.md").read_text()
+    assert "nextTicket:" in text
+"""
+
 
 def _git(repo: Path, *args: str) -> str:
     out = subprocess.run(
@@ -98,8 +120,9 @@ def _fixture_repo(root: Path) -> dict:
         {
             "docs/build/LEDGER.md": "# ledger\nnextTicket: P9.1\n",
             "tests/test_pin.py": PIN_TEST,
+            "tests/test_conv.py": CONV_TEST,
         },
-        "C: pin planted",
+        "C: pins planted",
     )
     c2 = _commit(
         repo,
@@ -112,9 +135,9 @@ def _fixture_repo(root: Path) -> dict:
         repo,
         {
             "docs/build/LEDGER.md": "# ledger\nnextTicket: P9.9\n",
-            "tests/test_pin.py": FIXED_TEST,
+            "tests/test_conv.py": FIXED_CONV_TEST,
         },
-        "C'': living change + the pin converted",
+        "C'': living change + one pin converted (one stays live at HEAD)",
     )
     return {"repo": repo, "c1": c1, "c2": c2, "c3": c3}
 
@@ -133,19 +156,24 @@ def test_transitions_and_pin_caught(tmp_path: Path) -> None:
     assert report["schema"] == "living-backtest/1"
     assert report["totals"]["transitions_replayed"] == 2
     assert report["totals"]["tests_replayed"] > 0
-    assert report["totals"]["pin_broken"] == 1
+    # test_living_pin is byte-identical at HEAD (C3 never fixed it): its
+    # failure on each replayed tree is a live pin — one pin-broken per
+    # transition.
+    assert report["totals"]["pin_broken"] == 2
     pin = [f for tr in report["transitions"] for f in tr["failures"] if f["class"] == "pin-broken"]
-    assert len(pin) == 1
-    assert "test_living_pin" in pin[0]["test"]
-    # the converted shape: C2's pin still fails on C3's tree but the test was
-    # edited at C3 — reported as the conversion, not a pin finding
+    assert len(pin) == 2
+    assert all("test_living_pin" in f["test"] for f in pin)
+    # the converted shape: the pin still fails on each replayed tree but its
+    # test is edited at HEAD — resolved history, reported as the conversion,
+    # not a pin finding
     converted = [
         f
         for tr in report["transitions"]
         for f in tr["failures"]
         if f["class"] == "converted-in-head"
     ]
-    assert len(converted) == 1
+    assert len(converted) == 2
+    assert all("test_converted_pin" in f["test"] for f in converted)
 
 
 def test_vacuous_run_is_never_green(tmp_path: Path) -> None:
@@ -187,7 +215,7 @@ def test_pin_broken_exit_code(tmp_path: Path) -> None:
     )
     assert code == 1
     report = json.loads(out_json.read_text())
-    assert report["totals"]["pin_broken"] == 1
+    assert report["totals"]["pin_broken"] == 2
 
 
 def test_real_tree_report_is_well_formed() -> None:
