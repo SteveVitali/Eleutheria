@@ -103,6 +103,7 @@
 | SIG-MEM-002 | implementation | MET | 2026-10-14 | — |
 | SIG-MEM-002 | implementation | PARTIAL | 2026-10-01 | SIG-MEM-002:a1 |
 | SIG-MEM-003 | implementation | MISSING | 2026-10-14 | — |
+| SIG-MEM-003 | implementation | MET-ENGINEERED(D-R10-MEMORY-2) | 2026-10-05 | SIG-MEM-003:a1 |
 | SIG-MEM-004 | implementation | MISSING | 2026-10-14 | — |
 | SIG-MEM-004 | implementation | MET | 2026-09-28 | SIG-MEM-004:a1 |
 | SIG-MEM-005 | implementation | MISSING | 2026-10-01 | — |
@@ -121,6 +122,5 @@
 | SIG-ONTO-035 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-051 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-054 | implementation | MET | 2026-10-01 | — |
-| SIG-ONTO-055 | implementation | PARTIAL | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

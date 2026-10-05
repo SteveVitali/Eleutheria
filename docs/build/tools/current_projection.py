@@ -492,8 +492,8 @@ def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) 
             "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md "
             "compatibility cells remain the control authority; this projection is "
             "derived from hashed inputs and never writes them (shadow mode; the "
-            "single-writer cutover deferral is D-R10-MEMORY-1, landed per its "
-            "disposition)"
+            "single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's "
+            "option-C successor leg, landed per its disposition)"
         ),
         "input_commit": manifest["input_commit"],
         "manifest_inputs": len(manifest["inputs"]),
@@ -567,7 +567,7 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         "> **Authority:** `docs/build/LEDGER.md` CURRENT STATE + the DEFERRALS.md",
         "> compatibility cells remain the control authority. This view is derived from",
         "> the hashed `input-manifest/1` (`manifest.json`); it never writes control",
-        "> state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-1`.",
+        "> state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`",
         f"> input_commit: `{projection['input_commit']}` · inputs hashed: "
         f"{projection['manifest_inputs']} · wall-clock receipt: `receipt.json`",
         "",
