@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `de2e35f7b0395ba5d679fae65b99dbbb47783287` · inputs hashed: 968 · wall-clock receipt: `receipt.json`
+> input_commit: `d95d7612c2f019ce6e6578c1836483bff30cdf61` · inputs hashed: 968 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -14,7 +14,7 @@
 ## Obligations
 
 - 156 obligations · **87 owed** (84 OPEN, 3 PARTIAL) · 69 terminal
-- 635 events (26 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 636 events (26 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
 - `obligations` → see [obligations.md](obligations.md) (complete — 87 rows)
 
@@ -46,9 +46,7 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-| check | obligation | message |
-|---|---|---|
-| events/missing-anchor | D-P34.31-1 | D-P34.31-1 has no migration anchor — every obligation carries one |
+- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
 
 ## Evidence domains — recorded evidence only
 
