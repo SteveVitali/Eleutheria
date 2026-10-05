@@ -973,6 +973,43 @@ def build_parser() -> argparse.ArgumentParser:
         help="the recorded renderer revision (default: p32.24)",
     )
 
+    rpub = sub.add_parser(
+        "release-publish",
+        help="P32.25 (SIG-TRUST-009, ADR-144): publish and verify the "
+        "GATE-G3-accepted release with rollback — in the BOUNDED staging "
+        "namespace only. Preflight-pins the committed candidate packet to "
+        "the signed inputs, activates it atomically in a fresh registry "
+        "(validate-first, latest-pointer-last), verifies unauthenticated "
+        "reads/citations/withdrawal/disclosure/intake-unavailable over the "
+        "staged surface, rehearses prior-release + no-prior-pointer + "
+        "failed-deploy rollback in labelled scratch registries, and emits "
+        "PUBLISH_PROOF + the prepared-not-executed live return pass. "
+        "Offline only — NO production serve, no synthetic submission, no "
+        "gate tick. Exit 1 on any failed check",
+    )
+    rpub.add_argument(
+        "--candidate",
+        default="docs/build/reports/p32.23a-release-candidate",
+        help="the committed P32.23a candidate packet directory (default: the landed packet)",
+    )
+    rpub.add_argument(
+        "--out",
+        required=True,
+        help="the report directory — PUBLISH_PROOF.json/.md, staging_registry/, "
+        "rehearsal/, ROLLBACK_REHEARSAL, LIVE_RETURN_PASS",
+    )
+    rpub.add_argument(
+        "--prior-export",
+        default="docs/build/reports/p32.24-investigation-journey-verification/corpus_export",
+        help="the export the rehearsal's stand-in 'prior release' is rebuilt "
+        "from (default: the committed P32.24 acceptance-corpus export)",
+    )
+    rpub.add_argument(
+        "--gate-readout",
+        default="docs/build/readouts/GATE-G3.md",
+        help="the signed gate readout carrying the publish authority",
+    )
+
     ji = sub.add_parser(
         "journey-intake",
         help="P32.24 (SIG-FIND-007, journey C): execute the durable "
@@ -2630,6 +2667,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_journey_verify(args)
     if args.command == "journey-intake":
         return _cmd_journey_intake(args)
+    if args.command == "release-publish":
+        return _cmd_release_publish(args)
     parser.print_help()
     return 0
 
@@ -2669,6 +2708,31 @@ def _cmd_journey_verify(args: argparse.Namespace) -> int:
                 f"       owner={check['owner']} landing={check['landing']}"
             )
     return 0 if portfolio["verdict"] == "pass" else 1
+
+
+def _cmd_release_publish(args: argparse.Namespace) -> int:
+    from . import release_publish_verify
+
+    proof = release_publish_verify.run(
+        candidate_dir=args.candidate,
+        out_dir=args.out,
+        prior_export_dir=args.prior_export,
+        gate_readout=args.gate_readout,
+    )
+    counts = proof["counts"]
+    print(
+        f"sig-ops release-publish: verdict={proof['verdict']} "
+        f"(checks={proof['total_checks']}: {counts['pass']} pass, "
+        f"{counts['fail']} fail, {counts['deferred']} deferred, "
+        f"{counts['not_applicable']} n/a)"
+    )
+    for check in proof["checks"]:
+        if check["status"] == "fail":
+            print(
+                f"  FAIL {check['id']}: {check['detail']}\n"
+                f"       owner={check['owner']} landing={check['landing']}"
+            )
+    return 0 if proof["verdict"] == "pass" else 1
 
 
 def _cmd_journey_intake(args: argparse.Namespace) -> int:

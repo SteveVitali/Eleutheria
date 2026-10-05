@@ -1204,6 +1204,59 @@ def rollback(
     return {"latest": pub, "stubs": stubs, "withdrawals_applied": applied}
 
 
+def clear_latest_pointer(
+    registry_dir: Path | str,
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Rollback to the honest 'no current release' state — the no-prior-
+    pointer path a release rollback packet names (the first immutable
+    release has no predecessor to re-point at).
+
+    Removes the mutable ``latest.json`` convenience pointer rather than
+    fabricating a predecessor, re-applies the CURRENT withdrawal registry,
+    drops the active-release entity convenience stubs, re-emits the mutable
+    overlay, and receipts the action. Every activated release stays
+    reachable at its own immutable ``r/<pub>`` routes — nothing deletes
+    release bytes, and the catalog/compat indexes are untouched.
+    """
+    registry = ReleaseRegistry(Path(registry_dir))
+    latest_path = registry._path("latest.json")
+    previous = registry.latest()
+    if previous is None:
+        raise ReleaseError(
+            "latest.json is already absent — nothing to clear "
+            "(a missing pointer is never silently re-cleared)"
+        )
+    staged = registry.root / "staged"
+    applied = apply_withdrawals(staged, registry.withdrawals())
+    entity_dir = staged / "entity"
+    if entity_dir.exists():
+        shutil.rmtree(entity_dir)
+    latest_path.unlink()
+    _emit_overlay(registry)
+    now = now or datetime.now(UTC)
+    _write(
+        registry._path(f"activations/rollback-none-{_ts(now)}.json"),
+        canonical_json(
+            {
+                "schema": ACTIVATION_SCHEMA,
+                "publication_id": None,
+                "manifest_sha256": previous.get("manifest_sha256"),
+                "activated_at": now.isoformat(),
+                "action": "rollback",
+                "cleared_latest": previous.get("publication_id"),
+                "withdrawals_applied": applied,
+            }
+        ),
+    )
+    return {
+        "cleared": True,
+        "previous_latest": previous.get("publication_id"),
+        "withdrawals_applied": applied,
+    }
+
+
 def _ts(dt: datetime) -> str:
     return dt.strftime("%Y%m%dT%H%M%SZ")
 
@@ -1340,6 +1393,11 @@ def apply_withdrawals(staged: Path, records: Sequence[DispositionRecord]) -> dic
         dec = access_decision(eff)
         decided = eff.decided_at.isoformat() if eff.decided_at else "unrecorded"
         if route.endswith(".json"):
+            # staged artifacts are hardlinks to the release dir — break the
+            # link before writing so the immutable release input can never be
+            # mutated by a tombstone write (P32.25/ADR-144)
+            if path.exists() and not path.is_dir() and os.stat(path).st_nlink > 1:
+                path.unlink()
             _write(
                 path,
                 canonical_json(
@@ -1369,6 +1427,11 @@ def apply_withdrawals(staged: Path, records: Sequence[DispositionRecord]) -> dic
                     shutil.rmtree(child)
                 else:
                     child.unlink()
+            # break the hardlink to the immutable release bytes before the
+            # tombstone page takes the route (P32.25/ADR-144)
+            index = path / "index.html"
+            if index.exists() and index.is_file() and os.stat(index).st_nlink > 1:
+                index.unlink()
         _write(
             path / "index.html",
             tombstone_page(

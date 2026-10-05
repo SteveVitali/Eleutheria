@@ -1,0 +1,36 @@
+{
+  "exercised_at": "2026-09-28T04:04:54.805032+00:00",
+  "rehearsals": [
+    {
+      "id": "R.prior_release",
+      "prior_stand_in": {
+        "built_from": "docs/build/reports/p32.24-investigation-journey-verification/corpus_export",
+        "note": "regenerated from the committed P32.24 sig.journey-corpus/1 export (deterministic, same publication id) \u2014 a labelled stand-in for whatever pointer production holds; NOT a production predecessor",
+        "publication_id": "p-81f1986aac5cb18b29f2dae0458f74d8b639f6efc1a9de35abc38167b126d2dd",
+        "renderer_revision": "p32.24"
+      },
+      "registry": "docs/build/reports/p32.25-accepted-release-verification/rehearsal/prior_registry",
+      "withdrawals_recorded": [
+        {
+          "target_id": "ent-acc-dep-41",
+          "target_kind": "entity"
+        },
+        {
+          "target_id": "246e1473-bf69-598f-8e5a-efd02e17923e",
+          "target_kind": "artifact"
+        }
+      ]
+    },
+    {
+      "id": "R.no_prior_pointer",
+      "note": "the candidate's real rollback shape \u2014 remove latest.json, never fabricate a predecessor; immutable routes stay reachable",
+      "registry": "docs/build/reports/p32.25-accepted-release-verification/rehearsal/no_prior_registry"
+    },
+    {
+      "id": "R.refused_deploy",
+      "note": "validate_release refuses a corrupted bundle before staging \u2014 the previous pointer is untouched",
+      "registry": "docs/build/reports/p32.25-accepted-release-verification/rehearsal/refused_registry"
+    }
+  ],
+  "schema": "sig.release-rollback-rehearsal/1"
+}
