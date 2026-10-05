@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "c55f29807ef76827eb09a2aaea94968a4300fdb3",
+  "input_commit": "97e1066c8c8b69895896916e0212705998f1adc2",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -774,15 +774,23 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "65daafc4a0daec10bf31e275f6fac3750082a5132ca1ea32979a90481df74bd3"
+      "sha256": "0b886253a41ce78c222856e3b42e3d53dd6255cf5aea5c4a15b64fc9aa2dfe6e"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "2826121fe0ef53c3f5c7827dc04dd6f55fec6279a2ba8427f312ece7ee47f424"
+      "sha256": "a628acef539233e5c483488578d3a83d634fc6b34c0b10a30535b9299ab3d941"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "470105964b8c0f15a53496e32dc754dcf4c4791fed0dc860303e3b7d573c3b14"
+      "sha256": "b3a556a7f708bead33cdf69175c4356bf76c933fa5a331685f7336757b0ef2a2"
+    },
+    {
+      "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
+      "sha256": "53d899c4120c5bbe4b3ba7e024a8594ed09ff23bd4a043e6589613b6d2612c23"
+    },
+    {
+      "path": "docs/build/planning/2026-09-30-next-phase/universe/UNIVERSE_DISPOSED.csv",
+      "sha256": "024cf764fa4f32d41a3ea0bb975ef8acf5df59f22c0931c133e850a3293c9e69"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -1689,6 +1697,10 @@
       "sha256": "eccf442df6a17bb49fcb6092f6863192a077f28e2d9884338bb51ffcbbc31e40"
     },
     {
+      "path": "docs/build/runs/P34.29.md",
+      "sha256": "7380bf498e09d29265fc6fc5797f99c43ca36c46a489cb50c76777030e231301"
+    },
+    {
       "path": "docs/build/runs/P34.3.md",
       "sha256": "0fec5c5513fd5050711c762ee6a2cc8ea822ca5ab829245e1698f63b26554fce"
     },
@@ -1823,6 +1835,10 @@
     {
       "path": "docs/build/runs/SEED-18b.md",
       "sha256": "1e3104908cc68cc708c307f33bbce389fad9a69a307023853a7c014f2a1610c5"
+    },
+    {
+      "path": "docs/build/tools/record_policy/return_pass.toml",
+      "sha256": "0196f4cd5ccebd6ab4bebee58871e2c02f08a310611975a0c6d6aa9b304632b3"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",

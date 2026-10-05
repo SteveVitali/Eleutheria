@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -136,7 +136,7 @@ verify-gen: gen
 ## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
 ## history guard, the spec-source checker and the coverage-matrix checker — all
 ## stdlib python3, so the uv-less CI `docs` job runs them too.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -218,6 +218,15 @@ docs-check-audit:
 docs-check-projection:
 	python3 docs/build/tools/obligation_events.py check
 	python3 docs/build/tools/current_projection.py verify
+
+## RETURN PASS generated-region check (P34.29; B3 §3.13 item 4, V6): the LEDGER
+## `### RETURN PASS — current` table must equal `return_pass.py generate`
+## byte-for-byte, `returnPass:` must equal its sorted ticket column, and every
+## owed obligation (event head OPEN/PARTIAL) must sit in exactly one home — a
+## RETURN PASS row, a manifest chain row, or a later-phase/wontfix/other
+## disposition. Exits 1 violations / 2 input error / 3 vacuous (SIG-ENG-042).
+docs-check-returnpass:
+	python3 docs/build/tools/return_pass.py check
 
 ## Planning-ledger freshness (P34.9; B4 V14): the vendored --planning mode
 ## judges each docs/build/planning/*/META_PLAN.md — updatedAt never older than
