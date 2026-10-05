@@ -24,6 +24,8 @@ import json
 import pathlib
 import re
 
+import pytest
+
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
 
@@ -100,6 +102,7 @@ def test_build_memory_section_names_supersession_chain() -> None:
     assert "control" in root and "authorit" in root
 
 
+@pytest.mark.living_record_invariant("coverage-row-uniqueness")
 def test_coverage_matrix_sig_mem_004_row_is_well_formed() -> None:
     """SIG-MEM-004 keeps exactly one matrix row whose verdict is in the checker's
     own vocabulary. A MET-family verdict cites evidence that exists; any other
