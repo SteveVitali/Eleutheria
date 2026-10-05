@@ -253,10 +253,11 @@ boundary again at closeout.
 ### C3 — 2026-10-05 (rows 272–278)
 
 Started: 2026-10-05T~18:30Z (first C3 file write; source: file mtime —
-investigation preceded it in the same context) · Closed: pending —
-this context's last criterion is the head-bound CI pass on the
-boundary-record commit; that commit fills this cell and the Boundary
-lines below.
+investigation preceded it in the same context) · Closed:
+2026-10-05T~20:10Z (work complete; boundary unresolved at close — three
+consecutive GitHub hosted-runner acquisition cancels, recorded below;
+the context stops blockedOn per DRAFT-MEM-3/G3 rather than looping, and
+C13's closeout re-read settles it).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + the 8a check):
@@ -409,16 +410,20 @@ Boundary (OM-05):
   failure, different job (run 37366260351); the `python` job on this
   head completed green and `docs` passed (the `seed-commit`
   declaration holds — the history guard is green in range). GitHub
-  runner capacity, not the change: two consecutive heads cancelled on
-  different jobs with no test evidence. This commit is the next fresh
-  head; if cancels persist the context reports blockedOn rather than
-  looping.
+  runner capacity, not the change.
+- Read 4 @ `a5a0b965` (the second boundary record): **`blockedOn: CI
+  cancel on #236@a5a0b96 (python)`** — third consecutive
+  acquisition cancel, third different job (run 37368155535). Three
+  cancels on three heads = a GitHub hosted-runner capacity incident,
+  not the change: on `8920c46` the `python` job ran green and `docs`
+  passed end-to-end. The context stops here per G3 (cancelled required
+  check → blockedOn → stop until fixed or operator-waived); this
+  close-record commit is the next head and its push gives CI a fourth
+  try — its result lands in `logs/ci-PLAN-11B-C3.json` and C13's
+  closeout re-read settles the boundary either way.
 
-Boundary-record commit (this one — `8920c463`'s successor): records the
-read-3 `ci:` line above; the close-record commit then re-reads
-head-bound on this commit and fills this section's Closed cell (C2's
-two-read pattern). The shared `Closed:` header stays unwritten — C13
-owns closeout.
+Close record (this commit): records reads 1–4 and fills Closed. The
+shared `Closed:` header stays unwritten — C13 owns closeout.
 
 ### C4 — pending
 
@@ -449,7 +454,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3) | header Started from `date -u`; C2/C3 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C3) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — subject named ticket ids; `seed-commit` fix-forward) → read-2 pending (log `logs/ci-PLAN-11B-C3.json`) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`) |
 | OM-06 every AC names its layer | ok (C1, C2, C3) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2, C3) | manifest Plan-extensions + ledger C2/C3 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); memory_guard --staged run pre-commit |
