@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "5238ded900aa07cc1f3f3bc7701bd9f0a8ef8702",
+  "input_commit": "f17eb537cec67c7216a26944e1c32c1cf4c6f001",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1766,7 +1766,7 @@
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",
-      "sha256": "ba2f4bb46ea13981cf4812b29c53e7e82a65173516cc3921fa7100c2f5020afa"
+      "sha256": "6170606df4957679bdea7ff29fb3639db282bf28264dc5684f7712978f931945"
     },
     {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
@@ -2402,35 +2402,35 @@
     },
     {
       "path": "docs/tickets/291_P35.1b__fleet-hygiene.md",
-      "sha256": "f03992951073fe3bb1d2843d9f83b5b2b510d54484b73fe5c878030f7c7a2eb1"
+      "sha256": "8a406653a2aa76882354e28ab9a6609db2349d57fabb57a1407aab0d6729140c"
     },
     {
       "path": "docs/tickets/292_P35.3__production-truth-probes-and-sentinel-scan.md",
-      "sha256": "7f463cf48060c1c00af0a8463c562f36cbab3f8912f44ad189766ab4c78f9d87"
+      "sha256": "3f2632be840580cb5ba2d0d71a80461ae673cf5b2f0e26b9e5c710e21affa138"
     },
     {
       "path": "docs/tickets/293_P35.4__ops-runbook.md",
-      "sha256": "94591be453ae345c2ef4622aed55c7c97def6a9ecb419d733d5f5c315ee967d4"
+      "sha256": "d77e886eb8228d5b96ed0e9f67abc2fc4abf376ad85b368fa8e30ac1217b2074"
     },
     {
       "path": "docs/tickets/294_P35.12__release-identity-v2-and-clock-guards.md",
-      "sha256": "a23873014d9d37f209576eed73d4fc5ee0300de29cb1c16f7bfbc7cabb2bd469"
+      "sha256": "693c2116b0406d151e8a0d8d95a1681c7b8e7b73ce38aa1389139ea80d537917"
     },
     {
       "path": "docs/tickets/295_P35.13__provenance-stamp-release-json-headers.md",
-      "sha256": "84f34f26d8c05c80a50a8a2c19988709183f0c1e0007a37744147ec56c45d64a"
+      "sha256": "5fcd537a5a21c91e4c20dc66d4a6c8d75e5f1a6af8155f3f5b7f44618576e89c"
     },
     {
       "path": "docs/tickets/296_P35.16__geometry-defects-at-ingest.md",
-      "sha256": "55e7a93dee8d6bcf746ede24b6298e9170976b614462c763c736a874404c8fd7"
+      "sha256": "1f8e74c882a6ff79da0423b563cbd8d6ca9d286e7037d1cac49999f0e3367e9a"
     },
     {
       "path": "docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md",
-      "sha256": "446a10ae19df7abde6c8c77747c4c95bfdc2b270bea9fc4e5ad936fbbd8cdf69"
+      "sha256": "698f6e8b6a55e3a08805fd1618cabb0f474ce2936ec429c3a2c58018acdf4d80"
     },
     {
       "path": "docs/tickets/298_P35.18__declared-jurisdiction-scheme.md",
-      "sha256": "4d9e508934e35b6e7c9c74c872a089ccefa1a8cff90c6a39d0dccaa935461a72"
+      "sha256": "2e13a2bef13a3f85bfc76a83c762d37a6d578617a01b28e103646bdae5d71088"
     },
     {
       "path": "docs/tickets/299_P35.19__placement-engine.md",
