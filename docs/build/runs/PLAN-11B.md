@@ -52,7 +52,8 @@ surfaces this plan row touches:
 
 ### C1 — 2026-10-05 (rows 261–265 + the SIG-TRANSP family)
 
-Started: 2026-10-05T11:32Z · Closed: (open while C1 works)
+Started: 2026-10-05T11:32Z · Closed: 2026-10-05T16:36Z (`date -u`; last C1
+criterion = green head-bound CI at 70ab52a).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverables 1, 2-in-part, 3-in-part):
@@ -132,6 +133,15 @@ Findings / decisions:
   `SIG_GCP_PROJECT` armed with the local sentinel `sig-local-sentinel` for
   the fail-closed secrets scan (OP-07 pattern; the real id lives in
   `vars.SIG_GCP_PROJECT`).
+- Boundary (OM-05): first read `ci_boundary.py --pr 236` @`9dcb023` =
+  **blockedOn** (docs job red — the projection digest for this ledger had
+  drifted: the C1 regen predated the same-commit ledger edit). Fix-forward
+  `70ab52a` regenerated the projection after the ledger edits; head-bound
+  re-read: `ci: pass #236@70ab52a` — python/docs/composed/security/web 5/5
+  (run 37339562266; stack pass; `main` 2de7b50 descends:no merges:0
+  open-other:6; log `docs/build/logs/ci-PLAN-11B-C1.json`, gitignored).
+  The final C1 record commit's own head-bound read lands in the same log;
+  C13 reads the boundary again at closeout.
 
 ### C2 — pending
 
@@ -166,7 +176,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1) | header + every C1 commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1) | header Started from `date -u` |
-| OM-05 CI read at every boundary; red → blockedOn | in progress | first read `ci_boundary.py --pr 236` @9dcb023: **blockedOn — docs job red** (projection verify stale: the regen predated the same-commit ledger edit; fixed by this commit's regen — logs/ci-PLAN-11B-C1.json); head-bound re-read follows this push |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`) |
 | OM-06 every AC names its layer | ok (C1) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1) | memory_guard --worktree clean; coverage assessments/events appended, none migrated |
@@ -177,7 +187,7 @@ filled per context.
 | OM-19 windows / live legs | n/a | none for this row (each written contract carries its own) |
 | OM-20 pre-authorisation | n/a | not an OM-20 row |
 | OM-03 rows only from the ratified plan | ok | rows 261–265 are the ratified chain rows |
-| PR-1 branch from chainTip; PR base = previous branch | in progress | base `r11/P34.33-round-close-record-checks` |
+| PR-1 branch from chainTip; PR base = previous branch | ok (C1) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
 | P11 local gate | ok (C1, with recorded limits) | `make docs-check` green incl. projection fresh 973/973; `make check` green with a PATH `docker` stub (daemon unreachable — `docker info` hangs) and `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI |
 | CI-8 CI config changed | no | |
