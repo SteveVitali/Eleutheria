@@ -179,6 +179,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--out", required=True, help="output directory for the committed artifact set"
     )
 
+    spkt = sub.add_parser(
+        "dossier-packet-san-diego",
+        help="P32.20 (SIG-DOS-005, ADR-139): emit the San Diego dossier "
+        "evidence set — the sig.dossier-packet/1 (fixture replay over the four "
+        "dossier documents: the 2025 Vigilant ASR, the Ubicquia/Flock "
+        "agreement, and the technology + PAB indexes), the composed dossier + "
+        "portfolio + print HTML, the drafted follow-up/request queue "
+        "(drafted, never sent), the metadata-only Part VIII preflight for "
+        "SRC-027, the evidence pack, and the bounded live RETURN PASS packet "
+        "(D-P32.20-1). Offline only: no fetch, no rights flip, no request "
+        "sent, no workbook transport",
+    )
+    spkt.add_argument(
+        "--out", required=True, help="output directory for the committed artifact set"
+    )
+
     seedfix = sub.add_parser(
         "seed-correct",
         help="P32.18: apply the authored OKC seed-correction packet to a spine "
@@ -971,6 +987,15 @@ def _cmd_dossier_packet(args: argparse.Namespace) -> int:
 
 def _cmd_dossier_packet_tulsa(args: argparse.Namespace) -> int:
     from .tulsa_dossier_packet import write
+
+    written = write(Path(args.out))
+    for key, path in written.items():
+        print(f"  {key}: {path}")
+    return 0
+
+
+def _cmd_dossier_packet_san_diego(args: argparse.Namespace) -> int:
+    from .san_diego_dossier_packet import write
 
     written = write(Path(args.out))
     for key, path in written.items():
@@ -2004,6 +2029,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_dossier_packet(args)
     if args.command == "dossier-packet-tulsa":
         return _cmd_dossier_packet_tulsa(args)
+    if args.command == "dossier-packet-san-diego":
+        return _cmd_dossier_packet_san_diego(args)
     if args.command == "seed-correct":
         return _cmd_seed_correct(args)
     if args.command == "egress-report":
