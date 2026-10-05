@@ -68,3 +68,18 @@ tests/
 
 - Don't loosen or delete an assertion to make a seam pass; record an unwired seam as an `LD-` xfail.
 - Don't rely on a Docker-less `pytest` run to cover the DB/e2e suites.
+- **Don't assert the current value of a living build record** (BM-TEST-01, G6, P34.31 /
+  SIG-ENG-040). The living paths are declared in
+  `docs/build/tools/record_policy/living_records.toml` (LEDGER, BUILD_INDEX, DEFERRALS,
+  the coverage matrix, readouts, `reports/current/`, `reports/obligations/`, the build
+  README's row range, the manifest, …). Read them only through the validators
+  (`audit_current_state`, `check_backlog`, …) or at an explicit snapshot commit
+  (`git show <sha>:<path>`), and assert only what holds at every commit —
+  vocabulary membership, uniqueness, generated == source, reference resolution,
+  append-only properties — or facts about frozen artifacts. The AST lint
+  `tests/unit/test_no_living_record_pins.py` (backed by
+  `docs/build/tools/living_record_lint.py`) enforces this in `make check`, and the
+  nightly `living-backtest` stage replays real-tree tests across legitimate record
+  transitions. A failing pin is **converted or deleted, never relaxed** (OM-15); a
+  genuinely-commit-stable exception is `@pytest.mark.living_record_invariant("<key>")`
+  with the key registered in the policy's `[invariants.allowed]`.

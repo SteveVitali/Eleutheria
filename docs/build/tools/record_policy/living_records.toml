@@ -1,0 +1,143 @@
+# docs/build/tools/record_policy/living_records.toml — the G6 record policy
+# (living-record-policy/1; P34.31 / B4 §G6, SIG-ENG-040, BM-TEST-01, OM-15,
+# ADR-197).
+#
+# Which committed records are LIVING: their contents legitimately change at
+# (nearly) every closeout, so a test that reads one from the repository root
+# (never `tmp_path`) may assert only what holds at every commit — vocabulary
+# membership, uniqueness, generated == source, reference resolution,
+# append-only properties — or facts about FROZEN artifacts (a dated report, a
+# closed round's PLAN.json). A real-tree test that reads a living path fails
+# `tests/unit/test_no_living_record_pins.py` (implemented by
+# `docs/build/tools/living_record_lint.py`) when it contains:
+#
+#   1. a literal matching a CURRENT STATE `key: value` (`nextTicket: P9.1`);
+#   2. an assertion naming a record id (obligation / requirement / readout /
+#      backlog row / ADR / gate) AND a status word in the same assertion, or a
+#      status-word literal asserted of a value derived from a living record;
+#   3. `len(<value derived from a living record>) == <int literal>`;
+#   4. a literal row range or calendar date (`"rows 1-200"`, `"2026-10-05"`)
+#      inside an assertion.
+#
+# Sanctioned channels that never trigger the lint: reading a record through a
+# validator (`audit_current_state.audit(REPO_ROOT)`, `check_backlog.*(path)`)
+# and reading it at an explicit snapshot commit (`git show <sha>:<path>`).
+# A test that genuinely needs a reviewed exception carries
+# `@pytest.mark.living_record_invariant("<key>")` with the key registered in
+# [invariants.allowed] below — grep-able, reviewed in the diff. A failing pin
+# is converted or deleted, never relaxed (OM-15).
+#
+# The nightly advance backtest (`living_record_backtest.py`, B4 G6, ADR-197)
+# replays the real-tree tests of commit C against the tree at the next
+# first-parent commit C′ that changed one of [living]; a pin fails exactly at
+# such a transition (the #165/#179/#185 shape).
+
+schema = "living-record-policy/1"
+
+[living]
+# Repo-root-relative paths whose current values are living state.
+paths = [
+    "README.md",                              # current-state prose (posture, bounds)
+    "CHANGELOG.md",                           # current limitations wording
+    "docs/adr/README.md",                     # the generated ADR index (gains rows per ADR)
+    "docs/build/LEDGER.md",                   # CURRENT STATE cursor + PHASE LOG
+    "docs/build/BUILD_INDEX.md",              # landed-row index
+    "docs/build/README.md",                   # the `rows 1-N as of` line
+    "docs/build/COVERAGE_MATRIX.csv",         # verdicts are re-judged per landing
+    "docs/build/BACKLOG.csv",                 # row statuses land/flip
+    "docs/build/BACKLOG.md",                  # generated mirror of the register
+    "docs/build/INTEGRATION_PLAN.md",         # superseded-pointer document
+    "docs/build/OPERATIONAL_READINESS.md",    # refreshed per readiness pass
+    "docs/build/reports/LEDGER_DEFERRALS.md", # the long-lived deferral register
+    "docs/build/reports/BACKLOG_THEMES.md",   # theme register
+    "docs/tickets/00_MANIFEST.md",            # the chain order (inserts + plan extensions)
+    "docs/tickets/DEFERRALS.md",              # the obligations register
+]
+globs = [
+    "docs/build/readouts/*.md",            # gate readouts gain Status/provenance
+    "docs/build/reports/current/*",        # the generated current-state projection
+    "docs/build/reports/obligations/*",    # events/assessments/reconciliations ledgers
+    "docs/build/reports/spend/*",          # spend + agent-usage ledgers
+]
+
+[frozen]
+# Immutable artifacts tests MAY assert concrete facts over — a dated report, a
+# closed round's plan, a byte-for-byte archive. A path matching [living] is
+# never frozen (living wins).
+paths = [
+    "docs/build/CAPSTONE_CLOSURE.md",   # the Round-10 acceptance packet
+]
+globs = [
+    "docs/build/planning/*",            # meta-planning artifacts of closed stages
+    "docs/build/planning/*/**",         #   (incl. PLAN.json files)
+    "docs/build/reports/*",             # dated reports, drafts, memory-repair archives
+    "docs/build/reports/*/**",          #   except the living subpaths above
+]
+
+[keys]
+# The LEDGER `## CURRENT STATE` keys: a `key: value` literal inside a real-tree
+# test pins the cursor/state (rule 1). Mirrors the ledger contract's key set.
+current_state = [
+    "projectStatus", "nextTicket", "lastCompleted", "blockedOn",
+    "pauseRequested", "returnPass", "manifest", "canonicalSpec", "memoryRoot",
+    "dispatchTarget", "buildWorktree", "buildBranchBase", "pinnedBaseSha",
+    "chainTip", "benchmarkSet", "autonomy", "mergePolicy", "round", "harness",
+    "updatedAt",
+]
+
+[vocabulary]
+# Status words. An assertion that contains BOTH a named-id literal and a status
+# word pins a record's state (rule 2), as does a status word asserted of a
+# living-derived value. Exact whole-token match.
+statuses = [
+    "OPEN", "PARTIAL", "DONE", "CLOSED", "WONTFIX", "DISCHARGED", "SKIPPED",
+    "ACCEPTED-SKELETON", "PENDING", "SIGNED",
+    "MET", "MISSING", "WAIVED", "MET-DIFFERENTLY", "MET-ENGINEERED",
+    "open", "closed", "accepted",
+]
+
+[named_ids]
+# A string literal containing a match of one of these names a record.
+patterns = [
+    "D-[A-Za-z0-9][A-Za-z0-9._-]*",          # DEFERRALS obligations
+    "SIG-[A-Z]+-[0-9]+[a-z]?",               # spec requirement ids
+    "LD-[A-Z]+[0-9]+[a-z]?",                 # e2e seam deferral tags
+    "RISK-[A-Z0-9][A-Za-z0-9.-]*",           # risk register
+    "BL-[0-9]{3}",                           # backlog rows
+    "ADR-[0-9]{3}",                          # decision records
+    "HG-[0-9]+",                             # human gates
+    "GATE-[A-Z0-9][A-Z0-9.-]*",              # gates
+    "ACCEPT-[A-Z0-9][A-Z0-9.-]*",            # acceptance readouts
+    "HUMAN-[A-Z0-9][A-Z0-9.-]*",             # human checkpoints
+    "P[0-9]+\\.[0-9]+[a-z]?",                # ticket ids (P33.8, P34.31)
+]
+
+[invariants]
+# The escape-hatch registry: `@pytest.mark.living_record_invariant("<key>")`
+# exempts one test from the pin rules, and is itself a violation when the key
+# is not listed here. Each entry records why the assertion holds at EVERY
+# commit (B4 G6: grep-able, reviewed in the diff).
+
+[invariants.allowed]
+# test_agent_docs_current_state.py::test_coverage_matrix_sig_mem_004_row_is_well_formed
+# — `len(rows) == 1` over a spec-defined requirement id is the allowed
+# "uniqueness" form (one coverage row per spec id is register well-formedness,
+# not a living value); the lint cannot distinguish it from a count pin, so it
+# is registered here.
+coverage-row-uniqueness = "a spec-defined requirement id has exactly one coverage row (G6 allowed form: uniqueness)"
+# test_agent_docs_current_state.py::test_build_index_header_describes_the_full_chain
+# — row 200's ticket and its runs/pr files are append-only history: a landed
+# BUILD_INDEX row is never rewritten (allowed form: append-only property).
+build-index-append-only-history = "row 200's ticket id and run/pr files are append-only history, never rewritten"
+# test_backlog_housekeeping.py::test_bl052_closed — BL-052's `closed` status and
+# `closed-by:P24.5` landing are settled history of a terminal row; backlog
+# terminal rows are never reopened, and the landing names the commit that
+# closed it (allowed form: append-only history fact).
+backlog-terminal-history = "a backlog row's terminal status and closing landing are append-only history"
+# test_capstone_closure_round10.py::test_gate_accept_readout_state_matches_the_recorded_decision
+# — the conditional shape (`if "PENDING" in declared: … else: assert "SIGNED"`)
+# is the allowed conditional-on-status form: the assertions enforce the
+# vocabulary/provenance relation whichever recorded state the readout declares
+# (the signed readout is itself settled history). The lint sees the status
+# literal, not the conditional.
+gate-readout-state-vocabulary = "a gate readout's declared state is checked by the status vocabulary + provenance relation, whichever state is recorded"
