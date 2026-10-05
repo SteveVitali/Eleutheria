@@ -146,9 +146,9 @@ Findings / decisions:
 ### C2 — 2026-10-05 (rows 266–271 + the 8b/8c placements)
 
 Started: 2026-10-05T16:58Z (first C2 file write; source: file mtime —
-investigation preceded it in the same context) · Closed: 2026-10-05T17:20Z
-(`date -u`; last C2 criterion = local verification green + the committed
-boundary record; the post-push head-bound CI read follows below).
+investigation preceded it in the same context) · Closed: 2026-10-05T17:39Z
+(last C2 criterion = the head-bound CI pass at `3243036`, read
+17:38:56Z per the ci-boundary log's `read_at`).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + deliverable 8b/8c placements):
@@ -240,11 +240,14 @@ Local verification (P11, with recorded limits):
 - `python3 docs/build/tools/memory_guard.py all --staged` — run green
   before the commit (protected records appended only).
 
-Boundary (OM-05): `ci_boundary.py --pr 236` @ `60c3fe4e` =
-**`ci: pass #236@60c3fe4`** — python/docs/composed/security/web 5/5
-head-bound (run 37348287333; stack pass; `main` 2de7b50 descends:no
-merges:0 open-other:6; log `docs/build/logs/ci-PLAN-11B-C2.json`,
-gitignored). Green on the first head, no fix-forwards. C13 reads the
+Boundary (OM-05): `ci_boundary.py --pr 236` @ `60c3fe4e` (content
+commit) = **`ci: pass #236@60c3fe4`** — python/docs/composed/security/web
+5/5 head-bound (run 37348287333); the boundary-record commit
+`32430362` was then pushed and re-read head-bound:
+**`ci: pass #236@3243036`** (run 37349874555; stack pass; `main`
+2de7b50 descends:no merges:0 open-other:6). Green on the first head,
+no fix-forwards; both reads land in
+`docs/build/logs/ci-PLAN-11B-C2.json` (gitignored). C13 reads the
 boundary again at closeout.
 
 ### C3 — pending
