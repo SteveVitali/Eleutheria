@@ -77,8 +77,9 @@ tests/
   (`git show <sha>:<path>`), and assert only what holds at every commit —
   vocabulary membership, uniqueness, generated == source, reference resolution,
   append-only properties — or facts about frozen artifacts. The AST lint
-  `tests/unit/test_no_living_record_pins.py` (backed by
-  `docs/build/tools/living_record_lint.py`) enforces this in `make check`, and the
+  `tests/unit/test_no_living_record_pins.py` (backed by the
+  `living_record_lint` tool under `docs/build/tools/`) enforces this in
+  `make check`, and the
   nightly `living-backtest` stage replays real-tree tests across legitimate record
   transitions. A failing pin is **converted or deleted, never relaxed** (OM-15); a
   genuinely-commit-stable exception is `@pytest.mark.living_record_invariant("<key>")`
