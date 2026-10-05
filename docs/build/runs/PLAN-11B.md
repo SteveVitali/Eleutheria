@@ -240,8 +240,12 @@ Local verification (P11, with recorded limits):
 - `python3 docs/build/tools/memory_guard.py all --staged` — run green
   before the commit (protected records appended only).
 
-Boundary (OM-05): `ci_boundary.py --pr 236` after push → recorded here;
-log `docs/build/logs/ci-PLAN-11B-C2.json` (gitignored).
+Boundary (OM-05): `ci_boundary.py --pr 236` @ `60c3fe4e` =
+**`ci: pass #236@60c3fe4`** — python/docs/composed/security/web 5/5
+head-bound (run 37348287333; stack pass; `main` 2de7b50 descends:no
+merges:0 open-other:6; log `docs/build/logs/ci-PLAN-11B-C2.json`,
+gitignored). Green on the first head, no fix-forwards. C13 reads the
+boundary again at closeout.
 
 ### C3 — pending
 
@@ -274,7 +278,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2) | header Started from `date -u`; C2 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 boundary pending — see C2 section |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`) |
 | OM-06 every AC names its layer | ok (C1, C2) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2) | manifest Plan-extensions + ledger C2 section appended only; memory_guard --staged run pre-commit |
