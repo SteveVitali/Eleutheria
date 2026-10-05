@@ -1,0 +1,1 @@
+{"as_of":"2026-09-28","generated_at":"2026-09-28T06:13:06Z","note":"P33.2 composed Round-10 verification fixture","refused":[{"reason":"UNDETERMINED","rights_id":"01a0e6a5-4571-7267-a160-3f2f8564ebc1","rows":1,"source_id":"composed-fixture","spdx":"UNDETERMINED","surface":"sites"}],"schema":"p27.4/exclusions/1.0.0","totals":{"refused_rows":1,"refused_slices":1}}

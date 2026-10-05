@@ -1010,6 +1010,36 @@ def build_parser() -> argparse.ArgumentParser:
         help="the signed gate readout carrying the publish authority",
     )
 
+    cv = sub.add_parser(
+        "composed-verify",
+        help="P33.2 (sig.composed-verification/1): drive the composed "
+        "Round-10 path over ONE fixture on a real PG spine — capture→claim "
+        "(the eight-stage connector pipeline + actual-capture bindings), "
+        "temporal/role resolution (pure model vs the SQL twin), eligible "
+        "release (materialize→export→build_release→activate with licence "
+        "compartments + disposition/licensing exclusions), search/record "
+        "(released FTS5 index + serving barrier), and the P32.16→P32.16a "
+        "correction chain on a claim THIS release published. Offline only; "
+        "needs a writable TEST DSN (sqitch-deployed). Exit 1 on any failed "
+        "check — a missing/unusable DSN is a failure, never a silent green",
+    )
+    cv.add_argument(
+        "--dsn",
+        default=None,
+        help="writable PostgreSQL DSN of the TEST spine (else SIG_STAGING_DSN/local)",
+    )
+    cv.add_argument(
+        "--out",
+        required=True,
+        help="the report directory — COMPOSED_VERIFICATION.json/.md plus the "
+        "export/, release/ and registry/ trees it built",
+    )
+    cv.add_argument(
+        "--renderer",
+        default="p33.2",
+        help="the recorded renderer revision (default: p33.2)",
+    )
+
     ji = sub.add_parser(
         "journey-intake",
         help="P32.24 (SIG-FIND-007, journey C): execute the durable "
@@ -2669,6 +2699,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_journey_intake(args)
     if args.command == "release-publish":
         return _cmd_release_publish(args)
+    if args.command == "composed-verify":
+        return _cmd_composed_verify(args)
     parser.print_help()
     return 0
 
@@ -2732,6 +2764,33 @@ def _cmd_release_publish(args: argparse.Namespace) -> int:
                 f"  FAIL {check['id']}: {check['detail']}\n"
                 f"       owner={check['owner']} landing={check['landing']}"
             )
+    return 0 if proof["verdict"] == "pass" else 1
+
+
+def _cmd_composed_verify(args: argparse.Namespace) -> int:
+    from . import composed_verify
+
+    try:
+        proof = composed_verify.run_composed_verification(
+            args.dsn or default_dsn(),
+            out_dir=args.out,
+            renderer_revision=args.renderer,
+        )
+    except Exception as exc:  # noqa: BLE001 - an unusable DSN fails LOUD
+        print(
+            f"sig-ops composed-verify: UNAVAILABLE — {type(exc).__name__}: {exc}", file=sys.stderr
+        )
+        return 1
+    n_checks = sum(len(leg["checks"]) for leg in proof["legs"])
+    n_ok = sum(1 for leg in proof["legs"] for c in leg["checks"] if c["ok"])
+    print(
+        f"sig-ops composed-verify: verdict={proof['verdict']} "
+        f"({n_ok}/{n_checks} checks) publication={proof['release'].get('publication_id')}"
+    )
+    for leg in proof["legs"]:
+        for c in leg["checks"]:
+            if not c["ok"]:
+                print(f"  FAIL {leg['leg']}::{c['check']}: {c['detail']}", file=sys.stderr)
     return 0 if proof["verdict"] == "pass" else 1
 
 

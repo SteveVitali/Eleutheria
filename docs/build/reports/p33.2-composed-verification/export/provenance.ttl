@@ -1,0 +1,13 @@
+<https://sig-project.org/prov/capture/sig-2026-09-28-30e3add6:composed-fixture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Entity> .
+<https://sig-project.org/prov/capture/sig-2026-09-28-30e3add6:composed-fixture> <http://www.w3.org/ns/prov#generatedAtTime> "2026-09-28T06:13:06+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://sig-project.org/prov/capture/sig-2026-09-28-30e3add6:composed-fixture> <http://www.w3.org/ns/prov#wasAttributedTo> <https://sig-project.org/prov/source/composed-fixture> .
+<https://sig-project.org/prov/capture/sig-2026-09-28-30e3add6:composed-fixture> <http://www.w3.org/ns/prov#wasGeneratedBy> <https://sig-project.org/prov/run/sig-2026-09-28-30e3add6> .
+<https://sig-project.org/prov/connector/sig-exports> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Agent> .
+<https://sig-project.org/prov/connector/sig-exports> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#SoftwareAgent> .
+<https://sig-project.org/prov/connector/sig-exports> <https://sig-project.org/prov/version> "p27.3/1.0.0" .
+<https://sig-project.org/prov/run/sig-2026-09-28-30e3add6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Activity> .
+<https://sig-project.org/prov/run/sig-2026-09-28-30e3add6> <http://www.w3.org/ns/prov#endedAtTime> "2026-09-28T06:13:06+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://sig-project.org/prov/run/sig-2026-09-28-30e3add6> <http://www.w3.org/ns/prov#startedAtTime> "2026-09-28T06:13:06+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://sig-project.org/prov/run/sig-2026-09-28-30e3add6> <http://www.w3.org/ns/prov#wasAssociatedWith> <https://sig-project.org/prov/connector/sig-exports> .
+<https://sig-project.org/prov/source/composed-fixture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Agent> .
+<https://sig-project.org/prov/source/composed-fixture> <https://sig-project.org/prov/name> "connector source composed-fixture" .

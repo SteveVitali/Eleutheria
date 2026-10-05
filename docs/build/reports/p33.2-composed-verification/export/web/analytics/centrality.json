@@ -1,0 +1,14 @@
+{
+  "as_of": "2026-09-28",
+  "denominator": "0 typed access edges between 0 entities in the exported sharing network",
+  "focus": {
+    "degree": null,
+    "entity_id": null,
+    "rule": "the entity with the highest undirected degree over the typed access edges; ties resolve to the lexically smallest entity id"
+  },
+  "is_population_total": false,
+  "measure": "undirected degree over the typed access edges (configured_access, observed_use, declared_policy) the web/network.json surface emits",
+  "schema": "sig/analytics-centrality/1",
+  "source_compartments": [],
+  "statistics": []
+}

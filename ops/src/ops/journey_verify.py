@@ -1980,6 +1980,7 @@ def run_intake_journey(
     publication_id: str,
     record_key_value: str,
     report_key: str | None = None,
+    target_claim_id: str | None = None,
 ) -> dict[str, Any]:
     """Execute the receipt→restart→queue→approve→apply→publish traversal.
 
@@ -1987,6 +1988,12 @@ def run_intake_journey(
     writable test/fixture database — this never touches production. Returns
     the ``sig.journey-intake-proof/1`` document. ``report_key`` namespaces
     the synthetic rows so a rerun on one DSN never collides.
+
+    ``target_claim_id`` (P33.2): when given, the synthetic report disputes
+    THAT existing live claim — its stored claim/evidence digests are
+    fingerprinted exactly as the bridge re-verifies them — instead of a
+    freshly seeded fixture claim. The composed-verification runner uses this
+    so the correction lands on a claim the activated release published.
     """
     key = report_key or secrets.token_hex(4)
     report_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"sig-journey-report-{key}"))
@@ -2006,7 +2013,13 @@ def run_intake_journey(
 
     # The target claim the synthetic report disputes — a live tier-0 claim
     # the reviewer fingerprints (the real digests the bridge re-verifies).
-    target = _seed_journey_target(dsn, key)
+    # P33.2: a caller may name the released claim directly; otherwise the
+    # journey seeds its own fixture claim as before (wire names unchanged).
+    target = (
+        _fingerprint_journey_claim(dsn, target_claim_id)
+        if target_claim_id is not None
+        else _seed_journey_target(dsn, key)
+    )
 
     recv = PgIntakeReceiverStore.from_dsn(dsn)
     try:
@@ -2066,11 +2079,19 @@ def run_intake_journey(
                     "target_id": target["claim_id"],
                     "claim_digest": target["claim_digest"],
                     "evidence_digest": target["evidence_digest"],
-                    "value": {
-                        "value_text": "225",
-                        "value_num": 225,
-                        "unit": "cameras",
-                    },
+                    # The bridge validates the proposal against the TARGET
+                    # claim's object_type (a `correct` keeps the disputed
+                    # claim's shape) — a literal target admits value_text +
+                    # unit only, never a stray numeric column.
+                    "value": (
+                        {"value_text": "225", "unit": "cameras"}
+                        if target.get("object_type") == "literal"
+                        else {
+                            "value_text": "225",
+                            "value_num": 225,
+                            "unit": "cameras",
+                        }
+                    ),
                     "correction_reason": "acceptance_journey",
                 },
             },
@@ -2321,6 +2342,43 @@ def _seed_journey_target(dsn: str, key: str) -> dict[str, Any]:
             "capture_id": capture_id,
             "claim_digest": claim_state_digest(dict(row)),
             "evidence_digest": claim_evidence_digest(evidence_rows),
+        }
+    finally:
+        conn.close()
+
+
+def _fingerprint_journey_claim(dsn: str, claim_id: str) -> dict[str, Any]:
+    """Fingerprint an EXISTING live claim the report disputes (P33.2).
+
+    The same two digests the bridge re-verifies: ``claim_state_digest`` over
+    the stored claim row and ``claim_evidence_digest`` over its ordered
+    evidence bindings. Seeded/minted claims need no fixture insert — the
+    composed runner names a claim its release already published.
+    """
+    import psycopg
+    from db.intake_apply import claim_evidence_digest, claim_state_digest
+    from psycopg.rows import dict_row
+
+    conn = psycopg.connect(dsn, autocommit=True, row_factory=dict_row)
+    try:
+        row = conn.execute("SELECT * FROM claim WHERE claim_id = %s::uuid", (claim_id,)).fetchone()
+        if row is None:
+            raise PortfolioError(f"target claim {claim_id!r} does not exist")
+        evidence_rows = [
+            tuple(r.values())
+            for r in conn.execute(
+                "SELECT capture_id::text, role, binding_status FROM claim_evidence"
+                " WHERE claim_id = %s::uuid ORDER BY capture_id, role",
+                (claim_id,),
+            ).fetchall()
+        ]
+        capture_ids = [str(r[0]) for r in evidence_rows]
+        return {
+            "claim_id": claim_id,
+            "capture_id": capture_ids[0] if capture_ids else None,
+            "claim_digest": claim_state_digest(dict(row)),
+            "evidence_digest": claim_evidence_digest(evidence_rows),
+            "object_type": str(row["object_type"]),
         }
     finally:
         conn.close()
