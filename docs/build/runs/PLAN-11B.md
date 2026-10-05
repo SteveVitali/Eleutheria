@@ -581,7 +581,8 @@ unwritten — C13 owns closeout.
 
 Started: 2026-10-05T~21:40Z (first C5 file write; source: file mtime —
 investigation preceded it in the same context) · Closed:
-2026-10-05T~22:2xZ (filled at the boundary record — see below).
+2026-10-05T22:28Z (`date -u`; last C5 criterion = the head-bound CI
+pass at `5238ded`).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + the 8a/8b Wave-B checks):
@@ -728,10 +729,18 @@ Local verification (P11, with recorded limits):
 
 Boundary (OM-05):
 
-- (filled at the boundary record — head sha, `ci:` line, log
-  `logs/ci-PLAN-11B-C5.json`).
+- Read @ `5238ded9` (content commit): **`ci: pass #236@5238ded`**
+  — python/docs/composed/security/web 5/5 head-bound (run
+  37381411791; stack pass; `main` 2de7b50 descends:no merges:0
+  open-other:6; log `docs/build/logs/ci-PLAN-11B-C5.json`,
+  gitignored, read 2026-10-05T~22:2xZ). Green on the first head —
+  the C3/C4 hosted-runner acquisition cancels did not recur. This
+  boundary-record commit's own head-bound re-read lands in the
+  same log; C13 reads the boundary again at closeout.
 
-Close record: the shared `Closed:` header stays unwritten — C13
+Close record (this commit): records the head-bound read and fills
+Closed at 2026-10-05T22:28Z — work complete; boundary green on the
+first head. The shared `Closed:` header stays unwritten — C13
 owns closeout.
 
 ### C6 — pending
@@ -759,7 +768,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5) | header Started from `date -u`; C2/C3/C4/C5 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`) |
 | OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2, C3, C4, C5) | manifest Plan-extensions + ledger C2/C3/C4/C5 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's rewrite commit names no ticket ids in its subject; memory_guard --staged run pre-commit |
