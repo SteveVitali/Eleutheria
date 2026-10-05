@@ -1,0 +1,361 @@
+{
+  "dependency_order": [
+    "resolution",
+    "camera-sites",
+    "edges",
+    "contradictions",
+    "coverage",
+    "accountability"
+  ],
+  "errors": [],
+  "execution": {
+    "code_commit": "a33cd6ec33cf33d69f15d282b8d69aec24dcbfc4",
+    "completion_id": "01a0e5b2-f5a2-7393-88fe-7075ce174c08",
+    "completion_status": "ok",
+    "ingest_run_id": "01a0e5b2-f5a0-77c5-b511-a210bf9630d6",
+    "sqitch_head": null
+  },
+  "inserted_pass_one": 3,
+  "inserted_rerun": 0,
+  "materialization_version": "sig.candidate-materialization/1",
+  "note": "audit history preserved: the P32.22 apply receipts and this execution's run/completion rows coexist append-only; nothing rewrites history",
+  "pass_one": [
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 1,
+      "seconds": 0.027,
+      "step": "resolution",
+      "summary": {
+        "considered_pairs": 2,
+        "inserted": 0,
+        "resolved": 0,
+        "skipped_existing": 0,
+        "skipped_pinned": 0,
+        "skipped_unresolvable": 2,
+        "superseded": 0,
+        "unresolved": 0
+      },
+      "table": "resolution"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 2,
+      "seconds": 0.037,
+      "step": "camera-sites",
+      "summary": {
+        "active_learning_enqueued": 0,
+        "auto_write_decisions": 0,
+        "auto_write_tiers": [],
+        "blocking_candidate_pairs": 0,
+        "by_tier": {},
+        "cluster_alerts": [],
+        "cluster_size_histogram": {},
+        "decisions": 0,
+        "dedup_ratio": 0.0,
+        "demotions": [
+          {
+            "demoted": true,
+            "precision": 0.0,
+            "threshold": 0.98,
+            "tier": 1
+          },
+          {
+            "demoted": true,
+            "precision": 0.0,
+            "threshold": 0.98,
+            "tier": 3
+          }
+        ],
+        "disputed_pairs": 77,
+        "duplicate_target_groups": 0,
+        "duplicate_target_records": 0,
+        "execution_appended": true,
+        "execution_id": "2cd34f18-ea2d-4331-926a-5cd3ead18b65",
+        "gold_pairs": 540,
+        "gold_set_version": "camera-2",
+        "holdout_pairs": 180,
+        "human_review": {
+          "accept_edges_applied": 0,
+          "accept_edges_refused": 0,
+          "accepts": 0,
+          "cannot_link_edges": 0,
+          "clusters_with_human_accepts": 0,
+          "conflicts": 0,
+          "proposed_awaiting_review": 0,
+          "rejects": 0,
+          "unmatched_pairs": 0,
+          "verdict_pairs": 0
+        },
+        "incompatible_class_pairs_blocked": 0,
+        "inserted": 0,
+        "kappa": 0.6689490445859873,
+        "mirror_lineages": {},
+        "multi_record_sites_independently_corroborated": 0,
+        "multi_record_sites_one_lineage_only": 0,
+        "observation_count_M": 0,
+        "proposed_decisions": 0,
+        "proposed_reasons": {},
+        "resolved_site_count_N": 0,
+        "resolver_version": "camera-sites/1.1.0",
+        "review_items_enqueued": 0,
+        "rules_version": "2",
+        "run_key": "camsite:dd6fef83150e036561b0c0e64b8bbcdbadbc70ee",
+        "run_record_inserted": true,
+        "skipped_existing": 0,
+        "tier6_discarded": 0,
+        "tier_measurements": {},
+        "tier_measurements_llm_labels": {},
+        "unblockable_records": 0
+      },
+      "table": "camera_site_match"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 3,
+      "seconds": 0.001,
+      "step": "edges",
+      "summary": {
+        "asymmetry_tasks": 0,
+        "by_access_kind": {},
+        "considered_claims": 5,
+        "contradictions": 0,
+        "edges_reconciled": 0,
+        "inserted": 0,
+        "observations": 0,
+        "skipped_existing": 0,
+        "skipped_unmapped": 0
+      },
+      "table": "relationship"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 4,
+      "seconds": 0.007,
+      "step": "contradictions",
+      "summary": {
+        "by_type": {},
+        "considered_pairs": 2,
+        "detected": 0,
+        "inserted": 0,
+        "skipped_existing": 0,
+        "skipped_unevidenced": 0,
+        "superseded": 0
+      },
+      "table": "contradiction"
+    },
+    {
+      "after": 3,
+      "before": 0,
+      "inserted": 3,
+      "order": 5,
+      "seconds": 0.019,
+      "step": "coverage",
+      "summary": {
+        "absences_considered": 0,
+        "absences_inserted": 0,
+        "by_method": {
+          "counted_with_denominator": 1,
+          "reconciliation_ratio": 2
+        },
+        "inserted": 3,
+        "metrics_considered": 3,
+        "skipped_existing": 0
+      },
+      "table": "coverage_record"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 6,
+      "seconds": 0.004,
+      "step": "accountability",
+      "summary": {
+        "by_link_type": {},
+        "claims_considered": 5,
+        "deployments_considered": 1,
+        "inserted": 0,
+        "links_derived": 0,
+        "skipped_existing": 0
+      },
+      "table": "inference.derived_fact"
+    }
+  ],
+  "plus_zero": true,
+  "rerun": [
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 1,
+      "seconds": 0.001,
+      "step": "resolution",
+      "summary": {
+        "considered_pairs": 2,
+        "inserted": 0,
+        "resolved": 0,
+        "skipped_existing": 0,
+        "skipped_pinned": 0,
+        "skipped_unresolvable": 2,
+        "superseded": 0,
+        "unresolved": 0
+      },
+      "table": "resolution"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 2,
+      "seconds": 0.016,
+      "step": "camera-sites",
+      "summary": {
+        "active_learning_enqueued": 0,
+        "auto_write_decisions": 0,
+        "auto_write_tiers": [],
+        "blocking_candidate_pairs": 0,
+        "by_tier": {},
+        "cluster_alerts": [],
+        "cluster_size_histogram": {},
+        "decisions": 0,
+        "dedup_ratio": 0.0,
+        "demotions": [
+          {
+            "demoted": true,
+            "precision": 0.0,
+            "threshold": 0.98,
+            "tier": 1
+          },
+          {
+            "demoted": true,
+            "precision": 0.0,
+            "threshold": 0.98,
+            "tier": 3
+          }
+        ],
+        "disputed_pairs": 77,
+        "duplicate_target_groups": 0,
+        "duplicate_target_records": 0,
+        "execution_appended": true,
+        "execution_id": "cd37b16e-1abd-4fda-b52b-c33dc6f40420",
+        "gold_pairs": 540,
+        "gold_set_version": "camera-2",
+        "holdout_pairs": 180,
+        "human_review": {
+          "accept_edges_applied": 0,
+          "accept_edges_refused": 0,
+          "accepts": 0,
+          "cannot_link_edges": 0,
+          "clusters_with_human_accepts": 0,
+          "conflicts": 0,
+          "proposed_awaiting_review": 0,
+          "rejects": 0,
+          "unmatched_pairs": 0,
+          "verdict_pairs": 0
+        },
+        "incompatible_class_pairs_blocked": 0,
+        "inserted": 0,
+        "kappa": 0.6689490445859873,
+        "mirror_lineages": {},
+        "multi_record_sites_independently_corroborated": 0,
+        "multi_record_sites_one_lineage_only": 0,
+        "observation_count_M": 0,
+        "proposed_decisions": 0,
+        "proposed_reasons": {},
+        "resolved_site_count_N": 0,
+        "resolver_version": "camera-sites/1.1.0",
+        "review_items_enqueued": 0,
+        "rules_version": "2",
+        "run_key": "camsite:dd6fef83150e036561b0c0e64b8bbcdbadbc70ee",
+        "run_record_inserted": false,
+        "skipped_existing": 0,
+        "tier6_discarded": 0,
+        "tier_measurements": {},
+        "tier_measurements_llm_labels": {},
+        "unblockable_records": 0
+      },
+      "table": "camera_site_match"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 3,
+      "seconds": 0.001,
+      "step": "edges",
+      "summary": {
+        "asymmetry_tasks": 0,
+        "by_access_kind": {},
+        "considered_claims": 5,
+        "contradictions": 0,
+        "edges_reconciled": 0,
+        "inserted": 0,
+        "observations": 0,
+        "skipped_existing": 0,
+        "skipped_unmapped": 0
+      },
+      "table": "relationship"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 4,
+      "seconds": 0.002,
+      "step": "contradictions",
+      "summary": {
+        "by_type": {},
+        "considered_pairs": 2,
+        "detected": 0,
+        "inserted": 0,
+        "skipped_existing": 0,
+        "skipped_unevidenced": 0,
+        "superseded": 0
+      },
+      "table": "contradiction"
+    },
+    {
+      "after": 3,
+      "before": 3,
+      "inserted": 0,
+      "order": 5,
+      "seconds": 0.007,
+      "step": "coverage",
+      "summary": {
+        "absences_considered": 0,
+        "absences_inserted": 0,
+        "by_method": {},
+        "inserted": 0,
+        "metrics_considered": 3,
+        "skipped_existing": 3
+      },
+      "table": "coverage_record"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 6,
+      "seconds": 0.002,
+      "step": "accountability",
+      "summary": {
+        "by_link_type": {},
+        "claims_considered": 5,
+        "deployments_considered": 1,
+        "inserted": 0,
+        "links_derived": 0,
+        "skipped_existing": 0
+      },
+      "table": "inference.derived_fact"
+    }
+  ],
+  "seconds": 0.132
+}

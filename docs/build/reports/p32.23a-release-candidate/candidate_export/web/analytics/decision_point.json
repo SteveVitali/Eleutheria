@@ -1,0 +1,9 @@
+{
+  "as_of": "2026-10-19",
+  "decision_point": null,
+  "denominator": "0 contracts on the renewal watch",
+  "is_population_total": false,
+  "rule": "the earliest derivable next_decision_date across the watch (expiry minus notice_window_days for an auto-renewing contract, else the expiry itself — SIG-UI-014b); ties resolve to the smallest subject key",
+  "schema": "sig/analytics-decision-point/1",
+  "source_compartments": []
+}

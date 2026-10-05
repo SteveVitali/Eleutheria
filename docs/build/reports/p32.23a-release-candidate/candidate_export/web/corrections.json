@@ -1,0 +1,21 @@
+[
+  {
+    "category": "revision",
+    "corrected_at": "2026-09-28T01:48:25.698327+00:00",
+    "corrected_value": "adjudicated-raw",
+    "id": "01a0e5b2-f4e2-74bb-ade8-bff33e68b1ae",
+    "outcome": "applied",
+    "previous_belief_date": "",
+    "previous_claim_id": "2007d8e5-4241-59e3-af19-0b4c263c9f55",
+    "previous_value": "",
+    "previous_withheld": true,
+    "reason": "evidence_audit_unsupported_role",
+    "reported_by": "anonymous",
+    "retraction_of": "",
+    "revises_claim": "2007d8e5-4241-59e3-af19-0b4c263c9f55",
+    "subject_id": "cbe9cb12-01b8-58c7-8830-7e1c1e253fb9",
+    "subject_label": "cbe9cb12-01b8-58c7-8830-7e1c1e253fb9",
+    "subject_path": "/dossier/cbe9cb12-01b8-58c7-8830-7e1c1e253fb9",
+    "what_changed": "camera_operator"
+  }
+]

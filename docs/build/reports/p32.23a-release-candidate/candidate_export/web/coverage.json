@@ -1,0 +1,29 @@
+[
+  {
+    "denominator": "published tier-0 claims",
+    "id": "materialized_counted_with_denominator_claim",
+    "is_population_total": false,
+    "kind": "counted_quantity",
+    "label": "published tier-0 claims with a resolvable evidence artifact",
+    "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources — an inventory, not a census or an estimate (SIG-METRIC-008).",
+    "value": "16 of 16"
+  },
+  {
+    "denominator": "subjects with a camera_location claim",
+    "id": "materialized_reconciliation_ratio_camera_location",
+    "is_population_total": false,
+    "kind": "reconciliation_ratio",
+    "label": "subjects with a resolved camera_location value",
+    "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources — an inventory, not a census or an estimate (SIG-METRIC-008).",
+    "value": "0 of 1"
+  },
+  {
+    "denominator": "subjects with a camera_operator claim",
+    "id": "materialized_reconciliation_ratio_camera_operator",
+    "is_population_total": false,
+    "kind": "reconciliation_ratio",
+    "label": "subjects with a resolved camera_operator value",
+    "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources — an inventory, not a census or an estimate (SIG-METRIC-008).",
+    "value": "0 of 1"
+  }
+]
