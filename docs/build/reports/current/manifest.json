@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "496580338e8d04e89d3ae53730a2ed8308380d6d",
+  "input_commit": "a0cf0fc468f350bc72ff38775b4ac8264f352c90",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -766,7 +766,7 @@
     },
     {
       "path": "docs/adr/ADR-197-living-record-test-lint-and-advance-backtest.md",
-      "sha256": "fe06cd34b80862e3db64d59edc2cabedd1eefb8bb6f302712630af06d0bc2b02"
+      "sha256": "86bc439aa3c35a694d30b37267e6b985ff4ae4f901f2f531ce8080efccbc16e0"
     },
     {
       "path": "docs/adr/README.md",
