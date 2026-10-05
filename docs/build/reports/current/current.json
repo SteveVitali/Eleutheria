@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "cb3b6dd7387119cd6947ac55532d8fa8939ed406",
+  "input_commit": "7f3798d41c9c68d06ce9b46ff810abd09c4280a9",
   "manifest_inputs": 968,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.31",
-    "lastCompleted": "P34.30",
+    "nextTicket": "P34.32",
+    "lastCompleted": "P34.31",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.30-memory-cutover-disposition-and-transition-rule",
+    "chainTip": "r11/P34.31-living-record-test-lint",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-05T02:06Z"
+    "updatedAt": "2026-10-05T05:03Z"
   },
   "counts": {
     "obligations": 156,
@@ -33,13 +33,13 @@
     "terminal": 69,
     "events": 636,
     "transitions": 26,
-    "coverage_assessments": 200,
+    "coverage_assessments": 201,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 19,
-    "known_inconsistencies": 0,
-    "conflicted": 0
+    "known_inconsistencies": 2,
+    "conflicted": 2
   },
   "obligations": [
     {
@@ -12282,8 +12282,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-040": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.31-1)",
+          "evidence": "docs/build/tools/living_record_lint.py:1;docs/build/tools/living_record_backtest.py:1;docs/build/tools/record_policy/living_records.toml:1;docs/build/runs/P34.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12937,6 +12937,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.31); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-040:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-040",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-P34.31-1)",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/P34.31-living-record-test-lint @ 95aaf8ba04a0b8f1e1aaf79ab018153565f304f8",
+        "limitations": "engineered only (live_verification=false) — the AST lint gates make check (real tree: 412 files scanned, 38 tests evaluated, 5 registered exemptions, 0 violations, 2 snapshot reads) and the §8b living-pin? grep is superseded by a structural policy/lint/driver check; the nightly living-backtest stage is proven by its fixture-repo suite (pin-broken/converted-in-head/removed-in-head/infra) plus a local real-history replay (42 living-change transitions in window-60, 2 replayed / 76 tests / 0 pin-broken) but has never run on a scheduled main — observing its first run is owed as D-P34.31-1 (kind V, home BL-084). Known fidelity caveat (ADR-197): the replay imports C-overlaid tests against the C′ tree at HEAD-import semantics, so a pin broken only by an import-side change can classify as infra rather than pin-broken.",
+        "supersedes": "SIG-ENG-040:r11-1",
+        "assessment_id": "SIG-ENG-040:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-041",
@@ -14727,6 +14737,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-040",
+          "verdict": "MET-ENGINEERED(D-P34.31-1)",
+          "assessed_at": "2026-10-05"
+        },
+        {
           "requirement": "SIG-ENG-041",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -16038,13 +16053,30 @@
       }
     ]
   },
-  "known_inconsistencies": [],
-  "incomplete": false,
+  "known_inconsistencies": [
+    {
+      "check": "ledger/last-completed",
+      "severity": "conflict",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P34.31",
+      "evidence": "lastCompleted: P34.31",
+      "message": "lastCompleted 'P34.31' has no BUILD_INDEX row"
+    },
+    {
+      "check": "ledger/next-not-lowest",
+      "severity": "error",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P34.32",
+      "evidence": "nextTicket: P34.32; lowest open row: P34.31",
+      "message": "nextTicket 'P34.32' is not the lowest chain row that has not landed ('P34.31'; superseded-by/deferred/unused and HUMAN rows skipped — V2)"
+    }
+  ],
+  "incomplete": true,
   "stale_sources": [],
-  "manifest_sha256": "d3a64906e45b03ab5032f7609fbc553afaa1815c49ede42a2aff9a817763be32",
+  "manifest_sha256": "a1e33fe277ddf241a13acc89dab1bf612c535882eab62e0ff9156f2bb48f3d0a",
   "current_md": {
-    "lines": 100,
-    "bytes": 17183,
+    "lines": 103,
+    "bytes": 17297,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

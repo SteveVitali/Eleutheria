@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "cb3b6dd7387119cd6947ac55532d8fa8939ed406",
+  "input_commit": "7f3798d41c9c68d06ce9b46ff810abd09c4280a9",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -766,7 +766,7 @@
     },
     {
       "path": "docs/adr/ADR-197-living-record-test-lint-and-advance-backtest.md",
-      "sha256": "b60f793a28fe7eaa0efd9cceb6333d01a3039ebb2c55b7a4eb5fc0199950d4e6"
+      "sha256": "fe06cd34b80862e3db64d59edc2cabedd1eefb8bb6f302712630af06d0bc2b02"
     },
     {
       "path": "docs/adr/README.md",
@@ -782,11 +782,11 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "1be2e770e00089f4d18f2cf5f29a280ea606e230dc5a45097cbcc39d347bbb35"
+      "sha256": "793e7e64467f39c241f654a6d71844adffe7841106277ce4c282024ac47fddf9"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "7c00ceda839d5b7f48da35f8a5fd966fdf10b6d2b6f7e63f29fdae00e8b91332"
+      "sha256": "60e9eaea2ac286f02ef58e3259e0ee42f29e341dd00d6afc963b45f92c67848d"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -854,7 +854,7 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "b87c3df5c959449ecb8fb638ec742685e79b8cdae396f96cdba4de5f9f37d7b3"
+      "sha256": "066dc89be1aaffcfda5f234300dac673468ea6eb36a2a436954a8ed140d33bb9"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
@@ -1714,7 +1714,7 @@
     },
     {
       "path": "docs/build/runs/P34.31.md",
-      "sha256": "c78aac3884e0b6596ef859c375b527de4b85b914463c2c094ac7ad1ad672321c"
+      "sha256": "740ba680ed4ab72432bfab62dae61ecf787e0d222e5f7683662846220d7e1356"
     },
     {
       "path": "docs/build/runs/P34.4.md",
