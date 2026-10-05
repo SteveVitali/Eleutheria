@@ -747,8 +747,8 @@ owns closeout.
 
 Started: 2026-10-05T~21:5xZ (first C6 file write; source: file mtime —
 investigation preceded it in the same context) · Closed:
-2026-10-05T23:0xZ (`date -u`; last C6 criterion = the head-bound CI
-read after push).
+2026-10-05T23:19Z (`date -u`; last C6 criterion = the head-bound CI
+pass at `0dc6bc1`).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + the 8a ADR-171 checks):
@@ -881,13 +881,19 @@ Local verification (P11, with recorded limits):
 
 Boundary (OM-05):
 
-- Read @ the content+ledger head (filled at commit): the head-bound
-  `ci:` line lands in the close record below; log
-  `docs/build/logs/ci-PLAN-11B-C6.json` (gitignored).
+- Read @ `0dc6bc1d` (content + ledger head): **`ci: pass
+  #236@0dc6bc1`** — python/docs/composed/security/web 5/5 head-bound
+  (run 37386655921; stack pass; `main` 2de7b50 descends:no merges:0
+  open-other:6; log `docs/build/logs/ci-PLAN-11B-C6.json`,
+  gitignored, read 2026-10-05T~23:1xZ). Green on the first head —
+  the C3/C4 hosted-runner acquisition cancels did not recur. This
+  boundary-record commit's own head-bound re-read lands in the same
+  log; C13 reads the boundary again at closeout.
 
 Close record (this commit): records the head-bound read and fills
-Closed — work complete pending the boundary read's outcome. The
-shared `Closed:` header stays unwritten — C13 owns closeout.
+Closed at 2026-10-05T23:19Z — work complete; boundary green on the
+first head. The shared `Closed:` header stays unwritten — C13
+owns closeout.
 
 ### C7 — pending
 
