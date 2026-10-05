@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "c716beb8efd42e0c5eb3d1bf0cbfaa2be27a0724",
+  "input_commit": "5c771f66b416e5195f263da477f12406ab5dc0af",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "ac253f09e6e4b55e56b2f10064656e7587850f7acca0582b8b8b1ea6392bb4be"
+      "sha256": "dcf3174877cd8b972ce25d318e7ca558ba4a5a8ab4ce63fd797ee3b299e6f435"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -790,7 +790,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "0f6a1355b5673c5557bfbc080faa8e5b30f789daa9e6b9cf1f8fdca9d0f329ac"
+      "sha256": "4d25def5daf6a239874146c2b329cd557a7e7e1aa20e66e711c8604cbf220aca"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -862,7 +862,7 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "57539b987730249758762b1016c248c87d3040e518663e8abda4eebe35e2b62c"
+      "sha256": "75861dd1ac83824806723ba39e68f747c174f6a10603b30c532f99dd6d0ca30b"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
@@ -1765,6 +1765,10 @@
       "sha256": "c8f94d0d01985d4c97a18eaae6f8079553c52bcf18008d88ca27f9561792f3fb"
     },
     {
+      "path": "docs/build/runs/PLAN-11B.md",
+      "sha256": "24c20aaf04ef24e3efd1f31112bcc1041fa76cf10729334457ab16d2745d3ed5"
+    },
+    {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
       "sha256": "2a2d624970f020e019f119bbacf58a99167dd5822710e7e6a02677b0157fe3bd"
     },
@@ -2278,23 +2282,23 @@
     },
     {
       "path": "docs/tickets/261_P35.57__api-release-parity.md",
-      "sha256": "f5737bcd84c16e9e420c9e7acc1caf59594bda40e12c239877a99a5713fa1ca2"
+      "sha256": "22cd83409b33ef2221a3f756c7d3381d23c56b72b04539eef8f239495c98a377"
     },
     {
       "path": "docs/tickets/262_P35.5__zero-egress-distribution-host.md",
-      "sha256": "ba2938542e9e5b0c08af98f63db630c0adac8a670f6cc5b2d87ae802043c90a8"
+      "sha256": "2de92ae225cba616e51b2dd8994f6e27efb718654316bc6acbf001312f2eb3b4"
     },
     {
       "path": "docs/tickets/263_P35.67__post-dns-cutover-probe.md",
-      "sha256": "bdc4d190fd691411b79eca9ded8ddc0043726b1490ad29bfa1be83a7e24f762f"
+      "sha256": "fcaa29304fb2cf33d2a62d73ea58989c0fdbc6f46a13b2d4a92cb173a66dc315"
     },
     {
       "path": "docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md",
-      "sha256": "cf7d01c802221b6df5db3205ba1e852f4d448266fc7c809b6f8c569315b63ca0"
+      "sha256": "ffff69d8cf1c8f11004dbdbaf24c9345ba3fb5dcca6b3c6d890f78b6d2a91498"
     },
     {
       "path": "docs/tickets/265_P36.1a__opt-out-register-and-reservation-refusal.md",
-      "sha256": "5b87db3156469254119e6813aa2a109087218cabd9304acc422c5c0332ff75e0"
+      "sha256": "3ce005738d58895084f17a8576048b6c6a70503eb0f9e53877238b8d7cf02928"
     },
     {
       "path": "docs/tickets/266_P35.6__acquisition-plumbing-and-verification-harness.md",

@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "c716beb8efd42e0c5eb3d1bf0cbfaa2be27a0724",
-  "manifest_inputs": 972,
+  "input_commit": "5c771f66b416e5195f263da477f12406ab5dc0af",
+  "manifest_inputs": 973,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "PLAN-11B",
@@ -33,8 +33,8 @@
     "terminal": 69,
     "events": 636,
     "transitions": 26,
-    "coverage_assessments": 202,
-    "coverage_historical_rows": 777,
+    "coverage_assessments": 245,
+    "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 19,
@@ -12604,6 +12604,264 @@
           "evidence": "",
           "assessed": "",
           "label": "historical/csv"
+        },
+        "SIG-TRANSP-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-010": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-011": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-012": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-013": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-014": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-015": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-016": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-017": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-018": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-019": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-020": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-021": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-022": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-023": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-024": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-025": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-026": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-027": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-028": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-029": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-030": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-031": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-032": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-033": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-034": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-035": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-036": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-037": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-038": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-039": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-040": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-041": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-042": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-TRANSP-043": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
         }
       }
     },
@@ -14479,6 +14737,436 @@
         "assessment_id": "SIG-STORE-048:r11-1"
       },
       {
+        "requirement_id": "SIG-TRANSP-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.48); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.40); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.47); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.47); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.69); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.46); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.69); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.47); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-009:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-010",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.49); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-010:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-011",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.36); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-011:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-012",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.51); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-012:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-013",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-013:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-014",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.50); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-014:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-015",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.50); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-015:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-016",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-016:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-017",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-017:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-018",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.50); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-018:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-019",
+        "domain": "hosted",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.5); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-019:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-020",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P37.36); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-020:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-021",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.43); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-021:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-022",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-022:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-023",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.42); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-023:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-024",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.67); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-024:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-025",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P37.42); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-025:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-026",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.40); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-026:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-027",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.40); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-027:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-028",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.48); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-028:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-029",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-029:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-030",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-030:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-031",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P35.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-031:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-032",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.68); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-032:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-033",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.48); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-033:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-034",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.43); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-034:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-035",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.45); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-035:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-036",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.46); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-036:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-037",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.46); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-037:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-038",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.47); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-038:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-039",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.47); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-039:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-040",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.69); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-040:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-041",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.69); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-041:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-042",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P37.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-042:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-043",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/PLAN-11B-contracts-for-11b-and-transp-family @ ac2b96950d97ccaadb08a9a13e0c757c9b8810d1",
+        "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.69); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-TRANSP-043:r11-1"
+      },
+      {
         "requirement_id": "SIG-TRUST-004",
         "domain": "hosted",
         "verdict": "MET-ENGINEERED(D-P32.3-1)",
@@ -15394,6 +16082,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-TRANSP-019",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
           "requirement": "SIG-TRUST-004",
           "verdict": "MET-ENGINEERED(D-P32.3-1)",
           "assessed_at": "2026-10-01"
@@ -15696,6 +16389,216 @@
           "requirement": "SIG-SEC-003",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-TRANSP-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-010",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-011",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-012",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-013",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-014",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-015",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-016",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-017",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-018",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-020",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-021",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-022",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-023",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-024",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-025",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-026",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-027",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-028",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-029",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-030",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-031",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-032",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-033",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-034",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-035",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-036",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-037",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-038",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-039",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-040",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-041",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-042",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-043",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-05"
         },
         {
           "requirement": "SIG-TRUST-009",
@@ -16071,14 +16974,15 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "aba55aa4a256aefae90e612e18ac8af1114c3ab211923f25daf416304d55c34c",
+  "manifest_sha256": "9f12344847e99f7d28d45e60e014c095417f4c4f4a619b2f5c34327aff7c1ab5",
   "current_md": {
     "lines": 100,
-    "bytes": 17262,
+    "bytes": 18884,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
       "coverage-2.md",
+      "coverage-3.md",
       "obligations.md"
     ]
   }

@@ -47,8 +47,9 @@ def test_reserved_set_matches_the_ticket() -> None:
 
 def test_fold_back_count_includes_declared_extensions() -> None:
     assert mod.EXPECTED_IDS == mod.BASELINE_IDS + len(mod.FOLD_BACK_IDS)
-    # 715 through Round 10; + the 62 Part XII §56 ids of Round 11 (SEED-12a/12c) = 777.
-    assert mod.EXPECTED_IDS == 777
+    # 715 through Round 10; + the 62 Part XII §56 ids of Round 11 (SEED-12a/12c)
+    # = 777; + the 43 §56.10 SIG-TRANSP ids of PLAN-11B = 820.
+    assert mod.EXPECTED_IDS == 820
 
 
 def test_appendix_f_ids_parses_rows() -> None:

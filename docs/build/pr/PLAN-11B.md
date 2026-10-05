@@ -2,7 +2,8 @@
 
 **Thirteen-context plan row (C1–C13, one shared branch, one PR).**
 **Requirement ids:** **SIG-TRANSP-001…043** (written here — the transparency
-family of spec §56.8, plan §6.2) · **SIG-SEC-008 / SIG-SEC-009 / SIG-CONF-010**
+family, spec §56.10 under §56.8's later-family rules, plan §6.2) ·
+**SIG-SEC-008 / SIG-SEC-009 / SIG-CONF-010**
 (owners re-confirmed, not changed) · **SIG-ENG-003** (cited — spec changes land
 through `spec_src` + `BUILD.sh`) · **SIG-ENG-041** (cited — MISSING rows and
 routing) · **Ticket:**
@@ -19,7 +20,7 @@ Rows 261–343 of the Round-11 manifest are skeletons. Before GATE-G4 each must
 read as an execute-grade contract — gate status with the operator's verbatim
 words and times, live stage/window/legs with their re-run prompts, production
 mutations, `live:` edges, token-counted Load lists, and requirement ids.
-Separately, the transparency requirement family (spec §56.8: J3 §11 D01–D25,
+Separately, the transparency requirement family (spec §56.10: J3 §11 D01–D25,
 K9 §10 D26–D34, K10 §18 D35–D43, adopted by K13's UXR-A10) needs final
 `SIG-TRANSP-nnn` ids so the 11B transparency rows can cite them. C13 runs the
 fresh-context Phase-4 sizing review and produces the draft 11B OM-20 list for
@@ -27,7 +28,7 @@ the GATE-G4 packet.
 
 ## What C1 ships (this push)
 
-- **SIG-TRANSP-001…043** appended to `spec_src` (new §56 subsection), `TRANSP`
+- **SIG-TRANSP-001…043** appended to `spec_src` (new §56.10), `TRANSP`
   registered in §0.3, the canonical spec rebuilt by
   `docs/research/_meta/spec_src/BUILD.sh` (the generated file is never
   hand-edited), `check_spec_src.py` fold-back baselines updated, an Appendix
@@ -58,16 +59,28 @@ the GATE-G4 packet.
 
 ## Verification (C1 boundary)
 
-- `python3 docs/build/tools/check_spec_src.py` — (recorded in the run ledger)
-- `bash scripts/docs/check-build-memory.sh .` — (recorded in the run ledger)
-- `make check` / `make docs-check` — (recorded in the run ledger; any
-  un-runnable leg, e.g. an unreachable Docker daemon, is recorded as
-  `locally-green (… not run: …)`, never claimed)
+- `python3 docs/build/tools/check_spec_src.py` — OK: spec-src 38/38,
+  appendix-f 191/191, requirement-ids 1,644/1,644; `BUILD.sh` reproduction
+  byte-identical (852,023 bytes); 820 ids = 668 baseline + 152 fold-backs
+- `bash scripts/docs/check-build-memory.sh .` — no violations (41
+  pre-existing warnings)
+- `python3 docs/build/tools/check_coverage_matrix.py` — 820/820 rows OK
+- `make docs-check` — green on every leg, including
+  `current_projection.py verify` fresh 973/973 (the projection was
+  regenerated — it had drifted after the committed spec/coverage append)
+- `make check` — green locally with two recorded limits: the local Docker
+  daemon is unreachable (`docker info` hangs; the SDK ping EOFs), so the
+  run used a PATH-ahead `docker` stub and the Docker-gated suites
+  (`tests/db`, `tests/e2e`, the docker-marked `test_web_iac` rows) **skipped**
+  — they run in CI's `python`/`composed` jobs; `SIG_GCP_PROJECT` armed with
+  a local sentinel for the fail-closed secrets scan. A C1-caused red was
+  found and fixed: `docs/build/tools/test_check_spec_src.py` still asserted
+  `EXPECTED_IDS == 777` after the TRANSP append raised it to 820
 - `python3 docs/build/tools/check_trailers.py --range <base>..HEAD` — clean
-- `python3 docs/build/tools/memory_guard.py all --staged` — clean before each
-  commit touching protected records
+- `python3 docs/build/tools/memory_guard.py all --staged` — clean before
+  the commit
 - `python3 docs/build/tools/ci_boundary.py --pr <n>` — recorded in the run
-  ledger
+  ledger after the push
 
 ## Non-goals
 

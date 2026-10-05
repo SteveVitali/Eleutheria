@@ -76,7 +76,61 @@ Scope (contract deliverables 1, 2-in-part, 3-in-part):
   C2/C5 per the contract's placement instructions — not read or placed
   by C1.
 
-Findings / decisions: (appended as C1 completes)
+Findings / decisions:
+
+- Committed TRANSP work verified before building on it (5c771f66): all 43
+  `SIG-TRANSP-001…043` ids land in spec §56.10 (the family is appended *under*
+  §56.8's later-family/de-dup rules — the ledger header's "spec §56.8" cites
+  the governing rules section, the requirements themselves are §56.10);
+  `TRANSP` registered in §0.3; Appendix G.7 row `R11-X2`; draft→final map
+  `docs/build/reports/plan-11b/TRANSP_id_map.csv`; 43 MISSING coverage rows
+  routed to their owning 11B chain rows; 43 `coverage-assessment/1` events.
+  `BUILD.sh` reproduces the committed spec byte-identically (852,023 bytes);
+  `check_spec_src.py` OK (1,644/1,644 ids; 820 requirement ids = 668 + 152
+  fold-backs); coverage matrix 820/820 rows OK.
+- Contracts rewritten in place (same filenames). Corrections found against
+  the ratified plan rows (`data/round11_plan.csv`) and fixed:
+  - 261 (P35.57): confirmed deps P34.25;P34.46;P34.40, IN-TICKET PAUSE /
+    never pre-authorised (public API responses), 1 live leg (the roll after
+    the go), size M.
+  - 262 (P35.5): `Depends on` corrected `none` → `P34.5, P34.10`; live legs
+    corrected 2 → 1 (the post-cutover probe belongs to row 263); OM-20
+    conditional (listed at GATE-G4) else in-ticket pause.
+  - 263 (P35.67): gate status corrected to `none` (the plan cell carries no
+    gate); read-only; `live:OP-09` edge kept; 2 legs (post-OP-09 probe +
+    cert-renewal read ~2026-11-22).
+  - 264 (P35.1a): deps confirmed P34.4; no live legs — the production write
+    (scheduled-ops deploy + first live-diff) runs in-ticket only if the
+    GATE-G4 OM-20 list names the row; size L-split-a. SIG-SEC-008 ownership
+    confirmed P35.1a/b as written.
+  - 265 (P36.1a): `Live window: none` added (no live legs but the field is
+    still declared); size corrected S → L-split-a; SIG-INGEST-046c
+    affirmative-reservation refusal, the S6 R-19 express-terms classification
+    route, S6R-28 GATE-G5 routing and the P36.1a → P35.11 hard edge all
+    carried.
+  - All five now carry: the literal `Run:` line, harness header, verbatim
+    operator words, OM-20 status, live stage/window/legs + re-run prompt
+    (OM-19), production-mutation declarations (OM-14), token-counted Load
+    lists (bytes ÷3 and ÷4), requirement ids, layered ACs (each layer
+    named — OM-06), cross-cutting invariants and the B5 §6.2/H2 §7
+    operating-clause block. No skeleton headers remain.
+- Verification fixes found and corrected (in place, C1 scope):
+  - `docs/build/tools/test_check_spec_src.py` hardcoded
+    `EXPECTED_IDS == 777`; the committed TRANSP append raised it to 820 and
+    the companion test was missed → red under `make check`. Fixed to 820
+    with the arithmetic comment.
+  - The committed `current` projection was stale after 5c771f66 (spec,
+    coverage matrix, assessments and this ledger had drifted); regenerated
+    — `verify` now fresh 973/973.
+- Local environment honesty (P11): the local Docker daemon is unreachable —
+  `docker info` hangs (> 17 min, no timeout in `tests/ops/test_web_iac.py`'s
+  probe), `docker version`/`docker.from_env().ping()` return EOF. `make
+  check` was run with a PATH-ahead `docker` stub so the Docker-gated
+  `tests/db`, `tests/e2e` and `test_web_iac` docker rows **skip** instead of
+  hanging — they run in CI's `python` (db) and `composed` jobs.
+  `SIG_GCP_PROJECT` armed with the local sentinel `sig-local-sentinel` for
+  the fail-closed secrets scan (OP-07 pattern; the real id lives in
+  `vars.SIG_GCP_PROJECT`).
 
 ### C2 — pending
 
@@ -109,20 +163,20 @@ filled per context.
 
 | clause | status | note |
 |---|---|---|
-| OM-01 harness/model recorded; commits trailered | in progress | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
-| OM-04 dates from `date -u` / git / GitHub (source named) | in progress | header Started from `date -u` |
+| OM-01 harness/model recorded; commits trailered | ok (C1) | header + every C1 commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1) | header Started from `date -u` |
 | OM-05 CI read at every boundary; red → blockedOn | pending | ci_boundary.py at the C1 push |
-| OM-06 every AC names its layer | pending | per contract |
+| OM-06 every AC names its layer | ok (C1) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
-| OM-13 protected records appended only | in progress | memory_guard --staged before each commit touching them |
-| OM-15 no test asserts a living record's current value | n/a | no tests written by C1 |
+| OM-13 protected records appended only | ok (C1) | memory_guard --worktree clean; coverage assessments/events appended, none migrated |
+| OM-15 no test asserts a living record's current value | ok (C1) | the one test touched is a fold-back count (820), an invariant of the committed spec — not a living-record read |
 | OM-07/08/09 gate records verbatim | n/a | no gate item decided by this row |
-| OM-16 size budget | in progress | C1 = transparency family + 5 contracts; ~200k seam rule watched |
+| OM-16 size budget | ok (C1) | C1 = transparency family + 5 contracts + test/projection fixes; within a single context |
 | OM-02 closeout is one commit after the PR exists | pending | C13 |
 | OM-19 windows / live legs | n/a | none for this row (each written contract carries its own) |
 | OM-20 pre-authorisation | n/a | not an OM-20 row |
 | OM-03 rows only from the ratified plan | ok | rows 261–265 are the ratified chain rows |
 | PR-1 branch from chainTip; PR base = previous branch | in progress | base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
-| P11 local gate | pending | `make check` etc. at the final C1 commit; Docker state recorded honestly |
+| P11 local gate | ok (C1, with recorded limits) | `make docs-check` green incl. projection fresh 973/973; `make check` green with a PATH `docker` stub (daemon unreachable — `docker info` hangs) and `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI |
 | CI-8 CI config changed | no | |
