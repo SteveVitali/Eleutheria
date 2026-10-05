@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "3a6871cfc9b4057b9649baab901afc6a73daec28",
+  "input_commit": "f5d6a4788f5200374829d6c12624a83f00f1fa56",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "baf0530f3443524b1301d55e338d99bc23a4ba64d965d475a06779f1db19d185"
+      "sha256": "ac253f09e6e4b55e56b2f10064656e7587850f7acca0582b8b8b1ea6392bb4be"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -773,12 +773,16 @@
       "sha256": "8d064699257fe4cc96bbc32cf3b8b4c47b6b868cb8c482a02b9fd2026a9acb7a"
     },
     {
+      "path": "docs/adr/ADR-199-round-close-record-checks-capstone-two-sum-and-tail-probe-sweep.md",
+      "sha256": "7fd5fb807b0fce764314149612709f192b4668546c5daadaf5f75e4ad7f19b97"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "930ec46f40aca1d3daf3506c7302e65526dcbafa33287ba9e9417fb8b40f004b"
+      "sha256": "ad48dd54a50d54b2a6cc9dc4cd882d1a2884374bf348c17282514a99b4c74c2e"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "c4d841a29df59622082b5b9214a374db370b72dc1e91ed06c7d2694418209f1b"
+      "sha256": "9a087ed984b9ae466ea16ad143037df9a38e37ff4834bc1204e7378c110cb015"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1862,7 +1866,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "c5c6d77aa26c6e61ee2f05818bc6c22a054d6ad87005ee2523742e734f504328"
+      "sha256": "1e78ccec2de5bf141fcb083d6bf70290ef2724224e85ffece597d8df520ab5f6"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",

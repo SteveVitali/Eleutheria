@@ -1,0 +1,105 @@
+# docs/build/tools/record_policy/tail_probe_sweep.toml — the tail probe-sweep
+# contract (B4 §G10 tail column; SIG-OPS-011; P34.33; ADR-199). Written 2026-10-05
+# (date -u). Changing this file is reviewed like code.
+#
+# One [[probe]] per G10 production-truth probe — the ten legs of the round-tail sweep
+# (route allow-list/absence, release record and id on pages, attribution sanity,
+# jurisdiction–coordinate consistency, API-vs-release parity, number truth,
+# monitoring liveness, live-config drift, the fixture-sentinel scan, claim markers).
+# Each entry declares: the requirement(s) it traces to, the owning chain row
+# (`owner`), the producer `command` the owner ships (the repo's verb conventions —
+# `sig-ops <verb> --record-out <record>`; the command is the contract, the owner
+# implements it), and `record` — the committed `sig.probe-run/1` record the tail
+# check reads. `sig.probe-run/1`: {version, generated_at (date -u), checks (a leg
+# map, each `verdict` ∈ pass/fail/skipped), overall}; the record shape
+# `ops/src/ops/republish_probe.py` emits.
+#
+# At `--round-tail` (P38's tail run and each sub-round acceptance row) every listed
+# probe MUST have a record no older than 24 h at the packet commit, and the record
+# must have evaluated something — an empty `checks` map or an all-`skipped` record
+# fails (G11: a scheduled job that measured nothing fails). The probes themselves are
+# their owners' (P35.3 and the OPS rows) — this file is the contract, not the probe.
+#
+# Records land under docs/build/reports/probes/<id>.json.
+
+schema = "tail-probe-sweep/1"
+
+[[probe]]
+id = "route-allowlist"
+title = "public-route allow-list and absence on every origin"
+requires = ["SIG-OPS-003"]
+owner = "P34.10"
+command = "uv run sig-ops republish-probe --record-out docs/build/reports/probes/route-allowlist.json"
+record = "docs/build/reports/probes/route-allowlist.json"
+
+[[probe]]
+id = "release-record"
+title = "release record written and release id on pages"
+requires = ["SIG-OPS-004", "DR-C3-14"]
+owner = "P34.10"
+command = "uv run sig-ops release-record-probe --record-out docs/build/reports/probes/release-record.json"
+record = "docs/build/reports/probes/release-record.json"
+
+[[probe]]
+id = "live-config-drift"
+title = "live-configuration reconciliation (schedulers, jobs, services, identities, bucket policies)"
+requires = ["SIG-OPS-005"]
+owner = "P35.1a"
+command = "uv run sig-ops drift-probe --record-out docs/build/reports/probes/live-config-drift.json"
+record = "docs/build/reports/probes/live-config-drift.json"
+
+[[probe]]
+id = "monitoring-liveness"
+title = "probe heartbeat ≤ 2 intervals, alert path delivered, first-fire watch for never-run schedules"
+requires = ["SIG-OPS-006"]
+owner = "P35.2"
+command = "uv run sig-ops monitoring-probe --record-out docs/build/reports/probes/monitoring-liveness.json"
+record = "docs/build/reports/probes/monitoring-liveness.json"
+
+[[probe]]
+id = "attribution-sanity"
+title = "every rights_attribution_required row has holder + terms URL, holder from the source registry"
+requires = ["SIG-OPS-011", "DR-C3-09"]
+owner = "P35.3"
+command = "uv run sig-ops probe-sweep --only attribution-sanity --record-out docs/build/reports/probes/attribution-sanity.json"
+record = "docs/build/reports/probes/attribution-sanity.json"
+
+[[probe]]
+id = "jurisdiction-coordinate"
+title = "points inside the claimed boundary; no (0,0) or swapped axes; one code scheme per dossier slug"
+requires = ["SIG-OPS-011", "DR-C3-05", "DR-C3-11"]
+owner = "P35.3"
+command = "uv run sig-ops probe-sweep --only jurisdiction-coordinate --record-out docs/build/reports/probes/jurisdiction-coordinate.json"
+record = "docs/build/reports/probes/jurisdiction-coordinate.json"
+
+[[probe]]
+id = "api-release-parity"
+title = "/v1/dossier/{scope} == the release JSON or 404; complete:false when evaluated = 0"
+requires = ["SIG-OPS-011", "DR-C3-12"]
+owner = "P35.3"
+command = "uv run sig-ops probe-sweep --only api-release-parity --record-out docs/build/reports/probes/api-release-parity.json"
+record = "docs/build/reports/probes/api-release-parity.json"
+
+[[probe]]
+id = "number-truth"
+title = "every displayed number recomputed from bulk; one label per quantity"
+requires = ["SIG-OPS-011", "DR-C3-15"]
+owner = "P35.3"
+command = "uv run sig-ops probe-sweep --only number-truth --record-out docs/build/reports/probes/number-truth.json"
+record = "docs/build/reports/probes/number-truth.json"
+
+[[probe]]
+id = "fixture-sentinel"
+title = "no fixture sentinels outside declared fixture compartments (example.test, sig.example, _FIXTURE, demo_, loopback URLs, unregistered contact domains)"
+requires = ["SIG-OPS-011", "DRAFT-OPS-2"]
+owner = "P35.3"
+command = "uv run sig-ops sentinel-scan --record-out docs/build/reports/probes/fixture-sentinel.json"
+record = "docs/build/reports/probes/fixture-sentinel.json"
+
+[[probe]]
+id = "claim-markers"
+title = "'human-verified', 'Reviewed', 'independent review' only where a recorded human-completion marker exists"
+requires = ["SIG-OPS-011", "DR-C3-03"]
+owner = "P35.3"
+command = "uv run sig-ops claim-marker-scan --record-out docs/build/reports/probes/claim-markers.json"
+record = "docs/build/reports/probes/claim-markers.json"
