@@ -396,13 +396,20 @@ Boundary (OM-05):
   the sanctioned mechanism for verifier-backed bulk-rewrite commits,
   same class as the Stage-B seeds and P34.18/ADR-178), with the scope
   and consequence note recorded in the policy comment itself.
-- Read 2 @ the fix/boundary commit: pending — this commit records it
-  after push.
+- Read 2 @ `e34dd7c2` (the seed-commit fix-forward): **`blockedOn: CI
+  cancel on #236@e34dd7c (composed)`** — "The job was not acquired by
+  Runner of type hosted even after multiple attempts" (run
+  37364225123): a GitHub hosted-runner acquisition failure, not a check
+  failure. The governed flake re-run (B-15) does not cover it —
+  `ci_boundary.py` only re-runs `conclusion == failure` results that
+  match an allow-listed pattern; a `cancelled` conclusion is never
+  re-run. The fix is the fresh head this commit creates.
 
-Boundary-record commit (`<pending>` in this commit — filled by the
-boundary-record commit): appends the read-2 `ci:` line and this
-section's Closed cell; a third commit then re-reads head-bound on it
-and records both (C2's two-read pattern).
+Boundary-record commit (this one — `e34dd7c2`'s successor): records the
+read-2 `ci:` line above; the close-record commit then re-reads
+head-bound on this commit and fills this section's Closed cell (C2's
+two-read pattern). The shared `Closed:` header stays unwritten — C13
+owns closeout.
 
 ### C4 — pending
 
