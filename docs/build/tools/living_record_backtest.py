@@ -12,14 +12,21 @@ inside `--window` commits where C′ changed a declared living record, it:
      policy the lint uses,
   3. materialises C's test files into the C′ tree and runs exactly those
      tests under the *caller's* interpreter (`sys.executable -m pytest`), and
-  4. classifies every failure by comparing C's test source to HEAD: still
-     byte-identical at HEAD — "pin-broken" (a *live* pin: the replay proves a
-     legitimate record advance would break the test as it stands today —
-     the actionable nightly finding); edited at HEAD —
-     "converted-in-head" (the pin was already converted — resolved
-     history, not a finding); absent at HEAD — "removed-in-head";
-     a collection/environment error — "infra" (counted, never a pin
-     finding).
+  4. classifies every failure. The lint is the definition of a pin, so a
+     failure is in the pin family only when the C-era test itself violates
+     the policy (unexempted): still byte-identical at HEAD — "pin-broken"
+     (a *live* pin: the replay proves a legitimate record advance would
+     break the test as it stands today — the actionable nightly finding);
+     edited at HEAD — "converted-in-head" (the pin was already converted —
+     resolved history, not a finding); absent at HEAD —
+     "removed-in-head". A failure whose C-era test is lint-clean (or rides
+     a registered invariant mark) is "broken-tree": the test is a
+     legitimate invariant — validator, generated-equals-source, vocabulary
+     — and the transition head's own committed tree trips it (the
+     documented fix-forward closeout pattern, e.g. a landed-row coverage
+     routing re-verdicted one commit later); recorded per transition,
+     never a pin finding. A collection/environment error is "infra"
+     (counted, never a pin finding).
 
 A pin fails exactly at such a transition — the #165/#179/#185 shape — so a
 non-empty pin-broken set is a nightly failure (exit 1): it means a pin lives
@@ -146,6 +153,31 @@ def _fn_segment(src: str, qualname: str) -> str | None:
     return None
 
 
+def _pins_living_at(root: Path, rev: str, rel: str, qualname: str, policy) -> bool:
+    """Whether the lint would flag the test at `rev` as a living-record pin —
+    violations with no registered invariant mark. Lint-clean and
+    registered-exempt tests are legitimate invariants; their failures are the
+    tree's, not a pin's."""
+    src = _show(root, f"{rev}:{rel}")
+    if src is None:
+        return False
+    try:
+        az = Analyzer(policy, rel, src, root)
+    except SyntaxError:
+        return False
+    fn = az.fns.get(qualname)
+    if fn is None:
+        return False
+    reads = az.reads_in_subtree(fn)
+    if not any(r[1] == "tree" and policy.classify(r[0]) == "living" for r in reads):
+        return False
+    viols = az.evaluate(fn)
+    if not viols:
+        return False
+    key = az.invariant_key(fn)
+    return key is None or key not in policy.invariants
+
+
 def replay_transition(
     root: Path, policy, trans: dict, work: Path, timeout: int, repo_head: str = "HEAD"
 ) -> dict:
@@ -219,14 +251,21 @@ def replay_transition(
         tail = [ln for ln in (out.stdout + "\n" + (out.stderr or "")).splitlines() if ln.strip()]
         result["output_tail"] = tail[-12:]
     for rel, qual, node in failed:
-        src_c = _show(root, f"{base}:{rel}")
-        src_h = _show(root, f"{repo_head}:{rel}")
-        if src_h is None:
-            cls = "removed-in-head"
-        elif src_c is not None and _fn_segment(src_c, qual) != _fn_segment(src_h, qual):
-            cls = "converted-in-head"
+        if not _pins_living_at(root, base, rel, qual, policy):
+            # lint-clean at C: the test is a legitimate invariant, so the
+            # failure is a property of the C′ tree itself (e.g. a closeout
+            # head whose follow-up commit re-verdicts the matrix row) —
+            # recorded, never counted as a pin.
+            cls = "broken-tree"
         else:
-            cls = "pin-broken"
+            src_c = _show(root, f"{base}:{rel}")
+            src_h = _show(root, f"{repo_head}:{rel}")
+            if src_h is None:
+                cls = "removed-in-head"
+            elif src_c is not None and _fn_segment(src_c, qual) != _fn_segment(src_h, qual):
+                cls = "converted-in-head"
+            else:
+                cls = "pin-broken"
         result["failures"].append({"test": node, "class": cls})
     return result
 
@@ -252,13 +291,16 @@ def run(
             "pin_broken": 0,
             "converted_in_head": 0,
             "removed_in_head": 0,
+            "broken_tree": 0,
             "infra": 0,
         },
     }
     report["totals"]["first_parent_scanned"] = len(
         _git(root, "rev-list", "--first-parent", "-n", str(window), "HEAD").split()
     )
-    for t in trans[:max_transitions]:
+    # trans is oldest → newest; the replay budget goes to the most recent
+    # transitions — that is where a fresh pin would show.
+    for t in trans[-max_transitions:] if max_transitions else trans:
         with tempfile.TemporaryDirectory() as td:
             result = replay_transition(root, policy, t, Path(td), timeout, repo_head)
         report["transitions"].append(result)
@@ -293,7 +335,8 @@ def main(argv: list[str] | None = None) -> int:
         f"{report['window']} first-parent commits), {t['tests_replayed']} tests "
         f"replayed, {t['pin_broken']} pin-broken, "
         f"{t['converted_in_head']} converted-in-head, "
-        f"{t['removed_in_head']} removed-in-head, {t['infra']} infra"
+        f"{t['removed_in_head']} removed-in-head, "
+        f"{t['broken_tree']} broken-tree, {t['infra']} infra"
     )
     for tr in report["transitions"]:
         for f_ in tr["failures"]:

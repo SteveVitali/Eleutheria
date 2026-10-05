@@ -73,12 +73,25 @@ artifact's settled facts from living state.
    `docs/build/tools/living_record_backtest.py` (`living-backtest/1`)
    replays — read-only, via `git archive` into a temp tree — the
    living-reading tests of each first-parent commit C against the tree at the
-   next commit C′ that changed a declared living record. Each failure is
-   classified by comparing C's test source to repo HEAD: still byte-identical
-   at HEAD is `pin-broken` — a *live* pin the replay proves a legitimate
-   advance would break today (the actionable finding); edited at HEAD is
-   `converted-in-head`; removed at HEAD is `removed-in-head` — resolved
-   history, never a gate finding; collection errors are `infra`. C′-only
+   next commit C′ that changed a declared living record. A failure is in the
+   pin family only when the C-era test itself violates the policy under the
+   same lint (unexempted) — the lint is the single definition of a pin, so
+   the dynamic verdict cannot drift from the static gate. Pin-family
+   failures are classified by comparing C's test source to repo HEAD: still
+   byte-identical at HEAD is `pin-broken` — a *live* pin the replay proves
+   a legitimate advance would break today (the actionable finding); edited
+   at HEAD is `converted-in-head`; removed at HEAD is `removed-in-head` —
+   resolved history, never a gate finding. A failure whose C-era test is
+   lint-clean (or rides a registered invariant mark) is `broken-tree`: the
+   test is a legitimate invariant — validator, generated-equals-source,
+   vocabulary — and the transition head's own committed tree trips it.
+   That class exists because the repo's closeout convention is fix-forward
+   (a closeout lands the ticket while the matrix row still routes its open
+   verdict there; the next commit re-verdicts — `test_real_matrix_passes_the_checker`
+   trips on the closeout head itself, recorded in the fix-forward commits
+   for P34.23/P34.24a/P34.28/P34.29); `broken-tree` is reported per
+   transition but is not a gate failure. Collection errors are `infra`.
+   C′-only
    test files stay in the tree (the coverage checker
    cites tests as evidence — deleting them fabricates a red). The nightly
    runs the stage `continue-on-error`, feeds `nightly_report.py`'s gate, and

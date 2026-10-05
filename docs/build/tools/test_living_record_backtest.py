@@ -79,6 +79,21 @@ def test_converted_pin():
     assert "nextTicket:" in text
 """
 
+# A lint-clean invariant over a living read: the assert carries no key, named
+# id, status, or date literal, so the lint never flags it — a failure means
+# the transition head's own tree is broken (the fix-forward shape), not a pin.
+TREE_TEST = """
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_tree_invariant():
+    text = (ROOT / "docs" / "build" / "LEDGER.md").read_text()
+    errors = [ln for ln in text.splitlines() if "BROKEN" in ln]
+    assert errors == []
+"""
+
 
 def _git(repo: Path, *args: str) -> str:
     out = subprocess.run(
@@ -121,15 +136,19 @@ def _fixture_repo(root: Path) -> dict:
             "docs/build/LEDGER.md": "# ledger\nnextTicket: P9.1\n",
             "tests/test_pin.py": PIN_TEST,
             "tests/test_conv.py": CONV_TEST,
+            "tests/test_tree.py": TREE_TEST,
         },
         "C: pins planted",
     )
     c2 = _commit(
         repo,
         {
-            "docs/build/LEDGER.md": "# ledger\nnextTicket: P9.2\n",
+            # legit living change that also breaks the committed tree —
+            # the closeout-head shape: lint-clean tests trip on the tree
+            # itself, pins trip on their stale literal.
+            "docs/build/LEDGER.md": "# ledger\nBROKEN row\nnextTicket: P9.2\n",
         },
-        "C': legit living change",
+        "C': living change landing a transiently broken tree",
     )
     c3 = _commit(
         repo,
@@ -174,6 +193,14 @@ def test_transitions_and_pin_caught(tmp_path: Path) -> None:
     ]
     assert len(converted) == 2
     assert all("test_converted_pin" in f["test"] for f in converted)
+    # the lint-clean invariant fails only on the broken C′ tree — its class is
+    # the tree's, never a pin's, whatever the test's later fate.
+    broken = [
+        f for tr in report["transitions"] for f in tr["failures"] if f["class"] == "broken-tree"
+    ]
+    assert len(broken) == 1
+    assert "test_tree_invariant" in broken[0]["test"]
+    assert report["totals"]["broken_tree"] == 1
 
 
 def test_vacuous_run_is_never_green(tmp_path: Path) -> None:
