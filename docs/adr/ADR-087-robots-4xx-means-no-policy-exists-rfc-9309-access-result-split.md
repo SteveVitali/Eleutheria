@@ -91,3 +91,10 @@ its operators publish a policy elsewhere that clearly binds (then honour it);
 or a 4xx-permitted fetch surfaces an access control on the data path that the
 recorded outcome would have masked (review whether the challenge/refusal was
 correctly recorded).
+
+## Status updates
+
+- **Status:** Superseded by ADR-088 (2026-10-05) — only the enforcement layer; the RFC 9309 §2.3.1.4 verdict-classification layer is kept
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-088's `Related:` field declares "ADR-087 (its RFC
+  9309 §2.3.1.4 verdict-classification layer is **kept**; only the enforcement layer is superseded)". Recorded by
+  P34.32's G8-2 backfill. The body above is unchanged (SIG-ENG-003).

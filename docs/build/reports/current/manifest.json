@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d0eee26c6f35a7b94435c73536885d1e41cffa93",
+  "input_commit": "625200047cc2f727dd90fa8cb22b45cb8b787e28",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "04b7737748c67647ec452ba94096c7476bb93269dd9903cbcdd8afcea9662d22"
+      "sha256": "baf0530f3443524b1301d55e338d99bc23a4ba64d965d475a06779f1db19d185"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -130,7 +130,7 @@
     },
     {
       "path": "docs/adr/ADR-030-review-queue-and-llm-extraction-scaffolding-as-library-plus-cli.md",
-      "sha256": "4701c42360a2e692f6ac44b2f39d3454f2f57bfe787fe160eaa1eca3b1381297"
+      "sha256": "a6ad5c3f468357a9f237f8c5cf2ce3774a03fd8aba079f456c81f8948a9ae32b"
     },
     {
       "path": "docs/adr/ADR-031-minimal-count-reconciliation-and-added-count-predicates-for-the-vertical-slice.md",
@@ -166,7 +166,7 @@
     },
     {
       "path": "docs/adr/ADR-039-the-research-task-engine-detector-as-data-callable-closing-conditions-and-executable-anti-abuse.md",
-      "sha256": "cb779e64cbea643d483cfa31b1adefa69e8b1e47f63e2443eb5429bc1c6b114a"
+      "sha256": "3dae584d26e5ca9bc9f485293f9daadf252c2ecd36a1141e574b702d3430a706"
     },
     {
       "path": "docs/adr/ADR-040-the-detector-catalog-and-the-contradiction-task-map.md",
@@ -230,7 +230,7 @@
     },
     {
       "path": "docs/adr/ADR-055-no-direct-automated-osm-writes-the-human-mediated-suggestion-workflow-and-the-osm-compliance-analysis.md",
-      "sha256": "5f06bad60079136577731cacfe0327ecbab9bbce129b723f692760324092bfe6"
+      "sha256": "6857f2a639079f6dc0a4b44401b17bc72564e8127a44b372403903ff0b7b5a12"
     },
     {
       "path": "docs/adr/ADR-056-the-jurisdiction-adapter-framework-namespaced-vocabularies-bcp47-labels-and-coarse-international-ingestion.md",
@@ -278,7 +278,7 @@
     },
     {
       "path": "docs/adr/ADR-068-the-authenticated-curation-service-and-the-curate-web-surface.md",
-      "sha256": "97c26414b463b593fd1f070934ff98e61d84303002806cad04ca3b33fd156f7f"
+      "sha256": "bc473be56b98610c813c3aa43f8ace19532c0fd4d1a79a4411f19d0a9f79e447"
     },
     {
       "path": "docs/adr/ADR-069-contribution-back-live-maproulette-client-osm-changeset-feed-and-the-registration-gate.md",
@@ -354,7 +354,7 @@
     },
     {
       "path": "docs/adr/ADR-087-robots-4xx-means-no-policy-exists-rfc-9309-access-result-split.md",
-      "sha256": "ba38eeabdc337cd08bd6e9a8281b6321577140bd39aa038ed8cd2e88a53973b1"
+      "sha256": "278dd434774ea9a9c0c9cc2624bb4fd2f48910019f5e81e0d4aca95298442688"
     },
     {
       "path": "docs/adr/ADR-088-robots-verdicts-recorded-never-enforced-gl-gate-08.md",
@@ -422,11 +422,11 @@
     },
     {
       "path": "docs/adr/ADR-104-camera-registry-predicates-in-the-predicate-registry.md",
-      "sha256": "ba559bd4ac072cfe63a4948fd8f4291fca54528319c64be1376a82d9b356e706"
+      "sha256": "c3a0b8dff27ac5cafdde780f8a4c492e2935f15427d00e02a897023c7a5639bc"
     },
     {
       "path": "docs/adr/ADR-105-geospatial-camera-site-entity-resolution.md",
-      "sha256": "a6ef342afe9036c90e590d0f7ce7c97cc1d88735e9076fcb6d1d933adc815b02"
+      "sha256": "be69b6a86866d16a7200cc8beb6b121f21d5ac0bd13c751dc3206d33be6ba805"
     },
     {
       "path": "docs/adr/ADR-106-public-share-alike-compartments-published-separately.md",
@@ -769,12 +769,16 @@
       "sha256": "86bc439aa3c35a694d30b37267e6b985ff4ae4f901f2f531ce8080efccbc16e0"
     },
     {
+      "path": "docs/adr/ADR-198-adr-index-truth-status-line-grammar-and-trigger-register-checker.md",
+      "sha256": "8d064699257fe4cc96bbc32cf3b8b4c47b6b868cb8c482a02b9fd2026a9acb7a"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "f3c3e77964cfab9fcf284ca3a5579711e1d9c05eb0ed446ec964eca5f7443c5e"
+      "sha256": "930ec46f40aca1d3daf3506c7302e65526dcbafa33287ba9e9417fb8b40f004b"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "c46b65fa8d9111789fbe28e96907215f2029e2b9d76d4dd487b02630b5b14924"
+      "sha256": "c4d841a29df59622082b5b9214a374db370b72dc1e91ed06c7d2694418209f1b"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1715,6 +1719,10 @@
     {
       "path": "docs/build/runs/P34.31.md",
       "sha256": "249b922c9cb990846b9a1ede568927945c331f49e4aa83425bd27be63cf72700"
+    },
+    {
+      "path": "docs/build/runs/P34.32.md",
+      "sha256": "fe1ec88a05742d73a5f6ffb8abc37c9830bbd9c809e6f05e8f5c1d49022b6fa0"
     },
     {
       "path": "docs/build/runs/P34.4.md",
