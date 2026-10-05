@@ -11,7 +11,8 @@ Harness: devin-desktop/swe-2-high/subagent
 Started: 2026-10-05T11:32Z (`date -u` at branch creation; branch
 `r11/PLAN-11B-contracts-for-11b-and-transp-family` from `0de78f39` on
 `r11/P34.33-round-close-record-checks`)
-PR: (to be opened at the C1 push; base `r11/P34.33-round-close-record-checks`)
+PR: #236 (opened at the C1 push; base `r11/P34.33-round-close-record-checks`;
+stays open — the row closes only at C13)
 
 ## Spec / Base / Branch / Config
 
@@ -165,7 +166,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1) | header + every C1 commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1) | header Started from `date -u` |
-| OM-05 CI read at every boundary; red → blockedOn | pending | ci_boundary.py at the C1 push |
+| OM-05 CI read at every boundary; red → blockedOn | in progress | first read `ci_boundary.py --pr 236` @9dcb023: **blockedOn — docs job red** (projection verify stale: the regen predated the same-commit ledger edit; fixed by this commit's regen — logs/ci-PLAN-11B-C1.json); head-bound re-read follows this push |
 | OM-06 every AC names its layer | ok (C1) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1) | memory_guard --worktree clean; coverage assessments/events appended, none migrated |
