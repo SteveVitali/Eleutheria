@@ -213,6 +213,11 @@ def replay_transition(
             failed.append((rel, qual.replace("::", "."), node))
     result["infra"] = sum(1 for ln in out.stdout.splitlines() if ln.startswith("ERROR "))
     result["tests_replayed"] = len(nodeids)
+    if failed or result["infra"]:
+        # the last lines of the replayed run — the failure's own message; the
+        # report stays small and the finding is diagnosable from the artifact.
+        tail = [ln for ln in (out.stdout + "\n" + (out.stderr or "")).splitlines() if ln.strip()]
+        result["output_tail"] = tail[-12:]
     for rel, qual, node in failed:
         src_c = _show(root, f"{base}:{rel}")
         src_h = _show(root, f"{repo_head}:{rel}")

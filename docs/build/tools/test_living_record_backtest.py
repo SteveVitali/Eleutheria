@@ -224,6 +224,5 @@ def test_real_tree_report_is_well_formed() -> None:
     assert report["schema"] == "living-backtest/1"
     assert report["totals"]["transitions_with_living_change"] > 0
     assert report["totals"]["tests_replayed"] > 0
-    findings = [f for t in report["transitions"] for f in t["failures"]]
     assert report["totals"]["infra"] == 0, json.dumps(report["transitions"], indent=1)
-    assert report["totals"]["pin_broken"] == 0, json.dumps(findings, indent=1)
+    assert report["totals"]["pin_broken"] == 0, json.dumps(report["transitions"], indent=1)
