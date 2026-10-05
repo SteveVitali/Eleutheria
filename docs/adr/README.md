@@ -196,6 +196,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-196](ADR-196-sqitch-lifecycle-verify-contract-and-extension-ownership.md) | Sqitch lifecycle hygiene: the verify contract, extension ownership, and the CI round trip (P34.24a) | P34.24a (Round 11 / P34, row 228 — owns SIG-ENG-045; closes | accepted |
 | [ADR-197](ADR-197-living-record-test-lint-and-advance-backtest.md) | The living-record test lint: a declared policy, an AST lint, and a nightly advance backtest (P34.31) | P34.31 (Round 11 / P34, row 236 — owns SIG-ENG-040; BM-TEST-01, OM-15) | accepted |
 | [ADR-198](ADR-198-adr-index-truth-status-line-grammar-and-trigger-register-checker.md) | ADR-index truth, the status-line declaration grammar, and the trigger-register checker (P34.32) | P34.32 (Round 11 / P34, row 237 — owns SIG-ENG-043; satisfies SIG-ENG-039; B4 G8, COV-14) | accepted |
+| [ADR-199](ADR-199-round-close-record-checks-capstone-two-sum-and-tail-probe-sweep.md) | Round-close record checks, the capstone two-sum, and the tail probe-sweep contract (P34.33) | P34.33 (Round 11 / P34, row 238 — the amended SIG-ENG-031 checks; extends SIG-ENG-041, | accepted |
 
 ## Notes
 

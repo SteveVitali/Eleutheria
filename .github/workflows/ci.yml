@@ -94,6 +94,14 @@ jobs:
       - name: RETURN PASS generated-region check (return_pass.py)
         run: python3 docs/build/tools/return_pass.py check
 
+      # P34.33 (B4 G9/G7-item-5/G10; amended SIG-ENG-031): the round-close
+      # record checks — unique risk ids via dated appended disambiguation,
+      # deferred rows routed to open homes, round banners citing spec parts,
+      # frozen-view pointers, the capstone two-sum. Also inside `make
+      # docs-check` (docs-check-round-close); explicit for visibility.
+      - name: Round-close record checks (check_round_close.py)
+        run: python3 docs/build/tools/check_round_close.py check
+
       # BM-HIST-01 (SEED-02): the lines this PR adds or removes in build-memory
       # records — record dates, append-only regions, record shape, gate records,
       # readouts. check-history.sh hands off to docs/build/tools/memory_guard.py.
