@@ -314,3 +314,101 @@ docs; no earlier claim was edited. Produced on branch `devin/p19-2-capstone-gap-
 `devin/p19-1-build-memory-and-hygiene` @ `33aaf02`. The matrix columns
 (`id, level, spec_section, class, verdict, evidence, owning_tickets, tests, adrs, risk_rows, routing,
 note`) are the stable contract consumed by P19.3/P19.4/P19.5/P20.1/P20.2 — do not rename.
+
+## (k) Round-10 independent gap analysis — P33.1 (2026-10-21)
+
+Independent re-derivation over the landed tree + committed artifacts (fresh-eyes: code, tests,
+public artifacts and digests inspected before run-ledger verdicts were consulted). The amended
+baseline applies: the S3 human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) was
+deferred wholesale by operator decision 2026-10-19 and GATE-G3 signed with recorded scope, so
+deferred/gated work is not counted as a gap when honestly recorded.
+
+**Verdict vocabulary:** MET / MET-DIFFERENTLY / PARTIAL / MISSING / AT-RISK-INTEGRATION.
+
+### Requirement verdicts (38 Round-10 ids)
+
+| id | owner | verdict | evidence domain | notes |
+|---|---|---|---|---|
+| SIG-MEM-001 | P32.1 | MET | tools + report | `docs/build/tools/audit_current_state.py`, p32.1-baseline report |
+| SIG-TRUST-001 | P32.2 | MET | schema+code+PG tests | `claim_assertion_bindings.sql`, `db.assertion`, typed-assertion fields + qualifiers |
+| SIG-TRUST-002 | P32.2 | MET | schema+code+PG tests | quarantine, idempotent re-ingest, replay time-binding, OCFL version pinning |
+| SIG-TRUST-003 | P32.3 | MET | code+PG tests | `db.organization_roles` role-sensitive minting |
+| SIG-TRUST-004 | P32.3 | MET | schema+code+tests | `partner_org_scoped_identity_key` + `partner_name_audit` dry-run; legacy-key dispositions stay OPEN (D-P32.3-1) |
+| SIG-TRUST-005 | P32.4 | MET | schema+PG tests | `eligible_occurrence` SQL twin, `camera_site_execution`, `spine_watermark` (D-P31.1-1 closed) |
+| SIG-TRUST-006 | P32.5 | MET | policy+schema+PG tests | `publication_disposition` registry + shared eligibility fragments consumed by API and exports; `decided_at` authority repaired P32.10a |
+| SIG-TRUST-007 | P32.6 | MET | code+tests+report | `evidence-audit/1` + `recovery-plan/1` fixture-verified; hosted audit deferred (D-R10-LIVE-1) |
+| SIG-TRUST-008 | P32.22 | MET | schema+code+PG tests | `recovery_application` exactly-once receipt + `sig_recovery` + frozen `sig.repaired-snapshot/1`; production recovery deferred (D-R10-LIVE-1) |
+| SIG-TRUST-009 | P32.25 | MET | artifacts+tests | `PUBLISH_PROOF.json` 25/25 pass — independently re-verified below |
+| SIG-TRUST-010 | P32.23a | MET | artifacts+tests | candidate `p-17b713…` rehashed below |
+| SIG-MEM-002 | P32.7 | MET | tools+events | `obligation_events.py` + `current_projection.py`; events re-anchored this run |
+| SIG-MEM-003 | P32.8 | MET | tools | `closeout_protocol.py` + worktree-safe `check-build-memory.sh` |
+| SIG-MEM-004 | P33.8 | MISSING | none | owner has not run at this checkpoint — genuinely pending, not deferred |
+| SIG-EVAL-001 | P32.9 | PARTIAL | schema+PG tests | preregistration/partition/sealed-sample machinery landed; human labels deferred (D-R10-HUMAN-1) |
+| SIG-EVAL-002 | P32.9 | PARTIAL | schema+RLS+PG tests | blinded label/adjudication surface landed; zero human labels → `awaiting_humans` |
+| SIG-EVAL-003 | P32.10 | MET | code+policy+tests | `eval-confidence/1` Clopper-Pearson/hypergeometric estimands; shadow mode committed |
+| SIG-EVAL-004 | P32.10 | MET | code+tests | explicit unavailable states + shadow ConfidencePolicy (never promotes); activation deferred (D-R6.1-EVAL) |
+| SIG-EVAL-005 | P32.23 | MISSING | none | owner deferred wholesale with S3 spine — recorded OPEN under D-R10-HUMAN-1, not an unrecorded gap |
+| SIG-EVAL-006 | P32.23 | MISSING | none | same deferral as SIG-EVAL-005 |
+| SIG-EVAL-007 | P32.22a | MISSING | none | same deferral (candidate-specific frame) |
+| SIG-ACQ-001 | P32.11 | MET | code+data | reviewed acquisition queue (`tasks.acquisition`) |
+| SIG-ACQ-002 | P32.11 | MET | code+data | per-target rights/caps registry |
+| SIG-ACQ-003 | P32.12 | MET | code+tests | `connectors.dossier_documents` adapter |
+| SIG-ACQ-004 | P32.21 | MET | code+artifacts | pilot funnel + `ACQ_PILOT_RETURN_PASS.json` prepared_not_executed; live leg OPEN (D-P32.21-1) |
+| SIG-FIND-001 | P32.13 | MET | code+tests | `exports.release` immutable namespaces |
+| SIG-FIND-002 | P32.13 | MET | code+tests | published-record registry |
+| SIG-FIND-003 | P32.14 | MET | code+tests | per-compartment search indexes |
+| SIG-FIND-004 | P32.15 | MET | code+tests | investigation workspace state |
+| SIG-FIND-005 | P32.15 | MET | code+tests | network/ego analytics |
+| SIG-FIND-006 | P32.16 | MET | policy+schema+PG tests | durable anonymous intake (isolated schema, capability receipts); receiver non-operational (D-P32.16-1) |
+| SIG-FIND-007 | P32.24 | MET | artifacts+tests | `JOURNEY_PORTFOLIO.json` verdict pass (38 checks: 31 pass, 3 verified-by-test, 2 deferred, 2 n/a) |
+| SIG-FIND-008 | P32.16a | MET | schema+code+PG tests | `intake.application` bridge + `sig_intake_bridge`; curation stays loopback |
+| SIG-DOS-001 | P32.17 | MET | code+tests+web | `sig.research-dossier/1` six-state answers + fact-to-capture ledger |
+| SIG-DOS-002 | P32.17 | MET | code+tests | fail-closed dossier validation + rubric; `pilot_complete` never fabricated |
+| SIG-DOS-003 | P32.18 | MET | code+artifacts | OKC packet + seed correction; live leg OPEN (D-P32.18-1) |
+| SIG-DOS-004 | P32.19 | MET | code+artifacts | Tulsa packet; live leg OPEN (D-P32.19-1) |
+| SIG-DOS-005 | P32.20 | MET | code+artifacts | San Diego packet; live leg OPEN (D-P32.20-1) |
+
+### Cross-stream seams
+
+| seam | verdict | evidence |
+|---|---|---|
+| P32.16 intake → P32.16a apply | MET | `intake.application` FKs into `intake.event`; bridge role provisioned, never granted (NOLOGIN) — honest isolation |
+| P32.22 recovery → P32.23a candidate | MET | candidate manifest pins frozen snapshot `sha256:138714a6…`; identity `sha256:bc20d4bf…` re-derived |
+| P32.23a candidate → P32.25 publish | MET | `PUBLISH_PROOF.json` pins the exact publication `p-17b713…` + GATE-G3 scope (provisional, review-only, `applied=[]`, `decision=null`) |
+| dossier packets → P32.24 corpus | MET | 176 corpus artifacts rehashed clean; 75 in/75 out records; completeness `complete` |
+| eval machinery → human evaluation | PARTIAL (honest deferral) | `eval_confidence.toml mode=shadow`, `awaiting_humans`; owner chain deferred wholesale — recorded, not a gap |
+| intake receiver → production | MISSING-by-design | `ops/config.toml [intake] operational=false`, `receiver_not_operating`; OPEN under D-P32.16-1 |
+
+### Findings and dispositions
+
+| # | finding | severity | disposition |
+|---|---|---|---|
+| 1 | 12 coverage-matrix rows still read `MISSING` although the owning Round-10 tickets landed code+tests (SIG-TRUST-001…008, SIG-EVAL-003/004, SIG-DOS-001/002). The Round-10 seed note "implementation not started" was never updated. | medium (coverage history stale; could mislead downstream consumers into re-dispatching landed work) | **fixed in-ticket** — rows re-verdicted `MET`/`covered+tested` with fresh-eyes evidence + tests; notes record "P33.1 matrix repair". Verdicts for deferred-owner rows kept `MISSING` with truthful deferral notes (SIG-EVAL-005/006/007, SIG-MEM-004). |
+| 2 | 8 DEFERRALS rows recorded verified dated DONEs inside an owed-leading status cell in the `P31.x (YYYY-MM-DD): DONE` word order that `DATED_TERMINAL_RE` could not see — the audit reported them clean and the e0 anchors preserved them as owed (D-P30.1-2, D-P30.2a-1/2, D-P30.3-1/2/3, D-P31.1-2, D-P31.3-1). | medium (owed-work register overstated by 8; downstream OPEN-row gates could block on discharged obligations) | **fixed in-ticket** — `DATED_TERMINAL_RE` extended to the `(date): TERMINAL` word order (shared by `audit_current_state` + `obligation_events`); all 8 cells rewritten under the P32.7 reconciliation convention (old value verbatim); 8 `RECONCILIATIONS` entries recorded; `migrate` re-anchored 97 events; `check` green. |
+| 3 | Committed `docs/build/reports/current/` projection drifted since P32.11's regeneration (inputs digests stale across spec/ADRs/index/matrix/ledger/readouts/10+ new run ledgers) — `verify` fails on the landed predecessor. | low (advisory artifact; LEDGER remains the control authority; the drift is itself honestly detected by the tool) | **fixed in-ticket** — regenerated at closeout after all input edits (`current_projection.py generate`). |
+| 4 | `docs/build/reports/p32.23a-release-candidate/candidate_release/` manifest paths are registry-relative (`r/<pub>/…`, `releases/<pub>/…`), not publication-dir-relative — a naive rehash reports 18 phantom misses. | none (documentation clarity only) | recorded here so future audits resolve against the registry root; all 18 artifacts verify when resolved correctly. |
+
+### Residual gaps (owned, not closed by P33.1)
+
+| obligation | owes | owner | state |
+|---|---|---|---|
+| D-R10-HUMAN-1 / D-R6.1-EVAL | real human labels + dossier review; eval activation | HUMAN-H4/5, P32.22a/23 | OPEN — truthful |
+| D-R10-SOURCES-1 | per-target rights review + bounded live acquisition | P32.18–21 return passes | OPEN — truthful |
+| D-R10-LIVE-1 | production hosted recovery + final candidate | P32.22/23a live stage | OPEN — truthful |
+| D-R10-PUBLISH-1 | production public exposure | post-GATE-G3 scope | OPEN — truthful |
+| D-R10-MEMORY-1 | closeout/writer cutover decision | P32.8 owner | OPEN — truthful |
+| D-R10-USERS-1 | independent usability sessions | operator recruiting | OPEN — truthful |
+| D-P32.3-1 | legacy `sig.org.name` dispositions | reviewer session | OPEN — truthful |
+| D-P32.10a-1 | whole-plan `sqitch verify` count staleness (`=27` vs 28 facets; confirmed `db/verify/shared_temporal_contract.sql:30`) | maintainer decision | OPEN — truthful |
+| D-P32.16-1 | intake receiver operating prerequisites | operator | OPEN — truthful (`operational=false` verified) |
+| D-P32.16a-1 | full-plan `sqitch revert` postgis CASCADE | maintainer decision | OPEN — truthful |
+| D-P32.18/19/20/21-1 | per-dossier/pilot live return passes | gated live stage | OPEN — `prepared_not_executed` packets verified on disk |
+| D-P32.23a-1 | production candidate build | gated live stage | OPEN — truthful |
+| SIG-MEM-004 | build-memory replay/audit | P33.8 (row 198) | pending — not deferred |
+
+Round-10 closures verified with evidence: D-P31.1-3 (P32.2 route half), D-P31.1-1 (P32.4
+watermark), D-P31.5-2 (P32.5 eligibility), D-P30.4-4 (P31.19 leak-scope check). No OPEN row was
+found closed without evidence; no closed row was found overstated.
+
+Provenance (append-only): produced on branch `devin/p33-1-round10-gap-analysis` off the P32.25 tip
+`e4bd612` by P33.1 (2026-10-21); no earlier section edited.
