@@ -250,7 +250,159 @@ no fix-forwards; both reads land in
 `docs/build/logs/ci-PLAN-11B-C2.json` (gitignored). C13 reads the
 boundary again at closeout.
 
-### C3 — pending
+### C3 — 2026-10-05 (rows 272–278)
+
+Started: 2026-10-05T~18:30Z (first C3 file write; source: file mtime —
+investigation preceded it in the same context) · Closed: pending —
+this context's last criterion is the head-bound CI pass on the
+boundary-record commit; that commit fills this cell and the Boundary
+lines below.
+Context model: devin-desktop/swe-2-high/subagent.
+
+Scope (contract deliverable 2-in-part + the 8a check):
+
+- Rewrite skeletons to full contracts: row 272 (P35.14a, vocabulary
+  conformance + closed vocabulary at the sink), 273 (P35.14b, entity
+  typing + hosted CHECK-NOT-VALID sqitch change), 274 (P35.15a,
+  technology slug + export columns + facets), 275 (P35.15b, ~200k-subject
+  append-only technology backfill), 276 (P36.3, ATE technology concept +
+  zone geometry kind), 277 (P36.4, official camera layers ×10,
+  `r11-layers-01`), 278 (P36.5, agency ALPR/Flock layers ×16 targets,
+  `r11-layers-02`).
+- Deliverable 8a (ADR-171 outreach-owed placement): applied per row —
+  recorded why-not on 276/277/278 (see below).
+
+Findings / decisions (per row):
+
+- 272 (P35.14a): deps `P34.24b`; OM-20 conditional (GATE-G4 verbatim
+  listing else in-ticket pause); INSERT-only hosted vocabulary
+  registrations only — six predicates, genre stamps, Mobility correction,
+  group-13 items. Corrections to the earlier draft: the
+  `SuccessionKind`/`succession`/`succession_kind` retirement
+  (BL-047/RISK-P3-04 — legacy slots coexisting with the reified
+  `OrganizationRelation` model) was missing from scope and is now
+  carried; SIG-ONTO-060 rides as the SEED-12b proposal artifact (read the
+  realised enum, write the amendment proposal — never apply it: a
+  closed-list relaxation needs the operator's words, G.7.5). `live:`
+  edge → P34.24b.
+- 273 (P35.14b): deps `P35.14a`; gate verbatim `IN-TICKET PAUSE (never
+  pre-authorised under OM-20 …); explicit verbatim go` — the plan §3.3
+  never-pre-authorised class names it by id (hosted sqitch change that
+  alters an existing table / ACCESS EXCLUSIVE). 1 leg (0.5 run): AR-2
+  restore point → `sqitch deploy --verify` with `lock_timeout` →
+  append-only typed-identity write (new decision records; existing entity
+  rows never updated/deleted) — all behind the operator's verbatim
+  in-ticket go; re-run prompt lands the OM-19 queue. `live:` edge →
+  P35.14a.
+- 274 (P35.15a): deps `P35.14b`; OM-20 conditional; INSERT-only
+  registration of the `technology` predicate + new technology slugs; no
+  claim/entity writes, no backfill, no flip, no fetch. Correction: the
+  draft's stale "enforcement family" wording was removed — P36.3 (row
+  276) owns the ATE technology concept; P35.15a owns slug registration,
+  export columns and facets, with technology declared per-target (never
+  source-ID/name substrings). `live:` edge → P35.14b.
+- 275 (P35.15b): deps `P35.15a`; OM-20 conditional
+  (`(hosted append-only backfill)` verbatim); 1 leg (0.5 run) inside
+  AR-3 + AR-2 — the ~200k-subject append-only technology-claim backfill:
+  AR-2 restore point → hosted `vocab_*` check → dry run → `--apply`
+  chunked INSERT-only → read-back → `+0` re-run. No subject reads
+  `traffic_camera` unless its target declares it; Flock/DeFlock lineages
+  read ALPR; leg refuses if `live:` P35.15a's registrations are not
+  landed (P35.14a's closed sink would quarantine). `live:` edges →
+  P35.15a + P35.14a.
+- 276 (P36.3): deps `P35.14b`; gate `none`; not an OM-20 row; 0.5 run;
+  no live stage. ATE family + subtypes (red-light, speed, bus-lane,
+  school-bus stop-arm, work-zone + `-unspecified` leaf) under §11.5's
+  hierarchy, each with `distinguishing_criterion`/`evidence_signature`/
+  `salience` (SIG-ONTO-056), plus the zone geometry kind the area-shaped
+  records declare. `make gen` regeneration; the §13.1 canonical counts
+  (SIG-ONTO-052/052a) change through `spec_src` + `BUILD.sh` with the
+  manifest amendment line and an ADR — never a direct edit of the
+  generated spec.
+- 277 (P36.4): deps `P35.6;P35.15b;P35.14b` + **P36.3 added** (recorded
+  correction, agent-labelled in-contract: the Seattle target's
+  `geometry_kind="area"` emit needs the zone geometry kind P36.3
+  registers — P35.14a's closed sink would quarantine the value; chain
+  order already places 276 before 277). Gate verbatim `HG-03
+  I7-RB-01/RB-02 [A-7] = a (GL-GATE-07 re-confirmed: batch-wide; Part
+  VIII S-lines still apply): …`. 1.0 run; no live stage/legs — the
+  flips are the operator's OP-26/ING-GO-B execution at P36.12. Ten
+  targets: `dot_511_{de,vt,wv,mi,nc}` + `camreg_{lincoln_ne_traffic,
+  omaha_ne_parks,hyattsville_md_cctv,seattle_wa_spd_cctv_areas}` +
+  Denver HALO (under `camreg_denver_co` if the licence matches, else
+  `camreg_denver_co_halo`); per-target `out_fields` allowlist +
+  `technology`, VT `DeviceType` filter, Seattle polygon → programme
+  area (never a device point), arcgis api_allowlist RPM (I8 NEW-3);
+  all `ingestion_permitted=false`.
+- 278 (P36.5): deps `P35.6;P35.15b;P35.14b`; gate verbatim `HG-03
+  I7-RB-01 [A-7] = a (…same batch-wide wording…)`. 1.0 run; no live
+  stage/legs. Fifteen sources / sixteen targets (the `camreg_fdot_flock`
+  source carries two: `fdot_d3_flock_inventory` +
+  `fdot_flock_removal_status`, ingested same-run so the removal ledger
+  and inventory stay consistent). Row rules: removal → `valid_to` never
+  deletion; Prince William `status=proposed`; Milford `approximate`
+  coordinates; Shelbyville "Hits" column excluded; Leon County splits
+  Vigilant LPR (`alpr-fixed`) from RTCC/CCTV + the existing
+  `camreg_leon_fl` same-org check recorded. Every row typed by declared
+  `technology`; all `ingestion_permitted=false`; flips are the
+  operator's at Wave B (P36.12).
+
+ADR-171 outreach-owed (deliverable 8a) — why-not recorded per row:
+
+- 276/277/278 each carry a "**recorded why it does not apply**" block:
+  no §6-compact or §22.4–22.5/§35.1 ecosystem-project connector is
+  written, widened or activated — 276 is vocabulary only; 277's ten
+  layers and 278's sixteen targets are all agency-origin sources (state
+  DOT 511 endpoints, city/police published layers, FDOT + municipal
+  inventories). The Eyes on Flock relationship on 278 stays read-side
+  (`camera_operator` links agency entities to existing EoF portal
+  entities at resolution — no EoF fetch or connector change), and ER
+  dedupe against OSM points is a read-time comparison, not an OSM
+  connector change. The Stage-0 set (SIG-CHART-033, SIG-INGEST-029/
+  030a, SIG-CONTRIB-012/012a/013, SIG-GOV-024) stays owed under
+  `D-R11-LATER-04` — recorded, never implied satisfied; no outside
+  contact made (ADR-171 Decision 3, U-011).
+
+Local verification (P11, with recorded limits):
+
+- `make docs-check` — green after the projection regen: no
+  skeleton/manifest violations on the rewritten rows; `check_spec_src`
+  1,644/1,644 ids; `check_coverage_matrix` 820/820;
+  `obligation_events check` green; `audit_current_state` 0 errors
+  (9 reconciled conflicts, all pre-existing); build-memory layout and
+  ledger-contract gates clean.
+- The committed `current` projection digests drifted on this context's
+  edits (the seven contracts); regenerated with
+  `current_projection.py generate` — `verify` fresh before commit.
+- `python3 docs/build/tools/memory_guard.py all --staged` — green
+  before the content commit (protected records appended only).
+- `make check` — not re-run this context: no code changed (contracts,
+  policy comment lines and this ledger only); C2's green at `b1206694`
+  stands and CI is the authority. Docker stays wedged (recorded C1).
+- `python3 docs/build/tools/memory_guard.py all --range
+  0de78f39...427c5efb` — green after the `seed-commit` declaration
+  (below); exactly the CI range check that failed.
+
+Boundary (OM-05):
+
+- Read 1 @ `427c5efb` (content commit): **`blockedOn: CI fail on
+  #236@427c5ef (docs)`** — the history guard flagged the contract
+  rewrites: the commit subject named ticket ids (`P35.14a/b`, …) so
+  `executed()` (B2 §7) marked all seven contracts "executing" in-range
+  and every rewritten skeleton line read as a frozen-contract edit (658
+  append-only findings, run 37363207636). The branch ruleset forbids
+  force-push, so the subject cannot be reworded; fix-forward = the
+  `seed-commit 427c5efb` declaration in `history.policy` (this commit —
+  the sanctioned mechanism for verifier-backed bulk-rewrite commits,
+  same class as the Stage-B seeds and P34.18/ADR-178), with the scope
+  and consequence note recorded in the policy comment itself.
+- Read 2 @ the fix/boundary commit: pending — this commit records it
+  after push.
+
+Boundary-record commit (`<pending>` in this commit — filled by the
+boundary-record commit): appends the read-2 `ci:` line and this
+section's Closed cell; a third commit then re-reads head-bound on it
+and records both (C2's two-read pattern).
 
 ### C4 — pending
 
@@ -279,20 +431,20 @@ filled per context.
 
 | clause | status | note |
 |---|---|---|
-| OM-01 harness/model recorded; commits trailered | ok (C1, C2) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
-| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2) | header Started from `date -u`; C2 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`) |
-| OM-06 every AC names its layer | ok (C1, C2) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
+| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3) | header Started from `date -u`; C2/C3 Started from file mtime (source named) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C3) | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — subject named ticket ids; `seed-commit` fix-forward) → read-2 pending (log `logs/ci-PLAN-11B-C3.json`) |
+| OM-06 every AC names its layer | ok (C1, C2, C3) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
-| OM-13 protected records appended only | ok (C1, C2) | manifest Plan-extensions + ledger C2 section appended only; memory_guard --staged run pre-commit |
-| OM-15 no test asserts a living record's current value | ok (C1, C2) | no test touched by C2 |
-| OM-07/08/09 gate records verbatim | ok (C2) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4); nothing decided by this row |
-| OM-16 size budget | ok (C1, C2) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; within a single context |
+| OM-13 protected records appended only | ok (C1, C2, C3) | manifest Plan-extensions + ledger C2/C3 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); memory_guard --staged run pre-commit |
+| OM-15 no test asserts a living record's current value | ok (C1, C2, C3) | no test touched by C3 |
+| OM-07/08/09 gate records verbatim | ok (C2, C3) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2); nothing decided by this row |
+| OM-16 size budget | ok (C1, C2, C3) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; within a single context |
 | OM-02 closeout is one commit after the PR exists | pending | C13 |
 | OM-19 windows / live legs | n/a | none for this row (each written contract carries its own) |
 | OM-20 pre-authorisation | n/a | not an OM-20 row |
-| OM-03 rows only from the ratified plan | ok | rows 261–271 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber |
-| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
+| OM-03 rows only from the ratified plan | ok | rows 261–278 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; C3's one dep correction (P36.3 → 277) is recorded in-contract, not in the plan |
+| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
-| P11 local gate | ok (C1, C2, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI |
+| P11 local gate | ok (C1, C2, C3, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3 touched no code (docs-check + range guard re-run locally) |
 | CI-8 CI config changed | no | |

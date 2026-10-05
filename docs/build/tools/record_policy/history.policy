@@ -137,6 +137,21 @@ seed-commit b4f52e4d
 seed-commit a58fa2fa
 seed-commit d130b54d
 
+# ── PLAN-11B C3 contract-rewrite commit (ticket 239; recorded 2026-10-05) ─────────────────────────
+# Commit 427c5efb rewrote the seven C3 skeletons (rows 272–278) into the full execute-grade
+# contracts ticket 239's deliverable demands — a planned bulk rewrite, the same class as the
+# Stage-B seeds and the P34.18/ADR-178 re-key. Its subject named ticket ids (`P35.14a/b`,
+# `P36.3`, …), so `executed()` (B2 §7) marked the seven contracts "executing" mid-range and every
+# rewritten skeleton line read as a frozen-contract edit (658 append-only findings, all attributed
+# to 427c5efb — verified by the docs job's history run, run 37363207636). The rewrite is the
+# sanctioned deliverable, not a correction of an executed contract; the branch rule forbids
+# force-push, so the exempting declaration lands as a later commit rather than a reworded subject.
+# Consequence recorded for later contexts: these seven files now read "executed" in any range that
+# contains 427c5efb, and in later ranges they read executed once runs/<id>.md or a BUILD_INDEX row
+# exists at base — i.e., normal BM-TICKET-04 semantics resume; subsequent edits must conform to it.
+# Scope: findings attributed to 427c5efb only; no other commit borrows the exemption.
+seed-commit 427c5efb
+
 # ── P34.22a whole-tree future-date test — first-run entries ──────────────────────────────────────
 # tests/unit/test_no_future_date_literals.py (P34.22a) sweeps code, data, migrations and tests for
 # ISO literals later than HEAD. Real-world and scheduled values in comment-capable files carry
