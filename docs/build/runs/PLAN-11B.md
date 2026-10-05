@@ -429,7 +429,7 @@ shared `Closed:` header stays unwritten — C13 owns closeout.
 
 Started: 2026-10-05T20:48Z (first C4 file write; source: file mtime —
 investigation preceded it in the same context) · Closed:
-2026-10-05T21:12Z (boundary re-read confirmed).
+2026-10-05T21:31Z (second boundary re-read confirmed).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + the 8a check):
@@ -552,14 +552,25 @@ Boundary (OM-05):
   result: the job never ran its checks. Re-read once after a short
   wait per policy — still canceled (record
   `logs/ci-PLAN-11B-C4.json`, read 2026-10-05T20:59Z and
-  re-read ~T21:11Z, both head-bound on 5877a44). Reported blockedOn;
-  the next context's push re-triggers CI regardless, and C13's
-  pre-closeout green read is unaffected by an intermediate cancel.
+  re-read ~T21:11Z, both head-bound on 5877a44).
+- The boundary-record push re-triggered CI at 917db14: `python`,
+  `composed` and `security` acquired runners and ran **green**;
+  `docs` and `web` both failed runner acquisition —
+  `blockedOn: CI cancel on #236@917db14 (docs): cancelled — The job
+  was not acquired by Runner of type hosted even after multiple
+  attempts (run 37374430350)` (web same, same run); re-read once,
+  still canceled (log updated in place, head-bound on 917db14).
+  Three acquisition cancels this context — the same hosted-runner
+  capacity issue as C3's three; infra, reported blockedOn. The next
+  context's push re-triggers CI regardless, and C13's pre-closeout
+  green read is unaffected by intermediate cancels.
 
-Close record (this commit): records the head-bound read and fills
-Closed at 2026-10-05T21:12Z — work complete; boundary blockedOn on
-hosted-runner acquisition capacity, per the C3 convention. The shared
-`Closed:` header stays unwritten — C13 owns closeout.
+Close record (this commit): records both head-bound reads and fills
+Closed at 2026-10-05T21:31Z — work complete; boundary blockedOn on
+hosted-runner acquisition capacity (python canceled at 5877a44;
+docs + web canceled at 917db14 after python/composed/security ran
+green), per the C3 convention. The shared `Closed:` header stays
+unwritten — C13 owns closeout.
 
 ### C5 — pending
 
@@ -588,7 +599,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4) | header Started from `date -u`; C2/C3/C4 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2); C3/C4 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 blockedOn (hosted-runner capacity cancel on `python`, run 37372747692 — never ran its checks; re-read once, still canceled) — infra (log `logs/ci-PLAN-11B-C4.json`) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2); C3/C4 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn (hosted-runner acquisition cancels: `python` run 37372747692, then `docs`+`web` run 37374430350 — python/composed/security ran green at 917db14 — each re-read once, still canceled) — infra (log `logs/ci-PLAN-11B-C4.json`) |
 | OM-06 every AC names its layer | ok (C1, C2, C3, C4) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2, C3, C4) | manifest Plan-extensions + ledger C2/C3/C4 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's rewrite commit names no ticket ids in its subject; memory_guard --staged run pre-commit |
