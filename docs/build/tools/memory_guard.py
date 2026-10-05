@@ -1118,13 +1118,18 @@ class Judge:
         self.date_candidates = 0
         self.date_unparsed = 0
         self.changed: list[tuple[str, str]] = []
+        self._bypath: dict[str, str] = {}
         self._executed: set[str] | None = None
         self._exec_cache: dict[str, tuple[bool, str | None]] = {}
         self._chain_scan: dict | None = None
+        self._obl_scanned = False
+        self._obl_scan: tuple[dict[str, str], dict[str, list[dict]]] | None = None
+        self._status_flips: list[tuple[str, int, str, str, str]] = []
 
     # -- entry point
     def run(self) -> None:
         self.changed = self.c.changed(self.pol)
+        self._bypath = {p: s for s, p in self.changed}
         self.c.attribute(self.pol)
         changed_paths = {p for _, p in self.changed}
         cand = 0
@@ -1874,6 +1879,8 @@ class Judge:
                         "(BM-DEFER-01)",
                         commit,
                     )
+                if verdict in ("flip", "flip-undated") and not legacy:
+                    self._status_flips.append((rid, ln, old, new, commit))
                 for d in status_dates(new):
                     if d not in old:
                         self.add_date(path, hl, "act", d, new)
@@ -1920,6 +1927,127 @@ class Judge:
                         (self.r.v if self.guards else self.r.w)(
                             "record-shape", "rule-5", path, i, msg
                         )
+        # P34.30 (ADR-148 D5): every collected lead-token move must be justified by an
+        # appended obligation-event/1 transition chaining on the BASE head.
+        self._judge_transition_events(path)
+
+    def obligation_event_scan(self) -> tuple[dict[str, str], dict[str, list[dict]]] | None:
+        """`(BASE chain heads, appended non-correction events)` — the substrate for the
+        DEFERRALS transition rule (P34.30; SIG-MEM-002; ADR-126/148). Heads: each
+        obligation's last non-correction `obligation-event/1` at BASE (the
+        `expected_previous_event` a new transition must name). Appended: every
+        non-correction `obligation-event/1` this change adds to `events.jsonl`, keyed by
+        obligation id in file order — a journal log-prefix blob is not a witness, and a
+        migration anchor sets the head a same-range transition can then chain on.
+        `None` when the events ledger does not exist at BASE — pre-ledger history, where
+        the row's own lead token was still the mechanism."""
+        if self._obl_scanned:
+            return self._obl_scan
+        self._obl_scanned = True
+        base_text = self.c.at_base(OBLIGATIONS_REL)
+        if base_text is None:
+            return None
+        heads: dict[str, str] = {}
+        for ln in base_text.splitlines():
+            if not ln.strip():
+                continue
+            try:
+                obj = json.loads(ln)
+            except (json.JSONDecodeError, ValueError):
+                continue  # pre-schema/opaque record — never a chain head
+            if (
+                obj.get("schema") == EVENT_SCHEMA
+                and isinstance(obj.get("obligation_id"), str)
+                and isinstance(obj.get("event_id"), str)
+                and obj.get("kind") != "correction"  # corrections never become links (P34.8)
+            ):
+                heads[obj["obligation_id"]] = obj["event_id"]
+        appended: dict[str, list[dict]] = {}
+        status = self._bypath.get(OBLIGATIONS_REL)
+        if status and status != "D":
+            for _hl, _ins, text in self.c.diff(OBLIGATIONS_REL, status).added:
+                if not text.strip():
+                    continue
+                try:
+                    obj = json.loads(text)
+                except (json.JSONDecodeError, ValueError):
+                    continue  # judged as a `schema` violation by judge_obligations
+                if (
+                    obj.get("schema") == EVENT_SCHEMA
+                    and isinstance(obj.get("obligation_id"), str)
+                    and isinstance(obj.get("event_id"), str)
+                    and obj.get("kind") != "correction"  # corrections never become links
+                ):
+                    appended.setdefault(obj["obligation_id"], []).append(obj)
+        self._obl_scan = (heads, appended)
+        return self._obl_scan
+
+    def _judge_transition_events(self, path: str) -> None:
+        """P34.30 (ADR-148 D5, BM-DEFER-01): a DEFERRALS lead-token move in the judged
+        range must be matched by an appended `obligation-event/1` transition — same
+        obligation, `from_status`/`to_status` equal to the old/new lead tokens, and
+        `expected_previous_event` the obligation's chain head at BASE. The cell's lead
+        is derived from the event chain; a dated prose note is never the mechanism —
+        "last token wins" is now mechanically closed."""
+        if not self._status_flips:
+            return
+        scan = self.obligation_event_scan()
+        if scan is None:
+            return  # no events ledger at BASE — pre-ledger history keeps its legacy shape
+        heads, appended = scan
+        for rid, ln, old, new, commit in self._status_flips:
+            frm, to = deferral_lead(old), deferral_lead(new)
+            head = heads.get(rid)
+            same_oid = appended.get(rid, [])
+            # Witness: a contiguous chain of appended transitions that runs the lead
+            # token from `frm` to `to`, each chained on the head its predecessor left —
+            # starting from the BASE head, or from a migration anchor first appended in
+            # this range. A single matching transition is the one-hop case of the walk;
+            # a record that does not chain on the current head is skipped here and
+            # flagged by the `chain` rule itself.
+            cur_status, cur_head = frm, head
+            for e in same_oid:
+                if e.get("expected_previous_event") != cur_head:
+                    continue
+                if e.get("kind") == "transition" and e.get("from_status") == cur_status:
+                    cur_status = e.get("to_status")
+                cur_head = e.get("event_id")
+            if cur_status == to:
+                continue
+            if same_oid:
+                near = "; ".join(
+                    f"{e.get('event_id', '?')} {e.get('from_status')}→{e.get('to_status')} "
+                    f"epe={e.get('expected_previous_event')!r}"
+                    for e in same_oid
+                )
+                note = (
+                    f"the appended event(s) for {rid} ({near}) do not witness the move — "
+                    f"need transition(s) running {frm}→{to}, chained on the BASE head "
+                    f"{head!r}"
+                )
+            elif appended:
+                note = (
+                    "the change appends obligation event(s) for other obligations only "
+                    f"({', '.join(sorted(appended))})"
+                )
+            else:
+                note = "no obligation-event/1 transition is appended in this change"
+            self.r.v(
+                "append-only",
+                "transition-event",
+                path,
+                ln,
+                f"DEFERRALS row {rid} moved its lead token {frm} → {to} without a matching "
+                f"appended obligation-event/1 transition — {note}; append "
+                f'{{"schema":"obligation-event/1","kind":"transition",'
+                f'"obligation_id":"{rid}","from_status":"{frm}","to_status":"{to}",'
+                f'"expected_previous_event":{json.dumps(head)},…}} where '
+                f"expected_previous_event is the chain head at BASE (or a migration "
+                f"anchor this change appends first) — the cell's lead token is derived "
+                f"from the event chain, never written directly "
+                f"(BM-DEFER-01, SIG-MEM-002, ADR-126/148)",
+                commit,
+            )
 
     # -- readouts (G2 + G4b)
     def judge_readout(self, status: str, path: str, recs: DiffRecs) -> None:
@@ -3398,19 +3526,35 @@ def status_dates(row: str) -> list[str]:
     )
 
 
+_DEFERRAL_LEAD = re.compile(r"^(OPEN|PARTIAL|DONE|WONTFIX|ACCEPTED-SKELETON)")
+
+
+def _deferral_cell_nz(cell: str) -> str:
+    x = re.sub(r"[*`]|~~", "", cell)
+    return re.sub(r"\s+", " ", x).strip()
+
+
+def _deferral_cell_lead(cell: str) -> str:
+    m = _DEFERRAL_LEAD.match(_deferral_cell_nz(cell).upper())
+    return m[1] if m else ""
+
+
+def deferral_lead(row: str) -> str:
+    """The leading status token of a DEFERRALS row's last cell ("" when none) — the
+    derived view the `obligation-event/1` chain owns (P34.30)."""
+    cells = table_cells(row)
+    return _deferral_cell_lead(cells[-1]) if cells else ""
+
+
 def deferral_verdict(old: str, new: str) -> str:
     def nz(x: str) -> str:
-        x = re.sub(r"[*`]|~~", "", x)
-        return re.sub(r"\s+", " ", x).strip()
-
-    status = r"^(OPEN|PARTIAL|DONE|WONTFIX|ACCEPTED-SKELETON)"
+        return _deferral_cell_nz(x)
 
     def lead(c: str) -> str:
-        m = re.match(status, nz(c).upper())
-        return m[1] if m else ""
+        return _deferral_cell_lead(c)
 
     def rest(c: str) -> str:
-        return re.sub(status + r"\s*", "", nz(c), flags=re.I)
+        return re.sub(_DEFERRAL_LEAD.pattern + r"\s*", "", nz(c), flags=re.I)
 
     o, n = table_cells(old), table_cells(new)
     for i in range(len(o) - 1):

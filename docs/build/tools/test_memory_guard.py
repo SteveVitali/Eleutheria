@@ -172,6 +172,19 @@ DEFERRALS = """# Deferrals
 | D-T1-1 | V | live check | budget gated | GATE-G1 | fixture | OPEN |
 """
 
+# The fixture's DEFERRALS row is anchored at BASE — the P34.30 `transition-event` rule
+# compares each lead-token move against an appended transition whose
+# `expected_previous_event` is exactly this chain head.
+OBLIGATION_ANCHOR_T1 = (
+    '{"schema":"obligation-event/1","event_id":"D-T1-1:e0","kind":"migration",'
+    '"obligation_id":"D-T1-1","seq":0,"expected_previous_event":null,'
+    '"from_status":"OPEN","to_status":"OPEN","ticket_id":"T0","owner":"—",'
+    '"landing":"—","backlog_home":"—","evidence_refs":[],'
+    '"observed_at":"2026-09-27","recorded_at":"2026-09-27","source_commit":"base",'
+    '"reason":"migration anchor","anchor":{"row_sha256":"x",'
+    '"interpretation":"preserved"}}\n'
+)
+
 INDEX = """# Build index
 
 | seq | ticket | kind | branch | PR | base | landed | adr | deferrals | live | evidence |
@@ -257,7 +270,13 @@ def repo(tmp_path: Path) -> Path:
     write(
         r,
         "docs/build/reports/obligations/events.jsonl",
-        '{"id":1,"recorded_at":"2026-09-20T10:00:00Z"}\n{"id":2,"recorded_at":"2026-09-21T10:00:00Z"}\n',
+        '{"id":1,"recorded_at":"2026-09-20T10:00:00Z"}\n'
+        '{"id":2,"recorded_at":"2026-09-21T10:00:00Z"}\n'
+        # a real obligation-event/1 migration anchor for the fixture's DEFERRALS row —
+        # the BASE chain head the P34.30 transition rule compares appended
+        # `expected_previous_event` values against (lead-token moves need a matching
+        # transition chained on it)
+        + OBLIGATION_ANCHOR_T1,
     )
     write(r, "docs/adr/ADR-001-demo.md", ADR1)
     write(r, "docs/adr/ADR-002-two.md", ADR2)
@@ -342,10 +361,14 @@ def test_oracle_95c8a73f_readout_signing_rewrite_and_future_date(tmp_path: Path)
 
 
 def test_oracle_7a2ff9fa_jsonl_rewrite_and_anchor_dates(tmp_path: Path) -> None:
+    """P33.1's wholesale regeneration flipped eight DEFERRALS lead tokens in the same
+    commit it rewrote events.jsonl — exactly the "last token wins" gap P34.30's
+    `transition-event` rule now closes (ADR-148 D5; the replay oracle names the cell)."""
     rc, doc, _ = replay("7a2ff9fa", tmp_path)
     got = rules(doc)
     ev = "docs/build/reports/obligations/events.jsonl"
     assert rc == 1 and ("append-only", "prefix", ev) in got and ("record-dates", "R1", ev) in got
+    assert ("append-only", "transition-event", "docs/tickets/DEFERRALS.md") in got
 
 
 def test_oracle_062306e7_sqitch_planned_after_commit(tmp_path: Path) -> None:
@@ -587,6 +610,28 @@ def test_deferrals_status_flip_needs_a_date(repo: Path) -> None:
 
 
 def test_deferrals_dated_flip_passes(repo: Path) -> None:
+    """A dated lead-token move passes only with the matching appended
+    `obligation-event/1` transition (P34.30 / ADR-148 D5 — never "last token wins")."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e1", oid="D-T1-1", epe='"D-T1-1:e0"', to="DONE"),
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert counts(doc)["record-dates"][1] >= 1
+
+
+def test_deferrals_flip_without_event_fails(repo: Path) -> None:
+    """The mechanical half of 'no last token wins': a dated prose note alone cannot move
+    a DEFERRALS lead token — the same PR must append the matching transition event."""
     replace(
         repo,
         "docs/tickets/DEFERRALS.md",
@@ -594,9 +639,256 @@ def test_deferrals_dated_flip_passes(repo: Path) -> None:
         "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
     )
     commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1 and (
+        "append-only",
+        "transition-event",
+        "docs/tickets/DEFERRALS.md",
+    ) in got
+
+
+def test_deferrals_flip_event_for_another_obligation_fails(repo: Path) -> None:
+    """A transition for a different obligation does not witness this row's flip."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T9-1:e0", kind="migration", seq=0, epe="null", to="OPEN")
+        + _ev("D-T9-1:e1", epe='"D-T9-1:e0"'),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1 and (
+        "append-only",
+        "transition-event",
+        "docs/tickets/DEFERRALS.md",
+    ) in got
+
+
+def test_deferrals_flip_wrong_status_pair_fails(repo: Path) -> None:
+    """The appended transition's from/to must agree with the old/new lead tokens."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e1", oid="D-T1-1", epe='"D-T1-1:e0"', to="PARTIAL"),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1 and (
+        "append-only",
+        "transition-event",
+        "docs/tickets/DEFERRALS.md",
+    ) in got
+
+
+def test_deferrals_flip_wrong_predecessor_fails(repo: Path) -> None:
+    """A transition that does not chain on the obligation's BASE head witnesses nothing —
+    and the chain check rejects it independently."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e1", oid="D-T1-1", epe='"D-T1-1:e9"', to="DONE"),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1
+    assert ("append-only", "transition-event", "docs/tickets/DEFERRALS.md") in got
+    assert (
+        "append-only",
+        "chain",
+        "docs/build/reports/obligations/events.jsonl",
+    ) in got
+
+
+def test_deferrals_flip_witnessed_by_a_chained_transition_run(repo: Path) -> None:
+    """A net OPEN→DONE lead move may be witnessed by a contiguous run of appended
+    transitions (OPEN→PARTIAL→DONE) — the chain itself carries the intermediate step;
+    the endpoints still have to match the old/new lead tokens exactly."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e1", oid="D-T1-1", epe='"D-T1-1:e0"', to="PARTIAL")
+        + _ev("D-T1-1:e2", oid="D-T1-1", seq=2, epe='"D-T1-1:e1"', frm="PARTIAL", to="DONE"),
+    )
+    commit(repo)
     rc, doc, out = judge(repo)
     assert rc == 0, out
-    assert counts(doc)["record-dates"] == (1, 1)
+
+
+def test_deferrals_flip_broken_chain_run_fails(repo: Path) -> None:
+    """A two-hop run whose second hop does not chain on the first witnesses nothing —
+    the skipped hop is flagged by the `chain` rule on its own."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e1", oid="D-T1-1", epe='"D-T1-1:e0"', to="PARTIAL")
+        + _ev("D-T1-1:e2", oid="D-T1-1", seq=2, epe='"D-T1-1:e9"', frm="PARTIAL", to="DONE"),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1
+    assert ("append-only", "transition-event", "docs/tickets/DEFERRALS.md") in got
+    assert ("append-only", "chain", "docs/build/reports/obligations/events.jsonl") in got
+
+
+def test_deferrals_flip_new_obligation_anchor_then_transition(repo: Path) -> None:
+    """A row that had no chain at BASE is first anchored in-range (migration e0), then
+    transitioned on that anchor — the walk follows the same-range head, not just the
+    BASE head."""
+    r = repo
+    # an unanchored row present at BASE: rewrite the fixture events ledger without it
+    write(
+        r,
+        "docs/tickets/DEFERRALS.md",
+        DEFERRALS + "| D-T9-9 | V | unanchored | gated | GATE-G1 | x | OPEN |\n",
+    )
+    commit(r)
+    replace(
+        r,
+        "docs/tickets/DEFERRALS.md",
+        "| x | OPEN |\n",
+        "| x | DONE 2026-09-28 (runs/T9.md) — was: OPEN |\n",
+    )
+    append(
+        r,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T9-9:e0", oid="D-T9-9", kind="migration", seq=0, epe="null", to="OPEN")
+        + _ev("D-T9-9:e1", oid="D-T9-9", seq=1, epe='"D-T9-9:e0"', to="DONE"),
+    )
+    commit(r)
+    rc, doc, out = run_guard(
+        r, "all", "--range", f"{git(r, 'rev-parse', 'HEAD~1').strip()}..HEAD"
+    )
+    assert rc == 0, out
+
+
+def test_deferrals_flip_migration_is_not_a_transition(repo: Path) -> None:
+    """A second migration anchor for the flipped obligation is not a transition witness."""
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e9", oid="D-T1-1", kind="migration", seq=9, epe="null", to="DONE"),
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1 and (
+        "append-only",
+        "transition-event",
+        "docs/tickets/DEFERRALS.md",
+    ) in got
+
+
+def test_deferrals_two_flips_each_need_events(repo: Path) -> None:
+    """Each lead-token move needs its own witness: one matching transition covers one
+    flip — the second flip is flagged by id."""
+    append(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| D-T1-2 | V | other | gated | GATE-G1 | x | OPEN |\n",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-2:e0", oid="D-T1-2", kind="migration", seq=0, epe="null", to="OPEN"),
+    )
+    commit(repo)
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    replace(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| x | OPEN |",
+        "| x | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    append(
+        repo,
+        "docs/build/reports/obligations/events.jsonl",
+        _ev("D-T1-1:e1", oid="D-T1-1", epe='"D-T1-1:e0"', to="DONE"),
+    )
+    commit(repo)
+    rc, doc, _ = run_guard(repo, "all", "--first-parent", "HEAD")
+    viol = [
+        f
+        for c in doc.get("checks", [])
+        for f in c["violations"]
+        if f["check"] == "append-only"
+        and f["rule"] == "transition-event"
+        and f["path"] == "docs/tickets/DEFERRALS.md"
+    ]
+    assert rc == 1 and len(viol) == 1 and "D-T1-2" in viol[0]["message"], viol
+
+
+def test_deferrals_flip_pre_ledger_history_unjudged(tmp_path: Path) -> None:
+    """A lead-token move before the events ledger existed keeps the sanctioned legacy
+    shape — the transition rule needs a BASE chain to compare against."""
+    r = tmp_path / "old-repo"
+    r.mkdir()
+    git(r, "init", "-q")
+    write(r, "docs/build/README.md", "# build memory\n<!-- build-memory: v2 -->\n")
+    write(r, "docs/tickets/DEFERRALS.md", DEFERRALS)
+    (r / "docs/build/tools/record_policy").mkdir(parents=True)
+    shutil.copy(REAL_POLICY, r / "docs/build/tools/record_policy/history.policy")
+    commit(r, T_BASE, "base")
+    replace(
+        r,
+        "docs/tickets/DEFERRALS.md",
+        "| fixture | OPEN |",
+        "| fixture | DONE 2026-09-28 (runs/T2.md) — was: OPEN |",
+    )
+    commit(r)
+    rc, doc, out = judge(r)
+    assert rc == 0, out
+    assert not [
+        f
+        for c in doc.get("checks", [])
+        for f in c["violations"]
+        if f["rule"] == "transition-event"
+    ]
 
 
 def test_deferrals_future_dated_flip_fails_r1(repo: Path) -> None:
@@ -2032,14 +2324,24 @@ def test_living_head_archive_one_byte_off_fails(repo: Path) -> None:
 
 _EV = (
     '{{"schema":"obligation-event/1","event_id":"{eid}","kind":"{kind}","obligation_id":'
-    '"{oid}","seq":{seq},"expected_previous_event":{epe},"from_status":"OPEN","to_status":'
+    '"{oid}","seq":{seq},"expected_previous_event":{epe},"from_status":"{frm}","to_status":'
     '"{to}","ticket_id":"T9","owner":"—","landing":"—","backlog_home":"—","evidence_refs":[],'
     '"observed_at":"2026-09-28","recorded_at":"2026-09-28","source_commit":"x","reason":"t"}}'
 )
 
 
-def _ev(eid: str, oid: str = "D-T9-1", kind: str = "transition", seq: int = 1, epe: str = '"x"', to: str = "DONE") -> str:
-    return _EV.format(eid=eid, oid=oid, kind=kind, seq=seq, epe=epe, to=to) + "\n"
+def _ev(
+    eid: str,
+    oid: str = "D-T9-1",
+    kind: str = "transition",
+    seq: int = 1,
+    epe: str = '"x"',
+    to: str = "DONE",
+    frm: str = "OPEN",
+) -> str:
+    return (
+        _EV.format(eid=eid, oid=oid, kind=kind, seq=seq, epe=epe, frm=frm, to=to) + "\n"
+    )
 
 
 def test_jsonl_chained_transition_passes(repo: Path) -> None:

@@ -458,6 +458,8 @@ violation,799ab088,docs/build/BUILD_INDEX.md,record-shape,*,reviewed,record-shap
 violation,7a2ff9fa,docs/build/reports/obligations/events.jsonl,*,*,append-register,loss: S2. Wholesale regeneration + status mutation: 8 migration e0 events flipped from
 violation,7a2ff9fa,docs/build/reports/obligations/events.jsonl,record-dates,*,date-register,b:event-date; basis: line written by 7a2ff9fa (P33.1 wholesale regeneration)
 clean,7a2ff9fa,docs/tickets/DEFERRALS.md,append-only,*,append-register,transition-justified
+violation,7a2ff9fa,docs/tickets/DEFERRALS.md,append-only,transition-event,reviewed,P34.30 transition-event: the lead-token moves (e.g. D-P30.1-2 OPEN→DONE) carried no appended obligation-event/1 transition in-commit — the rule they lacked is now mechanical (ADR-148 D5); 47b656eb's appended transitions repaired the chain
+waived,7a2ff9fa,docs/tickets/DEFERRALS.md,append-only,*,reviewed,append-register transition-justified classification withdrawn — no in-commit transition existed; see the sibling violation row (P34.30 review)
 violation,7a2ff9fa,docs/tickets/DEFERRALS.md,record-dates,*,date-register,b:event-date; basis: P33.1: PR #183 createdAt 2026-09-28T05:14Z; closeout commit
 clean,7b52f2b4,docs/build/BUILD_INDEX.md,append-only,*,append-register,transition-justified
 violation,7b52f2b4,docs/build/BUILD_INDEX.md,append-only,*,reviewed,region-mode finding under the completed append-only modes; the register's benign classification predates them (P34.7 review)

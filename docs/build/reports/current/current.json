@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
-  "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-1, landed per its disposition)",
-  "input_commit": "97e1066c8c8b69895896916e0212705998f1adc2",
-  "manifest_inputs": 965,
+  "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
+  "input_commit": "6d9ec3716a60d96caccbe244274b3cd17b31d822",
+  "manifest_inputs": 966,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.30",
@@ -26,14 +26,14 @@
     "updatedAt": "2026-10-05T00:09Z"
   },
   "counts": {
-    "obligations": 154,
+    "obligations": 155,
     "owed": 86,
     "open": 83,
     "partial": 3,
-    "terminal": 68,
-    "events": 633,
-    "transitions": 25,
-    "coverage_assessments": 199,
+    "terminal": 69,
+    "events": 635,
+    "transitions": 26,
+    "coverage_assessments": 200,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -4451,12 +4451,12 @@
     },
     {
       "id": "D-R10-MEMORY-1",
-      "status": "OPEN",
-      "status_source": "event-head D-R10-MEMORY-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-R10-MEMORY-1:e1",
       "kind": "H",
-      "owner": "P32.8",
-      "landing": "P34.30",
-      "landing_source": "disposition ticket(R11-MEM-06)",
+      "owner": "—",
+      "landing": "—",
+      "landing_source": "event-head",
       "backlog_home": "BL-058",
       "item": "Single-writer/event compatibility cutover; owner P32.8 (cites BL-058)",
       "unblocked_by": "Operator-approved ticket boundary after shadow parser/event/writer tests and reviewed skill-entry-point integration",
@@ -4491,6 +4491,34 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-R10-MEMORY-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-R10-MEMORY-1",
+          "seq": 1,
+          "expected_previous_event": "D-R10-MEMORY-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.30",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/235_P34.30__memory-cutover-disposition-and-transition-rule.md",
+            "docs/build/runs/P34.30.md",
+            "docs/adr/ADR-148-build-memory-v2-1-ledger-contract-and-enforced-append-only.md",
+            "docs/tickets/210_P34.8__obligation-events-repair.md",
+            "docs/build/tools/memory_guard.py",
+            "docs/build/tools/test_memory_guard.py",
+            "tests/unit/fixtures/memory_guard/replay_expected.csv"
+          ],
+          "observed_at": "2026-10-05",
+          "recorded_at": "2026-10-05",
+          "source_commit": "PENDING-COMMIT-SHA",
+          "reason": "ADR-148 Decision 5 option-C split (SEED-11): the events/enforcement leg of D-R10-MEMORY-1 is discharged on enforcement evidence — P34.30's `transition-event` rule (memory_guard.py) fails any judged PR range that moves a DEFERRALS leading token without an appended obligation-event/1 transition naming the same obligation id, matching from/to statuses, and expected_previous_event = the chain head at BASE; fixture tests plus the reviewed 7a2ff9fa replay-oracle rows pin it. The closeout-journal leg is re-homed to D-R10-MEMORY-2 (OPEN; later-phase, same trigger as D-R11-LATER-13 — parallel dispatch / multi-worktree / a second writer). The cell is never rewritten — its lead token is derived from this chain. The e0 anchor's four correction records are P34.8's repair evidence."
         }
       ]
     },
@@ -7602,6 +7630,55 @@
           "anchor": {
             "row_line": 1192,
             "row_sha256": "f4d85228cf94177cfa3b6b4d5e784db3215a7dcac08f48a3a3bc8ca1547f8ff4",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-R10-MEMORY-2",
+      "status": "OPEN",
+      "status_source": "event-head D-R10-MEMORY-2:e0",
+      "kind": "H",
+      "owner": "the orchestrator, then the operator at the trigger",
+      "landing": "parallel ticket dispatch, a multi-worktree build, or a second host or harness writing memory concurrently fires the trigger; at the trigger the operator applies the B6 entry-point patches, sets --authoritative-root explicitly, and dry-runs in a scratch clone before the journal is enforced at entry points",
+      "landing_source": "event-head",
+      "backlog_home": "BL-091",
+      "item": "Closeout-journal cutover — the `closeout-op/1` single-writer protocol (ADR-127; the P32.8 shadow landing already landed its code, tests and worktree-safe validator patch) wired into the worker/orchestrator closeout entry points under the operator-approved boundary; successor of `D-R10-MEMORY-1`'s journal leg (ADR-148 Decision 5, option C; the same unit `D-R11-LATER-13` registers on the later-phase register)",
+      "unblocked_by": "owner: the orchestrator, then the operator at the trigger · trigger: parallel ticket dispatch, a multi-worktree build, or a second host or harness writing memory concurrently · prerequisites at the trigger: the B6 entry-point patches applied by the operator, `--authoritative-root` set explicitly, and a dry-run in a scratch clone · due: none — event-triggered",
+      "verify": "the trigger recorded as fired (a dated GATE DECISIONS row or the measured fact); the B6 patch applied in a scratch clone with `activation-check` green against a second-writer fixture; `closeout_protocol` operations journaled end-to-end (prepare → external-known → memory-committed → acknowledged) under the lock",
+      "proxy": "stays shadow — `closeout-op/1` exists and self-applies on repo-internal closeouts but is unenforced at entry points; the in-repo `transition-event` rule (P34.30) already enforces the events half, so the journal is the only unenforced leg",
+      "line": 1204,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-R10-MEMORY-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-R10-MEMORY-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.30",
+          "owner": "the orchestrator, then the operator at the trigger",
+          "landing": "parallel ticket dispatch, a multi-worktree build, or a second host or harness writing memory concurrently fires the trigger; at the trigger the operator applies the B6 entry-point patches, sets --authoritative-root explicitly, and dry-runs in a scratch clone before the journal is enforced at entry points",
+          "backlog_home": "BL-091",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/235_P34.30__memory-cutover-disposition-and-transition-rule.md",
+            "docs/build/runs/P34.30.md",
+            "docs/adr/ADR-148-build-memory-v2-1-ledger-contract-and-enforced-append-only.md",
+            "docs/adr/ADR-127-single-writer-closeout-protocol.md"
+          ],
+          "observed_at": "2026-10-05",
+          "recorded_at": "2026-10-05",
+          "source_commit": "PENDING-COMMIT-SHA",
+          "reason": "migration anchor appended by P34.30 (row 235) for the successor row it added — the closeout-journal leg of D-R10-MEMORY-1's option-C split (ADR-148 Decision 5); appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1204,
+            "row_sha256": "ba72478617a387adf22cee87f5e554ea850c5ffc4067152f07e85a682444a3c8",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -11945,8 +12022,8 @@
           "label": "historical/csv"
         },
         "SIG-MEM-003": {
-          "verdict": "MET",
-          "evidence": "docs/build/tools/closeout_protocol.py:1;docs/build/tools/CLOSEOUT_WRITER_PROTOCOL.md:1;scripts/docs/check-build-memory.sh:14;docs/adr/ADR-127-single-writer-closeout-protocol.md:1",
+          "verdict": "MET-ENGINEERED(D-R10-MEMORY-2)",
+          "evidence": "docs/build/tools/closeout_protocol.py:1;docs/build/tools/CLOSEOUT_WRITER_PROTOCOL.md:1;scripts/docs/check-build-memory.sh:14;docs/adr/ADR-127-single-writer-closeout-protocol.md:1;docs/build/tools/memory_guard.py:1;docs/build/tools/test_memory_guard.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13492,6 +13569,16 @@
         "assessment_id": "SIG-MEM-003:a1"
       },
       {
+        "requirement_id": "SIG-MEM-003",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-R10-MEMORY-2)",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/P34.30-memory-cutover-disposition-and-transition-rule @ PENDING-COMMIT-SHA",
+        "limitations": "ADR-148 Decision 5 option-C split of D-R10-MEMORY-1 (SEED-11): the events/enforcement leg is MET on enforcement evidence — memory_guard.py's `transition-event` rule fails a judged range that moves a DEFERRALS leading token without an appended obligation-event/1 transition (same obligation id, matching from/to, expected_previous_event = the BASE chain head); pinned by fixture tests and the reviewed 7a2ff9fa replay-oracle rows; D-R10-MEMORY-1:e1 (OPEN->DONE) closes that leg. The closeout-journal leg — closeout-op/1 enforced at worker/orchestrator entry points — stays shadow-only and owed as D-R10-MEMORY-2 (OPEN; trigger: parallel dispatch / multi-worktree / second writer; home BL-091). No hosted/public claim; previous matrix verdict MET (routing P32.8, P32.7 assessment MISSING superseded).",
+        "supersedes": "SIG-MEM-003:a1",
+        "assessment_id": "SIG-MEM-003:r11-1"
+      },
+      {
         "requirement_id": "SIG-MEM-004",
         "domain": "implementation",
         "verdict": "MISSING",
@@ -14765,6 +14852,11 @@
           "assessed_at": "2026-10-14"
         },
         {
+          "requirement": "SIG-MEM-003",
+          "verdict": "MET-ENGINEERED(D-R10-MEMORY-2)",
+          "assessed_at": "2026-10-05"
+        },
+        {
           "requirement": "SIG-MEM-004",
           "verdict": "MISSING",
           "assessed_at": "2026-10-14"
@@ -15899,10 +15991,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a933e3c018193aff6efadc0c68a93942b2dd76008de653c671d9ef211b804d6e",
+  "manifest_sha256": "c48b1a0cf252c553babaae1a606b7d57e2a9fe3667083aef01b4b7b5c91c08d3",
   "current_md": {
     "lines": 100,
-    "bytes": 17123,
+    "bytes": 17179,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
