@@ -45,17 +45,27 @@ import re
 import subprocess
 import sys
 import tomllib
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable
 
 SCHEMA = "living-record-lint/1"
 POLICY_SCHEMA = "living-record-policy/1"
 POLICY_REL = "docs/build/tools/record_policy/living_records.toml"
 MARK = "living_record_invariant"
 
-_READ_ATTRS = {"read_text", "read_bytes", "open", "exists", "is_file",
-               "is_dir", "glob", "iterdir", "stat", "rglob"}
+_READ_ATTRS = {
+    "read_text",
+    "read_bytes",
+    "open",
+    "exists",
+    "is_file",
+    "is_dir",
+    "glob",
+    "iterdir",
+    "stat",
+    "rglob",
+}
 _KEY_LIT = None  # built from the policy
 _DATE_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}\b")
 _ROWRANGE_RE = re.compile(r"\brows?\s+\d+\s*[-–—]\s*\d+\b", re.IGNORECASE)
@@ -126,9 +136,9 @@ def _const(node: ast.AST) -> str | None:
 def _seg_list(node: ast.AST) -> list[str] | None:
     """A '/'-joined literal like 'docs' / 'build' -> ['docs','build']."""
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
-        l, r = _seg_list(node.left), _seg_list(node.right)
-        if l is not None and r is not None:
-            return l + r
+        left, right = _seg_list(node.left), _seg_list(node.right)
+        if left is not None and right is not None:
+            return left + right
         return None
     c = _const(node)
     if c is not None:
@@ -188,9 +198,7 @@ class Analyzer:
                 and isinstance(cur.value, ast.Attribute)
                 and cur.value.attr == "parents"
             ):
-                if isinstance(cur.slice, ast.Constant) and isinstance(
-                    cur.slice.value, int
-                ):
+                if isinstance(cur.slice, ast.Constant) and isinstance(cur.slice.value, int):
                     parents += cur.slice.value
                     cur = cur.value.value
                     continue
@@ -201,7 +209,12 @@ class Analyzer:
             is_path = (isinstance(f, ast.Name) and f.id == "Path") or (
                 isinstance(f, ast.Attribute) and f.attr == "Path"
             )
-            if is_path and base.args and isinstance(base.args[0], ast.Name) and base.args[0].id == "__file__":
+            if (
+                is_path
+                and base.args
+                and isinstance(base.args[0], ast.Name)
+                and base.args[0].id == "__file__"
+            ):
                 p = self.file_dir
                 for _ in range(parents):
                     p = p.parent
@@ -279,8 +292,10 @@ class Analyzer:
                         self.fns[f"{n.name}.{m.name}"] = Fn(node=m, file_rel=self.rel)
         # module-level simple assignments
         for n in tree.body:
-            if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(
-                n.targets[0], ast.Name
+            if (
+                isinstance(n, ast.Assign)
+                and len(n.targets) == 1
+                and isinstance(n.targets[0], ast.Name)
             ):
                 name = n.targets[0].id
                 val = n.value
@@ -324,7 +339,11 @@ class Analyzer:
                     if isinstance(f.value, ast.Name) and f.value.id == pname:
                         return True
                 if isinstance(f, ast.Name) and f.id in ("open", "Path"):
-                    if node.args and isinstance(node.args[0], ast.Name) and node.args[0].id == pname:
+                    if (
+                        node.args
+                        and isinstance(node.args[0], ast.Name)
+                        and node.args[0].id == pname
+                    ):
                         return True
                 # forwarded to a same-file helper's pathish param
                 if isinstance(f, ast.Name):
@@ -421,7 +440,9 @@ class Analyzer:
                                     else:
                                         pe = self._pathexpr(arg)
                                         if pe is not None and pe.tail:
-                                            events.append(("/".join(pe.tail), "tree", sub.lineno, where))
+                                            events.append(
+                                                ("/".join(pe.tail), "tree", sub.lineno, where)
+                                            )
                 # anchored joins used as values (existence, open-args, asserts)
                 if isinstance(sub, ast.BinOp) and isinstance(sub.op, ast.Div):
                     pe = self._pathexpr(sub)
@@ -520,17 +541,13 @@ class Analyzer:
                             if isinstance(t, ast.Name):
                                 targets.append(t.id)
                             elif isinstance(t, (ast.Tuple, ast.List)):
-                                targets += [
-                                    e.id for e in t.elts if isinstance(e, ast.Name)
-                                ]
+                                targets += [e.id for e in t.elts if isinstance(e, ast.Name)]
                         if targets and self._expr_living_names(sub.value, tainted):
                             for t in targets:
                                 if t not in tainted:
                                     tainted.add(t)
                                     changed = True
-                    elif isinstance(sub, ast.AnnAssign) and isinstance(
-                        sub.target, ast.Name
-                    ):
+                    elif isinstance(sub, ast.AnnAssign) and isinstance(sub.target, ast.Name):
                         if self._expr_living_names(sub.value, tainted):
                             if sub.target.id not in tainted:
                                 tainted.add(sub.target.id)
@@ -540,9 +557,7 @@ class Analyzer:
                             if sub.target.id not in tainted:
                                 tainted.add(sub.target.id)
                                 changed = True
-                    elif isinstance(sub, ast.comprehension) and isinstance(
-                        sub.target, ast.Name
-                    ):
+                    elif isinstance(sub, ast.comprehension) and isinstance(sub.target, ast.Name):
                         if self._expr_living_names(sub.iter, tainted):
                             if sub.target.id not in tainted:
                                 tainted.add(sub.target.id)
@@ -571,10 +586,7 @@ class Analyzer:
     def _literals(self, node: ast.AST) -> list[tuple[str, int]]:
         out = []
         joined_parts = {
-            id(c)
-            for n in ast.walk(node)
-            if isinstance(n, ast.JoinedStr)
-            for c in n.values
+            id(c) for n in ast.walk(node) if isinstance(n, ast.JoinedStr) for c in n.values
         }
         docstrings = self._docstrings(node)
         for n in ast.walk(node):
@@ -616,7 +628,7 @@ class Analyzer:
         all_lits: list[tuple[str, int]] = []
         for n in nodes:
             all_lits += self._literals(n)
-        subtree_has_id = any(self._named_id(l) for l, _ in all_lits)
+        subtree_has_id = any(self._named_id(lit) for lit, _ in all_lits)
 
         key_re = re.compile(
             r"(?:^|[\s'\"({,])(?:" + "|".join(re.escape(k) for k in self.policy.keys) + r")\s*:"
@@ -628,29 +640,38 @@ class Analyzer:
                 m = key_re.search(lit)
                 if m:
                     key = next(k for k in self.policy.keys if k in lit.split(":")[0])
-                    viols.append({
-                        "rule": "rule-1", "line": line,
-                        "detail": f"literal pins a current-state key ({key!r}): {lit[:80]!r}",
-                    })
+                    viols.append(
+                        {
+                            "rule": "rule-1",
+                            "line": line,
+                            "detail": f"literal pins a current-state key ({key!r}): {lit[:80]!r}",
+                        }
+                    )
             # assert-scoped rules 2–4
             for sub in ast.walk(n):
                 if isinstance(sub, ast.Assert):
                     alits = self._literals(sub)
-                    status_lits = [s for l, _ in alits if (s := self._status_literal(l))]
-                    id_lits = [i for l, _ in alits if (i := self._named_id(l))]
+                    status_lits = [s for lit, _ in alits if (s := self._status_literal(lit))]
+                    id_lits = [i for lit, _ in alits if (i := self._named_id(lit))]
                     tainted_names = {
                         x.id for x in ast.walk(sub) if isinstance(x, ast.Name) and x.id in tainted
                     }
                     touched = tainted_names or bool(self._expr_living_names(sub, tainted))
                     if status_lits and (touched or id_lits or subtree_has_id):
-                        viols.append({
-                            "rule": "rule-2", "line": sub.lineno,
-                            "detail": (
-                                f"assertion pins a status ({status_lits[0]!r})"
-                                + (f" of named id {id_lits[0]!r}" if id_lits else
-                                   " with a record name in the test")
-                            ),
-                        })
+                        viols.append(
+                            {
+                                "rule": "rule-2",
+                                "line": sub.lineno,
+                                "detail": (
+                                    f"assertion pins a status ({status_lits[0]!r})"
+                                    + (
+                                        f" of named id {id_lits[0]!r}"
+                                        if id_lits
+                                        else " with a record name in the test"
+                                    )
+                                ),
+                            }
+                        )
                     # `derived == "<record id>"` pins a living value to a named
                     # record (presence/`in` membership is reference resolution).
                     for cmpn in ast.walk(sub):
@@ -671,17 +692,19 @@ class Analyzer:
                                     if isinstance(x, ast.Name) and x.id in tainted
                                 }
                                 der_call = any(
-                                    isinstance(x, ast.Call)
-                                    for x in ast.walk(der_side)
+                                    isinstance(x, ast.Call) for x in ast.walk(der_side)
                                 ) and bool(self._expr_living_names(der_side, tainted))
                                 if der_names or der_call:
-                                    viols.append({
-                                        "rule": "rule-2", "line": cmpn.lineno,
-                                        "detail": (
-                                            f"assertion pins a living-derived value "
-                                            f"to record id {self._named_id(lit_c)!r}"
-                                        ),
-                                    })
+                                    viols.append(
+                                        {
+                                            "rule": "rule-2",
+                                            "line": cmpn.lineno,
+                                            "detail": (
+                                                f"assertion pins a living-derived value "
+                                                f"to record id {self._named_id(lit_c)!r}"
+                                            ),
+                                        }
+                                    )
                     # rule-3: len(<living-derived>) == <int>
                     for cmp_node in ast.walk(sub):
                         if isinstance(cmp_node, ast.Compare):
@@ -692,39 +715,53 @@ class Analyzer:
                                     and isinstance(s_.func, ast.Name)
                                     and s_.func.id == "len"
                                     and s_.args
-                                    and isinstance(s_.args[0], (ast.Name, ast.Attribute, ast.Subscript))
+                                    and isinstance(
+                                        s_.args[0], (ast.Name, ast.Attribute, ast.Subscript)
+                                    )
                                 ):
                                     other = sides[1 - i] if len(sides) == 2 else None
-                                    if isinstance(other, ast.Constant) and isinstance(other.value, int):
+                                    if isinstance(other, ast.Constant) and isinstance(
+                                        other.value, int
+                                    ):
                                         arg = s_.args[0]
                                         names_in = {
                                             x.id for x in ast.walk(arg) if isinstance(x, ast.Name)
                                         }
                                         if names_in & tainted:
-                                            viols.append({
-                                                "rule": "rule-3", "line": cmp_node.lineno,
-                                                "detail": f"len(<living-derived>) == {other.value}",
-                                            })
+                                            viols.append(
+                                                {
+                                                    "rule": "rule-3",
+                                                    "line": cmp_node.lineno,
+                                                    "detail": f"len(<living-derived>) == {other.value}",
+                                                }
+                                            )
                     # rule-4: literal row-range or calendar date in the assert
                     for lit, line in alits:
                         m = _DATE_RE.search(lit) or _ROWRANGE_RE.search(lit)
                         if m:
-                            viols.append({
-                                "rule": "rule-4", "line": line,
-                                "detail": f"literal row-range/date in assertion: {m.group(0)!r}",
-                            })
+                            viols.append(
+                                {
+                                    "rule": "rule-4",
+                                    "line": line,
+                                    "detail": (
+                                        f"literal row-range/date in assertion: {m.group(0)!r}"
+                                    ),
+                                }
+                            )
         return viols
 
 
 # ── tree driver ────────────────────────────────────────────────────────────
 
-TEST_GLOBS = ("tests/**/*.py", "docs/build/tools/test_*.py")
+TEST_GLOBS = ("tests/*.py", "tests/**/*.py", "docs/build/tools/test_*.py")
 
 
 def _repo_files(root: Path) -> list[str]:
     out = subprocess.run(
         ["git", "-C", str(root), "ls-files", *TEST_GLOBS],
-        capture_output=True, text=True, check=True,
+        capture_output=True,
+        text=True,
+        check=True,
     ).stdout.split()
     return sorted(out)
 
@@ -735,7 +772,9 @@ def lint_tree(root: Path, policy_path: Path | None = None) -> dict:
     policy = load_policy(policy_path)
     report = {
         "schema": SCHEMA,
-        "policy": str(policy_path.relative_to(root) if policy_path.is_relative_to(root) else policy_path),
+        "policy": str(
+            policy_path.relative_to(root) if policy_path.is_relative_to(root) else policy_path
+        ),
         "root": str(root),
         "files_scanned": 0,
         "tests_evaluated": 0,
@@ -758,15 +797,18 @@ def lint_tree(root: Path, policy_path: Path | None = None) -> dict:
                 continue
             reads = az.reads_in_subtree(fn)
             living = [r for r in reads if r[1] == "tree" and policy.classify(r[0]) == "living"]
-            snaps = [r for r in reads if r[1] == "snapshot" and policy.classify(r[0]) in ("living", "frozen")]
+            snaps = [
+                r
+                for r in reads
+                if r[1] == "snapshot" and policy.classify(r[0]) in ("living", "frozen")
+            ]
             report["snapshot_reads"] += len(snaps)
             if not living and not snaps:
                 continue
             report["tests_evaluated"] += 1
             key = az.invariant_key(fn)
             viols = az.evaluate(fn) if living else []
-            entry = {"file": rel, "test": name,
-                     "reads": sorted({r[0] for r in living + snaps})}
+            entry = {"file": rel, "test": name, "reads": sorted({r[0] for r in living + snaps})}
             unregistered = key is not None and key not in policy.invariants
             if viols:
                 for v in viols:
@@ -784,11 +826,15 @@ def lint_tree(root: Path, policy_path: Path | None = None) -> dict:
                 if key:
                     entry["invariant"] = key
             if unregistered:
-                report["violations"].append({
-                    "rule": "unregistered-invariant", "line": fn.node.lineno,
-                    "detail": f"mark {MARK}({key!r}) is not in [invariants.allowed]",
-                    "file": rel, "test": name,
-                })
+                report["violations"].append(
+                    {
+                        "rule": "unregistered-invariant",
+                        "line": fn.node.lineno,
+                        "detail": f"mark {MARK}({key!r}) is not in [invariants.allowed]",
+                        "file": rel,
+                        "test": name,
+                    }
+                )
                 entry["status"] = "violation"
             report["evaluated"].append(entry)
     return report

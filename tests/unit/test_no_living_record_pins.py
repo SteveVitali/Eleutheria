@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import importlib.util
 import sys
-from pathlib import Path
 
 from support import REPO_ROOT
 
@@ -45,9 +44,7 @@ def test_evaluated_set_is_not_vacuous() -> None:
     """The lint is worthless if it evaluated nothing — require coverage."""
     assert REPORT["files_scanned"] > 0
     assert REPORT["tests_evaluated"] > 0
-    assert len(REPORT["evaluated"]) + len(REPORT["exempted"]) >= REPORT[
-        "tests_evaluated"
-    ]
+    assert len(REPORT["evaluated"]) + len(REPORT["exempted"]) >= REPORT["tests_evaluated"]
 
 
 def test_no_living_record_pins() -> None:

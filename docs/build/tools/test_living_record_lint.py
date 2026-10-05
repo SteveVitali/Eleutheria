@@ -12,8 +12,6 @@ import sys
 import textwrap
 from pathlib import Path
 
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 POLICY_PATH = REPO_ROOT / "docs/build/tools/record_policy/living_records.toml"
 
@@ -59,10 +57,7 @@ def evaluated(source: str):
     for name, fn in az.fns.items():
         if name.startswith("test"):
             reads = az.reads_in_subtree(fn)
-            living = [
-                r for r in reads
-                if r[1] == "tree" and POLICY.classify(r[0]) == "living"
-            ]
+            living = [r for r in reads if r[1] == "tree" and POLICY.classify(r[0]) == "living"]
             snaps = [r for r in reads if r[1] == "snapshot"]
             if living or snaps:
                 out[name] = {

@@ -39,9 +39,7 @@ def _site_host() -> str:
     """The canonical host, derived from the astro config's `site:` field so a
     legitimate cutover never turns this test red (BM-TEST-01 — reference
     resolution, not a literal pin)."""
-    match = re.search(
-        r'^\s*site:\s*"https?://([^"/]+)', _read("web/astro.config.mjs"), re.M
-    )
+    match = re.search(r'^\s*site:\s*"https?://([^"/]+)', _read("web/astro.config.mjs"), re.M)
     assert match, "web/astro.config.mjs no longer declares its canonical site"
     return match.group(1)
 

@@ -21,7 +21,6 @@ import sys
 import tomllib
 
 import pytest
-
 from support import PY_PACKAGES, REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"

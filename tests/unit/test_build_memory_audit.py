@@ -25,7 +25,6 @@ import re
 import shutil
 
 import pytest
-
 from support import REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"

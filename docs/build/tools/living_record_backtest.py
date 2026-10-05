@@ -44,9 +44,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from living_record_lint import (  # noqa: E402
-    Analyzer,
     POLICY_REL,
     TEST_GLOBS,
+    Analyzer,
     load_policy,
 )
 
@@ -56,7 +56,8 @@ SCHEMA = "living-backtest/1"
 def _git(root: Path, *args: str, binary: bool = False):
     out = subprocess.run(
         ["git", "-C", str(root), *args],
-        capture_output=True, check=True,
+        capture_output=True,
+        check=True,
     )
     return out.stdout if binary else out.stdout.decode()
 
@@ -64,7 +65,8 @@ def _git(root: Path, *args: str, binary: bool = False):
 def _show(root: Path, rev_path: str) -> str | None:
     out = subprocess.run(
         ["git", "-C", str(root), "show", rev_path],
-        capture_output=True, check=False,
+        capture_output=True,
+        check=False,
     )
     return out.stdout.decode() if out.returncode == 0 else None
 
@@ -74,7 +76,7 @@ def transitions(root: Path, policy, window: int) -> list[dict]:
     commits = _git(root, "rev-list", "--first-parent", "-n", str(window), "HEAD").split()
     commits.reverse()  # oldest → newest
     out = []
-    for base, head in zip(commits, commits[1:]):
+    for base, head in zip(commits, commits[1:], strict=False):
         changed = _git(root, "diff", "--name-only", base, head).split()
         living = [c for c in changed if policy.classify(c) == "living"]
         if living:
@@ -84,11 +86,7 @@ def transitions(root: Path, policy, window: int) -> list[dict]:
 
 def _test_files_at(root: Path, rev: str) -> list[str]:
     files = _git(root, "ls-tree", "-r", "--name-only", rev).split()
-    return [
-        f
-        for f in files
-        if any(fnmatch.fnmatchcase(f, g) for g in TEST_GLOBS)
-    ]
+    return [f for f in files if any(fnmatch.fnmatchcase(f, g) for g in TEST_GLOBS)]
 
 
 def evaluated_tests_at(root: Path, rev: str, policy) -> list[tuple[str, str]]:
@@ -107,16 +105,11 @@ def evaluated_tests_at(root: Path, rev: str, policy) -> list[tuple[str, str]]:
             if not name.split(".")[-1].startswith("test"):
                 continue
             reads = az.reads_in_subtree(fn)
-            living = [
-                r
-                for r in reads
-                if r[1] == "tree" and policy.classify(r[0]) == "living"
-            ]
+            living = [r for r in reads if r[1] == "tree" and policy.classify(r[0]) == "living"]
             snaps = [
                 r
                 for r in reads
-                if r[1] == "snapshot"
-                and policy.classify(r[0]) in ("living", "frozen")
+                if r[1] == "snapshot" and policy.classify(r[0]) in ("living", "frozen")
             ]
             if living or snaps:
                 out.append((rel, name))
@@ -148,9 +141,7 @@ def _fn_segment(src: str, qualname: str) -> str | None:
     return None
 
 
-def replay_transition(
-    root: Path, policy, trans: dict, work: Path, timeout: int
-) -> dict:
+def replay_transition(root: Path, policy, trans: dict, work: Path, timeout: int) -> dict:
     base, head = trans["base"], trans["head"]
     result = {
         "base": base[:12],
@@ -177,17 +168,28 @@ def replay_transition(
     _materialize(root, base, tree, sorted({rel for rel, _ in tests}))
     # conftest/support modules must come from C too (C's harness).
     _materialize(
-        root, base, tree,
+        root,
+        base,
+        tree,
         [f for f in _test_files_at(root, base) if f.endswith(("conftest.py", "support.py"))],
     )
-    nodeids = [
-        f"{tree / rel}::{name.replace('.', '::')}"
-        for rel, name in sorted(set(tests))
-    ]
+    nodeids = [f"{tree / rel}::{name.replace('.', '::')}" for rel, name in sorted(set(tests))]
     out = subprocess.run(
-        [sys.executable, "-m", "pytest", "-p", "no:cacheprovider",
-         "--tb=line", "-rf", "-q", *nodeids],
-        capture_output=True, text=True, cwd=tree, timeout=timeout,
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "-p",
+            "no:cacheprovider",
+            "--tb=line",
+            "-rf",
+            "-q",
+            *nodeids,
+        ],
+        capture_output=True,
+        text=True,
+        cwd=tree,
+        timeout=timeout,
     )
     known = {rel for rel, _ in tests}
     failed = []
@@ -202,9 +204,7 @@ def replay_transition(
                 path_part,
             )
             failed.append((rel, qual.replace("::", "."), node))
-    result["infra"] = sum(
-        1 for ln in out.stdout.splitlines() if ln.startswith("ERROR ")
-    )
+    result["infra"] = sum(1 for ln in out.stdout.splitlines() if ln.startswith("ERROR "))
     result["tests_replayed"] = len(nodeids)
     for rel, qual, node in failed:
         src_c = _show(root, f"{base}:{rel}")
@@ -219,8 +219,9 @@ def replay_transition(
     return result
 
 
-def run(root: Path, window: int, max_transitions: int, timeout: int,
-        policy_path: Path | None = None) -> dict:
+def run(
+    root: Path, window: int, max_transitions: int, timeout: int, policy_path: Path | None = None
+) -> dict:
     root = Path(root).resolve()
     policy = load_policy(policy_path or (root / POLICY_REL))
     trans = transitions(root, policy, window)
@@ -259,17 +260,17 @@ def run(root: Path, window: int, max_transitions: int, timeout: int,
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", default=".", help="repository root")
-    ap.add_argument("--window", type=int, default=200,
-                    help="first-parent commits to scan for transitions")
-    ap.add_argument("--max-transitions", type=int, default=20,
-                    help="most recent transitions to actually replay")
-    ap.add_argument("--timeout", type=int, default=600,
-                    help="seconds per replayed pytest run")
+    ap.add_argument(
+        "--window", type=int, default=200, help="first-parent commits to scan for transitions"
+    )
+    ap.add_argument(
+        "--max-transitions", type=int, default=20, help="most recent transitions to actually replay"
+    )
+    ap.add_argument("--timeout", type=int, default=600, help="seconds per replayed pytest run")
     ap.add_argument("--policy", type=Path, default=None)
     ap.add_argument("--json", type=Path, default=None)
     args = ap.parse_args(argv)
-    report = run(Path(args.root), args.window, args.max_transitions,
-                 args.timeout, args.policy)
+    report = run(Path(args.root), args.window, args.max_transitions, args.timeout, args.policy)
     if args.json:
         args.json.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     t = report["totals"]
@@ -290,8 +291,7 @@ def main(argv: list[str] | None = None) -> int:
     if t["pin_broken"]:
         return 1
     if t["transitions_replayed"] == 0 or t["tests_replayed"] == 0:
-        print("living-backtest: VACUOUS — no transitions or no replayed tests",
-              file=sys.stderr)
+        print("living-backtest: VACUOUS — no transitions or no replayed tests", file=sys.stderr)
         return 3
     return 0
 
