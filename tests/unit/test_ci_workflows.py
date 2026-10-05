@@ -834,6 +834,20 @@ def test_nightly_runs_the_living_record_backtest() -> None:
     assert "living-backtest.txt" in paths and "living-backtest.json" in paths
 
 
+def test_python_job_checks_out_full_history_for_the_backtest() -> None:
+    """P34.31 (G6): `docs/build/tools/test_living_record_backtest.py`'s
+    real-tree floor test replays tests across first-parent living-change
+    transitions — a depth-1 checkout has none to replay, so the `python`
+    job (which runs `make check`) must fetch the full history like the
+    docs job and the nightly replay stage."""
+    job = _doc(CI_YML)["jobs"]["python"]
+    checkout = next(s for s in job["steps"] if "checkout" in (s.get("uses") or ""))
+    assert (checkout.get("with") or {}).get("fetch-depth") == 0, (
+        "the living-backtest floor test needs first-parent history; "
+        "a shallow python-job checkout makes its transitions vacuous"
+    )
+
+
 def test_ci_local_mirrors_the_new_gates() -> None:
     """`make ci-local` is the five-job mirror (P34.1): the verifier and the
     advisory gate run locally on the same inputs."""
