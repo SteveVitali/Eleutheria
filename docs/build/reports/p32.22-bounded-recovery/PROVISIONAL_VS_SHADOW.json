@@ -1,0 +1,30 @@
+{
+  "active_provisional_rules": [
+    {
+      "deferral": "D-R6.1-EVAL (OPEN) \u2014 the thresholds are explicitly provisional and must not ossify; every resolved-sites surface carries the provisional-eval disclosure",
+      "evidence": "resolution/camera_sites* + resolution/eval_loop.py (`provisional=True`; auto-write floor 0.98 set against an LLM-bootstrapped gold set)",
+      "rule": "camera-site auto-write tiers (decide_auto_write_tiers)",
+      "status": "PROVISIONAL-active"
+    },
+    {
+      "deferral": "D-R6.1-EVAL (OPEN)",
+      "evidence": "P28.1 measured first-pass floor; carried in the evaluator report labelled `history` \u2014 never new eligibility",
+      "rule": "historical point-gate (0.98 auto-write precision floor)",
+      "status": "PROVISIONAL-active"
+    }
+  ],
+  "code_commit": "10547fff2072e1a9f9481dc8d7adf2a972031091",
+  "report_version": "sig.provisional-vs-shadow/1",
+  "safety_demotions_scoped": [],
+  "shadow_evaluator": {
+    "activation_attempts_refused": [
+      "confidence policy activation refused \u2014 no_measured_decision, no_operational_release, policy_shadow_mode, zero_sample"
+    ],
+    "applied": [],
+    "eval_units": 0,
+    "mode": "shadow",
+    "note": "installing the evaluator activates nothing \u2014 applied stays empty until the measured post-HUMAN-H5 P32.23 decision + an operational release scope",
+    "policy_version": "eval-confidence/1"
+  },
+  "statement": "no provisional production rule was replaced, weakened, or certified by this stage; no shadow result activated a gate; no safety demotion is scoped in this packet (an approved demotion, if any, is a separately recorded operational decision in the live packet)"
+}
