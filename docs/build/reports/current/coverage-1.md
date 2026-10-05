@@ -35,7 +35,6 @@
 | SIG-ENG-024 | hosted | AT-RISK-INTEGRATION | 2026-10-01 | — |
 | SIG-ENG-034 | implementation | MET | 2026-10-01 | — |
 | SIG-ENG-040 | implementation | MISSING | 2026-10-01 | — |
-| SIG-ENG-040 | implementation | MET-ENGINEERED(D-P34.31-1) | 2026-10-05 | SIG-ENG-040:r11-1 |
 | SIG-ENG-041 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-042 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-042 | implementation | MET | 2026-10-02 | SIG-ENG-042:r11-1 |
@@ -122,5 +121,6 @@
 | SIG-ONTO-028 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-035 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-051 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-ONTO-054 | implementation | MET | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md
