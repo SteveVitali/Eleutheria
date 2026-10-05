@@ -130,6 +130,7 @@ def test_coverage_matrix_sig_mem_004_row_is_well_formed() -> None:
         assert row["routing"].strip() not in ("", "—"), f"{verdict} verdict must be routed"
 
 
+@pytest.mark.living_record_invariant("build-index-append-only-history")
 def test_build_index_header_describes_the_full_chain() -> None:
     index = _read("docs/build/BUILD_INDEX.md")
     # The P32.1-routed stale-doc item: the header claimed "the 46-ticket chain" —
