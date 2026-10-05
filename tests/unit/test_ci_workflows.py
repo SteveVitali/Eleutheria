@@ -808,6 +808,46 @@ def test_nightly_replays_build_memory_history() -> None:
     assert "npm-audit.txt" in paths and "recorded-ci.txt" in paths
 
 
+def test_nightly_runs_the_living_record_backtest() -> None:
+    """P34.31 (B4 G6, SIG-ENG-040): the nightly replays the living-reading tests
+    of each commit C against the tree at the next first-parent commit C′ that
+    changed a declared living record — a pin fails exactly at such a transition.
+    The stage must run the workspace interpreter (replayed tests need pytest),
+    read the full history (fetch-depth 0 — the same checkout assert as the
+    replay stage), feed the report gate, and upload its log + JSON report."""
+    doc = _doc(NIGHTLY_YML)
+    job = next(iter(doc["jobs"].values()))
+    steps = {s.get("id"): s for s in job.get("steps", []) if s.get("id")}
+    bk = steps.get("backtest")
+    assert bk is not None and "living_record_backtest.py" in bk["run"], (
+        "nightly must run the living-record advance backtest"
+    )
+    assert "uv run" in bk["run"], (
+        "the backtest replays tests under the workspace interpreter (sys.executable -m pytest)"
+    )
+    assert "--json living-backtest.json" in bk["run"]
+    report = next(s for s in job["steps"] if "nightly_report" in (s.get("run") or ""))
+    assert "backtest=" in report["run"], "the backtest outcome must feed the report gate"
+    assert "backtest=living-backtest.txt" in report["run"]
+    upload = next(s for s in job["steps"] if "upload-artifact" in (s.get("uses") or ""))
+    paths = upload.get("with", {}).get("path", "")
+    assert "living-backtest.txt" in paths and "living-backtest.json" in paths
+
+
+def test_python_job_checks_out_full_history_for_the_backtest() -> None:
+    """P34.31 (G6): `docs/build/tools/test_living_record_backtest.py`'s
+    real-tree floor test replays tests across first-parent living-change
+    transitions — a depth-1 checkout has none to replay, so the `python`
+    job (which runs `make check`) must fetch the full history like the
+    docs job and the nightly replay stage."""
+    job = _doc(CI_YML)["jobs"]["python"]
+    checkout = next(s for s in job["steps"] if "checkout" in (s.get("uses") or ""))
+    assert (checkout.get("with") or {}).get("fetch-depth") == 0, (
+        "the living-backtest floor test needs first-parent history; "
+        "a shallow python-job checkout makes its transitions vacuous"
+    )
+
+
 def test_ci_local_mirrors_the_new_gates() -> None:
     """`make ci-local` is the five-job mirror (P34.1): the verifier and the
     advisory gate run locally on the same inputs."""

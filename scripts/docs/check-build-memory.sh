@@ -1124,19 +1124,30 @@ if [ -n "$REQ_PATTERN" ] && [ -n "${SPEC:-}" ] && [ -f "${SPEC:-/nonexistent}" ]
   fi
 fi
 
-# ── 8b. Tests assert invariants, not living records (BM-TEST-01; heuristic warning) ──
-# A tracked test file that names a living record file AND one of its living keys/counts.
-if [ "$IN_GIT" -eq 1 ]; then
-  LIVING_FILES='LEDGER\.md|BUILD_INDEX\.md|DEFERRALS\.md|COVERAGE_MATRIX\.csv'
-  LIVING_KEYS='nextTicket|lastCompleted|projectStatus|chainTip|returnPass|EXPECTED_ROWS'
-  git -C "$REPO" ls-files 2>/dev/null \
-    | grep -E '(^|/)(tests?|__tests__|spec)/|(^|/)test_[^/]*\.[a-z]+$|_test\.[a-z]+$|\.(test|spec)\.[jt]sx?$' \
-    | grep -vE '^docs/(build|tickets)/' | while IFS= read -r tf; do
-      [ -f "$REPO/$tf" ] || continue
-      grep -qE "$LIVING_FILES" "$REPO/$tf" 2>/dev/null || continue
-      hit="$(grep -nE "$LIVING_KEYS" "$REPO/$tf" 2>/dev/null | head -1 | cut -d: -f1)"
-      [ -n "$hit" ] && warn 'living-pin?' "$tf:$hit reads a living build record and names a living key — tests assert invariants, never the current value of a living record (BM-TEST-01)" "$tf"
-    done
+# ── 8b. Living-record test lint (BM-TEST-01, G6, SIG-ENG-040) ────────────────
+# Supersedes the grep-based 'living-pin?' heuristic (P34.31): enforcement is the
+# AST lint docs/build/tools/living_record_lint.py over the declared policy
+# (docs/build/tools/record_policy/living_records.toml — living-record-policy/1),
+# driven in `make check` by tests/unit/test_no_living_record_pins.py. This
+# section structurally requires the wiring and runs the lint when a tomllib-
+# capable python3 is available — violations are violations, not warnings.
+LINT_POLICY="docs/build/tools/record_policy/living_records.toml"
+LINT_TOOL="docs/build/tools/living_record_lint.py"
+LINT_DRIVER="tests/unit/test_no_living_record_pins.py"
+for f in "$LINT_POLICY" "$LINT_TOOL" "$LINT_DRIVER"; do
+  [ -f "$REPO/$f" ] || viol living-lint "missing G6 wiring file: $f" "$f"
+done
+if [ -f "$REPO/$LINT_POLICY" ]; then
+  grep -q 'schema = "living-record-policy/1"' "$REPO/$LINT_POLICY" \
+    || viol living-lint "$LINT_POLICY does not declare schema living-record-policy/1" "$LINT_POLICY"
+fi
+if [ -f "$REPO/$LINT_TOOL" ]; then
+  if command -v python3 >/dev/null 2>&1 && python3 -c 'import tomllib' >/dev/null 2>&1; then
+    python3 "$REPO/$LINT_TOOL" "$REPO" -q \
+      || viol living-lint "the living-record AST lint reported violations — run: python3 $LINT_TOOL $REPO" "$LINT_DRIVER"
+  else
+    warn living-lint "python3 (with tomllib) unavailable — the G6 living-record lint ran only its structural checks here; the pytest driver enforces under the project interpreter" "$LINT_DRIVER"
+  fi
 fi
 
 # ── 9. size + secret checks ──────────────────────────────────────────────────

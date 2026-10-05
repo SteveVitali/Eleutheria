@@ -325,6 +325,7 @@ def test_p33_3_annotated_rows_close_only_with_recorded_evidence() -> None:
         assert evidence, f"{oid}'s closing transition cites no evidence outside the register"
 
 
+@pytest.mark.living_record_invariant("gate-readout-state-vocabulary")
 def test_gate_accept_readout_state_matches_the_recorded_decision() -> None:
     """The readout must declare a real recorded state — never an asserted one.
 

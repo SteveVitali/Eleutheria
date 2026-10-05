@@ -110,3 +110,9 @@ ignore_missing_imports = true
 testpaths = ["tests", "docs/build/tools"]
 pythonpath = ["tests"]
 addopts = "-ra"
+markers = [
+    # G6 living-record lint (P34.31, SIG-ENG-040): the reviewed escape hatch —
+    # the key must be registered in
+    # docs/build/tools/record_policy/living_records.toml [invariants.allowed].
+    "living_record_invariant(why): a real-tree test's assertion holds at every commit (registered key required)",
+]

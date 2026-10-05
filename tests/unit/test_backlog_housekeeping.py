@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tomllib
 
+import pytest
 from support import PY_PACKAGES, REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
@@ -122,6 +123,7 @@ def test_no_p22_plus_landings_remain() -> None:
     assert not stale, f"P22+ landings not triaged: {stale}"
 
 
+@pytest.mark.living_record_invariant("backlog-terminal-history")
 def test_bl052_closed() -> None:
     row = next(r for r in _rows() if r["bl_id"] == "BL-052")
     assert row["status"] == "closed"
