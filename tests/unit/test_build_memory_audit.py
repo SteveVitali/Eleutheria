@@ -24,6 +24,8 @@ import pathlib
 import re
 import shutil
 
+import pytest
+
 from support import REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
@@ -625,6 +627,7 @@ def test_real_tree_zero_errors_and_every_status_conflict_documented() -> None:
         assert len(meta["input_digests"].get(rel, "")) == 64
 
 
+@pytest.mark.living_record_invariant("ledger-cursor-done-consistency")
 def test_real_tree_ledger_cursor_is_honest() -> None:
     """The LEDGER cursor after any closeout, as invariants (this replaces the
     P33.8 test that pinned the cursor's literal values): no ``ledger/*`` finding

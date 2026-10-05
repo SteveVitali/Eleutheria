@@ -141,3 +141,9 @@ backlog-terminal-history = "a backlog row's terminal status and closing landing 
 # (the signed readout is itself settled history). The lint sees the status
 # literal, not the conditional.
 gate-readout-state-vocabulary = "a gate readout's declared state is checked by the status vocabulary + provenance relation, whichever state is recorded"
+# test_build_memory_audit.py::test_real_tree_ledger_cursor_is_honest — the
+# `assert upcoming == "DONE"` sits under `if status.upper() == "DONE":`, i.e.
+# it asserts the semantic relation "the project is never DONE while a chain
+# row is still next", not a pinned value — the allowed conditional-on-status
+# form.
+ledger-cursor-done-consistency = "projectStatus DONE implies nextTicket DONE — a conditional relation between cursor fields, not a pinned value"
