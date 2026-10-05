@@ -222,6 +222,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="CI invariants over the queue — exits 1 on any violation",
     )
     acq_ck.add_argument("--candidates", default=None, help="alternate inventory CSV (as `queue`)")
+    acq_pl = acq_sub.add_parser(
+        "pilot",
+        help="the P32.21 gap-closing acquisition pilot — the five-family batch, "
+        "rejected alternatives, funnel + maintenance measurement over committed "
+        "artifacts, recommendations and the bounded-live gate packet; offline, "
+        "approves nothing (SIG-ACQ-004)",
+    )
+    acq_pl.add_argument("--json", action="store_true", help="emit the acq-pilot-readout/1 JSON")
+    acq_pl.add_argument(
+        "--out",
+        default=None,
+        help="write the readout artifacts (BATCH/FUNNEL/GAP_LEDGER/RETURN_PASS/READOUT)",
+    )
+    acq_sub.add_parser(
+        "pilot-check",
+        help="CI invariants over the pilot batch + readout — exits 1 on any violation",
+    )
     return parser
 
 
@@ -560,6 +577,49 @@ def _acq_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def _acq_pilot(args: argparse.Namespace) -> int:
+    from . import acquisition_pilot as ap
+
+    entries = _acq_entries(args)
+    readout = ap.pilot_readout(entries)
+    if args.json:
+        print(json.dumps(readout, indent=2, sort_keys=True))
+    else:
+        print(ap.render_readout(readout))
+    if args.out:
+        out_dir = Path(args.out)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "BATCH.json").write_text(json.dumps(readout["batch"], indent=2, sort_keys=True))
+        (out_dir / "FUNNEL.json").write_text(
+            json.dumps(readout["funnel"], indent=2, sort_keys=True)
+        )
+        (out_dir / "GAP_LEDGER.json").write_text(
+            json.dumps(readout["gap_ledger"], indent=2, sort_keys=True)
+        )
+        (out_dir / "ACQ_PILOT_RETURN_PASS.json").write_text(
+            json.dumps(readout["return_pass"], indent=2, sort_keys=True)
+        )
+        (out_dir / "READOUT.json").write_text(json.dumps(readout, indent=2, sort_keys=True))
+        (out_dir / "READOUT.md").write_text(ap.render_readout(readout))
+        print(f"# wrote the pilot readout artifacts under {out_dir}")
+    return 0
+
+
+def _acq_pilot_check(args: argparse.Namespace) -> int:
+    from . import acquisition_pilot as ap
+
+    entries = _acq_entries(args)
+    readout = ap.pilot_readout(entries)
+    violations = ap.check_pilot(readout, entries)
+    if violations:
+        print("acquisition pilot check FAILED:")
+        for v in violations:
+            print(f"  - {v}")
+        return 1
+    print("acquisition pilot check: 0 violations")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `tasks` CLI. Returns a process exit code (3 = a gated refusal)."""
     parser = build_parser()
@@ -573,6 +633,10 @@ def main(argv: list[str] | None = None) -> int:
             return _acq_packet(args)
         if args.acq_command == "check":
             return _acq_check(args)
+        if args.acq_command == "pilot":
+            return _acq_pilot(args)
+        if args.acq_command == "pilot-check":
+            return _acq_pilot_check(args)
         parser.parse_args([args.command, "--help"])
         return 0
     if args.command == "maproulette":
