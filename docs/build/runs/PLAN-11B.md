@@ -560,16 +560,21 @@ Boundary (OM-05):
   was not acquired by Runner of type hosted even after multiple
   attempts (run 37374430350)` (web same, same run); re-read once,
   still canceled (log updated in place, head-bound on 917db14).
-  Three acquisition cancels this context — the same hosted-runner
-  capacity issue as C3's three; infra, reported blockedOn. The next
-  context's push re-triggers CI regardless, and C13's pre-closeout
-  green read is unaffected by intermediate cancels.
+  Three acquisition cancels so far — the same hosted-runner capacity
+  issue as C3's three; infra.
+- The second record push re-triggered CI at ec24cab: every job
+  acquired a runner and went green —
+  `ci: pass #236@ec24cab (python 37376459637; docs 37376459637;
+  composed 37376459637; security 37376459637; web 37376459637)` —
+  5/5 head-bound, ancestor stack pass, `main: 2de7b50 descends:no
+  merges:0` (log updated in place). Confirms the earlier cancels
+  were acquisition noise, not content: `docs` (the job that checks
+  these contracts) ran green on this head.
 
-Close record (this commit): records both head-bound reads and fills
-Closed at 2026-10-05T21:31Z — work complete; boundary blockedOn on
-hosted-runner acquisition capacity (python canceled at 5877a44;
-docs + web canceled at 917db14 after python/composed/security ran
-green), per the C3 convention. The shared `Closed:` header stays
+Close record (this commit): records all three head-bound reads and
+fills Closed at 2026-10-05T21:31Z — work complete; boundary passed
+green at ec24cab after three infra cancels (python at 5877a44,
+docs + web at 917db14). The shared `Closed:` header stays
 unwritten — C13 owns closeout.
 
 ### C5 — pending
@@ -599,7 +604,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4) | header Started from `date -u`; C2/C3/C4 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2); C3/C4 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn (hosted-runner acquisition cancels: `python` run 37372747692, then `docs`+`web` run 37374430350 — python/composed/security ran green at 917db14 — each re-read once, still canceled) — infra (log `logs/ci-PLAN-11B-C4.json`) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`) |
 | OM-06 every AC names its layer | ok (C1, C2, C3, C4) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2, C3, C4) | manifest Plan-extensions + ledger C2/C3/C4 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's rewrite commit names no ticket ids in its subject; memory_guard --staged run pre-commit |
