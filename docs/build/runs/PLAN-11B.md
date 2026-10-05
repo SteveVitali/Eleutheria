@@ -425,7 +425,136 @@ Boundary (OM-05):
 Close record (this commit): records reads 1–4 and fills Closed. The
 shared `Closed:` header stays unwritten — C13 owns closeout.
 
-### C4 — pending
+### C4 — 2026-10-05 (rows 279–284)
+
+Started: 2026-10-05T20:48Z (first C4 file write; source: file mtime —
+investigation preceded it in the same context) · Closed:
+<filled at the boundary record below>.
+Context model: devin-desktop/swe-2-high/subagent.
+
+Scope (contract deliverable 2-in-part + the 8a check):
+
+- Rewrite skeletons to full contracts: row 279 (automated traffic
+  enforcement layers + aggregate transports, 15), 280 (procurement
+  and programme registers, 3), 281 (statutory disclosures I: ALPR
+  regimes, 10 — plus the `government_mandated_disclosure`
+  generalization NEW-8), 282 (statutory disclosures II-a: UAV + FRT),
+  283 (statutory disclosures II-b: CSS, interception, ATE, DHS),
+  284 (CCOPS reports, police policies, district self-disclosures, 17).
+- Deliverable 8a (ADR-171 outreach-owed placement): applied per row —
+  the why-not is recorded on all six (below).
+
+Findings / decisions (per row):
+
+- 279: deps `P35.6;P36.3;P35.15b` + **P36.4 added** (agent-labelled
+  correction, in-contract: `deldot_red_light` is consolidated as a
+  target under `dot_511_de` — acquisition_plan `AP-T1-003`'s own
+  verification column says so — a source row only P36.4 registers;
+  chain order already places 277 before 279). Two widen groups ride
+  existing flips (`dot_511_dc` licence-match CC-BY-4.0 else
+  `camreg_dc_ddot_ate`; `camreg_chicago_il` under the C5 revocation
+  clause) as X3-like configuration. New: the two aggregate transports
+  (`socrata_aggregate`, `arcgis_outstatistics`) and the
+  `enforcement_count {period, count, measure}` predicate in
+  `predicates.yaml`; its hosted `vocab_*` registration is recorded as
+  a P36.12 wave prerequisite (seam noted for C5 below). ≈ 177k
+  claims, 93% aggregates — the volume group (I8 §7.4). Gate: HG-03
+  RB-01/RB-06 verbatim; not OM-20; no legs.
+- 280: deps `P35.9;P36.6` confirmed (catalog R11-ACQ-05;R11-ACQ-10 —
+  the portal `where` support and the `arcgis_outstatistics`
+  transport). Three rows (Cook, WA DES public-entity-only, DC OVSJG
+  rebate ward × year programme-level); P8-6 drops natural-person
+  payees; `D-SOURCES.9-1` (procportal_chicago_il) recorded as a
+  different, untouched source. Size S 0.5 run.
+- 281: deps `P35.6;P35.15b` confirmed. The row owns the NEW-8
+  connector generalization (state/federal publishers, the
+  `statutory_report` genre, the technology-literal → SKOS map,
+  `[adapters.<publisher>]` dispatch — existing CCOPS fixtures diff 0)
+  plus the ten `statrep_*` ALPR-regime rows; `statrep_mn_bca` hosts
+  the a-row's UAV target later. WA AGO/MN BCA entries modelled as
+  `inventory_entry` assertions, never verified deployments; MN
+  literals never geocoded in R11.
+- 282 (9a): deps `P36.8`; the S4c split boundary (FEA-04) — the seven
+  UAV/FRT candidates (CO FRT + Arvada target, WaTech, Detroit weekly
+  index → `usage_count` in `disclosure_use` only, ME/IL UAV, the MN
+  UAV target under `statrep_mn_bca`). Shared `r11-disclosures-02`
+  batch + gate cell with 283; batch membership idempotent.
+- 283 (9b): deps `P36.9a`; the remaining sixteen candidates — WTSC
+  index enumeration (~29 city reports), HI/MN interception
+  (institution-level counts only; judge/prosecutor appendix names
+  never extracted, Tier-2 S5), MD MSP CSS, DE DIAC (`fusion-center`
+  slug proposed/pending — coarsest declared, never guessed), Seattle
+  SDOT ATE literals, FL/PA ATE statutory, Seattle OIG, DHS PIA
+  five-target row + `legis_` SORN document pages (RB-05 CC0-1.0).
+  Oversized fixtures (WZSSC 11.9 MB, FL 2.2 MB) land as text extracts
+  with recorded sha256 (§5.0 rule).
+- 284: deps `P36.8` confirmed (the five CCOPS rows ride 281's
+  generalized connector). BL-054 carry landed in-contract: the six
+  registered-not-permitted `ccops_*` rows (berkeley, davis, boston,
+  baltimore, nashville, grand_rapids) are named on the Wave-B flip
+  list alongside the five new rows — still the operator's OP-26
+  decision; the fired ADR-080 trigger (b) is a named deliverable —
+  evaluated and recorded in the run ledger, reaffirm-as-is or a new
+  ADR, never an edit of ADR-080. The `agency_policy` generalization
+  collapses the `OkcDocumentConnector` subclasses with a
+  byte-stable-fixtures guard (sibling class if the collapse would
+  touch the live path). BL-054 itself stays open (the dedicated
+  legislative-platform scraper breadth is later-phase).
+
+ADR-171 outreach-owed (deliverable 8a) — why-not recorded per row:
+
+- All six carry a "**recorded why it does not apply**" block: every
+  publisher is government/agency-origin (state DOTs, municipal/county
+  portals, state oversight and disclosure offices, federal
+  DHS/Federal Register pages, school districts, a state statute);
+  none is a §6-compact or §22.4–22.5/§35.1 ecosystem project, and no
+  row writes, widens or activates a connector for one. Read-side
+  notes kept distinct: ER dedupe against OSM/EoF entities is a
+  read-time comparison (279/281), and 284's I9b-C040 discovery
+  channel is read-only with no registry row (the ACLU-list cell is
+  `D-CCOPS.1-2` WONTFIX history). The Stage-0 set (SIG-CHART-033,
+  SIG-INGEST-029/030a, SIG-CONTRIB-012/012a/013, SIG-GOV-024) stays
+  owed under `D-R11-LATER-04` — recorded, never implied satisfied;
+  no outside contact made (ADR-171 Decision 3, U-011).
+
+Carried seam for C5 (row 290's author):
+
+- 279's new `enforcement_count` predicate needs a hosted `vocab_*`
+  registration before Wave-B's first live emit or P35.14a's closed
+  sink quarantines it — recorded in 279's contract as a named
+  prerequisite of the wave-activation row's registration step
+  (P36.12 is the OM-20 production-write row that owns it). The
+  disclosures rows' genre/SKOS config is committed vocab, needing no
+  hosted step. C13's review may confirm or re-route.
+
+Local verification (P11, with recorded limits):
+
+- `make docs-check` — green after the projection regen: no
+  skeleton/manifest violations on the rewritten rows;
+  `check_spec_src` 1,644/1,644 ids; `check_coverage_matrix` 820/820;
+  `obligation_events check` green; `audit_current_state` 0 errors
+  (9 reconciled conflicts, all pre-existing); build-memory layout and
+  ledger-contract gates clean.
+- The committed `current` projection digests drifted on this
+  context's edits (the six contracts, this ledger); regenerated with
+  `current_projection.py generate` — `verify` fresh before commit.
+- `python3 docs/build/tools/memory_guard.py all --staged` — green
+  before the content commit (protected records appended only).
+- `make check` — not re-run this context: no code changed (contracts
+  and this ledger only); C2's green at `b1206694` stands and CI is
+  the authority. Docker stays wedged (recorded C1).
+
+Boundary (OM-05):
+
+- <read after the content-commit push; lands in the boundary-record
+  commit — `logs/ci-PLAN-11B-C4.json`. The C3 infrastructure issue
+  (hosted-runner acquisition cancels) may recur; a capacity cancel is
+  blockedOn, re-read once after a short wait, and the next context's
+  push re-triggers CI regardless.>
+
+Close record (the boundary-record commit): records the head-bound
+read and fills Closed. The shared `Closed:` header stays unwritten —
+C13 owns closeout.
 
 ### C5 — pending
 
@@ -452,20 +581,20 @@ filled per context.
 
 | clause | status | note |
 |---|---|---|
-| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
-| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3) | header Started from `date -u`; C2/C3 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`) |
-| OM-06 every AC names its layer | ok (C1, C2, C3) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
+| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4) | header Started from `date -u`; C2/C3/C4 Started from file mtime (source named) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2); C3 blockedOn; C4 read pending | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 read after the content push (log `logs/ci-PLAN-11B-C4.json`) |
+| OM-06 every AC names its layer | ok (C1, C2, C3, C4) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
-| OM-13 protected records appended only | ok (C1, C2, C3) | manifest Plan-extensions + ledger C2/C3 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); memory_guard --staged run pre-commit |
-| OM-15 no test asserts a living record's current value | ok (C1, C2, C3) | no test touched by C3 |
-| OM-07/08/09 gate records verbatim | ok (C2, C3) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2); nothing decided by this row |
-| OM-16 size budget | ok (C1, C2, C3) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; within a single context |
+| OM-13 protected records appended only | ok (C1, C2, C3, C4) | manifest Plan-extensions + ledger C2/C3/C4 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's rewrite commit names no ticket ids in its subject; memory_guard --staged run pre-commit |
+| OM-15 no test asserts a living record's current value | ok (C1, C2, C3, C4) | no test touched by C3 or C4 |
+| OM-07/08/09 gate records verbatim | ok (C2, C3, C4) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2, C4's HG-03 RB-lines ×6); nothing decided by this row |
+| OM-16 size budget | ok (C1, C2, C3, C4) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; C4 = 6 contracts + ledger lines; within a single context |
 | OM-02 closeout is one commit after the PR exists | pending | C13 |
 | OM-19 windows / live legs | n/a | none for this row (each written contract carries its own) |
 | OM-20 pre-authorisation | n/a | not an OM-20 row |
-| OM-03 rows only from the ratified plan | ok | rows 261–278 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; C3's one dep correction (P36.3 → 277) is recorded in-contract, not in the plan |
-| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
+| OM-03 rows only from the ratified plan | ok | rows 261–284 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; the dep corrections (P36.3 → 277, P36.4 → 279) are recorded in-contract, not in the plan |
+| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3, C4) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
-| P11 local gate | ok (C1, C2, C3, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3 touched no code (docs-check + range guard re-run locally) |
+| P11 local gate | ok (C1, C2, C3, C4, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3/C4 touched no code (docs-check + projection regen locally) |
 | CI-8 CI config changed | no | |
