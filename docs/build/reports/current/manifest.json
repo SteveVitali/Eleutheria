@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "2bdd28b067215d551c3ba52678480bb7712407f8",
+  "input_commit": "de2e35f7b0395ba5d679fae65b99dbbb47783287",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "5920818a0923b4bcbddf5324f52403cd3fc076aee8fb274460e737f9b3f36bc6"
+      "sha256": "04b7737748c67647ec452ba94096c7476bb93269dd9903cbcdd8afcea9662d22"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -765,8 +765,12 @@
       "sha256": "1203456633e4964adb109a0c40270eb2b1dd5386ef909207a90b09be86bf2851"
     },
     {
+      "path": "docs/adr/ADR-197-living-record-test-lint-and-advance-backtest.md",
+      "sha256": "b60f793a28fe7eaa0efd9cceb6333d01a3039ebb2c55b7a4eb5fc0199950d4e6"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "4e9f90b4143b7735d32e9b822a9665334fdae9622d8a40d0ea1494b24fa3d579"
+      "sha256": "f3c3e77964cfab9fcf284ca3a5579711e1d9c05eb0ed446ec964eca5f7443c5e"
     },
     {
       "path": "docs/build/BACKLOG.csv",
@@ -1707,6 +1711,10 @@
     {
       "path": "docs/build/runs/P34.30.md",
       "sha256": "274fe3bda71b01fa841efde3f5e3826c621598f27ba557ecb6b6ac7464bf24e0"
+    },
+    {
+      "path": "docs/build/runs/P34.31.md",
+      "sha256": "ac665896a4ec705dcbaf995b496492f20de5cbb1d08dde9bce0dbe88d1b3b6ed"
     },
     {
       "path": "docs/build/runs/P34.4.md",
@@ -3254,7 +3262,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "86d231a63051d33bdd0869f750893b84894039aab7f08f0b07d71b0963707940"
+      "sha256": "174d8ff5efc3c41e3f1ef77336eb72f9869a0aadd3213d0c5b53f7077d4a616a"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
