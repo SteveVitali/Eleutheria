@@ -403,10 +403,19 @@ Boundary (OM-05):
   failure. The governed flake re-run (B-15) does not cover it —
   `ci_boundary.py` only re-runs `conclusion == failure` results that
   match an allow-listed pattern; a `cancelled` conclusion is never
-  re-run. The fix is the fresh head this commit creates.
+  re-run, and a fresh head is the fix.
+- Read 3 @ `8920c463` (the boundary-record commit): **`blockedOn: CI
+  cancel on #236@8920c46 (web)`** — same hosted-runner acquisition
+  failure, different job (run 37366260351); the `python` job on this
+  head completed green and `docs` passed (the `seed-commit`
+  declaration holds — the history guard is green in range). GitHub
+  runner capacity, not the change: two consecutive heads cancelled on
+  different jobs with no test evidence. This commit is the next fresh
+  head; if cancels persist the context reports blockedOn rather than
+  looping.
 
-Boundary-record commit (this one — `e34dd7c2`'s successor): records the
-read-2 `ci:` line above; the close-record commit then re-reads
+Boundary-record commit (this one — `8920c463`'s successor): records the
+read-3 `ci:` line above; the close-record commit then re-reads
 head-bound on this commit and fills this section's Closed cell (C2's
 two-read pattern). The shared `Closed:` header stays unwritten — C13
 owns closeout.
