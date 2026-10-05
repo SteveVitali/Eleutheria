@@ -2454,6 +2454,41 @@ def test_jsonl_placeholder_fill_mid_file_passes(repo: Path) -> None:
     assert rc == 0, out
 
 
+def test_jsonl_event_placeholder_stamp_at_closeout_passes(repo: Path) -> None:
+    """A committed obligation-event's declared `source_commit` token stamped at closeout is a
+    placeholder fill, not a re-append — the chain rules must not re-judge it (B2 §7; P34.30's
+    own closeout stamps `D-R10-MEMORY-2:e0` / `D-R10-MEMORY-1:e1` this way)."""
+    ev = "docs/build/reports/obligations/events.jsonl"
+    append(
+        repo,
+        ev,
+        _ev("D-T9-1:e0", kind="migration", seq=0, epe="null", to="OPEN").replace(
+            '"source_commit":"x"', '"source_commit":"PENDING-COMMIT-SHA"'
+        ),
+    )
+    commit(repo)
+    replace(
+        repo,
+        ev,
+        '"source_commit":"PENDING-COMMIT-SHA"',
+        '"source_commit":"0123456789abcdef0123456789abcdef01234567"',
+    )
+    commit(repo)
+    rc, doc, out = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 0, out
+    # a fill cannot smuggle a chain change: filling the token into a *different* event id
+    # is still judged as a re-append (the record-id guard on the fill exemption holds)
+    replace(
+        repo,
+        ev,
+        '"event_id":"D-T9-1:e0"',
+        '"event_id":"D-T9-1:e7"',
+    )
+    commit(repo)
+    rc, doc, _ = run_guard(repo, "all", "--first-parent", "HEAD")
+    assert rc == 1 and ("append-only", "chain", ev) in rules(doc)
+
+
 def test_chain_id_rebound_to_another_slug_fails(repo: Path) -> None:
     """Chain-id registry (B4 G2 amendment 4): an id that ever appeared in the manifest chain
     table never re-binds to a different file slug (the 32bea406 / P23.1–P23.7 shape)."""

@@ -1965,8 +1965,18 @@ class Judge:
         appended: dict[str, list[dict]] = {}
         status = self._bypath.get(OBLIGATIONS_REL)
         if status and status != "D":
-            for _hl, _ins, text in self.c.diff(OBLIGATIONS_REL, status).added:
+            recs = self.c.diff(OBLIGATIONS_REL, status)
+            for _hl, _ins, text in recs.added:
                 if not text.strip():
+                    continue
+                # a placeholder-fill re-add (a committed record's `source_commit`
+                # stamped at closeout, B2 §7) is the BASE record, not a new append —
+                # it cannot witness this range's DEFERRALS move
+                if any(
+                    fills_placeholder(rm, text, self.pol.placeholders)
+                    and jsonl_record_id(rm) == jsonl_record_id(text)
+                    for _, rm in recs.removed
+                ):
                     continue
                 try:
                     obj = json.loads(text)
@@ -2990,6 +3000,19 @@ class Judge:
                     commit,
                 )
                 continue
+            # placeholder-fill (B2 §7): a committed record's declared tokens
+            # (`source_commit`'s `PENDING-COMMIT-SHA`, an assessment's `code_revision`)
+            # are stamped at closeout — the diff re-adds the line but it is not a new
+            # append; the record was chain/schema-judged when first committed.
+            # `fills_placeholder` pins every byte outside the token spans, so identity
+            # fields cannot move; requiring the same record id is belt-and-braces.
+            _rid = obj.get("event_id") or obj.get("assessment_id")
+            if isinstance(_rid, str) and any(
+                fills_placeholder(rm, text, self.pol.placeholders)
+                and jsonl_record_id(rm) == _rid
+                for _, rm in recs.removed
+            ):
+                continue
             schema = obj.get("schema")
             if schema == EVENT_SCHEMA:
                 missing = [k for k in EVENT_FIELDS if k not in obj]
@@ -3598,6 +3621,17 @@ def fills_placeholder(old: str, new: str, tokens: list[str]) -> bool:
         return False
     pat.append(re.escape(old[pos:]))
     return re.fullmatch("".join(pat), new) is not None
+
+
+def jsonl_record_id(text: str) -> str | None:
+    """The `event_id`/`assessment_id` of an obligations-ledger JSONL line, or `None` for
+    opaque/non-schema lines — used to match a placeholder-fill re-add to its base record."""
+    try:
+        obj = json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        return None
+    rid = obj.get("event_id") or obj.get("assessment_id")
+    return rid if isinstance(rid, str) else None
 
 
 def annotate_id(text: str) -> str:
