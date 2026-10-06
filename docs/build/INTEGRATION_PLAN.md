@@ -3,6 +3,16 @@
 
 # INTEGRATION_PLAN — how the operator merges the stack and cuts `v0.1.0` (P20.3, Phase E)
 
+> **Superseded for the current stack — 2026-09-28 (P33.6, row 198).** This document was
+> written when the open stack was PRs #27–#53; the stack has since grown through PR
+> #187+ and `origin/main` advanced to the PR-#111 merge. The **current** operator
+> procedure — re-inspected PR graph, real conflict steps, and rollback — is
+> [`reports/p33.6-integration-plan/INTEGRATION_PLAN.md`](reports/p33.6-integration-plan/INTEGRATION_PLAN.md).
+> This file remains the dated P20.3 record; its strategy analysis still applies. The
+> v0.1.0 tag/release step described below was never run (the operator integrated
+> progressively instead, which the HG-05 skip allowed) — no tag/release step exists in
+> the current plan.
+
 **This ticket (P20.3) merges nothing, tags nothing, and does not touch `main` or any branch.** It
 produces the *procedure* and *proof* the operator uses to integrate the stack **after the chain**
 (gate HG-05 — a post-chain operator action, `OPERATIONAL_READINESS.md §(d)`). Everything below is a
