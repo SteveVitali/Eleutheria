@@ -2543,6 +2543,38 @@ Boundary (OM-05) — appended after the pushes:
   external block cleared on the next read, per the
   P34.15/P34.31-correction precedent) — ci_boundary
   14:39:14Z, `logs/ci-PLAN-11B-C13-closeout.json`.
+- `a545ab53`/`dba51974` — post-closeout repair, recorded
+  verbatim: boundary read on `a545ab53` returned
+  `blockedOn: CI fail on #236@a545ab5 (security): failure —
+  Process completed with exit code 3. (run 37486085063)` —
+  the `security` job's npm advisory gate blocked on a NEW
+  advisory, sharp GHSA-wq5f-xc86-pv6w (high; librsvg
+  dependency CVE-2026-96889;
+  `level=high candidates=2 evaluated=2 allowed=1 blocked=1`
+  — the second candidate is the allowed
+  http-cache-semantics entry). A time-varying advisory-feed
+  finding published between the previous head's green run
+  (~15:05Z) and this one (15:17Z), identical class to the C7
+  source-map-js block -> fix-forward sharp 0.35.4 -> 0.35.5
+  (upstream fix, surgical lockfile edit, blocked=0 locally)
+  — `npm update sharp --package-lock-only`, diff confined to
+  the sharp entry tree (`node_modules/sharp` + the
+  `node_modules/@img/sharp-*`/`@img/sharp-libvips-*` binary
+  entries; `web/package.json` untouched; astro's
+  optionalDependency range `^0.35.4` admits 0.35.5); local
+  `npm_audit_gate.sh` `level=high candidates=1 evaluated=1
+  allowed=1 blocked=0`. Committed as `dba51974` (CI-3
+  honoured — run 37486085063 waited to completion before the
+  push). Read @ `dba51974` (fix-forward head): **`ci: pass
+  #236@dba5197 (python 37487788015; docs 37487788015;
+  composed 37487788015; security 37487788015; web
+  37487788015) · stack: #235 #234 #233 #232 #231 #230 #229
+  #228 #227 #226 #225 #224 #223 #221 #220 #219 #218 #217
+  #216 #214 #213 #211 #210 #209 #208 #207 #205 #204 #203
+  #202 #201 #200 #199 #198 #197 #196 pass · main: e9f9fa7
+  descends:no merges:0 open-other:0` — ci_boundary
+  15:28:29Z, `logs/ci-PLAN-11B-sharp-fix.json`** — all five
+  required jobs head-bound on the repair head.
 
 Close record — appended at closeout (OM-02, one commit after
 the PR exists).
