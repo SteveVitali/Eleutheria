@@ -52,7 +52,24 @@ def test_elapsed_time_never_written_to_the_submission_row() -> None:
     row = resp.json()["recorded"]
     assert "elapsed_minutes" not in row
     assert "elapsed_minutes" not in row.get("payload", {})
-    assert "8.5" not in str(row)
+
+    # PY-SUBSTR-1 (P34.2): the assertion inspects the row's fields — a `str(row)`
+    # substring scan could not tell an `8.5` value from `8.5` inside a timestamp.
+    def _scalar_values(node: object):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                assert "elapsed" not in key.lower(), f"elapsed field on the row: {key}"
+                assert "timing" not in key.lower(), f"timing field on the row: {key}"
+                yield from _scalar_values(value)
+        elif isinstance(node, (list, tuple)):
+            for item in node:
+                yield from _scalar_values(item)
+        else:
+            yield node
+
+    assert not any(value == 8.5 or value == "8.5" for value in _scalar_values(row)), (
+        "the elapsed measurement landed on the submission row"
+    )
 
 
 def test_opt_in_without_minutes_records_nothing() -> None:

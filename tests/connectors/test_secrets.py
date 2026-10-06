@@ -164,10 +164,17 @@ def test_gcp_project_id_is_env_resolved_not_committed() -> None:
     as historical fact and cannot be rewritten (P1–P3).
     """
     project_id = os.environ.get("SIG_GCP_PROJECT", "").strip()
+    # P34.2 (deliverable 7, H2 §5 S-4): the check fails closed — an unset
+    # SIG_GCP_PROJECT means the scan has no needle, which used to pass vacuously.
+    # The operator arms it via the `vars.SIG_GCP_PROJECT` repository variable
+    # (OP-07); a local run needs `export SIG_GCP_PROJECT=<the id>`.
     if not project_id:
         import pytest
 
-        pytest.skip("SIG_GCP_PROJECT unset; export it to arm the leak check")
+        pytest.fail(
+            "SIG_GCP_PROJECT is unset — the leak check cannot run without the id "
+            "it searches for (OP-07; fail-closed since P34.2, never a skip)"
+        )
 
     # Guard: the include list must resolve to real tracked files — a typo'd
     # pathspec would silently scope the check to nothing.
@@ -188,6 +195,12 @@ def test_gcp_project_id_is_env_resolved_not_committed() -> None:
     )
     # git grep exits 1 with no output when there is no match — the clean case.
     offenders = [line for line in tracked.stdout.splitlines() if line]
+    # SIG-ENG-042: the non-vacuous report — how many files were candidates and
+    # how many were actually scanned — is printed for the CI log.
+    print(
+        f"leak-check: candidates={len(scoped_files)} "
+        f"evaluated={len(scoped_files)} offenders={len(offenders)}"
+    )
     assert not offenders, (
         "GCP project id committed literally in code+config; write `$SIG_GCP_PROJECT` instead:\n"
         + "\n".join(offenders)

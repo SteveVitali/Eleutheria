@@ -104,6 +104,7 @@
 | SIG-MEM-005 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-006 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-007 | implementation | MISSING | 2026-10-01 | — |
+| SIG-MEM-007 | implementation | MET-ENGINEERED(D-P34.2-2) | 2026-10-02 | SIG-MEM-007:r11-1 |
 | SIG-MEM-008 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-009 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-010 | implementation | MISSING | 2026-10-01 | — |
@@ -121,6 +122,5 @@
 | SIG-ONTO-060 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-064 | public | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-065 | public | PARTIAL | 2026-10-01 | — |
-| SIG-OPS-001 | hosted | MISSING | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md
