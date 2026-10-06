@@ -895,7 +895,171 @@ Closed at 2026-10-05T23:19Z — work complete; boundary green on the
 first head. The shared `Closed:` header stays unwritten — C13
 owns closeout.
 
-### C7 — pending
+### C7 — 2026-10-06 (rows 299–306)
+
+Started: 2026-10-06T~01:4xZ (first C7 file write; source: file mtime —
+investigation preceded it in the same context) · Closed:
+2026-10-06T02:2xZ (`date -u`; last C7 criterion = the head-bound CI
+read at the content+ledger head — see Boundary).
+Context model: devin-desktop/swe-2-high/subagent.
+
+Scope (contract deliverable 2-in-part + the 8a ADR-171 checks):
+
+- Rewrote all eight skeletons in place to the landed full-contract
+  shape: row 299 (placement engine `placement@1`), 300 (PKG-10
+  split a — per-dossier provenance + unclamped coverage), 301
+  (PKG-10 split b — freshness classes + map-table suppression),
+  302 (truthful claim identity — volatile fields leave the
+  digest), 303 (truthful subject keys + append-only re-keying),
+  304 (declared lineage, id namespaces, independence), 305 (roles
+  and time backend — operator vs publisher, dated edges,
+  supersession), 306 (resolver input truth — valid time,
+  directness, tolerance-aware dissent).
+
+Findings / decisions (per row):
+
+- 299 (placement engine): deps `P35.17;P35.18;P35.16(S2)` confirmed —
+  the S2 edge to P35.16 is ordering-only (CF-14: corrected axis order
+  lands before placement reads points; chain order already places 296
+  before 299 — recorded, no plan change). No gate (`none`); not an
+  OM-20 row; output arrives with the next export/release (ADR-092
+  compute-on-read — a no-spine-write guard test is contracted).
+  R1–R8 ruleset carried verbatim from K4 §3.3 (located wins, R3
+  repair heuristics fall back to declared, unplaced is a quality
+  state never a jurisdiction). Recorded correction: no §56 Owner
+  names P35.19 — the owned findings are F-04/F-135/F-324/F-469/F-529
+  per the plan row's S0/S1 column; SIG-IDENT-004/005/006 +
+  SIG-ONTO-010/011 + SIG-RECON-058 + SIG-UI-048 + SIG-GEO-001 cited;
+  K4's draft SIG-JUR-D03/D04/D05 named as design refs (final ids are
+  PLAN-11C's). I8's name→key attribution named out-of-scope (R8 is
+  fixture-only).
+- 300 (PKG-10 a): dep `P35.18` confirmed; no gate; L-split a budget
+  recorded. Per-dossier/per-surface provenance emission (ED-41 — the
+  `provenance ?? getSiteProvenance()` fallback dies, absent rows
+  render "site-wide" explicitly) + the unclamped coverage numerator
+  (ED-42 — resolved+publishable+non-conflicted, `min(resolved,
+  claimed)` clamp removed, exclusions disclosed; F-134 owned).
+  Recorded plan-row note: S0/S1 lists F-134 on both splits — F-134
+  is this a-half's finding; the b-half serves ED-43/ED-44's
+  component findings. Recorded seam (agent-labelled): K4 §9's P9
+  note ("per-dossier 'How we know this' moves to K5 DSRC-01")
+  resolves data-vs-presentation — this row lands the derivation +
+  emitted rows; DSRC-01 (P35.44, row 323) owns the contribution
+  export + presentation. `number_trace.csv` is the oracle —
+  re-derive, never edit.
+- 301 (PKG-10 b): dep `P35.20a` confirmed; no gate; L-split b.
+  `staleness_not_evaluable` emitted + rendered (never "ok"/"stale 0"
+  for a non-evaluable source); per-source volatility classes as a
+  declared registry field (SIG-METRIC-006 + ADR-104(e) basis —
+  declared, never inferred); non-site freshness rows (the 41
+  evidence-bearing sources without rows); one suppression function
+  feeding figure + accessible table + SVG titles (ED-44 — the
+  601-cell / 40,913-record "Devices"-header leak); cell-to-
+  jurisdiction reconciliation consuming P35.19's keys where landed.
+  Owned-finding note mirrors row 300's (F-134 is the a-half's; this
+  half serves C3 NEW-8/NEW-16/NEW-21 + F-08's freshness clause).
+  GQ-15's freshness clause served, not flipped.
+- 302 (claim identity): dep `P34.44b` confirmed (the claim-minting-
+  diff harness is the parity oracle). OM-20 conditional verbatim;
+  live stage `production write — re-ingest on next scheduled runs`
+  verbatim + window `camera-registry batches days 6–13` verbatim.
+  Recorded note: the "write" is **new minting under the new
+  identity** — CP-1's no-mass-re-mint forbids touching stored rows;
+  recorded so the legs are never read as a backfill. Volatile fields
+  leave `digest_base` → evidence binding; `value_json`
+  normalisation + `payload_version`; `obs`/`ref` identity split;
+  one identity function emitter-side and sink-side. F-504 owned;
+  SIG-INGEST-003/004 + ADR-159 cited; SIG-EPIS-009 recorded as
+  context (P35.25 owns its binding). S6 A-20: `/status/` API-basis
+  notice contracted; **no `live:` edge to P35.57** (the plan row's
+  verbatim note).
+- 303 (subject keys): dep `P35.22` confirmed (L3 S1 edge). OM-20
+  conditional verbatim; live stage `production write — hosted
+  re-key run` verbatim; window AR-3 + AR-2 verbatim. Pinned
+  per-target field sets + tenant/state scope + `key_version`; the
+  5,278-collided-subject count is re-derived at run time
+  (discrepancy recorded, never assumed); re-keying is appended
+  correction claims — a no-update/delete test is contracted.
+  F-506 + F-518 owned. S6 A-20 disclosure; no `live:` edge to
+  P35.57.
+- 304 (lineage/namespaces/independence): dep `P35.24` confirmed (S2
+  edge). OM-20 conditional; live stage `registry change +
+  rematerialize` verbatim — the writes are additive registry
+  metadata + materialization appends (recorded note). **SIG-CONF-014
+  is the family's only §56 Owner — stamped**; SIG-EPIS-029/009 +
+  SIG-IDENT-005 cited. `undeclared` is first-class, never
+  `independent`-by-default; a mirror never corroborates its
+  original; `derived_from_claim_ids` persisted at emit. ODbL
+  compartment lineage recorded as a licence-metadata distinction,
+  not this row's connector lineage. S6 A-20; no `live:` edge to
+  P35.57.
+- 305 (roles and time): dep `P35.14b` confirmed. OM-20 conditional;
+  live stage `re-ingest EFF/OSM + rematerialize edges` verbatim —
+  re-ingest inside **existing** ingestion permission (no rights
+  flip; recorded). Role vocabulary + valid-time + `undated`
+  first-class (epoch-zero rejected) + correction-claim supersession
+  + explicit-unknown operator (SIG-ONTO-028). F-521 owned;
+  SIG-TRUST-003 + GQ-07/GQ-15 cited/served. **Recorded plan-row
+  notes:** the cell carries **no** S6 A-20 clause (unlike its
+  neighbours) — carried as-is, with the contract still recording
+  the disclosure posture; the live legs' scope is EFF + OSM only —
+  other sources' stale role edges correct on their own next runs
+  (recorded, never silently extended); the OSM leg stays inside the
+  ODbL compartment.
+- 306 (resolver input truth): deps `P35.25;P35.14b` confirmed. OM-20
+  conditional; live stage `rematerialize` verbatim. Valid-time-aware
+  candidate selection (non-overlap = succession, not conflict);
+  directness reads declared lineage; tolerance-aware dissent emits
+  `contested` (persisted signal) vs real conflict; the four-state
+  vocabulary (`uncontested`/`insufficient`/`resolved_conflict`/
+  `unresolved_conflict`) preserved exactly — `contested` is a
+  signal, never a fifth state (SIG-STORE-015's vocabulary not
+  extended). F-519 owned; SIG-RECON-053 + SIG-STORE-015 cited.
+  Undeclared tolerance → candidate conflict (recorded default,
+  never a guessed tolerance). S6 A-20; no `live:` edge to P35.57.
+
+ADR-171 outreach-owed (deliverable 8a) — per row:
+
+- All eight rows carry "**recorded why it does not apply**" blocks:
+  299 is an export-time computation over captured evidence + the
+  committed boundary pack; 300/301 correct export/inference/web
+  derivations (the volatility field is registry metadata, not a
+  connector change); 302/303 change claim/subject keying (the claim
+  path itself, not a connector surface); 304 declares lineage on
+  existing sources + back-populates spine fields; 305 re-ingests
+  **already-permitted** sources under corrected emitters — a
+  data-lineage act, not a connector act (no posture change, no new
+  source, no compact touched — the OSMUID contribution-back caveat
+  is recorded in-contract: those obligations stay exactly where
+  they are if the OSM evidence path exercises that seam); 306 is
+  resolver logic + materialization. None writes, widens or
+  activates a §6-compact / §22.4–22.5 / §35.1 ecosystem connector.
+  The Stage-0 set (SIG-CHART-033, SIG-INGEST-029/030a,
+  SIG-CONTRIB-012/012a/013, SIG-GOV-024) stays owed — unmet at
+  launch — under `D-R11-LATER-04` (recorded verbatim on each row).
+  No outside contact made or implied (ADR-171 Decision 3, U-011).
+
+Local verification (P11, with recorded limits):
+
+- `make docs-check` — recorded below after the projection regen
+  (the eight contract digests drift the projection — regenerated
+  with `current_projection.py generate`, `verify` fresh before the
+  commit).
+- `python3 docs/build/tools/memory_guard.py all --staged` — run
+  before the content commit (protected records appended only).
+- `make check` — not re-run this context: no code changed (contracts
+  + this ledger + projection only); CI is the authority. Docker
+  stays wedged (recorded C1).
+
+Boundary (OM-05):
+
+- Recorded below — the head-bound read at the content+ledger head
+  lands in `docs/build/logs/ci-PLAN-11B-C7.json` (gitignored);
+  the verbatim `ci:` line is appended here after the read.
+
+Close record (this commit): appends the head-bound read and fills
+Closed — work complete. The shared `Closed:` header stays
+unwritten — C13 owns closeout.
 
 ### C8 — pending
 
@@ -916,20 +1080,20 @@ filled per context.
 
 | clause | status | note |
 |---|---|---|
-| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5, C6) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
-| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5, C6) | header Started from `date -u`; C2/C3/C4/C5/C6 Started from file mtime (source named) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`) |
-| OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5, C6) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
+| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5, C6, C7) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5, C6, C7) | header Started from `date -u`; C2/C3/C4/C5/C6/C7 Started from file mtime (source named); C7 Closed from `date -u` |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 — see the C7 Boundary line (log `logs/ci-PLAN-11B-C7.json`) |
+| OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5, C6, C7) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
-| OM-13 protected records appended only | ok (C1, C2, C3, C4, C5, C6) | manifest Plan-extensions + ledger C2/C3/C4/C5/C6 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's + C6's rewrite commits name no ticket ids in their subjects; memory_guard --staged run pre-commit |
-| OM-15 no test asserts a living record's current value | ok (C1, C2, C3, C4, C5, C6) | no test touched by C3, C4, C5 or C6 |
-| OM-07/08/09 gate records verbatim | ok (C2, C3, C4, C5, C6) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2, C4's HG-03 RB-lines ×6; C5's HG-03 RB-04/RB-06 + WV-10/D3-Q3 verbatim + ING-GO-B; C6's G1-TRIM B-13 `a` + OM-20 conditionals ×3 (291/296/297) + D-K4-1/2/4 verbatim + HG-03 operator-flip); nothing decided by this row |
-| OM-16 size budget | ok (C1, C2, C3, C4, C5, C6) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; C4 = 6 contracts + ledger lines; C5 = 6 contracts (five verified + row 290 written) + ledger lines; C6 = 8 contracts + ledger lines + projection regen; within a single context |
+| OM-13 protected records appended only | ok (C1, C2, C3, C4, C5, C6, C7) | manifest Plan-extensions + ledger C2/C3/C4/C5/C6/C7 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's + C6's + C7's rewrite commits name no ticket ids in their subjects; memory_guard --staged run pre-commit |
+| OM-15 no test asserts a living record's current value | ok (C1, C2, C3, C4, C5, C6, C7) | no test touched by C3, C4, C5, C6 or C7 |
+| OM-07/08/09 gate records verbatim | ok (C2, C3, C4, C5, C6, C7) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2, C4's HG-03 RB-lines ×6; C5's HG-03 RB-04/RB-06 + WV-10/D3-Q3 verbatim + ING-GO-B; C6's G1-TRIM B-13 `a` + OM-20 conditionals ×3 (291/296/297) + D-K4-1/2/4 verbatim + HG-03 operator-flip; C7's `none` ×3 (299/300/301) + `named-mutation → OM-20 conditional; otherwise in-ticket pause` ×5 (302–306) verbatim); nothing decided by this row |
+| OM-16 size budget | ok (C1, C2, C3, C4, C5, C6, C7) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; C4 = 6 contracts + ledger lines; C5 = 6 contracts (five verified + row 290 written) + ledger lines; C6 = 8 contracts + ledger lines + projection regen; C7 = 8 contracts + ledger lines + projection regen; within a single context |
 | OM-02 closeout is one commit after the PR exists | pending | C13 |
-| OM-19 windows / live legs | n/a | none for this row (each written contract carries its own) |
-| OM-20 pre-authorisation | n/a | not an OM-20 row |
-| OM-03 rows only from the ratified plan | ok | rows 261–298 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; the dep corrections (P36.3 → 277, P36.4 → 279) and C6's recorded plan-note corrections (291's copied unsplit-scope notes; 296/297/298's "no §56 Owner" → findings/cited ids) are recorded in-contract, not in the plan |
-| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3, C4, C5, C6) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
+| OM-19 windows / live legs | n/a | none for this row (each written contract carries its own — C7's contracts carry the verbatim live windows/legs: camera-registry days 6–13 (302) + AR-3 + AR-2 (303–306) + EFF/OSM re-ingest + rematerializes) |
+| OM-20 pre-authorisation | n/a | not an OM-20 row (C7's contracts carry the conditional verbatim — five rows' live legs queue behind the operator's named-mutation pre-authorisation) |
+| OM-03 rows only from the ratified plan | ok | rows 261–306 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; the dep corrections (P36.3 → 277, P36.4 → 279), C6's recorded plan-note corrections (291's copied unsplit-scope notes; 296/297/298's "no §56 Owner" → findings/cited ids) and C7's recorded notes (299's S2 ordering-only edge; 300/301's shared F-134 column → a-half owns, b-half serves; 300's K4-P9 DSRC-01 seam resolution; 302's no-mass-re-mint live-stage reading; 303's 5,278 re-derive-not-assume; 304/306's "production write = appends" readings; 305's missing S6 clause + EFF/OSM-only leg scope) are recorded in-contract, not in the plan |
+| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3, C4, C5, C6, C7) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
-| P11 local gate | ok (C1, C2, C3, C4, C5, C6, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3/C4/C5/C6 touched no code (docs-check + projection regen locally) |
+| P11 local gate | ok (C1, C2, C3, C4, C5, C6, C7, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3/C4/C5/C6/C7 touched no code (docs-check + projection regen locally) |
 | CI-8 CI config changed | no | |

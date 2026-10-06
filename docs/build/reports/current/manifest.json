@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "0dc6bc1d6af836948c6843e4f92b1d80699c8820",
+  "input_commit": "e52c25793da5c015b457451c1f327e5f4bcc0588",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1766,7 +1766,7 @@
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",
-      "sha256": "91f0f957ce59f43aea1f75e57de95182fc243186cded925355eccc7a6066262c"
+      "sha256": "7e083322f2a30cea983e8ea52ce585ba14cecd4eda3c4258d7330cbca9126fd3"
     },
     {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
@@ -2434,35 +2434,35 @@
     },
     {
       "path": "docs/tickets/299_P35.19__placement-engine.md",
-      "sha256": "966b34754d6130c60f117273244e2b82e839229840a3eeca0b1679aa4b9fc375"
+      "sha256": "1f3c63150b84d62d1e2bb21cb380ca3636691ac04e30cf8478cbf2f04ac26dde"
     },
     {
       "path": "docs/tickets/300_P35.20a__per-dossier-provenance-unclamped-coverage.md",
-      "sha256": "e41da8b8cce9966b343bad135da7a06a06604a46bc8d8ae8611fb09c8999ca18"
+      "sha256": "fbfdfa397eddcc719c33828b59fe1bd0f9aaadb1092b7d88c16033f57589aa14"
     },
     {
       "path": "docs/tickets/301_P35.20b__freshness-classes-and-map-table-suppression.md",
-      "sha256": "eaf107af0dd82ab2f9d5703d730e12fd5898563a6462c8b6d50f480781099159"
+      "sha256": "c73125f87330ceca9853b91e1a50aef03cb4886a4d17e4958613907a27d02338"
     },
     {
       "path": "docs/tickets/302_P35.22__truthful-claim-identity.md",
-      "sha256": "13a76b78fdb33a0a8035a6db6981233c1afc9776c7809b1063efc75ce3f7edfc"
+      "sha256": "c7a2982e05cc946f0dc0dad322d8357771e975b2fa656b16a58f91e11c23e509"
     },
     {
       "path": "docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md",
-      "sha256": "5ef398c747320030fc63a598973002f82db5d28e2885536284ade2907513bc54"
+      "sha256": "9a0cd9457b4f59d79c82bfc6ad6479bb8969ce651732324c3316c07b9fdc9dce"
     },
     {
       "path": "docs/tickets/304_P35.25__declared-lineage-namespaces-independence.md",
-      "sha256": "1a1806ee2dc17f374512f2714b93393b97a0af934e8ae6f95c0acb94369c4d6d"
+      "sha256": "045737868468241f6536d54baa24e973732ae52472c5c47f9e0718dade722a87"
     },
     {
       "path": "docs/tickets/305_P35.26__roles-and-time-backend.md",
-      "sha256": "27cdd528ca4d907e237750cdc3fd8ae93deffa7990c8278fab9e784f63453a70"
+      "sha256": "c68a75230cd493862246ceb9bee99e5bb4a8fd6a14d57be0fd8cb3f1e8c6700e"
     },
     {
       "path": "docs/tickets/306_P35.27__resolver-input-truth.md",
-      "sha256": "984af58464ff1b6366fd566addc73d802e8449f73ad87793ed467fe48ece3e61"
+      "sha256": "60910962034434ce6d9aec22c5f65302f6af869f23780f895a259094c24e39ee"
     },
     {
       "path": "docs/tickets/307_P35.29__shared-labels-slugs-hashes.md",
