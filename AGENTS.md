@@ -19,8 +19,11 @@ A staged pipeline, each stage a plain CLI (SIG-ENG-013), over one canonical stor
 - `connectors/` acquire evidence from external sources and emit **claims** (behind a fail-closed
   ingestion gate) → `parsing/` extracts structured facts → `resolution/`/`reconcile/`/`inference/`
   resolve entities and reconcile counts → `db/` (PostgreSQL 18 + PostGIS) is the append-only
-  **claim spine** → `exports/` produces licence-compartmented bundles → `api/` (FastAPI) serves the
-  spine read-only → `web/` (Astro, static, zero-JS) renders the public surface from export bytes.
+  **claim spine** → `exports/` produces licence-compartmented bundles and immutable releases →
+  `api/` (FastAPI) serves the spine read-only (plus release-namespaced search and the
+  deliberately non-operational intake receiver) → `web/` (Astro, static-first) renders the public
+  surface from release bytes — zero-JS on public content pages, with named bounded islands
+  (`/curate/**` per ADR-068; `/map/`, `/network/`, `/search/` per ADR-097, budgeted per ADR-134).
 - `ontology/` is the single LinkML source of truth; `db` DDL, JSON Schema, OWL/SHACL and Pydantic
   are **generated** from it. `orchestration/`, `tasks/`, `policy/`, `evidence/`, `ops/` are the
   cross-cutting glue (scheduling, contribution-back, gates, the OCFL evidence store, runtime).
@@ -38,9 +41,9 @@ The §47 package layout is **frozen** (SIG-ENG-012) — 14 Python workspace memb
 | `resolution/` | entity resolution / envelope logic |
 | `reconcile/` | §29 count reconciliation and sharing-edge / snapshot-diff logic |
 | `inference/` | derived-claim inference over the spine |
-| `tasks/` | contribution-back (MapRoulette, OSM changeset feed), onboarding aggregates |
-| `api/` | FastAPI read API + the loopback-only authenticated curation app |
-| `exports/` | licence-compartmented export bundles, deposits, tiles, dossiers |
+| `tasks/` | contribution-back (MapRoulette, OSM changeset feed), onboarding aggregates, the gap-driven acquisition queue (ADR-130) |
+| `api/` | FastAPI read API + the loopback-only authenticated curation app + the non-operational correction-intake receiver + release-namespaced FTS5 search |
+| `exports/` | licence-compartmented export bundles, deposits, tiles, dossiers, immutable releases/records, per-compartment FTS5 search indexes |
 | `orchestration/` | Dagster-based scheduling glue |
 | `policy/` | executable governance: sensitivity tiers, licensing, publication gates |
 | `ops/` | runtime composition (`sig-ops`, docker-compose), egress, degraded mode |
@@ -53,15 +56,15 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 
 | File | Lines | Purpose |
 |---|---|---|
-| `Makefile` | ~80 | the single source of build/test/gen commands — humans and CI run the same targets |
-| `.github/workflows/ci.yml` | ~102 | CI: the `python` job mirrors `make check`; the `web` job runs `npm run check` |
+| `Makefile` | ~120 | the single source of build/test/gen commands — humans and CI run the same targets |
+| `.github/workflows/ci.yml` | ~205 | CI: the `python` job mirrors `make check`; the `web` job runs `npm run check` |
 | `connectors/src/connectors/loader.py` | ~170 | the fail-closed ingestion gate (`assert_loadable`, `ingestion_permitted`) |
 | `ontology/src/ontology/generate.py` | ~550 | ontology generation; canonicalises graphs (`to_canonical_graph`) |
-| `db/src/db/claim_sink.py` | ~920 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine |
-| `api/src/api/store_pg.py` | ~1240 | `PgReadStore` — read-only view over the spine (pooled, ADR-108) |
+| `db/src/db/claim_sink.py` | ~1860 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine |
+| `api/src/api/store_pg.py` | ~1410 | `PgReadStore` — read-only view over the spine (pooled, ADR-108) |
 | `tests/db/conftest.py` | ~230 | PG18+PostGIS testcontainer; `SIG_REQUIRE_DB_TESTS` fail-loud switch |
 | `tests/e2e/test_composed_stack.py` | ~860 | Docker-gated composed-stack e2e; the `LD-`/xfail convention |
-| `docs/tickets/00_MANIFEST.md` | ~180 | the ordered ticket backlog and how to drive the build |
+| `docs/tickets/00_MANIFEST.md` | ~470 | the ordered ticket backlog and how to drive the build |
 
 ## Build & Test
 
@@ -110,10 +113,14 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 5. **The claim spine is insert-only.** `PgClaimSink` (`db/src/db/claim_sink.py`) and `PgReadStore`
    (`api/src/api/store_pg.py`) never `UPDATE`/`DELETE`; there is no update/delete path anywhere in
    `db/`. Model corrections as new claims.
-6. **The public web budget is zero-JS.** Public pages must render with **no `<script>` tags**;
-   `web/lighthouserc.json` asserts script size `0` and total ≤ 150 KB, and `test:e2e` enforces WCAG
-   2.2 AA. Adding client JS to a public page fails `check:perf`/`test:e2e` (the `/curate/**` island
-   allowance is the only exception, ADR-068).
+6. **The public web budget is zero-JS on content pages — named islands are the bounded
+   exceptions.** Public *content* pages must render with **no `<script>` tags**;
+   `web/lighthouserc.json` asserts script size `0` and total ≤ 150 KB on them, and `test:e2e`
+   enforces WCAG 2.2 AA. The explicitly allowed islands are `/curate/**` (the authenticated
+   curation surface, ADR-068) and the three public interactive islands `/map/`, `/network/`,
+   `/search/` (ADR-097, extending ADR-068), each carrying an explicit per-island script/total
+   ceiling (P32.15, ADR-134) and a preserved no-JS fallback (SIG-UI-050). Adding client JS to any
+   *other* public page fails `check:perf`/`test:e2e`.
 7. **`tests/e2e` xfails carry an `LD-`/`accepted:` reason and are flipped only by the closing
    ticket.** A never-yet-wired seam is an `xfail` whose reason begins with its `LEDGER_DEFERRALS` id
    (`^LD-[A-Z]+[0-9]+:`) — never a loosened assertion. Do not flip an xfail to a pass unless your
@@ -123,7 +130,7 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
    your ticket or a landed prerequisite unblocks an `OPEN` row, closing it (verify + flip to `DONE` with
    evidence) is part of your run. Gates refuse to pass while an `OPEN` row scoped to that phase remains.
 
-## Where build memory lives (build-memory v2, ADR-073)
+## Build memory — where it lives (v2: ADR-073, extended by ADR-126/127 under ADR-120)
 
 `docs/build/` is the **committed** memory root (opted in by the `<!-- build-memory: v2 -->` marker in its
 README): its LEDGER holds the machine state (CURRENT STATE / GATE DECISIONS / RETURN PASS / PHASE LOG); its
@@ -132,6 +139,17 @@ the PR bodies, `docs/build/reports/` the project reports, and `docs/build/logs/`
 subtree. `.agents/scratch/` is retired. The layout is validated by `scripts/docs/check-build-memory.sh .`
 (run in `make docs-check`). The ADR index under `docs/adr/` is generated by `build-memory adr-index` — never
 hand-edited.
+
+The Round-10 extension (ADR-120 → ADR-126/127) adds two advisory surfaces under `docs/build/reports/`:
+`obligations/` holds the append-only `obligation-event/1` + `coverage-assessment/1` ledgers
+(the `obligation_events` tool under `docs/build/tools/`; a DEFERRALS compatibility cell's leading
+token is derived from the event chain, never "last token wins"), and `current/` holds the
+deterministic **current-state projection** (the `current_projection` tool — `generate` writes it,
+`verify` fails when its hashed inputs drifted). Both are read-only orientation views: the LEDGER's
+CURRENT STATE and `docs/tickets/DEFERRALS.md` remain the control authority, and a compact view
+never replaces a ticket's Load list or erases an OPEN obligation. The single-writer closeout
+protocol (`closeout_protocol` under `docs/build/tools/`, ADR-127) is **shadow mode** until the
+operator-approved `D-R10-MEMORY-1` cutover.
 
 ## Terminology
 
@@ -148,7 +166,10 @@ hand-edited.
 ## Do
 
 - Read the ticket contract in `docs/tickets/` and the relevant build memory in `docs/build/` before
-  implementing; stamp the requirement ids you satisfy in the PR.
+  implementing; stamp the requirement ids you satisfy in the PR. The committed current-state
+  projection under `docs/build/reports/current/` is a bounded orientation view (obligations,
+  evidence domains, governing ADRs) — it links to the full history but never replaces the
+  DEFERRALS-first rule or a ticket's Load list.
 - Run `make check` before every commit; commit regenerated artifacts **before** re-running it.
 - Stack every PR from the current checkout (the branch the previous ticket left checked out).
 - Add a per-package `AGENTS.md` only where a package has non-obvious conventions.

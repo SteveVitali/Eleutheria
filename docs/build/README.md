@@ -14,13 +14,16 @@ directory does not restate it. Established by **P19.1** (ADR-058); migrated to t
 memory here.
 
 - `LEDGER.md` — the machine-state file (`orchestrate-build` / `drive-build.sh` parse it).
-- `BUILD_INDEX.md` — one row per landed chain row (rows 1-199 as of P33.7, 2026-09-28).
+- `BUILD_INDEX.md` — one row per landed chain row (rows 1-200 as of P33.8, 2026-09-28).
 - `runs/<ID>.md` — the `implement-spec` run ledger for each ticket; `pr/<ID>.md` — its PR body.
 - `readouts/GATE-G<k>.md` — gate readouts (append-only); `planning/` — re-planning rounds.
 - `tools/`, `fixtures/`, `reports/` — committed; `logs/` — the one gitignored subtree.
 - `reports/` — the project-specific reports the build produced (capstone verification, backlog themes,
   jurisdiction/rights/curation/infra reports, and the functional `okc/`, `live_runs/`, `rights/`
-  subtrees the connectors reference by path).
+  subtrees the connectors reference by path); `reports/obligations/` holds the append-only
+  obligation-event + coverage-assessment ledgers (ADR-126), and `reports/current/` the deterministic
+  advisory current-state projection (`current_projection.py` — regenerate at closeout, never
+  hand-edit; `verify` fails on stale inputs).
 
 Everything here is a **historical record**: corrected by a new entry, never by editing an old one.
 Run `bash scripts/docs/check-build-memory.sh .` (or the skill's `check-build-memory.sh`) to validate.

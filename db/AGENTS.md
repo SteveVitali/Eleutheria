@@ -12,10 +12,11 @@ the full narrative.
 
 | File | Lines | Purpose |
 |---|---|---|
-| `db/src/db/claim_sink.py` | ~920 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine (ADR-110) |
-| `db/src/db/identity_guard.py` | ~130 | `resolve_identities` — one entity per identity-bearing `(scheme, value)` via `entity_identity_key` (ADR-110) |
+| `db/src/db/claim_sink.py` | ~1860 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine (ADR-110) |
+| `db/src/db/identity_guard.py` | ~240 | `resolve_identities` — one entity per identity-bearing `(scheme, value)` via `entity_identity_key` (ADR-110) |
+| `db/src/db/assertion.py` · `occurrences.py` · `dispositions.py` · `intake_apply.py` · `recovery_apply.py` | ~n/a | the Round-10 write surfaces — `sig.assertion/1` typed claims (ADR-121), eligible-occurrence selection (ADR-123), publication dispositions (ADR-124), reviewed-correction application (ADR-136), bounded recovery apply (ADR-141) — all insert-only |
 | `db/src/db/sink_bench.py` | ~240 | `sig-db sink-bench` — claims/min + round trips per claim for a sink pass |
-| `db/src/db/analytics.py` | ~n/a | DuckDB analytics commands over parquet (a separate engine) |
+| `db/src/db/analytics.py` | ~640 | DuckDB analytics commands over parquet (a separate engine) |
 | `db/sqitch.plan` | — | the ordered sqitch migration plan (deploy/revert/verify per change) |
 
 ## Build & Test
