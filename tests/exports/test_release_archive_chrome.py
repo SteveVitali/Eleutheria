@@ -363,6 +363,34 @@ def test_record_page_evidence_links_are_root_absolute(tmp_path: Path) -> None:
     assert "../../evidence/" not in page
 
 
+def test_cross_compartment_evidence_links_resolve(tmp_path: Path) -> None:
+    """P34.34a fix-forward — the seeded-PG release in CI (the leg a
+    Docker-less local run skips) caught a REAL dead link: a record in
+    ``osm_physical`` citing an artifact published under ``sig_graph`` linked
+    the record's own compartment. The link must name the artifact's
+    compartment; an artifact absent from the release renders the honest
+    "not published" cell, never a dead link."""
+    export = _write_export(tmp_path / "export")
+    claims_path = export / "osm_physical" / "record_claims.jsonl"
+    rows = [json.loads(line) for line in claims_path.read_text().splitlines() if line.strip()]
+    for row in rows:
+        if row["claim_id"] == "claim-src_osm-0-a":
+            row["evidence"][0]["artifact_id"] = "art-sig_graph"  # other compartment
+        if row["claim_id"] == "claim-src_osm-1-a":
+            row["evidence"][0]["artifact_id"] = "art-not-published"  # absent entirely
+    claims_path.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    build = build_release(export, tmp_path / "rel", renderer_revision=REVISION)
+    pub = build.publication_id
+    page = _html(build, f"r/{pub}/c/osm_physical/entity/deployment/ent-src_osm-0/index.html")
+    assert f'href="/r/{pub}/c/sig_graph/evidence/art-sig_graph/"' in page
+    assert "/c/osm_physical/evidence/art-sig_graph/" not in page
+    page1 = _html(build, f"r/{pub}/c/osm_physical/entity/deployment/ent-src_osm-1/index.html")
+    assert "artifact not published in this release" in page1
+    assert "art-not-published" not in page1  # no dead href, no bare id
+    assert link_crawl_failures(build.out_dir) == []
+    assert validate_release(build.out_dir).state == "complete"
+
+
 def test_browse_and_jurisdiction_rows_link_root_absolute(tmp_path: Path) -> None:
     build = _fixture_release(tmp_path)
     pub = build.publication_id

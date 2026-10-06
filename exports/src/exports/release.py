@@ -423,6 +423,16 @@ def build_release(
         )
         return target
 
+    # P34.34a fix-forward: an evidence anchor page lives under the artifact's
+    # OWN compartment (source_to_comp, the emit loop below), not the citing
+    # record's — a record in osm_physical can cite a web/sig_graph artifact.
+    # The map lets record_page link the true route (or state the absence) so
+    # the same-origin crawl sees no dead link.
+    evidence_compartment = {
+        str(a.get("artifact_id")): source_to_comp.get(str(a.get("source")), "web")
+        for a in evidence_payload.get("artifacts") or []
+    }
+
     comp_meta: list[dict[str, Any]] = []
     total_records = 0
     for comp in sorted(builds):
@@ -439,7 +449,11 @@ def build_release(
             emit(json_rel, record.json_bytes(), compartment=comp, licence=comps[comp])
             emit(
                 f"{comp_dir}/entity/{et}/{eid}/index.html",
-                record_page(record, latest_stub=f"/entity/{et}/{eid}/"),
+                record_page(
+                    record,
+                    latest_stub=f"/entity/{et}/{eid}/",
+                    evidence_compartment=evidence_compartment,
+                ),
                 compartment=comp,
                 licence=comps[comp],
             )

@@ -27,7 +27,7 @@ from html import escape
 from typing import Any
 from urllib.parse import quote
 
-from .published_record import PublishedRecord
+from .published_record import EvidenceRef, PublishedRecord
 
 
 def _e(v: Any) -> str:
@@ -162,8 +162,22 @@ def _layout(
 # --------------------------------------------------------------------------- #
 
 
-def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
-    """The complete released record page — ``<uuid>/index.html``."""
+def record_page(
+    record: PublishedRecord,
+    *,
+    latest_stub: str,
+    evidence_compartment: Mapping[str, str] | None = None,
+) -> bytes:
+    """The complete released record page — ``<uuid>/index.html``.
+
+    ``evidence_compartment`` maps an evidence ``artifact_id`` to the
+    compartment its anchor page was emitted under (the artifact's own
+    licence slice — P34.34a fix-forward): a record in ``osm_physical`` may
+    cite an artifact published under ``web``/``sig_graph``, so the link must
+    name that compartment, not the record's. When the map is supplied, an
+    artifact absent from it renders the honest "not published" cell instead
+    of a dead link. ``None`` keeps the record's own compartment (direct
+    renderer callers outside the release build)."""
     pub = record.publication_id or ""
     comp = record.compartment
     loc = record.location
@@ -208,19 +222,30 @@ def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
         "attached to this record.</em></td></tr>"
     )
 
+    def _ev_cell(e: EvidenceRef) -> str:
+        if not e.artifact_id:
+            return "<td><em>artifact not published in this release</em></td>"
+        ev_comp = (
+            evidence_compartment.get(e.artifact_id) if evidence_compartment is not None else comp
+        )
+        if ev_comp is None:
+            return "<td><em>artifact not published in this release</em></td>"
+        # P34.34a: site-root-absolute — relative-depth links from the
+        # entity/<type>/<id>/ route resolved one level too shallow (C4
+        # NEW-1); and the evidence anchor lives under ITS compartment, not
+        # the citing record's (the composed-PG release caught a cross-
+        # compartment dead link the fixture suites never produced). The
+        # validate_release crawl re-checks every link.
+        return (
+            f'<td><a href="/r/{_e(pub)}/c/{_e(ev_comp)}/evidence/{_e(e.artifact_id)}/">'
+            + f"<code>{_e(e.artifact_id)}</code></a></td>"
+        )
+
     ev_rows = "".join(
         "<tr>"
         f"<td><code>{_e(e.claim_id)}</code></td>"
         f"<td><code>{_e(e.capture_id) if e.capture_id else '<em>unlocated</em>'}</code></td>"
-        + (
-            # P34.34a: site-root-absolute — relative-depth links from the
-            # entity/<type>/<id>/ route resolved one level too shallow (C4
-            # NEW-1); the validate_release crawl re-checks every link.
-            f'<td><a href="/r/{_e(pub)}/c/{_e(comp)}/evidence/{_e(e.artifact_id)}/">'
-            + f"<code>{_e(e.artifact_id)}</code></a></td>"
-            if e.artifact_id
-            else "<td><em>artifact not published in this release</em></td>"
-        )
+        + _ev_cell(e)
         + f"<td>{_e(e.role) if e.role else '—'}</td>"
         f"<td>{_e(e.access)}</td></tr>"
         for e in record.evidence_refs
