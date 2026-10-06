@@ -48,15 +48,24 @@ class ClaimAnchor:
     #: ``recorded`` when the claim detail was published with the record;
     #: ``unlocated`` when only the opaque anchor is known for this release.
     locator: str = "recorded"
+    #: P34.34a (SIG-UI-024): the §12.2 access-edge type the claim carries —
+    #: ``configured_access`` / ``observed_use`` / ``declared_policy`` /
+    #: ``unclassified`` — emitted on the JSON only when the claim is an
+    #: access-typed claim (``None`` on an ordinary observation claim keeps
+    #: the released document byte-identical for non-edge records).
+    access_kind: str | None = None
 
     def as_json(self) -> dict[str, Any]:
-        return {
+        doc = {
             "claim_id": self.claim_id,
             "predicate_id": self.predicate_id,
             "observed_at": self.observed_at,
             "source_id": self.source_id,
             "locator": self.locator,
         }
+        if self.access_kind is not None:
+            doc["access_kind"] = self.access_kind
+        return doc
 
 
 @dataclass(frozen=True)
@@ -217,6 +226,10 @@ def record_from_site_row(
                 observed_at=(str(crow["observed_at"]) if crow.get("observed_at") else None),
                 source_id=str(crow["source_id"]) if crow.get("source_id") else None,
                 locator="recorded",
+                # P34.34a: the access-edge type rides in from record_claims
+                # (the reconciler's recorded kind wins there; never derived
+                # again here).
+                access_kind=(str(crow["access_kind"]) if crow.get("access_kind") else None),
             )
         )
         for ev in crow.get("evidence") or []:

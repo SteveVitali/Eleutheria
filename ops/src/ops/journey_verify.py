@@ -1028,7 +1028,9 @@ def _journey_a_checks(build: ReleaseBuild) -> list[dict[str, Any]]:
                     break
                 html = (page_dir / "index.html").read_text(encoding="utf-8")
                 for r in ordered[(page - 1) * 50 : page * 50]:
-                    href = f"../../entity/{r['entity_type']}/{r['entity_id']}/"
+                    # P34.34a: record links are site-root-absolute now — the
+                    # depth-fragile ../../ form was the C4 NEW-1 bug.
+                    href = f"/r/{pub}/c/{comp}/entity/{r['entity_type']}/{r['entity_id']}/"
                     if href in html:
                         if r["record_key"] in seen:
                             dup.append(r["record_key"])

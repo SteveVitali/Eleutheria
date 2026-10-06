@@ -77,9 +77,10 @@ _SURFACE_NAMES = {
 #: Required web reads with a declared producer outside the spine export (the
 #: check still binds them — a read is never unaccounted for).
 _DECLARED_EXTERNAL_PRODUCERS = {
-    # `sig-tasks osm-feed pull` emits web/leverage.json (P21.7, SIG-CONTRIB-016e)
-    # — the producer is a sibling CLI, not an EXPORT_QUERIES row.
-    "leverage": "sig-tasks osm-feed pull",
+    # `sig-tasks osm-feed pull` emits web/leverage.json (P21.7, SIG-CONTRIB-016e);
+    # since P34.34a `build_spine_export` also emits it directly (the recorded
+    # feed folded in, else the honest zeroed ledger).
+    "leverage": "sig-tasks osm-feed pull / build_spine_export",
 }
 
 
