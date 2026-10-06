@@ -2,6 +2,29 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-GOV-013 | public | WAIVED(ADR-165) | 2026-10-01 | — |
+| SIG-GOV-015 | public | WAIVED(ADR-164) | 2026-10-01 | — |
+| SIG-GOV-016 | public | PARTIAL | 2026-10-01 | — |
+| SIG-GOV-016 | public | MET-DIFFERENTLY(RISK-P0-10) | 2026-10-06 | SIG-GOV-016:r11-1 |
+| SIG-GOV-017 | implementation | MET | 2026-10-06 | — |
+| SIG-GOV-018 | implementation | MET | 2026-10-06 | — |
+| SIG-GOV-021 | implementation | MET | 2026-10-01 | — |
+| SIG-GOV-022 | hosted | MET-ENGINEERED(D-P21.5-1;D-R11-ARCHIVE-1) | 2026-10-01 | — |
+| SIG-GOV-023 | implementation | MET | 2026-10-01 | — |
+| SIG-GOV-024 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-IDENT-014 | implementation | MET | 2026-10-06 | — |
+| SIG-IDENT-027 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-IDENT-028 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-IDENT-030 | public | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-004 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-005 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-006 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-007 | implementation | MET | 2026-10-01 | — |
+| SIG-INGEST-008 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-010 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-025a | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-025b | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-INGEST-025c | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-INGEST-035 | hosted | WAIVED(ADR-188) | 2026-10-01 | — |
 | SIG-INGEST-036 | hosted | WAIVED(ADR-187) | 2026-10-01 | — |
 | SIG-INGEST-037 | hosted | WAIVED(ADR-182) | 2026-10-01 | — |
@@ -31,6 +54,9 @@
 | SIG-MEM-012 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ONTO-001 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-005 | implementation | MET | 2026-10-01 | — |
+| SIG-ONTO-006 | implementation | MET | 2026-10-06 | — |
+| SIG-ONTO-008 | implementation | MET | 2026-10-06 | — |
+| SIG-ONTO-009 | implementation | MET | 2026-10-06 | — |
 | SIG-ONTO-028 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-035 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-051 | implementation | PARTIAL | 2026-10-01 | — |
@@ -55,8 +81,11 @@
 | SIG-OPS-010 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-011 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-012 | hosted | MISSING | 2026-10-01 | — |
+| SIG-PUB-001 | implementation | MET | 2026-10-06 | — |
 | SIG-PUB-002 | public | PARTIAL | 2026-10-03 | — |
 | SIG-PUB-002 | public | PARTIAL | 2026-10-03 | SIG-PUB-002:r11-1 |
+| SIG-PUB-003d | implementation | PARTIAL | 2026-10-06 | — |
+| SIG-PUB-006 | implementation | MET | 2026-10-06 | — |
 | SIG-PUB-007 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
 | SIG-PUB-008 | public | WAIVED(ADR-163) | 2026-10-01 | — |
 | SIG-PUB-012 | composed-db | PARTIAL | 2026-10-01 | — |
@@ -67,6 +96,7 @@
 | SIG-RECON-018 | hosted | AT-RISK-INTEGRATION | 2026-10-01 | — |
 | SIG-RECON-039 | public | PARTIAL | 2026-10-01 | — |
 | SIG-RECON-040 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
+| SIG-RECON-051 | implementation | MET | 2026-10-06 | — |
 | SIG-RECON-052 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-REL-001 | public | MISSING | 2026-10-01 | — |
 | SIG-REL-002 | public | MISSING | 2026-10-01 | — |
@@ -83,6 +113,7 @@
 | SIG-REL-013 | public | MISSING | 2026-10-01 | — |
 | SIG-REL-014 | implementation | MISSING | 2026-10-01 | — |
 | SIG-REL-015 | public | MISSING | 2026-10-01 | — |
+| SIG-SEC-002 | implementation | MET | 2026-10-06 | — |
 | SIG-SEC-003 | public | MISSING | 2026-10-01 | — |
 | SIG-SEC-005 | hosted | PARTIAL | 2026-10-01 | — |
 | SIG-SEC-006 | hosted | PARTIAL | 2026-10-01 | — |
@@ -91,36 +122,5 @@
 | SIG-SEC-009 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-010 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-011 | hosted | MISSING | 2026-10-01 | — |
-| SIG-SEC-011 | implementation | MET-ENGINEERED(D-P34.25-1) | 2026-10-04 | — |
-| SIG-STORE-004 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-STORE-005 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-STORE-011 | composed-db | WAIVED(ADR-189) | 2026-10-01 | — |
-| SIG-STORE-013 | composed-db | MET | 2026-10-01 | — |
-| SIG-STORE-037 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-STORE-044 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-STORE-045 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-STORE-048 | hosted | MISSING | 2026-10-01 | — |
-| SIG-TRANSP-001 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-002 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-003 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-004 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-005 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-006 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-007 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-008 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-009 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-010 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-011 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-012 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-013 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-014 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-015 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-016 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-017 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-018 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-019 | hosted | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-020 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-021 | public | MISSING | 2026-10-05 | — |
-| SIG-TRANSP-022 | public | MISSING | 2026-10-05 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

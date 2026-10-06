@@ -2,6 +2,38 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-SEC-011 | implementation | MET-ENGINEERED(D-P34.25-1) | 2026-10-04 | — |
+| SIG-STORE-004 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-005 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-011 | composed-db | WAIVED(ADR-189) | 2026-10-01 | — |
+| SIG-STORE-013 | composed-db | MET | 2026-10-01 | — |
+| SIG-STORE-037 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-044 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-045 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-048 | hosted | MISSING | 2026-10-01 | — |
+| SIG-TIME-003 | implementation | MET | 2026-10-06 | — |
+| SIG-TRANSP-001 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-002 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-003 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-004 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-005 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-006 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-007 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-008 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-009 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-010 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-011 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-012 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-013 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-014 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-015 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-016 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-017 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-018 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-019 | hosted | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-020 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-021 | public | MISSING | 2026-10-05 | — |
+| SIG-TRANSP-022 | public | MISSING | 2026-10-05 | — |
 | SIG-TRANSP-023 | public | MISSING | 2026-10-05 | — |
 | SIG-TRANSP-024 | public | MISSING | 2026-10-05 | — |
 | SIG-TRANSP-025 | public | MISSING | 2026-10-05 | — |
@@ -36,6 +68,7 @@
 | SIG-UI-038 | implementation | MET | 2026-10-01 | — |
 | SIG-UI-040 | implementation | MET-DIFFERENTLY(ADR-108;ADR-133) | 2026-10-01 | — |
 | SIG-UI-040 | implementation | MET-DIFFERENTLY | 2026-10-01 | SIG-UI-040:r11-1 |
+| SIG-UI-040 | implementation | MET-DIFFERENTLY(ADR-200) | 2026-10-06 | SIG-UI-040:r11-2 |
 | SIG-UI-042 | public | WAIVED(ADR-179) | 2026-10-01 | — |
 | SIG-UI-047 | implementation | MET | 2026-10-01 | — |
 - historical CSV: 820 dated rows in `docs/build/COVERAGE_MATRIX.csv` (labelled `historical/csv`, preserved verbatim)

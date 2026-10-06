@@ -9,12 +9,13 @@
 <!-- Archived line: the head State line before P34.32's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-P34.32.txt, sha256 11dbb2c7de24393dcd45bb3f3d0eac5756eae0b283d8f5687a68c41707dbb634 -->
 <!-- Archived line: the head State line before P34.33's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-P34.33.txt, sha256 f8dbf6f8c35b7b7710e4bc2c9cede46c4e16ac98a8fa37ec3129763662318c62 -->
 <!-- Archived line: the head State line before PLAN-11B's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-PLAN-11B.txt, sha256 7d328161cade606aff0ac24604db3fd6650b18632b14b36a702b5f705da2ddbc -->
+<!-- Archived line: the head State line before P34.48's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-P34.48.txt, sha256 67ec068e1ebf17adabc3c30c5e3bc67cdaf36e99765682d270fc8ff65792a7b5 -->
 
 Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before the ledger was committed); committed as build memory v2 by P22.3 (ADR-073); head replaced for Round 11 by SEED-10 on branch `r11/seed` at 2026-10-01T08:14:19Z (B3 §3.2). The manifest is the plan; this file holds state and the append-only records.
 
 > **OPERATING MODE — Round 11** (SEED-17, 2026-10-01T16:53:34Z; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; per-ticket subset: the manifest's `## Operating rules`. Supersedes the Round-1 OPERATING MODE, the Round-10 import amendment and SEED-10's placeholder (archived above).
 >
-> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01): the PHASE LOG ends with PLAN-11B's entry (PR #236 — 5/5 green head-bound on its entries' heads; boundary verdicts `blockedOn` on the operator's external #190→main merge, recorded verbatim); next → P34.48 (row 240).
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01): the PHASE LOG ends with P34.48's entry (PR #237 — the 62-row boilerplate re-verdict complete: 49 MET · 1 MET-DIFFERENTLY(ADR-200) · 1 MET-ENGINEERED · 11 PARTIAL; two-sum 50 satisfied / 51 closed; both strays re-routed); next → P34.34a (row 241).
 > - **Dispatch (round 25).** One Devin Desktop `swe-2-high` orchestrator session (`orchestrate-build`), a fresh sub-agent per ticket. A `returnPass` key is a landed ticket, never re-dispatched as a ticket: its leg runs as its re-run line says. Isolation check (plan §8.5) at the T6 probe, P34.1, each sub-round GATE and every orchestrator restart; on failure: pause, then a T6-verified `drive-build.sh --agent-cmd` command (round 27), else the manual tier (`drive-build.sh --print-prompt`, a new session per ticket).
 > - **Orient (≤ 48 KiB).** O1 this head · O3 `### RETURN PASS — current` · O4 `current_projection.py verify` + `docs/build/reports/current/CURRENT.md` · O5 the last 3 lines · O6 the next row's manifest line + contract header. Never LEDGER, DEFERRALS or BUILD_INDEX whole. Re-measure each Load at dispatch (bytes ÷ 3 and ÷ 4) **plus the skill-text share (≈ 17.5k tokens)**: ≤ ~150k loaded, else split.
 > - **Clock (OM-04).** Every date from `date -u` at writing, or a named git/GitHub time. A read-back of a scheduled event (D-P31.4-1, the batch-05 OSM replay) waits for `date -u` ≥ its fire time and the scheduler's `lastAttemptTime`.
@@ -36,8 +37,8 @@ Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before t
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B, no history; the PHASE LOG and git carry the history of values. -->
 ```
 projectStatus:   IN_PROGRESS                             # Round 11 running since GATE-B (C10)
-nextTicket:      P34.48                             # row 240 — MEM-11 row-by-row re-verdict of the 61 unsampled boilerplate MET-DIFFERENTLY coverage rows (depends SEED-14, SEED-15)
-lastCompleted:   PLAN-11B                           # row 239 (PR #236, open; boundary blockedOn (external) on #190→main, recorded; 83+1 11B contracts + SIG-TRANSP family + Phase-4 review)
+nextTicket:      P34.34a                            # row 241 — release-archive link depth + link crawl + leverage.json (depends nothing; chain order)
+lastCompleted:   P34.48                             # row 240 (PR #237, open; 62 boilerplate re-verdicts: 49 MET · 1 MET-DIFF(ADR-200) · 1 ME · 11 PARTIAL; two-sum 50/51; strays to RISK-R11-34 / RISK-P0-10)
 blockedOn:       (nothing)                          # real blocks only; a pending gate is a RETURN PASS row
 pauseRequested:  false                               # set at C10 (GATE-B go)
 returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50 # landed tickets with owed legs; legs: RETURN PASS — current
@@ -48,13 +49,13 @@ dispatchTarget:  subagent                           # one orchestrator session, 
 buildWorktree:   /Users/stevenvitali/Eleutheria # the operator's main checkout on r11/seed (moved from the Stage-B worktree at C10+)
 buildBranchBase: devin/p33-8-agent-docs-refresh     # Round 11 stacks on #190 (plan §12)
 pinnedBaseSha:   b051732c
-chainTip:        r11/PLAN-11B-contracts-for-11b-and-transp-family # PR #236 open; next row branches from this checkout
+chainTip:        r11/P34.48-re-verdict-61-boilerplate-coverage-rows # PR #237 open; next row branches from this checkout
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a: pause at gates, ING-GO, spend, red CI, unlisted OM-20 mutations
 mergePolicy:     OPERATOR                           # agents never merge; the operator integrates (plan §12)
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10 (A-15, round 25)
-updatedAt:       2026-10-06T14:12Z
+updatedAt:       2026-10-06T19:21Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
