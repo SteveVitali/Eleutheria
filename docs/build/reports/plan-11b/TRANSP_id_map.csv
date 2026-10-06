@@ -1,0 +1,44 @@
+draft_id,final_id,family,plan_section,note
+SIG-TRANSP-D01,SIG-TRANSP-001,TRANSP,§6.2; J3 §11,source index; index columns + no-JS filtering superseded by K9's D28 (final text points there). Owner P36.48; also P35.40
+SIG-TRANSP-D02,SIG-TRANSP-002,TRANSP,§6.2; J3 §11,named counting definitions + funnel of source ids; K9 replaces the funnel by D26/D27's registry-row counting + partition. Owner P35.40; also P35.35
+SIG-TRANSP-D03,SIG-TRANSP-003,TRANSP,§6.2; J3 §11,source pages with values-or-named-absences; K10 adds the §4 publish-matrix reference (SIG-TRANSP-035). Owner P36.47; also P36.69 + P36.45
+SIG-TRANSP-D04,SIG-TRANSP-004,TRANSP,§6.2; J3 §11,upstream ground-truth links + terms capture date/digest after credential scrubbing. Owner P36.47
+SIG-TRANSP-D05,SIG-TRANSP-005,TRANSP,§6.2; J3 §11,capture history; bytes-available only for raw-ok lane with bytes in the public archive; synthetic captures labelled. Owner P36.69; also P36.51 + P37.36
+SIG-TRANSP-D06,SIG-TRANSP-006,TRANSP,§6.2; J3 §11,per-run log with closed error vocabulary; K10 re-keys it to executions (SIG-TRANSP-036). Owner P36.46; also P35.33
+SIG-TRANSP-D07,SIG-TRANSP-007,TRANSP,§6.2; J3 §11,cadence declared/scheduled/observed; K9 narrows it into D29–D31 (final text points there). Owner P35.41
+SIG-TRANSP-D08,SIG-TRANSP-008,TRANSP,§6.2; J3 §11,coverage by jurisdiction/technology + dossier contribution with equal numbers both directions. Owner P36.69; also P35.44
+SIG-TRANSP-D09,SIG-TRANSP-009,TRANSP,§6.2; J3 §11,rights-review record + collection conduct without person names; K10 gives it the D38/D39 texts. Owner P36.47; also P36.69
+SIG-TRANSP-D10,SIG-TRANSP-010,TRANSP,§6.2; J3 §11,append-only per-source issues log (auto classes + curated). Owner P36.49
+SIG-TRANSP-D11,SIG-TRANSP-011,TRANSP,§6.2; J3 §11,per-claim provenance panel (J3 §5.2) with one binding state; legacy_synthetic run-level text. Owner P35.36
+SIG-TRANSP-D12,SIG-TRANSP-012,TRANSP,§6.2; J3 §11,view-original lane x Part VIII x bytes-stored table (J3 §5.3). Owner P36.51; also P37.36
+SIG-TRANSP-D13,SIG-TRANSP-013,TRANSP,§6.2; J3 §11,every material number rendered with a manifest-artifact pointer + evidence link (J3 §5.4). Owner P35.37
+SIG-TRANSP-D14,SIG-TRANSP-014,TRANSP,§6.2; J3 §11,per-release downloads center with licence/attribution/size/rows/sha256/format + per-source slices; K9 adds D32's per-source statements slice. Owner P36.50
+SIG-TRANSP-D15,SIG-TRANSP-015,TRANSP,§6.2; J3 §11,ATTRIBUTION.txt generated from the registry; publish fails on required-but-empty attribution. Owner P36.50
+SIG-TRANSP-D16,SIG-TRANSP-016,TRANSP,§6.2; J3 §11,data dictionary generated from ontology + exporter column registry; Table Schema per tabular resource. Owner P35.39
+SIG-TRANSP-D17,SIG-TRANSP-017,TRANSP,§6.2; J3 §11,DCAT 3 + PROV-O as linked files; no <script> incl. JSON-LD on content pages without a new ADR (D-J3-7; UXR-32 keeps linked-only). SIG-EXPORT-002's RO-Crate clause stands (G.7.5). Owner P35.39
+SIG-TRANSP-D18,SIG-TRANSP-018,TRANSP,§6.2; J3 §11,detached signatures over SHA256SUMS; the SIG-REL-015 pipeline minisign key (operator-held; OP-20; D-J3-8). Owner P36.50
+SIG-TRANSP-D19,SIG-TRANSP-019,TRANSP,§6.2; J3 §11,zero/low-egress host; non-listable origin; size caps; rate limits; egress alert + kill switch (D-J3-4/A-3: R2; $50/mo ceiling). Owner P35.5
+SIG-TRANSP-D20,SIG-TRANSP-020,TRANSP,§6.2; J3 §11,raw bytes only for raw-ok after the Part VIII byte screen; redactions = new captures; withdrawal deletes + purges + tombstones. Owner P37.36; also P35.31
+SIG-TRANSP-D21,SIG-TRANSP-021,TRANSP,§6.2; J3 §11,status page + heartbeat <=6h from scrubbed run records; separate from release as-of; gated/refused sources as counts only (D-J3-11). Owner P36.43
+SIG-TRANSP-D22,SIG-TRANSP-022,TRANSP,§6.2; J3 §11,fail-closed scrub gate (J3 S-1..S-14); secret-shaped value aborts the publish. Owner P35.31
+SIG-TRANSP-D23,SIG-TRANSP-023,TRANSP,§6.2; J3 §11,immutable release URLs cited on every page; legacy as-of selectors resolve at the edge or answer 400/404/409 (SIG-UI-035's amended clause, R11-A4). Owner P35.42; also P36.66a/b
+SIG-TRANSP-D24,SIG-TRANSP-024,TRANSP,§6.2; J3 §11,id-level release diff + human changelog; /v1/changes backed by it; prior releases publish manifests + disclosure (D-J3-10). Owner P36.67
+SIG-TRANSP-D25,SIG-TRANSP-025,TRANSP,§6.2; J3 §11,JSON twin per transparency page + API serves the same release-backed data (J3 §6.10; API-side parity is SIG-REL-010). Owner P37.42; also P35.57
+SIG-TRANSP-D26,SIG-TRANSP-026,TRANSP,§6.2; K9 §10; UXR-A10,source = registry row; every count = rows satisfying a named predicate; data-carrying ids without a row are anomalies. Owner P35.40
+SIG-TRANSP-D27,SIG-TRANSP-027,TRANSP,§6.2; K9 §10; UXR-A10,exactly one lifecycle state per registry row from a published precedence list; partition sums to the row count. Owner P35.40; also P36.48
+SIG-TRANSP-D28,SIG-TRANSP-028,TRANSP,§6.2; K9 §10; UXR-A10,K9 §4.1 columns pre-rendered; asc/desc sorts via plain links; single-dimension facet pages; no JavaScript. Owner P36.48
+SIG-TRANSP-D29,SIG-TRANSP-029,TRANSP,§6.2; K9 §10; UXR-A10,one freshness-verdict function shared with alerting; evaluated at release as-of or status time; never without its evaluation time. Owner P35.41
+SIG-TRANSP-D30,SIG-TRANSP-030,TRANSP,§6.2; K9 §10; UXR-A10,volatility from the ontology predicate registry over all published claims; evaluable/not-evaluable counts; never 'unknown' or '0 stale' for unevaluable. Owner P35.41
+SIG-TRANSP-D31,SIG-TRANSP-031,TRANSP,§6.2; K9 §10; UXR-A10,upstream-declared last-modified else canonical records digest; byte-only changes do not move it; SIG-records change date shown separately. Owner P35.41
+SIG-TRANSP-D32,SIG-TRANSP-032,TRANSP,§6.2; K9 §10; UXR-A10,per-release per-source extracts (sites where applicable; statements always) with sha256/size/licence/attribution + version index with added/removed/changed counts. Owner P36.68
+SIG-TRANSP-D33,SIG-TRANSP-033,TRANSP,§6.2; K9 §10; UXR-A10,sources table downloadable CSV/JSON with generated Table Schema; API parity. Owner P36.48; also P35.39
+SIG-TRANSP-D34,SIG-TRANSP-034,TRANSP,§6.2; K9 §10; UXR-A10,no reader-current-time values on release pages; status-lane pages carry the status clock. Owner P36.43; also P35.41
+SIG-TRANSP-D35,SIG-TRANSP-035,TRANSP,§6.2; K10 §18; UXR-A10,per-field publish verdict (publish/transform/never); no verdict = not published; notes/contacts/credential vars/paths never published. Owner P36.45
+SIG-TRANSP-D36,SIG-TRANSP-036,TRANSP,§6.2; K10 §18; UXR-A10,one history row per execution across all execution stores with link + clock basis; shared-run values never presented as the execution's. Owner P36.46; also P35.32
+SIG-TRANSP-D37,SIG-TRANSP-037,TRANSP,§6.2; K10 §18; UXR-A10,sources with published data but no execution record say so on the page and in the table. Owner P36.46; also P36.47 + P36.48
+SIG-TRANSP-D38,SIG-TRANSP-038,TRANSP,§6.2; K10 §18; UXR-A10,every rights decision with basis/gate/reviewer role/date; delegated-rule vs per-source, beyond-rule, terms-conflict and counsel-caveat disclosures. Owner P36.47
+SIG-TRANSP-D39,SIG-TRANSP-039,TRANSP,§6.2; K10 §18; UXR-A10,conduct rendered from observed run records (robots outcomes, refusals, rate limits), never the registry's declared robots_policy; a withhold decision is itself stated. Owner P36.47; also P36.46
+SIG-TRANSP-D40,SIG-TRANSP-040,TRANSP,§6.2; K10 §18; UXR-A10,dossier contribution from one artifact shared with the dossier page + jurisdiction-assignment basis. Owner P36.69; also P35.44
+SIG-TRANSP-D41,SIG-TRANSP-041,TRANSP,§6.2; K10 §18; UXR-A10,capture change kind + file action per the J3 §5.3 table; downloads only for raw-ok screened retained bytes. Owner P36.69; also P36.51
+SIG-TRANSP-D42,SIG-TRANSP-042,TRANSP,§6.2; K10 §18; UXR-A10,append-only source changelog from records + release diffs; record clocks only, never VCS dates. Owner P37.41
+SIG-TRANSP-D43,SIG-TRANSP-043,TRANSP,§6.2; K10 §18; UXR-A10,published-entity lists capped with total + cap stated and a link to the full per-source data. Owner P36.69
