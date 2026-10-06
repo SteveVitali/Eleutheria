@@ -2145,7 +2145,349 @@ the requirement-index regeneration, the draft 11B OM-20
 list, the 11B outreach-owed list, the 8b/8c placement
 confirmations, and this row's closeout.
 
-### C13 — pending (fresh-context Phase-4 sizing review; closes this ledger)
+### C13 — 2026-10-06 (Phase-4 review of all 11B contracts; deliverables 4–8; closes this ledger)
+
+Started: 2026-10-06T12:07Z (`date -u` at the isolation echo —
+resumed context; the file reads and audits ran ahead of it in
+the same context window) · Closed: 2026-10-06T__:__:__Z
+(filled at close — the last criterion is the head-bound CI
+read). Context model: devin-desktop/swe-2-high/subagent.
+
+Isolation check (positive control — the verbatim block):
+
+    P11BC13-CTL-182c7b5e
+    Tue Oct  6 12:07:26 UTC 2026
+    /Users/stevenvitali/Eleutheria
+    r11/PLAN-11B-contracts-for-11b-and-transp-family
+     M docs/tickets/REQUIREMENT_INDEX_R11.md
+
+(the ` M` line is the regenerated requirement index C12 left
+staged for C13's audit — this context's own edits extend it).
+
+Scope (contract row 62 + deliverables 4–8): the fresh-context
+Phase-4 sizing review of every 11B contract (rows 261–343), the
+split decisions on the four flagged rows, the GATE-G4b
+re-split evaluation, the regenerated requirement index, the
+draft 11B OM-20 list, the 11B outreach-owed list, the 8b/8c/8d
+placement confirmations, and this row's closeout.
+
+Phase-4 sizing review — method (deliverable 4):
+
+- Every contract file of rows 261–343 (83 files before the
+  split) re-read: `## Load` header versus its entries on the
+  current tree, `Depends on:`/`live:` edges resolved against
+  the manifest, `Gate status`/`OM-20 status`/`Production
+  mutations` headers audited, requirement-id coverage checked
+  against spec §56's `Owner:`/`Also:` lines.
+- Working-set model (the T3 convention): Load ÷3 + ≈ 17.5k
+  implement-spec/self-review skill text + ≈ 15k harness/dispatch
+  + written output × 1.75 (re-reads) + ≈ 25k tool output + ≈ 12k
+  per live leg that runs inside the same dispatch context.
+  Verdict bands: ok ≤ 200k, tight 200–235k, split > 235k or a
+  scope too large for one run regardless of Load.
+- Declared reads: **no contract exceeds the ~150k-token ÷3
+  ceiling.** Largest after the split: P35.27 (306) ≈ 93.3k,
+  P35.26 (305) ≈ 91.7k, P35.25 (304) ≈ 90.0k, P35.6 (266)
+  ≈ 89.4k, P35.22 (302) ≈ 88.3k, P35.24 (303) ≈ 85.0k; the
+  rest trail off below ≈ 77k. The two non-ticket rows record
+  loads in their own forms (PLAN-11C ≈ 106.7k ÷3 per context;
+  GATE-G5 a gate marker). Modelled peaks for the heavy
+  conditional-OM-20 rows land ≈ 200–225k (tight, fitting) —
+  their live legs dispatch under the OM-19 re-run prompt.
+
+The four flagged rows — decided:
+
+- **P35.1b (row 291) — SPLIT.** Its mutations are all
+  *in-ticket* under the OM-20 listing (`Live legs: none
+  separately queued`) — unlike the leg rows, nothing forces
+  the work across dispatches. One context would carry the
+  engineering plus ~8 mutation groups (pre-state + backup, six
+  deletions, keep-list + `sig-export` guard, AR policy dry-run
+  + apply, four cron reconciles, `sig-alerts` disposition,
+  dispatcher build + deploy + ~79 retirements, closing proof):
+  ≈ 77k Load + ≈ 57.5k fixed + ≈ 52.5k output + ≈ 90k of live
+  leg work ≈ **275k — over the 235k split line**, and the
+  destructive sweep and the new dispatcher mechanism are two
+  different working sets with different blast radii. The
+  contract recorded the seam; this context executed it.
+- **P36.12 (row 290) — NOT split.** Its ten family legs run
+  10-26 → 11-05, each landing on its own day after ING-GO-B —
+  separately dispatched under the re-run prompts, never one
+  context. The dispatch context holds the engineering + the
+  L0 opening + at most the first family leg (≈ 68k + 57.5k +
+  52.5k + 24k ≈ **202k, tight but fitting**); each later leg is
+  a fresh context with its own +0 verification. The recorded
+  family-boundary seam stays available to the orchestrator at
+  dispatch — a seam-stop mid-wave is a clean `blockedOn`, not
+  a split this review needs to bake in. Splitting the row
+  statically would also force the ING-GO-B gate cell and the
+  window onto two suffix rows for no working-set gain.
+- **P35.61 (row 338) — NOT split.** The L2 pause is a *hard*
+  boundary by construction: the apply leg cannot start until
+  the operator's verbatim in-ticket go with a recorded
+  `--authority` scope, so L3 is always a separate dispatch
+  under the re-run prompt. What stays in the dispatch context
+  is audit + plan + packet assembly (≈ 58k + 57.5k + 52.5k +
+  12k ≈ **180k — ok**). The candidate seam (audit/packet vs
+  apply/freeze) would only formalise a boundary the pause
+  already imposes.
+- **P35.63 (row 341) — NOT split.** Same shape: the HG-11
+  in-ticket pause between stage+readout and promote+rehearsal
+  already forces two dispatches (≈ 67k + 57.5k + 52.5k + 12–24k
+  ≈ **190–200k in the first, tight but fitting**). Splitting the
+  row would duplicate the publication-window contract without
+  shrinking either context's work.
+
+The rest of the adversarial review:
+
+- **Ordering:** no forward or unresolved `Depends on:` or
+  `live:` edges — programmatic sweep over all 83 contracts,
+  every live: target resolves to a chain row (0 errors;
+  `check_order.py` over the plan CSV also 0).
+- **Orphan seams:** none found. The carried seam — P34.40's
+  `/v1/*` LB leg (deliverable 8d) — is honoured: 331 (P35.53)
+  and 336 (P35.59) both carry `live:P34.40` (its L2) with the
+  recorded fallback (the 11B OM-20 list names it, or the
+  landed GB-Q4 pre-authorisation runs it). The leg-level
+  live: edges the T3 line recorded (P34.43→P34.46,
+  P34.45→P34.46, P34.21b→P34.21a/P34.18) sit where the 11B
+  contracts that consume them expect.
+- **Fragmented decisions:** none found. The scattered SIG-CONF-010
+  owner correction is recorded in 337's notes (owner P35.60,
+  not P37.45); the SEED-12a owner re-confirmations
+  (SIG-OPS-007 → P35.2, SIG-SEC-008 → P35.1a/b, SIG-SEC-009 →
+  P35.4, SIG-CONF-010 → P35.60) are carried by the written
+  contracts; C-context recorded plan-note corrections (C6–C12)
+  stand.
+- **Coverage:** the regenerated index resolves every §56 id
+  with an 11B owner — 38 ids, each listing exactly its owner
+  row(s) and each owner contract listing the id (`owner
+  contract lists it: yes` on all 38; SIG-SEC-008's a/b band is
+  the only multi-owner pair, as the spec declares). Every
+  SIG-TRANSP id maps to exactly one owner row — the 29 whose
+  owner rows are 11C/11D skeletons (rows 386–466) read
+  `owner contract is a skeleton`, expected: PLAN-11C/11D write
+  those contracts. The 4 seed-owned §56 ids stand per §56.1.
+  No contract lost a requirement in the split (291's Owner:
+  SIG-SEC-008 line stays; 291a cites it — see the index).
+- **Over-factoring:** not proposed — the five existing a/b
+  splits keep disjoint halves; a further split of tight rows
+  would double the row count for no working-set gain (the T3
+  recorded tradeoff).
+- **Live legs vs engineering runs:** separately-dispatched leg
+  work (the Wave-A/B family legs, the post-pause legs of
+  338/341, the OM-19 re-run prompts) is never counted as an
+  engineering run — the counts below use only the manifest
+  est-runs cells of ticket rows.
+
+The split, landed (OM-03; `decompose-spec mode=extend`):
+
+- **`291a_P35.1c__dispatcher-consolidation.md`** — new full
+  contract at row **291a** under the same part-3 banner:
+  `sig-sched-due` dispatcher build + deploy, the
+  `[dispatcher]` declaration, the ~79 per-source trigger
+  retirements, the closing 0-drift proof + consolidated cost
+  record; `Depends on: P35.1b`; same window (AR-3 + AR-2), same
+  OM-20 conditional, same B-13 `a` answer; 1.0 run; Load
+  ≈ 60.7k ÷3.
+- **`291_P35.1b__fleet-hygiene.md`** re-scoped in place to the
+  sweep half (its own recorded seam): OM-14 mutation list,
+  deliverables, ACs, clauses, notes and re-run prompt updated;
+  the plan-cell Gate status kept verbatim; Load re-totalled
+  ≈ 65.7k ÷3.
+- Manifest: row `291a` inserted after 291 (suffix-letter
+  insert convention, the `170a` precedent); a `## Plan
+  extensions` line records the split; this section +
+  `## Decomposition decisions` hold the review. `gen_t3.py
+  check` (310 plan rows vs 310 CSV rows — the suffix insert is
+  invisible to the T3 checker by design) and `check_order.py`
+  both report 0 errors.
+
+GATE-G4b re-split rule (deliverable 5; S6R-15) — **evaluated,
+does not fire:**
+
+- Engineering rows after the split: **82** (ticket kind across
+  rows 261–343, excluding PLAN-11C 340 and GATE-G5 343;
+  84 if the plan+gate rows are counted) — under 85.
+- Engineering runs after the split: **74.5** (sum of the
+  manifest est-runs cells of ticket rows; live legs and the
+  PLAN row's fan-out excluded) — under 75.
+- Both counts clear under either reading → no `GATE-G4b`
+  marker is added after row 290; the banner boundary stays
+  what it is for a later review.
+
+Requirement index (deliverable 7 — regenerated, audited,
+committed):
+
+- `req_index.py write` + `check` → **`req_index: current`** —
+  311 contracts scanned (144 full, 167 skeleton), 277 distinct
+  ids cited, P35.1c present as `cited` on SIG-SEC-008 /
+  SIG-OPS-005 / SIG-STORE-003 / SIG-ENG-042 (owner rows stay
+  P35.1a/b as §56 declares).
+- Tool patch recorded (in this commit):
+  `req_index.py`'s map-row filter `int(r["row"])` would crash
+  on a suffix-letter insert — now parses the numeric prefix
+  (`291a` sorts under row 291). The generator's scan source is
+  the T3 contract map, so `T3_contract_map.csv` gained the
+  `291a` row (kind ticket / contract_kind full / completed_by
+  PLAN-11B C13); `gen_t3.py check` still reads only plan-CSV
+  rows against the map — 0 errors.
+- Audit findings worth recording: the index's
+  `owner contract does not (yet) list` list is 29 rows — all
+  rows ≥ 344 (11C/11D skeletons), expected at this stage; the
+  four seed-owned §56 ids stand; `SIG-TRANSP` 11B-owner rows
+  all resolve (002/007/011/013/016/017/019/022/023/026/027/
+  029/030/031) with no row owning two copies of the same id.
+
+Draft 11B OM-20 list (deliverable 6 — built only from the
+written `Production mutations (OM-14)` headers; expiry `the
+next GATE` = GATE-G5 per each contract's own text; the
+operator approves verbatim at GATE-G4; **nothing is
+pre-authorised on silence** — an unlisted row pauses
+in-ticket):
+
+| row | mutation (from the contract's OM-14 block) | restore point / rollback | expires | voided-by |
+|---|---|---|---|---|
+| **P35.5** (262) | R2 bucket + CDN route config, release-object pushes to the R2 origin, the $50/mo egress alert thresholds, enabling the `mirrors.toml` R2 entry — all after OP-09 lands | disable the CDN route + `enabled = false`, delete pushed objects, revert thresholds; GCS stays origin of record | GATE-G5 | a red probe, a failed restore point, or a production read that contradicts a record |
+| **P35.1a** (264) | `scheduled-ops` Scheduler creates/updates/deletes from `cadence.toml` (incl. the inert monthly-export trigger, gated on D-P34.6-2's own go) + the daily live-diff wiring into `sig-probe` | revert the cadence row + re-run `scheduled-ops`; `live-diff` mutates nothing | GATE-G5 | same |
+| **P35.14a** (272) | INSERT-only `vocab_*` registrations (six predicates, genre stamps, Mobility crosswalk, group-13 rows) via the appended sqitch seed | forward-only — superseding registrations (slugs never reused); AR-2 backup + per-table counts precede | GATE-G5 | same |
+| **P35.15a** (274) | INSERT-only `vocab_*` registrations for `technology` + new slugs | forward-only supersession; AR-2 backup precedes | GATE-G5 | same |
+| **P35.15b** (275) | INSERT-only technology backfill claims (chunked `--apply`, `+0` re-run) | forward-only supersession; the run stops clean and resumes from checkpoint | GATE-G5 | same + the hosted vocabulary check failing (leg waits on `live:` P35.15a) |
+| **P35.1b** (291) | the six named job deletions, the AR cleanup policy, the four cron reconciles, the `sig-export` guard roll, the `sig-alerts` disposition | AR-2 backup before the first delete; every delete's `describe` JSON saved; cadence rows reconcilable back; `sig-alerts` spec captured | GATE-G5 | same |
+| **P35.1c** (291a) | the `sig-sched-due` dispatcher job + hourly trigger creation and the ~79 recorded per-source trigger retirements | per-trigger `describe` JSON saved verbatim; the per-source shape re-creatable from `cadence.toml`; dispatcher removed after triggers restored | GATE-G5 | same |
+| **P35.16** (296) | append-only `geometry_defect`/correction claim inserts on the seven identified targets | additive writes; the pre-state capture is the record; a wrong claim is superseded, never deleted | GATE-G5 | same |
+| **P35.17** (297) | OCFL captures of the boundary-source objects (TIGER ×3, Gazetteer ×2, NE admin-0/1, 500k) + the `jurisdictions` registry rows — only after the operator's separate HG-03 flips | additive OCFL objects; the pre-capture store state is the record; a wrong capture is superseded | GATE-G5 | same |
+| **P35.22** (302) | new-identity minting on the next scheduled ingest of affected sources (camera-registry days 6–13 in window) + the `/status/` notice + label | stop minting under the new identity (a deploy revert) — no stored row is ever touched | GATE-G5 | same |
+| **P35.24** (303) | one hosted re-key run appending re-keying correction claims + the `/status/` notice | forward-only — a reversal correction names the run's ids; the dry-run artifact is the replayable record | GATE-G5 | same |
+| **P35.25** (304) | registry lineage declarations + the rematerialize back-populating `id_namespace`/lineage/independence | forward-only — a reversal materialization correction; never a delete | GATE-G5 | same |
+| **P35.26** (305) | EFF + OSM re-ingest appending role/time-corrected claims + the edge rematerialize (inside existing ingestion permission; OSM leg inside the ODbL compartment) | forward-only corrections/materializations; claim-identity idempotent | GATE-G5 | same |
+| **P35.27** (306) | one rematerialize recomputing resolved values + contradiction states | forward-only — a reversal correction names the run's rows | GATE-G5 | same |
+| **P35.32** (310) | the `ingest_run_report` sqitch deploy + insert-only report rows (scheduled-ingest + the one-shot backfill) | `sqitch revert` + stopping the writer; the backfill is `+0`-idempotent | GATE-G5 | same |
+| **P35.41** (320) | the connector-image roll (redeploy of the hosted ingest job family carrying the capture changes) | AR-2 restore point precedes; a roll-back to the prior digest | GATE-G5 | same |
+| **P35.46** (325) | the ruleset-v3 ER run (append-only derivation links, site ids, possible-duplicate links, census and demotion records; never concurrent with `sig-materialize`) | forward-only — a reversal run names the run's rows; AR-2 restore point precedes | GATE-G5 | same |
+| **P35.53** (331) | the three creates — private bucket (+lifecycle/IAM), two IAM-only staging services, `sig-release` job + `sig-release-rt` SA | each create is independently reversible (delete it); AR-2 restore point precedes; nothing existing is mutated | GATE-G5 | same |
+| **P35.59** (336) | the legacy floor import (private-bucket writes), the `sig-web` revision roll, the serving-path retirement declaration | roll `sig-web` back to the prior digest; the import is additive; the retirement is a config revert; byte-compare failure → revert, never patch | GATE-G5 | same |
+| **P35.62** (339) | `staged/` namespace object writes + staged artifacts on the IAM-only staging origins | an appended supersession record; immutable namespaces are never deleted | GATE-G5 | same |
+
+Notes on the list:
+
+- **Count is 20 rows, not 19** — GATE-G4's item-4 enumeration
+  ("the 19 OM-20 rows of 11B") predates this split; the
+  P35.1b mutations split across rows 291 + 291a, so the draft
+  names both under the same conditional authority. The list
+  above is the packet input; each entry is traceable to a
+  contract header.
+- **Never pre-authorised (unchanged):** P35.57 (261),
+  P35.11 (271), P35.14b (273), P36.12 (290), P35.61 (338),
+  P35.63 (341), and every HG-03 flip — P35.17's boundary flips
+  included (in-ticket goes or the operator's own act).
+- **P34.40's `/v1/*` leg (deliverable 8d):** not an 11B row —
+  it is carried on this list per the recorded fallback only if
+  still paused at GATE-G4 (else it runs under the landed
+  GB-Q4 pre-authorisation); naming it here records the seam,
+  it does not smuggle an authorisation.
+
+ADR-171 outreach-owed list (deliverable 8a — the 11B part;
+from the written contracts' outreach blocks, never inferred):
+
+| row | connector/project it touches | ids owed — unmet at launch (ADR-171, `D-R11-LATER-04`) |
+|---|---|---|
+| **P35.6** (266) | connector-registration plumbing — every compact/ecosystem-adjacent source flows through it | SIG-CHART-033, SIG-INGEST-029, SIG-INGEST-030a, SIG-CONTRIB-012, SIG-CONTRIB-012a, SIG-CONTRIB-013, SIG-GOV-024 |
+| **P35.11** (271) | Wave-A activation — activates connector behaviour incl. the three manual first runs + the tribal S8 screened lane | the same seven |
+| **P36.74** (289) | the Flock portal probe — the §22.5 Eyes on Flock relationship (probe only; EoF stays a read-side mirror) | the same seven |
+| **P36.12** (290) | Wave-B activation — ~89 sources, seven widen targets, the probe leg | the same seven |
+
+- Every other 11B contract records *why the set does not
+  apply* (no §6 compact-table or §22.4–22.5/§35.1 ecosystem
+  connector written, widened or activated) and re-states the
+  set as owed-unmet — audited programmatically: **no 11B
+  contract stamps any of the seven ids satisfied** (the only
+  "satisfied" hits are the verbatim disclaimer "None is
+  stamped satisfied").
+- Trigger (every row): **the operator authorises outside
+  contact**. No outside contact made or implied anywhere
+  (ADR-171 Decision 3, U-011); no operator e-mail address in
+  any file.
+- Handed on: PLAN-11C (row 340 — its own deliverable 7a
+  carries the 11C part; P36.77's DocumentCloud/MuckRock row
+  leaves the set unmet) and PLAN-11D (the contribution-back
+  rows); GATE-ANNOUNCE's "spec MUSTs unmet at launch" list is
+  where the operator signs it verbatim (plan §13.5, row 510).
+
+Placements confirmed (deliverable 8b/8c — verified against the
+written contracts, not just the Plan-extensions line):
+
+- **Tribal S8 screened lane** — `AP-T2-201` (`dot_511`
+  arcgis_query; IND-TRIBAL) and `AP-T2-210`
+  (`dossier_documents`; IND-TRIBAL) **stay in P35.11** (row
+  271): its contract's deliverable 5 lands both under ADR-185
+  (screened lane, no outside contact, facts/citations or
+  screened metadata only, the no-human-review disclosure) and
+  names `AP-T2-093` (`doj_ctas_awards`; IND-P8, **not**
+  IND-TRIBAL) as excluded under `D-R11-LATER-09`;
+  `CG-LATER-tribal-data-governance-rule-i7-new-6` stays OPEN.
+  P36.12's contract repeats both placements for Wave B.
+  Confirmed — no change.
+- **`D-R11-OSMUID-1`** — **stays handed to P37.1** (row 344,
+  "OSM as a camera-site origin (code)"; PLAN-11C authors the
+  contract). The review's re-route option was examined: the
+  fix is a capture-side connector-code change (`extract()` /
+  the Overpass query) and **no 11B row owns an OSM connector
+  change**; P35.26 (305) re-ingests EFF/OSM before 11C lands
+  but does so under the deferral's stated compensating
+  controls (the pre-claim discard + P34.49's capture seal),
+  which its contract records verbatim in the outreach/OSMUID
+  caveat. The hand-off route (parent-contract deliverable-8
+  AC + Plan-extensions line) is sound — confirmed, not
+  re-routed.
+
+Verification (this context; recorded with limits):
+
+- `req_index.py check` — `req_index: current` (311 contracts
+  scanned after the insert; the check re-derives the file and
+  byte-compares).
+- `check_order.py` — 0 errors; totals 310 rows / eng runs
+  285.5 (the suffix insert is a manifest row invisible to the
+  plan-CSV checker; order recorded by the banner convention).
+- `gen_t3.py check` — `310 Round-11 manifest rows, 310 plan
+  rows, errors 0` (the insert does not disturb the 1:1
+  comparison; no stray-file flag — `291a_*` is outside the
+  checker's 3-digit glob, recorded).
+- `make check` — green: ruff clean, format clean, mypy 313
+  files clean, **pytest 6,495 passed / 464 skipped / 0 failed**
+  (333.52 s — the P34.33 baseline exactly; a docs/tools-only
+  change), `verify-gen` clean. **Recorded limits:** the PATH
+  docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`
+  (Docker daemon unreachable locally — the C1-recorded
+  wedge; the Docker-gated `tests/db`/`tests/e2e`/`test_web_iac`
+  rows skipped and run in CI). First bare `make check` attempt
+  hung in the Docker probe — re-run under the recorded stub.
+- `make docs-check` — green on every leg except the
+  expected-stale `docs-check-projection` at this point in the
+  sequence (the projection names the changed files; it is
+  regenerated after the ledger write and before the commit —
+  the C1/C12 ordering rule): freshness detectors 0 broken
+  refs, build-memory 0 violations (41 pre-existing warnings,
+  none C13's), spec-src byte-identical (852,023 B), coverage
+  820/820, backlog/ledger-contract/audit (9 covered conflicts,
+  same set)/obligation-events (636) all clean, return_pass 0.
+- `check_spec_src.py` — OK (38/38 src, 191/191 appendix-f,
+  1,644/1,644 ids).
+- `check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv` —
+  820/820 rows OK.
+- `memory_guard.py all --staged` — 0 violations (1,030 items)
+  before the content commit.
+- Docker limitation stands (recorded C1): locally-green
+  `(tests/db, tests/e2e, test_web_iac docker rows not run:
+  daemon unreachable)` — CI is the authority for them.
+
+Boundary (OM-05) — appended after the push:
+
+- <pending — ci_boundary read at the pushed head; the `ci:`
+  line lands in the closeout commit>
+
+Close record — appended at closeout (OM-02, one commit after
+the PR exists).
 
 ## OM gap table
 

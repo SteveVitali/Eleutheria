@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "fce56436fd33e234ceec0f2dbe9f94548830f0e0",
+  "input_commit": "bb4298f056bb7f55a919685a6b68311fc17f1e2a",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1766,7 +1766,7 @@
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",
-      "sha256": "8111af9e17255f59190c13a86e7ad558bebdbb6cf101d13efacd9e5d08b2b649"
+      "sha256": "3938159660a8c3592e6f5ad44efebdad6993a1678c75380342fc1a9ac833fa95"
     },
     {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
@@ -1874,7 +1874,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "fc15043d30dfbfcbd408e7822901200dd1fd75173c339dd0a3b237f199d015ab"
+      "sha256": "35afac8eb87fd5d40a37fe8b182bcd84bd5f99137627c72ef80bf94b33aeceaa"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -2402,7 +2402,11 @@
     },
     {
       "path": "docs/tickets/291_P35.1b__fleet-hygiene.md",
-      "sha256": "8a406653a2aa76882354e28ab9a6609db2349d57fabb57a1407aab0d6729140c"
+      "sha256": "0fcdfff33de96eb7c636ca7580a338bb77098b1aa47292aa5dd42fc35e99b593"
+    },
+    {
+      "path": "docs/tickets/291a_P35.1c__dispatcher-consolidation.md",
+      "sha256": "87d6155fa382b6ec8e30eef0a22f6ea5bb9a70c753dcf30448420297f5538acb"
     },
     {
       "path": "docs/tickets/292_P35.3__production-truth-probes-and-sentinel-scan.md",
@@ -3894,7 +3898,7 @@
     },
     {
       "path": "docs/tickets/REQUIREMENT_INDEX_R11.md",
-      "sha256": "9e0419f67bd5724c3237047c93d8e500814e736c99d7f3d61208a4321fb55f2d"
+      "sha256": "ac29a23ffdb3e162966341d122acdb97a7326b693df5ee5b5402c47695447a43"
     },
     {
       "path": "docs/tickets/_TEMPLATE.md",

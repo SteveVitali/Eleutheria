@@ -150,7 +150,8 @@ def short(s: str, n: int) -> str:
 def build(date: str) -> str:
     D = G.load()
     sec_of = D["sec_of"]
-    rows = [r for r in csv.DictReader(MAP.open(encoding="utf-8")) if int(r["row"]) >= 201]
+    rows = [r for r in csv.DictReader(MAP.open(encoding="utf-8"))
+            if int(re.match(r"\d+", r["row"]).group()) >= 201]  # suffix-letter inserts (e.g. 291a) sort under their numeric row
     cov = coverage_head()
     ix: dict[str, dict[str, list[str]]] = {}
     kinds = {"full": 0, "skeleton": 0}
