@@ -899,8 +899,8 @@ owns closeout.
 
 Started: 2026-10-06T~01:4xZ (first C7 file write; source: file mtime —
 investigation preceded it in the same context) · Closed:
-2026-10-06T02:2xZ (`date -u`; last C7 criterion = the head-bound CI
-read at the content+ledger head — see Boundary).
+2026-10-06T02:40Z (`date -u`; last C7 criterion = the head-bound CI
+pass at `5479f608` after the advisory-gate fix-forward).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + the 8a ADR-171 checks):
@@ -1053,13 +1053,31 @@ Local verification (P11, with recorded limits):
 
 Boundary (OM-05):
 
-- Recorded below — the head-bound read at the content+ledger head
-  lands in `docs/build/logs/ci-PLAN-11B-C7.json` (gitignored);
-  the verbatim `ci:` line is appended here after the read.
+- First read @ `2c2ef14a` (content head): **`blockedOn` — the
+  `security` job's npm advisory gate blocked on a NEW advisory,
+  source-map-js GHSA-68fv-2mgg-jv7q (high, event-loop DoS via
+  indexed source-map section offsets; run 37404414780)** — a
+  time-varying advisory-feed finding, not the docs change (the
+  commit touched contracts + ledger + projection only).
+  Fix-forward (red→green, honest fix over allow-list): upstream's
+  1.2.2 (published 2026-09-30) patches exactly this advisory;
+  `web/package-lock.json` bumped 1.2.1→1.2.2 as a surgical edit
+  (every parent range `^1.0.1`/`^1.2.1` admits it; `npm ls`
+  resolves cleanly; `npm_audit_gate.sh` locally reports
+  `blocked=0` — the remaining candidate is the allowed
+  http-cache-semantics entry). Committed as `5479f608`.
+- Re-read @ `5479f608` (fix-forward head): **`ci: pass
+  #236@5479f60` — python/docs/composed/security/web 5/5
+  head-bound (run 37404618425; stack pass; `main` 2de7b50
+  descends:no merges:0 open-other:6; log
+  `docs/build/logs/ci-PLAN-11B-C7.json`, gitignored, read
+  2026-10-06T~02:3xZ).** Green on the second head — the advisory
+  gate cleared with the bump, all five required jobs green.
 
-Close record (this commit): appends the head-bound read and fills
-Closed — work complete. The shared `Closed:` header stays
-unwritten — C13 owns closeout.
+Close record (this commit): records the head-bound read and fills
+Closed at 2026-10-06T02:40Z — work complete; boundary green on
+the second head after the recorded fix-forward. The shared
+`Closed:` header stays unwritten — C13 owns closeout.
 
 ### C8 — pending
 
@@ -1082,7 +1100,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5, C6, C7) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5, C6, C7) | header Started from `date -u`; C2/C3/C4/C5/C6/C7 Started from file mtime (source named); C7 Closed from `date -u` |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 — see the C7 Boundary line (log `logs/ci-PLAN-11B-C7.json`) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 @2c2ef14a blockedOn (security npm advisory gate — new advisory GHSA-68fv-2mgg-jv7q on source-map-js 1.2.1, advisory-feed timing not the docs change) → fix-forward bump to 1.2.2 (upstream fix, surgical lockfile edit, `blocked=0` locally) → `ci: pass #236@5479f60` 5/5 head-bound (run 37404618425; log `logs/ci-PLAN-11B-C7.json`) |
 | OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5, C6, C7) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2, C3, C4, C5, C6, C7) | manifest Plan-extensions + ledger C2/C3/C4/C5/C6/C7 sections appended only; C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's + C6's + C7's rewrite commits name no ticket ids in their subjects; memory_guard --staged run pre-commit |
