@@ -149,6 +149,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-142](ADR-142-release-candidate-identity-deferred-evaluation-and-pointer-immutability.md) | — | — | — |
 | [ADR-143](ADR-143-investigation-journey-acceptance-portfolio-evidence-classes-and-honest-gaps.md) | — | — | — |
 | [ADR-144](ADR-144-bounded-release-publication-unauthenticated-verification-and-rollback-rehearsal.md) | — | — | — |
+| [ADR-145](ADR-145-round10-spec-reconciliation-to-landed-design.md) | Round-10 spec reconciliation to the landed design (P33.5) | P33.5 | Accepted |
 
 ## Notes
 

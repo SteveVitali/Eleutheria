@@ -6,7 +6,8 @@
 **Status:** Canonical. This document is the authoritative contract for implementation.
 **Supersedes as an implementation authority:** `docs/1_deep_research_overview.md` (which remains
 the authoritative statement of *intent* and against which this document is proven a strict superset).
-**Spec date:** 2026-08-20 (original); additive Round-10 extension 2026-09-25
+**Spec date:** 2026-08-20 (original); additive Round-10 extension 2026-09-25; Round-10
+landed-design reconciliation 2026-09-28 (P33.5, ADR-145)
 
 ---
 

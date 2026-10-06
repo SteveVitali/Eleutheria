@@ -84,14 +84,21 @@ most informative datasets SIG can produce.
 and the network, with per-host budgets, a documented crawler UA carrying a contact URL, and
 crawl-delay honoring. Connectors MUST NOT hold their own HTTP clients.
 
-**SIG-INGEST-012 (MUST).** Where `robots.txt` is *unavailable* — a connection failure, a timeout,
-an exhausted redirect chain, or a 5xx/429 server answer — crawl permission MUST be treated as
-**not granted** and the connector MUST refuse to run. Per RFC 9309 §2.3.1.4, a **4xx** robots
-response is not unavailability: it means the host publishes *no policy*, and access is
-unrestricted (ADR-087, P26.3 — the earlier reading conflated "no policy" with "unavailable"; the
-`*.api.civicclerk.com` tenant surface answers robots.txt with 404). Where the 4xx is itself a
-managed challenge (F2.1's Flock portals answer 403 on every path), the data fetch still surfaces
-the challenge and is recorded, never defeated (SIG-INGEST-013). *(REQ-R2-02.)*
+**SIG-INGEST-012 (MUST).** Every connector fetch MUST **probe and record** the target host's
+`robots.txt`, and the verdict MUST be classified per RFC 9309 §2.3.1.4 and recorded on the fetch
+record: `retrieved` (a policy was parsed), `no_policy_4xx` (a 4xx answer is *not* unavailability —
+it means the host publishes *no policy* and access is unrestricted; ADR-087, P26.3 — the earlier
+reading conflated "no policy" with "unavailable"; the `*.api.civicclerk.com` tenant surface answers
+robots.txt with 404), or `unretrievable` (connection failure, timeout, exhausted redirect chain,
+5xx/429). Under the operator's GL-GATE-08 disposition (ADR-088, P26.17) a `disallowed` or
+`unretrievable` verdict **does not refuse the fetch**: the fetch proceeds and is stamped
+`robots_disregarded`, so the record says the refusal was ignored — the verdict is first-class
+provenance, never silent. This is not a circumvention posture: the fail-closed rights gate
+(`ingestion_permitted`/custody review, HG-03) is untouched and is what actually refuses a source;
+challenge-solving, access-control bypass and transport deception remain prohibited
+(SIG-INGEST-013); and where a 4xx is itself a managed challenge (F2.1's Flock portals answer 403 on
+every path), the data fetch surfaces the challenge and is recorded, never defeated.
+*(REQ-R2-02.)*
 
 **SIG-INGEST-013 (MUST NOT).** SIG MUST NOT operate a crawler that defeats a bot-management
 challenge on any source. *(REQ-R2-01; §26, §46.5.)*
