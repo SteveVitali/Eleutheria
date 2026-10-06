@@ -1666,7 +1666,208 @@ Closed at 2026-10-06T05:55Z — work complete; boundary green on
 the first head. The shared `Closed:` header stays unwritten — C13
 owns closeout.
 
-### C11 — pending
+### C11 — 2026-10-06 (rows 331–337)
+
+Started: 2026-10-06T~05:5xZ (this context resumed from a summary;
+the row-331 write landed in the prior segment and rows 332–337
+landed ~05:59–06:03Z; the files' mtimes read 01:59–02:03 — the
+recorded local-clock offset C10 noted, so `date -u` is the
+anchor) · Closed: pending (the boundary commit fills it).
+Context model: devin-desktop/swe-2-high/subagent.
+
+Scope (contract deliverable 2-in-part + the 8a ADR-171 checks):
+
+- Rewrote all seven skeletons in place: 331 (release pipeline —
+  the `sig-ops release` verb family with registry lock/events/
+  dry-run/apply, the private versioned bucket with the §4.1
+  namespace layout, two IAM-only staging services, the
+  `sig-release` job + `sig-release-rt` SA, the NEW-5 eviction of
+  committed release trees with a recommit guard, the
+  stale-generation refusal), 332 (envsubst-templated nginx +
+  `conf/<gen>/` generations + metadata-only `promote` — the
+  promoted.map 404 gate, digest rolls, zero byte copies, atomic
+  latest flip), 333 (rollback/clear-latest/withdraw/
+  `--purge-versions` — withdrawals re-applied on rollback, no
+  config reversion, alias-complete tombstones, dormant R2/CDN
+  purge hooks, the legacy-floor import machinery, the conf-gen
+  regression probe, runbook sections appended into P35.4's file),
+  334 (verification suite A — V1–V5 + V11–V13, S/P modes, JSON
+  results, skip-blocks, each seeded defect fails), 335 (suite B —
+  V6–V10 + V14 + the P1 probe set + the D-G3-8 pre-authorised
+  post-promote auto-rollback + the V15 hook point), 336 (the dark
+  cutover — legacy-floor import, `sig-web` digest roll,
+  byte-compare of every allow-listed route, bucket-root serving
+  retirement), 337 (release classifier + Class-R standing go +
+  the agent-drafted readout generator + the sign-off-scope ADR).
+
+Findings / decisions (per row):
+
+- 331 (release pipeline): written — deps `P34.10;P34.3;P34.43`
+  confirmed verbatim. **The conditional OM-20 gate `named
+  mutation -> OM-20: pre-authorised only if the GATE-G4 list …
+  names this row …; otherwise NOT pre-authorised = IN-TICKET
+  PAUSE (private release bucket, staging services, sig-release
+  job)` + `D-G3-10 [B-9] = yes` carried verbatim**; live stage
+  `production write`, window `AR-3 + AR-2`, one infra-create leg
+  (AR-2 restore point → IaC apply → private-reachability proof →
+  stale-generation refuse), `live_verification=true`.
+  **SIG-REL-004 + SIG-REL-005 are the §56.6 Owners — stamped.**
+  The mutation list is named (private bucket + two IAM-only
+  staging services + `sig-release` job/`sig-release-rt`); the plan
+  cell enumerates no legs, so the contract derives one leg from
+  the creates + the unauthenticated-probe AC (recorded reading).
+  `live:` edges recorded — P34.40's L2 `/v1/*` step (8d seam;
+  GB-Q4 authority expires GATE-G4, named on the 11B OM-20 list if
+  still paused) and P35.59's consumption of the topology. NEW-5's
+  eviction removes files, not history — recorded.
+- 332 (config generations + promote): written — deps
+  `P35.53;P34.40;P34.41` confirmed verbatim. **Gate `none`
+  carried verbatim**; not an OM-20 row; live stage `none (used by
+  R11-REL-09)` carried. **SIG-REL-006 is the §56.6 Owner —
+  stamped.** Promotion is a metadata act: `conf/<gen+1>` composed
+  whole (promoted.map + latest.json + withdrawn/selectors/labels
+  + `releases/` index — release tool the only generator), zero
+  release bytes copied, `sig-api` then `sig-web` rolled by digest
+  with `min-instances=1`, the latest flip atomic per revision,
+  unpromoted namespaces 404 by `map` construction,
+  `SIG_STAGING=1` bypass + `noindex` env-guarded. Recorded:
+  `D-P34.13-1`'s `error_page` surface preserved; the approval
+  check reads the standing go or signed readout — never creates
+  one; Cloud Run traffic reversion forbidden (333's clause).
+- 333 (rollback/withdrawal/purge/runbook): written — deps
+  `P35.54;P35.4` confirmed verbatim. **Gate `none` carried
+  verbatim**; not an OM-20 row; live stage `none (rehearsed in
+  R11-REL-09/11)` carried — the 10/15-minute targets are measured
+  at REL-11, recorded as targets (D-G3-9). **SIG-REL-013 is the
+  §56.6 Owner — stamped.** Rollback re-applies the *current*
+  withdrawal set and writes `conf/<gen+1>` (latest moves; serving
+  configuration is never reverted — Cloud Run traffic reversion
+  is forbidden by construction); withdraw = the §8.3 order
+  verbatim over every staged namespace with alias-complete
+  `withdrawn.conf` and 410 `sig.tombstone/1` probed on every
+  alias; `--purge-versions` deletes noncurrent versions of
+  withdrawn objects only (the append-only claim spine untouched);
+  the R2/CDN purge hooks are wired but dormant until J3 TX-11's
+  mirror exists (a missing mirror config is a no-op, recorded);
+  the §7.3 needs-no-readout set is carried — every verb records
+  the operator go or pre-authorisation id; the runbook sections
+  are appended into P35.4's file, never a rewrite.
+- 334 (verification suite A): written — deps
+  `P35.13;P35.53;P34.34b;P35.31` confirmed verbatim. **Gate
+  `none` carried verbatim**; not an OM-20 row; no live stage.
+  **SIG-REL-007 recorded as `Also:` — Owner stays P35.58** (the
+  requirement's own §56.6 `Also:` naming). V1–V5 + V11–V13 in S
+  and P modes per the §5.5 table; every check writes a JSON
+  result; a skip blocks (SIG-ENG-042 — never a silent pass); the
+  waiver exists only under Class S and is recorded in the
+  readout; **each V-check fails a seeded defect** (the catalog AC
+  verbatim). The 2 % stratified integrity sample is this check's
+  — the full-tree monthly audit is a named later row, recorded.
+- 335 (verification suite B + auto-rollback): written — deps
+  `P35.56;P35.57;P35.55;P34.21b;P35.19;P35.16;P35.20b;P34.4`
+  confirmed verbatim (the catalog fan-out map). **Gate `D-G3-8
+  [B-9] = yes (auto-rollback pre-authorised)` carried
+  verbatim** — the one always-authorised mutation class, cited on
+  every invocation record; not an OM-20 row; no live stage.
+  **SIG-REL-007 is the §56.6 Owner — stamped.** V6 number truth
+  (DR-C3-15 recompute), V7 API parity (§6.4 verbatim over every
+  dossier scope + 20 coverage scopes), V8 attribution sanity, V9
+  jurisdiction–coordinate sanity (the named regression cases as
+  fixtures), V10 withdrawal barrier (every alias, conf-gen
+  equality), V14 diff sanity (six deltas emitted for 337's
+  classifier — never interpreted here); the P1 probes join
+  `cadence.toml` with trigger points + `probe-run/1` records; a
+  seeded post-promote failure rolls back automatically and
+  alerts (the catalog AC); the V15 hook point is hosted —
+  SIG-CONF-007's checks stay P34.44a's, a ratchet regression
+  feeds the Class-S signal.
+- 336 (dark cutover): written — deps
+  `P35.54;P35.56;P35.55;P34.17;P34.21b` confirmed verbatim. **The
+  conditional OM-20 gate carried verbatim**; live stage
+  `production write`, window `AR-3 + AR-2`, one cutover leg
+  (restore point → floor import → digest roll → byte-compare →
+  retirement), `live_verification=true`, S budget.
+  **No §56 Owner (recorded)** — the cutover serves SIG-REL-004/
+  005/006 + SIG-OPS-004. The floor lands as
+  `staged/v/legacy-<YYYYMMDD>/` labelled `legacy-…`, never a pub
+  id ("the import is not a publication", §8.2); `sig-web` rolls
+  by digest with `SIG_LATEST_PUB=legacy-…`, `SIG_CONF_GEN=0`;
+  every allow-listed route byte-compares identical on the
+  canonical origin + run.app URL — a difference fails the leg and
+  reverts; the bucket-root serving *path* retires (the `sig-web`
+  bucket itself keeps public-read 90 days as the floor source
+  under D-G3-7's carried answer — `D-R11-LATER-20`'s clock
+  anchors on this row's recorded landing date). **`live:P34.40`
+  seam recorded (8d)** — the `/v1/*` step precedes or is named on
+  the OM-20 list, never dropped.
+- 337 (classifier + standing go + readout): written — dep
+  `P35.58` confirmed verbatim. **Gate `D-G3-3 [B-9] = a` carried
+  verbatim** (standing-go adopted form; the standing-go text,
+  expiry/void conditions and required Class-S wording are
+  agent-drafted for operator adoption — labelled, never implied
+  adopted). **SIG-CONF-010 + SIG-REL-012 are the §56 Owners —
+  stamped; the C11 seam correction is recorded in-contract:
+  SIG-CONF-010's owner is P35.60 — P37.45 carries an `Also:`
+  placement (the P38 notice-surface extension), never the
+  ownership.** The classifier is fail-closed (any unevaluable
+  check → S; a ratchet-regression input → S — the catalog AC);
+  the template fingerprint is a fixed-fixture build digest; the
+  standing go is a record (adopted text + expiry + void
+  conditions; expiry honoured for in-flight only; absent/expired/
+  void refused); the readout generator emits the verbatim
+  required wording — "single maintainer, no second reviewer" and
+  "no human check performed" — labelled agent draft, signature
+  slot never filled; the notice rides the landed mail path to the
+  operator's configured destination (no address written into any
+  file); the sign-off-scope ADR lands here per SIG-REL-012's
+  "ADR at P35.60" clause.
+
+ADR-171 outreach-owed (deliverable 8a) — per row:
+
+- All seven rows carry "**recorded why it does not apply**"
+  blocks: 331 creates cloud infrastructure and repo tooling; 332
+  adds serving config and promotion machinery; 333 adds reversal
+  machinery and runbook text; 334/335 add verification and
+  rollback-orchestration code plus probe config; 336 imports an
+  already-published tree and rolls a serving image; 337 adds
+  classification and readout machinery plus drafted texts (its
+  notice channel delivers to the operator through the landed
+  mail path — internal notification, never outside contact). None
+  writes, widens or activates a §6-compact / §22.4–22.5 / §35.1
+  ecosystem connector or project. The Stage-0 set (SIG-CHART-033,
+  SIG-INGEST-029/030a, SIG-CONTRIB-012/012a/013, SIG-GOV-024)
+  stays owed — unmet at launch — under `D-R11-LATER-04` (recorded
+  verbatim on each row). No outside contact made or implied
+  (ADR-171 Decision 3, U-011); no operator e-mail address written
+  into any file.
+
+Local verification (P11, with recorded limits):
+
+- `make docs-check` — **green through every detector.** Both
+  freshness detectors, build-memory (0 violations; the same
+  legacy warning set as C10 — none C11's), memory-guard worktree
+  (0 violations), spec-src reproduction byte-identical (852,023
+  B), coverage matrix 820/820, backlog, ledger contract (0
+  violations), current-state audit `--require-reconciled` (9
+  pre-existing conflicts covered, 0 failing), obligation check —
+  all clean. The projection verify reported the seven contract
+  digests stale, as expected — regenerated before the commit.
+- Projection regenerated (`current_projection.py generate` — the
+  seven contract digests + input_commit advanced; `verify` fresh
+  before the content commit).
+- `python3 docs/build/tools/memory_guard.py all --staged` — run
+  before the content commit (protected records appended only;
+  this ledger's C11 section replaces the `### C11 — pending`
+  placeholder, the established per-context convention).
+- `make check` — not re-run this context: no code changed
+  (contracts + this ledger + projection only); CI is the
+  authority. Docker stays wedged (recorded C1).
+
+Boundary (OM-05): pending — the boundary commit fills it.
+
+Close record (pending): the boundary commit records the
+head-bound read and fills Closed. The shared `Closed:` header
+stays unwritten — C13 owns closeout.
 
 ### C12 — pending
 
@@ -1679,20 +1880,20 @@ filled per context.
 
 | clause | status | note |
 |---|---|---|
-| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
-| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10) | header Started from `date -u`; C2/C3/C4/C5/C6/C7/C8/C9 Started from file mtime (source named); C7/C8/C9 Closed from `date -u`; C10 Started + Closed from `date -u` (file mtimes read earlier than wall clock — a recorded anomaly, `date -u` anchored) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7, C8, C9, C10); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 @2c2ef14a blockedOn (security npm advisory gate — new advisory GHSA-68fv-2mgg-jv7q on source-map-js 1.2.1, advisory-feed timing not the docs change) → fix-forward bump to 1.2.2 (upstream fix, surgical lockfile edit, `blocked=0` locally) → `ci: pass #236@5479f60` 5/5 head-bound (run 37404618425; log `logs/ci-PLAN-11B-C7.json`); C8 `ci: pass #236@acde44e` 5/5 head-bound, first head (run 37407963600; log `logs/ci-PLAN-11B-C8.json`); C9 `ci: pass #236@3670b7e` 5/5 head-bound, first head (run 37411758538; log `logs/ci-PLAN-11B-C9.json`); C10 `ci: pass #236@80193e2` 5/5 head-bound, first head (run 37420161300; log `logs/ci-PLAN-11B-C10.json`) |
-| OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
+| OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | header Started from `date -u`; C2/C3/C4/C5/C6/C7/C8/C9 Started from file mtime (source named); C7/C8/C9 Closed from `date -u`; C10 Started + Closed from `date -u` (file mtimes read earlier than wall clock — a recorded anomaly, `date -u` anchored); C11 Started from `date -u` (file mtimes read 01:59–02:03 vs wall clock ~05:59–06:03 — the same recorded local-clock offset, `date -u` anchored) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7, C8, C9, C10); C3 blockedOn; C11 pending | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 @2c2ef14a blockedOn (security npm advisory gate — new advisory GHSA-68fv-2mgg-jv7q on source-map-js 1.2.1, advisory-feed timing not the docs change) → fix-forward bump to 1.2.2 (upstream fix, surgical lockfile edit, `blocked=0` locally) → `ci: pass #236@5479f60` 5/5 head-bound (run 37404618425; log `logs/ci-PLAN-11B-C7.json`); C8 `ci: pass #236@acde44e` 5/5 head-bound, first head (run 37407963600; log `logs/ci-PLAN-11B-C8.json`); C9 `ci: pass #236@3670b7e` 5/5 head-bound, first head (run 37411758538; log `logs/ci-PLAN-11B-C9.json`); C10 `ci: pass #236@80193e2` 5/5 head-bound, first head (run 37420161300; log `logs/ci-PLAN-11B-C10.json`); C11 pending — the boundary commit fills it (log `logs/ci-PLAN-11B-C11.json`) |
+| OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
-| OM-13 protected records appended only | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10) | manifest Plan-extensions + ledger C2/C3/C4/C5/C6/C7/C8/C9/C10 sections appended only (C9's + C10's sections replace their `### Cn — pending` placeholders, the established convention); C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's + C6's + C7's + C8's + C9's + C10's rewrite commits name no ticket ids in their subjects; memory_guard --staged run pre-commit |
-| OM-15 no test asserts a living record's current value | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10) | no test touched by C3, C4, C5, C6, C7, C8, C9 or C10 |
-| OM-07/08/09 gate records verbatim | ok (C2, C3, C4, C5, C6, C7, C8) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2, C4's HG-03 RB-lines ×6; C5's HG-03 RB-04/RB-06 + WV-10/D3-Q3 verbatim + ING-GO-B; C6's G1-TRIM B-13 `a` + OM-20 conditionals ×3 (291/296/297) + D-K4-1/2/4 verbatim + HG-03 operator-flip; C7's `none` ×3 (299/300/301) + `named-mutation → OM-20 conditional; otherwise in-ticket pause` ×5 (302–306) verbatim; C8's D-K2-1 [A-10] `b + c` ×2 (307/308) + D-J3-2 [B-19] `yes` (311) + D-J3-1 [B-19] `raw-ok only` + D-J3-5 [B-19] `no` (313) + the named-mutation OM-20 conditional (310) + `none` ×2 (312/314) verbatim; the SEED-12b withheld-amendment carry on 312 recorded verbatim; C9's Q-E2-03 [B-6] `Move UA, don't buy domain` (317) + the named-mutation OM-20 conditional with expiry + in-ticket pause (320) + `none` ×6 (315/316/318/319/321/322) verbatim; C10's D-K4-3 [B-44] `as recommended (county + place pages)` (324) + the conditional OM-20 gate Q-L3-6 [B-31] = a · Q-L3-1 [A-6] = a (325) + D-K13-4 [B-26] `yes` + the P35.63/HG-11 publication ride (326) + Q-L3-4 [B-31] `no` (327) + D-K0-1 [A-12] `a` (328) + `none` ×3 (323/329/330) verbatim); nothing decided by this row |
-| OM-16 size budget | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; C4 = 6 contracts + ledger lines; C5 = 6 contracts (five verified + row 290 written) + ledger lines; C6 = 8 contracts + ledger lines + projection regen; C7 = 8 contracts + ledger lines + projection regen; C8 = 8 contracts + ledger lines + projection regen; C9 = 8 contracts + ledger lines + projection regen; C10 = 3 verified drafts + 5 written contracts + ledger lines + projection regen; within a single context |
+| OM-13 protected records appended only | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | manifest Plan-extensions + ledger C2/C3/C4/C5/C6/C7/C8/C9/C10/C11 sections appended only (C9's + C10's + C11's sections replace their `### Cn — pending` placeholders, the established convention); C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's + C6's + C7's + C8's + C9's + C10's + C11's rewrite commits name no ticket ids in their subjects; memory_guard --staged run pre-commit |
+| OM-15 no test asserts a living record's current value | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | no test touched by C3, C4, C5, C6, C7, C8, C9, C10 or C11 |
+| OM-07/08/09 gate records verbatim | ok (C2, C3, C4, C5, C6, C7, C8) | gate cells carried verbatim from the plan rows (X4 `approve`, C9 `a`, ING-GO-A verbatim-at-GATE-G4, C3's OM-20 conditional ×3 + never-pre-authorised + HG-03 ×2, C4's HG-03 RB-lines ×6; C5's HG-03 RB-04/RB-06 + WV-10/D3-Q3 verbatim + ING-GO-B; C6's G1-TRIM B-13 `a` + OM-20 conditionals ×3 (291/296/297) + D-K4-1/2/4 verbatim + HG-03 operator-flip; C7's `none` ×3 (299/300/301) + `named-mutation → OM-20 conditional; otherwise in-ticket pause` ×5 (302–306) verbatim; C8's D-K2-1 [A-10] `b + c` ×2 (307/308) + D-J3-2 [B-19] `yes` (311) + D-J3-1 [B-19] `raw-ok only` + D-J3-5 [B-19] `no` (313) + the named-mutation OM-20 conditional (310) + `none` ×2 (312/314) verbatim; the SEED-12b withheld-amendment carry on 312 recorded verbatim; C9's Q-E2-03 [B-6] `Move UA, don't buy domain` (317) + the named-mutation OM-20 conditional with expiry + in-ticket pause (320) + `none` ×6 (315/316/318/319/321/322) verbatim; C10's D-K4-3 [B-44] `as recommended (county + place pages)` (324) + the conditional OM-20 gate Q-L3-6 [B-31] = a · Q-L3-1 [A-6] = a (325) + D-K13-4 [B-26] `yes` + the P35.63/HG-11 publication ride (326) + Q-L3-4 [B-31] `no` (327) + D-K0-1 [A-12] `a` (328) + `none` ×3 (323/329/330) verbatim; C11's named-mutation OM-20 conditionals ×2 (331 — private release bucket + staging services + sig-release job; 336 — dark cutover with byte-compare + no-visible-change) + D-G3-10 [B-9] `yes` (331) + `none` ×3 (332/333/334) + D-G3-8 [B-9] `yes (auto-rollback pre-authorised)` (335) + D-G3-3 [B-9] `a` (337) verbatim); nothing decided by this row |
+| OM-16 size budget | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | C1 = transparency family + 5 contracts + test/projection fixes; C2 = 6 contracts + manifest/ledger lines; C3 = 7 contracts + policy/ledger lines; C4 = 6 contracts + ledger lines; C5 = 6 contracts (five verified + row 290 written) + ledger lines; C6 = 8 contracts + ledger lines + projection regen; C7 = 8 contracts + ledger lines + projection regen; C8 = 8 contracts + ledger lines + projection regen; C9 = 8 contracts + ledger lines + projection regen; C10 = 3 verified drafts + 5 written contracts + ledger lines + projection regen; C11 = 7 contracts + ledger lines + projection regen; within a single context |
 | OM-02 closeout is one commit after the PR exists | pending | C13 |
-| OM-19 windows / live legs | n/a | none for this row (each written contract carries its own — C7's contracts carry the verbatim live windows/legs: camera-registry days 6–13 (302) + AR-3 + AR-2 (303–306) + EFF/OSM re-ingest + rematerializes; C8's 310 carries `AR-3 + AR-2` + one leg + the header re-run prompt under the OM-20 listing; C9's 320 carries `AR-3 + AR-2` + the connector-roll leg under the same conditional; C10's 325 carries `AR-3 + AR-2` + the ER leg under the conditional OM-20 gate, and 326 carries `AR-3 + AR-2` + live stage `publish` as P35.63's leg (the carry-shape of C9's 320)) |
-| OM-20 pre-authorisation | n/a | not an OM-20 row (C7's contracts carry the conditional verbatim — five rows' live legs queue behind the operator's named-mutation pre-authorisation; C8's 310 carries the same conditional for its hosted change + backfill; C9's 320 carries it for the connector-image roll — mutation list named in-contract, otherwise in-ticket pause; C10's 325 carries the conditional gate verbatim — its ER leg queues behind the operator's named-mutation pre-authorisation) |
-| OM-03 rows only from the ratified plan | ok | rows 261–306 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; the dep corrections (P36.3 → 277, P36.4 → 279), C6's recorded plan-note corrections (291's copied unsplit-scope notes; 296/297/298's "no §56 Owner" → findings/cited ids), C7's recorded notes (299's S2 ordering-only edge; 300/301's shared F-134 column → a-half owns, b-half serves; 300's K4-P9 DSRC-01 seam resolution; 302's no-mass-re-mint live-stage reading; 303's 5,278 re-derive-not-assume; 304/306's "production write = appends" readings; 305's missing S6 clause + EFF/OSM-only leg scope) and C8's recorded notes (307's UXR-17 draft-ref + soft prerequisite edges; 308's draft SIG-EXPORT-D21 + findings not §56 Owner; 309's interim lane basis; 310's C-14 unmatched/repo-record rows + `per_fetch` column split with 312; 311's verdict-function handoff to P35.41; 312's SEED-12b MUST-carried disposition + `/v1/changes` out; 313's C-6 same-field wording + interim-basis replacement; 314's helper-before-consumers / sweep-stays-P36.66a) and C9's recorded notes (315's SIG-TRANSP-012 stub-pending-TX-08b; 317's stale-literal enumeration + declined defensive-registration residual risk + no-§56-Owner record; 318's Depends-line rewording fix-forward — the audit parsed "the P35.38 split" as a dep on a non-existent row; 319's old-counts 178/218/219/208/236/342 named-predicate reconciliation; 320's connector-roll mutation list + `0 stale` never-for-unevaluable rule; 322's no-§56-Owner record + F-481 producer gap verified + the later watch rows' split recorded + K7 §8 draft ids deferred to PLAN-11C) and C10's recorded notes (326's publish-rides-P35.63 carry-shape + GQ-10 measured-not-assumed ratchet + DSRC-04 export-half mapping; 327's S1b-vs-S6 OPCHECK reconciliation superseded-half record + `D-R11-LATER-18` second-family placement; 328's SEED-11 informational-dep + no-§56-Owner record + `UXR-02` draft id deferred to PLAN-11C + the islands.spec.ts superseded-in-place seam; 329's SIG-FIND-005 Owner-stays-P32.15 record + island-budgets.json supersession seam + CI-8 declared-yes + the measured /map/ 497 KB gap; 330's F-104/F-414 owned + ADR-156 write-up + the MAP-03 rendering seam + MAP-01b property-payload seam + CI-8 declared-yes) are recorded in-contract, not in the plan |
-| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
+| OM-19 windows / live legs | n/a | none for this row (each written contract carries its own — C7's contracts carry the verbatim live windows/legs: camera-registry days 6–13 (302) + AR-3 + AR-2 (303–306) + EFF/OSM re-ingest + rematerializes; C8's 310 carries `AR-3 + AR-2` + one leg + the header re-run prompt under the OM-20 listing; C9's 320 carries `AR-3 + AR-2` + the connector-roll leg under the same conditional; C10's 325 carries `AR-3 + AR-2` + the ER leg under the conditional OM-20 gate, and 326 carries `AR-3 + AR-2` + live stage `publish` as P35.63's leg (the carry-shape of C9's 320); C11's 331 carries `AR-3 + AR-2` + the infra-create leg + re-run prompt, and 336 carries `AR-3 + AR-2` + the cutover leg + re-run prompt — both under the OM-20 listing) |
+| OM-20 pre-authorisation | n/a | not an OM-20 row (C7's contracts carry the conditional verbatim — five rows' live legs queue behind the operator's named-mutation pre-authorisation; C8's 310 carries the same conditional for its hosted change + backfill; C9's 320 carries it for the connector-image roll — mutation list named in-contract, otherwise in-ticket pause; C10's 325 carries the conditional gate verbatim — its ER leg queues behind the operator's named-mutation pre-authorisation; C11's 331 carries the conditional for the private bucket + staging services + job/SA creates, and 336 carries it for the dark cutover — both with named mutation lists, otherwise in-ticket pause) |
+| OM-03 rows only from the ratified plan | ok | rows 261–306 are the ratified chain rows; placements landed via a Plan-extensions line, no renumber; the dep corrections (P36.3 → 277, P36.4 → 279), C6's recorded plan-note corrections (291's copied unsplit-scope notes; 296/297/298's "no §56 Owner" → findings/cited ids), C7's recorded notes (299's S2 ordering-only edge; 300/301's shared F-134 column → a-half owns, b-half serves; 300's K4-P9 DSRC-01 seam resolution; 302's no-mass-re-mint live-stage reading; 303's 5,278 re-derive-not-assume; 304/306's "production write = appends" readings; 305's missing S6 clause + EFF/OSM-only leg scope) and C8's recorded notes (307's UXR-17 draft-ref + soft prerequisite edges; 308's draft SIG-EXPORT-D21 + findings not §56 Owner; 309's interim lane basis; 310's C-14 unmatched/repo-record rows + `per_fetch` column split with 312; 311's verdict-function handoff to P35.41; 312's SEED-12b MUST-carried disposition + `/v1/changes` out; 313's C-6 same-field wording + interim-basis replacement; 314's helper-before-consumers / sweep-stays-P36.66a) and C9's recorded notes (315's SIG-TRANSP-012 stub-pending-TX-08b; 317's stale-literal enumeration + declined defensive-registration residual risk + no-§56-Owner record; 318's Depends-line rewording fix-forward — the audit parsed "the P35.38 split" as a dep on a non-existent row; 319's old-counts 178/218/219/208/236/342 named-predicate reconciliation; 320's connector-roll mutation list + `0 stale` never-for-unevaluable rule; 322's no-§56-Owner record + F-481 producer gap verified + the later watch rows' split recorded + K7 §8 draft ids deferred to PLAN-11C) and C10's recorded notes (326's publish-rides-P35.63 carry-shape + GQ-10 measured-not-assumed ratchet + DSRC-04 export-half mapping; 327's S1b-vs-S6 OPCHECK reconciliation superseded-half record + `D-R11-LATER-18` second-family placement; 328's SEED-11 informational-dep + no-§56-Owner record + `UXR-02` draft id deferred to PLAN-11C + the islands.spec.ts superseded-in-place seam; 329's SIG-FIND-005 Owner-stays-P32.15 record + island-budgets.json supersession seam + CI-8 declared-yes + the measured /map/ 497 KB gap; 330's F-104/F-414 owned + ADR-156 write-up + the MAP-03 rendering seam + MAP-01b property-payload seam + CI-8 declared-yes) and C11's recorded notes (331's derived-leg reading — the plan cell enumerates no legs so the contract derives one from the creates + the probe AC; 332's `error_page`-surface preservation + approval-check-reads-never-writes; 333's 10/15-minute targets recorded-as-measured-at-REL-11 + purge-hooks-dormant-until-TX-11; 334's SIG-REL-007 `Also:` placement (owner stays P35.58) + the 2%-vs-monthly-audit seam; 335's V14-emits-never-classifies + the V15 hook-point hosted not re-implemented; 336's no-§56-Owner record + the `live:P34.40` 8d seam + `D-R11-LATER-20`'s clock anchored on the landing date + serving-path-retires-not-the-bucket under D-G3-7; 337's **SIG-CONF-010 seam correction — owner is P35.60, P37.45 is an `Also:` placement** + agent-drafted standing-go/readout texts labelled never-implied-adopted + no operator e-mail in files) are recorded in-contract, not in the plan |
+| PR-1 branch from chainTip; PR base = previous branch | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11) | branch from `0de78f39`; PR #236 base `r11/P34.33-round-close-record-checks` |
 | CI-2/CI-6 pre-closeout head green | pending | C13 |
-| P11 local gate | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3/C4/C5/C6/C7/C8/C9/C10 touched no code (docs-check + projection regen locally; C9's first docs-check caught a Depends-line prose dep → reworded, re-run green) |
+| P11 local gate | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, with recorded limits) | `make docs-check` + `make check` green with the PATH docker stub + `SIG_GCP_PROJECT=sig-local-sentinel`; Docker-gated suites skipped locally, run in CI; C3/C4/C5/C6/C7/C8/C9/C10/C11 touched no code (docs-check + projection regen locally; C9's first docs-check caught a Depends-line prose dep → reworded, re-run green) |
 | CI-8 CI config changed | no (PLAN-11B itself); C10's contracts 329/330 declare CI-8 `yes` in-contract for their own rows' CI wiring | |

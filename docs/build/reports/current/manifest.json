@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "80193e22de59f3e859e036e9551456f1b2d82ee8",
+  "input_commit": "b089f03429340148125e6fd05a40fa20aa9fa84e",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1766,7 +1766,7 @@
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",
-      "sha256": "883a8b763db0885a54356f202cb470561452bf4d56be7441f6d2e20ad45f7950"
+      "sha256": "41e6241df6c00356161b7717c6b8b020db213d346d9140e4126a29f33fc3e26f"
     },
     {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
@@ -2562,31 +2562,31 @@
     },
     {
       "path": "docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md",
-      "sha256": "7ee0124e2e8fe1df4e902190a6fe4abc79f09a3c61e1a4052cd9f5b56ffe2c62"
+      "sha256": "f08cc00b7d284c9c26b10d7ef37ea8fb9884f600af6bb2128929549330fd6dbc"
     },
     {
       "path": "docs/tickets/332_P35.54__config-generations-metadata-only-promotion.md",
-      "sha256": "94acb1d0e2f8017172f685de4296d365249e6ed27db043768e04e88fb4a55502"
+      "sha256": "055c800b516f90520ddef7466ff97b8df737bed35d7ba4bfd701dfa60194baef"
     },
     {
       "path": "docs/tickets/333_P35.55__rollback-withdrawal-purge-runbook.md",
-      "sha256": "e55343cc58392c7d6bca1cd8a12000811a4e1c98558d3d7b7fe9673bcb53c35a"
+      "sha256": "27cbf37faef256f94027c994f1a62bd53495aef4be3a09cc909126fb7637fb7d"
     },
     {
       "path": "docs/tickets/334_P35.56__verification-suite-a.md",
-      "sha256": "1f43e7dc31eb27071a310b0994a405ff288822e162fc6f1936a08398539d3ceb"
+      "sha256": "cfcbef4edde7ae83d8714aa359803f4a5a03d208461da33aa5cec736ecef5852"
     },
     {
       "path": "docs/tickets/335_P35.58__verification-suite-b-and-auto-rollback.md",
-      "sha256": "0c1f6016db11381c3536167abdef607f364bfa52ccc67a1990ed7654f38c1599"
+      "sha256": "d08eedb18a0a9f345fc7badc1ed7f8a7f5eaa5948b1ce6ca83016d319878ae32"
     },
     {
       "path": "docs/tickets/336_P35.59__dark-cutover-to-release-layout.md",
-      "sha256": "07a43ba2197a5f74f02253a2b5763e859b2d3a52e321bf51cc031b4fe68dcec8"
+      "sha256": "a8f1e1a8bb037fe255677f1182a2c166edbae7de9041ade91ca2d627bd361ae6"
     },
     {
       "path": "docs/tickets/337_P35.60__release-classifier-standing-go-readout.md",
-      "sha256": "8229c4cc9f572fe1dce8d810da9e5ca48afc4e215d2e99cbe499758417757cb9"
+      "sha256": "94140e08025f001459d6f88875aa0289a2e93fc16931faa0c1683bf557cc26ca"
     },
     {
       "path": "docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md",
