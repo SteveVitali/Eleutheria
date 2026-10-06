@@ -1,4 +1,4 @@
-# OPERATIONAL_READINESS — capability × {code, rights, infra, human} + the critical path (P20.1, Phase F; **Round 3–4 delta refresh by P24.8 / REC.1, 2026-09-13**)
+# OPERATIONAL_READINESS — capability × {code, rights, infra, human} + the critical path (P20.1, Phase F; **Round 3–4 delta refresh by P24.8 / REC.1, 2026-09-13; Round-10 refresh by P33.4, 2026-09-28 — see §(f)**)
 
 The document the operator reads to decide **what to unblock next**. It turns
 `DECISION_MEMO.md` §6 + the go-live spec `docs/3_sig_golive_spec.md` into a checkable
@@ -205,3 +205,159 @@ human actions.
   object store + live egress + SWH save (⧗ HG-07) — the transition from "staging" to
   "sustained"; Go-public (DNS + `v0.2.0`) stays a deliberate human action
   (GL-GATE-05) after real HG-01 + HG-11 + HG-02.
+
+---
+
+## (f) Round-10 readiness — 2026-09-28 (P33.4, post-GATE-ACCEPT)
+
+Sections (a)–(e) are the Round-3/4 snapshot; nothing above is rewritten — this
+section is the Round-10 state, recorded after the operator **signed** the
+Round-10 acceptance readout (`docs/build/readouts/ACCEPT-R10.md`, SIGNED
+2026-09-28). The signature accepts the `CAPSTONE_CLOSURE.md` §(f) packet **as
+presented** — explicitly *not* the owed register as closed. That register is
+§(f5): **36 owed rows (32 OPEN + 4 PARTIAL) + `SIG-MEM-004`** (scheduled chain
+work, owner P33.8 row 200), each with owner, landing, closure condition and
+compensating control. `projectStatus` stays `IN-PROGRESS` under BM-TAIL-03
+while the register is non-empty.
+
+### (f1) Readiness by domain — a fixture or staging pass is never a live or public pass
+
+- **implemented** (code landed + green under `make check`/the Docker suites):
+  the whole Round-10 engineering spine — `sig.assertion/1` typed assertions +
+  actual-capture bindings (P32.2/ADR-121); role/count semantics + scoped
+  organisation identity (P32.3/ADR-122); the shared bitemporal occurrence
+  contract (P32.4/ADR-123); one publication-eligibility policy (P32.5/ADR-124);
+  legacy-evidence audit + recovery plan/apply machinery (P32.6 + P32.22,
+  ADR-125/141); obligation events + current projection + single-writer
+  closeout protocol — landed **shadow-only** (P32.7/P32.8, ADR-126/127);
+  blinded human-eval campaign tooling + the shadow evaluator (P32.9/P32.10,
+  ADR-128/129 — `mode=shadow`, `awaiting_humans`, `applied=[]`); reviewed
+  acquisition queue + bounded document adapters (P32.11/P32.12, ADR-130/131);
+  immutable releases + per-compartment FTS5 search + coordinated workspace
+  (P32.13–15, ADR-132/133/134); durable anonymous intake + reviewed correction
+  application (P32.16/16a, ADR-135); dossier schema + three mechanical packets
+  (P32.17–20, ADR-136–139); acquisition funnel (P32.21, ADR-140); candidate
+  identity + publish verification + journey portfolio (P32.23a–25,
+  ADR-142/143/144); composed verification `sig.composed-verification/1`
+  **pass 20/20** (P33.2); the capstone packet + register guard (P33.3).
+- **fixture** (deterministic proof over committed fixtures/staging trees —
+  committed evidence, NOT live): the composed verification over one committed
+  fixture on a scratch PG18 spine (P33.2); dossier packets
+  `mechanical_complete` (`review.status=not_run`, `pilot_complete=False`);
+  release candidate `p-17b713…` with publish-verification **25/25** inside the
+  bounded staging namespace (P32.25); journey portfolio 38 checks over the
+  declared `sig.journey-corpus/1` corpus + the real-PG18 intake journey proof
+  (P32.24); recovery apply +0 on the seeded fixture (P32.22); every live
+  return-pass packet `prepared_not_executed` under `docs/build/reports/`.
+- **hosted** (real infrastructure): the pre-Round-10 hosted surface stands as
+  recorded by earlier rounds (P30/P31.16 lineage — `sig-pg`/`sig-api`/`sig-web`,
+  the national publish + republish). Round-10 executed **no production hosted
+  leg**: the staging namespace is verified; `D-R10-LIVE-1` (hosted
+  audit/recovery/freeze), `D-P32.23a-1` (production candidate over the hosted
+  snapshot) and `D-R10-PUBLISH-1` (production exposure) stay OPEN. Scheduled
+  hosted work: `D-FEDERAL.1-1` (monthly `sig-sched-sam-gov` cron + the +0
+  re-run check) and `D-P31.4-1` (the date-bound 2026-10-10 batch-05 replay —
+  verifiable only after the cron fires).
+- **public**: the public surface is the prior HG-11-signed national publish.
+  Round-10 added **no new public exposure**: the candidate is staged not
+  served, the intake receiver answers `503 receiver_not_operating`, the
+  provisional evaluation disclosure stands. Production exposure = OPEN
+  (`D-R10-PUBLISH-1` + `D-P32.23a-1` + `D-R10-LIVE-1`).
+- **human**: **signed** — GATE-G3 (2026-10-19, scoped: provisional candidate,
+  reduced dossier scope, intake stays non-operational) and GATE-ACCEPT
+  (2026-09-28, the packet accepted as presented). **Owed** — the S3 spine
+  deferred wholesale (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23, re-enter at
+  manifest row 184): `D-R10-HUMAN-1`, `D-R6.1-EVAL`, `D-P30.2b-1/-2`; reviewer
+  sessions (`D-P32.3-1` identity dispositions; the `D-R10-SOURCES-1` +
+  `D-SOURCES.*`/`D-JURIS.2-1` rights lanes); participants (`D-R10-USERS-1`);
+  the intake operating packet (`D-P32.16-1`); credentials/accounts
+  (`D-P21.3-2`, `D-P21.5-1`, `D-P21.7-1`); maintainer repair-shape decisions
+  (`D-P32.10a-1`, `D-P32.16a-1`); the external-IdP + consenting-filer
+  decisions (`D-R7.1-AUTH`, `D-R7.2-SEND`).
+
+### (f2) Backlog-home reconciliation (the P33.4 sweep — verified, nothing re-homed)
+
+`docs/build/tools/check_backlog.py` at this revision exits 0 and the sweep
+records:
+
+- **ADR-120…144** — each `## Revisit trigger` is owned by **exactly one**
+  `BACKLOG.csv` `sources` cell: `BL-058` (the Round-10 umbrella row,
+  `landing=P32+`, theme T4). Checker line: `ADR revisit triggers: 143/143`,
+  `duplicate sources: 0`.
+- **Deferral homes** — every `OPEN`/`PARTIAL` DEFERRALS row names a BL home:
+  `deferral homes: 36/36` (all 15 `BL-058`-homed rows — the whole Round-10
+  deferral set — keep `BL-058`; the §(f5) register's three carried-in
+  adjudications `D-R6.1-EVAL`, `D-P30.2b-1`, `D-P30.2b-2` keep `BL-057`, and
+  the other carried-forward rows keep their original homes). No `D-*` id
+  lives in a
+  `sources` cell; the `(cites BL-nnn)` convention holds everywhere.
+- **Mirror** — `docs/build/BACKLOG.md` regenerated by
+  `build_backlog_md.py`: **byte-identical** to the pre-sweep mirror — the homes
+  were already normalized; this run verifies and records, it does not
+  re-home. `--check` exits 0.
+- **Historic outcomes preserved** — no CSV row re-homed or re-triaged, no
+  DEFERRALS status flipped, no landed ADR body edited; the one thing that
+  changed in the world (the ACCEPT-R10 signature) is recorded additively in
+  `docs/tickets/DEFERRALS.md`'s P33.4 section and here.
+- For the record: `D-R7.2-SEND`'s status cell cites **one** home (`BL-057`);
+  the `BL-028` token in its verify text is a cross-reference to the
+  records-request backend, not a second home — no ambiguity, nothing changed.
+
+### (f3) RETURN PASS — a concrete command for every owed row
+
+Re-dispatches run the same contract with `live_verification=true` **only**
+after the recorded gate/credential/pre-condition is satisfied (per the Run
+line convention: a live stage reuses the same ticket after recorded scope +
+approval). Human rows have no engineering command — the recorded human action
+is the return path, then the named verification runs.
+
+**Round-10-scoped (18 rows):**
+
+| obligation | blocking domain | unblocked by | RETURN PASS |
+|---|---|---|---|
+| `D-R10-HUMAN-1` | human | operator assigns independent reviewers | re-enter the deferred spine in order at manifest row 184: `implement-spec spec=docs/tickets/184_HUMAN-H4__human-development-and-dossier-review.md` (orchestrator pauses; operator records the readouts) → `185_P32.22a__candidate-and-confirmatory-frame-freeze.md` → `186_HUMAN-H5__blinded-confirmatory-human-campaign.md` → `187_P32.23__human-evaluation-and-rules-decision.md` |
+| `D-R6.1-EVAL` | human → engineering | the same H4→H5→P32.23 spine lands real labels | after P32.23's measured decision: re-`build_gold_set` from the human holdout → re-measure P/R/F1 + B-cubed + κ → the P31.18 rules re-derivation (carried into Round 10 — authored at that point; no chain file exists yet) |
+| `D-P30.2b-1` | human → engineering | real human review decisions exist | same spine; an accepted proposal appears as a human edge in the next `camera_site` run; re-run `+0` |
+| `D-P30.2b-2` | engineering | rules-v3 + a fresh holdout under the human campaign | same spine → P31.18 re-derivation: a rules-v3 soft conflict measured on the new frozen holdout; tier-3g precision re-measured ≥ 0.98 |
+| `D-R10-SOURCES-1` | human (rights) → hosted | HG-03 per-target review + Part VIII preflight for the four pilot rows below | the four `D-P32.*-1` live re-dispatches are its legs (see below) |
+| `D-R10-LIVE-1` | hosted | reviewed scope + ceilings + pinned inputs; HUMAN-H5/P32.23 before a *final* candidate | `uv run sig-ops evidence-audit --dsn $SIG_HOSTED_DSN --capture-dir <mounted OCFL root> --out <live-audit>/` → `sig-ops recovery-plan --audit <live-audit>/audit_report.json --out <live-audit>/` → `sig-ops recovery-apply --dsn $SIG_HOSTED_DSN --plan … --audit … --apply --execution-id <id> --authority <op-ref> --capture-dir <OCFL root> --verify-rerun --rematerialize --out <live-apply>/` → `sig-ops recovery-freeze …` — exact forms + ceilings: `docs/build/reports/p32.22-bounded-recovery/LIVE_RETURN_PASS.json`; then `implement-spec spec=docs/tickets/183_P32.22__bounded-recovery-and-activation.md live_verification=true` |
+| `D-R10-PUBLISH-1` | public | GATE-G3-signed scope stands; production exposure needs the operator's serve decision | `implement-spec spec=docs/tickets/191_P32.25__accepted-release-public-verification.md live_verification=true`; rollback cases: `docs/build/reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json` |
+| `D-R10-MEMORY-1` | human (operator-approved cutover) | operator approves the entry-point boundary | apply `contract/patch/1..3` per `docs/build/tools/CLOSEOUT_WRITER_PROTOCOL.md` at an approved boundary; verify: `python3 docs/build/tools/obligation_events.py check` + `current_projection.py verify` fresh post-cutover; `168_P32.8__memory-concurrency-and-recovery.md` |
+| `D-R10-USERS-1` | human | operator recruitment + volunteers exist | run `docs/build/reports/p32.24-investigation-journey-verification/USABILITY_TASK_PROTOCOL.md`; land `USABILITY_SESSIONS.json`; re-run `implement-spec spec=docs/tickets/189_P32.24__investigation-journey-verification.md` — the portfolio check re-evaluates `UX.independent_sessions` |
+| `D-P32.3-1` | human (reviewer session) | reviewer sits with the dry-run report | `uv run sig-resolution partner-name-audit --dsn $SIG_HOSTED_DSN` → record a `same_as`/`distinct`/`keep` disposition per legacy `sig.org.name` key until `split_keys` exposure is reviewed to zero |
+| `D-P32.10a-1` | decision (maintainer) | repair-shape decision (count-derived / `>=` / stop pinning global counts) | append-only sqitch change for the chosen shape; verify `sqitch verify` over a fully deployed PG18 container exits 0 (today: `ERROR: division by zero` at `verify/shared_temporal_contract.sql:30`) |
+| `D-P32.16-1` | human (operator) | operating packet §1 rows filled | per `docs/governance/intake-receiver-operating-packet.md`: `ops/config.toml [intake]` `operational=true` + named owner + `staffed=true` + retention/secrets/log-exclusions on file; an unauthenticated probe then shows the form accepting and a submitted report reaching moderation |
+| `D-P32.16a-1` | decision (maintainer) | repair-shape decision (CASCADE vs ordered drops vs a new teardown change) | append-only sqitch change; verify `sqitch revert` over a fully deployed container exits 0 (today: `ERROR: cannot drop extension postgis` at `revert/extensions.sql:7`) |
+| `D-P32.18-1` | hosted | HG-03 per-target review + Part VIII preflight | `implement-spec spec=docs/tickets/179_P32.18__oklahoma-city-evidence-dossier.md live_verification=true`; packet: `docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_PASS.json` |
+| `D-P32.19-1` | hosted | same | `implement-spec spec=docs/tickets/180_P32.19__tulsa-evidence-dossier.md live_verification=true`; packet: `docs/build/reports/p32.19-tulsa-dossier/LIVE_RETURN_PASS.json` |
+| `D-P32.20-1` | hosted | same + the SRC-027 admissibility decision | `implement-spec spec=docs/tickets/181_P32.20__san-diego-evidence-dossier.md live_verification=true`; packet: `docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json` |
+| `D-P32.21-1` | hosted | HG-03 exact-target review (three rights lanes separately) + Part VIII screening | `implement-spec spec=docs/tickets/182_P32.21__source-pilot-and-maintenance-decision.md live_verification=true`; packet: `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json` |
+| `D-P32.23a-1` | hosted | `D-R10-LIVE-1` executed (hosted recovery + freeze) | `LIVE_RETURN_PASS.json` (`docs/build/reports/p32.23a-release-candidate/`): `sig-ops recovery-apply … --rematerialize` + `sig-ops recovery-freeze` → `sig-ops release-candidate --dsn $SIG_HOSTED_DSN --snapshot …/REPAIRED_SNAPSHOT.json …`; the produced `CANDIDATE_MANIFEST.json` must validate (`consistent`, `plus_zero`, `complete`, `pointer_unchanged: true`); then `implement-spec spec=docs/tickets/188_P32.23a__post-evaluation-release-candidate.md live_verification=true` |
+
+**Carried-forward pre-Round-10 rows (18):** unchanged owners/landings — the row's
+own `how to verify` cell in `DEFERRALS.md` is the proof; the command below is
+the trigger.
+
+| obligation | blocking domain | RETURN PASS |
+|---|---|---|
+| `D-P21.3-2` | human (credentials) | export `SIG_MUCKROCK_TOKEN`/`SIG_DATA_GOV_KEY`/`SIG_OVERPASS_ENDPOINT`/`SIG_CIVICCLERK_BASE` in the run shell (Secret Manager holds `sig-muckrock-refresh`, `sig-data-gov-key`), then `implement-spec spec=docs/tickets/P21.3__live-connector-wiring.md live_verification=true` |
+| `D-P21.5-1` | human (credentials) | export `SIG_ZENODO_SANDBOX_TOKEN`/`SIG_OBJECT_STORE_*` → `implement-spec spec=docs/tickets/P21.5__infra-deposit-and-tiles.md live_verification=true` (the SWH save-now leg was declined-by-operator 2026-09-16 — repo stays private) |
+| `D-P21.7-1` | human (accounts) | MapRoulette account + OSM Organised-Editing page + `SIG_MAPROULETTE_API_KEY` + `registered=true` → the one-step re-run in `docs/build/CONTRIBUTION_BACK_LIVE.md` |
+| `D-JURIS.2-1` | human (rights) | reviewer resolves the FR packets (`docs/build/reports/rights/{raa_prefectures,decp_fr,madada}.md`) + the LO 2.0 disposition → record each flip with reviewer+date → `sig-connectors gate --source <id>` green → keyed live run |
+| `D-SOURCES.2-2` | human (rights) | reviewer resolves documentcloud's source posture; operator accepts-or-declines the FLP terms → recorded flip/decline → `run --mode live` stops refusing exit 3 |
+| `D-SOURCES.7-1` | human (rights) | per-state terms for `dot_511_<st>` resolved (MD additionally needs a LicenseRef row) → `sig-connectors gate --source dot_511_<st>` green |
+| `D-SOURCES.7-2` | human (credentials) | per-platform keys exported (Secret-Manager bindings, the P26.4 pattern) → keyed live run; `[[enumerated]]` rows graduate to `[[targets]]` |
+| `D-SOURCES.8-1` | human (rights) | remaining `camreg_*` terms resolved (10/14 done under GL-GATE-07; Bellevue non-commercial call + Lexington counsel owed) → `sig-connectors gate --source camreg_<id>` green |
+| `D-SOURCES.8-2` | human (credentials) | per-platform keys exported → keyed live run |
+| `D-SOURCES.9-1` | human (rights) | Chicago portal terms fetched/quoted into `docs/build/reports/rights/procportal_chicago_il.md` → gate green → live run |
+| `D-SOURCES.9-2` | external + rights | a tenant's robots policy lifts or a reviewer records an ADR-083-class API-mode basis → live fetch |
+| `D-SOURCES.9-3` | external | a documented public endpoint/API emerges with reviewable terms → live fetch |
+| `D-SOURCES.9-4` | human (rights) | `bidnetdirect.com/terms` quoted into `docs/build/reports/rights/bidnet_direct.md` → gate green → live run |
+| `D-SOURCES.12-1` | human (rights) + engineering | `camreg_stalbert_ab` licence text captured verbatim + gated-row terms resolved from the recorded `licence_verbatim` evidence → gate green → the reviewed artifact's `spdx=null`/`blocker` rows are the enumerable worklist |
+| `D-FEDERAL.1-1` | hosted (scheduled) | the monthly `sig-sched-sam-gov` cron fires → GCS run row `outcome=ok` with `claims_added` → a +0 re-run check; or an operator api.data.gov key-tier upgrade unblocks early |
+| `D-R7.1-AUTH` | human (operator decision) | demonstrated demand + ratified moderation/safety/threat model → author a new ADR + ticket for external-IdP OAuth (pseudonymous id + tier only, no passwords/PII) |
+| `D-R7.2-SEND` | human (operator + consenting filer) | a consenting residency-valid `Filer` bound → `RecordsRequestGenerator.generate(gap, filer)` emits → the operator files through the jurisdiction's channel → `sig-tasks records-outcomes record` (BL-028) |
+| `D-P31.4-1` | hosted (date-bound) | after the 2026-10-10T03:35Z cron: the batch-05 run rows under `gs://…-sig-restricted/ops/runs/camreg_osm_surveillance/2026-10-10/` show `outcome` ok/partial + `fetches` 158 + `claims_added` ≈ 1.37M (the row's exact verify command in `DEFERRALS.md`) |
+
+**Scheduled (not a deferral):** `SIG-MEM-004` — owner **P33.8** (manifest row
+200): `implement-spec spec=docs/tickets/200_P33.8__round10-agent-docs-refresh.md live_verification=false` when the chain reaches it — docs refresh after P33.5–P33.7 land.
