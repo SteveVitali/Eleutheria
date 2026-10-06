@@ -120,3 +120,15 @@ Only path (2) is realizable now under the available ADC.
   `www`→apex redirect in `us-central1` — reconsider the LB for a new deployment (new ADR).
 - The domain must ever front **restricted** compartment bytes — a hard stop requiring a governance
   decision (Part VIII / §42.3), never a config change.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** the list price is ≈ $90–100/mo, including ≈ $18 for the HTTPS load
+balancer, against a README figure of "≈ $0/mo" (G1 NEW-11; F3 §5.1). **Answer:** the ceiling is ≤ $300/mo for
+infrastructure only (Q-10; A-2), and the operator kept the load balancer and min-instances 1 (B-12/13/14,
+"Accept all three (Recommended)", 2026-10-01T04:39:45Z), so no new ADR is needed; row P34.5 measures the real
+bill (billing export, budget alert). The decision above stays in force until that answer lands; this ADR's
+body is unchanged (SIG-ENG-003).

@@ -1,0 +1,8 @@
+# docs/build/tools/record_policy/ci_required.txt — the required GitHub check names (G3a, ci_boundary.py;
+# B4 §4 G3; plan Appendix A T2 SEED-02): the five jobs of .github/workflows/ci.yml. One name per line.
+# Written by SEED-02a (Round-11 Stage B, T2) at 2026-10-01T08:04:03Z (date -u).
+python
+docs
+composed
+security
+web

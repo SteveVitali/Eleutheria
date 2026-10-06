@@ -1,0 +1,187 @@
+idx,order_key,recorded_date,introduced_by,last_written_by,line_at_pre,section,lead_id,kind,entry_sha256_12,build_index_seq,date_status,correction_ref,era
+1,2026-09-09T21:39:53Z#00244,2026-09-08,4d5a5d27,4d5a5d27,244,"PHASE LOG (append-only, newest last)",,round,a85db8a9f8d0,,pre-git,,events
+2,2026-09-09T21:39:53Z#00245,2026-09-08,4d5a5d27,4d5a5d27,245,"PHASE LOG (append-only, newest last)",,gate,f7db8a712211,,pre-git,,events
+3,2026-09-09T21:39:53Z#00246,2026-09-08,4d5a5d27,4d5a5d27,246,"PHASE LOG (append-only, newest last)",SETUP,other,f81079cc0920,,pre-git,,events
+4,2026-09-09T21:39:53Z#00247,2026-09-08,4d5a5d27,4d5a5d27,247,"PHASE LOG (append-only, newest last)",P19.1,done,f07f17fd7007,47,pre-git,,R1-R2
+5,2026-09-09T21:39:53Z#00248,2026-09-08,4d5a5d27,4d5a5d27,248,"PHASE LOG (append-only, newest last)",P19.2,done,93b9cdaa7cdb,48,pre-git,,R1-R2
+6,2026-09-09T21:39:53Z#00249,2026-09-08,4d5a5d27,4d5a5d27,249,"PHASE LOG (append-only, newest last)",P19.3,done,24b19d939769,49,pre-git,,R1-R2
+7,2026-09-09T21:39:53Z#00250,2026-09-08,4d5a5d27,4d5a5d27,250,"PHASE LOG (append-only, newest last)",P19.4,done,7b94d47343cc,50,pre-git,,R1-R2
+8,2026-09-09T21:39:53Z#00251,2026-09-08,4d5a5d27,4d5a5d27,251,"PHASE LOG (append-only, newest last)",P19.5,done,cc97ecbffd30,51,pre-git,,R1-R2
+9,2026-09-09T21:39:53Z#00252,2026-09-08,4d5a5d27,4d5a5d27,252,"PHASE LOG (append-only, newest last)",P20.1,done,f4fe873f8003,52,pre-git,,R1-R2
+10,2026-09-09T21:39:53Z#00253,2026-09-08,4d5a5d27,4d5a5d27,253,"PHASE LOG (append-only, newest last)",P20.2,done,656a02b88e6a,53,pre-git,,R1-R2
+11,2026-09-09T21:39:53Z#00254,2026-09-08,4d5a5d27,4d5a5d27,254,"PHASE LOG (append-only, newest last)",P20.3,done,e8f01380f49d,54,pre-git,,R1-R2
+12,2026-09-09T21:39:53Z#00255,2026-09-08,4d5a5d27,4d5a5d27,255,"PHASE LOG (append-only, newest last)",,gate,ca2faaef1b4d,,pre-git,,events
+13,2026-09-09T21:39:53Z#00256,2026-09-08,4d5a5d27,4d5a5d27,256,"PHASE LOG (append-only, newest last)",P20.4,done,501de730bf9a,54.5,pre-git,,R1-R2
+14,2026-09-09T21:39:53Z#00257,2026-09-09,4d5a5d27,4d5a5d27,257,"PHASE LOG (append-only, newest last)",P21.1,done,7207ecbbc056,55,pre-git,,R1-R2
+15,2026-09-09T21:39:53Z#00258,2026-09-09,4d5a5d27,4d5a5d27,258,"PHASE LOG (append-only, newest last)",,pause,131e038f4e08,,pre-git,,events
+16,2026-09-09T21:39:53Z#00259,2026-09-09,4d5a5d27,4d5a5d27,259,"PHASE LOG (append-only, newest last)",,gate,d5d4ded2ec93,,pre-git,,events
+17,2026-09-09T21:39:53Z#00260,2026-09-09,4d5a5d27,4d5a5d27,260,"PHASE LOG (append-only, newest last)",P21.2,done,7c0d3e6618f7,56,pre-git,,R1-R2
+18,2026-09-09T21:39:53Z#00261,2026-09-09,4d5a5d27,4d5a5d27,261,"PHASE LOG (append-only, newest last)",P21.3,done,f11b2aa3308c,57,pre-git,,R1-R2
+19,2026-09-09T21:39:53Z#00262,2026-09-09,4d5a5d27,4d5a5d27,262,"PHASE LOG (append-only, newest last)",P21.4,done,3adc350fbeeb,58,pre-git,,R1-R2
+20,2026-09-09T21:39:53Z#00263,2026-09-09,4d5a5d27,4d5a5d27,263,"PHASE LOG (append-only, newest last)",P21.5,done,d91e575841bc,59,pre-git,,R1-R2
+21,2026-09-09T21:39:53Z#00264,2026-09-09,4d5a5d27,4d5a5d27,264,"PHASE LOG (append-only, newest last)",P21.6,done,88b9f14267ec,60,pre-git,,R1-R2
+22,2026-09-09T21:39:53Z#00265,2026-09-09,4d5a5d27,4d5a5d27,265,"PHASE LOG (append-only, newest last)",P21.7,done,26988eb9a720,61,pre-git,,R1-R2
+23,2026-09-09T21:39:53Z#00266,2026-09-09,4d5a5d27,4d5a5d27,266,"PHASE LOG (append-only, newest last)",P21.8,done,46fb01d73592,62,pre-git,,R1-R2
+24,2026-09-09T21:39:53Z#00267,2026-09-09,4d5a5d27,4d5a5d27,267,"PHASE LOG (append-only, newest last)",P21.9,done,df7565839564,63,pre-git,,R1-R2
+25,2026-09-09T21:39:53Z#00268,2026-09-09,4d5a5d27,4d5a5d27,268,"PHASE LOG (append-only, newest last)",P22.1,done,b9696447b6c6,64,pre-git,,R1-R2
+26,2026-09-09T21:39:53Z#00269,2026-09-09,4d5a5d27,4d5a5d27,269,"PHASE LOG (append-only, newest last)",P22.2,done,fd2a38089e26,65,pre-git,,R1-R2
+27,2026-09-27T03:19:21Z#00270,2026-09-27,ebd34ce1,ebd34ce1,270,"PHASE LOG (append-only, newest last)",P32.1,done,2cd6d5e40519,161,ok,,R10
+28,2026-09-27T11:20:03Z#00271,2026-09-27,30d401dc,30d401dc,271,"PHASE LOG (append-only, newest last)",P32.11,done,90ca084ec92e,171,ok,,R10
+29,2026-09-09T21:39:53Z#00289,2026-09-09,4d5a5d27,4d5a5d27,289,CAPSTONE — step 2/3 closure + composed E2E result,,inserted,17f55797e1c3,,pre-git,,events
+30,2026-09-22T17:26:36Z#00290,2026-09-22,6982830b,6982830b,290,CAPSTONE — step 2/3 closure + composed E2E result,P27.1,done,a03248c09332,117,ok,,R5
+31,2026-09-22T19:02:43Z#00291,2026-09-22,ac93df43,ac93df43,291,CAPSTONE — step 2/3 closure + composed E2E result,P27.2,done,bbc9032f8d64,118,ok,,R5
+32,2026-09-22T20:25:15Z#00292,2026-09-22,789b18f4,96f1e7a5,292,CAPSTONE — step 2/3 closure + composed E2E result,P27.3,done,a01839738bbd,119,ok,,R5
+33,2026-09-22T23:44:47Z#00293,2026-09-22,70d7bdb9,70d7bdb9,293,CAPSTONE — step 2/3 closure + composed E2E result,P27.4,done,ea1c44b89da5,120,ok,,R5
+34,2026-09-22T23:51:53Z#00294,2026-09-22,4f8c748d,4f8c748d,294,CAPSTONE — step 2/3 closure + composed E2E result,,inserted,eeaa018a7bed,,ok,,events
+35,2026-09-23T00:34:35Z#00295,2026-09-22,b6ca7658,b6ca7658,295,CAPSTONE — step 2/3 closure + composed E2E result,P27.5,done,db3ad90b2cad,121,ok,,R5
+36,2026-09-23T01:25:17Z#00296,2026-09-22,3be415cd,3be415cd,296,CAPSTONE — step 2/3 closure + composed E2E result,P27.6,done,a7936aec5c36,122,ok,,R5
+37,2026-09-23T02:09:05Z#00297,2026-09-22,f249fb38,f249fb38,297,CAPSTONE — step 2/3 closure + composed E2E result,P27.7,done,63eb2c7813a8,123,ok,,R5
+38,2026-09-23T02:54:53Z#00298,2026-09-22,2500c5b1,2500c5b1,298,CAPSTONE — step 2/3 closure + composed E2E result,P27.8,done,93918cb29370,124,ok,,R5
+39,2026-09-23T04:01:40Z#00299,2026-09-22,c22519bd,c22519bd,299,CAPSTONE — step 2/3 closure + composed E2E result,P27.9,done,2755b77812d0,125,ok,,R5
+40,2026-09-23T04:43:07Z#00300,2026-09-23,f2b95c40,f2b95c40,300,CAPSTONE — step 2/3 closure + composed E2E result,P27.10,done,afd694d519b2,126,ok,,R5
+41,2026-09-23T05:09:51Z#00301,2026-09-23,9a0483e1,9a0483e1,301,CAPSTONE — step 2/3 closure + composed E2E result,,round,3093a92b5e35,,ok,,events
+42,2026-09-23T06:01:33Z#00302,2026-09-23,e5b9cd14,e5b9cd14,302,CAPSTONE — step 2/3 closure + composed E2E result,P28.1,done,44308b0a861b,127,ok,,R6
+43,2026-09-23T06:38:33Z#00303,2026-09-23,e8dfc9f1,e8dfc9f1,303,CAPSTONE — step 2/3 closure + composed E2E result,P28.2,done,d6cfeadcd827,128,ok,,R6
+44,2026-09-23T14:54:50Z#00304,2026-09-23,82029bc1,82029bc1,304,CAPSTONE — step 2/3 closure + composed E2E result,P28.3,done,2067219e8aa1,129,ok,,R6
+45,2026-09-23T15:32:39Z#00305,2026-09-23,89f825e9,89f825e9,305,CAPSTONE — step 2/3 closure + composed E2E result,P28.4,done,c87e6a7d2d57,130,ok,,R6
+46,2026-09-23T17:14:11Z#00306,2026-09-23,708d7065,708d7065,306,CAPSTONE — step 2/3 closure + composed E2E result,P28.5,done,1b6cf8f5301a,131,ok,,R6
+47,2026-09-23T17:11:25Z#00307,2026-09-23,f314af89,f314af89,307,CAPSTONE — step 2/3 closure + composed E2E result,P28.6,done,0ad851284299,132,ok,,R6
+48,2026-09-23T17:53:08Z#00308,2026-09-23,799ab088,65c6ffcc,308,CAPSTONE — step 2/3 closure + composed E2E result,P29.1,done,479eac00035b,133,ok,,R7
+49,2026-09-23T19:11:36Z#00309,2026-09-23,1462ddc7,1462ddc7,309,CAPSTONE — step 2/3 closure + composed E2E result,P29.2,done,a3ff3843a892,134,ok,,R7
+50,2026-09-23T20:04:47Z#00310,2026-09-23,3addc79f,3addc79f,310,CAPSTONE — step 2/3 closure + composed E2E result,P29.3,done,75ac51cd6df1,135,ok,,R7
+51,2026-09-23T20:27:28Z#00312,2026-09-23,efdc67b4,efdc67b4,312,CAPSTONE — step 2/3 closure + composed E2E result,,round,dab8654a0586,,ok,,events
+52,2026-09-24T04:05:10Z#00314,2026-09-24,9b353af3,9b353af3,314,CAPSTONE — step 2/3 closure + composed E2E result,P30.1,done,334b0b49f518,136,ok,,R8
+53,2026-09-24T05:22:49Z#00315,2026-09-24,ebb90d9b,ebb90d9b,315,CAPSTONE — step 2/3 closure + composed E2E result,P30.2,done,aa466aa450a1,137,ok,,R8
+54,2026-09-24T05:39:10Z#00316,2026-09-24,83cd6668,83cd6668,316,CAPSTONE — step 2/3 closure + composed E2E result,,inserted,cc8344049661,,ok,,events
+55,2026-09-24T10:23:21Z#00318,2026-09-24,84597f1d,84597f1d,318,CAPSTONE — step 2/3 closure + composed E2E result,P30.2a,done,773ffcf5063e,140,ok,,R8
+56,2026-09-24T11:50:06Z#00320,2026-09-24,4266db6f,4266db6f,320,CAPSTONE — step 2/3 closure + composed E2E result,P30.2b,done,f2db9c2f2687,141,ok,,R8
+57,2026-09-24T16:51:14Z#00322,2026-09-24,2a6f2496,2a6f2496,322,CAPSTONE — step 2/3 closure + composed E2E result,P30.3,done,63103019a1c5,138,ok,,R8
+58,2026-09-24T17:36:41Z#00324,2026-09-24,df7b1278,df7b1278,324,CAPSTONE — step 2/3 closure + composed E2E result,P30.4,done,892a3cc7f6b5,139,ok,,R8
+59,2026-09-24T18:32:49Z#00326,2026-09-24,a84dadfe,a84dadfe,326,CAPSTONE — step 2/3 closure + composed E2E result,,round,53605075633c,,ok,,events
+60,2026-09-24T19:49:27Z#00328,2026-09-24,b6b84fcc,b6b84fcc,328,CAPSTONE — step 2/3 closure + composed E2E result,P31.1,done,f779995718b2,142,ok,,R9
+61,2026-09-24T20:56:37Z#00330,2026-09-24,0746fc1c,0746fc1c,330,CAPSTONE — step 2/3 closure + composed E2E result,P31.2,done,0210a36d055b,143,ok,,R9
+62,2026-09-24T23:09:54Z#00331,2026-09-24,ffccd244,ffccd244,331,CAPSTONE — step 2/3 closure + composed E2E result,P31.3,done,5d2a61bf36da,144,ok,,R9
+63,2026-09-25T02:01:47Z#00332,2026-09-25,13782968,13782968,332,CAPSTONE — step 2/3 closure + composed E2E result,P31.4,done,14b8b4ffa10e,145,ok,,R9
+64,2026-09-25T02:56:56Z#00333,2026-09-25,34406ffc,34406ffc,333,CAPSTONE — step 2/3 closure + composed E2E result,,round,f9b523be72ee,,ok,,events
+65,2026-09-25T04:03:25Z#00334,2026-09-25,434f2f78,434f2f78,334,CAPSTONE — step 2/3 closure + composed E2E result,P31.5,done,44c2ced42e84,146,ok,,R9
+66,2026-09-25T04:12:23Z#00335,2026-09-25,d41f9737,d41f9737,335,CAPSTONE — step 2/3 closure + composed E2E result,,resume,b569e5607b0e,,ok,,events
+67,2026-09-25T07:30:37Z#00336,2026-09-25,ff82b41e,ff82b41e,336,CAPSTONE — step 2/3 closure + composed E2E result,P31.6,done,9c98d87ab2aa,147,ok,,R9
+68,2026-09-25T12:02:56Z#00338,2026-09-25,a14869fd,a14869fd,338,CAPSTONE — step 2/3 closure + composed E2E result,P31.7,done,f137ee532b4d,148,ok,,R9
+69,2026-09-25T18:31:32Z#00339,2026-09-25,e3b7a5e0,e3b7a5e0,339,CAPSTONE — step 2/3 closure + composed E2E result,P31.8,done,bd786d3a53cf,149,ok,,R9
+70,2026-09-25T21:31:57Z#00341,2026-09-25,3357f8e7,3357f8e7,341,CAPSTONE — step 2/3 closure + composed E2E result,P31.9,done,8dff215a111a,150,ok,,R9
+71,2026-09-25T22:19:48Z#00342,2026-10-02,4dc4c80a,4dc4c80a,342,CAPSTONE — step 2/3 closure + composed E2E result,P31.10,done,6f3398376dfc,151,future,DC-L-05,R9
+72,2026-09-26T01:31:42Z#00343,2026-09-25,cbc0a536,cbc0a536,343,CAPSTONE — step 2/3 closure + composed E2E result,P31.11,done,da9d9f20dd32,152,ok,,R9
+73,2026-09-26T06:54:08Z#00344,2026-09-26,b660d1aa,b660d1aa,344,CAPSTONE — step 2/3 closure + composed E2E result,P31.12,done,cb4a82d19119,153,ok,,R9
+74,2026-09-26T13:50:46Z#00345,2026-09-26,401f6faa,401f6faa,345,CAPSTONE — step 2/3 closure + composed E2E result,P31.13,done,9d9f2f17c875,154,ok,,R9
+75,2026-09-26T14:29:11Z#00346,2026-10-03,be7bab69,fbb47a9c,346,CAPSTONE — step 2/3 closure + composed E2E result,P31.14,done,91b6e59bf4de,155,future,DC-L-06,R9
+76,2026-09-26T15:16:28Z#00347,2026-10-03,90264c8a,90264c8a,347,CAPSTONE — step 2/3 closure + composed E2E result,P31.15,done,29f948cbfc49,156,future,DC-L-07,R9
+77,2026-09-27T01:14:15Z#00349,2026-09-27,bd31c9e8,f6641b06,349,CAPSTONE — step 2/3 closure + composed E2E result,P31.16,done,f74a3d2f5a14,157,ok,,R9
+78,2026-09-27T01:47:33Z#00350,2026-09-27,4cc7e13c,4cc7e13c,350,CAPSTONE — step 2/3 closure + composed E2E result,P31.16,done,fad648556cc6,157,ok,,R9
+79,2026-09-27T02:05:36Z#00351,2026-09-27,9042c564,9042c564,351,CAPSTONE — step 2/3 closure + composed E2E result,P31.19,done,18e01d70b5a1,160,ok,,R9
+80,2026-09-27T10:25:18Z#00353,2026-10-18,13ade2b2,13ade2b2,353,CAPSTONE — step 2/3 closure + composed E2E result,P32.10,done,1b0187976af2,170,future,DC-L-08,R10
+81,2026-09-27T10:27:24Z#00355,2026-09-27,42bb286a,42bb286a,355,CAPSTONE — step 2/3 closure + composed E2E result,,inserted,7d053eeb3f03,,ok,,events
+82,2026-09-27T10:53:38Z#00357,2026-09-27,e8f8764d,e8f8764d,357,CAPSTONE — step 2/3 closure + composed E2E result,P32.10a,done,c8e767f96406,170,ok,,R10
+83,2026-09-09T21:39:53Z#00360,2026-09-09,4d5a5d27,4d5a5d27,360,PHASE LOG — CAPSTONE done,CAPSTONE,round,e7c20d1a0438,,pre-git,,events
+84,2026-09-09T21:41:11Z#00363,2026-09-09,ceb286c5,ceb286c5,363,PHASE LOG — Round 2 (build-memory v2),P22.3,done,ac0b84d3d94f,66,ok,,R1-R2
+85,2026-09-09T22:12:07Z#00366,2026-09-09,cbe5fd48,d8bcd3ab,366,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,round,e38f91fdc993,,ok,,events
+86,2026-09-09T22:34:21Z#00367,2026-09-09,32bea406,32bea406,367,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,round,f3d8eb703a04,,ok,,events
+87,2026-09-13T19:40:01Z#00368,2026-09-10,eb72be5f,eb72be5f,368,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,resume,e268048204cb,,past,DC-L-09,events
+88,2026-09-13T19:40:01Z#00369,2026-09-10,eb72be5f,eb72be5f,369,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P23.1,done,62ada788651b,67,past,DC-L-10,R3
+89,2026-09-13T19:40:01Z#00370,2026-09-10,eb72be5f,eb72be5f,370,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P23.2,done,668cf0479d62,68,past,DC-L-11,R3
+90,2026-09-13T19:40:01Z#00371,2026-09-10,eb72be5f,eb72be5f,371,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P23.3,done,32b6394db523,69,past,DC-L-12,R3
+91,2026-09-13T19:40:01Z#00372,2026-09-10,eb72be5f,eb72be5f,372,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P23.4,done,877755e8a296,70,past,DC-L-13,R3
+92,2026-09-13T19:56:51Z#00373,2026-09-10,e1cedcad,e1cedcad,373,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P21.1,done,4d6dda284516,71,past,DC-L-14,R3
+93,2026-09-13T20:21:10Z#00374,2026-09-10,d20f3a0b,d20f3a0b,374,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P23.5,done,8ae12f40e92b,72,past,DC-L-15,R3
+94,2026-09-13T20:36:43Z#00375,2026-09-10,773ae598,773ae598,375,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P21.3,done,f1eb68319ce2,73,past,DC-L-16,R3
+95,2026-09-13T20:53:00Z#00376,2026-09-10,3a4aa696,3a4aa696,376,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P21.4,done,18aa65f537ad,74,past,DC-L-17,R3
+96,2026-09-13T20:57:19Z#00377,2026-09-10,3259ca81,3259ca81,377,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P23.6,done,b81d04e3359b,75,past,DC-L-18,R3
+97,2026-09-13T21:10:20Z#00378,2026-09-10,e91b8f6a,e91b8f6a,378,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P21.5,done,56d39238a51f,76,past,DC-L-19,R3
+98,2026-09-13T21:20:02Z#00379,2026-09-10,2a5d01e0,2a5d01e0,379,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P21.7,done,400170a38171,77,past,DC-L-20,R3
+99,2026-09-13T21:29:56Z#00380,2026-09-10,761bbb30,761bbb30,380,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P21.8,done,a563d1353d78,78,past,DC-L-21,R3
+100,2026-09-13T21:52:02Z#00381,2026-09-10,7c92c341,7c92c341,381,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.1,done,affa3bc32566,79,past,DC-L-22,R3-R4
+101,2026-09-13T22:10:36Z#00382,2026-09-10,759fcbac,759fcbac,382,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.2,done,8935aa4c00f0,80,past,DC-L-23,R3-R4
+102,2026-09-14T02:31:31Z#00383,2026-09-13,a2c6711c,a2c6711c,383,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.3,done,1765b7fd6898,81,ok,,R3-R4
+103,2026-09-14T03:17:01Z#00384,2026-09-13,791e1bbd,5c9e76e6,384,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.4,done,0f049d1e0acf,82,ok,,R3-R4
+104,2026-09-14T04:00:47Z#00385,2026-09-13,3e826aa5,488ac7c5,385,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.5,done,98ac50ff43e4,83,ok,,R3-R4
+105,2026-09-14T04:50:00Z#00386,2026-09-14,5bc2d9ba,4efd5838,386,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.6,done,47ebb0f74944,84,ok,,R3-R4
+106,2026-09-14T05:27:25Z#00387,2026-09-13,9866efae,919bde02,387,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.7,done,48b729d7df4d,85,ok,,R3-R4
+107,2026-09-14T05:59:29Z#00388,2026-09-13,83c60491,556c6633,388,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.8,done,fca9de5b706a,86,ok,,R3-R4
+108,2026-09-14T06:05:50Z#00389,2026-09-13,a49e205b,a49e205b,389,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.9,done,eebeb2a70798,87,ok,,R3-R4
+109,2026-09-15T16:39:24Z#00390,2026-09-15,8e1f6769,8e1f6769,390,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.1,done,869e1869f2e4,79,ok,,R3-R4
+110,2026-09-15T17:03:51Z#00391,2026-09-15,393684ad,393684ad,391,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P24.1,other,5e2584066a21,79,ok,,R3-R4
+111,2026-09-15T17:28:33Z#00392,2026-09-15,8670a4da,8670a4da,392,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,other,72c8fa7769a6,,ok,,events
+112,2026-09-15T17:42:54Z#00393,2026-09-15,be3f6296,be3f6296,393,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P25.1,partial,35e0f67c5f99,88,ok,,R4 (P25-P26)
+113,2026-09-15T18:08:04Z#00394,2026-09-15,03450cb8,03450cb8,394,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,gate,524cdf2c7361,,ok,,events
+114,2026-09-15T18:57:05Z#00395,2026-09-15,ed993ee7,ed993ee7,395,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,gate,f74f43a1ed69,,ok,,events
+115,2026-09-15T19:11:58Z#00396,2026-09-15,38841865,38841865,396,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P25.3,partial,bd68fb2574fe,90,ok,,R4 (P25-P26)
+116,2026-09-15T19:19:34Z#00397,2026-09-15,97880e09,97880e09,397,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,gate,2b847b657f48,,ok,,events
+117,2026-09-15T21:02:04Z#00398,2026-09-15,2e534ee6,2e534ee6,398,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,gate,e82129e765ac,,ok,,events
+118,2026-09-15T21:36:43Z#00399,2026-09-15,7a1a17d4,7a1a17d4,399,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,gate,293d312e491f,,ok,,events
+119,2026-09-15T23:41:44Z#00400,2026-09-15,7975a90a,7975a90a,400,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P25.5,other,c0f6486061c8,92,ok,,R4 (P25-P26)
+120,2026-09-16T05:13:50Z#00401,2026-09-16,4c58f407,4c58f407,401,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P25.7,done,7aea1dce3349,94,ok,,R4 (P25-P26)
+121,2026-09-17T01:13:17Z#00402,2026-09-17,f7f8600a,f7f8600a,402,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.2,done,d7e832e84a30,99,ok,,R4 (P25-P26)
+122,2026-09-17T03:24:48Z#00403,2026-09-17,a36dfbea,a36dfbea,403,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.3,done,fff4a1f96992,100,ok,,R4 (P25-P26)
+123,2026-09-17T05:25:20Z#00404,2026-09-17,5b98004f,5b98004f,404,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.4,done,86b41ff0f0f5,101,ok,,R4 (P25-P26)
+124,2026-09-17T17:55:05Z#00405,2026-09-17,be125944,be125944,405,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.6,done,831544c3da9b,103,ok,,R4 (P25-P26)
+125,2026-09-18T10:01:45Z#00406,2026-09-18,3819b63c,3819b63c,406,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.12,done,a46f68d389d0,109,ok,,R4 (P25-P26)
+126,2026-09-18T12:11:13Z#00407,2026-09-18,6a4e2d5a,6a4e2d5a,407,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.13,done,05164cef0aae,110,ok,,R4 (P25-P26)
+127,2026-09-18T15:14:59Z#00408,2026-09-18,b2d02c52,b2d02c52,408,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.14,done,73076ef68f20,111,ok,,R4 (P25-P26)
+128,2026-09-18T19:23:39Z#00409,2026-09-18,dce0d067,dce0d067,409,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.15,done,8e0a3d7042c5,112,ok,,R4 (P25-P26)
+129,2026-09-19T06:33:52Z#00411,2026-09-19,376f65ae,99517730,411,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.16,done,6a84e0296f8c,113,ok,,R4 (P25-P26)
+130,2026-09-19T20:22:43Z#00412,2026-09-19,de8d34f9,755dbd3f,412,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.17,done,ec92b751fc90,114,ok,,R4 (P25-P26)
+131,2026-09-22T15:16:52Z#00413,2026-09-22,7d3ae4b8,7d3ae4b8,413,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.18,done,40d0d8b1daa6,115,ok,,R4 (P25-P26)
+132,2026-09-22T16:01:08Z#00414,2026-09-22,0cb794c7,0cb794c7,414,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P26.19,done,21f9eb04b031,116,ok,,R4 (P25-P26)
+133,2026-09-22T16:34:28Z#00415,2026-09-22,a6a2b566,a6a2b566,415,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,round,0f4ac12de232,,ok,,events
+134,2026-09-27T02:40:53Z#00417,2026-09-27,d6c562e5,d6c562e5,417,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),ROUND10,round,65790ce186ce,,ok,,events
+135,2026-09-27T02:46:39Z#00419,2026-09-27,c8d72cc3,c8d72cc3,419,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),ROUND10,round,0d3a08be4095,,ok,,events
+136,2026-09-27T04:17:10Z#00421,2026-09-28,5677495a,5677495a,421,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.2,done,cd649ac6f6cd,162,future,DC-L-24,R10
+137,2026-09-27T06:43:22Z#00423,2026-10-10,03ac3b06,03ac3b06,423,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.3,done,21808ff3f900,163,future,DC-L-25,R10
+138,2026-09-27T06:43:22Z#00425,2026-10-11,03ac3b06,03ac3b06,425,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.4,done,a941b76dfc09,164,future,DC-L-26,R10
+139,2026-09-27T07:19:07Z#00427,2026-10-12,616b889c,616b889c,427,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.5,done,a02bea2a0bb8,165,future,DC-L-27,R10
+140,2026-09-27T08:06:44Z#00428,2026-10-13,c8d2856e,c8d2856e,428,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.6,done,1bc189464d20,166,future,DC-L-28,R10
+141,2026-09-27T08:39:17Z#00430,2026-10-14,778a5e2e,778a5e2e,430,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.7,done,6663b28a53ce,167,future,DC-L-29,R10
+142,2026-09-27T09:13:03Z#00431,2026-10-15,5713f5dd,5713f5dd,431,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.8,done,42fbf4c6fade,168,future,DC-L-30,R10
+143,2026-09-27T09:52:15Z#00433,2026-10-16,c31380fb,c31380fb,433,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.9,done,3903f8789b1d,169,future,DC-L-31,R10
+144,2026-09-27T12:08:48Z#00435,2026-09-27,8ec2bcfb,8ec2bcfb,435,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.12,done,1b173bed7235,172,ok,,R10
+145,2026-09-27T12:52:09Z#00437,2026-09-27,9ae9b26f,9ae9b26f,437,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.13,done,e99e384f99c8,173,ok,,R10
+146,2026-09-27T13:46:11Z#00438,2026-09-27,3c9ea949,3c9ea949,438,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.14,done,58997ae65928,174,ok,,R10
+147,2026-09-27T14:15:07Z#00439,2026-10-04,4dd5a038,4dd5a038,439,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.15,done,dc8b327d75e6,175,future,DC-L-32,R10
+148,2026-09-27T15:05:56Z#00440,2026-10-18,0669f65d,0669f65d,440,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.16,done,d2f624b6f268,176,future,DC-L-33,R10
+149,2026-09-27T15:58:37Z#00441,2026-10-19,6cc5d9d8,5f80ba19,441,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.16a,done,39e80f628c34,177,future,DC-L-34,R10
+150,2026-09-27T16:41:46Z#00442,2026-10-02,2c588cd6,2c588cd6,442,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.17,done,ecd0ec578ea9,178,future,DC-L-35,R10
+151,2026-09-27T17:31:50Z#00443,2026-10-02,30f8638e,0f2e0711,443,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.18,done,25c0db93d3d1,179,future,DC-L-36,R10
+152,2026-09-27T17:56:12Z#00444,2026-10-01,3e26a2dc,3e26a2dc,444,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.19,done,964fc53c67b1,180,future,DC-L-37,R10
+153,2026-09-27T18:28:28Z#00445,2026-09-27,5efe4b9d,5efe4b9d,445,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.20,done,cd5a4190e05c,181,ok,DC-L-38,R10
+154,2026-09-27T18:57:18Z#00446,2026-09-27,c8fb59f9,c8fb59f9,446,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.21,done,b2f483ea0e58,182,ok,,R10
+155,2026-09-27T20:03:56Z#00447,2026-09-27,2404edb0,a97aaca2,447,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.22,done,bcf06d1de0bf,183,ok,,R10
+156,2026-09-27T20:07:17Z#00448,2026-10-19,c4aafa20,c4aafa20,448,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,pause,c8879a5f7978,,future,DC-L-39,events
+157,2026-09-28T01:27:21Z#00449,2026-10-19,a33cd6ec,a33cd6ec,449,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,gate,6c3246800f95,,future,DC-L-40,events
+158,2026-09-28T02:11:03Z#00450,2026-10-19,9bf11201,22b773f8,450,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.23a,done,ddef1e79c716,188,future,DC-L-41,R10
+159,2026-09-28T03:08:20Z#00451,2026-10-20,da146260,da146260,451,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.24,done,9e388b731121,189,future,DC-L-42,R10
+160,2026-09-28T03:09:13Z#00452,2026-10-19,e4be1b84,e4be1b84,452,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,pause,43d72e76fb28,,future,DC-L-43,events
+161,2026-09-28T04:39:31Z#00453,2026-10-20,e4bd612e,e4bd612e,453,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P32.25,done,d682fb2f261f,191,future,DC-L-44,R10
+162,2026-09-28T05:19:01Z#00454,2026-10-21,08b3135f,08b3135f,454,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.1,done,d1a04e252bdb,192,future,DC-L-45,R10
+163,2026-09-28T06:26:26Z#00455,2026-09-28,d76c22eb,d76c22eb,455,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.2,done,08b8c6699f0d,193,ok,,R10
+164,2026-09-28T07:13:07Z#00456,2026-09-28,4b35ad7c,4b35ad7c,456,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.3,done,40e4add32c21,194,ok,,R10
+165,2026-09-28T07:13:54Z#00457,2026-09-28,cf1f8711,cf1f8711,457,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),,pause,16bf5f2db464,,ok,,events
+166,2026-09-28T19:41:20Z#00458,2026-09-28,a711333d,a711333d,458,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.4,done,7bc33a688367,196,ok,,R10
+167,2026-09-28T20:28:13Z#00459,2026-09-28,bf98abb5,bf98abb5,459,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.5,done,a68cc163ffc7,197,ok,DC-L-46,R10
+168,2026-09-28T21:07:12Z#00460,2026-09-28,474f69f4,474f69f4,460,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.6,done,b76b8a7bfc54,198,ok,,R10
+169,2026-09-28T21:41:03Z#00461,2026-09-28,150d6f17,150d6f17,461,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.7,done,d7757da62028,199,ok,,R10
+170,2026-09-28T22:45:44Z#00462,2026-09-28,c77bd45e,b051732c,462,PHASE LOG — Round 3 (go-live) + Round 4 (productionize),P33.8,done,0db57a1643c1,200,ok,,R10
+171,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P25.2,missing-entry,,89,,,R4 (P25-P26)
+172,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P25.4,missing-entry,,91,,,R4 (P25-P26)
+173,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P25.6,missing-entry,,93,,,R4 (P25-P26)
+174,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P25.8,missing-entry,,95,,,R4 (P25-P26)
+175,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P25.9,missing-entry,,96,,,R4 (P25-P26)
+176,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P25.10,missing-entry,,97,,,R4 (P25-P26)
+177,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.1,missing-entry,,98,,,R4 (P25-P26)
+178,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.5,missing-entry,,102,,,R4 (P25-P26)
+179,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.7,missing-entry,,104,,,R4 (P25-P26)
+180,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.8,missing-entry,,105,,,R4 (P25-P26)
+181,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.9,missing-entry,,106,,,R4 (P25-P26)
+182,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.10,missing-entry,,107,,,R4 (P25-P26)
+183,,,,,,(no PHASE LOG entry; the BUILD_INDEX row is the record),P26.11,missing-entry,,108,,,R4 (P25-P26)
+184,,,,,,(only partial/landed entries; entries:L393),P25.1,no-done-entry,,88,,,R4 (P25-P26)
+185,,,,,,(only partial/landed entries; entries:L396),P25.3,no-done-entry,,90,,,R4 (P25-P26)
+186,,,,,,(only partial/landed entries; entries:L400),P25.5,no-done-entry,,92,,,R4 (P25-P26)

@@ -2,17 +2,22 @@
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2026 The SIG project (vendoring) and the build-memory skill authors.
 #
-# Vendored, unmodified copy of the ADR-index generator (BM-ADR-02), a dependency of check-build-memory.sh's ADR-index diff so this repository can validate its
-# committed build-memory layout (docs/build/, docs/tickets/, docs/adr/) WITHOUT the
-# build-memory skill installed (e.g. in CI / make docs-check, deliverable P22.3/EL.1).
+# Vendored copy of the ADR-index generator (BM-ADR-02). check-build-memory.sh (same directory) regenerates
+# the index with it (`--check`, and `--check --legacy` to recognise an index the 0.4.0 parser wrote) and
+# diffs docs/adr/README.md; regenerate with `bash scripts/docs/adr-index.sh docs/adr`. The MIT licence
+# of the source skill is retained above.
 #
-# Provenance: copied byte-for-byte from
-#   ~/agent-skills/skills/build-memory/scripts/adr-index.sh
-#   on 2026-09-09 by ticket P22.3 (build-memory v2 migration). The MIT licence of the
-#   source skill is retained above. The detection logic (layout allowlist, ticket-sequence
-#   grammar, manifest<->files, DEFERRALS ids, ADR index<->files, LEDGER key set, secret/size
-#   scans, JSON report, exit codes) is unchanged from upstream.
-# ---------------------------------------------------------------------------
+# Provenance (SEED-02c, Round-11 Stage B; vendored 2026-10-01T08:02:02Z, from `date -u`):
+#   source   ~/agent-skills  skills/build-memory/scripts/adr-index.sh  (live via ~/.claude/skills/build-memory)
+#   release  0.5.0 (.claude-plugin/plugin.json) at commit 8aeb6dcd55a26a049bfb2092dd32e0e286761f6f
+#            (e172f52 "Release 0.5.0" + 4140fda + 8aeb6dc)
+#   upstream sha256 f73fd58562a3724d794d19159906036cc0694b8463eb2053ebac1f4af6151721
+#   replaces the P22.3 vendor (2026-09-09) of upstream 6e4a863.
+# No local patch: the body below the closing banner line is the upstream file byte-for-byte.
+# Verify the vendored body against the skill:
+#   diff <(sed '2,/^# ---- end of SIG vendoring banner ----/d' scripts/docs/adr-index.sh) \
+#        ~/.claude/skills/build-memory/scripts/adr-index.sh      # → no output
+# ---- end of SIG vendoring banner ----
 # adr-index.sh — regenerate docs/adr/README.md from the ADR files. (BM-ADR-02.)
 #
 # The index is DERIVED, never hand-maintained: one row per ADR-NNN-<slug>.md, in
@@ -21,8 +26,11 @@
 # temp file and diff — a hand edit is a violation, not a merge.
 #
 # Usage:
-#   adr-index.sh [adr_dir]            # writes <adr_dir>/README.md
-#   adr-index.sh --check [adr_dir]    # print the index to stdout; write nothing
+#   adr-index.sh [adr_dir]                     # writes <adr_dir>/README.md
+#   adr-index.sh --check [adr_dir]             # print the index to stdout; write nothing
+#   adr-index.sh --check --legacy [adr_dir]    # print what the 0.4.0 parser produced (the
+#                                              # validator uses it to recognise an index that is
+#                                              # merely stale, not hand-edited)
 #
 # Arguments:
 #   adr_dir — the ADR directory (default: docs/adr relative to cwd).
@@ -30,12 +38,16 @@
 # A human-authored trailing section (from the first '## ' heading to EOF — e.g. a '## Notes'
 # prose block) is preserved across regeneration, so the generated table and hand-kept prose coexist.
 #
-# Each ADR file is parsed for:
-#   - title  : the H1 `# ADR-NNN: <title>`
-#   - status : the `- **Status:** <value>` header bullet
-#   - ticket : the `- **Ticket:** <value>` header bullet
-# Missing status/ticket render as `—`. Files are ordered by their zero-stripped
-# numeric NNN; ties keep filename order.
+# Each ADR file is parsed for the header forms in use (SK-21; landed ADR bodies are frozen, so the
+# generator adapts, never the ADRs):
+#   - title  : the H1 `# ADR-NNN: <title>`, `# ADR-NNN — <title>` or `# ADR-NNN - <title>`
+#   - ticket : the first of the header fields `Ticket`, `Phase`, `Phase / ticket`
+#   - status : the header field `Status`; an appended `Superseded by ADR-MMM …` line (BM-ADR-01's
+#              only permitted post-landing append) replaces it
+#   A header field is `- **Label:** value`, `- Label: value`, `**Label:** value` or `Label: value`
+#   (above the first `## ` heading). A `|` inside a value is escaped. Missing values render as `—`
+#   (the validator warns on every `—` cell). Files are ordered by their zero-stripped numeric NNN;
+#   ties keep filename order.
 #
 # Output:
 #   Default: (re)writes <adr_dir>/README.md. --check: prints to stdout only.
@@ -49,19 +61,55 @@
 
 set -o pipefail
 
-CHECK=0
-if [ "${1:-}" = "--check" ]; then CHECK=1; shift; fi
+CHECK=0 ; LEGACY=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --check)  CHECK=1; shift ;;
+    --legacy) LEGACY=1; shift ;;
+    *) break ;;
+  esac
+done
 ADR_DIR="${1:-docs/adr}"
 
 [ -d "$ADR_DIR" ] || { echo "adr-index.sh: no such directory: $ADR_DIR" >&2; exit 1; }
 
 MARKER='<!-- generated by build-memory adr-index; do not edit -->'
 
-# field <file> <bullet-label> — value of a `- **Label:** value` header bullet, or empty.
-field() {
+# legacy_field <file> <bullet-label> — the 0.4.0 reader: only `- **Label:** value`.
+legacy_field() {
   grep -m1 -E "^[[:space:]]*-[[:space:]]*\*\*${2}:\*\*" "$1" 2>/dev/null \
     | sed -E "s/^[[:space:]]*-[[:space:]]*\*\*${2}:\*\*[[:space:]]*//; s/[[:space:]]*$//"
 }
+
+# field <file> <label-ERE> — the value of the first header field (above the first `## ` heading)
+# whose label matches exactly; bullet/bold optional.
+field() {
+  awk -v lab="$2" '
+    /^##[[:space:]]/ { exit }
+    {
+      line = $0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      if (match(line, "^\\*\\*(" lab "):\\*\\*[[:space:]]*") || match(line, "^(" lab "):[[:space:]]*")) {
+        v = substr(line, RLENGTH + 1); sub(/[[:space:]]+$/, "", v)
+        if (v != "") { print v; exit }
+      }
+    }' "$1" 2>/dev/null
+}
+
+# superseded <file> — an appended `Superseded by ADR-MMM …` line below the header, if any.
+superseded() {
+  awk '
+    /^##[[:space:]]/ { body = 1 }
+    body {
+      line = $0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line); gsub(/\*\*/, "", line)
+      sub(/^Status:[[:space:]]*/, "", line)
+      if (line ~ /^Superseded by ADR-[0-9]+/) { sub(/[[:space:]]+$/, "", line); v = line }
+    }
+    END { if (v != "") print v }' "$1" 2>/dev/null
+}
+
+cell() { printf '%s' "$1" | sed 's/|/\\|/g'; }
 
 # Collect "NNN<TAB>filename" for numeric sort, then emit rows in that order.
 tmp_rows="$(mktemp)" ; notes_tmp="$(mktemp)"
@@ -85,6 +133,34 @@ for f in "$ADR_DIR"/ADR-*.md; do
   printf '%s\t%s\n' "$nnn" "$base" >> "$tmp_rows"
 done
 
+row_legacy() {   # the 0.4.0 rendering, byte for byte
+  local f="$1" base="$2" title status ticket adr_id
+  title="$(grep -m1 -E '^#[[:space:]]+ADR-[0-9]+:' "$f" | sed -E 's/^#[[:space:]]+ADR-[0-9]+:[[:space:]]*//; s/[[:space:]]*$//')"
+  [ -n "$title" ] || title='—'
+  status="$(legacy_field "$f" Status)"; [ -n "$status" ] || status='—'
+  ticket="$(legacy_field "$f" Ticket)"; [ -n "$ticket" ] || ticket='—'
+  adr_id="$(grep -m1 -E '^#[[:space:]]+ADR-[0-9]+:' "$f" | sed -E 's/^#[[:space:]]+(ADR-[0-9]+):.*$/\1/')"
+  [ -n "$adr_id" ] || adr_id="$(printf '%s' "$base" | sed -E 's/^(ADR-[0-9]+).*$/\1/')"
+  printf '| [%s](%s) | %s | %s | %s |\n' "$adr_id" "$base" "$title" "$ticket" "$status"
+}
+
+H1_RE='^#[[:space:]]+ADR-[0-9]+[[:space:]]*(:|—|-)'
+row() {
+  local f="$1" base="$2" title status ticket adr_id sup
+  title="$(grep -m1 -E "$H1_RE" "$f" | sed -E 's/^#[[:space:]]+ADR-[0-9]+[[:space:]]*(:|—|-)[[:space:]]*//; s/[[:space:]]*$//')"
+  [ -n "$title" ] || title='—'
+  status="$(field "$f" 'Status')"
+  sup="$(superseded "$f")"; [ -n "$sup" ] && status="$sup"
+  [ -n "$status" ] || status='—'
+  ticket="$(field "$f" 'Ticket')"
+  [ -n "$ticket" ] || ticket="$(field "$f" 'Phase')"
+  [ -n "$ticket" ] || ticket="$(field "$f" 'Phase / ticket')"
+  [ -n "$ticket" ] || ticket='—'
+  adr_id="$(grep -m1 -E "$H1_RE" "$f" | sed -E 's/^#[[:space:]]+(ADR-[0-9]+).*$/\1/')"
+  [ -n "$adr_id" ] || adr_id="$(printf '%s' "$base" | sed -E 's/^(ADR-[0-9]+).*$/\1/')"
+  printf '| [%s](%s) | %s | %s | %s |\n' "$adr_id" "$base" "$(cell "$title")" "$(cell "$ticket")" "$(cell "$status")"
+}
+
 emit() {
   printf '%s\n' "$MARKER"
   printf '# Architecture Decision Records\n\n'
@@ -94,15 +170,7 @@ emit() {
   printf '|---|---|---|---|\n'
   if [ -s "$tmp_rows" ]; then
     sort -n -k1,1 "$tmp_rows" | while IFS="$(printf '\t')" read -r _n base; do
-      f="$ADR_DIR/$base"
-      title="$(grep -m1 -E '^#[[:space:]]+ADR-[0-9]+:' "$f" | sed -E 's/^#[[:space:]]+ADR-[0-9]+:[[:space:]]*//; s/[[:space:]]*$//')"
-      [ -n "$title" ] || title='—'
-      status="$(field "$f" Status)"; [ -n "$status" ] || status='—'
-      ticket="$(field "$f" Ticket)"; [ -n "$ticket" ] || ticket='—'
-      # ADR label = the file's own NNN, zero-padded to 3 as written in the H1.
-      adr_id="$(grep -m1 -E '^#[[:space:]]+ADR-[0-9]+:' "$f" | sed -E 's/^#[[:space:]]+(ADR-[0-9]+):.*$/\1/')"
-      [ -n "$adr_id" ] || adr_id="$(printf '%s' "$base" | sed -E 's/^(ADR-[0-9]+).*$/\1/')"
-      printf '| [%s](%s) | %s | %s | %s |\n' "$adr_id" "$base" "$title" "$ticket" "$status"
+      if [ "$LEGACY" -eq 1 ]; then row_legacy "$ADR_DIR/$base" "$base"; else row "$ADR_DIR/$base" "$base"; fi
     done
   fi
   # Re-append any preserved human trailing section (see the capture above).

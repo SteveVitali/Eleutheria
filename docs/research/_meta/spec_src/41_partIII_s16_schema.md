@@ -197,6 +197,27 @@ CREATE TRIGGER claim_append_only_trg
 use an explicit column list generated from the schema so that adding a column cannot silently
 widen what is mutable. A CI test MUST assert the generated list matches the live schema.)*
 
+**Round-11 waiver — WV-11, one operator-only purge function (ADR-189; recorded 2026-10-01).** The
+operator approved, in their adopted sentence recorded in ADR-189 (S6R-03, GATE-P log round 26;
+agent-drafted, adopted by the operator at 2026-10-01T06:51:11Z; sha256 `04e7b77f8db7…`), one
+operator-only purge function as the sole exception to SIG-STORE-011, limited to material SIG must
+not hold (SIG-GOV-008) and leaving a tombstone and a public log entry. **Waived:** append-only, for
+exactly that one database function and for no other role, path or mechanism. **Stands:** the claim
+table stays append-only, enforced in the database, for every other role and path — the trigger above
+still raises for them, and a test proves it; corrections stay new claims (SIG-GOV-005); suppression
+(SIG-GOV-007) stays the primitive for everything outside SIG-GOV-008's scope; SIG-STORE-012 is not
+waived (no application role gains `DELETE`). **Mechanism and controls:** a single DB-enforced
+function executable only by an operator-held role, added by a new sqitch change with deploy, revert
+and verify scripts (no landed change is edited); scope limited to SIG-GOV-008 material; each use
+leaves a tombstone recording that a deletion occurred, its category and its date — never its content
+— and a public decision-log entry with its reason; it is never on a pre-authorisation list, each use
+needs the operator's in-ticket go naming the material, and its hosted deploy is itself a go that is
+never pre-authorised; the agent guidance names it as the sole exception to the insert-only rule.
+Until that change lands, no update or delete path to the claim table exists. **Revisit (ADR-189):**
+any use; a request to widen its scope or add a second purge path; a second maintainer; a contested
+deletion. Coverage: `WAIVED(ADR-189)`, `accepted_scope` naming the function; every other path keeps
+its verdict.
+
 **SIG-STORE-012 (MUST).** Application roles MUST NOT hold `DELETE` on `claim`, `extraction`,
 `evidence_artifact`, or `evidence_capture`. The trigger is defence in depth, not the only line.
 

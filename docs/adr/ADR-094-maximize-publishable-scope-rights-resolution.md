@@ -60,3 +60,15 @@ disposition (like GL-GATE-07) + this ADR's Appendix F row in its PR (SIG-ENG-039
   decision; never a silent flip.
 - A new UNDETERMINED source class appears that does not fit the US-public-record / non-US-operator /
   ODbL taxonomy — extend the disposition by a new ADR.
+
+## Status updates
+
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "Counsel revises the public-record / factual-compilation basis". Restated (agent reading,
+  labelled): it fires when the operator records a revised determination of that basis, labelled "the operator's own
+  determination (no counsel)" (ADR-167); or when counsel is obtained (LATER-05) or a first legal demand arrives
+  (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged (SIG-ENG-003).

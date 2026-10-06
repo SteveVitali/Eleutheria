@@ -1,0 +1,60 @@
+query_id,engine_or_tool,query_or_url,run_at,hits_kept,notes
+C5-Q001,WebFetch,https://atlasofsurveillance.org/,2026-09-30T18:15:42Z,1,"EFF Atlas home: search by city/county/state/agency; map; data library; ""compiled by more than 1,000 students and volunteers""; CC-by footer"
+C5-Q002,WebFetch,https://deflock.me/,2026-09-30T18:15:42Z,0,"301 Moved Permanently -> https://deflock.org/ (redirect not followed by tool; spec §21 records deflock.me as 403 Cloudflare, today a plain 301 was returned)"
+C5-Q003,WebFetch,https://eyesonflock.com/,2026-09-30T18:15:42Z,0,"client-rendered SPA; summariser saw title only; superseded by C5-Q006/Q011"
+C5-Q004,WebFetch,https://haveibeenflocked.com/,2026-09-30T18:15:42Z,1,"Flock audit-log aggregator; plate lookup + agency + search-reason browse; operator names shown -> PART VIII FLAG (link to methodology pages only, never to lookups); no download/API; delay 'months or even years'"
+C5-Q005,WebFetch,https://alprwatch.org/,2026-09-30T18:15:42Z,1,"ALPR Watch: map, suspected locations, avoidance routing, KMZ offline packages, API nav item, FOIA dashboards; no counts or timestamps visible"
+C5-Q006,curl,https://eyesonflock.com/,2026-09-30T18:16:00Z,1,"meta description verbatim: 'An independent project aggregating and analyzing data from Flock Safety's public transparency portals. Track ALPR cameras, searches, and data sharing across the United States.'"
+C5-Q007,WebFetch,https://deflock.org/,2026-09-30T18:16:00Z,0,"client-rendered SPA; title only; content read from public repo instead (C5-Q015..Q018)"
+C5-Q008,WebFetch,https://atlasofsurveillance.org/about,2026-09-30T18:16:00Z,1,"verbatim 'The Atlas of Surveillance data was last updated on Aug 27, 2026.'; 'more than 15,000 datapoints in 6,000-plus jurisdictions'; audience 'journalists, academics, and, most importantly, members of the public'"
+C5-Q009,curl,https://deflock.org/sitemap.xml,2026-09-30T18:16:14Z,1,"19 routes incl. /council /foia /groups /report /identify /app"
+C5-Q010,curl,https://atlasofsurveillance.org/search?location=Austin%2C+Texas,2026-09-30T18:16:14Z,1,"server-rendered result list of agency x technology records (/a/<id>) for the Austin query; no JS needed to read"
+C5-Q011,curl,https://eyesonflock.com/api/v1/data,2026-09-30T18:16:18Z,1,"16.5 MB JSON sha256=eccb336ab89a (same prefix I1 recorded); only field names and counts computed; file deleted (holds audit search-reason fields - Part VIII); 1528 portals (PD 1304 / SD 224) in 45 states; portal_url on 1528; data_last_updated median 2026-09-23 (1486 >= 2026-09-01); sharing list 917; retention 1462; prohibited_uses 1458"
+C5-Q012,curl,https://deflock.org/council,2026-09-30T18:16:32Z,0,SPA shell only
+C5-Q013,curl,https://deflock.org/foia,2026-09-30T18:16:32Z,0,SPA shell only
+C5-Q014,curl,https://deflock.org/groups,2026-09-30T18:16:32Z,0,SPA shell only
+C5-Q015,gh-api,repos/FoggedLens/deflock/git/trees/HEAD?recursive=1,2026-09-30T18:16:37Z,1,"view files CouncilView.vue FOIA.vue Groups.vue Identify.vue ReportID.vue"
+C5-Q016,gh-api,repos/FoggedLens/deflock/contents/webapp/src/views/CouncilView.vue,2026-09-30T18:16:40Z,1,"council action guide: talking points link; 'Meet Council Members Privately'; 'Speak at Council Meetings'; sample email template; 'Bring a brief printed summary of key points'"
+C5-Q017,gh-api,repos/FoggedLens/deflock/contents/webapp/src/views/FOIA.vue,2026-09-30T18:16:40Z,1,"public-records how-to: permits/invoices/contracts/emails; points to MuckRock examples"
+C5-Q018,gh-api,repos/FoggedLens/deflock/contents/webapp/src/views/Groups.vue,2026-09-30T18:16:40Z,1,"local groups directory by state; 'independently run and are not affiliated with DeFlock'"
+C5-Q019,curl,https://atlasofsurveillance.org/a/TX2270200ALPR,2026-09-30T18:16:46Z,1,"2 GETs of same URL; record shows Agency/Location/Technology/Vendor (Flock Safety) + narrative 'according to data obtained in July 2025' + Links: Public records (Muckrock), DocumentCloud; no contract date/policy/sharing"
+C5-Q020,WebSearch,MuckRock automated license plate reader project Flock public records,2026-09-30T18:16:46Z,0,"NOT PERFORMED: session WebSearch budget exhausted (200 of 200); no further searches attempted; all later reads are direct fetches of known URLs"
+C5-Q021,WebFetch,https://www.aclu.org/community-control-over-police-surveillance,2026-09-30T18:16:46Z,1,"CCOPS: model bill, resource library, national map; 'adopted in 26 jurisdictions ... nearly 18 million people'; map image dated 2024-11-21; no jurisdiction list with dates on page"
+C5-Q022,WebFetch,https://www.muckrock.com/project/,2026-09-30T18:17:01Z,0,HTTP 403
+C5-Q023,WebFetch,https://www.stopspying.org/,2026-09-30T18:17:01Z,1,"S.T.O.P.: NY-focused litigation/legislation/KYR training; legislative tracker; research; no open data downloads listed"
+C5-Q024,WebFetch,https://lucyparsonslabs.com/,2026-09-30T18:17:01Z,1,"Chicago; 1000+ FOIA requests; 100+ public-records cases; #StopShotSpotter coalition; no dataset/tool named on home"
+C5-Q025,WebFetch,https://www.perpetuallineup.org/,2026-09-30T18:17:01Z,1,"Georgetown CPT 2016-10-18; face-recognition scorecard (25 agencies); state/city clickable map; model act + model use policy; (c) 2016, no later update shown"
+C5-Q026,WebFetch,https://americandragnet.org/,2026-09-30T18:17:01Z,1,"Georgetown CPT 2022-05-10, foreword May 2025; ICE data access (DMV/utility/child welfare); no per-state lookup; report PDFs only"
+C5-Q027,curl,https://www.muckrock.com/foi/list/?q=flock+safety,2026-09-30T18:17:18Z,0,"2 GETs; HTTP 403 with browser UA (WAF; consistent with I1 note 'WAF-403')"
+C5-Q028,WebFetch,https://www.surveillancewatch.io/,2026-09-30T18:17:18Z,0,title only (SPA)
+C5-Q029,WebFetch,https://www.seattle.gov/tech/data-privacy/surveillance-technologies,2026-09-30T18:17:18Z,0,HTTP 404 (guessed plural path; corrected in C5-Q033 from sources.toml:1674)
+C5-Q030,WebFetch,https://www.oaklandca.gov/boards-commissions/privacy-advisory-board,2026-09-30T18:17:18Z,1,"Oakland PAC: agendas since 2016, per-technology use policies and impact reports (ALPR, BWC, ShotSpotter...); next listed meeting '10-1-26 Privacy Advisory Commission Regular Meeting'"
+C5-Q031,WebFetch,https://www.brennancenter.org/issues/protect-liberty-security/surveillance,2026-09-30T18:17:18Z,0,HTTP 404 (guessed path)
+C5-Q032,curl,https://www.surveillancewatch.io/,2026-09-30T18:17:38Z,1,"2 GETs; meta description verbatim: 'Surveillance Watch is an interactive map revealing the intricate connections between surveillance companies, their funding sources and affiliations.'"
+C5-Q033,WebFetch,https://www.seattle.gov/tech/data-privacy/surveillance-technology,2026-09-30T18:17:38Z,1,"SMC 14.18; Master List filings 2017-11-30 .. Sept 2025 with clerk file numbers; SIR register; technologies under review; public-comment stage; Community Surveillance Working Group"
+C5-Q034,WebFetch,https://www.aclu.org/get-the-flock-out-toolkit,2026-09-30T18:17:38Z,1,"organizer toolkit: how to find if your city uses ALPR, 3 model bills, template email, council guidance; links deflock.org, Have I Been Flocked, EFF Atlas, alpr.watch, affiliate maps; no publish date shown"
+C5-Q035,WebFetch,https://alpratlas.org/,2026-09-30T18:17:38Z,1,"ALPR Accountability Atlas: 'living, source-auditable map of reported issues'; downloads ZIP/CSV issue records/source index CSV/GeoJSON/data dictionary; 'Allegations, findings, court actions, policy decisions, and company statements stay distinct'; counts load client-side (0 shown to fetcher)"
+C5-Q036,WebFetch,https://transparency.flocksafety.com/,2026-09-30T18:17:38Z,0,HTTP 403 (vendor portal hub not readable by fetcher)
+C5-Q037,curl,https://surveillancegraph.org/,2026-09-30T18:18:08Z,1,"SIG home: '55 jurisdictions with a published dossier'; '178 sources tracked'; '2423200 of 2423200 published tier-0 claims'; per-predicate 'N of N' tiles"
+C5-Q038,curl,https://surveillancegraph.org/dossier/tx/,2026-09-30T18:18:08Z,1,"state-level only; '3994 of 3996 evaluable geolocated site observations'; Auto-renews/Notice window/Contract expiry/Next decision date/Approving body/Vote/Legal regime all 'unknown'; sharing partners 'Not researched'; sources as bare ids; belief-pinned permalink; 'Not yet human-reviewed'"
+C5-Q039,curl,https://surveillancegraph.org/network/,2026-09-30T18:18:14Z,1,"ego-network explorer text; no-JS lists promised"
+C5-Q040,curl,https://surveillancegraph.org/watch/,2026-09-30T18:18:14Z,1,"'No contracts on the watch yet'; 'No jurisdictions to subscribe to yet'; 'No citation list yet'; honest gap wording"
+C5-Q041,curl,https://surveillancegraph.org/evidence/,2026-09-30T18:18:14Z,1,"'SIG has published no claims whose full evidence view is available for this build'"
+C5-Q042,curl,https://surveillancegraph.org/search/,2026-09-30T18:18:14Z,1,"search island; see C5-Q044 for no-JS body"
+C5-Q043,curl,https://surveillancegraph.org/network/,2026-09-30T18:18:22Z,1,"parsed: 654 UUID mentions / 131 distinct; every node labelled by UUID only (no agency names); one hub degree 130, rest degree 1"
+C5-Q044,curl,https://surveillancegraph.org/search/,2026-09-30T18:18:22Z,1,"no-JS browse: 55 dossiers; '232625 mapped sites'; 'interactive filter covers the first 500 of 232625 mapped sites'"
+C5-Q045,curl,https://surveillancegraph.org/network/,2026-09-30T18:18:37Z,1,"edge list: configured/observed/declared legend ('Never implies: ...'); rows '<uuid> configured_access <uuid> ... weakly supported (1 of 4) ... downgrade: BEST_CLAIM_W1'"
+C5-Q046,curl,https://surveillancegraph.org/,2026-09-30T18:18:44Z,1,"outbound-link scan: 0 external hosts (only surveillancegraph.org x2)"
+C5-Q047,curl,https://surveillancegraph.org/methodology/,2026-09-30T18:18:44Z,1,outbound-link scan: 0 external hosts
+C5-Q048,curl,https://surveillancegraph.org/contribution-back/,2026-09-30T18:18:44Z,1,outbound-link scan: 0 external hosts
+C5-Q049,curl,https://surveillancegraph.org/dossier/tx/,2026-09-30T18:18:44Z,1,outbound-link scan: 0 external hosts
+C5-Q050,curl,https://surveillancegraph.org/data-freshness/,2026-09-30T18:18:44Z,1,outbound-link scan: 0 external hosts
+C5-Q051,curl,https://surveillancegraph.org/dossier/tx/print/,2026-09-30T18:18:58Z,1,"print view: 0 <script> tags; as-of + permalink repeated; governance fields 'unknown'"
+C5-Q052,curl,https://surveillancegraph.org/contribution-back/,2026-09-30T18:18:58Z,1,"'0 accepted upstream of 0 attributed changesets'; names DeFlock/Atlas/Eyes on Flock/MuckRock 0 times each"
+C5-Q053,WebFetch,https://alpr.watch/,2026-09-30T18:18:58Z,1,"meeting-agenda keyword tracker ('flock','license plate reader','alpr'); email+ZIP radius alerts; 'Data before mid-December may be unverified. All future flags are 100% moderator approved.'; counters unfilled for fetcher; NOT in SIG registry or spec"
+C5-Q054,WebFetch,https://www.brennancenter.org/our-work/research-reports/,2026-09-30T18:18:58Z,0,"landing shows 3 unrelated featured reports; no surveillance resource located"
+C5-Q055,curl,https://www.brennancenter.org/,2026-09-30T18:19:13Z,0,"no href matching surveil|facial|police-tech|social-media; Brennan not characterised (time box)"
+C5-Q056,curl,https://atlasofsurveillance.org/,2026-09-30T18:19:13Z,1,"internal links: /search /atlas /data-library /methodology /collaborate /glossary"
+C5-Q057,curl,https://atlasofsurveillance.org/data-library,2026-09-30T18:19:16Z,1,"full dataset https://atlasofsurveillance.org/download.csv ('Last Updated: Regularly'); curated library of peer datasets (Who Has Your Face, Ring/Neighbors, Bard drones, ASPI) - a link-hub pattern"
+C5-Q058,curl,https://www.aclu.org/get-the-flock-out-toolkit,2026-09-30T18:22:22Z,1,"raw HTML 200 65435 B; 0 mentions of surveillancegraph / Surveillance Infrastructure Graph; outbound hosts incl. alpr.watch, deflock.org, haveibeenflocked.com, aclu-ia.org, aclu-wa.org (verifies C5-Q034 link list)"
+C5-Q059,curl,https://atlasofsurveillance.org/data-library,2026-09-30T18:22:22Z,1,"raw HTML 200 55313 B; 0 mentions of SIG; links 25+ external projects incl. deflock.me, sunders.uber.space, whohasyourface.org, policefundingdatabase.org, brennancenter.org (Brennan/LEAF not fetched)"

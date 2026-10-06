@@ -37,14 +37,17 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
 
 ## Critical Gotchas
 
-1. **Zero-JS budget is a hard contract on public content pages — named islands are the bounded
-   exceptions.** Public *content* pages must render with **no `<script>` tags** and stay within
-   budget; `web/lighthouserc.json` asserts script size `0` and total ≤ 150 KB on them, and
-   `test:e2e` asserts the no-JS baseline. The allowed islands are `/curate/**` (ADR-068) and the
-   three public interactive islands `/map/`, `/network/`, `/search/` (ADR-097) — each keeps a
-   no-JS fallback (SIG-UI-050) and a measured per-island script/total ceiling (P32.15, ADR-134;
-   baselines in `web/tests/e2e/island-budgets.json`). Adding client JS to any *other* public page
-   fails `test:e2e`/`check:perf`.
+1. **Page types, not islands (ADR-155).** Look up the route's type in the page-type registry
+   (src/lib/page-types.ts, added by P35.50) before adding any client code. T0: none. T1: a
+   framework-free custom element from src/elements/ that upgrades existing markup (≤ 20 KiB gzip
+   initial). T2: a Preact island mounted with `client:visible`/`client:idle` into a reserved box
+   that already holds the static rendition — never `client:only`. Budgets: tests/e2e/page-budgets.json
+   (P35.51). Never render a data label with `innerHTML`. Runtime dependencies: runtime-deps.json
+   only. **Until P35.50/P35.51 land,** the current contract binds: content pages ship no
+   `<script>` (`web/lighthouserc.json` asserts script size `0`), and only `/curate/**` (ADR-068)
+   and the three ADR-097 islands `/map/`, `/network/`, `/search/` carry client JS, within
+   `web/tests/e2e/island-budgets.json`; adding client JS anywhere else fails
+   `test:e2e`/`check:perf`.
 2. **Accessibility is enforced, not aspirational.** `test:e2e` runs `@axe-core/playwright` for
    **WCAG 2.2 AA**; a violation fails the suite.
 3. **Dependency licences are gated.** `check:licenses` (`web/scripts/check-licenses.mjs`) fails on a

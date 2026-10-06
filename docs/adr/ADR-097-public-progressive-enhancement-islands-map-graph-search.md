@@ -98,3 +98,11 @@ and the island allowance (ADR-068) needs extending from `/curate/**` to the thre
 - The interactive map is asked to render individual points at a precision finer than the published
   tier (§19.4), or to drop the ODbL/OSM attribution (§42.3) — both are hard stops requiring a
   governance decision, not a code change.
+
+## Status updates
+
+- **Status:** Superseded by ADR-155 (2026-10-01) — §2–3 and §6 only (the named-island rule)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 155, ADR-155 (HTML-first page
+  types; A-12 "HTML-first page types (Recommended)", 2026-10-01T04:09:43Z) supersedes the three-island rule, the
+  extended allowance and the fourth-island clause; the other decisions stand, and ADR-068's `/curate/**`
+  allowance is unchanged (K0 §6). The body above is unchanged (SIG-ENG-003).

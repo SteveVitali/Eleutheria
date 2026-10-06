@@ -1,0 +1,102 @@
+# Stage B carry list (orchestrator)
+
+Items surfaced by seed units that a later unit (or the operator) must resolve. Each: source unit · item · owner.
+
+- SEED-11a · ADR requirement ids cite SEED-12a's draft map (`stageB/T1_id_map.csv`) — re-check every new ADR's ids against the final map · SEED-12c
+- SEED-11a · ADR-155 dated at the B-22 round (04:33:54Z) rather than A-12's (04:09:43Z) — acceptable (it also records B-22's Preact/JSON-LD adoption); no change
+- SEED-11a · ADR-155 also narrows ADR-091 Decision 1 and the React choice (ADR-091 D2 / ADR-097 D1) — status lines? · SEED-11d decides, orchestrator reviews
+- SEED-11a · ADR-148 extends ADR-073; ADR-150 extends ADR-126 (agent interpretation; not in §7) · SEED-11d (optional `Extended by` lines)
+- SEED-11c · RISK-P0-06 closes by ADR-168 (plan §6.5) — risk-register / BL-001 append · SEED-14 (T4)
+- SEED-11c · D-P30.3-COUNSEL reads DONE in the main DEFERRALS table but OPEN in a summary table · SEED-14 (T4)
+- SEED-11c · plan §6.3 cites "SIG-CONTRIB-030a" — correct id is SIG-INGEST-030a (also SIG-INGEST-029) · SEED-12b
+- SEED-11c · Q-E2-13 option c (adopted via A-4) calls for re-deciding the out-of-rule / counsel-flagged rows (aikner, Calgary, Lexington, MD iMAP); no plan row owns it · orchestrator: add a ticket row at T3 (rights re-review under ADR-169 guardrails, operator HG-03 lines as needed)
+- SEED-11c · E4-R4a/R4b `recommendation` cells in decision_catalog are an earlier S4c draft; ADR-169 records the answer as presented (round-26 clarification) · no change (log is authoritative)
+- SEED-11b · B-9 Class R standing-go sentence (S6 hash `e4e24975…`) has no seed ADR home (ADR-161 is P35.12's) → record it at T5 as a GATE DECISIONS `kind: pre-authorization` row (expires next sub-round GATE or 30 days; void on ratchet regression / Part VIII screen change / new source) and cite it from ADR-149 · SEED-17 (T5) + orchestrator
+- SEED-11b · SIG-UI-021/022 amendment called for by D-K0-6 is not in plan §6.3; check whether it weakens a MUST (then it is a waiver needing the operator) · SEED-12b
+- SEED-11b · WV-01 "disclosed on the site" vs C-5 "Omit until I write it": the legal-home disclosure must not name the operator or describe them beyond the adopted WV-01 sentence until they write the About text · T3 (copy-batch contract) + HANDOFF note
+- SEED-11b · ticket_catalog R11-GOV-01 says counsel values become "operator-reported"; P34.16's contract must say "the operator's own determination (no counsel)" (TS-09) · SEED-13 (T3)
+- SEED-11b · ADR-159 / ADR-166 cite T4's new OPEN rows ("the ADR-124 allow row", "SEC-003 owner") — create them · SEED-14 (T4); ADR-124's third revisit trigger evaluated · SEED-11d
+- SEED-12a · `check_spec_src.py` id count will fail after BUILD.sh (777 vs 715) unless the 62 new §56 ids are appended to its `FOLD_BACK_IDS` (list in `docs/build/runs/SEED-12a.md`) · SEED-12c
+- SEED-12a · spec version line (`00_front_part0.md:5`, 1.1.0) not bumped · SEED-12c
+- SEED-12a · owners to confirm: SIG-OPS-007→P35.2, SIG-SEC-008→P35.1a/b, SIG-SEC-009→P35.4, SIG-CONF-010→P35.60 (P35.49 dropped) · SEED-13 (T3)
+- SEED-12a · SIG-ENG-031 amendment should cite SIG-MEM-007 ("CI green"); Appendix G.7 needs a row for Part XII · SEED-12b/12c
+- SEED-12a · seven ids beyond plan §6.2 (SIG-MEM-012, ENG-044/045/046, SEC-010/011, REL-015) — each traced to a ratified answer or cited note; keep (orchestrator review: all trace to A-21, A-13, C-10/F5, F5/H2, A-16, J1 NEW-9, B-20) · keep
+- SEED-12a · ADRs citing "final id assigned by SEED-12" → update to final ids from `stageB/T1_id_map.csv` · SEED-12c
+- SEED-12a · PLAN-11B / PLAN-11C must register SIG-TRANSP / K13 prefixes in §0.3 · SEED-13 contracts for PLAN-11B/11C
+- SEED-12a · 62 new coverage-matrix rows as MISSING routed to owners · SEED-14 (T4)
+- SEED-11d · guard must accept the appended `## Status updates` blocks and `### Trigger evaluation` subsections on landed ADRs (message sent to SEED-02a) · SEED-02a
+- SEED-11d · SEED-15's `trigger_sha256` must hash revisit-trigger text only up to the first `### Trigger evaluation` · SEED-15
+- SEED-11d · RISK-P15-29 still describes the release gate WV-04 retires → appended correction · SEED-14
+- SEED-11d · counsel-dormant restatements for the 13 ADRs in F3 §5.4 (ADR-182 names them) not appended → append `Qualified by ADR-182` lines · SEED-12c
+- SEED-11d · ADR-032 → ADR-050 supersession line added beyond Appendix A (F-249; ADR-050 "Closes out: ADR-032") — orchestrator keeps it
+- orchestrator · ADR-002 `Qualified by ADR-189` status line appended (WV-11 makes the one exception to it)
+- SEED-11d · **operator question (GATE-B packet):** ADR-183's acceptance covers "all ≈8,088 currently public rows" — do rows re-ingested after 2026-10-01 from the same express-terms sources (e.g. the TxDOT republish refreshing) also fall under it? Recommended reading to offer: yes for the same sources as of 2026-10-01 (they keep refreshing), new sources follow A-9 · GATE-B packet
+- T2-α · history mode must exempt the 53 restored GATE DECISIONS rows from R2 (>48 h back-dated) and check them in restored-dates-vs-`git blame` mode · SEED-02a (+ policy entry)
+- T2-α · SEED-05: append `## PHASE LOG — Round 11` after the new LEDGER date-correction section (PHASE LOG must be the last region); PHASE LOG entry drafts are in `docs/build/runs/SEED-01-04-06-07.md` · SEED-05
+- T2-α · SEED-08 owns date corrections for runs/pr/readouts/DEFERRALS/manifest; SEED-09 appends index repairs below the DC-BI table under a new header; SEED-10 cites DC-L-01…03 and appends to the memory-repair README · SEED-08/09/10
+- T2-α · CF-03 queue path = `docs/build/reports/memory-repair/pending_transitions.csv` (columns are SEED-04's design, labelled) · SEED-13/14
+- T2-α · full A1 delta incl. GCP + CI keys still owed before T6 · orchestrator (T6)
+- round 27 · WV-12 (SIG-UI-022 ego default waived) → ADR-190 + spec note + G.7 row; ADR-183 append-only clarification that refreshes of the same sources are covered (SB-2) — ADR-183 is a seed ADR, so add a dated `## Clarification` section · SEED-12c
+- round 27 · HANDOFF + OPERATING MODE: fallback order (headless Devin command via `--agent-cmd` if verified at T6, then manual tier) · SEED-17/T6
+- SEED-12b · withheld drafts keep their MUSTs; work owed: SIG-LIC-006 stored-table split (RISK-P4-07 → BL-046), SIG-INGEST-004 add versions to identity in P35.34 (or owed), SIG-ENG-004 verdict N/A-RATIONALE, SIG-ONTO-060 enum read + proposal (ticket) · SEED-13/14
+- SEED-12b · SEED-11d's appended ADR-027 trigger evaluation claims T1 made the LIC-006 amendment — append a correcting line (amendment not made; owed) · SEED-12c
+- SEED-12b · ADR-153 Decision 4 says census demotion "replaces" SIG-IDENT-028's holdout-demotion clause; spec keeps the clause (no waiver) → append clarification to ADR-153 (adds, does not replace) · SEED-12c
+- SEED-12b · outreach (SIG-CHART-033, SIG-INGEST-029/030a, SIG-CONTRIB-012) stays owed later-phase; P36.77 leaves them unmet — list on GATE-ANNOUNCE unmet list · SEED-13/14
+- SEED-02c · CI wiring: `--range base...head` on PRs; `--first-parent` on main pushes (docs job needs a push trigger or new job); python for memory_guard (stdlib) on the runner; exits 3/5 stay red · SEED-02b
+- SEED-02c · stale descriptions: `docs/build/tools/check_backlog.py` L119/131 comment; `CLOSEOUT_WRITER_PROTOCOL.md` contract/patch/3 text · SEED-02b
+- SEED-02c · upstream agent-skills fixes to send later (L2/L3 JSON field shift, check-history `#` comment strip, "Closed" anywhere) · orchestrator (agent-skills follow-up commit, local)
+- SEED-03 · `audit_current_state.py` EXPECTED_KEYS lacks the optional `harness` slot; `current_projection.py` reports INCOMPLETE on the seed LEDGER; remove the two strict xfails in the fix commit · SEED-02b
+- SEED-03 · new rules: closeouts update `docs/build/README.md` "rows 1-N as of" line; new verdict word → extend `check_coverage_matrix.VERDICTS`; source flips record `FLIPPED <date> (<gate|ADR>)`; D-P32.18–21-1 closes only with a transition event · SEED-13 (contract universal ACs) / SEED-17 OPERATING MODE
+- γ · RETURN PASS keyed by Round-11 rows would misfire the lowest-unlanded check → **orchestrator decision: key `returnPass` by the landed Round-10 tickets (P21.5, P31.4, P32.18–P32.22, P32.23a, P32.25 …) with the Round-11 row as the re-run line** · SEED-17 (T5)
+- γ · T5 replaces the OPERATING MODE placeholder (LEDGER lines 6–8); head budget left 8,751 B; confirm `buildWorktree` at T6 · SEED-17/T6
+- β · uncorrected wrong dates outside its paths: `OPERATIONAL_READINESS.md` L266 (rec 210), `COVERAGE_MATRIX.csv` recs 127–132 (SEED-14), `reports/obligations/MIGRATION.md` L55–57 (P34.8) · SEED-14 / P34.8 contract
+- β · DEFERRALS annotations for D-R10-PUBLISH-1 / D-P32.23a-1 (GATE-G3 "satisfied by this signature" no longer holds) and the C-3 bearing on D-LEGAL.1-1 / D-P30.3-COUNSEL · SEED-14
+- β · P34.22a parametrises the `p-17b713` pin in `release_publish_verify.py`; T5 writes the GATE-P rows for C-2/C-3/C-13; PHASE LOG drafts for SEED-08/09 in `runs/SEED-08-09.md` · SEED-13 / SEED-17
+- SEED-02a · conventions for later records (RESTORED caption, `| R<n> |` annotations, DATE CORRECTION wording, gate-marker decision rows need a PHASE LOG pause entry) · SEED-17 OPERATING MODE; guard's 0 `record-shape` candidates for BUILD_INDEX marker rows → check · SEED-02b
+- SEED-02b · seed PR docs job red until T4 lands (`check_coverage_matrix.py` 777 vs pinned 715; 62 ids missing) · SEED-14b + SEED-15
+- SEED-02b · P34.1 owns the docs-job push trigger + `--first-parent` step (TODO in ci.yml); P34.28/OP-25 commits `docs/build/tools/record_policy/allowed_signers` (default path) · SEED-13b contracts / HANDOFF
+- SEED-02b · T6 confirms the trailer Devin Desktop writes (a Devin co-author line without model passes with a warning) · T6
+- SEED-02b · `--first-parent` replay of single seed commits flags 125 seed-ADR edits (expected); the seed is judged as one range (passes) — note in HANDOFF/PR body · T6
+- SEED-02b · upstream agent-skills: `ci-boundary.sh` doesn't forward `--no-wait/--max-wait/--ledger` to the hook · orchestrator (agent-skills follow-up)
+- SEED-02b · regenerate `docs/build/reports/current/` at the end · T6
+- SEED-13b · **GATE-B packet question:** does the approved OM-20 entry "P34.6 (drill clone)" also cover P34.6's first monthly logical export and the `sig-backups` lifecycle changes? (13b read it as not covering them → in-ticket go) · GATE-B packet
+- SEED-13b · copy-batch file convention `docs/build/reports/copy-batches/batch-01.md` — adopt in OPERATING MODE (T5) · SEED-17
+- SEED-13b · Load counts include a 16 KiB DEFERRALS allowance; re-measure at dispatch (OM rule) · SEED-17 OPERATING MODE
+- SEED-13b · requirement→ticket index across all 60 11A rows + fresh-context Phase-4 sizing review · SEED-13e
+- SEED-13b · stricter windows chosen where row text and plan §8.4/§10.2 disagree (P34.3, P34.4, P34.6); P34.13 `/terms` redirect ships only with notice N-7; P34.4 `gh workflow disable reingest.yml` is a named mutation · note in HANDOFF
+- SEED-13c · ADR-146 Decision 5 allows a comment above a sqitch plan line, but `history.policy` only allows end-of-file additions → append a clarification to ADR-146 (corrections to sqitch lines are appended amendments / ADR text only; no in-file comment) · SEED-15
+- SEED-13c · P34.18's hosted rename can't use a new sqitch change before P34.46 deploys L44–52 → existing tables or wait (ADR-178 decides in-ticket) · noted in contract
+- SEED-13c · ticket-authored engineering ADRs take the next free number at dispatch (≥ ADR-191; e.g. P34.21a qualifying ADR-095, P34.24a) — OPERATING MODE rule · SEED-17
+- SEED-13c · P34.21b leg-level deps on P34.18 + P34.21a recorded in its contract; add a Plan-extensions note if row-level ordering is needed (row 221 P34.18 precedes P34.21b anyway) · SEED-13e verify order
+- SEED-13c · PLAN-11B ≈104k loaded + ≈56k written per 12-row batch → batches of 8–10 · PLAN-11B contract already notes; SEED-13e sizing review confirms
+- SEED-13c · P34.26 expects the ADR-124 allow DEFERRALS row from SEED-14 · SEED-14a
+- SEED-13d · PLAN-11B (row 239) lacks the **outreach-owed list** for GATE-ANNOUNCE (SIG-CHART-033, SIG-INGEST-029/030a, SIG-CONTRIB-012; P36.77 leaves them unmet) — patch PLAN-11B's contract · SEED-13e
+- SEED-13d · added `live:P34.46` edges on P34.45 (basis label deploys with P34.46's API roll) and P34.43 (`sig_recovery` needs L52) — not in `round11_plan.csv`; tight before GATE-G4 (11A pre-auth expiry) — verify order/feasibility; add Plan-extensions note if needed · SEED-13e
+- SEED-13d · **orchestrator decision (conservative):** P34.40's `/v1/*` LB rule makes the API answer on the main-site host (a public-surface change) → that step is **not** "dark" under the S5-3 pre-authorisation; it needs its own in-ticket go; only the nginx roll runs pre-authorised. Patch P34.40's contract; mention at GATE-B · SEED-13e + GATE-B packet
+- SEED-13d · P34.49's capture-side OSM `user`/`uid` fix → DEFERRALS row, owner PLAN-11B (to place in 11B) · SEED-14a (if still running) else SEED-15/T5
+- SEED-13d · P34.46 measured ≈69k (÷3) per leg; no split; optional seam noted · SEED-13e sizing review
+- SEED-14a · `obligation_events.py check` reports 26 missing-anchor errors (one per new DEFERRALS row); anchors belong in `events.jsonl` → add to P34.8's contract (append events, never `migrate`); `reports/current/` shows them until then · SEED-13e (patch P34.8 contract) + T6 (projection)
+- SEED-14a · tribal candidate group recorded as moved into Round 11 (I7-S8 = a) but no landing row named; `doj_ctas_awards` is not IND-TRIBAL → PLAN-11B/11C placement note · SEED-13e (patch PLAN-11B contract)
+- SEED-14a · rerun `later_register.py` whenever `UNIVERSE_DISPOSED.csv` / `round11_plan.csv` change (real-tree test fails until then, by design) · SEED-15 / OPERATING MODE
+- SEED-14a · memory-repair README's recorded sha256 of `pending_transitions.csv` differs (expected; append a dated note) · SEED-15
+- β/14a · `OPERATIONAL_READINESS.md` L266 date (rec 210) still uncorrected · SEED-15 (append correction)
+- SEED-14b · checker changes (list in `docs/build/runs/SEED-14b.md`): `check_coverage_matrix.py` 777 spec-derived rows, 16-column header, new verdict grammar, routing accepting `BL-nnn`/`SEED-nn`/letter-suffixed tickets; `check_backlog.py` landing pattern + open-home rule · SEED-15
+- SEED-14b · **orchestrator decision:** 52 open/partial DEFERRALS rows now cite only closed BL rows → SEED-15 appends `(cites BL-nnn)` re-homing annotations (append-only; map in SEED-14b's ledger) · SEED-15
+- SEED-14b · `obligation_events.py`: add new verdict words + letter-suffixed id parsing; append the 26 anchors for SEED-14a's new rows (append events, never `migrate`) — **in the seed** so T6 is green (P34.8 contract notes it) · SEED-15
+- SEED-14b · SIG-LIC-006 stored-table split (BL-092) has no Round-11 owner → DEFERRALS row owner PLAN-11B (place in 11B) or LATER with trigger; MUST stays owed · SEED-15
+- SEED-14b · EVAL-001 stays PARTIAL until `/methodology/` stops claiming a human-verified holdout (Wave-0 honesty row owns it); EVAL-003/006 → P37.44 · noted
+- SEED-13e · `req_index.py write` reads the coverage matrix at HEAD — re-run it after SEED-15 commits (and before T6) · orchestrator/T6
+- SEED-13e · every dispatch-time token count must add the skill-text share (implement-spec + self-review ≈ 17.5k tokens) · SEED-17 OPERATING MODE
+- SEED-13e · **orchestrator decision:** P34.7 stays one row, dispatched as two sequential contexts (part a: deliverables 1,2,6,7; part b: 3,4,5 + PR) — appended to its contract · done
+- SEED-13e · decompose-spec's ≈128k whole-working-set heuristic vs the plan's ≤ ~150k loaded rule — tradeoff recorded in the manifest's Decomposition decisions · HANDOFF note
+- SEED-13e · GATE-B: raise P34.40's `/v1/*` step needing its own go · GATE-B packet
+- SEED-15 · `test_extract_universe.py` (3 tests) compares the extractor against the live DEFERRALS (123 rows vs S1b's frozen 97) — pin it to the S1b snapshot commit (b051732c) instead of the living file · SEED-18 (T6 prep)
+- SEED-15 · `test_real_tree_zero_errors`: 20 errors = seed ADRs citing ticket-authored ADR numbers not yet written (151/156/157/160/161/174–178) → audit must accept numbers recorded as reserved in `docs/adr/README.md` Notes; 6 errors = `203_P35.38a` contract lists dependencies on later rows → fix the contract (later fetching rows depend on 203, not the reverse) · SEED-18
+- SEED-15 · P34.22a/b contracts still describe an in-file sqitch comment that ADR-146's clarification forbids → patch · SEED-18
+- SEED-15 · P34.48's contract should name SIG-UI-040 (re-verdict routed there) · SEED-18
+- SEED-15 · re-run `req_index.py write` after this commit · SEED-18
+- SEED-15 · vendored `check-build-memory.sh` V2 skip matches skip words anywhere in a row (too broad) → upstream note · orchestrator (agent-skills follow-up)
+- SEED-17 · GATE-M warning (answer dated 2026-09-30; its pause recorded only in META_PLAN) cannot be cleared honestly — no future PHASE LOG "pause" entry may name GATE-M · HANDOFF note
+- SEED-17 · at C10 (GATE-B): append a PHASE LOG `gate`/`pause` entry naming GATE-B dated ≤ the GATE-B decision row, then the `harness-switch` entry (draft in `docs/build/runs/SEED-17.md`) · GATE-B (orchestrator)
+- SEED-17 · confirm at GATE-B: chain lock = `docs/build/LEDGER.md.drive-lock`; B-9 standing go expires at GATE-G4 or 2026-10-31 (whichever first); leg-runner alerts via digest entry until P34.4 lands · GATE-B packet
+- SEED-17 · T6/GATE-B: Devin Desktop checks — loads `~/.claude/skills`? (else append B6 §5.3 overrides to OPERATING_MODE_R11.md), its co-author trailer, headless command for the fallback, scheduled sessions for the leg-runner (OP-24) · GATE-B (operator-run checks)

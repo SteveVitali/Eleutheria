@@ -9,7 +9,11 @@ real conflict steps found by the read-only inspection, carries the owed
 obligations register forward, and provides the required sections (procedure,
 verification cadence, rollback, reproduction). The artifact is a dated snapshot
 of the open-PR set at inspection time — the numbers pinned here are that set
-(#112–#187, minus the already-merged #148).
+(#112–#187, minus the already-merged #148); a frozen artifact, so pinning it is
+sound. The *prior* plan (``docs/build/INTEGRATION_PLAN.md``) is a living pointer
+document: it is asserted only to stay marked superseded with a pointer that
+resolves to an existing plan, whichever plan is current (BM-TEST-01; SEED-03 /
+PKG-02 ED-11).
 """
 
 from __future__ import annotations
@@ -107,7 +111,16 @@ def test_owed_obligations_carried_forward() -> None:
         assert deferral in text, f"plan must carry forward {deferral}"
 
 
-def test_prior_plan_points_at_current_plan() -> None:
+def test_prior_plan_points_at_an_existing_superseding_plan() -> None:
+    """The P20.3 plan stays marked superseded at its head, and every plan its
+    superseding note links to exists — a later round may re-point the note to a
+    newer plan, but never to nothing."""
     text = PRIOR_PLAN.read_text()
-    assert "reports/p33.6-integration-plan/INTEGRATION_PLAN.md" in text
-    assert "Superseded for the current stack" in text
+    head = text.split("\n## ", 1)[0]
+    banner = "\n".join(line for line in head.splitlines() if line.startswith(">"))
+    assert "Superseded" in banner, "prior INTEGRATION_PLAN.md lost its superseded banner"
+    targets = [t.split("#", 1)[0] for t in re.findall(r"\]\(([^)\s]+)\)", banner)]
+    plans = [t for t in targets if t.endswith("INTEGRATION_PLAN.md")]
+    assert plans, "the superseded banner links to no integration plan"
+    for target in plans:
+        assert (PRIOR_PLAN.parent / target).is_file(), f"superseding plan link is dead: {target}"

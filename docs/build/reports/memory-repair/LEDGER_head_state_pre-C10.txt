@@ -1,0 +1,2 @@
+# Archived LEDGER head line replaced at 2026-10-01T19:15:50Z (the State line still described the pre-GATE-B pause). Byte-for-byte:
+> - **State.** Paused for GATE-B: no dispatch before its GATE DECISIONS row; C10 then sets `projectStatus: IN_PROGRESS`, `pauseRequested: false` and appends the `harness-switch` entry (claude-code → devin-desktop; A-15, round 25).

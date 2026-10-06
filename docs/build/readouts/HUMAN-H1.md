@@ -37,3 +37,9 @@ rows `D-P21.4-1` (HG-01), `D-P21.4-2` (HG-11) remain OPEN. Go-public (GATE-G2) s
   No named independent reviewers exist yet; the operator chose to defer. `D-P21.4-2` stays **OPEN**
   (RETURN PASS, not a block). Consequence: Go-public (GATE-G2) remains impossible until HG-11 is
   established (checklist items 2–3) and counsel supersedes item 4 (HG-02, also deferred).
+
+## Addendum — DATE CORRECTION (SEED-08, appended 2026-10-01T08:21:03Z; ADR-146; append-only)
+
+- *Agent record (labelled): written by Claude Code, harness `claude-code/claude-opus-5-5/subagent`, Round-11 Stage-B unit SEED-08.* The text above is unchanged; this changes no status.
+- **DC-RO-03.** Line 5's disposition date is a Round-3 "chain date": recorded 2026-09-10 → true 2026-09-13T19:40:01Z (retro: the writing commit `eb72be5f`; `docs/build/runs/P21.5.md` line 23: "Environment clock read 2026-09-13; chain date for this re-run = 2026-09-10"). Register rec 1021.
+- **Harness and model (B7 §3 S4).** The disposition was written in the Devin CLI session `polydactyl-author` with model `claude-opus-4-8-medium` (retro: B7 §1–§3). It applied the pre-recorded GL-GATE-01 answer, not an answer given at this gate's pause. The annotation of the restored GATE DECISIONS block in `docs/build/LEDGER.md` (SEED-06) classes this gate's restored entry R38 as clock-false and delegated.

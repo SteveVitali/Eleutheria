@@ -25,3 +25,11 @@ Mutable entity rows with an audit log (the audit log becomes a second, divergent
 ## Revisit trigger
 
 A measured need arises to store a value with no supporting claim, or the derived-value view cannot meet performance budgets even after projection.
+
+## Status updates
+
+- **Status:** Qualified by ADR-189 (2026-10-01)
+- **Status note (2026-10-01T07:53:45Z, Round-11 T1, planning orchestrator):** ADR-189 (WV-11, the operator's adopted sentence at
+  2026-10-01T06:51:11Z) approves one operator-only, database-enforced purge function as the sole exception to the
+  append-only claim table (SIG-STORE-011), limited to material SIG must not hold at all (SIG-GOV-008 scope), leaving a
+  tombstone and a public log entry. Every other path stays insert-only; this decision is otherwise unchanged.

@@ -412,3 +412,13 @@ found closed without evidence; no closed row was found overstated.
 
 Provenance (append-only): produced on branch `devin/p33-1-round10-gap-analysis` off the P32.25 tip
 `e4bd612` by P33.1 (2026-10-21); no earlier section edited.
+
+## Addendum — DATE CORRECTION and later records (SEED-08, appended 2026-10-01T08:21:03Z; ADR-146; append-only)
+
+- *Agent record (labelled): written by Claude Code, harness `claude-code/claude-opus-5-5/subagent`, Round-11 Stage-B unit SEED-08.* The lines above are not edited. Each row maps a date this record carries that was not taken from a clock to the true time from git (committer time) or GitHub (PR `createdAt`), per the register `docs/build/reports/memory-repair/date_corrections.csv` (`rec` = data-record number). Exact times from B7's session-store reads (S3 deferral 2026-09-28T01:15:49Z, GATE-G3 approval 03:49:14Z) were confirmed by the operator at GATE-P (B-4 → Q-B1-2; C-1).
+
+| corr | line | recorded → true (UTC) | evidence | register rec |
+|---|---|---|---|---|
+| DC-CAP-04 | L318 | P33.1: recorded 2026-10-21 → true 2026-09-28T05:14Z | P33.1: PR #183 createdAt 2026-09-28T05:14Z; closeout commit 08b3135f 2026-09-28T05:19Z | 123 |
+| DC-CAP-05 | L323 | S3 deferral: recorded 2026-10-19 → true 2026-09-28T01:15:49Z (B7; before `a33cd6ec` 01:27:21Z) | S3DEFER: commit a33cd6ec "operator defers S3 human-eval spine" (local 2026-09-27 21:27 -04:00) | 124 |
+| DC-CAP-06 | L414 | P33.1: recorded 2026-10-21 → true 2026-09-28T05:14Z | P33.1: PR #183 createdAt 2026-09-28T05:14Z; closeout commit 08b3135f 2026-09-28T05:19Z | 125 |

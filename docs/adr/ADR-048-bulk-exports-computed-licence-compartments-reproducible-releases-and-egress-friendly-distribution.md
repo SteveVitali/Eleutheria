@@ -110,3 +110,14 @@ to Postgres, to confirm the export projections reproduce the API envelope via th
 wired (it must satisfy the same concept/version-DOI + digest-manifest contract the `FakeZenodoTransport`
 encodes), or if `derivative_permitted` is decided to gate the export (which must change `policy.licensing`
 centrally, with the API's collection-licence behaviour re-verified).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** partly answered — the map surface and the Postgres-wired ReadStore landed;
+the real Zenodo transport and the production deposit are still owed (F3 §5.1). **Answer:** row P37.55 (Zenodo
+production package; B-21 = yes: operator-run DOIs, OP-19, open compartments only, after the attribution fix in
+rows P34.21a/b). The decision above stays in force until that answer lands; this ADR's body is unchanged
+(SIG-ENG-003).

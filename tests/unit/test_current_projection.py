@@ -31,7 +31,7 @@ def _load_tool(name: str):
 current_projection = _load_tool("current_projection")
 obligation_events = _load_tool("obligation_events")
 
-KEYS = """projectStatus: IN-PROGRESS
+KEYS = """projectStatus: IN_PROGRESS
 nextTicket: P9.1
 lastCompleted: P00.2
 blockedOn: —
@@ -85,9 +85,12 @@ DEFERRALS = (
 )
 
 SPEC = "**SIG-TST-001 (MUST).** One requirement. See ADR-001.\n"
+# The Round-11 matrix header: twelve P19.2 columns + the four build-memory 0.5.0 columns
+# (ADR-150 D2; check_coverage_matrix.HEADER, SEED-15).
 COVERAGE = (
-    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note\n"
-    "SIG-TST-001,MUST,§1,covered+tested,MET,e,P00.1,t,ADR-001,—,—,n\n"
+    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note,"
+    "required_domain,achieved_domain,owed_legs,accepted_scope\n"
+    "SIG-TST-001,MUST,§1,covered+tested,MET,e,P00.1,t,ADR-001,—,—,n,,,,\n"
 )
 
 FUNNEL = """# evidence domains + funnel
@@ -396,6 +399,46 @@ def test_control_state_surfaces_advisory(tmp_path: pathlib.Path) -> None:
     assert proj["control"]["nextTicket"] == "P9.1"
     assert "advisory" in proj["authority"]
     assert "LEDGER.md" in proj["authority"]
+
+
+#: The Round-11 seed shape of CURRENT STATE (B3 §3.4; layout BM-LEDGER-02/-08):
+#: values only, `harness` in its slot, an archive pointer comment in the section.
+KEYS_R11 = (
+    KEYS.replace("projectStatus: IN_PROGRESS", "projectStatus: PAUSED")
+    .replace("round: 9", "round: 11\nharness: devin-desktop/swe-2-high/subagent")
+    .replace("updatedAt: 2026-01-05", "updatedAt: 2026-01-05T00:00:00Z")
+)
+
+
+def _r11_tree(root: pathlib.Path) -> pathlib.Path:
+    ledger = (
+        "## CURRENT STATE\n\n```\n"
+        + KEYS_R11
+        + "\n```\n<!-- Rounds 1-10 head archived; sha256 pointer. -->\n\n"
+        + "## PHASE LOG — Round 11\n\n"
+        + "- 2026-01-01 — P00.1 a done (PR #1)\n- 2026-01-02 — P00.2 b done (PR #2)\n"
+    )
+    return _tree(root, {"docs/build/LEDGER.md": ledger})
+
+
+def test_round11_values_only_control_state_projects(tmp_path: pathlib.Path) -> None:
+    """The projection reads the seed's values-only CURRENT STATE — including the
+    new `harness` key — without leaking the archive pointer into a value."""
+    root = _r11_tree(tmp_path)
+    current_projection.generate(root, _out(root))  # exit code: asserted by the next test
+    control = json.loads((_out(root) / "current.json").read_text())["control"]
+    assert control["projectStatus"] == "PAUSED"
+    assert control["round"] == "11"
+    assert control["harness"] == "devin-desktop/swe-2-high/subagent"
+    assert control["updatedAt"] == "2026-01-05T00:00:00Z"
+    md = (_out(root) / "CURRENT.md").read_text()
+    assert "projectStatus `PAUSED` · round `11`" in md
+
+
+def test_round11_values_only_ledger_generates_and_verifies_clean(tmp_path: pathlib.Path) -> None:
+    root = _r11_tree(tmp_path)
+    assert current_projection.generate(root, _out(root)) == 0
+    assert current_projection.verify(root, _out(root)) == 0
 
 
 def test_evidence_domains_and_releases_recorded_not_measured(tmp_path: pathlib.Path) -> None:

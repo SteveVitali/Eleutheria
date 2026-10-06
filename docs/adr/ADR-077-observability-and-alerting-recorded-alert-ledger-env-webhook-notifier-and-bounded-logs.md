@@ -142,3 +142,15 @@ Revisit this decision when any of the following holds:
 - **The free cron decays again** (RISK-P0-12): if the daily `observability.yml`
   sweep is disabled for inactivity, the keepalive failure path is already wired —
   but the *sweep* would need a host-cron fallback on the GCE box (ADR-075).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the hosted stack is live and a real notifier exists (P25.8), but alerts
+reached no human and the probe had been red 14 times running since 2026-09-27 (G1 NEW-2); `observability.yml`
+measures nothing (G1 NEW-3; F3 §5.1). **Answer:** Track 0.5 created minimal alerting before the round (plan
+§2.2); row P34.4 makes alerts reach a human (incl. a TLS-expiry alert) and row P35.2 puts alerting in code
+with escalation. Plan §7 lists no new observability ADR; if P35.2 changes this decision it records one. The
+decision above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

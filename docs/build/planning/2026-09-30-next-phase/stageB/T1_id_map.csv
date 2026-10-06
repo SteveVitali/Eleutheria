@@ -1,0 +1,69 @@
+draft_id,final_id,family,plan_section,note
+DRAFT-MEM-1,SIG-MEM-005,MEM,§6.2; §5.2; B4 §5 (G1),clock-true records; adds the correction-by-appended-entry rule (ADR-146) and points deployed sqitch lines to SIG-ENG-045 (C-10); planning forecast text excluded (SEED-02 scope). Owner SEED-02
+DRAFT-MEM-2,SIG-MEM-006,MEM,§6.2; §5.2; B4 §5 (G2); B3 §3.1,append-only proven per change; living regions per B3 §3.1. Owner P34.7
+DRAFT-MEM-3,SIG-MEM-007,MEM,§6.2; §5.2; §5.3; B4 §5 (G3),"CI truth at every boundary; + head-bound check runs, CI-unavailable rule and flake re-run (plan §5.3) and the Round-11 r11/ scope (B-15). Cited by the DRAFT-ENG-5 amendment of SIG-ENG-031 (""CI green""). Owner P34.2"
+DRAFT-MEM-4,SIG-MEM-008,MEM,§6.2; §5.2; B4 §5 (G4a),gate records; + record kinds (B4 G4a) and the A-16 forward rule (Q-E2-21). Owner P34.28
+DRAFT-MEM-5,SIG-MEM-009,MEM,§6.2; §5.2; B4 §5 (G4b),"readout authorship; + the ""agent-drafted, adopted by the operator at <time>"" label (plan §1.3/§7) and OM-08 counsel-determination rule (ADR-167). Owner P34.28"
+DRAFT-MEM-6,SIG-MEM-010,MEM,§6.2; §5.2; B4 §5 (G5); B3 §6 V1-V11,ledger contract; 12 KiB orient budget from B3 §3.3 / plan §5.2 acceptance. Owner P34.9
+DRAFT-MEM-7,SIG-MEM-011,MEM,§6.2; §5.2; B4 §5 (G10),live claims cite probes; merged with OM-06 status layers (plan §3.3). Owner P35.3
+OM-01 (B5 §6.1; plan §3.3),SIG-MEM-012,MEM,§3.3; §6.2 (MEM/ENG per unit prompt),"T1 addition (not in §6.2 draft list): harness/model trailers CI-enforced because the operator keeps commit authorship (A-21 ""Keep my name""); trailer grammar per SEED-02/S6R-10. Owner SEED-02"
+DRAFT-ENG-1,SIG-ENG-040,ENG,§6.2; §5.2; B4 §5 (G6); F5 §3,tests assert invariants; + F5 ED-13 (read living records only through validators or a snapshot commit) and B4 NEW-7 (validators must not pin living counts). Owner P34.31
+DRAFT-ENG-2,SIG-ENG-041,ENG,§6.2; §6.4; §6.5; B4 §5 (G7),"verdict integrity; + verdict vocabulary (§6.4), ""weakening amendment is a waiver"" (§6.5, ADR-150) and the capstone two-sum (G7 item 5). Owner SEED-15"
+DRAFT-ENG-3,SIG-ENG-042,ENG,"§6.2; §5.3; B4 §5 (G7, G11)",validator gates + no vacuous pass; absorbs the vacuous-success sentence of G1 draft SIG-OPS-006. Owner P34.9
+DRAFT-ENG-4,(amendment of SIG-ENG-039; no new id),ENG,§6.3,"written by the §6.3 amendments context, not this unit"
+DRAFT-ENG-5,(amendment of SIG-ENG-031; no new id),ENG,§6.3,"written by the §6.3 amendments context, not this unit; its ""CI green"" should cite SIG-MEM-007"
+DRAFT-ENG-6,SIG-ENG-043,ENG,§6.2; B4 §5 (G8),revisit triggers monitored; register fields from B4 G8-3. Owner P34.32
+Q-B4-1 / Q-14 = a (A-13); B4 §6.1; CF-01,SIG-ENG-044,ENG,§5.2; Appendix A T2 (SEED-02),T1 addition (not in §6.2 draft list): guards precede the records they protect (the seed guard core). Owner SEED-02
+F5 PKG-01; C-10 (Q-B1-4),SIG-ENG-045,ENG,§5.11; §6.3 last row; F5 §2.3,T1 addition (not in §6.2 draft list): sqitch round trip in CI from template0; deployed plan lines never re-stamped; db/sqitch.plan L44-52 keep stamped dates (C-10). Owner P34.24a
+F5 PKG-13; H2 TC-PIN,SIG-ENG-046,ENG,§5.3; §5.11,T1 addition (not in §6.2 draft list): pinned toolchain identical local/CI; lockfile rewrite fails CI; no cancelled push runs on main. Owner P34.1
+"SIG-OPS-001 (G1 §4, provisional)",SIG-OPS-001,OPS,§6.2; §5.8; G1 §4,restore drill; absorbs the monthly logical export from G1 draft SIG-OPS-002 (single owner P34.6). Owner P34.6
+"SIG-OPS-002 (G1 §4, provisional)",SIG-OPS-002,OPS,§6.2; §5.8; G1 §4,instance survivability; monthly export moved to SIG-OPS-001; + autoresize cap (B-11). Owner P34.3
+"SIG-OPS-003 (G1 §4, provisional)",SIG-OPS-003,OPS,§6.2; §5.8; G1 §4,public route allow-list; + C-12 withdrawn surfaces stay off the list. Owner P34.10
+"SIG-OPS-004 (G1 §4, provisional)",SIG-OPS-004,OPS,§6.2; §5.8; G1 §4; G3 §10,single publish path + release record; page release-id clause moved to SIG-REL-009 (G3 D09); single-path clause refined by SIG-REL-004 (G3 D04). Owner P34.10
+"SIG-OPS-005 (G1 §4, provisional)",SIG-OPS-005,OPS,§6.2; §5.8; G1 §4,live-config reconciliation + cron lint; + one scheduler of record. Owner P35.1a
+"SIG-OPS-006 (G1 §4, provisional)",SIG-OPS-006,OPS,§6.2; §5.8; G1 §4,"alert delivery; vacuous-success sentence de-duplicated into SIG-ENG-042; TLS alert 21 days (P34.4 note, FEA-08). Owner P35.2 (first leg P34.4)"
+"SIG-OPS-007 (G1 §4, provisional)",SIG-OPS-007,OPS,§6.2; G1 §4,SHOULD; owner P35.2 is an agent assignment (no row names the monthly error-budget readout) - confirm at T3/T4
+"SIG-OPS-008 (G1 §4, provisional)",SIG-OPS-008,OPS,§6.2; §5.8; G1 §4; G3 §10,"narrowed to read-model freshness (weekly materialize); republish triggers merged into SIG-REL-011 (G3 D11 ""S1 merges the two""); as-of/API-newer disclosure is SIG-REL-009. Owner P36.44"
+"SIG-OPS-009 (G1 §4, provisional)",SIG-OPS-009,OPS,§6.2; §10.4; G1 §4,"cost truth; + A-2a infra-only ceiling, A-2b agent usage reported not capped; non-GCP spend lines (FEA-08). Owner P34.5"
+"SIG-OPS-010 (G1 §4, provisional)",SIG-OPS-010,OPS,§6.2; G1 §4,runbooks (SHOULD); + release rollback/withdrawal sections. Owner P35.4
+DRAFT-OPS-1,SIG-OPS-011,OPS,§6.2; B4 §5 (G10),probe placement and probe-run/1 records; references final ids instead of the provisional G1 list. Owner P35.3
+DRAFT-OPS-2,SIG-OPS-012,OPS,§6.2; B4 §5 (G10),fixture sentinels. Owner P35.3
+"SIG-STORE-048 (G1 §4, provisional)",SIG-STORE-048,STORE,§6.2; §5.8; G1 §4,evidence immutability in hosting; + 365-day unlocked retention (B-14; keeps ADR-181/189 deletion paths possible). Owner P37.3
+"SIG-SEC-007 (G1 §4, provisional)",SIG-SEC-007,SEC,§6.2; G1 §4,least-privilege runtime identities; + per-consumer secret access (R11-OPS-01 scope). Owner P34.42a/b
+"SIG-SEC-008 (G1 §4, provisional)",SIG-SEC-008,SEC,§6.2; G1 §4,"digest pinning for services too (extends ADR-111). Owner P35.1a/b is an agent assignment from R11-OPS-03 scope (""one fleet digest per roll"") - confirm at T3/T4"
+"SIG-SEC-009 (G1 §4, provisional)",SIG-SEC-009,SEC,§6.2; G1 §4,secret lifecycle (SHOULD). Owner P35.4 (runbook secret-rotation section) is an agent assignment - confirm at T3/T4
+Q-B4-2 = a (A-16); B4 G4c; OP-25; S6R-17,SIG-SEC-010,SEC,§4 (A-16); §6.2 (SEC per unit prompt E2/B4),T1 addition (not in §6.2 draft list): operator-only gate-signing key verified in CI; also covers ingestion_permitted false->true (S6R-17). Owner P34.28
+J1 NEW-9; R11-ACT-08 scope,SIG-SEC-011,SEC,§6.2 (SEC per unit prompt E2/J1),T1 addition (not in §6.2 draft list): public read role by explicit grant with a DB allow-list test. Owner P34.25
+E2-10 (Q-E2-09; A-4),(amendment of SIG-SEC-003; no new id),SEC,§6.3,"demand-response posture + counts, canary declined (ADR-166); written by the §6.3 amendments context"
+SIG-REL-D01,SIG-REL-001,REL,§6.2; §5.8; G3 §10,release identity + label. Owner P35.12
+SIG-REL-D02,SIG-REL-002,REL,§6.2; §5.8; G3 §10,"descriptor binding; + quality.json digest (SIG-CONF-006, L3 §5.4) and B-10 unmerged stack commits. Owner P35.12"
+SIG-REL-D03,SIG-REL-003,REL,§6.2; §5.8; G3 §10,clock-true release dates; replay is Class S (G3 §3.3). Owner P35.12
+SIG-REL-D04,SIG-REL-004,REL,§6.2; §5.8; G3 §10,one writer of public bytes; refines SIG-OPS-004. Owner P35.53
+SIG-REL-D05,SIG-REL-005,REL,§6.2; §5.8; G3 §10,immutable after staging. Owner P35.53
+SIG-REL-D06,SIG-REL-006,REL,§6.2; §5.8; G3 §10,metadata-only promotion. Owner P35.54
+SIG-REL-D07,SIG-REL-007,REL,§6.2; §5.8; G3 §10,V1-V14 + V15 (SIG-CONF-007) + auto-rollback (D-G3-8). Also P35.56. Owner P35.58
+SIG-REL-D08,SIG-REL-008,REL,§6.2; §5.8; G3 §10,snapshot containment; complements draft SIG-TRANSP-D23 (PLAN-11B). Also P35.65. Owner P36.66b
+SIG-REL-D09,SIG-REL-009,REL,§6.2; §5.8; G3 §10,release stamp + X-SIG-Release; absorbs G1 draft SIG-OPS-004 page release-id clause. Owner P35.13
+SIG-REL-D10,SIG-REL-010,REL,§6.2; §5.8; G3 §10,"API release parity; + A-20 ""Yes, with labels"". Owner P35.57"
+SIG-REL-D11,SIG-REL-011,REL,§6.2; §5.8; G3 §10,cadence; absorbs G1 draft SIG-OPS-008 republish triggers; + FEA-09 suppression after a Class S promotion. Owner P36.44
+SIG-REL-D12,SIG-REL-012,REL,§6.2; §5.8; G3 §10,Class R/S + B-9 standing go quoted verbatim (sha256 e4e24975b854...); WV-03 / B-31 readout sentences. Owner P35.60
+SIG-REL-D13,SIG-REL-013,REL,§6.2; §5.8; G3 §10,rollback + 15-minute withdrawal (D-G3-9). Owner P35.55
+SIG-REL-D14,SIG-REL-014,REL,§6.2; §5.8; G3 §10,one version source; operator-only tags. Owner P34.23
+B-20 = a (D-J3-8),SIG-REL-015,REL,§4 (B-20); §5.8,"T1 addition (not in G3 D01-D14): pipeline key signs manifests (integrity), operator gate key (SIG-SEC-010) signs approvals. Owner P36.50 (key OP-20)"
+SIG-CONF-D01,SIG-CONF-001,CONF,§6.2; §5.4; L3 §7,basis classes; also listed under K13 UXR-A13 - written once here; PLAN-11C cites SIG-CONF-001. Also P37.45. Owner P34.45
+SIG-CONF-D02,SIG-CONF-002,CONF,§6.2; §5.4; L3 §7,agent labels segregated. Owner P35.48
+SIG-CONF-D03,SIG-CONF-003,CONF,§6.2; §5.4; L3 §7,only mechanical checks gate. Owner P34.44a
+SIG-CONF-D04,SIG-CONF-004,CONF,§6.2; §5.4; L3 §7,"derivation, not identity (ADR-L3-B = ADR-153); C2 enabled (B-31/Q-L3-6 a, >= 0.9 overlap); A-6 waiver sentence quoted (sha256 03c0a79ef3b8...); organisation tiers from L3 §4.6. Also P37.46a/b. Owner P35.46"
+SIG-CONF-D05,SIG-CONF-005,CONF,§6.2; §5.4; L3 §7,no auto-written identity inference; ranged counts; also listed under K13 UXR-A13 - written once here; PLAN-11C cites SIG-CONF-005. Also P34.45. Owner P35.47
+SIG-CONF-D06,SIG-CONF-006,CONF,§6.2; §5.4; L3 §7,graph-quality suite registry + quality.json bound into the descriptor. Owner P34.44a
+SIG-CONF-D07,SIG-CONF-007,CONF,§6.2; §5.4; L3 §7,ratchet discipline; + release gate = 0 ratchet regressions + 0 enforce failures (FEA-11). Owner P34.44a
+SIG-CONF-D08,SIG-CONF-008,CONF,§6.2; §5.4; L3 §7,real-data regression corpus. Owner P35.23
+SIG-CONF-D09,SIG-CONF-009,CONF,§6.2; §5.4; L3 §7,upstream reconciliation (GQ-19); check registered in P34.44a/b. Owner P35.34
+SIG-CONF-D10,SIG-CONF-010,CONF,§6.2; §5.4; L3 §7,"maintainer checks written ""when performed""; Round 11 performs none (B-31 ""No maintainer check""); P35.49 dropped at S6. Also P37.45. Owner P35.60"
+SIG-CONF-D11,SIG-CONF-011,CONF,§6.2; §5.4; L3 §7,public /quality/ incl. failing and ratchet checks (Q-L3-5 yes); also listed under K13 UXR-A13 - written once here; PLAN-11C cites SIG-CONF-011. Also P37.39. Owner P37.45
+SIG-CONF-D12,SIG-CONF-012,CONF,§6.2; §5.4; L3 §7,"mechanical estimands labelled; + the L3 §4.5 not-claimable list (plan §5.4, TS-10). Also P34.47, P38.1a/b. Owner P37.44"
+SIG-CONF-D13,SIG-CONF-013,CONF,§6.2; §5.4; L3 §7,least-privilege audit path (sig_audit). Owner P34.43
+SIG-CONF-D14,SIG-CONF-014,CONF,§6.2; §5.4; L3 §7,declared lineage (SHOULD). Owner P35.25
+SIG-TRANSP-D01..D25 (J3 §11),(deferred to PLAN-11B),TRANSP,§6.2,not written by SEED-12 (FEA-01)
+SIG-TRANSP-D26..D43 (K9/K10; UXR-A10),(deferred to PLAN-11B),TRANSP,§6.2,"listed under TRANSP and the K13 set: written once, by PLAN-11B; PLAN-11C cites the final ids"
+UXR-01..38; UXR-A01..A13 (K13),(deferred to PLAN-11C),K13,§6.2,PLAN-11C decides new prefixes vs SIG-UI; UXR-A13 cites SIG-CONF-001/005/011 instead of re-minting SIG-CONF-D01/D05/D11

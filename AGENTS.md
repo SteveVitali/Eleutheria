@@ -113,14 +113,22 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 5. **The claim spine is insert-only.** `PgClaimSink` (`db/src/db/claim_sink.py`) and `PgReadStore`
    (`api/src/api/store_pg.py`) never `UPDATE`/`DELETE`; there is no update/delete path anywhere in
    `db/`. Model corrections as new claims.
-6. **The public web budget is zero-JS on content pages — named islands are the bounded
-   exceptions.** Public *content* pages must render with **no `<script>` tags**;
-   `web/lighthouserc.json` asserts script size `0` and total ≤ 150 KB on them, and `test:e2e`
-   enforces WCAG 2.2 AA. The explicitly allowed islands are `/curate/**` (the authenticated
-   curation surface, ADR-068) and the three public interactive islands `/map/`, `/network/`,
-   `/search/` (ADR-097, extending ADR-068), each carrying an explicit per-island script/total
-   ceiling (P32.15, ADR-134) and a preserved no-JS fallback (SIG-UI-050). Adding client JS to any
-   *other* public page fails `check:perf`/`test:e2e`.
+6. **Public pages are HTML-first; client JS is budgeted by page type (ADR-155).** Every public
+   route is classified in the page-type registry (web/src/lib/page-types.ts, added by P35.50) — an
+   unclassified route fails the build. **T0 record & print** (`/r/**`, every `…/print/`,
+   `/dispute/`, `/intake/**`) ships **no `<script>`**. **T1 content** (dossiers, entities,
+   sources, queue, methodology, …) must show every fact with JS off and may load only approved
+   enhancement elements (≤ 20 KiB gzip initial, never render-blocking). **T2 explore** (`/map/`,
+   `/explore/`, `/search/`) may be app-like but must keep URL state (`sig.workspace-state/2`), a
+   server-rendered first paint in a reserved box, and a no-JS equivalent (tables, lists, GET
+   forms, static SVG), within the per-surface budgets in web/tests/e2e/page-budgets.json (P35.51).
+   `/curate/**` stays ADR-068. The script-policy and no-JS-parity specs (P35.50), `budget.spec.ts`
+   and the generated `lighthouserc.json` (P35.51) enforce this on every built route. Raising a
+   budget, adding a T2 surface or a browser runtime dependency needs a new ADR amending ADR-155.
+   **Until P35.50/P35.51 land,** today's enforcement binds: `web/lighthouserc.json` asserts script
+   size `0` on content pages, and only `/curate/**` and the three ADR-097 islands (`/map/`,
+   `/network/`, `/search/`, ceilings in `web/tests/e2e/island-budgets.json`) carry client JS —
+   adding it anywhere else fails `check:perf`/`test:e2e`.
 7. **`tests/e2e` xfails carry an `LD-`/`accepted:` reason and are flipped only by the closing
    ticket.** A never-yet-wired seam is an `xfail` whose reason begins with its `LEDGER_DEFERRALS` id
    (`^LD-[A-Z]+[0-9]+:`) — never a loosened assertion. Do not flip an xfail to a pass unless your

@@ -257,6 +257,22 @@ single-maintainer efforts, and the relevant vendor domains are excluded from the
 archive (§22.2) — so if these projects vanish, the record vanishes with them. This is one of the
 most valuable things SIG can offer, and it costs SIG almost nothing.
 
+**Round-11 status — outreach timing (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).**
+SIG-CONTRIB-012, SIG-CONTRIB-012a, SIG-CONTRIB-013, SIG-CHART-033, SIG-INGEST-029, SIG-INGEST-030a
+and SIG-GOV-024 are **not amended and not waived**. Round 11 makes no contact outside the project
+(the operator's standing instruction U-011; B-6 "Move UA, don't buy domain", GATE-P log round 11,
+2026-10-01T04:33:54Z, answering Q-E2-12 = a), so Stage-0 outreach, the archival-succession offer and
+every other outward contact — sending records requests, recruiting, contribution-back posting,
+asking a source's owner — are owed as a later-phase obligation whose trigger is the operator
+authorising outside contact (LATER-04). No agent contacts anyone. Where a connector is written or
+extended for a project in the §6 table before outreach has been attempted, the "before a connector
+is written" precondition is recorded as unmet and owed — listed among the spec MUSTs unmet at launch
+that the operator signs at GATE-ANNOUNCE — never as met, re-timed or waived. Meanwhile: honest
+compact postures (for example `public_terms_only`) are published with the registry export;
+structural attribution is fixed and gated at publish; licence compartments are kept; any upstream
+opt-out is honoured at once (§26 rule 7); the outreach letter's text is corrected before any future
+send; and SIG publishes no claim that it contacted, consulted or partnered with any project.
+
 ### 35.2 To OpenStreetMap (Q33)
 
 **SIG-CONTRIB-014 (MUST NOT).** SIG MUST NOT perform direct automated writes to OSM

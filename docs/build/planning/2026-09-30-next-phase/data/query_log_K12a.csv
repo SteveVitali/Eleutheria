@@ -1,0 +1,103 @@
+query_id,engine_or_tool,query_or_url,run_at,hits_kept,notes
+K12a-Q001,WebFetch,https://surveillancegraph.org/,2026-09-30T21:30:36Z,1,SIG live-read 1/8: nav; qualified counts (55 jurisdictions; 178 sources; 223;901 resolved sites of 232;625 records); fetcher reads tier-0 claims as 242;320 (unverified vs raw HTML - see Q003 note)
+K12a-Q002,WebFetch,https://surveillancegraph.org/map/,2026-09-30T21:30:36Z,1,SIG live-read 2/8: OSM attribution text; self-hosted static vector tiles; 8 layers; H3-binned tables are the stated equivalent
+K12a-Q003,WebFetch,https://surveillancegraph.org/network/,2026-09-30T21:30:36Z,1,SIG live-read 3/8: ego network (never global); hub degree 130; UUID-only labels; list fallback without JS
+K12a-Q004,WebFetch,https://surveillancegraph.org/search/,2026-09-30T21:30:36Z,1,SIG live-read 4/8: interactive filter covers first 500 of 232625 mapped sites; no-JS path is browse links
+K12a-Q005,curl (Bash; default curl UA; no personal identifier),https://surveillancegraph.org/map/,2026-09-30T21:30:55Z,1,SIG live-read 5/8: HTTP 200; 3;460;837 bytes (uncompressed; curl sent no Accept-Encoding); local python count: 1;504 <tr>; 12 per-licence *-sites.pmtiles overlays; no basemap/style URL found; island MapIsland.*.js
+K12a-Q006,curl (Bash; default curl UA; no personal identifier),https://surveillancegraph.org/network/,2026-09-30T21:30:55Z,1,SIG live-read 6/8: HTTP 200; 358;510 bytes; 131 unique UUID node ids; 415 <li>; tier distribution 2245390 untiered + 2690 W1 + 175114 W3 (=2;423;194)
+K12a-Q007,curl (Bash; default curl UA; no personal identifier),https://surveillancegraph.org/search/,2026-09-30T21:30:55Z,1,SIG live-read 7/8: HTTP 200; 152;450 bytes; island SearchIsland.*.js
+K12a-Q008,WebFetch,https://surveillancegraph.org/dossier/az/,2026-09-30T21:30:55Z,1,SIG live-read 8/8: no agency/vendor names or entity links; source shown as registry id camreg_azdot_az; print/PDF + JSON; ruleset-pinned permalink
+K12a-Q009,WebFetch,https://docs.protomaps.com/basemaps/downloads,2026-09-30T21:31:49Z,1,planet ~120 GB z0-15; daily builds; ODbL produced work; pmtiles extract --maxzoom; each zoom ~doubles size
+K12a-Q010,WebFetch,https://openfreemap.org/,2026-09-30T21:31:49Z,1,free public instance; no limits/keys/cookies; donation-funded; no SLA; weekly planet; MIT
+K12a-Q011,WebFetch,https://operations.osmfoundation.org/policies/tiles/,2026-09-30T21:31:49Z,1,OSM tile policy: attribution; UA/Referer; no bulk/prefetch; best-effort no SLA; vector tiles separate policy
+K12a-Q012,WebFetch,https://stadiamaps.com/pricing/,2026-09-30T21:31:49Z,1,Stadia: free 200k credits non-commercial; $20/1M; $80/7.5M; $250/25M; 1 credit/tile; 20 credits/geocode
+K12a-Q013,WebFetch,https://www.maptiler.com/cloud/pricing/,2026-09-30T21:31:49Z,1,MapTiler: free 5k sessions/100k requests non-commercial; Flex $30 25k sessions; logo required on free
+K12a-Q014,WebFetch,https://docs.protomaps.com/deploy/,2026-09-30T21:32:04Z,1,PMTiles deploy: bucket + serverless decode + CDN; Cloudflare ~$5 baseline; cache hits <=100 ms vs multi-second from single-region bucket
+K12a-Q015,WebFetch,https://maplibre.org/maplibre-gl-js/docs/examples/create-and-style-clusters/,2026-09-30T21:32:04Z,1,MapLibre GeoJSON clustering: clusterMaxZoom; clusterRadius default 50; getClusterExpansionZoom
+K12a-Q016,WebFetch,https://github.com/mapbox/supercluster,2026-09-30T21:32:04Z,1,supercluster: 6 million points demo; getTile/getLeaves/getClusterExpansionZoom; map/reduce aggregation
+K12a-Q017,WebFetch,https://operations.osmfoundation.org/policies/nominatim/,2026-09-30T21:32:04Z,1,Nominatim: max 1 req/s; client-side autocomplete forbidden; must cache; identifying UA/Referer
+K12a-Q018,WebFetch,https://github.com/protomaps/basemaps,2026-09-30T21:32:04Z,1,Protomaps basemaps: Planetiler profile (planet in 2-3 h); styles CC0; code BSD-3; tiles ODbL; fonts/sprites in basemaps-assets
+K12a-Q019,WebFetch,https://photon.komoot.io/,2026-09-30T21:32:20Z,1,Photon public demo: search-as-you-type; extensive usage throttled; no availability guarantee
+K12a-Q020,WebFetch,https://download.geonames.org/export/dump/,2026-09-30T21:32:20Z,1,GeoNames: cities15000.zip 3.2M; cities500.zip 13M; allCountries.zip 402M; CC BY 4.0
+K12a-Q021,WebFetch,https://docs.protomaps.com/pmtiles/,2026-09-30T21:32:20Z,1,PMTiles: single-file; HTTP range requests; read-only (rewrite to update); dedup 70%+; <=2 cacheable intermediate requests
+K12a-Q022,WebSearch,MapLibre GL JS accessibility keyboard screen reader map WCAG,2026-09-30T21:32:20Z,1,lead kept: nps.gov maps accessibility (fetched as Q023); snippets not cited
+K12a-Q023,WebFetch,https://www.nps.gov/maps/web/accessibility,2026-09-30T21:32:33Z,1,NPS: required map description; tab order; planned toggleable tabular view + downloads; not colour alone; next NPMap on MapLibre
+K12a-Q024,WebFetch,https://www.opensanctions.org/entities/Q7747/,2026-09-30T21:32:33Z,1,OpenSanctions entity: per-property values with statement/dataset counts; Family/Associations/Linked from/Linked to tables; Data sources; server-rendered; no graph viz
+K12a-Q025,WebSearch,"OpenSanctions network graph explorer entity relationships visualization ""network"" view",2026-09-30T21:32:33Z,1,lead kept: OpenScreening (Open Ownership article fetched as Q028); snippets not cited
+K12a-Q026,WebFetch,https://littlesis.org/org/12-Goldman_Sachs_Group,2026-09-30T21:32:33Z,0,INACCESSIBLE: Anubis proof-of-work 'Access Denied' page (bot wall); used GitHub READMEs instead (Q027 Q100)
+K12a-Q027,WebFetch,https://github.com/public-accountability/oligrapher,2026-09-30T21:32:47Z,1,Oligrapher: curated network maps; annotations story mode; embeddable; React/Redux; GPL-3.0
+K12a-Q028,WebFetch,https://www.openownership.org/en/news/connecting-beneficial-ownership-peps-and-sanctions-data-with-openscreening/,2026-09-30T21:32:47Z,1,OpenScreening (OpenSanctions+Linkurious+Open Ownership): graph viz; alerts; free sign-up; no scale numbers
+K12a-Q029,WebFetch,https://docs.aleph.occrp.org/users/investigations/network-diagrams/,2026-09-30T21:32:47Z,1,Aleph network diagrams: user-built inside investigations; private + shared; no scale/a11y info
+K12a-Q030,WebFetch,https://scholia.toolforge.org/,2026-09-30T21:32:47Z,1,Scholia: profile pages from Wikidata SPARQL; graphs + tables per aspect
+K12a-Q031,WebFetch,https://www.sigmajs.org/,2026-09-30T21:33:06Z,1,sigma.js: WebGL; 'graphs of thousands of nodes and edges'; graphology backend; MIT
+K12a-Q032,WebFetch,https://js.cytoscape.org/#performance,2026-09-30T21:33:06Z,1,partial: rendering hints (hideEdgesOnViewport; textureOnViewport; pixelRatio); MIT; performance section not captured -> Q038
+K12a-Q033,WebFetch,https://github.com/cosmograph-org/cosmos,2026-09-30T21:33:06Z,1,cosmos.gl: GPU force layout; hundreds of thousands of points/links; WebGL2; iOS 15.4+ EXT_float_blend issue; MIT
+K12a-Q034,WebFetch,https://graphology.github.io/,2026-09-30T21:33:06Z,1,graphology: forceatlas2; louvain; shortest-path; metrics; sigma backend
+K12a-Q035,WebSearch,Cytoscape.js WebGL renderer preview blog performance nodes edges,2026-09-30T21:33:17Z,1,lead kept: blog.js.cytoscape.org webgl-preview (fetched as Q038)
+K12a-Q036,WebFetch,https://reasonator.toolforge.org/?q=Q42,2026-09-30T21:33:17Z,0,INACCESSIBLE to non-JS fetcher: JS shell (heading only) - itself a no-JS finding
+K12a-Q037,WebFetch,https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual,2026-09-30T21:33:17Z,1,WDQS: 60 s hard deadline; 60 s processing per 60 s per client; 5 parallel queries per IP
+K12a-Q038,WebFetch,https://blog.js.cytoscape.org/2025/01/13/webgl-preview/,2026-09-30T21:33:27Z,1,Cytoscape WebGL: ~1200n/16000e 20->100+ FPS; ~3200n/68000e 3->10 FPS (M1 Chrome); edge style limits
+K12a-Q039,WebFetch,https://graphcommons.com/,2026-09-30T21:33:27Z,1,Graph Commons: free unlimited public graphs; embeds; exports incl GraphML/Cypher; no node limits stated
+K12a-Q040,WebFetch,https://kumu.io/pricing,2026-09-30T21:33:27Z,1,Kumu: public projects free; private $9-20/project/month; embeds; filters/clustering
+K12a-Q041,WebFetch,https://doc.linkurious.com/user-manual/latest/,2026-09-30T21:33:27Z,1,Linkurious: search; expand; filter panel; timeline; node/edge grouping; geographic map; lasso; no limits in excerpt
+K12a-Q042,WebFetch,https://dig.cmu.edu/data-navigator/,2026-09-30T21:33:40Z,1,Data Navigator: keyboard/screen-reader navigation layer over any visual (semantic HTML buttons); MIT
+K12a-Q043,WebFetch,https://www.w3.org/WAI/tutorials/images/complex/,2026-09-30T21:33:40Z,1,WAI: complex images (charts/diagrams/maps) need short + long description; data table as long description
+K12a-Q044,WebFetch,https://aleph.occrp.org/,2026-09-30T21:33:40Z,0,INACCESSIBLE to non-JS fetcher: empty content (JS app)
+K12a-Q045,WebFetch,https://api.opensanctions.org/,2026-09-30T21:33:40Z,0,INACCESSIBLE: ReDoc JS shell (SRI config message only); used Q046 instead
+K12a-Q046,WebFetch,https://www.opensanctions.org/docs/api/,2026-09-30T21:33:51Z,1,OpenSanctions API: /match /search /entities; API key; free keys for public-interest work; pay-as-you-go; self-host yente
+K12a-Q047,WebSearch,OCCRP Aleph Pro 2025 access change registration investigative data platform,2026-09-30T21:33:51Z,1,lead kept: OCCRP Aleph Pro FAQ (fetched as Q051); snippets not cited
+K12a-Q048,WebFetch,https://pagefind.app/,2026-09-30T21:33:51Z,1,Pagefind: chunked static index; 10;000-page site <300kB payload (usually ~100kB); filters; metadata
+K12a-Q049,WebFetch,https://docs.orama.com/docs/orama-js,2026-09-30T21:33:51Z,0,nav-only content; used GitHub README (Q050)
+K12a-Q050,WebFetch,https://github.com/oramasearch/orama,2026-09-30T21:34:02Z,1,Orama: full-text/vector/hybrid; facets; geosearch; typo tolerance; '<2kb' claim; Apache-2.0
+K12a-Q051,WebFetch,https://www.occrp.org/en/announcement/aleph-pro-frequently-asked-questions-on-the-future-of-occrps-investigative-data-platform,2026-09-30T21:34:02Z,1,Aleph Pro: hosted; free for nonprofit journalism; at-cost for public-interest groups; public instance stays free; beta Dec 15
+K12a-Q052,WebSearch,"Pagefind large site 100,000 pages index size performance limits",2026-09-30T21:34:02Z,1,lead kept: Hugo discourse 'Scaling Pagefind to over 1 million pages' (fetched as Q054)
+K12a-Q053,WebFetch,https://www.sqlite.org/fts5.html,2026-09-30T21:34:02Z,1,FTS5: unicode61/porter/trigram; trigram substring + indexed LIKE/GLOB; <3 chars no match; bm25 column weights; prefix indexes; no fuzzy
+K12a-Q054,WebFetch,https://discourse.gohugo.io/t/scaling-pagefind-to-over-1-million-pages/56109,2026-09-30T21:34:20Z,1,single practitioner report: crash ~300k pages; best 250k; abandoned for custom JSON (2025-10-18 / 2025-12-27)
+K12a-Q055,WebFetch,https://phiresky.github.io/blog/2021/hosting-sqlite-databases-on-github-pages/,2026-09-30T21:34:20Z,1,sql.js-httpvfs: 670 MiB DB static; indexed lookup ~1 kB; complex 10-20 GETs 130-270 KiB; FTS ~70 KiB
+K12a-Q056,WebFetch,https://typesense.org/docs/guide/system-requirements.html,2026-09-30T21:34:20Z,1,Typesense RAM 2X-3X searchable data; >=2 vCPU; 4vCPU 2.2M records 104 qps
+K12a-Q057,WebFetch,https://www.meilisearch.com/pricing,2026-09-30T21:34:20Z,1,Meilisearch Cloud from $20/mo; usage $30 (100K docs 50K searches); resource $23 (0.5 vCPU 1 GB); self-host MIT free
+K12a-Q058,WebFetch,https://atlasofsurveillance.org/,2026-09-30T21:34:33Z,1,AoS home: map 'loads 3rd party assets'; text search by city/county/state/agency; >1;000 volunteers
+K12a-Q059,WebFetch,https://deflock.me/,2026-09-30T21:34:33Z,0,301 redirect to deflock.org (followed as Q063)
+K12a-Q060,WebFetch,https://alpr.watch/,2026-09-30T21:34:33Z,1,alpr.watch: agenda keyword scanning; email alerts by ZIP + radius; map; JS-dependent (counts not populated without JS)
+K12a-Q061,WebFetch,https://eyesonflock.com/,2026-09-30T21:34:33Z,0,INACCESSIBLE to non-JS fetcher: title only ('Aggregating Flock Safety Transparency Portal Data')
+K12a-Q062,WebFetch,https://www.surveillancewatch.io/,2026-09-30T21:34:33Z,0,INACCESSIBLE to non-JS fetcher: title only
+K12a-Q063,WebFetch,https://deflock.org/,2026-09-30T21:34:46Z,0,INACCESSIBLE to non-JS fetcher: 'DeFlock' only; used GitHub README (Q065)
+K12a-Q064,WebFetch,https://atlasofsurveillance.org/search,2026-09-30T21:34:46Z,1,AoS search: server-rendered sortable table; 1-100 of 15135; 152 pages; per-record links + more info; CSV download
+K12a-Q065,WebFetch,https://github.com/FoggedLens/deflock,2026-09-30T21:34:46Z,1,DeFlock stack: Vue3/Vuetify/MapLibre (Leaflet deprecated); Overpass; R2 points + vector tiles; Nominatim geocoding; MIT
+K12a-Q066,WebFetch,https://www.wikidata.org/wiki/Help:Ranking,2026-09-30T21:34:58Z,1,Wikidata ranks preferred/normal/deprecated; reason for deprecated rank P2241; all statements must be sourced; truthy = best rank
+K12a-Q067,WebFetch,https://opencorporates.com/companies/gb/00102498,2026-09-30T21:34:58Z,1,OpenCorporates: subsidiaries/control statements lists; many fields login-gated; 'not the primary source' disclaimer
+K12a-Q068,WebFetch,https://projects.propublica.org/nonprofits/organizations/131624100,2026-09-30T21:34:58Z,1,Nonprofit Explorer: per-year filings table; PDF/XML originals; About This Data with update date; server-rendered
+K12a-Q069,WebFetch,https://offshoreleaks.icij.org/nodes/10000001,2026-09-30T21:35:32Z,1,ICIJ node page: fields; Connections tables (Role/From/To/Data From); JS graph (spinner); data currency note
+K12a-Q070,WebFetch,https://www.opensanctions.org/search/?q=flock,2026-09-30T21:35:32Z,1,OpenSanctions search: typed results; facets Topics/Data sources/Countries with counts; server-rendered; 'Data current as of'
+K12a-Q071,WebFetch,https://leafletjs.com/,2026-09-30T21:35:32Z,1,Leaflet ~42 KB JS; keyboard navigation; 2.0.0-alpha.1 (2025-08-16)
+K12a-Q072,WebSearch,Neo4j Bloom scene node limit 10000 nodes default perspective,2026-09-30T21:35:32Z,1,lead kept: Neo4j developer blog (fetched as Q073)
+K12a-Q073,WebFetch,https://neo4j.com/blog/developer/fetching-large-amount-data-neo4j-reactive-driver-the-bloom-case/,2026-09-30T21:35:44Z,1,Bloom displays 100-10;000 unique nodes; query response capped 10;000 records; client resource limits
+K12a-Q074,WebFetch,https://www.gov.uk/service-manual/technology/using-progressive-enhancement,2026-09-30T21:35:44Z,1,GOV.UK: reasons JS fails; content sites must work HTML-only; avoid SPAs
+K12a-Q075,WebFetch,https://docs.astro.build/en/concepts/islands/,2026-09-30T21:35:44Z,1,Astro islands: zero JS default; client:load/idle/visible; server:defer server islands
+K12a-Q076,WebFetch,https://webaim.org/projects/million/,2026-09-30T21:35:44Z,1,WebAIM Million 2026: 95.9% home pages with detected failures; 56.1 errors/page
+K12a-Q077,WebFetch,https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics,2026-09-30T21:35:44Z,1,Google: render queue; SSR/pre-render recommended; not all bots run JS; real <a href>; SPA soft 404s
+K12a-Q078,WebFetch,https://webaim.org/projects/million/,2026-09-30T21:36:01Z,1,second prompt same URL (framework table): Astro 5;472 pages 9.0 errors -84.0%; Next.js 40.9; React 43.5; Vue 64.6; jQuery 64.9; correlation caveat
+K12a-Q079,WebFetch,https://ourworldindata.org/grapher/life-expectancy,2026-09-30T21:36:01Z,1,OWID grapher: static PNG in page; ZIP (CSV+JSON metadata+README); API URLs; cite block; last/next update
+K12a-Q080,WebFetch,https://www.wikidata.org/wiki/Help:Merge,2026-09-30T21:36:01Z,1,Wikidata: item IDs persistent; merged items become redirects; never reuse
+K12a-Q081,WebFetch,https://osmfoundation.org/wiki/Licence/Attribution_Guidelines,2026-09-30T21:36:01Z,1,OSM attribution: corner of map; link to /copyright; may collapse to (i) button; static images same
+K12a-Q082,WebFetch,https://github.com/felt/tippecanoe,2026-09-30T21:36:37Z,1,tippecanoe: --drop-densest-as-needed; --cluster-distance; --cluster-densest-as-needed; --accumulate-attribute; -r1; -o .pmtiles
+K12a-Q083,WebFetch,https://pagefind.app/docs/filtering/,2026-09-30T21:36:37Z,1,Pagefind filters via data-pagefind-filter (content/attribute/inline); facet-count details not in excerpt
+K12a-Q084,WebFetch,https://pagefind.app/docs/multisite/,2026-09-30T21:36:37Z,1,Pagefind mergeIndex; indexWeight; mergeFilter; CORS for cross-domain
+K12a-Q085,WebFetch,https://infrequently.org/2024/01/performance-inequality-gap-2024/,2026-09-30T21:36:37Z,1,budgets: markup-heavy 3 s 75 KiB JS/1.4 MiB; JS-heavy 3 s 365 KiB JS/730 KiB; P75 device Galaxy A51; 7.2 Mbps/94 ms
+K12a-Q086,WebFetch,https://www.w3.org/WAI/ARIA/apg/patterns/combobox/,2026-09-30T21:36:37Z,1,APG combobox: role combobox; aria-expanded; aria-controls; aria-activedescendant; aria-autocomplete; keys
+K12a-Q087,WebFetch,https://docs.datasette.io/en/stable/facets.html,2026-09-30T21:37:07Z,1,Datasette facets: _facet URL params; HTML and .json parity; toggle_url; default 30; suggested facets <50 ms
+K12a-Q088,WebFetch,https://docs.openalex.org/how-to-use-the-api/get-lists-of-entities/autocomplete-entities,2026-09-30T21:37:07Z,0,301 redirect to help.openalex.org (docs home) - not followed; OpenAlex not assessed
+K12a-Q089,WebFetch,https://developers.cloudflare.com/r2/pricing/,2026-09-30T21:37:07Z,1,R2: $0.015/GB-month; Class A $4.50/M; Class B $0.36/M; free tier 10 GB/1M A/10M B; egress free
+K12a-Q090,WebFetch,https://github.com/hyperknot/openfreemap,2026-09-30T21:37:07Z,1,OpenFreeMap: Ubuntu deploy script; OpenMapTiles schema; ~300M hard-linked files avg 450 B; weekly (Wednesday); MIT
+K12a-Q091,WebFetch,https://www.kaggle.com/docs/datasets,2026-09-30T21:37:07Z,0,INACCESSIBLE to non-JS fetcher: title only; Kaggle versioning not assessed
+K12a-Q092,WebFetch,https://maplibre.org/maplibre-gl-js/docs/API/classes/KeyboardHandler/,2026-09-30T21:37:30Z,1,MapLibre KeyboardHandler: +/- zoom; arrows pan 100 px; shift+arrows rotate 15 deg / pitch 10 deg
+K12a-Q093,WebFetch,https://github.com/lucaong/minisearch,2026-09-30T21:37:30Z,1,MiniSearch: prefix + fuzzy; boosting; auto-suggest; in-memory index for mobile; toJSON/loadJSON; MIT
+K12a-Q094,WebFetch,https://github.com/komoot/photon,2026-09-30T21:37:30Z,1,Photon self-host: Apache-2.0; planet DB ~95 GB (2026); >=64 GB RAM recommended; weekly dumps; typeahead; bbox/tag filters
+K12a-Q095,WebFetch,https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Flock%20Safety&language=en&format=json&limit=5,2026-09-30T21:37:30Z,1,typeahead result: Q108485435 'Flock Safety' / 'American video surveillance company' / match label
+K12a-Q096,WebFetch,https://github.com/alphagov/accessible-autocomplete,2026-09-30T21:37:30Z,1,accessible-autocomplete: enhanceSelectElement progressive enhancement; MIT
+K12a-Q097,WebFetch,https://atlasofsurveillance.org/atlas,2026-09-30T21:37:51Z,1,AoS map: ArcGIS third-party host warning (Tor/cookies); requires JS; points to text search as most comprehensive
+K12a-Q098,WebSearch,Kumu docs performance large maps number of elements slow,2026-09-30T21:37:51Z,1,lead kept: docs.kumu.io FAQ (fetched as Q102)
+K12a-Q099,WebFetch,https://github.com/typesense/typesense,2026-09-30T21:37:51Z,1,Typesense: GPL-3.0; typo tolerance; facets; geo; <50 ms; 2.2M recipes 104 qps 11 ms; 28M books 46 qps 28 ms
+K12a-Q100,WebFetch,https://github.com/public-accountability/littlesis-rails,2026-09-30T21:37:51Z,1,LittleSis: >1.6 million relationships between >400 thousand people and organizations; GPL-3.0
+K12a-Q101,WebFetch,https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/Wikidata_Query_Help/Result_Views,2026-09-30T21:37:51Z,1,WDQS result views: table default; map; timeline; tree; graph; charts; iframe embeds
+K12a-Q102,WebFetch,https://docs.kumu.io/frequently-asked-questions/how-much-data-can-kumu-handle,2026-09-30T21:38:10Z,1,Kumu: no hard limit; practical limit; Canvas (slower; more decoration) vs WebGL (faster; less variety); no numbers

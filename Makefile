@@ -14,7 +14,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -71,7 +71,10 @@ verify-gen: gen
 ## repo-docs detector (P22.1) plus the agent-facing AGENTS.md detector. Both are
 ## vendored under scripts/docs/, structural-only, read-only, and exit non-zero on
 ## a critical issue. Run over the whole repo (`.`). Wired into CI on pull requests.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory
+## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
+## history guard, the spec-source checker and the coverage-matrix checker — all
+## stdlib python3, so the uv-less CI `docs` job runs them too.
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -93,6 +96,45 @@ docs-check-agent:
 ## gitignored logs path — never a shared /tmp file across concurrent worktrees.
 docs-check-build-memory:
 	bash scripts/docs/check-build-memory.sh . --json docs/build/logs/build-memory-check.json
+
+## The change judged by the history guards (SEED-02b). Empty = the uncommitted
+## working tree; CI sets the PR range: CHANGE_RANGE=<base.sha>...<head.sha>.
+CHANGE_RANGE ?=
+
+## Build-memory history guard (Round 11 SEED-02; B4 G1/G2/G4, BM-HIST-01): judges
+## the lines a change adds or removes in build-memory records — record dates,
+## append-only regions, record shape, gate records, readouts. With CHANGE_RANGE the
+## vendored validator's history mode runs (check-history.sh hands off to
+## docs/build/tools/memory_guard.py); without it memory_guard.py judges the
+## uncommitted working tree against HEAD. Exits 1 violation / 3 vacuous / 5 unknown
+## (shallow clone, bad range) are all red.
+docs-check-memory:
+ifeq ($(strip $(CHANGE_RANGE)),)
+	python3 docs/build/tools/memory_guard.py all --worktree --json docs/build/logs/memory-guard.json
+else
+	bash scripts/docs/check-build-memory.sh . --range $(CHANGE_RANGE) --json docs/build/logs/build-memory-history.json
+endif
+
+## Spec-source checker (P20.2, SIG-ENG-039): the canonical spec is a byte-identical
+## BUILD.sh concatenation of docs/research/_meta/spec_src/, Appendix F lists every
+## ADR file, the requirement-id count and reference closure hold.
+docs-check-spec:
+	python3 docs/build/tools/check_spec_src.py
+
+## Coverage-matrix checker (P19.2): row count, ids defined in the spec, enums,
+## routing and evidence rules of docs/build/COVERAGE_MATRIX.csv.
+docs-check-matrix:
+	python3 docs/build/tools/check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv
+
+## OM-01 commit-trailer check (SEED-02b; plan §3.3, A-21): every commit of
+## CHANGE_RANGE carries a recognised harness trailer or is an operator commit.
+## Needs CHANGE_RANGE (e.g. CHANGE_RANGE=origin/<base>...HEAD); CI passes the PR range.
+docs-check-trailers:
+ifeq ($(strip $(CHANGE_RANGE)),)
+	@echo "docs-check-trailers: set CHANGE_RANGE=<base>...<head> (the commits to judge)" >&2; exit 2
+else
+	python3 docs/build/tools/check_trailers.py --range $(CHANGE_RANGE) --json docs/build/logs/trailer-check.json
+endif
 
 ## The CI.1 / GL-CI-01 scanning gates (ADR-078) — the same commands CI runs.
 ## `security-scan` runs all three; the nightly workflow does the same. The two

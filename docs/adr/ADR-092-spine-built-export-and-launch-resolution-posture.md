@@ -65,3 +65,12 @@ persistence. The choice for launch: **materialize into the spine** vs **compute 
 - The read API must serve resolved entities (a consumer needs them) — materialize by a new ADR.
 - Compute-on-read at national scale blows the export build time/memory budget — move the aggregation
   into a materialized, incrementally-refreshed layer by a new ADR.
+
+## Status updates
+
+- **Status:** Superseded by ADR-099 and ADR-101 (2026-10-01) — Decision 2 only, for the resolved layer
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** ADR-099 and ADR-101 §2 supersede the
+  compute-on-read launch-resolution posture for the resolved layer; Decisions 1 (the export is built from the
+  live spine) and 3 stand, and Decision 4 (materialisation deferred) was carried out by ADR-099. SIG-EXPORT-012
+  and SIG-RECON-058 still describe the superseded posture and are amended at T1 (SEED-12; F-34). Recorded from
+  F3 §5.2 and F-249 (NEW-4). The body above is unchanged (SIG-ENG-003).

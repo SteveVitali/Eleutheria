@@ -8,15 +8,20 @@ The strict current-state parser must detect malformed/duplicate obligation ids,
 OPEN-first/DONE-later status conflicts and legacy-filename forward dependencies
 (the case the vendored seq-0 mapping misses), and it must never write or mutate
 control state — including on error. These tests build minimal fixture trees in
-``tmp_path`` and also pin the known real-tree conflicts so a regression that
-stops detecting them fails loudly.
+``tmp_path`` (including the Round-11 values-only CURRENT STATE shape) and run the
+audit over the real tree, where they assert only invariants that hold at every
+commit: zero errors, a LEDGER cursor consistent with the manifest and the index,
+every status conflict documented by a recorded reconciliation, and parsing that
+never changes a row's own leading status (BM-TEST-01; SEED-03 / PKG-02 ED-10).
 """
 
 from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 import pathlib
+import re
 import shutil
 
 from support import REPO_ROOT
@@ -33,8 +38,9 @@ def _load_tool(name: str):
 
 
 audit_current_state = _load_tool("audit_current_state")
+obligation_events = _load_tool("obligation_events")
 
-KEYS = """projectStatus: IN-PROGRESS
+KEYS = """projectStatus: IN_PROGRESS
 nextTicket: P9.1
 lastCompleted: P00.2
 blockedOn: —
@@ -67,11 +73,57 @@ companions: _TEMPLATE.md
 | 3 | `161_P9.1__c.md` | 9 | c |
 | 4 | `P00.9__later.md` | 0 | a legacy-named ticket inserted late |
 """
+ROUND11_ROWS = "\n### Round 11 — wave 1\n\n| 5 | `201_P10.1__d.md` | 10 | d |\n"
+# The seed's manifest: the unlanded rows below the first Round-11 row carry an appended gate-cell
+# `superseded-by(…)` token (plan §8.6; rows 184–187 in the real manifest), so V2 skips them.
+MANIFEST_R11 = (
+    MANIFEST.replace("| 9 | c |", "| 9 | c · **superseded-by(P10.1)** |").replace(
+        "| 0 | a legacy-named ticket inserted late |",
+        "| 0 | a legacy-named ticket inserted late · deferred(D-P9.1-1) |",
+    )
+    + ROUND11_ROWS
+)
 
 SPEC = "**SIG-TST-001 (MUST).** One requirement. See ADR-001.\n"
+# The Round-11 matrix header: the twelve P19.2 columns + the four build-memory 0.5.0 columns
+# (ADR-150 D2; check_coverage_matrix.HEADER, SEED-15).
 COVERAGE = (
-    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note\n"
-    "SIG-TST-001,MUST,§1,covered+tested,MET,t,P00.1,t,ADR-001,—,—,n\n"
+    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note,"
+    "required_domain,achieved_domain,owed_legs,accepted_scope\n"
+    "SIG-TST-001,MUST,§1,covered+tested,MET,t,P00.1,t,ADR-001,—,—,n,,,,\n"
+)
+
+# The Round-11 seed shape of CURRENT STATE (B3 §3.4; skill 0.5.0 layout
+# BM-LEDGER-02/-08): values only, `harness` in its optional slot between `round`
+# and `updatedAt`, `projectStatus: PAUSED`, the next row a newly appended one,
+# and the archive pointer comment inside the section.
+KEYS_R11 = """projectStatus: PAUSED
+nextTicket: P10.1
+lastCompleted: P00.2
+blockedOn: (nothing)
+pauseRequested: true
+returnPass: (none)
+manifest: docs/tickets/00_MANIFEST.md
+canonicalSpec: docs/2_canonical_design_spec.md
+memoryRoot: docs/build
+dispatchTarget: subagent
+buildWorktree: .
+buildBranchBase: devin/base
+pinnedBaseSha: deadbeef
+chainTip: r11/seed
+benchmarkSet: N/A
+autonomy: checkpoint
+mergePolicy: NONE
+round: 11
+harness: devin-desktop/swe-2-high/subagent
+updatedAt: 2026-01-03T00:00:00Z"""
+LEDGER_R11 = (
+    "# ledger\n\n## CURRENT STATE\n\n```\n"
+    + KEYS_R11
+    + "\n```\n<!-- Rounds 1-10 head archived; sha256 pointer. -->\n\n"
+    + "## PHASE LOG — Round 9\n\n"
+    + "- 2026-01-01 — P00.1 a done (PR #1)\n- 2026-01-02 — P00.2 b done (PR #2)\n"
+    + "\n## PHASE LOG — Round 11\n\n- 2026-01-03 — SEED-10 repair — head archived\n"
 )
 DEFERRALS = """# deferrals
 
@@ -195,7 +247,7 @@ def test_owed_row_without_backlog_home_is_error(tmp_path: pathlib.Path) -> None:
 
 
 def test_coverage_nonmet_without_routing_is_error(tmp_path: pathlib.Path) -> None:
-    bad_cov = COVERAGE + "SIG-TST-002,MUST,§1,unreferenced,PARTIAL,,P9.1,,,—,—,n\n"
+    bad_cov = COVERAGE + "SIG-TST-002,MUST,§1,unreferenced,PARTIAL,,P9.1,,,—,—,n,,,,\n"
     spec = SPEC + "**SIG-TST-002 (MUST).** Second.\n"
     diags, _ = audit_current_state.audit(
         _tree(
@@ -220,6 +272,138 @@ def test_ledger_index_ahead_and_next_landed(tmp_path: pathlib.Path) -> None:
     checks = _checks(diags)
     assert "ledger/index-ahead" in checks
     assert "ledger/next-landed" in checks
+
+
+def _r11_tree(root: pathlib.Path, ledger: str = LEDGER_R11) -> pathlib.Path:
+    return _tree(
+        root,
+        {
+            "docs/build/LEDGER.md": ledger,
+            "docs/tickets/00_MANIFEST.md": MANIFEST_R11,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+
+
+def test_round11_values_only_cursor_resolves(tmp_path: pathlib.Path) -> None:
+    """The seed's values-only CURRENT STATE (PAUSED, the next row a newly
+    appended Round-11 row, an archive pointer comment, PHASE LOG regions per
+    round) parses: the cursor checks resolve it without a finding."""
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path))
+    checks = _checks(diags)
+    for check in (
+        "ledger/next-ticket",
+        "ledger/last-completed",
+        "ledger/next-landed",
+        "ledger/index-ahead",
+        "ledger/done-uncovered",
+        "ledger/next-not-lowest",
+    ):
+        assert check not in checks, [d for d in diags if d["check"] == check]
+
+
+def test_v2_next_ticket_must_be_the_lowest_open_row(tmp_path: pathlib.Path) -> None:
+    """V2 (B3 §6; COV-14): with rows 3 and 4 neither landed nor superseded, a cursor that jumps
+    to the Round-11 row is an error naming the row the build actually owes next."""
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": LEDGER_R11,
+            "docs/tickets/00_MANIFEST.md": MANIFEST + ROUND11_ROWS,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    hits = _by_check(diags, "ledger/next-not-lowest")
+    assert [d["obligation"] for d in hits] == ["P10.1"]
+    assert "lowest open row: P9.1" in hits[0]["evidence"]
+
+
+def test_v2_skips_superseded_deferred_unused_and_human_rows(tmp_path: pathlib.Path) -> None:
+    """Each skip form on its own takes a row out of the order: a superseded-by(…) or deferred(…)
+    gate token, an `unused` row, and a HUMAN marker row."""
+    manifest = (
+        MANIFEST.replace("| 9 | c |", "| 9 | c · unused |").replace(
+            "| 4 | `P00.9__later.md` | 0 | a legacy-named ticket inserted late |",
+            "| 4 | `HUMAN-H9__review.md` | 0 | human review |",
+        )
+        + ROUND11_ROWS
+    )
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": LEDGER_R11,
+            "docs/tickets/00_MANIFEST.md": manifest,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+            "docs/tickets/HUMAN-H9__review.md": "# human\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    assert not _by_check(diags, "ledger/next-not-lowest")
+
+
+def test_v2_superseded_token_only_counts_in_the_gate_cell(tmp_path: pathlib.Path) -> None:
+    """A description that merely mentions supersession does not skip the row."""
+    manifest = (
+        MANIFEST.replace("| 9 | c |", "| 9 | superseded-by(x) mentioned | c |").replace(
+            "| 0 | a legacy-named ticket inserted late |", "| 0 | x | deferred(D-P9.1-1) |"
+        )
+        + ROUND11_ROWS
+    )
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": LEDGER_R11,
+            "docs/tickets/00_MANIFEST.md": manifest,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    assert [d["evidence"] for d in _by_check(diags, "ledger/next-not-lowest")] == [
+        "nextTicket: P10.1; lowest open row: P9.1"
+    ]
+
+
+def test_v2_done_when_every_row_landed_or_skipped(tmp_path: pathlib.Path) -> None:
+    ledger = LEDGER_R11.replace("nextTicket: P10.1", "nextTicket: DONE")
+    index = (
+        "| # | ticket | x | evidence |\n|---|---|---|---|\n"
+        "| 1 | P00.1 | t | `runs/P00.1.md` |\n"
+        "| 2 | P00.2 | t | `runs/P00.1.md` |\n"
+        "| 5 | P10.1 d-ticket | t | `runs/P00.1.md` |\n"
+    )
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": ledger,
+            "docs/build/BUILD_INDEX.md": index,
+            "docs/tickets/00_MANIFEST.md": MANIFEST_R11,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    assert not _by_check(diags, "ledger/next-not-lowest")
+
+
+def test_round11_cursor_naming_no_chain_row_is_error(tmp_path: pathlib.Path) -> None:
+    ledger = LEDGER_R11.replace("nextTicket: P10.1", "nextTicket: P99.9")
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path, ledger))
+    assert [d["obligation"] for d in _by_check(diags, "ledger/next-ticket")] == ["P99.9"]
+
+
+def test_round11_harness_slot_passes_key_order(tmp_path: pathlib.Path) -> None:
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path))
+    assert "ledger/key-order" not in _checks(diags)
+
+
+def test_round11_harness_out_of_its_slot_is_a_key_order_error(tmp_path: pathlib.Path) -> None:
+    """`harness` is optional but only in its slot — after `updatedAt` it stays an
+    error now that the slot is accepted (SEED-02b)."""
+    moved = LEDGER_R11.replace("harness: devin-desktop/swe-2-high/subagent\n", "").replace(
+        "updatedAt: 2026-01-03T00:00:00Z", "updatedAt: 2026-01-03T00:00:00Z\nharness: x/y/z"
+    )
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path, moved))
+    assert "ledger/key-order" in _checks(diags)
 
 
 def test_done_entry_without_evidence_is_error(tmp_path: pathlib.Path) -> None:
@@ -279,6 +463,74 @@ def test_adr_index_mismatch_and_missing_revisit(tmp_path: pathlib.Path) -> None:
     assert "adr/index-mismatch" in checks
 
 
+RESERVED_NOTES = (
+    "\n## Notes\n\nADR-009 is a skipped number (never assigned).\n"
+    "ADR-002 and ADR-004…ADR-006 are reserved for the chain rows that\n"
+    "write them (noted 2026-10-01); each appears here when its file lands.\n"
+)
+
+
+def _dangling(tmp_path: pathlib.Path, readme: str) -> set[str]:
+    diags, _ = audit_current_state.audit(
+        _tree(
+            tmp_path,
+            {
+                "docs/adr/ADR-001-x.md": "# ADR-001\n\nCites ADR-002, ADR-005, ADR-007 and "
+                "ADR-009.\n\n## Revisit trigger\n\n- t\n",
+                "docs/adr/README.md": readme,
+            },
+        )
+    )
+    return {d["obligation"] for d in _by_check(diags, "adr/dangling-reference")}
+
+
+def test_adr_citation_of_a_missing_number_is_dangling(tmp_path: pathlib.Path) -> None:
+    assert _dangling(tmp_path, "| [ADR-001](ADR-001-x.md) | t |\n") == {
+        "ADR-002",
+        "ADR-005",
+        "ADR-007",
+        "ADR-009",
+    }
+
+
+def test_adr_citation_of_a_number_reserved_in_the_index_notes_is_accepted(
+    tmp_path: pathlib.Path,
+) -> None:
+    """SEED-18a: a number the index Notes record as reserved (a later chain row writes it)
+    resolves; an unreserved missing number (ADR-007, just past the range) and a number
+    recorded only as skipped (ADR-009) still fail."""
+    got = _dangling(tmp_path, "| [ADR-001](ADR-001-x.md) | t |\n" + RESERVED_NOTES)
+    assert got == {"ADR-007", "ADR-009"}
+
+
+def test_reserved_adr_numbers_come_only_from_the_notes_section() -> None:
+    parse = audit_current_state.reserved_adr_numbers
+    assert parse(RESERVED_NOTES) == {"ADR-002", "ADR-004", "ADR-005", "ADR-006"}
+    # the same sentence in the index table (above Notes) or after Notes reserves nothing
+    assert parse("ADR-002 is reserved for a row.\n" + "\n## Notes\n\nnone\n") == set()
+    assert parse("\n## Notes\n\nnone\n\n## Other\n\nADR-003 is reserved.\n") == set()
+    assert parse("ADR-010…ADR-012 are reserved.\n") == set()
+    # ASCII ellipsis and en-dash ranges, comma lists
+    assert parse("## Notes\nADR-010...ADR-011, ADR-020–ADR-021 are reserved.\n") == {
+        "ADR-010",
+        "ADR-011",
+        "ADR-020",
+        "ADR-021",
+    }
+
+
+def test_real_adr_index_reservations_are_read() -> None:
+    """Invariant over the real index: when its Notes state a reservation, the parser reads at
+    least one number from it, so a wording drift cannot silently reserve nothing (the real-tree
+    zero-errors test then fails on any cited number that is neither written nor reserved)."""
+    text = (REPO_ROOT / "docs" / "adr" / "README.md").read_text()
+    notes = text.split("\n## Notes", 1)[1] if "\n## Notes" in text else ""
+    reserved = audit_current_state.reserved_adr_numbers(text)
+    if re.search(r"\b(?:is|are)\s+reserved\b", notes):
+        assert reserved
+    assert all(re.fullmatch(r"ADR-\d{3}", n) for n in reserved)
+
+
 def _digests(root: pathlib.Path) -> dict[str, str]:
     return {
         str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -323,19 +575,41 @@ def test_reports_go_to_caller_provided_paths(tmp_path: pathlib.Path) -> None:
     assert not (root / "discrepancies.json").exists()
 
 
-def test_real_tree_expected_conflicts_and_zero_errors() -> None:
-    """The real tree after P32.7's recorded reconciliations: the parser must
-    still surface `D-P21.5-1` (the one conflict row whose recorded
-    interpretation is PARTIAL — the dated DONE tokens stay deliberately
-    visible), the documented Lane-B pointer rows, and P31.17/18 named as
-    dropped/moved in P31.19's depends line — and zero errors. The six other
-    former conflict rows were reconciled by obligation-event anchors and their
-    compatibility cells flipped to match (P32.7/ADR-126)."""
+GUARDS_MARKER = "<!-- build-memory-guards: 1 -->"
+PROJECT_STATUSES = frozenset({"NOT_STARTED", "IN_PROGRESS", "BLOCKED", "PAUSED", "DONE"})
+
+
+def test_real_tree_zero_errors_and_every_status_conflict_documented() -> None:
+    """The real tree: zero errors (a true invariant — it caught the #165/#179
+    record defects), and every ``deferrals/status-conflict`` the parser surfaces
+    is reconciled by a recorded interpretation — an obligation-event migration
+    anchor (P32.7/ADR-126) or an entry of ``reconciliations.json`` — so closing
+    such a row never turns this red while an undocumented conflict always does.
+    The documented manifest/ticket conflicts are facts of append-only records
+    (the Lane-B pointer rows; P31.19's depends line), so their detection stays
+    pinned as the parser-regression guard."""
     diags, meta = audit_current_state.audit(REPO_ROOT)
     errors = [d for d in diags if d["severity"] == "error"]
     assert errors == [], errors
-    flagged = {d["obligation"] for d in _by_check(diags, "deferrals/status-conflict")}
-    assert flagged == {"D-P21.5-1"}, flagged
+    obligations = REPO_ROOT / "docs" / "build" / "reports" / "obligations"
+    documented = {
+        (d["check"], d["obligation"])
+        for d in json.loads((obligations / "reconciliations.json").read_text())["documented"]
+    }
+    events, errs = obligation_events.load_jsonl(obligations / "events.jsonl")
+    assert errs == [], errs
+    reconciled = {
+        ev["obligation_id"]
+        for ev in events
+        if ev.get("kind") == "migration"
+        and ev.get("anchor", {}).get("interpretation") in {"reconciled", "ambiguous-open"}
+    }
+    undocumented = [
+        d
+        for d in _by_check(diags, "deferrals/status-conflict")
+        if d["obligation"] not in reconciled and (d["check"], d["obligation"]) not in documented
+    ]
+    assert undocumented == [], undocumented
     deps = {d["obligation"] for d in _by_check(diags, "tickets/dependency-not-in-chain")}
     assert {"P31.17", "P31.18"} <= deps
     dupes = {d["obligation"] for d in _by_check(diags, "manifest/duplicate-file")}
@@ -351,25 +625,55 @@ def test_real_tree_expected_conflicts_and_zero_errors() -> None:
         assert len(meta["input_digests"].get(rel, "")) == 64
 
 
-def test_no_existing_gate_or_deferral_is_closed_by_parsing() -> None:
-    """Parsing preserves every obligation: the Round-10 prerequisite rows stay
-    OPEN, and the audit does not rewrite any status cell. (D-P31.1-1,
-    D-P31.1-3 and D-P31.5-2 are DONE — not by parsing: P32.7 recorded
-    evidence-backed reconciliation events for them and updated the
-    compatibility cells to match, the old values preserved on the anchors.)"""
-    diags, _ = audit_current_state.audit(REPO_ROOT)  # noqa: F841 — audit must not raise
+def test_real_tree_ledger_cursor_is_honest() -> None:
+    """The LEDGER cursor after any closeout, as invariants (this replaces the
+    P33.8 test that pinned the cursor's literal values): no ``ledger/*`` finding
+    of any severity — key order, ``nextTicket`` names a chain row (or DONE /
+    SETUP) that has not landed, ``lastCompleted`` names a landed row with
+    existing evidence, the index does not run ahead, PHASE LOG ``done`` entries
+    are indexed — and the project is never DONE while a row is still next.
+    Under the guards marker (BM-COMPAT-06) ``projectStatus`` is also held to
+    the layout vocabulary; a legacy ledger keeps its legacy spelling."""
+    diags, _ = audit_current_state.audit(REPO_ROOT)
+    findings = [d for d in diags if d["check"].startswith("ledger/")]
+    assert findings == [], findings
+    text = (REPO_ROOT / "docs" / "build" / "LEDGER.md").read_text()
+    status = audit_current_state._lval(text, "projectStatus")
+    upcoming = audit_current_state._lval(text, "nextTicket")
+    assert status, "CURRENT STATE has no projectStatus value"
+    if status.upper() == "DONE":
+        assert upcoming == "DONE", f"projectStatus DONE while nextTicket is {upcoming!r}"
+    readme = (REPO_ROOT / "docs" / "build" / "README.md").read_text()
+    if GUARDS_MARKER in readme:
+        assert status in PROJECT_STATUSES, f"projectStatus {status!r} is off-vocabulary"
+
+
+def test_parsing_preserves_each_rows_own_leading_status() -> None:
+    """Parsing never closes (or opens) an obligation: every DEFERRALS obligation
+    row is parsed, and its parsed status is exactly the row's own leading status
+    token — never a later dated token in the prose (no last-token-wins). This is
+    the invariant the former named-row pin stood in for; closing a row with a
+    recorded transition changes its leading token and so never turns this red."""
+    audit_current_state.audit(REPO_ROOT)  # the audit must not raise on the real tree
     obligations = audit_current_state.parse_deferrals(REPO_ROOT, [])
-    by_id = {o["id"]: o["status"] for o in obligations}
-    for owed in (
-        "D-P31.4-1",
-        "D-R10-HUMAN-1",
-        "D-R10-SOURCES-1",
-        "D-R10-LIVE-1",
-        "D-R10-PUBLISH-1",
-        "D-R10-MEMORY-1",
-        "D-R6.1-EVAL",
-    ):
-        assert by_id[owed] in {"OPEN", "PARTIAL"}, (owed, by_id.get(owed))
+    assert obligations, "DEFERRALS.md parser found no obligation rows — parser broke?"
+    raw: dict[str, str] = {}
+    lines = (REPO_ROOT / "docs" / "tickets" / "DEFERRALS.md").read_text().splitlines()
+    for line in lines:
+        if audit_current_state.DEFERRAL_XREF_RE.match(line):
+            continue
+        m = re.match(r"^\|\s*(D-[^|\s]+)\s*\|", line)
+        if not m:
+            continue
+        oid = m.group(1).rstrip("`*.,;:)")
+        if not audit_current_state.DEFERRAL_ID_RE.match(oid):
+            continue
+        status_cell = line.rstrip().rstrip("|").rsplit("|", 1)[-1]
+        raw.setdefault(oid, (status_cell.split() or [""])[0].upper())
+    parsed = {o["id"]: o["status"] for o in obligations}
+    assert parsed.keys() == raw.keys(), sorted(parsed.keys() ^ raw.keys())
+    changed = {oid: (raw[oid], parsed[oid]) for oid in raw if parsed[oid] != raw[oid]}
+    assert changed == {}, changed
 
 
 def test_tool_is_removed_behavior_fails(tmp_path: pathlib.Path) -> None:

@@ -73,3 +73,14 @@ Revisit if the committed build memory measurably slows the inner loop or bloats 
 clone size), or if `build-memory` upstream changes the layout contract in a way this repo's paths cannot
 follow. At that point, either prune to `logs/`-style gitignored carve-outs (recording the change here) or
 adopt the new upstream layout via a new ADR.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** `LEDGER.md` is 679 KB and cannot be read in one context (P13), and the
+largest report is 5,112,144 B, 97.5% of the validator's 5 MiB flag (F3 §5.1). **Answer:** SEED-10 archives
+LEDGER lines 1–54 byte-for-byte under `docs/build/reports/memory-repair/` and writes a slim head ≤ 12 KiB;
+ADR-148 records the build-memory v2.1 ledger contract; whole-LEDGER rotation is LATER-14 (trigger: LEDGER > 1
+MiB). The decision above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

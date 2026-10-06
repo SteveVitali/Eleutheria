@@ -199,3 +199,14 @@ Revisit this decision when any of the following holds:
 - **The ILIKE jurisdiction filter proves too loose** (a jurisdiction token that
   collides with non-jurisdiction identifier text) — replace the filter with a
   structured scheme; RISK-P24-04 records the coupling.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** later jurisdictions arrived through the national surface, the ILIKE
+jurisdiction filters remain and jurisdiction codes collide (F-44, I1 NEW-1; F3 §5.1). **Answer:** row P35.17
+(jurisdiction registry, boundary pack, `lookup@1`) writes ADR-160 and appends its own `Revisited by ADR-160`
+line here (plan §7, S6R-24); P35.18 keeps the declared scheme. The decision above stays in force until that
+answer lands; this ADR's body is unchanged (SIG-ENG-003).

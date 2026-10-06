@@ -138,3 +138,28 @@ and geographic-queue claim), when the per-jurisdiction operational fields
 are replaced with reviewed ones, when a jurisdiction's records law materially changes
 (a versioned `records_law.toml` migration), or if a `legal_barrier` coverage kind is
 ever added to the §9.5/§32.1 model (then the residency fact is realigned to it).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** a records filing/response backend landed (F3 §5.1 cites P25.9). **Answer:**
+SIG sends no records request in Round 11: sending is outreach, owed later-phase with the trigger "the operator
+authorises outside contact" (ADR-171; LATER-04; D-R7.2-SEND stays OPEN); row P37.14 seeds records leads only.
+The counsel review of the operational fields (RISK-P10-16) cannot happen without counsel (F3 §5.4; WV-07,
+ADR-182). The decision stands. The decision above stays in force until that answer lands; this ADR's body is
+unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "the per-jurisdiction operational fields (deadline/fee/appeal) complete their counsel review
+  (RISK-P10-16)". Restated (agent reading, labelled): it fires when the operator records a reviewed determination of
+  those fields that replaces the seed values, labelled "the operator's own determination (no counsel)" (ADR-167); or
+  when counsel is obtained (LATER-05) or a first legal demand arrives (ADR-182's and ADR-166's triggers). The decision
+  and the body above are unchanged (SIG-ENG-003).

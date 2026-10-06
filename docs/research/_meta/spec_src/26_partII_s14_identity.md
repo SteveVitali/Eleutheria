@@ -171,6 +171,16 @@ versioned data with per-label provenance.
 boundary and B-cubed cluster precision/recall on the holdout. **Auto-write tiers MUST be
 automatically demoted to review if holdout precision falls below the published threshold.**
 
+**Round-11 amendment (A-6; ADR-153; recorded 2026-10-01).** For the derivation-collapse tiers C0–C2
+(SIG-CONF-004), automatic demotion is also census-driven: after every ER run the census re-verifies
+every collapse, and any failure demotes that lineage's collapse tier on the next run and alerts; a
+quarterly id-resolution sample per declared namespace is reported as a measured property of the copy
+link, never as a certification figure. The per-run holdout report continues, labelled as measured on
+agent-labelled development data, never as human ground truth (ADR-152); this requirement's
+holdout-precision demotion clause is not waived. Inferential tiers are review-only and never
+auto-write (SIG-CONF-005). The independently adjudicated holdout stays owed under T-EVAL-IND (§55.9,
+Round-11 disposition).
+
 **SIG-IDENT-029 (MUST).** Cluster-shape alerts MUST fire for implausible clusters — a municipal PD
 or sheriff cluster above a size threshold, or a cluster joined by a single bridge into components
 that are each substantial. These are the signatures of a bad merge.

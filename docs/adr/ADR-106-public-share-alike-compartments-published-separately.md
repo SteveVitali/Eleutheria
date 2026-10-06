@@ -133,3 +133,24 @@ was not honest, which a share-alike-public rule makes consequential:
   the licence-only rule no longer suffices; introduce a per-compartment restriction in a new ADR.
 - A render surface other than `web/map.json` starts carrying per-record data from several compartments —
   label it with `surface_license` in the exporter so the classifier keeps it restricted.
+
+## Status updates
+
+- **Status:** Qualified by ADR-167 (2026-10-01)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 167, ADR-167 (counsel basis)
+  re-records the 2026-09-24 "counsel" answer this ADR rests on as the operator's own determination (no counsel),
+  with the C-3 sentence, agent-drafted and adopted by the operator at 2026-10-01T04:54:19Z (sha256
+  `1461ae213fac4749cd26d24d1ca22de1db893686d1b0fdef88cb64c296eca6c6`): *"The 'counsel' determinations of
+  2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer all the human review
+  steps and proceed' was my decision to defer the human review legs."* The body above is unchanged
+  (SIG-ENG-003).
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "Counsel's **dated written opinion** (`D-P30.3-COUNSEL`) differs from the operator-reported
+  clearance". Restated (agent reading, labelled): ADR-167 re-records that clearance as the operator's own
+  determination; the clause fires when the operator records a different determination, labelled "the operator's own
+  determination (no counsel)" (ADR-167), or when counsel is obtained (LATER-05) or a first legal demand arrives
+  (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged (SIG-ENG-003).

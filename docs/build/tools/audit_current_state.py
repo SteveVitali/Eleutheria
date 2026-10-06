@@ -50,6 +50,9 @@ EXPECTED_KEYS = (
     "manifest canonicalSpec memoryRoot dispatchTarget buildWorktree buildBranchBase "
     "pinnedBaseSha chainTip benchmarkSet autonomy mergePolicy round updatedAt"
 ).split()
+# The optional `harness` key (layout BM-LEDGER-02 / BM-HARNESS-01, build-memory 0.5.0) is accepted
+# only in its slot, between `round` and `updatedAt` (Round-11 seed; SEED-02b).
+EXPECTED_KEYS_WITH_HARNESS = [*EXPECTED_KEYS[:-1], "harness", EXPECTED_KEYS[-1]]
 
 MARKER = "<!-- build-memory: v2 -->"
 OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
@@ -91,9 +94,24 @@ DEP_ID_RE = re.compile(
 SEMANTIC_ID_RE = re.compile(r"\*\*Semantic id:\*\*\s*`?([A-Z][A-Za-z0-9.]*)\b")
 FILENAME_ID_RE = re.compile(r"^(\d{2,3}[a-z]?_)?(.+?)__[^_].*\.md$")
 # Admissible routing sentinels that are not chain-ticket ids.
+# V2 (B3 §3.12/§6; plan §8.6; COV-14): an appended gate-cell token that takes a manifest row out
+# of the `nextTicket` order — `superseded-by(…)` (rows 184–187 in Round 11), `deferred(…)`, or
+# `unused`.
+SKIP_TOKEN_RE = re.compile(r"\b(?:superseded-by|deferred)\(|\bunused\b", re.I)
+# A BUILD_INDEX row's ticket cell: its first word (legacy rows read `P00.1 repo-skeleton`).
+INDEX_TICKET_RE = re.compile(r"^\|\s*\d+\s*\|\s*\**([A-Za-z][A-Za-z0-9.-]*)")
 ROUTING_SENTINELS = frozenset({"—", "accepted"})
 SCOPED_ROUTING_RE = re.compile(r"^P\d+\.\d+:.+$")
 PHASE_LOG_DONE_RE = re.compile(r"^-\s*\d{4}-\d{2}-\d{2}\s*—\s*(?:\*\*)?([A-Za-z][A-Za-z0-9.-]*)")
+# ADR numbers the ADR index's `## Notes` section records as reserved — e.g. "ADR-151, ADR-156 and
+# ADR-174…ADR-178 are reserved for the Round-11 chain rows that write them" (SEED-12c; plan §7). A
+# body citation of a reserved number is a forward reference to a decision a later chain row
+# writes, not a dangling one; any other cited number without a file stays an error.
+_ADR_REF_OR_RANGE = r"ADR-(\d{3})(?:\s*(?:…|\.\.\.?|–)\s*ADR-(\d{3}))?"
+_ADR_REF_NC = r"ADR-\d{3}(?:\s*(?:…|\.\.\.?|–)\s*ADR-\d{3})?"
+RESERVED_ADRS_RE = re.compile(
+    rf"({_ADR_REF_NC}(?:\s*(?:,|,?\s+and)\s+{_ADR_REF_NC})*)\s+(?:is|are)\s+reserved\b"
+)
 
 
 def diag(
@@ -156,6 +174,7 @@ def parse_manifest(root: pathlib.Path, diags: list[dict]) -> dict:
     in_chain = False
     seen_seq: dict[str, str] = {}
     seen_file: dict[str, str] = {}
+    skipped: set[str] = set()
     for lineno, line in enumerate(text.splitlines(), 1):
         if re.match(r"^##\s+The chain", line):
             in_chain = True
@@ -223,6 +242,12 @@ def parse_manifest(root: pathlib.Path, diags: list[dict]) -> dict:
         else:
             seen_file[fname] = str(lineno)
         rows.append((first, fname))
+        # V2 (B3 §6; COV-14): a row whose gate cell carries an appended skip token is never
+        # `nextTicket`.
+        if SKIP_TOKEN_RE.search(cells[-1] if cells else ""):
+            m_skip = FILENAME_ID_RE.match(fname)
+            if m_skip:
+                skipped.add(m_skip.group(2))
     # Chain order is the *physical* row order in the table, not the `#` cell —
     # inserted tickets (P30.2a/P30.2b) keep stable row numbers while sitting
     # physically earlier (manifest RENUMBER/Plan-extensions notes).
@@ -242,6 +267,7 @@ def parse_manifest(root: pathlib.Path, diags: list[dict]) -> dict:
         "id_to_seq": id_to_seq,
         "id_to_num": id_to_num,
         "file_to_seq": file_to_seq,
+        "skipped": skipped,
     }
 
 
@@ -475,7 +501,7 @@ def parse_ledger(root: pathlib.Path, manifest: dict, diags: list[dict]) -> dict:
         for ln in body.splitlines()
         if re.match(r"^\s*[A-Za-z][A-Za-z0-9]*:(\s|$)", ln)
     ]
-    if got != EXPECTED_KEYS:
+    if got not in (EXPECTED_KEYS, EXPECTED_KEYS_WITH_HARNESS):
         diags.append(
             diag(
                 "ledger/key-order",
@@ -569,6 +595,33 @@ def parse_ledger(root: pathlib.Path, manifest: dict, diags: list[dict]) -> dict:
                         f"lastCompleted {lc} — index and control state disagree",
                     )
                 )
+    # V2 (B3 §6; COV-14): nextTicket is the lowest chain row (manifest order) that has not landed,
+    # skipping rows whose gate cell carries a superseded-by(…) / deferred(…) / unused token and
+    # HUMAN rows (they never block code tickets, BM-TICKET-05); DONE when none is left. Landed = a
+    # BUILD_INDEX row or a PHASE LOG "done" entry.
+    if nt and nt != "SETUP" and manifest.get("rows"):
+        landed = _landed_ids(root, text)
+        skipped = manifest.get("skipped", set())
+        want = "DONE"
+        for _seq, fname in manifest["rows"]:
+            m_id = FILENAME_ID_RE.match(fname)
+            tid = m_id.group(2) if m_id else fname
+            if tid in landed or tid in skipped or tid.startswith("HUMAN-"):
+                continue
+            want = tid
+            break
+        if nt != want:
+            diags.append(
+                diag(
+                    "ledger/next-not-lowest",
+                    "error",
+                    "docs/build/LEDGER.md",
+                    nt,
+                    f"nextTicket: {nt}; lowest open row: {want}",
+                    f"nextTicket {nt!r} is not the lowest chain row that has not landed ({want!r}; "
+                    "superseded-by/deferred/unused and HUMAN rows skipped — V2)",
+                )
+            )
     # PHASE LOG "done" entries must have an index row whose evidence cell names
     # at least one file that exists (runs/, pr/, readouts/, reports/…). A gate
     # marker's evidence is its readout, not a runs/ file.
@@ -609,6 +662,23 @@ def parse_ledger(root: pathlib.Path, manifest: dict, diags: list[dict]) -> dict:
                 )
             )
     return {"nextTicket": nt, "lastCompleted": lc}
+
+
+def _landed_ids(root: pathlib.Path, ledger_text: str) -> set[str]:
+    """Chain ids that have landed: the first word of every BUILD_INDEX row's ticket cell, plus every
+    PHASE LOG ``done`` entry (the V2 rule's landed set)."""
+    out: set[str] = set()
+    path = root / "docs/build/BUILD_INDEX.md"
+    if path.is_file():
+        for line in path.read_text().splitlines():
+            m = INDEX_TICKET_RE.match(line)
+            if m:
+                out.add(m.group(1).rstrip("."))
+    for line in ledger_text.splitlines():
+        dm = PHASE_LOG_DONE_RE.match(line)
+        if dm and "done" in line:
+            out.add(dm.group(1))
+    return out
 
 
 def _build_index_rows(root: pathlib.Path) -> list[dict]:
@@ -728,6 +798,9 @@ def parse_coverage(root: pathlib.Path, manifest: dict, diags: list[dict]) -> Non
             routing not in ROUTING_SENTINELS
             and routing not in chain_ids
             and not SCOPED_ROUTING_RE.match(routing)
+            # Round-11 homes (ADR-150 D3; SEED-15): an open BACKLOG row or a seed unit.
+            and not check_coverage_matrix.BACKLOG_ROUTE_RE.match(routing)
+            and not check_coverage_matrix.SEED_ROUTE_RE.match(routing)
         ):
             diags.append(
                 diag(
@@ -788,6 +861,22 @@ def parse_coverage(root: pathlib.Path, manifest: dict, diags: list[dict]) -> Non
 
 
 # ── ADRs ─────────────────────────────────────────────────────────────────────
+
+
+def reserved_adr_numbers(readme_text: str) -> set[str]:
+    """ADR numbers the index README's ``## Notes`` section states "is/are reserved" (single
+    numbers, comma/`and` lists and inclusive `ADR-a…ADR-b` ranges). Text outside Notes and
+    other statuses (e.g. "ADR-064 is a skipped number") reserve nothing."""
+    m = re.search(r"^## Notes[ \t]*$(.*?)(?=^## |\Z)", readme_text, re.M | re.S)
+    if not m:
+        return set()
+    reserved: set[str] = set()
+    for stmt in RESERVED_ADRS_RE.finditer(m.group(1)):
+        for ref in re.finditer(_ADR_REF_OR_RANGE, stmt.group(1)):
+            lo = int(ref.group(1))
+            hi = int(ref.group(2)) if ref.group(2) else lo
+            reserved.update(f"ADR-{n:03d}" for n in range(lo, hi + 1))
+    return reserved
 
 
 def parse_adrs(root: pathlib.Path, diags: list[dict]) -> None:
@@ -894,10 +983,11 @@ def parse_adrs(root: pathlib.Path, diags: list[dict]) -> None:
                 )
             )
     # dangling cross-references inside ADR bodies (supersession/citation chains
-    # must resolve to real files).
+    # must resolve to real files, or to a number the index Notes record as reserved).
+    reserved = reserved_adr_numbers(readme.read_text()) if readme.is_file() else set()
     for num, p in files.items():
         for ref in sorted(set(re.findall(r"ADR-\d{3}", p.read_text())) - {num}):
-            if ref not in files:
+            if ref not in files and ref not in reserved:
                 diags.append(
                     diag(
                         "adr/dangling-reference",

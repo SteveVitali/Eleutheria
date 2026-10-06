@@ -137,6 +137,24 @@ public CC BY-SA 4.0 API** (§22.5, SC-18), and MUST NOT attempt direct capture f
 every path returns a bot challenge (F2.1). Output MUST land in the **CC BY-SA 4.0 compartment**
 (SIG-LIC-004a), never merged into the CC-BY graph.
 
+**Round-11 waiver — WV-10, Flock transparency portals, probe-only (ADR-188; recorded 2026-10-01).**
+The operator waived this requirement's no-direct-capture clause in their adopted sentence recorded
+in ADR-188 (S6R-01, GATE-P log round 26; agent-drafted, adopted by the operator at
+2026-10-01T06:51:11Z; sha256 `82487f7b3f0d…`; chosen over the recommendation to keep Flock via the
+aggregator). **Waived:** "MUST NOT attempt direct capture from the vendor", for Flock transparency
+portals only and only in a probe-only form — one gentle, rate-limited probe per known portal under
+the project's user agent; further page requests only while the portal keeps serving without a
+challenge; any bot challenge, 403 or interstitial ends that portal's attempt and is recorded as a
+refusal with its kind. **Stand unchanged:** the aggregator-source clause (the Eyes on Flock
+aggregator remains the source of the portal layer) and the compartment clause (any direct output
+lands in the CC BY-SA 4.0 compartment, never merged into the CC-BY graph); SIG-INGEST-013, §26 rule
+4 and SIG-INGEST-037's anti-circumvention posture are untouched — no challenge-solving, header
+spoofing, proxy rotation or browser automation. A page served without a challenge is Part
+VIII-screened before persistence (ADR-185), its terms are captured verbatim, and opt-outs are
+honoured at once (§26 rule 7). Expected yield today is about zero (F2.1). **Revisit (ADR-188):** the
+first portal served without a challenge (review the parse and the exposure before publishing); a
+cease-and-desist, block, terms or access change; an opt-out; the aggregator ceasing publication.
+
 **The discovery problem, stated because it sizes the fallback.** The vendor publishes **no directory
 of portals**. Portal discovery has historically been performed by **brute-force enumeration over
 candidate locality/agency URL slugs** — which is why Eyes on Flock's discovery work is
@@ -224,6 +242,14 @@ as a refusal and recorded on the rights record. One ecosystem project combines
 — a formal opt-out with legal effect in the EU. `UNDETERMINED` and *"affirmatively refused"* are
 different states and MUST be stored differently: the first invites a Stage-0 conversation, the
 second closes it.
+
+**Round-11 note (A-5, S6R-08; ADR-168; recorded 2026-10-01).** Not waived and not amended. With
+GL-GATE-08 applied on every host, a disregarded robots disallow is still not a reservation: an
+affirmative machine-readable reservation (a Content-Signal header, a TDM reservation, an EU DSM
+Article 4 reservation) is honoured as a refusal on every host and recorded on the rights record, by
+the reservation refusal built ahead of every Round-11 acquisition activation (P36.1a). Whether any
+express-terms row's captured licence metadata is itself such a reservation is open; any that is goes
+back to the operator (plan §14 R-19).
 
 **SIG-INGEST-046 (MUST).** The upstream specialist's six documented capabilities (OL-2C-HIBF-08) are
 dispositioned as follows, explicitly, so that none is silently dropped:
@@ -427,9 +453,51 @@ connector. Its operative rules:
 7. **Honor opt-out** immediately and record it in the compact.
 8. **Cache aggressively; refetch rarely.** Conditional requests, content-hash short-circuits.
 
+**Round-11 amendment and waiver (A-5, S6R-08, B-6, B-39, WV-09; ADR-168, ADR-184, ADR-187; recorded
+2026-10-01).**
+- **Rule 2.** The operator re-confirmed GL-GATE-08 as is at GATE-P (A-5, "Re-confirm GL-GATE-08 as
+  is", 2026-10-01T04:03:25Z, chosen over the recommendation) and applied it to every host per
+  ADR-088 (S6R-08, "All hosts, as ADR-088 (Recommended)", 2026-10-01T06:51:11Z): `disallowed` and
+  `unretrievable` verdicts are recorded as `robots_disregarded` on every host SIG fetches, vendor
+  and platform hosts included, and each disregard is disclosed publicly as host + count with a
+  GL-GATE-08 reference (ADR-168). A disregarded disallow is never a rights reservation, a licence or
+  an ingestion clearance (SIG-INGEST-046c; HG-03).
+- **Rule 1.** The user agent names an owned explanation page on SIG's own domain, never the
+  operator's personal identifiers; it is in place before any Round-11 acquisition fetch (P35.38a).
+- **Rule 7.** A host-level opt-out register is checked before every fetch, honoured at once and
+  recorded in the compact (P36.1a).
+- **Rule 6 — WAIVED for DocumentCloud/MuckRock only (WV-09).** In the operator's adopted sentence
+  recorded in ADR-187 (S6-F2, GATE-P log round 24; agent-drafted, adopted by the operator at
+  2026-10-01T06:05:22Z; sha256 `94f061234c41…`). Scope: the `documentcloud` connector (public
+  DocumentCloud documents hosted by MuckRock). Compensating controls: ADR-184's envelope (public,
+  unauthenticated pages only; no logins, keys or circumvention; rate-limited; terms captured
+  verbatim; the exposure disclosed; the Part VIII screen before persistence); every claim links the
+  uploader's page; opt-outs honoured at once and recorded; activation only after the operator's
+  HG-03 flip. Revisit (ADR-187): an opt-out, block or objection from DocumentCloud/MuckRock or an
+  uploader; a terms change; the operator authorising outside contact. Rule 6 binds every other
+  source; another small civil-society source whose compact is unresolved waits rather than being
+  asked (ADR-171).
+- **Rules 3, 4, 5 and 8** and SIG-INGEST-013 bind every source unchanged, including the
+  terms-conflicted public pages fetched under ADR-184 and the Flock portal probe (the SIG-INGEST-035
+  note).
+
 **SIG-INGEST-037 (MUST).** Rule 4 is not merely ethical. Circumvention techniques have been held
 to support anti-circumvention claims independent of any computer-fraud theory, and vendor API terms
 in this sector expressly prohibit bulk extraction (R8). The policy is also a **legal posture**, and
 deviating from it is an ADR-level decision requiring counsel, not an engineering judgment.
+
+**Round-11 waiver — WV-07, the counsel clause (ADR-182; recorded 2026-10-01).** The operator waived
+"requiring counsel" in their adopted sentence recorded in ADR-182 (A-23 part 1, GATE-P log round 9;
+agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256 `c5a71e9d7fd9…`): rights and
+crawler-policy decisions rest on the operator's recorded determinations, labelled as such (no
+counsel; ADR-167). **Stands:** rule 4 and its legal posture, and "deviating from it is an ADR-level
+decision … not an engineering judgment" — every Round-11 deviation from the policy is an ADR resting
+on the operator's recorded words: GL-GATE-08 on every host (ADR-168, which restates this
+requirement's legal posture in the operator's A-5 words and by which RISK-P0-06 closes), the
+terms-conflicted public-page fetch envelope (ADR-184), rule 6 for DocumentCloud/MuckRock (ADR-187)
+and the Flock portal probe (ADR-188). **Compensating controls:** the determination label on every
+rights artifact; no claim of counsel review anywhere; the open legal questions kept in the risk
+register. **Revisit (ADR-182):** counsel obtained; a first legal demand; a rights holder objecting
+to a recorded determination.
 
 ---

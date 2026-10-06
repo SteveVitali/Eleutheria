@@ -141,3 +141,34 @@ outreach (a data edit to `upstream_refresh_days`, SIG-INGEST-030a); the connecto
 the backfill/change-feed drivers must persist the cross-capture events and sharing findings;
 P08.2's §29.3/§29.7 reconciler interfaces change; or §26's crawler-conduct posture is amended
 (an ADR with counsel).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the live HTTP transport and the OCFL capture store landed (ADR-065), and
+§26's crawler-conduct posture was amended (ADR-083, ADR-087, ADR-088; written into the spec by ADR-145)
+without the counsel this trigger names (F3 §5.1). **Answer:** F3 classified this trigger as needing only a
+recorded evaluation. The counsel condition cannot be met: SIG has no counsel (U-013), and Round 11 waives
+SIG-INGEST-037's counsel clause (WV-07, ADR-182), so crawler-posture changes are recorded as the operator's
+own determinations by ADR — GL-GATE-08 on every host (ADR-168), the terms-conflicted fetch envelope (ADR-184),
+rule 6 for DocumentCloud/MuckRock (ADR-187) and the Flock portal probe (ADR-188); the crawler-policy text and
+the rule-7 opt-out register are rows P36.1a/b. SIG-INGEST-035's no-direct-capture clause is waived for a
+probe-only Flock portal connector (WV-10, ADR-188; row P36.74); this connector's aggregator source and CC
+BY-SA compartment are unchanged, and the share lists become organisation-level claims in that compartment (row
+P36.75). The decision above stays in force until that answer lands; this ADR's body is unchanged
+(SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "§26's crawler-conduct posture is amended (an ADR with counsel)". Restated (agent reading,
+  labelled): it fires when that posture is amended by an ADR resting on the operator's recorded determination —
+  SIG-INGEST-037's ADR-level-decision rule stands, its counsel clause is waived — as the trigger evaluation above
+  records for ADR-168, ADR-184, ADR-187 and ADR-188; or when counsel is obtained (LATER-05) or a first legal demand
+  arrives (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged (SIG-ENG-003).
