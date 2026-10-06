@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "dba51974e69b136c3e55c5802eda251c45d27f76",
-  "manifest_inputs": 974,
+  "input_commit": "8494cd3d4a4354970db3beee0006579b98fb037a",
+  "manifest_inputs": 975,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.48",
@@ -33,7 +33,7 @@
     "terminal": 69,
     "events": 636,
     "transitions": 26,
-    "coverage_assessments": 245,
+    "coverage_assessments": 276,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -8022,44 +8022,44 @@
           "label": "historical/csv"
         },
         "SIG-CHART-001": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:230",
+          "verdict": "MET",
+          "evidence": "resolution/src/resolution/adjudicator.py;resolution/src/resolution/er_run.py;reconcile/src/reconcile/resolve.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-002": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:237",
+          "verdict": "MET",
+          "evidence": "connectors/src/connectors/data/sources.toml;connectors/src/connectors/loader.py;reconcile/src/reconcile/resolve.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-003": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:245",
+          "verdict": "MET",
+          "evidence": "ontology/src/ontology/schema/entities.yaml;ontology/src/ontology/schema/edges.yaml",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-004": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:262",
+          "verdict": "MET",
+          "evidence": "ontology/src/ontology/schema/entities.yaml;ontology/src/ontology/schema/edges.yaml",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-005": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:271",
+          "verdict": "MET",
+          "evidence": "ontology/src/ontology/schema/entities.yaml;ontology/src/ontology/schema/common.yaml",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-006": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:284",
+          "verdict": "PARTIAL",
+          "evidence": "docs/2_canonical_design_spec.md;api/src/api/store_pg.py;web/src/pages/dossier/[slug].astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-007": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:304",
+          "verdict": "MET",
+          "evidence": "db/src/db/claim_sink.py;web/src/pages/dossier/[slug].astro;docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8082,14 +8082,14 @@
           "label": "historical/csv"
         },
         "SIG-CHART-011": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:392",
+          "verdict": "MET",
+          "evidence": "db/deploy/claim_append_only.sql;db/deploy/access_control.sql;ontology/src/ontology/schema/entities.yaml;ontology/src/ontology/schema/edges.yaml",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-012": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:397",
+          "verdict": "MET",
+          "evidence": "db/deploy/claim.sql;db/deploy/claim_append_only.sql;ontology/src/ontology/schema/entities.yaml;policy/src/policy/sensitivity.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8100,20 +8100,20 @@
           "label": "historical/csv"
         },
         "SIG-CHART-014": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:435",
+          "verdict": "MET-ENGINEERED(D-P21.7-1)",
+          "evidence": "tasks/src/tasks/maproulette.py;tasks/src/tasks/osm_feed.py;ontology/vocab/crosswalks.yaml;connectors/src/connectors/data/sources.toml",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-015": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:446",
+          "verdict": "MET",
+          "evidence": "connectors/src/connectors/data/sources.toml;tasks/src/tasks/contribution.py;db/src/db/analytics.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-016": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:457",
+          "verdict": "MET",
+          "evidence": "connectors/src/connectors/loader.py;connectors/src/connectors/data/sources.toml;tests/connectors/test_loader_gate.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8124,8 +8124,8 @@
           "label": "historical/csv"
         },
         "SIG-CHART-018": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:478",
+          "verdict": "MET",
+          "evidence": "web/src/pages/index.astro;web/src/pages/methodology.astro;docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8136,44 +8136,44 @@
           "label": "historical/csv"
         },
         "SIG-CHART-020": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:493",
+          "verdict": "MET",
+          "evidence": "db/deploy/claim_append_only.sql;resolution/src/resolution/adjudicator.py;reconcile/src/reconcile/contradiction.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-021": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:519",
+          "verdict": "PARTIAL",
+          "evidence": "docs/2_canonical_design_spec.md;inference/src/inference/coverage.py;web/src/pages/coverage-metrics.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-022": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:541",
+          "verdict": "MET",
+          "evidence": "db/deploy/claim.sql;db/src/db/analytics.py;policy/src/policy/sensitivity.py;docs/governance/anti-misuse-statement.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-023": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:558",
+          "verdict": "MET",
+          "evidence": "docs/governance/anti-misuse-statement.md;docs/governance/contributor-safety.md;web/src/pages/editorial-standards.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-024": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:564",
+          "verdict": "MET",
+          "evidence": "db/deploy/claim.sql;policy/src/policy/sensitivity.py;docs/governance/anti-misuse-statement.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-025": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:574",
+          "verdict": "PARTIAL",
+          "evidence": "docs/2_canonical_design_spec.md;web/src/pages/coverage-metrics.astro;web/src/lib/corrections-methodology-fixture.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-CHART-026": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:584",
+          "verdict": "MET",
+          "evidence": "ontology/vocab/technology.yaml;connectors/src/connectors/data/sources.toml;connectors/src/connectors/data/live_targets.toml",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8514,38 +8514,38 @@
           "label": "historical/csv"
         },
         "SIG-ENG-018": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6534",
+          "verdict": "MET",
+          "evidence": "scripts/ci/license_scan.py;web/scripts/check-licenses.mjs;Makefile",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-019": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6542",
+          "verdict": "PARTIAL",
+          "evidence": "ops/src/ops/observe.py;ops/src/ops/run_completion.py;ops/src/ops/monitoring_defs.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-020": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6545",
+          "verdict": "MET",
+          "evidence": "web/src/pages/data-freshness/[...sort].astro;ops/src/ops/run_completion.py;docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-021": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6548",
+          "verdict": "PARTIAL",
+          "evidence": "ops/src/ops/alerts.py;ops/monitoring/alert-policy.job-failures.json;ops/monitoring/alert-policy.sig-alert-log.json;ops/monitoring/alert-policy.site-uptime.json",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-022": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6553",
+          "verdict": "PARTIAL",
+          "evidence": "docs/build/reports/CORRECTIONS_TAKEDOWN_RUNBOOK.md;docs/build/reports/DNS_CUTOVER_RUNBOOK.md;docs/build/reports/INFRA_RUNBOOK.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-023": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6561",
+          "verdict": "PARTIAL",
+          "evidence": "ops/gcp/protect.sh;ops/gcp/provision.sh;docs/build/reports/INFRA_RUNBOOK.md;ops/docker-compose.yml",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8556,26 +8556,26 @@
           "label": "historical/csv"
         },
         "SIG-ENG-025": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6568",
+          "verdict": "PARTIAL",
+          "evidence": "docs/build/reports/spend/SPEND_LEDGER.md;docs/build/reports/spend/spend_ledger.csv;ops/gcp/cost-guard.sh",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-026": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6576",
+          "verdict": "PARTIAL",
+          "evidence": "parsing/src/parsing/extraction.py;tests/parsing/test_extraction.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-027": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6580",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/degraded.py;.github/workflows/keepalive.yml;docs/build/reports/spend/spend_ledger.csv;ops/gcp/cost-guard.sh",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ENG-030": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6592",
+          "verdict": "MET",
+          "evidence": "docs/2_canonical_design_spec.md;docs/risk_register.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8586,8 +8586,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-032": {
-          "verdict": "MET-DIFFERENTLY",
-          "evidence": "docs/2_canonical_design_spec.md:6904",
+          "verdict": "MET",
+          "evidence": "connectors/src/connectors/flock_portal.py;connectors/src/connectors/audit_structural.py;tests/connectors/test_flock_portal.py;tests/connectors/test_audit_structural.py;docs/build/reports/live_runs/2026-09-17_eyes_on_flock.json;connectors/src/connectors/data/sources.toml",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12877,6 +12877,126 @@
         "assessment_id": "SIG-ACQ-004:r11-1"
       },
       {
+        "requirement_id": "SIG-CHART-001",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; SIG is built as the reconciliation layer, not another device map: the append-only claim spine, recorded entity-resolution envelopes and the versioned reconcile ruleset join evidence across registered upstream projects rather than re-mapping sensors.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-002",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; joined evidence is the product: reconciliation envelopes produce facts no single upstream holds; link-vs-build decisions are recorded per upstream project as compact_status/custody_posture rows in the source registry (the §6 compact), enforced by the fail-closed loader.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-003",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the LinkML schema's units are relationships: Organization, Technology, Capability, PhysicalAsset, Dataset, Policy, AccessRelationship and LegalInstrument entities joined by a closed typed-edge catalogue — a device (PhysicalAsset) is one manifestation, not the root.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-004",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; Capability, ConfigurationState, AccessRelationship and UsageAggregate entities plus the configured_access/federates_search_to/enrolls_asset_into/operates_within edge family model surveillance power as a graph of capabilities and access, not a sensor geography.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-005",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the twelve OL-1.1-02 properties are expressible on their §12.9 carriers: density=PhysicalAsset, retention/search/alerts=ConfigurationState+Capability, sharing/private-public access=AccessRelationship, analytics/identity-resolution=Capability+resolution artefacts, policy=Policy+LegalInstrument, operator behaviour=UsageAggregate+AccountabilityEvent.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-006",
+        "domain": "public",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the thirteen questions have named carriers (§2.1) and the dossier/API surfaces answer claim-backed questions with provenance and honest absence; the demonstrable all-13 answerability with explicit coverage statements is owed to the round acceptance packet.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-007",
+        "domain": "public",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; joined answers carry auditable joins: dossier pages are built automatically from published claims (each fact traceable to its claim and evidence), resolution decisions are recorded envelopes, and the 2026-09-27 live republish read verified the pages render this claim-derived form.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-011",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the six sentences are mechanically bound: append-only trigger plus REVOKE DELETE on the claim spine (no silent overwrites), the closed edge catalogue (no unexplained edges), UNRESOLVED/derivation_rule/Contradiction entities (no synthetic certainty; contradictions materialized, never deleted); the DB suite proves append-only under Docker.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-011:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-012",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the twelve principles' enforcement points exist in code: raw_value preserved beside normalized values (claim.sql), append-only claims with supersedes chains (claim_append_only.sql), first-class UNRESOLVED and derivation_rule fields, separate AccessRelationship/UsageAggregate and Policy/ConfigurationState entities, role-aware sensitivity policy.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-012:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-014",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-P21.7-1)",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; federation machinery is built and fixture-tested: upstream-id crosswalk preservation, reference/link postures on upstream datasets, a separately-namespaced SIG-claim layer, contradiction exposure and upstream-improving research tasks; the owed leg is the operator's real MapRoulette/OSM contribution push (HG-08, D-P21.7-1 OPEN, re-confirmed 2026-09-10).",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-014:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-015",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; none of the six MUST-NOTs hold: DeFlock/OSM/EFF projects are REFERENCE/LINK-posture compacts (never forked), contribution flows upstream via MapRoulette/OSM rather than duplicating reporting, no plate-search surface exists (no plate column; analytics carries the guard), provenance is structural, and public copy carries bounded-authority language rather than authoritative-replacement claims.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-015:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-016",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the coordination-layer role is operational: the registry records a per-project compact (compact_status/custody_posture) for every upstream and assert_loadable fails closed unless ingestion_permitted is set — the §6 compact is enforced in code, not editorial.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-016:r11-1"
+      },
+      {
         "requirement_id": "SIG-CHART-017",
         "domain": "hosted",
         "verdict": "PARTIAL",
@@ -12887,6 +13007,16 @@
         "assessment_id": "SIG-CHART-017:r11-1"
       },
       {
+        "requirement_id": "SIG-CHART-018",
+        "domain": "public",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the bounded claim is stated wherever the project describes itself: the landing page pairs every figure with its named denominator and never publishes a total, and the methodology page carries the provenance/contradiction/confidence terms; both verified live-rendered in the 2026-09-27 republish read.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-018:r11-1"
+      },
+      {
         "requirement_id": "SIG-CHART-019",
         "domain": "public",
         "verdict": "PARTIAL",
@@ -12895,6 +13025,76 @@
         "limitations": "transcription of the ratified Round-11 re-verdict (plan §6.6) from the cited research; current-state verdict, routed to its owning row; no implementation claim; matrix row note carries the reasoning; previous matrix verdict MET-DIFFERENTLY",
         "supersedes": null,
         "assessment_id": "SIG-CHART-019:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-020",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; no single source of truth is designated: claims stay per-source and append-only, resolution is a recorded adjudication decision rather than a merge, and disagreement materializes as Contradiction entities that survive resolution.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-020:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-021",
+        "domain": "public",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; all eight goals are bound to phases and metrics (§4.1) and several are demonstrably served (G3 provenance, G4 temporal, G6 denominators); serving all eight — including G2 measured ER quality at scale and G8 documented downstream use — is owed to the round acceptance packet.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-021:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-022",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; each non-goal has a mechanical enforcement: no plate/trip/per-person column or entity exists in the schema and the analytics layer carries the guard, the officer-naming five-prong gate and RF-residential demotion live in the sensitivity policy, audit ingestion emits aggregates only, and there is no SIG device-editing surface.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-022:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-023",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the operable §46.5 rules are committed and tested: the anti-misuse statement and contributor-safety guidance name the prohibited assistance classes, and the editorial-standards page states the support scope for research, journalism, policy and public-records work.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-023:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-024",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; SIG tracks infrastructure and institutional behaviour, not movements: the schema holds no person-movement entity (no plate, trip, sighting or per-search rows), audit-derived data lands as aggregates only, and the sensitivity policy demotes residential/private-person material by default.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-024:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-025",
+        "domain": "public",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; judged against the ADR-172 amended text: the release is live at US-nationwide, multi-vendor, multi-technology breadth, but the public surface does not label coverage quality per technology class and per geography — coverage metrics carry named denominators, not per-class/per-geography quality labels; P37.66 owns the coverage-outcome closeout.",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-025:r11-1"
+      },
+      {
+        "requirement_id": "SIG-CHART-026",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the six-vendor ALPR scope is covered: the versioned technology vocabulary carries the alpr family including alpr-unspecified (unknown/other), and the corpus/source registry covers Flock (eyes_on_flock), Axon (axon_community_connect) and multi-vendor corpora (EFF Atlas/Data Driven covering Vigilant/Rekor/Genetec deployments).",
+        "supersedes": null,
+        "assessment_id": "SIG-CHART-026:r11-1"
       },
       {
         "requirement_id": "SIG-CHART-033",
@@ -13167,6 +13367,66 @@
         "assessment_id": "SIG-ENG-005:r11-1"
       },
       {
+        "requirement_id": "SIG-ENG-018",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; data-quality tooling stays OSI-licensed by gate, not assumption: the Python dependency licence scan (security-scan) and the web check-licenses script run in CI and refuse non-OSI licences, which is exactly the re-verification-at-adoption the requirement demands.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-018:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-019",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; structured JSONL logs with run correlation exist (probe log with per-service latency; the ingest run-completion ledger counts claims per run; bounded-retention metrics), but the enumerated metrics — claim/contradiction/task counts and resolution latency — and a dedicated error-tracking integration are not evidenced; alerting-as-code P35.2 owns the remaining observability wiring.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-019:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-020",
+        "domain": "public",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the public data-freshness/status surface renders per-source staleness from the run-completion ledger rather than hiding it; the 2026-09-27 republish live read verified the page serves real dates.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-020:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-021",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; alerting-as-code exists (job-failures ~connector failure, uptime, disk, TLS-expiry and sig-alert-log policies plus the recorded-alert notifier seam), but parser-drift, count-plausibility, ER-precision, licence-gate, policy-engine and silent-zero-record conditions are not wired as policies; P35.2 (alerting as code + escalation) owns them.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-021:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-022",
+        "domain": "implementation",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; three of the six required runbooks exist (takedown, evidence-store restoration via INFRA_RUNBOOK, DNS cutover/rollback); source-disappearance, upstream-schema-change, bad-merge rollback and poisoning-campaign runbooks are not evidenced; P35.4 owns the ops runbook.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-022:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-023",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; managed Postgres+PostGIS (Cloud SQL), object storage with versioning, Cloud Run compute, CDN and static hosting are deployed and scripted; governance-mode Object Lock on the evidence bucket and an error-tracking integration are not evidenced; P37.3 owns evidence-store hardening including the object-lock leg.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-023:r11-1"
+      },
+      {
         "requirement_id": "SIG-ENG-024",
         "domain": "hosted",
         "verdict": "AT-RISK-INTEGRATION",
@@ -13175,6 +13435,56 @@
         "limitations": "transcription of the ratified Round-11 re-verdict (plan §6.6) from the cited research; current-state verdict, routed to its owning row; no implementation claim; matrix row note carries the reasoning; previous matrix verdict MET-DIFFERENTLY",
         "supersedes": null,
         "assessment_id": "SIG-ENG-024:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-025",
+        "domain": "implementation",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the three scales are recorded in §50 and real spend is ledgered monthly with the cost-guard IaC enforcing the bootstrap posture; the quarterly review of the three scales themselves is not evidenced — the Round-11 reconcile row P38.3a owns the standing review obligation.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-025:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-026",
+        "domain": "implementation",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the degrade leg exists — extraction queues to the human-review path rather than exceeding budget when the model is unavailable (SIG-LLM-007) — but per-document-class cost budgeting and budget monitoring are not built; BL-089 owns the model-assisted-parsing leg that carries them.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-026:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-027",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the bootstrap scale is real and tested, not a plan: the degraded/keepalive posture keeps the project alive on free/low tiers (monthly keepalive run fails loudly), actual spend sits in the tens-of-dollars order in the ledger, and the cost-guard IaC makes the posture enforceable.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-027:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-030",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; §51.2's phase table declares risk retirement per phase in its Retires column and each of the four critical risks R-01..R-04 is named at or before Phase 6 (Risk 4 at Phase 0, Risk 3 at Phase 2, Risk 2 at Phases 3/5, Risk 1 at Phase 4); the declaration the requirement demands exists and is checkable against §53.",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-030:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-032",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-06",
+        "code_revision": "r11/P34.48-re-verdict-61-boilerplate-coverage-rows @ 8494cd3d4a4354970db3beee0006579b98fb037a",
+        "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; every acceptance criterion is implemented and tested: challenge honoured as a refusal and never defeated, separate CC BY-SA compartment whose merge with the CC-BY graph fails the build, snapshot-field keying with poll cadence, archived-capture backfill, ai_training_permitted=false enforced, disappearance event+task, per-field snapshot diffs, configured-access-only sharing edges with blanks as negatives, the audit Camera Count as an independent claim, and `***` distinguished from empty; the lawful API path is exercised live (2026-09-17 fetch: 11,311 claims with an OCFL capture).",
+        "supersedes": null,
+        "assessment_id": "SIG-ENG-032:r11-1"
       },
       {
         "requirement_id": "SIG-ENG-034",
@@ -15355,6 +15665,81 @@
       ],
       "assessment_verdicts": [
         {
+          "requirement": "SIG-CHART-001",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-002",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-003",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-004",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-005",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-011",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-012",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-014",
+          "verdict": "MET-ENGINEERED(D-P21.7-1)",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-015",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-016",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-020",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-022",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-023",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-024",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-026",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
           "requirement": "SIG-CHART-033",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -15423,6 +15808,41 @@
           "requirement": "SIG-ENG-005",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-ENG-018",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-022",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-025",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-026",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-027",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-030",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-032",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
         },
         {
           "requirement": "SIG-ENG-034",
@@ -15897,6 +16317,21 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-019",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-021",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-ENG-023",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
           "requirement": "SIG-ENG-024",
           "verdict": "AT-RISK-INTEGRATION",
           "assessed_at": "2026-10-01"
@@ -16121,9 +16556,34 @@
       ],
       "assessment_verdicts": [
         {
+          "requirement": "SIG-CHART-006",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-007",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-018",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
+        },
+        {
           "requirement": "SIG-CHART-019",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-CHART-021",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
+        },
+        {
+          "requirement": "SIG-CHART-025",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-06"
         },
         {
           "requirement": "SIG-CHART-034",
@@ -16179,6 +16639,11 @@
           "requirement": "SIG-DOS-005",
           "verdict": "MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-ENG-020",
+          "verdict": "MET",
+          "assessed_at": "2026-10-06"
         },
         {
           "requirement": "SIG-EVAL-001",
@@ -16974,10 +17439,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "3dca6a234c73ff1311aa72d82c95336fa3d785cd082fa7d8349c3a80fac5ce74",
+  "manifest_sha256": "68e38755a369c6d6cdc4a4e426d5bb5c6579acdd11912dd39691726896a26df5",
   "current_md": {
     "lines": 100,
-    "bytes": 18881,
+    "bytes": 19909,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
