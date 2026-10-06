@@ -7,20 +7,36 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] — unreleased (tag cut by the operator per `docs/build/INTEGRATION_PLAN.md`)
+## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`)
 
 First tagged snapshot of the Surveillance Infrastructure Graph (SIG): the complete
 specification-driven build (Phases 0–18), the post-build capstone, reconciliation and
 release-readiness chain (Phases 19–20), and the Phase-21 operationalization chain that runs the
-system as composed local staging (Phases 21.1–21.9). A buildable, fully-tested reference
-implementation — **not a running service** (nothing deployed; no source fetched live). Full detail:
+system as composed local staging (Phases 21.1–21.9). Full detail:
 [`docs/build/reports/RELEASE_NOTES_v0.1.0.md`](./docs/build/reports/RELEASE_NOTES_v0.1.0.md).
+
+> **Post-Phase-21 chain (rows 67–198, dated history — see `docs/build/BUILD_INDEX.md`).** The chain
+> continued through go-live and Round 10: the GCP deployment executed 2026-09-15
+> (`docs/build/reports/GCP_DEPLOYMENT.md`, ADR-081); HG-01 was satisfied at an interim posture and
+> HG-11 was granted 2026-09-27, so the public surface is **live at https://surveillancegraph.org**
+> (launch record 2026-09-24; republish 2026-09-27 over a ~2.4M-claim spine — green-reviewed sources
+> were fetched live); the national publish, hosted materialization, partner registries and the
+> research-queue/records flows landed in P25–P31. **Round 10 (P32/P33)** added typed assertions +
+> actual-capture bindings, the shared bitemporal contract, immutable `r/<publication>` release
+> namespaces + compartmented FTS5 search, the coordinated workspace, durable anonymous intake
+> (built; `operational=false` — answers `503 receiver_not_operating`), the three dossier packets
+> (`mechanical_complete`, `review.status=not_run`), the shadow evaluator + preregistered human-eval
+> campaign tooling (deferred spine — no human labels), the provisional-ruleset release candidate
+> (**staging-only**; production exposure `D-R10-PUBLISH-1` remains OPEN), and the build-memory
+> v2 projections/closeout machinery. GATE-ACCEPT signed 2026-09-28 accepting the register as
+> presented: **36 owed obligations + `SIG-MEM-004`** remain — see `docs/tickets/DEFERRALS.md` and
+> `docs/build/OPERATIONAL_READINESS.md` §(f).
 
 > **Phase 21 — operationalization (local staging, no live sources).** SIG now runs as a composed
 > system for one real jurisdiction (Oklahoma City), end-to-end, without fetching a live source: the
 > `ingestion_permitted` gate stays fail-closed (HG-03 pending), so every connector run is
 > fixture-backed replay/shadow. **No version bump:** this is staging, not live; go-public is gated on
-> HG-01 + HG-11 (`docs/build/PUBLICATION_CHECKLIST.md`), and the `0.2.0` "first public jurisdiction"
+> HG-01 + HG-11 (`docs/build/reports/PUBLICATION_CHECKLIST.md`), and the `0.2.0` "first public jurisdiction"
 > cut-over is a later, human-gated decision. The chain (each a stacked PR):
 >
 > - **P21.1** (#56, ADR-063) — 27 rights-review packets + the registry `review-status`/flip rule; the 19-project Stage-0 outreach record. Nothing flipped (`loadable now: 0`).
@@ -72,19 +88,29 @@ implementation — **not a running service** (nothing deployed; no source fetche
   read API is served over PG (`PgReadStore`), entity resolution and the review queue run over PG, and
   the export gate honours `derivative_permitted`.
 
-### Known limitations (conforming, tracked)
-- Nothing is deployed and **no source has been fetched live**: the `ingestion_permitted` gate is
-  fail-closed (HG-03 pending), so all connector runs are fixture-backed replay/shadow and no
-  jurisdiction is published. Go-public is gated on HG-01 (legal home) + HG-11 (operating governance)
-  and the `docs/build/PUBLICATION_CHECKLIST.md`.
+### Known limitations (conforming, tracked — refreshed 2026-09-28, P33.7)
+- The `ingestion_permitted` gate stays **fail-closed per source**: green-reviewed sources are fetched
+  live by the hosted scheduled jobs (the national publish's ~2.4M claims), while every source whose
+  review record is not green still gets a refused `run --mode live` (exit 3). Sources left to review
+  or unblock are the `D-SOURCES.*`/`D-JURIS.2-1`/`D-R10-SOURCES-1` rows of
+  `docs/tickets/DEFERRALS.md`; publication gating is recorded in
+  `docs/build/reports/PUBLICATION_CHECKLIST.md`.
+- The Round-10 **provisional-policy release candidate is published to staging only**: production
+  exposure (`D-R10-PUBLISH-1`), the hosted recovery/freeze (`D-R10-LIVE-1`) and the production
+  candidate build (`D-P32.23a-1`) are open operator obligations. The public site currently serves the
+  prior HG-11-signed national publish.
+- The anonymous **correction receiver is built but not operating** (`[intake].operational=false`;
+  `503 receiver_not_operating`; `D-P32.16-1`), and the independent **human-evaluation spine is
+  deferred** (`D-R10-HUMAN-1`, `D-R6.1-EVAL` — no human labels exist; the evaluator runs shadow-only).
 - Resolved since the capstone (Phase 21): `LD-V08` — the web now reads export bytes, not just
   committed fixtures, so the OKC dossier renders the contradiction from the export (P21.4); PG
   persistence of contradiction/coverage/task objects is ACCEPTED as compute-on-read under A5/HG-14
-  (P21.2); the web curation surface shipped (A6 → P21.6). The interactive MapLibre map island
-  (`SIG-UI-047`, A1) remains **not built by design** — the static-PMTiles serving contract stands in
-  without bundling the maplibre-gl runtime (P21.5, ADR-051/067).
+  (P21.2); the web curation surface shipped (A6 → P21.6). The `/map/` surface later gained an
+  **opt-in MapLibre + PMTiles island** (P27.9, ADR-097; per-island budgets ADR-134/P32.15) — all
+  other public content pages remain zero-JS.
 - Deferred human-gated steps (not defects): the moderated onboarding usability study is landed but
-  **not yet run** (HG-10); Zenodo/live-mirror deposits and live MapRoulette pushes refuse until their
-  gates are ticked (HG-07/HG-08). Tracked in `docs/build/BACKLOG.csv` and the Phase-21 risk register.
+  **not yet run** (HG-10 / `D-R10-USERS-1`); Zenodo/live-mirror deposits and live MapRoulette pushes
+  refuse until their gates are ticked (HG-07/HG-08; `D-P21.5-1`, `D-P21.7-1`). All owed work is
+  tracked in `docs/tickets/DEFERRALS.md` (36 rows + `SIG-MEM-004`) and `docs/build/BACKLOG.csv`.
 
 [0.1.0]: https://github.com/SteveVitali/Eleutheria/releases/tag/v0.1.0

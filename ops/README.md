@@ -6,11 +6,14 @@ default the P21.4 gate HG-12 accepts: a `docker compose` PG18+PostGIS claim spin
 with the real `db/sqitch.plan` deployed on start, the read API served by `uvicorn`
 over that spine, and a static server for `web/dist`.
 
-There is **no cloud-specific config**: the same command runs on a laptop and on a
-single VM. The API and the static server run as **host processes** (the HG-12
-default: `uvicorn` + a static file server) so they execute the host's Python/Node
-toolchain at HEAD without baking a platform-specific image; only the stateful DB is
-a container.
+The composition itself has **no cloud-specific config**: the same command runs on a
+laptop and on a single VM. The API and the static server run as **host processes**
+(the HG-12 default: `uvicorn` + a static file server) so they execute the host's
+Python/Node toolchain at HEAD without baking a platform-specific image; only the
+stateful DB is a container. The **hosted** home is separate: `ops/gcp/` carries the
+GCP infra-as-code (ADR-075) that was applied under operator ADC on 2026-09-15 as
+Cloud SQL + Cloud Run (ADR-081) — the executed runbook is
+[`docs/build/reports/GCP_DEPLOYMENT.md`](../docs/build/reports/GCP_DEPLOYMENT.md).
 
 ## Commands
 
@@ -31,8 +34,9 @@ uv run sig-ops down                                             # stop everythin
   -v`, leaving **no containers** and no stray processes.
 - **`seed --jurisdiction okc`** loads the committed Oklahoma City slice into the
   spine append-only via `db.claim_sink.PgClaimSink` — above all the 299-vs-190
-  `claimed_device_count` contradiction (§3.1). It is *not* a live fetch (no green
-  sources; HG-03 skipped): re-running is idempotent (content-digest ON CONFLICT).
+  `claimed_device_count` contradiction (§3.1). It is *not* a live fetch — the
+  slice is committed data, not a network pull — and re-running is idempotent
+  (content-digest ON CONFLICT).
 
 ## Staging endpoints (HG-12: local staging is acceptable)
 
@@ -52,7 +56,7 @@ Compose knobs: `SIG_PG_USER`/`SIG_PG_PASSWORD`/`SIG_PG_DB`/`SIG_PG_PORT`;
 `docs/build/tools/run_okc.sh` drives the whole staging path end to end (up → shadow
 connector runs → resolution → reconcile → export → web build from the export →
 acceptance queries against the running API → status). See `RISK-P21-06/07` for the
-export-freshness and pre-gate-exposure risks, and `docs/build/FIRST_JURISDICTION_REPORT.md`
+export-freshness and pre-gate-exposure risks, and `docs/build/reports/FIRST_JURISDICTION_REPORT.md`
 for the run's output.
 
 ## Observability & alerting (OBS.1 / GL-OBS-01, ADR-077)
@@ -82,8 +86,25 @@ uv run sig-ops dashboard [--out FILE] [--verify-keepalive]  # render the readout
   recorded alert on failure. Secrets ride env only — every emitted surface is
   scrubbed of env-secret values (`ops.alerts.scrub_secrets`).
 
-## Go-public cut-over
+## Hosted operations, deploy, and the public surface
 
-Deferred: `HG-01` (legal home) and `HG-11` (operating governance) are **not** ticked,
-so this ticket ends at staging. The cut-over (DNS/host) is a single human decision
-once those gates and the `docs/build/PUBLICATION_CHECKLIST.md` are green.
+Beyond the local verbs above, `sig-ops` carries the hosted-ops and Round-10
+verification surface (`uv run sig-ops --help` for the exact flags):
+
+| verb family | what it does | posture |
+|---|---|---|
+| `deploy`, `backup-drill`, `roll-jobs`, `probe-hosted`, `probe-history`, `cadence`, `scheduled-ingest`, `replay-ingest`, `backfill-run-completions`, `sink-bench` | GCP deploy/restore/roll, hosted probe sweeps → WORM `ops/probes/`, the scheduled live-ingest audit trail → `ops/runs/` (`ops/cadence.toml`) | credentialed/hosted — operator ADC + gates |
+| `evidence-audit`, `recovery-plan`, `recovery-apply`, `recovery-freeze`, `recovery-fixture-seed` | the offline read-only legacy-evidence audit + bounded, dry-run-by-default recovery (ADR-125/141) | offline; `--apply` required to write |
+| `release-candidate`, `release-serve`, `release-publish`, `journey-verify`, `journey-intake`, `composed-verify` | the provisional-ruleset candidate build, the staging release-serving barrier, the staging publish+rollback rehearsal, the journey portfolio, and the composed Round-10 verification (ADR-132/142/143/144) | **offline/staging only** — no production serve; GATE-G3 owns publish |
+| `dossier-packet`, `dossier-packet-tulsa`, `dossier-packet-san-diego`, `seed-correct` | the reviewed three-dossier evidence sets + the authored OKC seed-correction packet (ADR-137/138/139) | offline fixture replay; `review.status=not_run` |
+| `swh-save`, `egress-report`, `degraded`, `keepalive-check`, `probe`, `alerts`/`alert`, `dashboard` | Software Heritage save request, egress budget, degraded static posture, observability | mixed — see each verb's help |
+
+## Go-public cut-over — executed (2026-09-16/24/27)
+
+Recorded, not deferred: the GCP deploy ran under operator ADC (`GCP_DEPLOYMENT.md`,
+ADR-081), HG-01 held at its interim posture and HG-11 was granted 2026-09-27, and
+the national publish serves at `https://surveillancegraph.org` (`LAUNCH_RECORD_2026-09-24.md`,
+`REPUBLISH_LIVE_2026-09-27.md`). Still owed: counsel review of the publication-scope
+analyses (`D-LEGAL.1-1`), the Round-10 production release exposure
+(`D-R10-PUBLISH-1` + upstream `D-R10-LIVE-1`/`D-P32.23a-1`), and the
+`docs/build/reports/PUBLICATION_CHECKLIST.md` items attached to each.

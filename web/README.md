@@ -3,8 +3,13 @@
 The Phase-15 public surface. TypeScript is confined to this package (SIG-ENG-010).
 It is built with [Astro](https://astro.build) as a **zero-JS-by-default,
 static-first** framework (SIG-UI-036): with no explicit `client:*` directive
-anywhere in the shell, the build ships **no client JavaScript**, so the pages are
-archivable by default — breaking that requires an explicit, greppable directive.
+on a public content page, the build ships **no client JavaScript** there
+(`web/lighthouserc.json` asserts script size 0 over them), so the pages are
+archivable by default. Three opt-in public islands are the standing exception —
+`/map/` (MapLibre + PMTiles), `/network/` and `/search/` (ADR-068/097/134) —
+each with an explicit per-island budget and a no-JS fallback (SIG-UI-050); the
+authenticated `/curate/**` surface is likewise island-allowed (ADR-068). Any
+other script requires an explicit, greppable directive.
 
 This ticket (**P15.1**) owns the **epistemic visual language** and the
 **a11y / no-JS / archivability baseline** that P15.2–P15.5 all consume. Later
@@ -22,7 +27,7 @@ visual language is an ADR, not an ad-hoc edit — ADR-049).
 | `src/lib/dossier.ts` | **P15.2** — the local dossier content contract as pure logic (§39.2): the twelve sections + validator (SIG-UI-010), the incompleteness banner (SIG-UI-012), the derived `next_decision_date` (SIG-UI-014b, a stable interface P15.4 consumes), the three action blocks (SIG-UI-014a), the `unknown`-not-omitted row (SIG-UI-015), and `renderDossierJson` — the single source of truth for the page, the print export, and the JSON API (SIG-UI-011). |
 | `src/lib/dossier-fixture.ts` | The worked Appendix-B/D dossier (Oklahoma City / OKCPD), keyed to the same demo entity the reference surfaces render. |
 | `src/components/*.astro` | `SupportGlyph`, `EpistemicFields`, `ContestedMarker`, `AbsenceHatch`, `ContradictionRange`, `Citation`, and the P15.2 dossier parts: `DossierFigure` (reconciliation disclosure), `DossierSection`, `IncompletenessBanner`, `WhatWeDontKnow`, `ActionBlocks`. |
-| `src/pages/*.astro` | Landing, the visual-language reference, the reference map (+ tabular equivalent) and graph (+ list equivalent), the task-intake route, and **the local dossier** — `dossier/[slug].astro`, its `dossier/[slug]/print.astro` (paginated, council-ready PDF path, SIG-UI-013), and its `dossier/[slug].json.ts` static API endpoint. |
+| `src/pages/` | Landing, methodology/editorial/coverage/data-freshness pages, the visual-language + style references, the three public islands (`map/`, `network.astro`, `search.astro`), `dossier/` + `research-dossier/` + `evidence/` + `releases/` (the release-namespaced record surface), `corrections.astro` + `dispute.astro` (the intake routes — honestly non-operational), `watch*`, `task/` + `research-queue.astro` + `contribution-back.astro`, and the authenticated `curate/` subtree; **the local dossier** — `dossier/[slug].astro`, its `dossier/[slug]/print.astro` (paginated, council-ready PDF path, SIG-UI-013), and its `dossier/[slug].json.ts` static API endpoint. |
 | `src/styles/epistemic.css` | The design system. Every `--sig-epi-*` colour is an `hsl()` outside the green band — green is never used for epistemic state (SIG-UI-006). Includes the neutral (non-epistemic) dossier + `@media print` chrome. |
 
 ## Commands

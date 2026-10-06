@@ -20,10 +20,12 @@ adopt the spec's policy, they do not redefine it.
 
 ## The policies
 
-Eight documents. **Status** is taken from each document itself: *adopted* (a first-class policy
+Ten documents. **Status** is taken from each document itself: *adopted* (a first-class policy
 in force), *protocol adopted; not yet run* (the procedure is fixed but its human step is gated),
-*published* (a live, machine-checked page), or *template* (a recorded template/instrument a
-per-instance run fills in).
+*published* (a live, machine-checked page), *template* (a recorded template/instrument a
+per-instance run fills in), *prepared; not ratified* (an operator packet for a built-but-gated
+capability), or *operator-adopted analysis* (a drafted disposition the operator adopted — not legal
+advice).
 
 | Policy | Covers | Status | Spec | Requirement ids |
 |---|---|---|---|---|
@@ -35,3 +37,5 @@ per-instance run fills in).
 | [Organised Editing activity — SIG operator attribution](organised-editing-activity.md) | the OSM Organised Editing activity page: coordinating org, changeset hashtag, goal, tools + data sources with usage conditions, metrics (task outcomes, not rankings) | published (machine-checked) | §35.2, §42.3a | SIG-CONTRIB-016d…g, SIG-LIC-007a–c |
 | [Hostile-reader review — dossier template](hostile-reader-review-dossier.md) | the recorded, release-blocking hostile-reader review of the dossier template version | template | §41 | SIG-UI-042 |
 | [Stage-0 outreach letter](stage0-outreach-letter.md) | the published template for first contact with every federation-compact project — addressed to an organisational channel, never a person (Part VIII §0.7); the outcome is recorded before any connector is written | template | §35.1 | SIG-CONTRIB-012/012a/013 |
+| [Intake receiver operating packet](intake-receiver-operating-packet.md) | the operator packet for the durable anonymous correction receiver: the gate statement (`operational=false` until every row is green), privilege matrix, honest-statement rules — the receiver is **built, not operating** | prepared; not ratified (D-P32.16-1) | §55.5 | SIG-FIND-006 |
+| [Publication opinion drafts](publication-opinion-drafts.md) | the four scoped HG-02 publication-law questions answered as drafted analyses the operator adopted in place of counsel — each row publish-permitting or conditioned, supersedeable by real counsel | operator-adopted analyses (D-LEGAL.1-1) | §42–§46 | (HG-02; no requirement id) |

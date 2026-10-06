@@ -34,6 +34,7 @@ Other useful targets:
 
 ```sh
 make test-db       # claim-spine DB tests on PG18 + PostGIS (needs Docker)
+make docs-check    # the repo-docs + agent-docs + build-memory detectors (structural, read-only)
 make lock          # refresh uv.lock after changing a dependency
 make export        # regenerate the PEP 751 lock export (pylock.toml)
 make sbom          # produce a CycloneDX SBOM (cut per release)
@@ -64,8 +65,11 @@ The build is a chain of reviewable PRs (`docs/tickets/00_MANIFEST.md` is the ord
 
 **No contributor branch merges to `main`, tags a release, or pushes `main`.** Integration is a
 single **operator action after the chain**, following the copy-pasteable procedure in
-[`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) §(d): re-run the read-only merge
-dry-run, merge the open PRs bottom-up, `make check`, then cut the tag and release.
+[`docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`](./docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md)
+— the current plan (P33.6): re-run the read-only merge dry-run, retarget and merge the open PRs in
+ascending order with the documented conflict resolutions, then run the post-merge verification. The
+older [`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) is kept as the dated P20.3
+record (it carries a supersession note; its tag step was never run).
 
 ```sh
 sh docs/build/tools/merge_dryrun.sh   # read-only proof the open-PR stack integrates cleanly

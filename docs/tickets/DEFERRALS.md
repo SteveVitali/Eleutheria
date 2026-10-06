@@ -750,3 +750,29 @@ itself performs no merge, tag, `main` push, branch deletion or force-push.
   counts unchanged from the P33.5 sweep; this ticket adds no backlog source).
 - **`projectStatus` stays `IN-PROGRESS`** (BM-TAIL-03): the register is
   non-empty (36 owed rows + `SIG-MEM-004` scheduled at P33.8).
+
+## P33.7 docs-refresh sweep (2026-09-28)
+
+Recorded after the human-facing documentation refresh
+(`docs/build/reports/DOCS_REFRESH_REPORT_R10.md`; PR evidence
+`docs/build/pr/P33.7.md`). This is a **sweep record, not a status change**: no
+row below was closed, opened, re-homed or re-worded.
+
+- **Docs refresh discharges nothing.** The refreshed human-facing docs now
+  *describe* the obligations accurately — staging-only provisional release
+  (`D-R10-PUBLISH-1` OPEN, with `D-R10-LIVE-1`/`D-P32.23a-1` upstream), built-
+  not-operating intake (`D-P32.16-1`; `operational=false`/`503
+  receiver_not_operating` stated verbatim), the deferred evaluation spine
+  (`D-R10-HUMAN-1`/`D-R6.1-EVAL`/`D-P30.2b-1/-2`), the source-rights and
+  dossier/pilot lanes, and all carried pre-R10 rows. Describing an obligation
+  is not satisfying it; every row's `how to verify` cell stands.
+- **`SIG-MEM-004` stays scheduled chain work** owned by P33.8 (manifest row
+  200): the agent-docs drift found in this audit (root `AGENTS.md` "zero-JS"
+  wording + `web/AGENTS.md` "only `/curate/**` exception" wording vs the three
+  landed public islands, ADR-097/134) is reported in the refresh report §5 and
+  left for that row — not fixed here.
+- **Backlog-home verification** — `python3 docs/build/tools/check_backlog.py`
+  at this revision exits 0 (`deferral homes: 36/36`, `duplicate sources: 0`,
+  counts unchanged from the P33.6 sweep; this ticket adds no backlog source).
+- **`projectStatus` stays `IN-PROGRESS`** (BM-TAIL-03): the register is
+  non-empty (36 owed rows + `SIG-MEM-004` scheduled at P33.8).
