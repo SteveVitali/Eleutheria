@@ -232,3 +232,14 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
 
 /** The attribution line rendered into the static HTML and print (SIG-GEO-013). */
 export const MAP_ATTRIBUTION_LINE = `${OSM_ATTRIBUTION} · ${SIG_ATTRIBUTION}`;
+
+/**
+ * The copy an honestly-empty export map states (P34.34a): the export carried no
+ * tile archives, so there is nothing to mislabel — the sentence names the state
+ * rather than implying coverage on a blank canvas (an empty attribution list
+ * alone could read as "nothing exists", exactly what the ticket forbids). The
+ * map still draws the published point list directly — the note must not deny
+ * that either.
+ */
+export const EMPTY_TILE_STATE_NOTE =
+  "No tile archives in this export — the map draws the published records directly, not rendered tile layers.";

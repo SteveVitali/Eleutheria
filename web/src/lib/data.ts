@@ -215,13 +215,17 @@ export function getResearchDossierPortfolio(): ResearchDossierPortfolio {
  * public OSM changeset feed via the declared hashtag.
  *
  *   - `fixtures` mode — the committed sample (`leverage-fixture.ts`).
- *   - `export` mode — `<exportDir>/web/leverage.json`, produced by
- *     `sig-tasks osm-feed pull --out <dir>` (`tasks.osm_feed.leverage_metric_json`).
+ *   - `export` mode — `<exportDir>/web/leverage.json`, a first-class web
+ *     artifact of every spine export since P34.34a (`build_spine_export`
+ *     writes the recorded metric, or the honest zeroed ledger when no
+ *     changeset feed was bound; the standalone
+ *     `sig-tasks osm-feed pull --out <dir>` emits the same shape).
  *
- * `export` mode fails LOUD if the artifact is missing — never a silent fall-back to
- * fixtures (that would fabricate the metric). The record carries only the hashtag,
- * the accepted count, and the attributed changeset ids — no OSM user data
- * (Part VIII §0.7).
+ * `export` mode fails LOUD if the artifact is missing — never a silent
+ * fall-back to fixtures (that would fabricate the metric). A missing file on a
+ * P34.34a-era export means the export is stale or malformed, so the error names
+ * the export build. The record carries only the hashtag, the accepted count,
+ * and the attributed changeset ids — no OSM user data (Part VIII §0.7).
  */
 export function getLeverageMetric(): LeverageMetric {
   if (dataSource() === "fixtures") return LEVERAGE_METRIC_FIXTURE;
@@ -232,7 +236,8 @@ export function getLeverageMetric(): LeverageMetric {
   } catch (cause) {
     throw new Error(
       `SIG_DATA_SOURCE=export but the leverage metric artifact is missing: ${path}. ` +
-        `Run \`sig-tasks osm-feed pull --out <dir>\` first (P21.7).`,
+        `Rebuild the export (\`sig-exports build\` emits it since P34.34a) or ` +
+        `run \`sig-tasks osm-feed pull --out <dir>\` (P21.7).`,
       { cause },
     );
   }

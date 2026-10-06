@@ -7,6 +7,7 @@ import react from "@astrojs/react";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
+import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES): in
 // `export` mode the static build CONSUMES the rendered vector tiles the export
@@ -32,32 +33,15 @@ function sigExportTiles() {
           override !== undefined && override !== ""
             ? resolve(repoRoot, override)
             : join(repoRoot, "exports/out/okc");
-        const tilesDir = join(exportDir, "web", "tiles");
         const destDir = join(fileURLToPath(dir), "tiles");
-        const manifestPath = join(exportDir, "manifest.json");
-        const listed = existsSync(manifestPath)
-          ? (JSON.parse(readFileSync(manifestPath, "utf-8")).artifacts ?? [])
-              .map((a) => String(a.path ?? ""))
-              .filter((p) => /^web\/tiles\/[^/]+-sites\.pmtiles$/.test(p))
-              .map((p) => p.slice("web/tiles/".length))
-          : [];
-        const perCompartment = listed.filter((f) => existsSync(join(tilesDir, f)));
-        if (perCompartment.length !== listed.length) {
-          throw new Error(
-            `SIG_DATA_SOURCE=export: the manifest lists tile archives missing from ${tilesDir}.`,
-          );
-        }
-        if (perCompartment.length === 0) {
-          // Fail LOUD (like the dossier data layer): an export build that cannot find
-          // its rendered tiles is a build error, never a silently tile-less map.
-          throw new Error(
-            `SIG_DATA_SOURCE=export but the rendered tiles are missing: ` +
-              `no web/tiles/<compartment>-sites.pmtiles under ${exportDir}. ` +
-              "Run `sig-exports build` first.",
-          );
-        }
+        // P34.34a: the copy list comes from resolveTileCopyList — a manifest
+        // that lists zero archives is an HONEST empty-tile export (the map
+        // page states it), not a build error; only a missing manifest or a
+        // listed-but-absent archive fails loud.
+        const { tilesDir, files } = resolveTileCopyList(exportDir);
+        if (files.length === 0) return;
         mkdirSync(destDir, { recursive: true });
-        for (const f of perCompartment) cpSync(join(tilesDir, f), join(destDir, f));
+        for (const f of files) cpSync(join(tilesDir, f), join(destDir, f));
       },
     },
   };

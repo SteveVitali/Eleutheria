@@ -2,13 +2,22 @@
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """Deterministic, zero-JS HTML emitters for the released record routes
-(P32.13 / ADR-132, SIG-FIND-002).
+(P32.13 / ADR-132, SIG-FIND-002; P34.34a archive chrome + link repair).
 
 Every page is a **complete** static document: no ``<script>``, no external
 asset — it renders byte-identical offline from ``file://`` or any static
 host. All dynamic strings are HTML-escaped. No wall-clock timestamps are
 emitted (the activation record, outside the hashed bytes, is where real
 UTC instants live — see ADR-132).
+
+P34.34a (G2 step-4, ACT-16): every exports-rendered page carries the same
+three chrome elements the Astro ``BaseLayout`` gives the live surface —
+site navigation, a dispute/correction link (SIG-UI-033), and the licence
+of the data the page shows (SIG-LIC-011). Same-origin links are emitted
+site-root-absolute (``/r/<pub>/…``) wherever the target lives outside the
+page's own directory, so no relative-depth arithmetic can drift: the
+``validate_release`` link crawl re-verifies every emitted link regardless
+of form.
 """
 
 from __future__ import annotations
@@ -16,12 +25,76 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, Sequence
 from html import escape
 from typing import Any
+from urllib.parse import quote
 
 from .published_record import PublishedRecord
 
 
 def _e(v: Any) -> str:
     return escape("" if v is None else str(v), quote=True)
+
+
+# --------------------------------------------------------------------------- #
+# Archive chrome (P34.34a)                                                      #
+# --------------------------------------------------------------------------- #
+
+#: The site-shell navigation every archive page carries (SIG-UI-049): the
+#: public Astro routes the release namespace links OUT to. Mirrored against
+#: ``web/src/pages`` + ``ops/public_routes.toml`` at test time — a route
+#: dropped from the public surface drops from this nav rather than 404ing.
+SITE_NAV: tuple[tuple[str, str], ...] = (
+    ("Map", "/map/"),
+    ("Network", "/network/"),
+    ("Search", "/search/"),
+    ("Dossiers", "/dossier/"),
+    ("Watch", "/watch/"),
+    ("Evidence", "/evidence/"),
+    ("Methodology", "/methodology/"),
+    ("Sources", "/sources/"),
+    ("Corrections", "/corrections/"),
+    ("Status", "/status/"),
+    ("Releases", "/releases/"),
+)
+
+#: The public dispute/correction intake route (SIG-UI-033, §45.1) — the same
+#: path ``web/src/lib/corrections.ts``'s ``DISPUTE_PATH`` pins.
+DISPUTE_HREF = "/dispute/"
+
+#: Every same-origin route an archive page may link to that lives OUTSIDE the
+#: release tree — either a public site-shell route (served by the Astro
+#: surface) or a pipeline-overlay route emitted at activation
+#: (``_emit_overlay`` owns ``/releases/index.html`` + ``releases/catalog.json``
+#: + ``compat_index.json``; ``_entity_overlay`` owns ``/entity/<t>/<id>/``).
+#: The ``validate_release`` link crawl treats exactly these as resolved —
+#: never a wildcard. Route strings are normalised: no leading slash, no
+#: trailing slash (``""`` is the homepage).
+EXTERNAL_LINK_ROUTES: frozenset[str] = frozenset(
+    {
+        "",  # the site homepage
+        "releases",  # the pipeline-owned archive index
+        "releases/index.html",
+        "releases/catalog.json",
+        "compat_index.json",
+    }
+    | {href.strip("/") for _, href in SITE_NAV}
+    | {DISPUTE_HREF.strip("/")}
+)
+
+#: Route prefixes the activation overlay emits that archive pages may link to
+#: (the ``/entity/<type>/<id>/`` convenience stubs — mutable pointers, never
+#: citations). Checked after :data:`EXTERNAL_LINK_ROUTES`.
+EXTERNAL_LINK_PREFIXES: tuple[str, ...] = ("entity/",)
+
+
+def _site_nav() -> str:
+    links = ' <span aria-hidden="true">·</span> '.join(
+        f'<a href="{_e(href)}">{_e(label)}</a>' for label, href in SITE_NAV
+    )
+    return (
+        '<nav class="site-nav" aria-label="Site">'
+        f'<a href="/"><strong>SIG</strong></a> <span aria-hidden="true">·</span> {links}'
+        "</nav>"
+    )
 
 
 _STYLE = """\
@@ -36,6 +109,9 @@ vertical-align:top}
 .tomb{background:#fdeeee;border:1px solid #a33;padding:.6rem;margin:.6rem 0}
 code{word-break:break-all}
 footer{border-top:1px solid #bbb;margin-top:1.5rem;padding-top:.5rem;font-size:.8rem;color:#444}
+.site-nav{font-size:.85rem;margin-bottom:.6rem}.site-nav a{margin-right:.2rem}
+.dispute{margin-top:.9rem}
+.licence{font-size:.85rem}
 nav a{margin-right:.8rem}.k{color:#555;display:inline-block;min-width:9rem}
 """
 
@@ -46,11 +122,23 @@ def _layout(
     body: str,
     publication_id: str | None,
     footer_note: str = "",
+    licence: str | None = None,
 ) -> bytes:
+    """The shared archive page skeleton (P34.34a): site nav, the title +
+    immutable-release stamp, then a footer carrying the dispute/correction
+    link (SIG-UI-033) and — when the page shows compartment data — the
+    licence that governs it (SIG-LIC-011). ``licence`` is an SPDX id or an
+    explicit human-readable basis (e.g. "per compartment"); ``None`` is the
+    honest state for pages that show no data (tombstones, error pages)."""
     pub = (
         f'<p class="mut">Immutable release <code>{_e(publication_id)}</code> — '
         "these bytes are version-pinned; cite this URL, not a &ldquo;latest&rdquo; alias.</p>"
         if publication_id
+        else ""
+    )
+    licence_line = (
+        f'<p class="licence">Licence of the data on this page: <strong>{_e(licence)}</strong></p>'
+        if licence
         else ""
     )
     html = (
@@ -58,9 +146,12 @@ def _layout(
         f"<title>{_e(title)} — SIG released record</title>"
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f"<style>{_STYLE}</style></head><body>"
-        f"<header><h1>{_e(title)}</h1>{pub}</header>"
+        f"<header>{_site_nav()}<h1>{_e(title)}</h1>{pub}</header>"
         f"<main>{body}</main>"
-        f"<footer><p>Surveillance Infrastructure Graph (SIG) — evidence-first public record. "
+        f'<footer>{licence_line}<p class="dispute">Something wrong, or a privacy '
+        f'or safety concern? <a href="{_e(DISPUTE_HREF)}">Dispute or correct this '
+        "record</a> — reports arrive by e-mail.</p>"
+        f"<p>Surveillance Infrastructure Graph (SIG) — evidence-first public record. "
         f"{escape(footer_note)}</p></footer></body></html>"
     )
     return html.encode("utf-8")
@@ -73,6 +164,8 @@ def _layout(
 
 def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
     """The complete released record page — ``<uuid>/index.html``."""
+    pub = record.publication_id or ""
+    comp = record.compartment
     loc = record.location
     if loc.get("kind") == "point":
         loc_html = (
@@ -91,6 +184,10 @@ def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
             "this record does not publish a location.</p>"
         )
 
+    # P34.34a (SIG-UI-024): an access-edge claim anchor renders its §12.2 type
+    # (configured_access / observed_use / declared_policy — or an honest
+    # "unclassified"), never an untyped sharing_access label.
+    show_access = any(a.access_kind for a in record.claim_anchors)
     claim_rows = "".join(
         "<tr>"
         f'<td id="claim-{_e(a.claim_id)}"><code>{_e(a.claim_id)}</code></td>'
@@ -101,12 +198,14 @@ def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
             else "<em>detail not published in this release</em>"
         )
         + "</td>"
-        f"<td>{_e(a.observed_at) if a.observed_at else '—'}</td>"
+        + (f"<td>{_e(a.access_kind) if a.access_kind else '—'}</td>" if show_access else "")
+        + f"<td>{_e(a.observed_at) if a.observed_at else '—'}</td>"
         f"<td>{_e(a.source_id) if a.source_id else '—'}</td>"
         "</tr>"
         for a in record.claim_anchors
     ) or (
-        '<tr><td colspan="4"><em>No observation claims are attached to this record.</em></td></tr>'
+        f'<tr><td colspan="{5 if show_access else 4}"><em>No observation claims are '
+        "attached to this record.</em></td></tr>"
     )
 
     ev_rows = "".join(
@@ -114,9 +213,11 @@ def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
         f"<td><code>{_e(e.claim_id)}</code></td>"
         f"<td><code>{_e(e.capture_id) if e.capture_id else '<em>unlocated</em>'}</code></td>"
         + (
-            '<td><a href="../../evidence/'
-            + _e(e.artifact_id)
-            + f'/"><code>{_e(e.artifact_id)}</code></a></td>'
+            # P34.34a: site-root-absolute — relative-depth links from the
+            # entity/<type>/<id>/ route resolved one level too shallow (C4
+            # NEW-1); the validate_release crawl re-checks every link.
+            f'<td><a href="/r/{_e(pub)}/c/{_e(comp)}/evidence/{_e(e.artifact_id)}/">'
+            + f"<code>{_e(e.artifact_id)}</code></a></td>"
             if e.artifact_id
             else "<td><em>artifact not published in this release</em></td>"
         )
@@ -139,6 +240,7 @@ def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
     label_txt = record.label.get("text") or f"Unnamed {record.entity_type}"
     title = f"{label_txt} · {record.entity_type}"
     cite_url = record.href or ""
+    access_th = "<th>Access edge</th>" if show_access else ""
     body = f"""
 <p><span class="k">Record key</span> <code>{_e(record.record_key)}</code></p>
 <p><span class="k">Compartment</span> {_e(record.compartment)} ·
@@ -152,7 +254,7 @@ def record_page(record: PublishedRecord, *, latest_stub: str) -> bytes:
 <h2>Claim anchors</h2>
 <p class="mut">Each anchor is a spine-issued claim id — the claim-level citation.
 Anchors without published detail state so explicitly.</p>
-<table><tr><th>Claim anchor</th><th>Predicate</th><th>Observed</th><th>Source</th></tr>
+<table><tr><th>Claim anchor</th><th>Predicate</th>{access_th}<th>Observed</th><th>Source</th></tr>
 {claim_rows}</table>
 <h2>Evidence anchors</h2>
 <table><tr><th>Claim</th><th>Capture</th><th>Artifact</th><th>Role</th><th>Access</th></tr>
@@ -179,6 +281,7 @@ Machine-readable: <a href="{_e(record.json_href)}"><code>{_e(record.json_href)}<
         body=body,
         publication_id=record.publication_id,
         footer_note=f"Licence {_e(record.license)} — compartment {_e(record.compartment)}.",
+        licence=record.license,
     )
 
 
@@ -187,10 +290,14 @@ Machine-readable: <a href="{_e(record.json_href)}"><code>{_e(record.json_href)}<
 # --------------------------------------------------------------------------- #
 
 
-def _record_li(item: Mapping[str, Any]) -> str:
+def _record_li(item: Mapping[str, Any], *, publication_id: str, compartment: str) -> str:
     label = item.get("label") or f"Unnamed {item.get('entity_type')}"
+    # P34.34a: site-root-absolute — the browse/jurisdiction pages sit three
+    # levels under the compartment root, where ../../entity/… resolved to the
+    # browse/ subtree (C4 NEW-1).
+    href = f"/r/{publication_id}/c/{compartment}/entity/{item['entity_type']}/{item['entity_id']}/"
     return (
-        f'<li><a href="../../entity/{_e(item["entity_type"])}/{_e(item["entity_id"])}/">'
+        f'<li><a href="{_e(href)}">'
         f'{_e(label)}</a> <span class="mut">{_e(item["entity_type"])} · '
         f"{_e(item['jurisdiction']) or '—'}</span></li>"
     )
@@ -208,7 +315,9 @@ def browse_page(
     licence: str,
 ) -> bytes:
     """One ``/r/<pub>/c/<comp>/browse/<kind>/<page>/`` index page."""
-    lis = "".join(_record_li(i) for i in items)
+    lis = "".join(
+        _record_li(i, publication_id=publication_id, compartment=compartment) for i in items
+    )
     pager = _pager(f"/r/{publication_id}/c/{compartment}/browse/{kind}", page, page_count)
     body = f"""
 <p><span class="k">Compartment</span> {_e(compartment)} ·
@@ -223,6 +332,7 @@ def browse_page(
         title=f"{kind} records — {compartment} (page {page}/{page_count})",
         body=body,
         publication_id=publication_id,
+        licence=licence,
     )
 
 
@@ -247,7 +357,9 @@ def jurisdiction_page(
     total: int,
     licence: str,
 ) -> bytes:
-    lis = "".join(_record_li(i) for i in items)
+    lis = "".join(
+        _record_li(i, publication_id=publication_id, compartment=compartment) for i in items
+    )
     pager = _pager(
         f"/r/{publication_id}/c/{compartment}/jurisdiction/{jurisdiction}",
         page,
@@ -266,6 +378,7 @@ def jurisdiction_page(
         title=f"{jurisdiction} — {compartment} (page {page}/{page_count})",
         body=body,
         publication_id=publication_id,
+        licence=licence,
     )
 
 
@@ -287,10 +400,19 @@ def compartment_page(
         f'<li><a href="jurisdiction/{_e(j)}/1/">{_e(j)}</a> — {_e(n)}</li>'
         for j, n in sorted(jurisdictions.items())
     )
+    empty_note = (
+        '<p class="warn">This compartment releases <strong>no records</strong> in '
+        "this release — the licence slice published nothing at the pinned as-of "
+        "dates; the empty index below is the honest state, not a rendering "
+        "fault.</p>"
+        if record_count == 0
+        else ""
+    )
     body = f"""
 <p><span class="k">Compartment</span> {_e(compartment)} ·
    <span class="k">Licence</span> {_e(licence)} ·
    <span class="k">Released records</span> {_e(record_count)}</p>
+{empty_note}
 <h2>Browse by record kind</h2><ul>{kind_lis}</ul>
 <h2>Browse by jurisdiction</h2><ul>{jur_lis}</ul>
 <h2>Machine index</h2>
@@ -302,6 +424,7 @@ recomputes this index).</p>
         title=f"Compartment {compartment}",
         body=body,
         publication_id=publication_id,
+        licence=licence,
     )
 
 
@@ -315,6 +438,7 @@ def evidence_page(
     publication_id: str,
     compartment: str,
     artifact: Mapping[str, Any],
+    licence: str,
 ) -> bytes:
     """``/r/<pub>/c/<comp>/evidence/<artifact_id>/`` — the released evidence
     anchor page (metadata only — capture bytes never travel, §17.5)."""
@@ -335,12 +459,28 @@ evidence object in the custody store.</p>
         title=f"Evidence artifact {artifact.get('artifact_id')}",
         body=body,
         publication_id=publication_id,
+        licence=licence,
     )
 
 
-def dossier_page(*, publication_id: str, dossier: Mapping[str, Any]) -> bytes:
+def dossier_slug(dossier: Mapping[str, Any]) -> str:
+    """The route slug one released dossier occupies — the dossier's own
+    ``slug`` field when present (the spine dossiers carry a slugified form),
+    else the jurisdiction label, else ``unknown``. Shared by the page emitter
+    and the release landing so a link can never drift from its route."""
+    return str(dossier.get("slug") or dossier.get("jurisdiction") or "unknown")
+
+
+def dossier_page(*, publication_id: str, dossier: Mapping[str, Any], licence: str) -> bytes:
     """``/r/<pub>/dossier/<slug>/`` — the released dossier overview: the
-    published sections/rows verbatim plus links into the compartments."""
+    published sections/rows verbatim plus links into the compartments.
+
+    P34.34a (C4 NEW-7): the page states its **provisional** posture plainly —
+    a computed inventory overview of the released projection at the pinned
+    as-of dates, with no human check performed (ADR-152) — and never reads
+    as "reviewed". The licence of the data it summarises travels with the
+    page (SIG-LIC-011).
+    """
     jurisdiction = str(dossier.get("jurisdiction") or "unknown")
     rows: list[str] = []
     for section in dossier.get("sections") or []:
@@ -373,12 +513,17 @@ def dossier_page(*, publication_id: str, dossier: Mapping[str, Any]) -> bytes:
    <span class="k">As-of world</span> {_e(asof.get("as_of_world"))} ·
    <span class="k">As-of belief</span> {_e(asof.get("as_of_belief"))} ·
    <span class="k">Ruleset</span> {_e(dossier.get("rulesetVersion"))}</p>
+<p class="warn"><strong>Posture: provisional.</strong> This dossier is a computed
+inventory overview of the released record projection at the as-of dates above —
+no human check performed (ADR-152), not an adjudicated finding.
+Recorded gaps below are first-class absences, never omissions.</p>
 {"".join(rows)}
 """
     return _layout(
         title=f"Dossier {jurisdiction}",
         body=body,
         publication_id=publication_id,
+        licence=licence,
     )
 
 
@@ -387,9 +532,15 @@ def dossier_page(*, publication_id: str, dossier: Mapping[str, Any]) -> bytes:
 # --------------------------------------------------------------------------- #
 
 
-def release_landing(entry: Mapping[str, Any]) -> bytes:
+def release_landing(
+    entry: Mapping[str, Any], *, dossiers: Sequence[Mapping[str, Any]] = ()
+) -> bytes:
     """``/releases/<pub>/index.html`` — the release landing: descriptor +
-    integrity digest + compartment inventory + download pointers."""
+    integrity digest + compartment inventory + download pointers.
+
+    P34.34a (C4 NEW-7 / NEW-31): the released dossier overviews are linked
+    from here (never orphaned), and a release that publishes zero records
+    says so explicitly instead of rendering an empty page."""
     pub = str(entry["publication_id"])
     comp_rows = "".join(
         f'<tr><td><a href="/r/{_e(pub)}/c/{_e(c["compartment"])}/">'
@@ -399,6 +550,34 @@ def release_landing(entry: Mapping[str, Any]) -> bytes:
         for c in entry.get("compartments") or []
     )
     repro = entry.get("reproducibility") or {}
+    total_records = int(entry.get("record_count") or 0)
+    # C4 NEW-31: an honestly empty release explains itself — the verified,
+    # complete state with no records is different from a broken build.
+    empty_block = (
+        '<div class="warn"><h2>This release publishes no records</h2>'
+        "<p>The integrity manifest and descriptor above verify — the export "
+        "simply contained no publishable records at the pinned as-of dates "
+        "(every input may have been withheld, or the corpus may be empty). "
+        "No route under this namespace claims a record that does not exist; "
+        "the empty compartment indexes are the honest state, not a rendering "
+        "fault.</p></div>"
+        if total_records == 0
+        else ""
+    )
+    # C4 NEW-7: released dossier overviews are reachable from the landing —
+    # each carries its provisional posture on its own page.
+    dossier_lis = "".join(
+        f'<li><a href="/r/{_e(pub)}/dossier/{_e(quote(dossier_slug(d), safe=""))}/">'
+        f"{_e(str(d.get('jurisdiction') or dossier_slug(d)))}</a>"
+        f' <code class="mut">{_e(dossier_slug(d))}</code></li>'
+        for d in dossiers
+    )
+    dossier_block = (
+        f'<h2>Dossiers</h2><p class="mut">Provisional, computed inventory '
+        f"overviews — no human check performed.</p><ul>{dossier_lis}</ul>"
+        if dossier_lis
+        else ""
+    )
     body = f"""
 <p><span class="k">Publication</span> <code>{_e(pub)}</code></p>
 <p><span class="k">Data release</span> <code>{_e(entry.get("data_release_id"))}</code> ·
@@ -407,9 +586,11 @@ def release_landing(entry: Mapping[str, Any]) -> bytes:
    <span class="k">As-of belief</span> {_e(repro.get("as_of_belief"))} ·
    <span class="k">Ruleset</span> {_e(repro.get("ruleset_version"))} ·
    <span class="k">Policy</span> {_e(repro.get("policy_version"))}</p>
+{empty_block}
 <h2>Compartments</h2>
 <table><tr><th>Compartment</th><th>Licence</th><th>Records</th><th>Artifacts</th></tr>
 {comp_rows}</table>
+{dossier_block}
 <h2>Machine-readable</h2>
 <p><a href="catalog_entry.json"><code>catalog_entry.json</code></a> ·
    <a href="integrity_manifest.json"><code>integrity_manifest.json</code></a> ·
@@ -421,6 +602,7 @@ Completeness: {_e((entry.get("completeness") or {}).get("state"))}.</p>
         title=f"Release {pub[:15]}…",
         body=body,
         publication_id=pub,
+        licence="per compartment — see the table",
     )
 
 
@@ -448,6 +630,8 @@ Each release is immutable: its bytes never change after activation
         body=body,
         publication_id=None,
         footer_note="The (latest) marker is a convenience pointer, never a citation.",
+        licence="CC-BY-4.0 — this catalog page is SIG metadata; record data "
+        "carries its compartment licence",
     )
 
 
@@ -473,6 +657,7 @@ record instead:</p>
         body=body,
         publication_id=None,
         footer_note="Mutable overlay page — never an immutable citation.",
+        licence="this page is a pointer only — the linked record carries its compartment licence",
     )
 
 
@@ -670,4 +855,5 @@ required).</p>
             "Dynamic released-search route — the same eligible corpus the "
             "static browse pages enumerate."
         ),
+        licence=licence,
     )

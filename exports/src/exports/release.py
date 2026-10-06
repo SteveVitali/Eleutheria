@@ -38,16 +38,19 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import posixpath
 import re
 import shutil
 import sys
 import tempfile
 import time
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote
 
 from policy.eligibility import (
     Disposition,
@@ -66,9 +69,12 @@ from .published_record import (
     record_from_site_row,
 )
 from .release_pages import (
+    EXTERNAL_LINK_PREFIXES,
+    EXTERNAL_LINK_ROUTES,
     browse_page,
     compartment_page,
     dossier_page,
+    dossier_slug,
     entity_stub,
     evidence_page,
     jurisdiction_page,
@@ -607,7 +613,12 @@ def build_release(
         comp = source_to_comp.get(str(art.get("source")), "web")
         emit(
             f"r/{pub}/c/{comp}/evidence/{aid}/index.html",
-            evidence_page(publication_id=pub, compartment=comp, artifact=art),
+            evidence_page(
+                publication_id=pub,
+                compartment=comp,
+                artifact=art,
+                licence=comps.get(comp, "CC-BY-4.0"),
+            ),
             compartment=comp,
             licence=comps.get(comp, "CC-BY-4.0"),
         )
@@ -616,10 +627,10 @@ def build_release(
     # --- released dossier overviews ------------------------------------------ #
     dossier_count = 0
     for dossier in dossiers:
-        slug = str(dossier.get("jurisdiction") or dossier.get("slug") or "unknown")
+        slug = dossier_slug(dossier)
         emit(
             f"r/{pub}/dossier/{slug}/index.html",
-            dossier_page(publication_id=pub, dossier=dossier),
+            dossier_page(publication_id=pub, dossier=dossier, licence="CC-BY-4.0"),
             compartment="web",
             licence="CC-BY-4.0",
         )
@@ -671,7 +682,7 @@ def build_release(
     landing_rel = f"releases/{pub}/index.html"
     emit(
         landing_rel,
-        release_landing(catalog_entry),
+        release_landing(catalog_entry, dossiers=dossiers),
         compartment="metadata",
         licence="CC-BY-4.0",
     )
@@ -750,6 +761,113 @@ class ValidationReport:
     artifacts_checked: int
 
 
+class _LinkParser(HTMLParser):
+    """Collect every ``href``/``action`` target an exports-rendered page
+    declares (P34.34a). Parse-time only — nothing is fetched."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.links: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        for name, value in attrs:
+            if name in ("href", "action") and value:
+                self.links.append(value)
+
+
+def _link_target(page_rel: str, href: str) -> str | None:
+    """Normalise one ``href``/``action`` to the site-root-relative route it
+    resolves to, or ``None`` when the crawl does not follow it (external
+    scheme, protocol-relative, fragment-only, query-only)."""
+    href = href.strip()
+    if not href or href.startswith("#") or href.startswith("?"):
+        return None
+    # fragment + query never change the resolved file
+    path = href.split("#", 1)[0].split("?", 1)[0]
+    if not path:
+        return None
+    if path.startswith("//"):
+        return None  # protocol-relative external
+    schemeish = path.split("/", 1)[0]
+    if ":" in schemeish:
+        return None  # http: https: mailto: tel: data: etc.
+    path = unquote(path)
+    if path.startswith("/"):
+        return path.lstrip("/")
+    # relative link — resolve against the page's directory route
+    base = page_rel
+    if base.endswith("index.html"):
+        base = base[: -len("index.html")]
+    elif "/" in base:
+        base = base.rsplit("/", 1)[0] + "/"
+    else:
+        base = ""
+    return posixpath.normpath(posixpath.join(base, path)).lstrip("/")
+
+
+def _route_resolves(root: Path, route: str) -> bool:
+    """Whether ``route`` (site-root-relative, already unquoted) maps to a real
+    file under ``root`` — a literal asset or a directory-style index page."""
+    rel = route.rstrip("/")
+    if not rel:
+        return (root / "index.html").is_file()
+    return (root / rel).is_file() or (root / rel / "index.html").is_file()
+
+
+def _route_is_external_or_denied(route: str, denied: frozenset[str]) -> bool:
+    """Whether a missing-from-corpus route is still an honest resolution:
+    a known site-shell/overlay route (the public Astro surface and the
+    activation overlay own them — enumerated in ``release_pages``), or a
+    route the withdrawal barrier denies explicitly (the 410 is a recorded
+    answer, never a 404)."""
+    norm = route.rstrip("/")
+    if norm in EXTERNAL_LINK_ROUTES:
+        return True
+    if any(norm.startswith(p) for p in EXTERNAL_LINK_PREFIXES):
+        return True
+    return norm in denied or f"{norm}/index.html" in denied
+
+
+def link_crawl_failures(corpus_root: Path | str, *, denied_routes: Iterable[str] = ()) -> list[str]:
+    """P34.34a (DR-C4-01): crawl every exports-rendered page under
+    ``corpus_root`` and return one failure line per same-origin
+    ``href``/``action`` that resolves to nothing — neither a staged file, a
+    known site-shell/overlay route, nor an explicitly denied (410) route.
+
+    No HTTP: routes resolve over local paths (``dir/index.html`` is a
+    directory route's target), so the check is byte-deterministic on the
+    release corpus itself. ``denied_routes`` is the staged withdrawal
+    barrier's route list (``apply_withdrawals``'s ``routes``), empty when
+    crawling a pre-activation ``release_dir``.
+    """
+    root = Path(corpus_root)
+    denied = frozenset(r.strip("/") for r in denied_routes)
+    failures: list[str] = []
+    for html_path in sorted(root.rglob("*.html")):
+        page_rel = html_path.relative_to(root).as_posix()
+        try:
+            text = html_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            failures.append(f"{page_rel}: unreadable html ({exc})")
+            continue
+        parser = _LinkParser()
+        try:
+            parser.feed(text)
+        except Exception as exc:  # noqa: BLE001 - malformed markup is a failure
+            failures.append(f"{page_rel}: unparseable html ({exc})")
+            continue
+        for href in parser.links:
+            route = _link_target(page_rel, href)
+            if route is None:
+                continue
+            if _route_resolves(root, route) or _route_is_external_or_denied(route, denied):
+                continue
+            failures.append(
+                f"{page_rel}: unresolved same-origin link {href!r} (route /{route.rstrip('/')}/)"
+            )
+    return failures
+
+
 def validate_release(release_dir: Path | str) -> ValidationReport:
     """Re-verify a built release bundle against its integrity manifest.
 
@@ -757,8 +875,9 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
     no undeclared file may sit under ``r/`` (except the external
     ``catalog_entry.json``/``integrity_manifest.json``); each compartment's
     ``records.index.jsonl`` must enumerate every emitted record exactly
-    once. Incomplete → the caller refuses staging; the latest pointer never
-    moves on a partial release.
+    once; and every same-origin link on every exports-rendered page must
+    resolve (P34.34a — the link-resolution crawl). Incomplete → the caller
+    refuses staging; the latest pointer never moves on a partial release.
     """
     release_dir = Path(release_dir)
     manifest_paths = list(release_dir.glob("releases/*/integrity_manifest.json"))
@@ -839,12 +958,16 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
             except Exception:  # noqa: BLE001 - malformed = incomplete
                 scope = {}
                 failures.append(f"search index descriptor not parseable: {sdesc_rel}")
-            if int(scope.get("indexed_records") or -1) != int(comp["record_count"]):
+            # `or -1` would misread a legitimate scope of 0 as missing (the
+            # honest zero-record release, C4 NEW-31) — test for None only.
+            _indexed = scope.get("indexed_records")
+            if _indexed is None or int(_indexed) != int(comp["record_count"]):
                 failures.append(
                     f"compartment {cid}: search index scope "
                     f"{scope.get('indexed_records')} != {comp['record_count']}"
                 )
-            if int(scope.get("eligible_records") or -1) != int(comp["record_count"]):
+            _eligible = scope.get("eligible_records")
+            if _eligible is None or int(_eligible) != int(comp["record_count"]):
                 failures.append(
                     f"compartment {cid}: search index eligible scope "
                     f"{scope.get('eligible_records')} != {comp['record_count']}"
@@ -869,6 +992,11 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
                     f"compartment {cid}: catalog search_indexed_records "
                     f"{n_indexed} != {comp['record_count']}"
                 )
+    # P34.34a (DR-C4-01): the same-origin link-resolution crawl — every
+    # href/action on every emitted page must resolve to a corpus file or a
+    # known site-shell/overlay route; a broken link is a release failure
+    # naming the page and the target.
+    failures.extend(link_crawl_failures(release_dir))
     return ValidationReport(
         publication_id=pub,
         state="complete" if not failures else "incomplete",
@@ -1088,6 +1216,17 @@ def activate(
     # The withdrawal barrier applies to EVERY staged release, current AND
     # historical (a withhold in R2 denies under an R1 rollback).
     applied = apply_withdrawals(staged, registry.withdrawals())
+    # P34.34a (DR-C4-01): the staged corpus gets the same link-resolution
+    # crawl the release passed alone — now over the composed tree, where an
+    # explicitly denied route (the withdrawal barrier's 410 tombstone)
+    # counts as resolved. A broken same-origin link refuses activation
+    # before the catalog or the latest pointer moves.
+    link_failures = link_crawl_failures(staged, denied_routes=applied.get("routes") or ())
+    if link_failures:
+        raise ReleaseError(
+            f"staged tree for {pub} carries {len(link_failures)} unresolved "
+            f"same-origin link(s) — activation refused: {link_failures[:5]}"
+        )
 
     catalog = registry.catalog()
     pubs = catalog.get("publications") or []
