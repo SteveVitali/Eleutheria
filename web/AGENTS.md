@@ -4,8 +4,10 @@
 
 The SIG public web surface: **Astro, static-first, zero-JS-by-default** (SIG-UI-036/037). It consumes
 export artifacts and the epistemic visual language; this is the **only** package where TypeScript is
-allowed (SIG-ENG-010). Node `>=22.12.0` (`web/package.json` `engines`, raised by P27.9 for the
-island toolchain). Nearest-file-wins: this file adds to the root `AGENTS.md`.
+allowed (SIG-ENG-010). Node `>=24 <25` and npm `>=11 <12` (`web/package.json`
+`engines`; the exact pins are `web/.nvmrc` + `packageManager`, P34.1 /
+SIG-ENG-046 — `engine-strict` makes the web gates fail on toolchain drift).
+Nearest-file-wins: this file adds to the root `AGENTS.md`.
 
 ## Key Files
 

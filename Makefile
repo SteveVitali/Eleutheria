@@ -2,9 +2,11 @@
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 #
-# One set of commands, used identically by humans and by CI (coverage guard):
-# whatever CI runs, `make check` runs. Every §47 pipeline package is a plain CLI
-# (SIG-ENG-013): `uv run python -m <package> --help`.
+# One set of commands, used identically by humans and by CI (SIG-ENG-046,
+# P34.1): `make check` is the fast gate — the `python` job's commands;
+# `make ci-local` runs all five CI jobs (python, docs, composed, security, web).
+# Every §47 pipeline package is a plain CLI (SIG-ENG-013):
+# `uv run python -m <package> --help`.
 
 # Import names of the workspace's Python packages (the §47 layout minus the
 # non-Python dirs web/ docs/ tests/). Kept in sync by tests/unit/test_package_layout.py.
@@ -14,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -42,8 +44,51 @@ test:
 test-db:
 	SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db
 
-## The full local gate — mirror of CI.
+## The fast local gate — the `python` CI job's commands.
 check: lint format-check typecheck test verify-gen
+
+## Local mirror of all five CI jobs (P34.1 / SIG-ENG-046, ADR-151). Runs the
+## jobs' own commands: the SIG_REQUIRE_DB_TESTS suite and docs, security,
+## composed (web deps present) and web gates. Needs Docker (tests/db + tests/e2e)
+## and a Node/npm matching web/.nvmrc + package.json `engines` — `engine-strict`
+## fails the web steps on drift. The docs job's range checks judge CHANGE_RANGE
+## when set, else this branch's unpushed commits (origin/<branch>...HEAD), else
+## the last commit — the same records the PR-range and push first-parent steps
+## judge in CI.
+ci-local: sync
+	$(MAKE) lint format-check typecheck
+	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true $(MAKE) test
+	$(MAKE) verify-gen
+	$(MAKE) docs-check
+	bash scripts/docs/check-build-memory.sh .
+	@range="$(CHANGE_RANGE)"; \
+	if [ -z "$$range" ]; then \
+	  base="$$(git rev-parse -q --verify "origin/$$(git branch --show-current)" 2>/dev/null || git rev-parse HEAD^)"; \
+	  range="$$base...HEAD"; \
+	fi; \
+	echo "ci-local: build-memory history + trailer range $$range"; \
+	bash scripts/docs/check-build-memory.sh . --range "$$range" --json docs/build/logs/build-memory-history.json && \
+	python3 docs/build/tools/check_trailers.py --range "$$range" --json docs/build/logs/trailer-check.json
+	@# The CI jobs' drift gate is `git diff --exit-code` (the checkout is clean, so
+	@# worktree==index). Locally the tree is dirty by construction — the same
+	@# predicate is "does the pinned npm rewrite the file": hash-stability across
+	@# the regeneration, green even over an intentional uncommitted regen.
+	@before="$$(git hash-object web/package-lock.json)"; \
+	npm --prefix web install --package-lock-only --ignore-scripts; \
+	after="$$(git hash-object web/package-lock.json)"; \
+	echo "ci-local: lockfile stability $$before -> $$after"; \
+	[ "$$before" = "$$after" ] || { echo "ci-local: the pinned npm would rewrite web/package-lock.json" >&2; exit 1; }
+	npm --prefix web ci
+	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true uv run pytest tests/e2e
+	$(MAKE) scan-secrets
+	uv run pytest tests/connectors/test_secrets.py::test_gcp_project_id_is_env_resolved_not_committed
+	$(MAKE) scan-licenses
+	npm --prefix web run typecheck
+	npm --prefix web run test:unit
+	npm --prefix web run build
+	npm --prefix web run check:licenses
+	npm --prefix web run test:e2e
+	npm --prefix web run check:perf
 
 ## Refresh the uv lockfile.
 lock:
