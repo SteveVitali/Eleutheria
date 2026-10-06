@@ -1887,7 +1887,9 @@ owns closeout.
 Started: 2026-10-06T06:23Z (`date -u` at the first contract
 write; this context resumed from a summary — the six skeleton
 inspections and the plan-cell reads landed in the prior
-segment) · Closed: pending (the boundary commit fills it).
+segment) · Closed: 2026-10-06T06:54Z (`date -u`; last C12
+criterion = the head-bound CI pass at `fce56436` — second
+head, the first red on the run-ledger digest, fixed forward).
 Context model: devin-desktop/swe-2-high/subagent.
 
 Scope (contract deliverable 2-in-part + the 8a ADR-171 checks
@@ -2108,11 +2110,34 @@ Local verification (P11, with recorded limits):
   (contracts + this ledger + projection only); CI is the
   authority. Docker stays wedged (recorded C1).
 
-Boundary (OM-05): pending — the boundary commit fills it.
+Boundary (OM-05):
 
-Close record (pending): the boundary commit records the
-head-bound read and fills Closed. The shared `Closed:` header
-stays unwritten — C13 owns closeout. **C13's remaining work,
+- Read @ `458e89ae` (content+ledger head, first push):
+  **blockedOn — docs job failure, exit code 2 (run
+  37424915860): `docs-check-projection` reported
+  `docs/build/runs/PLAN-11B.md: stale digest` — the projection
+  regen ran before the ledger write, so the recorded digest
+  predated the committed ledger (the same shape C1's first
+  head hit; C11's boundary-record head `04c5cd70` also went
+  red on it — its record commit omitted the regen C8's and
+  C10's records carried).** Fix-forward `fce56436` —
+  projection regen only (ledger digest advanced; `verify`
+  fresh 973/973 locally).
+- Read @ `fce56436` (fix-forward head): **`ci: pass
+  #236@fce5643 (python 37425285698; docs 37425285698; composed
+  37425285698; security 37425285698; web 37425285698) · stack:
+  #235 #234 #233 #232 #231 #230 #229 #228 #227 #226 #225 #224
+  #223 #221 #220 #219 #218 #217 #216 #214 #213 #211 #210 #209
+  #208 #207 #205 #204 #203 #202 #201 #200 #199 #198 #197 #196
+  #195 #193 #192 pass · main: 2de7b50 descends:no merges:0
+  open-other:6` (log `docs/build/logs/ci-PLAN-11B-C12.json`,
+  gitignored, read 2026-10-06T06:54Z).**
+
+Close record (this commit): records the head-bound read and
+fills Closed at 2026-10-06T06:54Z — work complete; boundary
+green on the second head after the projection-digest
+fix-forward. The shared `Closed:` header stays unwritten —
+C13 owns closeout. **C13's remaining work,
 recorded:** the Phase-4 sizing review across all 83
 contracts, the split decisions on the two flagged rows (the
 seams above), the GATE-G4b re-split evaluation with counts,
@@ -2131,7 +2156,7 @@ filled per context.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent` |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12) | header Started from `date -u`; C2/C3/C4/C5/C6/C7/C8/C9 Started from file mtime (source named); C7/C8/C9 Closed from `date -u`; C10 Started + Closed from `date -u` (file mtimes read earlier than wall clock — a recorded anomaly, `date -u` anchored); C11 Started from `date -u` (file mtimes read 01:59–02:03 vs wall clock ~05:59–06:03 — the same recorded local-clock offset, `date -u` anchored); C12 Started from `date -u` (resumed context — contract writes began ~06:23Z) |
-| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7, C8, C9, C10, C11); C3 blockedOn; C12 pending | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 @2c2ef14a blockedOn (security npm advisory gate — new advisory GHSA-68fv-2mgg-jv7q on source-map-js 1.2.1, advisory-feed timing not the docs change) → fix-forward bump to 1.2.2 (upstream fix, surgical lockfile edit, `blocked=0` locally) → `ci: pass #236@5479f60` 5/5 head-bound (run 37404618425; log `logs/ci-PLAN-11B-C7.json`); C8 `ci: pass #236@acde44e` 5/5 head-bound, first head (run 37407963600; log `logs/ci-PLAN-11B-C8.json`); C9 `ci: pass #236@3670b7e` 5/5 head-bound, first head (run 37411758538; log `logs/ci-PLAN-11B-C9.json`); C10 `ci: pass #236@80193e2` 5/5 head-bound, first head (run 37420161300; log `logs/ci-PLAN-11B-C10.json`); C11 `ci: pass #236@6fccb08` 5/5 head-bound, first head (run 37422175926; log `logs/ci-PLAN-11B-C11.json`); C12 pending — the boundary commit fills it (log `logs/ci-PLAN-11B-C12.json`) |
+| OM-05 CI read at every boundary; red → blockedOn | ok (C1, C2, C4, C5, C6, C7, C8, C9, C10, C11, C12); C3 blockedOn | @9dcb023 blockedOn (docs/projection stale — fixed forward) → `ci: pass #236@70ab52a` 5/5 head-bound (log `logs/ci-PLAN-11B-C1.json`); C2 `ci: pass #236@60c3fe4` 5/5 head-bound (log `logs/ci-PLAN-11B-C2.json`); C3 @427c5ef blockedOn (docs history guard — `seed-commit` fix-forward; docs+python green on 8920c46) → three hosted-runner acquisition cancels (@e34dd7c composed, @8920c46 web, @a5a0b96 python) — infra, reported blockedOn (log `logs/ci-PLAN-11B-C3.json`); C4 @5877a44 + @917db14 blockedOn on infra cancels (python run 37372747692; docs+web run 37374430350 — each re-read once) → `ci: pass #236@ec24cab` 5/5 head-bound (log `logs/ci-PLAN-11B-C4.json`); C5 `ci: pass #236@5238ded` 5/5 head-bound, first head (run 37381411791; log `logs/ci-PLAN-11B-C5.json`); C6 `ci: pass #236@0dc6bc1` 5/5 head-bound (log `logs/ci-PLAN-11B-C6.json`); C7 @2c2ef14a blockedOn (security npm advisory gate — new advisory GHSA-68fv-2mgg-jv7q on source-map-js 1.2.1, advisory-feed timing not the docs change) → fix-forward bump to 1.2.2 (upstream fix, surgical lockfile edit, `blocked=0` locally) → `ci: pass #236@5479f60` 5/5 head-bound (run 37404618425; log `logs/ci-PLAN-11B-C7.json`); C8 `ci: pass #236@acde44e` 5/5 head-bound, first head (run 37407963600; log `logs/ci-PLAN-11B-C8.json`); C9 `ci: pass #236@3670b7e` 5/5 head-bound, first head (run 37411758538; log `logs/ci-PLAN-11B-C9.json`); C10 `ci: pass #236@80193e2` 5/5 head-bound, first head (run 37420161300; log `logs/ci-PLAN-11B-C10.json`); C11 `ci: pass #236@6fccb08` 5/5 head-bound, first head (run 37422175926; log `logs/ci-PLAN-11B-C11.json`); C12 @458e89a blockedOn (docs `docs-check-projection` run-ledger digest stale — regen-before-ledger-write ordering, the same shape C1's first head hit; `04c5cd70` red on it too) → fix-forward `fce5643` regen → `ci: pass #236@fce5643` 5/5 head-bound (run 37425285698; log `logs/ci-PLAN-11B-C12.json`) |
 | OM-06 every AC names its layer | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12) | each contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
 | OM-14 production mutations | n/a | none — planning row |
 | OM-13 protected records appended only | ok (C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12) | manifest Plan-extensions + ledger C2/C3/C4/C5/C6/C7/C8/C9/C10/C11/C12 sections appended only (C9's + C10's + C11's + C12's sections replace their `### Cn — pending` placeholders, the established convention); C3 adds a `seed-commit` policy line for its own rewrite commit (recorded, scoped to 427c5efb); C4's + C6's + C7's + C8's + C9's + C10's + C11's + C12's rewrite commits name no ticket ids in their subjects; memory_guard --staged run pre-commit |
