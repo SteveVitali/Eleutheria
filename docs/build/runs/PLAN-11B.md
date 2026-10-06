@@ -2290,11 +2290,16 @@ The split, landed (OM-03; `decompose-spec mode=extend`):
   record; `Depends on: P35.1b`; same window (AR-3 + AR-2), same
   OM-20 conditional, same B-13 `a` answer; 1.0 run; Load
   ≈ 60.7k ÷3.
-- **`291_P35.1b__fleet-hygiene.md`** re-scoped in place to the
-  sweep half (its own recorded seam): OM-14 mutation list,
-  deliverables, ACs, clauses, notes and re-run prompt updated;
-  the plan-cell Gate status kept verbatim; Load re-totalled
-  ≈ 65.7k ÷3.
+- **`291_P35.1b__fleet-hygiene.md`** re-scoped to the sweep
+  half (its own recorded seam) — landed as an **appended
+  `> Amended 2026-10-06:` note** (BM-TICKET-04), not an
+  in-place rewrite: the C13 commit's subject named the ticket
+  id, so `memory_guard` judged the contract
+  frozen-after-execution from that commit on (the docs-job
+  red at `f9c407c8`, 147 violations, fixed forward). The
+  amendment scopes the OM-14 mutation list, deliverables,
+  ACs, clauses and re-run prompt to the sweep; the plan-cell
+  Gate status kept verbatim; Load re-totalled ≈ 65.7k ÷3.
 - Manifest: row `291a` inserted after 291 (suffix-letter
   insert convention, the `170a` precedent); a `## Plan
   extensions` line records the split; this section +
