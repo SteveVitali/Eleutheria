@@ -1244,7 +1244,201 @@ Closed at 2026-10-06T03:25Z — work complete; boundary green on
 the first head. The shared `Closed:` header stays
 unwritten — C13 owns closeout.
 
-### C9 — pending
+### C9 — 2026-10-06 (rows 315–322)
+
+Started: 2026-10-06T~03:3xZ (first C9 file write; source: file mtime —
+investigation preceded it in the same context; this context resumed
+from a summary, the seven earlier file writes 03:34–03:45Z stand)
+· Closed: 2026-10-06T0x:xxZ (`date -u`; last C9 criterion = the
+head-bound CI read at the content+ledger head — see Boundary).
+Context model: devin-desktop/swe-2-high/subagent.
+
+Scope (contract deliverable 2-in-part + the 8a ADR-171 checks):
+
+- Rewrote all eight skeletons in place to the landed full-contract
+  shape: row 315 (per-compartment `statements`/`record_claims.jsonl`
+  + the shared `<ProvenancePanel>` data contract + S-6-gated
+  `upstream_href`), 316 (figure-to-evidence pointers — every material
+  public number a Figure with artifact/pointer/definition/href +
+  the raw-numeral build check), 317 (the IRI-base half — new release
+  IRIs on `surveillancegraph.org`, published IRIs immutable, the
+  append-only alias map + compat note), 318 (ontology/exporter data
+  dictionary + per-resource Table Schema + DCAT 3 + PROV-O as linked
+  files), 319 (source = registry row + the six-state lifecycle
+  partition + named count predicates + the anomaly list), 320
+  (freshness semantics v2 — the one shared verdict function + the
+  two clocks + the two change dates), 321 (the citation block +
+  release ID on every page + edge-side legacy selector handling),
+  322 (the watch producer v1 — `EXPORT_QUERIES` reads +
+  `exports/watch.py` derivation + `sig/watch/2` + coverage block).
+
+Findings / decisions (per row):
+
+- 315 (statements + provenance panel): deps `P35.31;P35.65`
+  confirmed; no gate; not an OM-20 row. **SIG-TRANSP-011 is the
+  §56.10 Owner — stamped.** Per-compartment `record_claims.jsonl`
+  beside the record artifacts; `source_refs.upstream_href` filled
+  only through the scrub's S-6 URL gate (never a guessed link); the
+  four binding states (`actual_capture`/`replayed`/`document_only`/
+  `legacy_synthetic`) rendered verbatim — a legacy-synthetic row
+  never masquerades as a capture, and no panel implies SIG holds a
+  document it does not. One panel data contract across record
+  pages / relationship rows / edge panels / map selection / claim
+  viewer; licensing, Part VIII, contradiction, supersession and
+  review state carried through unchanged. The SIG-TRANSP-012 "view
+  original" element is recorded as a stub pending TX-08b's lane
+  table (P36.51) — never a raw link this row mints.
+- 316 (figure→evidence): deps `P35.36;P35.20b` confirmed; no gate.
+  **SIG-TRANSP-013 is the §56.10 Owner — stamped; F-102 owned.**
+  Figure contract = value + manifest-listed artifact + JSON pointer
+  + definition + visible evidence href; coverage tiles and
+  evaluation metrics are figures, not exempt chrome; the build
+  check fails on a missing pointer and on an unscoped raw numeral
+  (a scanned numeral with no pointer is a defect, not a fallback);
+  zero-JS preserved (the pointer resolves server-side into the
+  emitted artifact).
+- 317 (IRI base + provenance identity): deps `P34.25;P35.38a`
+  confirmed. **Gate `Q-E2-03 [B-6] = 'Move UA, don't buy domain'`
+  carried verbatim** — an operator decision recorded, never an
+  agent call; the declined defensive-registration half is recorded
+  as residual squatting risk, not silently dropped. New release
+  IRIs mint on `https://surveillancegraph.org/`; already-published
+  IRIs are immutable and resolve through an append-only alias map +
+  compat note. The stale literals are enumerated in-contract
+  (`exports/provo.py:33`, `exports/formats.py:103`,
+  `build_predicates.py:72`, the `ontology.sig-project.org`
+  vocab paths); generated artifacts regenerate through `make gen`,
+  never hand-edit; crawler retrieval-time + upstream-URL semantics
+  unchanged; no personal contact added (P35.38a's rule — e-mail
+  waits for `contact@`). No §56 Owner (recorded; R11-SAFE-06).
+- 318 (data dictionary + metadata): deps `P35.14b;P35.38b`
+  confirmed — **recorded fix-forward during docs-check:** the
+  Depends line's prose "the P35.38 split" parsed as a dep on a
+  non-existent `P35.38` row; reworded to "the a/b split of the IRI
+  row" (the audit's DEP_ID_RE never sees a bare stem on the line;
+  content unchanged). **SIG-TRANSP-016 + 017 are the §56.10
+  Owners — stamped; SIG-TRANSP-033 is the `Also:`** (Owner
+  P36.48 — the Table Schema machinery this row lands serves that
+  download). Exporter column registry → `dictionary.json`; a Table
+  Schema per tabular resource (the J1 NEW-11 fix); datapackage v2
+  per bundle; DCAT 3 `catalog.jsonld` + PROV-O `provenance.jsonld`
+  as **linked files only** (D-J3-7 — no inline JSON-LD `<script>`
+  on public pages; a new ADR would be needed to exempt a named
+  page — this row seeks none); `prov:generatedAtTime` is true
+  `retrieved_at`. ODbL separation + fail-closed rights unchanged.
+- 319 (source universe + lifecycle + counts): deps
+  `P35.31;P35.35;P34.17` confirmed; no gate. **SIG-TRANSP-002 +
+  026 + 027 are the §56.10 Owners — stamped; SIG-TRANSP-001 is the
+  `Also:` (Owner P36.48); F-431 owned.** A source is exactly one
+  registry row; connectors/agenda tenants/camera endpoints/capture
+  hosts/mirrors are attributes, not sources; a data-bearing
+  identifier without a registry row is an anomaly, listed —
+  never silently counted. Lifecycle precedence verbatim
+  (`withdrawn` > `published` > `ingested_not_published` >
+  `permitted_not_ingested` > `gated` > `refused`); partition
+  totals must equal the registry count (build-checked). The
+  historical numbers (178/218/219/208/236/342) are explained by
+  named predicate, never silently reused; the IDs behind each
+  funnel difference publish. No connector or outreach change.
+- 320 (freshness semantics v2): deps `P35.33;P35.32;P35.20b;P35.34`
+  confirmed. **The OM-20 conditional carried verbatim** — named
+  mutation (the connector-image roll deploying the capture-side
+  fields) pre-authorised only if the GATE-G4 list names this row,
+  expiry at the next gate, otherwise in-ticket pause; live stage
+  `production write / connector roll` + window `AR-3 + AR-2`
+  verbatim; one leg + re-run prompt. **SIG-TRANSP-007 + 029 + 030
+  + 031 are the §56.10 Owners — stamped; SIG-TRANSP-034 is the
+  `Also:` (Owner P36.43 — this row lands the release-side rule);
+  F-137 owned.** One `freshness_verdict(cadence, executions, at)`
+  shared by exporter/status/alerting; every verdict carries its
+  evaluation time; release pages show fixed as-of values only.
+  Volatility derives from the ontology predicate registry over all
+  published claims; staleness always shows evaluable +
+  not-evaluable counts — `unknown` and `not evaluable` are
+  distinct words and `0 stale` is never emitted for unevaluable
+  data; `one_time_load`/`not_applicable` preserved; upstream
+  last-modified preferred, canonical records digest the fallback,
+  and a byte-only change never moves the upstream-change date.
+- 321 (citation block + release ID): deps `P35.13;P35.65`
+  confirmed; no gate; S budget (0.5 run). **SIG-TRANSP-023 is the
+  §56.10 Owner — stamped** (this row satisfies the citation-block
+  half; the snapshots/selectors half belongs to the named `Also:`
+  rows); **F-07/F-099/F-101/F-390/F-399 owned.** `BaseLayout`
+  citation block on every page: immutable `/s/<pub>/`/`/r/<pub>/`
+  link + release ID + `as_of_world`/`as_of_belief` + ruleset id;
+  legacy selectors resolve at the edge — exact→redirect,
+  none→404, malformed→400, ambiguous→409 — never a silent
+  substitute of current content; zero-JS preserved.
+- 322 (watch producer v1): deps `P35.19;P35.31;P34.21b` confirmed;
+  no gate (D-K7-4 windows / D-K7-5 feed coverage cited as pending
+  operator decisions — the design's windows land as declared
+  inference, flagged, never ratified); not an OM-20 row. **No §56
+  Owner (recorded); F-481 owned** — the renewal watch has no
+  producer today (nothing fills `raw['contract_watch']`; verified
+  against the exporter). `EXPORT_QUERIES` watch reads +
+  `exports/watch.py` (the six kind-derivations verbatim;
+  `upper_bound` never labelled a deadline; `_next_decision_date`
+  reused, never a second formula); `sig.watch-item/1` +
+  `web/watch.json` v2 (`sig/watch/2`) with the coverage block —
+  an empty result arrives with its coverage statement; placement
+  follows the K7 §5.3 order with `unplaced` as an honest bucket
+  (a NUTS code is never an ISO 3166-2 code — no place guessed);
+  the read-only sizing count query is a named deliverable. Later
+  watch rows recorded out: pages/facets 402 (P36.59), recommender
+  repair 454 (P37.30), dated decision predicates 455 (P37.31),
+  the contract-expiring detector 456 (P37.32), the watch lane 457
+  (P37.33), feeds v2 458 (P37.34) — this row is the producer, not
+  the surface. Draft `SIG-WATCH-D01…D10` cited as design refs
+  (K7 §8 defers the final ids to PLAN-11C), recorded not stamped.
+
+ADR-171 outreach-owed (deliverable 8a) — per row:
+
+- All eight rows carry "**recorded why it does not apply**"
+  blocks: 315/316/318/319/320/322 are exporter code + emitted
+  artifacts + web components over already-captured claims and
+  committed config; 317 swaps IRI-base literals + regenerates
+  generated artifacts (the contact surface is P35.38a's already-
+  landed UA/URL — this row adds no contact); 321 is a template +
+  an edge rule. None writes, widens or activates a §6-compact /
+  §22.4–22.5 / §35.1 ecosystem connector; the watch's
+  `what_you_can_do` field is procedural text a reader could act
+  on — SIG itself sends no e-mail and makes no contact (W-P5).
+  The Stage-0 set (SIG-CHART-033, SIG-INGEST-029/030a,
+  SIG-CONTRIB-012/012a/013, SIG-GOV-024) stays owed — unmet at
+  launch — under `D-R11-LATER-04` (recorded verbatim on each row).
+  No outside contact made or implied (ADR-171 Decision 3, U-011).
+
+Local verification (P11, with recorded limits):
+
+- `make docs-check` — **green, second run.** First run caught one
+  real diagnostic (`318`'s Depends-line prose "the P35.38 split"
+  → dependency-not-in-chain on `P35.38`); reworded in place
+  (recorded above), audit re-run 0 failing diagnostics, full
+  `docs-check` re-run green (both vendored freshness detectors,
+  build-memory, memory-guard worktree, spec-src reproduction
+  byte-identical, coverage matrix 820/820, backlog, ledger
+  contract, current-state audit `--require-reconciled` — 9
+  conflicts covered by reconciliations.json, 0 failing).
+- Projection regenerated (`current_projection.py generate` —
+  the eight contract digests + input_commit advanced; `verify`
+  fresh before the content commit).
+- `python3 docs/build/tools/memory_guard.py all --staged` — run
+  before the content commit (protected records appended only;
+  this ledger's C9 section replaces the `### C9 — pending`
+  placeholder, the established per-context convention).
+- `make check` — not re-run this context: no code changed
+  (contracts + this ledger + projection only); CI is the
+  authority. Docker stays wedged (recorded C1).
+
+Boundary (OM-05):
+
+- Recorded below — the head-bound read at the content+ledger head
+  lands in `docs/build/logs/ci-PLAN-11B-C9.json` (gitignored);
+  the verbatim `ci:` line is appended here after the read.
+
+Close record (this commit): appends the head-bound read and fills
+Closed — work complete. The shared `Closed:` header stays
+unwritten — C13 owns closeout.
 
 ### C10 — pending
 
