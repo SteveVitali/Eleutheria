@@ -223,3 +223,16 @@ seed-commit 08c1840b
 # as a later commit rather than a reworded subject.
 # Scope: findings attributed to d778706b only; no other commit borrows the exemption.
 seed-commit d778706b
+
+# ── P34.35 closeout repair (ticket 243; recorded 2026-10-07) ───────────────────────────────
+# Commit 145b68a3 is the verifier-backed budget repair: the closeout commit 477d4749's PHASE
+# LOG entry ran 2,224 B — over the 2 KiB current-region cap (BM-LEDGER-06, check-build-memory
+# `ledger-budget`, caught head-bound by the docs job, run 37576846070). 145b68a3 trims the
+# entry to 1,845 B in place (every recorded field kept — head sha, the `ci:` line, run id,
+# the `ci_boundary 05:15:00Z` token, chainTip/next/layer/harness; the full untrimmed text is
+# reconstructible from this commit's diff and the run ledger records the failure verbatim) —
+# the sanctioned in-place trim pattern of P34.34a's d778706b and P34.20's b3cfeb87. The
+# branch rule forbids force-push, so the declaration lands as a later commit rather than a
+# reworded subject.
+# Scope: findings attributed to 145b68a3 only; no other commit borrows the exemption.
+seed-commit 145b68a3
