@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "232227c28fc567c967ea995f5fd96620ab71aba3",
+  "input_commit": "a20899a0de05822b453a71994e6a03d458c392b6",
   "manifest_inputs": 981,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.37",
-    "lastCompleted": "P34.36",
+    "nextTicket": "P34.38",
+    "lastCompleted": "P34.37",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.36-release-search-states",
+    "chainTip": "r11/P34.37-intake-defects-and-moderation-hardening",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-07T03:05Z"
+    "updatedAt": "2026-10-07T11:24Z"
   },
   "counts": {
     "obligations": 156,
@@ -17934,10 +17934,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "eb0181703fc35f71c7fc4516375a3e9a36d247ef30c65cd94b1efe143d73353c",
+  "manifest_sha256": "3eda1078975b0bb6c3df6322b482f825eed3af0142d80b15fef16bef126382d0",
   "current_md": {
     "lines": 91,
-    "bytes": 19852,
+    "bytes": 19870,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
