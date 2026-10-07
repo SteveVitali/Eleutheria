@@ -519,7 +519,7 @@ def search(
     meta: Mapping[str, Any],
     params: SearchParams,
     *,
-    denied: Callable[[tuple], bool] | None = None,
+    denied: Callable[[tuple], Any] | None = None,
     deadline_seconds: float = QUERY_TIMEOUT_SECONDS,
 ) -> dict[str, Any]:
     """Execute one bounded search page over a verified ro index connection.
@@ -532,7 +532,16 @@ def search(
       or skip a key.
     * ``denied`` is evaluated per candidate row before pagination — denied
       records are skipped (never returned), so pages stay dense and nothing
-      withheld leaks through the result list.
+      withheld leaks through the result list. The callable answers the
+      record's public-safe exclusion reason (a reason-category string) or a
+      falsy value when the record is allowed; a legacy bool predicate still
+      works (``True`` counts under the generic ``denied`` bucket).
+    * C4 NEW-12 / DR-C4-09 (P34.36): access-time denials are COUNTED in the
+      scope — one bounded pass over the whole ``records`` table under the
+      same deadline lowers ``eligible_records`` and carries the denied
+      records into ``excluded_records_by_reason``. The pinned
+      ``indexed_records`` never moves; with no barrier given, no count pass
+      runs at all.
     """
     publication_id = str(meta["publication_id"])
     compartment = str(meta["compartment"])
@@ -649,7 +658,38 @@ def search(
     finally:
         conn.set_progress_handler(None, 0)
 
+    # C4 NEW-12 / DR-C4-09: count the access-time denials — one bounded pass
+    # over the whole indexed table under the same deadline, grouped by the
+    # public-safe reason the callable returns. A record is counted once even
+    # when several denies reach it; exhaustion answers 503, never a partial
+    # scope presented as whole.
+    denied_counts: dict[str, int] = {}
+    denied_total = 0
+    if denied is not None:
+        for row in conn.execute(
+            "SELECT r.record_key, r.entity_id, r.entity_type, r.label,"
+            " r.jurisdiction, r.location_kind, r.source_id, r.claim_ids,"
+            " r.label_sort FROM records r"
+        ):
+            if time.monotonic() > deadline:
+                raise SearchIndexError(
+                    503,
+                    "query_timeout",
+                    f"query exceeded the {QUERY_TIMEOUT_SECONDS:.0f}s execution budget",
+                )
+            reason = denied(row)
+            if reason:
+                key = reason if isinstance(reason, str) else "denied"
+                denied_counts[key] = denied_counts.get(key, 0) + 1
+                denied_total += 1
+
     scope = meta.get("scope") or {}
+    excluded = dict(scope.get("excluded_records_by_reason") or {})
+    for key, count in denied_counts.items():
+        excluded[key] = excluded.get(key, 0) + count
+    eligible = scope.get("eligible_records")
+    if eligible is not None:
+        eligible = max(0, int(eligible) - denied_total)
     emitted_rows = out_rows[: params.limit]
     has_more = not exhausted and len(out_rows) > params.limit
 
@@ -671,8 +711,8 @@ def search(
             },
             "scope": {
                 "indexed_records": scope.get("indexed_records"),
-                "eligible_records": scope.get("eligible_records"),
-                "excluded_records_by_reason": scope.get("excluded_records_by_reason") or {},
+                "eligible_records": eligible,
+                "excluded_records_by_reason": excluded,
             },
             "results": [_row_dict(r, publication_id, compartment, matched) for r in rows],
             "next_cursor": next_cursor,

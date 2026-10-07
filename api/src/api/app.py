@@ -14,7 +14,11 @@ storage, and the contract is versioned via the ``/v1`` prefix and the app versio
 
 from __future__ import annotations
 
+import re
+
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
 from starlette.routing import Route
 
@@ -75,10 +79,13 @@ def create_app(
     # --- /v1/releases/{pub}/compartments/{comp}/search -------------------------
     # P32.14 (SIG-FIND-003, ADR-133): released-corpus search over the verified
     # immutable per-compartment FTS5 index. JSON by default; a browser GET (or
-    # format=html) selects the complete no-JS representation. No current-only
+    # format=html) selects the complete no-JS representation — for results AND
+    # for every error state (C4 NEW-13 / DR-C4-10, P34.36). No current-only
     # PG fallback exists beneath released pages — cold/missing indexes answer
     # an explicit 503, withdrawn namespaces 410.
     from exports.search_index import SearchIndexError, parse_params
+
+    from . import release_search as rs
 
     @app.get("/v1/releases/{publication_id}/compartments/{compartment}/search")
     def released_search(
@@ -118,21 +125,51 @@ def create_app(
             extra=unknown,
         )
         result = rstore.search(publication_id, compartment, params)
-        wants_html = format == "html" or (format is None and "text/html" in (accept or ""))
-        if wants_html:
+        if rs.wants_html(request):
             return HTMLResponse(
                 render_search_html(rstore, publication_id, compartment, params, result)
             )
         return JSONResponse(result)
 
+    def _html_search_error(request: Request, exc: SearchIndexError) -> HTMLResponse:
+        """The no-JS error page — status + Retry-After semantics preserved."""
+        headers = {"Retry-After": "5"} if exc.status == 503 else None
+        pub = str(request.path_params.get("publication_id") or "")
+        comp = str(request.path_params.get("compartment") or "")
+        return HTMLResponse(
+            rs.render_search_error_html(pub, comp, exc),
+            status_code=exc.status,
+            headers=headers,
+        )
+
     @app.exception_handler(SearchIndexError)
-    def _search_index_error(_request: Request, exc: SearchIndexError) -> JSONResponse:
+    def _search_index_error(request: Request, exc: SearchIndexError) -> Response:
+        if rs.wants_html(request):
+            return _html_search_error(request, exc)
         headers = {"Retry-After": "5"} if exc.status == 503 else None
         return JSONResponse(
             status_code=exc.status,
             content={"detail": exc.detail, "code": exc.code, **exc.extra},
             headers=headers,
         )
+
+    # Params that fail FastAPI parsing (e.g. ``limit=abc``) raise
+    # RequestValidationError before the handler runs — an HTML client on the
+    # search route still gets an HTML 422; every other route delegates to the
+    # framework's default unchanged (DR-C4-10).
+    _search_route_re = re.compile(r"^/v1/releases/[^/]+/compartments/[^/]+/search/?$")
+
+    @app.exception_handler(RequestValidationError)
+    async def _request_validation_error(request: Request, exc: RequestValidationError) -> Response:
+        if _search_route_re.match(request.url.path) and rs.wants_html(request):
+            fields = sorted({str(err.get("loc", ("?",))[-1]) for err in exc.errors()})
+            err = SearchIndexError(
+                422,
+                "invalid_search_parameters",
+                "invalid search parameters: " + (", ".join(fields) or "request"),
+            )
+            return _html_search_error(request, err)
+        return await request_validation_exception_handler(request, exc)
 
     # --- /id/{type}/{uuid} — dereferenceable identifiers (SIG-API-008) --------
     @app.get("/id/{id_type}/{uuid}")
