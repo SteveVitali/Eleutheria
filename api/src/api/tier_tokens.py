@@ -149,6 +149,18 @@ class TierTokenStore:
             return None
         return self._by_token.get(token)
 
+    def without_demo_tokens(self) -> TierTokenStore:
+        """A copy that can never resolve a published demo token (C4 NEW-30).
+
+        A DSN-backed deployment is a real service — the published demo keys
+        (``curator-demo-key`` et al.) must not authenticate there even if a
+        caller injected a demo store or none of the invites is provisioned.
+        """
+        return TierTokenStore(
+            _by_token={k: v for k, v in self._by_token.items() if k not in DEMO_TOKENS},
+            demo_mode=False,
+        )
+
     @property
     def size(self) -> int:
         """How many tokens the store can resolve (provisioned invites, or demo tokens)."""

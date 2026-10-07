@@ -18,12 +18,21 @@ from typing import Any
 
 import pytest
 from api.curation import create_curation_app
+from api.tier_tokens import load_tier_token_store
 from resolution.review_pg import PgReviewQueue
 from resolution.review_queue import ReviewItem
 from starlette.testclient import TestClient
 
-_REVIEWER = {"Authorization": "Bearer reviewer-demo-key"}
-_CURATOR = {"Authorization": "Bearer curator-demo-key"}
+# A PG-backed app refuses the published demo tokens (C4 NEW-30) — the fixture
+# provisions the invite registry's handles via env, exactly like production.
+_TOKENS = load_tier_token_store(
+    env={
+        "SIG_CURATION_TOKEN_SIG_REVIEWER": "fixture-reviewer-token",
+        "SIG_CURATION_TOKEN_SIG_CURATOR": "fixture-curator-token",
+    }
+)
+_REVIEWER = {"Authorization": "Bearer fixture-reviewer-token"}
+_CURATOR = {"Authorization": "Bearer fixture-curator-token"}
 
 
 class _FakeConn:
@@ -89,7 +98,10 @@ def _pg_client() -> tuple[TestClient, _FakePgQueue]:
             ),
         ]
     )
-    return TestClient(create_curation_app(review_queue=queue, enabled=True)), queue
+    return (
+        TestClient(create_curation_app(review_queue=queue, enabled=True, tier_token_store=_TOKENS)),
+        queue,
+    )
 
 
 def test_pg_decide_writes_accept_with_the_pseudonymous_curator() -> None:
@@ -102,8 +114,11 @@ def test_pg_decide_writes_accept_with_the_pseudonymous_curator() -> None:
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["review_decision"] == "accept"
-    # The reviewer on the record is the tier-token handle, never a person.
-    assert queue.decide_calls == [("er_match:camera_site:a:b", "accept", "curator-1", "same pole")]
+    # The reviewer on the record is the tier-token handle, never a person —
+    # the invite registry's pseudonymous handle (ADR-100).
+    assert queue.decide_calls == [
+        ("er_match:camera_site:a:b", "accept", "sig-curator", "same pole")
+    ]
 
 
 def test_pg_decide_no_match_maps_to_reject() -> None:
@@ -197,14 +212,36 @@ def test_pg_decide_requires_authentication_and_scope() -> None:
         ).status_code
         == 401
     )
-    # A registered contributor lacks verify_submissions → 403.
+    # A registered contributor lacks verify_submissions → 403. (Provisioned
+    # like a real invite token — demo keys never resolve on a PG-backed app.)
+    from api.tier_tokens import TierTokenStore
+    from tasks.contributor import Contributor, ContributorTier
+
+    reg_store = TierTokenStore(
+        _by_token={
+            "fixture-registered-token": Contributor(
+                handle="registered-fixture", tier=ContributorTier.REGISTERED
+            )
+        },
+        demo_mode=False,
+    )
+    reg = TestClient(
+        create_curation_app(review_queue=_FakePgQueue([]), enabled=True, tier_token_store=reg_store)
+    )
     assert (
-        client.post(
+        reg.post(
             "/v1/curation/review-queue/er_match:camera_site:a:b/decide",
             data={"decision": "match"},
-            headers={"Authorization": "Bearer registered-demo-key"},
+            headers={"Authorization": "Bearer fixture-registered-token"},
         ).status_code
         == 403
+    )
+    # And the headline invariant: a published demo key never resolves here.
+    assert (
+        client.get(
+            "/v1/curation/review-queue", headers={"Authorization": "Bearer curator-demo-key"}
+        ).status_code
+        == 401
     )
 
 
@@ -260,7 +297,8 @@ def test_coordinates_reduce_to_the_curator_tier() -> None:
 
 
 def test_demo_queue_path_is_unchanged() -> None:
-    """No DSN → the in-memory queue + CurationLog semantics stay exactly as P21.6."""
+    """No DSN → the in-memory queue + CurationLog semantics stay exactly as P21.6
+    (and the demo fallback tokens still resolve — no DSN is set)."""
     from api.curation import CurationLog
     from resolution.review_queue import ReviewQueue
 
@@ -271,7 +309,7 @@ def test_demo_queue_path_is_unchanged() -> None:
     resp = client.post(
         "/v1/curation/review-queue/er_match:a~b/decide",
         data={"decision": "defer"},
-        headers=_CURATOR,
+        headers={"Authorization": "Bearer curator-demo-key"},
     )
     assert resp.status_code == 200
     # The demo path still records a deferred CurationLog row (unchanged).

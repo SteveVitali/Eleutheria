@@ -22,10 +22,11 @@ of form.
 
 from __future__ import annotations
 
+import os
 from collections.abc import Iterable, Mapping, Sequence
 from html import escape
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from .published_record import EvidenceRef, PublishedRecord
 
@@ -60,6 +61,38 @@ SITE_NAV: tuple[tuple[str, str], ...] = (
 #: path ``web/src/lib/corrections.ts``'s ``DISPUTE_PATH`` pins.
 DISPUTE_HREF = "/dispute/"
 
+#: The correction receiver's form route (ADR-135) — only ever href'd when a
+#: release is built with :data:`INTAKE_DEEPLINK_ENV` set (P34.37, C4 NEW-19).
+#: The receiver stays dark in Round 11 (B-8/WV-05), so by default the
+#: record-level "report this" link resolves to :data:`DISPUTE_HREF` carrying
+#: the record context — the receiver route stays unlinked while it is not
+#: operating, and the context params are the intake form's own names so the
+#: future operator wiring forwards them verbatim.
+INTAKE_FORM_PATH = "/intake/new"
+INTAKE_DEEPLINK_ENV = "SIG_INTAKE_DEEPLINK"
+
+
+def _report_this_record_href(record: PublishedRecord, env: Mapping[str, str] | None = None) -> str:
+    """The record-level "report this" deep link (P34.37 / C4 NEW-19): the
+    release id, record key and claim anchors prefill the intake form — the
+    reporter never hand-types ``p-<64 hex>`` or a ``comp:type:id`` key.
+
+    While the receiver is not operating (``SIG_INTAKE_DEEPLINK`` unset — the
+    default and the Round-11 posture) the link lands on ``/dispute/`` with
+    the same context, so every emitted href resolves today and nothing ever
+    links a dead ``/intake/*`` route from a static page.
+    """
+    source = os.environ if env is None else env
+    params = {
+        "publication_id": record.publication_id or "",
+        "record_key": record.record_key,
+        "claim_ids": ",".join(a.claim_id for a in record.claim_anchors[:10]),
+    }
+    query = urlencode({k: v for k, v in params.items() if v})
+    base = INTAKE_FORM_PATH if source.get(INTAKE_DEEPLINK_ENV) == "1" else DISPUTE_HREF
+    return f"{base}?{query}" if query else base
+
+
 #: Every same-origin route an archive page may link to that lives OUTSIDE the
 #: release tree — either a public site-shell route (served by the Astro
 #: surface) or a pipeline-overlay route emitted at activation
@@ -78,6 +111,10 @@ EXTERNAL_LINK_ROUTES: frozenset[str] = frozenset(
     }
     | {href.strip("/") for _, href in SITE_NAV}
     | {DISPUTE_HREF.strip("/")}
+    # The receiver form route — only emitted when a build sets
+    # SIG_INTAKE_DEEPLINK=1, at which point the receiver is routed and the
+    # crawl may treat it as resolved like any other out-of-tree surface.
+    | {INTAKE_FORM_PATH.strip("/")}
 )
 
 #: Route prefixes the activation overlay emits that archive pages may link to
@@ -123,13 +160,16 @@ def _layout(
     publication_id: str | None,
     footer_note: str = "",
     licence: str | None = None,
+    report_href: str | None = None,
 ) -> bytes:
     """The shared archive page skeleton (P34.34a): site nav, the title +
     immutable-release stamp, then a footer carrying the dispute/correction
     link (SIG-UI-033) and — when the page shows compartment data — the
     licence that governs it (SIG-LIC-011). ``licence`` is an SPDX id or an
     explicit human-readable basis (e.g. "per compartment"); ``None`` is the
-    honest state for pages that show no data (tombstones, error pages)."""
+    honest state for pages that show no data (tombstones, error pages).
+    ``report_href`` is the record-level deep link (P34.37): emitted only on
+    record pages, where the record context is known."""
     pub = (
         f'<p class="mut">Immutable release <code>{_e(publication_id)}</code> — '
         "these bytes are version-pinned; cite this URL, not a &ldquo;latest&rdquo; alias.</p>"
@@ -141,6 +181,7 @@ def _layout(
         if licence
         else ""
     )
+    report_link = f' <a href="{_e(report_href)}">Report this record</a>.' if report_href else ""
     html = (
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
         f"<title>{_e(title)} — SIG released record</title>"
@@ -150,7 +191,7 @@ def _layout(
         f"<main>{body}</main>"
         f'<footer>{licence_line}<p class="dispute">Something wrong, or a privacy '
         f'or safety concern? <a href="{_e(DISPUTE_HREF)}">Dispute or correct this '
-        "record</a> — reports arrive by e-mail.</p>"
+        f"record</a> — reports arrive by e-mail.{report_link}</p>"
         f"<p>Surveillance Infrastructure Graph (SIG) — evidence-first public record. "
         f"{escape(footer_note)}</p></footer></body></html>"
     )
@@ -307,12 +348,12 @@ Machine-readable: <a href="{_e(record.json_href)}"><code>{_e(record.json_href)}<
         publication_id=record.publication_id,
         footer_note=f"Licence {_e(record.license)} — compartment {_e(record.compartment)}.",
         licence=record.license,
+        # C4 NEW-19: the record-level "report this" deep link — the record key,
+        # release id and claim anchors prefill the intake form; while the
+        # receiver is dark the link resolves to /dispute/ (see
+        # _report_this_record_href).
+        report_href=_report_this_record_href(record),
     )
-
-
-# --------------------------------------------------------------------------- #
-# Indexes: compartment browse + jurisdiction                                   #
-# --------------------------------------------------------------------------- #
 
 
 def _record_li(item: Mapping[str, Any], *, publication_id: str, compartment: str) -> str:

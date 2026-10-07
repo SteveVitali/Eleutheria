@@ -124,11 +124,12 @@ def test_operational_requires_real_secrets() -> None:
 
 
 def test_intake_operational_env_gate() -> None:
+    """The gate is fail-closed on EVERY key (C4 NEW-15 / DR-C4-11): the env
+    arm, the committed flag, a named owner AND staffing — each alone is
+    insufficient."""
     from api.intake import intake_operational
 
     assert intake_operational(env={}) is False
-    assert intake_operational(env={"SIG_INTAKE_OPERATIONAL": "1"}) is False or True
-    # Config flag alone is never enough — the env arm must also be 1.
     import tempfile
     from pathlib import Path
 
@@ -136,7 +137,22 @@ def test_intake_operational_env_gate() -> None:
         cfg = Path(td) / "config.toml"
         cfg.write_text("[intake]\noperational = false\n")
         assert intake_operational(env={"SIG_INTAKE_OPERATIONAL": "1"}, config_path=cfg) is False
+        # The flag alone is never enough — env arm + owner + staffed all bind.
         cfg.write_text("[intake]\noperational = true\n")
+        assert intake_operational(env={}, config_path=cfg) is False
+        assert intake_operational(env={"SIG_INTAKE_OPERATIONAL": "1"}, config_path=cfg) is False
+        # Staffed without an owner fails closed…
+        cfg.write_text("[intake]\noperational = true\nowner = ''\nstaffed = true\n")
+        assert intake_operational(env={"SIG_INTAKE_OPERATIONAL": "1"}, config_path=cfg) is False
+        # …an owner without staffing fails closed…
+        cfg.write_text(
+            "[intake]\noperational = true\nowner = 'moderation-on-call'\nstaffed = false\n"
+        )
+        assert intake_operational(env={"SIG_INTAKE_OPERATIONAL": "1"}, config_path=cfg) is False
+        # …and the env arm is required even when the committed posture is full.
+        cfg.write_text(
+            "[intake]\noperational = true\nowner = 'moderation-on-call'\nstaffed = true\n"
+        )
         assert intake_operational(env={}, config_path=cfg) is False
         assert intake_operational(env={"SIG_INTAKE_OPERATIONAL": "1"}, config_path=cfg) is True
 
@@ -466,3 +482,255 @@ def test_no_cors_grant() -> None:
     client = _app()
     resp = client.options("/intake/v1/reports")
     assert "access-control-allow-origin" not in {k.lower() for k in resp.headers.keys()}
+
+
+# --------------------------------------------------------------------------- #
+# C4 NEW-16 — the limiter keys on the edge-normalised client and never
+# charges a refusal
+# --------------------------------------------------------------------------- #
+def _post_report(client: TestClient, nonce: str, **extra_headers):
+    token = _mint_form(client)
+    return client.post(
+        "/intake/v1/reports",
+        json={
+            "form_token": token,
+            "category": "factual_error",
+            "description": "The retention-days value on this record is wrong.",
+            "idempotency_key": nonce,
+        },
+        headers=extra_headers or None,
+    )
+
+
+def test_refused_submissions_never_consume_the_limiter() -> None:
+    """Refusals — malformed payload, forged/expired token, oversize body —
+    return before the limiter, so they cannot burn a real client's slots."""
+    gate = AbuseGate(
+        "s" * 20,
+        per_pseudonym_burst=2,
+        per_pseudonym_per_hour=2,
+        global_per_hour=100,
+        failed_lookup_limit=10,
+    )
+    client = _app(abuse_gate=gate)
+    for i in range(10):
+        token = _mint_form(client)
+        resp = _submit(client, token, idempotency_key=f"bad-{i:05d}", description="x")
+        assert resp.status_code == 422
+    assert _submit(client, "v1.forged.token", idempotency_key="forged-0001").status_code == 403
+    # Two valid submissions fit the burst; the third is honestly limited.
+    assert _post_report(client, "ok-0000000000000001").status_code == 201
+    assert _post_report(client, "ok-0000000000000002").status_code == 201
+    limited = _post_report(client, "ok-0000000000000003")
+    assert limited.status_code == 429
+    assert limited.headers["retry-after"]
+
+
+def test_limiter_ignores_a_client_supplied_xff() -> None:
+    """With zero configured trusted hops a client-supplied X-Forwarded-For
+    changes nothing — the same peer bucket still applies."""
+    gate = AbuseGate(
+        "s" * 20,
+        per_pseudonym_burst=1,
+        per_pseudonym_per_hour=1,
+        global_per_hour=100,
+        failed_lookup_limit=10,
+    )
+    client = _app(abuse_gate=gate, trusted_proxy_hops=0)
+    assert _post_report(client, "xff-a-00000000000001").status_code == 201
+    # A spoofed header does not mint a fresh allowance.
+    resp = _post_report(client, "xff-b-00000000000001", **{"X-Forwarded-For": "203.0.113.66"})
+    assert resp.status_code == 429
+
+
+def test_limiter_uses_the_configured_trusted_hop() -> None:
+    """With ``trusted_proxy_hops=1`` the Nth-from-right chain entry — what the
+    documented edge observed — keys the bucket; entries further left are
+    client-claimed and ignored."""
+    gate = AbuseGate(
+        "s" * 20,
+        per_pseudonym_burst=1,
+        per_pseudonym_per_hour=1,
+        global_per_hour=100,
+        failed_lookup_limit=10,
+    )
+    client = _app(abuse_gate=gate, trusted_proxy_hops=1)
+    first = _post_report(client, "hop-a-00000000000001", **{"X-Forwarded-For": "203.0.113.1"})
+    assert first.status_code == 201
+    # The same edge-observed client is limited — and a spoofed leading entry
+    # does not move the key (it sits left of the trusted slice).
+    second = _post_report(client, "hop-b-00000000000001", **{"X-Forwarded-For": "203.0.113.1"})
+    assert second.status_code == 429
+    third = _post_report(
+        client,
+        "hop-c-00000000000001",
+        **{"X-Forwarded-For": "198.51.100.9, 203.0.113.1"},
+    )
+    assert third.status_code == 429
+    # A genuinely different edge-observed client gets its own bucket.
+    other = _post_report(client, "hop-d-00000000000001", **{"X-Forwarded-For": "203.0.113.77"})
+    assert other.status_code == 201
+
+
+# --------------------------------------------------------------------------- #
+# C4 NEW-17 / DR-C4-12 — the reporter sees the outcome, the approved public
+# response and the correction/release link once published
+# --------------------------------------------------------------------------- #
+def test_status_shows_outcome_response_and_release_link() -> None:
+    """End-to-end over the memory double: propose → approve (response
+    inherited from the approved proposal) → apply → publish → the reporter
+    reads state=outcome=response=link."""
+    from api.curation import create_curation_app
+
+    store = MemoryIntakeStore()
+    client = _app(store=store)
+    acc = _accepted(client)
+    receipt = acc["receipt_id"]
+    curation = TestClient(
+        create_curation_app(enabled=True, intake_store=store),
+        raise_server_exceptions=True,
+    )
+    reviewer = {"Authorization": "Bearer reviewer-demo-key"}
+    curator = {"Authorization": "Bearer curator-demo-key"}
+    proposal = {
+        "target_kind": "claim",
+        "target_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "reason_category": "suppressed",
+        "disposition": "withhold",
+    }
+    p = curation.post(
+        f"/v1/curation/intake/{receipt}/events",
+        json={
+            "event": "disposition_proposed",
+            "detail": {
+                "outcome": "suppress",
+                "reason": "verified",
+                "public_response": "Withheld in the next release.",
+                "public_response_publish": True,
+                "proposal": proposal,
+            },
+        },
+        headers=reviewer,
+    )
+    assert p.status_code == 201, p.text
+    # The approval names outcome+reason only — the publishable response is
+    # inherited from the proposal it approves (NEW-17).
+    a = curation.post(
+        f"/v1/curation/intake/{receipt}/events",
+        json={
+            "event": "disposition_approved",
+            "detail": {"outcome": "suppress", "reason": "verified"},
+        },
+        headers=curator,
+    )
+    assert a.status_code == 201, a.text
+    applied = curation.post(f"/v1/curation/intake/{receipt}/apply", json={}, headers=curator)
+    assert applied.status_code == 201, applied.text
+    pub = "p-" + "c" * 64
+    published = curation.post(
+        f"/v1/curation/intake/{receipt}/published",
+        json={"publication_id": pub},
+        headers=curator,
+    )
+    assert published.status_code == 201, published.text
+
+    resp = client.post(
+        "/intake/v1/status",
+        json={"receipt_id": receipt, "status_token": acc["status_token"]},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["state"] == "resolved"
+    assert body["outcome"] == "suppress"
+    assert body["response"] == "Withheld in the next release."
+    assert body["publication_id"] == pub
+    assert body["result_url"] == f"/r/{pub}/"
+
+
+def test_status_decided_shows_outcome_no_link_until_published() -> None:
+    """A decided-but-unpublished report shows outcome + response; the link
+    exists only once publication linkage is recorded (applied ≠ public)."""
+    from api.curation import create_curation_app
+
+    store = MemoryIntakeStore()
+    client = _app(store=store)
+    acc = _accepted(client)
+    receipt = acc["receipt_id"]
+    curation = TestClient(
+        create_curation_app(enabled=True, intake_store=store),
+        raise_server_exceptions=True,
+    )
+    reviewer = {"Authorization": "Bearer reviewer-demo-key"}
+    curator = {"Authorization": "Bearer curator-demo-key"}
+    p = curation.post(
+        f"/v1/curation/intake/{receipt}/events",
+        json={
+            "event": "disposition_proposed",
+            "detail": {"outcome": "refuse", "reason": "not evidenced"},
+        },
+        headers=reviewer,
+    )
+    assert p.status_code == 201
+    a = curation.post(
+        f"/v1/curation/intake/{receipt}/events",
+        json={
+            "event": "disposition_approved",
+            "detail": {
+                "outcome": "refuse",
+                "reason": "not evidenced",
+                "public_response": "The record stands: the cited source supports it.",
+                "public_response_publish": True,
+            },
+        },
+        headers=curator,
+    )
+    assert a.status_code == 201, a.text
+    resp = client.post(
+        "/intake/v1/status",
+        json={"receipt_id": receipt, "status_token": acc["status_token"]},
+    )
+    body = resp.json()
+    assert body["state"] == "decided"
+    assert body["outcome"] == "refuse"  # refusal is a real, reportable outcome
+    assert body["response"] == "The record stands: the cited source supports it."
+    assert "result_url" not in body and "publication_id" not in body
+
+
+# --------------------------------------------------------------------------- #
+# C4 NEW-19 — category placeholder, viewport meta, deep-link prefill
+# --------------------------------------------------------------------------- #
+def test_form_category_placeholder_viewport_and_deep_link() -> None:
+    client = _app()
+    resp = client.get("/intake/new")
+    assert resp.status_code == 200
+    # No silent default category — a placeholder forces an explicit choice.
+    assert 'value="" disabled selected' in resp.text
+    # The viewport meta every phone needs.
+    assert 'name="viewport"' in resp.text
+    # A released record page deep-links the report context — contract-shaped
+    # params prefill; the reporter never hand-types a p-<64 hex>.
+    pub = "p-" + "ab" * 32
+    deep = client.get(
+        f"/intake/new?publication_id={pub}&record_key=ccby3:deployment:abc123"
+        "&claim_ids=a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    )
+    assert f'value="{pub}"' in deep.text
+    assert 'value="ccby3:deployment:abc123"' in deep.text
+    assert 'value="a1b2c3d4-e5f6-7890-abcd-ef1234567890"' in deep.text
+    # Untrusted query text is dropped — never echoed back into the page.
+    dirty = client.get(
+        "/intake/new?publication_id=EVIL&record_key=%3Cscript%3Ealert(1)%3C/script%3E"
+        "&claim_ids=not-a-uuid"
+    )
+    assert 'value="EVIL"' not in dirty.text
+    assert "alert(1)" not in dirty.text
+    assert 'value="not-a-uuid"' not in dirty.text
+
+
+def test_form_copy_promises_no_anonymity() -> None:
+    """Round-11 posture (WV-05 / ADR-180): the form copy must not promise
+    anonymous or one-click intake — the public intake channel is e-mail."""
+    client = _app()
+    resp = client.get("/intake/new")
+    assert "anonymous" not in resp.text.lower()
+    assert "no account, no email" not in resp.text.lower()
