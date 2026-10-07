@@ -1,0 +1,2 @@
+wave,period,acu_sessions,acu_used,tokens_dispatched,source_label,evidence,note
+round-11-dispatched-through-P34.4,2026-10-02,8,2800,46000,operator-reported,docs/build/runs/P34.4.md,"DEVIN-2ACU operator report (~2.8k ACU sessions-8; ~46k tokens dispatched); usage is reported, never dollar-capped (OD-02/OD-03/OD-26); a usage-limit event pauses the round, never a spend line"

@@ -14,6 +14,11 @@ stateful DB is a container. The **hosted** home is separate: `ops/gcp/` carries 
 GCP infra-as-code (ADR-075) that was applied under operator ADC on 2026-09-15 as
 Cloud SQL + Cloud Run (ADR-081) — the executed runbook is
 [`docs/build/reports/GCP_DEPLOYMENT.md`](../docs/build/reports/GCP_DEPLOYMENT.md).
+Hosted spend is measured (BigQuery billing export) and alarmed at the $300/mo
+infrastructure ceiling by `ops/gcp/cost-guard.sh`; the monthly ledger —
+measured / operator-reported / estimate labels — is
+[`docs/build/reports/spend/`](../docs/build/reports/spend/SPEND_LEDGER.md)
+(SIG-OPS-009, P34.5).
 
 ## Commands
 
