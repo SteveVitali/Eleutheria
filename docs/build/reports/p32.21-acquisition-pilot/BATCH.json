@@ -57,7 +57,7 @@
       ],
       "family_id": "oklahoma-state",
       "lineage_group": "oklahoma-state",
-      "rationale": "the structured acquisition/procurement shape (S5) \u2014 contract/procurement-chain predicates, the relationship class a dossier's contract-chain gap needs; a net-new target \u2014 a new provenance family; wins the acquisition slot under acq-score/1 rank order (score 23); closes recorded dossier gaps via SRC-007; in-family excluded from the acquired batch: SRC-009, SRC-008",
+      "rationale": "the structured acquisition/procurement shape (S5) \u2014 contract/procurement-chain predicates, the relationship class a dossier's contract-chain gap needs; an improvement under the registered ok_omes_contracts row \u2014 a first-class acquisition; wins the acquisition slot under acq-score/1 rank order (score 23); closes recorded dossier gaps via SRC-007; in-family excluded from the acquired batch: SRC-009, SRC-008",
       "role": "contract/acquisition chain",
       "rule": "P-SEL-2",
       "slot": "incremental"
@@ -69,7 +69,7 @@
       "excluded_candidate_ids": [],
       "family_id": "california-state-auditor",
       "lineage_group": "california-state-auditor",
-      "rationale": "the independent oversight shape (S5) \u2014 oversight/governance predicates yielding provenance distinct from municipal self-report; a net-new target \u2014 a new provenance family; wins the oversight slot under acq-score/1 rank order (score 23)",
+      "rationale": "the independent oversight shape (S5) \u2014 oversight/governance predicates yielding provenance distinct from municipal self-report; an improvement under the registered ca_state_auditor row \u2014 a first-class acquisition; wins the oversight slot under acq-score/1 rank order (score 23)",
       "role": "independent oversight",
       "rule": "P-SEL-3",
       "slot": "incremental"
@@ -150,7 +150,7 @@
     },
     {
       "candidate_id": "SRC-024",
-      "detail": "Part VIII screening is owed work \u2014 an unscreened family cannot enter a bounded batch",
+      "detail": "Part VIII screening is owed work \u2014 a family flagged for possible excluded-category content cannot enter a bounded batch (a flagless screening_required means a screen is drafted, not that excluded content is suspected)",
       "family": "DLA LESO 1033 equipment holdings/transfers subset",
       "lineage_group": "us-federal-dla",
       "reason": "preflight_screening_owed",
@@ -158,7 +158,7 @@
     },
     {
       "candidate_id": "SRC-025",
-      "detail": "Part VIII screening is owed work \u2014 an unscreened family cannot enter a bounded batch",
+      "detail": "Part VIII screening is owed work \u2014 a family flagged for possible excluded-category content cannot enter a bounded batch (a flagless screening_required means a screen is drafted, not that excluded content is suspected)",
       "family": "FAA Part 107 waiver issued records",
       "lineage_group": "us-federal-faa",
       "reason": "preflight_screening_owed",
@@ -174,7 +174,15 @@
     },
     {
       "candidate_id": "SRC-027",
-      "detail": "prohibited_until_review \u2014 metadata-only research path; an explicit content-admissibility + rights decision is owed before any acquisition",
+      "detail": "blocked disposition \u2014 rights/sensitive rejection is score-independent",
+      "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
+      "lineage_group": "san-diego-municipal",
+      "reason": "blocked",
+      "score": -8
+    },
+    {
+      "candidate_id": "SRC-027",
+      "detail": "rejected \u2014 the Part VIII excluded content is permanently barred (E4-B3: the workbook path stays metadata-only forever; the link-label metadata path is kept)",
       "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
       "lineage_group": "san-diego-municipal",
       "reason": "prohibited_metadata_only",

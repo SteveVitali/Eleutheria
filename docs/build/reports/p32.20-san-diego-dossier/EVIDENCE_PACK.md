@@ -1,14 +1,14 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 # P32.20 — San Diego dossier evidence pack (offline)
 
-Packet `sig.dossier-packet/1` / dossier `san-diego-sdpd-alpr` — as-of 2026-10-01 (world) / 2026-10-01 (belief). Every row names the bytes the claims were read from and how those bytes were obtained. `live_verification=false`: nothing below is a live capture.
+Packet `sig.dossier-packet/1` / dossier `san-diego-sdpd-alpr` — as-of 2026-09-27 (world) / 2026-09-27 (belief). Every row names the bytes the claims were read from and how those bytes were obtained. `live_verification=false`: nothing below is a live capture.
 
 | document | bytes | capture digest (multihash) | how obtained | claims |
 |---|---|---|---|---|
-| `sd-asr-2025-vigilant` | 1002 | `bcnahgc5tkk62ylpau3asf4liv3iimsw…` | pdf_text / subscription | 11 |
-| `sd-pab-index` | 371 | `bcnais6jwoqh5qhgonafhpwkyc4uhmyi…` | html_text / document | 5 |
-| `sd-technology-index` | 460 | `bcnam7m3jdbew42nnr7wgn4zti7hy3nq…` | html_text / document | 8 |
-| `sd-ubicquia-agreement-2023` | 965 | `bcnap7tmundad3eb75ztrshepb3ign44…` | pdf_text / document | 13 |
+| `sd-asr-2025-vigilant` | 1002 | `bcnahgc5tkk62ylpau3asf4liv3iimsw…` | pdf_text / subscription / fixture_replay | 11 |
+| `sd-pab-index` | 371 | `bcnais6jwoqh5qhgonafhpwkyc4uhmyi…` | html_text / document / fixture_replay | 5 |
+| `sd-technology-index` | 460 | `bcnam7m3jdbew42nnr7wgn4zti7hy3nq…` | html_text / document / fixture_replay | 8 |
+| `sd-ubicquia-agreement-2023` | 965 | `bcnap7tmundad3eb75ztrshepb3ign44…` | pdf_text / document / fixture_replay | 13 |
 
 ## Document inventory and what each supports
 
@@ -40,12 +40,12 @@ Packet `sig.dossier-packet/1` / dossier `san-diego-sdpd-alpr` — as-of 2026-10-
 
 ## Part VIII preflight — metadata only
 
-- The ALPR index's 2024–2026 network-audit spreadsheet links (SRC-027) were reviewed by link/label metadata only. No workbook byte, XLSX container, ZIP member or `sharedStrings` stream was fetched, staged or transported; per-query audit workbooks may carry plates, person-level queries and officer identities — row-level acquisition stays `prohibited_until_review`.
+- The ALPR index's 2024–2026 network-audit spreadsheet links (SRC-027) were reviewed by link/label metadata only. No workbook byte, XLSX container, ZIP member or `sharedStrings` stream was fetched, staged or transported; per-query audit workbooks may carry plates, person-level queries and officer identities — the workbook acquisition path is `rejected` permanently (E4-B3 = a).
 - A safe agency-level aggregate could later support q8 through an approved workflow; it is optional and the dossier does not depend on it (PART_VIII_PREFLIGHT.json).
 
 ## Temporal distinctions (recorded, not resolved)
 
-- Stated dates are document dates — the 2023-12-15 vendor-signed date, the 2025 report period and the 2026-02-15 posted date are never promoted to the 2026-10-01 replay retrieved/observed date.
+- Stated dates are document dates — the 2023-12-15 vendor-signed date, the 2025 report period and the 2026-02-15 posted date are never promoted to capture dates: replayed records carry each fixture's real authoring commit time, read from git (never a fetch); the evidence anchor is 2026-09-27T12:06:40+00:00.
 - Captured index listings are not asserted to be the current versions: index currency is a live-pass question.
 
 ## Rights, review and acquisition posture

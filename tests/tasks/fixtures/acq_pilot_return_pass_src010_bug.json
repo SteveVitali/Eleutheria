@@ -1,9 +1,7 @@
 {
   "bounded_questions": [
-    "SRC-007 + SRC-006 (oklahoma-state \u2014 contract/acquisition chain): do the reviewed targets land the expected predicates (SRC-007: legal.authority, program.administration, temporal.applicability; SRC-006: contract.procurement, identity.vendor, funding.channel) as extractable facts under the rights-reviewed slice, HG-03-gated and byte-bounded?",
-    "SRC-007: Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?",
-    "SRC-011 (california-state-auditor \u2014 independent oversight): do the reviewed targets land the expected predicates (SRC-011: oversight.audit, governance.finding, usage.disclosure) as extractable facts under the rights-reviewed slice, HG-03-gated and byte-bounded?",
-    "SRC-011: Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified \u2014 and under what attribution may findings be quoted?"
+    "SRC-010 (sourcewell-cooperative): does the master cooperative contract's master identifier \u2192 vendor \u2192 participation \u2192 ordering chain land as extractable contract predicates under the rights-reviewed slice (the contract back-chain the municipal packets only mirror)?",
+    "SRC-011 (california-state-auditor): do the audit findings, agency survey answers and recommendations land as one-auditor-provenance independent oversight (respondent survey answers are never treated as independently verified)?"
   ],
   "deferral": "D-P32.21-1",
   "families": [
@@ -19,13 +17,13 @@
         "SRC-008"
       ],
       "family": "oklahoma-state",
-      "kind": "improvement",
+      "kind": "new_target",
       "new_protocol_families": 0,
       "protocols": [
         "html_text",
         "pdf_text"
       ],
-      "registered_source": "ok_dac_uved",
+      "registered_source": null,
       "retry_budget_per_target": 2,
       "slot": "incremental",
       "targets": [
@@ -39,8 +37,7 @@
         {
           "candidate_id": "SRC-007",
           "doc_id": "src-007-target-2",
-          "existing_source": "ok_statute",
-          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: legal.authority, program.administration, temporal.applicability; rides the existing green source 'ok_statute' \u2014 its recorded basis applies (E4-B5 = a)",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: legal.authority, program.administration, temporal.applicability",
           "kind": "document_capture",
           "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
         },
@@ -68,13 +65,13 @@
       "document_cap": 10,
       "excluded_candidate_ids": [],
       "family": "california-state-auditor",
-      "kind": "improvement",
+      "kind": "new_target",
       "new_protocol_families": 0,
       "protocols": [
         "html_text",
         "pdf_text"
       ],
-      "registered_source": "ca_state_auditor",
+      "registered_source": null,
       "retry_budget_per_target": 2,
       "slot": "incremental",
       "targets": [
@@ -95,9 +92,6 @@
       ]
     }
   ],
-  "green_source_notes": [
-    "src-007-target-2 rides the existing green source 'ok_statute' (E4-B5 = a \u2014 no invented reapproval)"
-  ],
   "non_goals": [
     "no source rights flip or ingestion_permitted change",
     "no operator-gate completion or fabricated approval ref",
@@ -115,7 +109,7 @@
   ],
   "preconditions": [
     "HG-03 exact-target source/rights review per target URL (the three rights lanes \u2014 raw document, fact extraction, derived publication \u2014 are separately decided; a state/local cooperative is not a federal public-domain assumption)",
-    "Part VIII preflight per family \u2014 SRC-007 carries 0 flag(s), status screening_required, SRC-006 carries 0 flag(s), status screening_required, SRC-011 carries 0 flag(s), status screening_required; the drafted screens (ADR-185) precede capture, and the B-42 agent clear is recorded by the capture rows, never here",
+    "Part VIII preflight per family \u2014 SRC-010/011 carry no flags but are status not_assessed; the screening must run before capture",
     "municipal-publication review where observed (both incremental families carry municipal_publication_observed)",
     "resource bounds identical to the replay path (html_text/pdf_text only, page/byte caps) \u2014 new protocol families: 0 of 2 allowed",
     "\u226410 approved documents/aggregate rows per family; \u22642 incremental families; \u22645 families total \u2014 the caps are hard, expansion is a new scope decision"

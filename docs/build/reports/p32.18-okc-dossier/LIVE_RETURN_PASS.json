@@ -7,6 +7,9 @@
     "the OSCN statutory version effective for the UVED program window"
   ],
   "deferral": "D-P32.18-1",
+  "green_source_notes": [
+    "O4 (okc-statute-47-7-606-1), O5 (okc-ops-manual-5-118) and O6 (okc-purchasing-index) ride the existing green sources ok_statute / okcpd_policy / okc_procurement — E4-B5 = a: no invented reapproval; the recorded basis applies"
+  ],
   "non_goals": [
     "no source rights flip inside this packet",
     "no operator-gate completion",
@@ -42,18 +45,21 @@
     },
     {
       "doc_id": "okc-statute-47-7-606-1",
+      "existing_source": "ok_statute",
       "goal": "verify the effective statutory version on the live OSCN page",
       "kind": "document_page",
       "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
     },
     {
       "doc_id": "okc-ops-manual-5-118",
+      "existing_source": "okcpd_policy",
       "goal": "capture the 6th-edition manual §5-118 pages (real PDF)",
       "kind": "document_page",
       "url": "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf"
     },
     {
       "doc_id": "okc-purchasing-index",
+      "existing_source": "okc_procurement",
       "goal": "locate the executed-contract record for C241032 (edge WAF may refuse — record the refusal)",
       "kind": "document_page",
       "url": "https://www.okc.gov/departments/finance/purchasing"

@@ -63,6 +63,10 @@ disposition = "link_only"
 [sources.buyboard]
 disposition = "link_only"
 
+[sources.ca_state_auditor]
+disposition = "reference"
+note = "P34.38 gated placeholder (SRC-011) — bounded document capture rides the dossier/pilot path under HG-03; no live connector"
+
 [sources.ca_sharing_visualization]
 disposition = "link_only"
 
@@ -244,6 +248,14 @@ disposition = "link_only"
 
 [sources.oklahoman]
 disposition = "link_only"
+
+[sources.ok_dac_uved]
+disposition = "reference"
+note = "P34.38 gated placeholder (SRC-007) — bounded document capture rides the dossier/pilot path under HG-03; no live connector"
+
+[sources.ok_omes_contracts]
+disposition = "reference"
+note = "P34.38 gated placeholder (SRC-006) — bounded document capture rides the dossier/pilot path under HG-03; no live connector"
 
 [sources.omnia_partners]
 disposition = "link_only"

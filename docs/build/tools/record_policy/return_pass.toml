@@ -355,3 +355,21 @@ rerun_cell = '''-1: `implement-spec spec=docs/tickets/224_P34.21b__attribution-r
   go = '''verbatim-go: the verbatim republish #2 go (HG-11 semantics)'''
   rerun = '''implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true'''
   live_dependants = ["P35.35", "P35.43", "P35.58", "P35.59", "P36.50", "P36.53", "P37.55"]
+
+[[row]]
+key = "P34.38"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued BidNet terms-capture leg (no deferral id of its own — it works the recorded E4-R6a answer; the rights decision keeps its manifest home at row 350)'''
+gates_cell = '''public read-only GET of `https://www.bidnetdirect.com/terms` under the project UA (SIG-INGEST-036), robots `Crawl-delay: 5` honoured; gated on `live:P35.38a` — the UA's owned `/data-collection/` page live (probed 2026-10-07T12:09Z: `/` 200, `/data-collection/` 404 → not yet); the operator's recorded E4-R6a answer ("a — capture bidnetdirect.com terms, then decide", round 17 2026-10-01T04:49:27Z) is the go; the terms land verbatim in `docs/build/reports/rights/bidnet_direct.md`, never paraphrased'''
+operator_cell = '''nothing for the leg itself — wait until `live:P35.38a` holds; the rights decision on the captured terms stays the operator's at GATE-G6 at the latest (S6R-28)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (scope: the BidNet terms capture only) · landed as row 246 (PR #243; prep shipped — the leg queued, never executed)'''
+
+  [[row.legs]]
+  id = "P34.38-bidnet-terms"
+  obligations = []
+  earliest = '''when `live:P35.38a` holds — the project UA's owned `/data-collection/` page live'''
+  excluded = []
+  go = '''none — the operator's recorded E4-R6a answer is the go (a public GET, not a production write)'''
+  rerun = '''implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true'''
+  live_dependants = []

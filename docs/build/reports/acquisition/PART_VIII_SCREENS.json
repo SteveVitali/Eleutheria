@@ -1,0 +1,126 @@
+{
+  "schema": "sig.part-viii-screen-drafts/1",
+  "generated_at": "2026-10-07",
+  "ticket": "P34.38",
+  "authority": "ADR-185 (E4-B2 → B-42 \"Agent clears, disclosed\", 2026-10-01T04:51:39Z)",
+  "disclosure": "cleared by agent screen, no human review — every readout and source page relying on a B-42 clear must carry this label",
+  "clear_recorded_here": false,
+  "clear_note": "the drafts are recorded here; B-42's agent clear is recorded by the P37.16a/b capture rows at capture time (plan §5.9) — never in this file",
+  "operator_answers_recorded_as_data": {
+    "E4-B1": {
+      "answer": "a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets",
+      "round": 3,
+      "answered_at": "2026-10-01T04:03:25Z",
+      "record": "prepared HG-03 flip patch on r11/sources-flips (S6R-17) — never applied by the agent"
+    },
+    "E4-B2": {
+      "answer": "Agent clears, disclosed",
+      "round": 18,
+      "answered_at": "2026-10-01T04:51:39Z",
+      "record": "the five screen drafts below; the clear itself lands on the P37.16a/b capture rows"
+    },
+    "E4-B3": {
+      "answer": "a",
+      "round": 18,
+      "answered_at": "2026-10-01T04:51:39Z",
+      "record": "SRC-027 workbooks metadata-only permanently — queue row preflight.status = \"rejected\"; link-label metadata path kept (tasks/src/tasks/data/acquisition_queue.toml; PART_VIII_PREFLIGHT.json)"
+    },
+    "E4-B4": {
+      "answer": "a",
+      "round": 18,
+      "answered_at": "2026-10-01T04:51:39Z",
+      "record": "per-target byte-bound exception + one bounded retry on sd-alpr-use-policy and sd-pab-recommendation-2025 (LIVE_RETURN_PASS.json targets)"
+    },
+    "E4-B5": {
+      "answer": "a",
+      "round": 18,
+      "answered_at": "2026-10-01T04:51:39Z",
+      "record": "no re-approval for the four green-source targets — O4/O5/O6 and P2 (src-007-target-2) ride ok_statute/okcpd_policy/okc_procurement; existing_source named in the return passes"
+    },
+    "E4-B6": {
+      "answer": "a",
+      "round": 18,
+      "answered_at": "2026-10-01T04:51:39Z",
+      "record": "Round 11 adds the 3 gated registry rows: ok_omes_contracts (SRC-006), ok_dac_uved (SRC-007), ca_state_auditor (SRC-011) — all ingestion_permitted=false"
+    },
+    "E4-R6a": {
+      "answer": "a — capture bidnetdirect.com terms, then decide",
+      "round": 17,
+      "answered_at": "2026-10-01T04:49:27Z",
+      "record": "leg QUEUED — live:P35.38a unproven (/data-collection/ 404 at 2026-10-07T12:09Z); re-run prompt recorded in LEDGER RETURN PASS"
+    },
+    "E4-R6b": {
+      "answer": "a — close periscope_s2g as superseded",
+      "round": 17,
+      "answered_at": "2026-10-01T04:49:27Z",
+      "record": "recorded as data in docs/build/reports/rights/periscope_s2g.md — the operator's answer, not a rights decision made here"
+    }
+  },
+  "screens": [
+    {
+      "family": "okc-municipal",
+      "members": ["SRC-001"],
+      "return_pass": "docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_PASS.json",
+      "preflight": {
+        "status": "screening_required",
+        "screener": "agent (draft)",
+        "screened_on": "2026-10-07",
+        "lanes": ["S6 free-text excerpts", "S7 incidental private names"],
+        "flags": [],
+        "notes": "city usage page + council memo + contract amendment — municipal documents; incidental staff/private names redacted at extraction (S7); excerpts pass the SIG-PUB-014a screen (S6)"
+      }
+    },
+    {
+      "family": "tulsa-municipal",
+      "members": ["SRC-002"],
+      "return_pass": "docs/build/reports/p32.19-tulsa-dossier/LIVE_RETURN_PASS.json",
+      "preflight": {
+        "status": "screening_required",
+        "screener": "agent (draft)",
+        "screened_on": "2026-10-07",
+        "lanes": ["S5 officer names (§43.4 naming gate stands)", "S6 free-text excerpts", "S7 incidental private names"],
+        "flags": [],
+        "notes": "TPD policies 113C/113E + camera-integration MOU template — policy text may name officers; names suppressed under the naming gate"
+      }
+    },
+    {
+      "family": "san-diego-municipal",
+      "members": ["SRC-003", "SRC-004", "SRC-005"],
+      "return_pass": "docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json",
+      "preflight": {
+        "status": "screening_required",
+        "screener": "agent (draft)",
+        "screened_on": "2026-10-07",
+        "lanes": ["S5 officer names (§43.4 naming gate stands)", "S6 free-text excerpts", "S7 incidental private names", "S9 row-specific — Ubicquia signature blocks name persons; suppressed at extraction"],
+        "flags": [],
+        "notes": "Vigilant ASR + Ubicquia agreement + technology/PAB indexes — signature blocks and officer names suppressed per S5/S9; SRC-027's workbook path is rejected permanently (E4-B3)"
+      }
+    },
+    {
+      "family": "oklahoma-state",
+      "members": ["SRC-006", "SRC-007"],
+      "return_pass": "docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json",
+      "preflight": {
+        "status": "screening_required",
+        "screener": "agent (draft)",
+        "screened_on": "2026-10-07",
+        "lanes": ["S6 free-text excerpts", "S7 incidental private names"],
+        "flags": [],
+        "notes": "OMES statewide-contract channel + DAC UVED program pages — incidental staff names redacted at extraction"
+      }
+    },
+    {
+      "family": "california-state-auditor",
+      "members": ["SRC-011"],
+      "return_pass": "docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json",
+      "preflight": {
+        "status": "screening_required",
+        "screener": "agent (draft)",
+        "screened_on": "2026-10-07",
+        "lanes": ["S5 officer/respondent names (naming gate)", "S6 free-text excerpts", "S7 incidental private names"],
+        "flags": [],
+        "notes": "audit index + survey responses — respondent survey answers are the Auditor's provenance, never independently verified; respondent/officer names suppressed under the naming gate"
+      }
+    }
+  ]
+}

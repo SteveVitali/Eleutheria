@@ -19,11 +19,11 @@
   "preconditions": [
     "HG-03 source/rights review per target (published-URL ownership screen)",
     "Part VIII preflight holds — the network-audit family stays metadata-only: no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query transport EVER",
-    "explicit SRC-027 content-admissibility decision before any audit-bytes path (aggregate production only)",
+    "SRC-027's content-admissibility decision is RECORDED (E4-B3 = a): workbook bytes rejected permanently — aggregate production only under an approved method",
     "resource bounds identical to the replay path (2 protocols, page/byte caps) — the ~16 MB PAB recommendation needs an approved method",
     "the drafted records requests are reviewed before any filing — sending is a separate operator act, never this pass's output"
   ],
-  "reason_deferred": "live_verification=false: D-R10-SOURCES-1 stays OPEN — source/evidence-use review and the HG-03 rights decision are pending; SRC-027 additionally needs an explicit content-admissibility decision before ANY workbook transport",
+  "reason_deferred": "live_verification=false: D-R10-SOURCES-1 stays OPEN — source/evidence-use review and the HG-03 rights decision are pending; SRC-027's workbook path is rejected permanently (E4-B3 = a) — metadata only",
   "schema": "sig.dossier-live-return-pass/1",
   "status": "prepared_not_executed",
   "targets": [
@@ -58,12 +58,16 @@
       "url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr"
     },
     {
+      "bounded_retries": 1,
+      "byte_bound_exception": "per-target exception under E4-B4 (a)",
       "doc_id": "sd-alpr-use-policy",
       "goal": "capture the index-linked ALPR Use Policy (the recorded 403 needs an approved bounded method) — authority, retention and use/sharing restrictions for the streetlight program",
       "kind": "clause_fields",
       "url": "https://www.sandiego.gov/sites/default/files/alpr-use-policy.pdf"
     },
     {
+      "bounded_retries": 1,
+      "byte_bound_exception": "per-target exception under E4-B4 (a)",
       "doc_id": "sd-pab-recommendation-2025",
       "goal": "capture the PAB recommendation (~16 MB — over the connector's byte bound; needs an approved method) and check council records for adoption/rejection — the recommendation stays proposed until evidence lands",
       "kind": "document_page",
@@ -77,7 +81,7 @@
     },
     {
       "doc_id": "sd-network-audit-links",
-      "goal": "PREFLIGHT ONLY (SRC-027, prohibited_until_review): the 2024–2026 network-audit spreadsheet links — link/label metadata only; no workbook, XLSX, ZIP member or sharedStrings transport; row-level content prohibited until an explicit content-admissibility + rights decision",
+      "goal": "PREFLIGHT ONLY (SRC-027, rejected under E4-B3 — metadata only permanently): the 2024–2026 network-audit spreadsheet links — link/label metadata only; no workbook, XLSX, ZIP member or sharedStrings transport; row-level content rejected permanently",
       "kind": "metadata_only_preflight",
       "url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr"
     }

@@ -26,7 +26,8 @@ fails if the behaviour it names is removed:
 * **Part VIII preflight is metadata-only** — the network-audit
   spreadsheet links (SRC-027) record a link-metadata preflight; no
   workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query content
-  is transported; row-level acquisition stays ``prohibited_until_review``;
+  is transported; the workbook acquisition path is ``rejected``
+  permanently (E4-B3 = a);
 * **temporal honesty** — the 2023-12-15 vendor-signed date, the 2025
   report period and the 2026-02-15 posted date stay document dates,
   never promoted to capture dates — the replay's retrieved/observed
@@ -501,7 +502,11 @@ def test_network_audit_preflight_is_metadata_only() -> None:
     pf = sd.network_audit_preflight()
     assert pf["schema"] == "sig.part-viii-preflight/1"
     assert pf["workbook_transport"] == "never"
-    assert pf["acquisition_status"] == "prohibited_until_review"
+    assert pf["acquisition_status"] == "rejected"
+    # E4-B3 = a recorded as data: the workbook path is permanently barred,
+    # the link-label metadata path kept.
+    assert pf["decision"]["ref"] == "E4-B3"
+    assert pf["decision"]["answer"] == "a"
     assert pf["deferral"] == "D-P32.20-1"
     assert pf["prohibited_content"]
     assert "SRC-027" in pf["source_reference"]
@@ -613,6 +618,17 @@ def test_live_return_pass_is_bounded_and_unexecuted() -> None:
     assert rp["bounded_questions"]
 
 
+def test_live_return_pass_records_byte_bound_exception() -> None:
+    """E4-B4 = a — the two over-bound/403 targets carry the recorded
+    per-target byte-bound exception plus exactly ONE bounded retry."""
+    rp = sd.live_return_pass()
+    by_id = {t["doc_id"]: t for t in rp["targets"]}
+    for doc_id in ("sd-alpr-use-policy", "sd-pab-recommendation-2025"):
+        t = by_id[doc_id]
+        assert t["byte_bound_exception"]
+        assert t["bounded_retries"] == 1
+
+
 def test_evidence_pack_names_captures_and_posture() -> None:
     md = sd.evidence_pack_markdown()
     for needle in (
@@ -625,7 +641,7 @@ def test_evidence_pack_names_captures_and_posture() -> None:
         "D-R10-SOURCES-1",
         "sd-asr-2025-vigilant",
         "sd-ubicquia-agreement-2023",
-        "prohibited_until_review",
+        "rejected",
         "records_requests_sent",
     ):
         assert needle in md

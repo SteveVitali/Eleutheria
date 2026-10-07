@@ -49,7 +49,7 @@ links = [
 lineage_class = "independent_account"
 lineage_group = "okc-municipal"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S6 (free-text excerpts), S7 (incidental staff/private names redacted at extraction); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 3, R = 3, I = 2, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
 dimension_evidence = "P0 dossier (G=3) closing owned-vs-partner + retention gap (R=3); same OKC publisher as permitted rows (I=2); 2-page memo+amendment (U=2); announced retention change (T=2); S2 city (J=3); effort M (E=2); intermittent 403 (A=2); no personal fields flagged (S=0)"
 extra_questions = [
@@ -67,7 +67,7 @@ links = [
 lineage_class = "independent_account"
 lineage_group = "tulsa-municipal"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S5 (officer names in policy text — §43.4 naming gate stands), S6 (free-text excerpts), S7 (incidental private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 3, R = 3, I = 3, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
 dimension_evidence = "P0 dossier (G=3); fixed Flock-vs-Axon + registration-vs-integration + policy terms (R=3); net-new TPD publisher (I=3); HTML+MOU+policy docs (U=2); current policies page (T=2); S2 city (J=3); effort M (E=2); executed contract not found in bounded search (A=2); none flagged (S=0)"
 extra_questions = [
@@ -83,7 +83,7 @@ target_predicates = ["inventory.technology", "access.subscription", "oversight.r
 lineage_class = "independent_account"
 lineage_group = "san-diego-municipal"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S5 (officer names — naming gate), S6 (free-text excerpts), S7 (incidental private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 3, R = 2, I = 3, U = 3, T = 3, J = 3, E = 2, A = 2, S = 0 }
 dimension_evidence = "P0 dossier (G=3); agency-described tech + subscription access distinctions (R=2); net-new City publisher distinct from county/port tenants (I=3); index + annual reports structure (U=3); annual reporting periods (T=3); S2 city (J=3); effort M (E=2); linked use policy 403 (A=2); none flagged (S=0)"
 extra_questions = [
@@ -98,7 +98,7 @@ target_predicates = ["contract.procurement", "identity.vendor_role", "funding.am
 lineage_class = "independent_account"
 lineage_group = "san-diego-municipal"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S6 (free-text excerpts), S7 (incidental private names), S9 (Ubicquia signature blocks name persons — suppressed at extraction; naming gate on any officer/person name); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 3, R = 3, I = 3, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
 dimension_evidence = "P0 dossier (G=3); buyer/prime/subcontractor/product chain (R=3); no matching procurement row (I=3); 85-page Ubicquia PDF selected sections (U=2); FY2024 table (T=2); S2 city (J=3); effort M (E=2); excerpts + signature review pending (A=2); none flagged (S=0)"
 extra_questions = [
@@ -113,7 +113,7 @@ target_predicates = ["oversight.recommendation", "governance.review", "lifecycle
 lineage_class = "independent_account"
 lineage_group = "san-diego-municipal"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S5 (officer names — naming gate), S6 (free-text excerpts), S7 (incidental private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 3, R = 2, I = 3, U = 1, T = 2, J = 3, E = 2, A = 3, S = 0 }
 dimension_evidence = "P0 dossier (G=3); recommendation existence + targeted review (R=2); distinct PAB oversight publisher (I=3); index + search excerpt only (U=1); 2025 recommendation (T=2); S2 city (J=3); effort M (E=2); direct PDF open failed (A=3); none flagged (S=0)"
 extra_questions = [
@@ -129,10 +129,13 @@ authority = "Oklahoma Office of Management and Enterprise Services (OMES)"
 gap = "P1: Oklahoma statewide contract channel for surveillance-equipment vendors (contract ids, vendors, procurement channel)"
 content_window = "current statewide contract register"
 target_predicates = ["contract.procurement", "identity.vendor", "funding.channel"]
+links = [
+  { id = "ok_omes_contracts", kind = "same_source", note = "the gated P34.38 registry row IS this candidate (E4-B6) — acquisition rides that row, never a second onboarding" },
+]
 lineage_class = "independent_account"
 lineage_group = "oklahoma-state"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S6 (free-text excerpts), S7 (incidental private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 2, R = 3, I = 3, U = 3, T = 2, J = 2, E = 2, A = 2, S = 0 }
 dimension_evidence = "P1 local (G=2); state contract IDs/vendors/procurement channel (R=3); no OMES row (I=3); official contract-search index (U=3); statewide contracts current (T=2); Oklahoma state (J=2); effort M (E=2); index+excerpts only, portal terms unreviewed (A=2); none flagged (S=0)"
 
@@ -142,12 +145,13 @@ gap = "P0 dossier: UVED program administrator and the legal authority chain incl
 content_window = "current program pages + displayed 2027-01-01 statute version"
 target_predicates = ["legal.authority", "program.administration", "temporal.applicability"]
 links = [
+  { id = "ok_dac_uved", kind = "same_source", note = "the gated P34.38 registry row IS this candidate (E4-B6) — acquisition rides that row, never a second onboarding" },
   { id = "ok_statute", kind = "related", note = "existing OKC statute target — same legal provenance family, distinct program/authority review" },
 ]
 lineage_class = "independent_account"
 lineage_group = "oklahoma-state"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S6 (free-text excerpts), S7 (incidental staff/private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 3, R = 3, I = 2, U = 2, T = 2, J = 2, E = 2, A = 1, S = 0 }
 dimension_evidence = "P0 dossier (G=3); program administrator + legal-version authority chain (R=3); overlaps existing statute target — distinct program (I=2); two official pages (U=2); displayed version effective 2027-01-01 (T=2); Oklahoma state (J=2); effort M (E=2); opened_text (A=1); CSV: no personal records (S=0)"
 extra_questions = [
@@ -214,10 +218,13 @@ authority = "California State Auditor"
 gap = "P1: California State Auditor ALPR audit — findings, agency survey answers, recommendations"
 content_window = "2019–2020 audit (historical baseline)"
 target_predicates = ["oversight.audit", "governance.finding", "usage.disclosure"]
+links = [
+  { id = "ca_state_auditor", kind = "same_source", note = "the gated P34.38 registry row IS this candidate (E4-B6) — acquisition rides that row, never a second onboarding" },
+]
 lineage_class = "independent_account"
 lineage_group = "california-state-auditor"
 municipal_publication = true
-preflight = { status = "not_assessed" }
+preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S5 (respondent/officer names — naming gate), S6 (free-text excerpts), S7 (incidental private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
 dimensions = { G = 2, R = 3, I = 3, U = 3, T = 1, J = 1, E = 1, A = 2, S = 0 }
 dimension_evidence = "P1 bounded pilot (G=2); independent audit + agency survey + recommendations (R=3); no auditor row (I=3); structured report/survey tables (U=3); 2019–2020 historical (T=1); California (J=1); effort L-M (E=1); search excerpts only, open access unverified (A=2); none flagged (S=0)"
 extra_questions = [
@@ -494,7 +501,7 @@ target_predicates = ["audit.metadata", "aggregate.count", "sharing.network"]
 lineage_class = "derived_summary"
 lineage_group = "san-diego-municipal"
 municipal_publication = true
-preflight = { status = "prohibited_until_review", flags = ["license_plate", "personal_identifier"], notes = "Per-query audit workbooks may contain plates, person-level queries and officer identities — redacted label insufficient; acquisition prohibited until explicit content-admissibility + rights decision (metadata-only research path only)" }
+preflight = { status = "rejected", flags = ["license_plate", "personal_identifier"], notes = "E4-B3 = a (2026-10-01T04:51:39Z): the per-query network-audit workbooks are metadata-only PERMANENTLY — the workbook path is rejected (plates, person-level queries, officer identities; a redacted label is not a content-admissibility check). The link-label metadata path is kept — existence/period labels only; never workbook/XLSX/ZIP/sharedStrings or row-level transport. Recorded 2026-10-07." }
 dimensions = { G = 0, R = 1, I = 0, U = 1, T = 2, J = 3, E = 3, A = 3, S = 3 }
 dimension_evidence = "P3 metadata only (G=0); existence-of-links + period metadata only (R=1); derived aggregate over same SDPD audit lineage — not independent corroboration (I=0); index labels only (U=1); 2024–2026 audit labels (T=2); S2 city (J=3); effort H (E=3); files not fetched, acquisition prohibited (A=3); plates/queries/officer identities (S=3)"
 extra_questions = [
