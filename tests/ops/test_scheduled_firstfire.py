@@ -229,7 +229,7 @@ def test_l1_pass_table():
     reads = {r["trigger"]: r for r in report["named_reads"]}
     assert reads["sam_gov"]["recorded"] and reads["sam_gov"]["evidence_for"] == "D-FEDERAL.1-1"
     assert reads["sam_gov"]["run_rows"][0]["outcome"] == "quota_reached"
-    assert reads["muckrock"]["recorded"] and reads["muckrock"]["evidence_for"] == "D-FEDERAL.1-2"
+    assert reads["muckrock"]["recorded"] and reads["muckrock"]["evidence_for"] == "F1 NEW-7"
     assert report["out_of_scope"] == 1  # sam_gov (peel-on is excluded separately)
     assert report["untracked_schedulers"] == []
 

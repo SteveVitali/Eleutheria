@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-10-07T20:57:40.021468+00:00",
+  "generated_at": "2026-10-07T21:20:08.748763+00:00",
   "guard": {
     "failures": [
-      "scheduled fire 2026-10-29T12:00:00+00:00 is in the future (now 2026-10-07T20:57:40.021468+00:00)",
+      "scheduled fire 2026-10-29T12:00:00+00:00 is in the future (now 2026-10-07T21:20:08.748763+00:00)",
       "scheduler trigger has not fired (no lastAttemptTime)",
       "no Cloud Run execution exists at/after the fire"
     ],
     "holds": false,
-    "now": "2026-10-07T20:57:40.021468+00:00"
+    "now": "2026-10-07T21:20:08.748763+00:00"
   },
   "kind": "sig.scheduled-firstfire/1",
   "layer": "live",
@@ -19,8 +19,7 @@
   "non_blocking": true,
   "obligations": [
     "D-P31.4-1",
-    "D-FEDERAL.1-1",
-    "D-FEDERAL.1-2"
+    "D-FEDERAL.1-1"
   ],
   "project": "zeta-medley-508121-u7",
   "queued_fires": [

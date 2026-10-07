@@ -67,7 +67,7 @@ RERUN_PROMPT = (
 )
 
 SCHEMA = "sig.scheduled-firstfire/1"
-OBLIGATIONS = ("D-P31.4-1", "D-FEDERAL.1-1", "D-FEDERAL.1-2")
+OBLIGATIONS = ("D-P31.4-1", "D-FEDERAL.1-1")
 
 # Contract bounds — the first-fire wave's L1 window
 # (G1 §3.7's planning range; the fema fire is its close).
@@ -77,8 +77,9 @@ PEEL_ON_SOURCE = "camreg_peel_on"
 PEEL_ON_AFTER = "2026-10-29T12:00Z"  # future-ok: scheduled: contract L2 fire bound
 
 # The two named reads the contract carries alongside the wave (first-day
-# triggers whose evidence feeds D-FEDERAL rows).  Their scheduled times are
-# real-world cron facts — future-ok: scheduled: contract named reads.
+# triggers whose evidence feeds the federal/owed-register rows).  Their
+# scheduled times are real-world cron facts — future-ok: scheduled: contract
+# named reads.
 NAMED_READS: tuple[dict, ...] = (
     {
         "trigger": "sam_gov",
@@ -88,7 +89,9 @@ NAMED_READS: tuple[dict, ...] = (
     {
         "trigger": "muckrock",
         "expected": "2026-10-01T06:00Z",  # future-ok: scheduled: contract named read
-        "evidence_for": "D-FEDERAL.1-2",
+        # F1 NEW-7 — the owed-register note the contract names for muckrock;
+        # evidence only, no DEFERRALS row of its own is invented (OM-03).
+        "evidence_for": "F1 NEW-7",
     },
 )
 

@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-07T20:57:09.902666+00:00",
+  "generated_at": "2026-10-07T21:19:39.502923+00:00",
   "guard": {
     "failures": [
-      "the L1 first-fire wave is still open \u2014 its window closes 2026-10-21T06:09Z (now 2026-10-07T20:57:09.902666+00:00)"
+      "the L1 first-fire wave is still open \u2014 its window closes 2026-10-21T06:09Z (now 2026-10-07T21:19:39.502923+00:00)"
     ],
     "holds": false,
-    "now": "2026-10-07T20:57:09.902666+00:00"
+    "now": "2026-10-07T21:19:39.502923+00:00"
   },
   "kind": "sig.scheduled-firstfire/1",
   "layer": "live",
@@ -17,8 +17,7 @@
   "non_blocking": true,
   "obligations": [
     "D-P31.4-1",
-    "D-FEDERAL.1-1",
-    "D-FEDERAL.1-2"
+    "D-FEDERAL.1-1"
   ],
   "project": "zeta-medley-508121-u7",
   "queued_fires": [
