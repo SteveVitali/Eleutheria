@@ -758,6 +758,31 @@ def test_nightly_carries_the_full_audit_and_recorded_ci_stages() -> None:
     assert "npm=" in report["run"] and "recordedci=" in report["run"], (
         "a stage the report cannot see passes silently — wire both outcomes in"
     )
+
+
+def test_nightly_replays_build_memory_history() -> None:
+    """P34.7 (B4 G2): the nightly re-judges every first-parent commit read-only
+    against the committed register-derived oracle — the guard's own behaviour is a
+    regression-tested invariant, and the stage feeds the report gate."""
+    doc = _doc(NIGHTLY_YML)
+    job = next(iter(doc["jobs"].values()))
+    steps = {s.get("id"): s for s in job.get("steps", []) if s.get("id")}
+    rp = steps.get("replay")
+    assert rp is not None and "memory_guard.py" in rp["run"] and " replay " in rp["run"], (
+        "nightly must run `memory_guard.py replay` over the first-parent history"
+    )
+    assert "--oracle" in rp["run"] and "replay_expected.csv" in rp["run"], (
+        "the replay must compare against the committed oracle"
+    )
+    # the whole history — a shallow clone is refused by the guard itself (vacuous
+    # is never green), and the checkout must not be shallow for that reason
+    checkout = next(s for s in job["steps"] if "checkout" in (s.get("uses") or ""))
+    assert (checkout.get("with") or {}).get("fetch-depth") == 0
+    # a stage the report cannot see passes silently — the outcome must be wired in
+    report = next(s for s in job["steps"] if "nightly_report" in (s.get("run") or ""))
+    assert "replay=" in report["run"]
+    upload = next(s for s in job["steps"] if "upload-artifact" in (s.get("uses") or ""))
+    assert "memory-replay" in (upload.get("with") or {}).get("path", "")
     upload = next(s for s in job["steps"] if "upload-artifact" in (s.get("uses") or ""))
     paths = upload.get("with", {}).get("path", "")
     assert "npm-audit.txt" in paths and "recorded-ci.txt" in paths

@@ -14,11 +14,35 @@
 #                                                 "expires"; an expired entry no longer exempts (R5)
 #   exempt <path> <heading text>                  a generated ##/### region (heading contains the text) is not judged
 #   archive <dir>                                 an extra living-archived destination for the LEDGER head
+#   placeholder <token>                           a declared placeholder a fillable line may replace with real
+#                                                 text (`______` is the blank convention: any ≥3-underscore run)
+#   seed-commit <sha-prefix>                      (memory_guard.py only) a Stage-B seed commit: its
+#                                                 append-only findings are exempt — the seed wrote
+#                                                 corrections under seed_verify.py before the completed
+#                                                 modes existed (B4 §6.1)
 # An allow entry names its reason and the record that authorises it. Changing this file is reviewed like code.
 
 # ── Archive (B3 §3.5; SEED-10) ────────────────────────────────────────────────────────────────────────────
 # The Rounds 1–10 LEDGER head is archived byte-for-byte under memory-repair/ with a sha256 pointer.
 archive docs/build/reports/memory-repair
+
+# ── Declared placeholder tokens (B2 §7 `placeholder-fill`; P34.7) ────────────────────────────
+# A line in a fillable position (a PHASE LOG bullet's PR field, a BUILD_INDEX row's PR/branch
+# cell, a readout's `Disposition:`/`Signed by:` line, a closed run ledger's lines, a .jsonl
+# record's stamped fields, a `Gate status:` line in a ticket's first commit) may change only by
+# replacing one of these tokens with real text — every other byte is identical. A token written
+# `re:<ERE>` names a token family: `DRAFT-*` covers the Stage-B draft requirement ids
+# (`DRAFT-MEM-1`, `DRAFT-ENG-4`, …) that SEED-12's id map stamped with their final SIG-* ids —
+# a fill, not a rewrite. `(filled at closeout)` is the run-ledger template's close-time marker.
+placeholder PR pending
+placeholder #TBD
+placeholder <pending>
+placeholder pending push
+placeholder PENDING-COMMIT-SHA
+placeholder (pending)
+placeholder (filled at closeout)
+placeholder ______
+placeholder re:DRAFT-[A-Z]+-[0-9]+
 
 # ── Generated region (B3 §3.13; SEED-16, later P34.29's generator) ────────────────────────────────────────
 # The heading is "### RETURN PASS — current"; it is written here without the leading "###" because
@@ -65,3 +89,35 @@ allow docs/build/LEDGER.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
 # head). A row's first ISO timestamp is its record date (R1: not later than the commit that lands it).
 append-only docs/build/reports/ci/flake_log.csv
 date docs/build/reports/ci/flake_log.csv [0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}
+
+# ── Stage-B seed commits (P34.7) ─────────────────────────────────────────────────────────────
+# seed-commit <sha-prefix>                       a first-parent commit of the seed round: the seed wrote
+#                                                corrections, re-homes and id stamps under seed_verify.py
+#                                                before the completed modes existed (B4 §6.1). Its
+#                                                append-only findings are exempt — keyed by the commit
+#                                                prefix, so no later commit can borrow the exemption.
+seed-commit f333b03e
+seed-commit 03effc4d
+seed-commit 8ccda04e
+seed-commit f68a3c96
+seed-commit 7bd2028c
+seed-commit 4b5c5398
+seed-commit cac65a17
+seed-commit c1382e83
+seed-commit 4cd43ce0
+seed-commit 08026350
+seed-commit 06724e3b
+seed-commit 87128d43
+seed-commit 4b346d51
+seed-commit 412cb337
+seed-commit e2ab1897
+seed-commit 044ffd0b
+seed-commit 9720b96c
+seed-commit 41cc0554
+seed-commit 02bf5d56
+seed-commit 4a921bb9
+seed-commit 850805aa
+seed-commit dbc04973
+seed-commit 375a8728
+seed-commit 23094c8c
+seed-commit b4f52e4d
