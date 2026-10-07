@@ -1,0 +1,62 @@
+{
+  "completions": [
+    {
+      "completion_id": "c-0001",
+      "run_id": "aa000001-0000-4000-8000-0000000000f1",
+      "source_id": "fbi_cde_agency_registry",
+      "status": "ok",
+      "finished_at": "2026-10-01T05:07:10Z",
+      "claims_inserted": 1844
+    },
+    {
+      "completion_id": "c-0002",
+      "run_id": "aa000002-0000-4000-8000-0000000000a2",
+      "source_id": "muckrock",
+      "status": "ok",
+      "finished_at": "2026-10-01T06:15:01Z",
+      "claims_inserted": 612
+    },
+    {
+      "completion_id": "c-0003",
+      "run_id": "aa000003-0000-4000-8000-0000000000b7",
+      "source_id": "usaspending",
+      "status": "ok",
+      "finished_at": "2026-10-03T05:23:44Z",
+      "claims_inserted": 42015
+    },
+    {
+      "completion_id": "c-0004",
+      "run_id": "aa000005-0000-4000-8000-0000000000d5",
+      "source_id": "camreg_osm_surveillance",
+      "status": "ok",
+      "finished_at": "2026-10-10T04:12:55Z",
+      "claims_inserted": 1369213
+    },
+    {
+      "completion_id": "c-0006",
+      "run_id": "aa000006-0000-4000-8000-0000000000e9",
+      "source_id": "camreg_peel_on",
+      "status": "ok",
+      "finished_at": "2026-10-29T12:05:40Z",
+      "claims_inserted": 47
+    }
+  ],
+  "counters": {
+    "claim": {
+      "n_tup_upd": 0,
+      "n_tup_del": 0
+    },
+    "claim_evidence": {
+      "n_tup_upd": 0,
+      "n_tup_del": 0
+    },
+    "ingest_run": {
+      "n_tup_upd": 0,
+      "n_tup_del": 0
+    },
+    "ingest_run_completion": {
+      "n_tup_upd": 0,
+      "n_tup_del": 0
+    }
+  }
+}

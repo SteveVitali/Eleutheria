@@ -108,6 +108,29 @@ def previous_fire(cron: str, now: datetime) -> datetime:
     raise CronError(f"{cron!r} did not fire in the {_MAX_LOOKBACK_DAYS} days before {now}")
 
 
+def next_fire(cron: str, now: datetime) -> datetime:
+    """The earliest time at or after ``now`` (UTC) at which ``cron`` fires.
+
+    The forward mirror of :func:`previous_fire` — P34.39b uses it to name a
+    trigger's first scheduled fire after its deployment (``userUpdateTime``)
+    or after a contract bound.
+    """
+    fields = parse_cron(cron)
+    minutes, hours = sorted(fields[0]), sorted(fields[1])
+    now = now.astimezone(UTC).replace(second=0, microsecond=0)
+    clean = " ".join(cron.split("#", 1)[0].split())
+    for fwd in range(_MAX_LOOKBACK_DAYS):
+        day = now.date() + timedelta(days=fwd)
+        if not _day_matches(clean, day, fields):
+            continue
+        for hour in hours:
+            for minute in minutes:
+                fire = datetime(day.year, day.month, day.day, hour, minute, tzinfo=UTC)
+                if fire >= now:
+                    return fire
+    raise CronError(f"{cron!r} fires nowhere in the {_MAX_LOOKBACK_DAYS} days after {now}")
+
+
 def cron_for_source(config: CadenceConfig, source_id: str) -> str | None:
     """The cron that schedules ``source_id``: its own row, else its batch's."""
     for row in config.sources:
@@ -128,6 +151,7 @@ __all__ = [
     "CronError",
     "cron_for_source",
     "logical_run_key",
+    "next_fire",
     "parse_cron",
     "previous_fire",
 ]

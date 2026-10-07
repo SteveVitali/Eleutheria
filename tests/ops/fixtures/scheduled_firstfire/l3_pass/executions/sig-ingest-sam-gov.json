@@ -1,0 +1,30 @@
+[
+  {
+    "metadata": {
+      "name": "sig-ingest-sam-gov-9102e",
+      "creationTimestamp": "2026-10-05T05:00:12Z"
+    },
+    "status": {
+      "startTime": "2026-10-05T05:00:31Z",
+      "completionTime": "2026-10-05T05:41:09Z",
+      "succeededCount": 1,
+      "failedCount": 0,
+      "cancelledCount": 0,
+      "observedGeneration": 2
+    }
+  },
+  {
+    "metadata": {
+      "name": "sig-ingest-sam-gov-4401b",
+      "creationTimestamp": "2026-10-01T05:00:04Z"
+    },
+    "status": {
+      "startTime": "2026-10-01T05:00:19Z",
+      "completionTime": "2026-10-01T05:47:55Z",
+      "succeededCount": 1,
+      "failedCount": 0,
+      "cancelledCount": 0,
+      "observedGeneration": 1
+    }
+  }
+]

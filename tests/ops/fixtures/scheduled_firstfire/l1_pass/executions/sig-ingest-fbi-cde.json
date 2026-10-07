@@ -1,0 +1,16 @@
+[
+  {
+    "metadata": {
+      "name": "sig-ingest-fbi-cde-ff10a",
+      "creationTimestamp": "2026-10-01T05:00:02Z"
+    },
+    "status": {
+      "startTime": "2026-10-01T05:00:20Z",
+      "completionTime": "2026-10-01T05:06:41Z",
+      "succeededCount": 1,
+      "failedCount": 0,
+      "cancelledCount": 0,
+      "observedGeneration": 1
+    }
+  }
+]

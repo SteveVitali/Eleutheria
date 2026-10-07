@@ -1,0 +1,4 @@
+{"kind": "scheduled-ingest", "source": "fbi_cde_agency_registry", "mode": "live",
+ "outcome": "ok", "exit_code": 0, "started_at": "2026-10-01T05:00:24Z",
+ "duration_seconds": 381.2, "claims_added": 1844, "capture_digests": ["sha256:f1"],
+ "ingest_run_id": "aa000001-0000-4000-8000-0000000000f1"}

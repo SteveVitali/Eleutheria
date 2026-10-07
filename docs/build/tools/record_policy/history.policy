@@ -196,6 +196,15 @@ allow tests/acceptance/fixtures/okc_sources.json 2027-07-01T00:00:00Z 2027-06-30
 # the values it names (R5); after the fire lands the literals are past-dated on their own.
 allow tests/ops/fixtures/scheduled_readback/* 2026-10-11T00:00:00Z 2026-10-10
 
+# P34.39b (D-P31.4-1 wave; ticket 248): the scheduled_firstfire fixtures are recorded
+# JSON captures of the scheduled 2026-10 first-fire wave (through the 10-21T06:09Z
+# close) and the 2026-10-29T12:00Z / 2026-11-29T12:00Z peel-on fires — JSON cannot
+# carry an inline marker, so the scheduled clocks are allow-listed per path-glob,
+# each expiry just past the literals it names so the entries die with the values
+# they name (R5); after the fires land the literals are past-dated on their own.
+allow tests/ops/fixtures/scheduled_firstfire/* 2026-11-30T00:00:00Z 2026-10-
+allow tests/ops/fixtures/scheduled_firstfire/* 2026-11-30T00:00:00Z 2026-11-
+
 # ── PLAN-11B C13 executed-flag exemption (ticket 239; recorded 2026-10-06) ────────────────────
 # Commit f9c407c8 (the C13 Phase-4 split commit) named `P35.1b`/`P35.1c` in its subject, so
 # `executed()` (B2 §7) marked row 291's contract "executing" mid-range and the sanctioned

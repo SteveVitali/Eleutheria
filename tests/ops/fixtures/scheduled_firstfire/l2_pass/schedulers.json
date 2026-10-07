@@ -1,0 +1,10 @@
+[
+  {
+    "name": "projects/sig-p/locations/us-central1/jobs/sig-sched-camreg-peel-on",
+    "schedule": "0 12 29 * *",
+    "state": "ENABLED",
+    "scheduleTime": "2026-11-29T12:00:01Z",
+    "lastAttemptTime": "2026-10-29T12:00:01.3Z",
+    "userUpdateTime": "2026-09-18T11:46:01Z"
+  }
+]

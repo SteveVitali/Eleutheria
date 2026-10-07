@@ -1,0 +1,4 @@
+{"kind": "scheduled-ingest", "source": "usaspending", "mode": "live",
+ "outcome": "ok", "exit_code": 0, "started_at": "2026-10-03T05:00:27Z",
+ "duration_seconds": 1294.3, "claims_added": 42015, "capture_digests": ["sha256:u1"],
+ "ingest_run_id": "aa000003-0000-4000-8000-0000000000b7"}
