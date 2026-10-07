@@ -1,0 +1,4 @@
+gs://example-proj-sig-backups/pg/:
+    145203  2026-09-15T12:49:56Z  gs://example-proj-sig-backups/pg/sig-20260915T124956Z.sql
+    147432  2026-09-15T12:52:52Z  gs://example-proj-sig-backups/pg/sig-20260915T125252Z.sql
+TOTAL: 2 objects, 292635 bytes (285.77 KiB)

@@ -37,6 +37,9 @@ SHELL_SCRIPTS = [
     "protect.sh",
     "alerts.sh",
     "cost-guard.sh",
+    "restore-drill.sh",
+    "restore-point.sh",
+    "logical-export.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -50,6 +53,9 @@ EXECUTABLE_SCRIPTS = [
     "protect.sh",
     "alerts.sh",
     "cost-guard.sh",
+    "restore-drill.sh",
+    "restore-point.sh",
+    "logical-export.sh",
 ]
 
 

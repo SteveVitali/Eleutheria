@@ -298,6 +298,29 @@ def build_parser() -> argparse.ArgumentParser:
     drill.add_argument(
         "--target-db", default="sig_restore", help="fresh database name to restore into"
     )
+    csdrill = sub.add_parser(
+        "cloudsql-drill",
+        help="P34.6: at-T append-only parity between two Cloud SQL instances "
+        "(the restore drill's verification half; DSNs arrive via "
+        "SIG_DRILL_DSN_SOURCE / SIG_DRILL_DSN_CLONE env, never argv)",
+    )
+    csdrill.add_argument("--at", required=True, help="restore point T (ISO-8601 UTC)")
+    csdrill.add_argument(
+        "--clone-instance",
+        required=True,
+        help="the drill instance name — must match sig-pg-drill(-b)?-<stamp> "
+        "(sig-pg is refused outright)",
+    )
+    csdrill.add_argument(
+        "--clone-started-at",
+        default=None,
+        help="when the clone op was submitted (ISO-8601 UTC; for the RTO field)",
+    )
+    csdrill.add_argument(
+        "--out",
+        default=None,
+        help="write the drill record JSON here (default: stdout only)",
+    )
 
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
     keepalive = sub.add_parser(
@@ -1588,6 +1611,63 @@ def _cmd_backup_drill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_cloudsql_drill(args: argparse.Namespace) -> int:
+    """P34.6: run the at-T parity comparison and emit the drill record."""
+    import os
+    from datetime import UTC, datetime
+
+    from .cloudsql_drill import DrillNameError, assert_drill_name, drill_parity
+
+    try:
+        clone_instance = assert_drill_name(args.clone_instance)
+    except DrillNameError as exc:
+        print(f"sig-ops cloudsql-drill: REFUSED — {exc}", file=sys.stderr)
+        return 42
+    source_dsn = os.environ.get("SIG_DRILL_DSN_SOURCE", "").strip()
+    clone_dsn = os.environ.get("SIG_DRILL_DSN_CLONE", "").strip()
+    if not source_dsn or not clone_dsn:
+        print(
+            "sig-ops cloudsql-drill: SIG_DRILL_DSN_SOURCE and SIG_DRILL_DSN_CLONE "
+            "must be set (env only — a DSN on argv leaks into the process list).",
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        at = datetime.fromisoformat(args.at.replace("Z", "+00:00"))
+        started = (
+            datetime.fromisoformat(args.clone_started_at.replace("Z", "+00:00"))
+            if args.clone_started_at
+            else None
+        )
+    except ValueError as exc:
+        print(f"sig-ops cloudsql-drill: bad timestamp — {exc}", file=sys.stderr)
+        return 2
+    record = drill_parity(
+        source_dsn=source_dsn,
+        clone_dsn=clone_dsn,
+        at=at,
+        clone_instance=clone_instance,
+        clone_started_at=started,
+        verified_at=datetime.now(UTC),
+    )
+    payload = record.as_json()
+    text = json.dumps(payload, indent=2, sort_keys=True)
+    print(text)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text + "\n")
+        print(f"sig-ops cloudsql-drill: record -> {args.out}")
+    if not record.reproduced:
+        print(
+            "sig-ops cloudsql-drill: FAILED — the clone does not reproduce the "
+            "source at T (see the per-table rows / watermark / sqitch fields).",
+            file=sys.stderr,
+        )
+        return 1
+    print("sig-ops cloudsql-drill: OK — exact append-only parity at the restore point.")
+    return 0
+
+
 def _cmd_keepalive_check(args: argparse.Namespace) -> int:
     from .alerts import alert_exit_code
     from .observe import verify_keepalive
@@ -2779,6 +2859,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_deploy(args)
     if args.command == "backup-drill":
         return _cmd_backup_drill(args)
+    if args.command == "cloudsql-drill":
+        return _cmd_cloudsql_drill(args)
     if args.command == "keepalive-check":
         return _cmd_keepalive_check(args)
     if args.command == "probe":
