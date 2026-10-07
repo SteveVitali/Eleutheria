@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01): the PHASE LOG ends with P34.34b's entry (PR #239 — a from-spine fixture export feeds the CI export-mode build, island budgets + Lighthouse run over it incl. the Round-10 routes and a mounted archive record, the broken-input leg fails loud, the fixture-substitution guard is wired); next → P34.35 (row 243).

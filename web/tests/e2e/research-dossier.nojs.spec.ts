@@ -94,4 +94,80 @@ test("the research dossier JSON endpoint emits the contract, without JS", async 
   const body = JSON.parse((await resp?.text()) ?? "{}");
   expect(body.schema).toBe("sig.research-dossier/1");
   expect(body.answers).toHaveLength(12);
+  // P34.35: the wire record carries the disclosure fields
+  expect(body.review_label).toBe("independent review not yet run");
+  expect(body.licence.artifact).toBe("CC-BY-4.0");
+  expect(body.permalink).toBe("https://surveillancegraph.org/research-dossier/okc-alpr/");
+  expect(body.evidence_posture.has_non_live).toBe(true);
+  expect(body.evidence_posture.stand_in_facts.length).toBeGreaterThan(0);
+});
+
+test("a non-live dossier discloses its evidence posture above the fold, without JS", async ({
+  page,
+}) => {
+  // P34.35 (DR-C4-03): a page resting on stand-in/transcription bytes says so
+  // before the answers — the disclosure precedes every answer section.
+  await page.goto(RESEARCH_PAGE);
+  const disclosure = page.getByTestId("non-live-disclosure");
+  await expect(disclosure).toBeVisible();
+  await expect(disclosure).toContainText("non-live evidence");
+  await expect(disclosure).toContainText("stand-in");
+  await expect(disclosure).toContainText("committed transcription");
+  const firstAnswer = page.getByTestId("research-answer").first();
+  const dBox = await disclosure.boundingBox();
+  const aBox = await firstAnswer.boundingBox();
+  expect(dBox!.y).toBeLessThan(aBox!.y); // above the fold, before every answer
+});
+
+test("every rendered assertion names how its bytes were obtained, without JS", async ({ page }) => {
+  // P34.35 (DR-C4-03): the per-assertion acquisition label — live capture,
+  // committed transcription or stand-in — never inferred from a URL.
+  await page.goto(RESEARCH_PAGE);
+  const labels = page.getByTestId("assertion-acquisition");
+  const n = await labels.count();
+  expect(n).toBeGreaterThan(0);
+  for (let i = 0; i < n; i++) {
+    await expect(labels.nth(i)).toContainText(/live capture|committed transcription|stand-in/);
+  }
+  const body = await page.content();
+  expect(body).toContain("committed transcription"); // the transcription-bound row
+  expect(body).toContain("stand-in");
+});
+
+test("the review wording derives from the recorded status — never 'reviewed' on not_run", async ({
+  page,
+}) => {
+  // P34.35 (F-153 / DR-C4-04): the fixture's review_status is not_run, so no
+  // rendered string may read as if a human check ran.
+  await page.goto(RESEARCH_PAGE);
+  await expect(page.getByTestId("review-label")).toContainText("independent review not yet run");
+  const body = await page.content();
+  expect(body).not.toContain("Reviewed research dossier");
+  expect(body).toContain("recorded status not_run");
+});
+
+test("licence, permalink and the as-of pair are carried on the page, without JS", async ({
+  page,
+}) => {
+  // P34.35 (C4 NEW-22/NEW-23): every page carries its licence, a permalink and
+  // a per-page as-of — the print footer carries the same triple on each page.
+  await page.goto(RESEARCH_PAGE);
+  const licence = page.getByTestId("dossier-licence");
+  await expect(licence).toBeVisible();
+  await expect(licence).toContainText("Licence CC-BY-4.0");
+  await expect(licence).toContainText("as-of world 2026-10-04, belief 2026-10-04");
+  const permalink = page.getByTestId("dossier-permalink");
+  await expect(permalink).toHaveAttribute(
+    "href",
+    "https://surveillancegraph.org/research-dossier/okc-alpr/",
+  );
+});
+
+test("the index labels each dossier's review state from its record, without JS", async ({
+  page,
+}) => {
+  await page.goto(RESEARCH_INDEX);
+  const item = page.getByTestId("research-dossier-item").first();
+  await expect(item).toContainText("independent review not yet run");
+  await expect(item).not.toContainText("reviewed packet");
 });

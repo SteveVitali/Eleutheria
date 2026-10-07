@@ -1,0 +1,289 @@
+{
+  "corrections": [
+    {
+      "correction_id": "deflock-299-metro-scope",
+      "correction_reason": "scope_unlabelled_genre_misclassified",
+      "note": "299 answers 'how many devices across the metro', not 'how many city readers' — it stays visible as a different-scope count, never a contradiction of the city figures.",
+      "replacement_records": [
+        {
+          "assertion_rationale": "the DeFlock figure is a community-map observation over the OKC METRO — neither a city-limits count nor a news article; the correction relabels genre and declares the metro count universe",
+          "attribution": "DeFlock community map",
+          "evidence_genre": "community_map",
+          "observed_at": "2026-08-20",
+          "predicate_id": "claimed_device_count",
+          "qualifiers": [
+            {
+              "jurisdiction": "us.state_abbr:OK",
+              "qualifier_id": "count_scope",
+              "value": "metro"
+            },
+            {
+              "qualifier_id": "evidence_origin",
+              "value": "seed_fixture"
+            }
+          ],
+          "raw_value": "299",
+          "source_id": "deflock",
+          "spdx": "CC-BY-4.0",
+          "subject_id": "sig:deployment:okc-okcpd-flock",
+          "value": 299
+        }
+      ],
+      "target_record": {
+        "attribution": "DeFlock community map",
+        "evidence_genre": "news_article",
+        "observed_at": "2026-08-20",
+        "predicate_id": "claimed_device_count",
+        "raw_value": "299",
+        "source_id": "deflock",
+        "spdx": "CC-BY-4.0",
+        "subject_id": "sig:deployment:okc-okcpd-flock",
+        "value": 299
+      }
+    },
+    {
+      "correction_id": "okc-council-190-derived-not-sourced",
+      "correction_reason": "derived_sum_recorded_as_source_claim",
+      "note": "190 was never an observation; the correction keeps the sourced ~100 and the packet's derived_labels record the ~190 roll-up explicitly.",
+      "replacement_records": [
+        {
+          "assertion_rationale": "the source asserted 'businesses own around 100 within city limits' — ~100 PRIVATELY-OWNED cameras; the 190 the legacy row recorded is a derived sum (90 + ~100), never a sourced figure. The correction asserts the sourced literal and labels it journalism (D6), city-limits scope, private ownership.",
+          "attribution": "the OKCPD chief, city council 2026-08-18",
+          "claim_directness": "D6",
+          "evidence_genre": "news_article",
+          "observed_at": "2026-08-18",
+          "predicate_id": "claimed_device_count",
+          "qualifiers": [
+            {
+              "jurisdiction": "us.state_abbr:OK",
+              "qualifier_id": "count_scope",
+              "value": "city_limits"
+            },
+            {
+              "qualifier_id": "evidence_origin",
+              "value": "seed_fixture"
+            },
+            {
+              "qualifier_id": "count_scope_detail",
+              "value": "privately_owned"
+            }
+          ],
+          "raw_value": "businesses own around 100 within city limits",
+          "source_id": "okc_council_statement",
+          "spdx": "CC-BY-4.0",
+          "subject_id": "sig:deployment:okc-okcpd-flock",
+          "value": 100
+        }
+      ],
+      "target_record": {
+        "attribution": "the OKCPD chief, city council 2026-08-18",
+        "evidence_genre": "news_article",
+        "observed_at": "2026-08-18",
+        "predicate_id": "claimed_device_count",
+        "raw_value": "businesses own around 100 within city limits",
+        "source_id": "okc_council_statement",
+        "spdx": "CC-BY-4.0",
+        "subject_id": "sig:deployment:okc-okcpd-flock",
+        "value": 190
+      }
+    },
+    {
+      "correction_id": "okc-council-90-active-scope",
+      "correction_reason": "scope_unlabelled",
+      "note": "90 active ≠ 90 owned ≠ 90 contracted — separate predicates kept separate.",
+      "replacement_records": [
+        {
+          "assertion_rationale": "the agency's 90 is an ACTIVE count over city-limits, agency-operated readers — declared so it never collapses with the city-owned 90 or the metro 299",
+          "attribution": "the OKCPD chief, city council 2026-08-18",
+          "claim_directness": "D6",
+          "evidence_genre": "official_statement",
+          "observed_at": "2026-08-18",
+          "predicate_id": "active_device_count",
+          "qualifiers": [
+            {
+              "jurisdiction": "us.state_abbr:OK",
+              "qualifier_id": "count_scope",
+              "value": "city_limits"
+            },
+            {
+              "qualifier_id": "evidence_origin",
+              "value": "seed_fixture"
+            },
+            {
+              "qualifier_id": "count_scope_detail",
+              "value": "agency_operated"
+            }
+          ],
+          "raw_value": "OKCPD has 90 cameras",
+          "source_id": "okc_council_statement",
+          "spdx": "CC-BY-4.0",
+          "subject_id": "sig:deployment:okc-okcpd-flock",
+          "value": 90
+        }
+      ],
+      "target_record": {
+        "attribution": "the OKCPD chief, city council 2026-08-18",
+        "evidence_genre": "official_statement",
+        "observed_at": "2026-08-18",
+        "predicate_id": "active_device_count",
+        "raw_value": "OKCPD has 90 cameras",
+        "source_id": "okc_council_statement",
+        "spdx": "CC-BY-4.0",
+        "subject_id": "sig:deployment:okc-okcpd-flock",
+        "value": 90
+      }
+    },
+    {
+      "correction_id": "contract-90-scope",
+      "correction_reason": "scope_unlabelled",
+      "note": "",
+      "replacement_records": [
+        {
+          "assertion_rationale": "the contracted unit count declares its universe: contracted units are not active sensors and not owned hardware",
+          "attribution": "OKC Master Agreement C241032",
+          "evidence_genre": "contract",
+          "observed_at": "2023-01-01",
+          "predicate_id": "contracted_device_count",
+          "qualifiers": [
+            {
+              "jurisdiction": "us.state_abbr:OK",
+              "qualifier_id": "count_scope",
+              "value": "city_limits"
+            },
+            {
+              "qualifier_id": "evidence_origin",
+              "value": "seed_fixture"
+            },
+            {
+              "qualifier_id": "count_scope_detail",
+              "value": "agency_operated"
+            }
+          ],
+          "raw_value": "90 cameras",
+          "source_id": "okc-contract-c241032",
+          "spdx": "CC-BY-4.0",
+          "subject_id": "sig:deployment:okc-okcpd-flock",
+          "value": 90
+        }
+      ],
+      "target_record": {
+        "attribution": "OKC Master Agreement C241032",
+        "evidence_genre": "contract",
+        "observed_at": "2023-01-01",
+        "predicate_id": "contracted_device_count",
+        "raw_value": "90 cameras",
+        "source_id": "okc-contract-c241032",
+        "spdx": "CC-BY-4.0",
+        "subject_id": "sig:deployment:okc-okcpd-flock",
+        "value": 90
+      }
+    },
+    {
+      "correction_id": "osm-31-metro-scope",
+      "correction_reason": "scope_unlabelled",
+      "note": "ODbL compartment unchanged — the licence boundary is not a count fix.",
+      "replacement_records": [
+        {
+          "assertion_rationale": "the OSM-derived mapped count is a METRO observation; its ODbL licence compartment and attribution are preserved verbatim",
+          "attribution": "© OpenStreetMap contributors, ODbL 1.0 (share-alike)",
+          "evidence_genre": "community_map",
+          "observed_at": "2026-08-20",
+          "predicate_id": "mapped_device_count",
+          "qualifiers": [
+            {
+              "jurisdiction": "us.state_abbr:OK",
+              "qualifier_id": "count_scope",
+              "value": "metro"
+            },
+            {
+              "qualifier_id": "evidence_origin",
+              "value": "seed_fixture"
+            }
+          ],
+          "raw_value": "31",
+          "source_id": "osm",
+          "spdx": "ODbL-1.0",
+          "subject_id": "sig:deployment:okc-okcpd-flock",
+          "value": 31
+        }
+      ],
+      "target_record": {
+        "attribution": "© OpenStreetMap contributors, ODbL 1.0 (share-alike)",
+        "evidence_genre": "community_map",
+        "observed_at": "2026-08-20",
+        "predicate_id": "mapped_device_count",
+        "raw_value": "31",
+        "source_id": "osm",
+        "spdx": "ODbL-1.0",
+        "subject_id": "sig:deployment:okc-okcpd-flock",
+        "value": 31
+      }
+    }
+  ],
+  "derived_labels": [
+    {
+      "input_scope_detail": [
+        "agency_operated",
+        "privately_owned"
+      ],
+      "kind": "derived_approximate_sum",
+      "label_id": "okc-city-limits-total",
+      "note": "the labelled roll-up a reader may compute; never asserted as a claim — the spine holds only the two sourced inputs",
+      "question": "q3",
+      "view": {
+        "approximate": true,
+        "assumptions": [
+          "the two inputs are disjoint city-limits populations — the agency's operated readers and privately-owned cameras are not double-counted",
+          "the ~100 private figure is an approximate journalism statement, so the sum is approximate, never a measured total"
+        ],
+        "basis": "derived_total",
+        "derived": true,
+        "input_bases": [
+          "active",
+          "claimed"
+        ],
+        "inputs": [
+          90,
+          100
+        ],
+        "label": "~190",
+        "layer": "L4",
+        "note": "'~190' is a DERIVED approximate city-limits total — 90 agency-operated + ~100 privately-owned, same scope, same period. It is L4, never an observation, and never a claim value.",
+        "scope": "city_limits (us.state_abbr:OK)"
+      }
+    }
+  ],
+  "non_corrections": [
+    {
+      "note": "the ODbL OSM row is corrected ONLY in scope labelling (see osm-31-metro-scope); its licence compartment is never moved",
+      "record": {
+        "attribution": "© OpenStreetMap contributors, ODbL 1.0 (share-alike)",
+        "evidence_genre": "community_map",
+        "observed_at": "2026-08-20",
+        "predicate_id": "mapped_device_count",
+        "raw_value": "31",
+        "source_id": "osm",
+        "spdx": "ODbL-1.0",
+        "subject_id": "sig:deployment:okc-okcpd-flock",
+        "value": 31
+      }
+    }
+  ],
+  "notes": [
+    "additive §16.6 corrections only: each target's belief window closes and a corrected claim with revises_claim + correction_reason is appended",
+    "no target row is deleted or mutated in place; a query before the correction still returns the legacy values",
+    "299 (metro, community map) is never a same-scope contradiction of the city figures; ~190 is a labelled derived sum, never a claim"
+  ],
+  "packet_id": "okc-seed-count-scopes",
+  "review": {
+    "note": "no independent reviewer exists on this build — D-R10-HUMAN-1 remains OPEN; nothing here fabricates one",
+    "status": "not_run"
+  },
+  "schema": "sig.seed-correction-packet/1",
+  "status": "prepared",
+  "subject": {
+    "deployment": "sig:deployment:okc-okcpd-flock",
+    "jurisdiction": "us.state_abbr:OK"
+  },
+  "version": "seed-correction/1"
+}

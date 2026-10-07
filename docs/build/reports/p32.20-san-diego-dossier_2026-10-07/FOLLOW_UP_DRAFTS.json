@@ -1,0 +1,140 @@
+{
+  "coverage_gaps": [
+    {
+      "absence_kind": "searched_not_found",
+      "coverage_id": "sd-gap-executed-instrument",
+      "jurisdiction_id": "us.state_abbr:CA",
+      "predicate_id": "contract_signed_date",
+      "subject_class": null,
+      "subject_id": "contract:sandiego-ubicquia-ps"
+    },
+    {
+      "absence_kind": "searched_not_found",
+      "coverage_id": "sd-gap-sharing-actors",
+      "jurisdiction_id": "us.state_abbr:CA",
+      "predicate_id": "sharing_agreement",
+      "subject_class": null,
+      "subject_id": "sig:deployment:sdpd-alpr"
+    },
+    {
+      "absence_kind": "searched_not_found",
+      "coverage_id": "sd-gap-installed-count",
+      "jurisdiction_id": "us.state_abbr:CA",
+      "predicate_id": "installed_device_count",
+      "subject_class": null,
+      "subject_id": "sig:deployment:sdpd-alpr"
+    },
+    {
+      "absence_kind": "searched_not_found",
+      "coverage_id": "sd-gap-oversight-adoption",
+      "jurisdiction_id": "us.state_abbr:CA",
+      "predicate_id": "oversight_recommendation_adoption",
+      "subject_class": null,
+      "subject_id": "sig:deployment:sdpd-alpr"
+    }
+  ],
+  "dossier_id": "san-diego-sdpd-alpr",
+  "generated_at": "2026-09-27",
+  "note": "drafts only — no filer or consent is fabricated (SIG-TASK-018) and no request is transmitted; the packet's follow_ups name the precise action + closing condition per question",
+  "posture": "drafted_not_sent",
+  "records_request_drafts": [
+    {
+      "appeal_path": "Writ of mandate in superior court",
+      "draft_body": "Pursuant to the California Public Records Act (Cal. Gov. Code § 7920.000), I request copies of the following public records held by San Diego Police Department: all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period the earliest available date to present.\n\nPlease provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction and release all reasonably segregable non-exempt portions. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the 10 calendar days (determination) your law provides.\n\n[Filing is a public act attributable to the filer; the acknowledgement is completed at filing time (SIG-TASK-018).]\n\nSubmitted by: [the contributor who files this request — completed at filing time]. Records contact: (records contact to be determined at filing time).",
+      "jurisdiction_id": "us.state_abbr:CA",
+      "jurisdiction_name": "California",
+      "record_type": "alpr_contract",
+      "records_contact": "(records contact to be determined at filing time)",
+      "records_law_key": "CA",
+      "records_sought": "all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period the earliest available date to present",
+      "residency_restricted": false,
+      "response_deadline": "10 calendar days (determination)",
+      "routing_note": "",
+      "status": "drafted",
+      "statute_name": "California Public Records Act",
+      "statutory_citation": "Cal. Gov. Code § 7920.000",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "table_version": "2026.09.01",
+      "target_agency": "San Diego Police Department",
+      "task_type": "missing_contract",
+      "template_set_version": "2026.09.01",
+      "template_version": "v1",
+      "trigger_kind": "coverage",
+      "trigger_ref": "sd-gap-executed-instrument"
+    },
+    {
+      "appeal_path": "Writ of mandate in superior court",
+      "draft_body": "Pursuant to the California Public Records Act (Cal. Gov. Code § 7920.000), I request copies of the following public records held by San Diego Police Department: all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period the earliest available date to present.\n\nPlease provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction and release all reasonably segregable non-exempt portions. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the 10 calendar days (determination) your law provides.\n\n[Filing is a public act attributable to the filer; the acknowledgement is completed at filing time (SIG-TASK-018).]\n\nSubmitted by: [the contributor who files this request — completed at filing time]. Records contact: (records contact to be determined at filing time).",
+      "jurisdiction_id": "us.state_abbr:CA",
+      "jurisdiction_name": "California",
+      "record_type": "alpr_contract",
+      "records_contact": "(records contact to be determined at filing time)",
+      "records_law_key": "CA",
+      "records_sought": "all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period the earliest available date to present",
+      "residency_restricted": false,
+      "response_deadline": "10 calendar days (determination)",
+      "routing_note": "",
+      "status": "drafted",
+      "statute_name": "California Public Records Act",
+      "statutory_citation": "Cal. Gov. Code § 7920.000",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "table_version": "2026.09.01",
+      "target_agency": "San Diego Police Department",
+      "task_type": "missing_contract",
+      "template_set_version": "2026.09.01",
+      "template_version": "v1",
+      "trigger_kind": "coverage",
+      "trigger_ref": "sd-gap-sharing-actors"
+    }
+  ],
+  "records_requests_sent": 0,
+  "research_queue": [
+    {
+      "jurisdiction_id": "us.state_abbr:CA",
+      "priority": 0.5,
+      "status": "generated",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "task_type": "coverage_hole",
+      "trigger_kind": "coverage",
+      "trigger_ref": "sd-gap-installed-count"
+    },
+    {
+      "jurisdiction_id": "us.state_abbr:CA",
+      "priority": 0.5,
+      "status": "generated",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "task_type": "missing_contract",
+      "trigger_kind": "coverage",
+      "trigger_ref": "sd-gap-executed-instrument"
+    },
+    {
+      "jurisdiction_id": "us.state_abbr:CA",
+      "priority": 0.5,
+      "status": "generated",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "task_type": "missing_contract",
+      "trigger_kind": "coverage",
+      "trigger_ref": "sd-gap-sharing-actors"
+    }
+  ],
+  "schema": "sig.dossier-follow-up-drafts/1",
+  "summary": {
+    "by_task_type": {
+      "coverage_hole": 1,
+      "missing_contract": 2
+    },
+    "by_trigger_kind": {
+      "coverage": 3
+    },
+    "contradictions_read": 0,
+    "coverage_read": 4,
+    "deduplicated": 1,
+    "edges_read": 0,
+    "generated": 3,
+    "rate_limited": 0,
+    "records_request_drafts": 2,
+    "records_requests_sent": 0,
+    "residency_routed_drafts": 0,
+    "unroutable": 0
+  }
+}
