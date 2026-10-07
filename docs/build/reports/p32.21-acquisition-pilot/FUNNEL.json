@@ -7,7 +7,7 @@
       "family": "Tulsa Flock policies integration and executed contract search",
       "lineage_group": "tulsa-municipal",
       "reasons": [
-        "rights undetermined (3 lanes) \u2014 routed to review"
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
       ],
       "retry_budget": 2
     },
@@ -17,6 +17,7 @@
       "family": "San Diego technology inventory and annual reports",
       "lineage_group": "san-diego-municipal",
       "reasons": [
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)",
         "recorded 403 on a prior retrieval"
       ],
       "retry_budget": 2
@@ -27,7 +28,7 @@
       "family": "San Diego Sunshine Act goods/services contracts",
       "lineage_group": "san-diego-municipal",
       "reasons": [
-        "rights undetermined (3 lanes) \u2014 routed to review"
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
       ],
       "retry_budget": 2
     },
@@ -37,7 +38,7 @@
       "family": "Oklahoma DAC UVED program and authority chain",
       "lineage_group": "oklahoma-state",
       "reasons": [
-        "rights undetermined (3 lanes) \u2014 routed to review"
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
       ],
       "retry_budget": 2
     },
@@ -47,6 +48,7 @@
       "family": "OKC Flock council amendment policy packet",
       "lineage_group": "okc-municipal",
       "reasons": [
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)",
         "recorded 403 on a prior retrieval"
       ],
       "retry_budget": 2
@@ -57,7 +59,7 @@
       "family": "Oklahoma OMES statewide contracts and solicitations",
       "lineage_group": "oklahoma-state",
       "reasons": [
-        "rights undetermined (3 lanes) \u2014 routed to review"
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
       ],
       "retry_budget": 2
     },
@@ -67,7 +69,7 @@
       "family": "California State Auditor ALPR audit survey and follow-up",
       "lineage_group": "california-state-auditor",
       "reasons": [
-        "rights undetermined (3 lanes) \u2014 routed to review"
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
       ],
       "retry_budget": 2
     },
@@ -117,7 +119,7 @@
       "family": "San Diego Privacy Advisory Board recommendations",
       "lineage_group": "san-diego-municipal",
       "reasons": [
-        "rights undetermined (3 lanes) \u2014 routed to review"
+        "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
       ],
       "retry_budget": 2
     },
@@ -267,7 +269,8 @@
       "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
       "lineage_group": "san-diego-municipal",
       "reasons": [
-        "prohibited_until_review \u2014 metadata-only path only"
+        "rejected \u2014 excluded content permanently barred (E4-B3)",
+        "blocked \u2014 rights/sensitive rejection"
       ],
       "retry_budget": 2
     }
@@ -293,11 +296,11 @@
           "complete_passports": 1,
           "excluded_from_batch": [],
           "hard_refused": [],
-          "kind": "new_target",
+          "kind": "improvement",
           "qualified_for_review": [
             "SRC-011"
           ],
-          "registry_join": "net_new"
+          "registry_join": "existing_unpermitted"
         },
         "capture": {
           "basis": "no capture \u2014 the live slice is a gate packet",
@@ -427,11 +430,11 @@
         "extraction": {
           "basis": "offline_replay",
           "claims_by_source": {
-            "okc_council_statement": 2,
             "deflock": 1,
             "dossier_okc": 16,
             "ok_statute": 2,
             "okc-contract-c241032": 1,
+            "okc_council_statement": 2,
             "okc_procurement": 5,
             "okcpd_policy": 2,
             "src:okc-council": 7,
@@ -520,14 +523,14 @@
             "SRC-008"
           ],
           "hard_refused": [],
-          "kind": "new_target",
+          "kind": "improvement",
           "qualified_for_review": [
             "SRC-006",
             "SRC-007",
             "SRC-008",
             "SRC-009"
           ],
-          "registry_join": "net_new"
+          "registry_join": "existing_unpermitted"
         },
         "capture": {
           "basis": "no capture \u2014 the live slice is a gate packet",

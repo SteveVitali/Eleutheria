@@ -7721,3 +7721,49 @@ compact_status = "not_contacted"
 robots_policy = "honor"
 access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
 notes = "P32.12 pilot dossier family: SDPD Annual Surveillance Report (Vigilant subscription — hosted access, never local hardware), the Ubicquia public-safety agreement, and the technology/PAB index pages. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."
+
+# --- P34.38 pilot-acquisition gated rows (ticket 246, E4-B6 = a) --------------
+# Three acquisition-queue families selected by the P32.21 pilot batch
+# (oklahoma-state SRC-006 + SRC-007, california-state-auditor SRC-011) get
+# registry rows as PLACEHOLDERS ONLY: every row is ingestion_permitted=false
+# with no review metadata — the prepared HG-03 flip patch on r11/sources-flips
+# (GL-GATE-07 batch-wide, E4-B1 = a) is the operator's to apply (S6R-17 /
+# OP-26). The loader gate stays closed (AGENTS.md gotcha 4); a rights packet
+# under docs/build/reports/rights/ records the reviewed facts and the owed
+# decision for each row.
+
+[sources.ok_omes_contracts]
+name = "Oklahoma OMES — statewide contracts + solicitation channel (SRC-006)"
+source_kind = "government_portal"
+homepage_url = "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "bounded document capture under HG-03 (html_text/pdf_text; reviewed URLs only — the statewide-contracts index + solicitation 0900000569)"
+review_packet = "docs/build/reports/rights/ok_omes_contracts.md"
+notes = "P34.38 gated placeholder (E4-B6 = a): Oklahoma Office of Management and Enterprise Services statewide-contract register — contract ids, vendors, procurement channel. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen and the operator's HG-03 flip (D-R10-SOURCES-1 OPEN; GL-GATE-07 prepared on r11/sources-flips)."
+
+[sources.ok_dac_uved]
+name = "Oklahoma District Attorneys Council — UVED program pages + OSCN statute (SRC-007)"
+source_kind = "government_portal"
+homepage_url = "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "bounded document capture under HG-03 (html_text/pdf_text; reviewed URLs only — the UVED program page + OSCN CiteID 478582)"
+review_packet = "docs/build/reports/rights/ok_dac_uved.md"
+notes = "P34.38 gated placeholder (E4-B6 = a): Oklahoma District Attorneys Council UVED program — administrator and the legal authority chain incl. the applicable statute version. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen and the operator's HG-03 flip (D-R10-SOURCES-1 OPEN; GL-GATE-07 prepared on r11/sources-flips). The OSCN statute target rides the green ok_statute source's recorded basis (E4-B5 = a)."
+
+[sources.ca_state_auditor]
+name = "California State Auditor — ALPR audit 2019-118 index + surveys (SRC-011)"
+source_kind = "government_portal"
+homepage_url = "https://information.auditor.ca.gov/reports/2019-118/index.html"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "bounded document capture under HG-03 (html_text/pdf_text; reviewed URLs only — the audit index + surveys pages)"
+review_packet = "docs/build/reports/rights/ca_state_auditor.md"
+notes = "P34.38 gated placeholder (E4-B6 = a): California State Auditor ALPR audit — findings, agency survey answers (one-auditor provenance, never independently verified) and recommendations. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen and the operator's HG-03 flip (D-R10-SOURCES-1 OPEN; GL-GATE-07 prepared on r11/sources-flips)."

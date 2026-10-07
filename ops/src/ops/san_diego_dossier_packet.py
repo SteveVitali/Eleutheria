@@ -52,8 +52,8 @@ The ticket's core distinctions are enforced by construction:
 * **Part VIII preflight is metadata-only** — the ALPR index's 2024–2026
   network-audit spreadsheet links (SRC-027) are recorded by link metadata
   only. No workbook byte, XLSX container, ZIP member or ``sharedStrings``
-  stream is ever transported; row-level acquisition stays
-  ``prohibited_until_review``.
+  stream is ever transported; the workbook acquisition path is
+  ``rejected`` permanently (E4-B3 = a, 2026-10-01T04:51:39Z).
 
 Gate discipline: ``live_verification=false``. Nothing here fetches, flips a
 source's rights posture, completes a human gate, sends a records request,
@@ -546,17 +546,19 @@ def network_audit_preflight() -> dict[str, Any]:
     """The Part VIII structural preflight for the network-audit source.
 
     The ALPR index's 2024–2026 network-audit spreadsheet links are recorded
-    in the acquisition queue as SRC-027 with
-    ``preflight.status = prohibited_until_review``: the per-query workbooks
-    may carry plates, person-level queries and officer identities, and a
-    "redacted" label is not a content-admissibility check. This record
-    documents the metadata-only posture: **no workbook byte, XLSX
-    container, ZIP member or ``sharedStrings`` stream is fetched, staged or
-    transported** — only the link/label metadata observed during the
-    bounded research pass and the committed queue row are cited. A safe
-    agency-level aggregate could later support q8 (declared-vs-observed
-    sharing) through an approved workflow; it is explicitly NOT required
-    for dossier completeness.
+    in the acquisition queue as SRC-027 with ``preflight.status =
+    rejected``: the operator's E4-B3 answer ("a", 2026-10-01T04:51:39Z —
+    SRC-027 workbooks metadata-only permanently) IS the explicit
+    content-admissibility decision — the per-query workbook path is
+    permanently barred (plates, person-level queries and officer
+    identities; a "redacted" label is not a content-admissibility check)
+    and the link-label metadata path is kept. This record documents the
+    metadata-only posture: **no workbook byte, XLSX container, ZIP member
+    or ``sharedStrings`` stream is fetched, staged or transported** — only
+    the link/label metadata observed during the bounded research pass and
+    the committed queue row are cited. A safe agency-level aggregate could
+    later support q8 (declared-vs-observed sharing) through an approved
+    workflow; it is explicitly NOT required for dossier completeness.
     """
     return {
         "schema": "sig.part-viii-preflight/1",
@@ -572,7 +574,18 @@ def network_audit_preflight() -> dict[str, Any]:
             "no workbook bytes fetched or staged at any point"
         ),
         "workbook_transport": "never",
-        "acquisition_status": "prohibited_until_review",
+        "acquisition_status": "rejected",
+        "decision": {
+            "ref": "E4-B3",
+            "answer": "a",
+            "decided_by": "operator",
+            "decided_on": "2026-10-01T04:51:39Z",
+            "effect": (
+                "the per-query network-audit workbooks are metadata-only "
+                "permanently — the workbook acquisition path is rejected; "
+                "the link-label metadata path is kept"
+            ),
+        },
         "prohibited_content": [
             "license_plate values",
             "person or officer identifiers",
@@ -601,14 +614,16 @@ def network_audit_preflight() -> dict[str, Any]:
             ),
         },
         "preconditions": [
-            "explicit content-admissibility decision (HG-03 family)",
+            "the content-admissibility decision is RECORDED (E4-B3 = a): "
+            "workbook bytes rejected permanently — any aggregate path needs "
+            "an approved production method, never workbook transport",
             "source/rights review under D-R10-SOURCES-1",
             "a bounded acquisition method that never transports workbook "
             "bytes — approved aggregate production only",
         ],
         "rights_posture": (
             "dossier_san_diego stays ingestion_permitted=false; the "
-            "network-audit family stays prohibited_until_review — this "
+            "network-audit workbook path is rejected (E4-B3) — this "
             "record is a preflight, never a fetch"
         ),
         "deferral": "D-P32.20-1",
@@ -859,8 +874,8 @@ def build_packet(
                 "q8",
                 [_AUDIT_LINKS],
                 "the 2024–2026 network-audit workbooks could close the "
-                "declared-vs-observed sharing gap, but row-level "
-                "acquisition is prohibited_until_review (plates/person/"
+                "declared-vs-observed sharing gap, but the workbook path "
+                "is rejected permanently — E4-B3 = a (plates/person/"
                 "officer content risk); only link metadata was reviewed — "
                 "the safe-aggregate path stays an open precondition "
                 "(follow-up q8)",
@@ -1004,7 +1019,7 @@ def build_packet(
             "Part VIII: the network-audit spreadsheet links (SRC-027) are "
             "preflighted metadata-only — no workbook/XLSX/ZIP/sharedStrings "
             "or row-level plate/person/query content is transported; "
-            "row-level acquisition stays prohibited_until_review",
+            "the workbook acquisition path is rejected permanently (E4-B3)",
             "unsupported facts stay unknown with documented search basis + "
             "precise follow-up — never zero and never inferred affirmative",
             "follow-up requests are DRAFTED, never sent — "
@@ -1204,7 +1219,7 @@ def evidence_pack_markdown(packet: Mapping[str, Any] | None = None) -> str:
         "byte, XLSX container, ZIP member or `sharedStrings` stream was "
         "fetched, staged or transported; per-query audit workbooks may "
         "carry plates, person-level queries and officer identities — "
-        "row-level acquisition stays `prohibited_until_review`.",
+        "the workbook acquisition path is `rejected` permanently (E4-B3 = a).",
         "- A safe agency-level aggregate could later support q8 through "
         "an approved workflow; it is optional and the dossier does not "
         "depend on it (PART_VIII_PREFLIGHT.json).",
@@ -1289,6 +1304,11 @@ def live_return_pass() -> dict[str, Any]:
                 "retention and use/sharing restrictions for the "
                 "streetlight program"
             ),
+            # E4-B4 = a (2026-10-01T04:51:39Z): a per-target byte-bound
+            # exception plus ONE bounded retry is recorded on this target —
+            # never a blind retry.
+            "byte_bound_exception": "per-target exception under E4-B4 (a)",
+            "bounded_retries": 1,
         },
         {
             "doc_id": "sd-pab-recommendation-2025",
@@ -1300,6 +1320,11 @@ def live_return_pass() -> dict[str, Any]:
                 "check council records for adoption/rejection — the "
                 "recommendation stays proposed until evidence lands"
             ),
+            # E4-B4 = a (2026-10-01T04:51:39Z): a per-target byte-bound
+            # exception plus ONE bounded retry is recorded on this target —
+            # never a blind retry.
+            "byte_bound_exception": "per-target exception under E4-B4 (a)",
+            "bounded_retries": 1,
         },
         {
             "doc_id": "sd-council-memo-2025-12-10",
@@ -1316,11 +1341,11 @@ def live_return_pass() -> dict[str, Any]:
             "url": _ALPR_PAGE_URL,
             "kind": "metadata_only_preflight",
             "goal": (
-                "PREFLIGHT ONLY (SRC-027, prohibited_until_review): the "
-                "2024–2026 network-audit spreadsheet links — link/label "
-                "metadata only; no workbook, XLSX, ZIP member or "
-                "sharedStrings transport; row-level content prohibited "
-                "until an explicit content-admissibility + rights decision"
+                "PREFLIGHT ONLY (SRC-027, rejected under E4-B3 — metadata "
+                "only permanently): the 2024–2026 network-audit spreadsheet "
+                "links — link/label metadata only; no workbook, XLSX, ZIP "
+                "member or sharedStrings transport; row-level content "
+                "rejected permanently"
             ),
         },
     ]
@@ -1332,8 +1357,8 @@ def live_return_pass() -> dict[str, Any]:
         "reason_deferred": (
             "live_verification=false: D-R10-SOURCES-1 stays OPEN — "
             "source/evidence-use review and the HG-03 rights decision are "
-            "pending; SRC-027 additionally needs an explicit "
-            "content-admissibility decision before ANY workbook transport"
+            "pending; SRC-027's workbook path is rejected permanently "
+            "(E4-B3 = a) — metadata only"
         ),
         "targets": dossier_targets + extra,
         "bounded_questions": [
@@ -1355,8 +1380,9 @@ def live_return_pass() -> dict[str, Any]:
             "Part VIII preflight holds — the network-audit family stays "
             "metadata-only: no workbook/XLSX/ZIP/sharedStrings or "
             "row-level plate/person/query transport EVER",
-            "explicit SRC-027 content-admissibility decision before any "
-            "audit-bytes path (aggregate production only)",
+            "SRC-027's content-admissibility decision is RECORDED "
+            "(E4-B3 = a): workbook bytes rejected permanently — aggregate "
+            "production only under an approved method",
             "resource bounds identical to the replay path (2 protocols, "
             "page/byte caps) — the ~16 MB PAB recommendation needs an "
             "approved method",

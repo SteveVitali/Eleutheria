@@ -336,9 +336,33 @@ def test_sensitive_rejection_is_terminal_not_a_score(by_id):
 
 
 def test_prohibited_until_review_is_a_gate_not_a_veto(by_id):
+    """prohibited_until_review = a gate on admissibility, not the outright
+    BLOCKED disposition a rejected/blocked record gets. P34.38 records
+    E4-B3 on SRC-027 itself (rejected), so the semantic is exercised on a
+    mutated passport."""
     e = by_id["SRC-027"]
-    assert acq.Gate.PREFLIGHT_PROHIBITED in e.gates
-    assert not e.admissible  # needs the explicit content decision first
+    p = e.passport
+    prohibited = _mutate(
+        p, preflight=replace(p.preflight, status=PreflightStatus.PROHIBITED_UNTIL_REVIEW)
+    )
+    join = join_candidate(prohibited, dispositions={}, peers=[])
+    gates = gates_for(prohibited, join)
+    assert acq.Gate.PREFLIGHT_PROHIBITED in gates
+    assert acq.Gate.SENSITIVE_REJECTED not in gates
+    assert disposition_for(prohibited, join, gates) != QueueDisposition.BLOCKED
+
+
+def test_src027_workbook_path_rejected_metadata_path_kept(by_id):
+    """E4-B3 = a (2026-10-01T04:51:39Z): the per-query network-audit
+    workbooks are metadata-only permanently — the recorded status is
+    ``rejected`` (a hard rejection no score can offset), the link-label
+    metadata path is kept."""
+    e = by_id["SRC-027"]
+    assert e.passport.preflight.status == PreflightStatus.REJECTED
+    assert acq.Gate.SENSITIVE_REJECTED in e.gates
+    assert e.disposition == QueueDisposition.BLOCKED
+    assert not e.admissible
+    assert "metadata" in e.passport.preflight.notes.lower()
 
 
 def test_municipal_publication_is_not_auto_cc0(by_id):
@@ -606,7 +630,7 @@ def test_json_projection_is_machine_readable(entries):
     by = {r["candidate_id"]: r for r in out}
     assert by["SRC-027"]["independent_yield"] is False
     assert by["SRC-027"]["score"]["contributions"]["I"] == 0
-    assert "preflight_prohibited" in by["SRC-027"]["gates"]
+    assert "sensitive_rejected" in by["SRC-027"]["gates"]
     assert by["SRC-010"]["relation"] == "existing_unpermitted"
     assert by["SRC-010"]["kind"] == "improvement"
     for row in out:
@@ -631,7 +655,7 @@ def test_cli_check_and_queue_and_explain(capsys, tmp_path):
 
     assert tasks_cli_main(["acquisition", "explain", "--candidate", "SRC-027"]) == 0
     out = capsys.readouterr().out
-    assert "contribution=" in out and "preflight_prohibited" in out
+    assert "contribution=" in out and "sensitive_rejected" in out
 
 
 def test_cli_packet_writes_review_inputs(tmp_path, capsys):
