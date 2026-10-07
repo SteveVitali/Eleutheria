@@ -10,4 +10,6 @@
 
 ## Verdict
 
-_(to be appended on report)_
+- **Nonce reveal:** `ac9cfd411887c79a360aff087533342e` (SHA-256 `93066de93fa5a111abbc87394468d8b3f91ea3d860c2a9775bd383f01bf18b2c` — matches the pre-dispatch hash).
+- **Report location:** `docs/build/runs/P34.34b.md` § "Isolation check (dispatch probe, plan §8.5)" — all five required fields present.
+- **Verdict: PASS** — control token `P34B-CTL-748d499f` echoed exactly; initial context sources recorded (dispatch prompt, `date -u`, the contract, `AGENTS.md`, then the Load list); 32-hex token held: **No**; sub-agent start `2026-10-07T00:00Z` later than the `2026-10-06T23:59:26Z` dispatch record; harness/model `devin-desktop/swe-2-high/subagent` recorded; the nonce appears nowhere in the sub-agent's output or the tree (grep clean at reveal, 2026-10-07T04:17:19Z).
