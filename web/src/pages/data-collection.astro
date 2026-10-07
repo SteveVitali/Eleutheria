@@ -1,0 +1,73 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The crawler contact/explanation page (SIG-INGEST-036 rule 1 "Identify";
+// P35.38a; ADR-168 Decisions 6–7). This is the URL every crawler User-Agent
+// names, on the domain SIG owns. T0 under ADR-155: static markup only — no
+// <script>, no island, no runtime dependency. Every sentence is agent-drafted
+// into docs/build/reports/copy-batches/batch-01.md, sha256-pinned and `pending`
+// until the operator confirms it verbatim (B-2); the `data-copy` tokens bind
+// each element to its batch rows and tests/unit/test_data_collection_page.py
+// fails on any drift. The page ships publicly in republish #1 (P34.17).
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="How SIG collects data" path="/data-collection/">
+  <p data-copy="DC-02 DC-03">
+    SIG — the Surveillance Infrastructure Graph — is an open, evidence-first
+    record of public surveillance infrastructure, built by fetching public
+    records. This page is the explanation the crawler's contact URL points to:
+    what it fetches, how it identifies itself, how it treats robots.txt, and
+    how to ask it to stop.
+  </p>
+
+  <h2 data-copy="DC-04">What SIG fetches</h2>
+  <p data-copy="DC-05 DC-06">
+    SIG fetches public records only — pages, documents, datasets and APIs that
+    a public body or a transparency project publishes openly. It never collects
+    licence-plate reads, trip histories or other per-person data: those are
+    excluded by design, not filtered out afterwards.
+  </p>
+
+  <h2 data-copy="DC-07">How the crawler identifies itself</h2>
+  <p data-copy="DC-08 DC-09">
+    Every request carries a User-Agent header of the form
+    <code>name/version (+https://surveillancegraph.org/data-collection/)</code>,
+    where <code>name</code> is the connector doing the fetch — for example
+    <code>osm/1.0.0</code> or the project fallback <code>SIG</code>. SIG never
+    impersonates a browser and never rotates or disguises its agent to get past
+    a block.
+  </p>
+
+  <h2 data-copy="DC-10">How robots.txt is treated</h2>
+  <p data-copy="DC-11 DC-12 DC-13">
+    For every host it fetches, SIG retrieves and records the host's
+    <code>robots.txt</code> and classifies the answer per RFC 9309. Under a
+    recorded operator decision (GL-GATE-08 — ADR-088 and ADR-168), a
+    <code>Disallow</code>, or a policy that cannot be retrieved, does not by
+    itself stop the fetch; the fetch is marked
+    <code>robots_disregarded</code> in SIG's record, so the refusal stays
+    visible instead of being silently bypassed. Robots.txt is not the access
+    control: the binding check is a fail-closed rights review per source, and a
+    source is never fetched before its rights record permits it.
+  </p>
+
+  <h2 data-copy="DC-14">Rate limits</h2>
+  <p data-copy="DC-15 DC-16">
+    SIG fetches slowly — at least one second between requests to one host by
+    default, and longer wherever a published crawl-delay or a documented API
+    budget demands it. An HTTP 429, 503 or 504 answer is met with bounded
+    backoff and retry; a bot-management challenge is recorded, never defeated
+    or worked around.
+  </p>
+
+  <h2 data-copy="DC-17">Ask SIG to stop</h2>
+  <p data-copy="DC-18 DC-19">
+    To ask SIG to stop fetching a site you operate, open a request through this
+    site's <a href="/dispute/">dispute channel</a>. SIG does not publish an
+    e-mail address; the dispute page is the project's contact route and states
+    its own operating status.
+  </p>
+</BaseLayout>

@@ -68,5 +68,6 @@
 | D-P34.1-1 | OPEN | operator merge | the first merge sitting after this PR reaches main; P38.1 audits it | every `CI` workflow run on `main` after the merge shows a non-`cancelled` conclusion (`gh run list --branch main --workflow CI` / the check-runs API); P38.1's a… |
 | D-P34.2-1 | OPEN | the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain) | a @lhci/cli/lighthouse release whose tree drops the advisories — failing that, before the entries' 2026-11-30 expires makes the nightly gate fail loudly | `scripts/ci/npm_audit_gate.sh --full` green with the entries REMOVED (the gate already notes when an entry covers no current finding); `npm --prefix web audit -… |
 | D-P34.2-2 | OPEN | P38.1a audits it (operator merge for the post-merge leg) | the first nightly --all recorded-CI verification green, and the first merge sitting (post-merge r11 stack audit) | `python3 docs/build/tools/verify_recorded_ci.py --all` green in a nightly run record; P38.1a's audit names this row |
+| D-P35.38a-1 | OPEN | the operator (the copy-batch sitting) | the copy-batch sitting before republish #1 — P34.17's L2 refuses a pending sentence | every `/data-collection/` row in `docs/build/reports/copy-batches/batch-01.md` reads `confirmed` with the operator's verbatim words and a `date -u` stamp in the… |
 
 ← back: CURRENT.md
