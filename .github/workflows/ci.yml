@@ -433,3 +433,65 @@ jobs:
 
       - name: Performance budgets (build fails on regression)
         run: npm run check:perf
+
+      # --- P34.34b (ACT-16b, C4 NEW-26, DR-C4-13; SIG-FIND-005): --------------
+      # the export-mode leg. A REAL from-spine fixture export — the producer
+      # stands up PG18+PostGIS, deploys the true db/sqitch.plan, seeds the
+      # licence-safe tests/db spine and runs `run_spine_export`, never the
+      # web-fixture serializer — feeds a SIG_DATA_SOURCE=export build; the
+      # per-island budgets and Lighthouse (incl. /releases/,
+      # /research-dossier/ and one archive record) then run over THAT build.
+      # The P32.23a-candidate export-mode failure can never again merge green.
+      # `scripts/ci/export_mode_leg.sh` is the single source of the commands —
+      # `make check-export-mode` (reachable from `make ci-local`) runs the
+      # same subcommands locally.
+
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        working-directory: ${{ github.workspace }}
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        working-directory: ${{ github.workspace }}
+        run: make sync
+
+      - name: From-spine fixture export (seeded PG spine → run_spine_export → release)
+        working-directory: ${{ github.workspace }}
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+        run: bash scripts/ci/export_mode_leg.sh produce
+
+      # AC-1's negative half runs BEFORE the real build: a deliberately broken
+      # export input (an empty directory — manifest.json absent) must FAIL the
+      # build loudly, and a silent fall-back to fixtures turns this step red
+      # (SIG-UI-036). Before, not after — the doomed build can leave dist
+      # half-written, and the measurement steps must see exactly the real
+      # build's output.
+      - name: Export-mode build fails loud on a missing export (no fixture fall-back)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/export_mode_leg.sh verify-fail-loud
+
+      - name: Export-mode build (SIG_DATA_SOURCE=export over the from-spine export)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/export_mode_leg.sh build
+
+      # DR-C4-13's "one archive record": publication + entity ids are
+      # content-derived and differ every run, so the committed collect URL
+      # mounts the release-builder's own record bytes at a stable alias
+      # (record pages are self-contained — no scripts, no external assets).
+      - name: Mount the archive record (stable URL over the release tree's real bytes)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/export_mode_leg.sh mount-record
+
+      - name: Island budgets over the export-mode build (ADR-134 ceilings)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/export_mode_leg.sh budgets
+
+      - name: Lighthouse over the export-mode build (Round-10 routes + one archive record)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/export_mode_leg.sh lighthouse
