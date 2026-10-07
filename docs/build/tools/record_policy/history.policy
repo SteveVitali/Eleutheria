@@ -270,3 +270,23 @@ seed-commit 145b68a3
 # P34.34a's d778706b and P34.35's 145b68a3.
 # Scope: findings attributed to ef1fb3bf only; no other commit borrows the exemption.
 seed-commit ef1fb3bf
+
+# ── P34.39b kind-vocabulary + recorded-ci repair (recorded 2026-10-07) ─────────────────────
+# Commit 6fe93216 is the verifier-backed vocabulary repair: the post-closeout record commit
+# 69b4f857's PHASE LOG entry used kind `post-closeout record boundary`, not in
+# record_policy/phase_log_kinds.txt (V4) — caught head-bound by the docs job's
+# ledger-contract check (run 37695565302, verbatim: "[kind-vocabulary] PHASE LOG kind
+# 'post-closeout record boundary' is not in … phase_log_kinds.txt (V4)"). The follow-on repair
+# commit 5816717d then recorded the fix under kind `post-closeout repair`, which
+# verify-recorded-ci (G3b) flags: a `post-closeout …` kind owes a `ci:` field no red head can
+# truthfully carry (run 37696647822, verbatim: "FAIL added PHASE LOG entry with no ci:
+# field"). 6fe93216 corrects both kind tokens in place — `post-closeout record boundary` →
+# `post-closeout record + boundary` (the `+ <note>` annotation keeps the boundary record
+# verbatim; BM-LEDGER-06) and `post-closeout repair` → `correction` (the record-event kind,
+# NON_CI_KINDS — the entry carries its boundary record in the payload) — and reverts the
+# interim kinds.txt declaration (correction-in-place, not vocabulary growth). No payload
+# bytes change. The sanctioned in-place pattern of P34.38's ef1fb3bf, P34.34a's d778706b and
+# P34.35's 145b68a3. The branch rule forbids force-push, so the declaration lands as a later
+# commit rather than a reworded subject.
+# Scope: findings attributed to 6fe93216 only; no other commit borrows the exemption.
+seed-commit 6fe93216
