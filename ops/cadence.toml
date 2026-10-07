@@ -926,6 +926,39 @@ job = "sig-ingest-fema-hsgp-allocations"
 scheduler = "sig-sched-fema-hsgp-allocations"
 note = "USAspending assistance-listing 97.067 prime-award slices (bounded 2-page reviewed window); funding evidence only — funded ≠ deployed."
 
+# --- P34.38 prepared HG-03 apply (r11/sources-flips): the three pilot dossier
+# families --- These rows exist only on the operator-signed apply branch — the
+# chain branch keeps every dossier_* row gated (ingestion_permitted=false).
+# The bounded captures are one-shot OM-19 legs (P37.16a/b, gated on the B-42
+# Part VIII clear recorded at capture + the B4 byte bounds); the standing
+# cadence is the posture-change detector — each run records the honest
+# outcome, never retries into silence. Quarterly: the reviewed policy/document
+# URLs change rarely.
+
+[[sources]]
+id = "dossier_okc"
+cadence = "quarterly"
+cron = "23 7 2 1,4,7,10 *"       # day 2 of Jan/Apr/Jul/Oct, 07:23 UTC
+job = "sig-ingest-dossier-okc"
+scheduler = "sig-sched-dossier-okc"
+note = "OKC usage page/council memo/amendment via dossier_documents (bounded live_targets; first run rides the P37.16a/b leg)."
+
+[[sources]]
+id = "dossier_tulsa"
+cadence = "quarterly"
+cron = "23 7 3 1,4,7,10 *"       # day 3 of Jan/Apr/Jul/Oct, 07:23 UTC
+job = "sig-ingest-dossier-tulsa"
+scheduler = "sig-sched-dossier-tulsa"
+note = "TPD policies 113C/113E + MOU template via dossier_documents (bounded live_targets; first run rides the P37.16a/b leg)."
+
+[[sources]]
+id = "dossier_san_diego"
+cadence = "quarterly"
+cron = "23 7 4 1,4,7,10 *"       # day 4 of Jan/Apr/Jul/Oct, 07:23 UTC
+job = "sig-ingest-dossier-san-diego"
+scheduler = "sig-sched-dossier-san-diego"
+note = "SDPD ASR/Ubicquia/indexes via dossier_documents (bounded live_targets; first run rides the P37.16a/b leg)."
+
 # --- P34.6 (SIG-OPS-001, ADR-175): the monthly logical export -----------------
 # Declared here — cadence.toml is the ops schedule of record. The DEPLOYER is
 # the scheduler of record (P35.1a); until then this row is the OM-19 queue

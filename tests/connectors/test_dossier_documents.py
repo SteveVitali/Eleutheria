@@ -46,7 +46,7 @@ from connectors.dossier_documents import (
     vocab,
 )
 from connectors.live_targets import live_targets
-from connectors.loader import IngestionNotPermitted, assert_loadable
+from connectors.loader import assert_loadable
 from connectors.net import PoliteFetcher, RateLimiter, RobotsResult
 from connectors.okc_documents import PartVIIIViolation, assert_part_viii_safe
 from connectors.pipeline import run
@@ -212,20 +212,22 @@ def test_connector_registered_and_routed() -> None:
         assert CONNECTOR_FOR_SOURCE[source_id] == CONNECTOR
 
 
-def test_new_source_rows_stay_blocked() -> None:
-    """The three NEW rows are fail-closed: not permitted, rights UNDETERMINED,
-    no fabricated review metadata — the loader gate refuses before any fetch."""
+def test_dossier_source_rows_permitted_under_prepared_flip() -> None:
+    """The r11/sources-flips apply (HG-03, E4-B1 = a — GL-GATE-07 batch-wide)
+    flips the three dossier rows: permitted, public_terms_only, a recorded
+    LicenseRef-PublicRecord-FactualCompilation basis and operator review
+    metadata — the loader gate now admits them (fixture runs stay fixture
+    runs; a live fetch is still the bounded P37.16a/b leg)."""
     for source_id in DOSSIER_SOURCES:
         record = get(source_id)
-        assert record.ingestion_permitted is False
-        assert record.compact_status is CompactStatus.NOT_CONTACTED
-        assert record.rights.spdx.strip().upper() == "UNDETERMINED"
-        assert record.rights.redistributable is False
-        assert not record.rights_reviewed_by
-        assert not record.review_packet
-        assert live_gate_reasons(source_id), "new rows must carry live-gate reasons"
-        with pytest.raises(IngestionNotPermitted):
-            assert_loadable(record)
+        assert record.ingestion_permitted is True
+        assert record.compact_status is CompactStatus.PUBLIC_TERMS_ONLY
+        assert record.rights.spdx == "LicenseRef-PublicRecord-FactualCompilation"
+        assert record.rights.redistributable is True
+        assert record.rights_reviewed_by == "operator (HG-03)"
+        assert record.review_packet
+        assert not live_gate_reasons(source_id), "applied rows are live-gate green"
+        assert_loadable(record)
 
 
 def test_bounded_protocols_and_adapters() -> None:
@@ -797,13 +799,20 @@ def test_claim_provenance_fields_complete() -> None:
 # --- licence / compartment preservation --------------------------------------------
 
 
-def test_undetermined_rights_fail_the_export_gate_closed() -> None:
+def test_resolved_basis_passes_undetermined_stays_fail_closed() -> None:
+    """SIG-LIC-004 both ways: the applied dossier rows carry a recorded
+    LicenseRef basis, so the export gate admits them; a genuinely UNDETERMINED
+    source (bidnet_direct — its terms leg is still queued behind the
+    live:P35.38a precondition) still fails the gate closed."""
     from connectors.loader import assert_export_compatible
     from policy.licensing import ExportGateClosed
 
     for source_id in DOSSIER_SOURCES:
-        with pytest.raises(ExportGateClosed, match="UNDETERMINED"):
-            assert_export_compatible([source_id])
+        assert assert_export_compatible([source_id]) == (
+            "LicenseRef-PublicRecord-FactualCompilation"
+        )
+    with pytest.raises(ExportGateClosed, match="UNDETERMINED"):
+        assert_export_compatible(["bidnet_direct"])
 
 
 def test_claims_carry_the_source_compartment_and_tier() -> None:

@@ -1,0 +1,103 @@
+{
+ "schema": "p272-dispositions/1.0.0",
+ "ticket": "P34.38 (ticket 246) — prepared HG-03 flip patch on r11/sources-flips (S6R-17 / OP-26). PREPARED, never applied by the agent: the operator applies it in one commit signed with the OP-25 key, or signs a GATE DECISIONS row naming each source id (P34.28's G4c check fails an unsigned false→true transition).",
+ "gate": "E4-B1 = a (decision_catalog.csv, round 3, 2026-10-01T04:03:25Z): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'.",
+ "rule": "GL-GATE-07 — US-jurisdiction government-published factual compilations record LicenseRef-PublicRecord-FactualCompilation (facts are not copyrightable; municipal/state portals publish as public records; SIG derives facts + citations, never re-hosts the documents wholesale). Every lane decision is recorded with a decision_ref — the queue and the registry mint nothing. The 4 green-source targets (okc-statute-47-7-606-1, okc-ops-manual-5-118, okc-purchasing-index, src-007-target-2) ride their existing sources' recorded bases — no invented re-approval (E4-B5 = a).",
+ "prepared": true,
+ "apply_instructions": "Operator (OP-26): apply this prepared patch as ONE commit signed with the OP-25 key on r11/sources-flips, or sign a GATE DECISIONS row naming dossier_okc, dossier_tulsa, dossier_san_diego, ok_omes_contracts, ok_dac_uved, ca_state_auditor — either path covers the false→true transitions for the G4c signed-gate origin check. Until applied, every named row stays ingestion_permitted=false and the loader gate keeps refusing it.",
+ "target_lanes": {
+  "note": "the 23 new targets (18 dossier + 5 pilot) — all three rights lanes decided under E4-B1 = a; the per-candidate records live in acquisition_queue.toml [candidates.<id>.rights], the per-source dispositions in 'resolutions' below",
+  "dossier_okc": ["okc-flock-usage-2026", "okc-council-memo-2026-08", "okc-flock-amendment-2026"],
+  "dossier_tulsa": ["tulsa-mou-template", "tulsa-policy-113c", "tulsa-policy-113e", "tpd-flock-page", "tpd-policies-index", "tulsa-corridor-safety-guide"],
+  "dossier_san_diego": ["sd-asr-2025-vigilant", "sd-ubicquia-agreement-2023", "sd-technology-index", "sd-pab-index", "sd-alpr-program-page", "sd-alpr-use-policy", "sd-pab-recommendation-2025", "sd-council-memo-2025-12-10", "sd-network-audit-links"],
+  "ok_omes_contracts": ["src-006-target-1", "src-006-target-2"],
+  "ok_dac_uved": ["src-007-target-1"],
+  "ca_state_auditor": ["src-011-target-1", "src-011-target-2"],
+  "green_source_targets": {
+   "okc-statute-47-7-606-1": "ok_statute",
+   "okc-ops-manual-5-118": "okcpd_policy",
+   "okc-purchasing-index": "okc_procurement",
+   "src-007-target-2": "ok_statute"
+  }
+ },
+ "resolutions": [
+  {
+   "source_id": "dossier_okc",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "attribution": "City of Oklahoma City (municipal public record)",
+   "redistributable": "yes",
+   "derivative_permitted": "yes",
+   "terms_url": "https://www.okc.gov/departments/police",
+   "retrieval_date": "2026-10-01",
+   "reviewed_by": "operator (HG-03)",
+   "reviewed_on": "2026-10-01",
+   "basis": "HG-03 answered 2026-10-01 (E4-B1 = a, decision_catalog.csv round 3): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'. OKC municipal documents are US government factual compilations; SIG derives facts + citations, never re-hosts wholesale. Recorded in sources.toml on the operator-signed apply.",
+   "review_packet": "docs/build/reports/acquisition/URL_RECONCILIATION.md"
+  },
+  {
+   "source_id": "dossier_tulsa",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "attribution": "City of Tulsa / Tulsa Police Department (municipal public record)",
+   "redistributable": "yes",
+   "derivative_permitted": "yes",
+   "terms_url": "https://www.tulsapolice.org/",
+   "retrieval_date": "2026-10-01",
+   "reviewed_by": "operator (HG-03)",
+   "reviewed_on": "2026-10-01",
+   "basis": "HG-03 answered 2026-10-01 (E4-B1 = a, decision_catalog.csv round 3): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'. Tulsa municipal policy documents are US government factual compilations; SIG derives facts + citations, never re-hosts wholesale. The blank MOU stays a template — structure only, never an executed instrument. Recorded in sources.toml on the operator-signed apply.",
+   "review_packet": "docs/build/reports/acquisition/URL_RECONCILIATION.md"
+  },
+  {
+   "source_id": "dossier_san_diego",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "attribution": "City of San Diego (municipal public record)",
+   "redistributable": "yes",
+   "derivative_permitted": "yes",
+   "terms_url": "https://www.sandiego.gov/police/data-transparency",
+   "retrieval_date": "2026-10-01",
+   "reviewed_by": "operator (HG-03)",
+   "reviewed_on": "2026-10-01",
+   "basis": "HG-03 answered 2026-10-01 (E4-B1 = a, decision_catalog.csv round 3): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'. San Diego municipal surveillance-technology disclosures are US government factual compilations; SIG derives facts + citations, never re-hosts wholesale. B3/B4 content bounds recorded in PART_VIII_PREFLIGHT.json (rejected workbook path; byte bound + one bounded retry). Recorded in sources.toml on the operator-signed apply.",
+   "review_packet": "docs/build/reports/acquisition/URL_RECONCILIATION.md"
+  },
+  {
+   "source_id": "ok_omes_contracts",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "attribution": "State of Oklahoma — Office of Management and Enterprise Services (public record)",
+   "redistributable": "yes",
+   "derivative_permitted": "yes",
+   "terms_url": "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html",
+   "retrieval_date": "2026-10-01",
+   "reviewed_by": "operator (HG-03)",
+   "reviewed_on": "2026-10-01",
+   "basis": "HG-03 answered 2026-10-01 (E4-B1 = a, decision_catalog.csv round 3): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'. OMES statewide-contract/solicitation records are US state-government factual compilations; SIG derives contract ids, vendors and the procurement channel — facts + citations, never wholesale re-hosting (vendor exhibits reviewed per-artifact). Recorded in sources.toml on the operator-signed apply.",
+   "review_packet": "docs/build/reports/rights/ok_omes_contracts.md"
+  },
+  {
+   "source_id": "ok_dac_uved",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "attribution": "Oklahoma District Attorneys Council (public record)",
+   "redistributable": "yes",
+   "derivative_permitted": "yes",
+   "terms_url": "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html",
+   "retrieval_date": "2026-10-01",
+   "reviewed_by": "operator (HG-03)",
+   "reviewed_on": "2026-10-01",
+   "basis": "HG-03 answered 2026-10-01 (E4-B1 = a, decision_catalog.csv round 3): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'. DAC UVED program pages are US state-government factual compilations; the OSCN statute secondary target rides the green ok_statute basis (E4-B5 = a), never a re-approval. Recorded in sources.toml on the operator-signed apply.",
+   "review_packet": "docs/build/reports/rights/ok_dac_uved.md"
+  },
+  {
+   "source_id": "ca_state_auditor",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "attribution": "California State Auditor (public record)",
+   "redistributable": "yes",
+   "derivative_permitted": "yes",
+   "terms_url": "https://information.auditor.ca.gov/reports/2019-118/index.html",
+   "retrieval_date": "2026-10-01",
+   "reviewed_by": "operator (HG-03)",
+   "reviewed_on": "2026-10-01",
+   "basis": "HG-03 answered 2026-10-01 (E4-B1 = a, decision_catalog.csv round 3): 'a — GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets'. The audit index + agency survey answers are US state-government factual compilations; survey answers carry one-auditor provenance, never independently verified. Recorded in sources.toml on the operator-signed apply.",
+   "review_packet": "docs/build/reports/rights/ca_state_auditor.md"
+  }
+ ]
+}

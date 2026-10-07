@@ -56,6 +56,11 @@ extra_questions = [
   "Are the council memo and the amendment one acquisition under common City provenance, or two documents with distinct review scopes?",
 ]
 
+[candidates.SRC-001.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_okc", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_okc", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_okc", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+
 [candidates.SRC-002]
 authority = "City of Tulsa / Tulsa Police Department"
 gap = "P0 dossier: Tulsa ALPR vendor (Flock vs Axon), registration-vs-integration terms, retention, and executed-contract provenance"
@@ -75,6 +80,11 @@ extra_questions = [
   "Is the blank MOU template evidence of structure only — can any executed party be asserted?",
 ]
 
+[candidates.SRC-002.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_tulsa", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_tulsa", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_tulsa", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+
 [candidates.SRC-003]
 authority = "City of San Diego (SDPD)"
 gap = "P0 dossier: SDPD surveillance-tech inventory and subscription/service access (vs local hardware) distinctions"
@@ -89,6 +99,11 @@ dimension_evidence = "P0 dossier (G=3); agency-described tech + subscription acc
 extra_questions = [
   "Do the report excerpts mirror the same SDPD origin across years — group as one municipal lineage while keeping year/revision identity?",
 ]
+
+[candidates.SRC-003.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
 
 [candidates.SRC-004]
 authority = "City of San Diego (Purchasing / contracts)"
@@ -105,6 +120,11 @@ extra_questions = [
   "Is the executed Ubicquia agreement's signature page publicly posted, and does the posted PDF include all vendor exhibits (which carry separate rights)?",
 ]
 
+[candidates.SRC-004.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+
 [candidates.SRC-005]
 authority = "City of San Diego Privacy Advisory Board"
 gap = "P0 dossier: San Diego Privacy Advisory Board recommendations targeted at surveillance technology and their adoption context"
@@ -119,6 +139,11 @@ dimension_evidence = "P0 dossier (G=3); recommendation existence + targeted revi
 extra_questions = [
   "What approved acquisition path retrieves the full PAB recommendation (direct open exceeded tool limits) — bounded retry, alternate index copy, or operator action?",
 ]
+
+[candidates.SRC-005.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#dossier_san_diego", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
 
 # ---------------------------------------------------------------------------
 # P1 local / pilot band (ranks 6–12)
@@ -139,6 +164,11 @@ preflight = { status = "screening_required", notes = "ADR-185 drafted screen rec
 dimensions = { G = 2, R = 3, I = 3, U = 3, T = 2, J = 2, E = 2, A = 2, S = 0 }
 dimension_evidence = "P1 local (G=2); state contract IDs/vendors/procurement channel (R=3); no OMES row (I=3); official contract-search index (U=3); statewide contracts current (T=2); Oklahoma state (J=2); effort M (E=2); index+excerpts only, portal terms unreviewed (A=2); none flagged (S=0)"
 
+[candidates.SRC-006.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ok_omes_contracts", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ok_omes_contracts", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ok_omes_contracts", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+
 [candidates.SRC-007]
 authority = "Oklahoma District Attorneys Council (DAC — UVED program)"
 gap = "P0 dossier: UVED program administrator and the legal authority chain including the applicable statute version"
@@ -157,6 +187,11 @@ dimension_evidence = "P0 dossier (G=3); program administrator + legal-version au
 extra_questions = [
   "Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?",
 ]
+
+[candidates.SRC-007.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ok_dac_uved", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ok_dac_uved", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ok_dac_uved", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
 
 [candidates.SRC-008]
 authority = "Oklahoma Attorney General's office (Safe Oklahoma grant)"
@@ -230,6 +265,11 @@ dimension_evidence = "P1 bounded pilot (G=2); independent audit + agency survey 
 extra_questions = [
   "Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified — and under what attribution may findings be quoted?",
 ]
+
+[candidates.SRC-011.rights]
+document_bytes = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ca_state_auditor", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+fact_extraction = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ca_state_auditor", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
+derived_publication = { decision = "decided", decision_ref = "docs/build/reports/rights/p3438_dispositions.json#ca_state_auditor", decided_by = "operator (HG-03, E4-B1 = a)", decided_on = 2026-10-01, basis = "GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets (decision_catalog.csv round 3, 2026-10-01T04:03:25Z) — recorded on the operator-signed apply, never minted by the queue" }
 
 [candidates.SRC-012]
 authority = "Seattle Office of Inspector General (OIG)"

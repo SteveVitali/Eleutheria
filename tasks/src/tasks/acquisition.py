@@ -147,6 +147,7 @@ DEFAULT_INVENTORY = "docs/build/planning/2026-09-25-six-streams/data/source-cand
 DISPOSITION_ARTIFACTS: tuple[str, ...] = (
     "docs/build/reports/rights/p272_dispositions.json",
     "docs/build/reports/rights/p293_dispositions.json",
+    "docs/build/reports/rights/p3438_dispositions.json",
 )
 
 

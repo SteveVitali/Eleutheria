@@ -501,17 +501,15 @@ def test_evidence_pack_names_captures_and_posture() -> None:
         assert needle in md
 
 
-def test_dossier_tulsa_stays_ingestion_gated() -> None:
-    """The replay's in-memory flip never touches the registry row — the source
-    stays gated (D-R10-SOURCES-1 OPEN), rights flips are HG-03 only."""
-    import pytest
-    from connectors.loader import IngestionNotPermitted, assert_loadable
+def test_dossier_tulsa_loadable_under_prepared_flip() -> None:
+    """The r11/sources-flips apply (HG-03, E4-B1 = a — GL-GATE-07 batch-wide)
+    flipped the registry row for real: permitted + recorded review. The
+    replay's in-memory flip is then a no-op against it."""
+    from connectors.loader import assert_loadable
     from connectors.registry import get
 
-    assert get("dossier_tulsa").ingestion_permitted is False
-    # The live gate still refuses the source.
-    with pytest.raises(IngestionNotPermitted):
-        assert_loadable(get("dossier_tulsa"))
+    assert get("dossier_tulsa").ingestion_permitted is True
+    assert_loadable(get("dossier_tulsa"))
 
 
 def test_no_part_viii_or_fabricated_participant_data() -> None:

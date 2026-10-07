@@ -103,15 +103,37 @@ def test_every_candidate_carries_a_passport(entries):
         assert not p.problems()  # completeness validated at load
 
 
-def test_seeding_approves_nothing(entries):
-    """No candidate may carry a decided rights lane at seed — the queue
-    cannot mint a rights decision (HG-03 stays operator-owned)."""
+DECIDED_BY_PREPARED_FLIP = {
+    "SRC-001",
+    "SRC-002",
+    "SRC-003",
+    "SRC-004",
+    "SRC-005",
+    "SRC-006",
+    "SRC-007",
+    "SRC-011",
+}
+
+
+def test_only_the_prepared_flip_batch_is_decided(entries):
+    """The r11/sources-flips apply (HG-03, E4-B1 = a) decides all three lanes
+    of exactly the 8 selected candidates — each citing the recorded
+    p3438_dispositions.json disposition — and mints nothing else: every other
+    candidate stays undetermined, inadmissible and not onboardable (the queue
+    still cannot mint a rights decision)."""
     for e in entries:
-        for _lane, record in e.passport.rights.lanes():
-            assert record.decision != LaneDecision.DECIDED
-        assert acq.Gate.RIGHTS_UNDETERMINED in e.gates
-        assert not e.admissible
-        assert not e.onboardable
+        lanes = [r for _l, r in e.passport.rights.lanes()]
+        if e.passport.candidate_id in DECIDED_BY_PREPARED_FLIP:
+            assert all(r.decision == LaneDecision.DECIDED for r in lanes)
+            for r in lanes:
+                assert "p3438_dispositions.json" in r.decision_ref
+                assert r.decided_by and r.decided_on and r.basis
+            assert acq.Gate.RIGHTS_UNDETERMINED not in e.gates
+        else:
+            assert all(r.decision != LaneDecision.DECIDED for r in lanes)
+            assert acq.Gate.RIGHTS_UNDETERMINED in e.gates
+            assert not e.admissible
+            assert not e.onboardable
 
 
 def test_seed_assessment_is_versioned_estimated_not_measured(entries):
@@ -299,11 +321,13 @@ def _all_decided(rights) -> object:
 
 
 def test_undetermined_rights_gate_blocks_any_score(by_id):
-    p = by_id["SRC-002"].passport  # highest-scoring row
+    # SRC-009 (excluded from the prepared-flip batch — its lanes stay
+    # undetermined, so the gate still bites regardless of score).
+    p = by_id["SRC-009"].passport
     assert p.dimensions.values == {d: p.dimensions.values[d] for d in acq.DIMENSIONS}
-    e = by_id["SRC-002"]
+    e = by_id["SRC-009"]
     assert acq.Gate.RIGHTS_UNDETERMINED in e.gates
-    assert not e.admissible  # a 25-point score buys nothing
+    assert not e.admissible  # a high score buys nothing
 
 
 def test_rejected_rights_blocked_regardless_of_usefulness(by_id):
@@ -368,8 +392,8 @@ def test_src027_workbook_path_rejected_metadata_path_kept(by_id):
 def test_municipal_publication_is_not_auto_cc0(by_id):
     """A municipal publisher observed → the municipal_rights_review gate and
     the non-edict question — municipal publication alone can never satisfy a
-    lane."""
-    e = by_id["SRC-001"]
+    lane (SRC-012 stays undetermined — outside the prepared-flip batch)."""
+    e = by_id["SRC-012"]
     assert acq.Gate.MUNICIPAL_RIGHTS_REVIEW in e.gates
     qs = " ".join(e.missing_questions)
     assert "not auto-CC0" in qs
@@ -527,7 +551,7 @@ def test_measured_cost_requires_a_basis(by_id):
 
 
 def test_missing_questions_cover_every_open_lane(by_id):
-    e = by_id["SRC-001"]
+    e = by_id["SRC-012"]  # undetermined — outside the prepared-flip batch
     qs = e.missing_questions
     assert len(qs) >= 4
     joined = " ".join(qs)

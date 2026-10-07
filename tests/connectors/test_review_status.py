@@ -230,12 +230,17 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # P32.12 added the three gated dossier_* pilot rows (339 → 342 registered;
     # all ingestion_permitted=false, so loadable stays 236). P34.38 added the
     # three gated pilot-acquisition rows (342 → 345 registered, still gated).
+    # The r11/sources-flips apply (HG-03, E4-B1 = a — GL-GATE-07 batch-wide
+    # over the 23 new targets) flips the three dossier_* rows + the three
+    # pilot-acquisition rows under LicenseRef-PublicRecord-FactualCompilation
+    # (236 → 242 loadable; the prepared patch records the operator-signed
+    # apply — OP-25/OP-26).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 345" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
-    assert "loadable now: 236" in out
+    assert "loadable now: 242" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -243,7 +248,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 236
+    assert len(loadable) == 242
     # state_alpr_statute_inventory is the single flip-ready row: its rights
     # resolved for the landed seed claims (P27.2/ADR-095) while the live gate
     # stays closed by design — one-time seed, never a feed (SIG-INGEST-049f).

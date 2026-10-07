@@ -84,8 +84,8 @@ def test_no_ingestion_permitted_changed() -> None:
         assert get(source_id).ingestion_permitted is True
     # …and the correction mechanism never manufactures a flip — a source
     # without one stays whatever it was (spot-check a gated source).
-    assert get("dossier_tulsa").ingestion_permitted is False
-    assert get("dossier_tulsa").date_corrections == ()
+    assert get("bidnet_direct").ingestion_permitted is False
+    assert get("bidnet_direct").date_corrections == ()
 
 
 def test_correction_for_lookup() -> None:

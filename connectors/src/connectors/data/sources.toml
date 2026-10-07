@@ -7695,10 +7695,22 @@ source_kind = "government_portal"
 homepage_url = "https://www.okc.gov/departments/police"
 default_tier = "R1"
 custody_posture = "REFERENCE"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
-notes = "P32.12 pilot dossier family: OKC official ALPR/Flock documents — city usage page, council memo, contract amendment. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."
+ingestion_permitted = true
+last_verified = 2026-10-01
+rights_reviewed_by = "operator (HG-03)"
+rights_reviewed_on = 2026-10-01
+review_packet = "docs/build/reports/rights/p3438_dispositions.json"
+notes = "P32.12 pilot dossier family: OKC official ALPR/Flock documents — city usage page, council memo, contract amendment. FLIPPED 2026-10-01 (HG-03, E4-B1 = a — \"GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets\", decision_catalog.csv round 3): OKC municipal documents are US government factual compilations — LicenseRef-PublicRecord-FactualCompilation; SIG derives facts + citations, never re-hosts wholesale. The three non-green targets ride this basis; O4/O5/O6 ride ok_statute/okcpd_policy/okc_procurement (E4-B5 = a). Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.dossier_okc.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of Oklahoma City (municipal public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.okc.gov/departments/police"
+retrieval_date = 2026-10-01
 
 [sources.dossier_tulsa]
 name = "Tulsa Police Department — ALPR dossier documents (policies 113C/113E, MOU template)"
@@ -7706,10 +7718,22 @@ source_kind = "government_portal"
 homepage_url = "https://www.tulsapolice.org/"
 default_tier = "R1"
 custody_posture = "REFERENCE"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
-notes = "P32.12 pilot dossier family: TPD ALPR policy documents + camera-integration MOU template (a template asserts structure only — never an executed instrument). NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."
+ingestion_permitted = true
+last_verified = 2026-10-01
+rights_reviewed_by = "operator (HG-03)"
+rights_reviewed_on = 2026-10-01
+review_packet = "docs/build/reports/rights/p3438_dispositions.json"
+notes = "P32.12 pilot dossier family: TPD ALPR policy documents + camera-integration MOU template (a template asserts structure only — never an executed instrument). FLIPPED 2026-10-01 (HG-03, E4-B1 = a — \"GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets\", decision_catalog.csv round 3): Tulsa municipal policy documents are US government factual compilations — LicenseRef-PublicRecord-FactualCompilation; SIG derives facts + citations, never re-hosts wholesale. Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.dossier_tulsa.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of Tulsa / Tulsa Police Department (municipal public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.tulsapolice.org/"
+retrieval_date = 2026-10-01
 
 [sources.dossier_san_diego]
 name = "City of San Diego — surveillance-technology dossier documents (ASR, Ubicquia agreement, indexes)"
@@ -7717,20 +7741,32 @@ source_kind = "government_portal"
 homepage_url = "https://www.sandiego.gov/police/data-transparency"
 default_tier = "R1"
 custody_posture = "REFERENCE"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "dossier_documents connector over committed fixtures (tests/connectors/fixtures/dossier)"
-notes = "P32.12 pilot dossier family: SDPD Annual Surveillance Report (Vigilant subscription — hosted access, never local hardware), the Ubicquia public-safety agreement, and the technology/PAB index pages. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen (D-R10-SOURCES-1 OPEN)."
+ingestion_permitted = true
+last_verified = 2026-10-01
+rights_reviewed_by = "operator (HG-03)"
+rights_reviewed_on = 2026-10-01
+review_packet = "docs/build/reports/rights/p3438_dispositions.json"
+notes = "P32.12 pilot dossier family: SDPD Annual Surveillance Report (Vigilant subscription — hosted access, never local hardware), the Ubicquia public-safety agreement, and the technology/PAB index pages. FLIPPED 2026-10-01 (HG-03, E4-B1 = a — \"GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets\", decision_catalog.csv round 3): San Diego municipal surveillance-technology disclosures are US government factual compilations — LicenseRef-PublicRecord-FactualCompilation; SIG derives facts + citations, never re-hosts wholesale. B3/B4 content bounds recorded in PART_VIII_PREFLIGHT.json (rejected workbook path; byte bound + one bounded retry). Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.dossier_san_diego.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of San Diego (municipal public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.sandiego.gov/police/data-transparency"
+retrieval_date = 2026-10-01
 
-# --- P34.38 pilot-acquisition gated rows (ticket 246, E4-B6 = a) --------------
+# --- P34.38 pilot-acquisition rows (ticket 246, E4-B6 = a) --------------------
 # Three acquisition-queue families selected by the P32.21 pilot batch
-# (oklahoma-state SRC-006 + SRC-007, california-state-auditor SRC-011) get
-# registry rows as PLACEHOLDERS ONLY: every row is ingestion_permitted=false
-# with no review metadata — the prepared HG-03 flip patch on r11/sources-flips
-# (GL-GATE-07 batch-wide, E4-B1 = a) is the operator's to apply (S6R-17 /
-# OP-26). The loader gate stays closed (AGENTS.md gotcha 4); a rights packet
-# under docs/build/reports/rights/ records the reviewed facts and the owed
-# decision for each row.
+# (oklahoma-state SRC-006 + SRC-007, california-state-auditor SRC-011). On the
+# chain branch every row is a gated PLACEHOLDER (ingestion_permitted=false);
+# THIS branch is the prepared HG-03 flip patch — the operator applies it in
+# one commit signed with the OP-25 key (S6R-17 / OP-26; the G4c check fails an
+# unsigned false→true transition). A rights packet under
+# docs/build/reports/rights/ records the reviewed facts for each row; the
+# batch decision record is rights/p3438_dispositions.json.
 
 [sources.ok_omes_contracts]
 name = "Oklahoma OMES — statewide contracts + solicitation channel (SRC-006)"
@@ -7738,11 +7774,22 @@ source_kind = "government_portal"
 homepage_url = "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html"
 default_tier = "R1"
 custody_posture = "REFERENCE"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "bounded document capture under HG-03 (html_text/pdf_text; reviewed URLs only — the statewide-contracts index + solicitation 0900000569)"
+ingestion_permitted = true
+last_verified = 2026-10-01
+rights_reviewed_by = "operator (HG-03)"
+rights_reviewed_on = 2026-10-01
 review_packet = "docs/build/reports/rights/ok_omes_contracts.md"
-notes = "P34.38 gated placeholder (E4-B6 = a): Oklahoma Office of Management and Enterprise Services statewide-contract register — contract ids, vendors, procurement channel. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen and the operator's HG-03 flip (D-R10-SOURCES-1 OPEN; GL-GATE-07 prepared on r11/sources-flips)."
+notes = "P34.38 registry row (E4-B6 = a): Oklahoma Office of Management and Enterprise Services statewide-contract register — contract ids, vendors, procurement channel. FLIPPED 2026-10-01 (HG-03, E4-B1 = a — \"GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets\", decision_catalog.csv round 3): OMES statewide-contract/solicitation records are US state-government factual compilations — LicenseRef-PublicRecord-FactualCompilation; vendor exhibits reviewed per-artifact. Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.ok_omes_contracts.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "State of Oklahoma — Office of Management and Enterprise Services (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html"
+retrieval_date = 2026-10-01
 
 [sources.ok_dac_uved]
 name = "Oklahoma District Attorneys Council — UVED program pages + OSCN statute (SRC-007)"
@@ -7750,11 +7797,22 @@ source_kind = "government_portal"
 homepage_url = "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html"
 default_tier = "R1"
 custody_posture = "REFERENCE"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "bounded document capture under HG-03 (html_text/pdf_text; reviewed URLs only — the UVED program page + OSCN CiteID 478582)"
+ingestion_permitted = true
+last_verified = 2026-10-01
+rights_reviewed_by = "operator (HG-03)"
+rights_reviewed_on = 2026-10-01
 review_packet = "docs/build/reports/rights/ok_dac_uved.md"
-notes = "P34.38 gated placeholder (E4-B6 = a): Oklahoma District Attorneys Council UVED program — administrator and the legal authority chain incl. the applicable statute version. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen and the operator's HG-03 flip (D-R10-SOURCES-1 OPEN; GL-GATE-07 prepared on r11/sources-flips). The OSCN statute target rides the green ok_statute source's recorded basis (E4-B5 = a)."
+notes = "P34.38 registry row (E4-B6 = a): Oklahoma District Attorneys Council UVED program — administrator and the legal authority chain incl. the applicable statute version. FLIPPED 2026-10-01 (HG-03, E4-B1 = a — \"GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets\", decision_catalog.csv round 3): DAC UVED program pages are US state-government factual compilations — LicenseRef-PublicRecord-FactualCompilation. The OSCN statute target rides the green ok_statute source's recorded basis (E4-B5 = a), never a re-approval. Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.ok_dac_uved.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "Oklahoma District Attorneys Council (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html"
+retrieval_date = 2026-10-01
 
 [sources.ca_state_auditor]
 name = "California State Auditor — ALPR audit 2019-118 index + surveys (SRC-011)"
@@ -7762,8 +7820,19 @@ source_kind = "government_portal"
 homepage_url = "https://information.auditor.ca.gov/reports/2019-118/index.html"
 default_tier = "R1"
 custody_posture = "REFERENCE"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "bounded document capture under HG-03 (html_text/pdf_text; reviewed URLs only — the audit index + surveys pages)"
+ingestion_permitted = true
+last_verified = 2026-10-01
+rights_reviewed_by = "operator (HG-03)"
+rights_reviewed_on = 2026-10-01
 review_packet = "docs/build/reports/rights/ca_state_auditor.md"
-notes = "P34.38 gated placeholder (E4-B6 = a): California State Auditor ALPR audit — findings, agency survey answers (one-auditor provenance, never independently verified) and recommendations. NOT yet rights-reviewed: ingestion_permitted stays false pending the published-URL/ownership screen and the operator's HG-03 flip (D-R10-SOURCES-1 OPEN; GL-GATE-07 prepared on r11/sources-flips)."
+notes = "P34.38 registry row (E4-B6 = a): California State Auditor ALPR audit — findings, agency survey answers (one-auditor provenance, never independently verified) and recommendations. FLIPPED 2026-10-01 (HG-03, E4-B1 = a — \"GL-GATE-07 (US) applied batch-wide to all three lanes of the 23 new targets\", decision_catalog.csv round 3): audit index + surveys are US state-government factual compilations — LicenseRef-PublicRecord-FactualCompilation. Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.ca_state_auditor.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "California State Auditor (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://information.auditor.ca.gov/reports/2019-118/index.html"
+retrieval_date = 2026-10-01
