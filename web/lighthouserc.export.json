@@ -1,0 +1,196 @@
+{
+  "//": "SPDX-License-Identifier: Apache-2.0 \u2014 SIG performance-budget CI gate over the EXPORT-MODE build (P34.34b / ACT-16b; DR-C4-13; SIG-FIND-005). The `web` CI job builds `web/dist` with SIG_DATA_SOURCE=export over a from-spine fixture export (scripts/ci/build_from_spine_fixture_export.py \u2014 the real run_spine_export, never serialized web fixtures) and runs `lhci autorun --config=lighthouserc.export.json` against it, so island/page budgets are measured on real-data-shaped bytes before any activation (the P32.23a export-mode build failure, C4 NEW-26, cannot recur unnoticed). The assertMatrix below is a deliberate copy of lighthouserc.json's \u2014 a unit test (tests/unit/test_ci_workflows.py) fails if the two drift apart.",
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "numberOfRuns": 3,
+      "//url": "The base collect set PLUS the Round-10 routes DR-C4-13 names: /releases/ and /research-dossier/ (built by SIG_BUILD_INTERNAL=1, still off the public allow-list), a real dossier route the seeded spine produces (/dossier/ok/), and one archive record \u2014 `/r/_fixture-record/` is a stable measurement alias: the web job copies the release-builder's own `r/<pub>/c/<comp>/entity/<type>/<id>/index.html` there (publication and entity ids are content-derived and differ every run, so a committed URL needs the alias; the bytes are the real record output, unmodified).",
+      "url": [
+        "/index.html",
+        "/dossier/ok/index.html",
+        "/coverage-metrics/index.html",
+        "/data-freshness/index.html",
+        "/curate/index.html",
+        "/map/index.html",
+        "/network/index.html",
+        "/search/index.html",
+        "/releases/index.html",
+        "/research-dossier/index.html",
+        "/r/_fixture-record/index.html"
+      ],
+      "settings": {
+        "throttlingMethod": "simulate"
+      }
+    },
+    "assert": {
+      "assertMatrix": [
+        {
+          "//": "Public content pages: the full zero-JS + performance budget. Excludes /curate/** (ADR-068) and the three opt-in islands /map//network//search/ (ADR-097) \u2014 every other public page ships script size 0.",
+          "matchingUrlPattern": "^(?:(?!/curate/|/map/|/network/|/search/).)*$",
+          "assertions": {
+            "categories:performance": [
+              "error",
+              {
+                "minScore": 0.9
+              }
+            ],
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
+            "resource-summary:script:size": [
+              "error",
+              {
+                "maxNumericValue": 0
+              }
+            ],
+            "resource-summary:total:size": [
+              "error",
+              {
+                "maxNumericValue": 153600
+              }
+            ],
+            "total-byte-weight": [
+              "error",
+              {
+                "maxNumericValue": 153600
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "Curation pages (/curate/**): WCAG 2.2 AA enforced; performance advisory only; script size NOT asserted (island allowance, ADR-068). Not the public budget.",
+          "matchingUrlPattern": ".*/curate/.*",
+          "assertions": {
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
+            "categories:performance": [
+              "warn",
+              {
+                "minScore": 0.7
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "The three public interactive islands (/map/, /network/, /search/): the opt-in-island budget (P27.9, ADR-097 extending ADR-068). WCAG 2.2 AA is enforced (a11y 100); performance is advisory. Each island preserves a no-JS fallback (SIG-UI-050); every OTHER public page keeps script size 0 under the block above. P32.15 (SIG-FIND-005, ADR-134): explicit per-island script/total ceilings below \u2014 measured baselines + headroom recorded in web/tests/e2e/island-budgets.json + docs/build/reports/p32.15-island-budgets.md; asserted again (wire-measured, incl. the map worker) by tests/e2e/budget.spec.ts.",
+          "matchingUrlPattern": ".*/(map|network|search)/.*",
+          "assertions": {
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
+            "categories:performance": [
+              "warn",
+              {
+                "minScore": 0.5
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "/map/ per-island budget (P32.15): MapLibre+PMTiles island \u2248 1.79 MB raw script-family (incl. the 507 KB worker) at the P32.15 baseline; ceiling 2.0 MB script / 2.3 MB total.",
+          "matchingUrlPattern": ".*/map/.*",
+          "assertions": {
+            "resource-summary:script:size": [
+              "error",
+              {
+                "maxNumericValue": 2000000
+              }
+            ],
+            "resource-summary:total:size": [
+              "error",
+              {
+                "maxNumericValue": 2300000
+              }
+            ],
+            "total-byte-weight": [
+              "error",
+              {
+                "maxNumericValue": 2300000
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "/network/ per-island budget (P32.15): React+island \u2248 230 KB raw at baseline; ceiling 400 KB script / 450 KB total.",
+          "matchingUrlPattern": ".*/network/.*",
+          "assertions": {
+            "resource-summary:script:size": [
+              "error",
+              {
+                "maxNumericValue": 400000
+              }
+            ],
+            "resource-summary:total:size": [
+              "error",
+              {
+                "maxNumericValue": 450000
+              }
+            ],
+            "total-byte-weight": [
+              "error",
+              {
+                "maxNumericValue": 450000
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "/search/ per-island budget (P32.15): React+island \u2248 228 KB raw at baseline; ceiling 400 KB script / 450 KB total.",
+          "matchingUrlPattern": ".*/search/.*",
+          "assertions": {
+            "resource-summary:script:size": [
+              "error",
+              {
+                "maxNumericValue": 400000
+              }
+            ],
+            "resource-summary:total:size": [
+              "error",
+              {
+                "maxNumericValue": 450000
+              }
+            ],
+            "total-byte-weight": [
+              "error",
+              {
+                "maxNumericValue": 450000
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        }
+      ]
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "./.lighthouseci-export"
+    }
+  }
+}
