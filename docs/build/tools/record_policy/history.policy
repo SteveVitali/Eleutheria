@@ -83,6 +83,14 @@ act-when connectors/src/connectors/data/sources.toml ^[[:space:]]*ingestion_perm
 allow docs/tickets/DEFERRALS.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
 allow docs/build/LEDGER.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
 
+# P34.39b: the first-fire wave closes 2026-10-21T06:09Z and the camreg_peel_on first
+# fire is scheduled 2026-10-29T12:00Z (the contract's recorded bounds, G1 §3.7 /
+# §7.1). A record line naming P34.39b may carry those scheduled dates until the
+# peel-on fire + 1 h; after that the record is written from the scheduler's
+# lastAttemptTime and the clock, never from this entry.
+allow docs/tickets/DEFERRALS.md 2026-10-29T13:00:00Z P34.39b
+allow docs/build/LEDGER.md 2026-10-29T13:00:00Z P34.39b
+
 # ── flake_log.csv (P34.2; H2 §4.4; B-15) ──────────────────────────────────────────────────────────────────
 # The flake re-run log is a living append-only record: ci_boundary.py appends one row per attempt
 # (the first failure's `failure` row and, when allowed, the `rerun-requested` row — at most one per
