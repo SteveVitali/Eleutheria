@@ -100,34 +100,41 @@ def test_the_export_dir_satisfies_every_export_mode_requirement(produced) -> Non
         json.loads(path.read_text())  # well-formed JSON, never empty bytes
 
     # Compartment licence discipline: the seeded ODbL subject stays in its own
-    # compartment with its own tile archive; sig_graph is the CC-BY graph.
+    # compartment (osm_physical) with its own tile archive; the CC0 subject
+    # lands in exactly one compartment that is NOT osm_physical (licenses.toml
+    # resolves CC0-1.0 to the first CC0-declaring name — `ontology` today —
+    # so assert by content, never a pinned name a registry reorder would
+    # silently break).
     assert (export_dir / "osm_physical" / "sites.jsonl").is_file()
-    assert (export_dir / "sig_graph" / "sites.jsonl").is_file()
-    for comp in ("osm_physical", "sig_graph"):
+    by_source: dict[str, list[str]] = {}
+    comp_dirs = [d for d in export_dir.iterdir() if d.is_dir() and (d / "sites.jsonl").is_file()]
+    for d in comp_dirs:
+        for line in (d / "sites.jsonl").read_text().splitlines():
+            if line.strip():
+                by_source.setdefault(json.loads(line)["source_id"], []).append(d.name)
+    assert by_source["camreg_osm"] == ["osm_physical"]
+    assert len(by_source["camreg_cc0"]) == 1
+    assert by_source["camreg_cc0"] != ["osm_physical"], (
+        "SIG-EXPORT-005: the ODbL and CC0 subjects must never share a compartment"
+    )
+    assert "muckrock" not in by_source, "UNDETERMINED never ships"
+    cc0_comp = by_source["camreg_cc0"][0]
+    for comp in ("osm_physical", cc0_comp):
         assert (export_dir / comp / "ATTRIBUTION.json").is_file(), (
             f"{comp}/ATTRIBUTION.json — the per-compartment attribution index"
         )
     tile_paths = [a["path"] for a in manifest["artifacts"] if a["path"].startswith("web/tiles/")]
     assert "web/tiles/osm_physical-sites.pmtiles" in tile_paths
-    assert "web/tiles/sig_graph-sites.pmtiles" in tile_paths
+    assert f"web/tiles/{cc0_comp}-sites.pmtiles" in tile_paths
 
     # Provenance: the bytes came from the spine pipeline (PROV-O + exclusions),
-    # not a fixture serializer.
+    # not a fixture serializer — no fixture serializer emits provenance.ttl or
+    # per-compartment JSONL bundles.
     assert (export_dir / "provenance.ttl").is_file()
     exclusions = json.loads((export_dir / "exclusions.json").read_text())
     assert exclusions["totals"]["refused_slices"] >= 1, (
         "the UNDETERMINED-licence subject must be excluded (licence gate held)"
     )
-
-    # And no web-fixture seam leaked in: no fixture serializer emits
-    # provenance.ttl or per-compartment JSONL bundles.
-    shipped_sources = {
-        json.loads(line)["source_id"]
-        for line in (export_dir / "sig_graph" / "sites.jsonl").read_text().splitlines()
-        if line.strip()
-    }
-    assert "camreg_cc0" in shipped_sources
-    assert "muckrock" not in shipped_sources  # UNDETERMINED never ships
 
 
 def test_the_release_build_emits_an_archive_record_and_validates(produced) -> None:
