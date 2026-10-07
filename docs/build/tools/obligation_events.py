@@ -740,6 +740,22 @@ def _ref_exists(root: pathlib.Path, ref: str) -> bool:
     return (root / ref.split("#", 1)[0]).exists()
 
 
+# `docs/build/logs/` is the one gitignored subtree (ADR-073): a ref into it
+# existed on the writer's machine when the record appended but is absent on a
+# fresh checkout. A missing volatile ref is a warning, never an error — the
+# append-only record is the fact, not a claim the file is present now.
+VOLATILE_REF_PREFIX = "docs/build/logs/"
+
+
+def _ref_missing(root: pathlib.Path, ref: str) -> str | None:
+    """None = resolvable; "volatile" = missing under the gitignored logs tree;
+    "missing" = a committed-path ref that does not exist."""
+    path = ref.split("#", 1)[0]
+    if (root / path).exists():
+        return None
+    return "volatile" if path.startswith(VOLATILE_REF_PREFIX) else "missing"
+
+
 def _validate_correction(root: pathlib.Path, ev: dict) -> list[str]:
     """Correction-payload validation (kind="correction"); shape only — target
     resolution happens in check_event_chain."""
@@ -788,9 +804,10 @@ def _validate_correction(root: pathlib.Path, ev: dict) -> list[str]:
     return errs
 
 
-def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
-    """Schema-level validation; returns messages (empty = valid)."""
+def _validate_event(root: pathlib.Path, ev: dict) -> tuple[list[str], list[str]]:
+    """Schema-level validation; returns (errors, warnings)."""
     errs: list[str] = []
+    warns: list[str] = []
     if ev.get("schema") != EVENT_SCHEMA:
         errs.append(f"schema must be {EVENT_SCHEMA!r}")
     kind = ev.get("kind")
@@ -808,7 +825,7 @@ def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
         if k not in ev:
             errs.append(f"missing field {k!r}")
     if errs:
-        return errs
+        return errs, warns
     if ev["kind"] not in EVENT_KINDS:
         errs.append(f"kind {ev['kind']!r} not in {sorted(EVENT_KINDS)}")
     if not isinstance(ev["seq"], int) or ev["seq"] < 0:
@@ -822,7 +839,13 @@ def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
         errs.append("evidence_refs must be a non-empty list")
     else:
         for r in ev["evidence_refs"]:
-            if not isinstance(r, str) or not _ref_exists(root, r):
+            missing = "missing" if not isinstance(r, str) else _ref_missing(root, r)
+            if missing == "volatile":
+                warns.append(
+                    f"evidence ref under the gitignored logs tree — absent on "
+                    f"a fresh checkout: {r!r}"
+                )
+            elif missing:
                 errs.append(f"evidence ref does not exist: {r!r}")
         if ev["kind"] == "transition" and all(
             r.split("#", 1)[0].startswith(REGISTER_PREFIXES) for r in ev["evidence_refs"]
@@ -845,7 +868,7 @@ def _validate_event(root: pathlib.Path, ev: dict) -> list[str]:
     else:
         if ev["expected_previous_event"] is None:
             errs.append("transition must name expected_previous_event (chain on the anchor)")
-    return errs
+    return errs, warns
 
 
 def _corrected_dates(events: list[dict]) -> dict[tuple[str, str], str]:
@@ -892,10 +915,21 @@ def check_event_chain(
     by_obl: dict[str, list[dict]] = {}
     for ev in events:
         eid = ev.get("event_id", "?")
-        errs = _validate_event(root, ev)
+        errs, warns = _validate_event(root, ev)
         for e in errs:
             diags.append(
                 diag("events/malformed", "error", EVENTS_PATH, ev.get("obligation_id", "?"), eid, e)
+            )
+        for w in warns:
+            diags.append(
+                diag(
+                    "events/volatile-ref",
+                    "warning",
+                    EVENTS_PATH,
+                    ev.get("obligation_id", "?"),
+                    eid,
+                    w,
+                )
             )
         if eid in by_id:
             diags.append(
@@ -1267,7 +1301,22 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
                 errs.append("evidence_refs must be a non-empty list")
             else:
                 for r in a["evidence_refs"]:
-                    if not isinstance(r, str) or not _ref_exists(root, r):
+                    missing = (
+                        "missing" if not isinstance(r, str) else _ref_missing(root, r)
+                    )
+                    if missing == "volatile":
+                        diags.append(
+                            diag(
+                                "coverage/volatile-ref",
+                                "warning",
+                                ASSESSMENTS_PATH,
+                                a.get("requirement_id", "?"),
+                                aid,
+                                f"evidence ref under the gitignored logs "
+                                f"tree — absent on a fresh checkout: {r!r}",
+                            )
+                        )
+                    elif missing:
                         errs.append(f"evidence ref does not exist: {r!r}")
                 if verdict_word(a["verdict"]) in MET_VERDICTS and all(
                     r.split("#", 1)[0].startswith(PLANNING_PREFIXES) for r in a["evidence_refs"]
@@ -1536,7 +1585,13 @@ def check(root: pathlib.Path) -> int:
     raw_event_lines = (
         [ln for ln in _epath.read_text().splitlines() if ln.strip()]
         if _epath.is_file()
-        else None
+        else []
+    )
+    _apath = root / ASSESSMENTS_PATH
+    raw_assessment_lines = (
+        [ln for ln in _apath.read_text().splitlines() if ln.strip()]
+        if _apath.is_file()
+        else []
     )
     for e in errs:
         diags.append(diag("events/malformed", "error", EVENTS_PATH, "—", "jsonl", e))
@@ -1545,15 +1600,39 @@ def check(root: pathlib.Path) -> int:
         diags.append(diag("coverage/malformed", "error", ASSESSMENTS_PATH, "—", "jsonl", e))
     diags += check_event_chain(root, events, assessments, raw_event_lines)
     diags += check_assessments(root, assessments)
+    # G11 (P34.9): the jsonl lines are the candidates; parsed records are what
+    # was evaluated. Lines offered and nothing parsed → vacuous, exit 3.
+    candidates = len(raw_event_lines) + len(raw_assessment_lines)
+    evaluated = len(events) + len(assessments)
+    if candidates > 0 and evaluated == 0:
+        print(
+            f"check: VACUOUS — {candidates} record line(s) offered, 0 parsed "
+            "(G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     if not diags:
         print(
             f"check: green — {len(events)} events ({sum(1 for e in events if e.get('kind') == 'transition')} transitions), "
-            f"{len(assessments)} coverage assessments, chains and cells consistent"
+            f"{len(assessments)} coverage assessments, chains and cells consistent "
+            f"(candidates {candidates}, evaluated {evaluated})"
         )
         return 0
     for d in diags:
         print(f"{d['severity']:8} {d['check']:34} {d['obligation']:20} {d['message']}")
-    print(f"check: {len(diags)} diagnostics", file=sys.stderr)
+    errors = [d for d in diags if d["severity"] == "error"]
+    if not errors:
+        print(
+            f"check: green — {len(diags)} warning(s), "
+            f"{len(events)} events, {len(assessments)} assessments "
+            f"(candidates {candidates}, evaluated {evaluated})"
+        )
+        return 0
+    print(
+        f"check: {len(errors)} error(s), {len(diags) - len(errors)} warning(s) "
+        f"(candidates {candidates}, evaluated {evaluated})",
+        file=sys.stderr,
+    )
     return 1
 
 

@@ -275,6 +275,30 @@ def test_nonexistent_evidence_ref_fails(tmp_path: pathlib.Path) -> None:
     diags = obligation_events.check_event_chain(root, events)
     hits = [d for d in diags if "does not exist" in d["message"]]
     assert hits
+    assert all(d["severity"] == "error" for d in hits)
+
+
+def test_missing_log_ref_warns_not_errors(tmp_path: pathlib.Path) -> None:
+    """docs/build/logs/ is the one gitignored subtree (ADR-073): a ref into it
+    existed on the writer's machine but is absent on a fresh checkout — the
+    append-only record warns, never errors (P34.9 CI-boundary fix)."""
+    root = _tree(tmp_path)
+    events = _anchors(root) + [
+        _transition(
+            "D-T9.1-1",
+            1,
+            "D-T9.1-1:e0",
+            "DONE",
+            evidence=["docs/build/logs/some-run/record.json"],
+        )
+    ]
+    diags = obligation_events.check_event_chain(root, events)
+    vol = [d for d in diags if d["check"] == "events/volatile-ref"]
+    assert vol
+    assert all(d["severity"] == "warning" for d in vol)
+    # the same ref must not also surface as a missing-ref error (the
+    # DONE-head/OPEN-cell divergence is an unrelated, expected diagnostic here)
+    assert not [d for d in diags if d["severity"] == "error" and "does not exist" in d["message"]]
 
 
 def test_register_only_evidence_fails(tmp_path: pathlib.Path) -> None:

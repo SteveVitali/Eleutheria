@@ -291,6 +291,8 @@ def classify_conflicts(
     by_doc: list[dict] = []
     inconsistencies: list[dict] = []
     for d in diags:
+        if d["severity"] == "warning":
+            continue  # advisory (e.g. volatile gitignored-log refs), never an inconsistency
         if d["severity"] == "conflict" and (
             d["check"] == "deferrals/status-conflict"
             and d["obligation"] in covered_conflict_obligations
@@ -729,6 +731,36 @@ def generate(root: pathlib.Path, out_dir: pathlib.Path) -> int:
     return 0
 
 
+def _landing_refs(root: pathlib.Path, projection: dict) -> list[str]:
+    """Unresolved ticket/backlog references in obligation landings — V9's
+    'landings name an existing chain row or BL id' (P34.9)."""
+    import csv
+
+    manifest = audit_current_state.parse_manifest(root, [])
+    chain = set(manifest["id_to_seq"])
+    bl_ids: set[str] = set()
+    bl_path = root / "docs/build/BACKLOG.csv"
+    if bl_path.is_file():
+        with bl_path.open(newline="") as fh:
+            reader = csv.DictReader(fh)
+            key = "bl_id" if "bl_id" in (reader.fieldnames or ()) else "id"
+            bl_ids = {r[key] for r in reader if r.get(key)}
+    bad: list[str] = []
+    for o in projection["obligations"]:
+        landing = o.get("landing") or ""
+        for tok in sorted(set(re.findall(r"\bP\d+\.\d+[a-z]?\b", landing))):
+            if tok not in chain:
+                bad.append(
+                    f"{o['id']}: landing names {tok} — not a manifest chain row (V9)"
+                )
+        for tok in sorted(set(re.findall(r"\bBL-\d{3}\b", landing))):
+            if bl_ids and tok not in bl_ids:
+                bad.append(
+                    f"{o['id']}: landing names {tok} — not a BACKLOG row (V9)"
+                )
+    return bad
+
+
 def verify(root: pathlib.Path, out_dir: pathlib.Path) -> int:
     manifest_path = out_dir / "manifest.json"
     if not manifest_path.is_file():
@@ -736,6 +768,9 @@ def verify(root: pathlib.Path, out_dir: pathlib.Path) -> int:
         return 2
     manifest = json.loads(manifest_path.read_text())
     stale: list[str] = []
+    # G11 (P34.9): candidates = recorded inputs + uncovered current inputs;
+    # evaluated = inputs whose recorded digest still verifies.
+    evaluated = 0
     for entry in manifest["inputs"]:
         rel = entry["path"]
         p = root / rel
@@ -747,6 +782,8 @@ def verify(root: pathlib.Path, out_dir: pathlib.Path) -> int:
                 stale.append(
                     f"{rel}: stale digest — recorded {entry['sha256'][:12]}… vs current {now[:12]}…"
                 )
+            else:
+                evaluated += 1
     current = set(enumerate_inputs(root, out_dir))
     recorded = {e["path"] for e in manifest["inputs"]}
     for rel in sorted(current - recorded):
@@ -777,12 +814,31 @@ def verify(root: pathlib.Path, out_dir: pathlib.Path) -> int:
                 f"CURRENT.md exceeds budget: {nlines} lines/{nbytes}B "
                 f"(limit {MAX_LINES}/{MAX_BYTES})"
             )
+    # V9 (P34.9): the projection carries no known inconsistencies and every
+    # obligation landing resolves to a chain row or BL id.
+    if projection["known_inconsistencies"]:
+        stale.append(
+            f"projection carries {len(projection['known_inconsistencies'])} "
+            "known inconsistency(ies) — reconcile, never render over (V9)"
+        )
+    stale += _landing_refs(root, projection)
+    candidates = len(recorded) + len(current - recorded)
+    if candidates > 0 and evaluated == 0:
+        print(
+            f"verify: VACUOUS — {candidates} input(s) offered, none verified "
+            "(G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     if stale:
         print("verify: STALE / drifted — regenerate the projection:", file=sys.stderr)
         for s in stale:
             print(f"  {s}", file=sys.stderr)
         return 1
-    print(f"verify: fresh — {len(recorded)} input digests match; projection in sync")
+    print(
+        f"verify: fresh — {evaluated}/{candidates} input digests verified; "
+        "projection in sync"
+    )
     return 0
 
 

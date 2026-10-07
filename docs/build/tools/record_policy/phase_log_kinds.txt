@@ -1,0 +1,25 @@
+# V4 PHASE LOG entry-kind vocabulary (B3 §6; P34.9) — the declared set an
+# entry's <kind> slot must parse to. Entry shape (BM-LEDGER-06):
+#   - <date -u +%F> — <id-or-pseudo> <kind> — <payload>
+# `<kind>` is the text between the entry id and the closing ` — ` of the head.
+# A trailing ` #<n>` ordinal or ` + <note>` annotation is allowed
+# (e.g. `interruption + resume`, `interruption #2 + resume`); the bare kind
+# must be in this list. `done`/`ticket` are the landing kinds — they require a
+# BUILD_INDEX row and an evidence file. B3's base set is `done`, `blocked`,
+# `inserted`, `split`, `gate`, `pause`, `round`, `correction`, `restored`; the
+# Round-11 working kinds in use follow it.
+done
+blocked
+inserted
+split
+gate
+pause
+round
+correction
+restored
+ticket
+post-closeout record
+post-closeout repair
+orchestrator repair
+interruption
+harness-switch

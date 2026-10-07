@@ -186,13 +186,23 @@ ADR_FILE_RE = re.compile(r"^(ADR-\d+)")
 ADR_ROW_RE = re.compile(r"^\| (ADR-\d+) \|")
 
 
-def assembled() -> str:
-    """Reproduce BUILD.sh: cat each ordered ``[0-9]*.md`` then a newline."""
-    parts = []
-    for f in sorted(SPEC_SRC.glob("[0-9]*.md")):
-        parts.append(f.read_text())
+def assembled(src_dir: pathlib.Path | None = None) -> tuple[str, list[str], list[str]]:
+    src_dir = src_dir or ROOT / "docs/research/_meta/spec_src"
+    """Reproduce BUILD.sh: cat each ordered ``[0-9]*.md`` then a newline.
+
+    Returns (text, read_files, unreadable_files) — an unreadable section file is
+    a candidate the checker cannot evaluate (G11), not silent input."""
+    parts: list[str] = []
+    read: list[str] = []
+    unreadable: list[str] = []
+    for f in sorted(src_dir.glob("[0-9]*.md")):
+        try:
+            parts.append(f.read_text())
+            read.append(f.name)
+        except (OSError, UnicodeDecodeError):
+            unreadable.append(f.name)
         parts.append("\n")
-    return "".join(parts)
+    return "".join(parts), read, unreadable
 
 
 def appendix_f_ids(spec_text: str) -> set[str]:
@@ -212,24 +222,49 @@ def appendix_f_ids(spec_text: str) -> set[str]:
     return ids
 
 
-def main() -> int:
-    errors: list[str] = []
+def main(argv: list[str] | None = None) -> int:
+    import argparse
 
-    if not SPEC.exists():
-        print(f"check_spec_src: FAIL — {SPEC} not found", file=sys.stderr)
+    ap = argparse.ArgumentParser(prog="check_spec_src.py")
+    ap.add_argument(
+        "--root",
+        type=pathlib.Path,
+        default=ROOT,
+        help="repo root the spec/spec_src/docs-adr paths resolve under "
+        "(default: this checkout)",
+    )
+    args = ap.parse_args(argv)
+    root = args.root.resolve()
+    spec = root / "docs/2_canonical_design_spec.md"
+    spec_src = root / "docs/research/_meta/spec_src"
+    adr_dir = root / "docs/adr"
+
+    errors: list[str] = []
+    # G11 (P34.9): per-check candidates/evaluated; a check that evaluated none
+    # of a non-empty candidate set is vacuous — exit 3, never a silent pass.
+    counts: dict[str, list[int]] = {"spec-src": [0, 0], "appendix-f": [0, 0],
+                                   "requirement-ids": [0, 0]}
+
+    if not spec.exists():
+        print(f"check_spec_src: FAIL — {spec} not found", file=sys.stderr)
         return 1
-    committed = SPEC.read_text()
+    committed = spec.read_text()
 
     # 1) byte-identical reproduction
-    if assembled() != committed:
+    built, read_files, unreadable = assembled(spec_src)
+    counts["spec-src"] = [len(read_files) + len(unreadable), len(read_files)]
+    for f in unreadable:
+        errors.append(f"spec_src section file {f} could not be read")
+    if built != committed:
         errors.append(
             "BUILD.sh reproduction is NOT byte-identical: re-run "
             "`sh docs/research/_meta/spec_src/BUILD.sh` and commit the result"
         )
 
     # 2) Appendix F <-> docs/adr file set
-    adr_files = {ADR_FILE_RE.match(p.name).group(1) for p in ADR_DIR.glob("ADR-*.md")}
+    adr_files = {ADR_FILE_RE.match(p.name).group(1) for p in adr_dir.glob("ADR-*.md")}
     appf = appendix_f_ids(committed)
+    counts["appendix-f"] = [len(adr_files | appf), len(adr_files | appf)]
     missing_from_appf = sorted(adr_files - appf)
     ghost_in_appf = sorted(appf - adr_files)
     if missing_from_appf:
@@ -268,9 +303,23 @@ def main() -> int:
     # 4) reference closure: every referenced id is defined or reserved
     referenced = set(REF_RE.findall(committed))
     dangling = sorted(referenced - unique_defs - RESERVED)
+    counts["requirement-ids"] = [len(defs) + len(referenced),
+                                len(defs) + len(referenced)]
     if dangling:
         errors.append(f"referenced but neither defined nor reserved (§0.3): {dangling}")
 
+    print(
+        "check_spec_src:"
+        + "".join(f" {k}={v[1]}/{v[0]}" for k, v in counts.items())
+    )
+    vacuous = [k for k, (c, e) in counts.items() if c > 0 and e == 0]
+    if vacuous:
+        print(
+            f"check_spec_src: VACUOUS — {', '.join(vacuous)} evaluated none of "
+            "a non-empty candidate set (G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     if errors:
         print(f"check_spec_src: FAIL — {len(errors)} problem(s):")
         for e in errors:

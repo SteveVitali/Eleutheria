@@ -1026,6 +1026,101 @@ INPUTS = (
 )
 
 
+# The reconciliation surfaces a `--require-reconciled` run trusts (P34.9): the
+# P32.7 documented-conflict register, and the obligation-event anchors whose
+# recorded interpretation is `reconciled` or `ambiguous-open` (the same two
+# sets current_projection.classify_conflicts enumerates).
+RECONCILIATIONS_REL = "docs/build/reports/obligations/reconciliations.json"
+
+
+def _reconciled_conflicts(root: pathlib.Path) -> set[tuple[str, str]]:
+    """(check, obligation) pairs a conflict diag need not fail on."""
+    covered: set[tuple[str, str]] = set()
+    rec = root / RECONCILIATIONS_REL
+    if rec.is_file():
+        try:
+            for d in json.loads(rec.read_text()).get("documented", []):
+                covered.add((d.get("check", ""), d.get("obligation", "")))
+        except (OSError, json.JSONDecodeError):
+            pass
+    try:
+        import obligation_events
+
+        events, _errs = obligation_events.load_jsonl(root / obligation_events.EVENTS_PATH)
+        for ev in events:
+            anchor = ev.get("anchor", {})
+            if ev.get("kind") == "migration" and anchor.get("interpretation") in {
+                "reconciled",
+                "ambiguous-open",
+            }:
+                covered.add(("deferrals/status-conflict", ev.get("obligation_id", "")))
+    except Exception:
+        pass
+    return covered
+
+
+def _counts(root: pathlib.Path, manifest: dict, diags: list[dict]) -> dict:
+    """Per-input candidates/evaluated (G11, P34.9). `candidates` = items the
+    input offered; `evaluated` = items that parsed into a checked structure."""
+    counts: dict[str, dict[str, int]] = {}
+    malformed_manifest = sum(
+        1 for d in diags if d["check"] == "manifest/malformed-row"
+    )
+    counts["manifest"] = {
+        "candidates": len(manifest["rows"]) + malformed_manifest,
+        "evaluated": len(manifest["rows"]),
+    }
+    deferrals = root / "docs/tickets/DEFERRALS.md"
+    d_cand = d_eval = 0
+    if deferrals.is_file():
+        for line in deferrals.read_text().splitlines():
+            if re.match(r"^\|\s*D-[A-Z0-9]", line):
+                d_cand += 1
+                cells = [c.strip() for c in line.split("|")]
+                words = cells[-2].split() if len(cells) >= 2 else []
+                if words and words[0].upper() in VALID_STATUSES | {"DEFERRED-AGAIN"}:
+                    d_eval += 1
+    counts["deferrals"] = {"candidates": d_cand, "evaluated": d_eval}
+    ledger = root / "docs/build/LEDGER.md"
+    l_cand = l_eval = 0
+    if ledger.is_file():
+        body = re.search(
+            r"(?ms)^##\s+CURRENT STATE.*?^```\s*$(.*?)^```", ledger.read_text()
+        )
+        if body:
+            for ln in body.group(1).splitlines():
+                if re.match(r"^\s*[A-Za-z][A-Za-z0-9]*:(\s|$)", ln):
+                    l_cand += 1
+                    l_eval += 1
+    counts["ledger"] = {"candidates": l_cand, "evaluated": l_eval}
+    tickets = list((root / "docs/tickets").glob("*.md")) if (root / "docs/tickets").is_dir() else []
+    counts["tickets"] = {
+        "candidates": len(tickets),
+        "evaluated": sum(1 for p in tickets if p.is_file()),
+    }
+    cov = root / "docs/build/COVERAGE_MATRIX.csv"
+    c_cand = c_eval = 0
+    if cov.is_file():
+        with cov.open(newline="") as fh:
+            rows = list(csv.reader(fh))
+        for r in rows[1:]:
+            c_cand += 1
+            if len(r) >= len(check_coverage_matrix.HEADER) and re.fullmatch(
+                r"SIG-[A-Z]+-\d+[a-z]?", r[0] or ""
+            ):
+                c_eval += 1
+    counts["coverage"] = {"candidates": c_cand, "evaluated": c_eval}
+    adr_dir = root / "docs/adr"
+    a_cand = a_eval = 0
+    if adr_dir.is_dir():
+        for p in adr_dir.glob("ADR-*.md"):
+            a_cand += 1
+            if p.is_file():
+                a_eval += 1
+    counts["adrs"] = {"candidates": a_cand, "evaluated": a_eval}
+    return counts
+
+
 def audit(root: pathlib.Path) -> tuple[list[dict], dict]:
     diags: list[dict] = []
     manifest = parse_manifest(root, diags)
@@ -1048,6 +1143,7 @@ def audit(root: pathlib.Path) -> tuple[list[dict], dict]:
         "schema": "build-memory-audit/1",
         "root": str(root),
         "input_digests": inputs,
+        "counts": _counts(root, manifest, diags),
     }
     return diags, meta
 
@@ -1085,6 +1181,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--md-out", type=pathlib.Path, default=None, help="write the Markdown report here"
     )
+    ap.add_argument(
+        "--require-reconciled",
+        action="store_true",
+        help="conflicts covered by reconciliations.json or a migration-anchor "
+        "interpretation are reported as reconciled, not failing; an "
+        "unreconciled conflict still exits 1 (P34.9, G5 wiring)",
+    )
     args = ap.parse_args(argv)
     root = args.root.resolve()
     readme = root / "docs/build/README.md"
@@ -1094,17 +1197,60 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
     diags, meta = audit(root)
+    counts = meta.get("counts", {})
+    vacuous = [
+        k for k, v in counts.items() if v["candidates"] > 0 and v["evaluated"] == 0
+    ]
+    if vacuous:
+        print(
+            f"audit_current_state: VACUOUS — {', '.join(vacuous)} evaluated "
+            "none of a non-empty candidate set (G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     errors = sum(1 for d in diags if d["severity"] == "error")
-    conflicts = sum(1 for d in diags if d["severity"] == "conflict")
-    payload = {**meta, "summary": {"errors": errors, "conflicts": conflicts}, "diagnostics": diags}
+    conflict_diags = [d for d in diags if d["severity"] == "conflict"]
+    reconciled: list[dict] = []
+    failing = list(diags)
+    if args.require_reconciled and conflict_diags:
+        covered = _reconciled_conflicts(root)
+        reconciled = [
+            d for d in conflict_diags if (d["check"], d["obligation"]) in covered
+        ]
+        failing = [
+            d for d in diags if d["severity"] != "conflict" or d not in reconciled
+        ]
+    conflicts = len(conflict_diags)
+    summary = {
+        "errors": errors,
+        "conflicts": conflicts,
+        "reconciled_conflicts": len(reconciled),
+        "failing_diagnostics": len(failing),
+    }
+    payload = {**meta, "summary": summary, "diagnostics": diags}
     if args.json_out:
         args.json_out.parent.mkdir(parents=True, exist_ok=True)
         args.json_out.write_text(json.dumps(payload, indent=1) + "\n")
     md = render_markdown(diags, meta)
+    if args.require_reconciled and reconciled:
+        md += (
+            f"\n`--require-reconciled`: {len(reconciled)} conflict(s) covered by "
+            "reconciliations.json or a recorded migration-anchor interpretation; "
+            f"{len(failing)} diagnostic(s) still failing.\n"
+        )
     if args.md_out:
         args.md_out.parent.mkdir(parents=True, exist_ok=True)
         args.md_out.write_text(md)
     sys.stdout.write(md)
+    if args.require_reconciled:
+        print(
+            "audit_current_state:"
+            + "".join(
+                f" {k}={v['evaluated']}/{v['candidates']}"
+                for k, v in counts.items()
+            )
+        )
+        return 1 if failing else 0
     return 1 if diags else 0
 
 
