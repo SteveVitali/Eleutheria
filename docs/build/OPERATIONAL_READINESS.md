@@ -372,3 +372,15 @@ the trigger.
 | corr | line | recorded → true (UTC) | evidence | register rec |
 |---|---|---|---|---|
 | DC-OR-01 | L266 | GATE-G3 signature: recorded 2026-10-19 → true 2026-09-28T03:49:14Z (spec Appendix G.7.4 R11-C1; ADR-146 event row 33) | G3SIGN: commit `95c8a73f` "docs(build): GATE-G3 signed …" (committer 2026-09-27T23:49:46-04:00 = 2026-09-28T03:49:46Z) | 210 |
+
+## Addendum — SCHEDULING CORRECTION (P34.4, appended 2026-10-02; append-only)
+
+- *Agent record (labelled): written by Devin, harness `devin-desktop/swe-2-high/subagent`, Round-11
+  chain row 205.* The scheduling row above that calls `reingest.yml` the GHA cron scheduler is
+  corrected, not edited: **the scheduler of record for hosted per-source reingestion is the Cloud
+  Scheduler + Cloud Run jobs driven from `ops/cadence.toml`** (`ops/gcp/scheduled-ops.sh`, P26.1);
+  `reingest.yml`'s `schedule:` block was redundant with it and failed every day it ran (daily-failure
+  noise, G1-09 — last five runs all `failure`). P34.4 removed the `schedule:` block (the workflow
+  stays `workflow_dispatch`-only) and queues the live `gh workflow disable reingest.yml` leg
+  (`D-P34.4-1`). The row's other claims (`sig-orchestration due`, FreshnessLedger, disappearance
+  sweep) are unchanged.

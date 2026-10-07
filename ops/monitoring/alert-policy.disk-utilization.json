@@ -1,0 +1,42 @@
+{
+  "_sig": {
+    "apply": "update",
+    "displayName": "SIG \u2014 Cloud SQL sig-pg disk utilization > 85%",
+    "id": "10812940548821947108",
+    "kind": "policy",
+    "source": "track0.5-live-export-2026-10-02"
+  },
+  "alertStrategy": {
+    "autoClose": "86400s"
+  },
+  "combiner": "OR",
+  "conditions": [
+    {
+      "conditionThreshold": {
+        "aggregations": [
+          {
+            "alignmentPeriod": "300s",
+            "perSeriesAligner": "ALIGN_MEAN"
+          }
+        ],
+        "comparison": "COMPARISON_GT",
+        "duration": "600s",
+        "filter": "metric.type = \"cloudsql.googleapis.com/database/disk/utilization\" AND resource.type = \"cloudsql_database\" AND resource.labels.database_id = \"{project}:sig-pg\"",
+        "thresholdValue": 0.85,
+        "trigger": {
+          "count": 1
+        }
+      },
+      "displayName": "disk utilization > 0.85 for 10 min"
+    }
+  ],
+  "displayName": "SIG \u2014 Cloud SQL sig-pg disk utilization > 85%",
+  "documentation": {
+    "content": "sig-pg disk is above 85% (15 GB disk, storage auto-resize ON with no limit). Review growth; the Round-11 plan proposes growing to 25 GB with a 40 GB cap. Created 2026-10-01 (Track 0.5).",
+    "mimeType": "text/markdown"
+  },
+  "enabled": true,
+  "notificationChannels": [
+    "projects/{project}/notificationChannels/10808426210098728267"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "_sig": {
+    "apply": "create",
+    "displayName": "SIG \u2014 SIG-ALERT log line on sig-alerts",
+    "id": null,
+    "kind": "policy",
+    "source": "p34.4-authored"
+  },
+  "alertStrategy": {
+    "autoClose": "86400s",
+    "notificationRateLimit": {
+      "period": "86400s"
+    }
+  },
+  "combiner": "OR",
+  "conditions": [
+    {
+      "conditionMatchedLog": {
+        "filter": "resource.type = \"cloud_run_revision\" AND resource.labels.service_name = \"sig-alerts\" AND textPayload : \"SIG-ALERT\""
+      },
+      "displayName": "SIG-ALERT textPayload on sig-alerts"
+    }
+  ],
+  "displayName": "SIG \u2014 SIG-ALERT log line on sig-alerts",
+  "documentation": {
+    "content": "sig-alerts emitted a SIG-ALERT line \u2014 a probe-hosted sweep reported a critical target down (or another SIG-ALERT emitter fired). Check: gcloud logging read 'resource.labels.service_name=\"sig-alerts\" AND textPayload:\"SIG-ALERT\"' --project {project} --freshness=24h. Created by P34.4 (QA-4); the sig-alerts receiver is the SIG-ALERT webhook target (ops/src/ops/alerts.py).",
+    "mimeType": "text/markdown"
+  },
+  "enabled": true,
+  "notificationChannels": [
+    "projects/{project}/notificationChannels/10808426210098728267"
+  ]
+}

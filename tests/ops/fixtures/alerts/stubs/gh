@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+# Offline `gh` stub for ops/gcp/alerts.sh tests (P34.4). Workflow state lives in
+# $GCLOUD_STUB_STATE key `wf_state` (default "active"). Logged to $GH_STUB_LOG.
+import json
+import os
+import sys
+from pathlib import Path
+
+LOG = os.environ.get("GH_STUB_LOG")
+if LOG:
+    Path(LOG).parent.mkdir(parents=True, exist_ok=True)
+    with open(LOG, "a") as fh:
+        fh.write("gh " + " ".join(sys.argv[1:]) + "\n")
+
+STATE_PATH = os.environ.get("GCLOUD_STUB_STATE", "/dev/null")
+state = {}
+try:
+    state = json.loads(Path(STATE_PATH).read_text())
+except Exception:
+    pass
+
+
+def save() -> None:
+    Path(STATE_PATH).write_text(json.dumps(state, indent=1, sort_keys=True))
+
+
+pos = [a for a in sys.argv[1:] if not a.startswith("--")]
+
+if pos[:2] == ["workflow", "list"]:
+    print(
+        json.dumps(
+            [
+                {
+                    "name": "reingest",
+                    "state": state.get("wf_state", "active"),
+                    "path": ".github/workflows/reingest.yml",
+                }
+            ]
+        )
+    )
+elif pos[:2] == ["workflow", "disable"]:
+    state["wf_state"] = "disabled_manually"
+    save()
+    print("")
+elif pos[:2] == ["workflow", "enable"]:
+    state["wf_state"] = "active"
+    save()
+    print("")
+elif pos[:2] == ["run", "list"]:
+    print("[]")
+else:
+    print("{}")

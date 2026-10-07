@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+# Offline `gcloud` stub for ops/gcp/alerts.sh tests (P34.4). State lives in
+# $GCLOUD_STUB_STATE (a JSON file): keys `policies`, `channels`, `uptime`,
+# `probe_image`, `probe_commit`, `probe_execs`, `image_digest`, `log_rows`.
+# Every invocation is logged to $GCLOUD_STUB_LOG. Mutations are limited to
+# `policies create|update`, `run jobs update` and `builds submit` (tag -> digest).
+import json
+import os
+import sys
+from pathlib import Path
+
+LOG = os.environ.get("GCLOUD_STUB_LOG")
+if LOG:
+    Path(LOG).parent.mkdir(parents=True, exist_ok=True)
+    with open(LOG, "a") as fh:
+        fh.write("gcloud " + " ".join(sys.argv[1:]) + "\n")
+
+STATE_PATH = os.environ.get("GCLOUD_STUB_STATE", "/dev/null")
+state = {}
+try:
+    state = json.loads(Path(STATE_PATH).read_text())
+except Exception:
+    pass
+
+
+def save() -> None:
+    Path(STATE_PATH).write_text(json.dumps(state, indent=1, sort_keys=True))
+
+
+def flag(prefix: str) -> str:
+    for a in sys.argv[1:]:
+        if a.startswith(prefix):
+            return a[len(prefix):]
+    return ""
+
+
+def job_json() -> dict:
+    return {
+        "apiVersion": "run.googleapis.com/v2",
+        "kind": "Job",
+        "metadata": {"name": "sig-probe"},
+        "spec": {
+            "template": {
+                "spec": {
+                    "template": {
+                        "spec": {
+                            "containers": [
+                                {
+                                    "image": state.get("probe_image", "img@sha256:" + "0" * 64),
+                                    "args": ["-c", "exec sig-ops probe-hosted --alert"],
+                                    "env": [
+                                        {"name": "SIG_CODE_COMMIT", "value": state.get("probe_commit", "")},
+                                        {"name": "SIG_OPS_CADENCE", "value": "/app/ops/cadence.toml"},
+                                    ],
+                                }
+                            ],
+                            "volumes": [],
+                        }
+                    }
+                }
+            }
+        },
+        "status": {},
+    }
+
+
+pos = [a for a in sys.argv[1:] if not a.startswith("--")]
+project = state.get("project", "stub-project")
+
+if pos[:3] == ["auth", "application-default", "print-access-token"]:
+    print("stub-token")
+elif pos[:4] == ["beta", "monitoring", "channels", "list"]:
+    print(json.dumps(state.get("channels", [])))
+elif pos[:3] == ["monitoring", "uptime", "list-configs"]:
+    print(json.dumps(state.get("uptime", [])))
+elif pos[:4] == ["alpha", "monitoring", "policies", "list"]:
+    print(json.dumps(state.get("policies", [])))
+elif pos[:4] == ["alpha", "monitoring", "policies", "describe"]:
+    pid = pos[4]
+    found = next(
+        (p for p in state.get("policies", []) if str(p.get("name", "")).endswith("/" + pid)), {}
+    )
+    print(json.dumps(found))
+elif pos[:4] == ["alpha", "monitoring", "policies", "create"]:
+    body = json.loads(Path(flag("--policy-from-file=")).read_text())
+    nid = str(state.get("next_policy_id", 9000000000000000001))
+    state["next_policy_id"] = int(nid) + 1
+    body["name"] = f"projects/{project}/alertPolicies/{nid}"
+    body["creationRecord"] = {"mutateTime": "2026-10-02T12:00:00Z"}
+    state.setdefault("policies", []).append(body)
+    save()
+    print(json.dumps({"name": body["name"]}))
+elif pos[:4] == ["alpha", "monitoring", "policies", "update"]:
+    pid = pos[4]
+    body = json.loads(Path(flag("--policy-from-file=")).read_text())
+    body["name"] = f"projects/{project}/alertPolicies/{pid}"
+    policies = state.get("policies", [])
+    for i, p in enumerate(policies):
+        if str(p.get("name", "")).endswith("/" + pid):
+            policies[i] = body
+            break
+    else:
+        policies.append(body)
+    state["policies"] = policies
+    save()
+    print(json.dumps(body))
+elif pos[:3] == ["run", "jobs", "describe"]:
+    print(json.dumps(job_json()))
+elif pos[:3] == ["run", "jobs", "update"]:
+    image = flag("--image=")
+    if image:
+        state["probe_image"] = image
+    envs = flag("--update-env-vars=")
+    for pair in [e for e in envs.split(",") if "=" in e]:
+        k, v = pair.split("=", 1)
+        if k == "SIG_CODE_COMMIT":
+            state["probe_commit"] = v
+    save()
+    print(json.dumps(job_json()))
+elif pos[:4] == ["run", "jobs", "executions", "list"]:
+    print(json.dumps(state.get("probe_execs", [])))
+elif pos[:3] == ["run", "services", "describe"]:
+    print("https://sig-alerts-stub.run.app")
+elif pos[:3] == ["compute", "ssl-certificates", "describe"]:
+    print(
+        json.dumps(
+            {
+                "expireTime": "2026-12-22T10:47:21.000-08:00",
+                "managed": {"status": "ACTIVE"},
+                "name": "sig-web-cert",
+            }
+        )
+    )
+elif pos[:3] == ["secrets", "versions", "access"]:
+    print(os.environ.get("STUB_SECRET_VALUE", "STUBTOKEN-NEVER-PRINTED"))
+elif pos[:2] == ["builds", "submit"]:
+    sys.stdin.buffer.read()  # drain the `git archive` tarball
+    state["image_digest"] = (
+        f"us-central1-docker.pkg.dev/{project}/sig/sig-api@sha256:" + "a" * 64
+    )
+    save()
+    print("build submitted")
+elif pos[:4] == ["artifacts", "docker", "images", "describe"]:
+    print(state.get("image_digest", ""))
+elif pos[:2] == ["logging", "read"]:
+    print(json.dumps(state.get("log_rows", [])))
+else:
+    print("{}")

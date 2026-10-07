@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-  "manifest_inputs": 923,
+  "input_commit": "87a1ffe12e40ea059b7b834363f102a8552ac9e3",
+  "manifest_inputs": 925,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.3",
-    "lastCompleted": "P35.38a",
+    "nextTicket": "P34.4",
+    "lastCompleted": "P34.3",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.38a-crawler-ua-contact-and-explanation-page",
+    "chainTip": "r11/P34.3-ops-data-protection",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-02T03:28:39Z"
+    "updatedAt": "2026-10-02T05:28:09Z"
   },
   "counts": {
-    "obligations": 129,
-    "owed": 68,
-    "open": 64,
+    "obligations": 132,
+    "owed": 71,
+    "open": 67,
     "partial": 4,
     "terminal": 61,
-    "events": 129,
+    "events": 132,
     "transitions": 0,
     "coverage_assessments": 187,
     "coverage_historical_rows": 777,
@@ -71,9 +71,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 35,
@@ -115,9 +115,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 36,
@@ -159,9 +159,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 37,
@@ -203,13 +203,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 38,
-            "row_sha256": "bfa25720cbe19307e37c5bf6f7f79306b7bbcea65c5cd97f5dce14826ab23e1e",
+            "row_sha256": "fa4d4695e4c4a03d0da069a25d3f8c2fa8130ada5e1e0e75b6b473d2fcda90c2",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -247,9 +247,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 39,
@@ -291,9 +291,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 40,
@@ -338,8 +338,8 @@
             "docs/build/LEDGER.md"
           ],
           "observed_at": "2026-09-16",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell itself records DONE 2026-09-16 — the operator decided GO at the go-public checkpoint, the GCP cut-over ran and was verified anonymously, and the custom-domain leg was skipped-by-operator (recorded, not silently dropped). Recorded interpretation: terminal DONE; the leading OPEN was stale.",
           "anchor": {
             "row_line": 41,
@@ -384,8 +384,8 @@
             "docs/build/LEDGER.md"
           ],
           "observed_at": "2026-09-16",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the dated DONE tokens are per-leg discharges — Zenodo deposit (2026-09-15), the GCS object-store push, and the live egress report — while the Software Heritage save-now leg was DECLINED-BY-OPERATOR because the repository is private and that leg reopens if visibility flips, and a non-GCS object-store push remains 'if desired'. Recorded interpretation: PARTIAL — the owed residue is an operator decision, not engineering.",
           "anchor": {
             "row_line": 42,
@@ -427,9 +427,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 43,
@@ -471,9 +471,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 44,
@@ -515,9 +515,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 45,
@@ -559,9 +559,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 47,
@@ -603,9 +603,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 71,
@@ -647,9 +647,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 72,
@@ -691,9 +691,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 73,
@@ -735,9 +735,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 74,
@@ -779,9 +779,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 75,
@@ -823,9 +823,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 76,
@@ -867,9 +867,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 89,
@@ -911,9 +911,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 90,
@@ -955,13 +955,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 101,
-            "row_sha256": "b6560439b5543d2af824ae20fcad4fa0e49da7d8784ca450cfde742a856d82a6",
+            "row_sha256": "f15d9beec9fff641639431b656fc789da4f3e47cd75e5bc0ba5f5ef87b742357",
             "parser_status": "PARTIAL",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -999,9 +999,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 103,
@@ -1043,9 +1043,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 116,
@@ -1087,9 +1087,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 118,
@@ -1131,9 +1131,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 129,
@@ -1175,13 +1175,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 130,
-            "row_sha256": "d84ed76c228f26c64c872aeb66e1f326d189094b6b9849cf4f2ae8745c830850",
+            "row_sha256": "e14cffaacf150308949ba50cb5d7e278e055ba44635366065487b668cfbd011e",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1219,9 +1219,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 131,
@@ -1266,8 +1266,8 @@
             "docs/build/LEDGER.md"
           ],
           "observed_at": "2026-09-19",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-19 (P26.17) — RESOLVED-BY-GL-GATE-08: the operator's recorded PrimeGov/robots disposition removed the gate, so the owed ADR-083-style API-mode justification is moot. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 132,
@@ -1309,13 +1309,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 145,
-            "row_sha256": "d5adbe6d4abc78f55e735c4d4cf774a836333a9c211adb965905443cecf56566",
+            "row_sha256": "08344e52994cf8c442395cb176c9bbae55ac337fbf7965caa333ddd384d6b2b7",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1353,13 +1353,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 146,
-            "row_sha256": "0354bc5116f3051d8143f40a7adb76930247752aed62deaac20f53de7bf07608",
+            "row_sha256": "80bc8c0f2e751493dd8e4324cf72feb21f4140d0e811243663c74c5c90815eb4",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1397,9 +1397,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 147,
@@ -1441,13 +1441,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 160,
-            "row_sha256": "3779424a4299a18802fb8260e7a4fff03d6382749cffe2ccf5dcbeba88b7b55b",
+            "row_sha256": "4163f6e3f8a2ce4b6ef640d64dc3eb4b7abf8a59471e285439182b106934be34",
             "parser_status": "PARTIAL",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1485,13 +1485,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 161,
-            "row_sha256": "0d9d4772c010d36f3411a4fb06e343baf632ddfbf0fd685729d2d809a892cebc",
+            "row_sha256": "d66f0eecf1295bcbf438a9729e87975811f9d3eb910c7b16ceb8370154c6c8a8",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1529,13 +1529,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 176,
-            "row_sha256": "929bb603fdf8f53cc910fe4650e72ffa95b17ff445b813f532f94b8176242073",
+            "row_sha256": "0d8e993b94438b10a6c7ca891fff33f71a6a207ecd7171d13af3f6fc516233b5",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1573,13 +1573,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 177,
-            "row_sha256": "cf348c9c4e26776b86e8b1443ddc992fc996ebd1710d2a6af7ffb888acbe783c",
+            "row_sha256": "d263b99f86993d3838546dd3539774c4d9903796520d292abf3c99e9b686d1a7",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1617,13 +1617,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 178,
-            "row_sha256": "099cbe0502845563ab2ce764d4af8b88b7ec06688ef8c52828bd8da69238dce1",
+            "row_sha256": "dc7f7ed917411f2f668e42d575b6cba729757203db23ed578a657137acae6980",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1661,13 +1661,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 179,
-            "row_sha256": "15d8513ccb795d5c5cd0c2be003533a0d425833716411d89f24d258efe51b820",
+            "row_sha256": "1aabb2676c2456cb17efa8b83e8ef782e88a48806e997337fb23323bd0ce03ef",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1705,9 +1705,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 192,
@@ -1749,13 +1749,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 210,
-            "row_sha256": "20d48461e4c39916526110ece54cdeb0e9cac179397983b9a32bd29ace61d56b",
+            "row_sha256": "d43ada6a661289daa691ae2c5a51e0d8162431f6d6204da5148e5c8332311f73",
             "parser_status": "PARTIAL",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1793,13 +1793,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 226,
-            "row_sha256": "98bdd3e850d3b58c8ca14fd3ef98c48c9e651d92fac2154bb456d12b5f3453c9",
+            "row_sha256": "b2a714c85b2a859fc1bb993a7cdee3fd1168d0b466d22cc301d6ed54a26e2ecb",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -1837,9 +1837,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 247,
@@ -1881,9 +1881,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 261,
@@ -1925,9 +1925,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 275,
@@ -1969,9 +1969,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 288,
@@ -2013,9 +2013,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 305,
@@ -2057,9 +2057,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 317,
@@ -2101,9 +2101,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 318,
@@ -2145,13 +2145,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 331,
-            "row_sha256": "c488cdace0decd29cd15e2dc085c3e96774e81a43fbf9c786d8e319590eafdf7",
+            "row_sha256": "2aab9b68c019cd96a5de9066812ac1bb7b10de75e38aadd74eb361f92577c0c7",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -2189,13 +2189,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 332,
-            "row_sha256": "b32f070d05d2ab7093f3c00c2efd3f1027d7176f2884275eaacdae1ae8112202",
+            "row_sha256": "6dbb95d65fe805330b2ce281fe54bcd7ffd2448ecc40e17ca224925903be06d4",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -2233,9 +2233,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 333,
@@ -2277,9 +2277,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 334,
@@ -2321,9 +2321,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 335,
@@ -2365,9 +2365,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 336,
@@ -2409,9 +2409,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 337,
@@ -2453,9 +2453,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 338,
@@ -2497,13 +2497,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 339,
-            "row_sha256": "fe098f5450ca6f8f7006d7522e4e6f5c19d77c15dbd12359b8fd9f1983527a93",
+            "row_sha256": "a6f747eecd36902f853a3c7334d1b2706662acc9b35da326511d80fa470f8f7f",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -2545,8 +2545,8 @@
             "docs/build/reports/p31.13-hosted/VERIFICATION.md"
           ],
           "observed_at": "2026-09-26",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-26 — all eight accountability-breadth sources landed: P31.12 wired+landed the first four and P31.13 the remaining four under digest-pinned hosted jobs (+0 re-runs, rights_decision rows recorded, materialize +0). Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 340,
@@ -2588,9 +2588,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 355,
@@ -2636,8 +2636,8 @@
             "tests/db/test_resume_pg.py"
           ],
           "observed_at": "2026-09-25",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-25 (P31.4 / HARDEN.4 / ADR-111) — memory-bounded resumable ingest with persisted per-target captures (ingest_run_capture + hosted GCS capture store); hosted kill/resume produced the identical output set (+0, same capture digests). Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 356,
@@ -2679,9 +2679,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 366,
@@ -2723,9 +2723,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 367,
@@ -2767,9 +2767,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 368,
@@ -2814,8 +2814,8 @@
             "docs/build/reports/p31.8-hosted/predicate_inventory_after.json"
           ],
           "observed_at": "2026-09-25",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-25 (P31.8 completing P31.5's family half; ADR-112) — all 62 unregistered measured predicates registered, 180x17 genre/directness assessed, hosted materialize +13,131 envelopes then +0, after-inventory 2,623,647/2,623,647 links admissible. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 378,
@@ -2861,8 +2861,8 @@
             "tests/db/test_resightings.py"
           ],
           "observed_at": "2026-09-25",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-25 (P31.7; ADR-114 revisit trigger recorded) — uncapped re-sighting recording and supersession landed; hosted +232,096 links at 43% of the 15 GB disk projection, under the 50% trigger. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 379,
@@ -2904,13 +2904,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 388,
-            "row_sha256": "5d6d4b0b0daa1743103579aba5c56c4f5aeff5bd5f82ee7949eb78ed224e8928",
+            "row_sha256": "f481d8b79398089780a07e5325db9ed94b8bc8e5c08ed9cac51f58f8fff09b81",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -2948,13 +2948,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 389,
-            "row_sha256": "aba330019fcc841d65eee1598c7c63b50b5aee3d979b8b5d6399a4ace91829dd",
+            "row_sha256": "e189f8f55e6e93092973bc80222ecfb1b83a02a2241b2e8095abbb8d193a1efb",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -2992,9 +2992,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 390,
@@ -3036,9 +3036,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 391,
@@ -3083,8 +3083,8 @@
             "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md"
           ],
           "observed_at": "2026-09-27",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.2's engine half; ADR-109) — /data-freshness/ serves real last_successful_run ISO dates for all 178 sources from the appended ingest_run_completion spine. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 392,
@@ -3130,8 +3130,8 @@
             "docs/build/readouts/ACCEPT-R8.md"
           ],
           "observed_at": "2026-09-27",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.15's engineering half; ADR-118) — the live map draws from per-compartment pmtiles sources, /map/points.json is 404 on both origins, R8-1 recorded CLOSED. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 393,
@@ -3176,8 +3176,8 @@
             "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md"
           ],
           "observed_at": "2026-09-27",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.14's engineering half; ADR-117) — the web/analytics family is live licence-separated and the public surfaces render real values with no not-recorded placeholders. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 394,
@@ -3219,9 +3219,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 403,
@@ -3263,9 +3263,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 404,
@@ -3307,9 +3307,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 405,
@@ -3351,9 +3351,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 406,
@@ -3399,12 +3399,12 @@
             "docs/adr/ADR-123-shared-bitemporal-occurrence-selection.md"
           ],
           "observed_at": "2026-10-11",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-10-11 (P32.4 / ADR-123) — _spine_watermark now reads the trigger-maintained spine_watermark table (bounded by construction); invalidation verified for all three classes on real PG18; the p31-scale-local fixture met the named budget. Composed/hosted latency evidence is reserved to the P32.24/P33.2 e2e rows, which this closure explicitly does not claim. Recorded interpretation: DONE.",
           "anchor": {
             "row_line": 465,
-            "row_sha256": "60e2fbc6797e2f34a67ec28de2eb69b09a8b8d81c4f541cfac4c53ae2a607db9",
+            "row_sha256": "576a4496670d9f8b0251f94257d1bce739e52756b95a0e35d19126bb20d4d897",
             "parser_status": "DONE",
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
@@ -3444,8 +3444,8 @@
             "docs/build/runs/P31.4.md"
           ],
           "observed_at": "2026-09-25",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-25 (P31.4) — every sig-api job rolled by pinned digest (never :latest, before/after recorded); sig-probe swept 8/8 ok including sig-api-health. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 466,
@@ -3491,12 +3491,12 @@
             "tests/api/test_api_unregistered_predicates.py"
           ],
           "observed_at": "2026-09-28",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-28 (P32.2, route half; ADR-121 §6) — the entity route resolves each predicate independently; unknown predicates land on an explicit unregistered_predicates field while registered facts flow through the eligibility policy. Recorded interpretation: DONE; composed/hosted verification stays P33.2's.",
           "anchor": {
             "row_line": 467,
-            "row_sha256": "33ef3a9d338917067671538c47056b4973eceb8827e8490b7cde78b25009a908",
+            "row_sha256": "64dca0fba8d5dffb8b4279791cc597afcb8f7282950044714a88c6e431bddf12",
             "parser_status": "DONE",
             "prose_terminal": "DONE 2026-",
             "interpretation": "reconciled"
@@ -3536,8 +3536,8 @@
             "docs/build/runs/P31.4.md"
           ],
           "observed_at": "2026-09-25",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-25 (P31.4; ADR-111) — sig-sink-bench on the rolled image through the live gate: 179,882 claims/min, re-run +0, 0 duplicate digests; the later OSM-replay observation point is tracked separately under OPEN D-P31.4-1. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 491,
@@ -3579,13 +3579,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 500,
-            "row_sha256": "6cbad8dadc858da1bd3696a555371653adf09c3f3d9bd49fcf2cd75db060c1ce",
+            "row_sha256": "e00de0b9b0efc940604e5a6ca12988491c778d0a4ba443d8c300ce1a902aecee",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3623,9 +3623,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 508,
@@ -3671,8 +3671,8 @@
             "tests/unit/test_publication_eligibility.py"
           ],
           "observed_at": "2026-10-12",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-10-12 (P32.5 / ADR-124) — publication-eligibility/1 + the publication_disposition registry withhold publication_review_required organisations from every public surface until a recorded allow; the flag was NOT declared moot and the owed operator action is recorded in ADR-124. Recorded interpretation: DONE.",
           "anchor": {
             "row_line": 509,
@@ -3714,13 +3714,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 580,
-            "row_sha256": "2701dd8966d526310c7fbd4d92c040ec0b3e254e76e1c486a80670288ba487c0",
+            "row_sha256": "5cd2857c9533ec8e535b002f65d0f1f7c521caa5be3a4459eab65ae89f7d5ea4",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3758,13 +3758,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 581,
-            "row_sha256": "bcdeff9f866facce8c19d9c2727475833ce437292c90b940e3d5f43e5ebbd67a",
+            "row_sha256": "d6f335a045cafdec31b6d3d8bc1a7d7be58a13f77f368f9261ea35a6bf97de88",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3802,13 +3802,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 582,
-            "row_sha256": "a42d265aea9ae84fcab33d43f78471ec0060f6631a3bd5bf67921e365e45fb72",
+            "row_sha256": "474c21bee0f1c7ff731b901e7bfc0377ec1a4be2d0d56de41337c5a9ecc44f5e",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3846,13 +3846,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 583,
-            "row_sha256": "a2e4a42b3583475ab5fd2c6262f3356160ea2be6811a419dba3eb6ce11182158",
+            "row_sha256": "8187f536b675f76a2e7001bae848f941c1bd97753012be34ba00124a4024892d",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3890,13 +3890,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 584,
-            "row_sha256": "2c8ff623ab8959539f3e66205312552223299c1e1ab1b0c42bd5b8e38baef2bc",
+            "row_sha256": "dbdf9ce4d2072481cca3972b1cfbf0b7dc99593339bc9833849baa8fcc1e6044",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3934,13 +3934,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 585,
-            "row_sha256": "48dd9e8b5f64787c0a9ecd15015fa8279778c7a1f3c7d90f46779cadd31508b9",
+            "row_sha256": "3549039b48177f798dc717a3eda107542072039ad88251695e6119e9106b7ca2",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3978,13 +3978,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 623,
-            "row_sha256": "b6818092237713319ec32c855e775330892bf9bb55667b688a5fa3d884067411",
+            "row_sha256": "cb3267c784e6447676d781eef8c92690f3ce1863f8c611c673968e52a448661e",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4022,13 +4022,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 624,
-            "row_sha256": "087358715adcd9ef1d537c5f2f0ceb264643c540070d3f1526c8252c13254692",
+            "row_sha256": "04c5f1fa791dbca6c0ba1b0690e29e922e2680f163d75e00e26bfde291726ed4",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4066,13 +4066,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 641,
-            "row_sha256": "5373b192bf428c02c3cf8af80021f6896ba027a27701a2ec5963eb3cecfb1108",
+            "row_sha256": "0c3e33eb32a3e245cd8d11219a4c0f5f3819928016363c5831b66e381d32831b",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4110,13 +4110,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 642,
-            "row_sha256": "2dee729a4d6b2c9bab49e5ce9397398bf58c9b99962df4f6aa2953137f440f2d",
+            "row_sha256": "d48699109241370082a5d0078217e1130e2bef7389fc986dbfa303481d795654",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4154,13 +4154,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 643,
-            "row_sha256": "ac2aed3c631b8c0c9980160c4c2220d269ed3197959cf0a30ae9e97e59ae0663",
+            "row_sha256": "a95fef18af235cb2d902be178cecf6ad5b33e29cd4dccf14325d184bfc4c46ab",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4198,13 +4198,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 644,
-            "row_sha256": "b7f201dea95b76a16788567d8dc000fbead894c2aa459150be2a184754951eb3",
+            "row_sha256": "926c3f66af83263bbe32325cc24dca8db745b2429e4fabfd7dea3baef5397243",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4242,13 +4242,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 645,
-            "row_sha256": "e698e793e6c5eb772cdb90dd53d882bcfc00eaaf1b85e57784dcc4eba872a012",
+            "row_sha256": "4ec207accea8ef570497ced2cba82c13c43793f34be32610d18e4b7121eef5d5",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4286,13 +4286,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 660,
-            "row_sha256": "a8e92dc63921597ff0521f9ac25abd90a41c76532a9dddcd811ec505851ae85e",
+            "row_sha256": "2b403974608ae5ca39de4dc0141d5d0aaa56e9b5908fdc56cb43519a2d6ba04e",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4330,13 +4330,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 676,
-            "row_sha256": "d8fbf99d3e80c67ac98581e1e73dad8047716ad7c349cb353015f01cf90ff1f9",
+            "row_sha256": "13d813630656ca15113162877cad9f2e93f5f0f27e35ccc5a435b9a31c671da3",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -4349,9 +4349,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-SEC003-1:e0",
       "kind": "F",
-      "owner": "engineering",
+      "owner": "P37.8 (row 428: legal-demand posture + published counts)",
       "landing": "P37.8",
-      "backlog_home": "BL-034",
+      "backlog_home": "BL-080",
       "item": "SIG-SEC-003's \"before the first demand\" clause: a written legal-demand response posture, published before the first demand, and the published legal-demand counts (received, complied with, refused; counts only, with an as-of date); the warrant canary is declined (ADR-166)",
       "unblocked_by": "owner: P37.8 (row 428: legal-demand posture + published counts) · trigger: P37.8's dispatch in 11D — or at once if a legal demand arrives first (the clause binds before the first demand)",
       "verify": "the posture and the counts are published with an as-of date, stating that the text is not legal advice and has not been reviewed by counsel (ADR-167); then an obligation-event transition citing P37.8's landing",
@@ -4367,17 +4367,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
+          "ticket_id": "SEED-15",
+          "owner": "P37.8 (row 428: legal-demand posture + published counts)",
           "landing": "P37.8",
-          "backlog_home": "BL-034",
+          "backlog_home": "BL-080",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 921,
             "row_sha256": "d5ca829c6baf58be7d32d3ebe14c5fd19bd84822ee667b3e2f4e5424d72a4df3",
@@ -4393,9 +4393,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-ADR124-1:e0",
       "kind": "F",
-      "owner": "engineering",
+      "owner": "P34.26 (row 231: verb + census) / P34.46 (row 258: applies the allows with the Round-10 schema) / P37.46a/b (rows 470–471)",
       "landing": "P34.26 → P34.46 → P37.46a",
-      "backlog_home": "BL-058",
+      "backlog_home": "BL-078",
       "item": "ADR-124 `allow` dispositions under ADR-159's registry auto-allow: the scripted, INSERT-only `sig-ops disposition` verb and the read-only census of every review-flagged organisation (P34.26); the allows applied with the Round-10 schema (P34.46); registry matching by construction widening the allowable set (P37.46a/b); every unmatched organisation shows the typed \"not yet reviewed\" state; persons are never allowed (ADR-163). It absorbs `D-P32.3-1`'s legacy organisation keys (B-18)",
       "unblocked_by": "owner: P34.26 (row 231: verb + census) / P34.46 (row 258: applies the allows with the Round-10 schema) / P37.46a/b (rows 470–471) · trigger: the Round-10 schema deploy (P34.46)",
       "verify": "allow rows exist for every registry-matched organisation, each naming its ADR-159 basis, and the API serves `pending_publication_review` for every other flagged organisation (P34.26 AC); then a transition citing P34.46 and P37.46b",
@@ -4411,17 +4411,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
+          "ticket_id": "SEED-15",
+          "owner": "P34.26 (row 231: verb + census) / P34.46 (row 258: applies the allows with the Round-10 schema) / P37.46a/b (rows 470–471)",
           "landing": "P34.26 → P34.46 → P37.46a",
-          "backlog_home": "BL-058",
+          "backlog_home": "BL-078",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 922,
             "row_sha256": "54ab73c848c204136a4cd6fca90d17fe483b390500150c96d73ac4434de52173",
@@ -4437,8 +4437,8 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-ARCHIVE-1:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "P37.55 → P35.5 → P35.63",
+      "owner": "P37.55 (row 482: the Zenodo production package) + OP-19 (the operator publishes the deposit; HG-07) for the deposit; P35.5 (row 262: the R2 zero-egress host) for the mirror — whether that host counts as SIG-GOV-022's geographic mirror is judged at its re-verdict (agent interpretation)",
+      "landing": "P37.55 → P35.5",
       "backlog_home": "BL-029",
       "item": "The archival legs SIG-GOV-022 and SIG-EVID-019 owe beyond `D-P21.5-1`'s SWH save: a production Zenodo deposit for each release (concept + version DOI, the evidence manifest of digests; openly licensed compartments only, D-J3-9) and a geographic mirror outside GCS (today one region, US-CENTRAL1)",
       "unblocked_by": "owner: P37.55 (row 482: the Zenodo production package) + OP-19 (the operator publishes the deposit; HG-07) for the deposit; P35.5 (row 262: the R2 zero-egress host) for the mirror — whether that host counts as SIG-GOV-022's geographic mirror is judged at its re-verdict (agent interpretation) · trigger: the first production model release (P35.63), then each quarterly release",
@@ -4455,17 +4455,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "P37.55 → P35.5 → P35.63",
+          "ticket_id": "SEED-15",
+          "owner": "P37.55 (row 482: the Zenodo production package) + OP-19 (the operator publishes the deposit; HG-07) for the deposit; P35.5 (row 262: the R2 zero-egress host) for the mirror — whether that host counts as SIG-GOV-022's geographic mirror is judged at its re-verdict (agent interpretation)",
+          "landing": "P37.55 → P35.5",
           "backlog_home": "BL-029",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 923,
             "row_sha256": "588602783b8a8c1641a7e489f02203b7d04d492ddc6f1420f0de7007fa617369",
@@ -4481,9 +4481,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-GOV017-1:e0",
       "kind": "F",
-      "owner": "engineering",
+      "owner": "P37.72 (row 442)",
       "landing": "P37.72",
-      "backlog_home": "BL-056",
+      "backlog_home": "BL-087",
       "item": "The written SIG-GOV-017 analysis that must precede the \"My location\" map control (D-K1-7): map-pan only, the location never leaves the browser, and no \"cameras near you\" list, count, alert or proximity output; if the analysis fails, the control is not built and the question returns to the operator",
       "unblocked_by": "owner: P37.72 (row 442) · trigger: P37.72's dispatch (11D), before any of the control is built",
       "verify": "the analysis is committed with its result: a pass ships the control as approved; a fail records the pause and the operator's answer; then a transition citing it",
@@ -4499,17 +4499,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
+          "ticket_id": "SEED-15",
+          "owner": "P37.72 (row 442)",
           "landing": "P37.72",
-          "backlog_home": "BL-056",
+          "backlog_home": "BL-087",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 924,
             "row_sha256": "6f0f38184f5496fca118d492519d74f9c8cbc9cf0eb717c8071eb5e8ff1668b3",
@@ -4525,9 +4525,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-RIGHTS-1:e0",
       "kind": "P",
-      "owner": "operator",
+      "owner": "P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26)",
       "landing": "P36.2",
-      "backlog_home": "BL-032",
+      "backlog_home": "BL-086",
       "item": "Re-decide the out-of-rule rights rows under ADR-169's guardrails: `camreg_aikner`, `camreg_calgary_ab`, `camreg_lexington_ky` (indemnify-and-defend terms) and the Maryland iMAP terms rows `dot_511_md` and `camreg_md_opendata` — capture each source's terms verbatim, write one E4-style line per source, and put an HG-03 line to the operator for each (keep under the operator-accepted basis, or decline)",
       "unblocked_by": "owner: P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26) · trigger: P36.2's dispatch (11C); the lines ride the 11C check-in packet at the latest (S6R-28)",
       "verify": "each source's terms captured verbatim, its HG-03 line answered by the operator, and `sources.toml` recording the outcome; then a transition citing them",
@@ -4543,17 +4543,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
+          "ticket_id": "SEED-15",
+          "owner": "P36.2 (row 350, per SEED-13a) for the captures and lines; the operator answers each HG-03 line and executes any flip (OP-26)",
           "landing": "P36.2",
-          "backlog_home": "BL-032",
+          "backlog_home": "BL-086",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 925,
             "row_sha256": "02a3eb58da1842bce8a495290f9278a4bb4ff12dfd4c00e7799681880a29eaa6",
@@ -4569,9 +4569,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-OSMUID-1:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "P34.49",
-      "backlog_home": "BL-055",
+      "owner": "PLAN-11B (row 239), to place it in an 11B row",
+      "landing": "trigger: P34.49 lands / before the next OSM monthly replay",
+      "backlog_home": "BL-085",
       "item": "Capture-side fix for SIG-INGEST-045e: OSM `user`/`uid` are never captured going forward (today `extract()` discards them only after capture; the Overpass query asks for `out meta center`, F-406). P34.49 seals any existing capture that holds them, without deleting or overwriting it",
       "unblocked_by": "owner: PLAN-11B (row 239), to place it in an 11B row · trigger: P34.49 lands / before the next OSM monthly replay",
       "verify": "an Overpass capture taken after the fix holds no `user`/`uid` (a byte-level test on a fresh capture) and the query no longer requests them; then a transition citing the 11B row's landing",
@@ -4587,17 +4587,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "P34.49",
-          "backlog_home": "BL-055",
+          "ticket_id": "SEED-15",
+          "owner": "PLAN-11B (row 239), to place it in an 11B row",
+          "landing": "trigger: P34.49 lands / before the next OSM monthly replay",
+          "backlog_home": "BL-085",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 926,
             "row_sha256": "ae1fbadfee5618e6a9cff0786c0be8ca2e822f38db1486cb64fe5b86ceb4ed0b",
@@ -4613,9 +4613,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-01:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "P30.2b → HUMAN-H4 → HUMAN-H5",
-      "backlog_home": "BL-057",
+      "owner": "the operator fires T-EVAL-IND (independent reviewers + the outside-contact exception to U-011); the orchestrator then seeds the segment",
+      "landing": "trigger: T-EVAL-IND (§11.3) (catalog gate: T-EVAL-IND (operator: independent reviewers + contact exception to U-011))",
+      "backlog_home": "BL-088",
       "item": "LATER-01 — T-EVAL-IND segment (EV1, H6, EV-F, H8, EV-D, EV-R; H7); also closes D-P30.2b-1 (later-phase unit; register items: F-202 E3:NEW-2, F-203 E3:NEW-3, F-260 F4:NEW-4, U-0039 D-P30.2b-1, U-0040 D-P30.2b-2, U-0066 D-R6.1-EVAL, U-0076 D-R10-HUMAN-1, U-0129 SIG-DOS-002, U-0173 SIG-EVAL-002, U-0174 SIG-EVAL-005, U-0176 SIG-EVAL-007, U-0253 SIG-TRUST-010, U-0320 RISK-P5-05, U-0321 RISK-P5-06, U-0323 RISK-P5-11, U-0474 ADR-099, U-0491 ADR-116, U-0503 ADR-128, U-0504 ADR-129, U-0521 HUMAN-H4, U-0522 HUMAN-H5, U-0525 MANIFEST-184, U-0526 MANIFEST-185, U-0527 MANIFEST-186, U-0528 MANIFEST-187)",
       "unblocked_by": "owner: the operator fires T-EVAL-IND (independent reviewers + the outside-contact exception to U-011); the orchestrator then seeds the segment · trigger: T-EVAL-IND (§11.3) (catalog gate: T-EVAL-IND (operator: independent reviewers + contact exception to U-011)) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -4631,17 +4631,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "P30.2b → HUMAN-H4 → HUMAN-H5",
-          "backlog_home": "BL-057",
+          "ticket_id": "SEED-15",
+          "owner": "the operator fires T-EVAL-IND (independent reviewers + the outside-contact exception to U-011); the orchestrator then seeds the segment",
+          "landing": "trigger: T-EVAL-IND (§11.3) (catalog gate: T-EVAL-IND (operator: independent reviewers + contact exception to U-011))",
+          "backlog_home": "BL-088",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 934,
             "row_sha256": "fbf55000d7527d1aebff6bb031ae9c47283dcd8580fc4a5fbf85612fedcf8666",
@@ -4657,8 +4657,8 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-02:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "BL-040",
+      "owner": "the operator (participants available; outside contact authorised)",
+      "landing": "trigger: participants available and contact authorised (Q-28 reversed) (catalog gate: Q-28 / U-011 revisited)",
       "backlog_home": "BL-040",
       "item": "LATER-02 — usability study on the live site (later-phase unit; register items: F-205 E3:NEW-5, U-0081 D-R10-USERS-1, U-0254 SIG-UI-001, U-0278 BL-040, U-0345 RISK-P16-06, U-0468 ADR-093)",
       "unblocked_by": "owner: the operator (participants available; outside contact authorised) · trigger: participants available and contact authorised (Q-28 reversed) (catalog gate: Q-28 / U-011 revisited) · due: none — event-triggered",
@@ -4675,17 +4675,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "BL-040",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (participants available; outside contact authorised)",
+          "landing": "trigger: participants available and contact authorised (Q-28 reversed) (catalog gate: Q-28 / U-011 revisited)",
           "backlog_home": "BL-040",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 935,
             "row_sha256": "8f2faa0998343b61c884a346bf85571811fb0fcb070630b3955e4f849d76a378",
@@ -4701,8 +4701,8 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-03:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "P21.7",
+      "owner": "the operator (opts into contribution-back and outside contact; HG-08)",
+      "landing": "trigger: the operator opts into contribution-back and outside contact (catalog gate: operator opt-in; U-011; HG-08)",
       "backlog_home": "BL-039",
       "item": "LATER-03 — contribution-back to OSM/MapRoulette (later-phase unit; register items: U-0022 D-P21.7-1, U-0277 BL-039, U-0355 RISK-P18-14, U-0431 ADR-055, U-0444 ADR-069)",
       "unblocked_by": "owner: the operator (opts into contribution-back and outside contact; HG-08) · trigger: the operator opts into contribution-back and outside contact (catalog gate: operator opt-in; U-011; HG-08) · due: none — event-triggered",
@@ -4719,17 +4719,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "P21.7",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (opts into contribution-back and outside contact; HG-08)",
+          "landing": "trigger: the operator opts into contribution-back and outside contact (catalog gate: operator opt-in; U-011; HG-08)",
           "backlog_home": "BL-039",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 936,
             "row_sha256": "ae8d4bc4bd5e18385ce0f967cd84748aaf979a1c3afb01141a24c8596357f4f9",
@@ -4745,9 +4745,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-04:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "BL-028",
-      "backlog_home": "BL-028",
+      "owner": "the operator (revisits U-011: outside contact)",
+      "landing": "trigger: the operator revisits U-011 (catalog gate: U-011; Q-E2-12; Q-E3-10; Q-28)",
+      "backlog_home": "BL-082",
       "item": "LATER-04 — outreach, records-request sending, recruiting (later-phase unit; register items: U-0074 D-R7.2-SEND, U-0122 SIG-CHART-033, U-0125 SIG-CONTRIB-012, U-0126 SIG-CONTRIB-012a, U-0127 SIG-CONTRIB-013, U-0192 SIG-GOV-024, U-0347 RISK-P16-13)",
       "unblocked_by": "owner: the operator (revisits U-011: outside contact) · trigger: the operator revisits U-011 (catalog gate: U-011; Q-E2-12; Q-E3-10; Q-28) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -4763,17 +4763,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "BL-028",
-          "backlog_home": "BL-028",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (revisits U-011: outside contact)",
+          "landing": "trigger: the operator revisits U-011 (catalog gate: U-011; Q-E2-12; Q-E3-10; Q-28)",
+          "backlog_home": "BL-082",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 937,
             "row_sha256": "2639e0679861fc746bd2869a94cc50a4f2128078dc2ab2042dafb9cd38b16efa",
@@ -4789,9 +4789,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-05:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "BL-035",
-      "backlog_home": "BL-035",
+      "owner": "the operator (obtains counsel; optional — WV-07 waived the counsel clauses)",
+      "landing": "trigger: the operator obtains counsel (≈ $0 pro bono … ≈ $3.5k–10.5k paid) (catalog gate: operator obtains counsel (U-013: do not block))",
+      "backlog_home": "BL-066",
       "item": "LATER-05 — counsel packet and written opinion (optional: WV-07 waived the counsel clauses) (later-phase unit; register items: F-204 E3:NEW-4)",
       "unblocked_by": "owner: the operator (obtains counsel; optional — WV-07 waived the counsel clauses) · trigger: the operator obtains counsel (≈ $0 pro bono … ≈ $3.5k–10.5k paid) (catalog gate: operator obtains counsel (U-013: do not block)) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -4807,17 +4807,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "BL-035",
-          "backlog_home": "BL-035",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (obtains counsel; optional — WV-07 waived the counsel clauses)",
+          "landing": "trigger: the operator obtains counsel (≈ $0 pro bono … ≈ $3.5k–10.5k paid) (catalog gate: operator obtains counsel (U-013: do not block))",
+          "backlog_home": "BL-066",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 938,
             "row_sha256": "33cdee6a18fb0a3cb5aac311ebfa415226113147dc94c6fd8a961a629f114219",
@@ -4833,9 +4833,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-06:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "BL-057",
-      "backlog_home": "BL-057",
+      "owner": "the operator (opens accounts once demand, a moderation/safety plan and a threat model exist); new ADR",
+      "landing": "trigger: demand beyond the vetted curator set + moderation/safety plan + threat model (catalog gate: operator; new ADR)",
+      "backlog_home": "BL-090",
       "item": "LATER-06 — authenticated contributor accounts (D-R7.1-AUTH) (later-phase unit; register items: U-0072 D-R7.1-AUTH, U-0475 ADR-100)",
       "unblocked_by": "owner: the operator (opens accounts once demand, a moderation/safety plan and a threat model exist); new ADR · trigger: demand beyond the vetted curator set + moderation/safety plan + threat model (catalog gate: operator; new ADR) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -4851,17 +4851,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "BL-057",
-          "backlog_home": "BL-057",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (opens accounts once demand, a moderation/safety plan and a threat model exist); new ADR",
+          "landing": "trigger: demand beyond the vetted curator set + moderation/safety plan + threat model (catalog gate: operator; new ADR)",
+          "backlog_home": "BL-090",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 939,
             "row_sha256": "29931d82637dbfbdf477354dbba59eed30aa174818222d1dad8fbbf0124799b5",
@@ -4877,8 +4877,8 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-07:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-041",
+      "owner": "engineering, when an intake or onboarding surface opens (the operator's Q-27 call)",
+      "landing": "trigger: an intake/onboarding surface opens (catalog gate: Q-27)",
       "backlog_home": "BL-041",
       "item": "LATER-07 — know-your-rights content (BL-041) (later-phase unit; register items: U-0279 BL-041, U-0346 RISK-P16-08)",
       "unblocked_by": "owner: engineering, when an intake or onboarding surface opens (the operator's Q-27 call) · trigger: an intake/onboarding surface opens (catalog gate: Q-27) · due: none — event-triggered",
@@ -4895,17 +4895,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-041",
+          "ticket_id": "SEED-15",
+          "owner": "engineering, when an intake or onboarding surface opens (the operator's Q-27 call)",
+          "landing": "trigger: an intake/onboarding surface opens (catalog gate: Q-27)",
           "backlog_home": "BL-041",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 940,
             "row_sha256": "047427d3f3d94145314ca1aebfcea897607707852133fd816eb1243d8a96f6e1",
@@ -4921,8 +4921,8 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-08:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-003",
+      "owner": "engineering measures the threshold; the operator gives the cost go",
+      "landing": "trigger: sustained CPU/latency or disk past ADR-022's threshold (catalog gate: operator cost go (would stay under $300 with today's baseline))",
       "backlog_home": "BL-003",
       "item": "LATER-08 — Cloud SQL permanent scale-up and HA (later-phase unit; register items: U-0261 BL-003, U-0398 ADR-022)",
       "unblocked_by": "owner: engineering measures the threshold; the operator gives the cost go · trigger: sustained CPU/latency or disk past ADR-022's threshold (catalog gate: operator cost go (would stay under $300 with today's baseline)) · due: none — event-triggered",
@@ -4939,17 +4939,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-003",
+          "ticket_id": "SEED-15",
+          "owner": "engineering measures the threshold; the operator gives the cost go",
+          "landing": "trigger: sustained CPU/latency or disk past ADR-022's threshold (catalog gate: operator cost go (would stay under $300 with today's baseline))",
           "backlog_home": "BL-003",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 941,
             "row_sha256": "4e4f4561984d00feaf7841c4248faee767866c68a3ab1dd27abdde857c7750dc",
@@ -4965,9 +4965,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-09:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-055",
-      "backlog_home": "BL-055",
+      "owner": "engineering per family; the operator decides each HG-03 line (Q-21 > $0 for paid data)",
+      "landing": "trigger: per-family triggers (I8 §6.3); paid data needs Q-21 > $0 (catalog gate: Q-30; Q-21; per-row HG-03)",
+      "backlog_home": "BL-091",
       "item": "LATER-09 — acquisition long tail: Tier-2 remainder (130), Tier 3, EDGAR (facts-only basis decided; first request after the alias), CourtListener bulk, OCDS, paid data (later-phase unit; register items: F-363 I7:NEW-6, F-377 I9a:NEW-4, F-380 I9b:NEW-1, 42 candidate groups (386 candidates))",
       "unblocked_by": "owner: engineering per family; the operator decides each HG-03 line (Q-21 > $0 for paid data) · trigger: per-family triggers (I8 §6.3); paid data needs Q-21 > $0 (catalog gate: Q-30; Q-21; per-row HG-03) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -4983,17 +4983,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-055",
-          "backlog_home": "BL-055",
+          "ticket_id": "SEED-15",
+          "owner": "engineering per family; the operator decides each HG-03 line (Q-21 > $0 for paid data)",
+          "landing": "trigger: per-family triggers (I8 §6.3); paid data needs Q-21 > $0 (catalog gate: Q-30; Q-21; per-row HG-03)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 942,
             "row_sha256": "8e379cf4df1f79dac1ce70bd031c92db4b78eb4d76c318cc2f4797f99f7ef487",
@@ -5009,8 +5009,8 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-11:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-025",
+      "owner": "engineering (an admitted source needs OCR)",
+      "landing": "trigger: an admitted source needs OCR (SIG-LLM-001)",
       "backlog_home": "BL-025",
       "item": "LATER-11 — OCR / model-assisted parsing (later-phase unit; register items: U-0322 RISK-P5-10, U-0325 RISK-P7-05, U-0506 ADR-131)",
       "unblocked_by": "owner: engineering (an admitted source needs OCR) · trigger: an admitted source needs OCR (SIG-LLM-001) · due: none — event-triggered",
@@ -5027,17 +5027,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-025",
+          "ticket_id": "SEED-15",
+          "owner": "engineering (an admitted source needs OCR)",
+          "landing": "trigger: an admitted source needs OCR (SIG-LLM-001)",
           "backlog_home": "BL-025",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 943,
             "row_sha256": "d5122afd68c8f95c1e2ccd40790d51dc2ac765af0140f6a2bd4474b18771fba7",
@@ -5053,9 +5053,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-12:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-056",
-      "backlog_home": "BL-056",
+      "owner": "engineering, after CAP-01 passes and the operator prioritises the item",
+      "landing": "trigger: CAP-01 passes and the item is prioritised",
+      "backlog_home": "BL-091",
       "item": "LATER-12 — claim-text/entity-scoped search, ZIP lookup, deferred K12b ideas (I-15, I-20, I-29 Flock portal view; I-24, I-27) (later-phase unit; register items: F-466 K3:NEW-6)",
       "unblocked_by": "owner: engineering, after CAP-01 passes and the operator prioritises the item · trigger: CAP-01 passes and the item is prioritised · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5071,17 +5071,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-056",
-          "backlog_home": "BL-056",
+          "ticket_id": "SEED-15",
+          "owner": "engineering, after CAP-01 passes and the operator prioritises the item",
+          "landing": "trigger: CAP-01 passes and the item is prioritised",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 944,
             "row_sha256": "985d972c2b80508c6a486e107b859b38f9bc798e4334e99ac5a3b9823c635d5c",
@@ -5097,9 +5097,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-13:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-058",
-      "backlog_home": "BL-058",
+      "owner": "engineering (the orchestrator, when the dispatch shape changes)",
+      "landing": "trigger: parallel dispatch, a multi-worktree build or a second harness writing memory (catalog gate: operator)",
+      "backlog_home": "BL-091",
       "item": "LATER-13 — closeout-journal cutover (later-phase unit; register items: F-069 B3:NEW-4, F-070 B3:NEW-5, U-0502 ADR-127)",
       "unblocked_by": "owner: engineering (the orchestrator, when the dispatch shape changes) · trigger: parallel dispatch, a multi-worktree build or a second harness writing memory (catalog gate: operator) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5115,17 +5115,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-058",
-          "backlog_home": "BL-058",
+          "ticket_id": "SEED-15",
+          "owner": "engineering (the orchestrator, when the dispatch shape changes)",
+          "landing": "trigger: parallel dispatch, a multi-worktree build or a second harness writing memory (catalog gate: operator)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 945,
             "row_sha256": "ef7fe1f6317cf157506e7a1b404b7019dcb7e496f8dbf2c60d32acd7b1529c57",
@@ -5141,9 +5141,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-14:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-014",
-      "backlog_home": "BL-014",
+      "owner": "engineering (the orchestrator)",
+      "landing": "trigger: LEDGER > 1 MiB",
+      "backlog_home": "BL-091",
       "item": "LATER-14 — whole-LEDGER rotation per round (later-phase unit; register items: none (the unit itself))",
       "unblocked_by": "owner: engineering (the orchestrator) · trigger: LEDGER > 1 MiB · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5159,17 +5159,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-014",
-          "backlog_home": "BL-014",
+          "ticket_id": "SEED-15",
+          "owner": "engineering (the orchestrator)",
+          "landing": "trigger: LEDGER > 1 MiB",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 946,
             "row_sha256": "bd30fa72b7c40dd0a85e1d8ccccb61c1e6afab646b2d2f0a595b09637b047cc2",
@@ -5186,8 +5186,8 @@
       "status_source": "event-head D-R11-LATER-16:e0",
       "kind": "F",
       "owner": "engineering",
-      "landing": "BL-056",
-      "backlog_home": "BL-056",
+      "landing": "trigger: a single view needs > 3,000 labelled nodes (catalog gate: D-K13-1)",
+      "backlog_home": "BL-091",
       "item": "LATER-16 — whole-graph canvas (> 3,000 labelled nodes) (later-phase unit; register items: none (the unit itself))",
       "unblocked_by": "owner: engineering · trigger: a single view needs > 3,000 labelled nodes (catalog gate: D-K13-1) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5203,17 +5203,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
+          "ticket_id": "SEED-15",
           "owner": "engineering",
-          "landing": "BL-056",
-          "backlog_home": "BL-056",
+          "landing": "trigger: a single view needs > 3,000 labelled nodes (catalog gate: D-K13-1)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 947,
             "row_sha256": "ff87546a10def5080a53a3de6b8a61a0ea9d8589ee87da83ae836fd9f610b8f9",
@@ -5229,9 +5229,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-17:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-055",
-      "backlog_home": "BL-055",
+      "owner": "engineering when the endpoint emerges; the operator decides the HG-03 line",
+      "landing": "trigger: a documented public endpoint with reviewable terms (catalog gate: E4 S3)",
+      "backlog_home": "BL-091",
       "item": "LATER-17 — OpenGov procurement source (later-phase unit; register items: U-0093 D-SOURCES.9-3)",
       "unblocked_by": "owner: engineering when the endpoint emerges; the operator decides the HG-03 line · trigger: a documented public endpoint with reviewable terms (catalog gate: E4 S3) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5247,17 +5247,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-055",
-          "backlog_home": "BL-055",
+          "ticket_id": "SEED-15",
+          "owner": "engineering when the endpoint emerges; the operator decides the HG-03 line",
+          "landing": "trigger: a documented public endpoint with reviewable terms (catalog gate: E4 S3)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 948,
             "row_sha256": "dd3b381f9f8a11dc5dce5330bd9fb1e112a027ab1d69799396a97717b71c4beb",
@@ -5273,9 +5273,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-18:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "GATE-P",
-      "backlog_home": "BL-001",
+      "owner": "the operator (revisits Q-L3-4)",
+      "landing": "trigger: the operator revisits Q-L3-4 (answered \"no\" at GATE-P) (catalog gate: Q-L3-4)",
+      "backlog_home": "BL-091",
       "item": "LATER-18 — second model family for agent review (later-phase unit; register items: none (the unit itself))",
       "unblocked_by": "owner: the operator (revisits Q-L3-4) · trigger: the operator revisits Q-L3-4 (answered \"no\" at GATE-P) (catalog gate: Q-L3-4) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5291,17 +5291,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "GATE-P",
-          "backlog_home": "BL-001",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (revisits Q-L3-4)",
+          "landing": "trigger: the operator revisits Q-L3-4 (answered \"no\" at GATE-P) (catalog gate: Q-L3-4)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 949,
             "row_sha256": "bf7ae03658bee40a203dc26ff681cef7ba3ed9bbe3df5d2e50509dc88944a94f",
@@ -5317,9 +5317,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-19:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "P35.1b",
-      "backlog_home": "BL-037",
+      "owner": "the operator (cost decision on 3 measured bills)",
+      "landing": "trigger: 3 measured bills (G1-TRIM d) (catalog gate: operator cost decision)",
+      "backlog_home": "BL-091",
       "item": "LATER-19 — Cloud SQL CUD (the scheduler consolidation moved into P35.1b) (later-phase unit; register items: none (the unit itself))",
       "unblocked_by": "owner: the operator (cost decision on 3 measured bills) · trigger: 3 measured bills (G1-TRIM d) (catalog gate: operator cost decision) · due: after 3 measured bills (G1-TRIM d) — a measured count, not a calendar date",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5335,17 +5335,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "P35.1b",
-          "backlog_home": "BL-037",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (cost decision on 3 measured bills)",
+          "landing": "trigger: 3 measured bills (G1-TRIM d) (catalog gate: operator cost decision)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 950,
             "row_sha256": "f1b792943c4674f7c8829a9259d5feceb4329127ab6331b76a82d00b14e0aa06",
@@ -5361,9 +5361,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-20:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "P35.59",
-      "backlog_home": "BL-037",
+      "owner": "engineering; the operator gives the go for the bucket retirement",
+      "landing": "trigger: 90 days after P35.59 (dark cutover); `sig-public` root frozen until downloads move (catalog gate: D-G3-7; operator go)",
+      "backlog_home": "BL-091",
       "item": "LATER-20 — legacy bucket retirement (later-phase unit; register items: none (the unit itself))",
       "unblocked_by": "owner: engineering; the operator gives the go for the bucket retirement · trigger: 90 days after P35.59 (dark cutover); `sig-public` root frozen until downloads move (catalog gate: D-G3-7; operator go) · due: time-bound: 90 days after P35.59 lands (the absolute date is written when P35.59's landing is recorded)",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5379,17 +5379,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "P35.59",
-          "backlog_home": "BL-037",
+          "ticket_id": "SEED-15",
+          "owner": "engineering; the operator gives the go for the bucket retirement",
+          "landing": "trigger: 90 days after P35.59 (dark cutover); `sig-public` root frozen until downloads move (catalog gate: D-G3-7; operator go)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 951,
             "row_sha256": "29cf3e0a959267d1cda67de7aed41af73d54ac66071bc37385c467ae5284882c",
@@ -5406,8 +5406,8 @@
       "status_source": "event-head D-R11-LATER-21:e0",
       "kind": "F",
       "owner": "engineering",
-      "landing": "BL-002",
-      "backlog_home": "BL-002",
+      "landing": "trigger: after TC-PIN, before 24.04 end of support",
+      "backlog_home": "BL-091",
       "item": "LATER-21 — CI runners to Ubuntu 26 (later-phase unit; register items: none (the unit itself))",
       "unblocked_by": "owner: engineering · trigger: after TC-PIN, before 24.04 end of support · due: time-bound: before the Ubuntu 24.04 runner's end of support (the absolute date is taken from the runner notice when it is recorded; it is not written here)",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5423,17 +5423,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
+          "ticket_id": "SEED-15",
           "owner": "engineering",
-          "landing": "BL-002",
-          "backlog_home": "BL-002",
+          "landing": "trigger: after TC-PIN, before 24.04 end of support",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 952,
             "row_sha256": "8bb726bf3219469caf30b8938caff718bef52f09fa0b27d92d76e11dc1e04626",
@@ -5449,9 +5449,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LATER-22:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "BL-056",
-      "backlog_home": "BL-056",
+      "owner": "the operator (says go after CAP-02 and REVIEW-R11's S0/S1 dispositions)",
+      "landing": "trigger: CAP-02 passes, REVIEW-R11's S0/S1 findings are fixed or dispositioned (S6-F3) and the operator says go (catalog gate: U-009 operator decision)",
+      "backlog_home": "BL-091",
       "item": "LATER-22 — Round-11 announcement and public launch (later-phase unit; register items: U-009 feedback/OPERATOR_FEEDBACK.md U-009)",
       "unblocked_by": "owner: the operator (says go after CAP-02 and REVIEW-R11's S0/S1 dispositions) · trigger: CAP-02 passes, REVIEW-R11's S0/S1 findings are fixed or dispositioned (S6-F3) and the operator says go (catalog gate: U-009 operator decision) · due: none — event-triggered",
       "verify": "the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an obligation-event transition citing their landing; register docs/build/reports/later-register/LATER_REGISTER.md",
@@ -5467,17 +5467,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "BL-056",
-          "backlog_home": "BL-056",
+          "ticket_id": "SEED-15",
+          "owner": "the operator (says go after CAP-02 and REVIEW-R11's S0/S1 dispositions)",
+          "landing": "trigger: CAP-02 passes, REVIEW-R11's S0/S1 findings are fixed or dispositioned (S6-F3) and the operator says go (catalog gate: U-009 operator decision)",
+          "backlog_home": "BL-091",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for a row SEED-14a added after the P32.7 migration — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell; backlog_home = the row's open (cites BL-nnn) home",
           "anchor": {
             "row_line": 953,
             "row_sha256": "b2ff7c3c46f51bc4eb74084ec2a6ede9f96203b505e005e6eee899758e25c84c",
@@ -5493,9 +5493,9 @@
       "status": "OPEN",
       "status_source": "event-head D-R11-LIC006-1:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-046",
-      "backlog_home": "BL-046",
+      "owner": "PLAN-11B (row 239), to place it in an 11B row — or, only in the operator's own words, a waiver ADR (never by default)",
+      "landing": "PLAN-11B (to place it in an 11B row)",
+      "backlog_home": "BL-092",
       "item": "SIG-LIC-006's \"physically separate table\" clause (§42.3): store the OSM-derived ODbL physical-asset layer in a physically separate table, not only behind the export boundary — the MUST stays owed and is not waived",
       "unblocked_by": "owner: PLAN-11B (row 239), to place it in an 11B row — or, only in the operator's own words, a waiver ADR (never by default) · trigger: PLAN-11B's dispatch in 11A",
       "verify": "a landed row whose new sqitch change stores ODbL-compartment physical-asset records in a physically separate table, with a test that no CC-BY table holds them; SIG-LIC-006's coverage row re-verdicted by a `coverage-assessment/1` event",
@@ -5511,17 +5511,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-046",
-          "backlog_home": "BL-046",
+          "ticket_id": "SEED-15",
+          "owner": "PLAN-11B (row 239), to place it in an 11B row — or, only in the operator's own words, a waiver ADR (never by default)",
+          "landing": "PLAN-11B (to place it in an 11B row)",
+          "backlog_home": "BL-092",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "7bd2028c22e6afb750c0770dba3278acfdf4d0e0",
+          "reason": "migration anchor appended by SEED-15 (Round-11 Stage B, T4) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
           "anchor": {
             "row_line": 964,
             "row_sha256": "7571d4146bac93d119a92b4ee351e070a602d5fbf0431cce637d6c8dc87ce068",
@@ -5537,8 +5537,8 @@
       "status": "OPEN",
       "status_source": "event-head D-P34.1-1:e0",
       "kind": "V",
-      "owner": "engineering",
-      "landing": "P38.1",
+      "owner": "operator merge",
+      "landing": "the first merge sitting after this PR reaches main; P38.1 audits it",
       "backlog_home": "BL-084",
       "item": "\"0 cancelled push runs on `main` after merges\" — the SIG-ENG-046 rule that a push run to `main` is never cancelled, observed for real",
       "unblocked_by": "owner: operator merge; trigger: the first merge sitting after this PR reaches `main`; P38.1 audits it",
@@ -5555,17 +5555,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "P38.1",
+          "ticket_id": "P34.1",
+          "owner": "operator merge",
+          "landing": "the first merge sitting after this PR reaches main; P38.1 audits it",
           "backlog_home": "BL-084",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-10-02",
-          "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "a7951049dd71d42c1f2927c16c3fa9bcedb00c38",
+          "reason": "migration anchor appended by P34.1 (row 201) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
           "anchor": {
             "row_line": 974,
             "row_sha256": "618a8cec9f866054f981b3ca3254bf752140e4a8bffbfbf3724a3d8f8191740c",
@@ -5581,8 +5581,8 @@
       "status": "OPEN",
       "status_source": "event-head D-P34.2-1:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-084",
+      "owner": "the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain)",
+      "landing": "a @lhci/cli/lighthouse release whose tree drops the advisories — failing that, before the entries' 2026-11-30 expires makes the nightly gate fail loudly",
       "backlog_home": "BL-084",
       "item": "Replace or upgrade the `@lhci/cli` audit-runner chain so the four `dev-only` advisories (basic-ftp, extract-zip ×2, tmp) in `record_policy/npm_audit_allow.toml` retire",
       "unblocked_by": "owner: the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain); trigger: a `@lhci/cli`/`lighthouse` release whose tree drops the advisories — failing that, before the entries' 2026-11-30 `expires` makes the nightly gate fail loudly",
@@ -5599,17 +5599,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-084",
+          "ticket_id": "P34.2",
+          "owner": "the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain)",
+          "landing": "a @lhci/cli/lighthouse release whose tree drops the advisories — failing that, before the entries' 2026-11-30 expires makes the nightly gate fail loudly",
           "backlog_home": "BL-084",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
           "observed_at": "2026-10-02",
           "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "source_commit": "5510d9d04c163b5812170223c75e5589cd0d128c",
+          "reason": "migration anchor appended by P34.2 (row 202) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
           "anchor": {
             "row_line": 975,
             "row_sha256": "478191d34c8f03ce60fa6afc9105baa65f72975414335079eb9abced8077751d",
@@ -5625,8 +5625,8 @@
       "status": "OPEN",
       "status_source": "event-head D-P34.2-2:e0",
       "kind": "V",
-      "owner": "engineering",
-      "landing": "P38.1a",
+      "owner": "P38.1a audits it (operator merge for the post-merge leg)",
+      "landing": "the first nightly --all recorded-CI verification green, and the first merge sitting (post-merge r11 stack audit)",
       "backlog_home": "BL-084",
       "item": "SIG-MEM-007's owed live sweeps — the first nightly `--all` recorded-CI verification over every Round-11 record, and the post-merge audit of the r11 stack's recorded `ci:` lines",
       "unblocked_by": "owner: P38.1a audits it (operator merge for the post-merge leg); trigger: the first `nightly` run after this PR and the first merge sitting",
@@ -5643,17 +5643,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "P38.1a",
+          "ticket_id": "P34.2",
+          "owner": "P38.1a audits it (operator merge for the post-merge leg)",
+          "landing": "the first nightly --all recorded-CI verification green, and the first merge sitting (post-merge r11 stack audit)",
           "backlog_home": "BL-084",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
           "observed_at": "2026-10-02",
           "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "source_commit": "9dbb26f3d39b6e8e446600091b7fd9233de8c95c",
+          "reason": "migration anchor appended by P34.2 (row 202) for the row it added — appended, never migrate; raw cell status preserved verbatim; owner and landing read from the DEFERRALS row",
           "anchor": {
             "row_line": 976,
             "row_sha256": "7607c63876b5f880ba71f21bac2f60ca9e377a0fb0a997f740330ee4aa5142c4",
@@ -5669,8 +5669,8 @@
       "status": "OPEN",
       "status_source": "event-head D-P35.38a-1:e0",
       "kind": "P",
-      "owner": "operator",
-      "landing": "P34.17",
+      "owner": "the operator (the copy-batch sitting)",
+      "landing": "the copy-batch sitting before republish #1 — P34.17's L2 refuses a pending sentence",
       "backlog_home": "BL-084",
       "item": "Operator verbatim confirmation of the copy-batch-01 `/data-collection/` sentences (B-2)",
       "unblocked_by": "owner: the operator (the copy-batch sitting); trigger: the copy-batch sitting before republish #1 — P34.17's L2 refuses to ship a `pending` sentence",
@@ -5687,17 +5687,17 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "operator",
-          "landing": "P34.17",
+          "ticket_id": "P35.38a",
+          "owner": "the operator (the copy-batch sitting)",
+          "landing": "the copy-batch sitting before republish #1 — P34.17's L2 refuses a pending sentence",
           "backlog_home": "BL-084",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
           "observed_at": "2026-10-02",
           "recorded_at": "2026-10-02",
-          "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "source_commit": "c2b6bad86a8c48be91b048a1d97e9aa3c616d887",
+          "reason": "migration anchor appended by P35.38a (row 203) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
           "anchor": {
             "row_line": 977,
             "row_sha256": "9110af4c1d505394e6e57132c47dc1437be71b45f8b3847771bfefbb73826098",
@@ -5713,8 +5713,8 @@
       "status": "OPEN",
       "status_source": "event-head D-P34.3-1:e0",
       "kind": "V",
-      "owner": "engineering",
-      "landing": "P34.3",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P34.3-live-<n>` dispatch or the operator",
+      "landing": "a `date -u` outside 03:00–10:00Z, and for the `sig-pg` legs also outside the AR-3 windows with no `sig-materialize` execution running",
       "backlog_home": "BL-084",
       "item": "The P34.3 production leg — run `ops/gcp/protect.sh --apply` so the five pre-authorised mutations execute live (`sig-pg` deletion protection + retain-backups-on-delete, SUN 09:00Z maintenance window, 40 GB autoresize cap; versioning + noncurrent lifecycle on `sig-restricted`/`sig-public`/`sig-web`; `allUsers` off `sig-web`), with the AR-2 backup first and the QA-7 site checks green",
       "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P34.3-live-<n>` dispatch or the operator; trigger: a `date -u` outside 03:00–10:00Z, and for the `sig-pg` legs also outside the AR-3 windows with no `sig-materialize` execution running",
@@ -5731,9 +5731,9 @@
           "expected_previous_event": null,
           "from_status": "OPEN",
           "to_status": "OPEN",
-          "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "P34.3",
+          "ticket_id": "P34.3",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P34.3-live-<n>` dispatch or the operator",
+          "landing": "a `date -u` outside 03:00–10:00Z, and for the `sig-pg` legs also outside the AR-3 windows with no `sig-materialize` execution running",
           "backlog_home": "BL-084",
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
@@ -5741,10 +5741,142 @@
           "observed_at": "2026-10-02",
           "recorded_at": "2026-10-02",
           "source_commit": "d45544e5966c608e60db83967f4fb8bb4fdc55d3",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "reason": "migration anchor appended by P34.3 (row 204) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
           "anchor": {
             "row_line": 987,
             "row_sha256": "533e275c7bc8b4c01da96b50fdab9b7c4f67b67ef2f6571434f9e849d92fd707",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.4-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.4-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P34.4-live-<n>` dispatch or the operator",
+      "landing": "a `date -u` outside 03:00–10:00Z (the roll leg also outside AR-3); the jobfail leg's second trigger is a green `sig-probe` sweep after the roll",
+      "backlog_home": "BL-084",
+      "item": "The P34.4 production legs — run `ops/gcp/alerts.sh --apply all` so the five pre-authorised mutations execute live (TLS-expiry + SIG-ALERT policies created; `sig-probe` re-rolled onto the HEAD-built image; `reingest.yml` disabled; the synthetic SIG-ALERT delivery test), then `ops/gcp/alerts.sh --apply jobfail` once the re-roll's next sweep is green (the jobfail extension is sweep-gated by contract)",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P34.4-live-<n>` dispatch or the operator; trigger: a `date -u` outside 03:00–10:00Z (the roll leg also outside AR-3); the jobfail leg's second trigger is a green `sig-probe` sweep after the roll",
+      "verify": "re-run `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true` (the contract's re-run line), equivalently `ops/gcp/alerts.sh --apply all` then `ops/gcp/alerts.sh --apply jobfail` then `ops/gcp/alerts.sh --verify` printing `9 OK, 0 DRIFT` (six policies + channel + two uptime checks all `OK`, workflow `disabled_manually`, probe image pinned)",
+      "proxy": "the script enforces the same window guard itself (exit 42 inside a closed window — it cannot be accidentally forced), every mutation is idempotent read-then-SKIP with a printed rollback (create→delete by id; update→captured prior def via `--policy-from-file`; roll→recorded before-digest; disable→`gh workflow enable`), the jobfail extension self-gates on a green sweep, and `--verify --from-state` is offline-proven both directions (`tests/ops/test_alerts_iac.py`, 33 tests over fixture + stubbed-CLI state)",
+      "line": 997,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.4",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "87a1ffe12e40ea059b7b834363f102a8552ac9e3",
+          "reason": "migration anchor appended by P34.4 (row 205) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P34.4-1:e0",
+          "obligation_id": "D-P34.4-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P34.4-live-<n>` dispatch or the operator",
+          "landing": "a `date -u` outside 03:00–10:00Z (the roll leg also outside AR-3); the jobfail leg's second trigger is a green `sig-probe` sweep after the roll",
+          "anchor": {
+            "row_line": 997,
+            "row_sha256": "830a33d1a288aa0d38644b462edee2b218771928bb7430953b709e99a2723338",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.4-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.4-2:e0",
+      "kind": "P",
+      "owner": "the operator",
+      "landing": "after D-P34.4-1's leg A runs — the delivery test posts the synthetic alert and the e-mail should follow within minutes (notification rate limit 86400s means a same-day repeat may not re-send)",
+      "backlog_home": "BL-084",
+      "item": "Operator confirms the alert e-mail actually arrived — the delivery test fires a synthetic `SIG-ALERT` through `sig-alerts`; the log-match policy opens an incident; the operator verifies the notification landed in the e-mail channel",
+      "unblocked_by": "owner: the operator; trigger: after D-P34.4-1's leg A runs — the delivery test posts the synthetic alert and the e-mail should follow within minutes (notification rate limit 86400s means a same-day repeat may not re-send)",
+      "verify": "the operator records receipt (date + which e-mail) in `docs/build/runs/P34.4.md` (or a reply naming it); the run ledger's delivered-alert log block flips `human-confirmed` from `no human check performed` to the recorded confirmation",
+      "proxy": "the delivery test itself proves every machine hop (webhook → SIG-ALERT log line → log-match condition → incident) — the e-mail leg is the one hop only a human sees; the channel definition is committed with the address redacted",
+      "line": 998,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.4",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "87a1ffe12e40ea059b7b834363f102a8552ac9e3",
+          "reason": "migration anchor appended by P34.4 (row 205) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P34.4-2:e0",
+          "obligation_id": "D-P34.4-2",
+          "owner": "the operator",
+          "landing": "after D-P34.4-1's leg A runs — the delivery test posts the synthetic alert and the e-mail should follow within minutes (notification rate limit 86400s means a same-day repeat may not re-send)",
+          "anchor": {
+            "row_line": 998,
+            "row_sha256": "49006a4811036effcfca654caef161ef2df959dff624750bcc1d771a675708b4",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.4-3",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.4-3:e0",
+      "kind": "F",
+      "owner": "P35.2 (SIG-OPS-006's owner row)",
+      "landing": "P35.2's alerting-as-code mechanism landing — it takes the committed `ops/monitoring/` defs as its substrate (ADR-192)",
+      "backlog_home": "BL-084",
+      "item": "Daily re-notification (`notificationRateLimit` 86400s) on the remaining three Track-0.5 policies (disk, site uptime, api uptime) + the general escalation path — P34.4 set it only where the authorised mutation list let it write (the two new policies + the jobfail update); the alerting-as-code mechanism itself is P35.2's row (SIG-OPS-006)",
+      "unblocked_by": "owner: P35.2 (SIG-OPS-006's owner row); trigger: P35.2's alerting-as-code mechanism landing — it takes the committed `ops/monitoring/` defs as its substrate (ADR-192)",
+      "verify": "`sig-ops monitoring-defs verify --live` stays `0 DRIFT` and the three policies' committed defs gain `notificationRateLimit` matching live",
+      "proxy": "the policies already auto-close and notify on every new incident; the daily re-notify is the >24h backstop — the gap is bounded and the verify diff will flag it if live is patched first",
+      "line": 999,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.4",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "87a1ffe12e40ea059b7b834363f102a8552ac9e3",
+          "reason": "migration anchor appended by P34.4 (row 205) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P34.4-3:e0",
+          "obligation_id": "D-P34.4-3",
+          "owner": "P35.2 (SIG-OPS-006's owner row)",
+          "landing": "P35.2's alerting-as-code mechanism landing — it takes the committed `ops/monitoring/` defs as its substrate (ADR-192)",
+          "anchor": {
+            "row_line": 999,
+            "row_sha256": "4895c5ad6c77a130c855fcf3f56d9023fc2827589a31bf0e41978ce6a1067807",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -10145,8 +10277,8 @@
           "label": "historical/csv"
         },
         "SIG-OPS-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.3-1)",
+          "evidence": "ops/gcp/protect.sh;tests/ops/test_protect_iac.py;docs/build/runs/P34.3.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13661,10 +13793,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "0c2ccce739df9150f7b0ad03902833668573336377a309181bc4f8b193455b4e",
+  "manifest_sha256": "744bea1706c0ce0f2e9bf1bbc25f43d9f5d1f162241ead45089af0072b6bf4cc",
   "current_md": {
     "lines": 74,
-    "bytes": 12826,
+    "bytes": 12809,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

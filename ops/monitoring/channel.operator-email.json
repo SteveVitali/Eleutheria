@@ -1,0 +1,16 @@
+{
+  "_sig": {
+    "apply": "diff-only",
+    "displayName": "SIG operator email (Track 0.5)",
+    "id": "10808426210098728267",
+    "kind": "channel",
+    "source": "track0.5-live-export-2026-10-02"
+  },
+  "description": "Operator-approved 2026-09-30: minimal alerting to the operator",
+  "displayName": "SIG operator email (Track 0.5)",
+  "enabled": true,
+  "labels": {
+    "email_address": "<redacted \u2014 the operator's address is never committed; verify never compares a <\u2026> leaf>"
+  },
+  "type": "email"
+}
