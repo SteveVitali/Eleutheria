@@ -14,9 +14,15 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getResearchDossierPortfolio } from "../../lib/data";
 import {
+  acquisitionLabel,
+  derivedAcquisition,
+  dossierLicenceText,
+  dossierPermalink,
+  evidencePosture,
   researchDossierPath,
   researchDossierJsonPath,
   researchDossierSlug,
+  reviewLabel,
   rubricGateLine,
   stateLabel,
   type ResearchAssertion,
@@ -31,6 +37,18 @@ export function getStaticPaths() {
 
 const dossier = Astro.props.dossier;
 const slug = researchDossierSlug(dossier);
+const posture = evidencePosture(dossier);
+// The above-the-fold disclosure detail (DR-C4-03): which non-live byte
+// classes this page's facts rest on, counted from the record.
+const nonLiveDetail = (
+  [
+    ["stand_in", "fact(s) on stand-in bytes"],
+    ["committed_transcription", "fact(s) on committed transcriptions"],
+  ] as const
+)
+  .map(([k, label]) => (posture.counts[k] ? `${posture.counts[k]} ${label}` : null))
+  .filter(Boolean)
+  .join(", ");
 
 // P34.22b (B4 G1 R4): the capture stamp is labelled by its kind — a
 // fixture_replay stamp is the fixture's authoring commit (never a bare
@@ -73,11 +91,19 @@ function locatorText(x: ResearchAssertion): string {
   <p class="sig-dossier-jurisdiction" data-testid="research-dossier-jurisdiction">
     {dossier.subject.jurisdiction}
   </p>
-  <p class="sig-kind" data-testid="research-dossier-kind">
-    <strong>Reviewed research dossier</strong> — an evidence-complete twelve-question
-    portfolio, distinct from the <a href="/dossier/">inventory overview</a>.
+  <p class="sig-kind" data-testid="research-dossier-kind" data-copy="RD-02">
+    <strong>Research dossier — {reviewLabel(dossier.review_status)}</strong> — an
+    evidence-complete twelve-question portfolio, distinct from the
+    <a href="/dossier/">inventory overview</a>.
     As-of world {dossier.as_of.world}, belief {dossier.as_of.belief}.
   </p>
+  {posture.has && (
+    <p class="sig-disclosure" data-testid="non-live-disclosure" data-copy="RD-01">
+      This dossier rests on non-live evidence
+      {nonLiveDetail ? ` — ${nonLiveDetail}` : ""} — nothing on this page is a
+      live capture; every fact names how its bytes were obtained.
+    </p>
+  )}
   {dossier.capture?.kind && (
     <p class="sig-kind" data-testid="research-dossier-capture">
       Capture: <strong>{dossier.capture.kind}</strong>
@@ -105,7 +131,8 @@ function locatorText(x: ResearchAssertion): string {
       ) : (
         <strong data-testid="pilot-state">incomplete</strong>
       )}{" "}
-      · {dossier.review_status} independent review
+      · <span data-testid="review-label">{reviewLabel(dossier.review_status)}</span>{" "}
+      (recorded status {dossier.review_status})
     </p>
     {dossier.completeness.blocking.length > 0 && (
       <ul data-testid="rubric-blocking">
@@ -150,7 +177,7 @@ function locatorText(x: ResearchAssertion): string {
           <thead>
             <tr>
               <th>predicate</th><th>value</th><th>scope</th><th>dates</th>
-              <th>source · locator</th><th>capture</th>
+              <th>source · locator</th><th>obtained</th><th>capture</th>
             </tr>
           </thead>
           <tbody>
@@ -176,6 +203,9 @@ function locatorText(x: ResearchAssertion): string {
                       <a href={x.source_url}>document</a>
                     </>
                   )}
+                </td>
+                <td data-testid="assertion-acquisition" data-acquisition={derivedAcquisition(x)}>
+                  {acquisitionLabel(x)}
                 </td>
                 <td>{x.capture_digest ? `${x.capture_digest.slice(0, 16)}…` : "—"}</td>
               </tr>
@@ -223,7 +253,7 @@ function locatorText(x: ResearchAssertion): string {
     </p>
     <table>
       <thead>
-        <tr><th>question</th><th>fact</th><th>claim digest</th><th>capture</th><th>state</th></tr>
+        <tr><th>question</th><th>fact</th><th>claim digest</th><th>obtained</th><th>capture</th><th>state</th></tr>
       </thead>
       <tbody>
         {dossier.ledger.map((r) => (
@@ -231,6 +261,9 @@ function locatorText(x: ResearchAssertion): string {
             <td>{r.question}</td>
             <td>{r.fact}</td>
             <td>{r.claim_digest ? `${r.claim_digest.slice(0, 12)}…` : "—"}</td>
+            <td data-acquisition={r.acquisition ?? undefined}>
+              {r.acquisition ? acquisitionLabel(r) : "—"}
+            </td>
             <td>{r.capture_digest ? `${r.capture_digest.slice(0, 12)}…` : "—"}</td>
             <td>{r.state}</td>
           </tr>
@@ -277,4 +310,12 @@ function locatorText(x: ResearchAssertion): string {
       </tbody>
     </table>
   </section>
+
+  <p class="sig-licence" data-testid="dossier-licence" data-copy="RD-03">
+    Licence {dossierLicenceText(dossier)} · permalink{" "}
+    <a href={dossierPermalink(dossier)} data-testid="dossier-permalink">
+      {dossierPermalink(dossier)}
+    </a>{" "}
+    · as-of world {dossier.as_of.world}, belief {dossier.as_of.belief}
+  </p>
 </BaseLayout>

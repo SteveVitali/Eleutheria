@@ -18,6 +18,14 @@
  * authoring day instead. The `capture` block binds each document_id to the
  * committed bytes it stands in for. `as_of`/`searched_at` are the authoring
  * day, never a fabricated capture date.
+ *
+ * P34.35: every assertion also carries its `acquisition` label. The stand-in
+ * assertions mark `stand_in`; the one assertion bound to `okc-p06-evidence-
+ * fixture` marks `committed_transcription` honestly — its bytes ARE the
+ * committed P06.1 transcription fixture at `tests/acceptance/fixtures/
+ * okc_sources.json` (the EVIDENCE_PACK's "reviewed transcriptions"), bound by
+ * path in `capture.fixtures`. No fixture entry marks `live_capture` — nothing
+ * here was ever retrieved live; the live posture is exercised in tests.
  */
 
 import type { ResearchDossier, ResearchDossierPortfolio } from "./research-dossier";
@@ -36,6 +44,17 @@ const AUTHORED = "2026-10-04";
 
 const STAND_IN_FIXTURE = {
   path: "web/src/lib/research-dossier-fixture.ts",
+  commit: null,
+  committed_at: AUTHORED,
+};
+
+/**
+ * The real P06.1 committed evidence fixture — committed transcription bytes
+ * (the packet's "reviewed transcriptions", never live captures). Commit is
+ * absent for the same reason as the stand-in manifest above.
+ */
+const TRANSCRIPTION_FIXTURE = {
+  path: "tests/acceptance/fixtures/okc_sources.json",
   commit: null,
   committed_at: AUTHORED,
 };
@@ -59,11 +78,25 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       "okc-flock-amendment-2026": STAND_IN_FIXTURE,
       "okc-flock-usage-2026": STAND_IN_FIXTURE,
       "okc-council-memo-2026-08": STAND_IN_FIXTURE,
+      "okc-p06-evidence-fixture": TRANSCRIPTION_FIXTURE,
     },
   },
   source_families: ["dossier_admin", "dossier_contracts", "dossier_usage"],
   review_status: "not_run",
+  review_label: "independent review not yet run",
   review: { status: "not_run", reviewer_role: "independent semantic reviewer" },
+  licence: { artifact: "CC-BY-4.0", record_spdx: ["CC-BY-4.0"] },
+  permalink: "https://surveillancegraph.org/research-dossier/okc-alpr/",
+  evidence_posture: {
+    acquisition_counts: { live_capture: 0, committed_transcription: 1, stand_in: 3 },
+    has_non_live: true,
+    questions_with_non_live: ["q1", "q3"],
+    stand_in_facts: [
+      "buyer='City of Oklahoma City'",
+      "claimed_device_count=190",
+      "claimed_device_count=299",
+    ],
+  },
   answers: [
     {
       question: "q1",
@@ -86,6 +119,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "signature block" },
         },
@@ -101,8 +135,29 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "signature block" },
+        },
+        {
+          // Bound to the real P06.1 committed transcription fixture — its
+          // bytes are a reviewed transcription, so the honest label is
+          // `committed_transcription`, never "stand-in" or "live capture".
+          predicate: "buyer",
+          value: "City of Oklahoma City",
+          scope: {},
+          qualifiers: [],
+          valid_from: "2026-07-01",
+          document_id: "okc-p06-evidence-fixture",
+          claim_digest: "c3".padEnd(64, "0"),
+          capture_digest: "cap-okc-p06-evidence",
+          source_id: "dossier_contracts",
+          capture_kind: "fixture_replay",
+          acquisition: "committed_transcription",
+          capture_method: "fixture_transcription",
+          access_mode: "committed_fixture",
+          committed_at: AUTHORED,
+          locator: { locator: "contract header" },
         },
       ],
       follow_ups: [],
@@ -127,6 +182,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_usage",
           source_url: "https://fixture/okc-usage",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "device table" },
         },
@@ -153,6 +209,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_usage",
           source_url: "https://fixture/okc-usage",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "device table" },
           conflicting: true,
@@ -168,6 +225,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_admin",
           source_url: "https://fixture/okc-memo",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "page 2" },
           conflicting: true,
@@ -211,6 +269,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "payment schedule" },
         },
@@ -236,6 +295,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_admin",
           source_url: "https://fixture/okc-memo",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "preamble" },
         },
@@ -261,6 +321,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "clause 4" },
         },
@@ -301,6 +362,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
           source_id: "dossier_contracts",
           source_url: "https://fixture/okc-amendment",
           capture_kind: "stand-in",
+          acquisition: "stand_in",
           committed_at: AUTHORED,
           locator: { locator: "recitals" },
         },
@@ -368,6 +430,20 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       locator: { locator: "signature block" },
       source_url: "https://fixture/okc-amendment",
       capture_kind: "stand-in",
+      acquisition: "stand_in",
+      committed_at: AUTHORED,
+      state: "rendered",
+    },
+    {
+      question: "q1",
+      predicate: "buyer",
+      fact: "buyer='City of Oklahoma City'",
+      claim_digest: "c3".padEnd(64, "0"),
+      capture_digest: "cap-okc-p06-evidence",
+      locator: { locator: "contract header" },
+      source_url: null,
+      capture_kind: "fixture_replay",
+      acquisition: "committed_transcription",
       committed_at: AUTHORED,
       state: "rendered",
     },
@@ -380,6 +456,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       locator: { locator: "device table" },
       source_url: "https://fixture/okc-usage",
       capture_kind: "stand-in",
+      acquisition: "stand_in",
       committed_at: AUTHORED,
       state: "rendered",
     },
@@ -392,6 +469,7 @@ export const RESEARCH_DOSSIER_FIXTURE: ResearchDossier = {
       locator: { locator: "page 2" },
       source_url: "https://fixture/okc-memo",
       capture_kind: "stand-in",
+      acquisition: "stand_in",
       committed_at: AUTHORED,
       state: "rendered",
     },

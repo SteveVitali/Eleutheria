@@ -51,6 +51,10 @@ notice allowance (`data-notice`), not as a batch row.
 | EW-27 | /evidence/ | No published artifacts in this release — the list appears once the export carries them. | ca58e07ca68745ac8be8b54ff787adc8131cd292264a0afb1d374d1fa92ffe7e | pending |
 | SL-20 | /sources/ | Corrected {correctedOn}: earlier downloads credited some rows to the wrong source. | 4ce52f1626dfcf196483636d14ac3ca22d28ce9fad870ddc599be2d0c9dd83f9 | pending |
 | TB-01 | object/sig-public | The download set published on 2026-09-27 is not served publicly: earlier downloads credited some rows to the wrong source; a corrected export replaces it. | a4137447e87bddb512a863a0e15f85dbbbff45c076e8c3c3746f8b8cb4ffb42d | pending |
+| RD-01 | /research-dossier/[slug]/ | This dossier rests on non-live evidence — {detail} — nothing on this page is a live capture; every fact names how its bytes were obtained. | 16005b822537c34942e70ccd969c4b00923ba53d74047ea6d0acb74e442c7864 | pending |
+| RD-02 | /research-dossier/[slug]/ | Research dossier — {reviewLabel} — an evidence-complete twelve-question portfolio, distinct from the inventory overview. As-of world {world}, belief {belief}. | cc46b1a3772a36c8947c4787aada2726ac85ad215a18262f032a50987d720994 | pending |
+| RD-03 | /research-dossier/[slug]/ | Licence {licence} · permalink {permalink} · as-of world {world}, belief {belief} | f8ecc1a7d3e3f8592aaf3b01aa0e19a22659d8cbd9b769c75c8cfa652f489994 | pending |
+| RD-04 | /research-dossier/ | A research dossier exists only when a packet was authored for it — absence here means none is published, not that the questions have no answers. | 59fd0815e8902fc6f96fe8e8e702df0c7032dab0ccc807ab7147d485b9d41830 | pending |
 
 ## Confirmation log
 

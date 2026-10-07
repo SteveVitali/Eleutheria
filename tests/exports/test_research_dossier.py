@@ -42,6 +42,9 @@ from connectors.stages import (
 )
 from evidence.ingest_run import IngestRun
 from exports.research_dossier import (
+    ACQ_COMMITTED_TRANSCRIPTION,
+    ACQ_LIVE_CAPTURE,
+    ACQ_STAND_IN,
     ANSWER_STATES,
     COMPLETE_MAX,
     COMPLETE_TOTAL,
@@ -51,10 +54,14 @@ from exports.research_dossier import (
     REQUIRED_MINIMUM,
     SUBSCRIPTION_HARDWARE_GUARD,
     TEMPLATE_EXECUTION_GUARD,
+    acquisition_label,
     build_dossier,
     build_portfolio,
+    capture_chronology_violations,
+    displayed_date_violations,
     render_dossier_print_html,
     render_portfolio_json,
+    review_label,
     validate_packet,
 )
 
@@ -885,7 +892,10 @@ def test_cli_dossier_portfolio(tmp_path: Path, okc_records: list[dict[str, Any]]
     artifact = json.loads((out / "web" / "research_dossiers.json").read_text())
     assert artifact["schema"] == "sig.dossier-portfolio/1"
     print_html = (out / "web" / "research_dossier" / "okc-alpr.print.html").read_text()
-    assert "Reviewed research dossier" in print_html
+    # P34.35 (F-153): the print's review wording derives from the recorded
+    # status — "reviewed" is never hard-coded against a `not_run` mark.
+    assert "Reviewed research dossier" not in print_html
+    assert "independent review not yet run" in print_html
 
 
 def test_cli_dossier_portfolio_fails_closed(tmp_path: Path) -> None:
@@ -914,3 +924,267 @@ def test_spine_export_emits_research_dossiers_surface() -> None:
         dossier_packets=[_packet(records, unknown_qs=())],
     )
     assert "web/research_dossiers.json" in export.web_artifacts
+
+
+# --------------------------------------------------------------------------- #
+# P34.35 — acquisition labels, review label, true dates, licence/permalink
+# (C4 NEW-2/NEW-3/NEW-22/NEW-23/NEW-32, F-152/F-153, F-16, DR-C4-03/04/15)
+# --------------------------------------------------------------------------- #
+
+
+def _standin_artifact(doc: str = "standin-doc") -> dict[str, Any]:
+    """A document artifact whose bytes are hand-authored committed stand-ins."""
+    art = _artifact(doc)
+    art["capture_kind"] = "stand-in"
+    art["committed_at"] = "2026-09-27T12:06:40+00:00"
+    del art["retrieved_date"]
+    return art
+
+
+def _standin_claim(
+    qid: str, predicate: str, value: Any, doc: str = "standin-doc"
+) -> dict[str, Any]:
+    """A declared stand-in claim — hand-authored bytes, never retrieved."""
+    claim = _fake_claim(qid, predicate, value, doc=doc)
+    claim["capture_kind"] = "stand-in"
+    claim["committed_at"] = "2026-09-27"
+    del claim["evidence"]["retrieved_date"]  # a stand-in was never retrieved
+    return claim
+
+
+def _transcription_artifact(doc: str = "transcription-doc") -> dict[str, Any]:
+    """An artifact bound to committed transcription bytes (the P06.1 posture)."""
+    art = _artifact(doc)
+    art["method"] = "fixture_transcription"
+    art["access_mode"] = "committed_fixture"
+    art["committed_at"] = "2026-09-13T20:21:05+00:00"
+    del art["retrieved_date"]
+    return art
+
+
+def _transcription_claim(
+    qid: str, predicate: str, value: Any, doc: str = "transcription-doc"
+) -> dict[str, Any]:
+    """A claim replayed over committed transcription bytes."""
+    claim = _fake_claim(qid, predicate, value, doc=doc)
+    claim["capture_kind"] = "fixture_replay"
+    claim["committed_at"] = "2026-09-13"
+    claim["evidence"]["extraction_method"] = "fixture_transcription"
+    del claim["evidence"]["retrieved_date"]
+    return claim
+
+
+def _all_assertions(dossier: dict[str, Any]) -> list[dict[str, Any]]:
+    return [x for a in dossier["answers"] for x in a["assertions"]]
+
+
+def test_acquisition_three_way_mixed_dossier(okc_records: list[dict[str, Any]]) -> None:
+    """A fixture dossier mixing live, transcribed and stand-in evidence marks
+    every rendered assertion's acquisition correctly (DR-C4-03)."""
+    records = list(okc_records)  # the canned-live connector emissions
+    records += [
+        _standin_artifact(),
+        _transcription_artifact(),
+        _standin_claim("q1", "buyer", "City of Oklahoma City"),
+        _transcription_claim("q1", "vendor", "Flock Safety"),
+    ]
+    dossier = build_dossier(_packet(records))
+    assertions = _all_assertions(dossier)
+    by_doc: dict[str, list[dict[str, Any]]] = {}
+    for x in assertions:
+        by_doc.setdefault(str(x["document_id"]), []).append(x)
+    # canned-live claims (document access + a real retrieval stamp) → live capture
+    live_docs = {d for d in by_doc if d not in {"standin-doc", "transcription-doc"}}
+    assert live_docs
+    for d in live_docs:
+        assert all(x["acquisition"] == ACQ_LIVE_CAPTURE for x in by_doc[d])
+    assert by_doc["standin-doc"][0]["acquisition"] == ACQ_STAND_IN
+    assert by_doc["transcription-doc"][0]["acquisition"] == ACQ_COMMITTED_TRANSCRIPTION
+    # the ledger carries the same label per fact — which facts rest on
+    # stand-ins is a direct read (F-16).
+    vocab = {ACQ_LIVE_CAPTURE, ACQ_COMMITTED_TRANSCRIPTION, ACQ_STAND_IN}
+    for row in dossier["ledger"]:
+        if row.get("acquisition"):
+            assert row["acquisition"] in vocab
+    stand_in_facts = {r["fact"] for r in dossier["ledger"] if r.get("acquisition") == ACQ_STAND_IN}
+    assert "buyer='City of Oklahoma City'" in stand_in_facts
+
+
+def test_evidence_posture_summary(okc_records: list[dict[str, Any]]) -> None:
+    """The dossier JSON says plainly which facts rest on non-live bytes (F-16)."""
+    records = list(okc_records) + [
+        _standin_artifact(),
+        _standin_claim("q1", "buyer", "City of Oklahoma City"),
+    ]
+    dossier = build_dossier(_packet(records))
+    posture = dossier["evidence_posture"]
+    assert posture["has_non_live"] is True
+    assert posture["acquisition_counts"][ACQ_STAND_IN] >= 1
+    assert "q1" in posture["questions_with_non_live"]
+    assert "buyer='City of Oklahoma City'" in posture["stand_in_facts"]
+
+
+def test_live_only_dossier_shows_no_disclosure(okc_records: list[dict[str, Any]]) -> None:
+    """A dossier resting only on live captures carries no non-live posture."""
+    dossier = build_dossier(_packet(okc_records))
+    posture = dossier["evidence_posture"]
+    assert posture["has_non_live"] is False
+    assert posture["acquisition_counts"][ACQ_STAND_IN] == 0
+    assert posture["acquisition_counts"][ACQ_COMMITTED_TRANSCRIPTION] == 0
+    assert posture["questions_with_non_live"] == []
+    assert posture["stand_in_facts"] == []
+    html_doc = render_dossier_print_html(dossier)
+    assert "non-live evidence" not in html_doc
+    assert "live capture" in html_doc  # every assertion row is labelled
+
+
+def test_acquisition_label_fail_closed() -> None:
+    """No retrieval stamp and no transcription marker → never overclaim:
+    the only honest label left is a stand-in."""
+    claim = _fake_claim("q5", "contract_value", 1)
+    del claim["evidence"]["retrieved_date"]
+    assert acquisition_label(claim, None) == ACQ_STAND_IN
+
+
+def test_review_label_derives_from_recorded_status() -> None:
+    import re
+
+    assert review_label("completed") == "independently reviewed"
+    assert review_label("pending") == "independent review pending"
+    assert review_label("not_run") == "independent review not yet run"
+    assert "reviewed" not in review_label("not_run")
+
+    records = [_artifact(), _fake_claim("q5", "contract_value", 100000)]
+    for status, expected, word_allowed in (
+        ("not_run", "independent review not yet run", False),
+        ("pending", "independent review pending", False),
+        ("completed", "independently reviewed", True),
+    ):
+        dossier = build_dossier(
+            _packet(
+                records,
+                review={"status": status, "reviewer_role": "independent semantic reviewer"},
+            )
+        )
+        assert dossier["review_label"] == expected
+        blob = json.dumps(dossier) + render_dossier_print_html(dossier)
+        found = re.search(r"\breviewed\b", blob, re.IGNORECASE)
+        assert (found is not None) == word_allowed, (
+            f"status {status}: 'reviewed' rendered={found is not None}"
+        )
+
+
+def test_print_disclosure_labels_and_footer(okc_records: list[dict[str, Any]]) -> None:
+    """Print carries licence + permalink + per-page as-of on EVERY page
+    (C4 NEW-22/NEW-23) and each assertion row names how its bytes were
+    obtained (DR-C4-03)."""
+    records = list(okc_records) + [
+        _standin_artifact(),
+        _transcription_artifact(),
+        _standin_claim("q1", "buyer", "City of Oklahoma City"),
+        _transcription_claim("q1", "vendor", "Flock Safety"),
+    ]
+    dossier = build_dossier(_packet(records))
+    html_doc = render_dossier_print_html(dossier)
+    # all three acquisition labels appear on their rows
+    assert ">live capture<" in html_doc
+    assert ">committed transcription<" in html_doc
+    assert ">stand-in<" in html_doc
+    # the page-one disclosure names the non-live posture
+    assert "non-live evidence" in html_doc
+    # every page footer carries licence, permalink and the as-of pair
+    footers = html_doc.count("class='footer'")
+    pages = html_doc.count("class='page'")
+    assert footers == pages and footers >= 4
+    for seg in html_doc.split("class='footer'")[1:]:
+        seg = seg.split("</p>")[0]
+        assert "CC-BY-4.0" in seg, "licence missing from a printed page"
+        assert "surveillancegraph.org/research-dossier/okc-alpr/" in seg, (
+            "permalink missing from a printed page"
+        )
+        assert "as-of world" in seg and "belief" in seg, "as-of missing from a printed page"
+
+
+def test_dossier_json_carries_licence_permalink(okc_records: list[dict[str, Any]]) -> None:
+    dossier = build_dossier(_packet(okc_records))
+    assert dossier["licence"]["artifact"] == "CC-BY-4.0"
+    assert isinstance(dossier["licence"]["record_spdx"], list)
+    assert dossier["permalink"] == "https://surveillancegraph.org/research-dossier/okc-alpr/"
+
+
+def test_rendered_dates_equal_their_records(okc_records: list[dict[str, Any]]) -> None:
+    """Every rendered stamp is lifted from its record verbatim — no re-typing."""
+    from db.claim_sink import content_digest
+
+    packet = _packet(okc_records)
+    claims = {content_digest(c): c for c in packet["records"] if c.get("record_kind") == "claim"}
+    dossier = build_dossier(packet)
+    for x in _all_assertions(dossier):
+        claim = claims[x["claim_digest"]]
+        ev = claim.get("evidence") or {}
+        assert x["retrieved_date"] == ev.get("retrieved_date")
+        assert x["observed_at"] == claim.get("observed_at")
+    assert dossier["as_of"] == packet["as_of"]
+
+
+def test_planted_future_date_fails_the_build_guard(okc_records: list[dict[str, Any]]) -> None:
+    """DR-C4-15: a displayed date later than the build clock refuses compose —
+    at the packet check and again at the rendered-dossier check."""
+    import copy
+
+    packet = _packet(copy.deepcopy(okc_records))
+    packet["records"][0]["retrieved_at"] = (
+        "2999-01-01T00:00:00+00:00"  # future-ok: synthetic: sentinel tripping the clock guard
+    )
+    assert any("build" in p for p in capture_chronology_violations(packet))
+    with pytest.raises(ValueError):
+        build_dossier(packet)
+
+
+def test_planted_future_search_stamp_fails() -> None:
+    packet = _packet([_artifact(), _fake_claim("q5", "contract_value", 1)], unknown_qs=("q10",))
+    packet["search_log"][0]["searched_at"] = (
+        "2999-12-31"  # future-ok: synthetic: sentinel tripping the clock guard
+    )
+    assert any("searched_at" in p and "build" in p for p in validate_packet(packet))
+    with pytest.raises(ValueError):
+        build_dossier(packet)
+
+
+def test_planted_future_review_stamp_fails_after_compose(okc_records: list[dict[str, Any]]) -> None:
+    """A stamp the packet check does not own (the free-form review record) is
+    still refused when the composed dossier is checked."""
+    packet = _packet(okc_records)
+    packet["review"] = {
+        "status": "completed",
+        "completed_at": "2999-01-01",  # future-ok: synthetic: sentinel tripping the clock guard
+    }
+    with pytest.raises(ValueError, match="future displayed dates"):
+        build_dossier(packet)
+
+
+def test_review_completed_at_before_build_is_fine(okc_records: list[dict[str, Any]]) -> None:
+    packet = _packet(okc_records)
+    packet["review"] = {"status": "completed", "completed_at": "2026-10-04"}
+    assert build_dossier(packet)["review_label"] == "independently reviewed"
+
+
+def test_displayed_date_violations_walks_the_render(okc_records: list[dict[str, Any]]) -> None:
+    import copy
+
+    dossier = build_dossier(_packet(okc_records))
+    assert displayed_date_violations(dossier) == []
+    target = next(a for a in dossier["answers"] if a["assertions"])
+    planted = copy.deepcopy(dossier)
+    pa = next(a for a in planted["answers"] if a["assertions"])
+    pa["assertions"][0]["retrieved_date"] = (
+        "2999-01-01"  # future-ok: synthetic: sentinel tripping the clock guard
+    )
+    assert target["assertions"][0]["retrieved_date"]  # the record had a stamp
+    assert any("retrieved_date" in p for p in displayed_date_violations(planted))
+    # stated document dates are real-world claims — exempt from the clock guard
+    stated = copy.deepcopy(dossier)
+    sa = next(a for a in stated["answers"] if a["assertions"])
+    sa["assertions"][0]["valid_from"] = "2999-01-01"
+    sa["assertions"][0]["valid_to"] = "2999-12-31"
+    assert displayed_date_violations(stated) == []

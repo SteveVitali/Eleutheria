@@ -1,0 +1,56 @@
+{
+  "artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "9b3c740b1c9956b33685be3d7e0b874f03c8a42114bda1990634952f58f64fb2"
+    },
+    "FOLLOW_UP_DRAFTS.json": {
+      "sha256": "076b049165380de817db0a1b7febe75fe7415ad1d526a53359f2b5d50df10391"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "4bba0668d172394d048e44972e5ea4399667df23856069f3ed76ce9c29bfa1dc"
+    },
+    "tulsa_dossier.json": {
+      "sha256": "583760d05c8ff4e59858dc81b121285a8d584d9028fe8c304a5e842979468512"
+    },
+    "tulsa_dossier.print.html": {
+      "sha256": "924709efaead944173b0a8970e2c0afcdfd0d4542376a9f313b48caf59946bb7"
+    },
+    "tulsa_dossier_packet.json": {
+      "sha256": "19f166577ec13afbe48bcfc835dae7d9102460c9a89ff44675064357f33c49ea"
+    },
+    "tulsa_dossier_portfolio.json": {
+      "sha256": "da0349cf7f7546806da24b419fc2d1ec0aea77564b82b00f7fe4bd5cddb0f904"
+    }
+  },
+  "basis": "ADR-146 D2 + B1 \u00a75.5 \u2014 the superseded run's bytes are historical evidence and keep them (their digests are recorded below and cited elsewhere); the P34.35 builders regenerate the same artifact set here with the disclosure fields added: per-assertion acquisition labels (live capture / committed transcription / stand-in), an evidence_posture roll-up, the review_label derived from the recorded review_status, and licence + permalink + per-page as-of on every page and print.",
+  "generated_by": "sig-ops dossier-packet-tulsa",
+  "notes": "CORRECTION.md lives with the original superseded dir and gains the pointer line naming this successor.",
+  "schema": "sig.supersedes-manifest/1",
+  "superseded_artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "9b3c740b1c9956b33685be3d7e0b874f03c8a42114bda1990634952f58f64fb2"
+    },
+    "FOLLOW_UP_DRAFTS.json": {
+      "sha256": "076b049165380de817db0a1b7febe75fe7415ad1d526a53359f2b5d50df10391"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "4bba0668d172394d048e44972e5ea4399667df23856069f3ed76ce9c29bfa1dc"
+    },
+    "tulsa_dossier.json": {
+      "sha256": "b33830f848265ecf05f4c736d0cc0c252a0ecef16a333267317835b09c88401b"
+    },
+    "tulsa_dossier.print.html": {
+      "sha256": "e5df8277c454a7d1a73954a641660fe6c7b7ec4169856bf44e8c92bce36ad809"
+    },
+    "tulsa_dossier_packet.json": {
+      "sha256": "19f166577ec13afbe48bcfc835dae7d9102460c9a89ff44675064357f33c49ea"
+    },
+    "tulsa_dossier_portfolio.json": {
+      "sha256": "01dd842b39ff1f80a05becede4f47b7010f2d1532dfe54739488e1389c1b1efd"
+    }
+  },
+  "supersedes": "../p32.19-tulsa-dossier_2026-10-04/",
+  "supersedes_ticket": "P32.19",
+  "ticket": "P34.35",
+  "written": "2026-10-07T04:54:36Z"
+}

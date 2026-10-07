@@ -31,6 +31,7 @@ import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
 import type { Dossier } from "./dossier";
 import { RESEARCH_PORTFOLIO_FIXTURE } from "./research-dossier-fixture";
 import {
+  assertNoFutureDisplayDates,
   emptyPortfolio,
   type ResearchDossierPortfolio,
 } from "./research-dossier";
@@ -195,18 +196,26 @@ function jurisdictionDemos(): Dossier[] {
  *     ticket, not minted mechanically.
  */
 export function getResearchDossierPortfolio(): ResearchDossierPortfolio {
-  if (dataSource() === "fixtures") return RESEARCH_PORTFOLIO_FIXTURE;
-  const path = `${exportDir()}/web/research_dossiers.json`;
-  try {
-    const parsed = JSON.parse(readFileSync(path, "utf-8")) as ResearchDossierPortfolio;
-    if (!Array.isArray(parsed.dossiers)) {
-      throw new Error(`${path}: .dossiers is not an array`);
+  let portfolio: ResearchDossierPortfolio;
+  if (dataSource() === "fixtures") {
+    portfolio = RESEARCH_PORTFOLIO_FIXTURE;
+  } else {
+    const path = `${exportDir()}/web/research_dossiers.json`;
+    try {
+      const parsed = JSON.parse(readFileSync(path, "utf-8")) as ResearchDossierPortfolio;
+      if (!Array.isArray(parsed.dossiers)) {
+        throw new Error(`${path}: .dossiers is not an array`);
+      }
+      portfolio = parsed;
+    } catch (cause) {
+      if ((cause as NodeJS.ErrnoException).code === "ENOENT") return emptyPortfolio();
+      throw cause;
     }
-    return parsed;
-  } catch (cause) {
-    if ((cause as NodeJS.ErrnoException).code === "ENOENT") return emptyPortfolio();
-    throw cause;
   }
+  // P34.35 (DR-C4-15): the build-time date guard — a displayed date later
+  // than the build clock fails the build here, on every render path.
+  for (const d of portfolio.dossiers) assertNoFutureDisplayDates(d);
+  return portfolio;
 }
 
 /**
