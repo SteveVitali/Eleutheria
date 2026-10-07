@@ -1,0 +1,22 @@
+{
+ "kind": "sig.scheduled-readback-baseline/1",
+ "taken_at": "2026-10-07T16:06:01Z",
+ "counters": {
+  "claim": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "ingest_run_completion": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  }
+ },
+ "claim_counts": {
+  "camreg_osm_surveillance": 26839
+ },
+ "claim_total": 2640429,
+ "sql": {
+  "disk_bytes_used": 6549311488.0,
+  "memory_utilization": 0.6
+ }
+}

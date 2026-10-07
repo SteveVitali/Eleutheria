@@ -1,11 +1,12 @@
 {
   "schema": "projection-receipt/1",
-  "generated_at": "2026-10-07T15:08:37Z",
-  "git_head": "ef1fb3bf9c77b123f1f59c13005843783c4742ea",
+  "generated_at": "2026-10-07T20:26:40Z",
+  "git_head": "5686684479f92b300dbcd6bc882ecce0ae91b1cf",
   "tool": "docs/build/tools/current_projection.py",
   "note": "wall-clock receipt — kept out of the deterministic payload; input digests live in manifest.json",
   "files": [
     "CURRENT.md",
+    "adrs.md",
     "coverage-1.md",
     "coverage-2.md",
     "coverage-3.md",

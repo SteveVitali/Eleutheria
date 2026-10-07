@@ -1,0 +1,42 @@
+{
+ "cloudsql.googleapis.com/database/memory/utilization": {
+  "points": [
+   {
+    "time": "2026-10-10T03:40:00Z",
+    "value": 0.61
+   },
+   {
+    "time": "2026-10-10T03:50:00Z",
+    "value": 0.72
+   },
+   {
+    "time": "2026-10-10T04:00:00Z",
+    "value": 0.63
+   }
+  ]
+ },
+ "cloudsql.googleapis.com/database/disk/bytes_used": {
+  "points": [
+   {
+    "time": "2026-10-10T03:35:00Z",
+    "value": 6549311488
+   },
+   {
+    "time": "2026-10-10T03:55:00Z",
+    "value": 6553000000
+   }
+  ]
+ },
+ "cloudsql.googleapis.com/database/uptime": {
+  "points": [
+   {
+    "time": "2026-10-10T03:35:00Z",
+    "value": 1900000
+   },
+   {
+    "time": "2026-10-10T03:55:00Z",
+    "value": 1901200
+   }
+  ]
+ }
+}

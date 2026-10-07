@@ -1,0 +1,13 @@
+{
+ "template": {
+  "template": {
+   "spec": {
+    "containers": [
+     {
+      "image": "us-central1-docker.pkg.dev/p/sig/sig-api@sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2"
+     }
+    ]
+   }
+  }
+ }
+}

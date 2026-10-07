@@ -1,0 +1,32 @@
+{
+  "batch": "camreg-batch-05",
+  "execution": {
+    "found": false
+  },
+  "fire_time": "2026-10-10T03:35:00+00:00",
+  "generated_at": "2026-10-07T16:19:00.781929+00:00",
+  "guard": {
+    "failures": [
+      "scheduled fire 2026-10-10T03:35:00+00:00 is in the future (now 2026-10-07T16:19:00.781929+00:00)",
+      "scheduler trigger has not fired (no lastAttemptTime)",
+      "no Cloud Run execution exists at/after the fire"
+    ],
+    "fire": "2026-10-10T03:35:00+00:00",
+    "holds": false,
+    "now": "2026-10-07T16:19:00.781929+00:00"
+  },
+  "kind": "sig.scheduled-readback/1",
+  "leg": {
+    "rerun_prompt": "implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true",
+    "status": "queued"
+  },
+  "obligation": "D-P31.4-1",
+  "read_only": true,
+  "run_date": "2026-10-10",
+  "scheduler": {
+    "lastAttemptTime": null,
+    "scheduleTime": "2026-10-10T03:35:00Z",
+    "state": "ENABLED"
+  },
+  "ticket": "P34.39a"
+}
