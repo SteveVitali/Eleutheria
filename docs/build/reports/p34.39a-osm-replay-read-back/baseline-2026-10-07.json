@@ -1,0 +1,129 @@
+{
+  "api_health": {
+    "body": {
+      "backend": "postgresql",
+      "detail": "",
+      "pool": {
+        "pool_available": 1,
+        "pool_max": 5,
+        "pool_min": 1,
+        "pool_size": 1,
+        "requests_waiting": 0
+      },
+      "status": "ok"
+    },
+    "status": 200
+  },
+  "batch": "camreg-batch-05",
+  "claim_counts": {
+    "camreg_monmap_mn": 98,
+    "camreg_mueller_de": 192,
+    "camreg_nashville_tn": 168,
+    "camreg_nitro": 56,
+    "camreg_nola_safety_la": 973,
+    "camreg_nzta_nz": 8280,
+    "camreg_oem_camera": 72,
+    "camreg_oosgis_nl": 378,
+    "camreg_osm_surveillance": 1241521,
+    "camreg_palmdesert_ca": 400,
+    "camreg_penndot_pa": 8743,
+    "camreg_pgcounty_md": 871,
+    "camreg_pipeline_sec": 21
+  },
+  "claim_counts_method": "claims credited to each member source through the evidence chain claim -> claim_evidence -> evidence_capture -> evidence_artifact.source_id (claim carries no source_id; the pre-P31.2 reuse-by-key runs fold several sources' executions into one ingest_run, so a run-level map mis-attributes them)",
+  "claim_total": 2640429,
+  "counters": {
+    "claim": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "claim_evidence": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "claim_qualifier": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "entity": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "entity_identifier": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "entity_identity_key": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "evidence_artifact": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "evidence_blob": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "evidence_capture": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "extraction": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "ingest_run": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "ingest_run_capture": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "ingest_run_completion": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "organization": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "rights_record": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    },
+    "source_registry": {
+      "n_tup_del": 0,
+      "n_tup_upd": 0
+    }
+  },
+  "errors": [],
+  "kind": "sig.scheduled-readback-baseline/1",
+  "obligation": "D-P31.4-1",
+  "project": "zeta-medley-508121-u7",
+  "read_only": true,
+  "region": "us-central1",
+  "run_date": "2026-10-10",
+  "scheduler": {
+    "lastAttemptTime": null,
+    "schedule": "35 3 10 * *",
+    "scheduleTime": "2026-10-10T03:35:00Z",
+    "state": "ENABLED",
+    "target_uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-05:run"
+  },
+  "sql": {
+    "disk_bytes_used": 6549315584.0,
+    "disk_bytes_used_points": 29,
+    "memory_utilization": 0.6062477827647446,
+    "memory_utilization_points": 28
+  },
+  "sql_instance": {
+    "dataDiskSizeGb": "15",
+    "state": "RUNNABLE",
+    "storageAutoResize": true,
+    "tier": "db-custom-1-3840"
+  },
+  "taken_at": "2026-10-07T16:48:04.597081+00:00",
+  "ticket": "P34.39a"
+}
