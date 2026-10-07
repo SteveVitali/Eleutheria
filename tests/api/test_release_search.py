@@ -292,3 +292,194 @@ def test_tampered_index_bytes_refused(tmp_path: Path) -> None:
     r = _search(c, b.publication_id)
     assert r.status_code == 503
     assert r.json()["code"] == "index_verification_failed"
+
+
+# --------------------------------------------------------------------------- #
+# P34.36 — release-search states                                               #
+# (C4 NEW-4 empty copy, NEW-12 scope counts, NEW-13 HTML errors, NEW-28        #
+# pager/copy, NEW-29 pseudo-compartment; DR-C4-05/09/10)                       #
+# --------------------------------------------------------------------------- #
+
+
+def _html_get(client: TestClient, pub: str, comp: str = COMP, *, by: str, **params):
+    """One GET as an HTML client — ``by='accept'`` negotiates the header,
+    ``by='format'`` uses the explicit ``format=html`` param."""
+    headers = {"Accept": "text/html"} if by == "accept" else {}
+    if by == "format":
+        params = {**params, "format": "html"}
+    return client.get(
+        f"/v1/releases/{pub}/compartments/{comp}/search",
+        params=params,
+        headers=headers,
+    )
+
+
+def _assert_html_error(r, status: int, code: str) -> None:
+    assert r.status_code == status, r.text
+    assert "text/html" in r.headers["content-type"]
+    assert "<html" in r.text and "<script" not in r.text.lower()
+    assert code in r.text
+
+
+@pytest.mark.parametrize("by", ["accept", "format"])
+def test_html_client_gets_html_error_pages(client: TestClient, released, by: str) -> None:
+    """C4 NEW-13 / DR-C4-10: every error status answers an HTML client with an
+    HTML page — never a raw JSON body a no-JS reader cannot use."""
+    registry, pub = released
+    # a real cursor minted for one filter set, replayed under another → 409
+    cursor = _search(client, pub, q="Site", limit=10).json()["next_cursor"]
+    cases: list[tuple[int, str, str, str, dict]] = [
+        (404, "unknown_publication", "p-" + "0" * 64, COMP, {}),
+        (404, "unknown_publication", "not-a-publication", COMP, {}),
+        (404, "unknown_compartment", pub, "nonexistent", {}),
+        (404, "compartment_not_searchable", pub, "web", {}),
+        (404, "compartment_not_searchable", pub, "metadata", {}),
+        (409, "cursor_context_mismatch", pub, COMP, {"q": "Camera", "cursor": cursor}),
+        (422, "query_too_short", pub, COMP, {"q": "zz"}),
+        (422, "unsupported_query", pub, COMP, {"bogus": "x"}),
+        (422, "unsupported_query", pub, COMP, {"limit": 0}),
+        (422, "malformed_cursor", pub, COMP, {"cursor": "%%%bad%%%"}),
+    ]
+    for status, code, target, comp, kw in cases:
+        _assert_html_error(_html_get(client, target, comp, by=by, **kw), status, code)
+    # whole-release withdrawal → 410 (last: it denies every later request)
+    _deny(registry, TargetKind.RELEASE_ARTIFACT, pub, day=28)
+    _assert_html_error(_html_get(client, pub, COMP, by=by), 410, "withdrawn")
+
+
+def test_410_html_carries_the_tombstone_category(client: TestClient, released) -> None:
+    registry, pub = released
+    _deny(registry, TargetKind.RELEASE_ARTIFACT, pub, day=28)
+    r = _html_get(client, pub, by="accept")
+    assert r.status_code == 410
+    assert "text/html" in r.headers["content-type"]
+    assert "safety_withdrawal" in r.text
+
+
+def test_html_error_on_cold_index_503(released) -> None:
+    registry, pub = released
+    victim = registry / "staged" / f"r/{pub}/c/{COMP}/search_index.sqlite"
+    victim.unlink()
+    c = TestClient(create_app(build_demo_store(), release_search=ReleaseSearchStore(registry)))
+    for by in ("accept", "format"):
+        r = _html_get(c, pub, by=by)
+        assert r.status_code == 503 and "text/html" in r.headers["content-type"]
+        assert "index_not_staged" in r.text
+        assert r.headers.get("retry-after") == "5"
+
+
+def test_html_error_when_search_unconfigured_503() -> None:
+    c = TestClient(create_app(build_demo_store()))
+    for by in ("accept", "format"):
+        r = _html_get(c, "p-" + "0" * 64, by=by)
+        assert r.status_code == 503 and "text/html" in r.headers["content-type"]
+        assert "release_search_unconfigured" in r.text
+
+
+def test_validation_422_is_html_for_html_clients(client: TestClient, released) -> None:
+    """``limit=abc`` fails FastAPI parsing before the handler — a RequestValidationError,
+    not a SearchIndexError. It still owes an HTML client an HTML page."""
+    _reg, pub = released
+    for by in ("accept", "format"):
+        r = _html_get(client, pub, by=by, limit="abc")
+        assert r.status_code == 422 and "text/html" in r.headers["content-type"]
+    # a JSON client gets the same 422 as a plain JSON body
+    r = client.get(
+        f"/v1/releases/{pub}/compartments/{COMP}/search",
+        params={"limit": "abc"},
+        headers={"Accept": "application/json"},
+    )
+    assert r.status_code == 422
+    assert r.headers["content-type"].startswith("application/json")
+
+
+def test_json_clients_keep_json_errors(client: TestClient, released) -> None:
+    """Back-compat: without an HTML signal the JSON error body is unchanged."""
+    _reg, pub = released
+    r = client.get(
+        f"/v1/releases/{pub}/compartments/{COMP}/search",
+        params={"q": "zz"},
+    )
+    assert r.status_code == 422
+    assert r.headers["content-type"].startswith("application/json")
+    assert r.json()["code"] == "query_too_short"
+    # a JSON-accept client is never handed the HTML page
+    r2 = client.get(
+        f"/v1/releases/{pub}/compartments/{COMP}/search",
+        params={"q": "zz"},
+        headers={"Accept": "application/json"},
+    )
+    assert r2.status_code == 422
+    assert r2.headers["content-type"].startswith("application/json")
+
+
+def test_empty_result_html_states_only_the_mismatch(client: TestClient, released) -> None:
+    """C4 NEW-4 / DR-C4-05: the no-match page says no released record in this
+    compartment matches — never 'recorded absence' or a research claim."""
+    _reg, pub = released
+    for by in ("accept", "format"):
+        r = _html_get(client, pub, by=by, q="zzqx-nonexistent")
+        assert r.status_code == 200 and "text/html" in r.headers["content-type"]
+        assert "no released record in this compartment matches" in r.text.lower()
+        assert "recorded absence" not in r.text.lower()
+        assert "missing research" not in r.text.lower()
+
+
+def test_scope_counts_access_time_denials(client: TestClient, released) -> None:
+    """C4 NEW-12 / DR-C4-09: denials recorded AFTER activation are counted in
+    the scope — eligible drops, exclusions carry the public-safe reason."""
+    registry, pub = released
+    _deny(registry, TargetKind.ENTITY, "ent-src_a-0")  # one record
+    _deny(registry, TargetKind.CLAIM, "claim-src_a-1-a")  # one carrier record
+    r = _search(client, pub)
+    scope = r.json()["scope"]
+    assert scope["indexed_records"] == 30  # the pinned index truth, unmoved
+    assert scope["eligible_records"] == 28
+    assert scope["excluded_records_by_reason"] == {"safety_withdrawal": 2}
+    # …and the HTML summary agrees with the JSON scope (humanised label)
+    r2 = _html_get(client, pub, by="accept")
+    assert "28 eligible" in r2.text and "safety withdrawal" in r2.text
+
+
+def test_pager_uses_the_requested_limit(client: TestClient, released, tmp_path: Path) -> None:
+    """C4 NEW-28: 'next N' names N — the requested page size."""
+    export = _write_export(tmp_path / "big", n_records=130, two_compartments=False)
+    b = build_release(export, tmp_path / "big-rel", renderer_revision=REVISION)
+    registry = tmp_path / "big-reg"
+    activate(registry, b.out_dir)
+    c = TestClient(create_app(build_demo_store(), release_search=ReleaseSearchStore(registry)))
+    r = _html_get(c, b.publication_id, by="format", limit="10")
+    assert r.status_code == 200
+    assert "next 10" in r.text and "next 50" not in r.text
+
+
+def test_no_raw_enums_or_duplicated_copy_in_html(client: TestClient, released) -> None:
+    """C4 NEW-28: no raw enum names as visible labels and no duplicated
+    gate/browse text."""
+    _reg, pub = released
+    r = _html_get(client, pub, by="accept", q="Site")
+    assert ">public-point<" not in r.text and ">no-public-point<" not in r.text
+    assert r.text.count("static browse") <= 1
+
+
+def test_non_record_compartment_is_404_not_searchable(
+    client: TestClient, released, tmp_path: Path
+) -> None:
+    """C4 NEW-29 (pseudo-compartment part): `web` is a page surface, never a
+    searchable record compartment — 404 'compartment_not_searchable', not the
+    readiness 503. Even if a ``c/web`` dir is staged, the answer is the same."""
+    registry, pub = released
+    # mirror the observed state: a c/web dir exists (page artifacts)
+    webdir = registry / "staged" / f"r/{pub}/c/web"
+    webdir.mkdir(parents=True, exist_ok=True)
+    (webdir / "index.html").write_text("<p>web surface</p>", encoding="utf-8")
+    for comp in ("web", "metadata", "code", "ontology"):
+        r = _search(client, pub, comp=comp)
+        assert r.status_code == 404, (comp, r.text)
+        assert r.json()["code"] == "compartment_not_searchable"
+        r_html = _html_get(client, pub, comp, by="accept")
+        assert r_html.status_code == 404
+        assert "text/html" in r_html.headers["content-type"]
+    # a genuinely absent compartment keeps its distinct 404
+    r = _search(client, pub, comp="no_such_compartment")
+    assert r.status_code == 404 and r.json()["code"] == "unknown_compartment"

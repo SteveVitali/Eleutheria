@@ -455,3 +455,247 @@ def test_response_contract_shape(tmp_path: Path) -> None:
 def test_index_descriptor_filename_contract() -> None:
     assert INDEX_FILE == "search_index.sqlite"
     assert INDEX_DESCRIPTOR_FILE == "search_index.json"
+
+
+# --------------------------------------------------------------------------- #
+# P34.36 — scope counts include access-time denials (C4 NEW-12 / DR-C4-09)     #
+# --------------------------------------------------------------------------- #
+
+
+def test_scope_counts_access_time_denials(tmp_path: Path) -> None:
+    """Denied-at-access records are counted: ``eligible_records`` drops by the
+    denied total and ``excluded_records_by_reason`` carries them under their
+    public-safe reason — the pinned index count never moves."""
+    path, _ = _build(tmp_path)
+    conn = _conn(path)
+    meta = check_index_contract(conn)
+    res = search(
+        conn,
+        meta,
+        _params(),
+        denied=lambda row: (
+            "safety_withdrawal"  # noqa: E731
+            if row[1] in {"ent-0000", "ent-0001", "ent-0002"}
+            else None
+        ),
+    )
+    scope = res["scope"]
+    assert scope["indexed_records"] == 120  # the pinned index truth, unmoved
+    assert scope["eligible_records"] == 117
+    assert scope["excluded_records_by_reason"] == {"safety_withdrawal": 3}
+    conn.close()
+
+
+def test_denied_reasons_are_grouped(tmp_path: Path) -> None:
+    path, _ = _build(tmp_path)
+    conn = _conn(path)
+    meta = check_index_contract(conn)
+    reasons = {
+        "ent-0000": "safety_withdrawal",
+        "ent-0001": "rights_withdrawal",
+        "ent-0002": "rights_withdrawal",
+    }
+    res = search(
+        conn,
+        meta,
+        _params(),
+        denied=lambda row: reasons.get(row[1]),  # noqa: E731
+    )
+    scope = res["scope"]
+    assert scope["eligible_records"] == 117
+    assert scope["excluded_records_by_reason"] == {
+        "safety_withdrawal": 1,
+        "rights_withdrawal": 2,
+    }
+    conn.close()
+
+
+def test_denied_record_counts_once_for_many_denied_claims(tmp_path: Path) -> None:
+    """A record carrying two denied claims is ONE excluded record, not two."""
+    path, _ = _build(tmp_path, n=10)
+    conn = _conn(path)
+    meta = check_index_contract(conn)
+    res = search(
+        conn,
+        meta,
+        _params(),
+        denied=lambda row: (
+            "safety_withdrawal"  # noqa: E731
+            if {"claim-3-a", "claim-3-b"}.intersection(json.loads(row[7]))
+            else None
+        ),
+    )
+    assert res["scope"]["eligible_records"] == 9
+    assert res["scope"]["excluded_records_by_reason"] == {"safety_withdrawal": 1}
+    conn.close()
+
+
+def test_no_denials_leave_scope_untouched(tmp_path: Path) -> None:
+    """With no access-time barrier the scope echoes the pinned index meta —
+    no count pass runs."""
+    path, _ = _build(tmp_path)
+    conn = _conn(path)
+    meta = check_index_contract(conn)
+    res = search(conn, meta, _params())
+    assert res["scope"] == {
+        "indexed_records": 120,
+        "eligible_records": 120,
+        "excluded_records_by_reason": {},
+    }
+    conn.close()
+
+
+def test_denial_count_scan_respects_deadline(tmp_path: Path) -> None:
+    """The denial count pass runs under the same hard budget — exhaustion
+    answers 503, never a partial scope presented as whole."""
+    out = tmp_path / INDEX_FILE
+    build_search_index(
+        _rows(4000),
+        publication_id=PUB,
+        compartment=COMP,
+        license_id="CC-BY-4.0",
+        out=out,
+    )
+    conn = _conn(out)
+    meta = check_index_contract(conn)
+    # a no-match query empties the page loop instantly — what must still trip
+    # is the denial count pass over the whole table.
+    with pytest.raises(SearchIndexError) as ei:
+        search(
+            conn,
+            meta,
+            _params(q="zzzzqqqq"),
+            denied=lambda row: "safety_withdrawal",  # noqa: E731
+            deadline_seconds=0.001,
+        )
+    assert ei.value.status == 503 and ei.value.code == "query_timeout"
+    conn.close()
+
+
+# --------------------------------------------------------------------------- #
+# P34.36 — the no-JS search page states (C4 NEW-4 / NEW-28 / DR-C4-05)          #
+# --------------------------------------------------------------------------- #
+
+
+def _page_result(results: list[dict] | None = None, **scope_over) -> dict:
+    scope = {"indexed_records": 3, "eligible_records": 3, "excluded_records_by_reason": {}}
+    scope.update(scope_over)
+    return {
+        "publication_id": PUB,
+        "compartment": COMP,
+        "license": "CC-BY-4.0",
+        "query": {"q": "cam", "normalized": "cam", "exact_id": False, "filters": {}},
+        "scope": scope,
+        "results": results or [],
+        "next_cursor": None,
+        "total_matches": {"value": None, "relation": "not_computed"},
+        "truncated": False,
+    }
+
+
+def _render(result: dict, *, limit: int = 50, filters: dict | None = None) -> str:
+    from exports.release_pages import search_page
+
+    return search_page(
+        action="/v1/releases/p/compartments/c/search",
+        publication_id=PUB,
+        compartment=COMP,
+        licence="CC-BY-4.0",
+        params={"q": "cam", "filters": filters or {}, "limit": limit},
+        facet_options={
+            "kind": [("deployment", 3)],
+            "jurisdiction": [("unreported", 1), ("OK", 2)],
+            "source": [("src_a", 3)],
+            "technology": [],
+        },
+        result=result,
+    ).decode()
+
+
+def test_search_page_empty_copy_asserts_only_the_mismatch() -> None:
+    """C4 NEW-4 / DR-C4-05: no-match copy says no released record in this
+    compartment matches — it never asserts research status or an absence."""
+    html = _render(_page_result())
+    assert "no released record in this compartment matches" in html.lower()
+    assert "recorded absence" not in html.lower()
+    assert "missing research" not in html.lower()
+
+
+def test_search_page_pager_names_the_actual_limit() -> None:
+    """C4 NEW-28: the pager honours the requested page size, never a fixed
+    "next 50"."""
+    hit = {
+        "record_key": f"{COMP}:deployment:ent-1",
+        "href": f"/r/{PUB}/c/{COMP}/entity/deployment/ent-1/",
+        "json_href": f"/r/{PUB}/c/{COMP}/entity/deployment/ent-1.json",
+        "label": "Site",
+        "kind": "deployment",
+        "jurisdiction": "OK",
+        "jurisdiction_state": "OK",
+        "sources": ["src_a"],
+        "location": "public-point",
+        "matched_fields": ["text"],
+        "status": "published",
+    }
+    res = _page_result([hit])
+    res["next_cursor"] = "CURSOR"
+    html = _render(res, limit=10)
+    assert "next 10" in html
+    assert "next 50" not in html
+
+
+def test_search_page_humanises_enum_labels_keeps_wire_values() -> None:
+    """C4 NEW-28: facet/result labels are human-readable; the wire ``value=``
+    stays the raw enum (the form must keep working)."""
+    hit = {
+        "record_key": f"{COMP}:deployment:ent-1",
+        "href": f"/r/{PUB}/c/{COMP}/entity/deployment/ent-1/",
+        "json_href": f"/r/{PUB}/c/{COMP}/entity/deployment/ent-1.json",
+        "label": "Site",
+        "kind": "deployment",
+        "jurisdiction": None,
+        "jurisdiction_state": "unreported",
+        "sources": ["src_a"],
+        "location": "no-public-point",
+        "matched_fields": ["text"],
+        "status": "published",
+    }
+    html = _render(_page_result([hit]))
+    # humanised display labels
+    assert ">public point (" in html or ">public point<" in html
+    assert ">not reported<" in html or "not reported (" in html
+    # raw enum tokens never appear as visible labels
+    assert ">public-point<" not in html
+    assert ">no-public-point<" not in html
+    assert ">unreported<" not in html
+    assert ">unreported (" not in html
+    # wire values preserved so the form still filters
+    assert 'value="public-point"' in html
+    assert 'value="no-public-point"' in html
+    assert 'value="unreported"' in html
+
+
+def test_search_page_does_not_repeat_the_browse_pointer() -> None:
+    """C4 NEW-28: the static-browse pointer is stated once (the body), not
+    repeated in the footer."""
+    html = _render(_page_result())
+    assert html.count("static browse") <= 1
+
+
+def test_search_error_page_is_honest_html() -> None:
+    """C4 NEW-13 / DR-C4-10: the error representation is the same zero-JS
+    skeleton — status + code + detail + a way back to the form."""
+    from exports.release_pages import search_error_page
+
+    html = search_error_page(
+        action="/v1/releases/p/compartments/c/search",
+        publication_id=PUB,
+        compartment=COMP,
+        status=404,
+        code="unknown_compartment",
+        detail="compartment x is not part of this release",
+    ).decode()
+    assert "<html" in html and "<script" not in html.lower()
+    assert "404" in html and "unknown_compartment" in html
+    assert "compartment x is not part of this release" in html
+    assert 'href="/v1/releases/p/compartments/c/search"' in html
