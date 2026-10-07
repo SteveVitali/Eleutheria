@@ -18,9 +18,11 @@ token resolved in this order:
 
 The token provider and the URL opener are injectable so the whole client is
 deterministic in tests — no socket is opened unless the caller asks for one.
-Nothing here deletes or overwrites: :meth:`GcsBucket.put_object` writes a NEW
-object name per run and this module exposes no delete path, matching the
-append-only ethos (P1–P3).
+Append-only by default: audit/record writers use per-run timestamped names and
+never rewrite objects (P1–P3). The single exception is
+:meth:`GcsBucket.delete_object`, added for P34.10 — the repository-owned
+publish path's removal of retired public-site objects, guarded by the
+protected release-namespace check in ``ops.publish`` (SIG-OPS-003/004).
 """
 
 from __future__ import annotations
@@ -168,6 +170,24 @@ class GcsBucket:
         )
         _, payload = self._request("GET", url)
         return payload
+
+    def delete_object(self, name: str) -> str:
+        """Delete one object; returns its name.
+
+        Added for P34.10 (SIG-OPS-003/004): the ONE sanctioned deleter — the
+        repository-owned publish path (``sig-ops publish-web``) calls it for
+        remote extras the allow-listed site tree no longer carries. Callers
+        MUST already exclude the protected release namespaces
+        (``ops.publish.PROTECTED_PREFIXES``); ``ops.publish.sync_tree``
+        re-checks every name at the write so a caller bug cannot delete a
+        release tree either.
+        """
+        url = (
+            f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o/"
+            f"{urllib.parse.quote(name, safe='')}"
+        )
+        self._request("DELETE", url)
+        return name
 
 
 __all__ = [

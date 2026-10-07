@@ -7,7 +7,9 @@
 | SIG-OPS-001 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-002 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-003 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-003 | hosted | PARTIAL | 2026-10-02 | SIG-OPS-003:r11-1 |
 | SIG-OPS-004 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-004 | hosted | PARTIAL | 2026-10-02 | SIG-OPS-004:r11-1 |
 | SIG-OPS-005 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-006 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-007 | hosted | MISSING | 2026-10-01 | — |

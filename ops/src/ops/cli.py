@@ -279,13 +279,88 @@ def build_parser() -> argparse.ArgumentParser:
         help="build web/dist from the real national export (SIG_DATA_SOURCE=export, fail-loud "
         "if absent) + partition the bundle into exports/out/{public,restricted} + PROVE the "
         "public compartment carries no ODbL/share-alike/UNDETERMINED byte (§42). Network-free; "
-        "no push. The operator runs the gcloud syncs afterwards.",
+        "no push. Publication runs through `sig-ops publish-web` (P34.10) — hand-typed "
+        "bucket syncs are forbidden (SIG-OPS-004).",
     )
     deploy.add_argument(
         "--export-dir",
         default=None,
         help="the national export the public build reads (default: SIG_EXPORT_DIR / "
         "exports/out/national). NEVER a fixtures fall-back for the public build.",
+    )
+
+    pub = sub.add_parser(
+        "publish-web",
+        help="the ONE repository-owned publish path for the public surface "
+        "(P34.10, SIG-OPS-003/004): assert the built tree against "
+        "ops/public_routes.toml + the internal/demo markers, write "
+        ".sig-release.json, run ONE sync that never deletes the release "
+        "namespaces (r/, releases/, entity/, conf/), then prove the denied "
+        "routes absent on every public origin. Dry-run by default; --apply "
+        "performs the sync + post-sync probes. Hand-typed bucket syncs are "
+        "forbidden — this command is the path.",
+    )
+    pub.add_argument(
+        "--dist",
+        default=None,
+        help="the built site tree to publish (default: web/dist — built by "
+        "`npm --prefix web run build`, which never emits internal routes "
+        "without SIG_BUILD_INTERNAL=1).",
+    )
+    pub.add_argument(
+        "--export-dir",
+        default=None,
+        help="when given, run the full prepare first: build web/dist from this "
+        "real export (SIG_DATA_SOURCE=export, never fixtures) and partition it "
+        "into exports/out/{public,restricted} — the public tree then publishes "
+        "through this same command.",
+    )
+    pub.add_argument(
+        "--release-tree",
+        default=None,
+        help="a staged release tree (e.g. <registry>/staged) to publish to the "
+        "web bucket in the same run — append-only, its top-level entries must "
+        "be release namespaces (r/, releases/, entity/, conf/, …).",
+    )
+    pub.add_argument(
+        "--public-tree",
+        default=None,
+        help="the partitioned public compartment tree (default: "
+        "exports/out/public when --export-dir ran the prepare).",
+    )
+    pub.add_argument(
+        "--bucket",
+        default=None,
+        help="the site bucket (default: SIG_WEB_BUCKET, else "
+        "{SIG_GCP_PROJECT}-sig-web). Required for --apply.",
+    )
+    pub.add_argument(
+        "--public-bucket",
+        default=None,
+        help="the public compartment bucket for --public-tree (default: "
+        "SIG_PUBLIC_BUCKET, else {SIG_GCP_PROJECT}-sig-public).",
+    )
+    pub.add_argument(
+        "--allowlist",
+        default=None,
+        help="ops/public_routes.toml path (default: the committed file / SIG_PUBLIC_ROUTES).",
+    )
+    pub.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path — its http-absent targets are the post-sync "
+        "verify (default: the packaged file / SIG_OPS_CADENCE).",
+    )
+    pub.add_argument(
+        "--release-id",
+        default=None,
+        help="the publish release id written to .sig-release.json (default: web-<utc>-<commit>).",
+    )
+    pub.add_argument(
+        "--apply",
+        action="store_true",
+        help="perform the sync + post-sync absence probes. Without it this is a "
+        "dry-run: assertions + release record + the printed sync plan only.",
     )
 
     drill = sub.add_parser(
@@ -1583,9 +1658,119 @@ def _cmd_deploy_prepare(args: argparse.Namespace) -> int:
         + json.dumps(result.partition.watermark, sort_keys=True, default=str)
     )
     print(
-        "sig-ops deploy --prepare-only: OK — web/dist + exports/out/public ready; the operator "
-        "runs the gcloud syncs (see `sig-ops deploy --target gcp --dry-run`)."
+        "sig-ops deploy --prepare-only: OK — web/dist + exports/out/public ready; publish "
+        "them with `sig-ops publish-web` (P34.10 — the one repository-owned publish "
+        "path; hand-typed bucket syncs are forbidden, SIG-OPS-004)."
     )
+    return 0
+
+
+def _cmd_publish_web(args: argparse.Namespace) -> int:
+    """The one allow-listed publish path (P34.10; SIG-OPS-003/004)."""
+    from .gcs import GcsBucket, GcsError
+    from .observe import ProbeResult
+    from .publish import PublishError, run_public_prepare, run_publish_web
+    from .scheduled import load_cadence, probe_hosted, resolve_targets
+
+    dist = Path(args.dist).resolve() if args.dist else _REPO_ROOT / "web" / "dist"
+    public_tree: Path | None = None
+    data_release: str | None = None
+    if args.export_dir:
+        # The full prepare leg: export-mode build + partition + clean proof —
+        # the publish then rides on the tree this command itself produced.
+        try:
+            prepare = run_public_prepare(
+                repo_root=_REPO_ROOT, export_dir=Path(args.export_dir).resolve()
+            )
+        except PublishError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        for line in prepare.as_lines():
+            print(f"  {line}")
+        dist = prepare.dist
+        public_tree = prepare.partition.public_root
+        # the export's own release id rides the site release record — the
+        # provenance link from a published page back to the data build.
+        data_release = prepare.partition.watermark.get("release_id")
+    if args.public_tree:
+        public_tree = Path(args.public_tree).resolve()
+
+    project = os.environ.get("SIG_GCP_PROJECT", "").strip()
+    bucket_name = (
+        args.bucket
+        or os.environ.get("SIG_WEB_BUCKET", "").strip()
+        or (f"{project}-sig-web" if project else "")
+    )
+    public_bucket_name = (
+        args.public_bucket
+        or os.environ.get("SIG_PUBLIC_BUCKET", "").strip()
+        or (f"{project}-sig-public" if project else "")
+    )
+    bucket = GcsBucket(bucket_name) if bucket_name else None
+    public_bucket = GcsBucket(public_bucket_name) if public_bucket_name else None
+    if args.apply and bucket is None:
+        print(
+            "publish-web --apply: no destination bucket — set --bucket, "
+            "SIG_WEB_BUCKET or SIG_GCP_PROJECT (nothing was synced)",
+            file=sys.stderr,
+        )
+        return 2
+    if args.apply and public_tree is not None and public_bucket is None:
+        print(
+            "publish-web --apply: --public-tree needs a compartment bucket — set "
+            "--public-bucket, SIG_PUBLIC_BUCKET or SIG_GCP_PROJECT",
+            file=sys.stderr,
+        )
+        return 2
+
+    def absent_verify() -> list[ProbeResult]:
+        # the post-sync proof (SIG-OPS-003): cadence http-absent targets
+        cadence = load_cadence(args.cadence)
+        specs = {s.name: s for s in cadence.probe_targets}
+        resolved, skipped = resolve_targets(cadence)
+        targets = [
+            (name, specs[name].kind, url)
+            for name, url in resolved
+            if specs[name].kind == "http-absent"
+        ]
+        for name in skipped:
+            if specs.get(name) is not None and specs[name].kind == "http-absent":
+                print(
+                    f"  ! absent-probe target {name!r} skipped — URL not resolvable "
+                    "(that origin's absence goes unproven this run)",
+                    file=sys.stderr,
+                )
+        return probe_hosted(targets)
+
+    try:
+        result = run_publish_web(
+            dist=dist,
+            apply=args.apply,
+            bucket=bucket,
+            allowlist_path=args.allowlist,
+            release_tree=Path(args.release_tree).resolve() if args.release_tree else None,
+            export_tree=public_tree,
+            export_bucket=public_bucket,
+            release_id=args.release_id,
+            data_release=data_release,
+            absent_verify=absent_verify if args.apply else None,
+        )
+    except PublishError as exc:
+        print(str(exc), file=sys.stderr)
+        print("sig-ops publish-web: REFUSED — nothing was published.", file=sys.stderr)
+        return 3
+    except GcsError as exc:
+        print(f"sig-ops publish-web: bucket operation failed: {exc}", file=sys.stderr)
+        return 7
+    for line in result.as_lines():
+        print(line)
+    if not args.apply:
+        print(
+            "dry-run: assertions green, release record written, sync plan above; "
+            "re-run with --apply to sync + probe (the first --apply is P34.17's "
+            "gated leg).",
+            file=sys.stderr,
+        )
     return 0
 
 
@@ -1793,14 +1978,21 @@ def _cmd_probe_hosted(args: argparse.Namespace) -> int:
             return 7
     down = [r for r in results if not r.ok]
     if down and args.alert:
+        kinds = {name: kind for name, kind, _url in targets}
         fired = None
         for result in down:
-            fired = _fire_alert(
-                "probe-hosted",
-                "critical",
-                f"hosted target {result.service} is DOWN ({result.detail or 'unreachable'})",
-                detail=result.as_json(),
-            )
+            if kinds.get(result.service) == "http-absent":
+                # P34.10: a failed absence probe means the denied route is
+                # PRESENT (or the origin unreachable) — word it accordingly.
+                message = (
+                    f"denied route probe {result.service} is RED on a public origin "
+                    f"({result.detail or 'route present'})"
+                )
+            else:
+                message = (
+                    f"hosted target {result.service} is DOWN ({result.detail or 'unreachable'})"
+                )
+            fired = _fire_alert("probe-hosted", "critical", message, detail=result.as_json())
         return alert_exit_code(fired)
     return 0 if not down else 1
 
@@ -2857,6 +3049,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_degraded(args)
     if args.command == "deploy":
         return _cmd_deploy(args)
+    if args.command == "publish-web":
+        return _cmd_publish_web(args)
     if args.command == "backup-drill":
         return _cmd_backup_drill(args)
     if args.command == "cloudsql-drill":

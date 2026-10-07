@@ -89,13 +89,17 @@ def build_gcp_plan(*, project: str | None = None, region: str | None = None) -> 
         "compartments incl. the ODbL/CC-BY-SA layers, each single-licence — ADR-106) + "
         "exports/out/restricted (UNDETERMINED/excluded/mixed-licence, PRIVATE); assert public "
         "compartment clean; write LICENCES.json (SPDX licence + attribution per compartment)",
-        f"gcloud storage rsync -r -c --delete-unmatched-destination-objects web/dist "
-        f"gs://{proj}-sig-web  (static site, public-read; mirrors the build exactly — the "
-        "prior demo pages and the non-public /curate/ shell are removed)",
-        f"gcloud storage rsync -r -c exports/out/public "
-        f"gs://{proj}-sig-public  (PUBLISHED compartment only, public-read)",
+        f"sig-ops publish-web --apply --dist web/dist --public-tree exports/out/public "
+        f"--bucket {proj}-sig-web --public-bucket {proj}-sig-public  "
+        "(the ONE repository-owned publish path — P34.10, SIG-OPS-003/004: the site "
+        "tree is allow-listed, internal/demo markers refused, .sig-release.json "
+        "written, the sync never deletes the r//releases//entity//conf/ release "
+        "namespaces; sig-public  (PUBLISHED compartment only, public-read) rides "
+        "the same command; post-sync absence probes; hand-typed bucket syncs are "
+        "forbidden)",
         f"gcloud storage rsync -r -c exports/out/restricted "
-        f"gs://{proj}-sig-restricted  (non-published compartments, PRIVATE)",
+        f"gs://{proj}-sig-restricted  (non-published compartments, PRIVATE — "
+        "restricted-side writes stay operator-executed)",
     ]
     return DeployPlan(
         target="gcp",

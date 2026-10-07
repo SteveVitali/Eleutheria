@@ -20,8 +20,12 @@ def test_gcp_plan_is_env_parameterised_by_project_and_region() -> None:
     assert "us-west1-docker.pkg.dev/my-proj/sig/sig-api" in joined
     assert "docker push" in joined
     assert "run deploy sig-api" in joined and "--min-instances=0" in joined
-    assert "gs://my-proj-sig-web" in joined
-    assert "gs://my-proj-sig-public" in joined
+    # P34.10: the public buckets publish through `sig-ops publish-web`, not a
+    # hand-typed `gcloud storage rsync` — the bucket NAMES ride the command's
+    # --bucket/--public-bucket flags.
+    assert "--bucket my-proj-sig-web" in joined
+    assert "--public-bucket my-proj-sig-public" in joined
+    assert "sig-ops publish-web" in joined
 
 
 def test_gcp_plan_keeps_published_public_and_restricted_private() -> None:
@@ -29,7 +33,7 @@ def test_gcp_plan_keeps_published_public_and_restricted_private() -> None:
     joined = "\n".join(plan.steps)
     # the published compartment syncs to the public bucket; restricted to a PRIVATE one
     assert "sig-public  (PUBLISHED compartment only, public-read)" in joined
-    assert "sig-restricted  (non-published compartments, PRIVATE)" in joined
+    assert "sig-restricted  (non-published compartments, PRIVATE" in joined
 
 
 def test_unset_project_uses_placeholder_never_a_literal(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -219,3 +219,56 @@ def test_cli_keepalive_check_passes_when_the_keepalive_verifies(
     )
     assert cli.main(["keepalive-check"]) == 0
     assert not alerts.exists()
+
+
+# --- the denied-route absence check (P34.10 / SIG-OPS-003) ------------------------
+
+
+class _Resp:
+    def __init__(self, status: int) -> None:
+        self.status = status
+
+    def __enter__(self) -> _Resp:
+        return self
+
+    def __exit__(self, *exc) -> None:
+        return None
+
+
+def test_http_absent_is_ok_only_on_a_404(monkeypatch: pytest.MonkeyPatch) -> None:
+    import urllib.error
+
+    def raise_404(url, timeout):
+        raise urllib.error.HTTPError(url, 404, "Not Found", None, None)
+
+    monkeypatch.setattr("urllib.request.urlopen", raise_404)
+    ok, detail = O.http_absent("https://apex.example/curate/")
+    assert ok is True and detail == "absent (HTTP 404)"
+
+
+def test_http_absent_flags_a_served_route_as_present(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("urllib.request.urlopen", lambda url, timeout: _Resp(200))
+    ok, detail = O.http_absent("https://apex.example/curate/")
+    assert ok is False and detail == "present (HTTP 200)"
+
+
+def test_http_absent_flags_a_forbidden_route_as_present(monkeypatch: pytest.MonkeyPatch) -> None:
+    import urllib.error
+
+    def raise_403(url, timeout):
+        raise urllib.error.HTTPError(url, 403, "Forbidden", None, None)
+
+    monkeypatch.setattr("urllib.request.urlopen", raise_403)
+    ok, detail = O.http_absent("https://apex.example/curate/")
+    assert ok is False and detail == "present (HTTP 403)"
+
+
+def test_http_absent_never_greens_a_dead_origin(monkeypatch: pytest.MonkeyPatch) -> None:
+    import urllib.error
+
+    def raise_urlerror(url, timeout):
+        raise urllib.error.URLError("connection refused")
+
+    monkeypatch.setattr("urllib.request.urlopen", raise_urlerror)
+    ok, detail = O.http_absent("https://apex.example/curate/")
+    assert ok is False and detail.startswith("unreachable")
