@@ -353,6 +353,38 @@ def test_built_release_pages_all_carry_chrome(tmp_path: Path) -> None:
 # --------------------------------------------------------------------------- #
 
 
+def test_record_page_report_this_deep_link() -> None:
+    """C4 NEW-19 (P34.37): a record page carries a "report this record" deep
+    link preloaded with the record context (release id, record key, claim
+    anchors — the intake form's own field names). While the receiver is not
+    operating the href resolves to ``/dispute/`` carrying the same context —
+    the ``/intake/*`` receiver route is never linked from a static page while
+    dark. ``SIG_INTAKE_DEEPLINK=1`` at build time flips the target to the live
+    ``/intake/new`` prefill route (operator-only, post-P37.59)."""
+    rec = _released_record()
+    dark = record_page(rec, latest_stub="/entity/deployment/e0/").decode()
+    assert "Report this record" in dark
+    # Default (receiver dark): lands on the dispute page, context attached.
+    assert 'href="/dispute/?' in dark
+    assert "/intake/new" not in dark
+    assert "publication_id=pub-1" in dark
+    assert "record_key=sig_graph%3Adeployment%3A" in dark  # urlencoded comp:type:id
+    assert "claim_ids=claim-src_a-0-a" in dark
+
+
+def test_record_page_report_link_targets_intake_only_when_flagged(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """The same deep link points at the live receiver form only when the
+    operator builds with ``SIG_INTAKE_DEEPLINK=1``."""
+    monkeypatch.setenv("SIG_INTAKE_DEEPLINK", "1")
+    rec = _released_record()
+    html = record_page(rec, latest_stub="/entity/deployment/e0/").decode()
+    assert 'href="/intake/new?' in html
+    assert "publication_id=pub-1" in html
+    assert "record_key=sig_graph%3Adeployment%3A" in html
+
+
 def test_record_page_evidence_links_are_root_absolute(tmp_path: Path) -> None:
     """C4 NEW-1 / F-151: an evidence link emitted from the entity route must
     resolve — the old ../../ form resolved one level too shallow."""

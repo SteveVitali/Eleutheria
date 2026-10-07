@@ -248,6 +248,9 @@ def _proposal_correct(seed: dict[str, Any], value_num: int = 225, **extra: Any) 
         "target_id": seed["claim_id"],
         "claim_digest": seed["claim_digest"],
         "evidence_digest": seed["evidence_digest"],
+        # P34.37 (C4 NEW-18): the declared object_type pins the value shape —
+        # the seeded claim is object_type='quantity'.
+        "object_type": "quantity",
         "value": {
             "value_text": str(value_num),
             "value_num": value_num,
@@ -395,7 +398,10 @@ def test_annotate_writes_non_superseding_claim(
     )
     report = _seed_report(seed_conn, "anno01", [seed["claim_id"]])
     proposal = _proposal_correct(
-        seed, predicate_id="fixture_note", value={"value_text": "noted in field visit"}
+        seed,
+        predicate_id="fixture_note",
+        object_type="literal",
+        value={"value_text": "noted in field visit"},
     )
     pseq = _propose(rev_conn, report["report_id"], "annotate", proposal)
     _approve(rev_conn, report["report_id"], "annotate", pseq)
@@ -708,6 +714,36 @@ def test_changed_evidence_refused(seed_conn: Any, rev_conn: Any, bridge_conn: An
     with pytest.raises(IntakeApplyError) as exc:
         PgIntakeApplicationStore(bridge_conn).apply(report["receipt_id"], actor="cur-1")
     assert exc.value.code == "evidence_changed"
+
+
+def test_object_type_mismatch_refused(seed_conn: Any, rev_conn: Any, bridge_conn: Any) -> None:
+    """C4 NEW-18 (P34.37): a proposal validated for a DECLARED object_type
+    that does not match the live target's resolved type is refused at apply —
+    the shape that passed proposal-time validation may not fit the live
+    record, so the bridge fails closed rather than apply an unvalidated
+    shape. The stored proposal is a perfectly valid ``literal`` shape; the
+    seeded target claim is ``quantity``."""
+    seed = _seed_claim(seed_conn, "otype01")
+    proposal = _proposal_correct(
+        seed,
+        # Literal-shaped value + a declared type that disagrees with the
+        # target claim's 'quantity' — passes validate_proposal, fails the
+        # declared/resolved agreement check.
+        object_type="literal",
+        value={"value_text": "twenty-five"},
+    )
+    report = _approved_report(seed_conn, rev_conn, "otype01", "correct", proposal)
+    with pytest.raises(IntakeApplyError) as exc:
+        PgIntakeApplicationStore(bridge_conn).apply(report["receipt_id"], actor="cur-1")
+    assert exc.value.code == "object_type_mismatch"
+    # Nothing reached the spine — refusal never mutates.
+    assert (
+        seed_conn.execute(
+            "SELECT count(*) AS n FROM claim WHERE revises_claim = %s::uuid",
+            (seed["claim_id"],),
+        ).fetchone()["n"]
+        == 0
+    )
 
 
 def test_unsafe_payload_never_reaches_the_spine(

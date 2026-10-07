@@ -167,6 +167,23 @@ def build_intake_moderation_router(
                     detail="approves_seq must name the current disposition_proposed",
                 )
             detail.setdefault("approves_seq", proposed_seq)
+            # C4 NEW-17 (DR-C4-12): approving a proposal that carries a
+            # publishable public response inherits it — the response the
+            # reporter sees is the one the approver actually approved, not a
+            # second hand-typed copy. The merged detail is re-validated below,
+            # so the inherited text clears the same bounds + Part VIII screen.
+            proposal_detail = next(
+                (e["detail"] or {})
+                for e in reversed(row["events"])
+                if e["event"] == "disposition_proposed"
+            )
+            if (
+                detail.get("public_response") is None
+                and proposal_detail.get("public_response") is not None
+                and proposal_detail.get("public_response_publish")
+            ):
+                detail.setdefault("public_response", proposal_detail["public_response"])
+                detail.setdefault("public_response_publish", True)
         try:
             clean = pint.validate_moderation_detail(event, detail)
         except pint.IntakeFieldError as exc:

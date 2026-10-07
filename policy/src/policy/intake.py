@@ -46,12 +46,14 @@ __all__ = [
     "contract",
     "contract_version",
     "event_vocabulary",
+    "field_pattern_ok",
     "housekeeping_events",
     "is_lifecycle_event",
     "legal_transition",
     "limits",
     "moderation_events",
     "normalize_report",
+    "object_value_rules",
     "proposal_limits",
     "public_state",
     "redactable_fields",
@@ -167,6 +169,17 @@ def _nfc(value: str) -> str:
 
 def _check_pattern(value: str, name: str) -> bool:
     return re.fullmatch(_patterns()[name], value) is not None
+
+
+def field_pattern_ok(name: str, value: str) -> bool:
+    """Whether ``value`` satisfies the named ``[patterns]`` entry.
+
+    Used by the receiver's deep-link prefill (NEW-19): a query parameter is
+    echoed into the form only when it is already contract-shaped — untrusted
+    text is dropped, never rendered back.
+    """
+    pattern = _patterns().get(name)
+    return pattern is not None and re.fullmatch(pattern, value) is not None
 
 
 def validate_evidence_url(url: str) -> str:
@@ -588,6 +601,32 @@ def proposal_limits() -> dict[str, int]:
     return {k: int(v) for k, v in _proposal_contract()["limits"].items()}
 
 
+def object_value_rules() -> dict[str, tuple[frozenset[str], frozenset[str]]]:
+    """Per-``object_type`` claim value shapes — ``(required, optional)`` columns.
+
+    The ONE table of record (``[proposal.object_value]``): the proposal-time
+    shape check in :func:`validate_proposal` and the bridge's apply-time
+    ``_value_columns`` both consume it, so a proposal that survives
+    moderation can never fail application on ``value_shape_mismatch``
+    (C4 NEW-18). ``value_geom`` is absent by design — spatial corrections are
+    outside the bridge's first scope and fail closed.
+    """
+    raw = _proposal_contract().get("object_value")
+    if not isinstance(raw, dict) or not raw:
+        raise IntakeContractError(
+            "intake_receiver.toml is missing the [proposal.object_value] table"
+        )
+    rules: dict[str, tuple[frozenset[str], frozenset[str]]] = {}
+    for object_type, spec in raw.items():
+        if not isinstance(spec, dict):
+            raise IntakeContractError(f"object_value row {object_type!r} is malformed")
+        rules[str(object_type)] = (
+            frozenset(str(k) for k in spec.get("required", ())),
+            frozenset(str(k) for k in spec.get("optional", ())),
+        )
+    return rules
+
+
 def _bounded(value: Any, cap: int) -> str:
     return _nfc(str(value).strip())[:cap]
 
@@ -614,8 +653,9 @@ def _check_target_id(kind: str, value: Any) -> str:
     return tid
 
 
-def _validate_proposal_value(raw: Any) -> dict[str, Any]:
-    """The proposed claim value columns — allowlisted keys, bounded text."""
+def _validate_proposal_value(raw: Any, object_type: str) -> dict[str, Any]:
+    """The proposed claim value columns — allowlisted keys, bounded text,
+    and the exact column shape the declared ``object_type`` admits."""
     contract_keys = frozenset(str(k) for k in _proposal_contract()["value_keys"])
     if not isinstance(raw, dict) or not raw:
         raise IntakeFieldError({"value": "an object of claim value columns is required"})
@@ -642,6 +682,20 @@ def _validate_proposal_value(raw: Any) -> dict[str, Any]:
         out["value_json"] = vj
     if not out:
         raise IntakeFieldError({"value": "at least one value column is required"})
+    # C4 NEW-18: the shape check runs HERE, at proposal time — the declared
+    # object_type pins required ⊆ present ⊆ required∪optional over the same
+    # [proposal.object_value] table the bridge re-checks at apply, so an
+    # approved proposal can never be unapplicable on value_shape_mismatch.
+    required, optional = object_value_rules()[object_type]
+    present = frozenset(out)
+    if not required <= present or not present <= required | optional:
+        raise IntakeFieldError(
+            {
+                "value": f"object_type {object_type!r} admits value columns "
+                f"{sorted(required | optional)} with {sorted(required)} "
+                "required — the proposal must name exactly a supported shape"
+            }
+        )
     # The unsafe-payload screen runs at proposal write AND at apply — a
     # corrected value may never carry plate/person-shaped content (Part VIII).
     for key, val in out.items():
@@ -725,8 +779,20 @@ def validate_proposal(outcome: str, proposal: Any) -> dict[str, Any]:
             raise IntakeFieldError({"predicate_id": "a bounded predicate id slug"})
         out["predicate_id"] = pred
 
+    if proposal.get("object_type") is not None:
+        otype = _bounded(proposal["object_type"], 64)
+        if otype not in object_value_rules():
+            raise IntakeFieldError(
+                {"object_type": f"must be one of {sorted(object_value_rules())}"}
+            )
+        out["object_type"] = otype
+
     if proposal.get("value") is not None:
-        out["value"] = _validate_proposal_value(proposal["value"])
+        if "object_type" not in out:
+            # The shape check needs the declared type — a value without it is
+            # ill-formed even if the outcome's required list missed it.
+            raise IntakeFieldError({"object_type": "required when a value is proposed"})
+        out["value"] = _validate_proposal_value(proposal["value"], out["object_type"])
     if proposal.get("scope") is not None:
         out["scope"] = _validate_proposal_scope(proposal["scope"])
 

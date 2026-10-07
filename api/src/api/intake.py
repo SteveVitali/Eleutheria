@@ -42,8 +42,10 @@ import base64
 import hashlib
 import hmac
 import html
+import ipaddress
 import json
 import os
+import re
 import secrets
 import tomllib
 import uuid
@@ -99,28 +101,44 @@ def ops_config_path() -> Path:
     return Path(__file__).resolve().parents[3] / "ops" / "config.toml"
 
 
-def intake_operational(
-    env: Mapping[str, str] | None = None, config_path: str | Path | None = None
-) -> bool:
-    """Whether the receiver may ACCEPT reports — two keys, both fail-closed.
-
-    Requires the committed operator decision ``[intake].operational = true``
-    (ops/config.toml — a gate record like the contribution `registered` flag)
-    AND ``SIG_INTAKE_OPERATIONAL=1`` in the process environment (the armed
-    kill-switch). Without both, the receiver refuses new reports with
-    ``receiver_not_operating`` — an unstaffed receiver is never advertised as
-    operational (D-R10-PUBLISH-1 / GATE-G3).
-    """
-    source = os.environ if env is None else env
-    if source.get(INTAKE_OPERATIONAL_ENV) != "1":
-        return False
+def _ops_intake_section(config_path: str | Path | None = None) -> dict[str, Any]:
+    """The committed ``[intake]`` section of ops/config.toml ({} when absent)."""
     path = Path(config_path) if config_path is not None else ops_config_path()
     try:
         with path.open("rb") as fh:
             cfg = tomllib.load(fh)
     except OSError:
+        return {}
+    section = cfg.get("intake")
+    return section if isinstance(section, dict) else {}
+
+
+def intake_operational(
+    env: Mapping[str, str] | None = None, config_path: str | Path | None = None
+) -> bool:
+    """Whether the receiver may ACCEPT reports — every key fail-closed.
+
+    Requires ALL of (DR-C4-11 / C4 NEW-15):
+      * the committed operator decision ``[intake].operational = true``
+        (ops/config.toml — a gate record like the contribution `registered`
+        flag);
+      * ``SIG_INTAKE_OPERATIONAL=1`` in the process environment (the armed
+        kill-switch);
+      * a non-empty ``[intake].owner`` — an accountable human owns the queue;
+      * ``[intake].staffed = true`` — a reviewer is actually watching it.
+    Without every one, the receiver refuses new reports with
+    ``receiver_not_operating`` — an unowned, unstaffed receiver is never
+    advertised as operational (D-R10-PUBLISH-1 / GATE-G3).
+    """
+    source = os.environ if env is None else env
+    if source.get(INTAKE_OPERATIONAL_ENV) != "1":
         return False
-    return cfg.get("intake", {}).get("operational") is True
+    intake = _ops_intake_section(config_path)
+    return (
+        intake.get("operational") is True
+        and bool(str(intake.get("owner") or "").strip())
+        and intake.get("staffed") is True
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -330,6 +348,34 @@ class MemoryIntakeStore:
     def public_status(self, receipt_id: str) -> dict[str, Any] | None:
         for r in self.reports.values():
             if r["receipt_id"] == receipt_id:
+                # Mirror intake.report_public (C4 NEW-17): the outcome comes
+                # from the latest DECIDING event (approved or refused), the
+                # public response only from deciding events (a proposal's
+                # draft response is not "approved"), and the linkage only
+                # from the `published` event.
+                events = [e for e in self.events if e["report_id"] == r["report_id"]]
+                deciding = [e for e in events if e["event"] in {"disposition_approved", "applied"}]
+                outcome = next(
+                    (
+                        str((e["detail"] or {}).get("outcome"))
+                        for e in reversed(deciding)
+                        if (e["detail"] or {}).get("outcome")
+                    ),
+                    None,
+                )
+                # Only a response the approver explicitly marked publishable
+                # reaches the reporter (a proposal's draft never does).
+                response = next(
+                    (
+                        str((e["detail"] or {}).get("public_response"))
+                        for e in reversed(deciding)
+                        if (e["detail"] or {}).get("public_response")
+                        and (e["detail"] or {}).get("public_response_publish")
+                    ),
+                    None,
+                )
+                published = next((e for e in reversed(events) if e["event"] == "published"), None)
+                link = (published["detail"] if published else {}) or {}
                 return {
                     "report_id": r["report_id"],
                     "receipt_id": receipt_id,
@@ -337,7 +383,11 @@ class MemoryIntakeStore:
                     "received_at": r["received_at"],
                     "lifecycle_event": r["lifecycle_event"],
                     "state": pint.public_state(r["lifecycle_event"]),
-                    "public_response": r.get("public_response"),
+                    "public_response": response,
+                    "outcome": outcome,
+                    "correction_ref": link.get("correction_ref"),
+                    "publication_id": link.get("publication_id"),
+                    "tombstone": link.get("tombstone"),
                 }
         return None
 
@@ -609,14 +659,59 @@ def receiver_store_from_dsn(dsn: str) -> IntakeReceiverStore:
 # --------------------------------------------------------------------------- #
 # The receiver app
 # --------------------------------------------------------------------------- #
-def _client_host(request: Request) -> str:
-    """The normalized ingress address for abuse pseudonymization.
+def _normalize_ip(host: str) -> str:
+    """Canonicalise one IP literal for the pseudonym key — compressed IPv6,
+    normalised IPv4; bracketed ``[v6]:port`` / ``v4:port`` forms strip the
+    port. Unparseable text lowercases (still a consistent, bounded key)."""
+    h = host.strip()
+    if h.startswith("[") and "]" in h:
+        h = h[1 : h.index("]")]
+    elif h.count(":") == 1 and h.rsplit(":", 1)[1].isdigit():
+        h = h.rsplit(":", 1)[0]
+    try:
+        return str(ipaddress.ip_address(h))
+    except ValueError:
+        return h.lower()[:64]
 
-    Uses the direct peer only — `X-Forwarded-For` is *trusted* input and must be
-    normalized by the deployment edge before it reaches here (the operating
-    packet records that requirement); the app never guesses at header truth.
+
+def _forwarded_chain(request: Request) -> list[str]:
+    """The left-to-right client→proxy address chain from forwarding headers —
+    RFC 7239 ``Forwarded: for=`` first, else ``X-Forwarded-For``. Each entry
+    is what a hop *claimed*; only the trusted-hop-sliced tail is ever used."""
+    fwd = request.headers.get("forwarded")
+    if fwd:
+        chain: list[str] = []
+        for element in fwd.split(","):
+            for piece in element.split(";"):
+                key, _, val = piece.partition("=")
+                if key.strip().lower() == "for" and val.strip():
+                    chain.append(val.strip().strip('"'))
+        return chain
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        return [p.strip() for p in xff.split(",") if p.strip()]
+    return []
+
+
+def _client_host(request: Request, trusted_proxy_hops: int = 0) -> str:
+    """The edge-normalised client address for abuse pseudonymization (C4 NEW-16).
+
+    ``[intake].trusted_proxy_hops = N`` declares how many forwarding hops the
+    operator has placed between the public edge and this process. Each trusted
+    hop appends the *peer it observed*, so the Nth-from-right entry of the
+    ``Forwarded``/``X-Forwarded-For`` chain is what the outermost trusted
+    proxy saw — the real client. Entries further left are client-claimed and
+    ignored; a chain shorter than N (or absent) falls back to the direct TCP
+    peer — a raw client-supplied header is **never** trusted on its own.
+    With ``trusted_proxy_hops = 0`` (the default and Round-11 posture) only
+    the direct peer is used.
     """
-    return (request.client.host if request.client else "unknown").lower()
+    if trusted_proxy_hops > 0:
+        chain = _forwarded_chain(request)
+        if len(chain) >= trusted_proxy_hops:
+            return _normalize_ip(chain[len(chain) - trusted_proxy_hops])
+    peer = request.client.host if request.client else ""
+    return _normalize_ip(peer) if peer else "unknown"
 
 
 def _security_headers() -> dict[str, str]:
@@ -632,6 +727,10 @@ def _security_headers() -> dict[str, str]:
 def _page(title: str, body: str) -> str:
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        # C4 NEW-19: every receiver page carries the viewport meta — without it
+        # mobile browsers render the ~980 px layout viewport and the form is
+        # unusable on a phone.
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f"<title>{html.escape(title)}</title></head><body>{body}</body></html>"
     )
 
@@ -678,16 +777,47 @@ def _check_origin(request: Request) -> None:
         raise HTTPException(status_code=403, detail="cross_site_refused")
 
 
-def _intake_form_html(form_token: str) -> str:
-    cats = "".join(
+def _safe_prefill(request: Request) -> dict[str, str]:
+    """Deep-link prefill values (NEW-19): echo a query parameter into the form
+    ONLY when it already satisfies the contract — a released record page can
+    link ``/intake/new?publication_id=…&record_key=…&claim_ids=…`` so the
+    reporter never hand-types ``p-<64 hex>`` or a record key. Unrecognised or
+    malformed values are dropped, never rendered back."""
+    out: dict[str, str] = {}
+    pub = request.query_params.get("publication_id", "")
+    if pub and pint.field_pattern_ok("publication_id", pub):
+        out["publication_id"] = pub
+    rk = request.query_params.get("record_key", "")
+    if rk and pint.field_pattern_ok("record_key", rk):
+        out["record_key"] = rk
+    claims = request.query_params.get("claim_ids", "")
+    if claims:
+        parts = [c.strip() for c in claims.split(",") if c.strip()]
+        lim = pint.limits()
+        if 0 < len(parts) <= int(lim["claim_ids_max"]) and all(
+            len(c) <= int(lim["claim_id_max_chars"]) and re.fullmatch(r"[0-9a-fA-F-]{8,128}", c)
+            for c in parts
+        ):
+            out["claim_ids"] = ",".join(parts)
+    return out
+
+
+def _intake_form_html(form_token: str, *, prefill: Mapping[str, str] | None = None) -> str:
+    pre = prefill or {}
+    options = ['<option value="" disabled selected>Select a category…</option>'] + [
         f'<option value="{html.escape(str(c["id"]))}">{html.escape(str(c["label"]))}</option>'
         for c in pint.intake_categories()
-    )
+    ]
+    cats = "".join(options)
+    publication_id = html.escape(pre.get("publication_id", ""), quote=True)
+    record_key = html.escape(pre.get("record_key", ""), quote=True)
+    claim_ids = html.escape(pre.get("claim_ids", ""), quote=True)
     return _page(
         "Report a problem",
         f"""<h1>Report a problem</h1>
-<p>This is SIG's anonymous correction channel. No account, no email, no
-identity is required — the single exception is a legal demand that needs
+<p>This is SIG's public correction channel. Reports are read by a reviewer
+before anything changes, and nothing sent here is published automatically.
+No account is required — the single exception is a legal demand that needs
 standing (you may optionally leave a contact for that category only).</p>
 <p><strong>Describe institutional facts only.</strong> Do not include licence
 plates, people's names, home addresses, per-person movements or other
@@ -699,11 +829,14 @@ record facts. References are stored, never fetched.</p>
 <p><label>What are you reporting?
 <select name="category" required>{cats}</select></label></p>
 <p><label>Release id (optional — the p-… namespace this concerns)
-<input type="text" name="publication_id" maxlength="66" size="50"></label></p>
+<input type="text" name="publication_id" maxlength="66" size="50"
+ value="{publication_id}"></label></p>
 <p><label>Record reference (optional — &lt;compartment&gt;:&lt;type&gt;:&lt;id&gt;)
-<input type="text" name="record_key" maxlength="200" size="50"></label></p>
+<input type="text" name="record_key" maxlength="200" size="50"
+ value="{record_key}"></label></p>
 <p><label>Public claim ids (optional — up to 10, comma-separated)
-<input type="text" name="claim_ids" maxlength="600" size="50"></label></p>
+<input type="text" name="claim_ids" maxlength="600" size="50"
+ value="{claim_ids}"></label></p>
 <p><label>Description (required — what is wrong or harmful; 20–4000 chars)<br>
 <textarea name="description" required minlength="20" maxlength="4000"
  rows="8" cols="72"></textarea></label></p>
@@ -715,6 +848,19 @@ record facts. References are stored, never fetched.</p>
 </form>
 <p><a href="/intake/status">Check a receipt</a></p>""",
     )
+
+
+def _result_url(row: Mapping[str, Any]) -> str | None:
+    """The reporter-facing link for a published decision (DR-C4-12): the
+    release namespace when a publication id is recorded, else the public
+    corrections log (where every correction is listed, SIG-UI-032). Nothing
+    before the decision has published — an ``applied``-but-unreleased change
+    has no public address yet."""
+    if row.get("publication_id"):
+        return f"/r/{row['publication_id']}/"
+    if row.get("tombstone") or row.get("correction_ref"):
+        return "/corrections/"
+    return None
 
 
 def _status_form_html() -> str:
@@ -737,9 +883,9 @@ accepted. The token is never put in a URL and this page stores nothing.</p>
 _NOT_OPERATING_BODY = _page(
     "Correction channel — not yet operating",
     """<h1>Correction channel</h1>
-<p><strong>The anonymous correction receiver is not yet operating.</strong>
+<p><strong>The public correction receiver is not yet operating.</strong>
 It opens only after a staffed moderation owner, the retention schedule and the
-public-exposure decision are approved (GATE-G3 / HG-11). This page will never
+public-exposure decision are approved. This page will never
 advertise an unstaffed receiver. The public
 <a href="/dispute/">dispute page</a> describes the process and every completed
 correction is listed on the <a href="/corrections/">corrections log</a>.</p>""",
@@ -756,12 +902,17 @@ def create_intake_app(
     env: Mapping[str, str] | None = None,
     abuse_gate: AbuseGate | None = None,
     signer: FormTokenSigner | None = None,
+    config_path: str | Path | None = None,
+    trusted_proxy_hops: int | None = None,
 ) -> FastAPI:
     """The anonymous correction receiver app — its own process, always.
 
     ``enabled`` mounts the surface (staging + status); ``operational`` opens
     the form/POST path. Both default to the env/config gates so a bare service
-    is never operational by accident.
+    is never operational by accident. ``trusted_proxy_hops`` (default: the
+    committed ``[intake].trusted_proxy_hops``, else 0) declares how many
+    edge-proxy hops to trust when normalising the limiter client key (C4
+    NEW-16) — 0 means only the direct TCP peer is ever used.
     """
     if enabled is None:
         enabled = intake_enabled(env)
@@ -772,6 +923,15 @@ def create_intake_app(
     app.state.enabled = enabled
     app.state.operational = operational
     app.state.store = store if store is not None else MemoryIntakeStore()
+
+    if trusted_proxy_hops is None:
+        raw_hops: Any = _ops_intake_section(config_path).get("trusted_proxy_hops", 0)
+        try:
+            trusted_proxy_hops = int(raw_hops)
+        except (TypeError, ValueError):
+            trusted_proxy_hops = 0
+    # Bounded so a config typo can never unbounded-walk a header chain.
+    app.state.trusted_proxy_hops = max(0, min(trusted_proxy_hops, 8))
 
     lim = pint.limits()
     if signer is None:
@@ -835,7 +995,9 @@ def create_intake_app(
         if not app.state.operational:
             return _html_response(_NOT_OPERATING_BODY, status=503)
         token = app.state.signer.mint()
-        return _html_response(_intake_form_html(token))
+        # NEW-19: released record pages deep-link here with the record context
+        # as query params — the form echoes only contract-shaped values.
+        return _html_response(_intake_form_html(token, prefill=_safe_prefill(request)))
 
     @app.get("/intake/status", response_class=HTMLResponse)
     def status_form() -> Response:
@@ -909,33 +1071,21 @@ def create_intake_app(
             )
         fields.setdefault("idempotency_key", nonce)
 
-        retry_after = app.state.abuse.try_accept(_client_host(request))
-        if retry_after is not None:
-            return _json(
-                {
-                    "error": "rate_limited",
-                    "retry_after_seconds": int(retry_after) + 1,
-                    "detail": "submission rate exceeded — wait and retry; your "
-                    "prepared report is not lost if you keep this page",
-                },
-                status=429,
-                extra_headers={"Retry-After": str(int(retry_after) + 1)},
-            )
-
         try:
             report = pint.normalize_report(fields)
         except pint.IntakeFieldError as exc:
-            # Rejected BEFORE persistence: no row, no log entry, only the safe
-            # per-field reasons. 422 preserves escaped safe fields in the form
-            # (the reporter's page is still open) — nothing is stored here.
+            # Rejected BEFORE persistence — and BEFORE the limiter (C4 NEW-16):
+            # a refusal never burns the sender's submission allowance.
+            # 422 preserves escaped safe fields in the form (the reporter's
+            # page is still open) — nothing is stored here.
             return _json({"error": "invalid_report", "fields": exc.fields}, status=422)
 
         store: IntakeReceiverStore = app.state.store
         prior = store.find_by_idempotency(report.idempotency_key)
         if prior is not None:
             # Idempotent retry: same nonce ⇒ same receipt, +0 stored, no
-            # double-count. The status token is shown once at first acceptance;
-            # a retry names the original receipt without re-issuing a token.
+            # double-count — and no limiter charge: a no-JS reload re-POST
+            # must not burn the sender's allowance (C4 NEW-16).
             return _json(
                 {
                     "receipt_id": prior["receipt_id"],
@@ -946,6 +1096,23 @@ def create_intake_app(
                     "with the first acceptance",
                 },
                 status=200,
+            )
+
+        # The limiter is reached ONLY by a well-formed, token-bearing,
+        # non-duplicate submission — refusals are never charged.
+        retry_after = app.state.abuse.try_accept(
+            _client_host(request, app.state.trusted_proxy_hops)
+        )
+        if retry_after is not None:
+            return _json(
+                {
+                    "error": "rate_limited",
+                    "retry_after_seconds": int(retry_after) + 1,
+                    "detail": "submission rate exceeded — wait and retry; your "
+                    "prepared report is not lost if you keep this page",
+                },
+                status=429,
+                extra_headers={"Retry-After": str(int(retry_after) + 1)},
             )
 
         receipt_id = f"rct-{secrets.token_hex(16)}"
@@ -1031,7 +1198,9 @@ This page stores nothing and the token is never part of a link.</p>""",
                 and hmac.compare_digest(digest, hashlib.sha256(status_token.encode()).digest())
             )
         if not ok:
-            over = app.state.abuse.record_failed_lookup(_client_host(request))
+            over = app.state.abuse.record_failed_lookup(
+                _client_host(request, app.state.trusted_proxy_hops)
+            )
             status = 429 if over else 404
             return _json(
                 {"error": "unknown_receipt", "detail": "no receipt matches that id/token pair"},
@@ -1045,8 +1214,22 @@ This page stores nothing and the token is never part of a link.</p>""",
             "category": row["category"],
             "response_window_hours": pint.category_response_window_hours(row["category"]),
         }
+        # C4 NEW-17 / DR-C4-12: the reporter sees HOW the report ended — the
+        # outcome kind, the approved public response, and the correction or
+        # release link once the decision has published.
+        if row.get("outcome"):
+            payload["outcome"] = row["outcome"]
         if row.get("public_response"):
             payload["response"] = row["public_response"]
+        if row.get("publication_id"):
+            payload["publication_id"] = row["publication_id"]
+        if row.get("correction_ref"):
+            payload["correction_ref"] = row["correction_ref"]
+        if row.get("tombstone"):
+            payload["tombstone"] = row["tombstone"]
+        result_url = _result_url(row)
+        if result_url:
+            payload["result_url"] = result_url
         if _wants_html(request):
             body = (
                 f"<h1>Receipt status</h1><p>State: <strong>"
@@ -1054,8 +1237,15 @@ This page stores nothing and the token is never part of a link.</p>""",
                 f"<p>Received: {html.escape(payload['received_at'])} · Category: "
                 f"{html.escape(payload['category'])}</p>"
             )
+            if payload.get("outcome"):
+                body += f"<p>Outcome: <strong>{html.escape(str(payload['outcome']))}</strong></p>"
             if payload.get("response"):
                 body += f"<p>Reviewer response: {html.escape(payload['response'])}</p>"
+            if result_url:
+                body += (
+                    f'<p><a href="{html.escape(result_url, quote=True)}">'
+                    "See the published result</a></p>"
+                )
             body += '<p><a href="/intake/status">Check another</a></p>'
             return _html_response(_page("Receipt status", body))
         return _json(payload)

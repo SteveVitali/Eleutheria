@@ -108,19 +108,15 @@ _LIFECYCLE_EVENTS = frozenset(
     }
 )
 
-#: Claim value columns a proposal may populate, per predicate object_type —
-#: (required, optional). ``geometry``/``value_geom`` is deliberately absent:
+#: Claim value columns a proposal may populate, per object_type —
+#: ``(required, optional)``. The ONE table of record is the policy contract
+#: ``[proposal.object_value]`` (policy/src/policy/data/intake_receiver.toml):
+#: ``policy.intake.validate_proposal`` checks the declared shape at proposal
+#: time (C4 NEW-18, P34.37) and this bridge re-checks the same shape against
+#: the *resolved* spine type at apply — one table, two checks, no drift.
+#: ``geometry``/``value_geom`` is deliberately absent from the contract:
 #: spatial corrections are outside this bridge's first scope (fail closed).
-_OBJECT_VALUE_RULES: dict[str, tuple[frozenset[str], frozenset[str]]] = {
-    "literal": (frozenset({"value_text"}), frozenset({"unit"})),
-    "quantity": (frozenset({"value_num", "value_text"}), frozenset({"unit"})),
-    "money": (frozenset({"value_json", "value_text"}), frozenset({"unit"})),
-    "duration": (frozenset({"value_json", "value_text"}), frozenset()),
-    "interval": (frozenset({"value_json", "value_text"}), frozenset()),
-    "vocab_term": (frozenset({"value_text"}), frozenset()),
-    "entity_ref": (frozenset({"object_entity", "value_text"}), frozenset()),
-    "document_ref": (frozenset({"value_json", "value_text"}), frozenset()),
-}
+_OBJECT_VALUE_RULES: dict[str, tuple[frozenset[str], frozenset[str]]] = pint.object_value_rules()
 
 #: Column → INSERT cast fragment for the correction claim insert (typed params
 #: avoid unknown-type binding surprises; mirrors the sink's casts).
@@ -744,6 +740,21 @@ class PgIntakeApplicationStore:
         # `annotate` against the *proposed* predicate's object_type (an
         # annotation may carry a different predicate than its target's).
         object_type = str(old["object_type"]) if outcome == "correct" else str(pred["object_type"])
+        # C4 NEW-18 — the declared/resolved type agreement check. The
+        # proposal's `object_type` is the type its value shape was validated
+        # for at proposal time; the resolved type is the live truth (target
+        # claim for `correct`, proposed predicate for `annotate`). Any
+        # mismatch — including a legacy proposal that predates the field —
+        # means the validated shape may not fit the live target: fail
+        # closed rather than apply an unvalidated shape.
+        declared_type = str(proposal.get("object_type") or "")
+        if declared_type != object_type:
+            raise IntakeApplyError(
+                "object_type_mismatch",
+                "the proposal's declared object_type does not match the "
+                "resolved target object_type — the value shape was validated "
+                "for a different type; re-propose against the live target",
+            )
         insert_predicate = pred["predicate_id"]
         value = self._value_columns(object_type, proposal["value"])
         self._screen_value(value)
