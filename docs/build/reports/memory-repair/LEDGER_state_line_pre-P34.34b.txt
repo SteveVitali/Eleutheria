@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01): the PHASE LOG ends with P34.34a's entry (PR #238 — release-archive link depth fixed, the same-origin crawl gates validate_release/activate, archive chrome on every page, access-edge kinds preserved, the leverage metric artifact always emitted, honest zero-record/empty-tile states); next → P34.34b (row 242).
