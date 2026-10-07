@@ -1,0 +1,10 @@
+{
+  "name": "example-proj-sig-already",
+  "versioning": {"enabled": true},
+  "lifecycle": {
+    "rule": [
+      {"action": {"type": "Delete"},
+       "condition": {"daysSinceNoncurrentTime": 120}}
+    ]
+  }
+}
