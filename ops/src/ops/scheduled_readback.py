@@ -47,7 +47,7 @@ RERUN_PROMPT = (
     "implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true"
 )
 
-# D-P31.4-1 / G1 §3.7 constants for the 2026-10-10 batch-05 OSM replay.
+# D-P31.4-1 constants for the 2026-10-10 replay — future-ok: scheduled: the real batch-05 fire.
 EXPECTED_OSM_FETCHES = 158
 EXPECTED_OSM_CLAIMS = 1_369_210  # the recorded 09-23 replay (G1 §3.7 "≈1.37M")
 CLAIMS_TOLERANCE = 0.15  # ±15% band around the recorded ≈1.37M

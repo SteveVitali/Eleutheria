@@ -34,8 +34,16 @@ from ops.scheduled_readback import (
 from ops import cli
 
 FIRE = datetime(2026, 10, 10, 3, 35, tzinfo=UTC)
-RUN_DATE = date(2026, 10, 10)
+RUN_DATE = date(2026, 10, 10)  # D-P31.4-1's real scheduled fire day
 AFTER = datetime(2026, 10, 10, 5, 0, tzinfo=UTC)
+
+
+def _ts(hms: str, day: date = RUN_DATE) -> str:
+    """An ISO ``Z`` stamp on the replay day — every fixture clock derives from
+    ``RUN_DATE`` so the scheduled fire date is written once, as a ``date()``."""
+    return f"{day.isoformat()}T{hms}Z"
+
+
 MEMBERS = ["camreg_osm_surveillance", "camreg_nitro", "camreg_nola_safety_la"]
 BATCH = {
     "id": "camreg-batch-05",
@@ -73,17 +81,17 @@ FIXTURE_BATCH = {
 SCHEDULER_FIRED = {
     "state": "ENABLED",
     "schedule": "35 3 10 * *",
-    "scheduleTime": "2026-10-10T03:35:00Z",
-    "lastAttemptTime": "2026-10-10T03:35:00.1Z",
+    "scheduleTime": _ts("03:35:00"),
+    "lastAttemptTime": _ts("03:35:00.1"),
 }
 EXECUTION_DONE = {
     "metadata": {
         "name": "sig-ingest-camreg-batch-05-ab12c",
-        "creationTimestamp": "2026-10-10T03:35:02Z",
+        "creationTimestamp": _ts("03:35:02"),
     },
     "status": {
-        "startTime": "2026-10-10T03:35:40Z",
-        "completionTime": "2026-10-10T03:55:12Z",
+        "startTime": _ts("03:35:40"),
+        "completionTime": _ts("03:55:12"),
         "succeededCount": 1,
         "cancelledCount": 0,
         "failedCount": 0,
@@ -98,17 +106,17 @@ def _osm_row(**kw: Any) -> dict:
         "mode": "live",
         "outcome": "ok",
         "exit_code": 0,
-        "started_at": "2026-10-10T03:36:20Z",
+        "started_at": _ts("03:36:20"),
         "duration_seconds": 812.4,
         "claims_added": 1_369_210,
         "capture_digests": ["sha256:aa"],
         "fetch_record": {
             "fetches": 158,
             "resumed": [],
-            "logical_run": "camreg_osm_surveillance@2026-10-10T03:35Z",
+            "logical_run": f"camreg_osm_surveillance@{RUN_DATE.isoformat()}T03:35Z",
         },
         "ingest_run_id": "11111111-2222-3333-4444-555566667777",
-        "_object": "gs://b/ops/runs/camreg_osm_surveillance/2026-10-10/r.json",
+        "_object": f"gs://b/ops/runs/camreg_osm_surveillance/{RUN_DATE.isoformat()}/r.json",
     }
     row.update(kw)
     return row
@@ -120,36 +128,36 @@ def _gathered(**kw: Any) -> Gathered:
     g.executions = [dict(EXECUTION_DONE)]
     g.run_rows = {
         "camreg_osm_surveillance": [_osm_row()],
-        "camreg_nitro": [{"started_at": "2026-10-10T03:40:00Z", "outcome": "ok"}],
-        "camreg_nola_safety_la": [{"started_at": "2026-10-10T03:41:00Z", "outcome": "ok"}],
+        "camreg_nitro": [{"started_at": _ts("03:40:00"), "outcome": "ok"}],
+        "camreg_nola_safety_la": [{"started_at": _ts("03:41:00"), "outcome": "ok"}],
     }
     g.completions = [
         {
             "run_id": "11111111-2222-3333-4444-555566667777",
             "source_id": "camreg_osm_surveillance",
             "status": "ok",
-            "run_record_uri": "gs://b/ops/runs/camreg_osm_surveillance/2026-10-10/r.json",
-            "finished_at": "2026-10-10T03:50:01Z",
+            "run_record_uri": f"gs://b/ops/runs/camreg_osm_surveillance/{RUN_DATE.isoformat()}/r.json",
+            "finished_at": _ts("03:50:01"),
         }
     ]
     g.counters = {"claim": {"n_tup_upd": 0, "n_tup_del": 0}}
     g.counters_queried = True
     g.completions_queried = True
     g.probes = [
-        {"service": "sig-api-health", "ok": True, "ts": "2026-10-10T00:00:05Z"},
-        {"service": "sig-api-health", "ok": True, "ts": "2026-10-10T06:00:05Z"},
+        {"service": "sig-api-health", "ok": True, "ts": _ts("00:00:05")},
+        {"service": "sig-api-health", "ok": True, "ts": _ts("06:00:05")},
     ]
     g.monitoring = {
         "cloudsql.googleapis.com/database/memory/utilization": [
-            {"time": "2026-10-10T03:50:00Z", "value": 0.72}
+            {"time": _ts("03:50:00"), "value": 0.72}
         ],
         "cloudsql.googleapis.com/database/disk/bytes_used": [
-            {"time": "2026-10-10T03:35:00Z", "value": 6_549_311_488},
-            {"time": "2026-10-10T03:55:00Z", "value": 6_553_000_000},
+            {"time": _ts("03:35:00"), "value": 6_549_311_488},
+            {"time": _ts("03:55:00"), "value": 6_553_000_000},
         ],
         "cloudsql.googleapis.com/database/uptime": [
-            {"time": "2026-10-10T03:35:00Z", "value": 1_900_000},
-            {"time": "2026-10-10T03:55:00Z", "value": 1_901_200},
+            {"time": _ts("03:35:00"), "value": 1_900_000},
+            {"time": _ts("03:55:00"), "value": 1_901_200},
         ],
     }
     for k, v in kw.items():
@@ -198,9 +206,9 @@ def test_guard_refuses_until_trigger_fired_and_execution_done() -> None:
     running = {
         "metadata": {
             "name": "sig-ingest-camreg-batch-05-x",
-            "creationTimestamp": "2026-10-10T03:35:02Z",
+            "creationTimestamp": _ts("03:35:02"),
         },
-        "status": {"startTime": "2026-10-10T03:35:40Z"},
+        "status": {"startTime": _ts("03:35:40")},
     }
     assert guard_failures(**base, scheduler=SCHEDULER_FIRED, execution=running)
     # Everything in place
@@ -244,9 +252,9 @@ def test_pick_execution_scopes_to_post_fire_executions() -> None:
     other_job = {
         "metadata": {
             "name": "sig-ingest-camreg-batch-04-ab",
-            "creationTimestamp": "2026-10-10T03:36:00Z",
+            "creationTimestamp": _ts("03:36:00"),
         },
-        "status": {"completionTime": "2026-10-10T04:00:00Z"},
+        "status": {"completionTime": _ts("04:00:00")},
     }
     picked = pick_execution([old, other_job, EXECUTION_DONE], "sig-ingest-camreg-batch-05", FIRE)
     assert picked is EXECUTION_DONE
@@ -337,8 +345,8 @@ def test_disk_jump_over_3gb_is_anomaly_not_deferral() -> None:
     # plain deferral-row, but a >3 GiB jump routes to stop-and-preserve.
     g = _gathered()
     g.monitoring["cloudsql.googleapis.com/database/disk/bytes_used"] = [
-        {"time": "2026-10-10T03:35:00Z", "value": 6_549_311_488},
-        {"time": "2026-10-10T03:55:00Z", "value": 6_549_311_488 + (4 << 30)},
+        {"time": _ts("03:35:00"), "value": 6_549_311_488},
+        {"time": _ts("03:55:00"), "value": 6_549_311_488 + (4 << 30)},
     ]
     criteria = evaluate(g, _ctx())
     assert _results(criteria)["sql-disk-growth"] == "fail"
@@ -386,11 +394,11 @@ def test_36h_timeout_routes_to_deferral_row() -> None:
     long_ex = {
         "metadata": {
             "name": "sig-ingest-camreg-batch-05-x",
-            "creationTimestamp": "2026-10-10T03:35:02Z",
+            "creationTimestamp": _ts("03:35:02"),
         },
         "status": {
-            "startTime": "2026-10-10T03:35:40Z",
-            "completionTime": "2026-10-11T15:36:00Z",
+            "startTime": _ts("03:35:40"),
+            "completionTime": _ts("15:36:00", RUN_DATE + timedelta(days=1)),
             "succeededCount": 1,
         },
     }
@@ -409,9 +417,9 @@ def test_health_memory_disk_restart_criteria() -> None:
     # two not-ok probe rows → fail (more than one transient allowed)
     g = _gathered(
         probes=[
-            {"service": "sig-api-health", "ok": True, "ts": "2026-10-10T00:00:05Z"},
-            {"service": "sig-api-health", "ok": False, "ts": "2026-10-10T03:45:05Z"},
-            {"service": "sig-api-health", "ok": False, "ts": "2026-10-10T06:00:05Z"},
+            {"service": "sig-api-health", "ok": True, "ts": _ts("00:00:05")},
+            {"service": "sig-api-health", "ok": False, "ts": _ts("03:45:05")},
+            {"service": "sig-api-health", "ok": False, "ts": _ts("06:00:05")},
         ]
     )
     assert _results(evaluate(g, _ctx()))["api-health"] == "fail"
@@ -421,20 +429,20 @@ def test_health_memory_disk_restart_criteria() -> None:
     # memory over 90%
     g = _gathered()
     g.monitoring["cloudsql.googleapis.com/database/memory/utilization"] = [
-        {"time": "2026-10-10T03:50:00Z", "value": 0.93}
+        {"time": _ts("03:50:00"), "value": 0.93}
     ]
     assert _results(evaluate(g, _ctx()))["sql-memory"] == "fail"
     # disk grew >1 GiB
     g = _gathered()
     g.monitoring["cloudsql.googleapis.com/database/disk/bytes_used"] = [
-        {"time": "2026-10-10T03:35:00Z", "value": 6_549_311_488},
-        {"time": "2026-10-10T03:55:00Z", "value": 8_000_000_000},
+        {"time": _ts("03:35:00"), "value": 6_549_311_488},
+        {"time": _ts("03:55:00"), "value": 8_000_000_000},
     ]
     assert _results(evaluate(g, _ctx()))["sql-disk-growth"] == "fail"
     # uptime smaller than the point's distance from the fire → restart
     g = _gathered()
     g.monitoring["cloudsql.googleapis.com/database/uptime"] = [
-        {"time": "2026-10-10T03:50:00Z", "value": 300.0}
+        {"time": _ts("03:50:00"), "value": 300.0}
     ]
     assert _results(evaluate(g, _ctx()))["sql-no-restart"] == "fail"
 
@@ -516,9 +524,9 @@ def test_cli_fixture_replay(capsys: pytest.CaptureFixture[str]) -> None:
             "--batch",
             "camreg-batch-05",
             "--date",
-            "2026-10-10",
+            RUN_DATE.isoformat(),
             "--now",
-            "2026-10-10T05:00:00Z",
+            _ts("05:00:00"),
             "--fixtures-dir",
             str(FIXTURES),
         ]
@@ -535,7 +543,7 @@ def test_cli_guard_refusal_is_queued_42(capsys: pytest.CaptureFixture[str]) -> N
             "--batch",
             "camreg-batch-05",
             "--date",
-            "2026-10-10",
+            RUN_DATE.isoformat(),
             "--now",
             "2026-10-07T12:00:00Z",
             "--fixtures-dir",
@@ -558,7 +566,7 @@ def test_cli_out_writes_report(tmp_path: Path) -> None:
             "--fixtures-dir",
             str(FIXTURES),
             "--now",
-            "2026-10-10T05:00:00Z",
+            _ts("05:00:00"),
             "--out",
             str(out),
         ]
@@ -663,4 +671,4 @@ def test_build_report_carries_disclosure_and_layer() -> None:
     assert report["layer"] == "live"
     assert report["read_only"] is True
     assert "feff986c" in report["disclosures"][0]
-    assert report["scheduler"]["lastAttemptTime"] == "2026-10-10T03:35:00.1Z"
+    assert report["scheduler"]["lastAttemptTime"] == _ts("03:35:00.1")
