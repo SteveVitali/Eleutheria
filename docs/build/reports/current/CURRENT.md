@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `89fca0a861ae11d259aa5e14271ef9fdda72188c` · inputs hashed: 982 · wall-clock receipt: `receipt.json`
+> input_commit: `2566930ed6f532f32fb34d6a83613acaa54748f6` · inputs hashed: 982 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.38` · lastCompleted `P34.37`
-- chainTip `r11/P34.37-intake-defects-and-moderation-hardening` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50` · updatedAt `2026-10-07T11:24Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.39a` · lastCompleted `P34.38`
+- chainTip `r11/P34.38-sources-pilot-prep-and-registry-rows` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.50` · updatedAt `2026-10-07T14:04Z`
 
 ## Obligations
 
@@ -43,6 +43,7 @@
 | P34.18 | D-P34.18-1 | `implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true` (scope limited to leg L2 — the insert-only hosted rena… |
 | P34.21a | D-P34.21a-1 | `implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (scope: leg L1 only, on `r11/P34.21a-live-1`… |
 | P34.21b | D-P34.21b-1 · D-P34.21b-2 | -1: `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L1 only, on `r11/P34.21b-live-1`… |
+| P34.38 | the queued BidNet terms-capture leg (no deferral id of its own — it works the recorded E4-R6a answer; the rights decision keeps its manifest home at row 350) | `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (scope: the BidNet terms capture only) · landed as… |
 
 ## Known inconsistencies (preserved, never synthesized)
 
