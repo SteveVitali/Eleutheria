@@ -111,7 +111,7 @@ def produce(
         summary["release"] = {
             "publication_id": build.publication_id,
             "records": build.report["records"],
-            "compartments": sorted(build.report["compartments"]),
+            "compartments": sorted(m["compartment"] for m in build.report["compartments"]),
             "validation": {
                 "state": report.state,
                 "artifacts_checked": report.artifacts_checked,
