@@ -129,12 +129,18 @@ def test_the_export_dir_satisfies_every_export_mode_requirement(produced) -> Non
 
     # Provenance: the bytes came from the spine pipeline (PROV-O + exclusions),
     # not a fixture serializer — no fixture serializer emits provenance.ttl or
-    # per-compartment JSONL bundles.
+    # per-compartment JSONL bundles. The UNDETERMINED subject is excluded by
+    # the publishable-scope filter BEFORE slicing (it never forms a site
+    # slice), so its absence is asserted above (`muckrock` not in by_source);
+    # here assert only that the loud-exclusions ledger is well-formed.
     assert (export_dir / "provenance.ttl").is_file()
     exclusions = json.loads((export_dir / "exclusions.json").read_text())
-    assert exclusions["totals"]["refused_slices"] >= 1, (
-        "the UNDETERMINED-licence subject must be excluded (licence gate held)"
-    )
+    assert exclusions["schema"] == "p27.4/exclusions/1.0.0"
+    assert {
+        "refused_slices",
+        "refused_rows",
+        "withdrawn_claims",
+    } <= exclusions["totals"].keys()
 
 
 def test_the_release_build_emits_an_archive_record_and_validates(produced) -> None:
