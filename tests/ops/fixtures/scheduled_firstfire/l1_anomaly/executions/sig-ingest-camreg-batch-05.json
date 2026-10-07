@@ -1,0 +1,16 @@
+[
+  {
+    "metadata": {
+      "name": "sig-ingest-camreg-batch-05-ab12c",
+      "creationTimestamp": "2026-10-10T03:35:02Z"
+    },
+    "status": {
+      "startTime": "2026-10-10T03:35:40Z",
+      "completionTime": "2026-10-10T04:12:08Z",
+      "succeededCount": 1,
+      "failedCount": 0,
+      "cancelledCount": 0,
+      "observedGeneration": 1
+    }
+  }
+]

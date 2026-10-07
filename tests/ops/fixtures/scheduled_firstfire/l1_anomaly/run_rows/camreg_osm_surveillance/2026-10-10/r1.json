@@ -1,0 +1,4 @@
+{"kind": "scheduled-ingest", "source": "camreg_osm_surveillance", "mode": "live",
+ "outcome": "ok", "exit_code": 0, "started_at": "2026-10-10T03:36:20Z",
+ "duration_seconds": 812.4, "claims_added": 1369210,
+ "ingest_run_id": "aa000005-0000-4000-8000-0000000000d5"}

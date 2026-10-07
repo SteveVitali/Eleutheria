@@ -391,3 +391,39 @@ rerun_cell = '''`implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-b
   go = '''none — the recorded schedule is the go (read-only)'''
   rerun = '''implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true'''
   live_dependants = ["P34.46"]
+
+[[row]]
+key = "P34.39b"
+kind = "leg"
+obligations = []
+obligations_cell = '''the three queued monitoring legs for the scheduled-ingest first-fire wave and the `camreg_peel_on` first fire (the fleet table, the named reads, the routing rows; the obligations stay homed on the P31.4 row above, the federal rows' own homes, and the fleet-hygiene rows — this row carries the clock-guarded legs only)'''
+gates_cell = '''hosted, date-bound (§(f3)); read-only, no gate — L1's window opens when the wave closes `2026-10-21T06:09Z` (per-fire AR-4 then applies inside the table); L2's at the `camreg_peel_on` first fire `2026-10-29T12:00Z` plus `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-peel-on` execution; L3 runs after L2 (the same peel-on AR-4); until each holds the guard exits 42 (queued), never a fabricated verdict'''
+operator_cell = '''nothing for the legs themselves — the recorded schedule is the go (read-only reads only); each routing row a leg emits becomes a DEFERRALS entry for its named owner (P35.1a/b fleet hygiene, the source's connector owner, or the operator for a credential)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (scope: one leg per run — L1, then L2, then L3) · landed as row 248 (PR #246; command + fixtures shipped — all three legs queued, never executed)'''
+
+  [[row.legs]]
+  id = "P34.39b-firstfire-wave"
+  obligations = []
+  earliest = '''2026-10-21T06:09Z — the wave's close; per-fire AR-4 then applies inside the table'''
+  excluded = []
+  go = '''none — the recorded schedule is the go (read-only)'''
+  rerun = '''implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true'''
+  live_dependants = []
+
+  [[row.legs]]
+  id = "P34.39b-peel-on"
+  obligations = []
+  earliest = '''2026-10-29T12:00Z — plus scheduler `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-peel-on` execution (AR-4)'''
+  excluded = []
+  go = '''none — the recorded schedule is the go (read-only)'''
+  rerun = '''implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true'''
+  live_dependants = []
+
+  [[row.legs]]
+  id = "P34.39b-final-read"
+  obligations = []
+  earliest = '''after leg L2's read-back — the peel-on AR-4 again: the `2026-10-29T12:00Z` fire plus `lastAttemptTime` and a finished execution'''
+  excluded = []
+  go = '''none — the recorded schedule is the go (read-only)'''
+  rerun = '''implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true'''
+  live_dependants = []

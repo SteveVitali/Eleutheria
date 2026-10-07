@@ -1,0 +1,16 @@
+[
+  {
+    "metadata": {
+      "name": "sig-ingest-muckrock-a09d1",
+      "creationTimestamp": "2026-10-01T06:00:02Z"
+    },
+    "status": {
+      "startTime": "2026-10-01T06:00:18Z",
+      "completionTime": "2026-10-01T06:14:02Z",
+      "succeededCount": 1,
+      "failedCount": 0,
+      "cancelledCount": 0,
+      "observedGeneration": 1
+    }
+  }
+]
