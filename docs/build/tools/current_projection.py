@@ -335,7 +335,12 @@ def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) 
     obligations: list[dict] = []
     for row in rows:
         oid = row["id"]
-        chain = sorted(by_obl.get(oid, []), key=lambda e: e.get("seq", -1))
+        # correction events annotate the log — they never become the status
+        # head and are not part of the projected chain (P34.8)
+        chain = sorted(
+            (e for e in by_obl.get(oid, []) if e.get("kind") != "correction"),
+            key=lambda e: e.get("seq", -1),
+        )
         head = chain[-1] if chain else None
         obligations.append(
             {

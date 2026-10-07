@@ -207,7 +207,7 @@ def _tree(
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
     if migrate:
-        assert obligation_events.migrate(root, "2026-10-14", "deadbeef") == 0
+        assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
     return root
 
 
@@ -328,14 +328,14 @@ def test_manifest_rejects_output_as_input(tmp_path: pathlib.Path) -> None:
 def test_known_inconsistency_preserved_bounded_and_nonzero(tmp_path: pathlib.Path) -> None:
     """A new conflict with no recorded reconciliation is not synthesized — it
     lands in known_inconsistencies and generation exits nonzero."""
-    root = _tree(tmp_path)
+    root = _tree(tmp_path, migrate=False)
     conflict_row = (
         "| D-T9.1-9 | V | unreconciled thing | deferred | an engineering run | "
         "`pytest u` | proxy | OPEN cites BL-001 — prose says DONE 2026-03-01 |\n"
     )
     deferrals = root / "docs" / "tickets" / "DEFERRALS.md"
     deferrals.write_text(deferrals.read_text() + conflict_row)
-    assert obligation_events.migrate(root, "2026-10-14", "deadbeef") == 0
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
     assert current_projection.generate(root, _out(root)) == 1
     proj = json.loads((_out(root) / "current.json").read_text())
     hits = [d for d in proj["known_inconsistencies"] if d["obligation"] == "D-T9.1-9"]

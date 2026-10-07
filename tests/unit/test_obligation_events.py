@@ -71,7 +71,7 @@ def _tree(root: pathlib.Path, overrides: dict[str, str] | None = None) -> pathli
 
 
 def _anchors(root: pathlib.Path) -> list[dict]:
-    events, _ = obligation_events.build_anchors(root, "2026-10-14", "deadbeef")
+    events, _ = obligation_events.build_anchors(root, "2026-09-30", "deadbeef")
     return events
 
 
@@ -101,8 +101,8 @@ def _transition(
         "landing": "—",
         "backlog_home": "BL-001",
         "evidence_refs": evidence if evidence is not None else ["docs/build/runs/P9.1.md"],
-        "observed_at": "2026-10-14",
-        "recorded_at": "2026-10-14",
+        "observed_at": "2026-09-30",
+        "recorded_at": "2026-09-30",
         "source_commit": "deadbeef",
         "reason": "test transition",
         **kw,
@@ -343,7 +343,7 @@ def test_owed_head_without_owner_fails(tmp_path: pathlib.Path) -> None:
 def test_append_rejects_and_accepts(tmp_path: pathlib.Path) -> None:
     """The shadow writer appends only chains that validate cleanly."""
     root = _tree(tmp_path)
-    assert obligation_events.migrate(root, "2026-10-14", "deadbeef") == 0
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
     bad = root / "bad.json"
     bad.write_text(json.dumps(_transition("D-T9.1-1", 1, "D-T9.1-1:eXX", "DONE")))
     assert obligation_events.append_event(root, bad) == 1
@@ -355,17 +355,21 @@ def test_append_rejects_and_accepts(tmp_path: pathlib.Path) -> None:
     assert events[-1]["to_status"] == "DONE"
 
 
-def test_migrate_preserves_appended_transitions(tmp_path: pathlib.Path) -> None:
+def test_migrate_refuses_existing_log(tmp_path: pathlib.Path) -> None:
+    """P34.8: migrate may create a fresh log only — it never regenerates an
+    existing one, whether or not transitions have been appended."""
     root = _tree(tmp_path)
-    assert obligation_events.migrate(root, "2026-10-14", "deadbeef") == 0
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
+    before = (root / obligation_events.EVENTS_PATH).read_bytes()
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 1
+    assert (root / obligation_events.EVENTS_PATH).read_bytes() == before
+    # and with a transition appended the refusal still holds
     good = root / "good.json"
     good.write_text(json.dumps(_transition("D-T9.1-1", 1, "D-T9.1-1:e0", "DONE")))
     assert obligation_events.append_event(root, good) == 0
-    assert obligation_events.migrate(root, "2026-10-14", "deadbeef") == 0
-    events, _ = obligation_events.load_jsonl(root / obligation_events.EVENTS_PATH)
-    kinds = [e["kind"] for e in events]
-    assert kinds.count("transition") == 1
-    assert events[-1]["event_id"] == "D-T9.1-1:e1"
+    before = (root / obligation_events.EVENTS_PATH).read_bytes()
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 1
+    assert (root / obligation_events.EVENTS_PATH).read_bytes() == before
 
 
 # ── coverage assessments ──────────────────────────────────────────────────────
@@ -583,3 +587,195 @@ def test_parameterised_met_differently_is_still_held_to_the_planning_rule(
     ]
     diags = obligation_events.check_assessments(root, assessments)
     assert [d for d in diags if "planning" in d["message"].lower()]
+
+
+# ── P34.8: append-only migration, clock dates, correction events ──────────────
+
+
+def _correction(oid: str, target_eid: str, line: int, prior_sha: str, **kw) -> dict:
+    return {
+        "schema": "obligation-event/1",
+        "event_id": f"{target_eid}:c1",
+        "kind": "correction",
+        "obligation_id": oid,
+        "seq": 0,
+        "expected_previous_event": target_eid,
+        "from_status": "—",
+        "to_status": "—",
+        "ticket_id": "P34.8",
+        "owner": "—",
+        "landing": "—",
+        "backlog_home": "—",
+        "evidence_refs": ["docs/build/runs/P9.1.md"],
+        "observed_at": "2026-09-30",
+        "recorded_at": "2026-09-30",
+        "source_commit": "deadbeef",
+        "reason": "rewrite-repair:test",
+        "correction": {
+            "file": obligation_events.EVENTS_PATH,
+            "line": line,
+            "event_id": target_eid,
+            "prior_line_sha256": prior_sha,
+            "source_commit": "deadbeef",
+        },
+        **kw,
+    }
+
+
+def test_migrate_defaults_recorded_at_to_utc_clock(tmp_path: pathlib.Path) -> None:
+    """The contract: dates come from `date -u`, not a required argument."""
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root) == 0
+    events, _ = obligation_events.load_jsonl(root / obligation_events.EVENTS_PATH)
+    assert events and all(e["recorded_at"] == obligation_events._utc_today() for e in events)
+
+
+def test_migrate_rejects_future_recorded_at(tmp_path: pathlib.Path) -> None:
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root, "2999-01-01") == 1
+    assert not (root / obligation_events.EVENTS_PATH).exists()
+
+
+def test_append_rejects_future_dates(tmp_path: pathlib.Path) -> None:
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
+    ev = _transition("D-T9.1-1", 1, "D-T9.1-1:e0", "DONE", recorded_at="2999-01-01")
+    f = tmp_path / "ev.json"
+    f.write_text(json.dumps(ev))
+    assert obligation_events.append_event(root, f) == 1
+
+
+def test_append_rejects_recorded_at_later_than_source_commit(
+    tmp_path: pathlib.Path, monkeypatch
+) -> None:
+    """A record cannot claim a date after the commit its evidence lives in."""
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
+    monkeypatch.setattr(obligation_events, "_commit_utc_date", lambda r, s: "2026-09-01")
+    ev = _transition(
+        "D-T9.1-1",
+        1,
+        "D-T9.1-1:e0",
+        "DONE",
+        recorded_at="2026-09-30",
+        observed_at="2026-09-30",
+        source_commit="abc1234",
+    )
+    f = tmp_path / "ev.json"
+    f.write_text(json.dumps(ev))
+    assert obligation_events.append_event(root, f) == 1
+
+
+def test_chain_rejects_backwards_recorded_at(tmp_path: pathlib.Path) -> None:
+    root = _tree(tmp_path)
+    events = _anchors(root)
+    ev = _transition(
+        "D-T9.1-1",
+        1,
+        "D-T9.1-1:e0",
+        "DONE",
+        recorded_at="2026-09-01",
+        observed_at="2026-09-01",
+    )
+    diags = obligation_events.check_event_chain(root, events + [ev])
+    hits = [d for d in diags if d["check"] == "events/backwards-recorded-at"]
+    assert hits and hits[0]["obligation"] == "D-T9.1-1"
+
+
+def test_correction_events_validate_and_never_move_the_head(
+    tmp_path: pathlib.Path,
+) -> None:
+    """A correction annotates a record; the status chain ignores it, and a
+    transition afterwards still chains on the previous status event."""
+    import hashlib
+
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
+    raw = (root / obligation_events.EVENTS_PATH).read_text().splitlines()
+    target = json.loads(raw[0])
+    sha = hashlib.sha256(raw[0].encode()).hexdigest()
+    corr = _correction(
+        target["obligation_id"],
+        target["event_id"],
+        1,
+        sha,
+        reason="date-correction: recorded_at was wrong",
+    )
+    corr["correction"]["field"] = "recorded_at"
+    corr["correction"]["recorded_value"] = target["recorded_at"]
+    corr["correction"]["true_value"] = "2026-09-28T05:13:58Z"
+    f = tmp_path / "corr.json"
+    f.write_text(json.dumps(corr))
+    assert obligation_events.append_event(root, f) == 0
+    # a following transition still chains on e0 — the correction is not a link
+    tr = _transition(target["obligation_id"], 1, target["event_id"], "DONE")
+    f.write_text(json.dumps(tr))
+    assert obligation_events.append_event(root, f) == 0
+    # protocol: the compatibility cell moves only after the event is appended
+    d = root / "docs" / "tickets" / "DEFERRALS.md"
+    lines = d.read_text().splitlines(keepends=True)
+    for i, line in enumerate(lines):
+        if line.startswith(f"| {target['obligation_id']} |"):
+            parts = line.rstrip("\n").split("|")
+            parts[-2] = " DONE 2026-09-30 (test flip) "
+            lines[i] = "|".join(parts) + "\n"
+    d.write_text("".join(lines))
+    events, _ = obligation_events.load_jsonl(root / obligation_events.EVENTS_PATH)
+    diags = obligation_events.check_event_chain(
+        root,
+        events,
+        None,
+        (root / obligation_events.EVENTS_PATH).read_text().splitlines(),
+    )
+    assert not [d for d in diags if d["severity"] == "error"]
+
+
+def test_correction_target_must_exist(tmp_path: pathlib.Path) -> None:
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
+    corr = _correction("D-T9.1-1", "D-T9.1-1:e99", 1, "0" * 64)
+    f = tmp_path / "corr.json"
+    f.write_text(json.dumps(corr))
+    assert obligation_events.append_event(root, f) == 1
+
+
+def test_date_correction_supersedes_recorded_at_for_monotonicity(
+    tmp_path: pathlib.Path,
+) -> None:
+    """An appended date-correction makes the corrected date the effective one —
+    a transition recorded between the wrong and the true date validates."""
+    import hashlib
+
+    root = _tree(tmp_path)
+    assert obligation_events.migrate(root, "2026-09-30", "deadbeef") == 0
+    raw = (root / obligation_events.EVENTS_PATH).read_text().splitlines()
+    # pretend the anchor's recorded_at is a future-dated mistake
+    raw0 = json.loads(raw[0])
+    raw0["recorded_at"] = "2026-09-30"
+    raw[0] = json.dumps(raw0)
+    (root / obligation_events.EVENTS_PATH).write_text("\n".join(raw) + "\n")
+    events, _ = obligation_events.load_jsonl(root / obligation_events.EVENTS_PATH)
+    target = events[0]
+    corr = _correction(
+        target["obligation_id"],
+        target["event_id"],
+        1,
+        hashlib.sha256(raw[0].encode()).hexdigest(),
+        reason="date-correction: recorded_at 2026-09-30 -> 2026-09-28T05:13:58Z",
+    )
+    corr["correction"]["field"] = "recorded_at"
+    corr["correction"]["recorded_value"] = "2026-09-30"
+    corr["correction"]["true_value"] = "2026-09-28T05:13:58Z"
+    # a transition recorded 2026-09-29 would be backwards vs the wrong date,
+    # but validates against the corrected 2026-09-28
+    tr = _transition(
+        target["obligation_id"],
+        1,
+        target["event_id"],
+        "DONE",
+        recorded_at="2026-09-29",
+        observed_at="2026-09-29",
+    )
+    appended = raw + [json.dumps(corr), json.dumps(tr)]
+    diags = obligation_events.check_event_chain(root, events + [corr, tr], None, appended)
+    assert not [d for d in diags if d["check"] == "events/backwards-recorded-at"]
