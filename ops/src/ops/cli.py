@@ -1212,6 +1212,57 @@ def build_parser() -> argparse.ArgumentParser:
         help="output conf path (e.g. <staged>/conf/renamed_sources.conf)",
     )
     rroute.add_argument("--dry-run", action="store_true", help="count rules only; write nothing")
+
+    lbm = sub.add_parser(
+        "lb-map",
+        help="P34.40 / G3 §4.3: the canonical-origin LB path-rule declaration "
+        "(ops/lb_routes.toml) — plan, render the url-maps import document, "
+        "diff the live map, render the composed edge conf. Offline; "
+        "ops/gcp/lb-routes.sh owns the (windowed) mutations",
+    )
+    lbms = lbm.add_subparsers(dest="map_command", required=True)
+    lbms.add_parser("plan", help="print the parsed declaration (offline)")
+    lbms_render = lbms.add_parser(
+        "render", help="merge enabled rules onto a live URL map → import YAML"
+    )
+    lbms_render.add_argument("--live", required=True)
+    lbms_render.add_argument("--project", required=True)
+    lbms_render.add_argument("--declaration", default=None)
+    lbms_render.add_argument("--out", default=None)
+    lbms_diff = lbms.add_parser("diff", help="verify: live map vs declaration (exit 4 on drift)")
+    lbms_diff.add_argument("--live", required=True)
+    lbms_diff.add_argument("--project", required=True)
+    lbms_diff.add_argument("--declaration", default=None)
+    lbms_edge = lbms.add_parser(
+        "render-edge", help="emit the composed edge nginx conf (ops/edge.conf)"
+    )
+    lbms_edge.add_argument("--declaration", default=None)
+    lbms_edge.add_argument("--out", default=None)
+
+    wconf = sub.add_parser(
+        "web-conf",
+        help="D-P34.13-1 / P34.40: generate the dark conf/ fragments the "
+        "sig-web nginx glob-includes — chrome_routes.conf (branded 403/410 + "
+        "/task/→404); terms_redirect.conf only with --api-base",
+    )
+    wconf.add_argument("--out-dir", required=True, help="the staged tree's conf/ dir")
+    wconf.add_argument("--api-base", default=None, help="or $SIG_API_BASE_URL")
+
+    rcmp = sub.add_parser(
+        "route-compare",
+        help="P34.40 dark check: byte-compare every allow-listed route between "
+        "two captures (status + body sha256); an unreachable origin is an "
+        "error, never a deny. Read-only GETs",
+    )
+    rcmps = rcmp.add_subparsers(dest="rc_command", required=True)
+    rcap = rcmps.add_parser("capture", help="fingerprint an origin → JSON")
+    rcap.add_argument("--base", required=True)
+    rcap.add_argument("--out", required=True)
+    rcap.add_argument("--allowlist", default=None)
+    rver = rcmps.add_parser("verify", help="diff two captures (exit 4 on any diff)")
+    rver.add_argument("--a", required=True)
+    rver.add_argument("--b", required=True)
+
     rplan.add_argument(
         "--out",
         required=True,
@@ -3901,6 +3952,33 @@ def main(argv: list[str] | None = None) -> int:
         if getattr(args, "dry_run", False):
             argv_tail.append("--dry-run")
         return renamed_routes.main(argv_tail)
+    if args.command == "lb-map":
+        from . import lb_routes
+
+        argv_tail = [args.map_command]
+        for opt in ("live", "project", "declaration", "out"):
+            v = getattr(args, opt, None)
+            if v is not None:
+                argv_tail += [f"--{opt}", str(v)]
+        return lb_routes.main(argv_tail)
+    if args.command == "web-conf":
+        from . import web_conf
+
+        argv_tail = ["--out-dir", args.out_dir]
+        if args.api_base is not None:
+            argv_tail += ["--api-base", args.api_base]
+        return web_conf.main(argv_tail)
+    if args.command == "route-compare":
+        from . import route_compare
+
+        argv_tail = [args.rc_command]
+        if args.rc_command == "capture":
+            argv_tail += ["--base", args.base, "--out", args.out]
+            if args.allowlist is not None:
+                argv_tail += ["--allowlist", args.allowlist]
+        else:
+            argv_tail += ["--a", args.a, "--b", args.b]
+        return route_compare.main(argv_tail)
     if args.command == "journey-verify":
         return _cmd_journey_verify(args)
     if args.command == "journey-intake":

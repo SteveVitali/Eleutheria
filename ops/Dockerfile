@@ -83,7 +83,9 @@ COPY evidence ./evidence
 # cannot break it. Observed 2026-09-24: an unconstrained resolve picked
 # sqlalchemy 2.1.0, whose sdist uv refuses (duplicate normalized extra), and the
 # build failed; the lock pins 2.0.52.
-RUN pip install --no-cache-dir uv \
+# P34.40: uv itself is pinned to pyproject.toml's [tool.uv] required-version —
+# an unpinned `pip install uv` now fails outright on the version check.
+RUN pip install --no-cache-dir "uv==0.12.6" \
  && uv export --frozen --no-emit-workspace --no-hashes --all-packages --no-dev \
       -o /tmp/constraints.txt \
  && uv pip install --system -c /tmp/constraints.txt ./api ./connectors ./ops \
@@ -104,9 +106,18 @@ COPY --from=tippecanoe-build /usr/local/bin/tippecanoe /usr/local/bin/tippecanoe
 # $SIG_PG_PASSWORD and is NEVER stored in the deploy config or image (HG-09). The
 # public API SET ROLEs to $SIG_API_ROLE (default sig_read_public) so RLS serves
 # only tier-0 rows. With no Cloud SQL connection the demo store is served (local).
+#
+# P34.40 / ACT-17: the release registry mount. When a read-only gcsfuse mount
+# (or any directory) exists at $SIG_RELEASE_REGISTRY (default
+# /mnt/rel/registry — the path G3 §4.3 records), the serve command gains
+# `--release-registry <dir>` and the /v1/releases/<pub>/compartments/<comp>/search
+# surface reads the staged per-compartment FTS5 indexes (P32.14). No mount ⇒
+# no flag ⇒ the registry-less posture is byte-identical to today. The mount
+# itself is engineered here but NOT rolled in this ticket (the registry's
+# bucket is P35.53's; the roll is P34.46/P35.57's).
 ENV SIG_API_HOST=0.0.0.0 \
     SIG_PG_USER=sig \
     SIG_PG_DB=sig \
     SIG_API_ROLE=sig_read_public
 EXPOSE 8080
-CMD ["sh", "-c", "if [ -n \"$SIG_CLOUDSQL_CONNECTION\" ]; then exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} --dsn \"postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}\" ${SIG_API_ROLE:+--role \"$SIG_API_ROLE\"}; else exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080}; fi"]
+CMD ["sh", "-c", "REG=${SIG_RELEASE_REGISTRY:-/mnt/rel/registry}; if [ -d \"$REG\" ]; then REG_FLAG=\"--release-registry $REG\"; else REG_FLAG=; fi; if [ -n \"$SIG_CLOUDSQL_CONNECTION\" ]; then exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} --dsn \"postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}\" ${SIG_API_ROLE:+--role \"$SIG_API_ROLE\"} $REG_FLAG; else exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} $REG_FLAG; fi"]
