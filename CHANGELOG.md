@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Withdrawal-barrier bytes: real tombstones on every alias** (P34.41;
+  cites SIG-REL-013 (owner P35.55), SIG-FIND-001/002, SIG-GOV-007;
+  ADR-132) — the generated deny map now denies **every alias** of a
+  withdrawn route (`/<route>`, `/<route>/`, `/<route>/index.html` for
+  page routes; the exact path for file routes such as the record's
+  `.json` twin) with `error_page 410` onto that route's own
+  `sig.tombstone/1` body staged under `conf/tombstone/` (an
+  `internal`-only prefix in `ops/web/nginx.conf`) — the 410 answers the
+  recorded tombstone (target kind/id, `withdrawn_at`, public-safe
+  `reason_class`, `disposition_ref`, `superseded_by`, release label,
+  corrections link; never an e-mail address), never nginx's generic
+  page. `/entity/<t>/<id>/` convenience stubs are denied and rewritten
+  to stub tombstones from the same deny set — entity-level denies,
+  claim denies on the active release's record route, and the latest
+  release's own namespace deny all reach the stub — and `page_index`
+  pages embedding a denied id are denied and marked `withdrawn` in the
+  index. `/r/<pub>/` now emits a real namespace landing page (with meta
+  description) instead of a directory 403.
 - **Release-archive chrome + same-origin link crawl** (P34.34a; cites
   SIG-FIND-001/002, SIG-UI-033, SIG-UI-024, SIG-LIC-011, SIG-UI-049) — every
   exports-rendered page now carries site navigation, a `/dispute/` link, and
