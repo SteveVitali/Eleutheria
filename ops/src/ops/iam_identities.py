@@ -51,6 +51,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import tomllib
 from dataclasses import dataclass
@@ -79,12 +80,21 @@ PUBLIC_MEMBERS = frozenset({"allUsers", "allAuthenticatedUsers"})
 SECRET_ACCESSOR_ROLE = "roles/secretmanager.secretAccessor"
 RUN_INVOKER_ROLE = "roles/run.invoker"
 
-LEGS = ("services", "jobs", "all")
+LEGS = ("services", "jobs", "exec", "all")
 
-# The one conditioned grant this declaration permits: the ingest class's
-# OCFL inventory-head rewrite under evidence/captures/ (ADR-201). A
-# condition on any other role refuses to load.
-CONDITIONABLE_ROLES = frozenset({"roles/storage.objectUser"})
+# The conditioned grants this declaration permits: the ingest class's OCFL
+# inventory-head rewrite under evidence/captures/ (objectUser, ADR-201), and
+# the P34.43 exec host's two prefix-scoped storage grants — a read-only
+# captures mount (objectViewer on evidence/captures/) and the probe-record
+# appender (objectCreator on ops/probes/ only; SIG-CONF-013). A condition on
+# any other role refuses to load.
+CONDITIONABLE_ROLES = frozenset(
+    {
+        "roles/storage.objectUser",
+        "roles/storage.objectViewer",
+        "roles/storage.objectCreator",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -108,6 +118,7 @@ class BucketRole:
     role: str
     condition_title: str | None = None
     condition_prefix: str | None = None  # objects/ prefix for the CEL expression
+    condition_description: str | None = None  # required when conditioned
 
 
 @dataclass(frozen=True)
@@ -148,6 +159,19 @@ class JobInvoker:
 
 
 @dataclass(frozen=True)
+class Oneoff:
+    """A one-off execution host (P34.43): an ephemeral Cloud Run job family —
+    every live job carries the `job_prefix`-<purpose>-<stamp> shape and is
+    deleted by a name-checked cleanup at the end of its run. The declared SA
+    is the family identity; a `job_prefix`-* job at rest is a leaked cleanup.
+    """
+
+    name: str
+    service_account: str
+    job_prefix: str
+
+
+@dataclass(frozen=True)
 class RemoveRole:
     member: str  # symbolic member or declared SA id
     role: str
@@ -164,6 +188,7 @@ class Declaration:
     job_classes: tuple[JobClass, ...] = ()
     job_invokers: tuple[JobInvoker, ...] = ()
     remove_roles: tuple[RemoveRole, ...] = ()
+    oneoffs: tuple[Oneoff, ...] = ()
     expected_job_count: int | None = None
 
     def sa(self, sa_id: str) -> ServiceAccount:
@@ -354,6 +379,7 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
                 f"bucket_role {i}: condition_title and condition_prefix "
                 "are declared together or not at all"
             )
+        cond_description = r.get("condition_description")
         if cond_title is not None:
             if not isinstance(cond_title, str) or not cond_title:
                 _fail(f"bucket_role {i}: condition_title must be non-empty")
@@ -367,6 +393,11 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
                 )
             if not isinstance(cond_prefix, str) or not cond_prefix.endswith("/"):
                 _fail(f"bucket_role {i}: condition_prefix must be a trailing-slash prefix")
+            if not isinstance(cond_description, str) or not cond_description:
+                _fail(
+                    f"bucket_role {i}: a conditioned grant names its "
+                    "condition_description — the audit text travels with it"
+                )
         bucket_roles.append(
             BucketRole(
                 service_account=sa,
@@ -374,6 +405,7 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
                 role=role,
                 condition_title=cond_title,
                 condition_prefix=cond_prefix,
+                condition_description=cond_description,
             )
         )
 
@@ -487,6 +519,37 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
             _fail(f"job_invoker {i}: targets {targets!r} must be 'scheduled'")
         job_invokers.append(JobInvoker(member=member, targets=targets))
 
+    oneoffs: list[Oneoff] = []
+    seen_oneoff: set[str] = set()
+    oneoff_bound_sa: set[str] = set()
+    oneoff_prefixes: set[str] = set()
+    for i, o in enumerate(raw.get("oneoff") or []):
+        name = o.get("name")
+        if not isinstance(name, str) or not re.match(r"^[a-z][a-z0-9-]{0,40}$", name):
+            _fail(f"oneoff {i}: name {name!r} must be a lowercase job-family name")
+        if name in seen_oneoff:
+            _fail(f"oneoff {i}: {name!r} declared twice")
+        seen_oneoff.add(name)
+        prefix = o.get("job_prefix")
+        if not isinstance(prefix, str) or not re.match(r"^sig-[a-z0-9-]{1,40}$", prefix):
+            _fail(f"oneoff {i}: job_prefix {prefix!r} must be a sig- name prefix")
+        if prefix in oneoff_prefixes:
+            _fail(
+                f"oneoff {i}: job_prefix {prefix!r} is already claimed — "
+                "the leaked-cleanup scan keys on a unique prefix per family"
+            )
+        oneoff_prefixes.add(prefix)
+        sa = o.get("service_account")
+        if sa not in seen_sa:
+            _fail(f"oneoff {i}: {sa!r} is not a declared service account")
+        if sa in bound_sa or sa in class_bound_sa or sa in oneoff_bound_sa:
+            _fail(
+                f"oneoff {i}: {sa!r} is already bound to a service, job class or "
+                "one-off family — identities bind one workload kind (AR-8)"
+            )
+        oneoff_bound_sa.add(sa)
+        oneoffs.append(Oneoff(name=name, service_account=sa, job_prefix=prefix))
+
     remove_roles: list[RemoveRole] = []
     for i, r in enumerate(raw.get("remove_role") or []):
         member = r.get("member")
@@ -532,9 +595,9 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
         _fail("job classes declared but expected_job_count is missing")
 
     # Identity/workload bookkeeping: a non-reserved SA binds to exactly one
-    # service or one job class; a reserved SA binds nothing (the job_invoker
-    # member is exempt — invoker is a grant, not a workload).
-    unbound = seen_sa - bound_sa - class_bound_sa
+    # service, job class, or one-off exec family; a reserved SA binds nothing
+    # (the job_invoker member is exempt — invoker is a grant, not a workload).
+    unbound = seen_sa - bound_sa - class_bound_sa - oneoff_bound_sa
     for sa in sas:
         if sa.id in unbound and not sa.reserved and sa.id not in {v.member for v in job_invokers}:
             _fail(
@@ -545,6 +608,7 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
         if sa.reserved and (
             sa.id in bound_sa
             or sa.id in class_bound_sa
+            or sa.id in oneoff_bound_sa
             or any(r.service_account == sa.id for r in project_roles)
             or any(r.service_account == sa.id for r in bucket_roles)
             or any(sa.id in s.consumers for s in secrets)
@@ -564,6 +628,7 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
         job_classes=tuple(job_classes),
         job_invokers=tuple(job_invokers),
         remove_roles=tuple(remove_roles),
+        oneoffs=tuple(oneoffs),
         expected_job_count=expected_job_count,
     )
 
@@ -604,6 +669,10 @@ def _service_sa_ids(decl: Declaration) -> set[str]:
 
 def _job_sa_ids(decl: Declaration) -> set[str]:
     return {c.service_account for c in decl.job_classes}
+
+
+def _oneoff_sa_ids(decl: Declaration) -> set[str]:
+    return {o.service_account for o in decl.oneoffs}
 
 
 # --- the mutation plan ---------------------------------------------------------
@@ -691,8 +760,7 @@ def _binding_steps(decl: Declaration, project: str, sa_ids: set[str]) -> list[St
             expr = condition_expression(project, b.bucket, b.condition_prefix or "")
             cmd += [
                 f"--condition-title={b.condition_title}",
-                f"--condition-description=P34.42b/ADR-201: OCFL inventory-head "
-                f"rewrite under {b.condition_prefix} only (SIG-STORE-048)",
+                f"--condition-description={b.condition_description}",
                 f"--condition-expression={expr}",
             ]
             note += f" (conditioned: {b.condition_title} on {b.condition_prefix})"
@@ -761,15 +829,26 @@ def plan_steps(
     leg=services invoker rule); ``jobs`` = the P34.42b leg (the job-class
     and reserved identities, their bindings + conditioned grants + secret
     revokes, the 88 same-image job updates, the scheduler-invoker move, the
-    leg=jobs invoker rule, the roles/editor removal); ``all`` = the full
-    end-state plan. Pure: values the contract requires be read live render
-    as ``<...>`` placeholders the shell wrapper fills.
+    leg=jobs invoker rule, the roles/editor removal); ``exec`` = the P34.43
+    leg (the one-off exec-family identities — created if absent — and only
+    their bindings: no revision, job, invoker or editor step, and no stale
+    secret revoke — the exec leg touches nothing a running workload holds);
+    ``all`` = the full end-state plan. Pure: values the contract requires be
+    read live render as ``<...>`` placeholders the shell wrapper fills.
     """
     if leg not in LEGS:
         _fail(f"leg {leg!r} must be one of {LEGS}")
     steps: list[Step] = []
     service_sas = _service_sa_ids(decl)
     job_sas = _job_sa_ids(decl)
+
+    if leg == "exec":
+        exec_sas = _oneoff_sa_ids(decl)
+        for sa in decl.service_accounts:
+            if sa.id in exec_sas:
+                steps.append(_sa_steps(sa, project))
+        steps += _binding_steps(decl, project, exec_sas)
+        return steps
 
     if _leg_includes(leg, "services", "jobs"):
         if leg == "services":
@@ -784,9 +863,13 @@ def plan_steps(
         if leg == "services":
             sa_ids = service_sas
         elif leg == "jobs":
-            sa_ids = (set(s.id for s in decl.service_accounts) - service_sas) | {
-                c for s in decl.secrets for c in s.consumers if c in job_sas
-            }
+            # The exec family's bindings are the exec leg's own mutations —
+            # the jobs leg still creates the (now oneoff-bound) identity,
+            # matching the P34.42b reserved-identity create, but grants
+            # nothing on it.
+            sa_ids = (
+                set(s.id for s in decl.service_accounts) - service_sas - _oneoff_sa_ids(decl)
+            ) | {c for s in decl.secrets for c in s.consumers if c in job_sas}
         else:
             sa_ids = {s.id for s in decl.service_accounts}
         steps += _binding_steps(decl, project, sa_ids)
@@ -1217,12 +1300,25 @@ def diff_snapshot(
     declared_emails = {sa.id: sa_email(project, sa.id) for sa in decl.service_accounts}
     declared_set = set(declared_emails.values())
     service_sas = _service_sa_ids(decl)
+    oneoff_sa_ids = _oneoff_sa_ids(decl)
     if leg == "services":
         judged_sas = [s for s in decl.service_accounts if s.id in service_sas]
         judged_sa_ids = service_sas
+    elif leg == "exec":
+        judged_sa_ids = oneoff_sa_ids
+        judged_sas = [s for s in decl.service_accounts if s.id in judged_sa_ids]
+    elif leg == "jobs":
+        # The jobs leg never created the exec family's bindings — a mid-stack
+        # snapshot is judged on this leg's own posture, not the end-state.
+        judged_sa_ids = {s.id for s in decl.service_accounts} - oneoff_sa_ids
+        judged_sas = [s for s in decl.service_accounts if s.id in judged_sa_ids]
     else:
         judged_sas = list(decl.service_accounts)
         judged_sa_ids = {s.id for s in decl.service_accounts}
+    # The "no undeclared/basic role on a runtime SA" scan covers every declared
+    # SA under services/jobs/all; the exec leg judges only its own identities
+    # (other legs' postures are their own legs' verdicts).
+    scanned_emails = {declared_emails[i] for i in judged_sa_ids} if leg == "exec" else declared_set
 
     if snap.service_accounts is not None:
         for sa in judged_sas:
@@ -1250,7 +1346,10 @@ def diff_snapshot(
             role = str(b.get("role"))
             for m in b.get("members") or []:
                 m = str(m)
-                if m.startswith("serviceAccount:") and m[len("serviceAccount:") :] in declared_set:
+                if (
+                    m.startswith("serviceAccount:")
+                    and m[len("serviceAccount:") :] in scanned_emails
+                ):
                     if (m, role) not in declared_roles:
                         diffs.append(f"undeclared project role on a runtime SA: {m} → {role}")
                     if role in BASIC_ROLES:
@@ -1304,7 +1403,10 @@ def diff_snapshot(
             role = str(bb.get("role"))
             for m in bb.get("members") or []:
                 m = str(m)
-                if m.startswith("serviceAccount:") and m[len("serviceAccount:") :] in declared_set:
+                if (
+                    m.startswith("serviceAccount:")
+                    and m[len("serviceAccount:") :] in scanned_emails
+                ):
                     if (m, role) not in declared_bucket_roles:
                         diffs.append(
                             f"undeclared bucket role on a runtime SA: {m} → {role} "
@@ -1341,7 +1443,12 @@ def diff_snapshot(
                 continue  # the fail-closed loader already refuses it
             else:
                 allowed.add(f"serviceAccount:{declared_emails[consumer]}")
-                if leg != "services" or consumer in service_sas:
+                if leg == "exec":
+                    if consumer in judged_sa_ids:
+                        required.add(f"serviceAccount:{declared_emails[consumer]}")
+                elif leg == "jobs" and consumer in oneoff_sa_ids:
+                    pass  # the exec leg owns this binding's required judgement
+                elif leg != "services" or consumer in service_sas:
                     required.add(f"serviceAccount:{declared_emails[consumer]}")
         for member in s.jobs_revoke:
             resolved = (
@@ -1353,6 +1460,8 @@ def diff_snapshot(
                 continue
             if leg == "services":
                 allowed.add(resolved)
+            elif leg == "exec":
+                continue  # the jobs leg owns the revokes — not this leg's verdict
             elif resolved in accessors:
                 diffs.append(
                     f"stale secret accessor {resolved} on {s.name} — the jobs leg revokes it"
@@ -1428,6 +1537,20 @@ def diff_snapshot(
                 got = _scheduler_identity(desc)
                 if got != want:
                     diffs.append(f"scheduler trigger for {job} signs as {got!r}, declared {want}")
+
+    # The exec host is ephemeral by construction: a `<job_prefix>-*` job in
+    # `run jobs list` at rest is a cleanup that did not run — flag every one.
+    if leg in ("exec", "all") and decl.oneoffs:
+        if snap.run_jobs is None:
+            diffs.append("UNREADABLE: no run-jobs.json in the snapshot")
+        else:
+            prefixes = tuple(o.job_prefix + "-" for o in decl.oneoffs)
+            for job in sorted(snap.run_jobs):
+                if job.startswith(prefixes):
+                    diffs.append(
+                        f"leaked one-off exec job {job} — a per-run cleanup "
+                        "deletes exactly the job it created"
+                    )
 
     for svc in decl.services:
         rule = decl.invoker_rule(svc.name, leg)
@@ -1521,7 +1644,7 @@ def _write(out: str | None, text: str) -> None:
 
 
 def _load_cadence_arg(raw: str | None, decl: Declaration, leg: str) -> dict[str, Any] | None:
-    needs = leg != "services" and (decl.job_classes or decl.job_invokers)
+    needs = leg not in ("services", "exec") and (decl.job_classes or decl.job_invokers)
     if raw is None and not needs:
         return None
     return load_cadence(raw)
@@ -1607,6 +1730,7 @@ def main(argv: list[str] | None = None) -> int:
                 ],
                 "job_invokers": [vars(v) for v in decl.job_invokers],
                 "remove_roles": [vars(r) for r in decl.remove_roles],
+                "oneoffs": [vars(o) for o in decl.oneoffs],
                 "expected_job_count": decl.expected_job_count,
                 "job_map": resolve_job_map(decl, cadence) if cadence else {},
                 "scheduler_triggers": (cadence_scheduler_triggers(cadence) if cadence else {}),

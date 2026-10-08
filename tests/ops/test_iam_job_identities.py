@@ -168,7 +168,14 @@ def test_no_ingest_identity_ever_holds_unconditional_delete(decl) -> None:
     # SIG-STORE-048: writers hold no object-delete. The ONLY storage grant
     # that can carry delete permission is the conditioned objectUser binding
     # on the captures prefix (ADR-201) — scoped, titled, and never
-    # objectAdmin/objectUser-without-condition.
+    # objectAdmin/objectUser-without-condition. P34.43 adds the exec leg's
+    # conditioned grants (ADR-202): objectViewer/objectCreator carry no
+    # delete permission at all, so their conditions scope READ/CREATE only.
+    # (ADR-201's third trigger fired on this widening — evaluation appended.)
+    exec_conditions = {
+        ("p34-43-captures-readonly", "evidence/captures/"),
+        ("p34-43-probe-records", "ops/probes/"),
+    }
     for b in decl.bucket_roles:
         assert b.role not in BASIC_ROLES
         if b.role in {"roles/storage.objectUser", "roles/storage.objectAdmin"}:
@@ -177,6 +184,12 @@ def test_no_ingest_identity_ever_holds_unconditional_delete(decl) -> None:
             assert b.condition_title == "p34-42b-capture-rewrite"
             assert b.condition_prefix == "evidence/captures/"
             assert b.role == "roles/storage.objectUser"
+        elif (b.condition_title, b.condition_prefix) in exec_conditions:
+            assert b.service_account == "sig-quality-probe-rt"
+            assert b.bucket == "sig-restricted"
+            # objectViewer/objectCreator hold no delete — the exec identity
+            # can never remove or overwrite any object anywhere.
+            assert b.role in {"roles/storage.objectViewer", "roles/storage.objectCreator"}
         else:
             assert b.condition_title is None
 
@@ -194,15 +207,17 @@ def test_declaration_rejects_a_conditioned_grant_on_the_wrong_role(
     )
     with pytest.raises(ValueError, match="a condition on"):
         load_declaration(bad)
-    # A condition on a viewer grant is also refused — conditions exist only
-    # for the recorded OCFL-rewrite grant.
+    # A condition on a role outside CONDITIONABLE_ROLES refuses — the
+    # allow-list is the recorded set (objectUser + the two P34.43 delete-free
+    # roles, ADR-202); a legacy writer stays refused.
     viewer_role = 'role = "roles/storage.objectViewer"'
     viewer_block = viewer_role + '\n\n[[bucket_role]]\nservice_account = "sig-ingest-rt"'
     bad.write_text(
         base.replace(
             viewer_block,
-            viewer_role
+            'role = "roles/storage.legacyBucketWriter"'
             + '\ncondition_title = "x"\ncondition_prefix = "ops/"'
+            + '\ncondition_description = "x"'
             + '\n\n[[bucket_role]]\nservice_account = "sig-ingest-rt"',
             1,
         )

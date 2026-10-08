@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ffb8dfc54c4592e205f3753f1d1a438615691b1c",
-  "manifest_inputs": 989,
+  "input_commit": "902a01e5e3847b1520b21776b15c01416a2e0dc8",
+  "manifest_inputs": 991,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.43",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-08T12:43Z"
   },
   "counts": {
-    "obligations": 157,
-    "owed": 88,
-    "open": 85,
+    "obligations": 158,
+    "owed": 89,
+    "open": 86,
     "partial": 3,
     "terminal": 69,
-    "events": 641,
+    "events": 642,
     "transitions": 30,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
@@ -7892,6 +7892,56 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.43-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.43-1:e0",
+      "kind": "P",
+      "owner": "P37.3 (the SIG-STORE-048 disposition row, alongside D-P34.42b-1)",
+      "landing": "GCS IAM gains per-object or content-type scoping, or the exec host gains a dedicated bucket for probe records — then the grants are re-scoped tighter",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "Standing review of the execution host's TWO conditioned IAM grants (ADR-202): `sig-quality-probe-rt` holds `roles/storage.objectViewer` scoped to `objects/evidence/captures/` and `roles/storage.objectCreator` scoped to `objects/ops/probes/` on the restricted bucket — read inside the captures prefix, create inside the probe-record prefix, delete nowhere",
+      "unblocked_by": "owner: P37.3 (the SIG-STORE-048 disposition row, alongside D-P34.42b-1) · trigger: GCS IAM gains per-object or content-type scoping, or the exec host gains a dedicated bucket for probe records — then the grants are re-scoped tighter",
+      "verify": "the two bindings are gone (or re-scoped) in `ops/iam_identities.toml` AND `gcloud storage buckets get-iam-policy gs://<project>-sig-restricted` shows no `p34-43-captures-readonly`/`p34-43-probe-records` binding; until then a periodic re-check confirms the expressions are still prefix-scoped",
+      "proxy": "the bindings are declared, conditioned and diffed byte-for-byte (`sig-ops iam diff` asserts the expressions; the loader refuses a condition outside `CONDITIONABLE_ROLES`); the exec leg's `analysis` action proves `storage.objects.create` under `evidence/captures/` and `storage.objects.delete` anywhere on the bucket are NOT_GRANTED via the read-only troubleshooter",
+      "line": 1227,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.43-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.43-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.43",
+          "owner": "P37.3 (the SIG-STORE-048 disposition row, alongside D-P34.42b-1)",
+          "landing": "GCS IAM gains per-object or content-type scoping, or the exec host gains a dedicated bucket for probe records — then the grants are re-scoped tighter",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md",
+            "docs/adr/ADR-202-execution-host-and-db-login-credentials.md",
+            "ops/iam_identities.toml",
+            "ops/gcp/exec-host.sh",
+            "tests/ops/test_iam_exec_leg.py"
+          ],
+          "observed_at": "2026-10-08",
+          "source_commit": "902a01e5e3847b1520b21776b15c01416a2e0dc8",
+          "reason": "migration anchor appended by P34.43 (row 253) for the deferral row it added — standing review of the execution host's two conditioned IAM grants (sig-quality-probe-rt holds roles/storage.objectViewer on the restricted bucket scoped to objects/evidence/captures/ and roles/storage.objectCreator scoped to objects/ops/probes/; ADR-202); appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1227,
+            "row_sha256": "546f4e60c1b8a5d8852d9f5ccdf01102f90b3e91be92f5f6807c649184a12729",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-08"
         }
       ]
     }
@@ -18141,7 +18191,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a38bdf67b316af422bbb4453735955b39b885a454580c2056e61899de7ca537e",
+  "manifest_sha256": "782b681402313afb9da5946f1637cc1147bb9bc81a53e242adccae9e9bba572a",
   "current_md": {
     "lines": 63,
     "bytes": 15453,
