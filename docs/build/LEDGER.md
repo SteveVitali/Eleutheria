@@ -32,7 +32,7 @@ nextTicket:      P34.42a                            # row 251 — least-privileg
 lastCompleted:   P34.41                             # row 250 (PR #251, open; per-alias sig.tombstone/1 410s + deny-set stubs + /r/<pub>/ landing)
 blockedOn:       (nothing)                          # real blocks only; a pending gate is a RETURN PASS row
 pauseRequested:  false                               # set at C10 (GATE-B go)
-returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.50 # landed tickets with owed legs; legs: RETURN PASS — current
+returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.50 # owed legs — RETURN PASS — current
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
 memoryRoot:      docs/build
