@@ -3962,6 +3962,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import at_rest_audit
 
         return at_rest_audit.main(raw[1:])
+    if raw and raw[0] == "quality":
+        from . import quality
+
+        return quality.main(raw[1:])
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)

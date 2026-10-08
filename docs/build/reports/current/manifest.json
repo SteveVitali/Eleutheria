@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "7bf00d049e997fec44821c45221b687d84aea1ce",
+  "input_commit": "3396c79b19d353ad481e4f868ff17abf004fc640",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "5388d8b9164198f3233bc495131a98a7b0c9ed642ed15af473a72d03af481a1e"
+      "sha256": "133cf7eb29dce0fb8643dda2a39c81b97710248fd37c95b336cf1810748e54f9"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -793,12 +793,16 @@
       "sha256": "3cd8c38e8988a5b7c4bc128e83a33546e631f71a979a362f48cf57ee56fcf9fc"
     },
     {
+      "path": "docs/adr/ADR-204-quality-registry-schema-outcome-vocabulary-and-the-ruleset-diff.md",
+      "sha256": "2d9dfa14d556af2b6aee864c737bfa762720b9258d93683fadacd9cc36bbb773"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "f056f08564473619d35bb909a237b1d0552931e0236e3fb949cb5093023ee07d"
+      "sha256": "12519aae1a512796614b9d2c38c6d573429d3c95fc210dc85f5d242f9cf80cd1"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "ed7dbce239dcc90772c385bd01a100d5e1b04d36656ae0cad6d89e395e27d21e"
+      "sha256": "2c9720af737c4a600f7f43fd2c000cfb015ea351142645eac05acf0bfa85bd16"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1803,6 +1807,10 @@
     {
       "path": "docs/build/runs/P34.43.md",
       "sha256": "162a07c830ff2a9bc8518894cd67804c2063899ac2fd383a4afd736ac966b214"
+    },
+    {
+      "path": "docs/build/runs/P34.44a.md",
+      "sha256": "24831644a5eeec2f7892a2b7822324ae0082c5cee6a05edd0fd76aa91a0ecf99"
     },
     {
       "path": "docs/build/runs/P34.48.md",
