@@ -63,7 +63,7 @@ def _utcnow() -> str:
 
 
 def _stamp(ts: str) -> str:
-    """``2026-10-13T14:00:00Z`` → ``20261013T140000Z``."""  # future-ok: illustrative: docstring shape example
+    """``YYYY-MM-DDTHH:MM:SSZ`` → ``YYYYMMDDTHHMMSSZ``."""
     return ts.replace("-", "").replace(":", "")
 
 
@@ -204,7 +204,7 @@ def job_name(decl: ExecHost, purpose: str, at: str) -> str:
         _fail(f"purpose {purpose!r} must match {PURPOSE_RE.pattern}")
     stamp = _stamp(at)
     if not STAMP_RE.match(stamp):
-        _fail(f"at {at!r} must be an ISO-UTC stamp like 2026-10-13T14:00:00Z")  # future-ok: illustrative: error-text example
+        _fail(f"at {at!r} must be an ISO-UTC stamp like YYYY-MM-DDTHH:MM:SSZ")
     name = f"{decl.job_prefix}-{purpose}-{stamp}"
     if len(name) > 63:
         _fail(f"job name {name!r} exceeds 63 chars (Cloud Run limit)")
