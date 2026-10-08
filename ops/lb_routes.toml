@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed load-balancer path declaration for the canonical origin
+# (P34.40 / ACT-17, G3 §4.3 option 3a — one origin, nginx never proxies to
+# Cloud Run). This file is DATA, not code — it is the record `sig-ops lb-map`
+# renders and `ops/gcp/lb-routes.sh --apply` applies.
+#
+# Semantics: every [[rule]] joins a set of URL-map `pathRules` paths on the
+# APEX path matcher to a [service.*] entry. `enabled = false` means the rule
+# is WRITTEN, NOT APPLIED: it renders into the composed edge (so the dark
+# topology is exercised end-to-end) but never into the URL-map import
+# document — /intake/* stays sig-web's until P37.59's receiver exists.
+#
+# The apex matcher's default service, the www→apex redirect, and every other
+# host rule are owned by `ops/gcp/domain-mapping.sh` and are never redeclared
+# here — `render` merges these rules onto the LIVE exported map, it does not
+# restate them.
+schema = "sig.lb-routes/1"
+
+# The apex path matcher these rules join (the surveillancegraph.org entry
+# point — the www host rule is a redirect and never carries pathRules).
+apex_matcher = "apex"
+
+[[rule]]
+# L2 (pre-authorised, GATE-B GB-Q4): the read API answers on the canonical
+# origin. Release search's no-JS form posts to /v1/releases/<pub>/…/search
+# (exports/release_pages.py); every other /v1/* read route is the same API.
+paths = ["/v1", "/v1/*"]
+service = "api"
+enabled = true
+
+[[rule]]
+# Written, NOT applied (P34.40 deliverable 2): intake is e-mail-only (B-8),
+# no `sig-intake` service exists and P37.59 owns any receiver. Until then
+# /intake/* stays sig-web's and this rule renders nowhere live.
+paths = ["/intake", "/intake/*"]
+service = "intake"
+enabled = false
+
+# Cloud Run service / serverless NEG / backend-service names — the same
+# names ops/gcp/config.sh exports (SIG_RUN_SERVICE / SIG_LB_API_* /
+# SIG_INTAKE_SERVICE / SIG_LB_INTAKE_*). `edge_upstream` is the compose
+# service:port the committed ops/edge.conf proxies to — the composed
+# stand-in for this backend.
+[service.api]
+cloud_run = "sig-api"
+neg = "sig-api-neg"
+backend = "sig-api-backend"
+edge_upstream = "api:8080"
+
+[service.intake]
+cloud_run = "sig-intake"
+neg = "sig-intake-neg"
+backend = "sig-intake-backend"
+edge_upstream = "intake:8080"
+
+# The composed edge's default upstream — the compose `web` service standing
+# in for sig-web (everything the declaration does not route).
+[edge]
+default_upstream = "web:8080"

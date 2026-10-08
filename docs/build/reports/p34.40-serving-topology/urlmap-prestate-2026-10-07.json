@@ -1,0 +1,38 @@
+{
+  "creationTimestamp": "2026-09-22T21:23:49.023-07:00",
+  "defaultService": "https://www.googleapis.com/compute/v1/projects/zeta-medley-508121-u7/global/backendServices/sig-web-backend",
+  "fingerprint": "ezM3zSalgAY=",
+  "hostRules": [
+    {
+      "hosts": [
+        "surveillancegraph.org"
+      ],
+      "pathMatcher": "apex"
+    },
+    {
+      "hosts": [
+        "www.surveillancegraph.org"
+      ],
+      "pathMatcher": "www-to-apex"
+    }
+  ],
+  "id": "5544745809416743612",
+  "kind": "compute#urlMap",
+  "name": "sig-web-urlmap",
+  "pathMatchers": [
+    {
+      "defaultService": "https://www.googleapis.com/compute/v1/projects/zeta-medley-508121-u7/global/backendServices/sig-web-backend",
+      "name": "apex"
+    },
+    {
+      "defaultUrlRedirect": {
+        "hostRedirect": "surveillancegraph.org",
+        "httpsRedirect": true,
+        "redirectResponseCode": "MOVED_PERMANENTLY_DEFAULT",
+        "stripQuery": false
+      },
+      "name": "www-to-apex"
+    }
+  ],
+  "selfLink": "https://www.googleapis.com/compute/v1/projects/zeta-medley-508121-u7/global/urlMaps/sig-web-urlmap"
+}

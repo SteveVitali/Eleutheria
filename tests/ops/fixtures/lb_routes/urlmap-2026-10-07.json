@@ -1,0 +1,33 @@
+{
+  "name": "sig-web-urlmap",
+  "defaultService": "https://www.googleapis.com/compute/v1/projects/sig-test-project/global/backendServices/sig-web-backend",
+  "hostRules": [
+    {
+      "hosts": [
+        "surveillancegraph.org"
+      ],
+      "pathMatcher": "apex"
+    },
+    {
+      "hosts": [
+        "www.surveillancegraph.org"
+      ],
+      "pathMatcher": "www-to-apex"
+    }
+  ],
+  "pathMatchers": [
+    {
+      "defaultService": "https://www.googleapis.com/compute/v1/projects/sig-test-project/global/backendServices/sig-web-backend",
+      "name": "apex"
+    },
+    {
+      "defaultUrlRedirect": {
+        "hostRedirect": "surveillancegraph.org",
+        "httpsRedirect": true,
+        "redirectResponseCode": "MOVED_PERMANENTLY_DEFAULT",
+        "stripQuery": false
+      },
+      "name": "www-to-apex"
+    }
+  ]
+}
