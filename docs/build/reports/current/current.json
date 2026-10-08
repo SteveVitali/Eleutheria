@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "902a01e5e3847b1520b21776b15c01416a2e0dc8",
+  "input_commit": "9d938bbae17ffb3380c5534a13d4f850cebea894",
   "manifest_inputs": 991,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.43",
-    "lastCompleted": "P34.42b",
+    "nextTicket": "P34.49",
+    "lastCompleted": "P34.43",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.42b-least-privilege-job-identities-remove-editor",
+    "chainTip": "r11/P34.43-execution-host-and-least-privilege-db-logins",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-08T12:43Z"
+    "updatedAt": "2026-10-08T16:28Z"
   },
   "counts": {
     "obligations": 158,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 25,
+    "return_pass_rows": 26,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8191,6 +8191,14 @@
         "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42 until then; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)",
         "operator_cell": "nothing until the window opens and ADC is armed — dry-run default, window/execution-gated; rollback replays the recorded prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed as row 252 (PR #253 — the leg queued exit 42)",
+        "obligations": []
+      },
+      {
+        "key": "P34.43",
+        "obligations_cell": "the queued L1 exec-host + `sig_audit` legs and the queued L2 `sig_recovery` login leg (SIG-CONF-013); the engineered halves landed — declaration, engine, IAM exec leg, both scripts, the `audit_login` sqitch change; the conditioned-grant standing review (→ P37.3) keeps its own DEFERRALS home",
+        "gates_cell": "hosted, window-bound (AR-3 + AR-2): L1 earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily — apply exits 42 until then; OM-20 pre-authorised — L1 by S5-3 (OM-20 11A list; expires GATE-G4), L2 by S5-3 (OM-20 11A list; expires GATE-G4 — L2 after GATE-G4 needs the 11B list or an in-ticket go) and additionally waits on `live:P34.46` (`db-logins.sh --role sig_recovery` exits 42 while `pg_roles` lacks the group); voided-by a red probe, a failed restore point or a contradicting read; AR-2 = `prestate` + the on-demand `sig-pg` backup verified SUCCESSFUL before role statements; a `/health` failure stops before mutation",
+        "operator_cell": "nothing until each window or gate holds and ADC is armed — dry-run default, window/ADC-gated; the hosted `audit_login` deploy is P34.46's; rollback drops only prestate-proven leg-created resources",
+        "rerun_cell": "`implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` (scope: one leg per run — exec host, then `sig_audit`, then L2 after `live:P34.46`) · landed as row 253 (PR #254; engineered + fixture-verified — all legs queued exit 42)",
         "obligations": []
       }
     ]
@@ -18191,10 +18199,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "782b681402313afb9da5946f1637cc1147bb9bc81a53e242adccae9e9bba572a",
+  "manifest_sha256": "eda0e860331ad26f3b4a5f4d2e6188d4783bd22c70ac9e9baf84832fdfcb1be5",
   "current_md": {
     "lines": 63,
-    "bytes": 15453,
+    "bytes": 15451,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
