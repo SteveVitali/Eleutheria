@@ -427,3 +427,30 @@ rerun_cell = '''`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-b
   go = '''none — the recorded schedule is the go (read-only)'''
   rerun = '''implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P34.40"
+kind = "leg"
+obligations = []
+obligations_cell = '''the two queued production legs of the dark serving-topology roll (L1 the `sig-web` nginx roll by pinned digest, L2 the `/v1/*` URL-map step onto `sig-api`); the engineered halves landed — declaration, render/diff engine, composed edge, scripts, byte-compare — and no deferral of its own opens; the branded-error/terms activation and the receiver-operation obligations keep their own homes'''
+gates_cell = '''hosted, window-bound (AR-3): each leg earliest `2026-10-13T12:00Z` and excluded 03:00-10:00Z daily — the apply path exits 42 (queued) until then; OM-20 pre-authorised — L1 by S5-3 (OM-20 11A list; expires GATE-G4), L2 by GATE-B GB-Q4 (OM-20 11A list; expires GATE-G4); AR-2 restore point = the committed prestate captures (`docs/build/reports/p34.40-serving-topology/`: url-map export + both service describes); the route byte-compare must show zero differences on every allow-listed route or the leg stops'''
+operator_cell = '''nothing for the legs until the window opens and ADC is armed — both scripts are dry-run by default and gate ADC/window before any mutation; rollback = re-import the recorded URL-map prestate / deploy a new revision at the recorded prior digest (never a traffic-only revert)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (scope: one leg per run — L1, then L2) · landed as row 249 (PR #248; engineered + composed-staging-verified — both legs queued exit 42, never executed)'''
+
+  [[row.legs]]
+  id = "P34.40-web-roll"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-10:00Z daily"]
+  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
+  rerun = '''implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true'''
+  live_dependants = ["P34.41"]
+
+  [[row.legs]]
+  id = "P34.40-lb-routes"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-10:00Z daily"]
+  go = '''pre-authorised: GATE-B GB-Q4 (OM-20 11A list; expires GATE-G4)'''
+  rerun = '''implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true'''
+  live_dependants = ["P35.57"]

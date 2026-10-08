@@ -33,7 +33,10 @@ services:
       # pg_upgrade-friendly layout is honoured (docker-library/postgres#37).
       - sig_pg_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${SIG_PG_USER:-sig} -d ${SIG_PG_DB:-sig}"]
+      # `-h 127.0.0.1` forces TCP: the entrypoint's bootstrap server listens on
+      # the unix socket only, so a socket-only pg_isready reports "healthy"
+      # during initdb and releases sqitch into a refused TCP connect (P34.40).
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${SIG_PG_USER:-sig} -d ${SIG_PG_DB:-sig}"]
       interval: 3s
       timeout: 5s
       retries: 30
@@ -82,6 +85,83 @@ services:
       - sh
       - -c
       - "pip install -e . && sig-api serve-curation --host 0.0.0.0 --port 8001"
+    restart: unless-stopped
+
+  # --- the composed serving topology (P34.40 / ACT-17, G3 §4.3) ---------------
+  # The `serving` profile stands the production serving shape up locally:
+  # the real `sig-web` image (ops/web/Dockerfile) over a staged site dir
+  # ($SIG_SITE_ROOT → /mnt/sig-web — the same path the gcsfuse mount uses), the
+  # real `sig-api` image (ops/Dockerfile) with the release registry mounted
+  # read-only at /mnt/rel/registry ($SIG_RELEASE_REGISTRY — the path its CMD
+  # conditionalises `--release-registry` on), the deliberately NON-OPERATIONAL
+  # intake receiver (SIG_INTAKE_ENABLED mounts it; [intake].operational stays
+  # false, so it answers `503 receiver_not_operating`), and an nginx `edge`
+  # service running ops/edge.conf — the committed render of ops/lb_routes.toml
+  # that stands in for the external HTTPS LB's path rules (/v1* → api,
+  # /intake* → intake, everything else → web; nginx never proxies to Cloud
+  # Run in production — the edge mimics the URL map, not a proxy chain).
+  #
+  #   SIG_SITE_ROOT=<staged-site> SIG_RELEASE_REGISTRY=<registry> \
+  #     docker compose --profile serving up -d --build
+  #
+  # The edge publishes on loopback ${SIG_EDGE_PORT:-18090} (the canonical-origin
+  # stand-in); `web` also publishes ${SIG_WEB_PORT:-18091} as the run.app
+  # stand-in so `sig-ops route-compare` can byte-compare both postures.
+  web:
+    profiles: ["serving"]
+    build:
+      context: ..
+      dockerfile: ops/web/Dockerfile
+    volumes:
+      # A default (not a :? guard) — the profile-free `sig-ops up/down` parse
+      # the whole file and must not fail on an unset serving var. An unset
+      # default mounts an empty dir: nginx answers 404s, the operator's miss
+      # is visible, never silent (the runbook/e2e always set SIG_SITE_ROOT).
+      - "${SIG_SITE_ROOT:-/tmp/sig-serving-site}:/mnt/sig-web:ro"
+    ports:
+      - "127.0.0.1:${SIG_WEB_PORT:-18091}:8080"
+    restart: unless-stopped
+
+  api:
+    profiles: ["serving"]
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile
+    volumes:
+      # Same default-not-guard rationale as SIG_SITE_ROOT above; an absent
+      # registry dir means the image CMD omits --release-registry entirely.
+      - "${SIG_RELEASE_REGISTRY:-/tmp/sig-serving-registry}:/mnt/rel/registry:ro"
+    restart: unless-stopped
+
+  intake:
+    profiles: ["serving"]
+    build:
+      context: ..
+      dockerfile: ops/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      sqitch:
+        condition: service_completed_successfully
+    environment:
+      SIG_INTAKE_ENABLED: "1"
+    command:
+      - sh
+      - -c
+      - "sig-api serve-intake --host 0.0.0.0 --port 8080 --dsn postgresql://${SIG_PG_USER:-sig}:${SIG_PG_PASSWORD:-sig}@db:5432/${SIG_PG_DB:-sig} --ops-config /app/ops/config.toml"
+    restart: unless-stopped
+
+  edge:
+    profiles: ["serving"]
+    image: nginx:1.27.5-alpine
+    depends_on:
+      - web
+      - api
+      - intake
+    volumes:
+      - ./edge.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "127.0.0.1:${SIG_EDGE_PORT:-18090}:8080"
     restart: unless-stopped
 
 volumes:
