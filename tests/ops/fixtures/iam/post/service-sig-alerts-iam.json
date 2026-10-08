@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "etag": "BwTESTalertsIAMpost",
+  "bindings": [
+    {
+      "role": "roles/run.invoker",
+      "members": ["serviceAccount:12345-compute@developer.gserviceaccount.com"]
+    }
+  ]
+}

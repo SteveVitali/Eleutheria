@@ -1,7 +1,7 @@
 {
   "schema": "projection-receipt/1",
-  "generated_at": "2026-10-08T06:12:37Z",
-  "git_head": "a0ae586dd994787dead86cff10aaa4fd11e037ab",
+  "generated_at": "2026-10-08T08:59:00Z",
+  "git_head": "3dca63903d08932a93595e39a03f29cca5feab2b",
   "tool": "docs/build/tools/current_projection.py",
   "note": "wall-clock receipt — kept out of the deterministic payload; input digests live in manifest.json",
   "files": [
@@ -13,6 +13,7 @@
     "current.json",
     "funnel.md",
     "manifest.json",
-    "obligations.md"
+    "obligations.md",
+    "return-pass.md"
   ]
 }

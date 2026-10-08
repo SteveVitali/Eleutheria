@@ -1,0 +1,21 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {"name": "sig-probe"},
+  "spec": {
+    "template": {
+      "spec": {
+        "template": {
+          "spec": {
+            "serviceAccountName": "12345-compute@developer.gserviceaccount.com",
+            "containers": [
+              {
+                "image": "us-central1-docker.pkg.dev/sig-test-project/sig/sig-api@sha256:6ad5477deeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

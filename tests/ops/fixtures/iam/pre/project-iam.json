@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "etag": "BwTESTpreIAM",
+  "bindings": [
+    {
+      "role": "roles/editor",
+      "members": [
+        "serviceAccount:12345-compute@developer.gserviceaccount.com",
+        "serviceAccount:12345@cloudbuild.gserviceaccount.com",
+        "serviceAccount:service-12345@serverless-robot-prod.iam.gserviceaccount.com"
+      ]
+    },
+    {
+      "role": "roles/owner",
+      "members": ["user:operator@example.invalid"]
+    }
+  ]
+}

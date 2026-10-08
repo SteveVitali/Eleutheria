@@ -1,0 +1,22 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {"name": "sig-web"},
+  "spec": {
+    "template": {
+      "metadata": {"name": "sig-web-00003-k2m"},
+      "spec": {
+        "serviceAccountName": "sig-web-rt@sig-test-project.iam.gserviceaccount.com",
+        "containers": [
+          {
+            "image": "us-central1-docker.pkg.dev/sig-test-project/sig/sig-web@sha256:d8244804bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ]
+      }
+    }
+  },
+  "status": {
+    "latestReadyRevisionName": "sig-web-00003-k2m",
+    "url": "https://sig-web-bbbbbbbbbb-uc.a.run.app"
+  }
+}
