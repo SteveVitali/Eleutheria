@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "c5b478bcf8b7f58891a5cd77987a4156fb9d7dd0",
-  "manifest_inputs": 984,
+  "input_commit": "af6d97771f52f4f21238aedc7a7964b1ca11b84e",
+  "manifest_inputs": 985,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.40",
-    "lastCompleted": "P34.39b",
+    "nextTicket": "P34.41",
+    "lastCompleted": "P34.40",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.39b-first-fire-read-backs",
+    "chainTip": "r11/P34.40-serving-topology-dark-v2",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-07T21:26Z"
+    "updatedAt": "2026-10-08T02:05Z"
   },
   "counts": {
     "obligations": 156,
@@ -31,13 +31,13 @@
     "open": 84,
     "partial": 3,
     "terminal": 69,
-    "events": 639,
-    "transitions": 29,
+    "events": 640,
+    "transitions": 30,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 22,
+    "return_pass_rows": 23,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -7269,10 +7269,10 @@
     {
       "id": "D-P34.13-1",
       "status": "OPEN",
-      "status_source": "event-head D-P34.13-1:e0",
+      "status_source": "event-head D-P34.13-1:e1",
       "kind": "F",
-      "owner": "P34.40 (the dark roll)",
-      "landing": "P34.40's nginx error_page change",
+      "owner": "P34.40's L1 leg (the queued sig-web roll)",
+      "landing": "the branded-error and /terms fragments take effect only when they land under the bucket's conf/ prefix AND nginx rolls or reloads — L1's digest roll is queued (exit 42, earliest 2026-10-13T12:00Z, never 03:00-10:00Z); the leg re-runs `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true`",
       "landing_source": "event-head",
       "backlog_home": "BL-084",
       "item": "nginx `error_page` wiring for the branded 403/410 pages (and the `/task/` 403 → 404 mapping per G1's route table), plus a true 301/302 for `/terms` → the API terms",
@@ -7308,6 +7308,32 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.13-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P34.13-1",
+          "seq": 1,
+          "expected_previous_event": "D-P34.13-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.40",
+          "owner": "P34.40's L1 leg (the queued sig-web roll)",
+          "landing": "the branded-error and /terms fragments take effect only when they land under the bucket's conf/ prefix AND nginx rolls or reloads — L1's digest roll is queued (exit 42, earliest 2026-10-13T12:00Z, never 03:00-10:00Z); the leg re-runs `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true`",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.40.md",
+            "docs/build/pr/P34.40.md",
+            "ops/web/nginx.conf",
+            "ops/src/ops/web_conf.py",
+            "tests/e2e/test_serving_topology.py",
+            "docs/tickets/249_P34.40__serving-topology-dark.md"
+          ],
+          "observed_at": "2026-10-07",
+          "source_commit": "af6d9777",
+          "reason": "progress note, not a close (P34.40): the obligation's engineered half landed — `ops/web/nginx.conf` now glob-includes `conf/chrome_*.conf` + `conf/terms_*.conf` beside the withdrawal/renamed barriers, and `sig-ops web-conf` deterministically generates the fragments (error_page 403→/403.html, 410→/410.html, exact /task/ → 404, true 302s for /terms + /terms/ — no meta-refresh). Still dark by design: no fragment is placed under any bucket conf/ and nothing rolls; the composed e2e proved the drop-fragment + `nginx -s reload` activation path (branded 410 on a withdrawn route, branded 403, /task/ → 404, /terms → 302 to the api terms doc). Still owed: the L1 roll that carries the include wiring live, then the fragment publish itself. Row stays OPEN.",
+          "recorded_at": "2026-10-07"
         }
       ]
     },
@@ -8041,6 +8067,14 @@
         "gates_cell": "hosted, date-bound (§(f3)); read-only, no gate — L1's window opens when the wave closes `2026-10-21T06:09Z` (per-fire AR-4 then applies inside the table); L2's at the `camreg_peel_on` first fire `2026-10-29T12:00Z` plus `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-peel-on` execution; L3 runs after L2 (the same peel-on AR-4); until each holds the guard exits 42 (queued), never a fabricated verdict",
         "operator_cell": "nothing for the legs themselves — the recorded schedule is the go (read-only reads only); each routing row a leg emits becomes a DEFERRALS entry for its named owner (P35.1a/b fleet hygiene, the source's connector owner, or the operator for a credential)",
         "rerun_cell": "`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (scope: one leg per run — L1, then L2, then L3) · landed as row 248 (PR #246; command + fixtures shipped — all three legs queued, never executed)",
+        "obligations": []
+      },
+      {
+        "key": "P34.40",
+        "obligations_cell": "the two queued production legs of the dark serving-topology roll (L1 the `sig-web` nginx roll by pinned digest, L2 the `/v1/*` URL-map step onto `sig-api`); the engineered halves landed — declaration, render/diff engine, composed edge, scripts, byte-compare — and no deferral of its own opens; the branded-error/terms activation and the receiver-operation obligations keep their own homes",
+        "gates_cell": "hosted, window-bound (AR-3): each leg earliest `2026-10-13T12:00Z` and excluded 03:00-10:00Z daily — the apply path exits 42 (queued) until then; OM-20 pre-authorised — L1 by S5-3 (OM-20 11A list; expires GATE-G4), L2 by GATE-B GB-Q4 (OM-20 11A list; expires GATE-G4); AR-2 restore point = the committed prestate captures (`docs/build/reports/p34.40-serving-topology/`: url-map export + both service describes); the route byte-compare must show zero differences on every allow-listed route or the leg stops",
+        "operator_cell": "nothing for the legs until the window opens and ADC is armed — both scripts are dry-run by default and gate ADC/window before any mutation; rollback = re-import the recorded URL-map prestate / deploy a new revision at the recorded prior digest (never a traffic-only revert)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (scope: one leg per run — L1, then L2) · landed as row 249 (PR #248; engineered + composed-staging-verified — both legs queued exit 42, never executed)",
         "obligations": []
       }
     ]
@@ -18041,10 +18075,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "7c7cb721e4cc0d27f1876c4ee39d3ea86ba04e7de6d99e0406f9b3679721d0c8",
+  "manifest_sha256": "bca5704b9a6e05a6e55fc2e31ea75167f950a6add38e40a20fef1d9d8b8ee180",
   "current_md": {
-    "lines": 88,
-    "bytes": 20090,
+    "lines": 89,
+    "bytes": 20437,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

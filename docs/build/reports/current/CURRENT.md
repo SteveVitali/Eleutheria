@@ -4,17 +4,17 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `c5b478bcf8b7f58891a5cd77987a4156fb9d7dd0` · inputs hashed: 984 · wall-clock receipt: `receipt.json`
+> input_commit: `af6d97771f52f4f21238aedc7a7964b1ca11b84e` · inputs hashed: 985 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.40` · lastCompleted `P34.39b`
-- chainTip `r11/P34.39b-first-fire-read-backs` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P…` · updatedAt `2026-10-07T21:26Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.41` · lastCompleted `P34.40`
+- chainTip `r11/P34.40-serving-topology-dark-v2` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P…` · updatedAt `2026-10-08T02:05Z`
 
 ## Obligations
 
 - 156 obligations · **87 owed** (84 OPEN, 3 PARTIAL) · 69 terminal
-- 639 events (29 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 640 events (30 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
 - `obligations` → see [obligations.md](obligations.md) (complete — 87 rows)
 
@@ -46,6 +46,7 @@
 | P34.38 | the queued BidNet terms-capture leg (no deferral id of its own — it works the recorded E4-R6a answer; the rights decision keeps its manifest home at row 350) | `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (scope: the BidNet terms capture only) · landed as… |
 | P34.39a | the queued live read-back verdict for the obligation homed on the P31.4 row above (this row carries the clock-guarded leg only); the pinned image predates P31.7… | `implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` · landed as row 247 (PR #245; command + fixtures + baseline shipp… |
 | P34.39b | the three queued monitoring legs for the scheduled-ingest first-fire wave and the `camreg_peel_on` first fire (the fleet table, the named reads, the routing row… | `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (scope: one leg per run — L1, then L2, then L3) · landed as row … |
+| P34.40 | the two queued production legs of the dark serving-topology roll (L1 the `sig-web` nginx roll by pinned digest, L2 the `/v1/*` URL-map step onto `sig-api`); the… | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (scope: one leg per run — L1, then L2) · landed as row 249 (PR #2… |
 
 ## Known inconsistencies (preserved, never synthesized)
 
