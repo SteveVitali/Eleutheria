@@ -1251,15 +1251,15 @@ def build_parser() -> argparse.ArgumentParser:
         "iam",
         help="P34.42a+b / G1-01 (SIG-SEC-007): the least-privilege runtime "
         "identity declaration (ops/iam_identities.toml) — plan a leg "
-        "(--leg services|jobs|all), diff a recorded IAM snapshot, gate the "
-        "same-image check. Offline; ops/gcp/iam-service-accounts.sh + "
-        "iam-job-identities.sh own the (windowed) mutations",
+        "(--leg services|jobs|exec|all), diff a recorded IAM snapshot, gate "
+        "the same-image check. Offline; ops/gcp/iam-service-accounts.sh + "
+        "iam-job-identities.sh + exec-host.sh own the (windowed) mutations",
     )
     iams = iamp.add_subparsers(dest="iam_command", required=True)
     iams_plan = iams.add_parser("plan", help="print the declaration + ordered steps")
     iams_plan.add_argument("--declaration", default=None)
     iams_plan.add_argument("--cadence", default=None)
-    iams_plan.add_argument("--leg", choices=["services", "jobs", "all"], default="all")
+    iams_plan.add_argument("--leg", choices=["services", "jobs", "exec", "all"], default="all")
     iams_plan.add_argument("--project", default=None)
     iams_plan.add_argument("--region", default=None)
     iams_plan.add_argument("--json", action="store_true")
@@ -1271,7 +1271,7 @@ def build_parser() -> argparse.ArgumentParser:
     iams_diff.add_argument("--compute-sa", default=None)
     iams_diff.add_argument("--declaration", default=None)
     iams_diff.add_argument("--cadence", default=None)
-    iams_diff.add_argument("--leg", choices=["services", "jobs", "all"], default="all")
+    iams_diff.add_argument("--leg", choices=["services", "jobs", "exec", "all"], default="all")
     iams_rev = iams.add_parser(
         "check-revisions", help="same-image gate: pre/post describes must carry identical digests"
     )
@@ -1643,6 +1643,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--out",
         default=None,
         help="write the proof JSON here (default: stdout)",
+    )
+
+    # P34.43 verbs carry their own parsers in the ops modules — registered
+    # here for discoverability; the dispatch in main() passes raw argv through.
+    sub.add_parser(
+        "exec-host",
+        help="P34.43 / SIG-CONF-013 (G2 ACT-13, L3 CP-0): the one-off Cloud "
+        "Run execution host for hosted return passes + quality probes — "
+        "plan|render|run|verify-describe|smoke (ops/exec_host.toml)",
+    )
+    sub.add_parser(
+        "db-login",
+        help="P34.43 / SIG-CONF-013: the least-privilege DB logins "
+        "sig_audit (L1) + sig_recovery_login (L2, gated live:P34.46) — "
+        "plan|apply|verify over --dsn",
     )
     return parser
 
@@ -3928,6 +3943,15 @@ def _cmd_release_candidate(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
+    raw = list(sys.argv[1:] if argv is None else argv)
+    if raw and raw[0] == "exec-host":
+        from . import exec_host
+
+        return exec_host.main(raw[1:])
+    if raw and raw[0] == "db-login":
+        from . import db_logins
+
+        return db_logins.main(raw[1:])
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)

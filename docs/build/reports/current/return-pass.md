@@ -29,5 +29,6 @@
 | P34.40 | the two queued production legs of the dark serving-topology roll (L1 the `sig-web` nginx roll by pinned digest, L2 the `/v1/*` URL-map step onto `sig-api`); the… | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (scope: one leg per run — L1, then L2) · landed as row 249 (PR #2… |
 | P34.42a | the queued IAM leg (G1-01/F-272 services half): create `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt`, the least-privilege bindings + `sig-pg-password` access, one s… | `implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true` (scope: the IAM leg only) · landed as row 251 (PR #… |
 | P34.42b | the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; the engineered halves landed) | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed a… |
+| P34.43 | the queued L1 exec-host + `sig_audit` legs and the queued L2 `sig_recovery` login leg (SIG-CONF-013); the engineered halves landed — declaration, engine, IAM ex… | `implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` (scope: one leg per run — exec host, then … |
 
 ← back: CURRENT.md
