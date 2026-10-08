@@ -164,8 +164,8 @@ def test_activate_refuses_when_the_staged_tree_carries_a_broken_link(
     build = _fixture_release(tmp_path)
     real = release_mod.apply_withdrawals
 
-    def plant(staged: Path, withdrawals):  # noqa: ANN001, ANN202
-        out = real(staged, withdrawals)
+    def plant(staged: Path, withdrawals, **kwargs):  # noqa: ANN001, ANN202
+        out = real(staged, withdrawals, **kwargs)
         bad = staged / "planted" / "index.html"
         bad.parent.mkdir(parents=True)
         bad.write_text('<a href="/ghost/route/">x</a>', encoding="utf-8")

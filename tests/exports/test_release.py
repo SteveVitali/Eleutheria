@@ -1035,3 +1035,328 @@ def test_non_record_compartment_sites_are_refused(tmp_path: Path) -> None:
     (export / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ReleaseError):
         _build(tmp_path, export)
+
+
+# --------------------------------------------------------------------------- #
+# P34.41 (C4 NEW-14 / NEW-29) — the withdrawal barrier's bytes: a real          #
+# sig.tombstone/1 on EVERY alias, entity stubs + page_index generated from the  #
+# deny set, and the /r/<pub>/ namespace landing                                 #
+# --------------------------------------------------------------------------- #
+
+import re  # noqa: E402
+
+_CONF_LINE = re.compile(r"^location = (\S+) \{ error_page 410 (\S+); return 410; \}$")
+
+
+def _deny_entity(registry: Path, eid: str) -> None:
+    reg = ReleaseRegistry(registry)
+    reg.save_withdrawals([_disposition(TargetKind.ENTITY, eid, Disposition.WITHDRAW)])
+
+
+def _conf_aliases(conf_text: str) -> dict[str, str]:
+    """location URI → the error_page body path, asserting every line carries
+    the tombstone-body redirect (a bare `return 410` is the generic nginx
+    page — the exact failure P34.41 removes)."""
+    out: dict[str, str] = {}
+    for line in conf_text.splitlines():
+        if line.startswith("location ="):
+            m = _CONF_LINE.match(line)
+            assert m is not None, f"deny line without a tombstone body: {line!r}"
+            out[m.group(1)] = m.group(2)
+    return out
+
+
+def test_namespace_landing_replaces_the_403(tmp_path: Path) -> None:
+    """``/r/<pub>/`` is a real emitted page — the citation visitor at the
+    namespace root gets the landing, never a directory 403 (C4 NEW-29)."""
+    export = _write_export(tmp_path / "export")
+    build = _build(tmp_path, export)
+    pub = build.publication_id
+    landing = build.out_dir / f"r/{pub}/index.html"
+    assert landing.exists()
+    html = landing.read_text()
+    assert '<meta name="description"' in html
+    assert pub in html
+    assert f"/r/{pub}/c/sig_graph/" in html
+    assert f"/releases/{pub}/" in html
+    # and the serving check agrees the namespace route is servable
+    registry = tmp_path / "registry"
+    activate(registry, build.out_dir)
+    assert route_access(registry, f"r/{pub}/")["permitted"] is True
+    assert route_access(registry, f"/r/{pub}/index.html")["permitted"] is True
+
+
+def test_deny_map_serves_tombstone_body_on_every_alias(tmp_path: Path) -> None:
+    """Every alias of a withdrawn record route denies 410 onto that route's
+    own sig.tombstone/1 body — never a generic nginx error page."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    _deny_entity(registry, "ent-src_a-1")
+    apply_withdrawals(staged, ReleaseRegistry(registry).withdrawals(), active_pub=pub)
+
+    route = f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-1"
+    aliases = _conf_aliases((staged / "conf/withdrawn_routes.conf").read_text())
+    # the complete alias set: no-slash, trailing-slash, index.html, .json
+    wanted = {f"/{route}", f"/{route}/", f"/{route}/index.html", f"/{route}.json"}
+    assert wanted <= set(aliases)
+
+    # every HTML alias serves the SAME staged tombstone page bytes
+    html_body = staged / aliases[f"/{route}"].lstrip("/")
+    assert aliases[f"/{route}/"] == aliases[f"/{route}"] == aliases[f"/{route}/index.html"]
+    body = html_body.read_bytes()
+    assert body == (staged / route / "index.html").read_bytes()
+    assert b"ent-src_a-1" in body and b"withdrawn" in body
+
+    # the .json alias serves the machine tombstone, not HTML
+    json_body = staged / aliases[f"/{route}.json"].lstrip("/")
+    assert json_body.suffix == ".json"
+    doc = json.loads(json_body.read_text())
+    assert doc["schema"] == "sig.tombstone/1"
+    assert doc["permitted"] is False
+    assert doc["route"] == f"{route}.json"
+    assert doc["target_kind"] == "entity" and doc["target_id"] == "ent-src_a-1"
+    assert doc["reason_class"] == "safety_withdrawal"
+    assert doc["withdrawn_at"] == "2026-09-27T00:00:00+00:00"
+    assert doc["disposition_ref"].startswith("sha256:")
+    assert doc["release"] == "sig-2026-09-27-test"
+    assert doc["corrections"] == "/corrections/"
+    assert "superseded_by" in doc
+
+
+def test_deny_map_alias_shape_file_vs_page(tmp_path: Path) -> None:
+    """A file route denies as its ONE exact path (no index.html alias); a
+    page route denies as the full alias triple (P34.41 alias completeness
+    proven from the deny set itself)."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    _deny_entity(registry, "ent-src_a-0")
+    out = apply_withdrawals(staged, ReleaseRegistry(registry).withdrawals(), active_pub=pub)
+    aliases = _conf_aliases((staged / "conf/withdrawn_routes.conf").read_text())
+    # the page route: exactly the three directory aliases
+    base = f"/r/{pub}/c/sig_graph/entity/deployment/ent-src_a-0"
+    page_forms = {a for a in aliases if a.rstrip("/") == base or a == f"{base}/index.html"}
+    assert page_forms == {base, f"{base}/", f"{base}/index.html"}
+    # the .json twin denies as one exact file route — never .json/ or
+    # .json/index.html (a file path has no directory aliases)
+    assert f"{base}.json" in aliases
+    assert f"{base}.json/" not in aliases
+    assert f"{base}.json/index.html" not in aliases
+    # the deny set returned to callers names both shapes
+    assert f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-0" in out["routes"]
+    assert f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-0.json" in out["routes"]
+
+
+def test_deny_map_is_deterministic(tmp_path: Path) -> None:
+    """Same registry + same tree ⇒ byte-identical conf AND tombstone bodies
+    (the deny set is deterministic end to end)."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    _deny_entity(registry, "ent-src_a-1")
+    reg = ReleaseRegistry(registry)
+    apply_withdrawals(staged, reg.withdrawals(), active_pub=pub)
+    first = _tree_bytes(staged / "conf")
+    apply_withdrawals(staged, reg.withdrawals(), active_pub=pub)
+    assert _tree_bytes(staged / "conf") == first
+
+
+def test_entity_stub_is_generated_from_the_deny_set(tmp_path: Path) -> None:
+    """The /entity/<t>/<id>/ convenience stub is withdrawn with the record:
+    stub page tombstoned, deny-map aliases emitted, route_access agreeing —
+    all from the same deny set (P34.41 deliverable 2)."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    _deny_entity(registry, "ent-src_a-1")
+    out = apply_withdrawals(staged, ReleaseRegistry(registry).withdrawals(), active_pub=pub)
+    assert "entity/deployment/ent-src_a-1" in out["entity_stubs"]
+    stub = (staged / "entity/deployment/ent-src_a-1/index.html").read_text()
+    assert "not publicly available" in stub
+    assert "ent-src_a-1" in stub
+    assert "/corrections/" in stub
+    aliases = _conf_aliases((staged / "conf/withdrawn_routes.conf").read_text())
+    for alias in (
+        "/entity/deployment/ent-src_a-1",
+        "/entity/deployment/ent-src_a-1/",
+        "/entity/deployment/ent-src_a-1/index.html",
+    ):
+        assert alias in aliases
+    for q in (
+        "entity/deployment/ent-src_a-1",
+        "/entity/deployment/ent-src_a-1/",
+        "entity/deployment/ent-src_a-1/index.html",
+    ):
+        assert route_access(registry, q)["permitted"] is False, q
+
+
+def test_stub_denies_when_the_active_record_is_claim_denied(tmp_path: Path) -> None:
+    """A claim-level deny (no entity disposition at all) still withdraws the
+    convenience stub — the stub points at denied bytes under the ACTIVE
+    release; the overlay + deny map + route_access all agree."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    reg = ReleaseRegistry(registry)
+    reg.save_withdrawals([_disposition(TargetKind.CLAIM, "claim-src_a-0-a", Disposition.WITHHOLD)])
+    # record_withdrawal is the registry-level path that scopes stubs to the
+    # latest pointer — exercise it like the runbook does.
+    from exports.release import record_withdrawal
+
+    record_withdrawal(registry, [])
+    stub = staged / "entity/deployment/ent-src_a-0/index.html"
+    assert "not publicly available" in stub.read_text()
+    assert route_access(registry, "entity/deployment/ent-src_a-0/")["permitted"] is False
+    # an unaffected entity's stub still serves its pointer page
+    other = staged / "entity/deployment/ent-src_a-2/index.html"
+    assert "convenience" in other.read_text()
+    assert route_access(registry, "entity/deployment/ent-src_a-2/")["permitted"] is True
+
+
+def test_page_index_pages_deny_and_mark(tmp_path: Path) -> None:
+    """A page_index page embedding a withdrawn record is denied whole —
+    the route tombstones AND the staged index names the deny instead of
+    silently listing denied bytes (P34.41 deliverable 2)."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    pi_dir = staged / f"s/{pub}"
+    (pi_dir / "page" / "p1").mkdir(parents=True)
+    (pi_dir / "page" / "p1" / "index.html").write_text("<h1>p1</h1>")
+    (pi_dir / "page" / "p2").mkdir(parents=True)
+    (pi_dir / "page" / "p2" / "index.html").write_text("<h1>p2</h1>")
+    idx = pi_dir / "page_index.json"
+    idx.write_text(
+        json.dumps(
+            {
+                "schema": "sig.page-index/1",
+                "pages": [
+                    {
+                        "route": f"s/{pub}/page/p1/",
+                        "entity_ids": ["ent-src_a-1"],
+                        "claim_ids": [],
+                    },
+                    {"route": f"s/{pub}/page/p2/", "entity_ids": ["ent-src_a-2"]},
+                ],
+            }
+        )
+    )
+    _deny_entity(registry, "ent-src_a-1")
+    out = apply_withdrawals(staged, ReleaseRegistry(registry).withdrawals(), active_pub=pub)
+    assert f"s/{pub}/page/p1" in out["routes"]
+    assert f"s/{pub}/page/p2" not in out["routes"]
+    pages = {p["route"]: p for p in json.loads(idx.read_text())["pages"]}
+    assert pages[f"s/{pub}/page/p1/"]["withdrawn"] is True
+    assert "withdrawn" not in pages[f"s/{pub}/page/p2/"]
+    aliases = _conf_aliases((staged / "conf/withdrawn_routes.conf").read_text())
+    assert f"/s/{pub}/page/p1/" in aliases
+
+
+def test_no_email_in_tombstones_or_stubs(tmp_path: Path) -> None:
+    """No tombstone body, stub or deny-map page embeds an e-mail address —
+    the corrections pointer is the /corrections/ route only (C4 NEW-14)."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    _deny_entity(registry, "ent-src_a-1")
+    apply_withdrawals(staged, ReleaseRegistry(registry).withdrawals(), active_pub=pub)
+    surfaces = [
+        (staged / f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-1/index.html").read_bytes(),
+        (staged / f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-1.json").read_bytes(),
+        (staged / "entity/deployment/ent-src_a-1/index.html").read_bytes(),
+        (staged / "conf/withdrawn_routes.conf").read_bytes(),
+    ]
+    surfaces += [p.read_bytes() for p in (staged / "conf/tombstone").glob("*")]
+    assert surfaces, "tombstone body dir is empty"
+    for blob in surfaces:
+        assert b"@" not in blob and b"mailto:" not in blob
+
+
+def test_route_access_normalizes_every_alias(tmp_path: Path) -> None:
+    """route_access sees the same denial through every alias the deny map
+    emits — slash, no-slash, index.html, .json, stub and namespace forms."""
+    registry, pub = _activated_registry(tmp_path)
+    _deny_entity(registry, "ent-src_a-1")
+    apply_withdrawals(registry / "staged", ReleaseRegistry(registry).withdrawals(), active_pub=pub)
+    base = f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-1"
+    for q in (
+        base,
+        f"{base}/",
+        f"/{base}",
+        f"/{base}/",
+        f"{base}/index.html",
+        f"/{base}/index.html",
+        f"{base}.json",
+        f"/{base}.json",
+        "entity/deployment/ent-src_a-1",
+        "/entity/deployment/ent-src_a-1/",
+        "/entity/deployment/ent-src_a-1/index.html",
+    ):
+        out = route_access(registry, q)
+        assert out["permitted"] is False, q
+        assert (
+            out["tombstone"]["schema"] == "sig.tombstone/1"
+            if "schema" in (out["tombstone"] or {})
+            else out["tombstone"]["permitted"] is False
+        )
+
+
+def test_route_access_denies_namespace_aliases(tmp_path: Path) -> None:
+    """A release deny dominates every namespace alias — /r/<pub>/, its
+    index.html, the releases landing and the entity stubs (P34.41: the
+    withdrawal reaches EVERY alias)."""
+    registry, pub = _activated_registry(tmp_path)
+    reg = ReleaseRegistry(registry)
+    reg.save_withdrawals([_disposition(TargetKind.RELEASE_ARTIFACT, pub, Disposition.WITHDRAW)])
+    apply_withdrawals(reg.root / "staged", reg.withdrawals(), active_pub=pub)
+    for q in (
+        f"r/{pub}",
+        f"r/{pub}/",
+        f"/r/{pub}/index.html",
+        f"releases/{pub}/",
+        f"/releases/{pub}/index.html",
+        f"r/{pub}/c/sig_graph/records.index.jsonl",
+        "entity/deployment/ent-src_a-0/",
+    ):
+        assert route_access(registry, q)["permitted"] is False, q
+
+
+def test_release_deny_denies_file_routes_exactly(tmp_path: Path) -> None:
+    """Under a release deny the whole namespace answers the barrier —
+    .json/.jsonl/.sqlite file routes deny as exact paths, the namespace
+    roots as pages, and the stub map covers the entity aliases."""
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    reg = ReleaseRegistry(registry)
+    reg.save_withdrawals([_disposition(TargetKind.RELEASE_ARTIFACT, pub, Disposition.WITHDRAW)])
+    apply_withdrawals(staged, reg.withdrawals(), active_pub=pub)
+    aliases = _conf_aliases((staged / "conf/withdrawn_routes.conf").read_text())
+    # the namespace roots deny as pages
+    for route in (f"r/{pub}", f"releases/{pub}"):
+        assert {f"/{route}", f"/{route}/", f"/{route}/index.html"} <= set(aliases)
+    # file routes deny as exactly their path — no phantom directory aliases
+    for f in (
+        f"r/{pub}/c/sig_graph/records.index.jsonl",
+        f"r/{pub}/c/sig_graph/search_index.sqlite",
+        f"r/{pub}/c/sig_graph/search_index.json",
+        f"releases/{pub}/catalog_entry.json",
+    ):
+        assert f"/{f}" in aliases
+        assert f"/{f}/" not in aliases
+        assert f"/{f}/index.html" not in aliases
+
+
+def test_withdrawal_receipts_stay_json_serializable(tmp_path: Path) -> None:
+    """The richer apply report (route→disposition stub map) never leaks
+    non-JSON values into the activation/rollback receipts (P34.41)."""
+    export = _write_export(tmp_path / "export")
+    registry = tmp_path / "registry"
+    a = _build(tmp_path, export, name="a")
+    activate(registry, a.out_dir)
+    reg = ReleaseRegistry(registry)
+    reg.save_withdrawals([_disposition(TargetKind.ENTITY, "ent-src_a-0", Disposition.WITHDRAW)])
+    b = build_release(export, tmp_path / "b", renderer_revision="f00d" * 16)
+    activate(registry, b.out_dir)
+    out = rollback(registry, a.publication_id)
+    # every surface a caller can serialise round-trips through json
+    json.dumps(out)
+    act = json.loads((registry / f"activations/{b.publication_id}.json").read_text())
+    json.dumps(act["withdrawals_applied"])
+    receipts = list((registry / "activations").glob("rollback-*.json"))
+    assert receipts, "rollback wrote no receipt"
+    for rct_path in receipts:
+        json.dumps(json.loads(rct_path.read_text())["withdrawals_applied"])
