@@ -454,21 +454,3 @@ rerun_cell = '''`implement-spec spec=docs/tickets/249_P34.40__serving-topology-d
   go = '''pre-authorised: GATE-B GB-Q4 (OM-20 11A list; expires GATE-G4)'''
   rerun = '''implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true'''
   live_dependants = ["P35.57"]
-
-[[row]]
-key = "P34.42a"
-kind = "leg"
-obligations = []
-obligations_cell = '''the queued IAM leg of the least-privilege runtime-identity remediation (G1-01/F-272 services half): create `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt`, the least-privilege bindings + the `sig-pg-password` accessor, one same-image `--service-account` revision per service, and `sig-alerts` onto IAM invocation — all declared in `ops/iam_identities.toml` (`sig.iam-identities/1`); the engineered halves landed (declaration, `sig-ops iam` plan/diff/check-revisions, the windowed script, deploy paths naming the SAs) and no deferral of its own opens'''
-gates_cell = '''hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excluded 03:00-06:30Z daily, preferred 14:00-20:00Z weekdays — the apply path exits 42 (queued) until then; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4) — the S5-3 list names "P34.42a/b (IAM)"; voided-by a red probe, a failed restore point or a production read that contradicts a record; AR-2 restore point = the script's `prestate` leg (project/secret/bucket/service IAM + describes + the route byte-compare baseline) captured before any mutation; the poststate `sig-ops iam diff` + `check-revisions` (image digest byte-identical) + route byte-compare + policy-troubleshooter (no delete on the spine/evidence stores, no foreign secret — a GRANTED answer is a hard fail) must all read clean or the leg rolls back from the recorded prestate'''
-operator_cell = '''nothing for the leg until the window opens and ADC is armed — `ops/gcp/iam-service-accounts.sh` is dry-run by default and gates ADC/window before any mutation; rollback = `rollback` action replaying the recorded prestate (services back to their prior SAs, invoker policy re-set, added bindings + SAs removed)'''
-rerun_cell = '''`implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true` (scope: the IAM leg only) · landed as row 251 (PR pending; engineered + fixture-verified — the leg queued exit 42, never executed)'''
-
-  [[row.legs]]
-  id = "P34.42a-iam"
-  obligations = []
-  earliest = '''2026-10-13T12:00Z'''
-  excluded = ["03:00-06:30Z daily"]
-  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
-  rerun = '''implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true'''
-  live_dependants = ["P34.42b"]
