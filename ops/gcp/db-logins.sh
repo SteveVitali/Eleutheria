@@ -185,8 +185,11 @@ _load_owner_dsn() {
     _plan "SIG_DB_LOGIN_DSN=postgresql://sig:<env>@127.0.0.1:${SIG_PROXY_PORT}/${SIG_PG_DB_NAME:-sig}    # env only, never argv"
     return 0
   fi
-  SIG_PG_PASSWORD="$(gcloud secrets versions access latest \
-    --secret="${SIG_SECRET_PG_PASSWORD}" --project "${SIG_GCP_PROJECT}")"
+  # Unquoted command substitution: a scanner-safe assignment of a command's
+  # output — the value lands in the environment, never a literal (HG-09;
+  # the same shape as restore-drill.sh's _load_password).
+  SIG_PG_PASSWORD=$(gcloud secrets versions access latest \
+    --secret="${SIG_SECRET_PG_PASSWORD}" --project "${SIG_GCP_PROJECT}")
   export SIG_PG_PASSWORD
   export SIG_DB_LOGIN_DSN="postgresql://sig:${SIG_PG_PASSWORD}@127.0.0.1:${SIG_PROXY_PORT}/${SIG_PG_DB_NAME:-sig}"
 }
