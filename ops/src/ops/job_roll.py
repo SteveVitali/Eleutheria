@@ -22,7 +22,10 @@ the jobs is now one explicit, recorded act:
    planned). ``update`` changes only what it is given: every other setting a job
    carries (its task timeout, its env such as ``SIG_COMMIT_CHUNK_SIZE``, its
    secrets) is preserved. That matters: the live batch jobs run a 36 h timeout that
-   ``scheduled-ops.sh`` would reset.
+   ``scheduled-ops.sh`` would reset. A roll may also pin the job's runtime
+   identity (``--service-account``; P34.42b's job-class SAs — ``class`` resolves
+   each job's declared SA from ``ops/iam_identities.toml``), so a re-roll never
+   silently reverts a job to the default compute SA.
 4. **Verify** by describing each job again: its configured image must equal the
    planned digest.
 
@@ -109,6 +112,11 @@ class JobPlan:
     add_capture_volume: bool = False
     add_capture_env: bool = False
     set_code_commit: bool = False
+    #: The SA the job runs as NOW (from its describe; "" when absent).
+    before_service_account: str = ""
+    #: The runtime identity the update pins (``--service-account``); empty = the
+    #: job's current SA is preserved untouched (P34.42b: the job's class SA).
+    service_account: str = ""
     after_image_verified: str = ""
     applied: bool = False
     notes: list[str] = field(default_factory=list)
@@ -120,7 +128,10 @@ class JobPlan:
     @property
     def changes(self) -> bool:
         return (
-            self.before_image != self.after_digest or self.add_capture_store or self.set_code_commit
+            self.before_image != self.after_digest
+            or self.add_capture_store
+            or self.set_code_commit
+            or (bool(self.service_account) and self.service_account != self.before_service_account)
         )
 
     @property
@@ -130,6 +141,12 @@ class JobPlan:
 
 def _container(job: Mapping[str, Any]) -> Mapping[str, Any]:
     return job["spec"]["template"]["spec"]["template"]["spec"]["containers"][0]
+
+
+def _service_account(job: Mapping[str, Any]) -> str:
+    """The SA a job runs as (the task spec's ``serviceAccountName``)."""
+    spec = job["spec"]["template"]["spec"]["template"]["spec"]
+    return str(spec.get("serviceAccountName") or "")
 
 
 def _is_scheduled_ingest(job: Mapping[str, Any]) -> bool:
@@ -174,6 +191,7 @@ def plan_roll(
     region: str,
     gcloud: Gcloud,
     capture_bucket: str | None = None,
+    service_accounts: Mapping[str, str] | None = None,
 ) -> list[JobPlan]:
     """Describe each job and plan its roll onto ``image_digest`` (read-only)."""
     if not DIGEST_REF.match(image_digest):
@@ -196,6 +214,8 @@ def plan_roll(
             add_capture_volume=store and not _has_capture_volume(job),
             add_capture_env=store and CAPTURE_ENV not in _env(job),
             set_code_commit=_env(job).get(CODE_COMMIT_ENV) != _digest_of(image_digest),
+            before_service_account=_service_account(job),
+            service_account=(service_accounts or {}).get(name, ""),
         )
         plans.append(plan)
     return plans
@@ -235,6 +255,8 @@ def update_args(
         f"--region={region}",
         f"--image={plan.after_digest}",
     ]
+    if plan.service_account:
+        args.append(f"--service-account={plan.service_account}")
     env: list[str] = []
     if plan.add_capture_volume and capture_bucket:
         args += [
@@ -282,6 +304,11 @@ def apply_roll(
             )
         if plan.add_capture_store and not _has_capture_store(job):
             raise RollError(f"{plan.job}: the capture store is not configured after the update")
+        if plan.service_account and _service_account(job) != plan.service_account:
+            raise RollError(
+                f"{plan.job}: runs as {_service_account(job)!r} != "
+                f"planned identity {plan.service_account!r}"
+            )
         if _env(job).get(CODE_COMMIT_ENV) != _digest_of(plan.after_digest):
             raise RollError(f"{plan.job}: {CODE_COMMIT_ENV} is not the rolled digest")
     return list(plans)

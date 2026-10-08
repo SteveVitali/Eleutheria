@@ -91,6 +91,7 @@ do_job() {
   _log "   pinned: ${pinned}"
   run gcloud run jobs deploy "${SIG_EXPORT_JOB}" \
     --image "${pinned}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --service-account "${SIG_SA_EXPORT}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com" \
     --command sh --args "-c,$(export_cmd)" \
     --tasks 1 --task-timeout 4h --max-retries 0 --cpu 4 --memory 16Gi \
     --execution-environment gen2 \

@@ -472,3 +472,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/251_P34.42a__least-privilege-s
   go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
   rerun = '''implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true'''
   live_dependants = ["P34.42b"]
+
+[[row]]
+key = "P34.42b"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; the engineered halves landed)'''
+gates_cell = '''hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42 until then; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
+operator_cell = '''nothing until the window opens and ADC is armed — dry-run default, window/execution-gated; rollback replays the recorded prestate'''
+rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed as row 252 (PR #253 — the leg queued exit 42)'''
+
+  [[row.legs]]
+  id = "P34.42b-jobs-iam"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-06:30Z daily"]
+  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
+  rerun = '''implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true'''
+  live_dependants = ["P34.43", "P34.49"]

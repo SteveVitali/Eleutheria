@@ -143,6 +143,7 @@ do_job() {
   _log "   pinned: ${pinned}"
   run gcloud run jobs deploy "${SIG_MATERIALIZE_JOB}" \
     --image "${pinned}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --service-account "${SIG_SA_MATERIALIZE}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com" \
     --command sh --args "-c,$(step_cmd resolution)" \
     --tasks 1 --task-timeout 24h --max-retries 0 --cpu 4 --memory 16Gi \
     --set-cloudsql-instances "${CONN}" \
