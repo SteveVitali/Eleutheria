@@ -90,6 +90,46 @@ def test_apply_writes_tombstones_and_deny_map(tmp_path: Path) -> None:
     assert f"/r/{PUB}/c/sig_graph/entity/deployment/ent-1/" in conf
 
 
+def test_apply_deny_map_serves_the_tombstone_body(tmp_path: Path) -> None:
+    """P34.41: every deny line pairs `return 410` with `error_page 410` onto
+    a staged sig.tombstone/1 body — the aliases answer the real tombstone,
+    never the generic nginx error page."""
+    staged = _staged(tmp_path)
+    registry = _registry(tmp_path, withdraw=True)
+    release_serving.apply(registry, staged)
+    conf = (staged / "conf" / "withdrawn_routes.conf").read_text()
+    route = f"r/{PUB}/c/sig_graph/entity/deployment/ent-1"
+    seen: dict[str, str] = {}
+    for line in conf.splitlines():
+        if not line.startswith("location ="):
+            continue
+        assert "error_page 410 /conf/tombstone/" in line, line
+        uri = line.split(" ")[2]
+        body = line.split("error_page 410 ", 1)[1].split(";")[0]
+        seen[uri] = body
+    # every page alias + the .json file route all carry a deny
+    for alias in (f"/{route}", f"/{route}/", f"/{route}/index.html", f"/{route}.json"):
+        assert alias in seen, alias
+        body_path = staged / seen[alias].lstrip("/")
+        assert body_path.is_file(), f"missing tombstone body {seen[alias]}"
+        if alias.endswith(".json"):
+            doc = json.loads(body_path.read_text())
+            assert doc["schema"] == "sig.tombstone/1"
+            assert doc["permitted"] is False
+            assert doc["target_id"] == "ent-1"
+        else:
+            assert b"ent-1" in body_path.read_bytes()
+    # the convenience stub is denied predictively from the same deny set —
+    # the tree carried no entity/ dir at apply time
+    for alias in (
+        "/entity/deployment/ent-1",
+        "/entity/deployment/ent-1/",
+        "/entity/deployment/ent-1/index.html",
+    ):
+        assert alias in seen, alias
+    assert "ent-1" in (staged / "entity/deployment/ent-1/index.html").read_text()
+
+
 def test_check_reports_current_disposition(tmp_path: Path) -> None:
     staged = _staged(tmp_path)
     registry = _registry(tmp_path, withdraw=True)
