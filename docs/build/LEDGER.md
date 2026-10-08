@@ -28,7 +28,7 @@ Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before t
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B, no history; the PHASE LOG and git carry the history of values. -->
 ```
 projectStatus:   IN_PROGRESS                             # Round 11 running since GATE-B (C10)
-nextTicket:      P34.42a                            # row 251 — least-privilege runtime identities
+nextTicket:      P34.42b                            # row 252 — least-privilege job identities + roles/editor removal
 lastCompleted:   P34.41                             # row 250 (PR #251, open; per-alias sig.tombstone/1 410s + deny-set stubs + /r/<pub>/ landing)
 blockedOn:       (nothing)                          # real blocks only; a pending gate is a RETURN PASS row
 pauseRequested:  false                               # set at C10 (GATE-B go)
@@ -40,13 +40,13 @@ dispatchTarget:  subagent                           # one orchestrator session, 
 buildWorktree:   /Users/stevenvitali/Eleutheria # the operator's main checkout on r11/seed (moved from the Stage-B worktree at C10+)
 buildBranchBase: devin/p33-8-agent-docs-refresh     # Round 11 stacks on #190 (plan §12)
 pinnedBaseSha:   b051732c
-chainTip:        r11/P34.41-withdrawal-barrier-bytes # PR #251 open; next row branches from this checkout
+chainTip:        r11/P34.42a-least-privilege-service-identities # PR #252 open; next row branches from this checkout
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a: pause at gates, ING-GO, spend, red CI, unlisted OM-20 mutations
 mergePolicy:     OPERATOR                           # agents never merge; the operator integrates (plan §12)
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10 (A-15, round 25)
-updatedAt:       2026-10-08T05:31Z
+updatedAt:       2026-10-08T07:49Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
