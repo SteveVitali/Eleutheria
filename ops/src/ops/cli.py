@@ -824,6 +824,14 @@ def build_parser() -> argparse.ArgumentParser:
     roll.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
     roll.add_argument("--region", default=None, help="region (default: SIG_GCP_REGION)")
     roll.add_argument("--cadence", default=None, help="ops/cadence.toml path")
+    roll.add_argument(
+        "--service-account",
+        default=None,
+        help="pin a runtime identity on the update (P34.42b): a SA email applied "
+        "to every rolled job, or 'class' to resolve each job's declared class SA "
+        "from ops/iam_identities.toml (fails closed on an unmapped job). "
+        "Default: each job's current SA is preserved untouched",
+    )
     roll.add_argument("--record", default=None, help="write the before/after JSON record here")
     roll.add_argument("--apply", action="store_true", help="apply (default: plan only)")
     roll.add_argument(
@@ -1241,15 +1249,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     iamp = sub.add_parser(
         "iam",
-        help="P34.42a / G1-01 (SIG-SEC-007): the least-privilege runtime "
-        "identity declaration (ops/iam_identities.toml) — plan the leg, "
-        "diff a recorded IAM snapshot, gate the same-image revision. "
-        "Offline; ops/gcp/iam-service-accounts.sh owns the (windowed) "
-        "mutations",
+        help="P34.42a+b / G1-01 (SIG-SEC-007): the least-privilege runtime "
+        "identity declaration (ops/iam_identities.toml) — plan a leg "
+        "(--leg services|jobs|all), diff a recorded IAM snapshot, gate the "
+        "same-image check. Offline; ops/gcp/iam-service-accounts.sh + "
+        "iam-job-identities.sh own the (windowed) mutations",
     )
     iams = iamp.add_subparsers(dest="iam_command", required=True)
     iams_plan = iams.add_parser("plan", help="print the declaration + ordered steps")
     iams_plan.add_argument("--declaration", default=None)
+    iams_plan.add_argument("--cadence", default=None)
+    iams_plan.add_argument("--leg", choices=["services", "jobs", "all"], default="all")
     iams_plan.add_argument("--project", default=None)
     iams_plan.add_argument("--region", default=None)
     iams_plan.add_argument("--json", action="store_true")
@@ -1260,6 +1270,8 @@ def build_parser() -> argparse.ArgumentParser:
     iams_diff.add_argument("--project", required=True)
     iams_diff.add_argument("--compute-sa", default=None)
     iams_diff.add_argument("--declaration", default=None)
+    iams_diff.add_argument("--cadence", default=None)
+    iams_diff.add_argument("--leg", choices=["services", "jobs", "all"], default="all")
     iams_rev = iams.add_parser(
         "check-revisions", help="same-image gate: pre/post describes must carry identical digests"
     )
@@ -3163,17 +3175,44 @@ def _cmd_roll_jobs(args: argparse.Namespace) -> int:
             *(b.job for b in cadence.batches),
         ]
     jobs = [j for j in dict.fromkeys(jobs) if j not in set(args.exclude)]
+    # The identity pin (P34.42b): --service-account EMAIL applies one SA to every
+    # rolled job; --service-account class resolves each job's declared class SA
+    # from ops/iam_identities.toml — fail-closed on an unmapped job so a roll
+    # never silently reverts a job to the default compute SA.
+    service_accounts: dict[str, str] | None = None
+    if args.service_account == "class":
+        from . import iam_identities as _iam
+
+        decl = _iam.load_declaration()
+        job_map = _iam.resolve_job_map(decl, _iam.load_cadence(args.cadence))
+        class_sa = {c.name: c.service_account for c in decl.job_classes}
+        unmapped = [j for j in jobs if j not in job_map]
+        if unmapped:
+            print(f"roll-jobs: jobs with no declared class in iam_identities.toml: {unmapped}")
+            return 2
+        service_accounts = {
+            j: f"{class_sa[job_map[j]]}@{project}.iam.gserviceaccount.com" for j in jobs
+        }
+    elif args.service_account:
+        service_accounts = {j: args.service_account for j in jobs}
     plans: list[JobPlan] = []
     digest = ""
     failed: str | None = None
     try:
         digest = resolve_digest(args.image, project=project, gcloud=gcloud_cli)
         plans = plan_roll(
-            jobs, digest, project=project, region=region, gcloud=gcloud_cli, capture_bucket=bucket
+            jobs,
+            digest,
+            project=project,
+            region=region,
+            gcloud=gcloud_cli,
+            capture_bucket=bucket,
+            service_accounts=service_accounts,
         )
         for plan in plans:
             store = " + capture store" if plan.add_capture_store else ""
-            print(f"{plan.job}: {plan.before_image} ({plan.before_digest}) -> {digest}{store}")
+            sa = f" as {plan.service_account}" if plan.service_account else ""
+            print(f"{plan.job}: {plan.before_image} ({plan.before_digest}) -> {digest}{store}{sa}")
         if args.apply:
             apply_roll(
                 plans,
@@ -3995,6 +4034,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.iam_command == "plan":
             if args.declaration is not None:
                 argv_tail += ["--declaration", str(args.declaration)]
+            if args.cadence is not None:
+                argv_tail += ["--cadence", str(args.cadence)]
+            argv_tail += ["--leg", args.leg]
             if args.project is not None:
                 argv_tail += ["--project", str(args.project)]
             if args.region is not None:
@@ -4003,10 +4045,13 @@ def main(argv: list[str] | None = None) -> int:
                 argv_tail += ["--json"]
         elif args.iam_command == "diff":
             argv_tail += ["--state-dir", args.state_dir, "--project", args.project]
+            argv_tail += ["--leg", args.leg]
             if args.compute_sa is not None:
                 argv_tail += ["--compute-sa", str(args.compute_sa)]
             if args.declaration is not None:
                 argv_tail += ["--declaration", str(args.declaration)]
+            if args.cadence is not None:
+                argv_tail += ["--cadence", str(args.cadence)]
         else:
             argv_tail += ["--pre", args.pre, "--post", args.post]
         return iam_identities.main(argv_tail)

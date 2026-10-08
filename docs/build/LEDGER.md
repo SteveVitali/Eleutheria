@@ -39,13 +39,13 @@ dispatchTarget:  subagent                           # one orchestrator session, 
 buildWorktree:   /Users/stevenvitali/Eleutheria # the operator's main checkout on r11/seed (moved from the Stage-B worktree at C10+)
 buildBranchBase: devin/p33-8-agent-docs-refresh     # Round 11 stacks on #190 (plan §12)
 pinnedBaseSha:   b051732c
-chainTip:        r11/P34.42a-least-privilege-service-identities # PR #252 open; next row branches from this checkout
+chainTip:        r11/P34.42b-least-privilege-job-identities-remove-editor # PR pending; next row branches from this checkout
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a: pause at gates, ING-GO, spend, red CI, unlisted OM-20 mutations
 mergePolicy:     OPERATOR                           # agents never merge; the operator integrates (plan §12)
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10 (A-15, round 25)
-updatedAt:       2026-10-08T08:24Z
+updatedAt:       2026-10-08T11:40Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)

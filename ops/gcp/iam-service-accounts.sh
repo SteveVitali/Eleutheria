@@ -108,7 +108,8 @@ _sigops() {
 # `_decl <python -c body>` — a field out of `sig-ops iam plan --json` (the
 # declaration is the single source of every name this script uses).
 _decl() {
-  _sigops iam plan --json --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
+  _sigops iam plan --json --leg services \
+    --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
     | python3 -c "$1"
 }
 
@@ -309,15 +310,15 @@ do_verify() {
     # holds pre/ + post/) against the declaration — no ADC, no network.
     if [ -d "${FROM_STATE}/pre" ] && [ -d "${FROM_STATE}/post" ]; then
       _sigops iam check-revisions --pre "${FROM_STATE}/pre" --post "${FROM_STATE}/post"
-      _sigops iam diff --state-dir "${FROM_STATE}/post" --project "${SIG_GCP_PROJECT}"
+      _sigops iam diff --state-dir "${FROM_STATE}/post" --project "${SIG_GCP_PROJECT}" --leg services
     else
-      _sigops iam diff --state-dir "${FROM_STATE}" --project "${SIG_GCP_PROJECT}"
+      _sigops iam diff --state-dir "${FROM_STATE}" --project "${SIG_GCP_PROJECT}" --leg services
     fi
     return 0
   fi
   if [ "${SIG_GCP_MODE}" = "check" ]; then
     _plan "re-capture every prestate read under ${STATE_DIR}/post (same file names)"
-    _plan "sig-ops iam diff --state-dir ${STATE_DIR}/post --project ${SIG_GCP_PROJECT}   (clean = the declaration holds)"
+    _plan "sig-ops iam diff --state-dir ${STATE_DIR}/post --project ${SIG_GCP_PROJECT} --leg services   (clean = the services-leg posture holds)"
     _plan "sig-ops iam check-revisions --pre ${STATE_DIR}/pre --post ${STATE_DIR}/post  (every image digest byte-identical)"
     _plan "sig-ops route-compare verify --a pre/routes-<svc>.json --b post/routes-<svc>.json  (public responses unchanged)"
     do_analysis
@@ -339,7 +340,7 @@ do_verify() {
     fi
   done
   _sigops iam check-revisions --pre "${STATE_DIR}/pre" --post "${STATE_DIR}/post"
-  _sigops iam diff --state-dir "${STATE_DIR}/post" --project "${SIG_GCP_PROJECT}"
+  _sigops iam diff --state-dir "${STATE_DIR}/post" --project "${SIG_GCP_PROJECT}" --leg services
   do_analysis
   _log "verify OK — every service on its own SA, images byte-identical, sig-alerts IAM-invoked."
 }
@@ -484,7 +485,10 @@ fi
 # single source (a drift between this list and ops/iam_identities.toml fails
 # here, loudly, rather than mutating the wrong target).
 SERVICES="$(_decl 'import json,sys; print(" ".join(s["name"] for s in json.load(sys.stdin)["services"]))')"
-SA_IDS="$(_decl 'import json,sys; print(" ".join(s["id"] for s in json.load(sys.stdin)["service_accounts"]))')"
+# The SERVICES-leg identities only — the declaration now also carries the
+# P34.42b job-class + reserved SAs, which the jobs leg owns (a jobs-leg apply
+# is never implied by this script).
+SA_IDS="$(_decl 'import json,sys; print(" ".join(s["service_account"] for s in json.load(sys.stdin)["services"]))')"
 SECRET_NAMES="$(_decl 'import json,sys; print(" ".join(s["name"] for s in json.load(sys.stdin)["secrets"]))')"
 SVC_SA_LINES="$(_decl 'import json,sys; print("\n".join(s["name"]+" "+s["service_account"] for s in json.load(sys.stdin)["services"]))')"
 # "<secret>:consumer consumer …" per line — the analysis leg's foreign-secret lookup.

@@ -63,6 +63,8 @@ class FakeGcloud:
             for a in args:
                 if a.startswith("--image="):
                     spec["containers"][0]["image"] = a.split("=", 1)[1]
+                if a.startswith("--service-account="):
+                    spec["serviceAccountName"] = a.split("=", 1)[1]
                 if a.startswith("--add-volume="):
                     spec.setdefault("volumes", []).append({"name": "captures"})
                 if a.startswith("--update-env-vars="):
@@ -194,6 +196,71 @@ def test_an_unresolvable_rollback_digest_refuses_before_any_update() -> None:
     assert not [c for c in gcloud.calls if c[:3] == ["run", "jobs", "update"]]
     apply_roll(plans, project="p", region="r", gcloud=gcloud, allow_unresolved_rollback=True)
     assert plans[0].after_image_verified == NEW
+
+
+def test_a_roll_can_pin_the_class_identity() -> None:
+    # P34.42b: --service-account pins the job's runtime SA on the update (and a
+    # wrong post-update identity fails the verify).
+    jobs = {"sig-ingest-x": _job(OLD)}
+    sa = "sig-ingest-rt@p.iam.gserviceaccount.com"
+    gcloud = FakeGcloud(jobs, {})
+    plans = plan_roll(
+        list(jobs),
+        NEW,
+        project="p",
+        region="r",
+        gcloud=gcloud,
+        service_accounts={"sig-ingest-x": sa},
+    )
+    assert plans[0].service_account == sa
+    assert f"--service-account={sa}" in update_args(
+        plans[0], project="p", region="r", capture_bucket=None
+    )
+    apply_roll(plans, project="p", region="r", gcloud=gcloud)
+    spec = jobs["sig-ingest-x"]["spec"]["template"]["spec"]["template"]["spec"]
+    assert spec["serviceAccountName"] == sa
+
+
+def test_an_identity_pin_is_only_a_change_when_it_differs() -> None:
+    sa = "sig-ingest-rt@p.iam.gserviceaccount.com"
+    job = _job(NEW, store=True, commit=NEW.rsplit("@", 1)[1])
+    job["spec"]["template"]["spec"]["template"]["spec"]["serviceAccountName"] = sa
+    gcloud = FakeGcloud({"j": job}, {})
+    plans = plan_roll(
+        ["j"], NEW, project="p", region="r", gcloud=gcloud, service_accounts={"j": sa}
+    )
+    assert not plans[0].changes  # already on the image AND the identity
+    plans = plan_roll(
+        ["j"],
+        NEW,
+        project="p",
+        region="r",
+        gcloud=gcloud,
+        service_accounts={"j": "sig-probe-rt@p.iam.gserviceaccount.com"},
+    )
+    assert plans[0].changes  # a different identity IS a change
+
+
+def test_a_wrong_identity_after_update_raises() -> None:
+    jobs = {"j": _job(OLD)}
+
+    class DropsIdentity(FakeGcloud):
+        def __call__(self, args: Sequence[str]) -> str:
+            if args[:3] == ["run", "jobs", "update"]:
+                args = [a for a in args if not a.startswith("--service-account=")]
+            return super().__call__(args)
+
+    gcloud = DropsIdentity(jobs, {})
+    plans = plan_roll(
+        ["j"],
+        NEW,
+        project="p",
+        region="r",
+        gcloud=gcloud,
+        service_accounts={"j": "sig-ingest-rt@p.iam.gserviceaccount.com"},
+    )
+    with pytest.raises(RollError, match="identity"):
+        apply_roll(plans, project="p", region="r", gcloud=gcloud)
 
 
 def test_the_cli_writes_the_record_even_when_the_roll_fails(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
