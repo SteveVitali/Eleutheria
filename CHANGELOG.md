@@ -110,6 +110,23 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   instead of a readiness 503, and `build_release` fails closed if one ever
   carries `sites.jsonl`; a zero-record release reports completeness
   `not_evaluable` instead of `complete`.
+- **The graph-quality suite: versioned check registry + ratchet engine +
+  read-only probe** (P34.44a; owner SIG-CONF-003/SIG-CONF-006/
+  SIG-CONF-007; cites SIG-CONF-009/SIG-CONF-013/SIG-ENG-042; ADR-154 →
+  ADR-204) — `sig.quality-checks/1` (`exports/src/exports/data/
+  quality_checks.toml`) declares the 27 checks GQ-01…GQ-27 with
+  placement/mode/threshold/baseline/basis-class/fixing-row; only
+  mechanical basis classes may gate; `sig-ops quality run --placement`
+  evaluates the implemented M/R/P checks over a read-only spine session
+  or a release dir and emits `sig.quality-report/1` + `sig.probe-run/1`
+  with offered/evaluated counts — a 0-evaluated check fails and an
+  unwired seam reports `not_evaluable`, never a pass; `diff_registry`
+  enforces the ratchet on the ruleset itself (baselines move only toward
+  thresholds, loosenings and mode weakenings need a cited new ADR, an
+  `enforce` flip is legal only in the check's fixing row); `sig-ops
+  quality gate` is the standalone V15 hook (a `not_evaluable` enforce
+  check fails closed). The hosted baseline run and the nightly job are
+  P34.44b's.
 
 ### Security
 
