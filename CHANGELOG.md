@@ -113,6 +113,26 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Security
 
+- **Part VIII at-rest protective seal: counts-only screen + two-carrier
+  deny set** (P34.49, TS-07; cites SIG-GOV-007, SIG-PUB-002, SIG-PUB-003,
+  SIG-INGEST-045e, SIG-GOV-008, SIG-STORE-011; ADR-185 → ADR-203) — the
+  evidence store gains a deterministic at-rest audit: committed
+  field-name/shape/scoped-pattern rules screen every stored capture for
+  the three F-406 byte classes, the nine I7 S1–S9 lane screens and the
+  five SIG-PUB-002 never-publish categories, reporting **counts only** —
+  a field name or value is never emitted. Flagged captures are
+  protectively sealed (suppression, never deletion): an append-only
+  `capture_seal` register (`seal_register` sqitch change; immutability
+  trigger, no UPDATE/DELETE grant, the `capture_currently_sealed`
+  latest-action helper, the INSERT-only `sig_seal_writer` role) plus a
+  versioned `sig.seal-deny/1` deny set in the restricted bucket. The API
+  evidence paths answer the SIG-EVID-010 sealed representation (existence
+  + digest + claims only) for a currently-sealed capture whatever its
+  stored tier, and `spine_export`'s evidence bindings drop every sealed
+  capture with a fail-closed post-check and `sealed_bindings_*` counts.
+  No byte is deleted or overwritten; true purge stays the operator's
+  WV-11 action (ADR-181/189). Both live legs are queued exit 42 —
+  nothing hosted ran.
 - **Correction-intake + moderation hardening before any operational flip**
   (P34.37; cites SIG-FIND-006, SIG-FIND-008; C4 NEW-8/15/16/17/18/19/30,
   DR-C4-11/12) — the non-operational correction receiver and its curation

@@ -200,6 +200,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-200](ADR-200-search-without-a-dedicated-engine.md) | Search without a dedicated engine: pg_trgm on the read API plus per-compartment FTS5 on releases (P34.48) | P34.48 (Round 11 / P34, row 240 — the MET-DIFFERENTLY re-verdict; owns the SIG-UI-040 | accepted |
 | [ADR-201](ADR-201-ingest-capture-rewrite-condition.md) | The ingest identity's prefix-scoped capture-rewrite grant (P34.42b) | P34.42b (Round 11 / P34, row 252 — G1-01 / F-272, SIG-SEC-007; the | accepted |
 | [ADR-202](ADR-202-execution-host-and-db-login-credentials.md) | The execution host pattern and DB-login credentials (P34.43) | P34.43 (Round 11 / P34, row 253 — SIG-SEC-007's last leg, | accepted |
+| [ADR-203](ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md) | Protective seal: the two-carrier deny set and the counts-only at-rest audit (P34.49) | P34.49 (Round 11 / P34, row 254 — TS-07's at-rest half: F-406, the | accepted |
 
 ## Notes
 
