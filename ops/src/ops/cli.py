@@ -1239,6 +1239,33 @@ def build_parser() -> argparse.ArgumentParser:
     lbms_edge.add_argument("--declaration", default=None)
     lbms_edge.add_argument("--out", default=None)
 
+    iamp = sub.add_parser(
+        "iam",
+        help="P34.42a / G1-01 (SIG-SEC-007): the least-privilege runtime "
+        "identity declaration (ops/iam_identities.toml) — plan the leg, "
+        "diff a recorded IAM snapshot, gate the same-image revision. "
+        "Offline; ops/gcp/iam-service-accounts.sh owns the (windowed) "
+        "mutations",
+    )
+    iams = iamp.add_subparsers(dest="iam_command", required=True)
+    iams_plan = iams.add_parser("plan", help="print the declaration + ordered steps")
+    iams_plan.add_argument("--declaration", default=None)
+    iams_plan.add_argument("--project", default=None)
+    iams_plan.add_argument("--region", default=None)
+    iams_plan.add_argument("--json", action="store_true")
+    iams_diff = iams.add_parser(
+        "diff", help="judge a recorded IAM snapshot vs the declaration (exit 4 on drift)"
+    )
+    iams_diff.add_argument("--state-dir", required=True)
+    iams_diff.add_argument("--project", required=True)
+    iams_diff.add_argument("--compute-sa", default=None)
+    iams_diff.add_argument("--declaration", default=None)
+    iams_rev = iams.add_parser(
+        "check-revisions", help="same-image gate: pre/post describes must carry identical digests"
+    )
+    iams_rev.add_argument("--pre", required=True)
+    iams_rev.add_argument("--post", required=True)
+
     wconf = sub.add_parser(
         "web-conf",
         help="D-P34.13-1 / P34.40: generate the dark conf/ fragments the "
@@ -3961,6 +3988,28 @@ def main(argv: list[str] | None = None) -> int:
             if v is not None:
                 argv_tail += [f"--{opt}", str(v)]
         return lb_routes.main(argv_tail)
+    if args.command == "iam":
+        from . import iam_identities
+
+        argv_tail = [args.iam_command]
+        if args.iam_command == "plan":
+            if args.declaration is not None:
+                argv_tail += ["--declaration", str(args.declaration)]
+            if args.project is not None:
+                argv_tail += ["--project", str(args.project)]
+            if args.region is not None:
+                argv_tail += ["--region", str(args.region)]
+            if args.json:
+                argv_tail += ["--json"]
+        elif args.iam_command == "diff":
+            argv_tail += ["--state-dir", args.state_dir, "--project", args.project]
+            if args.compute_sa is not None:
+                argv_tail += ["--compute-sa", str(args.compute_sa)]
+            if args.declaration is not None:
+                argv_tail += ["--declaration", str(args.declaration)]
+        else:
+            argv_tail += ["--pre", args.pre, "--post", args.post]
+        return iam_identities.main(argv_tail)
     if args.command == "web-conf":
         from . import web_conf
 

@@ -41,6 +41,7 @@ SHELL_SCRIPTS = [
     "restore-point.sh",
     "logical-export.sh",
     "public-gate.sh",
+    "iam-service-accounts.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -58,6 +59,7 @@ EXECUTABLE_SCRIPTS = [
     "restore-point.sh",
     "logical-export.sh",
     "public-gate.sh",
+    "iam-service-accounts.sh",
 ]
 
 
@@ -158,7 +160,11 @@ def _iac_files() -> list[Path]:
     files = [GCP_DIR / n for n in SHELL_SCRIPTS]
     files.append(GCP_DIR / "README.md")
     files.append(REPO_ROOT / "ops" / "Dockerfile")
-    files += [REPO_ROOT / "ops" / "src" / "ops" / f"{m}.py" for m in ("deploy", "backup")]
+    files.append(REPO_ROOT / "ops" / "iam_identities.toml")
+    files += [
+        REPO_ROOT / "ops" / "src" / "ops" / f"{m}.py"
+        for m in ("deploy", "backup", "iam_identities")
+    ]
     return [f for f in files if f.is_file()]
 
 
@@ -311,3 +317,51 @@ def test_no_deploy_script_names_latest_as_an_image() -> None:
         text = (GCP_DIR / name).read_text()
         assert not re.search(r"--image\s+\S*:latest", text), name
         assert "IMAGE}:latest" not in text, name
+
+
+# --- P34.42a / AR-8: every service deploy names its own runtime identity -------
+
+
+def test_every_service_deploy_passes_an_explicit_service_account() -> None:
+    """G1-01/SIG-SEC-007: deploy plans name `--service-account`, never the
+    default compute identity (P34.42a)."""
+    web = subprocess.run(
+        ["bash", str(GCP_DIR / "web.sh"), "--check", "service"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=_no_adc_env(),
+        cwd=str(REPO_ROOT),
+    )
+    assert web.returncode == 0, web.stderr
+    # The check-mode placeholder project id must be filled — never `rt@.iam…`.
+    assert "@.iam.gserviceaccount.com" not in web.stdout
+    assert re.search(
+        r"run deploy sig-web .*--service-account \S*sig-web-rt@\S*\.iam\.gserviceaccount\.com",
+        web.stdout,
+    ), "sig-web deploy does not name sig-web-rt"
+
+    prov = subprocess.run(
+        ["bash", str(GCP_DIR / "provision.sh"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=_no_adc_env(),
+        cwd=str(REPO_ROOT),
+    )
+    assert prov.returncode == 0, prov.stderr
+    assert re.search(
+        r"run deploy sig-api .*--service-account \S*sig-api-rt@\S*\.iam\.gserviceaccount\.com",
+        prov.stdout,
+    ), "sig-api provision deploy does not name sig-api-rt"
+
+    dep = subprocess.run(
+        ["uv", "run", "sig-ops", "deploy", "--target", "gcp", "--dry-run"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=_no_adc_env(),
+        cwd=str(REPO_ROOT),
+    )
+    assert dep.returncode == 0, dep.stderr
+    assert "--service-account sig-api-rt@" in dep.stdout

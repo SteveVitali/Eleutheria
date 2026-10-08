@@ -81,8 +81,10 @@ def build_gcp_plan(*, project: str | None = None, region: str | None = None) -> 
         f"docker push {image}:api-<git-sha>  (push to Artifact Registry)",
         f"gcloud run deploy sig-api --image {image}@sha256:<digest of api-<git-sha>> "
         f"--region {reg} "
+        f"--service-account sig-api-rt@{proj}.iam.gserviceaccount.com "
         "--min-instances=0  (scale-to-zero API; managed TLS; deployed BY PINNED DIGEST, resolved "
-        "with `gcloud artifacts docker images describe` — ADR-107 §5, ADR-111)",
+        "with `gcloud artifacts docker images describe` — ADR-107 §5, ADR-111; on its own "
+        "P34.42a identity, never the default compute SA — AR-8)",
         f"sig-ops publish: build web/dist with SIG_DATA_SOURCE=export SIG_EXPORT_DIR={export_dir}  "
         "(the P27.4 national export — FAILS LOUD if absent, never a fixtures fall-back)",
         f"sig-ops publish: partition {export_dir} → exports/out/public (licence-separated "

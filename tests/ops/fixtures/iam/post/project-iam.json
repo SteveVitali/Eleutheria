@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "etag": "BwTESTpostIAM",
+  "bindings": [
+    {
+      "role": "roles/editor",
+      "members": [
+        "serviceAccount:12345-compute@developer.gserviceaccount.com",
+        "serviceAccount:12345@cloudbuild.gserviceaccount.com",
+        "serviceAccount:service-12345@serverless-robot-prod.iam.gserviceaccount.com"
+      ]
+    },
+    {
+      "role": "roles/cloudsql.client",
+      "members": ["serviceAccount:sig-api-rt@sig-test-project.iam.gserviceaccount.com"]
+    },
+    {
+      "role": "roles/owner",
+      "members": ["user:operator@example.invalid"]
+    }
+  ]
+}

@@ -135,6 +135,26 @@ export SIG_LB_EARLIEST="2026-10-13T12:00:00Z"  # future-ok: scheduled: contract 
 # ${TMPDIR}/p34.40-l{1,2}); export to keep a run's prestate across invocations.
 export SIG_LB_STATE_DIR="${SIG_LB_STATE_DIR:-${TMPDIR:-/tmp}/p34.40}"
 
+# --- least-privilege runtime identities (P34.42a / G1-01, F-272, SIG-SEC-007) --
+# One per-workload service account per Cloud Run service (AR-8). The committed
+# declaration ops/iam_identities.toml (`sig.iam-identities/1`, read by
+# `sig-ops iam`) carries the bindings + the sig-alerts invoker change; the
+# windowed leg ops/gcp/iam-service-accounts.sh creates the SAs and makes the
+# mutations — it must run BEFORE any deploy that names these accounts.
+export SIG_SA_API="sig-api-rt"          # cloudsql.client + sig-pg-password accessor only
+export SIG_SA_WEB="sig-web-rt"          # objectViewer on ${SIG_BUCKET_WEB} only
+export SIG_SA_ALERTS="sig-alerts-rt"    # no project roles, no secret access
+export SIG_API_SA_EMAIL="${SIG_SA_API}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+export SIG_WEB_SA_EMAIL="${SIG_SA_WEB}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+export SIG_ALERTS_SA_EMAIL="${SIG_SA_ALERTS}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+export SIG_IAM_TOML="ops/iam_identities.toml"
+# The P34.42a live window (OM-19): the IAM leg applies ≥ the bound below and
+# never 03:00–06:30Z (the contract's AR-3 + AR-2 window, row 251 — narrower
+# than P34.40's band, matching the AR-3 daily freeze). SIG_IAM_NOW overrides
+# the clock for the offline guard test only.
+export SIG_IAM_EARLIEST="2026-10-13T12:00:00Z"  # future-ok: scheduled: contract window
+export SIG_IAM_STATE_DIR="${SIG_IAM_STATE_DIR:-${TMPDIR:-/tmp}/p34.42a-iam}"
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented

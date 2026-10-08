@@ -1,0 +1,22 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {"name": "sig-alerts"},
+  "spec": {
+    "template": {
+      "metadata": {"name": "sig-alerts-00004-z1v"},
+      "spec": {
+        "serviceAccountName": "sig-alerts-rt@sig-test-project.iam.gserviceaccount.com",
+        "containers": [
+          {
+            "image": "us-central1-docker.pkg.dev/sig-test-project/sig/sig-alerts@sha256:c10a1e7fdddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          }
+        ]
+      }
+    }
+  },
+  "status": {
+    "latestReadyRevisionName": "sig-alerts-00004-z1v",
+    "url": "https://sig-alerts-cccccccccc-uc.a.run.app"
+  }
+}

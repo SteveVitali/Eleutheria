@@ -1,0 +1,22 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {"name": "sig-api"},
+  "spec": {
+    "template": {
+      "metadata": {"name": "sig-api-00012-b9r"},
+      "spec": {
+        "serviceAccountName": "sig-api-rt@sig-test-project.iam.gserviceaccount.com",
+        "containers": [
+          {
+            "image": "us-central1-docker.pkg.dev/sig-test-project/sig/sig-api@sha256:40a47da8cccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          }
+        ]
+      }
+    }
+  },
+  "status": {
+    "latestReadyRevisionName": "sig-api-00012-b9r",
+    "url": "https://sig-api-aaaaaaaaaa-uc.a.run.app"
+  }
+}
