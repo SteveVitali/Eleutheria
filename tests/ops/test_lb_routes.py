@@ -35,6 +35,13 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DECLARATION = REPO_ROOT / "ops" / "lb_routes.toml"
 EDGE_CONF = REPO_ROOT / "ops" / "edge.conf"
 FIXTURE = REPO_ROOT / "tests" / "ops" / "fixtures" / "lb_routes" / "urlmap-2026-10-07.json"
+
+# Clock values injected as SIG_LB_NOW into the window-guard apply tests
+# (future-ok: scheduled — they reproduce the AR-3 contract window offline;
+# no apply ever runs). SYNTHETIC_ names exempt them under B4 R5.
+SYNTHETIC_INSIDE_FREEZE = "2026-10-08T14:00:00Z"  # inside AR-3 → queue exit 42
+SYNTHETIC_PAST_WINDOW = "2026-10-14T14:00:00Z"  # past the window → ADC gate
+SYNTHETIC_0300_BAND = "2026-10-14T04:00:00Z"  # the excluded 03:00–10:00Z band
 LB_ROUTES_SH = REPO_ROOT / "ops" / "gcp" / "lb-routes.sh"
 WEB_ROLL_SH = REPO_ROOT / "ops" / "gcp" / "web-roll.sh"
 PROJECT = "sig-test-project"
@@ -300,7 +307,7 @@ def test_lb_routes_check_never_touches_network() -> None:
 
 
 def test_lb_routes_apply_refuses_without_adc() -> None:
-    proc = _run(LB_ROUTES_SH, "--apply", "neg", SIG_LB_NOW="2026-10-14T14:00:00Z")
+    proc = _run(LB_ROUTES_SH, "--apply", "neg", SIG_LB_NOW=SYNTHETIC_PAST_WINDOW)
     assert proc.returncode == 3
     out = proc.stdout + proc.stderr
     assert "gate pending" in out or "gcloud" in out
@@ -308,20 +315,20 @@ def test_lb_routes_apply_refuses_without_adc() -> None:
 
 def test_lb_routes_apply_queues_inside_the_freeze() -> None:
     # 2026-10-08 is inside AR-3 — a mutating apply exits 42 with the re-run line.
-    proc = _run(LB_ROUTES_SH, "--apply", "urlmap", SIG_LB_NOW="2026-10-08T14:00:00Z")
+    proc = _run(LB_ROUTES_SH, "--apply", "urlmap", SIG_LB_NOW=SYNTHETIC_INSIDE_FREEZE)
     assert proc.returncode == 42
     assert "implement-spec spec=docs/tickets/249_P34.40" in proc.stdout
-    proc = _run(LB_ROUTES_SH, "--apply", "all", SIG_LB_NOW="2026-10-08T14:00:00Z")
+    proc = _run(LB_ROUTES_SH, "--apply", "all", SIG_LB_NOW=SYNTHETIC_INSIDE_FREEZE)
     assert proc.returncode == 42
 
 
 def test_lb_routes_apply_queues_in_the_0300_1000_band() -> None:
-    proc = _run(LB_ROUTES_SH, "--apply", "neg", SIG_LB_NOW="2026-10-14T04:00:00Z")
+    proc = _run(LB_ROUTES_SH, "--apply", "neg", SIG_LB_NOW=SYNTHETIC_0300_BAND)
     assert proc.returncode == 42
 
 
 def test_lb_routes_apply_past_the_window_reaches_adc_gate() -> None:
-    proc = _run(LB_ROUTES_SH, "--apply", "neg", SIG_LB_NOW="2026-10-14T14:00:00Z")
+    proc = _run(LB_ROUTES_SH, "--apply", "neg", SIG_LB_NOW=SYNTHETIC_PAST_WINDOW)
     assert proc.returncode == 3  # past the window → ADC gate fires, not 42
 
 
@@ -349,10 +356,10 @@ def test_web_roll_check_plans_prestate_roll_poststate() -> None:
 
 
 def test_web_roll_apply_queues_inside_the_freeze() -> None:
-    proc = _run(WEB_ROLL_SH, "--apply", "roll", SIG_LB_NOW="2026-10-08T14:00:00Z")
+    proc = _run(WEB_ROLL_SH, "--apply", "roll", SIG_LB_NOW=SYNTHETIC_INSIDE_FREEZE)
     assert proc.returncode == 42
     assert "scope: L1" in proc.stdout
-    proc = _run(WEB_ROLL_SH, "--apply", "all", SIG_LB_NOW="2026-10-14T04:00:00Z")
+    proc = _run(WEB_ROLL_SH, "--apply", "all", SIG_LB_NOW=SYNTHETIC_0300_BAND)
     assert proc.returncode == 42  # the 03:00–10:00Z band
 
 
