@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "398d903561d640162a7c46fee7c9dfccc43e33f5",
-  "manifest_inputs": 991,
+  "input_commit": "a84d229faba4258d34fdace2d915bcc1ca7d5c2e",
+  "manifest_inputs": 993,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.49",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-08T16:28Z"
   },
   "counts": {
-    "obligations": 158,
-    "owed": 89,
-    "open": 86,
+    "obligations": 160,
+    "owed": 91,
+    "open": 88,
     "partial": 3,
     "terminal": 69,
-    "events": 642,
+    "events": 644,
     "transitions": 30,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
@@ -7937,6 +7937,104 @@
           "anchor": {
             "row_line": 1227,
             "row_sha256": "546f4e60c1b8a5d8852d9f5ccdf01102f90b3e91be92f5f6807c649184a12729",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-08"
+        }
+      ]
+    },
+    {
+      "id": "D-P34.49-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.49-1:e0",
+      "kind": "P",
+      "owner": "P37.3 (the evidence-store hardening / copies row)",
+      "landing": "P37.3's design work begins (its copy/export enumeration names `capture_seal` + `sig.seal-deny/1` as exclusion inputs)",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "Sealed-material exclusion for P37.3's off-instance copies: any copy of the evidence store the evidence-store-hardening row (P37.3) makes or verifies MUST exclude `capture_currently_sealed` captures' bytes, or carry them only inside a separately-encrypted compartment whose key is not on the copied media — a protective seal's whole point is that the material leaves every publishable tier, and a plain byte-copy of the bucket would silently defeat it",
+      "unblocked_by": "owner: P37.3 (the evidence-store hardening / copies row) · trigger: P37.3's design work begins (its copy/export enumeration names `capture_seal` + `sig.seal-deny/1` as exclusion inputs)",
+      "verify": "P37.3's written copy procedure names the sealed set as excluded-or-separately-encrypted AND its verification counts the excluded sealed digests (counts only — never lists material); the standing review confirms no off-instance copy carries a currently-sealed digest",
+      "proxy": "the exclusion is declared today in the seal record's own docs (ADR-203) and the deny set is the machine-readable input; until P37.3 lands, sealed bytes sit only in the OCFL store under the deny consults — no copy path exists that could leak them",
+      "line": 1239,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.49-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.49-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.49",
+          "owner": "P37.3 (the evidence-store hardening / copies row)",
+          "landing": "P37.3's design work begins (its copy/export enumeration names `capture_seal` + `sig.seal-deny/1` as exclusion inputs)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/254_P34.49__part-viii-at-rest-audit.md",
+            "docs/adr/ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md",
+            "db/deploy/seal_register.sql",
+            "evidence/src/evidence/seal.py"
+          ],
+          "observed_at": "2026-10-08",
+          "source_commit": "a84d229faba4258d34fdace2d915bcc1ca7d5c2e",
+          "reason": "migration anchor appended by P34.49 (row 254) for the deferral row it added — sealed-material exclusion for P37.3's off-instance copies (any copy of the evidence store must exclude `capture_currently_sealed` captures' bytes or carry them only in a separately-encrypted compartment; ADR-203); appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1239,
+            "row_sha256": "c3959b7985e3d5bb2adfc79cb703e5087861332a4215757cebe614db9a5f6eb5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-08"
+        }
+      ]
+    },
+    {
+      "id": "D-P34.49-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.49-2:e0",
+      "kind": "P",
+      "owner": "the connectors capture path (orchestrator routes — candidate home is the F-400 capture-writer row, P35.31)",
+      "landing": "the next OSM replay fire (the first Overpass re-capture after this row — if the writer still stores `user`/`uid`, the fix lands then)",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "The capture-side fix behind F-406's OSM half (SIG-INGEST-045e): `connectors`' Overpass path discards `user`/`uid` only in `extract()` — AFTER the raw capture is written — so stored Overpass captures still carry the identity metadata the ingest side correctly drops. The fix belongs at the capture writer (strip or refuse `user`/`uid` before the bytes land), so a capture never stores what ingest must not keep",
+      "unblocked_by": "owner: the connectors capture path (orchestrator routes — candidate home is the F-400 capture-writer row, P35.31) · trigger: the next OSM replay fire (the first Overpass re-capture after this row — if the writer still stores `user`/`uid`, the fix lands then)",
+      "verify": "a fresh Overpass capture stored after the fix contains no `user`/`uid` keys (a scan of exactly that object reports zero F406-OSM-USERUID hits) AND the at-rest screen re-run on the fixture set still counts only",
+      "proxy": "the ingest-side strip already protects the claim spine (the prohibited keys never become claims); the at-rest audit's seal suppresses any pre-fix capture on every publishable path — the stored bytes are contained, not live",
+      "line": 1240,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.49-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.49-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.49",
+          "owner": "the connectors capture path (orchestrator routes — candidate home is the F-400 capture-writer row, P35.31)",
+          "landing": "the next OSM replay fire (the first Overpass re-capture after this row — if the writer still stores `user`/`uid`, the fix lands then)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/254_P34.49__part-viii-at-rest-audit.md",
+            "docs/adr/ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md",
+            "evidence/src/evidence/screen.py",
+            "ops/at_rest_audit.toml"
+          ],
+          "observed_at": "2026-10-08",
+          "source_commit": "a84d229faba4258d34fdace2d915bcc1ca7d5c2e",
+          "reason": "migration anchor appended by P34.49 (row 254) for the deferral row it added — the capture-side fix behind F-406's OSM half (SIG-INGEST-045e discards `user`/`uid` only in `extract()`, after the raw capture is written; the strip/refuse belongs at the capture writer); appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1240,
+            "row_sha256": "66525c8975aa51608a5fb13ea5b75d2baeba60799572a4c301d117a4164d21bd",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -18199,7 +18297,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c8547ee3af89eef20aca82d4aa8014b4713c53630c84df24afe027aec0555013",
+  "manifest_sha256": "492ba4fe107af2a9adbdeaad082a09bc136332565645ba16058bab0a35ab6cd4",
   "current_md": {
     "lines": 63,
     "bytes": 15454,

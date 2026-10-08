@@ -1,0 +1,238 @@
+# ops/at_rest_audit.toml — the P34.49 Part VIII at-rest audit declaration
+# (sig.at-rest-audit-decl/1; F-406, ADR-185, SIG-PUB-002/003/011–014a,
+# SIG-STORE-025, SIG-GOV-007/017).
+#
+# The ONE committed rule table the at-rest screen applies — class ids, rule
+# vocabularies, lane membership, output objects. The ENGINE lives in
+# evidence/screen.py (pure, counts-only); this file declares WHAT it screens
+# so the applied screen is auditable byte-for-byte and a vocabulary change is
+# a reviewable diff, never a code spelunk.
+#
+# COUNTS-ONLY CONTRACT: every rule reports a COUNT of fields/elements that
+# matched — a field name, value, or captured string is an input, never an
+# output. The L1 report (sig.at-rest-audit/1) carries counts per class per
+# source; the flagged sidecar (sig.at-rest-flagged/1, restricted) names object
+# ids + digests + class ids so L2 seals exactly the flagged set.
+#
+# Fail-closed: an unknown class id / rule kind / value pattern REFUSES the
+# declaration (evidence.screen.validate_declaration) — a screen that cannot
+# name its rules never runs.
+schema = "sig.at-rest-audit-decl/1"
+
+# --- outputs -----------------------------------------------------------------
+[outputs]
+# The L1 scan's landing zone on gs://${SIG_GCP_PROJECT}-sig-restricted — the
+# exec identity's conditioned objectCreator admits ops/probes/ ONLY (the same
+# prefix the probe-run records use); report + flagged sidecar live under it.
+report_prefix = "ops/probes/at-rest/"
+# The serving/export deny set — written by the L2 leg under operator ADC into
+# ops/seal/ (a NEW object VERSION per update under bucket versioning, never
+# an in-place rewrite; sig.seal-deny/1, supersedes = the full prior entries).
+deny_set_object = "ops/seal/deny-set.json"
+# The counts-only SIG-PUB-002 listing the operator's purge decision (WV-11,
+# ADR-181 control 2, ADR-189) consumes — categories × object counts, never
+# material.
+pub002_object = "ops/seal/pub002-listing.json"
+
+# --- F-406 classes -------------------------------------------------------------
+# The three findings the Round-11 audit caught pre-ingest (SIG-GOV-007 §F-406).
+# Class applies when a member glob matches the source id; an empty member set
+# applies the class to every capture.
+
+# F-406: OSM user/uid identity metadata from the `out meta` Overpass query —
+# D-R11-OSMUID-1 fixed ingest; this screens captures stored BEFORE the fix.
+[[class]]
+id = "F406-OSM-USERUID"
+members = ["osm_overpass*", "osm_geofabrik*", "osm_*"]
+[[class.rules]]
+kind = "shape"
+shapes = ["json_elements"]   # .elements[] entries carrying user/uid + the XML twin
+[[class.rules]]
+kind = "fields"
+fields = ["user", "uid"]     # belt-and-braces: the bare keys anywhere in a doc
+
+# F-406: Eyes on Flock free-text search reasons.
+[[class]]
+id = "F406-EOF-FREETEXT"
+members = ["eyes_on_flock*"]
+[[class.rules]]
+kind = "fields"
+fields = ["top_search_reasons", "search_reasons", "search_reason", "reason_text"]
+
+# F-406: all-attribute ArcGIS captures carrying editor-tracking / operator /
+# contact material. Shape rule + the F-406-named field vocabulary + scoped
+# value patterns (e-mail/phone under any attribute — value never recorded).
+[[class]]
+id = "F406-ARCGIS-ATTRS"
+members = ["camreg_*", "dot_511_*", "*_arcgis_*", "camreg"]
+[[class.rules]]
+kind = "shape"
+shapes = ["arcgis_attributes"]
+fields = [
+  "created_user", "last_edited_user", "created_by", "modified_by", "editor",
+  "creator", "updated_by", "owner", "operator", "camera_org", "contact*",
+  "*_email", "*_phone", "email", "phone", "address",
+]
+patterns = ["email", "phone"]
+
+# --- I7 screen classes (the Tier-2 lanes, SIG-PUB-012/013/014a) -----------------
+# A lane rule runs ONLY on declared member sources — members are source-id
+# globs the declaration names deliberately (a lane member lands in the store,
+# the row is added, the leg flags it). Membership is conservative: an
+# over-broad glob can over-flag (a reviewable seal), never under-flag.
+#
+# S1: private-camera registry registrant names (PCAM/Flock/Ring/Nextdoor lanes).
+[[class]]
+id = "I7-S1"
+members = ["*flock*", "*ring*", "*nextdoor*", "*pcam*", "*private_camera*"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "registrant", "owner_name", "camera_owner", "household", "applicant",
+  "contact_name", "customer", "resident", "subscriber", "user_name",
+]
+
+# S2: GardenCity-class ArcGIS members — the allowlist lane (editor-tracking,
+# operator names, pilot-programme fields are off the allowlist).
+[[class]]
+id = "I7-S2"
+members = ["*gardencity*", "*garden_city*", "*mark43*", "camreg_nola_la"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "created_user", "last_edited_user", "created_by", "modified_by", "editor",
+  "creator", "updated_by", "owner", "operator", "camera_org", "pilot*",
+  "contact*", "*_email", "*_phone",
+]
+[[class.rules]]
+kind = "value_patterns"
+patterns = ["email", "phone"]
+
+# S3: 311-class aggregate-only members — any row-level record is a breach.
+[[class]]
+id = "I7-S3"
+members = ["*311*", "*la311*", "*nyc311*", "*kc311*"]
+[[class.rules]]
+kind = "shape"
+shapes = ["row_level"]
+
+# S4: residential-coordinate / RF-propagation members (OKC class).
+[[class]]
+id = "I7-S4"
+members = ["*okc*residential*", "*rf_propagation*", "*residential*"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "home_address", "household", "address", "resident*", "street_addr*",
+  "parcel*", "unit*", "apt*",
+]
+
+# S5: officer-naming members (SFPD/CA-DOJ class).
+[[class]]
+id = "I7-S5"
+members = ["*sfpd*", "*ca_doj*", "*officer*"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "officer_name", "officer", "investigator", "employee_name", "responder",
+  "badge*", "detective", "sergeant", "lieutenant",
+]
+
+# S6: records-derived members (free text is the hazard class).
+[[class]]
+id = "I7-S6"
+members = ["eyes_on_flock*", "*records*", "*foia*", "*muckrock*", "*minutes*"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "description", "notes", "comment*", "reason*", "narrative", "text",
+  "free_text", "summary_text", "remarks",
+]
+
+# S7: DC-PSAP-class members (incidental private names inside operational
+# records — 911-caller/witness-shaped fields).
+[[class]]
+id = "I7-S7"
+members = ["*psap*", "*911*", "*dispatch*"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "caller*", "witness*", "complainant*", "person*", "name", "first_name",
+  "last_name", "reported_by",
+]
+
+# S8: tribal-sovereignty / ShotSpotter-class members — the screened-lane rule
+# is membership itself: a member's row-level records are prohibited (only
+# named screened aggregates may emit). Flags every row-level record.
+[[class]]
+id = "I7-S8"
+members = ["*shotspotter*", "*soundthinking*", "*tribal*", "*nation_*"]
+[[class.rules]]
+kind = "shape"
+shapes = ["row_level"]
+
+# S9: Baltimore/NYPD/Western-class per-member hazards (family-member lists,
+# same-org hazard layers, signature blocks) — declared vocabulary.
+[[class]]
+id = "I7-S9"
+members = ["*baltimore*", "*nypd*", "*western_*"]
+[[class.rules]]
+kind = "fields"
+fields = [
+  "signature*", "signed_by", "approver*", "family*", "spouse*", "staff*",
+  "personnel*", "contact_name",
+]
+
+# --- SIG-PUB-002 never-publish categories (screened on EVERY capture) -----------
+# The categorical listing for the operator's purge decision — counts per
+# category; a flag on a field NAME (or a scoped plate value), never a value.
+[[class]]
+id = "PUB002-PLATES"
+[[class.rules]]
+kind = "fields"
+fields = [
+  "plate", "plates", "license_plate", "plate_number", "plate_text",
+  "plate_read*", "vrm", "tag_number", "vehicle_plate",
+]
+[[class.rules]]
+kind = "value_patterns"
+patterns = ["plate"]        # plate shape scoped to plate-named fields only
+fields = ["plate*", "*_plate", "vrm", "tag_number"]
+
+[[class]]
+id = "PUB002-HOME-ADDRESSES"
+[[class.rules]]
+kind = "fields"
+fields = [
+  "home_address", "street_address", "address", "addr", "residence",
+  "household_address", "owner_address", "site_address",
+]
+
+[[class]]
+id = "PUB002-PERSON-NAMES"
+[[class.rules]]
+kind = "fields"
+fields = [
+  "person_name", "first_name", "last_name", "full_name", "contact_person",
+  "registrant", "owner_name", "officer_name", "caller_name", "witness",
+  "complainant", "reported_by",
+]
+
+[[class]]
+id = "PUB002-PERSONAL-IDS"
+[[class.rules]]
+kind = "fields"
+fields = [
+  "ssn", "social_security", "drivers_license", "driver_license", "dl_number",
+  "license_number", "id_number", "voter_id", "badge_id", "employee_id",
+  "person_id", "national_id",
+]
+
+[[class]]
+id = "PUB002-TRAVEL-HISTORIES"
+[[class.rules]]
+kind = "fields"
+fields = [
+  "travel_history", "trip*", "itinerary", "sighting*", "route_history",
+  "movement*", "visited*", "travelled*", "traveled*",
+]
