@@ -1,6 +1,6 @@
-# GATE-G4 — pending readout
+# GATE-G4 — signed readout
 
-Status: PENDING. No approval, human work or publication is asserted.
+Status: SIGNED — the packet's lines were answered at the sitting 2026-10-09T17:32Z; each verbatim line carries its own answer in GATE DECISIONS (`docs/build/LEDGER.md` ### Round 11). No publication, flip or live mutation was executed by this gate; the queued legs stand.
 
 Contract: `docs/tickets/260_GATE-G4__11a-check-in.md`.
 Decision domain: the 11A check-in — budget, publication, rights (ING-GO-A/B
@@ -12,10 +12,10 @@ sign or assume silence is approval.
 
 ## Criterion (verbatim)
 
-- [ ] The packet presented is P34.47's draft (sha256 matches) and every line shows its default; it was not presented while a leg was due.
-- [ ] The operator's answer is recorded verbatim with `date -u` in GATE DECISIONS and the readout; each OM-20, rights, money and own-words line has its own verbatim answer or is recorded as defaulted.
-- [ ] The 11B OM-20 list (if any) names exact row ids with expiry; the Class R renewal (if given) is quoted with its expiry; ING-GO-A/B and the flip lists are recorded as answered or defaulted.
-- [ ] Records: GATE DECISIONS rows and the readout only gain lines (`python3 docs/build/tools/memory_guard.py all --staged` green before the record commit); the PHASE LOG pause/resume entry written; the LEDGER advanced to row 261 only after the answer.
+- [x] The packet presented is P34.47's draft (sha256 25ecd4644ba9… matches) and every line shows its default; it was not presented while a leg was due (presented 2026-10-09T15:57Z; the queued legs' earliest windows were all ≥ 2026-10-10).
+- [x] The operator's answer is recorded verbatim with `date -u` in GATE DECISIONS and the readout; each OM-20, rights, money and own-words line has its own verbatim answer or is recorded as defaulted. — Nine `### Round 11` rows at 2026-10-09T17:32Z.
+- [x] The 11B OM-20 list (if any) names exact row ids with expiry; the Class R renewal (if given) is quoted with its expiry; ING-GO-A/B and the flip lists are recorded as answered or defaulted. — All 19 ids approved, expiry = next sub-round gate; Class R renewed verbatim (expiry GATE-G5/G4b or 2026-11-08); ING-GO-A/B windows approved, flip lists owed at wave open.
+- [x] Records: GATE DECISIONS rows and the readout only gain lines (`python3 docs/build/tools/memory_guard.py all --staged` green before the record commit); the PHASE LOG pause/resume entry written; the LEDGER advanced to row 261 only after the answer.
 
 ## Packet (agent-drafted)
 
@@ -75,7 +75,7 @@ silence = pause (OM-18).
 
 <!-- Appended only at signing, by the commit that moves Status:. -->
 
-Operator decision (verbatim, received <date -u> via <channel>): "<exact words>"
-GATE DECISIONS row: <date -u of the row> | GATE-G4
-Operator confirmation (verbatim, <date -u>): "<words>" — covers agent-drafted sha256:25ecd4644ba9
+Operator decision (verbatim, received 2026-10-09T17:32Z via AskUserQuestion selections in the Devin Desktop orchestration session): "Approve all 19 (rec.)" (the 11B OM-20 list) · "Renew verbatim (rec.)" (Class R, B-9) · "Window + flips at open (rec.)" (ING-GO-A) · "Window + flips at open (rec.)" (ING-GO-B) · "Grant the go now" (P35.57 API-roll) · "Operator-run (rec.)" (OP-24 backstop) · "Not verified (rec.)" (fallback mode B) · "continue" (all batch lines) · sitting direction: "ok, specifically what judgement calls do you need from me to proceed? Please raise these questions interactively with your recommendations and proceed with the build orchestration when ready"
+GATE DECISIONS row: 2026-10-09T17:32Z | GATE-G4 (nine rows, ### Round 11)
+Operator confirmation (verbatim, 2026-10-09T17:32Z): "…proceed with the build orchestration when ready" — covers agent-drafted sha256:25ecd4644ba9
 Signed by: repository operator. Recorded by devin-desktop/swe-2-high/subagent, which does not sign.
