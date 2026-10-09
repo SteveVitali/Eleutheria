@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d7431b43606e8d01509ee7c0f9e6ce93061b9301",
+  "input_commit": "dee90db03f84594da22ca5e71794388fe1dd8533",
   "manifest_inputs": 1000,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.46",
-    "lastCompleted": "P34.45",
+    "nextTicket": "P34.47",
+    "lastCompleted": "P34.46",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.49, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.46, P34.49, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.45-honest-evaluation-posture",
+    "chainTip": "r11/P34.46-round10-schema-allows-and-api-roll",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-09T08:54Z"
+    "updatedAt": "2026-10-09T11:09Z"
   },
   "counts": {
     "obligations": 160,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 29,
+    "return_pass_rows": 30,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8348,6 +8348,14 @@
         "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z daily and the monthly batch window (day 6 00:00Z → day 13 12:00Z) — apply exits 42; pre-authorised: S5-3 \"Both + list + P34.45\" (expires GATE-G4) and additionally waits on `live:P34.43` (exec host + the `sig_materialize_login` credential), `live:P34.44b` (the GQ-24 post-run check) and `live:P34.46` (sig-api serving the rolled v3-interim image — the A-20 basis label); voided-by a red probe, a failed restore point or a contradicting production read; AR-2 = an on-demand Cloud SQL backup verified SUCCESSFUL immediately before the run + recorded prestate (per-tier counts, `spine_watermark`, current run id)",
         "operator_cell": "nothing until the window opens, all three live edges hold and ADC is armed — `er-rerun.sh --check` is plan-only (no ADC/network); `SIG_ER_RERUN_AUTHOR` (the recorded operator id) gates every mutating apply; an existing `ruleset_version='3-interim'` run exits 42 (exactly once — a second run needs a new decision); rollback is forward-only — a superseding run under the prior ruleset digest or a PITR clone for comparison; never an UPDATE/DELETE",
         "rerun_cell": "`implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true` (scope: the ER re-run leg only) · landed as row 257 (engineered + fixture-verified — the leg queued exit 42, never executed)",
+        "obligations": []
+      },
+      {
+        "key": "P34.46",
+        "obligations_cell": "the queued L2 deploy slot (the schema roll of the rehearsed plan tip + the ADR-159 auto-allow dispositions + the `sig-api` roll by digest + the `/status/` notice + the trigger pause/resume) and the queued L3 48 h soak; the engineered halves landed — the `@r11-verify-membership` rework (the P34.24b verify-role defect closed), the fresh-clone re-rehearsal green, `sig-ops roll-gate`, the go-request/notice/changelog drafts and the computed pause list; no deferral of its own opens",
+        "gates_cell": "hosted, never pre-authorised (IN-TICKET PAUSE — L44 rewrites `claim_evidence` under ACCESS EXCLUSIVE): L2 needs the operator's verbatim in-ticket go recorded in GATE DECISIONS, the operator present, a weekday 14:00-20:00Z slot not before 2026-10-14T14:00Z (the excluded hours: weekends and outside-14:00-20:00Z), `live:P34.39a` (the 10-10 read-back verdict `pass`), an AR-2 backup SUCCESSFUL, and `sig-ops roll-gate` green on fresh inputs (rehearsed lock <= min(20 min, 2x the P34.24b bound), disk >= 2x `claim_evidence`, `lock_timeout` set, plan diff = 0 — else re-rehearse first); L3 runs 48 h after a successful L2",
+        "operator_cell": "record the verbatim in-ticket go (silence is never consent) and be present in the slot; the go request + notice + changelog drafts ship verbatim-confirmed at the slot; no hosted `sqitch revert` — schema failures fix forward",
+        "rerun_cell": "`implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` (scope: one leg per run — L2 the slot, then L3 the soak) · landed as row 258 (PR #260; L1 engineered + live clone-verified — L2/L3 queued)",
         "obligations": []
       }
     ]
@@ -18348,10 +18356,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "093e2678acb5f5b6be9ba15925f7b229c0b6b66c2148ccdab7e65f44197719e5",
+  "manifest_sha256": "838ec9ded602e23b39c9e2312eb7b1ceeb2c4a7433d1a4676f8f2bcb081b6abc",
   "current_md": {
     "lines": 63,
-    "bytes": 15433,
+    "bytes": 15442,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
