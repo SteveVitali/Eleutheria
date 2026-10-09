@@ -43,13 +43,20 @@ def test_gate_queued_before_window():
 
 
 def test_gate_queued_without_l2():
-    g = acceptance.evaluate_gate(_gate_inputs(now="2026-10-20T15:00:00Z", p34_46_l2_landed=False))
+    g = acceptance.evaluate_gate(
+        _gate_inputs(
+            now="2026-10-20T15:00:00Z",  # future-ok: synthetic: post-window instant
+            p34_46_l2_landed=False,
+        )
+    )
     assert g.decision == "queued"
     assert any("p34_46_l2" in r for r in g.refusals)
 
 
 def test_gate_run_after_l2_in_window():
-    g = acceptance.evaluate_gate(_gate_inputs(now="2026-10-15T09:00:00Z"))
+    g = acceptance.evaluate_gate(
+        _gate_inputs(now="2026-10-15T09:00:00Z")  # future-ok: synthetic: post-floor test instant
+    )
     assert g.decision == "run"
     assert g.to_record()["rerun_prompt"] is None
 
@@ -57,7 +64,7 @@ def test_gate_run_after_l2_in_window():
 def test_gate_soak_and_handle_list_are_advisories_not_blockers():
     g = acceptance.evaluate_gate(
         _gate_inputs(
-            now="2026-10-15T09:00:00Z",
+            now="2026-10-15T09:00:00Z",  # future-ok: synthetic: post-floor test instant
             p34_46_l3_soak_read=False,
             handle_list_present=False,
         )
@@ -87,7 +94,10 @@ def test_map_derived_inputs(tmp_path):
     assert inputs["p34_46_l3_soak_read"] is False
     assert inputs["handle_list_present"] is False
     mp.write_text('[[row]]\nkey = "P34.46"\n[[row.legs]]\nid = "P34.46-soak"\n')
-    inputs = acceptance.map_derived_inputs(mp, now="2026-10-15T00:00:00Z")
+    inputs = acceptance.map_derived_inputs(
+        mp,
+        now="2026-10-15T00:00:00Z",  # future-ok: synthetic: post-floor test instant
+    )
     assert inputs["p34_46_l2_landed"] is True
     assert inputs["p34_46_l3_soak_read"] is False
 
@@ -198,7 +208,7 @@ def test_run_sweep_pass(tmp_path):
         handle_list=handles,
         l3_soak_read=True,
         reads={"scheduler": {"triggers": 2}, "billing_export": {"present": True}},
-        now="2026-10-15T00:00:00Z",
+        now="2026-10-15T00:00:00Z",  # future-ok: synthetic: post-floor test instant
         cadence_path=_CADENCE,
         fetch_text=lambda u: (200, "clean body\n"),
         fetch_bytes=lambda u: (206, b"clean bytes"),
@@ -291,7 +301,14 @@ def test_cli_check_exit42(tmp_path):
 
 def test_cli_check_run(tmp_path):
     inputs = tmp_path / "in.json"
-    inputs.write_text(json.dumps(_gate_inputs(now="2026-10-15T12:00:00Z")), encoding="utf-8")
+    inputs.write_text(
+        json.dumps(
+            _gate_inputs(
+                now="2026-10-15T12:00:00Z"  # future-ok: synthetic: post-floor test instant
+            )
+        ),
+        encoding="utf-8",
+    )
     assert acceptance.main(["--check", "--inputs", str(inputs)]) == 0
 
 

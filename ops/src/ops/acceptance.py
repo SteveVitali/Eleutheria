@@ -54,8 +54,9 @@ TARGET = "11a-live-surfaces"
 
 #: Contract live window: the sweep runs after P34.46's L2 lands live and
 #: never before the earliest possible L2 slot instant (ticket §Live
-#: window: "≥ 2026-10-14"; P34.46's earliest slot is 14:00Z).
-WINDOW_EARLIEST = "2026-10-14T14:00:00Z"  # future-ok: scheduled window floor (OM-19)
+#: window: "≥ 2026-10-14" — future-ok: scheduled: the contract's own
+#: floor text; P34.46's earliest slot is 14:00Z).
+WINDOW_EARLIEST = "2026-10-14T14:00:00Z"  # future-ok: scheduled: real AR-3 window floor (OM-19)
 
 #: The ticket's re-run prompt, recorded on every refusal/queued state.
 RERUN = (
