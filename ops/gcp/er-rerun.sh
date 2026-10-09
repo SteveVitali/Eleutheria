@@ -346,7 +346,7 @@ do_run() {
     _plan "assert no camera_site_run row with ruleset_version='3-interim' yet (exactly once — else exit 42)"
     _plan "sig-ops exec-host run --purpose er-rerun --secret-env SIG_ER_RERUN_PASSWORD \\"
     _plan "  --env SIG_PG_USER=${SIG_DB_ROLE_MATERIALIZE_LOGIN} --env SIG_PG_DB=... --env SIG_CLOUDSQL_CONNECTION=... \\"
-    _plan "  --arg=-c --arg 'export SIG_PG_PASSWORD=\"\$SIG_ER_RERUN_PASSWORD\"; exec python -m resolution camera-sites --dsn \"postgresql://\${SIG_PG_USER}:\${SIG_PG_PASSWORD}@/\${SIG_PG_DB}?host=/cloudsql/\${SIG_CLOUDSQL_CONNECTION}\" --role ${SIG_DB_ROLE_MATERIALIZE_LOGIN}'"
+    _plan "  --arg=-c --arg 'DSN=\"postgresql://\${SIG_PG_USER}:\${SIG_ER_RERUN_PASSWORD}@/\${SIG_PG_DB}?host=/cloudsql/\${SIG_CLOUDSQL_CONNECTION}\"; exec python -m resolution camera-sites --dsn \"\$DSN\" --role ${SIG_DB_ROLE_MATERIALIZE_LOGIN}'"
     return 0
   fi
   assert_deps
@@ -387,7 +387,7 @@ PY
       --env "SIG_PG_DB=${SIG_PG_DB_NAME:-sig}" \
       --env "SIG_CLOUDSQL_CONNECTION=${conn}" \
       --env "SIG_EXEC_BUCKET=${SIG_EXEC_BUCKET}" \
-      --arg=-c --arg 'export SIG_PG_PASSWORD="$SIG_ER_RERUN_PASSWORD"; exec python -m resolution camera-sites --dsn "postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}" --role sig_materialize_login' \
+      --arg=-c --arg 'DSN="postgresql://${SIG_PG_USER}:${SIG_ER_RERUN_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}"; exec python -m resolution camera-sites --dsn "$DSN" --role sig_materialize_login' \
       >"${logf}" 2>&1; then
     _log "ERROR: the ER re-run failed — ${logf} has the output; the cleanup still ran (name-checked delete)." >&2
     exit 4
