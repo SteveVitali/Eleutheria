@@ -120,6 +120,21 @@
 | HW-13 | component/HowWeKnowThis | — this page | 2abeefadfd80aed1a6c7c4cb12b9e6730d153cccf440e66b800bfb978370c329 | pending |
 | MD-01 | lib/meta.ts | ${title} — Surveillance Infrastructure Graph (SIG) | b0f3d7cd012e8c848f0b0b5a39e533fbcdbb63229dfad78d2f33082486f11d52 | pending |
 | WM-01 | component/BaseLayout | SIG Surveillance Infrastructure Graph — home | 626b082b24a64831515e39f3f6830f963e38e56f3a291f870ce0e4312e116463 | pending |
+| JD-01 | /dossier/[slug]/ | This dossier combines {combinesList}. | a4ca28564fa4004f5cf5dc38b14730e16b0d6a863ec7680b97e32bd3ede366ea | pending |
+| JD-02 | /dossier/[slug]/print/ | This dossier combines {combinesList}. | a4ca28564fa4004f5cf5dc38b14730e16b0d6a863ec7680b97e32bd3ede366ea | pending |
+| JD-03 | /dossier/[slug]/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| JD-04 | /dossier/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| JD-05 | /search/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| JD-06 | / | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| JD-07 | /dossier/[slug]/print/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+<!-- P34.14 (QW-8, K4 NEW-1): the mixed-bucket sentence and the unmapped-code
+     flag. `{combinesList}` is a rendered template placeholder (the HW-09
+     `{provenance.denominator}` precedent — the row pins the sentence shape)
+     resolving to JURISDICTION_COMBINES in web/src/lib/jurisdictions.ts, which
+     renders "Idaho (US) and Indonesia" on ID and "Minnesota and Mongolia" on
+     MN. The unmapped-code rows ship on every surface that shows a jurisdiction
+     name; the element renders only when a code the table does not know reaches
+     it — none does today. pending — added 2026-10-03. -->
 <!-- P34.13: the 410 body and the /terms notice are notice strings N-6 and N-7
      verbatim — they ship by sha256 under B-2's notice allowance (until
      GATE-G4), not as batch rows; `data-notice` records which string each is.

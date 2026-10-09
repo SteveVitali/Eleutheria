@@ -18,6 +18,7 @@ import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../lib/dossier";
 import { getDossiers } from "../../lib/data";
+import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
 
 export function getStaticPaths() {
   return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
@@ -33,10 +34,22 @@ const dossier = applyPublicationPolicy(Astro.props.dossier);
 validateDossier(dossier);
 const lang = dossierLang(dossier);
 const SECTION_TITLES = sectionTitlesFor(lang);
+// P34.14 (QW-8, F-105): the place's NAME leads — the code stays, secondary
+// (`label` is "Name (CODE)"). A physically mixed bucket says which two places
+// it combines (K4 NEW-1); an unmapped code fails loud with the task link.
+const jurisdiction = displayJurisdiction(dossier.jurisdiction);
+const pageTitle = dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction);
+const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ") : null;
 ---
 
-<BaseLayout title={dossier.subject_label} path={dossierPath(dossier.slug)} lang={lang}>
-  <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{dossier.jurisdiction}</p>
+<BaseLayout title={pageTitle} path={dossierPath(dossier.slug)} lang={lang}>
+  <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
+  {combinesList && (
+    <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-01">This dossier combines {combinesList}.</p>
+  )}
+  {!jurisdiction.known && (
+    <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-03">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+  )}
   <p class="sig-dossier-kind" data-testid="dossier-kind" data-copy="D-01 D-02">
     Inventory overview — built automatically from published claims. The
     evidence-complete reviewed-portfolio form is being built.
