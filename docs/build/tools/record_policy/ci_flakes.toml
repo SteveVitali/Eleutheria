@@ -62,3 +62,13 @@ evidence_runs = ["37991996497"]
 reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1, on the composed job's image pulls"
 tracking = "same as DOCKERHUB-RATE-1 — escalate to the operator for authenticated pulls or a mirror if recurring"
 expires = "2026-12-01"
+
+[[flake]]
+id = "DOCKERHUB-RATE-3"
+job = "python"
+step = "testcontainer image pulls (sqitch/postgis in tests/db)"
+pattern = "toomanyrequests.*pull rate limit|pull rate limit"
+evidence_runs = ["37992428702"]
+reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1/-2, on the python job's tests/db image pull"
+tracking = "same as DOCKERHUB-RATE-1 — three jobs on the same class; ESCALATED to the operator (OM-18 three-use rule)"
+expires = "2026-12-01"

@@ -3,3 +3,6 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-10-09T20:48,262,bcb8f25e,web,DOCKERHUB-RATE-1,37988558340,1,failure (unlisted at first failure — rerun was my deviation, see PHASE LOG)
 2026-10-09T20:57,262,bcb8f25e,web,DOCKERHUB-RATE-1,37988558340,2,failure (flake-exhausted on this head)
 2026-10-09T21:14,262,877eb6f2,composed,DOCKERHUB-RATE-2,37991996497,1,failure
+2026-10-09T21:14,262,7973564,composed,DOCKERHUB-RATE-2,37992428702,1,failure
+2026-10-09T21:24,262,7973564,web,DOCKERHUB-RATE-1,37992428702,1,failure
+2026-10-09T21:24,262,7973564,python,DOCKERHUB-RATE-3,37992428702,1,failure
