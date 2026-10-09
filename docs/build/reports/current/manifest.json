@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "8c848cd6750ecfbd0efd531ffb6dee9a57c4e514",
+  "input_commit": "6039ecbb1eb5771f69974e37081759847acb95c3",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -855,6 +855,10 @@
     {
       "path": "docs/build/readouts/GATE-G3.md",
       "sha256": "d50f8955924e0dba1f865e322fc6e51cf6dfc1fba092364657fec6613e164547"
+    },
+    {
+      "path": "docs/build/readouts/GATE-G4.md",
+      "sha256": "4d184d3b31cdd630434242c87aa0ffd4ad8eecb5f84f145b08111cf29d32c834"
     },
     {
       "path": "docs/build/readouts/HUMAN-H1.md",

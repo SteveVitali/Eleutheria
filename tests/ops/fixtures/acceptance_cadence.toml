@@ -1,0 +1,23 @@
+# Fixture cadence for the acceptance-sweep absence-probe leg: one http-absent
+# target over a placeholder origin (the test's injected check_absent never
+# touches the network).
+[probes]
+job = "sig-probe"
+scheduler = "sig-sched-probe"
+schedule = "0 */6 * * *"
+gcs_prefix = "gs://example/probe/"
+
+[[probes.targets]]
+name = "absent-curate"
+kind = "http-absent"
+url = "https://example.invalid"
+path = "/curate/"
+
+[[probes.targets]]
+name = "absent-curate-submit"
+kind = "http-absent"
+url = "https://example.invalid"
+path = "/curate/submit/"
+
+[runs]
+gcs_prefix = "gs://example/runs/"

@@ -618,6 +618,32 @@ def build_parser() -> argparse.ArgumentParser:
         help="also write the verdict JSON to this path",
     )
 
+    acsw = sub.add_parser(
+        "acceptance-sweep",
+        help="P34.47 (plan §5.1/§13.1): the 11A live-read acceptance sweep "
+        "→ sig.probe-run/1 (read-only crawl of site/API/tiles/sig-public/"
+        "repo tip, handle + claim-word counts only). Gated on P34.46's L2 "
+        "landing + the window floor — exits 42 queued otherwise; --check "
+        "evaluates the gate only",
+    )
+    acsw.add_argument("--check", action="store_true", help="evaluate the gate only")
+    acsw.add_argument("--inputs", default=None, help="a recorded inputs JSON")
+    acsw.add_argument("--map", dest="map_path", default=None)
+    acsw.add_argument("--at", dest="at", default=None)
+    acsw.add_argument("--handle-list", default=None)
+    acsw.add_argument("--record-out", default=None)
+    acsw.add_argument("--site-url", action="append", default=[])
+    acsw.add_argument("--sitemap-url", default=None)
+    acsw.add_argument("--max-pages", type=int, default=500)
+    acsw.add_argument("--api-url", action="append", default=[])
+    acsw.add_argument("--tile-url", action="append", default=[])
+    acsw.add_argument("--cadence", default=None)
+    acsw.add_argument("--listing-file", default=None)
+    acsw.add_argument("--reads-file", default=None)
+    acsw.add_argument("--export-dir", action="append", default=[])
+    acsw.add_argument("--tiles-dir", action="append", default=[])
+    acsw.add_argument("--build-dir", action="append", default=[])
+
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
     keepalive = sub.add_parser(
         "keepalive-check",
@@ -4143,6 +4169,42 @@ def main(argv: list[str] | None = None) -> int:
         from . import roll_gate
 
         return roll_gate.main(["--inputs", args.inputs] + (["--out", args.out] if args.out else []))
+    if args.command == "acceptance-sweep":
+        from . import acceptance
+
+        tail: list[str] = []
+        if args.check:
+            tail.append("--check")
+        if args.inputs:
+            tail += ["--inputs", args.inputs]
+        if args.map_path:
+            tail += ["--map", args.map_path]
+        if args.at:
+            tail += ["--at", args.at]
+        if args.handle_list:
+            tail += ["--handle-list", args.handle_list]
+        if args.record_out:
+            tail += ["--record-out", args.record_out]
+        if args.sitemap_url:
+            tail += ["--sitemap-url", args.sitemap_url]
+        tail += ["--max-pages", str(args.max_pages)]
+        for opt, vals in (
+            ("--site-url", args.site_url),
+            ("--api-url", args.api_url),
+            ("--tile-url", args.tile_url),
+            ("--export-dir", args.export_dir),
+            ("--tiles-dir", args.tiles_dir),
+            ("--build-dir", args.build_dir),
+        ):
+            for v in vals:
+                tail += [opt, v]
+        if args.cadence:
+            tail += ["--cadence", args.cadence]
+        if args.listing_file:
+            tail += ["--listing-file", args.listing_file]
+        if args.reads_file:
+            tail += ["--reads-file", args.reads_file]
+        return acceptance.main(tail)
     parser.print_help()
     return 0
 
