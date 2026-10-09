@@ -19,3 +19,8 @@
 # As of 2026-10-04 no key line is present: the file is intentionally header-only and every
 # gate-affecting record fails closed until the operator's key lands — DEFERRALS D-P34.28-1,
 # due before GATE-G4 (its packet lists OP-25 as outstanding).
+
+# OP-25 supplied 2026-10-09 — the operator's words at GATE-G4 (Devin Desktop session): the
+# key was generated with `ssh-keygen -t ed25519 -C "sig-operator-gate" -f ~/.ssh/sig_gate_key`
+# (passphrase-protected); fingerprint quoted by the operator: SHA256:ioI5xDcC9sfqfFxMKzLACgNBL8WOdUxVQL+mEp5SK1U
+14stevevitali@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFCfcSObE7Agi6t6TupfRNSwHlIiJ6Q/pVwKeWJU02/Q sig-operator-gate
