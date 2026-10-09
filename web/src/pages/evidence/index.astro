@@ -30,7 +30,7 @@ const CLAIM_VIEWS = getEvidence().claimViews;
   <ul class="sig-evidence-index">
     {CLAIM_VIEWS.map((view) => (
       <li data-testid="evidence-index-item" data-claim-id={view.claim_id} data-sealed={isSealed(view.capture) ? "true" : "false"}>
-        <a href={evidencePath(view.claim_id)}>{view.claim_label}</a>
+        <a href={evidencePath(view.claim_id)}>{view.claim_label}</a>{" "}
         {isClaimContested(view) && <ContestedMarker compact />}
         {isSealed(view.capture) && <span class="sig-sealed-badge"> (sealed — metadata only)</span>}
       </li>

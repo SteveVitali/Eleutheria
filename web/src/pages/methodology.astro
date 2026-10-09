@@ -14,7 +14,7 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
 
 <BaseLayout title="Methodology" path="/methodology/">
   <p>
-    This page explains how SIG produces and qualifies every claim. SIG
+    This page explains how SIG produces and qualifies every claim. SIG{" "}
     <strong>reports</strong>; it does not endorse. Every material claim carries four
     independent epistemic fields, a support glyph, a persistent marker when contested,
     and an honest gap wherever SIG has not looked.
@@ -42,7 +42,7 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
   <p>
     A missing row is never silently omitted. SIG distinguishes four kinds of absence —
     not researched, no evidence found (with the sources searched named), evidence of
-    absence, and unresolved — and each is a clickable invitation to
+    absence, and unresolved — and each is a clickable invitation to{" "}
     <a href="/research-queue/">research it</a>.
   </p>
 
@@ -52,7 +52,7 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
     population from volunteer mapping and vendor portal reporting — not with a caveat,
     not with a wide interval. Linkage is impossible from published counts, the samples
     are not independent, and the estimator's known failure mode is understating the very
-    thing SIG exists to document. SIG publishes counted quantities with
+    thing SIG exists to document. SIG publishes counted quantities with{" "}
     <strong>named denominators</strong> and records-derived bounds instead — never a
     total. See the <a href="/coverage-metrics/">coverage metrics</a>.
   </p>
@@ -75,7 +75,7 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
     Two rows from the same source are never merged, a republished copy (mirror) of the same
     upstream dataset is not treated as independent confirmation, and each point shown is
     one record's own — never coordinates combined from two sources. Deciding which of one
-    record's own values stands (for example its latest coordinate) is <em>not</em>
+    record's own values stands (for example its latest coordinate) is <em>not</em>{" "}
     deduplication and is never counted as a resolved site.
   </p>
   {RESOLUTION_EVAL.provisional && (
@@ -86,8 +86,8 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
   <ul class="sig-eval" data-testid="resolution-eval">
     {RESOLUTION_EVAL.metrics.map((m) => (
       <li class="sig-eval-metric" data-testid="resolution-eval-metric">
-        <span class="sig-eval-metric__label">{m.label}</span>
-        <span class="sig-eval-metric__value"><strong>{m.value}</strong></span>
+        <span class="sig-eval-metric__label">{m.label}</span>{" "}
+        <span class="sig-eval-metric__value"><strong>{m.value}</strong></span>{" "}
         <span class="sig-eval-metric__against">{m.against}</span>
       </li>
     ))}

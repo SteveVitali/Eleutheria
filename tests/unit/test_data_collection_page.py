@@ -29,7 +29,9 @@ VALID_STATUSES = {"pending", "confirmed"}
 
 
 def _norm(text: str) -> str:
-    """Collapse whitespace runs — markup line-wrapping is not copy."""
+    """Collapse whitespace runs and unfold ``{" "}`` JSX space literals —
+    markup line-wrapping and tag-boundary spacing are not copy."""
+    text = re.sub(r'\{"\s*"\}', " ", text)
     return " ".join(text.split())
 
 

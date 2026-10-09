@@ -178,7 +178,7 @@ const mapCitationHref = beliefPinnedPermalink({
     <div class="sig-recon__body">
       <p><strong>Observed</strong> (a record): {OBSERVED_LAYERS.map((l) => l.label).join(", ")}.</p>
       <p>
-        <strong>Derived</strong> (a model, drawn distinctly and separately toggled):
+        <strong>Derived</strong> (a model, drawn distinctly and separately toggled):{" "}
         {DERIVED_LAYERS.map((l) => l.label).join(", ")}.
       </p>
     </div>
@@ -390,13 +390,13 @@ const mapCitationHref = beliefPinnedPermalink({
   <h2 id="sharing-heading">Sharing edges</h2>
   <p>
     Sharing edges default to an <strong>{DEFAULT_SHARING_EDGE_VIEW} network</strong> from a
-    selected entity — never a national hairball (SIG-UI-021). Explore them in the
+    selected entity — never a national hairball (SIG-UI-021). Explore them in the{" "}
     <a href="/network/">network explorer</a>, which also offers matrix and arc views.
   </p>
 
   <!-- OSM attribution in every rendering context, incl. print (SIG-GEO-013). -->
   <p class="sig-map-attribution" data-testid="map-attribution">
-    {MAP_ATTRIBUTION_LINE}. Tiles served as static PMTiles v3 —
+    {MAP_ATTRIBUTION_LINE}. Tiles served as static PMTiles v3 —{" "}
     <a href="/map/style.json">map style</a> (SIG-GEO-012, SIG-UI-038).
   </p>
 </BaseLayout>

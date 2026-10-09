@@ -15,6 +15,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
 import { assertCoverageMetrics } from "../lib/metrics";
+import { fmtInt, groupDigits } from "../lib/format";
 import { dossierPath } from "../lib/dossier";
 
 const coverage = getCoverage();
@@ -72,30 +73,30 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
     </p>
     <ul class="sig-stat-grid" role="list">
       <li class="sig-stat" data-testid="reach-stat">
-        <span class="sig-stat__value">{jurisdictions.length}</span>
-        <span class="sig-stat__label">jurisdictions with a published dossier</span>
+        <span class="sig-stat__value">{fmtInt(jurisdictions.length)}</span>{" "}
+        <span class="sig-stat__label">jurisdictions with a published dossier</span>{" "}
         <span class="sig-stat__denominator" data-testid="named-denominator">
           of the jurisdictions SIG has researched to a publishable standard
         </span>
       </li>
       <li class="sig-stat" data-testid="sources-stat">
-        <span class="sig-stat__value">{sourceCount}</span>
-        <span class="sig-stat__label">sources tracked for freshness</span>
+        <span class="sig-stat__value">{fmtInt(sourceCount)}</span>{" "}
+        <span class="sig-stat__label">sources tracked for freshness</span>{" "}
         <span class="sig-stat__denominator" data-testid="named-denominator">
           of the sources SIG monitors — not of all sources that exist
         </span>
       </li>
       {coverage.map((m) => (
         <li class="sig-stat" data-testid="coverage-stat" data-metric-kind={m.kind}>
-          <span class="sig-stat__value">{m.value}</span>
-          <span class="sig-stat__label">{m.label}</span>
-          <span class="sig-stat__denominator" data-testid="named-denominator">{m.denominator}</span>
+          <span class="sig-stat__value">{groupDigits(m.value)}</span>{" "}
+          <span class="sig-stat__label">{m.label}</span>{" "}
+          <span class="sig-stat__denominator" data-testid="named-denominator">{groupDigits(m.denominator)}</span>{" "}
           <span class="sig-stat__note">{m.population_note}</span>
         </li>
       ))}
     </ul>
     <p class="sig-landing-more">
-      The full, methodology-first breakdown is on the <a href="/coverage-metrics/">coverage metrics</a>
+      The full, methodology-first breakdown is on the <a href="/coverage-metrics/">coverage metrics</a>{" "}
       page; per-source recency is on <a href="/data-freshness/">data freshness</a>.
     </p>
   </section>
@@ -104,7 +105,7 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
     SIG is an open, vendor-agnostic, temporally versioned record of public
     surveillance infrastructure — what is deployed, where and by whom, how it is
     connected and governed, and the evidence behind each published figure. SIG
-    <strong>reports</strong>; it does not endorse.
+{" "}<strong>reports</strong>; it does not endorse.
   </p>
 
   <!-- Jurisdiction reach: the local dossier made discoverable at scale. -->
@@ -133,7 +134,7 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
       {ENTRY_POINTS.map((e) => (
         <li class="sig-entry" data-testid="entry-point">
           <a class="sig-entry__link" href={e.href}>
-            <span class="sig-entry__title">{e.title}</span>
+            <span class="sig-entry__title">{e.title}</span>{" "}
             <span class="sig-entry__body" data-copy={e.copy}>{e.body}</span>
           </a>
         </li>
@@ -147,7 +148,7 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
     <p>
       Every material claim carries four independent epistemic fields, a support glyph
       that says <em>why</em> it is trusted, a persistent marker when a value is
-      contested, and an honest, clickable gap wherever SIG has not (yet) looked.
+      contested, and an honest, clickable gap wherever SIG has not (yet) looked.{" "}
       <strong>Absence of a row is not evidence of absence</strong> — it is a place SIG
       has not yet researched, and you can turn it into a research task in one click.
     </p>

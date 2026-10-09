@@ -29,7 +29,7 @@ const dossiers = [...getDossierIndex()].sort(
   </p>
   <p data-copy="DI-04 DI-05 DI-06">
     This index lists every jurisdiction SIG has researched to a publishable standard.
-    It is not a census: a jurisdiction absent here is one SIG has not yet published,
+    It is not a census: a jurisdiction absent here is one SIG has not yet published,{" "}
     <strong>not</strong> one with no surveillance infrastructure. These are{" "}
     <strong>inventory overviews</strong>, built automatically from published claims; the
     reviewed, evidence-complete twelve-question portfolio form is being built.
@@ -40,9 +40,9 @@ const dossiers = [...getDossierIndex()].sort(
     {dossiers.map((d) => (
       <li class="sig-dossier-index__item" data-testid="dossier-index-item" data-slug={d.slug}>
         <a class="sig-dossier-index__link" href={dossierPath(d.slug)}>
-          <span class="sig-dossier-index__subject">{d.subject_label}</span>
+          <span class="sig-dossier-index__subject">{d.subject_label}</span>{" "}
           <span class="sig-dossier-index__place">{d.jurisdiction}</span>
-        </a>
+        </a>{" "}
         <span class="sig-dossier-index__meta">
           as of {d.asOf.as_of_world}
           <span aria-hidden="true"> · </span>

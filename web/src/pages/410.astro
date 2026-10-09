@@ -1,0 +1,17 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P34.13 (QW-11, RI-52): the branded 410 — the body is notice string N-6
+// verbatim (B-2's notice allowance lets N-1…N-7 ship by sha256 until GATE-G4;
+// `data-notice` records which string this is). Built as a static page; the
+// nginx `error_page 410` wiring is P34.40's dark roll (recorded owed), and the
+// sigChrome integration emits a flat /410.html copy alongside this /410/ route.
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Page removed" path="/410/" chrome="minimal" noindex={true}>
+  <p data-notice="N-6">This page has been removed while a correction is made.</p>
+  <p><a data-copy="GN-01" href="/">Go to the home page</a></p>
+</BaseLayout>

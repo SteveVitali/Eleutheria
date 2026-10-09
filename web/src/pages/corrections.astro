@@ -39,7 +39,7 @@ const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
   <p data-copy="CL-01 CL-03 CL-04">
     Every correction SIG makes is public. A correction is a <strong>new assertion</strong>,
     never a deletion: the earlier value is preserved, and each entry names the belief
-    date at which it stood (SIG-GOV-005). Each entry states
+    date at which it stood (SIG-GOV-005). Each entry states{" "}
     <strong>what changed, when, why, and who reported it</strong>.
   </p>
   {logStart && (
@@ -101,7 +101,7 @@ const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
         ) : (
           <p class="sig-correction__prior" data-copy="CL-05">
             The earlier value is preserved on the append-only record; this link
-            records the belief date at which it stood:
+            records the belief date at which it stood:{" "}
             <a data-testid="prior-permalink" href={priorValuePermalink(e, RULESET_VERSION, origin)}>
               belief {e.previous_belief_date}
             </a>.

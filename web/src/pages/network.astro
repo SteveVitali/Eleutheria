@@ -77,7 +77,7 @@ others.forEach((n, i) => {
 <BaseLayout title="Network explorer" path="/network/">
   <p>
     The sharing / access network. It defaults to an <strong>ego network</strong> around
-    one entity — never a global graph — and expands one ring at a time (SIG-UI-022).
+    one entity — never a global graph — and expands one ring at a time (SIG-UI-022).{" "}
     <strong>Every edge and every path is also in the lists below</strong>: the lists are
     the equivalent, not a fallback.
   </p>
@@ -166,7 +166,7 @@ others.forEach((n, i) => {
   <h2 id="centrality-heading">Centrality &amp; hub statistics</h2>
   <p>
     If entity resolution is imperfect, so is every network statistic — so each figure
-    carries its ER-quality disclosure <strong>at the statistic, not in a footnote</strong>
+    carries its ER-quality disclosure <strong>at the statistic, not in a footnote</strong>{" "}
     (SIG-UI-023).
   </p>
   {CENTRALITY_STATS.length === 0 && <EmptyState surface="centrality" />}
@@ -175,7 +175,7 @@ others.forEach((n, i) => {
       <li class="sig-centrality__item" data-testid="centrality-stat" data-metric={s.metric}>
         <span class="sig-centrality__value">
           <strong>{labelOf(s.node_id)}</strong> — {s.metric.replace(/_/g, " ")}: {s.value.toFixed(2)}
-        </span>
+        </span>{" "}
         <span class="sig-centrality__er" data-testid="er-disclosure">{s.disclosure}</span>
       </li>
     ))}
@@ -248,9 +248,9 @@ others.forEach((n, i) => {
   <!-- Access-path closure: full hop list, per-hop evidence, speculative label. -->
   <h2 id="paths-heading">Access-path closure</h2>
   <p>
-    "Can this entity reach that entity's data, through any chain?" Each path shows its
+    "Can this entity reach that entity's data, through any chain?" Each path shows its{" "}
     <strong>full hop list with per-hop evidence</strong>; confidence is the minimum over
-    the hops; and a path longer than {SPECULATIVE_HOP_THRESHOLD} hops is labelled
+    the hops; and a path longer than {SPECULATIVE_HOP_THRESHOLD} hops is labelled{" "}
     <strong>speculative</strong> and excluded from headline figures (SIG-UI-025,
     SIG-RECON-050).
   </p>
@@ -268,7 +268,7 @@ others.forEach((n, i) => {
         <p class="sig-path__summary">
           <strong>{labelOf(pathSource(p))}</strong> can reach
           <strong> {labelOf(pathTarget(p))}</strong>
-          — {pathHopCount(p)} hop{pathHopCount(p) === 1 ? "" : "s"},
+          {" "}— {pathHopCount(p)} hop{pathHopCount(p) === 1 ? "" : "s"},
           confidence {pathConfidence(p)} (path minimum), {pathTemporalStatus(p)}.
           {pathIsSpeculative(p) ? (
             <span class="sig-path__speculative" data-testid="speculative-label">
@@ -283,10 +283,10 @@ others.forEach((n, i) => {
           {p.hops.map((h) => (
             <li data-testid="path-hop" data-edge-label={h.edge_label}>
               <strong>{labelOf(h.from_org)}</strong> → <strong>{labelOf(h.to_org)}</strong>
-              <span class="sig-path__hop-meta">
+              {" "}<span class="sig-path__hop-meta">
                 ({h.edge_label}, scope {h.scope}, {h.confidence})
               </span>
-              <span class="sig-path__evidence" data-testid="hop-evidence">
+              {" "}<span class="sig-path__evidence" data-testid="hop-evidence">
                 evidence: {h.evidence.join(", ")}
               </span>
             </li>

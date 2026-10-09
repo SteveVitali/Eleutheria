@@ -41,7 +41,7 @@ const releaseCite = releaseInput ? releaseCitationText(releaseInput) : null;
   <h2 id="cite-heading">Cite this page</h2>
   {releaseLink && releaseCite ? (
     <p>
-      Immutable release citation (the released bytes never change):
+      Immutable release citation (the released bytes never change):{" "}
       <a
         class="sig-cite__permalink"
         data-testid="release-permalink"
@@ -53,12 +53,12 @@ const releaseCite = releaseInput ? releaseCitationText(releaseInput) : null;
     <p class="sig-cite__text" data-testid="release-citation-text">{releaseCite}</p>
     <p class="sig-cite__legacy">
       Historical-selector URL (legacy — resolved through the release
-      compatibility index, never an immutable citation):
+      compatibility index, never an immutable citation):{" "}
       <a data-testid="permalink" href={permalink}>{permalink}</a>
     </p>
   ) : (
     <p data-copy="CC-01">
-      Link (records the as-of pair and ruleset of this build):
+      Link (records the as-of pair and ruleset of this build):{" "}
       <a
         class="sig-cite__permalink"
         data-testid="permalink"

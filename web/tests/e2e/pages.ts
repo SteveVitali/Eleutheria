@@ -96,10 +96,28 @@ export const CURATE_PAGES = [
 // The data-freshness table's pre-rendered static sort routes (P27.7): sorting is a
 // plain GET to a distinct page (no client JS), so each sort order must meet WCAG 2.2 AA
 // like the base page. The base `/data-freshness/` is already in SHELL_PAGES.
+// P34.13 (K12b NEW-11, F-17): the "stale" and "volatility" sort routes returned the
+// identical alphabetical table — affordances that do nothing — and are REMOVED until
+// UX9-2 makes a real ordering. Only the working status sort remains pre-rendered.
 export const FRESHNESS_SORT_PAGES = [
   "/data-freshness/status/",
+] as const;
+
+// The no-op sort routes that must NOT exist in the build (K12b NEW-11) — asserted
+// 404 in the freshness spec.
+export const REMOVED_FRESHNESS_SORT_PAGES = [
   "/data-freshness/stale/",
   "/data-freshness/volatility/",
+] as const;
+
+// The P34.13 chrome pages (QW-11): branded error pages and the /terms forwarder.
+// They render the shell header/nav but a minimal chrome (no provenance/citation
+// module) and are noindex — in the axe + zero-JS sweeps like every public page.
+export const CHROME_PAGES = [
+  "/404.html",
+  "/403/",
+  "/410/",
+  "/terms/",
 ] as const;
 
 // The full a11y surface for the axe sweep: the shell-layout pages,
@@ -110,6 +128,7 @@ export const A11Y_PAGES = [
   ...ALL_PAGES,
   ...JURISDICTION_DOSSIER_PAGES,
   ...FRESHNESS_SORT_PAGES,
+  ...CHROME_PAGES,
   DOSSIER_PRINT,
   ...CURATE_PAGES,
 ] as const;
@@ -126,5 +145,6 @@ export const ZERO_JS_PUBLIC_PAGES = [
   ...ALL_PAGES,
   ...JURISDICTION_DOSSIER_PAGES,
   ...FRESHNESS_SORT_PAGES,
+  ...CHROME_PAGES,
   DOSSIER_PRINT,
 ].filter((p) => !(ISLAND_PAGES as readonly string[]).includes(p)) as readonly string[];
