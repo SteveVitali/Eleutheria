@@ -1,0 +1,141 @@
+{
+  "schema": "sig.express-terms-disclosure/1",
+  "generated_for": "P34.19",
+  "recorded_at": "2026-10-03",
+  "basis": {
+    "adr": "docs/adr/ADR-183-express-terms-acceptance.md",
+    "operator_words": [
+      {
+        "key": "A-8",
+        "text": "Keep all, accept risk",
+        "recorded_at": "2026-10-01T04:07:45Z",
+        "round": 4
+      },
+      {
+        "key": "A-8 wording",
+        "text": "Keep everything as is",
+        "recorded_at": "2026-10-01T04:09:43Z",
+        "round": 5
+      },
+      {
+        "key": "SB-2",
+        "text": "Yes, same sources (Recommended)",
+        "recorded_at": "2026-10-01T13:46:58Z",
+        "round": 27
+      }
+    ],
+    "adopted_sentence": "I accept the express-terms risk for all ≈8,088 currently public rows, including the non-commercial ones; A-9 applies to new sources only.",
+    "adopted_sentence_sha256": "cd76b74e872db8dcc118c0cda0355fa505524a7bc8730e5f21df23be171f2fb4",
+    "new_source_rule": "a new source with a non-commercial clause follows A-9 — facts and pointers only"
+  },
+  "counts": {
+    "method": "per-source row counts computed by code over release sig-2026-09-27-ce480ab1 compartment sites.csv (exports/out/national/*/sites.csv)",
+    "total_public_rows": 8088
+  },
+  "sources": [
+    {
+      "source_id": "camreg_caloes_ca",
+      "name": "CalOES California Webcams",
+      "spdx_registry": "LicenseRef-PublicRecord-FactualCompilation",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=5b4040338d704693994d5682ab2747c5",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "<p><span style='font-size:large;'>Public Use This product is for use by Cal OES personnel and supporting partners to conduct emergency management operations. The information contained herein has been compiled from various local, state, and federal agencies. This information is constantly changing, and Cal OES does not verify or certify the information contained herein.&nbsp;</span></p><p><span style='font-size:large;'>This layer includes data from the UC San Diego ALERTCalifornia program, which is licensed under the CC BY-NC-ND 4.0&nbsp;license. ALERTCalifornia data may not be used for commercial purposes, redistributed commercially, or used to create derivative products. Users seeking commercial use of ALERTCalifornia data must contact the UC San Diego Office of Innovation &amp; Commercialization (OIC) to obtain a commercial license.&nbsp;</span></p><p><span style='font-size:large;'>By accessing or using this layer, you agree to comply with all applicable license requirements and restrictions.</span></p>",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=5b4040338d704693994d5682ab2747c5]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 4342
+    },
+    {
+      "source_id": "camreg_cotgeo",
+      "name": "COT Geospatial Traffic Camera",
+      "spdx_registry": "LicenseRef-OperatorAccepted-DBRight",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=634b19920c7e45c092455134055b9335",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "Source must be credited. Cannot be re-sold. Resource provider must be contacted to get access.",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=634b19920c7e45c092455134055b9335]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 336
+    },
+    {
+      "source_id": "camreg_keizer_or",
+      "name": "Traffic and Graffiti Cameras",
+      "spdx_registry": "LicenseRef-PublicRecord-FactualCompilation",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=9338737e5f6b4deda9d90d120f16c32c",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "<p><span style='font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif;'>Data and analysis presented within (application) are based on best\navailable information, and are expected to be updated on a regular basis.\nLayers reflect documented resources at the time of data aggregation; and as\nsuch, absence of documentation does not necessarily indicate that no data are\npresent. Some data layers may be summarized to preserve the confidentiality of\nsensitive information. Documentation for layers and methodologies should be\nused to better understand the data sources, as well as the results and\nmethodologies presented.</span></p>\n\n<p><span style='font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif;'>(Application) is not intended to be used for navigation or\nnavigational purposes. </span></p>\n\n<p><span style='font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif;'>The<span style='color:black;'> City of Keizer\nmaintains no responsibility from misuses of the data or the application. </span></span><span style='font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black;'>This product\nis provided as is, without warranty.<span>  </span>In\nno event is the City of Keizer liable for damages from the use of this\nproduct.<span>   </span>This product is subject to\nlicense and copyright limitations.<span> \n</span>Distribution, sale and/or resale is prohibited.</span></p>\n\n<p><span style='font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif;'>I have read this disclaimer and understand the intent of this\nsystem, and therefore fully release the City of Keizer from any liability\narising from or related to using the (application) system. </span></p>",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=9338737e5f6b4deda9d90d120f16c32c]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 25
+    },
+    {
+      "source_id": "camreg_ramallah_ps",
+      "name": "Ramallah Surveillance Camera Network",
+      "spdx_registry": "LicenseRef-OperatorAccepted-DBRight",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=f4b3928a3f504467b3827b8658544c63",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "<p>This dataset is owned and maintained by Ramallah Municipality and is intended for official municipal use only.</p><p>Users are permitted to view and use this data for authorized operational, planning, maintenance, and public safety purposes. Redistribution, reproduction, or modification of the data without prior written permission from Ramallah Municipality is prohibited.</p><p>Ramallah Municipality does not guarantee that the dataset is free from errors or omissions and reserves the right to update, modify, or remove the data at any time without prior notice. Users are responsible for verifying the accuracy and suitability of the data for their intended use.</p>",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=f4b3928a3f504467b3827b8658544c63]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 6
+    },
+    {
+      "source_id": "camreg_sfoss",
+      "name": "Cameras",
+      "spdx_registry": "LicenseRef-OperatorAccepted-DBRight",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=460290f9870d4d8692048a87221f2080",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "<DIV STYLE=\"text-align:Left;font-size:12pt\"><P><SPAN>Demo purposes only</SPAN></P></DIV>",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=460290f9870d4d8692048a87221f2080]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 157
+    },
+    {
+      "source_id": "camreg_trpa_us",
+      "name": "SMART Traffic Camera Locations",
+      "spdx_registry": "LicenseRef-PublicRecord-FactualCompilation",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=4a1feaa5dd214d0287aee6467c2da3c7",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "CC BY-NC",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=4a1feaa5dd214d0287aee6467c2da3c7]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 15
+    },
+    {
+      "source_id": "camreg_ukm_my",
+      "name": "SISTEM_PENGURUSAN_CCTV",
+      "spdx_registry": "LicenseRef-OperatorAccepted-DBRight",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=a69da35b0c7f404890ba318f57d56349",
+      "terms_retrieval_date": "2026-09-18",
+      "captured_terms_verbatim": "kegunaan keselamatan dan JPP ukm sahaja",
+      "captured_terms_evidence": "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=a69da35b0c7f404890ba318f57d56349]",
+      "capture_note": "licence_verbatim as captured by the 2026-09-18 qualified catalog sweep on the ArcGIS hub item",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 386
+    },
+    {
+      "source_id": "camreg_txdot_rep_tx",
+      "name": "Texas Traffic Cameras (third-party republish of TxDOT camera points)",
+      "spdx_registry": "LicenseRef-PublicRecord-FactualCompilation",
+      "terms_url": "https://www.arcgis.com/home/item.html?id=269df31cafd9463abfd46ecd24162ef6",
+      "terms_retrieval_date": "2026-09-30",
+      "captured_terms_verbatim": "GIS content and data provided is the property of TxDOT and may not be used for commercial purposes or resold. Distribution of this content to third parties without TxDOT's written consent is strictly prohibited.",
+      "captured_terms_evidence": "docs/build/planning/2026-09-30-next-phase/data/query_log_I5.csv#I5-Q021 (sha256 2f2b1d9af8b9) + #I5-Q012 (sha256 361481bb4105); recorded in finding F-348 (I5:NEW-3)",
+      "capture_note": "captured on sibling items in the TxDOT ArcGIS org (orgid KTcxiTD9dsQw4r7Z); the republished item itself carries licence 'none' — the origin terms apply to the underlying TxDOT data (I7-C1, F-348)",
+      "publication_basis": "operator-accepted express terms (ADR-183)",
+      "refresh_scope": "scheduled refreshes of this same source are covered by the acceptance (SB-2, 2026-10-01T13:46:58Z)",
+      "public_row_count": 2821
+    }
+  ]
+}

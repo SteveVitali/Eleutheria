@@ -156,6 +156,20 @@
 | GC-08 | docs/governance/governance-and-code-of-conduct.md | A second independent reviewer has not yet been appointed; Round-11 releases state 'single maintainer, no second reviewer'. | 86241b8fc1f653e6d121a8c1eaa929f4bb0ac6c37d2e4b8e726aec0ee6dcd17d | pending |
 | GC-09 | docs/governance/governance-and-code-of-conduct.md | Corrections come by e-mail; senders disclose their address. | 5fd09424c73234803b5bb180fab78154805e361fcb2368b30504b7a93d44fa5f | pending |
 | GC-11 | docs/governance/governance-and-code-of-conduct.md | The five registry determinations earlier recorded as 'counsel (HG-02)' were the operator's own (no counsel). | fbeb4ee0b228bb7963cc2f95bc6dab3b13c70fa5e957e5c523b89ad680bc5604 | pending |
+| SL-01 | /sources/ | Sources and licences | 6adf604fbf18a253bb12576a4d3acb2b7063cc4b12c616c01d7e2dec5fde0181 | pending |
+| SL-02 | /sources/ | Every source SIG publishes rows from is listed with the licence its rows are filed under; a source whose express terms the operator accepted the risk of republishing shows its captured terms verbatim and the basis on which SIG publishes them. | dade1f541a5426dc989bb96a3b1d95291be65f9c93d371093217d9e8760db239 | pending |
+| SL-03 | /sources/ | Published under the operator's recorded acceptance of the express-terms risk (ADR-183); the source's captured terms appear verbatim. | d6255f667f05ac5cb412b91e2c18ddbcccb7b46150eb6c32172f6d60294743a4 | pending |
+| SL-04 | /sources/ | Scheduled refreshes of these sources are covered by the same acceptance (SB-2); a new source carrying a non-commercial clause is added facts-and-pointers only (A-9). | a8c94b85ec36e2c2839f6e296a34bfde0b779b49bca5996ccff436bbf1bbfe4d | pending |
+<!-- P34.19 (F-403, ADR-183): the interim sources-and-licences page's
+     disclosure sentences — page title, the page explainer, the per-source
+     basis line and the refresh-scope sentence. The captured terms verbatim
+     and the basis string are DATA (sig.terms-disclosure/1 via
+     `getTermsDisclosure`), not drafted copy — the rows below pin only the
+     page's own framing. The page slug `/sources/` names the intended
+     interim page P34.17 builds; if P34.17 renders under a different slug
+     the page column is updated by that run (the sentence text + sha256 are
+     what B-2 pins). All pending — none ships until the operator confirms
+     it verbatim at a copy-batch sitting (B-2). added 2026-10-03. -->
 <!-- P34.16 (F-189, G2 0c): candidate sentences for the governance
      doc's Corrections section — GC-01…03 are ADR-164's E2-03 drafted
      wording verbatim; GC-04/05 and the combined GC-06 are ADR-167's pinned
