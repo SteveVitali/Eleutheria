@@ -33,9 +33,8 @@ EXEC_HOST_TOML = REPO_ROOT / "ops" / "exec_host.toml"
 IAM_TOML = REPO_ROOT / "ops" / "iam_identities.toml"
 SQITCH_PLAN = REPO_ROOT / "db" / "sqitch.plan"
 
-#: A timestamp inside the AR-3 window: ≥ 2026-10-13T12:00Z, outside
-#: 03:00–06:30Z, outside the day-6→13 batch window.
-#: future-ok: scheduled: the AR-3 contract bound the fixture clock sits inside
+#: ≥ 2026-10-13T12:00Z — future-ok: scheduled: the AR-3 contract bound — inside the AR-3
+#: window, outside 03:00–06:30Z, outside the day-6→13 batch window.
 WINDOW_OK = "2026-10-14T15:00:00Z"  # future-ok: scheduled: fixture clock inside the AR-3 window
 
 
