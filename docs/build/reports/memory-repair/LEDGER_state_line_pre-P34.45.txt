@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P34.44b's entry (PR #258 — baseline run + nightly probe; legs queued); next → P34.45 (row 257).

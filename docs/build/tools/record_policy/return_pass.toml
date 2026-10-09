@@ -579,3 +579,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-
   go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4) and additionally waits on `live:P34.43`'''
   rerun = '''implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true'''
   live_dependants = ["P34.45"]
+[[row]]
+key = "P34.45"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued single append-only camera-site ER re-run under ruleset v3-interim on the P34.43 exec host (OM-20 "Both + list + P34.45"; ADR-153/206) — the engineered halves landed: ruleset v3-interim + demotion reasons, the basis-class evaluator + committed honest report, the agent-provenance gold relabel, GQ-24/GQ-27 enforce, `sig_materialize_login` (sqitch `er_rerun_login`), `er-rerun.sh`, the `sig-er-rerun-password` IAM binding; no deferral of its own opens'''
+gates_cell = '''hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z daily and the monthly batch window (day 6 00:00Z → day 13 12:00Z) — apply exits 42; pre-authorised: S5-3 "Both + list + P34.45" (expires GATE-G4) and additionally waits on `live:P34.43` (exec host + the `sig_materialize_login` credential), `live:P34.44b` (the GQ-24 post-run check) and `live:P34.46` (sig-api serving the rolled v3-interim image — the A-20 basis label); voided-by a red probe, a failed restore point or a contradicting production read; AR-2 = an on-demand Cloud SQL backup verified SUCCESSFUL immediately before the run + recorded prestate (per-tier counts, `spine_watermark`, current run id)'''
+operator_cell = '''nothing until the window opens, all three live edges hold and ADC is armed — `er-rerun.sh --check` is plan-only (no ADC/network); `SIG_ER_RERUN_AUTHOR` (the recorded operator id) gates every mutating apply; an existing `ruleset_version='3-interim'` run exits 42 (exactly once — a second run needs a new decision); rollback is forward-only — a superseding run under the prior ruleset digest or a PITR clone for comparison; never an UPDATE/DELETE'''
+rerun_cell = '''`implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true` (scope: the ER re-run leg only) · landed as row 257 (engineered + fixture-verified — the leg queued exit 42, never executed)'''
+
+  [[row.legs]]
+  id = "P34.45-er-rerun"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-06:30Z daily", "the monthly batch window (day 6 00:00Z → day 13 12:00Z)"]
+  go = '''pre-authorised: S5-3 "Both + list + P34.45" (expires GATE-G4) and additionally waits on `live:P34.43` (exec host + the `sig_materialize_login` credential), `live:P34.44b` (the GQ-24 post-run check) and `live:P34.46` (sig-api serving the rolled v3-interim image — the A-20 basis label)'''
+  rerun = '''implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true'''
+  live_dependants = ["P35.63"]

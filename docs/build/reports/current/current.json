@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "22c23e75e2c41d4c6f920b37a5bd73b42ac9bcbf",
+  "input_commit": "4be742e7683760b34429304826b5669a8a6983b4",
   "manifest_inputs": 999,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.45",
-    "lastCompleted": "P34.44b",
+    "nextTicket": "P34.46",
+    "lastCompleted": "P34.45",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.49, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.49, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.44b-quality-baseline-run-and-nightly-probe",
+    "chainTip": "r11/P34.45-honest-evaluation-posture",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-09T02:55Z"
+    "updatedAt": "2026-10-09T08:54Z"
   },
   "counts": {
     "obligations": 160,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 28,
+    "return_pass_rows": 29,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8313,6 +8313,14 @@
         "gates_cell": "hosted, window-bound (AR-3 + AR-2): both legs earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z daily and the monthly batch window (day 6 00:00Z → day 13 12:00Z) — apply exits 42; both pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4) and additionally waits on `live:P34.43` (`deps` exits 42 while `sig_audit`, `sig-quality-probe-rt` or the two secrets are absent); voided-by a red probe, a failed restore point or a contradicting read; AR-2 = recorded prestate + bucket versioning ON before the first probe record",
         "operator_cell": "nothing until the window opens, `live:P34.43` holds and ADC is armed — `--check` default; window/deps/ADC-gated before any mutation; rollback = exact-name delete of trigger + job (probe records stay — history)",
         "rerun_cell": "`implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` (scope: one leg per run — job+trigger, then baseline) · landed as row 256 (both legs queued exit 42, never executed)",
+        "obligations": []
+      },
+      {
+        "key": "P34.45",
+        "obligations_cell": "the queued single append-only camera-site ER re-run under ruleset v3-interim on the P34.43 exec host (OM-20 \"Both + list + P34.45\"; ADR-153/206) — the engineered halves landed: ruleset v3-interim + demotion reasons, the basis-class evaluator + committed honest report, the agent-provenance gold relabel, GQ-24/GQ-27 enforce, `sig_materialize_login` (sqitch `er_rerun_login`), `er-rerun.sh`, the `sig-er-rerun-password` IAM binding; no deferral of its own opens",
+        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z daily and the monthly batch window (day 6 00:00Z → day 13 12:00Z) — apply exits 42; pre-authorised: S5-3 \"Both + list + P34.45\" (expires GATE-G4) and additionally waits on `live:P34.43` (exec host + the `sig_materialize_login` credential), `live:P34.44b` (the GQ-24 post-run check) and `live:P34.46` (sig-api serving the rolled v3-interim image — the A-20 basis label); voided-by a red probe, a failed restore point or a contradicting production read; AR-2 = an on-demand Cloud SQL backup verified SUCCESSFUL immediately before the run + recorded prestate (per-tier counts, `spine_watermark`, current run id)",
+        "operator_cell": "nothing until the window opens, all three live edges hold and ADC is armed — `er-rerun.sh --check` is plan-only (no ADC/network); `SIG_ER_RERUN_AUTHOR` (the recorded operator id) gates every mutating apply; an existing `ruleset_version='3-interim'` run exits 42 (exactly once — a second run needs a new decision); rollback is forward-only — a superseding run under the prior ruleset digest or a PITR clone for comparison; never an UPDATE/DELETE",
+        "rerun_cell": "`implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true` (scope: the ER re-run leg only) · landed as row 257 (engineered + fixture-verified — the leg queued exit 42, never executed)",
         "obligations": []
       }
     ]
@@ -18313,10 +18321,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "de1c333d6730302e71047e46e8b28f4e6f501d0efac1cecd5cd864e6dcdefdfb",
+  "manifest_sha256": "0b6abe71cc01f408ae9a61d9e957d1c09d44ae1c310d6d58888a350e01e890c1",
   "current_md": {
     "lines": 63,
-    "bytes": 15447,
+    "bytes": 15432,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
