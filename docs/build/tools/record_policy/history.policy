@@ -315,3 +315,9 @@ seed-commit c4b2aa21
 # this declaration (same pattern as c4b2aa21).
 # Scope: findings attributed to 65f20cdf only; no other commit borrows the exemption.
 seed-commit 65f20cdf
+
+# ── GATE-G4 markup-id fix 2 ──────────────────────────────────────────────────
+# 65f20cdf stripped backticks; a residual `*` in "DOCKERHUB-RATE-*" still tripped
+# markup-id. 0b36a887 rewrites it to the explicit list; append-only preserved here.
+# Scope: findings attributed to 0b36a887 only; no other commit borrows the exemption.
+seed-commit 0b36a887
