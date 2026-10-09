@@ -293,3 +293,11 @@ seed-commit ef1fb3bf
 # commit rather than a reworded subject.
 # Scope: findings attributed to 6fe93216 only; no other commit borrows the exemption.
 seed-commit 6fe93216
+
+# ── P34.46 roll-gate recorded-inputs fixture (R5; contract's real L2 window) ────────────────────────────
+# The fixture replays the contract's actual window instants (OM-19/AR-3 — earliest legal slot
+# 2026-10-14T14:00Z, a go recorded 14:05Z, the read-back's 10-10 record name). Scheduled values, never
+# fabricated record dates; every instant is in the past after the earliest slot.
+allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "record": "readback-2026-10-10.json"
+allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "recorded_at"
+allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "now"

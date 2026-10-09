@@ -177,14 +177,15 @@ def test_backup_not_successful_refuses() -> None:
 @pytest.mark.parametrize(
     "now,ok",
     [
-        ("2026-10-13T15:00:00Z", False),  # before the earliest instant
-        ("2026-10-14T13:59:59Z", False),  # inside the day, before the band
-        ("2026-10-14T14:00:00Z", True),  # band opens on the earliest instant
-        ("2026-10-14T19:59:59Z", True),
-        ("2026-10-14T20:00:00Z", False),  # band closed
-        ("2026-10-17T15:00:00Z", False),  # Saturday — operator present rule
-        ("2026-10-18T15:00:00Z", False),  # Sunday
-        ("2026-10-19T15:00:00Z", True),  # a later weekday still holds
+        # future-ok: scheduled: the contract's real L2 window instants (OM-19/AR-3)
+        ("2026-10-13T15:00:00Z", False),  # future-ok: scheduled: before the earliest instant
+        ("2026-10-14T13:59:59Z", False),  # future-ok: scheduled: inside the day, before the band
+        ("2026-10-14T14:00:00Z", True),  # future-ok: scheduled: band opens on the earliest instant
+        ("2026-10-14T19:59:59Z", True),  # future-ok: scheduled: inside the band
+        ("2026-10-14T20:00:00Z", False),  # future-ok: scheduled: band closed
+        ("2026-10-17T15:00:00Z", False),  # future-ok: scheduled: Saturday — operator present rule
+        ("2026-10-18T15:00:00Z", False),  # future-ok: scheduled: Sunday
+        ("2026-10-19T15:00:00Z", True),  # future-ok: scheduled: a later weekday still holds
     ],
 )
 def test_window(now: str, ok: bool) -> None:
