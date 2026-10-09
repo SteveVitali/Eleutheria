@@ -197,6 +197,8 @@ jobs:
 
   python:
     runs-on: ubuntu-24.04
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -204,6 +206,13 @@ jobs:
           # replays tests across first-parent living-change transitions —
           # a depth-1 checkout has none to replay.
           fetch-depth: 0
+
+      # Authenticated Docker Hub pulls (DOCKERHUB-RATE-* flake class): the
+      # anonymous 100-pulls/6h per-IP limit saturates on shared runner egress.
+      # No-op until the operator sets DOCKERHUB_USERNAME/DOCKERHUB_TOKEN.
+      - name: Log in to Docker Hub (authenticated pulls)
+        if: env.DOCKERHUB_USERNAME != ''
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
       - name: Install uv (pinned; matches `[tool.uv] required-version`)
         uses: astral-sh/setup-uv@v10.2.0
@@ -262,8 +271,14 @@ jobs:
   # composed gate can never silently no-op.
   composed:
     runs-on: ubuntu-24.04
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
       - uses: actions/checkout@v7
+
+      - name: Log in to Docker Hub (authenticated pulls)
+        if: env.DOCKERHUB_USERNAME != ''
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
       - name: Install uv (pinned; matches `[tool.uv] required-version`)
         uses: astral-sh/setup-uv@v10.2.0
@@ -384,8 +399,14 @@ jobs:
       run:
         shell: bash # keep pipefail under the job's working-directory override
         working-directory: web
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
       - uses: actions/checkout@v7
+
+      - name: Log in to Docker Hub (authenticated pulls)
+        if: env.DOCKERHUB_USERNAME != ''
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
       - name: Install Node (exact pin from web/.nvmrc)
         uses: actions/setup-node@v7
