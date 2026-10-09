@@ -284,7 +284,8 @@ def _surface_license(licences: set[str] | frozenset[str]) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# 2. Network centrality + the ego-focus rule (§39.4, SIG-UI-022/023)
+# 2. The ego-focus rule over the typed access network (§39.4, SIG-UI-022; the   #
+#    centrality statistic itself is WITHDRAWN by P34.15, SIG-IDENT-030)          #
 # --------------------------------------------------------------------------- #
 
 
@@ -319,14 +320,6 @@ def _typed_access_edges(
     return sorted(seen), claim_ids
 
 
-_ER_DISCLOSURE = (
-    "Undirected degree over the exported typed sharing-edge graph; the edge "
-    "endpoints are spine entities minted by deterministic identity resolution, "
-    "so this figure does not rest on the probabilistic camera-site ER eval — "
-    "it is exact for the exported graph and never an estimate."
-)
-
-
 def _centrality(
     dataset: ShapedDataset,
     materialized_edges: Sequence[Mapping[str, Any]],
@@ -334,13 +327,17 @@ def _centrality(
     weight_rows: Sequence[Mapping[str, Any]] = (),
     registry: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Degree centrality over the typed access network + the ego-focus pick.
+    """The ego-focus pick over the typed access network — no published ranking.
 
-    The declared measure (ADR-R9-ANALYTICS): **undirected degree** — the count
-    of typed access edges incident on the entity — over the SAME edge set the
-    network surface renders. The focus entity is the highest-degree node; ties
-    resolve to the lexically smallest entity id (deterministic, stated in the
-    file).
+    P34.15 (K2 NEW-6, D-K2-2, SIG-IDENT-030 by abstention): the centrality
+    statistic is WITHDRAWN. The old artifact claimed the edge endpoints were
+    "minted by deterministic identity resolution" and "exact for the exported
+    graph … never an estimate" — an overstatement: organisation entity
+    resolution has not passed its gate, so `statistics` is deliberately EMPTY.
+    The `focus` block remains a PRESENTATION mechanism — the entity the
+    explorer centres on by default (the highest undirected degree over the
+    typed access edges; ties resolve to the lexically smallest entity id) — it
+    is a stated rule, not a published ranking of the graph.
     """
     pairs, claim_ids = _typed_access_edges(materialized_edges, dataset)
     licences = {r["spdx"] for r in weight_rows if r["claim_id"] in claim_ids and r["spdx"]}
@@ -348,21 +345,7 @@ def _centrality(
     for src, dst in pairs:
         degree[src] += 1
         degree[dst] += 1
-    statistics = [
-        {
-            "node_id": node,
-            "metric": "degree",
-            "value": deg,
-            # SIG-UI-023: every statistic carries its resolution-dependence
-            # statement INLINE. This edge set does not rest on the probabilistic
-            # camera-site ER eval, so there is no measured ER quality to cite —
-            # the disclosure says so rather than inventing numbers.
-            "er_quality": None,
-            "disclosure": _ER_DISCLOSURE,
-        }
-        for node, deg in sorted(degree.items(), key=lambda kv: (-kv[1], kv[0]))
-    ]
-    focus_entity: str | None = str(statistics[0]["node_id"]) if statistics else None
+    focus_entity: str | None = sorted(degree, key=lambda n: (-degree[n], n))[0] if degree else None
     payload = _envelope(
         SCHEMA_CENTRALITY,
         dataset.as_of,
@@ -375,7 +358,7 @@ def _centrality(
             "undirected degree over the typed access edges "
             f"({', '.join(_ACCESS_KINDS)}) the web/network.json surface emits"
         ),
-        statistics=statistics,
+        statistics=[],
         focus={
             "entity_id": focus_entity,
             "degree": degree.get(focus_entity) if focus_entity else None,

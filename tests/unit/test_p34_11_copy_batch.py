@@ -27,9 +27,12 @@ VALID_STATUSES = {"pending", "confirmed"}
 
 # The batch ids P34.11 authored (the DC-* rows belong to P35.38a) plus the rows
 # P34.12 appended (HW-10, RQ-01, XC-03), P34.13 appended (HW-11…HW-13,
-# MD-01, WM-01, NF-01/02, FB-01/02, GN-01, TR-01/02) and P34.14 appended
-# (JD-01…JD-07 — same batch, same checks).
-P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD)-\d+$")
+# MD-01, WM-01, NF-01/02, FB-01/02, GN-01, TR-01/02), P34.14 appended
+# (JD-01…JD-07) and P34.15 appended (MP-01…MP-15, NW-01…NW-03, WS-01 —
+# same batch, same checks).
+P34_ID = re.compile(
+    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS)-\d+$"
+)
 
 # Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
 # fixture route is gone, so T-01 ("Return to the dossier index.") is recorded
@@ -43,6 +46,8 @@ ASTRO_PAGES = {
     "/dossier/": "web/src/pages/dossier/index.astro",
     "/dossier/[slug]/": "web/src/pages/dossier/[slug].astro",
     "/dossier/[slug]/print/": "web/src/pages/dossier/[slug]/print.astro",
+    "/map/": "web/src/pages/map.astro",
+    "/network/": "web/src/pages/network.astro",
     "/search/": "web/src/pages/search.astro",
     "/corrections/": "web/src/pages/corrections.astro",
     "/watch/": "web/src/pages/watch.astro",
@@ -63,6 +68,9 @@ LITERAL_PAGES = {
     "lib/dossier-fixture.ts": "web/src/lib/dossier-fixture.ts",
     "lib/corrections-methodology-fixture.ts": "web/src/lib/corrections-methodology-fixture.ts",
     "lib/research-queue.ts": "web/src/lib/research-queue.ts",
+    "lib/map.ts": "web/src/lib/map.ts",
+    "lib/empty.ts": "web/src/lib/empty.ts",
+    "lib/workspace-state.ts": "web/src/lib/workspace-state.ts",
     "lib/meta.ts": "web/src/lib/meta.ts",
     "component/BaseLayout": "web/src/layouts/BaseLayout.astro",
     "exports/web_dossier.py": "exports/src/exports/web_dossier.py",

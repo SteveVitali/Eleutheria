@@ -191,6 +191,28 @@ export function assertCoverageBinding(controls: readonly LayerControl[] = LAYER_
   }
 }
 
+/**
+ * The legend entries worth listing in a given build (P34.15, QW-12): a control
+ * whose governed layers all carry NO records in this build is dropped — an
+ * empty legend entry implies data the surface does not have. The caller passes
+ * the layer ids that DO carry records (the point layer when assets exist, the
+ * coverage layer when bins exist); the catalog itself is unchanged.
+ */
+export function layerControlsWithData(
+  controls: readonly LayerControl[],
+  dataLayerIds: ReadonlySet<string>,
+): LayerControl[] {
+  return controls.filter((c) => c.governs.some((g) => dataLayerIds.has(g)));
+}
+
+/** The layers that carry records in this build — for the observed/derived explainer. */
+export function layersWithData(
+  layers: readonly MapLayer[],
+  dataLayerIds: ReadonlySet<string>,
+): MapLayer[] {
+  return layers.filter((l) => dataLayerIds.has(l.id));
+}
+
 // --- Low coverage MUST NOT read as low density (SIG-UI-018) ----------------
 
 /**
@@ -298,6 +320,22 @@ export function renderBin(bin: DensityBin, maxCount: number): BinRender {
       ? 0
       : Math.min(DENSITY_BUCKETS - 1, Math.floor((bin.deviceCount / maxCount) * DENSITY_BUCKETS));
   return { h3: bin.h3, deviceCount: bin.deviceCount, densityBucket: bucket, coverage: cov };
+}
+
+/** The word a value-suppressed bin prints where its count would stand (P34.15, QW-12). */
+export const SUPPRESSED_COUNT_LABEL = "suppressed";
+
+/**
+ * What the tabular equivalent prints in the records column (P34.15, QW-12 /
+ * SIG-UI-018): the record count where coverage makes it a real signal;
+ * `SUPPRESSED_COUNT_LABEL` where it does not. A suppressed figure is NEVER
+ * printed — a number on a cell SIG barely looked at reads as confidence the
+ * record does not carry.
+ */
+export function binCountLabel(bin: DensityBin): string {
+  return coverageEncoding(bin.coverage).valueSuppressed
+    ? SUPPRESSED_COUNT_LABEL
+    : String(bin.deviceCount);
 }
 
 // --- National-zoom binning + per-tier point honesty (SIG-UI-019) -----------
@@ -434,6 +472,37 @@ export function partitionByLocatability(assets: readonly MapAsset[]): {
     a.jurisdiction.localeCompare(b.jurisdiction),
   );
   return { locatable, jurisdictionIndicators };
+}
+
+/**
+ * How many of a jurisdiction indicator's records carry a CONTESTED location —
+ * `locationAbsence === "UNRESOLVED"` (evidence exists and disagrees, §9.5).
+ * P34.15 (K12b NEW-7): this per-jurisdiction count, leading to the dossier,
+ * replaces the retired per-record "⚠ Unresolved" affordances that linked to
+ * dead `/task/new/` pages. The count is over ALL the indicator's records, not
+ * just the inline-listed cap.
+ */
+export function contestedCount(
+  assetIds: readonly string[],
+  byId: ReadonlyMap<string, MapAsset>,
+): number {
+  return assetIds.filter((id) => byId.get(id)?.locationAbsence === "UNRESOLVED").length;
+}
+
+/**
+ * The dossier-slug form of a jurisdiction name (mirrors the exporter's
+ * `_slugify`: lowercase, non-alphanumeric runs become single dashes, edge
+ * dashes stripped, "unresolved" as the empty form). The page links a contested
+ * count to a dossier ONLY when a dossier with this slug exists — a count never
+ * links to a 404 (the K12b failure this row fixes).
+ */
+export function jurisdictionSlug(jurisdiction: string): string {
+  return (
+    jurisdiction
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "unresolved"
+  );
 }
 
 // --- Sharing edges: ego by default, never a hairball (SIG-UI-021) ----------

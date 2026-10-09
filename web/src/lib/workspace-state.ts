@@ -122,6 +122,13 @@ export interface WorkspaceParse {
    * combinations fail visibly" (DESIGN §"Workspace state"), never silently dropped.
    */
   issues: string[];
+  /**
+   * The contract-named parameters that were PRESENT in the input (P34.15, K6
+   * NEW-1). Presence is reported separately from the parsed value so a view can
+   * announce every named parameter it does not apply — a parsed-but-ignored
+   * facet must never pass for an applied filter.
+   */
+  present: readonly string[];
 }
 
 function values(params: URLSearchParams, facet: WorkspaceFacet): string[] {
@@ -195,7 +202,96 @@ export function parseWorkspaceState(
       page,
     },
     issues,
+    present: CONTRACT_PARAMS.filter((p) => params.has(p)),
   };
+}
+
+/**
+ * The contract-named state parameters (P34.15): everything `parseWorkspaceState`
+ * may report in `present` — `v` is excluded (it versions the contract itself and
+ * a wrong version already fails visibly in `issues`).
+ */
+export const CONTRACT_PARAMS = [
+  "release",
+  "collection",
+  "q",
+  "kind",
+  "jurisdiction",
+  "technology",
+  "source",
+  "location",
+  "focus",
+  "view",
+  "page",
+] as const;
+
+/**
+ * The parameters each view actually applies (P34.15, K6 NEW-1 — the interim for
+ * UXR-10's applying filters). The registry is the single source of truth for
+ * both halves of the honesty rule:
+ *
+ *   - a view that parses a named parameter it does NOT apply must announce it
+ *     (`unappliedParams` + `facetNoticeText`), never show unfiltered results as
+ *     if the filter held;
+ *   - a link to a view (dossier links included) must not carry a parameter the
+ *     target ignores — `tests/unit/test_p34_15_island_honesty.py` sweeps every
+ *     literal island link against this table.
+ *
+ * `view` is listed as applied on every surface: the path carries the same
+ * information and the parsed value is validated (a mismatch fails in `issues`,
+ * not here). `focus` and `release` are navigation/pinning applied by all three
+ * islands.
+ */
+export const APPLIED_PARAMS: Record<WorkspaceView, readonly string[]> = {
+  list: ["release", "q", "kind", "focus", "view"],
+  map: ["release", "collection", "focus", "view"],
+  network: ["release", "focus", "view"],
+};
+
+/** The parameters `present` may carry that are not applied anywhere today —
+ *  or applied only on some views — named for the reader-facing notice. */
+export const FACET_PARAM_LABELS: Readonly<Record<string, string>> = {
+  release: "a pinned release",
+  collection: "a licence-compartment filter",
+  q: "a text query",
+  kind: "a record-type filter",
+  jurisdiction: "a jurisdiction filter",
+  technology: "a technology filter",
+  source: "a source filter",
+  location: "a location filter",
+  focus: "a selected record",
+  view: "a named view",
+  page: "a result page",
+};
+
+/**
+ * The ignored-parameter notice template (P34.15, K6 NEW-1): `{facets}` resolves
+ * to the reader-facing names of the parameters this view does not apply. The
+ * sentence is copy-batch row WS-01 — the template is the confirmed artefact.
+ */
+export const IGNORED_FACET_NOTICE =
+  "This address names {facets}, which this view does not apply — they do not filter what is shown.";
+
+/**
+ * The contract parameters a view parsed but does not apply, in canonical order —
+ * every entry must surface in the island's visible notice (K6 NEW-1).
+ */
+export function unappliedParams(
+  present: readonly string[],
+  view: WorkspaceView,
+): string[] {
+  const applied = new Set<string>(APPLIED_PARAMS[view]);
+  return CONTRACT_PARAMS.filter((p) => present.includes(p) && !applied.has(p));
+}
+
+/** The rendered ignored-parameter notice for a view's unapplied parameters. */
+export function facetNoticeText(ignored: readonly string[]): string {
+  const names = ignored.map((p) => FACET_PARAM_LABELS[p] ?? `the "${p}" parameter`);
+  const list =
+    names.length <= 1
+      ? (names[0] ?? "")
+      : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return IGNORED_FACET_NOTICE.replace("{facets}", list);
 }
 
 /**

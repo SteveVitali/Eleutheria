@@ -66,6 +66,7 @@ import type { CompartmentTileSource } from "../lib/map-tiles";
 import type { IslandPoint } from "../lib/map";
 import {
   evidenceAnchorHref,
+  facetNoticeText,
   recordRoutes,
   splitRecordKey,
   viewHref,
@@ -188,7 +189,7 @@ export default function MapIsland({
   const [failed, setFailed] = useState(false);
   const [drawn, setDrawn] = useState(false);
   const [focusPane, setFocusPane] = useState<FocusPane | null>(null);
-  const { state, issues, update } = useWorkspaceState("map", { release });
+  const { state, issues, ignored, update } = useWorkspaceState("map", { release });
 
   // The effective compartment selection: an ABSENT `collection` means all;
   // an explicit `collection=` means none — "0 of N compartments" is a real
@@ -401,7 +402,7 @@ export default function MapIsland({
       canvas.setAttribute(
         "aria-label",
         `Interactive map of ${pointCount} located surveillance records. ` +
-          "The full list, including assets without a published point, is in the table below.",
+          "The full list, including records without a published point, is in the table below.",
       );
       setReady(true);
       // Evidence the points actually reached the renderer (the worker loaded + a source
@@ -612,6 +613,11 @@ export default function MapIsland({
       {issues.length > 0 && (
         <p className="sig-island__note" role="status" data-testid="workspace-issues">
           {issues.join(" ")}
+        </p>
+      )}
+      {ignored.length > 0 && (
+        <p className="sig-island__note" role="status" data-testid="facet-not-applied">
+          {facetNoticeText(ignored)}
         </p>
       )}
 

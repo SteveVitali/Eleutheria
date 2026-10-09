@@ -242,3 +242,71 @@ describe("bounded jurisdiction indicators (P32.15, SIG-FIND-005)", () => {
     expect(total).toBe(MAP_ASSETS.length - partitionByLocatability(MAP_ASSETS).locatable.length);
   });
 });
+
+// --- P34.15 (QW-12, K12b NEW-7): the map counts records honestly --------------
+
+describe("legend entries with no data are dropped (P34.15, QW-12)", () => {
+  it("a control is listed only when a layer it governs has records", async () => {
+    const { layerControlsWithData } = await import("../../src/lib/map");
+    const onlyDevices = new Set(["physical_devices"]);
+    const shown = layerControlsWithData(LAYER_CONTROLS, onlyDevices);
+    // The bound devices+coverage control stays (it governs a data layer); every
+    // other layer's toggle is dropped — a legend that lists empty layers
+    // implies data the build does not carry.
+    expect(shown).toHaveLength(1);
+    expect(shown[0]!.id).toBe("devices_and_coverage");
+    const withCoverage = layerControlsWithData(
+      LAYER_CONTROLS,
+      new Set(["physical_devices", "coverage"]),
+    );
+    expect(withCoverage).toHaveLength(1); // coverage rides the same bound control
+    const deployments = layerControlsWithData(LAYER_CONTROLS, new Set(["deployments"]));
+    expect(deployments.map((c) => c.id)).toEqual(["toggle_deployments"]);
+  });
+
+  it("the observed/derived explainer lists only layers with records", async () => {
+    const { layersWithData } = await import("../../src/lib/map");
+    const none = layersWithData(OBSERVED_LAYERS, new Set());
+    expect(none).toHaveLength(0);
+    const some = layersWithData(DERIVED_LAYERS, new Set(["coverage"]));
+    expect(some.map((l) => l.id)).toEqual(["coverage"]);
+  });
+});
+
+describe("a value-suppressed bin never prints its count (P34.15, QW-12, SIG-UI-018)", () => {
+  it("low/no-coverage cells print 'suppressed', never a number", async () => {
+    const { binCountLabel, SUPPRESSED_COUNT_LABEL } = await import("../../src/lib/map");
+    for (const bin of DENSITY_BINS) {
+      if (coverageEncoding(bin.coverage).valueSuppressed) {
+        expect(binCountLabel(bin)).toBe(SUPPRESSED_COUNT_LABEL);
+        expect(binCountLabel(bin)).not.toMatch(/\d/);
+      } else {
+        expect(binCountLabel(bin)).toBe(String(bin.deviceCount));
+      }
+    }
+    // Even a fabricated high count on a low-coverage cell stays suppressed.
+    const spike = { ...LOW_COVERAGE_BIN, deviceCount: 9999 };
+    expect(binCountLabel(spike)).toBe(SUPPRESSED_COUNT_LABEL);
+  });
+});
+
+describe("per-jurisdiction contested counts leading to the dossier (P34.15, K12b NEW-7)", () => {
+  it("counts only UNRESOLVED-location records across ALL of a jurisdiction's assets", async () => {
+    const { contestedCount } = await import("../../src/lib/map");
+    const byId = new Map(MAP_ASSETS.map((a) => [a.id, a]));
+    const { jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
+    const okc = jurisdictionIndicators.find((j) => j.jurisdiction === "Oklahoma City")!;
+    // device:okc-006 is the contested record; okc-004/okc-005 are uncontested gaps.
+    expect(contestedCount(okc.assetIds, byId)).toBe(1);
+    const tulsa = jurisdictionIndicators.find((j) => j.jurisdiction === "Tulsa")!;
+    expect(contestedCount(tulsa.assetIds, byId)).toBe(0); // NOT_RESEARCHED is not contested
+  });
+
+  it("the dossier slug mirrors the exporter's _slugify", async () => {
+    const { jurisdictionSlug } = await import("../../src/lib/map");
+    expect(jurisdictionSlug("Oklahoma City")).toBe("oklahoma-city");
+    expect(jurisdictionSlug("Cimarron County")).toBe("cimarron-county");
+    expect(jurisdictionSlug("(unasserted)")).toBe("unasserted");
+    expect(jurisdictionSlug("")).toBe("unresolved");
+  });
+});

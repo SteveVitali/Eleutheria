@@ -13,8 +13,10 @@
  * Honest defaults (SIG-UI-021/022): the explorer opens on an EGO network around one
  * entity and expands one ring at a time — never a national hairball. The three §12.2
  * access edge types stay visually distinct by dash pattern, not colour (SIG-UI-024,
- * greyscale-safe). Every centrality statistic shown carries its inline ER-quality
- * disclosure (SIG-UI-023). Keyboard operability (WCAG 2.2 AA): the node selector is a
+ * greyscale-safe). No centrality statistic is shown — the ranking is withdrawn
+ * until organisation entity resolution passes its gate (P34.15, SIG-IDENT-030 by
+ * abstention; SIG-UI-023's inline-disclosure contract stands for its return).
+ * Keyboard operability (WCAG 2.2 AA): the node selector is a
  * list of real focusable buttons that drive the same focus state as clicking a node.
  *
  * Shared URL state (`sig.workspace-state/1`): `focus` names the ego centre — a
@@ -29,20 +31,24 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ReactElement } from "react";
-import type { NetworkNode, NetworkEdge, CentralityStatistic, AccessKind } from "../lib/network";
+import type { NetworkNode, NetworkEdge, AccessKind } from "../lib/network";
 import {
   ACCESS_EDGE_STYLES,
   boundedEgoNetwork,
   EGO_EDGE_LIMIT,
   EGO_NODE_LIMIT,
 } from "../lib/network";
-import { recordRoutes, viewHref, WORKSPACE_VIEWS } from "../lib/workspace-state";
+import {
+  facetNoticeText,
+  recordRoutes,
+  viewHref,
+  WORKSPACE_VIEWS,
+} from "../lib/workspace-state";
 import { useWorkspaceState } from "./workspace";
 
 export interface NetworkIslandProps {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
-  centrality: CentralityStatistic[];
   focusEntityId: string;
   /** The latest activated publication id for this build, or null (none). */
   release: string | null;
@@ -67,11 +73,10 @@ const VIEW_LABELS: Record<string, string> = {
 export default function NetworkIsland({
   nodes,
   edges,
-  centrality,
   focusEntityId,
   release,
 }: NetworkIslandProps): ReactElement {
-  const { state, issues, update } = useWorkspaceState("network", { release });
+  const { state, issues, ignored, update } = useWorkspaceState("network", { release });
 
   // `focus` is the ego centre. A URL focus that names no node in this view stays
   // honest: the default centre renders and the miss is reported (never a
@@ -122,7 +127,6 @@ export default function NetworkIsland({
     return (id: string) => m.get(id);
   }, [placed]);
 
-  const selectedStats = centrality.filter((s) => s.node_id === selectedId);
   const selectedEdges = ego.edges.filter((e) => e.from === selectedId || e.to === selectedId);
 
   return (
@@ -141,6 +145,11 @@ export default function NetworkIsland({
       {issues.length > 0 && (
         <p className="sig-island__note" role="status" data-testid="workspace-issues">
           {issues.join(" ")}
+        </p>
+      )}
+      {ignored.length > 0 && (
+        <p className="sig-island__note" role="status" data-testid="facet-not-applied">
+          {facetNoticeText(ignored)}
         </p>
       )}
       {state.release && (
@@ -249,19 +258,6 @@ export default function NetworkIsland({
 
           <div className="sig-graph-detail" data-testid="graph-island-detail" aria-live="polite">
             <h3>{labelOf(selectedId)}</h3>
-            {selectedStats.length === 0 ? (
-              <p>No centrality statistic is published for this node.</p>
-            ) : (
-              <ul>
-                {selectedStats.map((s, i) => (
-                  <li key={i} data-testid="graph-island-centrality">
-                    <strong>{s.metric}</strong>: {s.value.toFixed(3)}
-                    <br />
-                    <span data-testid="graph-island-er-disclosure">{s.disclosure}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
             <h4>Edges</h4>
             {selectedEdges.length === 0 ? (
               <p>No edges to this node in the current view.</p>
