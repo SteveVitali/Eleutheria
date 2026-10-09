@@ -7,12 +7,16 @@
 // tests (tests/exports/test_dossier.py), now over the production TypeScript surface.
 import { describe, expect, it } from "vitest";
 import {
+  NO_RECORD_IN_SIG,
+  SECTION_ACTION_BLOCKS,
   SECTION_IDS,
+  dossierUnknowns,
   incompletenessBanner,
   nextDecisionDate,
   renderDossierJson,
   resolveTermination,
   rowDisplayValue,
+  sectionIsEmpty,
   unresearchedFieldCount,
   validateDossier,
 } from "../../src/lib/dossier";
@@ -76,20 +80,86 @@ describe("next_decision_date, not the expiry date (SIG-UI-014b)", () => {
 });
 
 describe("incompleteness banner (SIG-UI-012)", () => {
-  it("names the count of unresearched fields and the absence rule", () => {
+  it("names the count of EVERY unanswered field, broken down honestly, plus the absence rule (P34.11 / QW-7)", () => {
     const banner = incompletenessBanner(OKC_DOSSIER);
-    const n = unresearchedFieldCount(OKC_DOSSIER);
-    expect(n).toBeGreaterThan(0);
-    expect(banner).toContain(`${n} unresearched field`);
+    const u = dossierUnknowns(OKC_DOSSIER);
+    expect(u.total).toBeGreaterThan(0);
+    expect(banner).toContain(`${u.total} field`);
+    expect(banner).toContain("no recorded value");
+    // The not-researched subset is named as such, never conflated with the
+    // searched-but-empty or unresolved kinds.
+    expect(banner).toContain(`${u.notResearched} not researched`);
     expect(banner).toContain("absence of a row is not evidence of absence");
   });
 
-  it("counts DISTINCT NOT_RESEARCHED fields, not 'no evidence found', deduped", () => {
-    // NOT_RESEARCHED (subject, predicate) pairs in the fixture: sharing_partners
-    // (a gap AND a row — counted once), unmapped_devices (gap), and
-    // immigration_enforcement_config (row) = 3 distinct. The NO_EVIDENCE_FOUND
-    // retention field (SIG looked) must NOT be counted as unresearched.
-    expect(unresearchedFieldCount(OKC_DOSSIER)).toBe(3);
+  it("counts DISTINCT NOT_RESEARCHED fields, not the other unknown kinds, deduped", () => {
+    // NOT_RESEARCHED (subject, predicate) pairs in the fixture: unmapped_devices
+    // (gap) and immigration_enforcement_config (row) = 2 distinct. sharing_partners
+    // is UNRESOLVED (F-422: a contested sharing edge is recorded — 'not researched'
+    // would contradict the record), and the NO_EVIDENCE_FOUND retention field
+    // (SIG looked) must NOT be counted as unresearched either.
+    expect(unresearchedFieldCount(OKC_DOSSIER)).toBe(2);
+  });
+});
+
+describe("dossierUnknowns — every field the page cannot answer (P34.11 / QW-7)", () => {
+  const u = dossierUnknowns(OKC_DOSSIER);
+
+  it("counts every unknown kind, deduplicated by (subject, predicate)", () => {
+    // 2 NOT_RESEARCHED (unmapped_devices, immigration_enforcement_config);
+    // 1 NO_EVIDENCE_FOUND (retention_days — gap AND row, counted once);
+    // 2 UNRESOLVED (sharing_partners — gap AND row, counted once; contracted_active_delta);
+    // 2 bare UNKNOWNs (annual contract value, policy written retention — null
+    // rows with no recorded absence kind: rendered 'unknown', never assigned one).
+    expect(u.notResearched).toBe(2);
+    expect(u.noEvidenceFound).toBe(1);
+    expect(u.unresolved).toBe(2);
+    expect(u.unknown).toBe(2);
+    expect(u.total).toBe(7);
+    expect(u.withheld).toBe(0);
+  });
+
+  it("the worked dossier has no empty sections; an empty one is detected and never assigned a kind", () => {
+    expect(u.emptySections).toBe(0);
+    const withEmpty = {
+      ...OKC_DOSSIER,
+      sections: OKC_DOSSIER.sections.map((s) =>
+        s.section_id === "usage" ? { section_id: "usage" } : s,
+      ),
+    };
+    const u2 = dossierUnknowns(withEmpty);
+    expect(u2.emptySections).toBe(1);
+    expect(sectionIsEmpty({ section_id: "usage" })).toBe(true);
+    // The empty-section sentence asserts NO absence kind.
+    expect(NO_RECORD_IN_SIG).toBe("No record in SIG.");
+    expect(NO_RECORD_IN_SIG).not.toMatch(/not researched|no evidence|absent/i);
+  });
+
+  it("a bare-null action-block field is an unknown the banner counts", () => {
+    const noVote = {
+      ...OKC_DOSSIER,
+      authorization: { ...OKC_DOSSIER.authorization, vote: null },
+    };
+    expect(dossierUnknowns(noVote).unknown).toBe(u.unknown + 1);
+  });
+
+  it("the rendered JSON carries the full unknown counts additively", () => {
+    const js = renderDossierJson(OKC_DOSSIER);
+    expect(js.unresearched_field_count).toBe(2);
+    expect(js.unknown_field_count).toBe(7);
+    expect(js.empty_section_count).toBe(0);
+    expect(js.unknown_fields).toMatchObject({
+      not_researched: 2,
+      no_evidence_found: 1,
+      unresolved: 2,
+      unknown: 2,
+    });
+  });
+
+  it("section/action-block placement is shared, so page and print cannot disagree", () => {
+    expect(SECTION_ACTION_BLOCKS["cost_and_expiry"]).toBe("termination");
+    expect(SECTION_ACTION_BLOCKS["accountability_events"]).toBe("authorization");
+    expect(SECTION_ACTION_BLOCKS["policy"]).toBe("legal_regime");
   });
 });
 

@@ -122,10 +122,14 @@ export const OKC_DOSSIER: Dossier = {
   gaps: [
     {
       label: "Data-sharing partners",
-      kind: "NOT_RESEARCHED",
+      // UNRESOLVED, not NOT_RESEARCHED (F-422): a contested 'shares data with' edge
+      // is recorded — "not researched" would contradict the record itself.
+      kind: "UNRESOLVED",
       subject_id: "agency:okcpd",
       predicate_id: "sharing_partners",
-      note: "SIG has not yet researched which agencies OKCPD shares ALPR data with.",
+      note:
+        "A 'shares data with' edge to the Oklahoma County Sheriff is recorded but " +
+        "contested; the full partner list is not established.",
     },
     {
       label: "Retention window (days)",
@@ -178,7 +182,10 @@ export const OKC_DOSSIER: Dossier = {
         {
           label: "Data-sharing partners",
           value: null,
-          absence: "NOT_RESEARCHED",
+          // UNRESOLVED, not NOT_RESEARCHED: a contested 'shares data with' edge to
+          // the Oklahoma County Sheriff is recorded — claiming "not researched"
+          // would contradict the record itself (F-422).
+          absence: "UNRESOLVED",
           subject_id: "agency:okcpd",
           predicate_id: "sharing_partners",
         },
@@ -202,8 +209,8 @@ export const OKC_DOSSIER: Dossier = {
     {
       section_id: "where_the_hardware_is",
       rows: [
-        { label: "Independently mapped devices", value: 31, note: "A lower bound. See the reference map for locations at published precision." },
-        { label: "Reference map", value: "/visual-language/#reference-map", documentUrl: "/visual-language/#reference-map" },
+        { label: "Independently mapped devices", value: 31, note: "A lower bound. See the infrastructure map for locations at published precision." },
+        { label: "Infrastructure map", value: "/map/", documentUrl: "/map/" },
       ],
     },
     {

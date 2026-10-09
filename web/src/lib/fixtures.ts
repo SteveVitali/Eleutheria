@@ -155,7 +155,10 @@ export const OKCPD: EntityFixture = {
       subject_id: "agency:okcpd",
       predicate_id: "sharing_partners",
       label: "Data-sharing partners",
-      absence_kind: "NOT_RESEARCHED",
+      // UNRESOLVED, not NOT_RESEARCHED: a contested 'shares data with' edge to the
+      // Oklahoma County Sheriff is recorded (REFERENCE_GRAPH_EDGES) — "not
+      // researched" would contradict the record itself (F-422).
+      absence_kind: "UNRESOLVED",
     },
     {
       subject_id: "agency:okcpd",
@@ -302,11 +305,13 @@ export const TASKABLE_ABSENCES: AbsenceTaskParams[] = [
     absence_kind: "NOT_RESEARCHED",
     predicate_label: "Location",
   },
-  // The OKCPD entity-level gaps.
+  // The OKCPD entity-level gaps. sharing_partners is UNRESOLVED — a contested
+  // 'shares data with' edge is recorded, so "not researched" would be a false claim
+  // (F-422).
   {
     subject_id: "agency:okcpd",
     predicate_id: "sharing_partners",
-    absence_kind: "NOT_RESEARCHED",
+    absence_kind: "UNRESOLVED",
     predicate_label: "Data-sharing partners",
   },
   {

@@ -47,3 +47,12 @@ scope = "dev-only"
 reason = "tmp arbitrary-write via symlink reachable only inside @lhci/cli's external-editor path — dev-only tooling on a CI runner, not the shipped surface"
 tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
 expires = "2026-11-30"
+
+[[allow]]
+id = "ASTRO-CHAIN-HTTP-CACHE-SEMANTICS"
+package = "http-cache-semantics"
+advisories = ["GHSA-ch52-4w7c-c8xp"]
+scope = "prod"
+reason = "max-stale handling can disclose cross-user cached responses; every published release (<=4.2.0) is in range — there is no fix to upgrade to. Reachable transitively via astro, the static site builder: the vulnerable path is shared HTTP response caching in astro's dev/build fetch, never shipped — the public surface is pre-built static bytes"
+tracking = "D-P34.11-1 — a http-cache-semantics release >4.2.0 (or astro off the dep), then the entry is removed"
+expires = "2026-11-30"

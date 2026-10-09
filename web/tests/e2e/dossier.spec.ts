@@ -34,8 +34,12 @@ test("incompleteness banner names the count and the absence rule (SIG-UI-012)", 
   await page.goto(DOSSIER_PAGE);
   const banner = page.getByTestId("incompleteness-banner");
   await expect(banner).toBeVisible();
-  await expect(banner).toContainText(/\d+ unresearched field/);
+  // P34.11 (QW-7): EVERY unanswered field is counted — not only the
+  // not-researched subset — with the kinds named honestly and the total kept
+  // machine-checkable on the element.
+  await expect(banner).toContainText(/\d+ fields? with no recorded value/);
   await expect(banner).toContainText("absence of a row is not evidence of absence");
+  expect(await banner.getAttribute("data-unknown")).toMatch(/^\d+$/);
 });
 
 test("'what we don't know' appears in the summary, the section, AND the API (SIG-UI-011)", async ({

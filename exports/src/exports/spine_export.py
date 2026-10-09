@@ -957,7 +957,10 @@ def contradictions_visible_metric(
     return {
         "id": "contradictions_visible",
         "kind": "counted_quantity",
-        "label": "contradictions kept visible",
+        # P34.11 (K12b NEW-17 / F-22): "contradictions kept visible" claimed a
+        # browsability the public surface does not have — the claim is withdrawn;
+        # only the recorded count is shown. Mirrors the web fixture.
+        "label": "recorded contradictions",
         "value": f"{open_n} open of {k} recorded contradictions",
         "denominator": (
             f"{k} recorded contradictions in the materialized graph "
@@ -966,7 +969,8 @@ def contradictions_visible_metric(
         "population_note": (
             "Contradictions are never silently reconciled (§3.1); both disagreeing sides are "
             "retained. This counts recorded contradictions, not an estimate of every "
-            "disagreement that exists."
+            "disagreement that exists. This page shows only the recorded count; SIG does "
+            "not publish a contradiction browser."
         ),
         "is_population_total": False,
     }
