@@ -165,12 +165,19 @@ def bcubed(
 
 @dataclass(frozen=True)
 class DemotionDecision:
-    """Whether an auto-write tier keeps auto-writing or is demoted to review."""
+    """Whether an auto-write tier keeps auto-writing or is demoted to review.
+
+    ``reason`` names the demotion's cause — ``no_certifying_evaluation`` (the
+    P34.45 v3-interim inferential-tier lock: no independent human evaluation
+    exists), ``insufficient_holdout``, ``below_threshold`` — empty when the tier
+    is not demoted or when the caller did not classify one.
+    """
 
     tier: int
     precision: float
     threshold: float
     demoted: bool
+    reason: str = ""
 
     @property
     def disposition(self) -> str:

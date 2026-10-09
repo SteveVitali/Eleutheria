@@ -94,6 +94,7 @@ __all__ = [
     "INDEPENDENT_UNITS",
     "GATE_VERDICTS",
     "ESTIMAND_STATES",
+    "BASIS_CLASSES",
     "EvalUnit",
     "StratumSpec",
     "HypothesisSpec",
@@ -178,6 +179,44 @@ GATE_VERDICTS: tuple[str, ...] = (
 
 #: Estimand report states — an unavailable frame is a first-class answer.
 ESTIMAND_STATES: tuple[str, ...] = ("measured", "partial", "unavailable")
+
+#: Basis classes a reported figure's evidence can carry (GQ-27 / P34.45):
+#: ``human`` is the only certifying basis; ``agent``, ``llm``, ``synthetic``
+#: and ``unknown`` are non-human provenance classes reported under their own
+#: basis, never substituted into a human estimand. ``mixed`` names a frame
+#: holding more than one provenance class; ``none`` names an empty frame.
+BASIS_CLASSES: tuple[str, ...] = (
+    "human",
+    "agent",
+    "llm",
+    "synthetic",
+    "unknown",
+    "mixed",
+    "none",
+)
+
+
+def _basis_of(units: Sequence[EvalUnit]) -> str:
+    """The single basis class a unit frame's reference provenance reduces to.
+
+    Exactly one of :data:`PROVENANCES` when the frame is homogeneous (so an
+    agent-labelled frame reports basis ``agent``, never ``human``), ``mixed``
+    when it carries more than one provenance class, ``none`` when empty.
+    """
+    provenances = {u.reference_provenance for u in units}
+    if not provenances:
+        return "none"
+    if len(provenances) == 1:
+        return next(iter(provenances))
+    return "mixed"
+
+
+def _provenance_counts(units: Sequence[EvalUnit]) -> dict[str, int]:
+    counts: dict[str, int] = defaultdict(int)
+    for u in units:
+        counts[u.reference_provenance] += 1
+    return dict(sorted(counts.items()))
+
 
 _POLICY_RESOURCE = ("data", "eval_confidence.toml")
 
@@ -1022,7 +1061,14 @@ def evaluate_tier_gate(
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
 class EstimandReport:
-    """One estimand's measured state: rows + the named frame/population."""
+    """One estimand's measured state: rows + the named frame/population.
+
+    ``basis`` (P34.45 / GQ-27) is the single basis class of the evidence the
+    report speaks for — ``human`` only when every reference label in the
+    frame is human; an agent- or LLM-labelled frame reports its own basis and
+    the human estimand is ``unavailable``, never substituted. ``extras``
+    carries the per-provenance unit counts so the source mix is visible.
+    """
 
     estimand: str
     state: str  # ESTIMAND_STATES
@@ -1032,6 +1078,7 @@ class EstimandReport:
     population_note: str
     method: str | None
     unavailable_reason: str | None = None
+    basis: str = "none"  # BASIS_CLASSES
     extras: Mapping[str, Any] = field(default_factory=dict)
 
 
@@ -1041,18 +1088,21 @@ def _auto_positive_rows(
     """The auto-positive precision accounting rows per (tier, scope) cell.
 
     Every drawn unit stays visible: successes beside the non-success
-    categories, never a pooled count.
+    categories, never a pooled count. P34.45: the provenance column keeps a
+    non-human label visibly non-human — it can never be silently read as
+    human evidence.
     """
-    groups: dict[tuple[int | None, str, str], list[EvalUnit]] = defaultdict(list)
+    groups: dict[tuple[int | None, str, str, str], list[EvalUnit]] = defaultdict(list)
     for u in units:
-        groups[(u.tier, u.scope, u.stratum_id)].append(u)
+        groups[(u.tier, u.scope, u.stratum_id, u.reference_provenance)].append(u)
     rows: list[Mapping[str, Any]] = []
-    for (tier, scope, stratum), us in sorted(groups.items(), key=lambda kv: str(kv[0])):
+    for (tier, scope, stratum, provenance), us in sorted(groups.items(), key=lambda kv: str(kv[0])):
         rows.append(
             {
                 "tier": tier,
                 "scope": scope,
                 "stratum_id": stratum,
+                "provenance": provenance,
                 "drawn": len(us),
                 "same": sum(1 for u in us if u.is_success),
                 "different": sum(1 for u in us if u.outcome == "different"),
@@ -1101,9 +1151,42 @@ def _candidate_recall(
             ),
             method=None,
             unavailable_reason="candidate_only_frame",
+            basis=_basis_of(frame),
+            extras={"provenance_counts": _provenance_counts(frame)},
         )
-    decided_same = [u for u in frame if u.outcome == "same"]
-    undecided = [u for u in frame if u.outcome != "same"]
+    human = [u for u in frame if u.reference_provenance == CERTIFYING_PROVENANCE]
+    if not human:
+        # P34.45 / ADR-152: an agent/LLM-labelled reference cannot establish
+        # the same-pair population the human estimand speaks for.
+        return EstimandReport(
+            estimand="candidate_recall",
+            state="unavailable",
+            rows=(
+                {
+                    "frame_units": len(frame),
+                    "provenance_counts": _provenance_counts(frame),
+                },
+            ),
+            numerator=None,
+            denominator=None,
+            population_note=(
+                "the recall frame carries no human-provenance reference — an "
+                "agent or LLM label can never stand in for the independently "
+                "referenced same-pair population (P34.45 / ADR-152)"
+            ),
+            method=None,
+            unavailable_reason="no_human_reference",
+            basis=_basis_of(frame),
+            extras={"provenance_counts": _provenance_counts(frame)},
+        )
+    decided_same = [u for u in human if u.outcome == "same"]
+    # Non-human-labelled units stay in the undecided reference bucket — they
+    # are visible, they depress the strict bound, they never count as truth.
+    undecided = [
+        u
+        for u in frame
+        if not (u.outcome == "same" and u.reference_provenance == CERTIFYING_PROVENANCE)
+    ]
     offered = sum(1 for u in decided_same if u.offered_to_matcher)
     n_decided = len(decided_same)
     point = (offered / n_decided) if n_decided else None
@@ -1113,6 +1196,7 @@ def _candidate_recall(
             "offered_same": offered,
             "decided_reference_same": n_decided,
             "undecided_reference": len(undecided),
+            "non_human_reference": len(frame) - len(human),
             "recall_point": point,
             "recall_lower_strict": worst,
         },
@@ -1126,11 +1210,13 @@ def _candidate_recall(
         denominator=n_decided,
         population_note=(
             "fraction of independently referenced same pairs the candidate "
-            "generator offered; undecided reference units are counted, never "
-            "dropped"
+            "generator offered; undecided and non-human reference units are "
+            "counted, never dropped"
         ),
         method="design_weighted" if any(u.weight for u in frame) else "unweighted",
         unavailable_reason=None if state == "measured" else "reference_undecided",
+        basis=_basis_of(human),
+        extras={"provenance_counts": _provenance_counts(frame)},
     )
 
 
@@ -1159,23 +1245,38 @@ def _cluster_quality(
     labeled = [
         u
         for u in frame
-        if u.entity_id is not None and u.reference_cluster_id is not None and u.packet_ok
+        if u.entity_id is not None
+        and u.reference_cluster_id is not None
+        and u.packet_ok
+        # P34.45 / ADR-152: only a human-provenance membership is reference
+        # truth; an agent/LLM-labelled cluster is coverage, never evidence.
+        and u.reference_provenance == CERTIFYING_PROVENANCE
     ]
     unresolved = len(frame) - len(labeled)
     if not labeled:
+        non_human = sum(1 for u in frame if u.reference_provenance != CERTIFYING_PROVENANCE)
         return EstimandReport(
             estimand="cluster_quality",
             state="unavailable",
-            rows=({"declared_entities": len(frame), "unresolved_entities": unresolved},),
+            rows=(
+                {
+                    "declared_entities": len(frame),
+                    "unresolved_entities": unresolved,
+                    "non_human_reference": non_human,
+                },
+            ),
             numerator=None,
             denominator=len(frame),
             population_note=(
-                "no entity in the frame carries a reference-cluster membership — "
-                "a pair sample alone cannot establish whole-cluster quality "
-                "(SIG-EVAL-003)"
+                "no entity in the frame carries a human-provenance reference-"
+                "cluster membership — a pair sample alone cannot establish "
+                "whole-cluster quality, and an agent/LLM-labelled membership "
+                "is never a substitute (SIG-EVAL-003, P34.45 / ADR-152)"
             ),
             method=None,
-            unavailable_reason="no_reference_clusters",
+            unavailable_reason=("no_human_reference" if non_human else "no_reference_clusters"),
+            basis=_basis_of(frame),
+            extras={"provenance_counts": _provenance_counts(frame)},
         )
     pred = {str(u.entity_id): str(u.predicted_cluster_id) for u in labeled}
     gold = {str(u.entity_id): str(u.reference_cluster_id) for u in labeled}
@@ -1214,6 +1315,8 @@ def _cluster_quality(
         ),
         method="bcubed+pairwise",
         unavailable_reason=None if unresolved == 0 else "partial_reference_coverage",
+        basis=_basis_of(labeled),
+        extras={"provenance_counts": _provenance_counts(frame)},
     )
 
 
@@ -1243,7 +1346,14 @@ def _labelability(units: Sequence[EvalUnit]) -> EstimandReport:
     rows: list[Mapping[str, Any]] = []
     decisive = total = 0
     for stratum, us in sorted(groups.items()):
-        d = sum(1 for u in us if u.outcome in ("same", "different"))
+        # P34.45: "decisive" is a human decision — an agent/LLM/synthetic
+        # label is counted under non_human, never as a decided unit.
+        d = sum(
+            1
+            for u in us
+            if u.outcome in ("same", "different")
+            and u.reference_provenance == CERTIFYING_PROVENANCE
+        )
         decisive += d
         total += len(us)
         rows.append(
@@ -1251,6 +1361,7 @@ def _labelability(units: Sequence[EvalUnit]) -> EstimandReport:
                 "stratum_id": stratum,
                 "units": len(us),
                 "decisive": d,
+                "non_human": sum(1 for u in us if u.reference_provenance != CERTIFYING_PROVENANCE),
                 "insufficient_evidence": sum(1 for u in us if u.outcome == "insufficient_evidence"),
                 "unresolved": sum(1 for u in us if u.outcome == "unresolved"),
                 "missing": sum(1 for u in us if u.outcome == "missing"),
@@ -1258,15 +1369,27 @@ def _labelability(units: Sequence[EvalUnit]) -> EstimandReport:
                 "decisive_fraction": (d / len(us)) if us else None,
             }
         )
+    human_units = sum(1 for u in units if u.reference_provenance == CERTIFYING_PROVENANCE)
+    if not total:
+        state, reason = "unavailable", "no_units"
+    elif not human_units:
+        state, reason = "unavailable", "no_human_reference"
+    else:
+        state, reason = "measured", None
     return EstimandReport(
         estimand="labelability",
-        state="measured" if total else "unavailable",
+        state=state,
         rows=tuple(rows),
         numerator=decisive,
         denominator=total,
-        population_note="fraction of drawn units carrying a decisive same/different label",
+        population_note=(
+            "fraction of drawn units carrying a decisive human same/different "
+            "label; non-human-labelled units stay in the denominator"
+        ),
         method="stratified_counts",
-        unavailable_reason=None if total else "no_units",
+        unavailable_reason=reason,
+        basis=_basis_of(units),
+        extras={"provenance_counts": _provenance_counts(units)},
     )
 
 
@@ -1309,6 +1432,7 @@ class EvaluationReport:
                     "population_note": r.population_note,
                     "method": r.method,
                     "unavailable_reason": r.unavailable_reason,
+                    "basis": r.basis,
                     "extras": dict(r.extras),
                 }
                 for k, r in sorted(self.estimands.items())
@@ -1391,21 +1515,37 @@ def evaluate(
     )
 
     auto_units = [u for u in units if u.estimand == "auto_positive_precision"]
+    # P34.45 (ADR-152): the estimand is the HUMAN-verified share — only
+    # human-provenance units enter its numerator/denominator; agent/LLM/
+    # synthetic units stay visible in the rows under their own basis and can
+    # never make the estimand "measured".
+    auto_human = [u for u in auto_units if u.reference_provenance == CERTIFYING_PROVENANCE]
+    if not auto_units:
+        auto_state, auto_reason = "unavailable", "no_auto_positive_frame"
+    elif not auto_human:
+        auto_state, auto_reason = "unavailable", "no_human_reference"
+    elif len(auto_human) < len(auto_units):
+        auto_state, auto_reason = "partial", "non_human_reference"
+    else:
+        auto_state, auto_reason = "measured", None
     auto_report = EstimandReport(
         estimand="auto_positive_precision",
-        state="measured" if auto_units else "unavailable",
+        state=auto_state,
         rows=_auto_positive_rows(auto_units),
-        numerator=sum(1 for u in auto_units if u.is_success),
-        denominator=len(auto_units) if auto_units else None,
+        numerator=sum(1 for u in auto_human if u.is_success) if auto_human else None,
+        denominator=len(auto_human) if auto_human else None,
         population_note=(
-            "strict share of sampled auto-positive edges verified same; "
-            "missing/sealed/insufficient stay in the denominator"
+            "strict share of sampled auto-positive edges verified same by a "
+            "HUMAN reference; missing/sealed/insufficient stay in the "
+            "denominator and non-human labels are never substituted"
         ),
         method=next(
             (g.method for g in gates if g.method),
             None,
         ),
-        unavailable_reason=None if auto_units else "no_auto_positive_frame",
+        unavailable_reason=auto_reason,
+        basis=_basis_of(auto_units),
+        extras={"provenance_counts": _provenance_counts(auto_units)},
     )
 
     estimands: dict[str, EstimandReport] = {
@@ -1417,6 +1557,12 @@ def evaluate(
 
     recommendations = {f"tier{g.tier}:{g.scope}": g.recommended_disposition for g in gates}
     all_notes = list(notes)
+    all_notes.append(
+        "P34.45 (ADR-152/153): only human-provenance reference evidence can "
+        "measure a human estimand — agent/LLM/synthetic labels are reported "
+        "under their own basis class, and a human estimand without human "
+        "evidence is 'unavailable', never substituted."
+    )
     if policy.shadow:
         all_notes.append(
             "SHADOW MODE (eval-confidence policy): the preregistered gate is "
@@ -1511,11 +1657,19 @@ def render_report_md(report: EvaluationReport) -> str:
             "P32.23 decision."
         )
         lines.append("")
+    lines.append(
+        "> **Human-eval posture (P34.45 / ADR-152)** — only `human`-provenance "
+        "reference evidence can measure a human estimand. Agent, LLM and "
+        "synthetic labels are reported under their own basis class; a human "
+        "estimand without human evidence is `unavailable`, never substituted."
+    )
+    lines.append("")
     lines.append("## Estimands (separate frames, never pooled)")
     lines.append("")
     for name, est in sorted(report.estimands.items()):
         lines.append(f"### {name} — {est.state}")
         lines.append("")
+        lines.append(f"- basis class: `{est.basis}`")
         lines.append(f"- numerator / denominator: {_fmt(est.numerator)} / {_fmt(est.denominator)}")
         lines.append(f"- population: {est.population_note}")
         lines.append(f"- uncertainty method: {_fmt(est.method)}")

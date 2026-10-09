@@ -150,6 +150,33 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   `baseline_run`/`baseline_at` provenance pair (`date -u`), and re-diffs
   the result so a loosening is never written. The hosted leg is queued
   on the `live:P34.43` `sig_audit` login (exit 42, recorded).
+- **Honest evaluation posture: basis classes, review-only inferential
+  tiers, and the one-shot v3-interim ER re-run leg** (P34.45; owner
+  SIG-CONF-001/SIG-CONF-005; cites SIG-EVAL-001/004/006, SIG-CONF-012,
+  SIG-REL-010; ADR-152/153 → ADR-206) — estimands and evidence now
+  carry a basis class (`human`/`agent`/`llm`/`synthetic`/`mixed`/
+  `unknown`/`none`), human estimands measure only on
+  `reference_provenance='human'` evidence, and agent/LLM/synthetic rows
+  stay visible under their own basis — never fabricated into human
+  evidence. The committed camera-site gold is relabelled `agent` (it was
+  never human-labelled), and the v3-interim ruleset marks tiers 3–5
+  inferential: their decisions demote to review-only
+  (`no_certifying_evaluation`) absent a B5-certified evaluation, with
+  GQ-24's enforce lock refusing a completed run that carries an
+  uncertified inferential auto-write while disclosing historical ones on
+  the append-only spine; GQ-27 enforces one basis class per published
+  quality statement and refuses `verified`/`human`/`independent` under a
+  non-human basis. `scripts/eval/run_honest_eval_posture.py` emits the
+  posture report (every human estimand `unavailable` / `basis=agent` /
+  `no_human_reference`). `db`'s `er_rerun_login` change adds
+  `sig_materialize_login` — a distinct LOGIN member of the existing
+  NOLOGIN `sig_materialize` group, append-only INSERT surface,
+  UPDATE/DELETE/TRUNCATE refused, no claim-spine write — and
+  `ops/gcp/er-rerun.sh` runs the pre-authorised one-shot leg: `--check`
+  plan-only, `--apply` window-/author-/dependency-/backup-/
+  exactly-once-gated (a prior `ruleset_version='3-interim'` run exits
+  42), `--verify` read-only; rollback is forward-only. The hosted leg is
+  queued on `live:P34.43` + the AR-3 window (exit 42, recorded).
 
 ### Security
 

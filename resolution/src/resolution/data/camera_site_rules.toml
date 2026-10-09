@@ -16,8 +16,15 @@
 # evidence (SIG-IDENT-025). Only tiers whose measured holdout precision clears the
 # published floor (splink_model.toml `auto_write_precision_threshold`) auto-write;
 # everything else is PROPOSED and enqueued for human review (SIG-IDENT-020/028).
+#
+# v3-interim (P34.45 / ADR-153 "derivation, not identity"; ADR-152): every
+# identity-INFERENCE tier is review-only — no agent/LLM-labelled evidence can
+# certify an auto-written same-device claim, and no independent human (B5)
+# evaluation exists in Round 11. The namespace join 1g:shared_upstream_ref (the
+# same upstream identifier republished under the v2 conditions) is a DERIVATION,
+# not identity inference, and stays the only candidate auto-write tier.
 
-version = "2"
+version = "3-interim"
 
 # ---------------------------------------------------------------------------
 # Distances (metres, great-circle). A candidate pair farther apart than
@@ -42,16 +49,24 @@ candidate_max_m = 50.0
 # disposition rules and the quality gates key on; the label names the camera rule).
 # `candidate_auto_write` tiers MAY auto-write, but ONLY if the ER run measures their
 # holdout precision >= the floor; a tier with no holdout evidence never auto-writes.
+# `inferential` tiers additionally require an independent human (B5) evaluation to
+# auto-write at all — the P34.45 v3-interim lock (ADR-153, GQ-24): the agent/LLM-
+# labelled gold set can never certify one, so an inferential tier is review-only
+# while `certified_tiers` is empty. A future 1g label that is not the namespace
+# join joins this list.
 # ---------------------------------------------------------------------------
 [tiers]
-candidate_auto_write = [1, 3]
+candidate_auto_write = [1]
+inferential = [3, 4, 5]
 # v2 (ADR-105 §4 — derived from the gold set's TRAINING partition errors, measured on a
 # fresh holdout): a shared upstream reference is the deterministic tier only when the
 # pair is also mutually nearest across the two sources AND, unless the two site
 # descriptions agree, each record is the other's ONLY counterpart within `colocation_m`
 # (so an unnamed shared-ref pair must also be one-to-one within 5 m). A publisher listing
 # several devices at one point cannot be disambiguated by a shared row number alone (the
-# v1 holdout measured tier 1g at 0.882).
+# v1 holdout measured tier 1g at 0.882). Its measured precision still rides the
+# agent-labelled holdout, but that measurement only demotes the DERIVATION — it can
+# never promote an inferential tier (ADR-153).
 shared_ref_requires_mutual_nearest = true
 shared_ref_colocated_requires_name_agreement = true
 
@@ -179,7 +194,9 @@ seed = 30
 strict_precision = true
 # A candidate tier needs at least this many frozen-holdout pairs before its precision can
 # gate auto-write (a 1-of-1 "1.000" is not evidence). The v2 holdout carries 70 per
-# auto-write candidate tier.
+# auto-write candidate tier. Under v3-interim the same measurement is REPORTED for every
+# candidate tier but can only ever demote a derivation — the inferential tiers also need
+# a `certified_tiers` entry from an independent human evaluation (none exists).
 min_holdout_pairs = 50
 
 # The written adjudication rules for camera-site pairs (versioned prose; an

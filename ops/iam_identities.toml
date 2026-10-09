@@ -366,3 +366,11 @@ consumers = ["sig-quality-probe-rt"]
 [[secret]]
 name = "sig-recovery-password"
 consumers = ["sig-quality-probe-rt"]
+
+# P34.45's OM-20 pre-authorised credential: the WRITE-capable
+# sig_materialize_login password — mounted as SIG_ER_RERUN_PASSWORD on the
+# one-off job that runs the v3-interim camera-site ER re-run. The ONLY
+# accessor is the exec host's runtime identity.
+[[secret]]
+name = "sig-er-rerun-password"
+consumers = ["sig-quality-probe-rt"]
