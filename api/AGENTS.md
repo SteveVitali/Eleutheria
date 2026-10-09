@@ -21,6 +21,7 @@ and the **anonymous correction-intake receiver** — built but deliberately non-
 | `api/src/api/curation.py` | ~1040 | `create_curation_app` — the gated, loopback-only write surface |
 | `api/src/api/intake.py` + `intake_moderation.py` | ~n/a | the anonymous correction receiver + moderation store (non-operational: `503 receiver_not_operating`) |
 | `api/src/api/release_search.py` | ~n/a | read-only serving of release-pinned per-compartment FTS5 search artifacts |
+| `api/src/api/release_serving.py` | ~470 | P35.57 (SIG-REL-010): verified serving of the release's `r/<pub>/api/` slice for the release-backed routes (`/v1/dossier`, `/v1/coverage`, `/v1/export`, `/v1/changes`, `/v1/sources…`, `/v1/releases/**`) |
 | `api/src/api/tiers.py` | ~70 | sensitivity-tier filtering applied at the view layer |
 | `api/src/api/cli.py` | ~300 | `sig-api serve` / `serve-curation` / `serve-intake` / `intake-purge` entry point |
 
