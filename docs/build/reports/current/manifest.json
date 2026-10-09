@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "184edd45a4bcb61c817be7f482fedccb2c0e5853",
+  "input_commit": "c0eae00698c0a15077e33eb29761a7cc3c92deb2",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "133cf7eb29dce0fb8643dda2a39c81b97710248fd37c95b336cf1810748e54f9"
+      "sha256": "b85899fed5ace111f5f11c5c2adc93091bd9deb0c11dfe1e9a21f96a12fbd741"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -797,12 +797,16 @@
       "sha256": "2d9dfa14d556af2b6aee864c737bfa762720b9258d93683fadacd9cc36bbb773"
     },
     {
+      "path": "docs/adr/ADR-205-nightly-quality-probe-job-and-measured-baseline-application.md",
+      "sha256": "a8f92b1270c87eb43c0f4115130cfdc82c9dd73266cd571a1a37f92f916a86d7"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "12519aae1a512796614b9d2c38c6d573429d3c95fc210dc85f5d242f9cf80cd1"
+      "sha256": "584e2fbbc6a8bdb64c5a5b1d9a4e916eec9a64706848e79a662c1d66d390ad6c"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "2c9720af737c4a600f7f43fd2c000cfb015ea351142645eac05acf0bfa85bd16"
+      "sha256": "8bbc07c232e9f1f1b3616d126a073aab8006a23a1a2feb5b5e286b9143626923"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -810,7 +814,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "16271767c1ad81d06c8f76376e694a74d0ba1509e150f45eda8a04f33c1f81c1"
+      "sha256": "19bf80f78cc4ceb720cc84287a06da543c2fcc6fefe8204749ffc2ebc5bf180a"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -1811,6 +1815,10 @@
     {
       "path": "docs/build/runs/P34.44a.md",
       "sha256": "9b114efa7f137ede2a48a40ceaa8ff9afbe3a1c733fc7af24983e72f1df30388"
+    },
+    {
+      "path": "docs/build/runs/P34.44b.md",
+      "sha256": "3567c4c36dec156ea3d9bdad3d29360aed435fc79a12ec6cadad7c63c0c7891e"
     },
     {
       "path": "docs/build/runs/P34.48.md",
