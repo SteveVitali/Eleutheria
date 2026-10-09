@@ -216,16 +216,19 @@ def evaluate(inputs: dict) -> Verdict:
 
     # -- lock_timeout ------------------------------------------------------------
     session = inputs.get("deploy_session") or {}
-    lt = session.get("lock_timeout_ms")
-    ok = isinstance(lt, (int, float)) and not isinstance(lt, bool) and lt > 0
+    lt_raw = session.get("lock_timeout_ms")
+    lt: float | None = (
+        float(lt_raw) if isinstance(lt_raw, (int, float)) and not isinstance(lt_raw, bool) else None
+    )
+    ok = lt is not None and lt > 0
     criteria.append(
         Criterion(
             "lock_timeout",
             ok,
             (
-                f"lock_timeout={lt!r} ms — the deploy session must set it"
+                f"lock_timeout={lt_raw!r} ms — the deploy session must set it"
                 if not ok
-                else f"lock_timeout={int(lt)} ms set for the deploy session"
+                else f"lock_timeout={lt:g} ms set for the deploy session"
             ),
             lt,
         )
