@@ -57,7 +57,7 @@ class FakeBucket:
 def test_suppressed_record_is_a_probe_run() -> None:
     rec = suppressed_probe_record(
         reason="quiet-hours-03:00-06:30Z",
-        generated_at="2026-10-20T03:15:00Z",
+        generated_at="2026-09-20T03:15:00Z",
         job="sig-quality-probe",
     )
     assert rec["version"] == "sig.probe-run/1"
@@ -69,7 +69,7 @@ def test_suppressed_record_is_a_probe_run() -> None:
 def test_error_record_records_the_failure_never_silence() -> None:
     rec = error_probe_record(
         reason="connection refused",
-        generated_at="2026-10-20T01:00:00Z",
+        generated_at="2026-09-20T01:00:00Z",
         job="sig-quality-probe",
     )
     assert rec["version"] == "sig.probe-run/1"
@@ -82,13 +82,13 @@ def test_error_record_records_the_failure_never_silence() -> None:
 
 
 def test_object_stamp_partitions_by_day() -> None:
-    assert _object_stamp("2026-10-20T01:00:00Z") == "2026-10-20/2026-10-20T01-00-00Z"
+    assert _object_stamp("2026-09-20T01:00:00Z") == "2026-09-20/2026-09-20T01-00-00Z"
 
 
 def test_upload_records_writes_two_new_objects() -> None:
     bucket = FakeBucket()
     report = {
-        "generated_at": "2026-10-20T01:00:00Z",
+        "generated_at": "2026-09-20T01:00:00Z",
         "version": "sig.quality-report/1",
         "target": "hosted-spine",
         "placement": "M",
@@ -98,7 +98,7 @@ def test_upload_records_writes_two_new_objects() -> None:
         "totals": {"evaluated": 0, "offered": 0},
     }
     names = upload_records(bucket, PROBE_PREFIX_DEFAULT, report)
-    assert names["report"].startswith(PROBE_PREFIX_DEFAULT + "2026-10-20/")
+    assert names["report"].startswith(PROBE_PREFIX_DEFAULT + "2026-09-20/")
     assert names["report"].endswith("-quality-report.json")
     assert names["probe_run"].endswith("-probe-run.json")
     assert len(bucket.puts) == 2
@@ -110,10 +110,10 @@ def test_upload_records_writes_two_new_objects() -> None:
 def test_upload_probe_record_names_a_new_object() -> None:
     bucket = FakeBucket()
     rec = suppressed_probe_record(
-        reason="batch-window", generated_at="2026-11-07T01:00:00Z", job="j"
+        reason="batch-window", generated_at="2026-09-07T01:00:00Z", job="j"
     )
     name = upload_probe_record(bucket, PROBE_PREFIX_DEFAULT, rec)
-    assert name.startswith(PROBE_PREFIX_DEFAULT + "2026-11-07/")
+    assert name.startswith(PROBE_PREFIX_DEFAULT + "2026-09-07/")
     assert json.loads(bucket.objects[name])["suppressed"] == "batch-window"
 
 
@@ -200,7 +200,7 @@ def test_nightly_suppressed_writes_a_probe_run(tmp_path: Path, capsys) -> None:
         [
             "nightly",
             "--now",
-            "2026-10-20T03:15:00Z",
+            "2026-09-20T03:15:00Z",
             "--out",
             str(tmp_path),
         ]
@@ -222,7 +222,7 @@ def test_nightly_without_dsn_reports_partial_not_pass(
         [
             "nightly",
             "--now",
-            "2026-10-20T01:00:00Z",
+            "2026-09-20T01:00:00Z",
             "--out",
             str(tmp_path),
             "--no-alert",
@@ -247,7 +247,7 @@ def test_nightly_run_failure_is_recorded_and_alerted(
     monkeypatch.setattr("ops.quality.connect_readonly", _refuse)
     monkeypatch.setenv("SIG_QUALITY_DSN", "host=nowhere dbname=sig")
     monkeypatch.setenv("SIG_ALERT_LOG", str(tmp_path / "alerts.jsonl"))
-    rc = main(["nightly", "--now", "2026-10-20T01:00:00Z"])
+    rc = main(["nightly", "--now", "2026-09-20T01:00:00Z"])
     assert rc != 0
     rows = (tmp_path / "alerts.jsonl").read_text().splitlines()
     assert rows and "run failed" in json.loads(rows[-1])["message"]
@@ -261,7 +261,7 @@ def test_nightly_suppression_needs_no_credentials(
     monkeypatch.delenv("SIG_QUALITY_DSN", raising=False)
     monkeypatch.delenv("SIG_DB_DSN", raising=False)
     monkeypatch.delenv("SIG_AUDIT_PASSWORD", raising=False)
-    rc = main(["nightly", "--now", "2026-11-07T01:00:00Z", "--out", str(tmp_path)])
+    rc = main(["nightly", "--now", "2026-09-07T01:00:00Z", "--out", str(tmp_path)])
     assert rc == 0
     rec = json.loads((tmp_path / "probe-run.json").read_text())
     assert "batch-window" in rec["suppressed"]
@@ -279,12 +279,12 @@ def test_job_plan_prints_the_declaration(capsys) -> None:
 
 def test_job_window_exits_42_when_queued(capsys) -> None:
     rc = main(
-        ["job", "window", "--earliest", "2026-10-13T12:00:00Z", "--now", "2026-10-08T01:00:00Z"]
+        ["job", "window", "--earliest", "2026-09-13T12:00:00Z", "--now", "2026-09-08T01:00:00Z"]
     )
     assert rc == 42
     assert "QUEUED" in capsys.readouterr().out
     rc = main(
-        ["job", "window", "--earliest", "2026-10-13T12:00:00Z", "--now", "2026-10-14T01:00:00Z"]
+        ["job", "window", "--earliest", "2026-09-13T12:00:00Z", "--now", "2026-09-14T01:00:00Z"]
     )
     assert rc == 0
 

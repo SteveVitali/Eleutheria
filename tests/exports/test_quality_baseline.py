@@ -96,7 +96,7 @@ from = "L2"
 
 
 def test_baseline_provenance_pair_validates() -> None:
-    doc = _check_doc('\nbaseline_run = "baseline-x"\nbaseline_at = "2026-10-14"\n')
+    doc = _check_doc('\nbaseline_run = "baseline-x"\nbaseline_at = "2026-09-14"\n')
     # validator appends to the check table — the extra lines must sit INSIDE
     # [[check]]; put them before the closing table by appending after `from`.
     errors = validate_registry(doc)
@@ -122,7 +122,7 @@ def test_baseline_run_on_pending_baseline_is_refused() -> None:
     doc = _check_doc()
     doc["check"][0]["baseline"] = "pending"
     doc["check"][0]["baseline_run"] = "baseline-x"
-    doc["check"][0]["baseline_at"] = "2026-10-14"
+    doc["check"][0]["baseline_at"] = "2026-09-14"
     errors = validate_registry(doc)
     assert any("not a measured value" in e for e in errors)
 
@@ -214,25 +214,25 @@ def test_apply_baselines_resolves_pending_and_stamps_provenance() -> None:
     text = _registry_text_for_gq14('baseline = "pending"')
     proposal = [{"check": "GQ-14", "proposed": 0.0}]
     new_text = apply_baselines(
-        text, proposal, run_id="baseline-2026-10-14", at="2026-10-14", ticket="P34.44b"
+        text, proposal, run_id="baseline-2026-09-14", at="2026-09-14", ticket="P34.44b"
     )
     assert "baseline = 0" in new_text
-    assert 'baseline_run = "baseline-2026-10-14"' in new_text
-    assert 'baseline_at = "2026-10-14"' in new_text
+    assert 'baseline_run = "baseline-2026-09-14"' in new_text
+    assert 'baseline_at = "2026-09-14"' in new_text
     assert 'baseline = "pending"' not in new_text
     # The rewritten registry still validates.
     p = _write(new_text)
     reg = load_registry(p)
     check = reg.by_id()["GQ-14"]
     assert check.baseline == 0.0
-    assert check.baseline_run == "baseline-2026-10-14"
-    assert check.baseline_at == "2026-10-14"
+    assert check.baseline_run == "baseline-2026-09-14"
+    assert check.baseline_at == "2026-09-14"
 
 
 def test_apply_baselines_preserves_untouched_blocks_byte_for_byte() -> None:
     text = REGISTRY_PATH.read_text(encoding="utf-8")
     proposal = [{"check": "GQ-14", "proposed": 0.0}]
-    new_text = apply_baselines(text, proposal, run_id="r", at="2026-10-14", ticket="P34.44b")
+    new_text = apply_baselines(text, proposal, run_id="r", at="2026-09-14", ticket="P34.44b")
     # Every line outside GQ-14's block is identical.
     old_blocks = re.split(r"(?=^\[\[check\]\])", text, flags=re.M)
     new_blocks = re.split(r"(?=^\[\[check\]\])", new_text, flags=re.M)
@@ -247,20 +247,20 @@ def test_apply_baselines_refuses_a_loosening() -> None:
     text = _registry_text_for_gq14("baseline = 5")
     proposal = [{"check": "GQ-14", "proposed": 99.0}]  # worse — never writable
     with pytest.raises(RegistryError, match="illegal ratchet move"):
-        apply_baselines(text, proposal, run_id="r", at="2026-10-14", ticket="P34.44b")
+        apply_baselines(text, proposal, run_id="r", at="2026-09-14", ticket="P34.44b")
 
 
 def test_apply_baselines_refuses_unknown_checks() -> None:
     text = _registry_text_for_gq14('baseline = "pending"')
     proposal = [{"check": "GQ-99", "proposed": 1.0}]
     with pytest.raises(RegistryError, match="unknown checks"):
-        apply_baselines(text, proposal, run_id="r", at="2026-10-14", ticket="P34.44b")
+        apply_baselines(text, proposal, run_id="r", at="2026-09-14", ticket="P34.44b")
 
 
 def test_apply_baselines_refuses_bad_inputs() -> None:
     text = _registry_text_for_gq14('baseline = "pending"')
     with pytest.raises(RegistryError, match="run_id"):
-        apply_baselines(text, [], run_id="", at="2026-10-14", ticket="P34.44b")
+        apply_baselines(text, [], run_id="", at="2026-09-14", ticket="P34.44b")
     with pytest.raises(RegistryError, match="YYYY-MM-DD"):
         apply_baselines(text, [], run_id="r", at="yesterday", ticket="P34.44b")
 
@@ -275,7 +275,7 @@ def test_apply_baselines_rewrites_stale_provenance() -> None:
         1,
     )
     proposal = [{"check": "GQ-14", "proposed": 2.0}]  # tighter — legal
-    new_text = apply_baselines(text, proposal, run_id="new-run", at="2026-10-14", ticket="P34.44b")
+    new_text = apply_baselines(text, proposal, run_id="new-run", at="2026-09-14", ticket="P34.44b")
     assert 'baseline_run = "new-run"' in new_text
     assert "old-run" not in new_text
     assert new_text.count("baseline_run") == 1
@@ -297,7 +297,7 @@ def test_apply_end_to_end_from_a_record(tmp_path: Path) -> None:
         text,
         record["proposal"],
         run_id=record["run_id"],
-        at="2026-10-14",
+        at="2026-09-14",
         ticket="P34.44b",
         adr_ids=("ADR-205",),
     )
@@ -306,6 +306,6 @@ def test_apply_end_to_end_from_a_record(tmp_path: Path) -> None:
 
 
 def test_baseline_at_re() -> None:
-    assert BASELINE_AT_RE.match("2026-10-14")
+    assert BASELINE_AT_RE.match("2026-09-14")
     assert not BASELINE_AT_RE.match("2026-1-4")
     assert not BASELINE_AT_RE.match("14-10-2026")

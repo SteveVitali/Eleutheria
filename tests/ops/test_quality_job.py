@@ -116,18 +116,18 @@ def test_secret_env_duplicates_and_plain_overlap_refused(tmp_path: Path) -> None
 @pytest.mark.parametrize(
     ("stamp", "quiet", "batch"),
     [
-        ("2026-10-20T01:00:00Z", False, False),  # the scheduled fire shape
-        ("2026-10-20T02:59:59Z", False, False),
-        ("2026-10-20T03:00:00Z", True, False),
-        ("2026-10-20T05:30:00Z", True, False),
-        ("2026-10-20T06:29:59Z", True, False),
-        ("2026-10-20T06:30:00Z", False, False),
-        ("2026-11-05T23:59:59Z", False, False),  # day 5 — last free night
-        ("2026-11-06T00:00:00Z", False, True),  # batch window opens
-        ("2026-11-10T12:00:00Z", False, True),
-        ("2026-11-13T11:59:59Z", False, True),  # still inside at noon minus a second
-        ("2026-11-13T12:00:00Z", False, False),  # window closes
-        ("2026-11-14T01:00:00Z", False, False),  # the first post-window fire
+        ("2026-09-20T01:00:00Z", False, False),  # the scheduled fire shape
+        ("2026-09-20T02:59:59Z", False, False),
+        ("2026-09-20T03:00:00Z", True, False),
+        ("2026-09-20T05:30:00Z", True, False),
+        ("2026-09-20T06:29:59Z", True, False),
+        ("2026-09-20T06:30:00Z", False, False),
+        ("2026-09-05T23:59:59Z", False, False),  # day 5 — last free night
+        ("2026-09-06T00:00:00Z", False, True),  # batch window opens
+        ("2026-09-10T12:00:00Z", False, True),
+        ("2026-09-13T11:59:59Z", False, True),  # still inside at noon minus a second
+        ("2026-09-13T12:00:00Z", False, False),  # window closes
+        ("2026-09-14T01:00:00Z", False, False),  # the first post-window fire
     ],
 )
 def test_suppression_windows(stamp: str, quiet: bool, batch: bool) -> None:
@@ -145,17 +145,17 @@ def test_suppression_windows(stamp: str, quiet: bool, batch: bool) -> None:
 def test_suppression_reason_prefers_quiet_band() -> None:
     # Day 7 at 04:00Z is inside BOTH windows — the reason names either; the
     # point is the run is suppressed, never run.
-    assert suppression_reason(_at("2026-11-07T04:00:00Z")) is not None
+    assert suppression_reason(_at("2026-09-07T04:00:00Z")) is not None
 
 
 def test_leg_window_reason_orders_earliest_first() -> None:
     assert (
-        leg_window_reason(_at("2026-10-08T01:00:00Z"), earliest="2026-10-13T12:00:00Z")
+        leg_window_reason(_at("2026-09-08T01:00:00Z"), earliest="2026-09-13T12:00:00Z")
         == "before-earliest"
     )
-    assert leg_window_reason(_at("2026-10-14T01:00:00Z"), earliest="2026-10-13T12:00:00Z") is None
+    assert leg_window_reason(_at("2026-09-14T01:00:00Z"), earliest="2026-09-13T12:00:00Z") is None
     assert (
-        leg_window_reason(_at("2026-10-14T03:15:00Z"), earliest="2026-10-13T12:00:00Z") is not None
+        leg_window_reason(_at("2026-09-14T03:15:00Z"), earliest="2026-09-13T12:00:00Z") is not None
     )
 
 
