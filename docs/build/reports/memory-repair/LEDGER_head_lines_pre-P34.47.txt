@@ -1,0 +1,13 @@
+Byte-for-byte archive of the three LEDGER head lines corrected in place for the
+P34.46 → #261/-v2 supersession refs (PR number and branch name only; the closeout
+records already named #261 — these head lines predated the supersession edit).
+Archived 2026-10-07 → correction commit follows the P34.46/BM-LEDGER-08 pattern.
+
+Line 7 (State):
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P34.46's entry (PR #260 — Round-10 schema/API roll: the L1 prep leg; L2 slot + L3 soak queued); next → P34.47 (row 259).
+
+Line 16 (lastCompleted):
+lastCompleted:   P34.46                             # row 258 (PR #260, open)
+
+Line 27 (chainTip):
+chainTip:        r11/P34.46-round10-schema-allows-and-api-roll # PR #260 open

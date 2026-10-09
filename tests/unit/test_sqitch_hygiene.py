@@ -296,3 +296,65 @@ def test_the_harnesses_actually_use_the_pin() -> None:
         assert SQITCH_IMAGE_PINNED in (REPO / rel).read_text(), (
             f"{rel} does not reference the pinned sqitch image"
         )
+
+
+# --------------------------------------------------------------------------- #
+# 5. The frozen L44-52 spine (P34.46; C-10)                                      #
+# --------------------------------------------------------------------------- #
+
+#: The sha256 of `db/sqitch.plan` lines 44-52 — the L44-52 frozen spine the
+#: deploy window replays — as recorded by P34.24b's plan-hashes record
+#: (REHEARSAL.md, C-10) and re-confirmed byte-identical to the base tip at
+#: every rework. Lines are never edited or re-stamped; every correction
+#: appends after L52 (ADR-196).
+L44_52_SHA256 = "8cc9d3db4dfc9335821cc4ecef181ee0c9f96231346ce231567e0f55b413a9fc"
+L44, L52 = 44, 52
+
+
+def test_l44_52_spine_is_byte_identical() -> None:
+    """The deployed spine's plan lines are frozen: an edit or re-stamp of any
+    of L44-52 changes the span hash — the deploy window's precondition is
+    that the plan it replays is exactly the plan that was rehearsed."""
+    import hashlib
+
+    lines = PLAN.read_text(encoding="utf-8").splitlines(keepends=True)
+    span = "".join(lines[L44 - 1 : L52])
+    assert hashlib.sha256(span.encode()).hexdigest() == L44_52_SHA256, (
+        "db/sqitch.plan L44-52 drifted from the recorded frozen spine — "
+        "these lines may only ever be appended to, never edited (C-10)"
+    )
+
+
+def test_plan_tip_depends_on_the_verify_membership_rework() -> None:
+    """P34.46's repair is on the deploy path: the tip carries the
+    @r11-verify-membership reworked instances so a production-shaped deploy
+    grants the deploying login membership in the intake roles before its
+    own verify SET ROLEs them (D-P34.24b-1)."""
+    appended = dict((ln.split()[0], n) for n, ln in _appended_lines())
+    assert "@r11-verify-membership" in appended, "missing the rework boundary tag"
+    for change in ("intake_storage", "intake_application_bridge"):
+        assert appended[change] > appended["@r11-verify-membership"], (
+            f"{change}'s reworked instance must follow the tag"
+        )
+    # The reworked instance is what the tip deploys: the change line depends
+    # on its own @tag copy.
+    for change in ("intake_storage", "intake_application_bridge"):
+        line = _plan_lines()[appended[change] - 1]
+        assert f"[{change}@r11-verify-membership]" in line
+
+
+def test_tagged_membership_deploys_grant_the_deploying_login() -> None:
+    """The repair itself: the @r11-verify-membership deploy scripts carry
+    `GRANT <intake role> TO <current_user>` — the materialize_role /
+    recovery_apply pattern — so a non-superuser deployer can SET ROLE the
+    NOLOGIN intake roles its own verify exercises."""
+    for change, roles in (
+        ("intake_storage", ("sig_intake_receiver", "sig_intake_reviewer")),
+        ("intake_application_bridge", ("sig_intake_bridge",)),
+    ):
+        text = (REPO / "db" / "deploy" / f"{change}@r11-verify-membership.sql").read_text()
+        for role in roles:
+            assert re.search(rf"GRANT\s+{role}\s+TO\s+%I", text) and "current_user" in text, (
+                f"{change}@r11-verify-membership deploy must grant {role} "
+                "to the deploying login via current_user"
+            )
