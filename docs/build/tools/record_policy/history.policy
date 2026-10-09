@@ -301,3 +301,10 @@ seed-commit 6fe93216
 allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "record": "readback-2026-10-10.json"
 allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "recorded_at"
 allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "now"
+
+# ── GATE-G4 blocked-entry `ci:` fragment fix ─────────────────────────────────
+# d2534d02's PHASE LOG entry carried `ci: fail #262@bcb8f25`, which the G3b
+# recorded-CI verifier cannot parse (its grammar knows pass/pass-after-rerun).
+# The fix reworded the fragment in place; the declaration lands as a later commit.
+# Scope: findings attributed to c4b2aa21 only; no other commit borrows the exemption.
+seed-commit c4b2aa21
