@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "e9cb8e1533fa9005241575a6335269357b1d5314",
-  "manifest_inputs": 999,
+  "input_commit": "d7431b43606e8d01509ee7c0f9e6ce93061b9301",
+  "manifest_inputs": 1000,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.46",
@@ -27,12 +27,12 @@
   },
   "counts": {
     "obligations": 160,
-    "owed": 91,
-    "open": 88,
+    "owed": 90,
+    "open": 87,
     "partial": 3,
-    "terminal": 69,
-    "events": 644,
-    "transitions": 30,
+    "terminal": 70,
+    "events": 645,
+    "transitions": 31,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
@@ -7654,11 +7654,11 @@
     },
     {
       "id": "D-P34.24b-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P34.24b-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P34.24b-1:e1",
       "kind": "F",
-      "owner": "the sqitch fix row ahead of P34.46 (a new appended change)",
-      "landing": "before P34.46's schema deploy — its go/no-go cannot pass a tip that fails at intake_storage",
+      "owner": "the sqitch fix row ahead of P34.46 (P34.46 itself)",
+      "landing": "the row's own success criterion ran verbatim — fresh sig-pg-drill clone through restore-drill.sh clone/rehearse/deleteclone, deploy --verify exit 0, verify exit 0, all changes ok in record.json",
       "landing_source": "event-head",
       "backlog_home": "BL-084",
       "item": "The Cloud SQL verify-role fix: `verify/intake_storage.sql:80` fails `SET LOCAL ROLE sig_intake_receiver` on the production-shaped clone — the Cloud SQL `sig` login is not a superuser and holds no membership in the deploy-created `NOLOGIN` role (the same `SET ROLE` mechanism appears in `verify/intake_application_bridge.sql` and `verify/recovery_apply.sql`, so the class repeats downstream). The fix is a NEW appended sqitch change after line 58 (grant the verify/deploy login the membership it needs, or another mechanism that row chooses) — C-10 keeps L44–52 byte-frozen, so the repair can never be an in-place edit",
@@ -7696,6 +7696,33 @@
             "interpretation": "preserved"
           },
           "recorded_at": "2026-10-04"
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.24b-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P34.24b-1",
+          "seq": 1,
+          "expected_previous_event": "D-P34.24b-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.46",
+          "owner": "the sqitch fix row ahead of P34.46 (P34.46 itself)",
+          "landing": "the row's own success criterion ran verbatim — fresh sig-pg-drill clone through restore-drill.sh clone/rehearse/deleteclone, deploy --verify exit 0, verify exit 0, all changes ok in record.json",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/logs/restore-drill/drill-20261009T100817Z/rehearsal/record.json",
+            "docs/build/runs/P34.46.md",
+            "docs/tickets/DEFERRALS.md",
+            "db/sqitch.plan",
+            "db/deploy/intake_storage@r11-verify-membership.sql",
+            "db/deploy/intake_application_bridge@r11-verify-membership.sql",
+            "tests/unit/test_sqitch_hygiene.py"
+          ],
+          "observed_at": "2026-10-09",
+          "source_commit": "dee51e1e",
+          "reason": "P34.46 discharged the row: the @r11-verify-membership rework grants the deploying sig login membership in the three NOLOGIN intake roles via current_user (materialize_role pattern; tagged copies carry full DDL + the grant, tip deploys idempotent re-grant, tip verifies assert pg_has_role, guarded revoke on revert; L44-52 byte-identical). Verified on a fresh production-shaped clone sig-pg-drill-20261009t1008z (PIT 2026-10-09T09:58:17Z, hosted head camera_site_human_decisions): sqitch deploy --verify exit 0 (19 changes, 141.0s wall, lock_timeout 1200000ms), sqitch verify exit 0; claim_evidence ACCESS EXCLUSIVE bound 15.927s; clone deleted; sig-pg read-only throughout.",
+          "recorded_at": "2026-10-09"
         }
       ]
     },
@@ -18321,10 +18348,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "ad261d881572697f492e47ec72496f67f82d09568379d1b7bb1448b3d4960434",
+  "manifest_sha256": "093e2678acb5f5b6be9ba15925f7b229c0b6b66c2148ccdab7e65f44197719e5",
   "current_md": {
     "lines": 63,
-    "bytes": 15432,
+    "bytes": 15433,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
