@@ -63,6 +63,7 @@ from policy.licensing import (
     export_refusal_reason,
 )
 from policy.rights import RightsRecord
+from policy.source_aliases import resolve_public_text
 from reconcile.materialize import (
     read_materialized_contradictions,
     read_materialized_edges,
@@ -293,7 +294,12 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
             raw[key] = cur.fetchall()
         except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
             raw[key] = []
-    return raw
+    # P34.18 / ADR-178 (S0 RI-01): the keyed-digest alias projection — every
+    # retired identifier token in a supplementary row (source ids, evidence
+    # titles/locators, subject refs, attribution strings) resolves or redacts
+    # to its neutral public form here, once, before any surface builder sees
+    # it. Nothing publicly renderable may repeat a handle (TS-04).
+    return {k: resolve_public_text(v) for k, v in raw.items()}
 
 
 def _table_present(cur: Any, table: str) -> bool:
@@ -2314,7 +2320,9 @@ def run_spine_export(
         # The materialized graph (P28.1-P28.4, ADR-101), read inside the SAME snapshot so
         # every emitted artifact describes one spine state; empty/absent tables degrade to []
         # (the honest state until the hosted materialization runs, D-R6.5-SURFACE).
-        export_raw.update(fetch_materialized_graph(cur))
+        export_raw.update(
+            {k: resolve_public_text(v) for k, v in fetch_materialized_graph(cur).items()}
+        )
     finally:
         if snapshot:
             cur.execute("ROLLBACK")

@@ -20,10 +20,10 @@ sentence that could be challenged as uncited, characterised, or overstated.
 - **The 299-vs-190 `claimed_device_count` contradiction is reported, not
   characterised.** The figure renders as a contested standoff ("190–299", persistent
   contested marker) whose reconciliation lists BOTH claims — DeFlock (299, 2026-08-20,
-  W2) and Chief Bacy (190, 2026-08-18, W2) — each with its source, tier, date, and a
+  W2) and the OKCPD chief (190, 2026-08-18, W2) — each with its source, tier, date, and a
   document link; the "different quantity" note explains the metro-vs-city-limits scope
   difference. No single number is asserted as the truth (no synthetic certainty, §3.1).
-- **Every material figure is cited.** Active count (90 → Chief Bacy, 2026-08-18),
+- **Every material figure is cited.** Active count (90 → the OKCPD chief, 2026-08-18),
   independently-mapped count (31 → OSM, named a **lower bound** in the same figure,
   ODbL-attributed) — each expands to its reconciliation with a document link
   (`data-testid="recon-claim"`, one per claim).
@@ -36,7 +36,7 @@ sentence that could be challenged as uncited, characterised, or overstated.
   *platform* is "under federal constitutional challenge (vendor)" — an accurate,
   attributed statement about the existence of litigation, not an adjudicated finding.
 - **No un-permitted public-employee name is published.** Claims are attributed to
-  source roles/records (e.g. "OKCPD Chief Bacy, city council 2026-08-18" as an
+  source roles/records (e.g. "the OKCPD chief, city council 2026-08-18" as an
   attribution, not a person-claim); `applyPublicationPolicy` runs over the dossier at
   build (SIG-PUB-017) and can only withhold.
 

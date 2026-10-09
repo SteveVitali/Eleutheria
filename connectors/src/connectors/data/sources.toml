@@ -2821,7 +2821,7 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_ut.md"
-notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo is an informational/no-warranty notice asserting no use restriction — state public record → CC0-1.0. ArcGIS item d3f7dae59eba45459bd9ba6a37f6ba56 (owner nlucchetti@utah.gov_uplan); 32 cameras observed. Geometry-only coordinates."
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo is an informational/no-warranty notice asserting no use restriction — state public record → CC0-1.0. ArcGIS item d3f7dae59eba45459bd9ba6a37f6ba56 (owner [account withheld]); 32 cameras observed. Geometry-only coordinates."
 [sources.dot_511_ut.rights]
 spdx = "CC0-1.0"
 attribution = "Utah Department of Transportation Live View camera registry"
@@ -3812,7 +3812,7 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_lambeth_gb.md"
-notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner opendata@lambeth.gov.uk) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. 35 cameras observed."
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner [account withheld]) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. 35 cameras observed."
 [sources.camreg_lambeth_gb.rights]
 spdx = "OGL-3.0"
 attribution = "London Borough of Lambeth parking CCTV camera registry (OGL v3.0)"
@@ -3864,7 +3864,7 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_stalbert_ab.md"
-notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.13 catalog sweep. GATED — ArcGIS item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner open@stalbert.ca, 80 rows) names 'City of St. Albert Open Government License' (LicenseRef-StAlbert-ODL-1.0) but the licence grant text could not be captured verbatim: data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists. Blocker: verbatim licence-text capture + HG-03-class rights decision (D-SOURCES.12-1)."
+notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.13 catalog sweep. GATED — ArcGIS item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner [account withheld], 80 rows) names 'City of St. Albert Open Government License' (LicenseRef-StAlbert-ODL-1.0) but the licence grant text could not be captured verbatim: data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists. Blocker: verbatim licence-text capture + HG-03-class rights decision (D-SOURCES.12-1)."
 [sources.camreg_stalbert_ab.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3982,8 +3982,8 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=7b3c9de533e544a397882b3ac62dcb9f"
 retrieval_date = 2026-09-18
 
-[sources.camreg_aikner]
-name = "Traffic cameras (aikner_mrrigis ArcGIS registry)"
+[sources.camreg_und_001]
+name = "Traffic cameras (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=509475945f494a37bcbeefee139a6ecc"
 default_tier = "R1"
@@ -3998,9 +3998,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_aikner.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_001.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_aikner.rights]
+[sources.camreg_und_001.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
 redistributable = true
@@ -4190,7 +4190,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=5590d73396564488b5d627079be0ee5a"
 retrieval_date = 2026-09-18
 
-[sources.camreg_bargabos]
+[sources.camreg_und_002]
 name = "CCTV camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=8ebed01d37c9486fae407a8e6623e8f4"
@@ -4206,9 +4206,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_bargabos.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_002.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_bargabos.rights]
+[sources.camreg_und_002.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -4455,7 +4455,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=9667d52f9c014ba29e576a519af6b409"
 retrieval_date = 2026-09-18
 
-[sources.camreg_cclemire]
+[sources.camreg_und_003]
 name = "Public-safety cameras view (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=aa12417a64b04fcbb07e67435c84086d"
@@ -4471,9 +4471,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_cclemire.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_003.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_cclemire.rights]
+[sources.camreg_und_003.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -4507,7 +4507,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=bb665114837146769fe7103082d4fb98"
 retrieval_date = 2026-09-18
 
-[sources.camreg_cheicylia]
+[sources.camreg_und_004]
 name = "CCTV camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=7d7654bc257f40d0aa7aebf71ae971b8"
@@ -4523,9 +4523,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_cheicylia.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_004.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_cheicylia.rights]
+[sources.camreg_und_004.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -4590,7 +4590,7 @@ captured_terms_verbatim = '''Source must be credited. Cannot be re-sold. Resourc
 captured_terms_evidence = "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=634b19920c7e45c092455134055b9335]"
 publication_basis = "operator-accepted express terms (ADR-183)"
 
-[sources.camreg_cphang]
+[sources.camreg_und_005]
 name = "Surveillance sites (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=81d052e49e5c4ac8972506a6740adb03"
@@ -4606,9 +4606,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_cphang.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_005.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_cphang.rights]
+[sources.camreg_und_005.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published surveillance-site registry camera registry"
 redistributable = true
@@ -4746,7 +4746,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=55213f82bc5a47c2b5483c5627c4730f"
 retrieval_date = 2026-09-18
 
-[sources.camreg_duganmeyer]
+[sources.camreg_und_006]
 name = "Flock ALPR locations (UA GIS ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=1396d889c2734c57a93184470a11c7f4"
@@ -4762,9 +4762,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_duganmeyer.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_006.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_duganmeyer.rights]
+[sources.camreg_und_006.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published ALPR camera registry camera registry"
 redistributable = true
@@ -4928,7 +4928,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=d23db5da905b43798391379c0bd2f4a2"
 retrieval_date = 2026-09-18
 
-[sources.camreg_fifia]
+[sources.camreg_und_007]
 name = "CCTV_ camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d03b77e0286d4d82b76c76de32c36b27"
@@ -4944,9 +4944,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_fifia.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_007.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_fifia.rights]
+[sources.camreg_und_007.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -5032,8 +5032,8 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=fe8ee8d36eb34bc6bdd49c3e447f5ffb"
 retrieval_date = 2026-09-18
 
-[sources.camreg_freese_dm]
-name = "ITS CCTV camera layer (Freese DM ArcGIS registry)"
+[sources.camreg_und_008]
+name = "ITS CCTV camera layer (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d6d80e7f82884caaaeea1e0eed5d595b"
 default_tier = "R1"
@@ -5048,9 +5048,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_freese_dm.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_008.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_freese_dm.rights]
+[sources.camreg_und_008.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published ITS camera registry camera registry"
 redistributable = true
@@ -5214,7 +5214,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=4e1c6cf7573948ef885ecd262d5d262b"
 retrieval_date = 2026-09-18
 
-[sources.camreg_gvanmaren]
+[sources.camreg_und_009]
 name = "CCTV cameras asset registry (3D-GIS ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=119f3f9304f94b74af62f20798d3c52d"
@@ -5230,9 +5230,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_gvanmaren.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_009.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_gvanmaren.rights]
+[sources.camreg_und_009.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV asset registry camera registry"
 redistributable = true
@@ -5240,7 +5240,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=119f3f9304f94b74af62f20798d3c52d"
 retrieval_date = 2026-09-18
 
-[sources.camreg_helberg]
+[sources.camreg_und_010]
 name = "Camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=0fa13d7ceac549e5869f30800d2b2a2c"
@@ -5256,9 +5256,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_helberg.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_010.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_helberg.rights]
+[sources.camreg_und_010.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -5396,7 +5396,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=24da916fb36f44e9afd0bab4c527204d"
 retrieval_date = 2026-09-18
 
-[sources.camreg_jelenic]
+[sources.camreg_und_011]
 name = "Camera point registry (UNSW ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=38ad4086df4e4ba285792c207fc37da4"
@@ -5412,9 +5412,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_jelenic.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_011.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_jelenic.rights]
+[sources.camreg_und_011.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published camera registry camera registry"
 redistributable = true
@@ -5527,8 +5527,8 @@ arising from or related to using the (application) system. </span></p>'''
 captured_terms_evidence = "docs/build/reports/catalog_sweep_2026-09-18_qualified.json#datasets[id=9338737e5f6b4deda9d90d120f16c32c]"
 publication_basis = "operator-accepted express terms (ADR-183)"
 
-[sources.camreg_keshan]
-name = "Camera registry (KeshanMoodley ArcGIS layer)"
+[sources.camreg_und_012]
+name = "Camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=3a72754fa9004f9ca5774bb23c6f3504"
 default_tier = "R1"
@@ -5543,9 +5543,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_keshan.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_012.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_keshan.rights]
+[sources.camreg_und_012.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -5579,7 +5579,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=7fc8ba9051684d0aabc228038758c10b"
 retrieval_date = 2026-09-18
 
-[sources.camreg_kosman]
+[sources.camreg_und_013]
 name = "Traffic cameras (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=234686a8453d406bab8f1a2ab5870ce5"
@@ -5595,9 +5595,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_kosman.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_013.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_kosman.rights]
+[sources.camreg_und_013.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
 redistributable = true
@@ -5605,7 +5605,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=234686a8453d406bab8f1a2ab5870ce5"
 retrieval_date = 2026-09-18
 
-[sources.camreg_kunying]
+[sources.camreg_und_014]
 name = "CCTV camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=25a5a95fcbd645d0b5cfe08522209591"
@@ -5621,9 +5621,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_kunying.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_014.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_kunying.rights]
+[sources.camreg_und_014.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -5631,8 +5631,8 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=25a5a95fcbd645d0b5cfe08522209591"
 retrieval_date = 2026-09-18
 
-[sources.camreg_langan]
-name = "Camera registry (Langan ArcGIS layer)"
+[sources.camreg_und_015]
+name = "Camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=98fa8eeae92946dbadb62b821e756522"
 default_tier = "R1"
@@ -5647,9 +5647,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_langan.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_015.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_langan.rights]
+[sources.camreg_und_015.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -5683,7 +5683,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=e8c0a78e50084eb782607ce02c38501e"
 retrieval_date = 2026-09-18
 
-[sources.camreg_lenhardt]
+[sources.camreg_und_016]
 name = "University security cameras public view (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=22d52fc22ec440a78813debcf2d1c21a"
@@ -5699,9 +5699,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_lenhardt.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_016.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_lenhardt.rights]
+[sources.camreg_und_016.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published camera registry camera registry"
 redistributable = true
@@ -5943,7 +5943,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=bb2aa42539864062b55011c67510cfe2"
 retrieval_date = 2026-09-18
 
-[sources.camreg_mhebert]
+[sources.camreg_und_017]
 name = "Public-safety / ALPR cameras view (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=22be1b5f269b441ba5f4963c4f4ac665"
@@ -5959,9 +5959,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_mhebert.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_017.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_mhebert.rights]
+[sources.camreg_und_017.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -6125,8 +6125,8 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=a86fc3d9aa4b4f579f826055af93d1dc"
 retrieval_date = 2026-09-18
 
-[sources.camreg_nurnazihah]
-name = "CCTV camera registries (NURNAZIHAH ArcGIS layers)"
+[sources.camreg_und_018]
+name = "CCTV camera registries (ArcGIS layers)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=32b4a83b129646ad985081f5ba654696"
 default_tier = "R1"
@@ -6141,9 +6141,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_nurnazihah.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_018.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_nurnazihah.rights]
+[sources.camreg_und_018.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -6151,7 +6151,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=32b4a83b129646ad985081f5ba654696"
 retrieval_date = 2026-09-18
 
-[sources.camreg_nyc_jgrayson_ny]
+[sources.camreg_us_ny_001]
 name = "NYCDOT traffic cameras (ArcGIS republish layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=900bea850d98407ead83b9b0ec392a2a"
@@ -6167,9 +6167,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_nyc_jgrayson_ny.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_us_ny_001.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (NY)."
-[sources.camreg_nyc_jgrayson_ny.rights]
+[sources.camreg_us_ny_001.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "New York City Department of Transportation (republished layer) camera registry"
 redistributable = true
@@ -6177,7 +6177,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=900bea850d98407ead83b9b0ec392a2a"
 retrieval_date = 2026-09-18
 
-[sources.camreg_nyc_weltia_ny]
+[sources.camreg_us_ny_002]
 name = "New York City traffic cameras (ArcGIS republish layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9e90790daf7e4f0592da37a1bda10417"
@@ -6193,9 +6193,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_nyc_weltia_ny.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_us_ny_002.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (NY)."
-[sources.camreg_nyc_weltia_ny.rights]
+[sources.camreg_us_ny_002.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "New York City (republished layer) camera registry"
 redistributable = true
@@ -6229,8 +6229,8 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=bc2f36369f9e4137872afefcdc62735d"
 retrieval_date = 2026-09-18
 
-[sources.camreg_olsson]
-name = "CCTV camera registry (olsson ArcGIS layer)"
+[sources.camreg_und_019]
+name = "CCTV camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=106e6ceef3c14fb6bceddeb07eb5d8a5"
 default_tier = "R1"
@@ -6245,9 +6245,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_olsson.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_019.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_olsson.rights]
+[sources.camreg_und_019.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -6598,7 +6598,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=6f7185fd39d34ccb95a9545f778ed43c"
 retrieval_date = 2026-09-18
 
-[sources.camreg_rjcoleman]
+[sources.camreg_und_020]
 name = "Cameras registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=871da848d25940e890d811ee20280f79"
@@ -6614,9 +6614,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_rjcoleman.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_020.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_rjcoleman.rights]
+[sources.camreg_und_020.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -6624,7 +6624,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=871da848d25940e890d811ee20280f79"
 retrieval_date = 2026-09-18
 
-[sources.camreg_ruslan]
+[sources.camreg_und_021]
 name = "CCTV_S camera registry (UCP/UFR ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=776c96fa7597423da691513f9fa05a66"
@@ -6640,9 +6640,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_ruslan.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_021.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_ruslan.rights]
+[sources.camreg_und_021.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published CCTV registry camera registry"
 redistributable = true
@@ -6702,7 +6702,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=e153fe4453104b11b8a5a17599bd8478"
 retrieval_date = 2026-09-18
 
-[sources.camreg_schellinger]
+[sources.camreg_und_022]
 name = "BPD surveillance cameras (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=fbb79a6d3cf94464a6b657a59e8cedf1"
@@ -6718,9 +6718,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_schellinger.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_022.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_schellinger.rights]
+[sources.camreg_und_022.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -6754,8 +6754,8 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=99799a7e7e164f229cec271da18165ae"
 retrieval_date = 2026-09-18
 
-[sources.camreg_sfoss]
-name = "Cameras registry (sfoss_solutions ArcGIS layer)"
+[sources.camreg_und_023]
+name = "Cameras registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=460290f9870d4d8692048a87221f2080"
 default_tier = "R1"
@@ -6770,9 +6770,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_sfoss.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_023.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_sfoss.rights]
+[sources.camreg_und_023.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -6889,7 +6889,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=94b17026e83d49d58b41fd75933166db"
 retrieval_date = 2026-09-18
 
-[sources.camreg_sweeney]
+[sources.camreg_und_024]
 name = "Replacement CCTV system camera locations (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=de3248c897b645c6a825c6c56b42b6c5"
@@ -6905,9 +6905,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_sweeney.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_024.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_sweeney.rights]
+[sources.camreg_und_024.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -6915,7 +6915,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=de3248c897b645c6a825c6c56b42b6c5"
 retrieval_date = 2026-09-18
 
-[sources.camreg_tblose]
+[sources.camreg_und_025]
 name = "Camera intersections registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=650c53bb6fb24aa1aecba07847f1e2fb"
@@ -6931,9 +6931,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_tblose.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_025.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_tblose.rights]
+[sources.camreg_und_025.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -7320,7 +7320,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=f4859c702ed54fd69b416ae91de3b1fd"
 retrieval_date = 2026-09-18
 
-[sources.camreg_vidya]
+[sources.camreg_und_026]
 name = "CCTV camera registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=bce5d44e878d4d71b5895a89ecfac9c7"
@@ -7336,9 +7336,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_vidya.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_026.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_vidya.rights]
+[sources.camreg_und_026.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -7398,7 +7398,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=90e7ab7aed3c4cf6a61ed75cd4e5e286"
 retrieval_date = 2026-09-18
 
-[sources.camreg_whatley]
+[sources.camreg_und_027]
 name = "Camera locations (ArcGIS registry)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=b28ca74f76ad4b7cb31d380f7679c49f"
@@ -7414,9 +7414,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_whatley.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_027.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_whatley.rights]
+[sources.camreg_und_027.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true
@@ -7450,7 +7450,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=a0a6e71d55804d249535831ec98b4db0"
 retrieval_date = 2026-09-18
 
-[sources.camreg_yazid]
+[sources.camreg_und_028]
 name = "CCTV phase-1 registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=4d528bdf8dab4956885c527b41732ae4"
@@ -7466,9 +7466,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_yazid.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_028.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_yazid.rights]
+[sources.camreg_und_028.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
 redistributable = true
@@ -7528,7 +7528,7 @@ derivative_permitted = true
 terms_url = "https://www.arcgis.com/home/item.html?id=10e0013f57d045cebc794610150a6dc4"
 retrieval_date = 2026-09-18
 
-[sources.camreg_zyinger]
+[sources.camreg_und_029]
 name = "CAMERA_3 registry (ArcGIS layer)"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=718e480ad69e466fbebf3b11c0684f9e"
@@ -7544,9 +7544,9 @@ last_verified = 2026-09-18
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
-review_packet = "docs/build/reports/rights/annex/p2616/camreg_zyinger.md"
+review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_029.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
-[sources.camreg_zyinger.rights]
+[sources.camreg_und_029.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
 redistributable = true

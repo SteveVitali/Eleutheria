@@ -186,7 +186,7 @@ the rule that fired.
 
 | licence (registry SPDX) | raw-ok | derived-only | restricted | unknown |
 |---|---|---|---|---|
-| LicenseRef-OperatorAccepted-DBRight | — | 90 | 3 (NEW-1) | 1 (`camreg_sfoss`) |
+| LicenseRef-OperatorAccepted-DBRight | — | 90 | 3 (NEW-1) | 1 (`camreg_und_023`) |
 | LicenseRef-PublicRecord-FactualCompilation | — | 57 | 3 (NEW-1) | — |
 | CC0-1.0 | 20 | 12 (SIG labels, NEW-7) | 1 (`agency_audit_export`) | — |
 | ODbL-1.0 | 11 | 1 (`raa_prefectures`) | — | — |
@@ -219,7 +219,7 @@ the rule that fired.
 | raw-ok | 166,990 | 154,528 from `camreg_osm_surveillance` (ODbL) |
 | derived-only | 64,737 | 54 public-record sources 33,853 · 89 DB-right sources 20,877 · 5 SIG-labelled CC0 DOT feeds 10,007 |
 | restricted | **5,110** | NEW-1: Cal OES 4,342 · UKM 386 · Toronto `cotgeo` 336 · Keizer 25 · TRPA 15 · Ramallah 6 |
-| unknown | 157 | `camreg_sfoss` ("Demo purposes only") |
+| unknown | 157 | `camreg_und_023` ("Demo purposes only") |
 
 ### 3.3 Gated and refused (cheap pass; 105 rows)
 
@@ -245,7 +245,7 @@ the rule that fired.
    - **TRPA:** "CC BY-NC".
    - **Cal OES:** ALERTCalifornia data under CC BY-NC-ND 4.0, "may not be … used to create derivative products".
    - **Toronto `cotgeo`:** "Cannot be re-sold. Resource provider must be contacted to get access".
-   - **`camreg_sfoss`:** "Demo purposes only".
+   - **`camreg_und_023`:** "Demo purposes only".
 
    The registry was flipped under GL-GATE-07 with `redistributable = true`, and 5,267 rows are public. GL-GATE-07
    records acceptance of *database-right* risk; it does not record acceptance of express licence prohibitions
@@ -267,7 +267,7 @@ the rule that fired.
    - `eyes_on_flock`: CC-BY-SA would allow raw, but the capture holds 500 free-text search reasons.
    - `agency_audit_export`: audit CSVs.
    - `muckrock`: released records, plus `redistributable=false`.
-5. **Seed fixtures served live (NEW-6).** `bacy`, `okc-contract-c241032` and `osm` are not in the registry, and
+5. **Seed fixtures served live (NEW-6).** `okc_council_statement`, `okc-contract-c241032` and `osm` are not in the registry, and
    `deflock` is gated with no rights block. The live API serves them with CC-BY-4.0/ODbL obligations, and
    `web/evidence.json` lists them. One of the ids is a police official's surname.
 
@@ -487,7 +487,7 @@ The CSV `log_exposure_ok` column sets the level per source:
 | **P8-6** | Procurement: `sam_gov` (contracting-officer contacts; inference from the API schema), `usaspending` (recipients who are natural persons), `ted_eu` (contact points), `decp_fr` (sole-trader holders under GDPR), `procportal_*` and `okc_procurement` (vendor contacts) | names, emails and phones of natural persons | Drop natural-person contact fields and sole-trader identifiers before any raw publication. Jurisdiction-conditional (SIG-PUB-017). |
 | **P8-7** | DOT 511 feeds | raw JSON links live camera imagery (plates and faces in view) | Never proxy, capture or thumbnail imagery. Upstream links are optional. |
 | **P8-8** | OSM-derived: `osm_overpass` (`out meta`), `osm_element_history`, `osm_replication`, `sous_surveillance_osm_import`, `camreg_osm_surveillance` | mapper `user`/`uid` (SIG-INGEST-045e: MUST NOT be stored or exposed) | Strip before capture: query `out tags center` plus version-only metadata, or scrub pre-OCFL (NEW-4). Any raw re-serialisation drops `user`/`uid` and keeps `changeset`. |
-| **P8-9** | Seed and fixture material: `bacy`, `okc-contract-c241032`, `osm`, `deflock` (NEW-6) | a person-named source id; unreviewed claims | Rename to institutional ids. Seeded claims pass rights + naming review or leave the public spine. |
+| **P8-9** | Seed and fixture material: `okc_council_statement`, `okc-contract-c241032`, `osm`, `deflock` (NEW-6) | a person-named source id; unreviewed claims | Rename to institutional ids. Seeded claims pass rights + naming review or leave the public spine. |
 
 The CSV column `part_viii_flags` carries the class per source. 34 in-scope sources carry a substantive flag; another
 19 carry only the ArcGIS field screen and 12 only the DOT imagery rule.

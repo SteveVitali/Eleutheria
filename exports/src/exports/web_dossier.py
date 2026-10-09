@@ -13,7 +13,7 @@ The Oklahoma City dossier is the worked-case dossier the shell already renders
 (same at-a-glance / cost / sharing / retention / accountability content, so the site
 is byte-comparable in both modes) **plus** the defining-standard contradiction
 (§3.1): the 299-vs-190 ``claimed_device_count`` disagreement — DeFlock's community
-map (~299 metro) vs Chief Bacy's council statement (~190 city limits) — as a
+map (~299 metro) vs the OKCPD chief's council statement (~190 city limits) — as a
 first-class, contested material figure whose reconciliation lists BOTH claims with
 their sources and dates. Nothing collapses it to one number (no synthetic
 certainty). Its presence (absent from the committed fixtures) is what proves the
@@ -49,17 +49,17 @@ _CLAIMED_CLAIMS: list[dict[str, Any]] = [
         "date": "2026-08-20",
         "documentUrl": "/v1/claim/deflock",
         "differentQuantityNote": (
-            "DeFlock maps ~299 devices across the metro; Chief Bacy's ~190 counts devices "
+            "DeFlock maps ~299 devices across the metro; the OKCPD chief's ~190 counts devices "
             "within city limits. These may measure different quantities — both are retained."
         ),
     },
     {
-        "claimId": "bacy",
+        "claimId": "okc_council_statement",
         "value": 190,
-        "source": "OKCPD Chief Bacy, city council 2026-08-18",
+        "source": "the OKCPD chief, city council 2026-08-18",
         "tier": "W2",
         "date": "2026-08-18",
-        "documentUrl": "/v1/claim/bacy",
+        "documentUrl": "/v1/claim/okc_council_statement",
     },
 ]
 
@@ -79,7 +79,7 @@ _CLAIMED_FIGURE: dict[str, Any] = {
         "claims": _CLAIMED_CLAIMS,
         "note": (
             "Unresolved. 299 rests on the DeFlock community map (2026-08-20); ~190 rests on "
-            "Chief Bacy's council statement (2026-08-18). No source establishes the claimed "
+            "the OKCPD chief's council statement (2026-08-18). No source establishes the claimed "
             "device count directly; both values are shown with their evidence (§3.1)."
         ),
     },
@@ -206,7 +206,7 @@ def _okc_dossier() -> dict[str, Any]:
                 "kind": "UNRESOLVED",
                 "subject_id": "sig:deployment:okc-okcpd-flock",
                 "predicate_id": "claimed_device_count",
-                "note": "DeFlock maps ~299 metro; Chief Bacy states ~190 within city limits. "
+                "note": "DeFlock maps ~299 metro; the OKCPD chief states ~190 within city limits. "
                 "Different scopes; the disagreement is retained, not adjudicated.",
             },
             {

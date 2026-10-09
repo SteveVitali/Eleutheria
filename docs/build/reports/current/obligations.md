@@ -83,5 +83,6 @@
 | D-P34.13-1 | OPEN | P34.40 (the dark roll) | P34.40's nginx error_page change | `ops/web/nginx.conf` maps `error_page 403`/`410` onto the branded assets, `/task/` 403 → 404, and `/terms` returns a real 3xx to the API terms — verified in the… |
 | D-P34.19-1 | OPEN | engineering | P34.46 | re-run: (1) read-only confirm the current exposure (`/v1/claim/<claim_id>` on each committed target); (2) narrow the Miami candidates — join `claim_qualifier`/`… |
 | D-P34.17-1 | OPEN | the OM-19 leg-runner (r11/P34.17-live-<n>) or the operator | the L2 republish leg (HG-11 verbatim go + batch-1 confirmation + live:P34.3 versioning + <=24 h probe record + outside 03:00-10:00Z) | re-run `implement-spec spec=docs/tickets/220_P34.17__web-honesty-wave-and-republish-1.md live_verification=true` (scope limited to the L2 republish); verify = t… |
+| D-P34.18-1 | OPEN | the OM-19 leg-runner (r11/P34.18-live-2) or the operator | the L2 hosted rename leg (verbatim in-ticket go + date -u >= 2026-10-13T12:00Z outside 03:00-06:30Z + AR-2 restore point + pre-state capture + <=24 h probe reco… | re-run `implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true` (scope: leg L2 only); verify = the hosted read-… |
 
 ← back: CURRENT.md

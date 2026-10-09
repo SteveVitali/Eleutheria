@@ -19,6 +19,7 @@ from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse, R
 from starlette.routing import Route
 
 from . import __version__
+from .alias_middleware import IdentifierAliasMiddleware
 from .dereference import (
     HTML_MEDIA_TYPE,
     JSONLD_MEDIA_TYPE,
@@ -189,4 +190,9 @@ def create_app(store: ReadStore, release_search: ReleaseSearchStore | None = Non
     # Fail closed: no prohibited surface may be mounted (SIG-API-012).
     paths = route_paths([r for r in app.routes if isinstance(r, Route)])
     assert_no_prohibited_routes(paths)
+    # P34.18 / ADR-178 (S0 RI-01): every JSON/JSON-LD/HTML/Turtle response body
+    # passes the keyed-digest alias projection — retired identifiers resolve or
+    # redact at the response boundary so nothing publicly renderable repeats a
+    # handle. Output-side only; recorded ids still query.
+    app.add_middleware(IdentifierAliasMiddleware)
     return app

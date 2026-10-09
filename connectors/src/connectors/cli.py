@@ -56,6 +56,17 @@ def build_parser() -> argparse.ArgumentParser:
     gate = sub.add_parser("gate", help="report the connector-loader gate verdict for a source")
     gate.add_argument("--source", required=True, help="source id to check")
     sub.add_parser("export-check", help="compute the export licence per compartment (SIG-LIC-010)")
+    rekeyp = sub.add_parser(
+        "rekey-personal-ids",
+        help=(
+            "P34.18 / ADR-178: dry-run-by-default re-key of the handle-bearing "
+            "source ids (S0 RI-01); --apply writes, counts only, never prints a handle"
+        ),
+    )
+    rekeyp.add_argument("--apply", action="store_true", help="write changes (default: dry-run)")
+    rekeyp.add_argument("--handles", default=None, help="gitignored handle-list path")
+    rekeyp.add_argument("--report", default=None, help="report output path (gitignored)")
+    rekeyp.add_argument("--restricted-out", default=None, help="restricted map path (gitignored)")
     rev = sub.add_parser(
         "review-status",
         help="per-source rights-review gate breakdown + flip-ready count (P21.1)",
@@ -379,5 +390,16 @@ def main(argv: list[str] | None = None) -> int:
         return _export_check()
     if args.command == "review-status":
         return _review_status(args.source)
+    if args.command == "rekey-personal-ids":
+        from . import personal_id_rekey
+
+        argv_tail = []
+        if args.apply:
+            argv_tail.append("--apply")
+        for opt in ("handles", "report", "restricted_out"):
+            val = getattr(args, opt)
+            if val:
+                argv_tail += [f"--{opt.replace('_', '-')}", val]
+        return personal_id_rekey.main(argv_tail)
     parser.print_help()
     return 0

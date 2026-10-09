@@ -39,7 +39,7 @@ AFFECTED = {
     "camreg_cotgeo",
     "camreg_keizer_or",
     "camreg_ramallah_ps",
-    "camreg_sfoss",
+    "camreg_und_023",
     "camreg_trpa_us",
     "camreg_txdot_rep_tx",
     "camreg_ukm_my",
@@ -171,7 +171,7 @@ def test_apply_to_record_decorates_only_affected_sources() -> None:
     from datetime import date
 
     base = RightsRecord(
-        source_id="camreg_sfoss",
+        source_id="camreg_und_023",
         spdx="LicenseRef-OperatorAccepted-DBRight",
         attribution="x",
         redistributable=True,
@@ -181,7 +181,7 @@ def test_apply_to_record_decorates_only_affected_sources() -> None:
     )
     decorated = disclosure.apply_to_record(base)
     assert (
-        decorated.captured_terms_verbatim == _entries()["camreg_sfoss"]["captured_terms_verbatim"]
+        decorated.captured_terms_verbatim == _entries()["camreg_und_023"]["captured_terms_verbatim"]
     )
 
     other = disclosure.apply_to_record(

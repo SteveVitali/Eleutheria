@@ -23,10 +23,10 @@
       "url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback",
       "retrieved_at": "2026-09-01",
       "title": "Oklahoma City Council renews license plate reader contract despite pushback (2026-08-18)",
-      "text": "The Oklahoma City Council voted Tuesday, August 18, 2026, to extend the city's contract with ALPR vendor Flock Safety, 5 to 3, despite opposition from residents; council members Cooper, Hamon, and Pennington voted no after public comment. The renewal was granted with the addition of an amendment that gives Oklahoma City, rather than Flock, the sole power to share data with federal agencies. Chief Bacy said his department is reducing the data retention period from 30 to 7 days and removing its data from a nationwide sharing platform. The one-year renewal runs through 2027-06-30 and returns to the council before another renewal."
+      "text": "The Oklahoma City Council voted Tuesday, August 18, 2026, to extend the city's contract with ALPR vendor Flock Safety, 5 to 3, despite opposition from residents; council members Cooper, Hamon, and Pennington voted no after public comment. The renewal was granted with the addition of an amendment that gives Oklahoma City, rather than Flock, the sole power to share data with federal agencies. the OKCPD chief said his department is reducing the data retention period from 30 to 7 days and removing its data from a nationwide sharing platform. The one-year renewal runs through 2027-06-30 and returns to the council before another renewal."
     },
     {
-      "artifact_id": "okc-bacy-count-2026-08-18",
+      "artifact_id": "okc-council-count-2026-08-18",
       "source_id": "src:journalrecord",
       "source_family": "investigative journalism",
       "genre": "news_article",
@@ -35,7 +35,7 @@
       "url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/",
       "retrieved_at": "2026-09-01",
       "title": "OKC Council approves Flock contract extension with new restrictions",
-      "text": "Bacy said OKCPD has 90 cameras, while businesses own around 100 within city limits."
+      "text": "the chief said OKCPD has 90 cameras, while businesses own around 100 within city limits."
     },
     {
       "artifact_id": "okc-oklahoman-2026-08-03",
@@ -83,7 +83,7 @@
       "url": "https://deflockokc.com/",
       "retrieved_at": "2026-09-01",
       "title": "OKCPD data sharing — configured access (confirmed 2026-08-18)",
-      "text": "On August 18, OKCPD confirmed 109 local agencies can already pull OKC's Flock data, and when Councilwoman Hamon asked for the list, Chief Bacy said, 'No, ma'am.' Flock's network spans more than 5,000 agencies and 100,000 cameras sharing data nationwide."
+      "text": "On August 18, OKCPD confirmed 109 local agencies can already pull OKC's Flock data, and when Councilwoman Hamon asked for the list, the OKCPD chief said, 'No, ma'am.' Flock's network spans more than 5,000 agencies and 100,000 cameras sharing data nationwide."
     },
     {
       "artifact_id": "okc-statute-47-7-606-1",

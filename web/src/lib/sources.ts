@@ -14,6 +14,7 @@
  */
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { resolveSourceId, resolveTextIds } from "./alias";
 
 export interface SourceLicenceRow {
   sourceId: string;
@@ -72,7 +73,11 @@ export function sourceLicenceTable(exportDir: string): SourceLicenceRow[] {
       const t = line.trim();
       if (!t) continue;
       const row = JSON.parse(t) as SiteRow;
-      const sid = typeof row.source_id === "string" ? row.source_id : null;
+      // P34.18 / ADR-178: already-published export bytes may still carry a
+      // retired id until P34.21b's re-export — resolve so the rendered table
+      // can never repeat a handle.
+      const rawSid = typeof row.source_id === "string" ? row.source_id : null;
+      const sid = rawSid === null ? null : resolveSourceId(rawSid);
       if (!sid) continue;
       const rights = row._rights ?? {};
       let a = agg.get(sid);
@@ -98,9 +103,9 @@ export function sourceLicenceTable(exportDir: string): SourceLicenceRow[] {
       if (typeof rights.license === "string") a.licenseSet.add(rights.license);
       if (rights.attribution_required === true) a.attributionRequired = true;
       if (typeof rights.attribution === "string" && rights.attribution.trim()) {
-        a.attrSet.add(rights.attribution.trim());
+        a.attrSet.add(resolveTextIds(rights.attribution.trim()));
       }
-      if (typeof rights.terms_url === "string") a.termsSet.add(rights.terms_url);
+      if (typeof rights.terms_url === "string") a.termsSet.add(resolveTextIds(rights.terms_url));
     }
   }
   const rows: SourceLicenceRow[] = [];

@@ -134,7 +134,7 @@ premise).
 A-8's express-terms acceptance (ADR-183); the terms-conflicted fetch envelope (ADR-184); the Part VIII screened lanes
 (ADR-185); WV-07, WV-09 and WV-10 (ADR-182, ADR-187, ADR-188); the counsel basis and label text (ADR-167); A-18's flips of
 `census_gazetteer_tiger` and `natural_earth_10m` (P35.17 / ADR-160). **Agent observation (labelled):** Q-E2-13's option c
-also named re-deciding the out-of-rule and counsel-flagged rows individually (e.g. `camreg_aikner`,
+also named re-deciding the out-of-rule and counsel-flagged rows individually (e.g. `camreg_und_001`,
 `camreg_calgary_ab`, Lexington, MD iMAP); after A-7 and A-8 the plan schedules no individual re-decision row for them
 (no such row in `PD/data/round11_plan.csv`), so they stay published under this basis and its withdrawal-on-objection
 guardrail. Raised for the orchestrator, not decided here.
@@ -201,3 +201,11 @@ ADR (after the fact, by the method S6 used).
 - A **terms change** on a fetched platform (DocumentCloud/MuckRock, Sourcewell/OMNIA, Axon, Flock) or the Eyes on Flock
   aggregator changing its licence or stopping publication.
 - The operator revokes or narrows GL-GATE-07 (a new gate decision and a new ADR).
+
+## Status updates
+
+- 2026-10-03 (P34.18 / ADR-178, S0 RI-01): a handle-bearing source identifier
+  quoted in this ADR's body was re-keyed to its neutral id under the Part VIII
+  personal-data protection re-key; the recorded decision is unchanged. Git
+  history retains the original string — see the P34.18 correction note
+  (`docs/governance/identifier-rekey-note.md`).

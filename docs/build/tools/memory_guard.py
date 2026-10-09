@@ -1135,18 +1135,27 @@ class Judge:
         self.r.count("append-only", cand, cand)
         self.judge_dates()
         self.judge_commit_clock()
-        if (
-            self.c.committed
-            and self.c.head_commit.sha[:8].lower() in self.pol.seed_commits
-        ):
+        if self.c.committed:
             # a declared Stage-B seed commit (policy `seed-commit`): the seed round wrote
             # corrections, re-homes and id stamps under its own verifier before the
             # completed modes existed (B4 §6.1) — its append-only findings are sanctioned.
-            # The exemption is keyed by commit prefix so a later commit cannot borrow it.
+            # The same mechanism covers a later verifier-backed bulk correction commit
+            # (P34.18 / ADR-178): the exemption is keyed by the commit each finding is
+            # attributed to, so a finding can borrow the exemption only by belonging to a
+            # declared commit — never by sitting later in the judged range. The head-commit
+            # rule stays for modes where findings carry no attribution.
+            head_seed = self.c.head_commit.sha[:8].lower() in self.pol.seed_commits
             self.r.findings = [
                 f
                 for f in self.r.findings
-                if not (f.check == "append-only" and f.severity == "error")
+                if not (
+                    f.check == "append-only"
+                    and f.severity == "error"
+                    and (
+                        head_seed
+                        or (f.commit and f.commit[:8].lower() in self.pol.seed_commits)
+                    )
+                )
             ]
 
     def add_date(self, path: str, line: int, cls: str, stamp_text: str, text: str) -> None:

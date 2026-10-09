@@ -116,7 +116,7 @@ def test_correction_packet_applies_additively(clean_dsn: str) -> None:
     assert all(r["correction_reason"] for r in replacements)
     # Each replacement names the claim it revises.
     assert {r["revises_claim"] for r in replacements} == {r["claim_id"] for r in legacy_open}
-    # 190 was never sourced: the corrected bacy claim asserts the literal ~100.
+    # 190 was never sourced: the corrected okc_council_statement claim asserts the literal ~100.
     nums = {r["value_num"] for r in replacements}
     assert 190 not in nums and 100 in nums
 

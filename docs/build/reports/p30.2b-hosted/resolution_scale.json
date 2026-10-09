@@ -238,8 +238,8 @@
         "camreg_cotgeo",
         "camreg_toronto_on"
       ],
-      "camreg_duganmeyer": [
-        "camreg_duganmeyer",
+      "camreg_und_006": [
+        "camreg_und_006",
         "camreg_osm_surveillance"
       ],
       "camreg_esri_dash": [
@@ -261,7 +261,7 @@
       ],
       "camreg_nzta_nz": [
         "camreg_nzta_nz",
-        "camreg_sfoss"
+        "camreg_und_023"
       ],
       "camreg_penndot_pa": [
         "camreg_penndot_pa",
