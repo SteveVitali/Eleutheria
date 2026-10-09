@@ -14,13 +14,17 @@ or file scans over a release/build directory — and emits the
 A registered check whose evaluation seam does not exist yet (the replay seam,
 the lineage/collapse seams, the procurement surfaces) reports
 ``not_evaluable`` with the seam named — never a pass, never a silent skip
-(SIG-ENG-042 / B4 G11). The nightly ``M`` job itself belongs to P34.44b; this
-runner is the harness that job calls.
+(SIG-ENG-042 / B4 G11). P34.44b adds the run surface on top of this runner:
+the in-container ``nightly`` verb (the ``sig-quality-probe`` job's command —
+window-suppressed, record-emitting, alerting on failure), the ``baseline``
+verb (the L2 reproduction + baseline proposal leg), and the ``job`` surface
+that renders the declaration ``ops/quality_probe.toml``.
 """
 
 from __future__ import annotations
 
 import json
+import os
 import re
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
@@ -722,20 +726,209 @@ def write_records(report: dict[str, Any], out: Path) -> dict[str, str]:
     return {"report": str(report_path), "probe_run": str(probe_path)}
 
 
+# ---------------------------------------------------------------------------
+# The P34.44b run surface — the nightly probe job, its records, and the
+# L2 baseline leg (SIG-CONF-006/007/009, ADR-154/205).
+
+#: The restricted-bucket prefix each nightly run's two records land under —
+#: inside the conditioned ``ops/probes/`` objectCreator scope the job's
+#: identity holds (ops/iam_identities.toml).
+PROBE_PREFIX_DEFAULT = "ops/probes/quality/"
+
+#: The baseline leg's records — the same conditioned scope.
+BASELINE_PREFIX_DEFAULT = "ops/probes/quality-baseline/"
+
+#: The alert kind stamped on a nightly run's recorded alert (ADR-077's
+#: ledger + the sig-alerts channel, P34.4 / SIG-OPS-006).
+QUALITY_ALERT_KIND = "quality-probe"
+
+#: The fetch caps on ``baseline --release-prefix``: the current release's
+#: public objects, bounded — a runaway listing never becomes an unbounded
+#: download.
+RELEASE_MAX_OBJECTS = 2000
+RELEASE_MAX_BYTES = 64 * 2**20
+
+
+def _object_stamp(generated_at: str) -> str:
+    """``2026-01-02T03:04:05Z`` → the object-name-safe ``2026-01-02/2026-01-02T03-04-05Z``."""
+    return f"{generated_at[:10]}/{generated_at.replace(':', '-')}"
+
+
+def suppressed_probe_record(
+    *, reason: str, generated_at: str, job: str = "", target: str = "hosted-spine"
+) -> dict[str, Any]:
+    """A suppressed run's ``sig.probe-run/1`` — the window guard fired before
+    any connection opened (the contract's off-peak/batch-window promise is
+    itself part of the recorded evidence)."""
+    return {
+        "version": "sig.probe-run/1",
+        "generated_at": generated_at,
+        "probe": "sig-quality",
+        "placement": "M",
+        "target": target,
+        "job": job,
+        "suppressed": reason,
+        "checks": [],
+        "overall": "suppressed",
+    }
+
+
+def error_probe_record(
+    *, reason: str, generated_at: str, job: str = "", target: str = "hosted-spine"
+) -> dict[str, Any]:
+    """A failed run's ``sig.probe-run/1`` — the run could not produce a
+    report (a refused connection, a fetch failure); the record still lands
+    so a missing record is never mistaken for a pass."""
+    return {
+        "version": "sig.probe-run/1",
+        "generated_at": generated_at,
+        "probe": "sig-quality",
+        "placement": "M",
+        "target": target,
+        "job": job,
+        "checks": [{"name": "run", "outcome": "fail", "reason": reason}],
+        "overall": "fail",
+        "error": reason,
+    }
+
+
+def upload_records(bucket: Any, prefix: str, report: dict[str, Any]) -> dict[str, str]:
+    """Write a run's two records as NEW timestamped objects under ``prefix``
+    (WORM-shaped — never rewritten). ``bucket`` is a ``GcsBucket``-shaped
+    object (injectable in tests)."""
+    stamp = _object_stamp(str(report["generated_at"]))
+    names = {
+        "report": f"{prefix}{stamp}-quality-report.json",
+        "probe_run": f"{prefix}{stamp}-probe-run.json",
+    }
+    bucket.put_object(
+        names["report"],
+        (json.dumps(report, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        content_type="application/json",
+    )
+    bucket.put_object(
+        names["probe_run"],
+        (json.dumps(probe_run_record(report), indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        content_type="application/json",
+    )
+    return names
+
+
+def upload_probe_record(bucket: Any, prefix: str, record: dict[str, Any]) -> str:
+    """Write a suppressed/error ``sig.probe-run/1`` as a new object."""
+    name = f"{prefix}{_object_stamp(str(record['generated_at']))}-probe-run.json"
+    bucket.put_object(
+        name,
+        (json.dumps(record, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        content_type="application/json",
+    )
+    return name
+
+
+def nightly_dsn(env: dict[str, str]) -> str:
+    """The spine conninfo for the in-container run: the explicit DSN env
+    wins, else the Cloud SQL socket + the mounted ``sig_audit`` credential.
+    Empty when neither is available — the caller then runs file checks only
+    (spine checks report ``not_evaluable``, never a pass)."""
+    explicit = (env.get("SIG_QUALITY_DSN") or env.get("SIG_DB_DSN") or "").strip()
+    if explicit:
+        return explicit
+    conn = env.get("SIG_CLOUDSQL_CONNECTION", "").strip()
+    password = env.get("SIG_AUDIT_PASSWORD", "")
+    if not conn or not password:
+        return ""
+    db = env.get("SIG_PG_DB", "sig").strip() or "sig"
+    return f"host=/cloudsql/{conn} dbname={db} user=sig_audit password={password}"
+
+
+def fetch_release(
+    bucket: Any,
+    prefix: str,
+    dest: Path,
+    *,
+    max_objects: int = RELEASE_MAX_OBJECTS,
+    max_bytes: int = RELEASE_MAX_BYTES,
+) -> dict[str, Any]:
+    """Fetch the public release's objects under ``prefix`` into ``dest`` —
+    read-only, bounded, deterministic order. ``bucket`` is a
+    ``GcsBucket``-shaped object (injectable). Returns the fetch accounting
+    the baseline record carries."""
+    names = sorted(bucket.list_objects(prefix))
+    written = 0
+    total = 0
+    truncated = len(names) > max_objects
+    for name in names[:max_objects]:
+        rel = name[len(prefix) :] if name.startswith(prefix) else name
+        if not rel or rel.endswith("/") or ".." in rel.split("/"):
+            continue
+        body = bucket.get_object(name)
+        if total + len(body) > max_bytes:
+            truncated = True
+            break
+        target = dest / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(body)
+        written += 1
+        total += len(body)
+    return {
+        "objects_seen": len(names),
+        "objects_written": written,
+        "bytes": total,
+        "truncated": truncated,
+    }
+
+
+def _fire_quality_alert(
+    message: str,
+    *,
+    detail: dict[str, Any] | None = None,
+    severity: str = "critical",
+    kind: str = QUALITY_ALERT_KIND,
+    ledger: Any = None,
+    notifiers: Any = None,
+) -> Any:
+    """Record the alert, then fan out to every configured sink — the record
+    never depends on delivery (ADR-077; P34.4's channel)."""
+    from .alerts import Alert, AlertLedger, fire, notifiers_from_env
+
+    alert = Alert.create(kind, severity, message, detail=detail)
+    if ledger is None:
+        ledger = AlertLedger(Path(os.environ.get("SIG_ALERT_LOG", ".sig/ops/alerts.jsonl")))
+    if notifiers is None:
+        notifiers = notifiers_from_env()
+    fire(alert, ledger=ledger, notifiers=notifiers)
+    return alert
+
+
+def _parse_gs_uri(uri: str) -> tuple[str, str]:
+    """``gs://<bucket>/<prefix>/`` → (bucket, prefix); anything else refuses."""
+    m = re.match(r"^gs://([a-z0-9._-]+)/(.+)$", uri.strip())
+    if not m:
+        raise ValueError(f"release prefix {uri!r} must be a gs://<bucket>/<prefix>/ URI")
+    return m.group(1), m.group(2)
+
+
+def _iso_now() -> str:
+    from datetime import UTC, datetime
+
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def main(argv: list[str] | None = None) -> int:
-    """``sig-ops quality`` — the P34.44a harness surface (offline/read-only)."""
+    """``sig-ops quality`` — the P34.44a/b harness surface (offline/read-only)."""
     import argparse
-    import os
     import sys
 
     parser = argparse.ArgumentParser(
         prog="sig-ops quality",
         description=(
-            "P34.44a (SIG-CONF-006/007/008/013): run the read-only quality "
+            "P34.44a/b (SIG-CONF-006/007/008/013): run the read-only quality "
             "probe for a placement and emit sig.quality-report/1 + "
             "sig.probe-run/1 records. DB checks run under a read-only "
-            "session; file checks scan a release/build dir. The nightly "
-            "schedule and the baseline run belong to P34.44b."
+            "session; file checks scan a release/build dir. `nightly` is the "
+            "sig-quality-probe job's in-container command (window-suppressed, "
+            "record-emitting, alerting); `baseline` is the L2 reproduction "
+            "leg; `job` renders the ops/quality_probe.toml declaration."
         ),
     )
     sub = parser.add_subparsers(dest="quality_command", required=True)
@@ -779,6 +972,142 @@ def main(argv: list[str] | None = None) -> int:
         "joins the V15 suite with P35.58",
     )
     p_gate.add_argument("--report", required=True, help="a quality-report JSON")
+
+    # --- P34.44b: the nightly job's in-container verb ---------------------
+    p_nightly = sub.add_parser(
+        "nightly",
+        help="the sig-quality-probe job's command (P34.44b): suppress inside "
+        "the contract's windows, run the M placement read-only, write both "
+        "records under the restricted prefix, alert on failure",
+    )
+    p_nightly.add_argument(
+        "--dsn",
+        default=None,
+        help="PostgreSQL DSN (default: SIG_QUALITY_DSN / SIG_DB_DSN, else the "
+        "Cloud SQL socket + SIG_AUDIT_PASSWORD)",
+    )
+    p_nightly.add_argument("--scan-dir", default=None, help="file checks' scan dir")
+    p_nightly.add_argument("--target", default="hosted-spine", help="what was measured (recorded)")
+    p_nightly.add_argument(
+        "--bucket",
+        default=os.environ.get("SIG_OPS_GCS_BUCKET", ""),
+        help="restricted bucket the records upload to (default: SIG_OPS_GCS_BUCKET; "
+        "empty = local only)",
+    )
+    p_nightly.add_argument(
+        "--prefix",
+        default=os.environ.get("SIG_QUALITY_PROBE_PREFIX", PROBE_PREFIX_DEFAULT),
+        help="bucket-relative record prefix (default: SIG_QUALITY_PROBE_PREFIX)",
+    )
+    p_nightly.add_argument(
+        "--job-name",
+        default=os.environ.get("SIG_QUALITY_JOB_NAME", "sig-quality-probe"),
+        help="the job name stamped on the records",
+    )
+    p_nightly.add_argument("--out", default=None, help="local dir for the records")
+    p_nightly.add_argument("--emit", action="store_true", help="print the probe-run JSON")
+    p_nightly.add_argument(
+        "--no-alert",
+        action="store_true",
+        help="record only — never fire the alert channel",
+    )
+    p_nightly.add_argument(
+        "--now",
+        default=None,
+        help="ISO-UTC timestamp for the window guard (default: now — the test "
+        "hook only; a live run always reads the clock)",
+    )
+    p_nightly.add_argument("--sample-percent", type=float, default=None)
+    p_nightly.add_argument("--seed", type=int, default=42)
+
+    # --- P34.44b: the L2 baseline leg --------------------------------------
+    p_base = sub.add_parser(
+        "baseline",
+        help="the L2 baseline run (P34.44b): every M + R check once over the "
+        "hosted spine + the current public release files, emitting the "
+        "sig.quality-baseline/1 record + the ratchet-baseline proposal",
+    )
+    p_base.add_argument("--dsn", default=None, help="PostgreSQL DSN (as nightly)")
+    p_base.add_argument("--scan-dir", default=None, help="staged release files")
+    p_base.add_argument(
+        "--release-prefix",
+        default=os.environ.get("SIG_BASELINE_RELEASE_PREFIX", ""),
+        help="gs://<bucket>/<prefix>/ the current public release's objects "
+        "live under — fetched read-only + bounded (SIG_BASELINE_RELEASE_PREFIX)",
+    )
+    p_base.add_argument(
+        "--fetch-dir",
+        default=None,
+        help="where --release-prefix objects are staged (default: <out>/release-scan)",
+    )
+    p_base.add_argument("--target", default="hosted-spine", help="what was measured (recorded)")
+    p_base.add_argument("--run-id", default=None, help="the run id (default: baseline-<stamp>)")
+    p_base.add_argument(
+        "--out",
+        default=None,
+        help="dir for the baseline record + the two reports (required for a "
+        "local run; the leg then commits the counts summary)",
+    )
+    p_base.add_argument(
+        "--bucket",
+        default=os.environ.get("SIG_OPS_GCS_BUCKET", ""),
+        help="restricted bucket the baseline record uploads to (default: "
+        "SIG_OPS_GCS_BUCKET; empty = local only)",
+    )
+    p_base.add_argument(
+        "--prefix",
+        default=os.environ.get("SIG_BASELINE_PREFIX", BASELINE_PREFIX_DEFAULT),
+        help="bucket-relative record prefix",
+    )
+    p_base.add_argument("--emit", action="store_true", help="print the baseline JSON")
+    p_base.add_argument("--sample-percent", type=float, default=None)
+    p_base.add_argument("--seed", type=int, default=42)
+
+    # --- P34.44b: the job declaration surface ------------------------------
+    p_job = sub.add_parser(
+        "job",
+        help="the sig-quality-probe declaration surface (P34.44b): plan, "
+        "render, verify-describe, verify-trigger, window — offline verbs "
+        "ops/gcp/quality-probe.sh drives",
+    )
+    job_sub = p_job.add_subparsers(dest="job_command", required=True)
+    p_jp = job_sub.add_parser("plan", help="print the validated declaration (offline)")
+    p_jp.add_argument("--declaration", default=None)
+    p_jr = job_sub.add_parser("render", help="render the whole mutation set as argv JSON (offline)")
+    p_jr.add_argument("--declaration", default=None)
+    p_jr.add_argument("--image", required=True, help="digest-pinned image ref")
+    p_jr.add_argument("--project", default=os.environ.get("SIG_GCP_PROJECT", "<SIG_GCP_PROJECT>"))
+    p_jr.add_argument("--region", default=os.environ.get("SIG_GCP_REGION", "us-central1"))
+    p_jr.add_argument(
+        "--env",
+        dest="env_pairs",
+        action="append",
+        default=[],
+        help="NAME=value for a declared plain env var (repeatable)",
+    )
+    p_jd = job_sub.add_parser(
+        "verify-describe",
+        help="judge a recorded `run jobs describe --format=json`",
+    )
+    p_jd.add_argument("--declaration", default=None)
+    p_jd.add_argument("--describe", required=True)
+    p_jd.add_argument("--project", default=os.environ.get("SIG_GCP_PROJECT", ""))
+    p_jt = job_sub.add_parser(
+        "verify-trigger",
+        help="judge a recorded `scheduler jobs describe --format=json`",
+    )
+    p_jt.add_argument("--declaration", default=None)
+    p_jt.add_argument("--describe", required=True)
+    p_jt.add_argument("--project", default=os.environ.get("SIG_GCP_PROJECT", ""))
+    p_jt.add_argument("--region", default=os.environ.get("SIG_GCP_REGION", "us-central1"))
+    p_jw = job_sub.add_parser(
+        "window",
+        help="the leg's clock guard: exit 0 when the window is open, 42 when "
+        "queued (before-earliest / quiet band / batch window)",
+    )
+    p_jw.add_argument("--earliest", default="", help="ISO-UTC lower bound")
+    p_jw.add_argument("--now", default=None, help="ISO-UTC (default: now)")
+
     args = parser.parse_args(argv)
     if args.quality_command == "gate":
         from exports.quality import run_release_gate
@@ -823,10 +1152,298 @@ def main(argv: list[str] | None = None) -> int:
         if summary["overall"] == "partial":
             return 3
         return 0
+
+    if args.quality_command == "nightly":
+        from datetime import UTC, datetime
+
+        from .quality_job import suppression_reason
+
+        now = datetime.now(UTC)
+        if args.now:
+            now = datetime.fromisoformat(str(args.now).replace("Z", "+00:00")).astimezone(UTC)
+        generated = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+        reason = suppression_reason(now)
+        if reason is not None:
+            # The window contract is enforced in-container too: a run inside
+            # the quiet band or the batch window records `suppressed` and
+            # exits 0 — never a probe, never a silent no-op.
+            record = suppressed_probe_record(
+                reason=reason,
+                generated_at=generated,
+                job=args.job_name,
+                target=args.target,
+            )
+            if args.bucket:
+                from .gcs import GcsBucket
+
+                name = upload_probe_record(GcsBucket(args.bucket), args.prefix, record)
+                print(
+                    f"sig-quality-probe suppressed ({reason}): gs://{args.bucket}/{name}",
+                    file=sys.stderr,
+                )
+            else:
+                print(f"sig-quality-probe suppressed ({reason})", file=sys.stderr)
+            if args.out:
+                out = Path(args.out)
+                out.mkdir(parents=True, exist_ok=True)
+                (out / "probe-run.json").write_text(
+                    json.dumps(record, indent=2, sort_keys=True) + "\n"
+                )
+            if args.emit:
+                print(json.dumps(record, indent=2, sort_keys=True))
+            return 0
+        try:
+            env = dict(os.environ)
+            dsn = args.dsn if args.dsn is not None else nightly_dsn(env)
+            conn = connect_readonly(dsn) if dsn else None
+            ctx = EvalContext(
+                conn=conn,
+                scan_dir=Path(args.scan_dir) if args.scan_dir else None,
+                sample_percent=args.sample_percent,
+                sample_seed=args.seed,
+            )
+            report = run_quality_probe(ctx, placement="M", target=args.target)
+            report["job"] = args.job_name
+            if conn is not None:
+                conn.close()
+        except Exception as e:  # noqa: BLE001 — a failed run is recorded, never silent
+            from .alerts import scrub_secrets
+
+            reason = scrub_secrets(str(e))  # never a secret value in the record
+            record = error_probe_record(
+                reason=reason,
+                generated_at=generated,
+                job=args.job_name,
+                target=args.target,
+            )
+            if args.bucket:
+                try:
+                    from .gcs import GcsBucket
+
+                    upload_probe_record(GcsBucket(args.bucket), args.prefix, record)
+                except Exception as up:  # noqa: BLE001 — surfaced, still alerts
+                    print(f"record upload failed after the run failed: {up}", file=sys.stderr)
+            print(f"sig-quality-probe run failed: {reason}", file=sys.stderr)
+            if not args.no_alert:
+                fired = _fire_quality_alert(
+                    f"sig-quality-probe {args.target}: run failed — {reason}",
+                    detail={"target": args.target, "job": args.job_name, "error": reason},
+                )
+                from .alerts import alert_exit_code
+
+                return alert_exit_code(fired)
+            return 4
+        # A completed run: write both records, then the verdict decides.
+        if args.bucket:
+            from .gcs import GcsBucket
+
+            names = upload_records(GcsBucket(args.bucket), args.prefix, report)
+            print(f"records → gs://{args.bucket}/{names['report']}", file=sys.stderr)
+        if args.out:
+            paths = write_records(report, Path(args.out))
+            print(f"wrote {paths['report']} + {paths['probe_run']}", file=sys.stderr)
+        if args.emit:
+            print(json.dumps(probe_run_record(report), indent=2, sort_keys=True))
+        summary = report["summary"]
+        print(
+            f"sig-quality-probe: M → {summary['overall']} "
+            f"(enforce failures {summary['enforce_failures']}; "
+            f"ratchet regressions {summary['ratchet_regressions']}; "
+            f"not_evaluable {summary['not_evaluable']})",
+            file=sys.stderr,
+        )
+        if summary["overall"] == "fail" and not args.no_alert:
+            fired = _fire_quality_alert(
+                f"sig-quality-probe {args.target}: {summary['overall']} — "
+                f"enforce failures {summary['enforce_failures']}, "
+                f"ratchet regressions {summary['ratchet_regressions']}",
+                detail={
+                    "target": args.target,
+                    "job": args.job_name,
+                    "summary": summary,
+                },
+            )
+            from .alerts import alert_exit_code
+
+            return alert_exit_code(fired)
+        if summary["class_s_trigger"] and summary["overall"] != "fail" and not args.no_alert:
+            # The engine's alert band breached on an otherwise-clean run —
+            # a recorded "alarm" the operator sees (the class-S trigger is the
+            # registry's own alert semantics, never paged critical).
+            _fire_quality_alert(
+                f"sig-quality-probe {args.target}: alert band breach "
+                f"(overall {summary['overall']})",
+                detail={
+                    "target": args.target,
+                    "job": args.job_name,
+                    "summary": summary,
+                },
+                severity="alarm",
+            )
+        if summary["overall"] == "fail":
+            return 4
+        if summary["overall"] == "partial":
+            return 3
+        return 0
+
+    if args.quality_command == "baseline":
+        import tempfile
+
+        from exports.quality import build_baseline_record
+
+        generated = _iso_now()
+        run_id = args.run_id or f"baseline-{generated}"
+        env = dict(os.environ)
+        dsn = args.dsn if args.dsn is not None else nightly_dsn(env)
+        out_dir = Path(args.out) if args.out else Path(tempfile.mkdtemp(prefix="sig-baseline-"))
+        out_dir.mkdir(parents=True, exist_ok=True)
+        scan_dir = Path(args.scan_dir) if args.scan_dir else None
+        fetch: dict[str, Any] | None = None
+        if scan_dir is None and args.release_prefix:
+            bucket_name, rel_prefix = _parse_gs_uri(args.release_prefix)
+            dest = Path(args.fetch_dir) if args.fetch_dir else out_dir / "release-scan"
+            from .gcs import GcsBucket
+
+            fetch = fetch_release(GcsBucket(bucket_name), rel_prefix, dest)
+            scan_dir = dest
+            print(
+                f"release fetch: {fetch['objects_written']}/"
+                f"{fetch['objects_seen']} objects ({fetch['bytes']} bytes"
+                f"{' — TRUNCATED at the caps' if fetch['truncated'] else ''})",
+                file=sys.stderr,
+            )
+        conn = connect_readonly(dsn) if dsn else None
+        ctx = EvalContext(
+            conn=conn,
+            scan_dir=scan_dir,
+            sample_percent=args.sample_percent,
+            sample_seed=args.seed,
+        )
+        reg = load_registry()
+        report_m = run_quality_probe(ctx, placement="M", target=args.target, registry=reg)
+        report_r = run_quality_probe(ctx, placement="R", target=args.target, registry=reg)
+        if conn is not None:
+            conn.close()
+        record = build_baseline_record(
+            registry=reg,
+            reports={"M": report_m, "R": report_r},
+            target=args.target,
+            run_id=run_id,
+            fetch=fetch,
+        )
+        record_path = out_dir / "quality-baseline.json"
+        record_path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+        (out_dir / "quality-report-M.json").write_text(
+            json.dumps(report_m, indent=2, sort_keys=True) + "\n"
+        )
+        (out_dir / "quality-report-R.json").write_text(
+            json.dumps(report_r, indent=2, sort_keys=True) + "\n"
+        )
+        print(f"wrote {record_path} (+ quality-report-M/R.json)", file=sys.stderr)
+        if args.bucket:
+            from .gcs import GcsBucket
+
+            stamp = _object_stamp(generated)
+            name = f"{args.prefix}{stamp}-baseline.json"
+            GcsBucket(args.bucket).put_object(
+                name,
+                (json.dumps(record, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+                content_type="application/json",
+            )
+            print(f"baseline record → gs://{args.bucket}/{name}", file=sys.stderr)
+        if args.emit:
+            print(json.dumps(record, indent=2, sort_keys=True))
+        counts = record["counts"]
+        print(
+            f"quality baseline {run_id}: {counts['measured']}/{counts['ratchet_checks']} "
+            f"ratchet checks measured; {counts['baselined']} pending→baselined, "
+            f"{counts['tightened']} tightened, {counts['regressions']} regressions, "
+            f"{counts['findings']} findings",
+            file=sys.stderr,
+        )
+        # The leg's follow-up: `sig-exports quality apply-baselines --report
+        # <this record>` rewrites the registry from the proposal (the ratchet
+        # diff re-checks the result — a loosening cannot be written).
+        return 0 if counts["measured"] > 0 else 3
+
+    if args.quality_command == "job":
+        from . import quality_job as qj
+
+        try:
+            decl = qj.load_declaration(getattr(args, "declaration", None))
+        except ValueError as e:
+            print(str(e), file=sys.stderr)
+            return 2
+        if args.job_command == "plan":
+            import dataclasses
+
+            print(
+                json.dumps(
+                    {"schema": qj.SCHEMA, **dataclasses.asdict(decl)},
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+            return 0
+        if args.job_command == "render":
+            env_values: dict[str, str] = {}
+            for pair in args.env_pairs:
+                if "=" not in pair:
+                    print(f"job render: --env {pair!r} must be NAME=value", file=sys.stderr)
+                    return 2
+                k, v = pair.split("=", 1)
+                env_values[k] = v
+            try:
+                plan = qj.render(
+                    decl,
+                    project=args.project,
+                    region=args.region,
+                    image=args.image,
+                    env_values=env_values,
+                )
+            except ValueError as e:
+                print(str(e), file=sys.stderr)
+                return 2
+            print(json.dumps(plan, indent=2, sort_keys=True))
+            return 0
+        if args.job_command == "verify-describe":
+            describe = json.loads(Path(args.describe).read_text(encoding="utf-8"))
+            diffs = qj.verify_describe(decl, describe, project=args.project)
+            if diffs:
+                for d in diffs:
+                    print(f"DRIFT: {d}", file=sys.stderr)
+                return 4
+            print("verify-describe OK — the job posture matches the declaration")
+            return 0
+        if args.job_command == "verify-trigger":
+            describe = json.loads(Path(args.describe).read_text(encoding="utf-8"))
+            diffs = qj.verify_trigger(decl, describe, project=args.project, region=args.region)
+            if diffs:
+                for d in diffs:
+                    print(f"DRIFT: {d}", file=sys.stderr)
+                return 4
+            print("verify-trigger OK — the trigger matches the declaration")
+            return 0
+        if args.job_command == "window":
+            from datetime import UTC, datetime
+
+            now = datetime.now(UTC)
+            if args.now:
+                now = datetime.fromisoformat(str(args.now).replace("Z", "+00:00")).astimezone(UTC)
+            reason = qj.leg_window_reason(now, earliest=args.earliest)
+            if reason is not None:
+                print(f"QUEUED ({reason}): the leg runs inside its contract window only")
+                return 42
+            print("window open")
+            return 0
+        return 2
     return 2
 
 
 __all__ = [
+    "BASELINE_PREFIX_DEFAULT",
+    "PROBE_PREFIX_DEFAULT",
+    "QUALITY_ALERT_KIND",
     "EvalContext",
     "Evaluator",
     "FILE_EVALUATORS",
@@ -834,7 +1451,13 @@ __all__ = [
     "SEAM_DEFERRALS",
     "SPINE_EVALUATORS",
     "connect_readonly",
+    "error_probe_record",
+    "fetch_release",
+    "nightly_dsn",
     "probe_run_record",
     "run_quality_probe",
+    "suppressed_probe_record",
+    "upload_probe_record",
+    "upload_records",
     "write_records",
 ]

@@ -41,6 +41,7 @@ import hashlib
 import json
 import re
 import tomllib
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -52,6 +53,7 @@ from typing import Any, Final
 SCHEMA: Final = "sig.quality-checks/1"
 REPORT_VERSION: Final = "sig.quality-report/1"
 PROBE_RUN_VERSION: Final = "sig.probe-run/1"
+BASELINE_VERSION: Final = "sig.quality-baseline/1"
 REGISTRY_VERSION: Final = "1"
 
 DEFAULT_REGISTRY_PATH: Final = Path(__file__).resolve().parent / "data" / "quality_checks.toml"
@@ -86,6 +88,10 @@ GATING_BASIS_CLASSES: Final = frozenset({"B0", "B1", "B2", "B5"})
 
 CHECK_ID_RE: Final = re.compile(r"^GQ-\d{2}$")
 FIXING_ROW_RE: Final = re.compile(r"^P\d+\.\d+[a-z]?$")
+
+#: `baseline_at` is a date-only stamp recorded by the baseline apply —
+#: always written from `date -u` (OM-04).
+BASELINE_AT_RE: Final = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 #: threshold grammar: "none" | "<= N" | "< N" | "> N" | ">= N" | "== N"
 THRESHOLD_RE: Final = re.compile(r"^(<=|<|>|>=|==)\s*([0-9]+(?:\.[0-9]+)?)$")
@@ -173,6 +179,8 @@ class QualityCheck:
     fixing: tuple[str, ...]
     source_ids: str  # the `from` field — the L1/L2/L3 ids this check deduplicates
     note: str
+    baseline_run: str = ""  # the run id the baseline was measured in (P34.44b)
+    baseline_at: str = ""  # the `date -u` day that run recorded it (YYYY-MM-DD)
 
 
 @dataclass(frozen=True)
@@ -261,6 +269,25 @@ def validate_registry(doc: dict[str, Any], known_rows: set[str] | None = None) -
         note = raw.get("note")
         if note is not None and not isinstance(note, str):
             errors.append(f"{where}: note must be a string")
+        # The measured-baseline provenance pair (P34.44b): a check whose
+        # baseline a recorded run set names the run and its `date -u` day —
+        # always both or neither, and only beside a numeric baseline.
+        baseline_run = raw.get("baseline_run")
+        baseline_at = raw.get("baseline_at")
+        if baseline_run is not None and (
+            not isinstance(baseline_run, str) or not baseline_run.strip()
+        ):
+            errors.append(f"{where}: baseline_run must be a non-empty string")
+        if baseline_at is not None and (
+            not isinstance(baseline_at, str) or not BASELINE_AT_RE.match(baseline_at)
+        ):
+            errors.append(f"{where}: baseline_at {baseline_at!r} must be YYYY-MM-DD (date -u)")
+        if (baseline_run is None) != (baseline_at is None):
+            errors.append(f"{where}: baseline_run and baseline_at land together")
+        if baseline_run is not None and not isinstance(baseline, (int, float)):
+            errors.append(
+                f"{where}: baseline_run names a measuring run but baseline is not a measured value"
+            )
     return errors
 
 
@@ -281,19 +308,13 @@ def _parse_check(raw: dict[str, Any]) -> QualityCheck:
         fixing=tuple(str(t) for t in raw.get("fixing", [])),
         source_ids=str(raw["from"]),
         note=str(raw.get("note", "")),
+        baseline_run=str(raw.get("baseline_run") or ""),
+        baseline_at=str(raw.get("baseline_at") or ""),
     )
 
 
-def load_registry(
-    path: Path | str | None = None, known_rows: set[str] | None = None
-) -> CheckRegistry:
-    """Load + validate the registry (fail closed — a malformed registry raises)."""
-    if path is not None:
-        raw_bytes = Path(path).read_bytes()
-    else:
-        from importlib.resources import files
-
-        raw_bytes = files("exports").joinpath(_REGISTRY_RESOURCE).read_bytes()
+def _registry_from_bytes(raw_bytes: bytes, known_rows: set[str] | None = None) -> CheckRegistry:
+    """The load+validate core — shared by path and text entry points."""
     doc = tomllib.loads(raw_bytes.decode("utf-8"))
     errors = validate_registry(doc, known_rows)
     if errors:
@@ -308,6 +329,19 @@ def load_registry(
         f"{hashlib.sha256(canonical.encode()).hexdigest()[:16]}"
     )
     return CheckRegistry(version=str(doc["version"]), checks=checks, digest=digest)
+
+
+def load_registry(
+    path: Path | str | None = None, known_rows: set[str] | None = None
+) -> CheckRegistry:
+    """Load + validate the registry (fail closed — a malformed registry raises)."""
+    if path is not None:
+        raw_bytes = Path(path).read_bytes()
+    else:
+        from importlib.resources import files
+
+        raw_bytes = files("exports").joinpath(_REGISTRY_RESOURCE).read_bytes()
+    return _registry_from_bytes(raw_bytes, known_rows)
 
 
 # ---------------------------------------------------------------------------
@@ -602,6 +636,7 @@ def build_probe_run(report: dict[str, Any]) -> dict[str, Any]:
         "probe": "sig-quality",
         "placement": report["placement"],
         "target": report["target"],
+        "job": report.get("job", ""),  # the job name when a job ran this (P34.44b)
         "checks": checks,
         "report": report,
         "overall": summary["overall"],
@@ -770,3 +805,252 @@ def _diff_mode(
 
 def _mode_rank(mode: str) -> int:
     return {"report": 0, "ratchet": 1, "enforce": 2}[mode]
+
+
+# ---------------------------------------------------------------------------
+# The L2 baseline run — proposal, record and registry apply (P34.44b,
+# SIG-CONF-006/007, ADR-154/205). The baseline is set FROM MEASUREMENT: a
+# pending baseline takes the measured value; an existing baseline moves only
+# toward the threshold when today's measurement is better — a regression is
+# recorded as a finding and the baseline stands, never loosened by hand.
+# ---------------------------------------------------------------------------
+
+
+def _check_outcome_map(reports: dict[str, dict[str, Any]]) -> dict[str, tuple[str, dict[str, Any]]]:
+    """check_id → (placement, check row) for every measured check across the
+    placement reports — a check's placement picks the report that ran it."""
+    by_check: dict[str, tuple[str, dict[str, Any]]] = {}
+    for placement, report in reports.items():
+        for row in report.get("checks", []):
+            if row.get("measured") is not None and row.get("outcome") != "not_evaluable":
+                by_check.setdefault(str(row["id"]), (str(placement), row))
+    return by_check
+
+
+def baseline_proposal(
+    registry: CheckRegistry, reports: dict[str, dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """For each ratchet check: the measured value from the placement report
+    that evaluated it and the proposed new baseline.
+
+    * ``baselined`` — a ``pending`` baseline takes today's measured value;
+    * ``tightened`` — today's value beats the recorded baseline toward the
+      threshold (the ratchet's only legal direction — no ADR needed);
+    * ``kept`` — the value stands at the recorded baseline: either equal or
+      a **regression** (recorded as a finding; the baseline NEVER loosens
+      silently);
+    * ``not_measured`` — the run offered no value (``not_evaluable``); the
+      baseline is untouched and the check stays pending if it was.
+    """
+    by_check = _check_outcome_map(reports)
+    rows: list[dict[str, Any]] = []
+    for check in registry.checks:
+        if check.mode != "ratchet":
+            continue
+        row: dict[str, Any] = {
+            "check": check.check_id,
+            "unit": check.unit,
+            "direction": check.direction,
+            "threshold": str(check.threshold),
+            "baseline_old": check.baseline,
+            "baseline_pending": check.baseline_pending,
+            "l2_ref": check.note,
+            "fixing": list(check.fixing),
+        }
+        hit = by_check.get(check.check_id)
+        if hit is None:
+            row["proposed"] = None
+            row["state"] = "not_measured"
+        else:
+            placement, outcome = hit
+            measured = float(outcome["measured"])
+            row.update(
+                measured=measured,
+                placement=placement,
+                outcome=outcome.get("outcome"),
+                regression=bool(outcome.get("regression")),
+            )
+            if check.baseline is None:
+                row["proposed"] = measured
+                row["state"] = "baselined"
+            else:
+                toward = (
+                    measured < check.baseline
+                    if check.direction == "lower_is_better"
+                    else measured > check.baseline
+                )
+                if toward:
+                    row["proposed"] = measured
+                    row["state"] = "tightened"
+                else:
+                    row["proposed"] = check.baseline
+                    row["state"] = "regression_kept" if outcome.get("regression") else "kept"
+        rows.append(row)
+    return rows
+
+
+def build_baseline_record(
+    *,
+    registry: CheckRegistry,
+    reports: dict[str, dict[str, Any]],
+    target: str,
+    run_id: str,
+    fetch: dict[str, Any] | None = None,
+    generated_at: datetime | None = None,
+) -> dict[str, Any]:
+    """The ``sig.quality-baseline/1`` record: every check with its L2
+    reference (the registry ``from`` ids + the note carrying L2's measured
+    value), today's measured value, its outcome, and the baseline proposal —
+    plus the counts summary the committed report under
+    ``docs/build/reports/quality/`` is rendered from. A check outcome of
+    ``fail`` or a ratchet regression is a named finding with its fixing row
+    (L2 found 29 of 45 failing — each is reproduced or explained here)."""
+    proposal = baseline_proposal(registry, reports)
+    by_check_all: dict[str, dict[str, Any]] = {}
+    for report in reports.values():
+        for row in report.get("checks", []):
+            by_check_all.setdefault(str(row["id"]), row)
+    comparison: list[dict[str, Any]] = []
+    findings: list[dict[str, Any]] = []
+    for check in registry.checks:
+        outcome = by_check_all.get(check.check_id) or {}
+        comparison.append(
+            {
+                "id": check.check_id,
+                "from": check.source_ids,
+                "l2_ref": check.note,
+                "mode": check.mode,
+                "unit": check.unit,
+                "baseline": check.baseline,
+                "baseline_pending": check.baseline_pending,
+                "measured": outcome.get("measured"),
+                "outcome": outcome.get("outcome", "not_run"),
+                "reason": outcome.get("reason", ""),
+                "regression": bool(outcome.get("regression")),
+                "fixing": list(check.fixing),
+            }
+        )
+        if outcome.get("outcome") == "fail" or outcome.get("regression"):
+            findings.append(
+                {
+                    "check": check.check_id,
+                    "outcome": outcome.get("outcome"),
+                    "measured": outcome.get("measured"),
+                    "baseline": check.baseline,
+                    "threshold": str(check.threshold),
+                    "fixing": list(check.fixing),
+                }
+            )
+    counts = {
+        "checks": len(registry.checks),
+        "ratchet_checks": sum(1 for c in registry.checks if c.mode == "ratchet"),
+        "measured": sum(1 for r in proposal if r.get("measured") is not None),
+        "baselined": sum(1 for r in proposal if r["state"] == "baselined"),
+        "tightened": sum(1 for r in proposal if r["state"] == "tightened"),
+        "kept": sum(1 for r in proposal if r["state"] == "kept"),
+        "regressions": sum(1 for r in proposal if r["state"] == "regression_kept"),
+        "findings": len(findings),
+    }
+    record: dict[str, Any] = {
+        "version": BASELINE_VERSION,
+        "generated_at": (generated_at or datetime.now(UTC)).isoformat(),
+        "run_id": run_id,
+        "target": target,
+        "registry": {
+            "schema": SCHEMA,
+            "version": registry.version,
+            "digest": registry.digest,
+        },
+        "placements": sorted(reports),
+        "l2_comparison": comparison,
+        "proposal": proposal,
+        "counts": counts,
+        "findings": findings,
+        "reports": reports,
+    }
+    if fetch is not None:
+        record["release_fetch"] = fetch
+    return record
+
+
+def apply_baselines(
+    registry_text: str,
+    proposal: Iterable[dict[str, Any]],
+    *,
+    run_id: str,
+    at: str,
+    ticket: str,
+    adr_ids: tuple[str, ...] = (),
+    known_rows: set[str] | None = None,
+) -> str:
+    """Rewrite the registry TOML with the proposal's measured baselines and
+    return the new text — the ONLY writer of ``baseline_run``/``baseline_at``.
+
+    Every proposal row carrying a ``proposed`` value sets that check's
+    ``baseline`` (a ``pending`` resolves to the measured value) and stamps
+    ``baseline_run``/``baseline_at`` beside it. The rewrite is then
+    re-validated and re-diffed against the original: an illegal ratchet move
+    raises ``RegistryError`` — this writer can never emit a loosening, even
+    from a hand-crafted proposal.
+    """
+    if not run_id or not str(run_id).strip():
+        raise RegistryError("apply_baselines: run_id must be a non-empty string")
+    if not BASELINE_AT_RE.match(str(at)):
+        raise RegistryError(f"apply_baselines: --date {at!r} must be YYYY-MM-DD (date -u, OM-04)")
+    new_values = {
+        str(r["check"]): float(r["proposed"]) for r in proposal if r.get("proposed") is not None
+    }
+    old = _registry_from_bytes(registry_text.encode("utf-8"), known_rows)
+    unknown = sorted(set(new_values) - {c.check_id for c in old.checks})
+    if unknown:
+        raise RegistryError(f"apply_baselines: proposal names unknown checks {unknown}")
+
+    blocks = re.split(r"(?=^\[\[check\]\])", registry_text, flags=re.M)
+    out_blocks: list[str] = []
+    for block in blocks:
+        m = re.search(r'^id\s*=\s*"(GQ-\d{2})"', block, flags=re.M)
+        cid = m.group(1) if m else None
+        if cid is None or cid not in new_values:
+            out_blocks.append(block)
+            continue
+        value = new_values[cid]
+        baseline_line = f"baseline = {value:g}"
+        triple = [
+            baseline_line,
+            f'baseline_run = "{run_id}"',
+            f'baseline_at = "{at}"',
+        ]
+        lines = block.splitlines()
+        new_lines: list[str] = []
+        inserted = False
+        for line in lines:
+            if re.match(r"^baseline\s*=", line):
+                if not inserted:
+                    new_lines.extend(triple)
+                    inserted = True
+                continue  # drop the old baseline line (and any duplicate)
+            if re.match(r"^baseline_(run|at)\s*=", line):
+                continue  # drop stale provenance — ours is written once
+            new_lines.append(line)
+        if not inserted:
+            # A ratchet check always carries a baseline line; defensively
+            # insert the triple before `unit =` when the block lacks one.
+            for i, line in enumerate(new_lines):
+                if re.match(r"^unit\s*=", line):
+                    new_lines[i:i] = triple
+                    break
+            else:
+                new_lines.extend(triple)
+        # A processed block is rejoined then given its block terminator
+        # back — the blank line before the next [[check]] is preserved by
+        # the trailing '' element splitlines carries.
+        out_blocks.append("\n".join(new_lines) + "\n")
+    new_text = "".join(out_blocks)
+    new = _registry_from_bytes(new_text.encode("utf-8"), known_rows)
+    violations = diff_registry(old, new, ticket=ticket, adr_ids=adr_ids)
+    if violations:
+        raise RegistryError(
+            "apply_baselines: the proposal produced an illegal ratchet move:\n"
+            + "\n".join(f"  {v.check_id}.{v.field}: {v.message}" for v in violations)
+        )
+    return new_text if new_text.endswith("\n") else new_text + "\n"

@@ -417,6 +417,51 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help="a new-ADR id the change cites (repeatable) — required for loosenings",
     )
+    qbase = qsub.add_parser(
+        "apply-baselines",
+        help="P34.44b (SIG-CONF-006/007): set ratchet baselines from a "
+        "sig.quality-baseline/1 (or sig.quality-report/1) record — measured "
+        "values only, provenance-stamped, re-diffed against the ratchet "
+        "rules so a loosening can never be written",
+    )
+    qbase.add_argument(
+        "--report",
+        required=True,
+        help="a sig.quality-baseline/1 record (preferred) or a bare sig.quality-report/1",
+    )
+    qbase.add_argument("--registry", default=None, help="registry path (default: bundled)")
+    qbase.add_argument(
+        "--run-id",
+        default=None,
+        help="stamped as baseline_run (default: the record's run_id)",
+    )
+    qbase.add_argument(
+        "--date",
+        required=True,
+        help="YYYY-MM-DD stamped as baseline_at — from `date -u` (OM-04)",
+    )
+    qbase.add_argument(
+        "--ticket",
+        default="P34.44b",
+        help="the manifest row landing the apply (default P34.44b)",
+    )
+    qbase.add_argument(
+        "--adr",
+        action="append",
+        default=["ADR-205"],
+        help="ADR ids the apply cites (default ADR-205 — the baseline semantics ADR); repeatable",
+    )
+    qbase.add_argument("--manifest", default=None, help="00_MANIFEST.md path (fixing-row check)")
+    qbase.add_argument(
+        "--write",
+        action="store_true",
+        help="write the registry in place (default: print the proposal + the diff check only)",
+    )
+    qbase.add_argument(
+        "--out",
+        default=None,
+        help="write the new registry here instead of in place",
+    )
 
     return parser
 
@@ -1393,4 +1438,81 @@ def _run_quality(args: argparse.Namespace) -> int:
             )
         )
         return 4 if violations else 0
+    if args.quality_command == "apply-baselines":
+        doc = json.loads(Path(args.report).read_text(encoding="utf-8"))
+        registry_path = args.registry or q.DEFAULT_REGISTRY_PATH
+        registry_text = Path(registry_path).read_text(encoding="utf-8")
+        known = _manifest_rows(args.manifest)
+        old = q.load_registry(registry_path, known)
+        # The proposal is recomputed from the record's own reports — the
+        # record is evidence, the registry + ratchet rules are the arbiter.
+        if doc.get("version") == q.BASELINE_VERSION:
+            reports = dict(doc.get("reports") or {})
+        elif doc.get("version") == q.REPORT_VERSION:
+            reports = {str(doc.get("placement") or "M"): doc}
+        else:
+            print(
+                f"sig-exports quality apply-baselines: record version "
+                f"{doc.get('version')!r} is neither {q.BASELINE_VERSION} "
+                f"nor {q.REPORT_VERSION}",
+                file=sys.stderr,
+            )
+            return 4
+        proposal = q.baseline_proposal(old, reports)
+        run_id = args.run_id or str(doc.get("run_id") or "")
+        if not run_id:
+            print(
+                "sig-exports quality apply-baselines: --run-id required (the record carries none)",
+                file=sys.stderr,
+            )
+            return 4
+        try:
+            new_text = q.apply_baselines(
+                registry_text,
+                proposal,
+                run_id=run_id,
+                at=args.date,
+                ticket=args.ticket,
+                adr_ids=tuple(args.adr or ()),
+                known_rows=known,
+            )
+        except q.RegistryError as e:
+            print(f"sig-exports quality apply-baselines: refused — {e}", file=sys.stderr)
+            return 4
+        changing = [r for r in proposal if r.get("proposed") is not None]
+        print(
+            json.dumps(
+                {
+                    "version": "sig.quality-baseline-apply/1",
+                    "run_id": run_id,
+                    "baseline_at": args.date,
+                    "ticket": args.ticket,
+                    "adrs": list(args.adr or []),
+                    "checks_rebased": [
+                        {
+                            "check": r["check"],
+                            "old": r.get("baseline_old"),
+                            "new": r["proposed"],
+                            "state": r["state"],
+                        }
+                        for r in changing
+                    ],
+                    "untouched": [r["check"] for r in proposal if r.get("proposed") is None],
+                },
+                indent=2,
+            )
+        )
+        if args.out:
+            Path(args.out).write_text(new_text, encoding="utf-8")
+            print(f"wrote {args.out}", file=sys.stderr)
+        elif args.write:
+            Path(registry_path).write_text(new_text, encoding="utf-8")
+            print(f"wrote {registry_path}", file=sys.stderr)
+        else:
+            print(
+                "dry-run: re-run with --write (or --out) to apply — "
+                "the diff check above already passed",
+                file=sys.stderr,
+            )
+        return 0
     return 2

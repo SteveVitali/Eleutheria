@@ -302,9 +302,10 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
     for s in sched:
         assert "--role=roles/run.invoker" in " ".join(s.command)
         assert "sig-scheduler@" in " ".join(s.command)
-    # (5) sig-alerts: grant sig-probe-rt before the revokes.
+    # (5) sig-alerts: grant the declared callers (sig-probe-rt +
+    # P34.44b's sig-quality-probe-rt) before the revokes.
     grants = [s for s in steps if "services add-iam-policy-binding" in " ".join(s.command)]
-    assert len(grants) == 1 and "sig-alerts" in " ".join(grants[0].command)
+    assert len(grants) == 2 and all("sig-alerts" in " ".join(g.command) for g in grants)
     revokes = [s for s in steps if "services remove-iam-policy-binding" in " ".join(s.command)]
     assert len(revokes) == 2  # allUsers + default-compute
     assert steps.index(grants[0]) < min(steps.index(r) for r in revokes)
@@ -419,7 +420,13 @@ def _post_jobs_snapshot(decl, cadence, job_map) -> Snapshot:
                 "bindings": [
                     {
                         "role": RUN_INVOKER_ROLE,
-                        "members": [f"serviceAccount:{emails['sig-probe-rt']}"],
+                        # every member the jobs-leg [[invoker]] grants —
+                        # sig-probe-rt + P34.44b's sig-quality-probe-rt
+                        "members": [
+                            f"serviceAccount:{emails[g]}"
+                            for g in decl.invoker_rule("sig-alerts", "jobs").grant
+                            if g != "default-compute"
+                        ],
                     }
                 ]
             }
@@ -771,7 +778,11 @@ def test_jobs_leg_offline_verify_from_state(tmp_path: Path, decl, cadence, job_m
                 "bindings": [
                     {
                         "role": "roles/run.invoker",
-                        "members": [f"serviceAccount:{emails['sig-probe-rt']}"],
+                        "members": [
+                            f"serviceAccount:{emails[g]}"
+                            for g in decl.invoker_rule("sig-alerts", "jobs").grant
+                            if g != "default-compute"
+                        ],
                     }
                 ]
             }

@@ -553,3 +553,29 @@ rerun_cell = '''`implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-
   go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
   rerun = '''implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P34.44b"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued L1 `sig-quality-probe` job + `sig-sched-quality-probe` trigger and the L2 hosted read-only baseline run + `apply-baselines` write; the engineered halves landed (`sig.quality-probe/1` → `nightly`/`baseline`/`apply_baselines`/`quality-probe.sh` + alert-path IAM); no deferral of its own opens'''
+gates_cell = '''hosted, window-bound (AR-3 + AR-2): both legs earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z daily and the monthly batch window (day 6 00:00Z → day 13 12:00Z) — apply exits 42; both pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4) and additionally waits on `live:P34.43` (`deps` exits 42 while `sig_audit`, `sig-quality-probe-rt` or the two secrets are absent); voided-by a red probe, a failed restore point or a contradicting read; AR-2 = recorded prestate + bucket versioning ON before the first probe record'''
+operator_cell = '''nothing until the window opens, `live:P34.43` holds and ADC is armed — `--check` default; window/deps/ADC-gated before any mutation; rollback = exact-name delete of trigger + job (probe records stay — history)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` (scope: one leg per run — job+trigger, then baseline) · landed as row 256 (both legs queued exit 42, never executed)'''
+
+  [[row.legs]]
+  id = "P34.44b-quality-probe"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-06:30Z daily", "the monthly batch window (day 6 00:00Z → day 13 12:00Z)"]
+  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4) and additionally waits on `live:P34.43`'''
+  rerun = '''implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true'''
+  live_dependants = ["P34.45", "P34.47"]
+
+  [[row.legs]]
+  id = "P34.44b-baseline"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-06:30Z daily", "the monthly batch window (day 6 00:00Z → day 13 12:00Z)"]
+  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4) and additionally waits on `live:P34.43`'''
+  rerun = '''implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true'''
+  live_dependants = ["P34.45"]
