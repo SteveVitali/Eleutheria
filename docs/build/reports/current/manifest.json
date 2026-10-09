@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "07af39594d2c046b9526c48c02af0994d6ac89f0",
+  "input_commit": "e9cb8e1533fa9005241575a6335269357b1d5314",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "b85899fed5ace111f5f11c5c2adc93091bd9deb0c11dfe1e9a21f96a12fbd741"
+      "sha256": "18bd6f7cb9fd5419ebf91a0ddf20b2b017be9c9614e908fcdc44e0c794ced85a"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -786,7 +786,7 @@
     },
     {
       "path": "docs/adr/ADR-202-execution-host-and-db-login-credentials.md",
-      "sha256": "f91783bc91ec5fbfcb703394ffdfb08d9ed889d761bcd07ebba980c5fecb9fae"
+      "sha256": "e8d71e77f88196de2229bca76389ff23007c1e3b9c674e4d15a8a5d4505a12c2"
     },
     {
       "path": "docs/adr/ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md",
@@ -801,24 +801,28 @@
       "sha256": "a8f92b1270c87eb43c0f4115130cfdc82c9dd73266cd571a1a37f92f916a86d7"
     },
     {
+      "path": "docs/adr/ADR-206-er-rerun-login-and-the-one-shot-v3-interim-leg.md",
+      "sha256": "2bd09f91239a222ecf7949991bcdc486079b925bd9ef30c49fa3444470d0b032"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "584e2fbbc6a8bdb64c5a5b1d9a4e916eec9a64706848e79a662c1d66d390ad6c"
+      "sha256": "1c2c0dc34324643844f5f3db54fc9e2592eba0a72d1798fd739719dfbe75ca4a"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "8bbc07c232e9f1f1b3616d126a073aab8006a23a1a2feb5b5e286b9143626923"
+      "sha256": "2fa00b3c25dec979a99a87bdfd1078441f6b27d428a824afc47aac92485ee1be"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "6785559049cae4b96faf1598368925e6277dc1d35017a98799fe1ea19bd7de1e"
+      "sha256": "121f134ad8400dca422f4f529b91efc8869544e3f5668e442794d2d9bcfbbfa2"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "ddcdedc778fd739b4f4cda5528316339ce5cafe35426acea9c0121620513c0ad"
+      "sha256": "78d6bff331702703a96d052847b5eb8ffb55ab4008cd45b972cd98a6ae95ec31"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "73f6ef2f9cc8b77b4828559b3c881251c6f4c45c961d16f1c9722e05244ed925"
+      "sha256": "63ed60cc1d737bd46412f50048a0ebdbe2a5b79147e0cd5f317385a6885f76df"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1821,6 +1825,10 @@
       "sha256": "a1e2260a3d5e7a2e5445c5ae1cfe3a171478dce330d1b14ac213010145f371db"
     },
     {
+      "path": "docs/build/runs/P34.45.md",
+      "sha256": "ffd648e455dfd3ecbce6a32dcabc947f2dbf1997646f1919f8f23f33851e0bc2"
+    },
+    {
       "path": "docs/build/runs/P34.48.md",
       "sha256": "a534791cf09b129ceb2475c6670a797dcff4bca5af8daaadecd469d29e7206a3"
     },
@@ -1962,7 +1970,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "d2ec0c46ad7e942b866298e43e09e0744cde09f5ab05325a23fde0643350f4cf"
+      "sha256": "b3c756da00295500f94ae45030d5d717f2c84b004531b2c28adfc3f5c5bdd3e6"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",

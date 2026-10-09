@@ -448,15 +448,37 @@ _NAMESPACE_1G_LABELS: frozenset[str] = frozenset({"1g:shared_upstream_ref"})
 _INFERENTIAL_TIER_RE = re.compile(r"^[345]g:|^1g:")
 
 
+def _is_inferential_tier(tier_label: str) -> bool:
+    """A tier label naming an identity inference (never the namespace join)."""
+    return bool(_INFERENTIAL_TIER_RE.match(tier_label)) and (tier_label not in _NAMESPACE_1G_LABELS)
+
+
 def eval_gq24(ctx: EvalContext) -> Measurement:
     """GQ-24 — the inferential auto-write lock: auto-written same-device
     decisions in any identity-inference tier while no B5 evaluation certifies
-    that tier. All auto_writes in tiers 1g/3g/4g/5g count (no B5 certification
-    exists today — P34.45 owns the certified posture)."""
+    that tier.
+
+    P34.45 scoping. The spine is append-only: a superseded run's auto_write
+    rows can never be deleted, so the violation set is the LATEST completed
+    execution's run — what a reader resolves today. Inferential auto_writes
+    recorded under superseded runs are still *detected* and disclosed
+    (``historical_inferential_auto_writes``), never silently excused. And a
+    zero is never vacuous (SIG-ENG-042): with no completed execution or a
+    latest run carrying no inferential-tier decisions the measurement reports
+    ``evaluated=0`` and the ratchet's vacuous-pass guard fails it.
+    """
+    latest = _rows(
+        ctx.conn,
+        """
+        SELECT run_key FROM camera_site_execution
+        ORDER BY completed_at DESC, execution_id DESC LIMIT 1
+        """,
+    )
+    latest_run = str(latest[0]["run_key"]) if latest else None
     rows = _rows(
         ctx.conn,
         """
-        SELECT match_id, match_tier, tier_label
+        SELECT match_id, match_tier, tier_label, run_key
         FROM camera_site_match
         WHERE disposition = 'auto_write' AND decided_by = 'auto'
         """,
@@ -464,17 +486,44 @@ def eval_gq24(ctx: EvalContext) -> Measurement:
     violations = sum(
         1
         for r in rows
-        if _INFERENTIAL_TIER_RE.match(str(r["tier_label"]))
-        and str(r["tier_label"]) not in _NAMESPACE_1G_LABELS
+        if latest_run is not None
+        and str(r["run_key"]) == latest_run
+        and _is_inferential_tier(str(r["tier_label"]))
+    )
+    historical = sum(
+        1
+        for r in rows
+        if str(r["run_key"]) != latest_run and _is_inferential_tier(str(r["tier_label"]))
+    )
+    # The evaluated population is the latest run's inferential-tier decision
+    # set — 0 violations over 0 inferential decisions is not a pass.
+    inferential_decisions = (
+        int(
+            _rows(
+                ctx.conn,
+                """
+                SELECT count(*) AS n FROM camera_site_match
+                WHERE run_key = %s
+                  AND (tier_label ~ '^[345]g:'
+                       OR (tier_label ~ '^1g:' AND tier_label <> '1g:shared_upstream_ref'))
+                """,
+                (latest_run,),
+            )[0]["n"]
+        )
+        if latest_run is not None
+        else 0
     )
     return Measurement(
         check_id="GQ-24",
-        offered=len(rows),
-        evaluated=len(rows),
-        measured=violations,
+        offered=inferential_decisions,
+        evaluated=inferential_decisions,
+        measured=violations if inferential_decisions else None,
         detail={
+            "latest_run_key": latest_run,
+            "inferential_decisions_latest_run": inferential_decisions,
+            "inferential_auto_writes_latest_run": violations,
+            "historical_inferential_auto_writes": historical,
             "auto_write_total": len(rows),
-            "inferential_auto_writes": violations,
         },
     )
 
@@ -537,29 +586,92 @@ def eval_gq14(ctx: EvalContext) -> Measurement:
 
 
 #: Claim-marker phrases GQ-27 gates on — a B5-word is a published claim of
-#: human verification and is legal only next to a B5 completion marker.
-_CLAIM_PHRASES = ("human-verified", "independently reviewed", "certified")
+#: human verification and is legal only next to a B5 completion marker
+#: (P34.45 adds bare "verified" to the L3 list).
+_CLAIM_PHRASES = ("human-verified", "independently reviewed", "verified", "certified")
+_CLAIM_RE = re.compile(r"\b(?:" + "|".join(map(re.escape, _CLAIM_PHRASES)) + r")\b")
+
+#: The context a published quality figure's statement must carry (the GQ-27
+#: statement): its n, population, source-mix digest, ruleset and window. Each
+#: field may live on the figure object or be inherited from an enclosing
+#: object in the same document (a report-level ruleset/window applies to the
+#: figures it wraps) — except ``n``, which is the figure's own denominator
+#: and is never inherited. Aliases cover the shapes our own report records
+#: emit (evaluation rows, probe reports, dossier stats).
+_FIGURE_CONTEXT: dict[str, tuple[str, ...]] = {
+    "n": ("n", "denominator", "drawn", "sample_n", "offered"),
+    "population": ("population", "population_note", "target_population", "frame_population"),
+    "source_mix_digest": (
+        "source_mix_digest",
+        "provenance_digest",
+        "provenance_counts",
+        "source_mix",
+    ),
+    "ruleset": (
+        "ruleset",
+        "ruleset_digest",
+        "ruleset_version",
+        "rules_version",
+        "design_digest",
+    ),
+    "window": ("window", "as_of", "sys_period", "scope", "completed_at"),
+}
+_FIGURE_KEYS = {"measured", "value", "precision", "recall", "f1"}
+_BASIS_KEYS = ("basis_class", "basis")
 
 
-def _scan_quality_figures(obj: Any, path: Path, hits: list[str]) -> None:
+def _is_number(v: Any) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _scan_quality_figures(
+    obj: Any, path: Path, hits: list[str], ctx: Mapping[str, str] | None = None
+) -> None:
     """Walk a JSON tree: every object that publishes a quality/evaluation
-    figure (a numeric value under a metric-ish key) must name its basis class;
-    claim phrases need a B5 marker in the same object."""
+    figure (a numeric value under a metric-ish key) must name exactly one
+    basis class and carry the figure context (n, population, source-mix
+    digest, ruleset, window — on the figure or inherited); claim phrases need
+    a B5 marker in the same object."""
+    scope = dict(ctx or {})
     if isinstance(obj, dict):
+        # context fields this object contributes to the figures inside it
+        for field, aliases in _FIGURE_CONTEXT.items():
+            if field == "n" or field in scope:
+                continue  # n is per-figure; an ancestor's n is not this figure's
+            for a in aliases:
+                if a in obj and obj[a] not in (None, "", [], {}):
+                    scope.setdefault(field, a)
+                    break
+        if "basis" not in scope:
+            for k in _BASIS_KEYS:
+                if str(obj.get(k) or "").strip():
+                    scope["basis"] = k
+                    break
         text = " ".join(str(v) for v in obj.values() if isinstance(v, str))
         basis = str(obj.get("basis_class") or obj.get("basis") or "")
-        if any(p in text for p in _CLAIM_PHRASES) and "B5" not in basis:
+        if _CLAIM_RE.search(text) and "B5" not in basis:
             hits.append(f"{path}: claim phrase without a B5 marker")
-        figure_keys = {"measured", "value", "precision", "recall", "f1"}
-        if any(isinstance(obj.get(k), (int, float)) for k in figure_keys) and (
-            "basis_class" not in obj and "basis" not in obj
-        ):
-            hits.append(f"{path}: quality figure without a basis class")
+        if any(_is_number(obj.get(k)) for k in _FIGURE_KEYS):
+            basis_values = {
+                str(obj[k]).strip() for k in _BASIS_KEYS if str(obj.get(k) or "").strip()
+            }
+            if len(basis_values) > 1:
+                hits.append(f"{path}: quality figure names more than one basis class")
+            elif not basis_values and "basis" not in scope:
+                hits.append(f"{path}: quality figure without a basis class")
+            own_scope = dict(scope)
+            for a in _FIGURE_CONTEXT["n"]:
+                if a in obj and obj[a] not in (None, "", [], {}):
+                    own_scope["n"] = a
+                    break
+            missing = sorted(f for f in _FIGURE_CONTEXT if f not in own_scope)
+            if missing:
+                hits.append(f"{path}: quality figure missing context {missing}")
         for v in obj.values():
-            _scan_quality_figures(v, path, hits)
+            _scan_quality_figures(v, path, hits, scope)
     elif isinstance(obj, list):
         for v in obj:
-            _scan_quality_figures(v, path, hits)
+            _scan_quality_figures(v, path, hits, ctx)
 
 
 def eval_gq27(ctx: EvalContext) -> Measurement:
@@ -584,9 +696,9 @@ def eval_gq27(ctx: EvalContext) -> Measurement:
             except UnicodeDecodeError:
                 continue
             scanned += 1
-            for phrase in _CLAIM_PHRASES:
-                if phrase in text and "B5" not in text:
-                    hits.append(f"{path}: '{phrase}' without a B5 marker")
+            for m in _CLAIM_RE.finditer(text):
+                if "B5" not in text:
+                    hits.append(f"{path}: '{m.group(0)}' without a B5 marker")
     if scanned == 0:
         return _not_evaluable("GQ-27", f"nothing to scan under {ctx.scan_dir}")
     return Measurement(

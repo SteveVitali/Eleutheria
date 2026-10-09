@@ -388,7 +388,7 @@ unit = "count"
 basis_class = "B1"
 fixing = ["P34.45"]
 from = "new (INV-15 successor)"
-note = "L2 M04/NEW-15: 11,106 auto-write pairs incl. 4,693 at tier 3 — expected to fail until CONF-02 (P34.45)"
+note = "P34.45 (v3-interim): evaluated population = the LATEST completed run's inferential-tier decisions (append-only spine — superseded runs' inferential auto_writes are detected and disclosed, never re-judged); expected to pass after the v3-interim ER re-run"
 
 [[check]]
 id = "GQ-25"
@@ -422,7 +422,7 @@ note = "unmeasured; P placement rides the real-data regression corpus (CONF-08/P
 
 [[check]]
 id = "GQ-27"
-statement = "Every published quality or evaluation figure names its basis class, n, population, source-mix digest, ruleset and window; 'human-verified', 'independently reviewed' or 'certified' appears only with a B5 completion marker"
+statement = "Every published quality or evaluation figure names exactly one basis class with n, population, source-mix digest, ruleset and window; 'human-verified', 'independently reviewed', 'verified' or 'certified' appears only with a B5 completion marker"
 population = "published quality/evaluation figures"
 placement = ["R", "P"]
 mode = "enforce"

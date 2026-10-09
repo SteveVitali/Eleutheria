@@ -79,3 +79,7 @@ secret = "sig-audit-password"        # the sig_audit login credential (L1)
 [[secret_env]]
 env = "SIG_RECOVERY_PASSWORD"
 secret = "sig-recovery-password"     # the sig_recovery_login credential (L2)
+
+[[secret_env]]
+env = "SIG_ER_RERUN_PASSWORD"
+secret = "sig-er-rerun-password"     # the sig_materialize_login credential (L3 — P34.45's OM-20 ER re-run)

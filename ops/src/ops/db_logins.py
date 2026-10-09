@@ -117,15 +117,58 @@ SIG_RECOVERY_LOGIN = LoginRole(
     rolconfig=(),
 )
 
+SIG_MATERIALIZE_LOGIN = LoginRole(
+    name="sig_materialize_login",
+    statements=(
+        "CREATE ROLE sig_materialize_login LOGIN NOBYPASSRLS NOSUPERUSER "
+        "NOCREATEDB NOCREATEROLE CONNECTION LIMIT 2",
+        "GRANT sig_materialize TO sig_materialize_login",
+    ),
+    secret_name="sig-er-rerun-password",
+    consumer_sa="sig-quality-probe-rt",
+    password_env="SIG_ER_RERUN_PASSWORD",
+    # The group is Round-6's (P30.2-era) — long deployed on hosted, so on the
+    # live spine the gate holds trivially; on a cold spine the apply queues
+    # (exit 42) rather than mint a credential that cannot write anyway.
+    requires_roles=("sig_materialize",),
+    connection_limit=2,
+    memberships=("sig_materialize",),
+    # The append-only camera-site surface + the reads the resolver needs
+    # (INSERT ... RETURNING requires SELECT; the queue rows too).
+    select_tables=(
+        "camera_site_match",
+        "camera_site_run",
+        "camera_site_execution",
+        "review_item",
+        "review_decision",
+    ),
+    # Every grant it needs was deployed by Round-6 + P32.4 — nothing pending.
+    pending_deploy_tables=(),
+    write_refusal_probes=(
+        "UPDATE camera_site_match SET decided_by = 'tampered' WHERE false",
+        "DELETE FROM camera_site_match WHERE false",
+        "TRUNCATE camera_site_match",
+        "DELETE FROM claim WHERE false",
+        "INSERT INTO ingest_run (run_id) VALUES (gen_random_uuid())",
+    ),
+    # Write-capable by design (the one pre-authorised append-only mutation) —
+    # deliberately no default_transaction_read_only: the INSERT grants bound
+    # it, not a session flag.
+    rolconfig=(),
+)
+
 ROLES: dict[str, LoginRole] = {
     SIG_AUDIT.name: SIG_AUDIT,
     SIG_RECOVERY_LOGIN.name: SIG_RECOVERY_LOGIN,
+    SIG_MATERIALIZE_LOGIN.name: SIG_MATERIALIZE_LOGIN,
 }
 #: The names the leg script/declarations accept on `--role`.
 ROLE_ALIASES: dict[str, str] = {
     "sig_audit": "sig_audit",
     "sig_recovery": "sig_recovery_login",
     "sig_recovery_login": "sig_recovery_login",
+    "sig_materialize_login": "sig_materialize_login",
+    "sig_er_rerun": "sig_materialize_login",
 }
 
 

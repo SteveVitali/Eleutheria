@@ -144,12 +144,13 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     assert jobs_rule is not None
     assert jobs_rule.grant == ("sig-probe-rt", "sig-quality-probe-rt")
     assert jobs_rule.revoke == ("allUsers", "default-compute")
-    # The 13-secret consumer matrix is complete (P34.43 adds the two DB-login
-    # credentials consumed by the exec identity alone); the services-leg
+    # The 14-secret consumer matrix is complete (P34.43 adds the two DB-login
+    # credentials consumed by the exec identity alone; P34.45 adds the third —
+    # the write-capable sig_materialize_login password); the services-leg
     # accessor grant set is unchanged (sig-api-rt on sig-pg-password), the
     # jobs-leg grants are the job-class consumers, and the five job-only
     # secrets carry a jobs_revoke on default-compute.
-    assert len(decl.secrets) == 13
+    assert len(decl.secrets) == 14
     api_env = next(s for s in decl.secrets if s.name == "sig-api-env")
     assert api_env.consumers == ()  # recorded, 0 versions, never deleted
     revoked = {s.name for s in decl.secrets if "default-compute" in s.jobs_revoke}
