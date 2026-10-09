@@ -61,7 +61,9 @@ BASELINE_BOUND_S = 13.844
 #: Contract § Live window: not before this instant (after the 10-10
 #: read-back and outside the AR-3 batch window), then 14:00–20:00Z on a
 #: weekday with the operator present.
-WINDOW_EARLIEST = "2026-10-14T14:00:00Z"
+WINDOW_EARLIEST = (
+    "2026-10-14T14:00:00Z"  # future-ok: scheduled: the contract's L2 window (OM-19/AR-3)
+)
 WINDOW_START_HH = 14  # 14:00Z inclusive
 WINDOW_END_HH = 20  # 20:00Z exclusive — the slot must fit inside it
 
