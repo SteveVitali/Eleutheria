@@ -352,13 +352,9 @@ def test_tagged_membership_deploys_grant_the_deploying_login() -> None:
         ("intake_storage", ("sig_intake_receiver", "sig_intake_reviewer")),
         ("intake_application_bridge", ("sig_intake_bridge",)),
     ):
-        text = (
-            REPO / "db" / "deploy" / f"{change}@r11-verify-membership.sql"
-        ).read_text()
+        text = (REPO / "db" / "deploy" / f"{change}@r11-verify-membership.sql").read_text()
         for role in roles:
-            assert re.search(
-                rf"GRANT\s+{role}\s+TO\s+%I", text
-            ) and "current_user" in text, (
+            assert re.search(rf"GRANT\s+{role}\s+TO\s+%I", text) and "current_user" in text, (
                 f"{change}@r11-verify-membership deploy must grant {role} "
                 "to the deploying login via current_user"
             )
