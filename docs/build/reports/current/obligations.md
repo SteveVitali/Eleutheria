@@ -82,5 +82,6 @@
 | D-P34.11-1 | OPEN | the upstream http-cache-semantics/astro release that clears the range, or the P34/P35 toolchain row that moves the builder | a http-cache-semantics release >4.2.0 (or an astro release without the dep) — failing that, before the entry expires 2026-11-30 | `bash scripts/ci/npm_audit_gate.sh --out docs/build/logs` green with the entry REMOVED (the gate already notes when an entry covers no current finding); `npm --… |
 | D-P34.13-1 | OPEN | P34.40 (the dark roll) | P34.40's nginx error_page change | `ops/web/nginx.conf` maps `error_page 403`/`410` onto the branded assets, `/task/` 403 → 404, and `/terms` returns a real 3xx to the API terms — verified in the… |
 | D-P34.19-1 | OPEN | engineering | P34.46 | re-run: (1) read-only confirm the current exposure (`/v1/claim/<claim_id>` on each committed target); (2) narrow the Miami candidates — join `claim_qualifier`/`… |
+| D-P34.17-1 | OPEN | the OM-19 leg-runner (r11/P34.17-live-<n>) or the operator | the L2 republish leg (HG-11 verbatim go + batch-1 confirmation + live:P34.3 versioning + <=24 h probe record + outside 03:00-10:00Z) | re-run `implement-spec spec=docs/tickets/220_P34.17__web-honesty-wave-and-republish-1.md live_verification=true` (scope limited to the L2 republish); verify = t… |
 
 ← back: CURRENT.md

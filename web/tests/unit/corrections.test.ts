@@ -100,15 +100,17 @@ describe("transparency reporting includes refusals (SIG-GOV-011)", () => {
   });
 });
 
-describe("durable anonymous receiver state (P32.16, ADR-135, SIG-FIND-006)", () => {
+describe("durable receiver state (P32.16, ADR-135, SIG-FIND-006)", () => {
   it("never advertises an unstaffed receiver as operational", () => {
     const availability = intakeAvailability();
     // Built but not yet operating: the static page must say so, not promise
     // liveness it cannot see (S4 §8; the flip is a later reviewed change with
     // the operating packet approved — D-R10-PUBLISH-1 stays OPEN).
+    // P34.17 / WV-05: no "anonymous" claim — the receiver is e-mail intake.
     expect(availability.operational).toBe(false);
-    expect(availability.note).toMatch(/not yet operating/i);
+    expect(availability.note).toMatch(/not operating yet/i);
     expect(availability.note).toMatch(/staffed/i);
+    expect(availability.note).not.toMatch(/anonymous/i);
   });
 
   it("names the receiver's public paths for the no-JS form + receipt check", () => {

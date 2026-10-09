@@ -13,11 +13,9 @@
  * exercise geographic filtering) that the rest of the shell already renders.
  */
 
-import { RULESET_VERSION } from "./fixtures";
 import type { JurisdictionClaim, ResearchTaskCard } from "./research-queue";
 import { dispositionsFor } from "./research-queue";
 import type { CorrectionEntry } from "./corrections";
-import type { HostileReaderReview } from "./editorial";
 import type { CoverageMetric, FreshnessRow } from "./metrics";
 import type { ProvenanceSummary } from "./provenance";
 
@@ -126,7 +124,7 @@ export const QUEUE_AS_OF = "2026-08-20";
  * The corrections log. Each entry records what changed, when, why, and who reported
  * it (SIG-UI-032), and preserves the prior value at its belief-time so a pre-correction
  * citation stays reproducible (SIG-GOV-005). The set spans several outcomes, including
- * a REFUSAL with reasoning (SIG-GOV-004) and a SUPPRESSION (SIG-GOV-007).
+ * a REFUSAL with reasoning and a SUPPRESSION.
  */
 export const CORRECTIONS: CorrectionEntry[] = [
   {
@@ -150,7 +148,7 @@ export const CORRECTIONS: CorrectionEntry[] = [
     subject_label: "Oklahoma City PD — retention characterization",
     what_changed: "Attached the department's response disputing the retention characterization.",
     corrected_at: "2026-08-12",
-    reason: "The subject disputes an accurate claim and is entitled to attach a response (SIG-GOV-010).",
+    reason: "The subject disputes an accurate claim and is entitled to attach a response.",
     reported_by: "Oklahoma City PD (subject)",
     category: "factual_error",
     outcome: "annotated",
@@ -165,8 +163,8 @@ export const CORRECTIONS: CorrectionEntry[] = [
     subject_label: "A mapped device near a sensitive residential site",
     what_changed: "Suppressed a device's precise coordinates from public view; retained internally under seal.",
     corrected_at: "2026-08-05",
-    reason: "A valid privacy-harm submission; suppression is distinct from deletion (SIG-GOV-007).",
-    reported_by: "anonymous",
+    reason: "A valid privacy-harm submission; suppression is distinct from deletion .",
+    reported_by: "reader report",
     category: "privacy_harm",
     outcome: "suppressed",
     previous_value: "block-level coordinates published",
@@ -180,8 +178,8 @@ export const CORRECTIONS: CorrectionEntry[] = [
     subject_label: "Oklahoma City PD — accountability event",
     what_changed: "No change: a request to remove a sourced, accurate accountability event was declined.",
     corrected_at: "2026-07-28",
-    reason: "The claim is accurate and well-sourced; refusal with published reasoning (SIG-GOV-004).",
-    reported_by: "anonymous",
+    reason: "The claim is accurate and well-sourced; refusal with published reasoning .",
+    reported_by: "reader report",
     category: "factual_error",
     outcome: "refused",
     previous_value: "accountability event published",
@@ -194,44 +192,14 @@ export const CORRECTIONS: CorrectionEntry[] = [
 // --- Editorial: the hostile-reader review (§41, SIG-UI-042) ------------------
 
 /**
- * The recorded hostile-reader review for the current dossier template version. Two
- * independent reviewers read the rendered Oklahoma City dossier as the department's
- * counsel and logged every sentence they would challenge; every finding is
- * dispositioned, so the template version is releasable (SIG-UI-042). The template
- * version is the resolver ruleset version the dossier is pinned to.
+ * P34.17 / ADR-179 (WV-04): there is NO committed hostile-reader review — the
+ * fixture constant that stood here recorded a two-reviewer "Releasable" review
+ * that was never performed (F-183/F-107/F-198/F-201) and is removed. The honest
+ * state is absence: `getHostileReaderReview()` returns `null` until a real
+ * review is recorded, and the SIG-UI-042 release block is waived for this
+ * round so the truthful record ships. The `HostileReaderReview` type and the
+ * disposition helpers stay — a future recorded review still binds.
  */
-export const HOSTILE_READER_REVIEW: HostileReaderReview = {
-  template_version: RULESET_VERSION,
-  reviewed_dossier: "/dossier/oklahoma-city/",
-  reviewers: ["Reviewer A (counsel stance)", "Reviewer B (counsel stance)"],
-  review_date: "2026-08-19",
-  findings: [
-    {
-      id: "hr-1",
-      challenge: "\"admitted to only 38 cameras\" characterizes the portal report as a concession.",
-      disposition: "accepted_revised",
-      resolution: "Rewritten to \"the portal reported 38 cameras on 2026-07-01\" (register rule 1).",
-    },
-    {
-      id: "hr-2",
-      challenge: "The wrongful-stop lawsuit is described as if the misread were established fact.",
-      disposition: "accepted_revised",
-      resolution: "Rewritten to attribute the allegation to the complaint and note it is unadjudicated (rule 2).",
-    },
-    {
-      id: "hr-3",
-      challenge: "The 31-device map figure reads as a total, not a lower bound.",
-      disposition: "accepted_annotated",
-      resolution: "Annotated as a lower bound in the same sentence as the number (rule 5).",
-    },
-    {
-      id: "hr-4",
-      challenge: "Counsel objects to publishing the accountability event at all.",
-      disposition: "rejected_with_reason",
-      resolution: "Retained: the event is accurate and W3-sourced; a response affordance is offered instead (SIG-GOV-010).",
-    },
-  ],
-};
 
 // --- Data-freshness (§32.4, SIG-UI-034) --------------------------------------
 
@@ -368,7 +336,7 @@ export const RESEARCH_QUEUE_PROVENANCE: ProvenanceSummary = {
   source_independence_count: 3,
   date_range: { earliest: "2025-03-25", latest: "2026-08-20" },
   rules_applied: ["task-catalog-v1", "resolver-ruleset-2026.07"],
-  human_review_status: "partially_reviewed",
+  human_review_status: "unreviewed",
 };
 
 /** The provenance summary for the corrections log. */
@@ -378,5 +346,5 @@ export const CORRECTIONS_PROVENANCE: ProvenanceSummary = {
   source_independence_count: 3,
   date_range: { earliest: "2026-07-28", latest: "2026-08-18" },
   rules_applied: ["takedown-correction-policy-v1", "resolver-ruleset-2026.07"],
-  human_review_status: "reviewed",
+  human_review_status: "unreviewed",
 };

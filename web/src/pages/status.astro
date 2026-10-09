@@ -1,0 +1,52 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public status page (P34.17 / R1.10). Static, zero-JS. It carries (a) notice
+// N-7 verbatim — the API's dossier and terms responses are known to be wrong until
+// P34.46 deploys the fix (no API hotfix, B-7) — and (b) the A-20 notice that
+// live-API answers may differ from this dated site before the next published
+// release. Every sentence is a pending copy-batch row (`data-copy`) or an allowed
+// N-string (`data-notice`, B-2 notice allowance until GATE-G4).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getSiteMetadata } from "../lib/data";
+
+const meta = getSiteMetadata();
+const releaseId = meta.releaseId;
+const asOfWorld = meta.asOf.as_of_world;
+---
+
+<BaseLayout title="Status" path="/status/">
+  <p data-copy="ST-02">
+    This page names what is known to be wrong right now and how it is being
+    corrected.
+  </p>
+
+  <h2 id="api-heading" data-copy="ST-07">The API</h2>
+  <p data-notice="N-7" data-testid="api-notice">The API's dossier and terms responses are known to be wrong and are being corrected.</p>
+  <p data-copy="ST-03">
+    The fix ships as part of a later release; the wrong answers stay live until
+    then, marked here rather than hidden.
+  </p>
+
+  <h2 id="currency-heading" data-copy="ST-08">How current this site is</h2>
+  {releaseId ? (
+    <p data-copy="ST-04">
+      This site shows release {releaseId}, data as of {asOfWorld}.
+      The public API is updated continuously and may show newer records.
+    </p>
+  ) : (
+    <p data-copy="ST-05">
+      This is a development build. The public API is updated continuously and may
+      show newer records.
+    </p>
+  )}
+
+  <h2 id="reports-heading" data-copy="ST-09">Reports</h2>
+  <p data-copy="ST-06">
+    Corrections and safety reports arrive by e-mail — the{" "}
+    <a href="/dispute/">dispute page</a> states the address and the handling
+    order. SIG promises no response time.
+  </p>
+</BaseLayout>

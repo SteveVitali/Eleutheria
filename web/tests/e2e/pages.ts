@@ -34,6 +34,10 @@ export const SHELL_PAGES = [
   // (SIG-INGEST-036 rule 1). T0 — ships zero <script> like every other
   // non-island public page.
   "/data-collection/",
+  // P34.17: the interim sources-and-licences page + the status page — public
+  // routes, so the a11y and zero-JS sweeps cover them.
+  "/sources/",
+  "/status/",
 ] as const;
 
 // The seven outline surfaces + the required eighth (the corrections log), asserted to

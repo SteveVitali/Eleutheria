@@ -152,6 +152,12 @@ def test_every_page_sentence_is_batch_recorded() -> None:
         seen.extend(ids)
 
     for rid in rows:
+        # DC-19 is superseded by DC-20 (P34.17 — the dispute page names the
+        # contact address): the batch is append-only, so the old row stays
+        # recorded but is bound to nothing.
+        if rid == "DC-19":
+            assert rid not in seen, "superseded row DC-19 must not still render"
+            continue
         assert rid == "title" or rid in seen, f"batch row {rid} is not carried by the page"
 
 

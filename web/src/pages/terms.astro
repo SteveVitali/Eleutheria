@@ -21,6 +21,12 @@ const termsUrl = apiTermsUrl();
 
 <BaseLayout title="Terms of acceptable use" path="/terms/" chrome="minimal" noindex={true}>
   <p data-notice="N-7">The API's dossier and terms responses are known to be wrong and are being corrected.</p>
+  <!-- P34.17 / WV-01 (ADR-165): the interim legal-home sentence, naming no
+       person (C-5) — the E2-04 drafted wording, pending copy-batch #1. -->
+  <p data-copy="TR-03">
+    SIG is currently run by an individual maintainer, not by an organization. It
+    has no fiscal sponsor or incorporated legal entity yet.
+  </p>
   <p data-copy="TR-01">The acceptable-use terms are served by the read API.</p>
   <p><a data-copy="TR-02" href={termsUrl}>Open the API terms</a>.</p>
 </BaseLayout>

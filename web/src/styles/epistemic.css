@@ -1185,3 +1185,39 @@ table.sig-freshness td {
     overflow: visible !important;
   }
 }
+
+/* --- P34.17: the honesty wave's small additions ----------------------------- */
+
+/* The publication-basis label (H-6 / ADR-167) + the interim release stamp,
+ * rendered on every full-chrome page. */
+.sig-footer {
+  margin-top: 2rem;
+  border-top: 1px solid var(--sig-rule);
+  padding: 0.8rem var(--sig-space-4) 1.2rem;
+  font-size: 0.8rem;
+  color: var(--sig-muted);
+}
+.sig-basis {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* The interim sources-and-licences table (R1.8). */
+.sig-sources {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  max-width: 100%;
+}
+.sig-sources th,
+.sig-sources td {
+  text-align: left;
+  padding: 0.3rem 0.8rem 0.3rem 0;
+  border-bottom: 1px solid var(--sig-rule);
+  vertical-align: top;
+}
+.sig-captured-terms {
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+  max-height: 20rem;
+  overflow: auto;
+}
