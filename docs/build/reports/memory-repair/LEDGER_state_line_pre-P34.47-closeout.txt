@@ -1,0 +1,7 @@
+Byte-for-byte archive of the head State line replaced at P34.47's closeout
+(the PHASE LOG end pointer P34.46 → P34.47 and the next-row pointer
+P34.47 → GATE-G4). Archived 2026-10-09 — the P34.46/BM-LEDGER-08 pattern
+(replaced lines archived, never silently rewritten).
+
+Line 7 (State):
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P34.46's entry (PR #261 — Round-10 schema/API roll: the L1 prep leg; L2 slot + L3 soak queued); next → P34.47 (row 259).
