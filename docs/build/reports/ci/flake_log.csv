@@ -2,3 +2,4 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-10-07T20:11,245,56866844,web,RUNNER-STALL-1,37670635995,2,success
 2026-10-09T20:48,262,bcb8f25e,web,DOCKERHUB-RATE-1,37988558340,1,failure (unlisted at first failure — rerun was my deviation, see PHASE LOG)
 2026-10-09T20:57,262,bcb8f25e,web,DOCKERHUB-RATE-1,37988558340,2,failure (flake-exhausted on this head)
+2026-10-09T21:14,262,877eb6f2,composed,DOCKERHUB-RATE-2,37991996497,1,failure

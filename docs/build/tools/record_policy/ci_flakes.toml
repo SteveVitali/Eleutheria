@@ -52,3 +52,13 @@ evidence_runs = ["37988558340"]
 reason = "Docker Hub unauthenticated pull-rate limit on GitHub-hosted runner egress IPs; transient and external — identical green job on other heads same day"
 tracking = "escalate to the operator if recurring — authenticated pulls or a registry mirror would retire it"
 expires = "2026-12-01"
+
+[[flake]]
+id = "DOCKERHUB-RATE-2"
+job = "composed"
+step = "testcontainer image pulls (postgis, sqitch)"
+pattern = "toomanyrequests.*pull rate limit|pull rate limit.*toomanyrequests"
+evidence_runs = ["37991996497"]
+reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1, on the composed job's image pulls"
+tracking = "same as DOCKERHUB-RATE-1 — escalate to the operator for authenticated pulls or a mirror if recurring"
+expires = "2026-12-01"
