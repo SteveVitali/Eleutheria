@@ -1935,7 +1935,7 @@ verified = true
 last_verified = 2026-08-20
 review_packet = "docs/build/reports/rights/madada.md"
 ingestion_permitted = true
-rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_by = "the operator's own determination (no counsel)"
 rights_reviewed_on = 2026-09-15
 notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts only (request metadata: authority/status/dates), never the user-authored request text; redistributable=false, counsel basis recorded. Upstream is Atom feeds/authorities CSV ≠ the records_requests shape — document adapter owed before live. | Prior: 51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
@@ -1965,7 +1965,7 @@ last_verified = 2026-09-15
 notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts basis. The register itself sits behind Belgian eID (citizen assurance Level 300) — NO anonymous access path; live stays refused on NoLiveTargets until an HG-04 operator path exists. The flip records the rights posture, not a fetch claim. | Prior: loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8). Packet drafted 2026-09-15 (B pass): JS-only shell, no terms reachable — LINK-only pending HG-04 outreach. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 review_packet = "docs/build/reports/rights/declarationcamera_be.md"
 ingestion_permitted = true
-rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_by = "the operator's own determination (no counsel)"
 rights_reviewed_on = 2026-09-15
 
 # Coarse international datasets (§22.7, SIG-ENG-036/SIG-INGEST-042). Country-level
@@ -1991,7 +1991,7 @@ compact_status = "public_terms_only"
 robots_policy = "honor"
 review_packet = "docs/build/reports/rights/carnegie_ai_gsi.md"
 ingestion_permitted = true
-rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_by = "the operator's own determination (no counsel)"
 rights_reviewed_on = 2026-09-15
 verified = true
 last_verified = 2026-09-15
@@ -2014,7 +2014,7 @@ compact_status = "public_terms_only"
 robots_policy = "honor"
 review_packet = "docs/build/reports/rights/facial_recognition_world_map.md"
 ingestion_permitted = true
-rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_by = "the operator's own determination (no counsel)"
 rights_reviewed_on = 2026-09-15
 verified = true
 last_verified = 2026-09-15
@@ -2039,7 +2039,7 @@ review_packet = "docs/build/reports/rights/aspi_mapping_chinas_tech_giants.md"
 verified = true
 last_verified = 2026-09-15
 ingestion_permitted = true
-rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_by = "the operator's own determination (no counsel)"
 rights_reviewed_on = 2026-09-15
 notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor), never the dataset bytes. Interactive-map upstream needs an adapter before live. | Prior: Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 

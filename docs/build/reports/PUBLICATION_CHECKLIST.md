@@ -316,3 +316,36 @@ deploy (ADR-106 revisit trigger).
 **GO — executed.** Follow-ups (not launch-blocking): D-P30.3-1 (freshness dates not recorded on the hosted
 spine), D-P30.3-2 (zoomable tiles / basemap / compression), D-P30.3-3 (presentation analytics for a
 real-data build), D-P30.2-2 (sharing edges / accountability links), D-R6.1-EVAL (first-principles eval).
+
+---
+
+## 2026-10-03 — correction (P34.16; ADR-167, ADR-182; append-only, OM-13)
+
+*This correction names the lines above that record a counsel review, a counsel
+opinion or a counsel basis; none is rewritten.*
+
+No counsel reviewed, resolved, approved or cleared anything recorded above. The
+determinations this checklist attributes to counsel were the operator's own
+determinations (no counsel) — the operator's adopted sentence (C-3, round 19,
+2026-10-01T04:54:19Z,
+`docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md`):
+
+> *"The 'counsel' determinations of 2026-09-16 and 09-24 were my own; there was
+> no counsel. My 09-28 message 'let's defer all the human review steps and
+> proceed' was my decision to defer the human review legs."*
+
+The counsel-review clauses of SIG-LIC-009 and SIG-INGEST-037 are waived (WV-07,
+ADR-182): rights decisions rest on the operator's recorded determinations,
+labelled as such. The source registry's five `rights_reviewed_by` values now
+read `the operator's own determination (no counsel)` (ADR-167 decision 2), and
+the governance document carries its own appended Corrections section
+(`docs/governance/governance-and-code-of-conduct.md`).
+
+The lines this correction names: :9 ("HG-02 counsel on item 4"), :13 ("a more
+durable home + counsel (HG-02)"), :29 ("counsel superseding item 4"), :48
+("HG-02 counsel recommended before real public exposure"), :51 ("pending
+counsel"; "Real counsel opinion … supersedes"), :84 ("counsel → ADR-086"),
+:144 ("remaining counsel opinions (HG-02 remainder)"), :164 and :176 ("dated
+counsel opinions … stay owed"; "pending HG-02 counsel"). Operator words quoted
+inside dated records (:75, :251) stay verbatim — they record what was said;
+the correction records who made the determinations.

@@ -146,6 +146,27 @@
 | NW-02 | /network/ | No centrality or hub ranking is published; the resolution review that would make one honest has not passed its gate. | ea36b45843d56aff5111119c735e0587a3b14b26598079b42263d73d728f46fd | pending |
 | NW-03 | lib/empty.ts | Network statistics are only as good as entity resolution; SIG publishes none until the resolution review that would make one honest has passed its gate. Their absence is not a measurement of zero. | a14feda910497bd8567d0fc2df6e25562668118b780c88474fccc992f8960692 | pending |
 | WS-01 | lib/workspace-state.ts | This address names {facets}, which this view does not apply — they do not filter what is shown. | 8abde874a4456f5a5687983935170b1ae1a712159a46970daf628b5c4969515c | pending |
+| GC-01 | docs/governance/governance-and-code-of-conduct.md | SIG does not yet have an editorial board. | f37f6b4ed1822a9066db7b6bd2545944380b675c7587126a9d6ebbcd31d575ba | pending |
+| GC-02 | docs/governance/governance-and-code-of-conduct.md | Until it does, editorial decisions (contested claims and sensitivity classifications) are made by the maintainer and recorded publicly in the editorial decisions log. | 764e01a9d5d9fee8da546c2a5180ba7ab673e9911d25baa48e0f4a1631284b5d | pending |
+| GC-03 | docs/governance/governance-and-code-of-conduct.md | Officer and person naming is turned off. | 44526964e7f357d3abc771dde05f985a456096e9fc4f62dfa6802cf2e365e5b8 | pending |
+| GC-04 | docs/governance/governance-and-code-of-conduct.md | Published on the maintainer's own rights and publication decisions. | efee2089e2fa2a2532d5ce21a55acab761a8829be02ac7ed579e6b8aa194201f | pending |
+| GC-05 | docs/governance/governance-and-code-of-conduct.md | No lawyer's written opinion has been obtained; nothing here states that this publication has been cleared by counsel. | f62f9e984c0d6d7b7a6f5065cef480d666a8da59b2a73e15c762dbf347333b4f | pending |
+| GC-06 | docs/governance/governance-and-code-of-conduct.md | Published on the maintainer's own rights and publication decisions. No lawyer's written opinion has been obtained; nothing here states that this publication has been cleared by counsel. | c7e4f78bcd07b99b9a656c2bc4e6e56a19be7fd86b5d2329b2447414348a6e02 | pending |
+| GC-07 | docs/governance/governance-and-code-of-conduct.md | SIG has been public since 2026-09-16. | 20e5a4d4c2f2e92b87876e068fa0ac2e5ec7a4de5d178518926274973ecde2d8 | pending |
+| GC-08 | docs/governance/governance-and-code-of-conduct.md | A second independent reviewer has not yet been appointed; Round-11 releases state 'single maintainer, no second reviewer'. | 86241b8fc1f653e6d121a8c1eaa929f4bb0ac6c37d2e4b8e726aec0ee6dcd17d | pending |
+| GC-09 | docs/governance/governance-and-code-of-conduct.md | Corrections come by e-mail; senders disclose their address. | 5fd09424c73234803b5bb180fab78154805e361fcb2368b30504b7a93d44fa5f | pending |
+| GC-11 | docs/governance/governance-and-code-of-conduct.md | The five registry determinations earlier recorded as 'counsel (HG-02)' were the operator's own (no counsel). | fbeb4ee0b228bb7963cc2f95bc6dab3b13c70fa5e957e5c523b89ad680bc5604 | pending |
+<!-- P34.16 (F-189, G2 0c): candidate sentences for the governance
+     doc's Corrections section — GC-01…03 are ADR-164's E2-03 drafted
+     wording verbatim; GC-04/05 and the combined GC-06 are ADR-167's pinned
+     publication-basis forms (the ADR records their sha256: f62f9e98… for
+     GC-05, c7e4f78b… for GC-06 — the row pins must equal them); GC-07…09 and
+     GC-11 are agent-drafted record candidates (GC-10 was dropped pre-commit:
+     the doc cites the /dispute/ page's own words, so no drafted sentence was
+     needed there). All pending — none lands until the
+     operator confirms it verbatim at a copy-batch sitting (B-2); the
+     section's sentences state the posture only in the operator's adopted
+     words until then. added 2026-10-03. -->
 <!-- P34.15 (QW-12, K1 NEW-20, K12b NEW-7, K2 NEW-6, K6 NEW-1): the map's
      "records" vocabulary and dropped-layer/suppressed-count honesty, the
      contested-count → dossier lead, the network's merged-organisations and
