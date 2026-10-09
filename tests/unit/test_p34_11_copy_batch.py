@@ -25,8 +25,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 BATCH_PATH = REPO_ROOT / "docs/build/reports/copy-batches/batch-01.md"
 VALID_STATUSES = {"pending", "confirmed"}
 
-# The batch ids P34.11 authored (the DC-* rows belong to P35.38a).
-P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC)-\d+$")
+# The batch ids P34.11 authored (the DC-* rows belong to P35.38a) plus the rows
+# P34.12 appended (HW-10, RQ-01, XC-03 — same batch, same checks).
+P34_ID = re.compile(r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ)-\d+$")
+
+# Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
+# fixture route is gone, so T-01 ("Return to the dossier index.") is recorded
+# history that can never ship — kept in the batch (append-only) but bound to
+# nothing. Asserted retired, never silently dropped.
+RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {
@@ -37,7 +44,6 @@ ASTRO_PAGES = {
     "/corrections/": "web/src/pages/corrections.astro",
     "/watch/": "web/src/pages/watch.astro",
     "/methodology/": "web/src/pages/methodology.astro",
-    "/task/new/": "web/src/pages/task/new/[slug].astro",
     "component/HowWeKnowThis": "web/src/components/HowWeKnowThis.astro",
     "component/Citation": "web/src/components/Citation.astro",
     "component/WhatWeDontKnow": "web/src/components/WhatWeDontKnow.astro",
@@ -49,6 +55,7 @@ LITERAL_PAGES = {
     "lib/dossier.ts": "web/src/lib/dossier.ts",
     "lib/dossier-fixture.ts": "web/src/lib/dossier-fixture.ts",
     "lib/corrections-methodology-fixture.ts": "web/src/lib/corrections-methodology-fixture.ts",
+    "lib/research-queue.ts": "web/src/lib/research-queue.ts",
     "exports/web_dossier.py": "exports/src/exports/web_dossier.py",
     "exports/spine_export.py": "exports/src/exports/spine_export.py",
 }
@@ -168,7 +175,7 @@ def test_p34_rows_are_well_formed_and_hashes_verify() -> None:
             f"{rid}: sha256 does not verify the recorded text"
         )
         assert row["status"] in VALID_STATUSES, f"{rid}: unknown status {row['status']!r}"
-        assert row["page"] in ASTRO_PAGES or row["page"] in LITERAL_PAGES, (
+        assert row["page"] in ASTRO_PAGES or row["page"] in LITERAL_PAGES or rid in RETIRED_ROWS, (
             f"{rid}: unknown page scope {row['page']!r}"
         )
 
@@ -243,8 +250,15 @@ def test_every_p34_row_is_carried_somewhere() -> None:
     for rel in ["web/src/pages/index.astro"]:
         for ids in re.findall(r'copy: "([^"]+)"', _source(rel)):
             carried.update(ids.split())
-    orphans = set(rows) - carried
+    orphans = set(rows) - carried - set(RETIRED_ROWS)
     assert not orphans, f"batch rows never carried by any surface: {sorted(orphans)}"
+    # A retired row is only excused because its page no longer exists.
+    for rid, page_file in RETIRED_ROWS.items():
+        assert rid in rows, f"retired row {rid} must stay in the batch (append-only)"
+        assert not (REPO_ROOT / page_file).exists(), (
+            f"{rid}: marked retired but its page {page_file} exists — "
+            "re-add the binding or delete the retirement marker"
+        )
 
 
 def test_shared_lib_rows_match_the_exported_constants() -> None:

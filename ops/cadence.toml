@@ -103,6 +103,12 @@ url = "https://surveillancegraph.org"
 path = "/task/new/demo_roundtrip/"
 
 [[probes.targets]]
+name = "absent-apex-task-new"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/task/new/"          # the whole retired prefix (P34.12 / K11 §5.5)
+
+[[probes.targets]]
 name = "absent-apex-releases"
 kind = "http-absent"
 url = "https://surveillancegraph.org"
@@ -139,6 +145,12 @@ url_env = "SIG_PROBE_WEB_URL"
 path = "/task/new/demo_roundtrip/"
 
 [[probes.targets]]
+name = "absent-web-task-new"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/task/new/"
+
+[[probes.targets]]
 name = "absent-web-releases"
 kind = "http-absent"
 url_env = "SIG_PROBE_WEB_URL"
@@ -173,6 +185,12 @@ name = "absent-bucket-demo-task"
 kind = "http-absent"
 url = "https://storage.googleapis.com/{project}-sig-web"
 path = "/task/new/demo_roundtrip/"
+
+[[probes.targets]]
+name = "absent-bucket-task-new"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/task/new/"
 
 [[probes.targets]]
 name = "absent-bucket-releases"

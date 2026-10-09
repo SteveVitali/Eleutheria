@@ -31,7 +31,6 @@ import { ABSENCE_KIND_META } from "./epistemic";
 import type { AbsenceKind, CompetingClaim, Support } from "./epistemic";
 import { beliefPinnedPermalink } from "./citation";
 import type { AsOfEcho } from "./fixtures";
-import type { AbsenceTaskParams } from "./task";
 import { adapterFor, adapterPublicationPermitted } from "./publication";
 
 // --- SIG-UI-010: the twelve sections, in the exact §39.2 order ---------------
@@ -675,28 +674,9 @@ function rowJson(row: Row): Record<string, unknown> {
 }
 
 /**
- * Every taskable absence a dossier links a hatch to — its "what we don't know"
- * gaps plus every section row that is an absence — as `AbsenceTaskParams`. The
- * task-intake route (`pages/task/new/[slug].astro`) unions these into its
- * `getStaticPaths` so every clickable dossier gap resolves to a real, pre-generated
- * intake page with no client JavaScript (SIG-UI-007, SIG-UI-036/037).
+ * (P34.12 / K11 §5.5, RQ-00) The dossier no longer derives taskable-absence
+ * link params: the fixture `/task/new/<slug>/` intake pages are retired
+ * (F-113/F-274 — they claimed a task "has been generated" when nothing had
+ * been). Absence hatches render as named absences until RQ-03 ships real
+ * `/task/<handle>/` pages from the export's task handles.
  */
-export function dossierTaskableAbsences(dossier: Dossier): AbsenceTaskParams[] {
-  const fromGaps: AbsenceTaskParams[] = dossier.gaps.map((g) => ({
-    subject_id: g.subject_id,
-    predicate_id: g.predicate_id,
-    absence_kind: g.kind,
-    predicate_label: g.label,
-  }));
-  const fromRows: AbsenceTaskParams[] = dossier.sections.flatMap((s) =>
-    (s.rows ?? [])
-      .filter((r): r is Row & { absence: AbsenceKind } => r.absence !== undefined)
-      .map((r) => ({
-        subject_id: r.subject_id ?? dossier.slug,
-        predicate_id: r.predicate_id ?? r.label,
-        absence_kind: r.absence,
-        predicate_label: r.label,
-      })),
-  );
-  return [...fromGaps, ...fromRows];
-}

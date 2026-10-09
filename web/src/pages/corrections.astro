@@ -35,7 +35,7 @@ const report = transparencyReport(CORRECTIONS);
 const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
 ---
 
-<BaseLayout title="Corrections log" path="/corrections/" provenance={CORRECTIONS_PROVENANCE}>
+<BaseLayout title="Corrections log" path="/corrections/" provenance={CORRECTIONS_PROVENANCE} provenanceName="corrections log">
   <p data-copy="CL-01 CL-03 CL-04">
     Every correction SIG makes is public. A correction is a <strong>new assertion</strong>,
     never a deletion: the earlier value is preserved, and each entry names the belief

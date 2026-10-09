@@ -30,6 +30,13 @@ interface Props {
   rulesetVersion?: string;
   /** The page's "How we know this" provenance (SIG-UI-044); defaults site-wide. */
   provenance?: ProvenanceSummary;
+  /**
+   * The name the page-scoped "How we know this" scope line carries (P34.12 /
+   * C3 NEW-13): a page supplying its own summary SHOULD also name itself — e.g.
+   * `provenanceName="research queue"` renders "…the research queue's own
+   * evidence…" so the label says WHICH page's totals these are.
+   */
+  provenanceName?: string;
   /** The BCP-47 document language (SIG-UI localisation); defaults to English. */
   lang?: string;
 }
@@ -126,7 +133,7 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
     <main id="main">
       <h1>{title}</h1>
       <slot />
-      <HowWeKnowThis provenance={provenance} scope={provenanceScope} />
+      <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} />
       <DisputeLink />
       <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
     </main>

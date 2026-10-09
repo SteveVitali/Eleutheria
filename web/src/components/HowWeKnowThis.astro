@@ -21,10 +21,19 @@ interface Props {
    * provenance (the corrections log, the research queue).
    */
   scope?: "site" | "page";
+  /**
+   * The page's own name, used by the page-scoped scope line (P34.12 / C3
+   * NEW-13): a page-specific summary names the page it describes ("These
+   * totals describe the research queue's own evidence…"), never an anonymous
+   * "this page". Optional for back-compat: an unnamed page-scoped module still
+   * renders the generic page line.
+   */
+  pageName?: string;
 }
 
 const provenance = Astro.props.provenance ?? DEFAULT_PROVENANCE;
 const scope = Astro.props.scope ?? "site";
+const pageName = Astro.props.pageName;
 // Enforce the six-component contract at build time (SIG-UI-044): a module missing a
 // component fails the build rather than shipping.
 assertProvenanceComplete(provenance);
@@ -35,9 +44,15 @@ const range = provenance.date_range;
 
 <section class="sig-hwkt" data-testid="how-we-know-this" aria-labelledby="hwkt-heading">
   <h2 id="hwkt-heading">How we know this</h2>
+  <!-- P34.12 (C3 NEW-13): a page-scoped module names the page it describes
+       (the `pageName` prop), never an anonymous "this page". -->
   {scope === "site" ? (
     <p class="sig-hwkt__scope" data-testid="hwkt-scope" data-copy="HW-01">
       Site-wide — these totals describe the whole published record, not this page alone.
+    </p>
+  ) : pageName ? (
+    <p class="sig-hwkt__scope" data-testid="hwkt-scope" data-copy="HW-10">
+      These totals describe the {pageName}'s own evidence, not the whole record.
     </p>
   ) : (
     <p class="sig-hwkt__scope" data-testid="hwkt-scope" data-copy="HW-02">

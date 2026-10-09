@@ -32,6 +32,7 @@ import type { ProvenanceSummary } from "./provenance";
  */
 export const RESEARCH_QUEUE: ResearchTaskCard[] = [
   {
+    task_id: "fx-okc-unmapped-devices",
     task_type: "missing_physical_devices",
     subject_id: "agency:okcpd",
     subject_label: "Oklahoma City PD — unmapped ALPR devices",
@@ -45,6 +46,7 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     priority: 0.8,
   },
   {
+    task_id: "fx-okc-conflicting-retention",
     task_type: "conflicting_retention",
     subject_id: "agency:okcpd",
     subject_label: "Oklahoma City PD — retention policy vs configuration",
@@ -59,6 +61,7 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     trigger: { kind: "contradiction", ref: "policy_configuration_divergence:okcpd:retention" },
   },
   {
+    task_id: "fx-okc-contract-expiring",
     task_type: "contract_expiring",
     subject_id: "contract:okcpd-alpr",
     subject_label: "Oklahoma City PD — ALPR contract renewal decision",
@@ -72,6 +75,7 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     priority: 0.9,
   },
   {
+    task_id: "fx-tulsa-coverage-hole",
     task_type: "coverage_hole",
     subject_id: "jurisdiction:tulsa",
     subject_label: "Tulsa — no surveillance evidence on file",
@@ -85,6 +89,7 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     priority: 0.5,
   },
   {
+    task_id: "fx-portal-snapshot-link-rot",
     task_type: "link_rot",
     subject_id: "artifact:portal-snapshot-2026-07",
     subject_label: "Portal snapshot — source URL now 404s",
