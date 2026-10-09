@@ -16,7 +16,7 @@ nextTicket:      P34.47                             # row 259
 lastCompleted:   P34.46                             # row 258 (PR #260, open)
 blockedOn:       (nothing)                          # real blocks only
 pauseRequested:  false                               # set at C10 (GATE-B go)
-returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.46, P34.49, P34.50 # owed legs
+returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.46, P34.49, P34.50
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
 memoryRoot:      docs/build
