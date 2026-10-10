@@ -216,6 +216,17 @@ allow tests/ops/fixtures/scheduled_readback/* 2026-10-11T00:00:00Z 2026-10-10
 allow tests/ops/fixtures/scheduled_firstfire/* 2026-11-30T00:00:00Z 2026-10-
 allow tests/ops/fixtures/scheduled_firstfire/* 2026-11-30T00:00:00Z 2026-11-
 
+# P35.67 (ticket 263): the post_cutover fixtures are recorded dig/curl/gcloud/whois
+# captures — JSON and WHOIS text cannot carry an inline marker, so the real-world
+# values are allow-listed per path: the managed cert's `expireTime` (the
+# 2026-12-22 expiry the probe proves) and the registry/registration expiry dates
+# inside the WHOIS captures. Each entry's expiry sits just past the literal it
+# names so it dies with the value it covers (R5).
+allow tests/ops/fixtures/post_cutover/good/gcloud_cert.txt 2026-12-23T00:00:00Z expireTime
+allow tests/ops/fixtures/post_cutover/precutover/gcloud_cert.txt 2026-12-23T00:00:00Z expireTime
+allow tests/ops/fixtures/post_cutover/good/whois.txt 2027-09-23T00:00:00Z 2027-09-22
+allow tests/ops/fixtures/post_cutover/precutover/whois.txt 2027-09-23T00:00:00Z 2027-09-22
+
 # ── PLAN-11B C13 executed-flag exemption (ticket 239; recorded 2026-10-06) ────────────────────
 # Commit f9c407c8 (the C13 Phase-4 split commit) named `P35.1b`/`P35.1c` in its subject, so
 # `executed()` (B2 §7) marked row 291's contract "executing" mid-range and the sanctioned

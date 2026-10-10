@@ -512,6 +512,71 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the sig.probe-run/1 record here (default: stdout).",
     )
 
+    pcprobe = sub.add_parser(
+        "post-cutover-probe",
+        help="P35.67: the post-DNS-cutover probe — emits a sig.probe-run/1 "
+        "record verifying the OP-09 posture (Cloudflare NS serving, grey-cloud "
+        "A records, www→apex + :80→HTTPS redirects, apex TLS SAN/dates, DNSSEC "
+        "DS+RRSIG+ad, the managed cert's ACTIVE state via gcloud describe, "
+        "every sitemap route, mail posture, registrar lock state). READ-ONLY "
+        "by construction: dig/curl -sSI/openssl s_client/gcloud describe/whois "
+        "only — no mutating command is reachable. --leg l1 is the full "
+        "post-switch checklist; --leg l2 is the cert-renewal read.",
+    )
+    pcprobe.add_argument(
+        "--leg",
+        choices=("l1", "l2"),
+        default="l1",
+        help="l1 = the full post-cutover checklist (after OP-09); l2 = the "
+        "cert-renewal read (~2026-11-22; expiry 2026-12-22).",  # future-ok: scheduled: L2
+    )
+    pcprobe.add_argument(
+        "--domain",
+        default=None,
+        help="the domain to probe (default: SIG_WEB_DOMAIN or "
+        "surveillancegraph.org) — env-overridable per the HG-12 convention.",
+    )
+    pcprobe.add_argument(
+        "--expected-ip",
+        default=None,
+        help="the LB static IP the A records must answer (default: "
+        "SIG_WEB_EXPECTED_IP or 136.81.80.102).",
+    )
+    pcprobe.add_argument(
+        "--cert",
+        default=None,
+        help="the Google-managed cert name for the gcloud describe read "
+        "(default: SIG_LB_CERT or sig-web-cert).",
+    )
+    pcprobe.add_argument(
+        "--project",
+        default=None,
+        help="the GCP project for the cert read (default: SIG_GCP_PROJECT; "
+        "unset → the cert leg reports 'skipped', never fabricated).",
+    )
+    pcprobe.add_argument(
+        "--max-routes",
+        type=int,
+        default=400,
+        help="cap on sitemap routes HEAD-checked (0 = all).",
+    )
+    pcprobe.add_argument(
+        "--capture",
+        default=None,
+        help="write every raw command output under this directory — the "
+        "committed evidence the run ledger cites.",
+    )
+    pcprobe.add_argument(
+        "--from-capture",
+        default=None,
+        help="replay a --capture directory offline (no commands run).",
+    )
+    pcprobe.add_argument(
+        "--out",
+        default=None,
+        help="write the sig.probe-run/1 record here (default: stdout).",
+    )
+
     drill = sub.add_parser(
         "backup-drill",
         help="dump the compose PG and restore into a fresh DB, asserting the graph reproduces",
@@ -2480,6 +2545,47 @@ def _cmd_republish_probe(args: argparse.Namespace) -> int:
     return 0 if record["overall"] != "fail" else 1
 
 
+def _cmd_post_cutover_probe(args: argparse.Namespace) -> int:
+    """P35.67: emit the sig.probe-run/1 post-cutover probe record."""
+    from .post_cutover_probe import (
+        DEFAULT_CERT,
+        DEFAULT_DOMAIN,
+        EXPECTED_APEX_IP,
+        CaptureRunner,
+        LiveRunner,
+        ProbeRunner,
+        run_probe,
+    )
+
+    runner: ProbeRunner
+    if args.from_capture:
+        runner = CaptureRunner(Path(args.from_capture).resolve())
+    else:
+        runner = LiveRunner(capture_dir=Path(args.capture).resolve() if args.capture else None)
+    record = run_probe(
+        leg=args.leg,
+        domain=args.domain or os.environ.get("SIG_WEB_DOMAIN", DEFAULT_DOMAIN),
+        expected_ip=args.expected_ip or os.environ.get("SIG_WEB_EXPECTED_IP", EXPECTED_APEX_IP),
+        cert=args.cert or os.environ.get("SIG_LB_CERT", DEFAULT_CERT),
+        project=args.project or os.environ.get("SIG_GCP_PROJECT") or None,
+        runner=runner,
+        max_routes=args.max_routes,
+    )
+    text = json.dumps(record, indent=2, sort_keys=True)
+    if args.out:
+        Path(args.out).write_text(text + "\n", encoding="utf-8")
+        print(f"sig-ops post-cutover-probe: record -> {args.out}")
+    else:
+        print(text)
+    print(
+        f"sig-ops post-cutover-probe: leg={record['leg']} "
+        f"overall={record['overall']} cutover={record['cutover_detected']} "
+        f"generated_at={record['generated_at']}",
+        file=sys.stderr,
+    )
+    return 0 if record["overall"] != "fail" else 1
+
+
 def _cmd_backup_drill(args: argparse.Namespace) -> int:
     from .backup import DrillError, restore_drill
 
@@ -4209,6 +4315,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_mirror_push(args)
     if args.command == "republish-probe":
         return _cmd_republish_probe(args)
+    if args.command == "post-cutover-probe":
+        return _cmd_post_cutover_probe(args)
     if args.command == "backup-drill":
         return _cmd_backup_drill(args)
     if args.command == "cloudsql-drill":

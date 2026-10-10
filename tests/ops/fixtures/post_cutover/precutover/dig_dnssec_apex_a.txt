@@ -1,0 +1,10 @@
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43938
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+;; ANSWER SECTION:
+surveillancegraph.org.	7412	IN	A	136.81.80.102
+surveillancegraph.org.	7412	IN	RRSIG	A 8 2 14400 20261028140138 20261006140138 50430 surveillancegraph.org. MbF3mcySD18MptVmdczaMdlVYfdKCOlCOA0bNNP1pLm8eMK69Er2+hH5 RBxJKWxxNdOauv7HcO4uH8QdIK1D+W1GYCymNtc8LBGUMq1lEWBhHBTp 2FFLLZMPif8nwzfzf2rSmmnIZyYZj9LCcWvqZCQfejLyxu5uRTLqedMG LTg=
+

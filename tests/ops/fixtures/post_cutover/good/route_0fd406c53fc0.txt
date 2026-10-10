@@ -1,0 +1,16 @@
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:43 GMT
+vary: Accept-Encoding
+etag: "6ab87277-25382"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+accept-ranges: bytes
+x-cloud-trace-context: 41ad1fdd68f65cce30b2585a95be45c1
+content-length: 152450
+date: Sat, 10 Oct 2026 04:42:52 GMT
+server: Google Frontend
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000
+
