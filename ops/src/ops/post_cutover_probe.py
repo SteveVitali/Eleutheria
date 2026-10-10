@@ -12,7 +12,8 @@ nameserver switch:
 * the Cloudflare NS pair serves the zone (runbook step 8),
 * apex + ``www`` still answer the load-balancer IP and never a Cloudflare
   anycast address (steps 9/10/14 — the grey-cloud rule that keeps the
-  Google-managed certificate renewing toward its 2026-12-22 expiry),
+  Google-managed certificate renewing toward its December expiry — the
+  inventoried ``CERT_EXPIRY_ISO`` below),
 * ``www`` 301s to the apex, the apex answers 200 on TLS with SAN
   ``{apex, www}``, and ``:80`` 301s to HTTPS (steps 11/12/15),
 * DNSSEC validates — an RRSIG on the apex ``A`` answer, the ``ad`` flag, and
@@ -64,7 +65,7 @@ DEFAULT_DOMAIN = "surveillancegraph.org"
 DEFAULT_CERT = "sig-web-cert"
 # The managed cert's inventoried expiry (zone_inventory_2026-10-02; openssl
 # s_client read) — the runbook's renewal deadline and the P34.4 alert anchor.
-CERT_EXPIRY_ISO = "2026-12-22T18:47:21Z"
+CERT_EXPIRY_ISO = "2026-12-22T18:47:21Z"  # future-ok: scheduled: inventoried cert expiry
 EXPECTED_DENY_ALL_SPF = "v=spf1 -all"  # the no-mail design posture pre-OP-10
 
 # Cloudflare's published IPv4 anycast ranges (public config, never a secret).
@@ -796,8 +797,8 @@ def run_probe(
         checks["renewal_read"] = CheckResult(
             renewal_verdict,
             {
-                "note": "the P34.4 TLS-expiry alert (≈21 days, ~2026-12-01) is the "
-                "tripwire if the renewal slips toward the 2026-12-22 expiry",
+                "note": "the P34.4 TLS-expiry alert (≈21 days) is the "
+                "tripwire if the renewal slips toward expected_expiry",
                 "managed_status": cert_detail.get("managed_status"),
                 "expire_time": cert_detail.get("expire_time"),
                 "expected_expiry": CERT_EXPIRY_ISO,

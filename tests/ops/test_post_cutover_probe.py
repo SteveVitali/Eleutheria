@@ -339,7 +339,7 @@ def test_leg_l2_good_state() -> None:
     assert record["leg"] == "L2"
     assert record["overall"] == "pass"
     assert set(record["checks"]) == {"ns_pair", "apex_https_tls", "cert_status", "renewal_read"}
-    assert record["checks"]["renewal_read"]["expected_expiry"] == "2026-12-22T18:47:21Z"
+    assert record["checks"]["renewal_read"]["expected_expiry"] == pcp.CERT_EXPIRY_ISO
 
 
 def test_leg_l2_cert_not_active_fails() -> None:
@@ -436,5 +436,6 @@ def test_probe_checklist_exists_and_covers_every_check() -> None:
     text = CHECKLIST.read_text(encoding="utf-8")
     for name in pcp.L1_CHECKS + ("www_redirect", "apex_https", "renewal_read"):
         assert name in text, f"checklist never names check {name}"
-    for needle in ("L1", "L2", "OP-09", "2026-11-22", "post-cutover-probe", "DNS_CUTOVER_RUNBOOK"):
+    for needle in ("L1", "L2", "OP-09", "post-cutover-probe", "DNS_CUTOVER_RUNBOOK"):
         assert needle in text, f"checklist lost {needle}"
+    assert "2026-11-22" in text  # future-ok: scheduled: the ticket's L2 window
