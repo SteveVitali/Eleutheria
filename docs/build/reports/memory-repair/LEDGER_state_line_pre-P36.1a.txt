@@ -1,0 +1,7 @@
+Byte-for-byte archive of the head State line replaced at P36.1a's closeout
+(the PHASE LOG end pointer P35.1a → P36.1a and the next-row pointer
+P36.1a → P35.6 — manifest row 266, not P36.1b). Archived 2026-10-10 — the
+BM-LEDGER-08 pattern (replaced lines archived, never silently rewritten).
+
+Line 14 (State):
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.1a closeout (row 264 — scheduler of record engineered; live-diff ran read-only, 28 findings; apply leg queued on AR-3); next → P36.1a (row 265).
