@@ -49,3 +49,40 @@ def test_usage_over_budget_alarms_nonzero() -> None:
     report = E.build_report(_cfg(budget=100.0), usage_gb=120.0)
     assert report.level == "alarm"
     assert E.exit_code_for(report) == 5
+
+
+# ── P35.5 / SIG-TRANSP-019: the $50/month hard ceiling on the mirror ──
+
+
+def test_the_committed_config_carries_the_hard_dollar_ceiling() -> None:
+    cfg = E.EgressConfig.from_toml(_CONFIG)
+    assert cfg.hard_ceiling_usd == E.DEFAULT_HARD_CEILING_USD
+
+
+def test_reported_spend_below_the_warn_ratio_is_ok() -> None:
+    # $0 is the R2 free-tier expectation — and stays ok.
+    report = E.build_report(_cfg(), usage_gb=None, usage_usd=0.0)
+    assert report.gate_pending is False  # a reported measurement is not pending
+    assert report.level == "ok"
+    assert E.exit_code_for(report) == 0
+
+
+def test_reported_spend_at_warn_ratio_warns_without_alarm() -> None:
+    # 80% of $50 = $40 → warn (the operator sees it before the kill switch).
+    report = E.build_report(_cfg(), usage_gb=None, usage_usd=41.0)
+    assert report.level == "warn"
+    assert E.exit_code_for(report) == 0
+
+
+def test_reported_spend_at_the_ceiling_alarms_nonzero() -> None:
+    # $50+ = the hard ceiling: alarm fires the kill-switch path (exit 5).
+    report = E.build_report(_cfg(), usage_gb=None, usage_usd=50.0)
+    assert report.level == "alarm"
+    assert E.exit_code_for(report) == 5
+
+
+def test_a_dollar_alarm_wins_over_an_ok_gb_report() -> None:
+    # The worse bound decides — GB fine but the spend ceiling breached.
+    report = E.build_report(_cfg(), usage_gb=10.0, usage_usd=55.0)
+    assert report.level == "alarm"
+    assert E.exit_code_for(report) == 5

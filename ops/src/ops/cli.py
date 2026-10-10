@@ -228,6 +228,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="observed monthly egress (GB); omit when no live usage API (gate pending: HG-07).",
     )
     egress.add_argument(
+        "--usage-usd",
+        type=float,
+        default=None,
+        help="operator-reported monthly mirror spend (USD) checked against the "
+        "$50 hard ceiling (SIG-TRANSP-019); omit when no figure was reported.",
+    )
+    egress.add_argument(
         "--alert",
         action="store_true",
         help="fire a RECORDED alert via the notifier seam when the threshold is breached "
@@ -361,6 +368,78 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="perform the sync + post-sync absence probes. Without it this is a "
         "dry-run: assertions + release record + the printed sync plan only.",
+    )
+    pub.add_argument(
+        "--mirror",
+        default=None,
+        metavar="NAME",
+        help="attach the zero-egress mirror leg (P35.5, SIG-TRANSP-019): the "
+        "named object-store row in ops/mirrors.toml preflights BEFORE any write "
+        "(enabled row, zero/low-egress provider via assert_low_egress, push "
+        "caps, egress join) and --apply pushes the public tree to it under "
+        "content-hash keys after the syncs + probes. Needs --export-dir or "
+        "--public-tree.",
+    )
+    pub.add_argument(
+        "--mirrors",
+        default=None,
+        help="ops/mirrors.toml path for --mirror / mirror-push (default: the "
+        "committed file / SIG_OPS_MIRRORS).",
+    )
+
+    mp = sub.add_parser(
+        "mirror-push",
+        help="push a built export/release tree to a named object-store row in "
+        "ops/mirrors.toml (P35.5, SIG-TRANSP-019): the row must be enabled + "
+        "zero/low-egress (assert_low_egress), the run is fail-closed bounded "
+        "(per-file/run caps + the request-rate guard), and the origin must not "
+        "answer an anonymous listing. Dry-run prints the preflight plan; "
+        "--apply probes the origin then pushes.",
+    )
+    mp.add_argument(
+        "--name",
+        required=True,
+        metavar="NAME",
+        help="the [[mirror]] row name (e.g. the R2 public mirror row).",
+    )
+    mp.add_argument(
+        "--export-dir",
+        required=True,
+        help="a built export/release tree carrying manifest.json.",
+    )
+    mp.add_argument(
+        "--mirrors",
+        default=None,
+        help="ops/mirrors.toml path (default: the committed file / SIG_OPS_MIRRORS).",
+    )
+    mp.add_argument(
+        "--config",
+        default=None,
+        help="ops/config.toml path for the egress join (default: ops/config.toml).",
+    )
+    mp.add_argument(
+        "--usage-gb",
+        type=float,
+        default=None,
+        help="observed monthly egress (GB) for the egress-accounting join.",
+    )
+    mp.add_argument(
+        "--usage-usd",
+        type=float,
+        default=None,
+        help="operator-reported monthly mirror spend (USD) for the $50 ceiling join.",
+    )
+    mp.add_argument(
+        "--no-probe",
+        action="store_true",
+        help="skip the anonymous non-listable probe (e.g. the CDN route is not "
+        "bound yet) — an applied push then records the probe as not-run, "
+        "never as verified.",
+    )
+    mp.add_argument(
+        "--apply",
+        action="store_true",
+        help="probe the origin + push. Without it: the preflight plan only.",
     )
 
     rprobe = sub.add_parser(
@@ -2033,24 +2112,32 @@ def _cmd_egress_report(args: argparse.Namespace) -> int:
 
     config_path = args.config or (_COMPOSE_FILE.parent / "config.toml")
     config = EgressConfig.from_toml(config_path)
-    report = build_report(config, args.usage_gb)
+    report = build_report(config, args.usage_gb, args.usage_usd)
     print(json.dumps(report.as_json(), indent=2, sort_keys=True))
     if report.gate_pending:
         print(
             "gate pending: HG-07 — no live object-store usage API (no credentials); "
-            f"budget threshold {config.monthly_budget_gb} GB documented, not measured "
-            "(RISK-P21-09).",
+            f"budget threshold {config.monthly_budget_gb} GB and hard ceiling "
+            f"${config.hard_ceiling_usd:.0f}/month (SIG-TRANSP-019) documented, "
+            "not measured (RISK-P21-09).",
             file=sys.stderr,
         )
     # Wire INFRA.1's alarm to the notifier seam (OBS.1): a warn/alarm threshold
     # breach fires a RECORDED alert. The breach decision stays in ops.egress —
     # this consumes it, it does not re-implement it.
     if args.alert and report.level in ("warn", "alarm"):
+        parts = []
+        if report.usage_gb is not None:
+            parts.append(f"{report.usage_gb} GB of {report.budget_gb} GB")
+        if report.usage_usd is not None:
+            parts.append(
+                f"${report.usage_usd} of the ${report.ceiling_usd:.0f}/month hard "
+                "ceiling (SIG-TRANSP-019 — the kill switch is the operator's step)"
+            )
         _fire_alert(
             "egress-budget",
             report.level,
-            f"egress threshold breached: {report.usage_gb} GB of "
-            f"{report.budget_gb} GB ({report.level})",
+            f"egress threshold breached: {'; '.join(parts)} ({report.level})",
             detail=report.as_json(),
         )
     return exit_code_for(report)
@@ -2227,6 +2314,33 @@ def _cmd_publish_web(args: argparse.Namespace) -> int:
         )
         return 2
 
+    # P35.5 / SIG-TRANSP-019: the zero-egress mirror leg — a mirrors.toml
+    # object-store row pushed under content-hash keys after the syncs + probes.
+    mirror_leg = None
+    if args.mirror:
+        from .egress import EgressConfig
+        from .mirror_push import DEFAULT_MIRRORS_PATH, MirrorPushLeg, http_get
+
+        if public_tree is None:
+            print(
+                "publish-web --mirror needs the public export tree — pass "
+                "--export-dir (runs the prepare) or --public-tree",
+                file=sys.stderr,
+            )
+            return 2
+        mirrors_path = (
+            Path(args.mirrors).resolve()
+            if args.mirrors
+            else Path(os.environ.get("SIG_OPS_MIRRORS", str(_REPO_ROOT / DEFAULT_MIRRORS_PATH)))
+        )
+        mirror_leg = MirrorPushLeg(
+            mirrors_path=mirrors_path,
+            name=args.mirror,
+            export_dir=public_tree,
+            fetch=http_get if args.apply else None,
+            egress_config=EgressConfig.from_toml(_COMPOSE_FILE.parent / "config.toml"),
+        )
+
     def absent_verify() -> list[ProbeResult]:
         # the post-sync proof (SIG-OPS-003): cadence http-absent targets
         cadence = load_cadence(args.cadence)
@@ -2258,6 +2372,7 @@ def _cmd_publish_web(args: argparse.Namespace) -> int:
             release_id=args.release_id,
             data_release=data_release,
             absent_verify=absent_verify if args.apply else None,
+            mirror=mirror_leg,
         )
     except PublishError as exc:
         print(str(exc), file=sys.stderr)
@@ -2273,6 +2388,57 @@ def _cmd_publish_web(args: argparse.Namespace) -> int:
             "dry-run: assertions green, release record written, sync plan above; "
             "re-run with --apply to sync + probe (the first --apply is P34.17's "
             "gated leg).",
+            file=sys.stderr,
+        )
+    return 0
+
+
+def _cmd_mirror_push(args: argparse.Namespace) -> int:
+    """P35.5 / SIG-TRANSP-019: the standalone mirror leg — push a built export
+    tree to a named object-store row of ops/mirrors.toml."""
+    from .egress import EgressConfig
+    from .mirror_push import DEFAULT_MIRRORS_PATH, MirrorPushLeg, MirrorRefusal, http_get
+
+    mirrors_path = (
+        Path(args.mirrors).resolve()
+        if args.mirrors
+        else Path(os.environ.get("SIG_OPS_MIRRORS", str(_REPO_ROOT / DEFAULT_MIRRORS_PATH)))
+    )
+    config_path = (
+        Path(args.config).resolve() if args.config else _COMPOSE_FILE.parent / "config.toml"
+    )
+    leg = MirrorPushLeg(
+        mirrors_path=mirrors_path,
+        name=args.name,
+        export_dir=Path(args.export_dir).resolve(),
+        fetch=None if args.no_probe or not args.apply else http_get,
+        egress_config=EgressConfig.from_toml(config_path) if config_path.is_file() else None,
+        usage_gb=args.usage_gb,
+        usage_usd=args.usage_usd,
+    )
+    try:
+        if not args.apply:
+            for line in leg.preflight():
+                print(f"  {line}")
+            print(
+                "sig-ops mirror-push: DRY-RUN — preflight green; re-run with "
+                "--apply to probe the origin + push under content-hash keys."
+            )
+            return 0
+        outcome = leg.push()
+    except MirrorRefusal as exc:
+        print(str(exc), file=sys.stderr)
+        print("sig-ops mirror-push: REFUSED — nothing was pushed.", file=sys.stderr)
+        return 3
+    except Exception as exc:  # noqa: BLE001 — store client errors (missing creds, 5xx)
+        print(f"sig-ops mirror-push: store operation failed: {exc}", file=sys.stderr)
+        return 7
+    for line in outcome.as_lines():
+        print(line)
+    if outcome.non_listable is None:
+        print(
+            "  note: the non-listable probe did not run (--no-probe or no URL) — "
+            "the mirror's listability is unverified this run.",
             file=sys.stderr,
         )
     return 0
@@ -4039,6 +4205,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_deploy(args)
     if args.command == "publish-web":
         return _cmd_publish_web(args)
+    if args.command == "mirror-push":
+        return _cmd_mirror_push(args)
     if args.command == "republish-probe":
         return _cmd_republish_probe(args)
     if args.command == "backup-drill":

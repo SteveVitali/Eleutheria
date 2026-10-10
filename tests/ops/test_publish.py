@@ -983,6 +983,96 @@ def test_publish_web_cli_dry_run_and_apply_guards(tmp_path: Path, monkeypatch) -
     assert rc != 0  # no destination bucket — refused, nothing synced
 
 
+# ── P35.5 / SIG-TRANSP-019: the mirror leg inside the publish path ──
+
+
+class _FakeMirrorOutcome:
+    def as_lines(self) -> list[str]:
+        return ["mirror-push APPLIED: r2 (cloudflare-r2:sig-bulk)"]
+
+
+class _FakeMirrorLeg:
+    """A stand-in mirror leg recording whether the publish called it."""
+
+    def __init__(self, refuse: bool = False) -> None:
+        self.preflight_calls = 0
+        self.push_calls = 0
+        self._refuse = refuse
+
+    def preflight(self) -> list[str]:
+        self.preflight_calls += 1
+        if self._refuse:
+            raise P.PublishError("mirror refused — provider metered-egress")
+        return ["mirror r2: preflight OK — provider cloudflare-r2 (egress class zero)"]
+
+    def push(self) -> _FakeMirrorOutcome:
+        self.push_calls += 1
+        return _FakeMirrorOutcome()
+
+
+def test_the_mirror_leg_preflights_in_a_dry_run_without_pushing(tmp_path: Path) -> None:
+    leg = _FakeMirrorLeg()
+    result = P.run_publish_web(
+        dist=_public_dist(tmp_path),
+        apply=False,
+        bucket=None,
+        allowlist_path=_ALLOWLIST_PATH,
+        git_commit="c0ffee",
+        now="2026-10-03T00:00:00Z",
+        mirror=leg,
+    )
+    assert leg.preflight_calls == 1
+    assert leg.push_calls == 0  # a dry run never pushes
+    assert any("preflight OK" in line for line in result.as_lines())
+
+
+def test_the_mirror_leg_pushes_after_the_sync_and_probes(tmp_path: Path) -> None:
+    store = _FakeSiteStore()
+    leg = _FakeMirrorLeg()
+    result = P.run_publish_web(
+        dist=_public_dist(tmp_path),
+        apply=True,
+        bucket=store.bucket(),
+        allowlist_path=_ALLOWLIST_PATH,
+        git_commit="c0ffee",
+        now="2026-10-03T00:00:00Z",
+        absent_verify=_ok_absent_verify,
+        mirror=leg,
+    )
+    assert leg.preflight_calls == 1 and leg.push_calls == 1
+    assert any("mirror-push APPLIED" in line for line in result.as_lines())
+
+
+def test_a_mirror_preflight_refusal_stops_before_any_write(tmp_path: Path) -> None:
+    # assert_low_egress inside the publish path: a leg that refuses stops the
+    # whole publish — no release record, no remote object.
+    store = _FakeSiteStore()
+    dist = _public_dist(tmp_path)
+    with pytest.raises(P.PublishError, match="metered-egress"):
+        P.run_publish_web(
+            dist=dist,
+            apply=True,
+            bucket=store.bucket(),
+            allowlist_path=_ALLOWLIST_PATH,
+            git_commit="c0ffee",
+            now="2026-10-03T00:00:00Z",
+            absent_verify=_ok_absent_verify,
+            mirror=_FakeMirrorLeg(refuse=True),
+        )
+    assert store.put_calls == [] and store.delete_calls == []
+    assert not (dist / P.RELEASE_RECORD).exists()  # refused before the record
+
+
+def test_publish_web_cli_mirror_guard(tmp_path: Path, monkeypatch) -> None:
+    """--mirror with no export tree refuses before doing anything (rc 2)."""
+    from ops import cli
+
+    dist = _public_dist(tmp_path)
+    monkeypatch.delenv("SIG_GCP_PROJECT", raising=False)
+    rc = cli.main(["publish-web", "--dist", str(dist), "--mirror", "r2-public"])
+    assert rc == 2  # needs --export-dir/--public-tree
+
+
 def test_every_denied_route_has_an_http_absent_probe_on_each_origin() -> None:
     """SIG-OPS-003: each [[denied]] route in the allow-list is probed absent on
     every public origin by the committed cadence rows."""

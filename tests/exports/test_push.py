@@ -117,3 +117,89 @@ def test_push_summary_counts(tmp_path) -> None:
     assert summary["uploaded"] == len(results)
     assert summary["skipped"] == 0
     assert json.dumps(summary)  # JSON-able for the CLI
+
+
+# ── P35.5 / SIG-TRANSP-019: fail-closed push bounds + the non-listable origin ──
+
+
+def test_an_oversized_artifact_refuses_before_any_upload(tmp_path) -> None:
+    out = _build_export(tmp_path)
+    client = FakeS3()
+    limits = P.PushLimits(max_file_bytes=1)  # every artifact is over the cap
+    with pytest.raises(P.PushRefusal, match="per-file cap"):
+        P.push_export_dir(str(out), ObjectStore("cloudflare-r2", "sig-bulk"), client, limits=limits)
+    assert client.objects == {}  # refused, never truncated
+
+
+def test_an_over_run_object_cap_run_refuses_before_any_upload(tmp_path) -> None:
+    out = _build_export(tmp_path)
+    client = FakeS3()
+    limits = P.PushLimits(max_run_objects=0)  # no run fits
+    with pytest.raises(P.PushRefusal, match="per-run object cap"):
+        P.push_export_dir(str(out), ObjectStore("cloudflare-r2", "sig-bulk"), client, limits=limits)
+    assert client.objects == {}
+
+
+def test_an_over_run_byte_cap_run_refuses_before_any_upload(tmp_path) -> None:
+    out = _build_export(tmp_path)
+    client = FakeS3()
+    limits = P.PushLimits(max_run_bytes=1)
+    with pytest.raises(P.PushRefusal, match="per-run byte cap"):
+        P.push_export_dir(str(out), ObjectStore("cloudflare-r2", "sig-bulk"), client, limits=limits)
+    assert client.objects == {}
+
+
+def test_an_over_rate_run_refuses_instead_of_racing(tmp_path) -> None:
+    # The request-rate guard: a frozen clock means the second put already
+    # exceeds a 1-request/minute cap — the run refuses, it does not slow-play.
+    out = _build_export(tmp_path)
+    client = FakeS3()
+    limits = P.PushLimits(max_requests_per_minute=1)
+    with pytest.raises(P.PushRefusal, match="requests/minute"):
+        P.push_export_dir(
+            str(out),
+            ObjectStore("cloudflare-r2", "sig-bulk"),
+            client,
+            limits=limits,
+            clock=lambda: 0.0,
+        )
+    assert len(client.objects) == 1  # the cap fired on the second put
+
+
+def test_pacing_interval_sleeps_between_uploads(tmp_path) -> None:
+    out = _build_export(tmp_path)
+    client = FakeS3()
+    slept: list[float] = []
+    limits = P.PushLimits(min_request_interval_s=0.05)
+    P.push_export_dir(
+        str(out),
+        ObjectStore("cloudflare-r2", "sig-bulk"),
+        client,
+        limits=limits,
+        sleep=slept.append,
+    )
+    uploads = sum(1 for _ in client.objects)
+    assert slept == [0.05] * (uploads - 1)
+
+
+def test_a_listing_origin_refuses() -> None:
+    def listing_fetch(url: str) -> tuple[int, str]:
+        return 200, "<ListBucketResult><Contents><Key>r/…</Key></Contents></ListBucketResult>"
+
+    with pytest.raises(P.PushRefusal, match="non-listable"):
+        P.assert_non_listable_origin(listing_fetch, "https://files.example")
+
+
+def test_an_autoindex_origin_refuses() -> None:
+    def index_fetch(url: str) -> tuple[int, str]:
+        return 200, "<html><title>Index of /</title>...</html>"
+
+    with pytest.raises(P.PushRefusal, match="non-listable"):
+        P.assert_non_listable_origin(index_fetch, "https://files.example")
+
+
+def test_a_non_listable_origin_passes() -> None:
+    def deny_fetch(url: str) -> tuple[int, str]:
+        return 403, "<Error><Code>AccessDenied</Code></Error>"
+
+    P.assert_non_listable_origin(deny_fetch, "https://files.example")  # no refusal

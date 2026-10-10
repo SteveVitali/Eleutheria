@@ -47,7 +47,7 @@ import shutil
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Protocol
 
 from .alerts import utcnow
 from .degraded import DegradedBuildError, Runner, build_static_site
@@ -1157,6 +1157,9 @@ class PublishWebResult:
     #: ``confirmed`` (plus an unset dispute-intake address). A dry run prints
     #: them as warnings; ``--apply`` refuses.
     copy_violations: tuple[str, ...] = ()
+    #: P35.5 / SIG-TRANSP-019: the zero-egress mirror leg's preflight plan
+    #: (dry-run) or applied outcome lines.
+    mirror_lines: tuple[str, ...] = ()
 
     def as_lines(self) -> list[str]:
         mode = "APPLIED" if self.applied else "DRY-RUN (nothing synced)"
@@ -1195,7 +1198,28 @@ class PublishWebResult:
             lines.extend(f"    {v}" for v in self.copy_violations[:50])
             if len(self.copy_violations) > 50:
                 lines.append(f"    … and {len(self.copy_violations) - 50} more")
+        lines.extend(f"  {line}" for line in self.mirror_lines)
         return lines
+
+
+class MirrorOutcome(Protocol):
+    """The reported result of an applied mirror leg (P35.5)."""
+
+    def as_lines(self) -> Sequence[str]: ...
+
+
+class MirrorLeg(Protocol):
+    """A zero-egress mirror step attachable to the publish (P35.5/SIG-TRANSP-019).
+
+    ``preflight()`` proves the leg before any write — it raises (refuses) or
+    returns the plan lines the result reports. ``push()`` runs the leg after
+    the site/release/export syncs and the absence probes, returning an outcome
+    (``ops.mirror_push.MirrorPushLeg`` is the production shape).
+    """
+
+    def preflight(self) -> Sequence[str]: ...
+
+    def push(self) -> MirrorOutcome: ...
 
 
 def run_publish_web(
@@ -1214,6 +1238,7 @@ def run_publish_web(
     image_digests: Sequence[str] = (),
     absent_verify: Callable[[], Sequence[ProbeResult]] | None = None,
     copy_batch_path: str | Path | None = None,
+    mirror: MirrorLeg | None = None,
 ) -> PublishWebResult:
     """The one publish path (SIG-OPS-003/004): assert → record → sync → verify.
 
@@ -1256,6 +1281,13 @@ def run_publish_web(
         assert_attribution_complete(export_tree)
     else:
         assert_attribution_complete(dist)
+
+    # P35.5 / SIG-TRANSP-019: the mirror leg's preflight runs BEFORE the release
+    # record is written — a mirror that is disabled, metered-egress, over its
+    # push caps, or in egress alarm refuses the whole publish with nothing sent.
+    mirror_lines: tuple[str, ...] = ()
+    if mirror is not None:
+        mirror_lines = tuple(mirror.preflight())
 
     commit = git_commit or _git_head()
     built_at = now or utcnow()
@@ -1322,6 +1354,8 @@ def run_publish_web(
                 "public origin after the sync (SIG-OPS-003):\n  "
                 + "\n  ".join(f"{p.service}: {p.detail}" for p in present)
             )
+        if mirror is not None:
+            mirror_lines = tuple(mirror.push().as_lines())
     else:
         if release_tree is not None:
             release_plan = plan_site_sync(
@@ -1345,6 +1379,7 @@ def run_publish_web(
         export_plan=export_plan,
         absent_probes=probes,
         copy_violations=copy_violations,
+        mirror_lines=mirror_lines,
     )
 
 
@@ -1366,6 +1401,8 @@ __all__ = [
     "DEFAULT_ALLOWLIST_PATH",
     "PrepareResult",
     "PublishWebResult",
+    "MirrorLeg",
+    "MirrorOutcome",
     "PublicAllowlist",
     "PROTECTED_NAMES",
     "PROTECTED_PREFIXES",
