@@ -90,6 +90,13 @@ class SourceCadence:
     append run rows like every other source. ``secrets`` carries extra
     Secret-Manager env bindings the job needs beyond ``sig-pg-password``
     (``ENV=secret-name`` pairs — names only, never values, HG-09).
+
+    ``cron_or_semantics_ok`` (P35.1a / SIG-OPS-005) is the explicit annotation
+    that lets a row restrict BOTH day-of-month and day-of-week (cron OR-fires
+    on them): the lint rejects an un-annotated dom⊕dow row. The value names the
+    recorded exception's OWNER (e.g. ``"P35.1b"`` — the fleet-hygiene sweep that
+    owns the correction); ``true`` alone is tolerated but an owner-less
+    annotation is weaker evidence — prefer naming the row that carries the fix.
     """
 
     source: str
@@ -100,6 +107,7 @@ class SourceCadence:
     existing: bool = False  # scheduler trigger already applied — verify only
     secrets: tuple[str, ...] = ()
     note: str = ""
+    cron_or_semantics_ok: str = ""
 
 
 @dataclass(frozen=True)
@@ -121,6 +129,103 @@ class BatchCadence:
     scheduler: str
     members: tuple[str, ...]
     note: str = ""
+    cron_or_semantics_ok: str = ""
+
+
+@dataclass(frozen=True)
+class MaintenanceCadence:
+    """One ``[[maintenance]]`` row (P34.6 + P35.1a): a recurring ops procedure
+    carried by the scheduler of record as a Cloud Scheduler trigger.
+
+    ``state`` is the declared trigger posture — ``"paused"`` rows (the D-P34.6-2
+    monthly export) are deployed PAUSED and the reconcile NEVER enables one;
+    the trigger's firing stays gated on the row's own verbatim-go machinery.
+    ``target_job`` defaults to ``sig-<id>`` — the job the trigger would invoke
+    once its owning row's go lands (created by that leg, not by the reconcile).
+    """
+
+    id: str
+    cadence: str
+    cron: str
+    scheduler: str = ""
+    state: str = "paused"  # "paused" | "enabled" — maintenance triggers default inert
+    target_job: str = ""
+    procedure: str = ""
+    note: str = ""
+    cron_or_semantics_ok: str = ""
+
+
+@dataclass(frozen=True)
+class ManualJob:
+    """One ``[[manual_jobs]]`` row (P35.1a, G1-NEW-4): a live Cloud Run job that
+    legitimately carries NO scheduler trigger (``sig-export``, ``sig-materialize``,
+    ``sig-replay-ingest``). A live job that is neither cadence-owned nor on this
+    allow-list is unlisted drift. ``sa_class`` names the ``iam_identities.toml``
+    job class; ``secrets`` maps env names to Secret-Manager names.
+    """
+
+    job: str
+    sa_class: str = ""
+    secrets: tuple[str, ...] = ()
+    note: str = ""
+
+
+@dataclass(frozen=True)
+class ImagePin:
+    """One ``[[pins]]`` row (SIG-SEC-008): a declared hold off the fleet digest.
+
+    ``image`` is the digest-pinned reference the named job/service is expected
+    to run (``{project}``/``{ar_host}`` placeholders resolve at compare time);
+    ``reason`` + ``expiry`` make a pin a bounded, re-reviewed exception — an
+    expired pin is reported drift until re-declared or swept.
+    """
+
+    job: str = ""
+    service: str = ""
+    image: str = ""
+    reason: str = ""
+    expiry: str = ""  # YYYY-MM-DD
+
+
+@dataclass(frozen=True)
+class FleetDecl:
+    """The ``[fleet]`` table: the image contract every cadence/manual job and
+    service is judged against — the Artifact Registry repo path (placeholders
+    resolved at compare time) and the repo-relative newest ``roll-jobs``
+    record a non-pinned workload's digest is expected to match.
+    """
+
+    image_repo: str = ""  # e.g. "{ar_host}/{project}/sig/sig-api"
+    roll_record: str = ""  # repo-relative path to the newest roll record
+
+
+@dataclass(frozen=True)
+class LiveDiffSpec:
+    """The ``[live_diff]`` table: the daily drift check's own trigger — a Cloud
+    Scheduler job that invokes ``job`` with ``args`` overriding the container
+    args (the check rides the probe job's identity + alert path, no new job).
+    """
+
+    scheduler: str
+    cron: str
+    job: str
+    args: str
+    note: str = ""
+
+
+@dataclass(frozen=True)
+class BucketPosture:
+    """One ``[[buckets]]`` row: the declared posture live-diff asserts for a
+    ``{project}-<suffix>`` bucket. Fields left unset are NOT compared — a row
+    declares only what it means.
+    """
+
+    suffix: str
+    public: bool | None = None  # allUsers roles/storage.objectViewer expected/forbidden
+    ubla: bool | None = None  # uniform bucket-level access
+    versioning: bool | None = None
+    noncurrent_days: int | None = None  # lifecycle: delete noncurrent versions >= N days
+    note: str = ""
 
 
 @dataclass(frozen=True)
@@ -135,6 +240,20 @@ class CadenceConfig:
     runs_gcs_prefix: str
     sources: tuple[SourceCadence, ...]
     batches: tuple[BatchCadence, ...] = ()
+    maintenance: tuple[MaintenanceCadence, ...] = ()
+    manual_jobs: tuple[ManualJob, ...] = ()
+    pins: tuple[ImagePin, ...] = ()
+    fleet: FleetDecl = FleetDecl()
+    live_diff: LiveDiffSpec | None = None
+    buckets: tuple[BucketPosture, ...] = ()
+
+
+def _annotation(raw: Any) -> str:
+    """Normalise ``cron_or_semantics_ok``: a string names the exception's owner;
+    ``true`` becomes a generic annotation; anything else means unannotated."""
+    if isinstance(raw, str):
+        return raw.strip()
+    return "annotated" if raw else ""
 
 
 def load_cadence(path: str | Path | None = None) -> CadenceConfig:
@@ -154,6 +273,18 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
     resolved = next((c for c in candidates if c.is_file()), candidates[0])
     with resolved.open("rb") as fh:
         doc = tomllib.load(fh)
+    return parse_cadence_doc(doc)
+
+
+def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
+    """Build a :class:`CadenceConfig` from an already-decoded TOML document.
+
+    Split from :func:`load_cadence` so P35.1a's live-diff can parse the
+    declared side fetched off the published declaration bundle
+    (``SIG_OPS_DECLARED_GCS``) without touching the filesystem — cadence
+    configuration must not require an image roll to take effect
+    (SIG-OPS-005).
+    """
     probes = doc.get("probes", {})
     targets = tuple(
         TargetSpec(
@@ -176,6 +307,7 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
             existing=bool(s.get("existing", False)),
             secrets=tuple(f"{k}={v}" for k, v in dict(s.get("secrets", {})).items()),
             note=str(s.get("note", "")),
+            cron_or_semantics_ok=_annotation(s.get("cron_or_semantics_ok")),
         )
         for s in doc.get("sources", [])
     )
@@ -188,8 +320,66 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
             scheduler=str(b["scheduler"]),
             members=tuple(str(m) for m in b.get("members", [])),
             note=str(b.get("note", "")),
+            cron_or_semantics_ok=_annotation(b.get("cron_or_semantics_ok")),
         )
         for b in doc.get("batches", [])
+    )
+    maintenance = tuple(
+        MaintenanceCadence(
+            id=str(m["id"]),
+            cadence=str(m.get("cadence", "")),
+            cron=str(m["cron"]),
+            scheduler=str(m.get("scheduler", "")),
+            state=str(m.get("state", "paused")).lower(),
+            target_job=str(m.get("target_job", "")),
+            procedure=str(m.get("procedure", "")),
+            note=str(m.get("note", "")),
+            cron_or_semantics_ok=_annotation(m.get("cron_or_semantics_ok")),
+        )
+        for m in doc.get("maintenance", [])
+    )
+    manual_jobs = tuple(
+        ManualJob(
+            job=str(j["job"]),
+            sa_class=str(j.get("sa_class", "")),
+            secrets=tuple(f"{k}={v}" for k, v in dict(j.get("secrets", {})).items()),
+            note=str(j.get("note", "")),
+        )
+        for j in doc.get("manual_jobs", [])
+    )
+    pins = tuple(
+        ImagePin(
+            job=str(p.get("job", "")),
+            service=str(p.get("service", "")),
+            image=str(p.get("image", "")),
+            reason=str(p.get("reason", "")),
+            expiry=str(p.get("expiry", "")),
+        )
+        for p in doc.get("pins", [])
+    )
+    fleet = doc.get("fleet", {})
+    live_diff_raw = doc.get("live_diff")
+    live_diff = (
+        LiveDiffSpec(
+            scheduler=str(live_diff_raw["scheduler"]),
+            cron=str(live_diff_raw["cron"]),
+            job=str(live_diff_raw["job"]),
+            args=str(live_diff_raw["args"]),
+            note=str(live_diff_raw.get("note", "")),
+        )
+        if live_diff_raw
+        else None
+    )
+    buckets = tuple(
+        BucketPosture(
+            suffix=str(b["suffix"]),
+            public=(None if "public" not in b else bool(b["public"])),
+            ubla=(None if "ubla" not in b else bool(b["ubla"])),
+            versioning=(None if "versioning" not in b else bool(b["versioning"])),
+            noncurrent_days=(None if "noncurrent_days" not in b else int(b["noncurrent_days"])),
+            note=str(b.get("note", "")),
+        )
+        for b in doc.get("buckets", [])
     )
     return CadenceConfig(
         probe_job=str(probes.get("job", "sig-probe")),
@@ -200,6 +390,15 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
         runs_gcs_prefix=str(runs.get("gcs_prefix", RUN_PREFIX)),
         sources=sources,
         batches=batches,
+        maintenance=maintenance,
+        manual_jobs=manual_jobs,
+        pins=pins,
+        fleet=FleetDecl(
+            image_repo=str(fleet.get("image_repo", "")),
+            roll_record=str(fleet.get("roll_record", "")),
+        ),
+        live_diff=live_diff,
+        buckets=buckets,
     )
 
 
@@ -701,7 +900,13 @@ __all__ = [
     "RUN_OUTCOMES",
     "RUN_PREFIX",
     "BatchCadence",
+    "BucketPosture",
     "CadenceConfig",
+    "FleetDecl",
+    "ImagePin",
+    "LiveDiffSpec",
+    "MaintenanceCadence",
+    "ManualJob",
     "RunRow",
     "SourceCadence",
     "TargetHistory",
@@ -709,6 +914,7 @@ __all__ = [
     "fold_probe_history",
     "hosted_pg_dsn",
     "load_cadence",
+    "parse_cadence_doc",
     "percentile",
     "probe_hosted",
     "read_sweep_rows",

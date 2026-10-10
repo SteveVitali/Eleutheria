@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "4f82d7c5cfec31d211ef4010537588d7b658391f",
+  "input_commit": "47bf425b9c714e3f57227acf99c6d2fa09fd523d",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "18bd6f7cb9fd5419ebf91a0ddf20b2b017be9c9614e908fcdc44e0c794ced85a"
+      "sha256": "a188f9aaea4986773047d9260d4b86a9c62902176882ed9e87576f16131865bd"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -74,7 +74,7 @@
     },
     {
       "path": "docs/adr/ADR-016-dagster-oss-for-orchestration-kept-reversible.md",
-      "sha256": "ee2cc72365601d16d1626d305266f79aa7a4fa4d5b745597108928cfcb9f4ad0"
+      "sha256": "b0d791cfd385983bfd2d011f5c78b9905a91b12702727a5e9068e3daeff841d1"
     },
     {
       "path": "docs/adr/ADR-017-fastapi-for-the-read-api.md",
@@ -310,7 +310,7 @@
     },
     {
       "path": "docs/adr/ADR-076-reingest-cadence-github-actions-scheduler-vs-prefect-dagster-and-the-cadence-vs-etiquette-design.md",
-      "sha256": "ea3f0df144d9920be788dca492f44d9f91e68f9403a5f70634cc3c80a5e54051"
+      "sha256": "9c892a8b732f6cf2ec74194de72f36d2d2e9695b1aca1c357f9019ebf43cdf05"
     },
     {
       "path": "docs/adr/ADR-077-observability-and-alerting-recorded-alert-ledger-env-webhook-notifier-and-bounded-logs.md",
@@ -685,6 +685,10 @@
       "sha256": "6b7189b29d0c43387047d76248ad7d4050b55d955c621e153e15da11d7766392"
     },
     {
+      "path": "docs/adr/ADR-174-scheduler-of-record-cloud-scheduler-cadence-toml-live-diff-cron-lint-and-digest-pinning.md",
+      "sha256": "260b255b74fcfb4b1ca8979bbbaf4cc079b86ddb4e26aa5f6d7308c3f78f8509"
+    },
+    {
       "path": "docs/adr/ADR-175-restore-drill-at-scale-restore-point-and-logical-export-policy.md",
       "sha256": "1bfff5e8d4315f0e6de704b99ca74ae57a0a62703b1d5c453fe6e4726eaa5345"
     },
@@ -806,23 +810,23 @@
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "1c2c0dc34324643844f5f3db54fc9e2592eba0a72d1798fd739719dfbe75ca4a"
+      "sha256": "f479ecdd581f134de5a33d43ff19fc4dc1c3db5ef1126cf18af2273651c90e04"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "2fa00b3c25dec979a99a87bdfd1078441f6b27d428a824afc47aac92485ee1be"
+      "sha256": "393c31c40349c0110e91a10ef1855353306b98368aad9c31a3552f9c0cda91f4"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "bc34343b7c4e38691f01fc71a8c2d4285df444ade0c3a5ad8186a4db19d5211c"
+      "sha256": "28371a1b7724c7cd7b8679e9b08a0d56a86dc03342be26339104cea0f0f187b3"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "fb284bf33101405f6e8c05620a8bde96162976a3fcae2235eb98b454b2167cc4"
+      "sha256": "72cb053e143cfe6da176b3eb4d23286e64802340d7c7eae0d4e484d84df9d88f"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "d6f2d6e46658e14792df50dd0295ca2691e0854c029eb5409bcfcfa918d482e5"
+      "sha256": "d9457e0752379d8f2316c91c078af073bc8ea867a15719a1e6932900593f6444"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1873,6 +1877,10 @@
       "sha256": "3147a6d3c1b92b12a5fa096e60659f27e95f71ff0358715ad5eab0e6e3068211"
     },
     {
+      "path": "docs/build/runs/P35.1a.md",
+      "sha256": "c6ba4049b8f4c4e619cea67860097355ed1d79e73d9688e6321d9ecacfb10c47"
+    },
+    {
       "path": "docs/build/runs/P35.38a.md",
       "sha256": "c8f94d0d01985d4c97a18eaae6f8079553c52bcf18008d88ca27f9561792f3fb"
     },
@@ -1994,7 +2002,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "115c7366bdca36d350cabcf4bb376c05514883f06ad8f8a424acbb28ff8d40d8"
+      "sha256": "8fbfda884190a6735c1372650bf8c0b7d5f0d91b222b71acbd55ef77cf172f16"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",

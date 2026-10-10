@@ -1194,7 +1194,59 @@ def build_parser() -> argparse.ArgumentParser:
     cadence_cmd.add_argument(
         "--check",
         action="store_true",
-        help="exit 1 if any loadable source with live targets lacks a cadence row",
+        help="exit 1 if any loadable source with live targets lacks a cadence row "
+        "OR the cadence file fails the P35.1a lints (cron OR-semantics, pin schema)",
+    )
+
+    ldiff = sub.add_parser(
+        "live-diff",
+        help="P35.1a (SIG-OPS-005): the read-only repo-vs-live reconciler — diff "
+        "the declared scheduler/jobs/services/identities/bucket posture in "
+        "ops/cadence.toml against live GCP and append the run row under "
+        "ops/runs/_live-diff/ (exit 0 clean, 1 drift, 2 error — fail-closed)",
+    )
+    ldiff.add_argument(
+        "--live",
+        action="store_true",
+        help="read live GCP state (default when --from-state is absent)",
+    )
+    ldiff.add_argument(
+        "--from-state",
+        default=None,
+        metavar="PATH",
+        help="diff against a state fixture instead of live GCP — a JSON bundle "
+        "file or a directory of schedulers/jobs/services/buckets .json maps",
+    )
+    ldiff.add_argument(
+        "--declared",
+        default=None,
+        metavar="PATH|gs://URI",
+        help="the declaration bundle (default: $SIG_OPS_DECLARED_GCS, else the "
+        "repo's ops/cadence.toml + [fleet].roll_record)",
+    )
+    ldiff.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path for the repo-side declared state "
+        "(default: the packaged file / SIG_OPS_CADENCE)",
+    )
+    ldiff.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    ldiff.add_argument("--region", default="us-central1", help="GCP region")
+    ldiff.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket for the run row (default: SIG_OPS_GCS_BUCKET; unset = no upload)",
+    )
+    ldiff.add_argument(
+        "--alert",
+        action="store_true",
+        help="fire a RECORDED alert when drift is found (the daily trigger's flag)",
+    )
+    ldiff.add_argument(
+        "--emit-declared",
+        action="store_true",
+        help="print the declaration bundle JSON to stdout instead of diffing "
+        "(scheduled-ops.sh publishes it to gs://…/ops/declared/live-diff.json)",
     )
 
     alerts = sub.add_parser(
@@ -3735,6 +3787,7 @@ def _cmd_sink_bench(args: argparse.Namespace) -> int:
 
 
 def _cmd_cadence(args: argparse.Namespace) -> int:
+    from .live_diff import lint_cadence_crons, pin_lint
     from .scheduled import load_cadence, unscheduled_live_sources
 
     cadence = load_cadence(args.cadence)
@@ -3756,17 +3809,107 @@ def _cmd_cadence(args: argparse.Namespace) -> int:
                 f"  {b.id:38s} {b.cadence:8s} {b.cron:12s} {b.job} ← {b.scheduler}"
                 f"  [{len(b.members)} members]"
             )
+    if cadence.maintenance:
+        print("maintenance rows (P35.1a — triggers reconcile PAUSED, never enabled):")
+        for m in cadence.maintenance:
+            print(f"  {m.id:38s} {m.cadence:8s} {m.cron:12s} state={m.state} ← {m.scheduler}")
+    if cadence.manual_jobs:
+        print("declared-manual jobs (no trigger expected):")
+        for mj in cadence.manual_jobs:
+            print(f"  {mj.job}")
+    if cadence.live_diff is not None:
+        ld = cadence.live_diff
+        print(f"live-diff trigger: {ld.scheduler} cron={ld.cron!r} → {ld.job} {ld.args!r}")
     missing = unscheduled_live_sources(cadence)
+    failed = False
     if missing:
         print(
             "UNSCHEDULED live-target sources (loadable, in live_targets.toml, no "
             f"cadence row): {', '.join(missing)}",
             file=sys.stderr,
         )
-        return 1 if args.check else 0
+        failed = True
+    lint = lint_cadence_crons(cadence) + pin_lint(cadence)
+    if lint:
+        print("cadence lint FAILED:", file=sys.stderr)
+        for problem in lint:
+            print(f"  {problem}", file=sys.stderr)
+        failed = True
     if args.check:
-        print("cadence check OK — every loadable live-target source has a cadence row")
-    return 0
+        if failed:
+            return 1
+        print(
+            "cadence check OK — every loadable live-target source has a cadence row; "
+            "cron semantics + pin schema lint clean"
+        )
+    return 1 if (failed and args.check) else 0
+
+
+def _cmd_live_diff(args: argparse.Namespace) -> int:
+    from .alerts import alert_exit_code
+    from .live_diff import (
+        LiveDiffError,
+        build_declared_bundle,
+        execute,
+        upload_run_row,
+    )
+    from .scheduled import load_cadence
+
+    if args.emit_declared:
+        # The reconcile's publish leg: print the declaration bundle on stdout;
+        # scheduled-ops.sh pipes it to `gcloud storage cp - gs://…`.
+        cadence = load_cadence(args.cadence)
+        print(json.dumps(build_declared_bundle(cadence), sort_keys=True))
+        return 0
+
+    mode = "from-state" if args.from_state else "live"
+    try:
+        row, code = execute(
+            mode=mode,
+            declared_source=args.declared,
+            cadence_file=args.cadence,
+            state_source=args.from_state,
+            project=args.project,
+            region=args.region,
+        )
+    except LiveDiffError as exc:
+        print(f"live-diff: {exc}", file=sys.stderr)
+        return 2
+
+    rec = row.as_json()
+    payload = rec["fetch_record"] if isinstance(rec["fetch_record"], dict) else {}
+    findings = payload.get("findings") or []
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    if findings:
+        print("DRIFT:", file=sys.stderr)
+        for f in findings:
+            print(f"  {f['class']} {f['name']}: {f['detail']}", file=sys.stderr)
+
+    gcs = _gcs_bucket(args.gcs_bucket)
+    if gcs is None:
+        print(
+            "  ! no GCS bucket configured (--gcs-bucket / SIG_OPS_GCS_BUCKET) — "
+            "run row not uploaded",
+            file=sys.stderr,
+        )
+    else:
+        try:
+            cadence = load_cadence(args.cadence)
+            written = upload_run_row(row, cadence, gcs=gcs)
+            print(f"  run row stored: {written.get('gcs', '')}")
+        except Exception as exc:  # noqa: BLE001 - surfaced, never hidden
+            print(f"  ! run-row upload FAILED (row kept in stdout): {exc}", file=sys.stderr)
+            return 7
+    if code == 1 and args.alert:
+        fired = _fire_alert(
+            "live-diff",
+            "alarm",
+            f"repo-vs-live drift: {len(findings)} finding(s) — "
+            "see ops/runs/_live-diff/ for the full row",
+            detail={"findings": findings},
+        )
+        return alert_exit_code(fired)
+    return code
 
 
 def _cmd_alerts(args: argparse.Namespace) -> int:
@@ -4339,6 +4482,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_replay_ingest(args)
     if args.command == "cadence":
         return _cmd_cadence(args)
+    if args.command == "live-diff":
+        return _cmd_live_diff(args)
     if args.command == "backfill-run-completions":
         return _cmd_backfill_run_completions(args)
     if args.command == "scheduled-readback":

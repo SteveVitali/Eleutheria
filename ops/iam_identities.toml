@@ -56,7 +56,7 @@ purpose = "every sig-ingest-* job + the replay/resume-test ingest jobs — Cloud
 [[service_account]]
 id = "sig-probe-rt"
 display_name = "sig probe jobs runtime"
-purpose = "sig-probe + the four scheduled-for-deletion egress probes — Cloud SQL client (the cloudsql reachability target) + create/read on the restricted bucket for ops/probes sweep rows; no delete"
+purpose = "sig-probe + the four scheduled-for-deletion egress probes — Cloud SQL client (the cloudsql reachability target) + create/read on the restricted bucket for ops/probes sweep rows; no delete. P35.1a adds the live-diff read surface: run.viewer + cloudscheduler.viewer at project level and a bucket-metadata read on the declared buckets — read-only by construction, no write anywhere new"
 
 [[service_account]]
 id = "sig-export-rt"
@@ -110,6 +110,18 @@ role = "roles/cloudsql.client"
 [[project_role]]
 service_account = "sig-probe-rt"
 role = "roles/cloudsql.client"
+
+# P35.1a live-diff (SIG-OPS-005): the daily repo-vs-live reconciler rides the
+# sig-probe job's identity (the [live_diff] trigger overrides its args), so
+# the probe class carries the two read-only viewers the diff needs —
+# Cloud Run job/service describe + Cloud Scheduler job list/describe.
+[[project_role]]
+service_account = "sig-probe-rt"
+role = "roles/run.viewer"
+
+[[project_role]]
+service_account = "sig-probe-rt"
+role = "roles/cloudscheduler.viewer"
 
 [[project_role]]
 service_account = "sig-export-rt"
@@ -167,6 +179,32 @@ role = "roles/storage.objectCreator"
 service_account = "sig-probe-rt"
 bucket = "sig-restricted"
 role = "roles/storage.objectViewer"
+
+# P35.1a live-diff bucket leg: the reconciler reads each declared bucket's
+# IAM policy + metadata (public posture, UBLA, versioning, lifecycle) —
+# `storage.buckets.get`/`getIamPolicy`/`objects.list`, bundled by the managed
+# legacyBucketReader role, granted per declared bucket only (a custom role
+# would carry the same three permissions through heavier machinery; this is
+# the least-privilege managed fit, recorded in ADR-174).
+[[bucket_role]]
+service_account = "sig-probe-rt"
+bucket = "sig-web"
+role = "roles/storage.legacyBucketReader"
+
+[[bucket_role]]
+service_account = "sig-probe-rt"
+bucket = "sig-public"
+role = "roles/storage.legacyBucketReader"
+
+[[bucket_role]]
+service_account = "sig-probe-rt"
+bucket = "sig-restricted"
+role = "roles/storage.legacyBucketReader"
+
+[[bucket_role]]
+service_account = "sig-probe-rt"
+bucket = "sig-backups"
+role = "roles/storage.legacyBucketReader"
 
 # Export: writes a new exports/national/<as-of>/ prefix per run — create only.
 [[bucket_role]]
