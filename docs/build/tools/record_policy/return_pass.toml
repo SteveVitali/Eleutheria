@@ -639,3 +639,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acce
   go = '''none — read-only sweeps and reads (the recorded live window is the go)'''
   rerun = '''implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true'''
   live_dependants = ["GATE-G4"]
+[[row]]
+key = "P35.57"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued API-roll leg (the ticket's only live requirement — the in-ticket pause): mount the current promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY=/mnt/rel/registry`, GCSFuse `r/` slice) and roll the image to a new Cloud Run revision, then verify the new revision serves traffic and `/v1/health` names the promoted release; the engineered halves landed (ReleaseServingStore verified api-slice reads + basis disclosure + V7 api-parity preflight, PR #263 five-check green); no deferral of its own opens — the api-slice-emission deferral this run records has its own home in the toolchain rows'''
+gates_cell = '''hosted production write, never pre-authorised (IN-TICKET PAUSE — it changes public API response bytes): the verbatim in-ticket go is already recorded (GATE-G4 §2, "Grant the go now", 2026-10-09T17:32Z) but the leg still needs its real preconditions — `sig-api` deployed and serving (live:P34.46 L2 landed; its L3 soak is the standing read), the release-registry mount actually configured on the service (`SIG_RELEASE_REGISTRY` + the `r/` slice present — absent at run time), a promoted release in the registry bucket, an AR-2 backup SUCCESSFUL, `sig-ops roll-gate` green on fresh inputs, and an AR-3 weekday slot (the excluded hours: weekends and outside-14:00-20:00Z)'''
+operator_cell = '''the GATE-G4 §2 go is on record; the operator runs (or re-authorises) the roll in the slot — mount config, image roll, revision-serving + `/v1/health` verification — and be present; a failed health read rolls back, never leaves a half-mounted revision serving'''
+rerun_cell = '''`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (scope: the mount + roll + verification) · landed as row 261 (PR #263 — engineering green; the live leg queued on absent deployment prerequisites)'''
+
+  [[row.legs]]
+  id = "P35.57-api-roll"
+  obligations = []
+  earliest = '''bounded by live:P34.46 (its L2 deploy landed — `sig-api` must exist to roll) + the release-registry mount on the service + a promoted release in the bucket; then the next weekday 14:00-20:00Z slot'''
+  excluded = ["weekends and outside-14:00-20:00Z"]
+  go = '''verbatim-go: the GATE-G4 §2 go recorded in GATE DECISIONS ("Grant the go now" 2026-10-09T17:32Z) + AR-2 backup SUCCESSFUL + roll-gate green on fresh inputs + the registry mount present'''
+  rerun = '''implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true'''
+  live_dependants = ["P35.58", "P35.59", "P35.60", "P35.61", "P35.63", "P36.38", "P37.20"]

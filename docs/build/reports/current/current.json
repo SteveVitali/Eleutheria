@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "5f2d0bc0cbbc52cfff34831cbfd8d0ab7a27548e",
+  "input_commit": "1f198c2dae6c2a21816a8c04780d5b8fa79c03d7",
   "manifest_inputs": 1003,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.57",
-    "lastCompleted": "GATE-G4",
+    "nextTicket": "P35.5",
+    "lastCompleted": "P35.57",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.46, P34.47, P34.49, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.46, P34.47, P34.49, P34.50, P35.57",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.47-sub-round-11a-acceptance",
+    "chainTip": "r11/P35.57-api-release-parity",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-09T15:18Z"
+    "updatedAt": "2026-10-10T00:14Z"
   },
   "counts": {
     "obligations": 161,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 31,
+    "return_pass_rows": 32,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8438,6 +8438,14 @@
         "gates_cell": "hosted, read-only — `sig-ops acceptance-sweep --check` refuses (exit 42) until P34.46's L2 deploy leg has landed live, which itself needs the operator's verbatim in-ticket go recorded in GATE DECISIONS, `live:P34.39a` verdict pass, a weekday 14:00-20:00Z slot no earlier than 2026-10-14T14:00Z and `sig-ops roll-gate` green on fresh inputs; exit item 5 additionally waits on P34.46's L3 soak read (48 h after L2); a missing handle list means RI-01 reports not checked, never passed; GATE-G4 is not presented while any leg is due (OM-19)",
         "operator_cell": "nothing until P34.46's L2 has landed — the sweep itself needs no go (read-only); the packet is presented by the orchestrator at row 260 (GATE-G4) only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (scope: the sweep and the packet) · landed as row 259 (sweep leg queued exit 42 — the gate's refusals are the recorded evidence)",
+        "obligations": []
+      },
+      {
+        "key": "P35.57",
+        "obligations_cell": "the queued API-roll leg (the ticket's only live requirement — the in-ticket pause): mount the current promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY=/mnt/rel/registry`, GCSFuse `r/` slice) and roll the image to a new Cloud Run revision, then verify the new revision serves traffic and `/v1/health` names the promoted release; the engineered halves landed (ReleaseServingStore verified api-slice reads + basis disclosure + V7 api-parity preflight, PR #263 five-check green); no deferral of its own opens — the api-slice-emission deferral this run records has its own home in the toolchain rows",
+        "gates_cell": "hosted production write, never pre-authorised (IN-TICKET PAUSE — it changes public API response bytes): the verbatim in-ticket go is already recorded (GATE-G4 §2, \"Grant the go now\", 2026-10-09T17:32Z) but the leg still needs its real preconditions — `sig-api` deployed and serving (live:P34.46 L2 landed; its L3 soak is the standing read), the release-registry mount actually configured on the service (`SIG_RELEASE_REGISTRY` + the `r/` slice present — absent at run time), a promoted release in the registry bucket, an AR-2 backup SUCCESSFUL, `sig-ops roll-gate` green on fresh inputs, and an AR-3 weekday slot (the excluded hours: weekends and outside-14:00-20:00Z)",
+        "operator_cell": "the GATE-G4 §2 go is on record; the operator runs (or re-authorises) the roll in the slot — mount config, image roll, revision-serving + `/v1/health` verification — and be present; a failed health read rolls back, never leaves a half-mounted revision serving",
+        "rerun_cell": "`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (scope: the mount + roll + verification) · landed as row 261 (PR #263 — engineering green; the live leg queued on absent deployment prerequisites)",
         "obligations": []
       }
     ]
@@ -18438,10 +18446,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "5cc4dd037a4efcd5aedd212718655c053ac61fced82e6bfba31946791f9c16e1",
+  "manifest_sha256": "cdb4be11d47ec378c3adb2cdf681b35919593b5c18afeef17921ea8a3939a6be",
   "current_md": {
     "lines": 63,
-    "bytes": 15433,
+    "bytes": 15425,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
