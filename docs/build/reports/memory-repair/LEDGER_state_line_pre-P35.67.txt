@@ -1,0 +1,7 @@
+Byte-for-byte archive of the head State line replaced at P35.67's closeout
+(the PHASE LOG end pointer P35.5 → P35.67 and the next-row pointer
+P35.67 → P35.1a). Archived 2026-10-10 — the BM-LEDGER-08 pattern
+(replaced lines archived, never silently rewritten).
+
+Line 12 (State):
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with the P35.5 closeout (row 262 — the zero-egress R2 mirror leg engineered + fixture-verified; the R2 push + origin-enable leg queued in RETURN PASS on OP-09 + credentials); next → P35.67 (row 263).
