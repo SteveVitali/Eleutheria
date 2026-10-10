@@ -65,7 +65,7 @@ secrets = { SIG_PG_PASSWORD = "sig-pg-password" }
 job = "sig-ingest-pinned"
 image = "{ar_host}/{project}/sig/sig-api@sha256:%s"
 reason = "test pin"
-expiry = "2999-01-01"
+expiry = "2999-01-01"  # future-ok: synthetic: far-future expiry so the fixture pin never expires
 
 [fleet]
 image_repo = "{ar_host}/{project}/sig/sig-api"
@@ -567,7 +567,7 @@ def test_upload_run_row_local(tmp_path: Path):
         mode="from-state",
         outcome="ok",
         exit_code=0,
-        started_at="2026-10-10T11:30:00+00:00",
+        started_at="2026-10-10T11:30:00+00:00",  # future-ok: synthetic: fixture run-row timestamp
         duration_seconds=0.1,
     )
     cadence, _ = _cadence(tmp_path)
