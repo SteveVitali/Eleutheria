@@ -1795,6 +1795,18 @@ derivative_permitted = true
 terms_url = "https://www.ncsl.org/terms-of-use"
 retrieval_date = 2026-09-22
 
+[sources.state_alpr_statute_inventory_2026]
+name = "State ALPR statute inventory — 2026 origin-verified refresh"
+source_kind = "government_portal"
+homepage_url = ""
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "not_applicable"
+ingestion_permitted = false
+last_verified = 2026-10-10
+notes = "SIG-INGEST-049f / I8 §4.4 (ACQ-06, P35.10; F-374; I7-C9 [B-39] = a): the 2026 refresh of the frozen 2022 seed — a NEW committed asset (state_alpr_statute_seed_2026.toml, schema statute_seed/2) that supersedes the 2022 asset's coverage going forward while both stay committed and loadable (append-only). Eight [[statutes]] entries verified at per-state origins in the committed I7 packets (I7-U137/U138/U142–U147, live-read 2026-09-30) incl. MO EO 26-18 typed executive_order; NCSL/LAPPA/GHSA/MultiState were enumeration aids only — no claim cites them. The [[duty_rows]] 50-state table records the coverage/duty surface honestly (8 origin_verified, 16 recorded in the superseded asset, 26 none_recorded = absence of evidence). One-time committed data, never a feed; loads through `sig-connectors load-seed` on the Wave-A roll (P35.11). ingestion_permitted stays false (SIG-INGEST-028); a live run still refuses. Rights posture: the same derived-facts basis the reviewed 2022 row recorded (P27.2/ADR-095 — facts + citations only, never re-hosted text) is the EXPECTED basis; this row is left UNREVIEWED (no rights block, UNDETERMINED) — an agent records no reviewer signature."
+
 # ===========================================================================
 # H4. Future recurring sources — mandated but not yet flowing (§22.6 H4, SIG-INGEST-050)
 # ===========================================================================
@@ -1808,6 +1820,77 @@ custody_posture = "MIRROR"
 compact_status = "not_contacted"
 robots_policy = "not_applicable"
 notes = "SIG-INGEST-050: enacted statute mandating public posting of nine items mapping onto SIG's deployment schema; first reports due 2027-04-01. Registered early so the connector can be specified against the field list; absence before the due date is a lawful not_applicable coverage state; non-compliance after is an AccountabilityEvent (SIG-INGEST-049e)."  # future-ok: real-world: statutory first-reports deadline
+
+# P35.10 (I8 §4.4 / ACQ-06, SIG-INGEST-050): the I7-packet duty leads,
+# registered with their commencement dates — absence before the due date
+# is a lawful not_applicable coverage state; non-compliance after is an
+# AccountabilityEvent (SIG-INGEST-049e). All gated; no feed exists yet.
+
+[sources.future_statutory_disclosure_va]
+name = "Virginia ALPR statutory disclosures — Va. Code § 2.2-5517(I/J/K)"
+source_kind = "government_portal"
+homepage_url = "https://law.lis.virginia.gov/vacode/title2.2/chapter55.6/section2.2-5517/"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+last_verified = 2026-09-30
+notes = "SIG-INGEST-050: Va. Code § 2.2-5517 (eff. 2025-07-01) — I: each ALPR-using agency reports to Virginia State Police by April 1; J: the VSP aggregate report to the Governor/General Assembly/VSCC by July 1; K: each agency publicly posts its ALPR policy and its report. First reports due 2026-04-01 / 2026-07-01 (cycle after the effective date). Evidence: I7-U138 / I3-C041 (origin live-read 2026-09-30)."
+
+[sources.future_statutory_disclosure_nm]
+name = "New Mexico ALPR agency reports to DPS — SB 40 (2026) §A"
+source_kind = "government_portal"
+homepage_url = "https://www.nmlegis.gov/Sessions/26%20Regular/final/SB0040.PDF"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+last_verified = 2026-09-30
+notes = "SIG-INGEST-050: NM SB 40 (2026) §A — every ALPR-using law-enforcement agency reports to the Department of Public Safety by April 1 each year on the preceding calendar year: camera counts by mobile/stationary, state/federal databases compared, query counts and purposes. First reports on or after 2027-04-01 (inferred: effective 2026-07-01 + April-1 cycle). Evidence: I7-U531 / I9a-C037 (final text live-read 2026-09-30, F060 pp4-5)."  # future-ok: real-world: statutory first-reports deadline
+
+[sources.future_statutory_disclosure_al]
+name = "Alabama LPR Registry duties — Ala. Admin. Code 265-X-6"
+source_kind = "government_portal"
+homepage_url = "https://admincode.legislature.state.al.us/api/chapter/265-X-6"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+last_verified = 2026-09-30
+notes = "SIG-INGEST-050: Alabama Justice Information Commission rules ch. 265-X-6 (eff. 2022-03-17) — .05: capturing agencies submit LPR data to the State LPR Registry at ALEA within 48 h once established; .07: ALEA audits every capturing agency at least every 3 years; .10: annual report to the Commission (statewide audit + per-agency policy-posting compliance). Duty already commenced; publication not located. Evidence: I7-U530 / I9a-C020 (live-read 2026-09-30, F024)."
+
+[sources.future_statutory_disclosure_ar]
+name = "Arkansas LPR statistics compilation — 12 CAR 150-103(f)"
+source_kind = "government_portal"
+homepage_url = "https://media.ark.org/ardot/12-CAR-150-License-Plate-Reader-Rules.pdf"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+last_verified = 2026-09-30
+notes = "SIG-INGEST-050: 12 CAR 150-103(f)(1) — the Arkansas Highway Police compiles LPR statistical data in accordance with Ark. Code 12-12-1805 to allow general-public review; (f)(2) data retained 18 months (F048). Duty already commenced; the compiled publication is not located. Evidence: I7-U556 / I9a-C032 (live-read 2026-09-30)."
+
+[sources.future_statutory_disclosure_ut]
+name = "Utah facial-recognition annual reports — Utah Code 77-23e-106"
+source_kind = "government_portal"
+homepage_url = "https://le.utah.gov/~2021/bills/sbillenr/SB0034.htm"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+last_verified = 2026-09-30
+notes = "SIG-INGEST-050: Utah Code 77-23e-106(3)(a) (SB 34, 2021) — on or after Aug 1 and before Oct 15 each year, every government entity using a facial-recognition system reports to the Government Operations Interim Committee (crime types, request counts, probable matches, image source). A T11 FR duty registered beside the ALPR duty set; report publication not located (F078). Evidence: I7-U517 / I9a-C050 (live-read 2026-09-30)."
+
+[sources.future_statutory_disclosure_mn]
+name = "Minnesota NW Metro RTCC report — HF 3198 (2025-26), contingent"
+source_kind = "government_portal"
+homepage_url = "https://www.revisor.mn.gov/bills/94/2025/0/HF/3198/versions/latest"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+last_verified = 2026-09-30
+notes = "SIG-INGEST-050: MN HF 3198 (2025-26) — appropriation for the Northwest Metro Regional Real Time Crime Center (Brooklyn Park) with a required report to the Governor and legislature. CONTINGENT LEAD: enactment unverified — a bill is not an appropriation (S5 guard); if enacted, the report lands in the MN LRL mandated-reports series. Evidence: I7-U532 / I9a-C051 (bill text live-read 2026-09-30, F080)."
 
 # ===========================================================================
 # I. International (§22.6 I)

@@ -117,6 +117,9 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # via `sig-connectors load-seed` / `run_seed` — the packaged asset over the
     # static transport, never a live fetch.
     "state_alpr_statute_inventory": "state_statute_seed",
+    # The 2026 origin-verified refresh (P35.10 / ACQ-06): a second committed
+    # seed asset beside the frozen 2022 one — both stay loadable (append-only).
+    "state_alpr_statute_inventory_2026": "state_statute_seed",
     # The nine P25.6 `promote` sources, made real under P26.2 (SOURCES.2). Each
     # routes through its named class connector — no bespoke adapters:
     #   * legistar / civicclerk / primegov — the agenda-platform tenant path the

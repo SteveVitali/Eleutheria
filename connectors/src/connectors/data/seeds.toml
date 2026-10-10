@@ -24,3 +24,17 @@ asset = "state_alpr_statute_seed.toml"
 kind = "statute_seed"
 media_type = "application/toml"
 target_url = "https://www.ncsl.org/technology-and-communication/automated-license-plate-readers-state-statutes"
+
+# The 2026 origin-verified refresh (P35.10 / I8 §4.4 / ACQ-06, F-374,
+# I7-C9 [B-39] = a): a NEW committed asset beside the frozen 2022 seed —
+# both stay registered and loadable (append-only). Every [[statutes]]
+# entry is origin-cited from the committed I7 packets; the [[duty_rows]]
+# 50-state table is the coverage/duty surface (SIG-INGEST-050). A
+# compiled multi-origin asset has no single upstream URL — the target
+# url is its committed-asset URN (never fetched).
+
+[state_alpr_statute_inventory_2026]
+asset = "state_alpr_statute_seed_2026.toml"
+kind = "statute_seed"
+media_type = "application/toml"
+target_url = "urn:sig:seed:state-alpr-statute-2026"

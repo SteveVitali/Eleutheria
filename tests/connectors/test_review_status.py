@@ -121,8 +121,11 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # ca_state_auditor (342 → 345 registered; all ingestion_permitted=false).
     # P35.6 (ACQ-01) registered the Round-11 acquisition plan's 242 source
     # rows (345 → 587 registered; every row lands ingestion_permitted=false
-    # pending its HG-03 line, so loadable is unchanged).
-    assert "registered sources: 587" in out
+    # pending its HG-03 line, so loadable is unchanged). P35.10 (ACQ-06)
+    # registered the 2026 statute-seed refresh row plus the six gated
+    # future_statutory_disclosure_* duty rows (587 → 594 registered; all
+    # ingestion_permitted=false, so loadable is unchanged).
+    assert "registered sources: 594" in out
     assert "self-checks OK" in out
 
 
@@ -237,9 +240,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # (345 → 587 registered; every generated row stays
     # ingestion_permitted=false until its HG-03 line — loadable 236
     # unchanged, flip-ready still the one standing exception).
+    # P35.10 (ACQ-06) registered the 2026 statute-seed refresh row plus the
+    # six gated future_statutory_disclosure_* duty rows (587 → 594
+    # registered; every row stays ingestion_permitted=false — loadable 236
+    # unchanged, flip-ready still the one standing exception: the refresh
+    # row carries no rights block, so it does not join flip-ready).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 587" in out
+    assert "registered sources: 594" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out
