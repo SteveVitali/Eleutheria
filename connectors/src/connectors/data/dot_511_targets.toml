@@ -270,6 +270,160 @@ rights_note = "MD iMAP terms: 'Data can be freely distributed as long as the met
 #   unresolved_rights    — located but no terms resolve under GL-GATE-06
 #   access_restricted    — endpoint answered 401/403
 
+# --- P35.6 / R11-ACQ-01 generated targets (ticket 266) -----------------------
+# Gated source rows own these registrations; observed_count/out_fields/
+# object_id_field are pinned at the family ticket's registration review
+# (the note on each row says so — nothing here is silently verified).
+
+[[targets]]
+id = "traffic_devices_camera_de_boundary_and_point_layer_26"
+source_id = "dot_511_de"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/26"
+layer_url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/26"
+agency = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap (state ArcGIS Enterprise)"
+state = "US-DE"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T1-002"
+notes = "ACQ-01 generated target (plan AP-T1-002, cand I5-C003). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "its_devicelist_devicelocdetail"
+source_id = "dot_511_vt"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/NXmBVyW5TaiCXqFs/arcgis/rest/services/ITS_DeviceList/FeatureServer/1"
+layer_url = "https://services1.arcgis.com/NXmBVyW5TaiCXqFs/arcgis/rest/services/ITS_DeviceList/FeatureServer/1"
+agency = "Vermont Agency of Transportation, Operations & Safety Bureau ITS group (via ArcGIS Online, owner OSB_VTrans)"
+state = "US-VT"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T1-007"
+notes = "ACQ-01 generated target (plan AP-T1-007, cand I5-C001). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "cctv_wvdoh_wvdot_assets_mapserver_layer_22"
+source_id = "dot_511_wv"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://gis.transportation.wv.gov/arcgis/rest/services/Assets/Assets/MapServer/22"
+layer_url = "https://gis.transportation.wv.gov/arcgis/rest/services/Assets/Assets/MapServer/22"
+agency = "West Virginia Department of Transportation, Division of Highways (WVDOT GIS server)"
+state = "US-WV"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T1-008"
+notes = "ACQ-01 generated target (plan AP-T1-008, cand I5-C009). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "midrive_cameras"
+source_id = "dot_511_mi"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services2.arcgis.com/67lKNkQ2TO1I3lhR/arcgis/rest/services/MiDrive%20Cameras/FeatureServer/0"
+layer_url = "https://services2.arcgis.com/67lKNkQ2TO1I3lhR/arcgis/rest/services/MiDrive%20Cameras/FeatureServer/0"
+agency = "Michigan Department of Transportation (via ArcGIS Online, owner MDOT_GIS)"
+state = "US-MI"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T1-011"
+notes = "ACQ-01 generated target (plan AP-T1-011, cand I5-C002). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "automated_safety_cameras_asc"
+source_id = "dot_511_dc"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/43"
+layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/43"
+agency = "District of Columbia, District Department of Transportation (via DC GIS / OCTO)"
+state = "US-DC"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T1-025"
+notes = "ACQ-01 generated target (plan AP-T1-025, cand I4-C051). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead CC-BY-4.0."
+technology = "fixed-camera-unspecified"
+
+[[targets]]
+id = "ncdot_cameras"
+source_id = "dot_511_nc"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/NuWFvHYDMVmmxMeM/arcgis/rest/services/NCDOT_Cameras/FeatureServer/0"
+layer_url = "https://services.arcgis.com/NuWFvHYDMVmmxMeM/arcgis/rest/services/NCDOT_Cameras/FeatureServer/0"
+agency = "North Carolina Department of Transportation (ArcGIS Online org NuWFvHYDMVmmxMeM, which hosts GISUnit.NCDOT.GOV items)"
+state = "US-NC"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T1-090"
+notes = "ACQ-01 generated target (plan AP-T1-090, cand I5-C017). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "cctv_wvpa_wvdot_assets_mapserver_layer_23"
+source_id = "dot_511_wv"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://gis.transportation.wv.gov/arcgis/rest/services/Assets/Assets/MapServer/23"
+layer_url = "https://gis.transportation.wv.gov/arcgis/rest/services/Assets/Assets/MapServer/23"
+agency = "West Virginia Parkways Authority cameras on the WVDOT GIS server"
+state = "US-WV"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T2-003"
+notes = "ACQ-01 generated target (plan AP-T2-003, cand I5-C010). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "statewide_cctv_view"
+source_id = "dot_511_nm"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services9.arcgis.com/g5DRQBSrdz0HuCxB/arcgis/rest/services/Statewide_CCTV_View/FeatureServer/0"
+layer_url = "https://services9.arcgis.com/g5DRQBSrdz0HuCxB/arcgis/rest/services/Statewide_CCTV_View/FeatureServer/0"
+agency = "NMDOT ITS CCTV inventory per item snippet (ArcGIS Online org short-name \"ITS511\", owner douglas.geusz_ITS511; org identi"
+state = "US-NM"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T2-018"
+notes = "ACQ-01 generated target (plan AP-T2-018, cand I5-C006). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "its_atm_existing_devices_ndot_statewide_its_atm_masterplan_layer_3"
+source_id = "dot_511_nv"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/9Y4hSlLf13E9S0Eo/arcgis/rest/services/ITS_ATM/FeatureServer/3"
+layer_url = "https://services1.arcgis.com/9Y4hSlLf13E9S0Eo/arcgis/rest/services/ITS_ATM/FeatureServer/3"
+agency = "Nevada Department of Transportation (ArcGIS Online owner OpenData_NDOT)"
+state = "US-NV"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T2-103"
+notes = "ACQ-01 generated target (plan AP-T2-103, cand I5-C014). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
+
+[[targets]]
+id = "closed_circuit_television_cctv_itd_intelligenttransportationsystems_layer_0"
+source_id = "dot_511_id"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://gisp.itd.idaho.gov/server/rest/services/GDWarehouse/IntelligentTransportationSystems/FeatureServer/0"
+layer_url = "https://gisp.itd.idaho.gov/server/rest/services/GDWarehouse/IntelligentTransportationSystems/FeatureServer/0"
+agency = "Idaho Transportation Department (ArcGIS Enterprise gisp.itd.idaho.gov; owner ITDGISdata)"
+state = "US-ID"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 0
+enum_source = "r11-acq-01:AP-T2-105"
+notes = "ACQ-01 generated target (plan AP-T2-105, cand I5-C018). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+technology = "camera-ptz"
 [[enumerated]]
 id = "fl511_api"
 state = "FL"

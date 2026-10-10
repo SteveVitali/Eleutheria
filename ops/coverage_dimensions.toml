@@ -1,0 +1,35 @@
+# P35.6 / R11-ACQ-01 — the committed coverage-delta dimension registry (I8 §7.7).
+#
+# `sig-ops coverage-delta` reports added/removed/changed cells across exactly
+# these dimensions — the I1 blind-spot method, committed as data so a wave's
+# report can never invent a category (no unexplained dots, §3.1). A snapshot
+# cell whose `dimension` is not declared here fails to load — an undeclared
+# dimension is drift, not coverage.
+#
+# A dimension's `key` describes what one cell identifies; `source` names where
+# the cell keys come from.
+
+[dimensions.blind_spot]
+key = "an I1/NEW-n blind-spot id (e.g. 'NEW-8')"
+source = "the candidate seed's i7_blind_spots cell"
+note = "I1's discovery method: each blind spot is a recorded gap the wave set out to close."
+
+[dimensions.state_tier]
+key = "an ISO 3166-2 state cell (e.g. 'US-DE'); `tier` records A/B where I1 graded it"
+source = "the candidate seed's geographies cell + I1 tier grades"
+note = "Tier-A/B state coverage — the wave's highest-priority geography axis."
+
+[dimensions.gl1_city]
+key = "a GL1 city id/name cell"
+source = "the GL1 city list (I1)"
+note = "Global-city coverage; a cell exists only where the city is a named GL1 row."
+
+[dimensions.technology_class]
+key = "a SKOS technology class slug (e.g. 'alpr', 'traffic_camera')"
+source = "the candidate seed's ontology_concepts cell"
+note = "Coverage by surveillance technology class (R3 typing rules apply to targets)."
+
+[dimensions.country]
+key = "an ISO 3166-1 alpha-2 country cell (e.g. 'US', 'CA')"
+source = "derived from the geographies cell"
+note = "Country-level roll-up; US rows also carry their state_tier cells."

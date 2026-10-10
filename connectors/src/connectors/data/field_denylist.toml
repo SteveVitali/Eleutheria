@@ -1,0 +1,98 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The Part VIII layer-field denylist (F-330, S1 — findings/REGISTER.md row
+# F-330, owned by P35.6 / R11-ACQ-01). F-330 found public ArcGIS/Socrata layers
+# discovered by the same keyword/owner sweep SIG uses for camera registries that
+# carry per-person data: Flock "search results" (plate + capture time +
+# location), a Mark43-hosted "CGPD LPR Hits" layer (PLATE, HOTLIST_REASON,
+# TIMESTAMP, ADDRESS), a Flower Mound TX registrant layer (FIRST_NAME,
+# LAST_NAME, ADDRESS1, PHONE, EMAIL), a Socrata `red_vrm` field, and the Horizon
+# City Axon ALPR layer (owner_firstname/owner_lastname/badge_id) that
+# GL-GATE-07 had to exclude by hand.
+#
+# This table is DATA, not code (SIG-ENG-001): a field name is denied as a
+# REGISTRATION refusal — a `[[targets]]` row whose `observed_fields` (the
+# layer's published schema) or `out_fields` (the reviewed capture allowlist)
+# contains a denied name is refused by `sig-connectors validate`, by the
+# ACQ-01 generator, and by the dot_511 target reader. It is NOT a capture-time
+# filter: a layer that publishes plate/registrant fields is not a camera
+# registry and never registers, even with an allowlist (Part VIII §0.7 is
+# absolute — the safest capture of a person-data layer is no layer).
+#
+# Matching (connectors.field_denylist): each published field name is
+# normalised to lowercase snake tokens (camelCase and `FirstName` split on
+# case, non-alphanumeric runs collapse to one separator). A name is denied when
+# it contains a denied token SEQUENCE — `[["first","name"]]` matches
+# `FIRST_NAME`, `firstName`, `owner_first_name`, `ownerFirstName` — or equals a
+# denied single token. Tokens match exactly, so `template` never matches
+# `plate`, `RoadwayName` never matches `first_name`, and a camera's own `Owner`
+# (the publishing agency — an organisation label) is not denied: the denied
+# "kin" names the PERSON fields, never the layer's organisation metadata.
+
+schema = "sig.field-denylist/1"
+finding = "F-330"
+owner = "P35.6 (R11-ACQ-01)"
+
+# Single tokens — a field carrying one of these as a whole token is denied.
+deny_tokens = [
+  "plate",      # PLATE, license_plate(→license+plate), plate_number, red plate
+  "lpn",        # licence-plate-number abbreviations
+  "vrm",        # Socrata red_vrm; vehicle registration mark fields
+  "hotlist",    # HOTLIST_REASON, hotlist_name — the watchlist itself is PII-linked
+  "badge",      # badge_id, badge_number — officer identity (Horizon precedent)
+  "email",      # EMAIL, email_address (→email+address pair also denied)
+  "phone",      # PHONE, phone_number, phone_num
+  "telephone",
+  "mobile",
+  "cellphone",
+  "address",    # ADDRESS, ADDRESS1/2 — registrant/home addresses (F-330)
+  "driver",     # driver_name, driver_license — vehicle-operator identity
+  "officer",    # officer_name, officer_id — officer identity
+  "registrant", # registrant_name — camera-programme registrants (Flower Mound)
+  "submitter",  # private-camera programme submitter identity
+  "resident",   # resident_name — private-registry resident rows
+  "surname",
+  "firstname",
+  "lastname",
+  "contact",    # contact, contact_name/email/phone — person contact rows
+]
+
+# Token sequences — a field containing this contiguous token run is denied.
+# `first_name`/`last_name` cover FIRST_NAME, FirstName, owner_first_name,
+# ownerLastName; `search_reason`/`stop_reason`/`hit_reason` cover Flock audit
+# and Mark43 hotlist-reason fields (F-330 "search reason").
+deny_sequences = [
+  ["first", "name"],
+  ["last", "name"],
+  ["full", "name"],
+  ["family", "name"],
+  ["given", "name"],
+  ["middle", "name"],
+  ["maiden", "name"],
+  ["owner", "name"],       # owner_name / OwnerName — registrant identity
+  ["person", "name"],
+  ["license", "plate"],
+  ["licence", "plate"],
+  ["plate", "number"],
+  ["plate", "read"],
+  ["search", "reason"],
+  ["reason", "for", "search"],
+  ["stop", "reason"],
+  ["hit", "reason"],
+  ["read", "record"],      # read_record_id — ALPR read records (Horizon)
+  ["hotlist", "reason"],
+  ["hotlist", "name"],
+  ["driver", "license"],
+  ["driver", "licence"],
+  ["badge", "number"],
+  ["badge", "id"],
+  ["vehicle", "name"],     # registrant vehicle label (Horizon layer)
+  ["home", "address"],
+  ["street", "address"],
+  ["mailing", "address"],
+  ["postal", "address"],
+  ["e", "mail"],
+  ["cell", "phone"],
+]

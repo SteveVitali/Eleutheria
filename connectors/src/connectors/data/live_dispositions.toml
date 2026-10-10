@@ -362,3 +362,975 @@ disposition = "link_only"
 # and fema_hsgp_allocations through the `procurement` connector's federal-
 # assistance award-search path — so all eight carry no disposition row (mapped
 # sources carry none). D-R7.3-BREADTH is closed.
+
+# --- P35.6 / R11-ACQ-01 generated dispositions (ticket 266) --------------------
+# One promote row per generated source, naming its recorded class ticket
+# (HG-03 flip still required — never here).
+
+[sources.agenda_az_maricopa_county_board_of]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_bexar_county_tx_agenda_center]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_durham_nc_agenda_center]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_frisco_tx_onbase_agenda_online]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_haskell_ar_resolution_no_19]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.agenda_hialeah_fl_agenda_center]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_jersey_city_nj_digital_agenda]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_nd_fargo_city_commission_agendas]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_pasadena_ca_policy_620_cellular]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.agenda_savannah_ga_2023_05_25]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_tampa_fl_onbase_agenda_online]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_tx_dallas_county_commissioners]
+disposition = "promote"
+class_ticket = "P37.50"
+
+[sources.agenda_us_agency_fusus_real]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_alabaster_al_lpr_cameras]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_au_ckan_package_search]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_nsw_sydney_street_safety]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_qld_towns_cctv_camera_register]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_tas_emergency_closed_circuit]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_tas_hobar_security_camera]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_vic_ballarat_cctv_cameras]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_vic_geelong_closed_circuit]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_au_wa_perth_security_cameras]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_az_mesa_city_of_expenditures]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_bloomington_il_drone_flights]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_ca_monterey_park_flock_camera]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.camreg_ct_approximate_speed_safety]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_dc_private_security_camera]
+disposition = "promote"
+class_ticket = "P36.7"
+
+[sources.camreg_de_delaware_checkbook_expenditure]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_de_traffic_devices_red]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_detroit_mi_project_green_light]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_elgin_il_lpr_cameras]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_es_md_madrid_c_maras_de]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_eu_eea_data_europa_search_api]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_fl_broward_county_us_palm_beach]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.camreg_fl_d3_flock_camera]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_fl_flock_removal_status]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_fr_92_grand_paris_seine_ouest_vid]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_ga_brookhaven_flock_camera]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_ga_flock_cameras_asof]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_ga_peachtree_corners_flock_camera]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_ga_savannah_flock_camera]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_gastonia_nc_flock_condor_cameras]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_gb_eng_barnet_cctv_camera]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_eng_barnet_cctv_traffic]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_eng_brist_cctv_cameras]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_eng_ipswich_cctv_camera]
+disposition = "promote"
+class_ticket = "P37.69b"
+
+[sources.camreg_gb_eng_leice_cctv_cameras]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_eng_mansf_cctv_cameras]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_eng_north_cctv_cameras]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_eng_runny_cctv_cameras]
+disposition = "promote"
+class_ticket = "P37.69b"
+
+[sources.camreg_gb_eng_south_skdc_cctv]
+disposition = "promote"
+class_ticket = "P37.69b"
+
+[sources.camreg_gb_eng_traff_trafford_cctv]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_gb_sct_clackmannanshire_cctv]
+disposition = "promote"
+class_ticket = "P37.69b"
+
+[sources.camreg_gb_sct_edinburgh_public_cctv]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_howard_county_md_schzonehighligh]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_hyattsville_md_cctv_camera_2024]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.camreg_ie_d_dublin_traffic_poles_with]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_il_chicago_violence_reduction]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_it_me_messina_videosorveglianza]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_jeffersonville_in_flock]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.camreg_la_east_baton_rouge_parish_flock]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_la_new_orleans_eye_on]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_lakeland_fl_red_light_cameras]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_leon_county_fl_overwatch_viewer]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_ma_massachusetts_capital]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.camreg_marble_falls_tx_flock_locations]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_md_montgomery_county_automated]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_md_montgomery_county_speedcameras]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_medford_or_drone_deployments_fs]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_medford_or_red_light_speed]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_mi_detroit_dpd_shotspotter]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_milford_ct_flocklprcam]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_ne_lincoln_traffic_cameras]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.camreg_nj_new_jersey_yourmoney]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_nv_las_vegas_us_clark_county]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.camreg_ny_new_york_city_mta_bus]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_oakland_ca_shotspotter_2013_2015]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_omaha_ne_parks_cameras]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.camreg_peoria_il_drone_usage]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_pt_11_lisboa_sistema_de]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_pueblo_co_flock]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_rocky_mount_nc_lpr_cameras]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_santa_fe_nm_park_cameras]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.camreg_shelbyville_tn_flock_cameras]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_si_048_ko_evje_videonadzor_na]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_south_fulton_ga_lpr_cameras]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_suffolk_county_ny_tpva_red_light]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_temecula_ca_flock_wfl1]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_thomasville_ga_flock_location]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_ua_18_korosten]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.camreg_us_agency_drone_flight]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_us_agency_published_flock]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.camreg_us_ate_camera_location_and_per]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_us_body_worn_camera]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_us_municipal_contract_expenditure]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_us_nces_school_survey_on_crime]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.camreg_us_socrata_hosted_vendor]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.camreg_va_pittsylvania_county_stationary]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_va_prince_william_county]
+disposition = "promote"
+class_ticket = "P36.5"
+
+[sources.camreg_wa_tacoma_automated_enforcement]
+disposition = "promote"
+class_ticket = "P36.6"
+
+[sources.camreg_wa_washington_state_open]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.ccops_anchorage_ak]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.ccops_austin_tx]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.ccops_ca_calistoga_police_department]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.ccops_ca_pinole_police_department]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.ccops_ca_san_diego_privacy_advisory]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.ccops_ca_san_diego_sunshine_act_goods]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.ccops_columbia_mo]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.ccops_dayton_oh]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.ccops_gb_eng_barnet_traffic_cctv]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.ccops_hi_honolulu_police_department]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_ia_des_moines_city_of_council]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.ccops_il_chicago_oig_shotspotter]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_iso_au_privacy_commissioner]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.ccops_it_tn_trento_provvedimento_dell_11]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.ccops_mi_wayne_county_commission]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_mn_dayton_police_department]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.ccops_mo_st_louis_fy21_spi_shotspotter]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_nc_charlotte_mecklenburg_police]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_nc_elizabeth_city_police]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_nc_forsyth_county_us_winston_salem]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.ccops_ny_new_york_nyc_comptroller]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_oh_cincinnati_police_department]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.ccops_ok_oklahoma_city_okc_flock_council]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.ccops_ok_tulsa_flock_policies]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.ccops_ri_narragansett_police_camera]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.ccops_san_diego_ca]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.ccops_san_francisco_bay_ca]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_san_jose_ca]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_santa_clara_county_ca]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.ccops_sc_jasper_county_council_special]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.ccops_si_085_novo_mesto_evidenca_o]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.ccops_st_louis_mo]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.dot_511_de]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.dot_511_gb]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.dot_511_id]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.dot_511_mi]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.dot_511_nc]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.dot_511_nm]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.dot_511_nv]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.dot_511_vt]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.dot_511_wv]
+disposition = "promote"
+class_ticket = "P36.4"
+
+[sources.grant_al_alabama_adeca_newsroom]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.grant_ca_california_bscc_organized]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.grant_fl_florida_legislature_local]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.grant_il_illinois_gata_csfa]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.grant_ma_massachusetts_law_enforcement]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.grant_nj_new_jersey_oag]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.grant_oh_ohio_criminal_justice]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.grant_ok_oklahoma_jag_lle]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.grant_ok_safe_oklahoma_grant]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.grant_tx_texas_dmv_motor]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.grant_us_doj_cops_technology]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.legis_ca_california_code_53166]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.legis_gu_governor_guam_press]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.legis_ie_rs_general_scheme]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.legis_pr_pc0489_ley_del]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_pr_pc0560_plan_de]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_pr_rc0740_investigaci_sobre]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_pr_rc0787_resoluci_de]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_pr_rcs0198_resoluci_conjunta]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_pr_rs0604_resoluci_del]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_pr_sistema_nico_de]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.legis_us_dhs_system_records]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.legis_us_federal_register_api]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.legis_vi_legislature_virgin_islands]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.policy_anaheim_ca_pd_policy_manual]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.policy_bangor_me_general_order_59]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_ca_orange_county_policy_610]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_chicago_il_oemc_link_your]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.policy_houston_tx_general_orders]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_lafayette_in_camera_registration]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.policy_little_rock_ar_general_order_332]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_maricopa_county_az_mcso_policies]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.policy_nm_albuquerque_apd_standard]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_norman_ok_alpr_policy_amendment]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.policy_ok_oklahoma_dac_uved]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.policy_pflugerville_tx_isd_gaggle_page]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_st_cloud_mn_area_school_district]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.policy_us_private_camera_registry]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.policy_zionsville_in_camera_registry]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.procportal_davie_fl_notice_intent_award]
+disposition = "promote"
+class_ticket = "P36.11"
+
+[sources.procportal_fl_florida_buy_cooperative]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.procportal_il_cook_county_procurement]
+disposition = "promote"
+class_ticket = "P36.7"
+
+[sources.procportal_ny_northeastern_regional]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.procportal_ok_oklahoma_omes_statewide]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.procportal_pr_consulta_del_registro]
+disposition = "promote"
+class_ticket = "P37.51"
+
+[sources.procportal_tx_texas_dir_cooperative]
+disposition = "promote"
+class_ticket = "P37.48"
+
+[sources.procportal_us_naspo_valuepoint_portfolio]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.procportal_wa_washington_des_statewide]
+disposition = "promote"
+class_ticket = "P36.7"
+
+[sources.procportal_wa_wsipc_rfp_24]
+disposition = "promote"
+class_ticket = "P37.52"
+
+[sources.statrep_austin_tx_auditor_apd_license]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_ca_california_auditor_alpr]
+disposition = "promote"
+class_ticket = "P37.16a"
+
+[sources.statrep_ca_special_parliament_use]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.statrep_co_arvada_facial_recognition]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_co_colorado_agency_facial]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_de_delaware_information_analysis]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_fl_florida_highway_safety]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_fr_cnil_utilisation_de]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.statrep_gb_enforcement_action]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.statrep_gb_eng_seven_cctv_june_2026]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.statrep_gb_sct_joint_assurance_review]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.statrep_gb_uk_algorithmic_transparency]
+disposition = "promote"
+class_ticket = "P37.69a"
+
+[sources.statrep_hi_hawai_judiciary_under]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_il_illinois_automated_license]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_il_illinois_freedom_from]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_md_maryland_legislative_library]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_md_maryland_required_chapters]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_me_safety_maine_law]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_mi_detroit_police_department]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_mn_agencies_that_use]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_mn_minnesota_court_administrator]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_mn_unmanned_aerial_vehicle]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_nc_onslow_county_schools_gaggle]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.statrep_ne_nebraska_crime_commission]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_new_york_ny_nyc_doi_oig]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.statrep_ny_whitesboro_central_school]
+disposition = "promote"
+class_ticket = "P36.10"
+
+[sources.statrep_pa_pennsylvania_work_zone]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_seattle_wa_2024_2025_automated]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.statrep_tx_south_padre_island_faa]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.statrep_us_2024_federal_agency]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.statrep_us_dhs_ai_use]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.statrep_us_dhs_cbp_border]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_us_dhs_cbp_pia]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_us_dhs_component_privacy]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_us_dhs_obim_pia]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_us_dhs_privacy_impact]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_us_ice_287_monthly]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.statrep_us_ice_287_participating]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.statrep_us_upturn_mass_extraction_2020]
+disposition = "promote"
+class_ticket = "P37.47"
+
+[sources.statrep_us_wiretap_summary_tables]
+disposition = "promote"
+class_ticket = "P37.49"
+
+[sources.statrep_va_virginia_alpr_reporting]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_va_virginia_crime_commission]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_va_virginia_general_assembly]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_vt_vermont_law_enforcement]
+disposition = "promote"
+class_ticket = "P37.53"
+
+[sources.statrep_vt_vermont_safety_automated]
+disposition = "promote"
+class_ticket = "P36.8"
+
+[sources.statrep_wa_2026_automated_safety]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_wa_automated_traffic_safety]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_wa_facial_recognition_watech]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_wa_seattle_oig_annual]
+disposition = "promote"
+class_ticket = "P36.9b"
+
+[sources.statrep_wa_washington_attorney_general]
+disposition = "promote"
+class_ticket = "P36.8"

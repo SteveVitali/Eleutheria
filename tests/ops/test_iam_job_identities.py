@@ -10,7 +10,7 @@ job → class map resolves every live job deterministically against
 unclaimed cadence job, a conditioned grant on the wrong role, a bound
 ``reserved`` identity, a missing ``expected_job_count``); ``sig-ops iam plan
 --leg jobs`` renders the ordered leg — identities → bindings (incl. the one
-conditioned captures-prefix grant, ADR-201) → 88 same-image job updates →
+conditioned captures-prefix grant, ADR-201) → 98 same-image job updates →
 scheduler/sig-alerts invokers → the editor removal LAST — with per-step
 rollbacks; ``iam diff --leg jobs`` judges a recorded snapshot (jobs on their
 class identities, schedulers signing as sig-scheduler, the editor binding
@@ -106,11 +106,13 @@ CLASS_SA = {
 
 def test_job_map_covers_every_live_job_exactly_once(decl, cadence, job_map) -> None:
     # G1-C07's 2026-09-30 read: 88 jobs — 70 per-source + 8 camreg batches +
+    # P35.6/ACQ-01 adds the ten sig-ingest-r11-* batch jobs (created paused):
+    # 88 -> 98.
     # sig-probe + 3 manual ingest + sig-export + sig-materialize + 4 cruft
     # egress probes (P35.1b deletes them; until then they hold probe-class
     # grants).
-    assert len(job_map) == 88
-    assert decl.expected_job_count == 88
+    assert len(job_map) == 98
+    assert decl.expected_job_count == 98
     names = {s["job"] for s in cadence.get("sources", [])}
     names |= {b["job"] for b in cadence.get("batches", [])}
     names.add((cadence.get("probes") or {}).get("job"))
@@ -244,7 +246,7 @@ def test_declaration_rejects_a_bound_reserved_identity(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="bound to no workload"):
         load_declaration(bad)
     # Removing expected_job_count with classes present refuses.
-    bad.write_text(base.replace("expected_job_count = 88", ""))
+    bad.write_text(base.replace("expected_job_count = 98", ""))
     with pytest.raises(ValueError, match="expected_job_count"):
         load_declaration(bad)
 
@@ -289,9 +291,9 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
     assert "objects/evidence/captures/" in flat
     # Five job-only secrets drop the default-compute accessor.
     assert flat.count("secrets remove-iam-policy-binding") == 5
-    # (3) 88 same-image job updates — identity only, never an image.
+    # (3) 98 same-image job updates — identity only, never an image.
     job_updates = [s for s in steps if s.phase == "jobs"]
-    assert len(job_updates) == 88
+    assert len(job_updates) == 98
     for s in job_updates:
         assert "run jobs update" in " ".join(s.command)
         assert "--service-account=" in " ".join(s.command)
@@ -300,7 +302,9 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
         assert s.rollback, s.note
     # (4) the scheduler invoker move: run.invoker on each scheduled job.
     sched = [s for s in steps if "run jobs add-iam-policy-binding" in " ".join(s.command)]
-    assert len(sched) == 79
+    # 70 source + 8 camreg-batch + 1 probe triggers, +10 P35.6 r11-* batch
+    # triggers — 79 -> 89 scheduled-job invoker bindings.
+    assert len(sched) == 89
     for s in sched:
         assert "--role=roles/run.invoker" in " ".join(s.command)
         assert "sig-scheduler@" in " ".join(s.command)
@@ -522,7 +526,7 @@ def test_diff_leg_jobs_flags_an_unmapped_live_job_and_a_bad_count(decl, cadence,
     )
     joined = "\n".join(diffs)
     assert "claimed by no class" in joined
-    assert "89 != declared 88" in joined
+    assert "99 != declared 98" in joined
     # And a job missing the conditioned binding's exact expression is drift.
     snap2 = _post_jobs_snapshot(decl, cadence, job_map)
     buckets = json.loads(json.dumps(snap2.bucket_policies))
@@ -615,7 +619,7 @@ def test_jobs_leg_check_prints_the_full_plan() -> None:
         "P34.42b",
         "projects get-iam-policy",
         "run jobs list",
-        "88-job",
+        "98-job",
         "run jobs describe",
         "scheduler jobs describe",
         "secrets get-iam-policy",

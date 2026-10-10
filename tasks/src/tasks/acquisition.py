@@ -1069,8 +1069,33 @@ def join_candidate(
     for record in reg.values():
         home = getattr(record, "homepage_url", "") or ""
         if home and normalize_url(home) in own:
+            if getattr(record, "ingestion_permitted", False):
+                return RegistryJoin(
+                    relation=RegistryRelation.DUPLICATE,
+                    linked=tuple(linked),
+                    duplicate_of=f"source:{record.id}",
+                )
+            # A gated row (ingestion_permitted=false — the P35.6/ACQ-01
+            # registration posture pending HG-03) is not consumed work: the
+            # lead deepens that row as improvement/flip work, never a second
+            # registration (NEW-1). Only a *permitted* homepage collision is
+            # a literal duplicate.
+            linked.append(
+                LinkedSource(
+                    link=RegistryLink(
+                        source_id=record.id,
+                        kind=LinkKind.SAME_SOURCE,
+                        note=(
+                            "homepage URL match against a gated registered row — "
+                            "improvement leg under the existing source (HG-03 pending)"
+                        ),
+                    ),
+                    record=record,
+                    dispositions=tuple(dispositions.get(record.id, ())),
+                )
+            )
             return RegistryJoin(
-                relation=RegistryRelation.DUPLICATE,
+                relation=RegistryRelation.EXISTING_UNPERMITTED,
                 linked=tuple(linked),
                 duplicate_of=f"source:{record.id}",
             )
