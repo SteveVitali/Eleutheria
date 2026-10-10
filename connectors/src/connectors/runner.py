@@ -45,6 +45,7 @@ from .net import (
     RobotsResult,
     RobotsUnretrievable,
 )
+from .opt_out import OptOutRegisterError, load_register
 from .pipeline import RunReport, run
 from .registry import SourceRecord, get
 from .replay import ShadowDiff, replay, replay_fingerprint, shadow_replay
@@ -446,6 +447,30 @@ def live_gate_reasons(source: SourceRecord | str) -> list[str]:
         reasons.append(f"custody_posture={record.custody_posture.value!r} is link-only (§8.4)")
     if not has_rights_block(record):
         reasons.append("rights block is UNDETERMINED (SIG-LIC-004)")
+    # SIG-INGEST-046c (P36.1a): a recorded affirmative rights reservation is a
+    # *refused* state — honoured as a refusal on every path, never a green
+    # gate. It is reported separately from UNDETERMINED: unresolved rights
+    # invite the Stage-0 conversation; a reservation closes it.
+    if record.rights.reservation is not None:
+        reservation = record.rights.reservation
+        reasons.append(
+            f"rights record carries an affirmative reservation "
+            f"({reservation.kind}, recorded {reservation.observed_on}, "
+            f"evidence: {reservation.evidence}) — honoured as a refusal "
+            "(SIG-INGEST-046c)"
+        )
+    # §26 rule 7 (P36.1a / ADR-168): the host-level opt-out register is
+    # consulted at the gate too, so a newly listed host refuses the live run
+    # before a socket is constructed — not only at the per-fetch consult.
+    # A malformed/unreadable register refuses rather than silently passing
+    # (the register is fail-closed).
+    try:
+        opt_out_reason = load_register().reason_for(urlsplit(record.homepage_url).netloc)
+    except OptOutRegisterError as exc:
+        reasons.append(f"opt-out register unusable (fail-closed, §26 rule 7): {exc}")
+    else:
+        if opt_out_reason is not None:
+            reasons.append(opt_out_reason)
     if not has_review_metadata(record):
         reasons.append("no recorded review metadata (rights_reviewed_by/on, SIG-INGEST-038)")
     return reasons

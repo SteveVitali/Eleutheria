@@ -97,10 +97,23 @@ def assert_loadable(source: SourceRecord | str) -> SourceRecord:
     Refuses to run unless *all three* hold: ``ingestion_permitted`` is true
     (SIG-INGEST-028), the ``compact_status`` permits ingestion (§22.4), and the
     ``custody_posture`` permits a content-fetching connector (§8.4). Any absent or
-    unresolved permission fails closed with a reason. Returns the record so the
-    driver can chain.
+    unresolved permission fails closed with a reason. A source whose rights
+    record carries a recorded affirmative rights reservation is refused outright
+    (SIG-INGEST-046c): the reservation is honoured as a refusal — a distinct,
+    recorded state that is never UNDETERMINED and never silently flips back.
+    Returns the record so the driver can chain.
     """
     record = assert_ingestion_permitted(source)
+    if record.rights.reservation is not None:
+        reservation = record.rights.reservation
+        raise IngestionNotPermitted(
+            f"source {record.id!r} carries an affirmative machine-readable rights "
+            f"reservation ({reservation.kind}, recorded {reservation.observed_on}, "
+            f"evidence: {reservation.evidence}) — honoured as a refusal "
+            "(SIG-INGEST-046c, §23.7). The refused state is stored distinctly "
+            "from UNDETERMINED and closes the Stage-0 conversation; it is never "
+            "bypassed by the loader gate."
+        )
     if not compact_permits_ingestion(record.compact_status):
         raise IngestionNotPermitted(
             f"source {record.id!r} has compact_status={record.compact_status.value!r}, "
