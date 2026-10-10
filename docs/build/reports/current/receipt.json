@@ -1,7 +1,7 @@
 {
   "schema": "projection-receipt/1",
-  "generated_at": "2026-10-10T00:30:05Z",
-  "git_head": "e03c196af69e4bcd5658563318449a2f8de4499e",
+  "generated_at": "2026-10-10T00:36:59Z",
+  "git_head": "2ff0555fd8f83c8028d64391788209c138f520ee",
   "tool": "docs/build/tools/current_projection.py",
   "note": "wall-clock receipt — kept out of the deterministic payload; input digests live in manifest.json",
   "files": [
