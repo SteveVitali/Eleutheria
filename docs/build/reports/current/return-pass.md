@@ -36,5 +36,6 @@
 | P34.46 | the queued L2 deploy slot (the schema roll of the rehearsed plan tip + the ADR-159 auto-allow dispositions + the `sig-api` roll by digest + the `/status/` notic… | `implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` (scope: one leg per run — L2 the slot, then L3 the s… |
 | P34.47 | the queued 11A acceptance sweep + GATE-G4 packet leg (plan §13.1): the read-only crawl of the site, the API, the tiles, the `sig-public` listing and the repo ti… | `implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (scope: the sweep and the packet) · landed as row 259 (sweep l… |
 | P35.57 | the queued API-roll leg (the ticket's only live requirement — the in-ticket pause): mount the current promoted release's registry on `sig-api` (`SIG_RELEASE_REG… | `implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (scope: the mount + roll + verification) · landed as row 261 (PR #26… |
+| P35.5 | the queued R2-mirror leg (the ticket's only live stage): enable the committed-disabled ops/mirrors.toml r2-public row, configure the R2 bucket + CDN custom doma… | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (scope: the queued R2 push + origin-enable leg) · landed a… |
 
 ← back: CURRENT.md
