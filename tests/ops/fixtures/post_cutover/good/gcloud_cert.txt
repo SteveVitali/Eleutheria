@@ -16,7 +16,7 @@
     "status": "ACTIVE"
   },
   "name": "sig-web-cert",
-  "selfLink": "https://www.googleapis.com/compute/v1/projects/zeta-medley-508121-u7/global/sslCertificates/sig-web-cert",
+  "selfLink": "https://www.googleapis.com/compute/v1/projects/sig-project-fixture/global/sslCertificates/sig-web-cert",
   "subjectAlternativeNames": [
     "surveillancegraph.org",
     "www.surveillancegraph.org"
