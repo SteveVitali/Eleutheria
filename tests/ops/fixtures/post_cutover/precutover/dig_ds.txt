@@ -1,0 +1,9 @@
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64903
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; ANSWER SECTION:
+surveillancegraph.org.	3274	IN	DS	17039 8 2 3F5E85B0E5893AD0906C5167D150A793F32ED37A2D4B4F6AC780426C A062B6D6
+

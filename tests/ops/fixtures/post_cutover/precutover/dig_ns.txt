@@ -1,0 +1,12 @@
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 37298
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; ANSWER SECTION:
+surveillancegraph.org.	13037	IN	NS	nsc4.squarespacedns.com.
+surveillancegraph.org.	13037	IN	NS	nsc1.squarespacedns.com.
+surveillancegraph.org.	13037	IN	NS	nsc2.squarespacedns.com.
+surveillancegraph.org.	13037	IN	NS	nsc3.squarespacedns.com.
+
