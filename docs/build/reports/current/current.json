@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "3de748ac496398d145f9e6905f25dce38988e634",
-  "manifest_inputs": 1009,
+  "input_commit": "696ebfe0e687d9e9a3af638591e2b07278f56738",
+  "manifest_inputs": 1010,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.7",
-    "lastCompleted": "P35.6",
+    "nextTicket": "P35.8",
+    "lastCompleted": "P35.7",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.57,P35.67",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.6-acquisition-plumbing-and-verification-harness",
+    "chainTip": "r11/P35.7-registry-and-tenant-label-corrections",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-10T10:31Z"
+    "updatedAt": "2026-10-10T14:54Z"
   },
   "counts": {
     "obligations": 161,
@@ -18470,10 +18470,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "7a29310950aa930348c43158e39a08503510f252e69166d7741a134abc260a7e",
+  "manifest_sha256": "fe29fe6a63c7ccb2b36885658caef5831524ee13912f9ad4c9b000f8d61fae85",
   "current_md": {
     "lines": 63,
-    "bytes": 15450,
+    "bytes": 15442,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

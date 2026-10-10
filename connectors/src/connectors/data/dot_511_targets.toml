@@ -557,7 +557,7 @@ platform = "state_511_api"
 url = "https://drivenc.gov/api/v2/get/cameras"
 enum_source = "vendor_platform_probe"
 status = "robots_unretrievable"
-note = "robots.txt answers HTTP 200 with a '302 Found' interstitial body → unparseable; camera API path answers 302 HTML. NCDOT ArcGIS mirrors exist under non-state orgs (runneals) — authority unresolved."
+note = "robots.txt answers HTTP 200 with a '302 Found' interstitial body → unparseable; camera API path answers 302 HTML. NCDOT ArcGIS mirrors exist on org NuWFvHYDMVmmxMeM — corrected 2026-10-10 (M6, I5 NEW-5): the org is NCDOT-owned (state origin), not a non-state 'runneals' account."
 
 [[enumerated]]
 id = "511pa"
@@ -683,7 +683,13 @@ platform = "arcgis_feature_layer"
 url = "https://services.arcgis.com/NuWFvHYDMVmmxMeM/arcgis/rest/services/NCDOT_Traffic_Cameras/FeatureServer"
 enum_source = "arcgis_hub_search"
 status = "unresolved_rights"
-note = "'NC DOT: Cameras' under the non-state runneals account; layer query answered 'Invalid URL' (moved/stale) AND publisher authority unresolved."
+# M6 (P35.7, I7-X4 B-40 `approve`): declared lineage, SIG-CONF-014 shape —
+# this layer is a mirror of the NCDOT (state) origin `dot_511_nc`, never a
+# delete; retirement of the mirror target is Wave-C (P37.2 / ACQ-18, R5).
+mirror_of = "dot_511_nc"
+derived_from = "dot_511_nc"
+lineage_evidence = "I5 NEW-5 live-read 2026-09-30 (I5-F035 org services listing, sha256 24668e557d4e; I5-F036 NCDOT_Cameras count 1,157, sha256 6f6ae5cc7e89): ArcGIS org NuWFvHYDMVmmxMeM hosts NCDOT-owned services — the 'runneals' item registrant is not the hosting authority; the org is the state origin."
+note = "'NC DOT: Cameras' on ArcGIS org NuWFvHYDMVmmxMeM; the layer query answered 'Invalid URL' (moved/stale) on the 2026-09-17 probe. Corrected 2026-10-10 (M6): the org is NCDOT-owned (state origin), not a non-state 'runneals' account — see mirror_of/derived_from/lineage_evidence."
 
 [[enumerated]]
 id = "padot_runneals_mirror"

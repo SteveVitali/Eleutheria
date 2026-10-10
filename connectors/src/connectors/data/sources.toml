@@ -1495,12 +1495,12 @@ notes = "Authoritative roster: 80 centers (54 primary + 26 recognized). §22.3."
 [sources.faa_drone_waivers]
 name = "FAA drone waivers"
 source_kind = "government_portal"
-homepage_url = "https://www.faa.gov/uas/"
+homepage_url = "https://www.faa.gov/uas/advanced_operations/part_91_waivers/waivers_issued"
 default_tier = "R1"
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Dated authorization_state records with native validity intervals (§22.3, EFF FOIA release)."
+notes = "Dated authorization_state records with native validity intervals (§22.3, EFF FOIA release). M7 correction 2026-10-10 (I7-X4 B-40 `approve`; I4 NEW-7): homepage now points at the Part 91.113 'Waivers Issued' table (https://www.faa.gov/uas/advanced_operations/part_91_waivers/waivers_issued) — DFR authorizations are Part 91.113 waivers; the companion Part 107 'Waivers Issued' table (unexpired waivers only) is https://www.faa.gov/uas/commercial_operators/part_107_waivers/waivers_issued."
 
 # ===========================================================================
 # G. Lead generation (§22.6 G)

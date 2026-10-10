@@ -1277,7 +1277,7 @@ enum_source = "cc+us"
 notes = "P26.5 enumeration: verified live 2026-09-17 — webapi.legistar.com/v1/carrboro/matters returns the real InSite matter index; tenant portal carrboro.legistar.com serves."
 
 [tenants.carrollton_ga]
-jurisdiction = "City of Carrollton, GA"
+jurisdiction = "Carrollton, TX"
 platform = "legistar"
 tenant = "carrolltontx"
 api_base = "https://webapi.legistar.com/v1/carrolltontx"
@@ -1327,7 +1327,7 @@ enum_source = "cc"
 notes = "P26.5 enumeration: verified live 2026-09-17 — webapi.legistar.com/v1/charlottecountyfl/matters returns the real InSite matter index; tenant portal charlottecountyfl.legistar.com serves."
 
 [tenants.charlotte_ia]
-jurisdiction = "City of Charlotte, IA"
+jurisdiction = "Charlotte, NC"
 platform = "legistar"
 tenant = "charlottenc"
 api_base = "https://webapi.legistar.com/v1/charlottenc"
@@ -1587,7 +1587,7 @@ enum_source = "cc"
 notes = "P26.5 enumeration: verified live 2026-09-17 — webapi.legistar.com/v1/cityoftacoma/matters returns the real InSite matter index; tenant portal cityoftacoma.legistar.com serves."
 
 [tenants.clark]
-jurisdiction = "clark (legistar tenant — unresolved)"
+jurisdiction = "Clark County, NV"
 platform = "legistar"
 tenant = "clark"
 api_base = "https://webapi.legistar.com/v1/clark"
@@ -1667,7 +1667,7 @@ enum_source = "cc"
 notes = "P26.5 enumeration: verified live 2026-09-17 — webapi.legistar.com/v1/commerce/matters returns the real InSite matter index; tenant portal commerce.legistar.com serves."
 
 [tenants.concord_ca]
-jurisdiction = "City of Concord, CA"
+jurisdiction = "Concord, NH"
 platform = "legistar"
 tenant = "concordnh"
 api_base = "https://webapi.legistar.com/v1/concordnh"
@@ -2747,7 +2747,7 @@ enum_source = "cc"
 notes = "P26.5 enumeration: verified live 2026-09-17 — webapi.legistar.com/v1/nevco/matters returns the real InSite matter index; tenant portal nevco.legistar.com serves."
 
 [tenants.newark]
-jurisdiction = "newark (legistar tenant — unresolved)"
+jurisdiction = "Newark, NJ"
 platform = "legistar"
 tenant = "newark"
 api_base = "https://webapi.legistar.com/v1/newark"
@@ -3187,7 +3187,7 @@ enum_source = "cc"
 notes = "P26.5 enumeration: verified live 2026-09-17 — webapi.legistar.com/v1/san-marcos-tx/matters returns the real InSite matter index; tenant portal san-marcos-tx.legistar.com serves."
 
 [tenants.san_bernardino_ca]
-jurisdiction = "City of San Bernardino, CA"
+jurisdiction = "San Bernardino County, CA"
 platform = "legistar"
 tenant = "sanbernardino"
 api_base = "https://webapi.legistar.com/v1/sanbernardino"
