@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.7 closeout (row 267 — six agenda-tenant jurisdiction labels corrected + NCDOT mirror lineage declared + FAA waiver homepage corrected, fixture-verified; committed config only, no flips); next → P35.8 (row 268).
