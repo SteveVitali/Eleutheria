@@ -430,6 +430,10 @@ cadence = "monthly"
 cron = "0 5 20 * *"
 job = "sig-ingest-legistar"
 scheduler = "sig-sched-legistar"
+# P35.6 (ACQ-01): the widened keyword pass over the Verified InSite tenants is
+# reviewed at a 3h task bound — well inside the batch ceiling, above the 60m
+# per-source default the deploy script substitutes for an empty field.
+task_timeout = "3h"
 note = "Verified InSite tenants (seattle/mesa/sanantonio) → matters+events indexes; 'chicago' is a recorded tenant_api_error. Agenda platforms draft for RECURRING (05:00); a near-empty monthly source stays monthly."
 
 [[sources]]
@@ -860,6 +864,111 @@ job = "sig-ingest-camreg-batch-08"
 scheduler = "sig-sched-camreg-batch-08"
 members = ["camreg_und_027", "camreg_wim_camera", "camreg_und_028", "camreg_yline", "camreg_york_on", "camreg_yorku", "camreg_und_029", "dot_511_al", "dot_511_ga", "dot_511_la", "dot_511_md"]
 note = "GL-GATE-07 batch 8/8: 11 target(s) across 11 source(s)."
+
+# --- P35.6 / R11-ACQ-01: the Round-11 wave batches (I8 §7.1, NEW-4) -------------
+# Created --paused under R6 (scheduled-ops.sh): manually run once, verify,
+# rerun for +0, then resume. task_timeout 6h per reviewed row bound;
+# --max-retries 0 with resume via logical_run.
+
+[[batches]]
+id = "r11-ate-01"
+cadence = "monthly"
+cron = "17 7 18 * *"
+job = "sig-ingest-r11-ate-01"
+scheduler = "sig-sched-r11-ate-01"
+task_timeout = "6h"
+members = ["camreg_de_traffic_devices_red", "camreg_md_montgomery_county_automated", "camreg_ny_new_york_city_mta_bus", "camreg_wa_tacoma_automated_enforcement", "camreg_md_montgomery_county_speedcameras", "camreg_howard_county_md_schzonehighligh", "camreg_lakeland_fl_red_light_cameras", "camreg_suffolk_county_ny_tpva_red_light", "camreg_medford_or_red_light_speed", "camreg_ct_approximate_speed_safety"]
+note = "Round-11 batch r11-ate-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-disclosures-01"
+cadence = "monthly"
+cron = "27 7 21 * *"
+job = "sig-ingest-r11-disclosures-01"
+scheduler = "sig-sched-r11-disclosures-01"
+task_timeout = "6h"
+members = ["statrep_mn_agencies_that_use", "statrep_va_virginia_general_assembly", "statrep_wa_washington_attorney_general", "statrep_va_virginia_alpr_reporting", "statrep_va_virginia_crime_commission", "statrep_ne_nebraska_crime_commission", "statrep_vt_vermont_safety_automated", "statrep_md_maryland_legislative_library", "statrep_il_illinois_automated_license", "statrep_austin_tx_auditor_apd_license"]
+note = "Round-11 batch r11-disclosures-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-disclosures-02"
+cadence = "monthly"
+cron = "27 7 22 * *"
+job = "sig-ingest-r11-disclosures-02"
+scheduler = "sig-sched-r11-disclosures-02"
+task_timeout = "6h"
+members = ["statrep_co_arvada_facial_recognition", "statrep_me_safety_maine_law", "statrep_hi_hawai_judiciary_under", "statrep_wa_facial_recognition_watech", "statrep_co_colorado_agency_facial", "statrep_de_delaware_information_analysis", "statrep_wa_2026_automated_safety", "statrep_wa_automated_traffic_safety", "statrep_mi_detroit_police_department", "statrep_us_dhs_privacy_impact", "statrep_us_dhs_component_privacy", "statrep_fl_florida_highway_safety", "statrep_pa_pennsylvania_work_zone", "statrep_md_maryland_required_chapters", "statrep_mn_minnesota_court_administrator", "statrep_us_dhs_obim_pia", "statrep_us_dhs_cbp_border", "legis_us_dhs_system_records", "statrep_seattle_wa_2024_2025_automated", "statrep_mn_unmanned_aerial_vehicle", "statrep_il_illinois_freedom_from", "statrep_wa_seattle_oig_annual", "statrep_us_dhs_cbp_pia"]
+note = "Round-11 batch r11-disclosures-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-documents-01"
+cadence = "monthly"
+cron = "27 7 23 * *"
+job = "sig-ingest-r11-documents-01"
+scheduler = "sig-sched-r11-documents-01"
+task_timeout = "6h"
+members = ["ccops_columbia_mo", "agenda_haskell_ar_resolution_no_19", "ccops_st_louis_mo", "ccops_dayton_oh", "grant_tx_texas_dmv_motor", "grant_ca_california_bscc_organized", "grant_fl_florida_legislature_local", "ccops_anchorage_ak", "policy_ca_orange_county_policy_610", "agenda_pasadena_ca_policy_620_cellular", "grant_al_alabama_adeca_newsroom", "grant_nj_new_jersey_oag", "ccops_ia_des_moines_city_of_council", "ccops_sc_jasper_county_council_special", "procportal_davie_fl_notice_intent_award", "ccops_nc_forsyth_county_us_winston_salem", "legis_ca_california_code_53166", "ccops_austin_tx", "legis_gu_governor_guam_press", "grant_ok_oklahoma_jag_lle", "policy_st_cloud_mn_area_school_district", "statrep_nc_onslow_county_schools_gaggle", "policy_pflugerville_tx_isd_gaggle_page", "statrep_ny_whitesboro_central_school", "policy_bangor_me_general_order_59", "policy_houston_tx_general_orders", "policy_nm_albuquerque_apd_standard", "policy_little_rock_ar_general_order_332"]
+note = "Round-11 batch r11-documents-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-layers-01"
+cadence = "monthly"
+cron = "17 7 16 * *"
+job = "sig-ingest-r11-layers-01"
+scheduler = "sig-sched-r11-layers-01"
+task_timeout = "6h"
+members = ["dot_511_de", "dot_511_vt", "dot_511_wv", "dot_511_mi", "camreg_ne_lincoln_traffic_cameras", "camreg_omaha_ne_parks_cameras", "camreg_hyattsville_md_cctv_camera_2024", "dot_511_nc"]
+note = "Round-11 batch r11-layers-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-layers-02"
+cadence = "monthly"
+cron = "17 7 17 * *"
+job = "sig-ingest-r11-layers-02"
+scheduler = "sig-sched-r11-layers-02"
+task_timeout = "6h"
+members = ["camreg_fl_d3_flock_camera", "camreg_fl_flock_removal_status", "camreg_pueblo_co_flock", "camreg_rocky_mount_nc_lpr_cameras", "camreg_shelbyville_tn_flock_cameras", "camreg_temecula_ca_flock_wfl1", "camreg_marble_falls_tx_flock_locations", "camreg_va_prince_william_county", "camreg_milford_ct_flocklprcam", "camreg_elgin_il_lpr_cameras", "camreg_south_fulton_ga_lpr_cameras", "camreg_va_pittsylvania_county_stationary", "camreg_alabaster_al_lpr_cameras", "camreg_thomasville_ga_flock_location", "camreg_leon_county_fl_overwatch_viewer", "camreg_ga_peachtree_corners_flock_camera"]
+note = "Round-11 batch r11-layers-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-procurement-01"
+cadence = "monthly"
+cron = "17 7 19 * *"
+job = "sig-ingest-r11-procurement-01"
+scheduler = "sig-sched-r11-procurement-01"
+task_timeout = "6h"
+members = ["procportal_il_cook_county_procurement", "procportal_wa_washington_des_statewide", "camreg_dc_private_security_camera"]
+note = "Round-11 batch r11-procurement-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+
+[[batches]]
+id = "r11-tier2-01"
+cadence = "monthly"
+cron = "37 7 25 * *"
+job = "sig-ingest-r11-tier2-01"
+scheduler = "sig-sched-r11-tier2-01"
+task_timeout = "6h"
+members = ["camreg_us_municipal_contract_expenditure", "statrep_us_wiretap_summary_tables", "procportal_tx_texas_dir_cooperative", "legis_us_federal_register_api", "camreg_jeffersonville_in_flock", "camreg_ca_monterey_park_flock_camera", "statrep_us_2024_federal_agency", "camreg_az_mesa_city_of_expenditures", "camreg_us_socrata_hosted_vendor", "camreg_nj_new_jersey_yourmoney", "statrep_us_ice_287_participating", "dot_511_nm", "camreg_santa_fe_nm_park_cameras", "camreg_detroit_mi_project_green_light", "procportal_pr_consulta_del_registro", "camreg_de_delaware_checkbook_expenditure", "camreg_fl_broward_county_us_palm_beach", "camreg_ga_savannah_flock_camera", "camreg_la_east_baton_rouge_parish_flock", "camreg_ga_flock_cameras_asof", "camreg_gastonia_nc_flock_condor_cameras", "camreg_wa_washington_state_open", "camreg_us_nces_school_survey_on_crime", "agenda_nd_fargo_city_commission_agendas", "agenda_jersey_city_nj_digital_agenda", "agenda_durham_nc_agenda_center", "agenda_hialeah_fl_agenda_center", "agenda_frisco_tx_onbase_agenda_online", "agenda_tampa_fl_onbase_agenda_online", "procportal_fl_florida_buy_cooperative", "camreg_ma_massachusetts_capital", "ccops_ok_tulsa_flock_policies", "ccops_san_diego_ca", "ccops_ca_san_diego_sunshine_act_goods", "camreg_ga_brookhaven_flock_camera", "camreg_mi_detroit_dpd_shotspotter", "camreg_nv_las_vegas_us_clark_county", "ccops_gb_eng_barnet_traffic_cctv", "procportal_wa_wsipc_rfp_24", "agenda_savannah_ga_2023_05_25", "procportal_ny_northeastern_regional", "policy_ok_oklahoma_dac_uved", "statrep_vt_vermont_law_enforcement", "statrep_us_dhs_ai_use", "procportal_us_naspo_valuepoint_portfolio", "ccops_ok_oklahoma_city_okc_flock_council", "procportal_ok_oklahoma_omes_statewide", "statrep_ca_california_auditor_alpr"]
+note = "Round-11 Wave-D batch r11-tier2-01 (I8 \u00a77.1 days 25\u201327 07:37Z; members assigned deterministically by ACQ-01 \u2014 ACQ-27 may re-balance)."
+
+[[batches]]
+id = "r11-tier2-02"
+cadence = "monthly"
+cron = "37 7 26 * *"
+job = "sig-ingest-r11-tier2-02"
+scheduler = "sig-sched-r11-tier2-02"
+task_timeout = "6h"
+members = ["camreg_us_agency_published_flock", "statrep_tx_south_padre_island_faa", "camreg_us_ate_camera_location_and_per", "grant_il_illinois_gata_csfa", "camreg_us_body_worn_camera", "legis_pr_sistema_nico_de", "camreg_us_agency_drone_flight", "dot_511_nv", "dot_511_id", "camreg_gb_eng_north_cctv_cameras", "camreg_au_qld_towns_cctv_camera_register", "camreg_au_tas_hobar_security_camera", "camreg_au_wa_perth_security_cameras", "camreg_eu_eea_data_europa_search_api", "agenda_us_agency_fusus_real", "legis_vi_legislature_virgin_islands", "camreg_bloomington_il_drone_flights", "camreg_peoria_il_drone_usage", "camreg_medford_or_drone_deployments_fs", "grant_oh_ohio_criminal_justice", "grant_ma_massachusetts_law_enforcement", "ccops_mi_wayne_county_commission", "legis_pr_rc0787_resoluci_de", "legis_pr_rs0604_resoluci_del", "legis_pr_rc0740_investigaci_sobre", "legis_pr_rcs0198_resoluci_conjunta", "legis_pr_pc0560_plan_de", "legis_pr_pc0489_ley_del", "ccops_iso_au_privacy_commissioner", "statrep_gb_enforcement_action", "statrep_fr_cnil_utilisation_de", "camreg_oakland_ca_shotspotter_2013_2015", "ccops_hi_honolulu_police_department", "statrep_ca_special_parliament_use", "dot_511_gb", "camreg_gb_eng_leice_cctv_cameras", "camreg_gb_eng_mansf_cctv_cameras", "camreg_gb_eng_traff_trafford_cctv", "camreg_gb_eng_barnet_cctv_camera", "camreg_gb_eng_barnet_cctv_traffic", "camreg_gb_eng_brist_cctv_cameras", "camreg_gb_sct_edinburgh_public_cctv", "camreg_au_ckan_package_search", "camreg_au_vic_ballarat_cctv_cameras", "camreg_au_vic_geelong_closed_circuit", "camreg_au_nsw_sydney_street_safety", "camreg_au_tas_emergency_closed_circuit", "camreg_ie_d_dublin_traffic_poles_with"]
+note = "Round-11 Wave-D batch r11-tier2-02 (I8 \u00a77.1 days 25\u201327 07:37Z; members assigned deterministically by ACQ-01 \u2014 ACQ-27 may re-balance)."
+
+[[batches]]
+id = "r11-tier2-03"
+cadence = "monthly"
+cron = "37 7 27 * *"
+job = "sig-ingest-r11-tier2-03"
+scheduler = "sig-sched-r11-tier2-03"
+task_timeout = "6h"
+members = ["ccops_it_tn_trento_provvedimento_dell_11", "camreg_es_md_madrid_c_maras_de", "camreg_it_me_messina_videosorveglianza", "camreg_fr_92_grand_paris_seine_ouest_vid", "camreg_pt_11_lisboa_sistema_de", "camreg_ua_18_korosten", "policy_us_private_camera_registry", "statrep_new_york_ny_nyc_doi_oig", "camreg_la_new_orleans_eye_on", "camreg_il_chicago_violence_reduction", "statrep_us_upturn_mass_extraction_2020", "statrep_us_ice_287_monthly", "agenda_az_maricopa_county_board_of", "agenda_tx_dallas_county_commissioners", "agenda_bexar_county_tx_agenda_center", "statrep_gb_sct_joint_assurance_review", "camreg_si_048_ko_evje_videonadzor_na", "ccops_oh_cincinnati_police_department", "ccops_ca_san_diego_privacy_advisory", "ccops_ny_new_york_nyc_comptroller", "policy_anaheim_ca_pd_policy_manual", "camreg_gb_eng_runny_cctv_cameras", "camreg_gb_eng_south_skdc_cctv", "camreg_gb_sct_clackmannanshire_cctv", "camreg_gb_eng_ipswich_cctv_camera", "statrep_gb_eng_seven_cctv_june_2026", "ccops_si_085_novo_mesto_evidenca_o", "policy_lafayette_in_camera_registration", "policy_zionsville_in_camera_registry", "ccops_ri_narragansett_police_camera", "ccops_ca_calistoga_police_department", "ccops_ca_pinole_police_department", "ccops_mn_dayton_police_department", "ccops_nc_charlotte_mecklenburg_police", "grant_us_doj_cops_technology", "grant_ok_safe_oklahoma_grant", "policy_chicago_il_oemc_link_your", "statrep_tx_ca_nm_ri_fl_il_eff_red_flag", "ccops_nc_elizabeth_city_police", "ccops_il_chicago_oig_shotspotter", "ccops_san_francisco_bay_ca", "statrep_gb_uk_algorithmic_transparency", "ccops_mo_st_louis_fy21_spi_shotspotter", "legis_ie_rs_general_scheme", "ccops_san_jose_ca", "ccops_santa_clara_county_ca", "policy_maricopa_county_az_mcso_policies", "policy_norman_ok_alpr_policy_amendment"]
+note = "Round-11 Wave-D batch r11-tier2-03 (I8 \u00a77.1 days 25\u201327 07:37Z; members assigned deterministically by ACQ-01 \u2014 ACQ-27 may re-balance)."
 
 # --- P31.12 (BREADTH.1): the four P29.3 accountability-breadth flips ----------
 # Targeted oversight-report lookups through the `accountability` connector —

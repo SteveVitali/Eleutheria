@@ -62,6 +62,8 @@ from policy.sensitivity import SensitivityClass, apply_tier, geo_tier_for
 from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
+from .api_allowlist import api_allow_entry
+from .field_denylist import assert_target_fields_clean
 from .stages import (
     CaptureRef,
     Connector,
@@ -135,6 +137,11 @@ _ARCGIS_QUERY_PARAMS = {
     "f": "json",
 }
 
+#: The reviewed ArcGIS REST request budget (I8 NEW-3, api_allowlist.toml
+#: `services*.arcgis.com` rows): applied to every ``arcgis_query`` target
+#: unless the row or the host's allowlist entry names a stricter one.
+_ARCGIS_REVIEWED_RPM = 10
+
 #: ArcGIS page size: ArcGIS Online hosted layers cap a ``query`` response at the
 #: service's ``maxRecordCount`` (1,000 on every hosted layer probed 2026-09-17 —
 #: the capture carries ``exceededTransferLimit: true``). Registry rows therefore
@@ -155,6 +162,22 @@ _ARCGIS_PAGE_SIZE = 1000
 _SOCRATA_PAGE_SIZE = 5000
 
 
+def _row_out_fields(row: Mapping[str, Any]) -> list[str]:
+    """The reviewed ``out_fields`` capture allowlist on a target row (P35.6 / P8-5).
+
+    ``out_fields`` names the literal layer fields a new camera target may
+    capture — it replaces the ``outFields=*`` wildcard so a raw capture holds
+    only allowlisted attribute columns (Part VIII P8-5). The value may be a
+    TOML array or a comma string; order is preserved.
+    """
+    value = row.get("out_fields")
+    if isinstance(value, str):
+        return [f.strip() for f in value.split(",") if f.strip()]
+    if isinstance(value, (list, tuple)):
+        return [str(f) for f in value]
+    return []
+
+
 def _arcgis_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     """Expand one ArcGIS layer row into its deterministic ``/query`` pages.
 
@@ -162,16 +185,29 @@ def _arcgis_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     when the layer's own ``maxRecordCount`` is below the 1,000 default
     (P26.16: camreg_portland_or serves 200 rows/page, so a 1,000-row request
     returns ``exceededTransferLimit`` on every page).
+
+    ``out_fields`` (P35.6 / P8-5) replaces ``outFields=*`` with the reviewed
+    allowlist so the raw capture holds only those fields; the object-id field
+    is always appended (paging breaks without it). A denied field inside the
+    allowlist is a registration refusal — the F-330 denylist check runs before
+    this expansion, so a row that reaches here is clean.
     """
     layer_url = str(row["layer_url"]).rstrip("/")
     observed = int(row.get("observed_count") or 0)
     oid_field = str(row.get("object_id_field") or "OBJECTID")
     page_size = min(_ARCGIS_PAGE_SIZE, max(1, int(row.get("page_size") or _ARCGIS_PAGE_SIZE)))
     pages = max(1, -(-observed // page_size))
+    params_base = dict(_ARCGIS_QUERY_PARAMS)
+    out_fields = _row_out_fields(row)
+    if out_fields:
+        names = list(out_fields)
+        if oid_field not in names:
+            names.append(oid_field)
+        params_base["outFields"] = ",".join(names)
     out: list[dict[str, Any]] = []
     for page in range(pages):
         params = {
-            **_ARCGIS_QUERY_PARAMS,
+            **params_base,
             "orderByFields": oid_field,
             "resultRecordCount": page_size,
             "resultOffset": page * page_size,
@@ -192,10 +228,12 @@ def _socrata_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     resource_url = str(row["layer_url"]).rstrip("/")
     observed = int(row.get("observed_count") or 0)
     pages = max(1, -(-observed // _SOCRATA_PAGE_SIZE))
+    out_fields = _row_out_fields(row)
+    select = ",".join([*out_fields, ":id"]) if out_fields else "*,:id"
     out: list[dict[str, Any]] = []
     for page in range(pages):
         params = {
-            "$select": "*,:id",
+            "$select": select,
             "$order": ":id",
             "$limit": _SOCRATA_PAGE_SIZE,
             "$offset": page * _SOCRATA_PAGE_SIZE,
@@ -222,12 +260,37 @@ def registry_targets(source_id: str) -> list[dict[str, Any]]:
     either way). All pages of one layer share the registry row's ``id`` — a
     camera's subject key is page-independent.
     """
+    return expand_registry_rows(
+        (
+            row
+            for row in target_table().get("targets", [])
+            if str(row.get("source_id")) == source_id
+        ),
+        source_id=source_id,
+    )
+
+
+def expand_registry_rows(
+    rows: Iterable[Mapping[str, Any]], *, source_id: str = ""
+) -> list[dict[str, Any]]:
+    """Expand registry ``[[targets]]`` rows into fetch targets (P35.6 seam).
+
+    The expansion logic of :func:`registry_targets`, factored so the
+    F-330 denylist, the ``out_fields`` allowlist and the api_allowlist rate
+    budget can be exercised on arbitrary rows (the ACQ-01 generator and its
+    tests) without touching the committed registry files.
+    """
     expanders = {"arcgis_query": _arcgis_pages, "socrata_rows": _socrata_pages}
     out: list[dict[str, Any]] = []
-    for row in target_table().get("targets", []):
-        if str(row.get("source_id")) != source_id:
+    for row in rows:
+        if source_id and str(row.get("source_id")) != source_id:
             continue
         kind = str(row.get("kind") or "arcgis_query")
+        # F-330 (P35.6): a target whose declared layer schema or out_fields
+        # allowlist carries a Part VIII denied field is refused here too — the
+        # registration-time denylist (validate/generator) is the primary gate,
+        # but a dirty row must never reach the fetch path.
+        assert_target_fields_clean(row)
         expand = expanders.get(kind)
         if expand is None:
             raise ValueError(
@@ -235,25 +298,41 @@ def registry_targets(source_id: str) -> list[dict[str, Any]]:
                 f"(known: {sorted(expanders)}) — the connector never fetches an "
                 "unrecognised platform."
             )
+        # P35.6 (I8 NEW-3): apply the host's reviewed api_allowlist request
+        # budget — the 10/min ArcGIS services*.arcgis.com rows — as the
+        # per-target rate limit; an explicit ``rate_limit_per_min`` on the row
+        # (a stricter reviewed budget) always wins.
+        rpm = row.get("rate_limit_per_min")
+        if rpm is None:
+            entry = api_allow_entry(str(row["layer_url"]))
+            rpm = entry.rate_limit_per_min if entry is not None else None
+        if rpm is None and kind == "arcgis_query":
+            # An ArcGIS layer on a host the allowlist does not name still runs
+            # at the reviewed 10/min ArcGIS budget (I8 NEW-3), never unbounded.
+            rpm = _ARCGIS_REVIEWED_RPM
         for page in expand(row):
-            out.append(
-                {
-                    "id": str(row["id"]),
-                    "url": page["url"],
-                    "kind": kind,
-                    "state": str(row["state"]),
-                    "agency": str(row["agency"]),
-                    "jurisdiction_scheme": str(row.get("jurisdiction_scheme") or "us.state_abbr"),
-                    "layer_url": str(row["layer_url"]).rstrip("/"),
-                    "page": page["page"],
-                    "page_count": page["page_count"],
-                    "license_spdx": str(row.get("license_spdx", "")),
-                    "sensitivity_class": str(
-                        row.get("sensitivity_class") or vocab()["default_sensitivity_class"]
-                    ),
-                    "enum_source": str(row.get("enum_source", "")),
-                }
-            )
+            target = {
+                "id": str(row["id"]),
+                "url": page["url"],
+                "kind": kind,
+                "state": str(row["state"]),
+                "agency": str(row["agency"]),
+                "jurisdiction_scheme": str(row.get("jurisdiction_scheme") or "us.state_abbr"),
+                "layer_url": str(row["layer_url"]).rstrip("/"),
+                "page": page["page"],
+                "page_count": page["page_count"],
+                "license_spdx": str(row.get("license_spdx", "")),
+                "sensitivity_class": str(
+                    row.get("sensitivity_class") or vocab()["default_sensitivity_class"]
+                ),
+                "enum_source": str(row.get("enum_source", "")),
+            }
+            if rpm is not None:
+                target["rate_limit_per_min"] = int(rpm)
+            out_fields = _row_out_fields(row)
+            if out_fields:
+                target["out_fields"] = out_fields
+            out.append(target)
     return out
 
 
