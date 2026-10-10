@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.8 closeout (row 268 — Legistar keyword-filtered paged matter pass + Round-11 agenda vocabulary bump, fixture-verified; committed code/config only, no flips); next → P35.9 (row 269).
