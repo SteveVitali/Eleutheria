@@ -30,7 +30,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from policy.rights import is_undetermined
+from policy.rights import is_refused, is_undetermined
 
 from .loader import compact_permits_ingestion, custody_permits_fetch
 from .registry import SourceRecord, sources
@@ -48,7 +48,7 @@ def has_review_metadata(record: SourceRecord) -> bool:
 
 @dataclass(frozen=True)
 class GateBreakdown:
-    """The five gate fields for one source (SIG-INGEST-014/028, §22.4, §8.4)."""
+    """The gate fields for one source (SIG-INGEST-014/028, §22.4, §8.4, 046c)."""
 
     source_id: str
     ingestion_permitted: bool
@@ -56,12 +56,22 @@ class GateBreakdown:
     custody_ok: bool
     rights_present: bool
     reviewed_by: bool
+    #: P36.1a (SIG-INGEST-046c): the rights record carries a recorded
+    #: affirmative machine-readable rights reservation — a *refused* state,
+    #: distinct from UNDETERMINED, honoured as a refusal.
+    rights_reserved: bool = False
 
     @property
     def flip_ready(self) -> bool:
-        """Ready to flip: everything true except the flag (which is still false)."""
+        """Ready to flip: everything true except the flag (which is still false).
+
+        A reserved source is never flip-ready (SIG-INGEST-046c): the recorded
+        refusal closes the conversation — it routes to the operator, not to a
+        flag flip.
+        """
         return (
             not self.ingestion_permitted
+            and not self.rights_reserved
             and self.compact_ok
             and self.custody_ok
             and self.rights_present
@@ -70,7 +80,12 @@ class GateBreakdown:
     @property
     def loadable(self) -> bool:
         """The runtime loader verdict (matches :func:`connectors.loader.is_loadable`)."""
-        return self.ingestion_permitted and self.compact_ok and self.custody_ok
+        return (
+            self.ingestion_permitted
+            and not self.rights_reserved
+            and self.compact_ok
+            and self.custody_ok
+        )
 
 
 def gate_breakdown(record: SourceRecord) -> GateBreakdown:
@@ -82,6 +97,7 @@ def gate_breakdown(record: SourceRecord) -> GateBreakdown:
         custody_ok=custody_permits_fetch(record.custody_posture),
         rights_present=has_rights_block(record),
         reviewed_by=bool(record.rights_reviewed_by),
+        rights_reserved=is_refused(record.rights),
     )
 
 
@@ -108,6 +124,16 @@ def review_metadata_violations(records: Iterable[SourceRecord] | None = None) ->
     records = list(records) if records is not None else sources()
     violations: list[str] = []
     for r in records:
+        # SIG-INGEST-046c: a recorded affirmative rights reservation is honoured
+        # as a refusal — the source MUST NOT be flipped while it stands (a
+        # refusal is a distinct state from UNDETERMINED, never a pending flip).
+        if r.ingestion_permitted and is_refused(r.rights):
+            kind = r.rights.reservation.kind if r.rights.reservation else "?"
+            violations.append(
+                f"source {r.id!r} has ingestion_permitted=true but carries a recorded "
+                f"affirmative rights reservation ({kind}); a reservation is honoured "
+                "as a refusal and refuses the flip (SIG-INGEST-046c)."
+            )
         if not r.ingestion_permitted:
             continue
         missing: list[str] = []

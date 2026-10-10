@@ -35,6 +35,17 @@ Three rules are enforced here rather than left to prose:
 * **Politeness (SIG-INGEST-011 / Rule 3).** A per-host :class:`RateLimiter`
   enforces a minimum interval — the source's crawl-delay, or a conservative
   default — so SIG never burdens a small civic host.
+* **Opt-out + reservation refusal (§26 rule 7 / SIG-INGEST-046c, P36.1a /
+  ADR-168).** Before every fetch — before even the robots probe — the fetcher
+  consults the **host-level opt-out register**
+  (:mod:`connectors.opt_out`); a listed host receives **zero egress** and
+  raises :class:`HostOptOut`. Every response envelope is scanned for an
+  **affirmative machine-readable rights reservation** (a ``Content-Signal``
+  directive, a TDM reservation, an EU DSM Article 4 reservation —
+  :func:`policy.crawler.detect_reservation`); an affirmative reservation is
+  honoured as a refusal, raises :class:`ReservationRefused`, and is recorded
+  for the rights record. A robots ``Disallow`` is **not** a reservation:
+  under GL-GATE-08 it still proceeds, stamped ``robots_disregarded``.
 
 The layer is transport-agnostic: it drives a :class:`Transport` (robots retrieval
 plus request execution) injected at construction, so it is fully testable without
@@ -50,9 +61,15 @@ from typing import Any, Protocol, runtime_checkable
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
 
-from policy.crawler import assert_no_circumvention, robots_access_permits
+from policy.crawler import (
+    ReservationVerdict,
+    assert_no_circumvention,
+    detect_reservation,
+    robots_access_permits,
+)
 
 from .api_allowlist import api_allow_reason
+from .opt_out import OptOutRegister, load_register
 from .stages import FetchResult
 
 #: The contact URL the UA carries (Crawler Conduct Rule 1, SIG-INGEST-011):
@@ -93,6 +110,51 @@ class RobotsDisallowed(Exception):
     ADR-088 ``PoliteFetcher`` itself never raises it — a ``Disallow`` verdict
     is recorded and the fetch proceeds marked ``robots_disregarded``.
     """
+
+
+class HostOptOut(Exception):
+    """Raised when a fetch is attempted against a host on the opt-out register.
+
+    §26 rule 7: a host-level opt-out is honoured **immediately** — the register
+    (:mod:`connectors.opt_out`) is consulted before *every* fetch, before even
+    the robots probe, so a listed host receives zero egress. The refusal is
+    recorded on the fetcher's :attr:`PoliteFetcher.opt_out_refusals` audit list
+    and, for a live run, in the fetch record.
+    """
+
+    def __init__(self, url: str, host: str, reason: str) -> None:
+        self.url = url
+        self.host = host
+        self.reason = reason
+        super().__init__(f"{url!r} refused: {reason}")
+
+
+class ReservationRefused(Exception):
+    """Raised when a response carries an affirmative rights reservation.
+
+    SIG-INGEST-046c (§23.7): an affirmative machine-readable rights
+    reservation — a ``Content-Signal`` directive (e.g. ``ai-train=no``), a TDM
+    reservation, or an EU DSM Article 4 reservation — is honoured as a
+    **refusal**: the fetched bytes are not captured and no claims derive from
+    them. The signals are kept verbatim on the exception and the fetcher's
+    :attr:`PoliteFetcher.reservations` audit list so the refusal can be
+    recorded on the source's rights record — a distinct *refused* state,
+    never collapsed into ``UNDETERMINED``. Every reservation encountered
+    routes to the operator (S6R-28 → the GATE-G5 packet); a reservation on an
+    A-8 express-terms row routes per S6 R-19.
+    """
+
+    def __init__(self, url: str, host: str, verdict: ReservationVerdict) -> None:
+        self.url = url
+        self.host = host
+        self.verdict = verdict
+        kinds = ", ".join(sorted({s.kind for s in verdict.signals}))
+        verbatim = "; ".join(s.detail for s in verdict.signals)
+        super().__init__(
+            f"{url!r} carries an affirmative machine-readable rights reservation "
+            f"({kinds}: {verbatim}) — honoured as a refusal (SIG-INGEST-046c); the "
+            "refusal is recorded on the rights record and routes to the operator."
+        )
 
 
 class ChallengeEncountered(Exception):
@@ -243,6 +305,7 @@ class PoliteFetcher:
         contact_url: str = DEFAULT_CONTACT_URL,
         rate_limiter: RateLimiter | None = None,
         circumvention_techniques: Iterable[str] = (),
+        opt_out_register: OptOutRegister | None = None,
     ) -> None:
         # A crawler that defeats challenges MUST NOT exist (SIG-INGEST-013): a
         # circumvention technique configured on the fetcher is a hard error.
@@ -251,6 +314,11 @@ class PoliteFetcher:
         self._ua = user_agent(connector_name, connector_version, contact_url)
         self._transport = transport
         self._limiter = rate_limiter or RateLimiter()
+        # §26 rule 7 / ADR-168: the host-level opt-out register is consulted
+        # before EVERY fetch. ``None`` loads the operative register (the
+        # committed artifact, or the $SIG_OPT_OUT_REGISTER override that makes
+        # an entry apply with no rebuild/redeploy).
+        self._opt_out = opt_out_register or load_register()
         self._robots: dict[str, RobotFileParser] = {}
         #: Auditable conduct decisions (ADR-083): one entry per fetch recording
         #: whether robots (CRAWL) or the API allow-list (API) governed it.
@@ -269,6 +337,16 @@ class PoliteFetcher:
         #: ``robots_disregarded`` field so a claim's provenance says the fetch
         #: ignored a refusal.
         self.robots_disregarded: list[dict[str, str]] = []
+        #: Per-URL audit rows for fetches refused because the host is on the
+        #: opt-out register (§26 rule 7 / P36.1a): ``{"url", "host", "reason"}``.
+        #: The live runner writes these into the fetch record.
+        self.opt_out_refusals: list[dict[str, str]] = []
+        #: Per-URL audit rows for responses carrying an affirmative
+        #: machine-readable rights reservation (SIG-INGEST-046c):
+        #: ``{"url", "host", "signals": [{"kind", "detail"}]}`` — the signals
+        #: verbatim, so the refusal can be recorded on the rights record and
+        #: routed to the operator (S6R-28; S6 R-19 for express-terms rows).
+        self.reservations: list[dict[str, Any]] = []
 
     @property
     def user_agent_string(self) -> str:
@@ -339,8 +417,12 @@ class PoliteFetcher:
         it never raises and its answer does not gate :meth:`fetch`. ``False``
         means a retrieved policy disallows the URL or the policy is
         unretrievable (the RFC-assumed disallow); ``True`` means a retrieved
-        policy allows it or no policy exists (4xx).
+        policy allows it or no policy exists (4xx). An opt-out-listed host
+        answers ``False`` without probing robots — a listed host receives zero
+        egress of any kind (§26 rule 7).
         """
+        if self._opt_out.is_listed(_host(url)):
+            return False
         return self._robots_verdict(url) in ("allowed", "no_policy_4xx")
 
     def fetch(
@@ -372,8 +454,22 @@ class PoliteFetcher:
         ``disallowed`` or ``unretrievable`` proceeds and is recorded in
         :attr:`robots_disregarded` — the audit trail says the refusal was
         ignored rather than pretending it never existed.
+
+        Two refusals stand above the robots rule (P36.1a / ADR-168): a host on
+        the **opt-out register** is refused before any egress — before even the
+        robots probe — as :class:`HostOptOut` (§26 rule 7, honoured
+        immediately), and a response carrying an **affirmative rights
+        reservation** is refused as :class:`ReservationRefused`
+        (SIG-INGEST-046c) — the bytes are never captured.
         """
         host = _host(url)
+        # §26 rule 7: the host-level opt-out register is consulted BEFORE every
+        # fetch — before the robots probe or any request — so a listed host
+        # receives zero egress of any kind.
+        opt_out_reason = self._opt_out.reason_for(host)
+        if opt_out_reason is not None:
+            self.opt_out_refusals.append({"url": url, "host": host, "reason": opt_out_reason})
+            raise HostOptOut(url, host, opt_out_reason)
         # ADR-083 carve-out: an allow-listed API endpoint is API mode (documented,
         # ToS-governed, rate-limited) — robots governs crawling, not this. A host
         # off the allow-list stays CRAWL and its robots verdict is recorded
@@ -404,6 +500,28 @@ class PoliteFetcher:
         if body is not None:
             kwargs["body"] = body
         result = self._transport.request(url, user_agent=self._ua, **kwargs)
+        # SIG-INGEST-046c: an affirmative machine-readable rights reservation on
+        # the response (Content-Signal / TDM-Reservation / X-Robots-Tag headers,
+        # or a page-level meta reservation on HTML bodies) is honoured as a
+        # refusal — the bytes are never captured or parsed, the signals are
+        # recorded verbatim, and the refusal lands on the rights record (a
+        # distinct refused state, never UNDETERMINED). It is the strongest
+        # signal: when present it classifies the response even over a challenge.
+        reservation = detect_reservation(
+            result.headers,
+            body=result.body if result.status < 400 else None,
+            media_type=result.media_type,
+        )
+        if reservation.refuses:
+            self.reservations.append(
+                {
+                    "url": url,
+                    "host": host,
+                    "status": result.status,
+                    "signals": [{"kind": s.kind, "detail": s.detail} for s in reservation.signals],
+                }
+            )
+            raise ReservationRefused(url, host, reservation)
         if _is_challenge(result):
             raise ChallengeEncountered(
                 f"{url!r} returned a bot-management challenge (status {result.status}); "
@@ -432,7 +550,9 @@ __all__ = [
     "ChallengeEncountered",
     "DEFAULT_CONTACT_URL",
     "DEFAULT_CRAWL_DELAY_SECONDS",
+    "HostOptOut",
     "PoliteFetcher",
+    "ReservationRefused",
     "RateLimiter",
     "RobotsDisallowed",
     "RobotsResult",
