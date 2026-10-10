@@ -38,3 +38,12 @@ Cloud Scheduler + daily live-diff + cron lint), which supersedes this ADR's sche
 scheduling path; P35.1a appends that status line here in its own PR (plan §7, S6R-24). P34.4 disables the
 GitHub `reingest` schedule (QA-8) and P35.1b consolidates the scheduler (B-13). The decision above stays in
 force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Qualified by ADR-174 (2026-10-10, P35.1a) — the scheduler-of-record clause
+- **Status note (2026-10-10, Round-11 P35.1a):** the SEED-11 trigger evaluation above fired on the
+  scheduler-of-record reading. ADR-174 names Cloud Scheduler + `ops/cadence.toml` the single scheduler of
+  record (daily live-diff, cron lint, digest pinning). This ADR's orchestration-seam decision stands —
+  Dagster remains reserved and reversible through the confined `orchestration/` import boundary; what is
+  superseded is only any reading of it as the scheduler. The body above is unchanged (SIG-ENG-003).
