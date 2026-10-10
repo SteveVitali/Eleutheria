@@ -1,0 +1,7 @@
+Byte-for-byte archive of the head State line replaced at P35.57's closeout
+(the PHASE LOG end pointer GATE-G4 → P35.57 and the next-row pointer
+P35.57 → P35.5). Archived 2026-10-10 — the BM-LEDGER-08 pattern
+(replaced lines archived, never silently rewritten).
+
+Line 10 (State):
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with the GATE-G4 resume entry (the operator answered all packet lines 2026-10-09T17:32Z; the record commit is operator-signed, OP-25); next → P35.57 (row 261).

@@ -20,11 +20,13 @@ from typing import Any
 
 from evidence.tiers import StorageTier
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi.responses import JSONResponse
 from policy.sensitivity import apply_tier, geo_tier_for, published_precision
 from reconcile.resolve import RESOLVE
 from reconcile.snapshot_diff import diff_series
 
 from .asof import AsOfContext, as_of_dependency
+from .basis_middleware import BASIS_RELEASE
 from .envelope import (
     attribution_for,
     coverage_statement,
@@ -55,6 +57,11 @@ from .models import (
     TaskResponse,
 )
 from .prohibitions import ProhibitedEndpointError, assert_entity_type_allowed
+from .release_serving import (
+    ReleaseIdentity,
+    ReleaseServingError,
+    ReleaseServingStore,
+)
 from .store import (
     SEARCH_DEFAULT_LIMIT,
     SEARCH_MAX_LIMIT,
@@ -81,6 +88,92 @@ class ScopeNotAvailableError(Exception):
     def __init__(self, scope: str) -> None:
         super().__init__(scope)
         self.scope = scope
+
+
+#: The OpenAPI disclosure on every live-spine route (P35.57, SIG-REL-010): the
+#: answer is computed from the current claim spine, not a promoted release.
+LIVE_SPINE_DESCRIPTION = (
+    "Live-spine read — answers from the current claim spine: newer than the site; not a citation."
+)
+
+#: The OpenAPI disclosure on the release-backed routes (P35.57, G3 §6.4): the
+#: answer is the promoted release's own pinned bytes — the same answer the
+#: site shows. ``?release=<publication_id>`` selects any promoted release.
+RELEASE_BACKED_DESCRIPTION = (
+    "Release-backed read — answers from the current promoted release's files, "
+    "the same answer the site shows; ?release=<publication_id> selects any "
+    "promoted release. Falls back to the live spine only when no release "
+    "registry is configured on this service."
+)
+
+
+def _release_serving(request: Request) -> ReleaseServingStore | None:
+    """The mounted release registry's serving store — ``None`` on a service
+    with no release registry configured (the live-spine fallback)."""
+    return getattr(request.app.state, "release_serving", None)
+
+
+def _mark_release(request: Request, identity: ReleaseIdentity | None = None) -> None:
+    """Mark this request's basis class as ``release`` — the basis middleware
+    reads the mark (and the release block) from ``scope["state"]`` so every
+    response, errors included, is labelled by the authority that answered."""
+    state = request.scope.setdefault("state", {})
+    state["sig_basis"] = BASIS_RELEASE
+    if identity is not None:
+        state["sig_release"] = identity.block()
+
+
+def _release_payload(
+    request: Request,
+    family: str,
+    name: str | None,
+    release: str | None,
+    *,
+    absent_status: int,
+    absent_code: str,
+) -> dict[str, Any] | None:
+    """Serve an api-slice document from the promoted release — ``None`` when
+    no release registry is configured (the caller keeps its live-spine path)."""
+    serving = _release_serving(request)
+    if serving is None:
+        return None
+    _mark_release(request)
+    payload, identity = serving.api_document(
+        release, family, name, absent_status=absent_status, absent_code=absent_code
+    )
+    _mark_release(request, identity)
+    return payload
+
+
+def _release_document(
+    request: Request,
+    family: str,
+    name: str | None,
+    release: str | None,
+    *,
+    absent_status: int,
+    absent_code: str,
+) -> JSONResponse | None:
+    payload = _release_payload(
+        request,
+        family,
+        name,
+        release,
+        absent_status=absent_status,
+        absent_code=absent_code,
+    )
+    return JSONResponse(payload) if payload is not None else None
+
+
+def _require_release_serving(request: Request) -> ReleaseServingStore:
+    serving = _release_serving(request)
+    if serving is None:
+        raise ReleaseServingError(
+            503,
+            "release_serving_unconfigured",
+            "release-backed serving is not configured on this service",
+        )
+    return serving
 
 
 #: A searchable term has a run of SEARCH_MIN_QUERY_LENGTH letters/digits (P31.1,
@@ -112,7 +205,11 @@ def build_router() -> APIRouter:
     router = APIRouter(prefix="/v1")
 
     # --- /resolution — the core material-fact endpoint (SIG-API-002) ----------
-    @router.get("/resolution/{subject_id}/{predicate_id}", response_model=ResolutionResponse)
+    @router.get(
+        "/resolution/{subject_id}/{predicate_id}",
+        response_model=ResolutionResponse,
+        description=LIVE_SPINE_DESCRIPTION,
+    )
     def resolution(
         subject_id: str,
         predicate_id: str,
@@ -151,7 +248,11 @@ def build_router() -> APIRouter:
         )
 
     # --- /entity --------------------------------------------------------------
-    @router.get("/entity/{entity_type}/{entity_id}", response_model=EntityResponse)
+    @router.get(
+        "/entity/{entity_type}/{entity_id}",
+        response_model=EntityResponse,
+        description=LIVE_SPINE_DESCRIPTION,
+    )
     def entity(
         entity_type: str,
         entity_id: str,
@@ -221,7 +322,9 @@ def build_router() -> APIRouter:
         )
 
     # --- /claim (provenance, not a verdict) -----------------------------------
-    @router.get("/claim/{claim_id}", response_model=ClaimResponse)
+    @router.get(
+        "/claim/{claim_id}", response_model=ClaimResponse, description=LIVE_SPINE_DESCRIPTION
+    )
     def claim(
         claim_id: str,
         response: Response,
@@ -262,7 +365,11 @@ def build_router() -> APIRouter:
         )
 
     # --- /evidence — tier-gated; sealed bytes never returned (SIG-API-012) ----
-    @router.get("/evidence/{artifact_id}/{capture_id}", response_model=EvidenceResponse)
+    @router.get(
+        "/evidence/{artifact_id}/{capture_id}",
+        response_model=EvidenceResponse,
+        description=LIVE_SPINE_DESCRIPTION,
+    )
     def evidence(
         artifact_id: str,
         capture_id: str,
@@ -299,7 +406,7 @@ def build_router() -> APIRouter:
     # Bounded (P31.1, ADR-108): a minimum query length, a capped page size, and
     # keyset pagination (``next_cursor``). The page is fetched one row long so
     # "is there more?" costs no count query.
-    @router.get("/search", response_model=SearchResponse)
+    @router.get("/search", response_model=SearchResponse, description=LIVE_SPINE_DESCRIPTION)
     def search(
         response: Response,
         q: str = "",
@@ -354,15 +461,34 @@ def build_router() -> APIRouter:
             next_cursor=next_cursor,
         )
 
-    # --- /dossier (collection) ------------------------------------------------
-    @router.get("/dossier/{scope}", response_model=DossierResponse)
+    # --- /dossier (collection) — release-backed (P35.57, SIG-REL-010) ---------
+    # The dossier answer the site shows is a release file; the API serves the
+    # same pinned document (or ?release=<pub> for any promoted release). Only a
+    # service with no release registry configured falls back to the live spine.
+    @router.get(
+        "/dossier/{scope}",
+        response_model=DossierResponse,
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
     def dossier(
         scope: str,
+        request: Request,
         response: Response,
+        release: str | None = Query(default=None),
         store: ReadStore = Depends(get_store),
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
-    ) -> DossierResponse:
+    ) -> Any:
+        served = _release_document(
+            request,
+            "dossier",
+            scope,
+            release,
+            absent_status=404,
+            absent_code="scope_not_available",
+        )
+        if served is not None:
+            return served
         record = store.dossier(scope)
         if record is None:
             # P34.25 (C3 NEW-1): an unheld scope is a typed 404, never an
@@ -378,15 +504,31 @@ def build_router() -> APIRouter:
             as_of=asof.echo(),
         )
 
-    # --- /coverage (the §32.2 metrics surface, SIG-API-003) -------------------
-    @router.get("/coverage/{scope}", response_model=CoverageResponse)
+    # --- /coverage (the §32.2 metrics surface) — release-backed (P35.57) ------
+    @router.get(
+        "/coverage/{scope}",
+        response_model=CoverageResponse,
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
     def coverage(
         scope: str,
+        request: Request,
         response: Response,
+        release: str | None = Query(default=None),
         store: ReadStore = Depends(get_store),
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
-    ) -> CoverageResponse:
+    ) -> Any:
+        served = _release_document(
+            request,
+            "coverage",
+            scope,
+            release,
+            absent_status=404,
+            absent_code="scope_not_available",
+        )
+        if served is not None:
+            return served
         records = store.coverage_for(scope)
         if records is None:
             # P34.25 (C3 NEW-1): an unheld scope is a typed 404, never an
@@ -399,7 +541,9 @@ def build_router() -> APIRouter:
         )
 
     # --- /contradiction (always visible, §3.1) --------------------------------
-    @router.get("/contradiction", response_model=ContradictionCollection)
+    @router.get(
+        "/contradiction", response_model=ContradictionCollection, description=LIVE_SPINE_DESCRIPTION
+    )
     def contradictions(
         response: Response,
         store: ReadStore = Depends(get_store),
@@ -418,7 +562,11 @@ def build_router() -> APIRouter:
             spine_watermark=watermark,
         )
 
-    @router.get("/contradiction/{contradiction_id}", response_model=ContradictionResponse)
+    @router.get(
+        "/contradiction/{contradiction_id}",
+        response_model=ContradictionResponse,
+        description=LIVE_SPINE_DESCRIPTION,
+    )
     def contradiction(
         contradiction_id: str,
         response: Response,
@@ -433,7 +581,7 @@ def build_router() -> APIRouter:
         return _contradiction(record, asof, store.annotation_watermark())
 
     # --- /task ----------------------------------------------------------------
-    @router.get("/task", response_model=TaskCollection)
+    @router.get("/task", response_model=TaskCollection, description=LIVE_SPINE_DESCRIPTION)
     def tasks(
         response: Response,
         store: ReadStore = Depends(get_store),
@@ -450,7 +598,7 @@ def build_router() -> APIRouter:
             spine_watermark=watermark,
         )
 
-    @router.get("/task/{task_id}", response_model=TaskResponse)
+    @router.get("/task/{task_id}", response_model=TaskResponse, description=LIVE_SPINE_DESCRIPTION)
     def task(
         task_id: str,
         response: Response,
@@ -465,7 +613,7 @@ def build_router() -> APIRouter:
         return _task(record, asof, store.annotation_watermark())
 
     # --- /crosswalk (collection) ----------------------------------------------
-    @router.get("/crosswalk", response_model=CrosswalkResponse)
+    @router.get("/crosswalk", response_model=CrosswalkResponse, description=LIVE_SPINE_DESCRIPTION)
     def crosswalk(
         response: Response,
         store: ReadStore = Depends(get_store),
@@ -489,13 +637,29 @@ def build_router() -> APIRouter:
             as_of=asof.echo(),
         )
 
-    # --- /export (index only; P14.2 builds the bulk artifacts) ----------------
-    @router.get("/export", response_model=ExportIndexResponse)
+    # --- /export (index) — release-backed (P35.57); P14.2 builds the bytes ----
+    @router.get(
+        "/export",
+        response_model=ExportIndexResponse,
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
     def export_index(
+        request: Request,
         response: Response,
+        release: str | None = Query(default=None),
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
-    ) -> ExportIndexResponse:
+    ) -> Any:
+        served = _release_document(
+            request,
+            "export",
+            None,
+            release,
+            absent_status=503,
+            absent_code="release_artifact_absent",
+        )
+        if served is not None:
+            return served
         asof.apply_cache(response)
         return ExportIndexResponse(
             exports=[
@@ -512,21 +676,51 @@ def build_router() -> APIRouter:
             as_of=asof.echo(),
         )
 
-    # --- /changes — the snapshot-diff feed (§29.7, SIG-API-009) ---------------
-    @router.get("/changes", response_model=ChangesResponse)
+    # --- /changes — the change feed — release-backed (P35.57) ------------------
+    @router.get(
+        "/changes",
+        response_model=ChangesResponse,
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
     def changes(
+        request: Request,
         response: Response,
         since: str | None = None,
+        release: str | None = Query(default=None),
         store: ReadStore = Depends(get_store),
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
-    ) -> ChangesResponse:
+    ) -> Any:
         try:
             since_date = date.fromisoformat(since) if since else None
         except ValueError as exc:
             raise HTTPException(
                 status_code=400, detail=f"invalid since parameter: {since!r} is not an ISO date"
             ) from exc
+        payload = _release_payload(
+            request,
+            "changes",
+            None,
+            release,
+            absent_status=503,
+            absent_code="release_artifact_absent",
+        )
+        if payload is not None:
+            # The release document is a fixed snapshot; ``since`` filters its
+            # events the same way the live feed filters the spine's.
+            if since_date is not None and isinstance(payload.get("events"), list):
+                payload = {
+                    **payload,
+                    "since": since_date.isoformat(),
+                    "events": [
+                        e
+                        for e in payload["events"]
+                        if isinstance(e, dict)
+                        and e.get("new_date")
+                        and str(e["new_date"]) >= since_date.isoformat()
+                    ],
+                }
+            return JSONResponse(payload)
         events = diff_series(store.captures())
         selected = [e for e in events if since_date is None or e.new_date >= since_date]
         asof.apply_cache(response)
@@ -549,6 +743,91 @@ def build_router() -> APIRouter:
             coverage=empty_coverage("changes"),
             as_of=asof.echo(),
         )
+
+    # --- /sources — the transparency surface, release-backed (P35.57; the J3
+    #     copy is P37.23/TX-15's — this row places the route family on the
+    #     release-backed class only) -----------------------------------------
+    @router.get("/sources", description=RELEASE_BACKED_DESCRIPTION)
+    def sources_index(
+        request: Request,
+        release: str | None = Query(default=None),
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        payload = _release_payload(
+            request,
+            "sources",
+            None,
+            release,
+            absent_status=503,
+            absent_code="release_artifact_absent",
+        )
+        if payload is None:
+            raise ReleaseServingError(
+                503,
+                "release_serving_unconfigured",
+                "release-backed serving is not configured on this service",
+            )
+        return JSONResponse(payload)
+
+    @router.get("/sources/{source_id}", description=RELEASE_BACKED_DESCRIPTION)
+    def source(
+        source_id: str,
+        request: Request,
+        release: str | None = Query(default=None),
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        payload = _release_payload(
+            request,
+            "sources",
+            source_id,
+            release,
+            absent_status=404,
+            absent_code="scope_not_available",
+        )
+        if payload is None:
+            raise ReleaseServingError(
+                503,
+                "release_serving_unconfigured",
+                "release-backed serving is not configured on this service",
+            )
+        return JSONResponse(payload)
+
+    # --- /releases — the promoted-release registry routes (P35.57, G3 §6.4) --
+    # The literal /latest must register before the {publication_id} parameter
+    # route so "latest" resolves to the current pointer, never a pub lookup.
+    @router.get("/releases", description=RELEASE_BACKED_DESCRIPTION)
+    def releases_index(
+        request: Request,
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        serving = _require_release_serving(request)
+        _mark_release(request)
+        payload, identity = serving.releases_index()
+        _mark_release(request, identity)
+        return JSONResponse(payload)
+
+    @router.get("/releases/latest", description=RELEASE_BACKED_DESCRIPTION)
+    def releases_latest(
+        request: Request,
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        serving = _require_release_serving(request)
+        _mark_release(request)
+        payload, identity = serving.latest_document()
+        _mark_release(request, identity)
+        return JSONResponse(payload)
+
+    @router.get("/releases/{publication_id}", description=RELEASE_BACKED_DESCRIPTION)
+    def releases_show(
+        publication_id: str,
+        request: Request,
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        serving = _require_release_serving(request)
+        _mark_release(request)
+        payload, identity = serving.release_document(publication_id)
+        _mark_release(request, identity)
+        return JSONResponse(payload)
 
     return router
 

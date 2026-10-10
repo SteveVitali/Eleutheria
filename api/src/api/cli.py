@@ -148,16 +148,32 @@ def _serve(
     # even the first /v1/contradiction request is warm (a no-op for stores whose
     # surfaces are already materialised).
     store.warmup()
+    # P35.57 (SIG-REL-010): the registry can also come from the deployment env
+    # (Cloud Run sets env, not argv — SIG_RELEASE_REGISTRY carries the mount
+    # path, ops/gcp config.sh's SIG_RELEASE_REGISTRY_DIR value).
+    release_registry = release_registry or os.environ.get("SIG_RELEASE_REGISTRY") or None
     release_search = None
+    release_serving = None
     if release_registry:
         from .release_search import ReleaseSearchStore
+        from .release_serving import ReleaseServingStore
 
         release_search = ReleaseSearchStore(release_registry)
+        release_serving = ReleaseServingStore(release_registry)
     # P34.25 (A-20=a): the promoted release this service is pinned to, where one
     # exists — the live-spine basis label discloses it on every response; unset
     # answers "not pinned".
     release_id = os.environ.get("SIG_RELEASE_ID") or None
-    uvicorn.run(create_app(store, release_search, release_id=release_id), host=host, port=port)
+    uvicorn.run(
+        create_app(
+            store,
+            release_search,
+            release_id=release_id,
+            release_serving=release_serving,
+        ),
+        host=host,
+        port=port,
+    )
     return 0
 
 

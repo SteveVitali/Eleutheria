@@ -321,7 +321,9 @@ def table_tickets(data: dict) -> list[str]:
 
 
 def return_pass_value(data: dict) -> str:
-    return ", ".join(sorted(table_tickets(data), key=ticket_sort_key))
+    # Compact join — the CURRENT STATE line budget is 256 B (BM-LEDGER-08)
+    # and the comma-separated form is what every reader accepts.
+    return ",".join(sorted(table_tickets(data), key=ticket_sort_key))
 
 
 # ── ledger ───────────────────────────────────────────────────────────────────
@@ -658,7 +660,7 @@ def cmd_check(root: pathlib.Path) -> int:
     if rp_value is None:
         problems.append("LEDGER: no `returnPass:` line in CURRENT STATE")
     else:
-        committed_sorted = ", ".join(
+        committed_sorted = ",".join(
             sorted(table_keys or [], key=ticket_sort_key)
         )
         if table_keys is not None and rp_value != committed_sorted:
