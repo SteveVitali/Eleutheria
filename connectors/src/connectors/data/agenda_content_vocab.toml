@@ -32,7 +32,22 @@
 # titled "Security Camera System" carries no other vocab literal). Both stay
 # verbatim-literal claims: a match still asserts only "this record contains
 # this term".
-vocab_version = "2026.09.18"
+# 2026.10.10 (P35.8 / ACQ-04, I4 NEW-6): the Round-11 widening bump — adds the
+# reviewed ATE, mobile-forensics, video-analytics, biometric, SMM,
+# electronic-monitoring and school-surveillance term classes (plus the vendor
+# rows the Legistar keyword pass names: Axon, BriefCam, Genetec, Rekor, Fusus,
+# Verra Mobility, Clearview AI) so the keyword-filtered matter pass's
+# client-side precision filter keeps exactly the reviewed hits. Social-media
+# monitoring gains the SMM vendor names on WORD BOUNDARIES (the I4 NEW-6
+# finding: a bare substring catches 'Brinc' inside 'Parsons Brinckerhoff');
+# `alpr` gains the bare "license plate"/"licence plate" phrasings and "license
+# plate camera" (the technology name itself — the forbidden-token list above
+# stays narrower than a plate NUMBER, unchanged); `drone` gains "unmanned aero"
+# (the keyword `unmanned aer` is the server-side substring; the filter keeps
+# the aeronautical/aerospace phrasings it surfaces); `gunshot_detection` gains
+# the "gunshot locat"/"gunfire locat" locator phrasings. Additions only — no
+# prior row or pattern is rewritten.
+vocab_version = "2026.10.10"
 
 # Part VIII §0.7 / §43.2 guard for emitted agenda-content rows (the mechanical
 # form of "no plate / per-trip / per-person / per-search data"). A matched
@@ -81,6 +96,11 @@ patterns = [
   # P26.10: the dominant procurement phrasing for the same technology family —
   # "License Plate Recognition (LPR)" is how US solicitations name ALPR.
   "license plate recognition", "licence plate recognition", "\\blpr\\b",
+  # P35.8: the bare technology name itself — the keyword pass's server-side
+  # `license plate` substring surfaces titles like "License Plate Camera
+  # Program" that carry no reader/recognition phrasing; the forbidden-token
+  # list stays narrower than a plate NUMBER, so the name is claimable.
+  "license plate", "licence plate", "license plate camera",
 ]
 
 [[terms]]
@@ -111,6 +131,9 @@ label = "drone / unmanned aerial system"
 patterns = [
   "\\bdrone\\b", "\\bdrones\\b", "\\buas\\b", "\\bsuas\\b",
   "unmanned aerial", "unmanned aircraft",
+  # P35.8: the server-side `unmanned aer` substring also surfaces the
+  # aeronautical/aerospace phrasings — kept by the precision filter.
+  "unmanned aero",
 ]
 
 [[terms]]
@@ -169,13 +192,23 @@ patterns = ["predictive policing", "\\bpredpol\\b", "predictive analysis"]
 id = "gunshot_detection"
 kind = "technology"
 label = "gunshot detection"
-patterns = ["gunshot detection", "gunfire detection", "acoustic sensor"]
+# P35.8: the locator phrasings the keyword pass surfaces ("gunshot location
+# technology") join the detection phrasings — additions only.
+patterns = ["gunshot detection", "gunfire detection", "acoustic sensor",
+            "gunshot locat", "gunfire locat"]
 
 [[terms]]
 id = "social_media_monitoring"
 kind = "technology"
 label = "social media monitoring"
-patterns = ["social media monitoring", "social-media monitoring", "\\bgeofeedia\\b"]
+# P35.8 (I4 NEW-6): the SMM vendor names ride WORD BOUNDARIES — a bare
+# substring is how 'Brinc' lands inside 'Parsons Brinckerhoff' (I4-Q015).
+patterns = [
+  "social media monitoring", "social-media monitoring", "\\bgeofeedia\\b",
+  "social media surveillance", "social media intelligence",
+  "\\bdataminr\\b", "babel street", "\\bskopenow\\b", "shadowdragon",
+  "shadow dragon", "voyager labs", "\\bcobwebs\\b", "\\bfivecast\\b",
+]
 
 # The procurement-matter vocabulary (P26.2's reviewed contract_matter_patterns)
 # rides the same scan: a document carrying contract-family language emits a
@@ -191,3 +224,123 @@ patterns = [
   "\\binterlocal\\b", "professional services", "\\bsettlement\\b",
   "\\bsolicitation\\b", "\\bbid award\\b", "\\brfp\\b", "\\brfq\\b",
 ]
+
+# --- the Round-11 term classes (P35.8 / ACQ-04, I4 NEW-6) ---------------------
+# The classes the widened Legistar matter pass names server-side — the reviewed
+# patterns below are the client-side word-boundary precision filter that drops
+# the substring noise the broad `substringof` terms return.
+
+[[terms]]
+id = "automated_traffic_enforcement"
+kind = "technology"
+label = "automated traffic enforcement"
+patterns = [
+  "automated traffic enforcement", "automated enforcement",
+  "automated traffic", "red light camera", "red-light camera",
+  "speed camera", "speed safety camera", "speed enforcement",
+  "photo enforcement", "photo radar",
+]
+
+[[terms]]
+id = "mobile_forensics"
+kind = "technology"
+label = "mobile-device forensics"
+# Word boundaries on the short vendor tokens — 'XRY'/'MSAB' must not land
+# inside a longer word.
+patterns = [
+  "mobile forensic", "cell.?phone extraction", "phone forensic",
+  "device extraction", "forensic extraction",
+  "\\bcellebrite\\b", "graykey", "grayshift",
+  "magnet forensics", "magnet axiom", "axiom forensics",
+  "oxygen forensic", "belkasoft", "\\bmsab\\b", "\\bxry\\b",
+]
+
+[[terms]]
+id = "video_analytics"
+kind = "technology"
+label = "video analytics"
+patterns = [
+  "video analytics", "video analytic", "video synopsis",
+  "video content analy", "behavioral video",
+]
+
+[[terms]]
+id = "biometric"
+kind = "technology"
+label = "biometric identification"
+patterns = [
+  "\\bbiometric", "iris recognition", "iris scan",
+  "voiceprint", "voice recognition", "gait recognition",
+]
+
+[[terms]]
+id = "electronic_monitoring"
+kind = "program"
+label = "electronic monitoring"
+# Cook County's EM contract chain (I4-C218) is the reviewed anchor. The bare
+# "monitoring" word is deliberately ABSENT — a workers-comp or medical
+# monitoring title is the I4-C218 noise class the precision pass drops.
+patterns = [
+  "electronic monitoring", "electronic monitor",
+  "ankle monitor", "ankle bracelet", "\\bgps monitor",
+  "\\bscram\\b", "\\battenti\\b", "sentinel offender",
+  "\\btrack group\\b", "electronic home detention",
+  "electronic supervision", "house arrest monitor",
+]
+
+[[terms]]
+id = "school_surveillance"
+kind = "program"
+label = "school surveillance"
+patterns = [
+  "\\bgaggle\\b", "gaggle.net", "goguardian", "\\bsecurly\\b",
+  "lightspeed systems", "lightspeed filter", "lightspeed alert",
+  "linewize", "student monitoring", "school surveillance",
+  "student safety monitor",
+]
+
+[[terms]]
+id = "axon"
+kind = "vendor"
+label = "Axon Enterprise"
+patterns = ["\\baxon\\b", "axon enterprise", "axon body", "axon fleet"]
+
+[[terms]]
+id = "briefcam"
+kind = "vendor"
+label = "BriefCam"
+patterns = ["briefcam", "brief cam"]
+
+[[terms]]
+id = "genetec"
+kind = "vendor"
+label = "Genetec"
+patterns = ["genetec"]
+
+[[terms]]
+id = "rekor"
+kind = "vendor"
+label = "Rekor Systems"
+patterns = ["\\brekor\\b", "rekor systems"]
+
+[[terms]]
+id = "fusus"
+kind = "vendor"
+label = "Fusus"
+patterns = ["\\bfusus\\b", "axon fusus"]
+
+[[terms]]
+id = "verra_mobility"
+kind = "vendor"
+label = "Verra Mobility"
+patterns = ["verra mobility", "\\bverra\\b", "american traffic solutions"]
+
+[[terms]]
+id = "clearview_ai"
+kind = "vendor"
+label = "Clearview AI"
+# The disambiguated forms only — a bare "Clearview" false-positives on the
+# municipality name and on "Clearview Data Systems" (the CROL reviewed
+# false-positive class, I8 §4.2); the keyword pass's server-side `Clearview`
+# substring still surfaces the titles, and only these forms keep them.
+patterns = ["clearview ai", "clearview face", "clearview facial"]
