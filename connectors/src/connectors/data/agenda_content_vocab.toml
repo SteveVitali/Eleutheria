@@ -47,7 +47,14 @@
 # the aeronautical/aerospace phrasings it surfaces); `gunshot_detection` gains
 # the "gunshot locat"/"gunfire locat" locator phrasings. Additions only — no
 # prior row or pattern is rewritten.
-vocab_version = "2026.10.10"
+# 2026.10.10-p35.9 (P35.9 / ACQ-05, I8 §4.2): +Skydio, +BRINC, +Palantir,
+# +counter-UAS, +data-broker term rows — the vendor/program vocabulary the
+# USAspending per-term filter and the CROL where-slice precision pass draw
+# on. `brinc` is WORD-BOUNDARY only: 'Parsons Brinckerhoff' is the reviewed
+# false-positive class (I9b-Q008). `data_broker` carries the
+# broker/investigative-platform vendor names as word-boundary literals.
+# Additions only — no prior row or pattern rewritten.
+vocab_version = "2026.10.10-p35.9"
 
 # Part VIII §0.7 / §43.2 guard for emitted agenda-content rows (the mechanical
 # form of "no plate / per-trip / per-person / per-search data"). A matched
@@ -344,3 +351,42 @@ label = "Clearview AI"
 # false-positive class, I8 §4.2); the keyword pass's server-side `Clearview`
 # substring still surfaces the titles, and only these forms keep them.
 patterns = ["clearview ai", "clearview face", "clearview facial"]
+
+[[terms]]
+id = "skydio"
+kind = "vendor"
+label = "Skydio"
+patterns = ["\\bskydio\\b"]
+
+[[terms]]
+id = "brinc"
+kind = "vendor"
+label = "BRINC"
+# Word-boundary only (I9b-Q008): 'Parsons Brinckerhoff' is the reviewed
+# false-positive class — a substring match carries it.
+patterns = ["\\bbrinc\\b", "brinc drone", "brincdrones"]
+
+[[terms]]
+id = "palantir"
+kind = "vendor"
+label = "Palantir"
+patterns = ["\\bpalantir\\b", "palantir technologies"]
+
+[[terms]]
+id = "counter_uas"
+kind = "technology"
+label = "Counter-UAS / counter-drone"
+patterns = ["counter-uas", "counter uas", "counter unmanned", "anti-drone", "counter drone", "\\bcuas\\b"]
+
+[[terms]]
+id = "data_broker"
+kind = "vendor"
+label = "Data brokers / investigative platforms"
+patterns = [
+  "data broker",
+  "\\blexisnexis\\b",
+  "\\bthomson reuters\\b",
+  "\\btransunion\\b",
+  "fog data science",
+  "\\bpenlink\\b",
+]

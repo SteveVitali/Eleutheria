@@ -73,7 +73,7 @@ from parsing.classification import (
 )
 from parsing.document import html_text, page_locator_for, pdf_text_pages, utf8_text
 from parsing.locator import Locator
-from resolution.partner_identity import partner_ref_rows
+from resolution.partner_identity import natural_person_signal, partner_ref_rows
 
 from ._data import load_table
 from .stages import (
@@ -173,6 +173,39 @@ def sam_gov_config() -> Mapping[str, Any]:
 def usaspending_sweep_config() -> Mapping[str, Any]:
     """The bounded federal sweep plan (``[usaspending_sweep]`` in the vocab, P26.14)."""
     return vocab().get("usaspending_sweep", {})
+
+
+def procurement_term_classes() -> Mapping[str, Any]:
+    """The §4.2 acquisition term dictionary (``[terms.*]`` classes, P35.9)."""
+    return vocab().get("terms", {})
+
+
+def acq_keyword_term_defs() -> Mapping[str, Any]:
+    """The named reviewed acquisition term sets (``[acq_keyword_terms.*]``, P35.9)."""
+    return vocab().get("acq_keyword_terms", {})
+
+
+def acq_keyword_term_set(name: str) -> list[str]:
+    """The reviewed literal list a named acquisition term set carries (P35.9).
+
+    ``terms`` is the literal list itself; ``terms_of`` resolves the set from
+    another table's list (``"usaspending_sweep.keywords"`` — single-sourced).
+    An unknown set name resolves to nothing (fail-closed: no terms, no slices).
+    """
+    row = acq_keyword_term_defs().get(str(name))
+    if not isinstance(row, Mapping):
+        return []
+    terms_of = row.get("terms_of")
+    if terms_of:
+        table, _, key = str(terms_of).partition(".")
+        source = vocab().get(table, {})
+        return [str(t) for t in source.get(key, ())] if isinstance(source, Mapping) else []
+    return [str(t) for t in row.get("terms", ())]
+
+
+def portal_where_defs() -> Mapping[str, Any]:
+    """The named SoQL where-clause definitions (``[portal_where.*]``, P35.9)."""
+    return vocab().get("portal_where", {})
 
 
 def sam_gov_sweep_config() -> Mapping[str, Any]:
@@ -741,6 +774,18 @@ def usaspending_award_targets() -> list[dict[str, Any]]:
     sub_pages = int(bounds.get("sub_max_pages", 1))
     prime_pages = int(bounds.get("prime_max_pages", 1))
     agency_pages = int(bounds.get("agency_max_pages", 1))
+    # P35.9 (ACQ-05, I8 §4.2): the widened slice set — recipient-text slices,
+    # ALN program-number slices, the named term set stamped as provenance.
+    acq_set = _opt_str(cfg.get("acq_keyword_terms"))
+    recipients = [str(v) for v in cfg.get("recipient_search_text", ())]
+    program_numbers = [str(v) for v in cfg.get("program_numbers", ())]
+    program_pages = int(bounds.get("program_max_pages", 1))
+    program_codes = [
+        str(c) for c in bounds.get("program_award_type_codes", ()) or ()
+    ] or prime_codes
+    program_fields = [str(f) for f in bounds.get("program_fields", ()) or ()] or prime_fields
+    recipient_sub_pages = int(bounds.get("recipient_sub_max_pages", sub_pages))
+    recipient_prime_pages = int(bounds.get("recipient_prime_max_pages", prime_pages))
 
     def _slice(
         tid: str,
@@ -828,6 +873,90 @@ def usaspending_award_targets() -> list[dict[str, Any]]:
                     {"agency": agency, "slice": "awarding_agency", "page": page},
                 )
             )
+
+    # P35.9: vendor-name recipient slices (the recipient-search index by
+    # literal, sub + prime — a signal the keyword index misses) and the
+    # reviewed ALN/CFDA program slices (prime assistance rows only).
+    def _post_slice(
+        tid: str,
+        kind: str,
+        filters: dict[str, Any],
+        fields: list[str],
+        page: int,
+        sort: str,
+        prov: dict[str, Any],
+    ) -> None:
+        targets.append(
+            _slice(
+                tid,
+                kind,
+                {
+                    "subawards": kind == "sub",
+                    "filters": filters,
+                    "fields": fields,
+                    "limit": page_size,
+                    "page": page,
+                    "sort": sort,
+                    "order": "desc",
+                },
+                {**prov, "page": page},
+            )
+        )
+
+    for recipient in recipients:
+        sub_flt = {
+            "time_period": time_period,
+            "award_type_codes": sub_codes,
+            "recipient_search_text": [recipient],
+        }
+        prime_flt = {
+            "time_period": time_period,
+            "award_type_codes": prime_codes,
+            "recipient_search_text": [recipient],
+        }
+        for page in range(1, recipient_sub_pages + 1):
+            _post_slice(
+                f"sub_rcpt:{recipient}:p{page}",
+                "sub",
+                sub_flt,
+                sub_fields,
+                page,
+                "Sub-Award Amount",
+                {"recipient_search": recipient, "slice": "subaward_recipient"},
+            )
+        for page in range(1, recipient_prime_pages + 1):
+            _post_slice(
+                f"prime_rcpt:{recipient}:p{page}",
+                "prime",
+                prime_flt,
+                prime_fields,
+                page,
+                "Award Amount",
+                {"recipient_search": recipient, "slice": "prime_recipient"},
+            )
+    for aln in program_numbers:
+        aln_flt = {
+            "time_period": time_period,
+            "award_type_codes": program_codes,
+            "program_numbers": [aln],
+        }
+        for page in range(1, program_pages + 1):
+            _post_slice(
+                f"program:{aln}:p{page}",
+                "prime",
+                aln_flt,
+                program_fields,
+                page,
+                "Award Amount",
+                {
+                    "program_number": aln,
+                    "slice": "assistance_listing",
+                    "award_class": "assistance",
+                },
+            )
+    if acq_set:
+        for target in targets:
+            target["acq_keyword_terms"] = acq_set
     return targets
 
 
@@ -1499,36 +1628,81 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
             template = str(
                 cfg.get("index_path_template") or "https://{host}/resource/{dataset}.json"
             )
-            query = urlencode(
-                {
-                    "$limit": limit,
-                    **({"$order": f"{date_field} DESC"} if date_field else {}),
-                }
-            )
-            out.append(
-                {
-                    **base,
-                    "id": f"{tenant_id}:rows",
-                    "url": f"{template.format(host=host, dataset=dataset)}?{query}",
-                    "index_kind": "rows",
-                    "index_keyword": None,
-                    "host": host,
-                    "dataset": dataset,
-                    "limit": limit,
-                    # The reviewed per-dataset field aliases ride the target —
-                    # extract/normalize read the dataset's own column names
-                    # from the registry row, never hardcoded.
-                    "id_fields": [str(f) for f in row.get("id_fields", ())],
-                    "title_fields": [str(f) for f in row.get("title_fields", ())],
-                    "date_field": date_field or None,
-                    "vendor_field": _opt_str(row.get("vendor_field")),
-                    "amount_field": _opt_str(row.get("amount_field")),
-                    "dept_field": _opt_str(row.get("dept_field")),
-                    "notice_type_field": _opt_str(row.get("notice_type_field")),
-                    "deadline_field": _opt_str(row.get("deadline_field")),
-                    "doc_field": _opt_str(row.get("doc_field")),
-                }
-            )
+            rows_url = f"{template.format(host=host, dataset=dataset)}"
+            # P35.9 (ACQ-05, I8 §4.2): a tenant naming a reviewed
+            # ``portal_where`` definition expands BESIDE the rows window —
+            # one bounded SoQL slice per reviewed OR-group (``upper(field)
+            # like '%TERM%'``, B00329 shape). The LIKE is recall only; the
+            # verbatim vocab scan at extract is precision. An unknown name is
+            # a config error (fail closed); the rows target carries the name
+            # so extract can apply the pruned fallback deterministically.
+            where_name = _opt_str(row.get("portal_where"))
+            where_def = portal_where_defs().get(where_name) if where_name else None
+            if where_name and not isinstance(where_def, Mapping):
+                raise ValueError(
+                    f"tenant {tenant_id} names unknown portal_where {where_name!r} "
+                    "(a where-slice must resolve to a reviewed [portal_where] row)"
+                )
+            socrata_target: dict[str, Any] = {
+                **base,
+                "id": f"{tenant_id}:rows",
+                "url": f"{rows_url}?"
+                + urlencode(
+                    {
+                        "$limit": limit,
+                        **({"$order": f"{date_field} DESC"} if date_field else {}),
+                    }
+                ),
+                "index_kind": "rows",
+                "index_keyword": None,
+                "host": host,
+                "dataset": dataset,
+                "limit": limit,
+                "portal_where": where_name,
+                "acq_keyword_terms": (str(where_def.get("terms") or "") if where_def else None),
+                # The reviewed per-dataset field aliases ride the target —
+                # the dataset's own column names, never hardcoded.
+                "id_fields": [str(f) for f in row.get("id_fields", ())],
+                "title_fields": [str(f) for f in row.get("title_fields", ())],
+                "desc_fields": [str(f) for f in row.get("desc_fields", ())],
+                "date_field": date_field or None,
+                "vendor_field": _opt_str(row.get("vendor_field")),
+                "amount_field": _opt_str(row.get("amount_field")),
+                "dept_field": _opt_str(row.get("dept_field")),
+                "notice_type_field": _opt_str(row.get("notice_type_field")),
+                "deadline_field": _opt_str(row.get("deadline_field")),
+                "doc_field": _opt_str(row.get("doc_field")),
+            }
+            out.append(socrata_target)
+            if where_def is not None:
+                where_fields = [str(f) for f in where_def.get("fields", ())]
+                where_terms = acq_keyword_term_set(str(where_def.get("terms") or ""))
+                group_size = max(1, int(where_def.get("group_size", 8)))
+                where_limit = _opt_int(where_def.get("limit")) or limit
+                for group_index in range(0, len(where_terms), group_size):
+                    group = where_terms[group_index : group_index + group_size]
+                    clause = _socrata_where_clause(where_fields, group)
+                    where_query = urlencode(
+                        {
+                            "$limit": where_limit,
+                            **({"$order": f"{date_field} DESC"} if date_field else {}),
+                            "$where": clause,
+                        }
+                    )
+                    gid = group_index // group_size
+                    out.append(
+                        {
+                            **socrata_target,
+                            "id": f"{tenant_id}:where:g{gid}",
+                            "url": f"{rows_url}?{where_query}",
+                            "index_kind": "where",
+                            "index_keyword": f"g{gid}",
+                            "limit": where_limit,
+                            "where_fields": where_fields,
+                            "where_terms": group,
+                            "where_group": gid,
+                        }
+                    )
         else:
             # bonfire / opengov — the gated portal surface itself: the target
             # exists so each run records the host's own verdict (a robots
@@ -2356,21 +2530,60 @@ class ProcurementConnector(Connector):
             capture = parsed["capture"]
             target = parsed["target"]
             items = parsed["items"]
-            out: list[Mapping[str, Any]] = [
-                {
-                    "record_kind": "portal_index",
-                    "source_uri": capture.source_uri,
-                    "capture_digest": capture.digest,
-                    "media_type": capture.media_type,
-                    "retrieved_at": (
-                        capture.retrieved_at.isoformat() if capture.retrieved_at else None
-                    ),
-                    "byte_size": parsed["byte_size"],
-                    "text": parsed["text"],
-                    "items_count": len(items),
-                    "target": target,
-                }
-            ]
+            # P35.9: a `where` slice is recall only — a row is kept ONLY when
+            # the verbatim vocab scan keeps a non-suppressed term match
+            # (I9b-Q008). The pruned fallback dedupes envelopes: the earliest
+            # `where` group whose clause would return the row owns its claims
+            # (`_socrata_like_owner`); `rows` emits only unowned records. A
+            # pure per-row rule — replay/shadow decide identically; drops and
+            # prunes are counted on the index row.
+            index_kind = str(target.get("index_kind") or "")
+            where_name = _opt_str(target.get("portal_where"))
+            where_def = portal_where_defs().get(where_name) if where_name else None
+            my_group = _opt_int(target.get("where_group"))
+            precise_items: list[Mapping[str, Any]] = []
+            dropped_count = 0
+            pruned_count = 0
+            seen_ids: set[str] = set()
+            for item in items:
+                ext_id = _portal_external_id(item, target)
+                owner = _socrata_like_owner(item, where_def)
+                if index_kind == "where":
+                    if my_group is None or owner != my_group:
+                        if owner is None:
+                            dropped_count += 1  # recall noise: not even a LIKE hit
+                        else:
+                            pruned_count += 1  # an earlier where group owns it
+                        continue
+                    if not _socrata_where_precise(item, target):
+                        dropped_count += 1
+                        continue
+                elif owner is not None:
+                    pruned_count += 1  # a tighter where tier owns this envelope
+                    continue
+                if ext_id in seen_ids:
+                    pruned_count += 1  # the same envelope twice in one slice
+                    continue
+                seen_ids.add(ext_id)
+                precise_items.append(item)
+            index_record: dict[str, Any] = {
+                "record_kind": "portal_index",
+                "source_uri": capture.source_uri,
+                "capture_digest": capture.digest,
+                "media_type": capture.media_type,
+                "retrieved_at": (
+                    capture.retrieved_at.isoformat() if capture.retrieved_at else None
+                ),
+                "byte_size": parsed["byte_size"],
+                "text": parsed["text"],
+                "items_count": len(items),
+                "target": target,
+            }
+            if index_kind == "where" or where_def is not None:
+                index_record["precise_count"] = len(precise_items)
+                index_record["dropped_count"] = dropped_count
+                index_record["pruned_count"] = pruned_count
+            out: list[Mapping[str, Any]] = [index_record]
             out.extend(
                 {
                     "record_kind": "portal_index_item",
@@ -2382,7 +2595,7 @@ class ProcurementConnector(Connector):
                         capture.retrieved_at.isoformat() if capture.retrieved_at else None
                     ),
                 }
-                for pos, item in enumerate(items)
+                for pos, item in enumerate(precise_items)
             )
             return out
         if parsed["kind"] == "portal_document":
@@ -2557,20 +2770,35 @@ class ProcurementConnector(Connector):
             # declare it — an absent key keeps the P26.14 shadow diff at zero.
             if target and target.get("award_class"):
                 provenance["award_class"] = str(target["award_class"])
+            # P35.9: recipient/program/term-set provenance — absent keys
+            # assert nothing.
+            for key in ("recipient_search", "program_number", "acq_keyword_terms"):
+                if target and target.get(key):
+                    provenance[key] = str(target[key])
             objects = list(payload.get("results", [])) if isinstance(payload, Mapping) else []
             award_records: list[Mapping[str, Any]] = []
+            # P8-6/P35.9: a natural-person / sole-proprietor payee drops —
+            # the record's type literal or the affirmative person signal
+            # decides; ambiguity never drops. The drop count lands on the row.
+            dropped_recipients = 0
             for pos, obj in enumerate(objects):
                 if not isinstance(obj, Mapping):
                     obj = {"value": obj}
-                award_records.append(
-                    {
-                        "record_kind": "procurement_notice",
-                        "raw": dict(obj),
-                        "notice_provenance": provenance,
-                        "row_index": pos,
-                    }
-                )
-                if provenance["award_kind"] == "sub" or _looks_like_subaward(obj):
+                drop_reason = _usaspending_recipient_drop(obj)
+                if drop_reason:
+                    dropped_recipients += 1
+                record: dict[str, Any] = {
+                    "record_kind": "procurement_notice",
+                    "raw": dict(obj),
+                    "notice_provenance": provenance,
+                    "row_index": pos,
+                }
+                if drop_reason:
+                    record["recipient_dropped"] = drop_reason
+                award_records.append(record)
+                if (
+                    provenance["award_kind"] == "sub" or _looks_like_subaward(obj)
+                ) and not drop_reason:
                     award_records.append({"record_kind": "subaward", "raw": dict(obj)})
             # The per-slice outcome row trails the result records.
             award_records.append(
@@ -2580,6 +2808,7 @@ class ProcurementConnector(Connector):
                     "capture_digest": capture.digest if capture else None,
                     "provenance": provenance,
                     "items_count": len(objects),
+                    "recipient_dropped_count": dropped_recipients,
                     "page_metadata": (
                         dict(payload.get("page_metadata", {}))
                         if isinstance(payload, Mapping)
@@ -3082,6 +3311,15 @@ class ProcurementConnector(Connector):
             },
             source_id=ctx.source.id,
         )
+        # P35.9: where-slice provenance + precision-pass counts ride the row.
+        for key in ("portal_where", "acq_keyword_terms"):
+            if target.get(key):
+                row[key] = str(target[key])
+        if target.get("where_terms"):
+            row["where_terms"] = [str(t) for t in target["where_terms"]]
+        for key in ("precise_count", "dropped_count", "pruned_count"):
+            if raw.get(key) is not None:
+                row[key] = raw[key]
         if jurisdiction:
             row["jurisdiction_candidate"] = org_candidate(
                 jurisdiction, scheme="portal.jurisdiction_name"
@@ -3258,7 +3496,7 @@ class ProcurementConnector(Connector):
         retrieved_date = _opt_str(raw.get("retrieved_at"))
         retrieved_date = retrieved_date[:10] if retrieved_date else None
 
-        fields = [str(f) for f in tenant.get("title_fields", ()) if str(f)]
+        fields = _socrata_scan_fields(tenant)
         scanned: list[dict[str, Any]] = []
         suppressions: list[dict[str, Any]] = []
         total_len = 0
@@ -3339,6 +3577,39 @@ class ProcurementConnector(Connector):
                             "retrieved_date": retrieved_date,
                             "extraction_method": "json_text",
                             "locator": Locator.row(int(row_index)).to_row(),
+                        },
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        # P35.9 (description fan-out): each populated ``desc_fields`` alias
+        # emits a verbatim ``description`` claim located to its own field.
+        for field_name in [str(f) for f in tenant.get("desc_fields", ()) if str(f)]:
+            value = _opt_str(item.get(field_name))
+            if not value:
+                continue
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("description"),
+                        "value": value,
+                        "raw_value": value,
+                        "observed_at": retrieved_date,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                        "document": index_url,
+                        "document_subject": doc_subject,
+                        "evidence_genre": "portal_document",
+                        "evidence": {
+                            "source_url": index_url,
+                            "retrieved_date": retrieved_date,
+                            "extraction_method": "json_text",
+                            "field": field_name,
+                            "locator": Locator.byte_range(0, len(value)).to_row(),
+                            "record_row": row_index,
                         },
                     },
                     source_id=ctx.source.id,
@@ -3680,6 +3951,9 @@ class ProcurementConnector(Connector):
                 "slice": prov.get("slice"),
                 "index_keyword": prov.get("index_keyword"),
                 "agency": prov.get("agency"),
+                "recipient_search": prov.get("recipient_search"),
+                "program_number": prov.get("program_number"),
+                "acq_keyword_terms": prov.get("acq_keyword_terms"),
                 "capture_digest": prov.get("capture_digest"),
             }
 
@@ -3687,6 +3961,12 @@ class ProcurementConnector(Connector):
         recipient = _first_nonempty(
             notice, ("Sub-Awardee Name", "subawardee", "subrecipient_name", "Recipient Name")
         )
+        # P8-6/P35.9: extract already decided this row's payee is a natural
+        # person / sole proprietor — no `recipient` claim, no entity ref, no
+        # FundingInstrument asserting the person as grantee.
+        drop_reason = _opt_str(raw.get("recipient_dropped"))
+        if drop_reason:
+            recipient = None
         # P31.13: on an assistance row the administering *sub*-agency (FEMA
         # under DHS for the Homeland Security Grant Program) is the
         # funder-of-record — prefer it when the row carries both fields so the
@@ -3739,6 +4019,7 @@ class ProcurementConnector(Connector):
                     "provenance": prov,
                     "row_index": row_index,
                     "raw": dict(notice),
+                    **({"recipient_dropped": drop_reason} if drop_reason else {}),
                 },
                 source_id=ctx.source.id,
             )
@@ -3777,6 +4058,18 @@ class ProcurementConnector(Connector):
                     description,
                 )
             )
+        # P35.9 (description fan-out): every OTHER populated description
+        # alias with a different literal emits its own claim, own field.
+        for desc_field in (
+            "Sub-Award Description",
+            "Description",
+            "subaward_description",
+            "description",
+            "Award Description",
+        ):
+            extra_desc = _opt_str(notice.get(desc_field))
+            if extra_desc is not None and extra_desc != description:
+                field_claims.append(("description", desc_field, extra_desc, extra_desc))
         if federal_id is not None:
             field_claims.append(
                 ("federal_award_id", "prime_award_generated_internal_id", federal_id, federal_id)
@@ -3811,7 +4104,7 @@ class ProcurementConnector(Connector):
         # nothing asserts the recipient purchased, deployed, or operates
         # anything (funded ≠ deployed, §11.12, SIG-INGEST-034 — the same guard
         # the sub-award path rides).
-        if is_assistance:
+        if is_assistance and not drop_reason:
             instrument = _funding_instrument_from_assistance(notice, source_id=ctx.source.id)
             if instrument is not None:
                 rows.extend(instrument.claim_rows())
@@ -4612,6 +4905,135 @@ def _portal_index_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | N
     return None
 
 
+def _socrata_where_clause(fields: Sequence[str], terms: Sequence[str]) -> str:
+    """One reviewed SoQL OR-group of ``upper(<field>) like '%<TERM>%'`` (B00329).
+
+    Per term: one parenthesised OR across ``fields``; the group ORs the
+    terms. Quotes are doubled (the SoQL escape). Recall-side substring
+    filter only — the verbatim vocabulary scan is the precision pass.
+    """
+    parts: list[str] = []
+    for term in terms:
+        escaped = str(term).replace("'", "''").upper()
+        parts.append(
+            "(" + " or ".join(f"upper({field}) like '%{escaped}%'" for field in fields) + ")"
+        )
+    return " or ".join(parts)
+
+
+def _socrata_scan_fields(tenant: Mapping[str, Any]) -> list[str]:
+    """The reviewed verbatim text fields a Socrata record's scan covers (P35.9).
+
+    ``title_fields`` ∪ ``desc_fields`` (the description fan-out) ∪ the
+    ``where_fields`` a where-slice filtered on ∪ ``vendor_field`` — one scan
+    surface decides keep/drop AND emits the ``content_term``/``description``
+    claims (recorded on the document row's ``fields_scanned``).
+    """
+    out: list[str] = []
+    for f in (
+        *tenant.get("title_fields", ()),
+        *tenant.get("desc_fields", ()),
+        *tenant.get("where_fields", ()),
+        tenant.get("vendor_field"),
+    ):
+        s = str(f or "")
+        if s and s not in out:
+            out.append(s)
+    return out
+
+
+def _socrata_where_precise(item: Mapping[str, Any], tenant: Mapping[str, Any]) -> bool:
+    """The client-side precision pass for a ``where``-slice Socrata row (P35.9).
+
+    The server-side ``%TERM%`` LIKE is deliberately broad recall (I9b-Q008);
+    the verbatim ``agenda_content_vocab`` scan is the match of record — a row
+    keeping NO reviewed-term match is the false-positive class to drop
+    ('CLEARVIEW DATA SYSTEMS' ≠ Clearview AI; 'Parsons Brinckerhoff' never
+    matches ``\\bbrinc\\b``). A row whose only match is Part VIII-suppressed
+    also drops — a bare landing with no emittable evidence.
+    """
+    for field_name in _socrata_scan_fields(tenant):
+        value = _opt_str(item.get(field_name))
+        if not value:
+            continue
+        for m in scan_agenda_content(value):
+            token = content_guard_token(str(m["literal"])) or content_guard_token(
+                str(m["term_label"])
+            )
+            if token is None:
+                return True
+    return False
+
+
+def _socrata_like_owner(item: Mapping[str, Any], where_def: Mapping[str, Any] | None) -> int | None:
+    """Which ``where``-slice group owns this record's claims, or ``None``.
+
+    The pruned generic fallback (P35.9, I8 §4.2): the earliest ``where``
+    group whose generated clause would have returned the row owns its claim
+    set — every other capture records it ``pruned``. A pure function of the
+    record + the reviewed definition, so replay decides identically
+    (SIG-INGEST-017/019). ``None``: the ``rows`` fallback owns it — or,
+    inside a ``where`` capture, it is recall noise to drop.
+    """
+    if not isinstance(where_def, Mapping):
+        return None
+    fields = [str(f) for f in where_def.get("fields", ()) if str(f or "")]
+    terms = acq_keyword_term_set(str(where_def.get("terms") or ""))
+    group_size = max(1, int(where_def.get("group_size", 8)))
+    if not fields or not terms:
+        return None
+    earliest: int | None = None
+    for pos, term in enumerate(terms):
+        needle = str(term).upper()
+        if not needle:
+            continue
+        if any(needle in str(item.get(f) or "").upper() for f in fields):
+            if earliest is None or pos < earliest:
+                earliest = pos
+    if earliest is None:
+        return None
+    return earliest // group_size
+
+
+def _usaspending_recipient_drop(notice: Mapping[str, Any]) -> str | None:
+    """Why this award row's recipient is dropped (P8-6, P35.9), or ``None``.
+
+    Two reviewed signals: the record's OWN recipient/business-type literal is
+    a reviewed exclusion (``recipient_type_fields`` /
+    ``excluded_recipient_types``), or the recipient name carries an
+    affirmative ``natural_person_signal``. The identity layer's *ambiguity*
+    refusals are NOT person evidence — "two words, no organisation marker"
+    never drops a payee. A dropped recipient emits no ``recipient`` claim and
+    no FundingInstrument, and counts on the slice row; the award stays.
+    """
+    bounds = usaspending_sweep_config().get("bounds", {})
+    excluded = {str(v).strip().lower() for v in bounds.get("excluded_recipient_types", ())}
+    if excluded:
+        for field_name in bounds.get("recipient_type_fields", ()):
+            value = notice.get(str(field_name))
+            values = value if isinstance(value, (list, tuple)) else [value]
+            for v in values:
+                text = str(v or "").strip().lower()
+                if text and text in excluded:
+                    return f"excluded_type:{text}"
+    recipient = _first_nonempty(
+        notice,
+        (
+            "Sub-Awardee Name",
+            "subawardee",
+            "subrecipient_name",
+            "Recipient Name",
+            "recipient",
+            "awardee_name",
+        ),
+    )
+    if recipient:
+        signal = natural_person_signal(recipient)
+        if signal:
+            return signal
+    return None
+
+
 def _portal_item_id(item: Mapping[str, Any]) -> str:
     """A portal item's external id — solicitation number, detail-id, or digest."""
     return (
@@ -4651,10 +5073,11 @@ def _portal_notice_type(
     own = _first_nonempty(item, (str(tenant.get("notice_type_field") or ""),))
     if own:
         return own
-    if index_kind and index_kind != "rows":
+    if index_kind and index_kind not in ("rows", "where"):
         return index_kind  # the verbatim index window the record surfaced under
     # A register row without its own type field asserts no notice_type — the
     # `contracted` lifecycle transition already records what the register is.
+    # ("where" is a P35.9 filter slice, not a notice type.)
     return None
 
 

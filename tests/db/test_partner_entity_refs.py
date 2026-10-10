@@ -231,10 +231,20 @@ def test_person_shaped_and_ambiguous_partners_mint_nothing(clean_dsn: str) -> No
                 == 0
             ), refused
         # ...and each still stands as its text claim (the literal is never dropped).
-        for name in ("John A. Smith", "JOHN Q CITIZEN", "Police Department"):
+        for name in ("John A. Smith", "Police Department"):
             assert _count(conn, "SELECT count(*) FROM claim WHERE value_text = %s", (name,)) == 1, (
                 name
             )
+        # P35.9 / P8-6 (ACQ-05): the one literal that does NOT stand — the
+        # person-shaped USAspending recipient (SIG-FIXTURE-A-002) now drops the
+        # recipient claim itself on the affirmative person signal, so nothing
+        # mints AND nothing is written (the drop is recorded as
+        # recipient_dropped on the notice / recipient_dropped_count on the
+        # slice outcome row, covered in tests/connectors).
+        assert (
+            _count(conn, "SELECT count(*) FROM claim WHERE value_text = %s", ("JOHN Q CITIZEN",))
+            == 0
+        )
 
 
 def test_a_replay_inserts_nothing(clean_dsn: str) -> None:

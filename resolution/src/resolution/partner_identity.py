@@ -71,6 +71,7 @@ __all__ = [
     "PARTNER_PREDICATES",
     "PartnerIdentity",
     "PartnerRefusal",
+    "natural_person_signal",
     "partner_identity",
     "partner_ref_rows",
     "partner_rules_version",
@@ -280,6 +281,39 @@ def partner_identity(
         scope=scope_token,
         candidate=True,
     )
+
+
+def natural_person_signal(name: str) -> str | None:
+    """The affirmative natural-person signal a recipient name carries (P35.9 / P8-6).
+
+    Returns the person-signal reason — ``"sole_proprietor"`` or
+    ``"person_shaped"`` — when the name carries affirmative person evidence,
+    else ``None``. Runs only the identity layer's *affirmative* person checks:
+    a sole-trader phrase ("Jane Q. Public dba JQP Consulting"), a person /
+    honorific / given-name token, or a bare role title beside a name
+    ("Sheriff Smith"). The ambiguity refusals are NOT person evidence: a
+    two-word name with no organisation marker is merely ambiguous
+    ("Magnet Forensics" lands there — a company without a reviewed marker
+    keeps its recipient claim, the ambiguity merely withholds the entity
+    mint). Empty values, multi-party strings, and generic agency names
+    return ``None`` — not persons, just refused entity mints.
+    """
+    raw = str(name or "")
+    label = _display(raw)
+    if not label:
+        return None
+    normalized = normalize_org_name(label)
+    tokens = normalized.split()
+    if not tokens:
+        return None
+    if any(_has_run(tokens, p) for p in _phrases("individual_phrases")):
+        return "sole_proprietor"
+    token_set = set(tokens)
+    if token_set & (_token_set("person_tokens") | _token_set("given_names")):
+        return "person_shaped"
+    if token_set & _token_set("role_tokens") and not token_set & _token_set("head_nouns"):
+        return "person_shaped"
+    return None
 
 
 def _names(value: Any) -> list[str]:
