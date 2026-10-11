@@ -166,6 +166,34 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Changed
 
+- **Closed claim vocabulary at the sink** (P35.14a; cites SIG-STORE-013,
+  SIG-ONTO-028, SIG-ONTO-035, SIG-ONTO-051, SIG-ONTO-057, SIG-ONTO-060,
+  SIG-STORE-037, SIG-STORE-044, SIG-GEO-002) — the claim sink now treats the
+  predicate and evidence-genre vocabularies as closed registries: a claim
+  carrying a predicate absent from `vocab_predicate` or an evidence genre
+  absent from the new `vocab_artifact_genre` table produces no claim and
+  lands an auditable `assertion_quarantine` row stamped `unknown_predicate`
+  or `unknown_genre` (full payload + provenance kept), instead of the prior
+  silent sink-side auto-registration. `register_vocabulary()` now validates
+  against the registry — it never creates rows. The ontology is the single
+  vocabulary source: the generated predicate registry grew to 280 entries
+  (including the four previously unregistered connector-emitted predicates
+  `atlas_category_retired`, `deployment_ended`, `osm_element_deleted`,
+  `physical_removed_from_street`) and projects the full
+  280-predicate × 20-genre directness matrix into the new sqitch change
+  `closed_vocabulary` (INSERT-only seed; the hosted deploy is a queued OM-19
+  leg under AR-3). Connector outputs conform: Atlas stamps closed registry
+  genres while raw method labels stay in `atlas_method`, Flock Portal rows
+  default to `portal_snapshot`, OSM rows to `osm_node_set`, and the OSM
+  Mobility vocabulary defect is corrected (`mobile` → `redeployable`,
+  `vehicle` → `vehicle_mounted`, `drone` → `airborne`). Ontology hygiene:
+  `SuccessionKind` + `Organization.succession{,_kind}` retired,
+  `ConfigurationState.mfa_required` added, 40 technology slugs
+  retired-and-superseded (104 active / 40 retired), and the generator now
+  refuses reflexive or cyclic SKOS broader relations. A connector-output
+  conformance test (planted violations fail closed) pins every emitted
+  predicate, genre and enum value to the registry.
+
 ### Deprecated
 
 ### Removed

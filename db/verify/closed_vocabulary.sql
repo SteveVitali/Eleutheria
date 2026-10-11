@@ -14,7 +14,7 @@ SELECT predicate_id FROM vocab_predicate
  WHERE predicate_id IN ('installation_date','last_checked','upstream_ref',
                         'portal_stated_permitted_use','deployed',
                         'retention_window_observed');
-SELECT 6/count(*) FROM vocab_predicate
+SELECT 1 / (CASE WHEN count(*) = 6 THEN 1 ELSE 0 END) FROM vocab_predicate
  WHERE predicate_id IN ('installation_date','last_checked','upstream_ref',
                         'portal_stated_permitted_use','deployed',
                         'retention_window_observed');
@@ -25,7 +25,7 @@ SELECT conname FROM pg_constraint
    AND pg_get_constraintdef(oid) LIKE '%unknown_genre%';
 
 -- every seeded predicate carries the full registry metadata (SIG-ONTO-066).
-SELECT 0/count(*) FROM vocab_predicate
+SELECT 1 / (CASE WHEN count(*) = 0 THEN 1 ELSE 0 END) FROM vocab_predicate
  WHERE volatility_class IS NULL OR resolution_strategy IS NULL
     OR definition IS NULL OR skos_concept_iri IS NULL
     OR (volatility_class <> 'IMMUTABLE' AND half_life_days IS NULL);
