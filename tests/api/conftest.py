@@ -137,12 +137,15 @@ def pg_dsn() -> _Iterator[str]:
         yield f"postgresql://{db.PG_USER}:{db.PG_PASSWORD}@{host}:{port}/{db.PG_DB}"
 
 
-@pytest.fixture(autouse=True)
-def _subject_typer_stub(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.fixture(scope="session", autouse=True)
+def _subject_typer_stub() -> _Iterator[None]:
     """P35.14b: same stub as ``tests/db/conftest.py`` — the sink mint path is
     fail-closed over the declared map; the PG fixtures here mint arbitrary
-    synthetic subjects, so unmapped prefixes mint ``deployment`` (the
-    pre-P35.14b default) while mapped prefixes keep the real type.
+    synthetic subjects (``okc:deployment:*`` and friends), so unmapped
+    prefixes mint ``deployment`` (the pre-P35.14b default) while mapped
+    prefixes keep the real type. Session scope: the module-scoped ``seeded``
+    fixtures mint through ``PgClaimSink.from_dsn`` before any function-scoped
+    ``monkeypatch`` could apply.
     """
     import db.claim_sink as claim_sink
     from db.subject_types import UnmappedSubjectScheme, entity_type_for_subject
@@ -153,4 +156,6 @@ def _subject_typer_stub(monkeypatch: pytest.MonkeyPatch) -> None:
         except UnmappedSubjectScheme:
             return "deployment"
 
-    monkeypatch.setattr(claim_sink, "entity_type_for_subject", _typer)
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(claim_sink, "entity_type_for_subject", _typer)
+        yield

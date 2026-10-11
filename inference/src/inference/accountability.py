@@ -53,6 +53,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any, cast
 
+from db.identity_guard import SUBJECT_SCHEME
 from db.organization_roles import (
     PROVENANCE_ROLES,
     ROLE_OF_PREDICATE,
@@ -210,6 +211,19 @@ _EVENT_ORGANIZATION_PREDICATES: frozenset[str] = frozenset(
 #: (§11.17) (P31.5 / ADR-112). Such a subject is never a deployment anchor (procured ≠
 #: deployed; an event is not a deployment).
 _PLACEHOLDER_SUBJECT_TYPE = "deployment"
+#: P35.14b (SIG-IDENT-025, the recorded ``:401`` anchor re-point): the entity
+#: types an accountability link may anchor on. ``deployment`` and
+#: ``physical_asset`` are the deployed thing the chain is about (a
+#: registry-listed camera mints ``physical_asset`` under the
+#: subject-scheme → entity-type map — §11.8 — and was a ``deployment`` anchor
+#: under the old all-``deployment`` mint). ``organization`` anchors only when
+#: the org is itself a connector subject (a ``sig.connector.subject``-keyed
+#: entity): an agency subject's ``vendor`` claim anchors ``has_vendor`` on the
+#: agency — the accountable body. An org minted as a claim OBJECT (partner /
+#: org-name refs) is NEVER an anchor — the same procured ≠ deployed guard: an
+#: access partner is not the deployed thing.
+_DEPLOYED_ANCHOR_TYPES: frozenset[str] = frozenset({"deployment", "physical_asset"})
+_ACCOUNTABLE_ANCHOR_TYPES: frozenset[str] = frozenset(_DEPLOYED_ANCHOR_TYPES | {"organization"})
 _SUBJECT_DOMAIN_BY_PREDICATE: dict[str, str] = {
     "buyer": "contract",
     "seller": "contract",
@@ -387,19 +401,54 @@ def _jurisdiction_clause(jurisdiction: str | None, column: str, params: list[Any
     return f" AND {column} IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
 
 
+def _current_type_expr(conn: Any, alias: str) -> str:
+    """The SQL expression resolving ``<alias>``'s CURRENT entity type.
+
+    P35.14b's ``entity_current_type`` view (latest ``entity_type_decision``
+    wins, else the recorded column) exists once the L1 sqitch leg deploys;
+    before it, ``entity.entity_type`` is the only type the spine carries. The
+    ``to_regclass`` probe keeps the materializer working unchanged on a
+    pre-L1 spine — the recorded type is the effective type there.
+    """
+    row = conn.execute("SELECT to_regclass('entity_current_type')").fetchone()
+    if row and row[0]:
+        return (
+            "COALESCE((SELECT t.entity_type FROM entity_current_type t "
+            f"WHERE t.entity_id = {alias}.entity_id), {alias}.entity_type)"
+        )
+    return f"{alias}.entity_type"
+
+
 def read_deployment_anchors(
     conn: Any, *, jurisdiction: str | None = None, subject: str | None = None
 ) -> list[str]:
-    """The resolved ``deployment`` anchors: surviving nodes (``merged_into IS NULL``).
+    """The resolved accountability anchors: surviving nodes (``merged_into IS NULL``).
 
     A deployment entity IS the resolved deployment node — physical observations resolve
     into it (P28.1); ``merged_into IS NULL`` keeps only the surviving node after dedup, so
     a link never anchors on a merged-away duplicate. This is the procured ≠ deployed guard's
-    first line: an anchor must already exist as a ``deployment`` entity — a procurement
+    first line: an anchor must already exist as a resolved entity — a procurement
     record cannot conjure one.
+
+    P35.14b: the anchor's type is the entity's CURRENT type (``entity_current_type``
+    when the typed-identity decisions have landed, the recorded column before).
+    ``physical_asset`` joins ``deployment`` (a field device IS the deployed thing)
+    and ``organization`` joins only for ``sig.connector.subject``-keyed entities —
+    a subject-minted agency anchors its own vendor/oversight claims exactly as it
+    did when every subject minted ``deployment``, while an org minted as a claim
+    object (a partner ref) stays a non-anchor.
     """
-    where = ["e.entity_type = 'deployment'", "e.merged_into IS NULL"]
-    params: list[Any] = []
+    etype = _current_type_expr(conn, "e")
+    anchor_types = " OR ".join(
+        [
+            f"{etype} IN ('deployment', 'physical_asset')",
+            f"({etype} = 'organization' AND EXISTS ("
+            "SELECT 1 FROM entity_identity_key k "
+            "WHERE k.entity_id = e.entity_id AND k.scheme = %s))",
+        ]
+    )
+    where = [f"({anchor_types})", "e.merged_into IS NULL"]
+    params: list[Any] = [SUBJECT_SCHEME]
     if subject:
         where.append("e.entity_id = %s")
         params.append(subject)
@@ -428,9 +477,13 @@ def read_accountability_claims(conn: Any) -> list[AcctClaim]:
     deployment with only procurement claims yields no link (honest gap).
     """
     predicates = tuple(sorted(ACCOUNTABILITY_PREDICATES))
+    # P35.14b: subject/object types resolve the entity's CURRENT type (the
+    # typed-identity decisions supersede the recorded column once landed) so a
+    # corrected subject joins its true domain, never the mistyped one.
     rows = conn.execute(
-        "SELECT c.claim_id::text, c.subject_id::text, se.entity_type, c.predicate_id, "
-        "       c.object_entity::text, oe.entity_type "
+        f"SELECT c.claim_id::text, c.subject_id::text, {_current_type_expr(conn, 'se')}, "
+        "       c.predicate_id, "
+        f"       c.object_entity::text, {_current_type_expr(conn, 'oe')} "
         "  FROM claim c "
         "  JOIN entity se ON se.entity_id = c.subject_id "
         "  JOIN entity oe ON oe.entity_id = c.object_entity "
@@ -502,9 +555,9 @@ def assemble_links(anchors: Iterable[str], claims: Iterable[AcctClaim]) -> list[
         subject_type = c.subject_type
         if subject_type == _PLACEHOLDER_SUBJECT_TYPE and c.subject_id in record_subjects:
             subject_type = _SUBJECT_DOMAIN_BY_PREDICATE.get(p, subject_type)
-        if p in _OPERATOR_PREDICATES and subject_type == "deployment":
+        if p in _OPERATOR_PREDICATES and subject_type in _ACCOUNTABLE_ANCHOR_TYPES:
             deployment_orgs.setdefault(c.subject_id, []).append((c.object_id, c.claim_id))
-        elif p in _VENDOR_PREDICATES and subject_type == "deployment":
+        elif p in _VENDOR_PREDICATES and subject_type in _ACCOUNTABLE_ANCHOR_TYPES:
             direct_vendors.setdefault(c.subject_id, []).append((c.object_id, c.claim_id))
         elif p == _CONTRACT_BUYER and subject_type == "contract":
             contracts_by_buyer.setdefault(c.object_id, []).append((c.subject_id, c.claim_id))
@@ -716,7 +769,9 @@ def materialize_accountability_links(
 ) -> AccountabilityLinkSummary:
     """Materialize the accountability linkage over the resolved spine (P28.6).
 
-    Reads the resolved ``deployment`` anchors and the accountability-layer entity-ref
+    Reads the resolved anchors (``deployment`` + ``physical_asset`` entities and
+    ``sig.connector.subject``-keyed organizations — the P35.14b re-point of the
+    old all-``deployment`` anchor set) and the accountability-layer entity-ref
     claims, assembles each deployment→vendor→contract→funding→policy→oversight link
     (:func:`assemble_links`), and writes it as an append-only, idempotent L4
     ``inference.derived_fact`` row — each link citing its establishing claims, none
