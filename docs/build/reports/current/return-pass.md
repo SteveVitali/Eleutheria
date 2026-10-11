@@ -40,5 +40,6 @@
 | P35.67 | the queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`; docs/build/reports/POST_CUTOVER_PROBE_CHECKLIST.md) after OP-09 + the L2 cert-renew… | `implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` · landed row 263 (PR #265 — legs queued on OP-09) |
 | P35.1a | the queued in-ticket production-write leg: `scheduled-ops.sh --apply` reconciling Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED triggers + the d… | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266; mutation leg queued … |
 | P35.11 | the queued Wave-A production sequence: L1 rolls the connector digest, loads `state_alpr_statute_inventory_2026`, then runs legistar → usa_spending → procportal_… | L2 |
+| P35.14a | the queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — genres + strategies + 280 predicates + 5,600 directness rows + the widened CHECK), ver… | `implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` · landed row 272 (PR #274 — write queued unde… |
 
 ← back: CURRENT.md
