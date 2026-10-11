@@ -50,6 +50,10 @@ _require_or_skip = _DB._require_or_skip
 _docker_reachable = _DB._docker_reachable
 seed_claim_prerequisites = _DB.seed_claim_prerequisites
 insert_claim = _DB.insert_claim
+# P35.14a: db test functions re-import helpers as ``from conftest import …`` at
+# call time; whichever conftest pytest last bound under the plain ``conftest``
+# module name answers, so the closed-vocabulary seeder is re-exported here too.
+register_vocab_predicate = _DB.register_vocab_predicate
 
 
 @pytest.fixture(scope="session")
