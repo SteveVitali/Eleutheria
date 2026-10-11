@@ -352,3 +352,12 @@ seed-commit 65f20cdf
 # markup-id. 0b36a887 rewrites it to the explicit list; append-only preserved here.
 # Scope: findings attributed to 0b36a887 only; no other commit borrows the exemption.
 seed-commit 0b36a887
+
+# ── P35.14b kind repair ──────────────────────────────────────────────────────
+# b40cb4c1's PHASE LOG entry kind `post-closeout repair` owes a `ci:` field it
+# cannot truthfully carry for a red head (verify-recorded-ci, run 38166601565);
+# the in-place kind repair `post-closeout repair` → `correction` (NON_CI_KINDS;
+# the P34.39b 5816717d precedent) edited the committed line — append-only is
+# preserved by this declaration (same pattern as c4b2aa21).
+# Scope: findings attributed to 64648080 only; no other commit borrows the exemption.
+seed-commit 64648080
