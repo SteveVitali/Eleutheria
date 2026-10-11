@@ -1,0 +1,1 @@
+<!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B, no history; the PHASE LOG and git carry the history of values. -->

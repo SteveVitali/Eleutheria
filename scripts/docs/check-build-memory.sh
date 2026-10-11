@@ -97,7 +97,8 @@
 #     pauseRequested ∈ true|false; mergePolicy ∈ NONE|OPERATOR|AUTO-BOTTOM-UP; autonomy ∈
 #     auto|checkpoint|manual; round an integer; updatedAt ISO-8601 (`<…>`/`(…)` seed placeholders skip)
 #   - LEDGER.md budget + shape (BM-LEDGER-08; guarded — warn, or fail under the guards
-#     marker): orient region <= 12 KiB (warn > 8 KiB); CURRENT STATE <= 3 KiB, lines <= 256 B, no
+#     marker): orient region <= 12 KiB (warn > 8 KiB); CURRENT STATE <= 3 KiB, lines <= 256 B
+#     (the generated returnPass id list <= 512 B — the B3 V2 hard bound; it grows with the queue), no
 #     `| PRIOR`; returnPass an id list; no other line begins with a CURRENT STATE key; the last `## `
 #     heading is a PHASE LOG heading; its entries <= 2 KiB (older regions: warn); every repo path
 #     named in the orient region exists and no stale token appears (`.agents/scratch`,
@@ -873,7 +874,10 @@ if [ -f "$LEDGER" ]; then
       if (index(keys, " " k " ")) print k "\t" length($0) "\t" ($0 ~ /\|[[:space:]]*\**PRIOR/ ? 1 : 0)
     }' "$LEDGER" | while IFS="$(printf '\t')" read -r k len prior; do
     [ -n "$k" ] || continue
-    [ "$len" -gt 256 ] 2>/dev/null && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' line is $len B (> 256 B; values only, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
+    # returnPass rides the B3 V2 hard bound (fail > 512 B): the generated id
+    # list grows with the queued-leg set and cannot be shortened in place.
+    cap=256; [ "$k" = "returnPass" ] && cap=512
+    [ "$len" -gt "$cap" ] 2>/dev/null && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' line is $len B (> $cap B; values only, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
     [ "$prior" = "1" ] && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' carries '| PRIOR' history (values only; git + PHASE LOG carry history, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
   done
   # returnPass is a comma-separated id list (or "(none)").
