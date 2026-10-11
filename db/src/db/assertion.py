@@ -59,6 +59,9 @@ class QuarantineReason(StrEnum):
     BAD_DIGEST = "bad_digest"
     UNKNOWN_PREDICATE = "unknown_predicate"
     UNKNOWN_GENRE = "unknown_genre"
+    #: P35.14b: a ``sig.connector.subject`` value no declared map prefix covers
+    #: (subject_entity_types.toml) — never defaulted to ``deployment``.
+    UNKNOWN_SUBJECT_SCHEME = "unknown_subject_scheme"
     UNKNOWN_OBJECT_TYPE = "unknown_object_type"
     UNKNOWN_VALUE_KIND = "unknown_value_kind"
     MISSING_CAPTURE_BINDING = "missing_capture_binding"

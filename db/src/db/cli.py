@@ -113,6 +113,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="the code commit recorded on the terms-capture ingest_run",
     )
 
+    ti = sub.add_parser(
+        "typed-identity",
+        help="plan or apply the append-only typed-identity correction "
+        "(P35.14b / SIG-IDENT-025): new entity_type_decision rows for "
+        "sig.connector.subject keys whose declared map type supersedes the "
+        "recorded entity_type — INSERT-only, idempotent (+0 on rerun), "
+        "existing entity rows never UPDATEd/DELETEd",
+    )
+    ti.add_argument("--dsn", required=True, help="PostgreSQL DSN for the spine")
+    ti.add_argument(
+        "--apply",
+        action="store_true",
+        help="write the pending entity_type_decision rows (default: plan only — "
+        "print the per-type pending counts and unmapped subjects)",
+    )
+
     bench = sub.add_parser(
         "sink-bench",
         help="time PgClaimSink passes over synthetic OSM-shaped claims: claims/min and "
@@ -317,6 +333,17 @@ def _run_attribution_corrections(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_typed_identity(args: argparse.Namespace) -> int:
+    """Plan or apply the append-only typed-identity correction (P35.14b)."""
+    import json
+
+    from .typed_identity import run
+
+    report = run(args.dsn, apply_mode=args.apply)
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `db` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -325,6 +352,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_analytics(args)
     if args.command == "rights-decisions":
         return _run_rights_decisions(args)
+    if args.command == "typed-identity":
+        return _run_typed_identity(args)
     if args.command == "attribution-corrections":
         return _run_attribution_corrections(args)
     if args.command == "sink-bench":

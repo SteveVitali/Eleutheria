@@ -14,6 +14,8 @@ the full narrative.
 |---|---|---|
 | `db/src/db/claim_sink.py` | ~1860 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine (ADR-110) |
 | `db/src/db/identity_guard.py` | ~240 | `resolve_identities` — one entity per identity-bearing `(scheme, value)` via `entity_identity_key` (ADR-110) |
+| `db/src/db/subject_types.py` + `db/src/db/data/subject_entity_types.toml` | ~n/a | the committed, versioned subject-scheme → entity-type map the sink's mint path consults — longest-prefix, fail-closed (`unknown_subject_scheme` quarantine, never a `deployment` default) (P35.14b) |
+| `db/src/db/typed_identity.py` | ~n/a | the append-only `entity_type_decision` writer correcting pre-P35.14b mistyped subjects — dry-run by default, `+0` on rerun, never `UPDATE`/`DELETE` |
 | `db/src/db/assertion.py` · `occurrences.py` · `dispositions.py` · `intake_apply.py` · `recovery_apply.py` | ~n/a | the Round-10 write surfaces — `sig.assertion/1` typed claims (ADR-121), eligible-occurrence selection (ADR-123), publication dispositions (ADR-124), reviewed-correction application (ADR-136), bounded recovery apply (ADR-141) — all insert-only |
 | `db/src/db/sink_bench.py` | ~240 | `sig-db sink-bench` — claims/min + round trips per claim for a sink pass |
 | `db/src/db/analytics.py` | ~640 | DuckDB analytics commands over parquet (a separate engine) |

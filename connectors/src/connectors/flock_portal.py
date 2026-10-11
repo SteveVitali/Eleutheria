@@ -63,6 +63,7 @@ from typing import Any
 from uuid import uuid4
 
 from db.identity_guard import SUBJECT_SCHEME
+from db.subject_types import entity_type_for_subject
 from reconcile.sharing import (
     ACCESS_KINDS,
     SharingObservation,
@@ -764,14 +765,14 @@ def _portal_partner_ref(slug: str) -> dict[str, str]:
     ``flock_portal:<slug>``): when the partner is itself a portal subject, the
     guard resolves the SAME entity the portal's own claims key on; when it never
     appears as a portal, the ref still denotes the body that portal slug
-    identifies on the platform. The entity type stays the connector-subject
-    placeholder ``deployment`` (§11.7) so a minted object is typed exactly like
-    the same identifier minted as a subject.
+    identifies on the platform. The entity type is the declared map's
+    (``flock_portal:`` → ``data_system``, §11.10 — P35.14b) so a minted object is
+    typed exactly like the same identifier minted as a subject.
     """
     return {
         "scheme": SUBJECT_SCHEME,
         "value": portal_id(slug),
-        "entity_type": "deployment",
+        "entity_type": entity_type_for_subject(portal_id(slug)),
         "label": slug,
         "basis": "portal_slug_identifier",
         "rules": "portal_partner_ref/1",

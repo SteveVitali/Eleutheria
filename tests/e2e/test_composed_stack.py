@@ -771,15 +771,20 @@ def test_s6_api_serves_resolution_envelope_and_families(
             import psycopg
 
             with psycopg.connect(dsn) as probe:
+                # P35.14b: subjects mint their declared map type, never a shared
+                # 'deployment' — read the entity's actual type for the
+                # type-scoped route instead of assuming it.
                 row = probe.execute(
-                    "SELECT subject_id, predicate_id FROM claim "
-                    "WHERE content_digest IS NOT NULL LIMIT 1"
+                    "SELECT c.subject_id, c.predicate_id, e.entity_type FROM claim c "
+                    "JOIN entity e ON e.entity_id = c.subject_id "
+                    "WHERE c.content_digest IS NOT NULL LIMIT 1"
                 ).fetchone()
             assert row is not None, "S3 must have written claims the API can read"
             subject_id, predicate_id = str(row[0]), str(row[1])
+            entity_type = str(row[2])
             for path in (
                 f"/v1/resolution/{subject_id}/{predicate_id}",
-                f"/v1/entity/deployment/{subject_id}",
+                f"/v1/entity/{entity_type}/{subject_id}",
                 "/v1/contradiction",
                 "/v1/task",
                 "/v1/crosswalk",

@@ -95,6 +95,7 @@ from .identity_guard import (
     resolve_identity_batch,
 )
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
+from .subject_types import UnmappedSubjectScheme, entity_type_for_subject
 
 #: Name-derived identity schemes — organisations minted from a NAME (global or
 #: scope-qualified) are publication-review-required until an identity review
@@ -115,7 +116,11 @@ _NON_DETERMINISTIC = frozenset({"claim_id", "sys_period", "recorded_at"})
 _DEFAULT_RELIABILITY = "R3"  # credible secondary source (§10.4)
 _DEFAULT_DIRECTNESS = "D2"  # direct statement in a secondary record (§10.5)
 _DEFAULT_INTEGRITY = "I1"  # intact original capture (§10.6)
-_DEFAULT_ENTITY_TYPE = "deployment"  # the atlas/osm subjects are adoption bridges (§11.7)
+# P35.14b (L1 NEW-5 / FM-17, SIG-IDENT-025): there is no default subject entity
+# type any more. A ``sig.connector.subject`` value's type comes from the
+# committed subject_entity_types.toml map via ``subject_typer`` (longest-prefix
+# match, fail-closed); an unmapped subject quarantines with
+# ``unknown_subject_scheme`` rather than minting ``deployment``.
 
 #: Environment variables recorded on each ``ingest_run.environment`` (SIG-EVID-018
 #: asks for the locale + timezone; the Cloud Run ids tie a run to its job execution).
@@ -377,6 +382,9 @@ class _Staged:
 
     digest: str
     subject: str
+    #: P35.14b: the entity type the declared map assigns this subject — resolved
+    #: at staging so an unmapped scheme quarantines before any mint work runs.
+    subject_type: str
     predicate: str
     extraction_id: str
     run_id: str
@@ -710,6 +718,7 @@ class PgClaimSink:
         logical_run: str | None = None,
         extra_parameters: Mapping[str, str] | None = None,
         rights_resolver: RightsResolver | None = None,
+        subject_typer: Callable[[str], str] | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -748,6 +757,11 @@ class PgClaimSink:
         # omits rights fields (wired by ``connectors.sinks.make_claim_sink`` from
         # ``sources.toml``; absent → assertion-only behaviour, e.g. replays).
         self._rights_resolver = rights_resolver
+        # P35.14b / SIG-IDENT-025: the subject-scheme → entity-type lookup the
+        # mint path consults (``data/subject_entity_types.toml``, longest-prefix
+        # match, fail-closed). Injectable so DB fixtures that mint arbitrary
+        # subjects keep working; production never overrides it.
+        self._subject_typer = subject_typer or entity_type_for_subject
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         # (source_id, spdx, attribution, terms_url) -> rights_id. P34.21a: the
@@ -1430,6 +1444,25 @@ class PgClaimSink:
         predicate = typed.predicate
 
         source_id = str(claim.get("source_id") or self._connector_name)
+        # P35.14b / SIG-IDENT-025: the subject's entity type is the declared map
+        # value, never a default. An unmapped scheme fails closed into
+        # quarantine — the record is preserved, the claim never lands, and no
+        # entity is minted.
+        try:
+            subject_type = self._subject_typer(subject)
+        except UnmappedSubjectScheme as exc:
+            self._quarantine(
+                claim,
+                Rejection(
+                    QuarantineReason.UNKNOWN_SUBJECT_SCHEME,
+                    str(exc),
+                    quarantine_payload(
+                        claim, connector_name=self._connector_name, source_id=source_id
+                    ),
+                ),
+                source_id=source_id,
+            )
+            return
         spdx = str(claim.get("license") or claim.get("spdx") or "")
         attribution = claim.get("source_attribution") or claim.get("attribution")
         terms_url = claim.get("terms_url") or claim.get("source_terms_url")
@@ -1499,6 +1532,39 @@ class PgClaimSink:
                 f"object resolver named a {object_ref.entity_type!r} entity; the sink "
                 "never mints one (Part VIII)"
             )
+        if object_ref is not None and object_ref.scheme == SUBJECT_SCHEME:
+            # P35.14b: an object ref that names a connector-subject identifier
+            # must declare the type the map declares — a disagreement is a
+            # connector/map bug the sink never resolves by first-writer-wins.
+            try:
+                ref_type = self._subject_typer(object_ref.value)
+            except UnmappedSubjectScheme as exc:
+                self._quarantine(
+                    claim,
+                    Rejection(
+                        QuarantineReason.UNKNOWN_SUBJECT_SCHEME,
+                        str(exc),
+                        quarantine_payload(
+                            claim, connector_name=self._connector_name, source_id=source_id
+                        ),
+                    ),
+                    source_id=source_id,
+                )
+                return
+            if ref_type != object_ref.entity_type:
+                self._quarantine(
+                    claim,
+                    Rejection(
+                        QuarantineReason.UNKNOWN_SUBJECT_SCHEME,
+                        f"object_ref declares entity_type {object_ref.entity_type!r} for "
+                        f"subject {object_ref.value!r} but the map declares {ref_type!r}",
+                        quarantine_payload(
+                            claim, connector_name=self._connector_name, source_id=source_id
+                        ),
+                    ),
+                    source_id=source_id,
+                )
+                return
         if object_ref is not None and (not object_ref.value or typed.value_kind == "novalue"):
             # An entity reference needs a named entity and a value to stand for:
             # without either the claim stays a literal (claim_value_shape).
@@ -1513,6 +1579,7 @@ class PgClaimSink:
             _Staged(
                 digest=content_digest(claim),
                 subject=subject,
+                subject_type=subject_type,
                 predicate=predicate,
                 extraction_id=extraction_id,
                 run_id=run_id,
@@ -1703,7 +1770,9 @@ class PgClaimSink:
         refs: dict[tuple[str, str], tuple[str, str, str]] = {}
         for s in staged:
             subject_key = (SUBJECT_SCHEME, s.subject)
-            refs.setdefault(subject_key, (*subject_key, _DEFAULT_ENTITY_TYPE))
+            # P35.14b: the staged subject type the declared map assigned —
+            # never a shared default (SIG-IDENT-025).
+            refs.setdefault(subject_key, (*subject_key, s.subject_type))
             if s.object_ref is not None:
                 o = s.object_ref
                 refs.setdefault((o.scheme, o.value), (o.scheme, o.value, o.entity_type))

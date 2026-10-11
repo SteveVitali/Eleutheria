@@ -348,3 +348,28 @@ def insert_claim(
         ),
     )
     return _id_of(cur.fetchone(), "claim_id")
+
+
+@pytest.fixture(autouse=True)
+def _subject_typer_stub(monkeypatch: pytest.MonkeyPatch) -> None:
+    """P35.14b: the sink mint path resolves subjects through the declared,
+    fail-closed ``subject_entity_types.toml`` map (``db.subject_types``).
+    Pre-existing plumbing fixtures mint arbitrary synthetic subjects
+    (``subj:1``, ``chunk-subj-*``, ``undo:*``, …) that no map prefix covers —
+    under the strict map they would quarantine instead of exercising the
+    write path. This stub keeps the real map for declared prefixes and mints
+    ``deployment`` (the pre-P35.14b default) for the rest, so those fixtures
+    probe plumbing exactly as before. The real map's typing + refusal is
+    asserted with explicit ``subject_typer=`` sinks in
+    ``test_subject_typing.py``.
+    """
+    import db.claim_sink as claim_sink
+    from db.subject_types import UnmappedSubjectScheme, entity_type_for_subject
+
+    def _typer(subject: str) -> str:
+        try:
+            return entity_type_for_subject(subject)
+        except UnmappedSubjectScheme:
+            return "deployment"
+
+    monkeypatch.setattr(claim_sink, "entity_type_for_subject", _typer)
