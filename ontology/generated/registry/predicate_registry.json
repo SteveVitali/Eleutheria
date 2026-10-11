@@ -21,7 +21,7 @@
     "subscription",
     "recommendation"
   ],
-  "count": 280,
+  "count": 281,
   "predicates": [
     {
       "cardinality": "single",
@@ -9408,6 +9408,39 @@
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
+    },
+    {
+      "cardinality": "single",
+      "definition": "The geometry shape kind a record declares for its subject — a `GeometryKind` member (area | line | point) of the ontology enum (§19, SIG-GEO-003). An automated-traffic-enforcement zone or a published camera programme area is an `area`, never a device point; an enforced route or corridor segment is a `line`. Registered by P36.3 (ACQ-03) so the closed vocabulary accepts the `geometry_kind=\"area\"` values P36.4's programme-area emit and P36.6's ATE zone layers assert.",
+      "directness": {
+        "agency_policy": "D6",
+        "agenda_document": "D6",
+        "audit_log": "D6",
+        "bill_index": "D6",
+        "camera_registry": "D1",
+        "community_map": "D6",
+        "connector_run": "D3",
+        "contract": "D6",
+        "council_minutes": "D6",
+        "executed_contract": "D6",
+        "invoice": "D6",
+        "news_article": "D6",
+        "official_statement": "D6",
+        "osm_node_set": "D6",
+        "portal_document": "D6",
+        "portal_snapshot": "D6",
+        "recommendation": "D6",
+        "subscription": "D6",
+        "template": "D6",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "geometry_kind",
+      "resolution_strategy": "authoritative_source_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/geometry_kind",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
     }
   ],
   "scheme": "predicate",

@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 280,
+    "count": 281,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -211,6 +211,7 @@
       "funding_amount",
       "funding_instrument",
       "funding_program_name",
+      "geometry_kind",
       "hit_volume_observed",
       "holds_data_collected_by",
       "hotlist_hit_windowed_count",
@@ -369,9 +370,9 @@
   "technology": {
     "counts": {
       "domains": 14,
-      "families": 36,
+      "families": 37,
       "retired_technologies": 40,
-      "technologies": 104
+      "technologies": 110
     },
     "families_without_unspecified_leaf": [],
     "scheme_iri": "https://ontology.sig-project.org/vocab/technology/1.0.0",
@@ -469,6 +470,54 @@
         "has_evidence_signature": true,
         "salience": "H",
         "slug": "alpr-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ate-bus-lane",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "ate-red-light",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ate-school-bus-stop-arm",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "ate-speed",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "ate-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ate-work-zone",
         "status": "active",
         "superseded_by": null
       },

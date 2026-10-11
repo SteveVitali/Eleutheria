@@ -205,6 +205,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-204](ADR-204-quality-registry-schema-outcome-vocabulary-and-the-ruleset-diff.md) | The quality-check registry schema, the outcome vocabulary, and the ruleset diff (P34.44a) | P34.44a (Round 11 / P34, row 255 — ADR-154 decision 1's registry + | accepted |
 | [ADR-205](ADR-205-nightly-quality-probe-job-and-measured-baseline-application.md) | The nightly quality-probe job and measured-baseline application (P34.44b) | P34.44b (Round 11 / P34, row 256 — ADR-154 decision 3's "the suite | accepted |
 | [ADR-206](ADR-206-er-rerun-login-and-the-one-shot-v3-interim-leg.md) | The sig_materialize_login credential and the one-shot v3-interim ER re-run leg (P34.45) | P34.45 (Round 11 / P34, row 257 — the honest-evaluation posture; | accepted |
+| [ADR-207](ADR-207-ate-technology-family-and-the-declared-geometry-kind.md) | The ATE technology family and the declared geometry kind (P36.3) | P36.3 (Round 11 / P36, row 276 — ACQ-03; the Round-11 wave-B | accepted |
 
 ## Notes
 

@@ -2,8 +2,8 @@
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 #
-# The SIG technology vocabulary (§13.1) — SKOS source of truth. 14 domains, 36
-# families, 104 technologies (144 entries: 104 active + 40 retired, P35.14a);
+# The SIG technology vocabulary (§13.1) — SKOS source of truth. 14 domains, 37
+# families, 110 technologies (150 entries: 110 active + 40 retired, P35.14a);
 # every family carries an -unspecified leaf
 # (SIG-ONTO-020/054); every technology carries a distinguishing criterion, an
 # evidence signature, and a salience L/M/H/C (SIG-ONTO-056). Slugs are
@@ -21,8 +21,8 @@ version: 1.0.0
 hierarchy: domain → family → technology
 counts:
   domains: 14
-  families: 36
-  technologies: 104
+  families: 37
+  technologies: 110
 domains:
 - slug: surveillance-vehicle
   label: Vehicle surveillance
@@ -109,6 +109,66 @@ domains:
         separating its specific technologies.'
       evidence_signature:
       - commercial plate-data purchase
+      salience: H
+  - slug: ate
+    label: Automated traffic enforcement
+    technologies:
+    - slug: ate-red-light
+      label: Red-light enforcement camera
+      distinguishing_criterion: Automated citation triggered by a vehicle entering
+        or crossing an intersection against a red signal.
+      evidence_signature:
+      - red light camera
+      - red-light safety camera
+      - red light running
+      - photo red light
+      salience: H
+    - slug: ate-speed
+      label: Speed enforcement camera
+      distinguishing_criterion: Automated citation triggered by a measured vehicle
+        speed over the posted limit (fixed-site or average-speed).
+      evidence_signature:
+      - speed camera
+      - speed safety camera
+      - automated speed enforcement
+      - photo speed
+      salience: H
+    - slug: ate-bus-lane
+      label: Bus-lane enforcement camera
+      distinguishing_criterion: Automated citation for unauthorised use of a
+        bus/transit-only lane, enforced per route or corridor.
+      evidence_signature:
+      - bus lane enforcement
+      - automated bus lane enforcement
+      - bus lane camera
+      salience: M
+    - slug: ate-school-bus-stop-arm
+      label: School-bus stop-arm enforcement camera
+      distinguishing_criterion: Automated citation for passing a school bus with
+        its stop arm deployed.
+      evidence_signature:
+      - school bus stop arm camera
+      - stop-arm violation
+      - school bus camera program
+      salience: M
+    - slug: ate-work-zone
+      label: Work-zone enforcement camera
+      distinguishing_criterion: Automated speed enforcement deployed inside a
+        highway work or construction zone.
+      evidence_signature:
+      - work zone speed camera
+      - work zone automated enforcement
+      - automated work zone speed enforcement
+      salience: M
+    - slug: ate-unspecified
+      label: Automated traffic enforcement (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - automated traffic enforcement
+      - automated enforcement
+      - photo enforcement
+      - traffic safety camera
       salience: H
 - slug: surveillance-video
   label: Video surveillance

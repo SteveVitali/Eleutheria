@@ -6,7 +6,9 @@ this section specifies their **structure, governing rules, and the terms that ar
 
 ### 13.1 Technology (`domain` → `family` → `technology`)
 
-**SIG-ONTO-052 (MUST).** **14 domains, 36 families, 104 technologies** at v1.
+**SIG-ONTO-052 (MUST).** **14 domains, 37 families, 110 technologies** at v1.
+*(Amended by P36.3 / ADR-207: the `ate` family — automated traffic enforcement — joined
+`surveillance-vehicle` with six active leaves; retired leaves remain outside the active count.)*
 
 **SIG-ONTO-052a (MUST).** Phase 1 acceptance MUST assert these counts against the generated
 vocabulary artifact, and MUST assert that every technology term carries its distinguishing
@@ -15,7 +17,7 @@ checked against an artifact are unfalsifiable, and this requirement exists to pr
 
 | Domain | Covers |
 |---|---|
-| `surveillance-vehicle` | ALPR (fixed, mobile, covert, trailer, checkpoint, unspecified), vehicle-fingerprint re-identification, commercial plate-data purchase |
+| `surveillance-vehicle` | ALPR (fixed, mobile, covert, trailer, checkpoint, unspecified), vehicle-fingerprint re-identification, commercial plate-data purchase, automated traffic enforcement (red-light, speed, bus-lane, school-bus stop-arm, work-zone, unspecified — P36.3 / ADR-207) |
 | `surveillance-video` | Fixed CCTV, PTZ, private-camera registry / integration / per-incident request, video analytics, camera trailers |
 | `body-worn-video` | **Body-worn cameras (`bwc-recorded`, `bwc-livestream`, `bwc-unspecified`); in-car video; live BWC streaming into an integration platform** |
 | `biometric-id` | Face (1:1, 1:N, retrospective, live), iris, DNA/rapid DNA, tattoo, gait, voice |

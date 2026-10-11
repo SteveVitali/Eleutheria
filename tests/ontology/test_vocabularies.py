@@ -20,14 +20,15 @@ def summary() -> dict:
     return json.loads((generated_dir() / "registry" / "vocab_summary.json").read_text())
 
 
-def test_technology_counts_are_14_36_104(summary: dict) -> None:
+def test_technology_counts_are_14_37_110(summary: dict) -> None:
     # SIG-ONTO-052. P35.14a retires the 40 non-family-prefixed slugs under
-    # superseded_by metadata (SIG-ONTO-055): the active set stays 104, the
-    # retired records stay resolvable and countable.
+    # superseded_by metadata (SIG-ONTO-055); P36.3 adds the `ate` family —
+    # automated traffic enforcement with six active leaves — so the active
+    # set reads 110 and the retired records stay resolvable and countable.
     assert summary["technology"]["counts"] == {
         "domains": 14,
-        "families": 36,
-        "technologies": 104,
+        "families": 37,
+        "technologies": 110,
         "retired_technologies": 40,
     }
 

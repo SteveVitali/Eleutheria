@@ -1823,6 +1823,16 @@
             "title": "FundingInstrumentType",
             "type": "string"
         },
+        "GeometryKind": {
+            "description": "The geometry shape kind a record declares for its subject (\u00a719, SIG-GEO-003): the asset model MUST NOT assume a point. A record whose publisher's geometry is a zone or programme area declares `area` \u2014 automated-traffic-enforcement zones and published camera programme areas are areas, never device points \u2014 and a route-shaped record declares `line`. The `geometry_kind` predicate (ontology/vocab/predicates.yaml) carries this vocabulary's member on the claim surface; an area-shaped record MUST NOT be flattened to a device point.",
+            "enum": [
+                "point",
+                "line",
+                "area"
+            ],
+            "title": "GeometryKind",
+            "type": "string"
+        },
         "GeometryPrecision": {
             "description": "How precisely a stored geometry locates its subject (\u00a714.2, SIG-IDENT-004). An agency-registry latitude/longitude MUST be stored as `organization_centroid_or_unknown` and MUST NOT be used for point-in-polygon jurisdiction assignment or as an organization address \u2014 using an agency centroid as a device location would be a fabrication.",
             "enum": [

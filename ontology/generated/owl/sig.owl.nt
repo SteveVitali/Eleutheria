@@ -1713,6 +1713,30 @@
 <https://ontology.sig-project.org/schema/FundingInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/FundingInstrumentType#private_donation> .
 <https://ontology.sig-project.org/schema/FundingInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/FundingInstrumentType#state_grant> .
 <https://ontology.sig-project.org/schema/FundingInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/FundingInstrumentType#vendor_provided_free> .
+<https://ontology.sig-project.org/schema/GeometryKind#area> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryKind#area> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryKind> .
+<https://ontology.sig-project.org/schema/GeometryKind#area> <http://www.w3.org/2000/01/rdf-schema#label> "area" .
+<https://ontology.sig-project.org/schema/GeometryKind#area> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryKind> .
+<https://ontology.sig-project.org/schema/GeometryKind#area> <http://www.w3.org/2004/02/skos/core#definition> "An area geometry — a zone or programme area (e.g. an ATE zone or a published camera coverage polygon); never a device point (SIG-GEO-003)." .
+<https://ontology.sig-project.org/schema/GeometryKind#line> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryKind#line> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryKind> .
+<https://ontology.sig-project.org/schema/GeometryKind#line> <http://www.w3.org/2000/01/rdf-schema#label> "line" .
+<https://ontology.sig-project.org/schema/GeometryKind#line> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryKind> .
+<https://ontology.sig-project.org/schema/GeometryKind#line> <http://www.w3.org/2004/02/skos/core#definition> "A linear geometry — an enforced route or corridor segment." .
+<https://ontology.sig-project.org/schema/GeometryKind#point> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryKind#point> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryKind> .
+<https://ontology.sig-project.org/schema/GeometryKind#point> <http://www.w3.org/2000/01/rdf-schema#label> "point" .
+<https://ontology.sig-project.org/schema/GeometryKind#point> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryKind> .
+<https://ontology.sig-project.org/schema/GeometryKind#point> <http://www.w3.org/2004/02/skos/core#definition> "A point geometry — one coordinate site (a device point)." .
+<https://ontology.sig-project.org/schema/GeometryKind> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryKind> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/EnumDefinition> .
+<https://ontology.sig-project.org/schema/GeometryKind> <http://www.w3.org/2000/01/rdf-schema#label> "GeometryKind" .
+<https://ontology.sig-project.org/schema/GeometryKind> <http://www.w3.org/2002/07/owl#unionOf> _:cb12853964cb5f724e773976e325629639b396800e9a13be46f3bea8ebb85cd90a9 .
+<https://ontology.sig-project.org/schema/GeometryKind> <http://www.w3.org/2004/02/skos/core#definition> "The geometry shape kind a record declares for its subject (§19, SIG-GEO-003): the asset model MUST NOT assume a point. A record whose publisher's geometry is a zone or programme area declares `area` — automated-traffic-enforcement zones and published camera programme areas are areas, never device points — and a route-shaped record declares `line`. The `geometry_kind` predicate (ontology/vocab/predicates.yaml) carries this vocabulary's member on the claim surface; an area-shaped record MUST NOT be flattened to a device point." .
+<https://ontology.sig-project.org/schema/GeometryKind> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/GeometryKind> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryKind#area> .
+<https://ontology.sig-project.org/schema/GeometryKind> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryKind#line> .
+<https://ontology.sig-project.org/schema/GeometryKind> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryKind#point> .
 <https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryPrecision> .
 <https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/2000/01/rdf-schema#label> "organization_centroid_or_unknown" .
@@ -4849,6 +4873,8 @@ _:cb126bc8bb4540d8d6544adf80d7b3386ba6d21341e41a03e583a309cf8f434d173 <http://ww
 _:cb126bc8bb4540d8d6544adf80d7b3386ba6d21341e41a03e583a309cf8f434d173 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb128512cdecc8bac2e950892a7fcac5297c5516e38902c0b50728e065eb6de4448 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SystemScope#commercial> .
 _:cb128512cdecc8bac2e950892a7fcac5297c5516e38902c0b50728e065eb6de4448 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb12853964cb5f724e773976e325629639b396800e9a13be46f3bea8ebb85cd90a9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryKind#point> .
+_:cb12853964cb5f724e773976e325629639b396800e9a13be46f3bea8ebb85cd90a9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cba9bed89b640a56c5d3bca192a54164e9761d1bfa107e35863b6fbf110b2367f8 .
 _:cb12856f25211c568a1d2c8ad2546290c1f9456a88c087f15dd48cee6c8da2f28f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ClaimEvidence> .
 _:cb12856f25211c568a1d2c8ad2546290c1f9456a88c087f15dd48cee6c8da2f28f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cba80e5ae53d19fbbe48482d7650131e68623b6f89e96cdc4f01f114bb6df58a08 .
 _:cb128eacf695f72d18891ab009da27312fcc61e0c867de64b375b96b1846163c7c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/LegalInstrumentType#de.landesdatenschutzgesetz> .
@@ -4874,6 +4900,8 @@ _:cb13286930833d53f648d1a03cc97ea97c314b189e56186f89f3dcd827a36707032 <http://ww
 _:cb132dacde45fa2acef28969c12f8b8172b899f3bdbd30bd4d6455188795acd12bb <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb132dacde45fa2acef28969c12f8b8172b899f3bdbd30bd4d6455188795acd12bb <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/Boolean> .
 _:cb132dacde45fa2acef28969c12f8b8172b899f3bdbd30bd4d6455188795acd12bb <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/denominator_published> .
+_:cb132ffeee93986948f551acf96ae9d82837febc46b5d102b994b70a80426d1b8ec <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryKind#area> .
+_:cb132ffeee93986948f551acf96ae9d82837febc46b5d102b994b70a80426d1b8ec <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb13a708b0f5c39bacc28640ce8f35f59b662d4c871bd99f47524d2adfae269c2de <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb13a708b0f5c39bacc28640ce8f35f59b662d4c871bd99f47524d2adfae269c2de <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/Integer> .
 _:cb13a708b0f5c39bacc28640ce8f35f59b662d4c871bd99f47524d2adfae269c2de <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/count> .
@@ -7119,6 +7147,8 @@ _:cba8f958b9115706c768a802cbc422cfdd3fdf3ab17ab365593696e978a8f6438a <http://www
 _:cba8f958b9115706c768a802cbc422cfdd3fdf3ab17ab365593696e978a8f6438a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16ed2c62f21e0f30bc697a3ae5d26c2cfc4d67c59f8cbc3e3903a008c02d7d45f .
 _:cba9445d727b81481fe1093c0d1b1e080ae2507601416d1f233144c567758ec192 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#vendor_statement> .
 _:cba9445d727b81481fe1093c0d1b1e080ae2507601416d1f233144c567758ec192 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb8c763fb5c15d64edd25af7a1f03745f85aec150a89f54d3c197af4f8c82e2f1 .
+_:cba9bed89b640a56c5d3bca192a54164e9761d1bfa107e35863b6fbf110b2367f8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryKind#line> .
+_:cba9bed89b640a56c5d3bca192a54164e9761d1bfa107e35863b6fbf110b2367f8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb132ffeee93986948f551acf96ae9d82837febc46b5d102b994b70a80426d1b8ec .
 _:cbab3701eccfd322ceee3332e7d667d7c274efdb9fc9b39a20965f52fc7dd00f67 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SystemScope#vendor_cloud_single_tenant> .
 _:cbab3701eccfd322ceee3332e7d667d7c274efdb9fc9b39a20965f52fc7dd00f67 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb6c0abec4a508c60515d5feabc3bcc4414bbb8f2209a32a6cb59f65d621771bad .
 _:cbabb3df44636f1c0c0bf544fa4a8212563b98382ba390a8143001a5ce08126bfd <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ObservedVia#portal> .
