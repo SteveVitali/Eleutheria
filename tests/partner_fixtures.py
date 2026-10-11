@@ -165,6 +165,12 @@ GOLDEN_ACCOUNTABILITY_VOCAB = "2026.09.18.2"
 #: France/Belgium procurement connector stamps the procurement vocab too.
 GOLDEN_PROCUREMENT_VOCAB = "2026.09.18-p26.15"
 
+#: Same normalization for the dot_511 vocabulary (P35.15a / PKG-07 bumped it to
+#: 2026.10.11.1 — `technology` joined the predicate allowlist; a vocabulary
+#: migration restamps provenance, never claim content). The golden was last
+#: re-computed under P32.3 at `2026.10.10.1`.
+GOLDEN_DOT511_VOCAB = "2026.10.10.1"
+
 
 def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
     """`content_digest` comparable to the base-commit golden for ``run_key``.
@@ -174,6 +180,7 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
     other field digests exactly as stored.
     """
     from connectors.accountability import vocab_version as _acc_vv
+    from connectors.dot_511 import vocab_version as _dot_vv
     from connectors.procurement import vocab_version as _proc_vv
     from db.claim_sink import content_digest
 
@@ -183,4 +190,6 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
             record = {**record, "vocab_version": GOLDEN_ACCOUNTABILITY_VOCAB}
         elif vv == str(_proc_vv()):
             record = {**record, "vocab_version": GOLDEN_PROCUREMENT_VOCAB}
+        elif vv == str(_dot_vv()):
+            record = {**record, "vocab_version": GOLDEN_DOT511_VOCAB}
     return content_digest(record)

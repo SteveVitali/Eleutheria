@@ -23,8 +23,18 @@
 # evaluation exists in Round 11. The namespace join 1g:shared_upstream_ref (the
 # same upstream identifier republished under the v2 conditions) is a DERIVATION,
 # not identity inference, and stays the only candidate auto-write tier.
+#
+# v3.1-interim (P35.15a / PKG-07, NEW-7 / FM-05): a record's device class now
+# comes from its subject's DECLARED SKOS technology slug first — the
+# `technology` claim the connector emits from the camera-registry target's
+# declared slug ([[classes.technology_rule]] below). The substring rules are
+# retained only as the fallback for records that carry no declaration (the
+# spine's pre-P35.15b-backfill rows) and as the audit arm that logs a
+# device-class finding when it would have disagreed with a declaration — a
+# mismatch is recorded, never silently overridden. The inferential-tier lock
+# is unchanged.
 
-version = "3-interim"
+version = "3.1-interim"
 
 # ---------------------------------------------------------------------------
 # Distances (metres, great-circle). A candidate pair farther apart than
@@ -77,15 +87,41 @@ shared_ref_colocated_requires_name_agreement = true
 5 = "5g:proximate_candidate"
 
 # ---------------------------------------------------------------------------
-# Device classes and the RECORDED compatibility rules. A record's class is derived
-# from its source id and published operator label (first matching class wins, in
-# file order); no match -> "unspecified". A pair whose classes are listed in
-# `incompatible` is NEVER a candidate (never merged, never proposed): an ALPR reader
-# and a traffic-management CCTV are different devices even on one pole.
+# Device classes and the RECORDED compatibility rules. A record's class comes
+# from its subject's DECLARED technology slug when one is asserted (the P35.15a
+# `technology` claim — [[classes.technology_rule]] maps the slug prefix to a
+# class); a record with no declaration falls back to the source/operator/type
+# substring rules (first matching class wins, in file order); no match ->
+# "unspecified". A pair whose classes are listed in `incompatible` is NEVER a
+# candidate (never merged, never proposed): an ALPR reader and a
+# traffic-management CCTV are different devices even on one pole.
 # ---------------------------------------------------------------------------
 [classes]
 default = "unspecified"
 incompatible = [["alpr", "traffic"], ["alpr", "cctv"]]
+
+# The declared-slug table (P35.15a / PKG-07). `technology_prefixes` match a
+# lower-cased slug exactly or at a '-' boundary (`alpr` covers alpr-fixed,
+# alpr-mobile, alpr-trailer, … — the whole plate-capture family). Order is
+# first-match like [[classes.rule]]; a declared slug matching no entry is the
+# default class (a declaration still owns the classification — the fallback is
+# never the substring rules).
+[[classes.technology_rule]]
+class = "alpr"
+technology_prefixes = ["alpr", "vehicle-fingerprint", "plate-data-commercial"]
+
+[[classes.technology_rule]]
+class = "traffic"
+technology_prefixes = ["fixed-camera-ptz"]
+
+[[classes.technology_rule]]
+class = "cctv"
+technology_prefixes = [
+  "fixed-camera-cctv",
+  "camera-trailer",
+  "private-camera",
+  "video-analytics",
+]
 
 [[classes.rule]]
 class = "alpr"

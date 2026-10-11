@@ -46,7 +46,12 @@
 # not operator evidence — and `operator_fields` names the authoritative
 # feature-field aliases that alone mint `camera_operator` (the target's
 # `operator` key wins first).
-vocab_version = "2026.10.10.1"
+# 2026.10.11.1 (P35.15a / PKG-07, F-329/F-523): `technology` joins the
+# allowlist — the registered predicate (ontology/vocab/predicates.yaml) the
+# target's declared SKOS slug is emitted under; the entity row's record_kind
+# becomes the declared subtype, never the hard-coded `traffic_camera` blanket.
+# Additive only.
+vocab_version = "2026.10.11.1"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -70,6 +75,9 @@ predicate_allowlist = [
   "camera_longitude",
   "camera_coordinate_source",
   "external_id",
+  # P35.15a / PKG-07: the target's declared SKOS technology slug, emitted as a
+  # `technology` claim on the subject (a registered predicates.yaml member).
+  "technology",
 ]
 
 # Predicate GENRES this connector MUST NOT write (scope-creep guard): the

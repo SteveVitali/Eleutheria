@@ -668,6 +668,10 @@ def _site_row_data(site: ShapedSite, rights: Mapping[str, Any]) -> dict[str, Any
         "entity_id": site.entity_id,
         "entity_type": site.entity_type,
         "label": site.label,
+        # P35.15a / PKG-07: the declared SKOS technology slug (null when
+        # unreported/conflicted — the status keeps the honest reason).
+        "technology": site.technology,
+        "technology_status": site.technology_status,
         "jurisdiction": site.jurisdiction,
         "tier": site.sensitivity_tier,
         "precision": site.precision,
@@ -1215,6 +1219,11 @@ def _map_layer(
             "id": site.entity_id,
             "label": site.label or site.entity_id,
             "jurisdiction": site.jurisdiction,
+            # P35.15a / PKG-07: the declared technology slug for the map's
+            # facet band; `technologyStatus` keeps an unresolved/conflicted
+            # declaration honest (never a guessed class).
+            "technology": site.technology,
+            "technologyStatus": site.technology_status,
             "tier": site.sensitivity_tier,
             "lat": site.latitude,
             "lon": site.longitude,

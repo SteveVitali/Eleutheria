@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""P32.13 (SIG-FIND-002) — the ``sig.published-record/1`` projection: ID-free
-hashing, namespace binding, and honest unavailability states."""
+"""P32.13 (SIG-FIND-002) — the ``sig.published-record`` projection: ID-free
+hashing, namespace binding, and honest unavailability states. (Projection /2:
+P35.15a / PKG-07 added the declared ``technology`` field.)"""
 
 from __future__ import annotations
 
@@ -37,6 +38,8 @@ def _row(**over) -> dict:
         "precision": "full_precision",
         "source_id": "src_a",
         "spdx": "CC-BY-4.0",
+        "technology": "fixed-camera-ptz",
+        "technology_status": "resolved",
         "tier": 0,
     }
     base.update(over)
@@ -104,4 +107,24 @@ def test_record_json_is_deterministic() -> None:
     r2 = record_from_site_row(_row(), compartment="c", license_id="L").bind("p-" + "0" * 64)
     assert r1.json_bytes() == r2.json_bytes()
     doc = json.loads(r1.json_bytes())
-    assert doc["schema"] == "sig.published-record/1"
+    assert doc["schema"] == "sig.published-record/2"
+
+
+def test_declared_technology_survives_the_projection() -> None:
+    """P35.15a / PKG-07: the site row's declared SKOS slug lands on the record
+    with its honest basis — a declared claim, a conflicted declaration, or an
+    unreported gap; never an inferred class."""
+    rec = record_from_site_row(_row(), compartment="sig_graph", license_id="CC-BY-4.0")
+    assert rec.technology == {"id": "fixed-camera-ptz", "basis": "declared_technology_claim"}
+    unreported = record_from_site_row(
+        _row(technology=None, technology_status="unreported"),
+        compartment="sig_graph",
+        license_id="CC-BY-4.0",
+    )
+    assert unreported.technology == {"id": None, "basis": "unreported"}
+    conflicted = record_from_site_row(
+        _row(technology=None, technology_status="conflicted"),
+        compartment="sig_graph",
+        license_id="CC-BY-4.0",
+    )
+    assert conflicted.technology == {"id": None, "basis": "conflicted"}

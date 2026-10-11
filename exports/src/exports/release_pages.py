@@ -321,6 +321,8 @@ def record_page(
    <span class="k">Entity id</span> <code>{_e(record.entity_id)}</code></p>
 <p><span class="k">Jurisdiction</span> {_e(record.jurisdiction.get("id")) or "<em>unreported</em>"}
    <span class="mut">(basis: {_e(record.jurisdiction.get("basis"))})</span></p>
+<p><span class="k">Technology</span> {_e(record.technology.get("id")) or "<em>unreported</em>"}
+   <span class="mut">(basis: {_e(record.technology.get("basis"))})</span></p>
 {loc_html}
 <h2>Claim anchors</h2>
 <p class="mut">Each anchor is a spine-issued claim id — the claim-level citation.

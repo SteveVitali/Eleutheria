@@ -310,3 +310,31 @@ describe("per-jurisdiction contested counts leading to the dossier (P34.15, K12b
     expect(jurisdictionSlug("")).toBe("unresolved");
   });
 });
+
+describe("the declared-technology facet (P35.15a, PKG-07)", () => {
+  it("technologyLabel renders the slug only on a resolved declaration", async () => {
+    const { technologyLabel } = await import("../../src/lib/map");
+    expect(technologyLabel({ technology: "alpr-fixed", technologyStatus: "resolved" })).toBe(
+      "alpr-fixed",
+    );
+    // no slug -> the honest status word, never a guessed class
+    expect(technologyLabel({ technology: null, technologyStatus: "unreported" })).toBe(
+      "unreported",
+    );
+    expect(technologyLabel({ technology: null, technologyStatus: "conflicted" })).toBe(
+      "conflicted declarations",
+    );
+    // a slug on a non-resolved status still renders (the slug is the declaration)
+    expect(technologyLabel({ technology: "fixed-camera-cctv" })).toBe("fixed-camera-cctv");
+    // pre-P35.15a export bytes carry neither field -> "unreported"
+    expect(technologyLabel({})).toBe("unreported");
+  });
+
+  it("the committed fixture set exercises declared + unreported + conflicted", () => {
+    const slugs = MAP_ASSETS.map((a) => a.technology ?? null);
+    expect(slugs).toContain("alpr-fixed");
+    expect(slugs).toContain("fixed-camera-cctv");
+    expect(MAP_ASSETS.some((a) => a.technologyStatus === "conflicted")).toBe(true);
+    expect(MAP_ASSETS.some((a) => a.technologyStatus === "unreported")).toBe(true);
+  });
+});

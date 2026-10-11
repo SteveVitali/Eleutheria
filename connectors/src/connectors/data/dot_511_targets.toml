@@ -28,6 +28,7 @@
 
 [[targets]]
 id = "ky_kytc_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_ky"
 state = "KY"
 agency = "Kentucky Transportation Cabinet"
@@ -48,6 +49,7 @@ rights_note = "Item licenseInfo is a KYTC no-warranty DISCLAIMER asserting no us
 
 [[targets]]
 id = "il_idot_gateway_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_il"
 state = "IL"
 agency = "Illinois Department of Transportation"
@@ -64,6 +66,7 @@ rights_note = "Item licenseInfo declares 'Creative Commons Attribution-ShareAlik
 
 [[targets]]
 id = "ut_udot_live_view_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_ut"
 state = "UT"
 agency = "Utah Department of Transportation"
@@ -80,6 +83,7 @@ rights_note = "Item licenseInfo is an informational/no-warranty notice ('field v
 
 [[targets]]
 id = "or_tripcheck_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_or"
 state = "OR"
 agency = "Oregon Department of Transportation (TripCheck)"
@@ -96,6 +100,7 @@ rights_note = "Item licenseInfo = 'Public' (Oregon_OEM/ODOT); state public recor
 
 [[targets]]
 id = "la_dotd_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_la"
 state = "LA"
 agency = "Louisiana Department of Transportation and Development"
@@ -112,6 +117,7 @@ rights_note = "GOHSEP-owned item; licenseInfo EMPTY — no published terms locat
 
 [[targets]]
 id = "ia_dot_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_ia"
 state = "IA"
 agency = "Iowa Department of Transportation"
@@ -128,6 +134,7 @@ rights_note = "Item licenseInfo declares Creative Commons Attribution 4.0 verbat
 
 [[targets]]
 id = "wa_wsdot_travel_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_wa"
 state = "WA"
 agency = "Washington State Department of Transportation"
@@ -144,6 +151,7 @@ rights_note = "WSDOT-published feed 'intended for low volume use; may cancel or 
 
 [[targets]]
 id = "wa_kingcounty_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_wa"
 state = "WA"
 agency = "King County / WSDOT"
@@ -160,6 +168,7 @@ rights_note = "King County GIS terms link (kingcounty.gov terms-conditions-copyr
 
 [[targets]]
 id = "dc_ddot_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_dc"
 state = "DC"
 agency = "District Department of Transportation / DC GIS (OCTO)"
@@ -176,6 +185,7 @@ rights_note = "DC Data Policy (2017-115) + dc.gov Terms: District catalog data i
 
 [[targets]]
 id = "ga_gdot_511_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_ga"
 state = "GA"
 agency = "Georgia Department of Transportation"
@@ -192,6 +202,7 @@ rights_note = "GEMA-owned item; licenseInfo EMPTY — no published terms located
 
 [[targets]]
 id = "al_aldot_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_al"
 state = "AL"
 agency = "Alabama Department of Transportation"
@@ -208,6 +219,7 @@ rights_note = "Published under a county E-911 GIS org account (bce911gis), not a
 
 [[targets]]
 id = "mo_modot_traffic_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_mo"
 state = "MO"
 agency = "Missouri Department of Transportation"
@@ -224,6 +236,7 @@ rights_note = "MO Terms of Use: user agrees to conditions; warranty disclaimers 
 
 [[targets]]
 id = "tx_txdot_cctv_locations"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_tx"
 state = "TX"
 agency = "Texas Department of Transportation"
@@ -240,6 +253,7 @@ rights_note = "Published under a personal ArcGIS account (dkarctur), not a TxDOT
 
 [[targets]]
 id = "md_chart_cameras"
+technology = "fixed-camera-ptz"
 source_id = "dot_511_md"
 state = "MD"
 agency = "Maryland DOT SHA / CHART"

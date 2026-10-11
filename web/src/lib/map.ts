@@ -383,6 +383,14 @@ export interface MapAsset {
   id: string;
   label: string;
   jurisdiction: string;
+  /** P35.15a / PKG-07: the subject's declared SKOS technology slug (`technology`
+   * claim), or null when the record carries none. Optional on the wire —
+   * pre-P35.15a export bytes do not carry the field. */
+  technology?: string | null;
+  /** The envelope status behind `technology`: a slug only renders when the
+   * declaration RESOLVED; `conflicted`/`unreported` render as honest states,
+   * never a guessed class. */
+  technologyStatus?: "resolved" | "conflicted" | "unreported";
   tier: SensitivityTier;
   /** null when SIG publishes no point for this asset (tier 3, mobile, or unknown). */
   lat: number | null;
@@ -391,6 +399,16 @@ export interface MapAsset {
   precision: string;
   /** Set when the location itself is a gap (§9.5) — rendered as the hatch. */
   locationAbsence?: AbsenceKind;
+}
+
+/** The facet-band label for an asset's declared technology (P35.15a): the slug
+ * when one is declared, else an honest status word — "conflicted declarations"
+ * or "unreported" — so the band never invents a class the evidence lacks. */
+export function technologyLabel(
+  asset: Pick<MapAsset, "technology" | "technologyStatus">,
+): string {
+  if (asset.technology) return asset.technology;
+  return asset.technologyStatus === "conflicted" ? "conflicted declarations" : "unreported";
 }
 
 /** A jurisdiction-level roll-up of the assets that cannot be drawn as points. */

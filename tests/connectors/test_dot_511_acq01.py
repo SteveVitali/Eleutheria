@@ -29,6 +29,9 @@ _ARCGIS_ROW = {
     "object_id_field": "OBJECTID",
     "state": "DC",
     "agency": "A",
+    # P35.15a / PKG-07: expansion refuses a camera-class row without a
+    # declared registry-member technology slug.
+    "technology": "fixed-camera-ptz",
 }
 
 _SOCRATA_ROW = {
@@ -38,6 +41,7 @@ _SOCRATA_ROW = {
     "observed_count": 5,
     "state": "DC",
     "agency": "A",
+    "technology": "fixed-camera-ptz",
 }
 
 
@@ -103,3 +107,44 @@ def test_denied_fields_refuse_target_expansion() -> None:
     row = {**_SOCRATA_ROW, "out_fields": ["camid", "first_name"]}
     with pytest.raises(FieldDenylistViolation):
         expand_registry_rows([row])
+
+
+# --- P35.15a / PKG-07: the declared technology slug -------------------------------
+
+
+def test_target_without_technology_never_expands() -> None:
+    """A camera-class target row with no `technology` (or a non-registry slug)
+    is refused at expansion — the emit path can never fall back to the legacy
+    traffic_camera blanket typing (F-329)."""
+    from connectors.dot_511 import TechnologyNotDeclared
+
+    row = {k: v for k, v in _ARCGIS_ROW.items() if k != "technology"}
+    with pytest.raises(TechnologyNotDeclared, match="no 'technology' slug"):
+        expand_registry_rows([row])
+    with pytest.raises(TechnologyNotDeclared, match="not an active member"):
+        expand_registry_rows([{**_ARCGIS_ROW, "technology": "invented-slug"}])
+    with pytest.raises(TechnologyNotDeclared):
+        expand_registry_rows([{**_ARCGIS_ROW, "technology": "camera-fixed-cctv"}])  # retired
+
+
+def test_expanded_target_carries_declared_technology_and_subtype() -> None:
+    (target,) = expand_registry_rows([_ARCGIS_ROW])
+    assert target["technology"] == "fixed-camera-ptz"
+    assert target["record_kind"] == "fixed-camera-ptz"  # subtype defaults to the slug
+
+
+def test_traffic_camera_record_kind_needs_a_camera_domain_slug() -> None:
+    """`record_kind = "traffic_camera"` is legal only on a target that literally
+    declares it AND whose technology is a fixed/PTZ camera — never on ALPR."""
+    from connectors.dot_511 import TechnologyNotDeclared
+
+    (target,) = expand_registry_rows([{**_ARCGIS_ROW, "record_kind": "traffic_camera"}])
+    assert target["record_kind"] == "traffic_camera"
+    with pytest.raises(TechnologyNotDeclared, match="traffic_camera"):
+        expand_registry_rows(
+            [{**_ARCGIS_ROW, "technology": "alpr-fixed", "record_kind": "traffic_camera"}]
+        )
+    with pytest.raises(TechnologyNotDeclared):
+        expand_registry_rows(
+            [{**_ARCGIS_ROW, "record_kind": "fixed-camera-cctv"}]
+        )  # a divergent slug is not a valid subtype declaration

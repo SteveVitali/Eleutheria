@@ -110,6 +110,139 @@ def predicate_allowlist() -> frozenset[str]:
     return frozenset(vocab()["predicate_allowlist"])
 
 
+# --- the declared technology vocabulary (PKG-07 / P35.15a) -------------------
+
+
+@cache
+def _technology_vocab() -> dict[str, Any]:
+    """The committed technology vocabulary (``ontology/vocab/technology.yaml``)."""
+    from ontology.generate import load_vocab
+
+    return load_vocab("technology")
+
+
+@cache
+def technology_slugs() -> frozenset[str]:
+    """Every ACTIVE technology slug in the registry (retired slugs never emit)."""
+    out: set[str] = set()
+    for domain in _technology_vocab()["domains"]:
+        for family in domain.get("families", ()):
+            for tech in family.get("technologies", ()):
+                if str(tech.get("status") or "active") != "retired":
+                    out.add(str(tech["slug"]))
+    return frozenset(out)
+
+
+@cache
+def _technology_domains() -> dict[str, str]:
+    """Technology slug -> its domain slug (``surveillance-video``, …)."""
+    out: dict[str, str] = {}
+    for domain in _technology_vocab()["domains"]:
+        for family in domain.get("families", ()):
+            for tech in family.get("technologies", ()):
+                if str(tech.get("status") or "active") != "retired":
+                    out[str(tech["slug"])] = str(domain["slug"])
+    return out
+
+
+#: The record-kind values an emitted camera-registry entity row may carry
+#: besides a technology slug itself: ``traffic_camera`` stays legal ONLY for a
+#: target that literally declares it — the pre-P35.15a blanket typing is the
+#: F-329/FM-04 defect; an ALPR/ATE/UAS target may never carry it.
+_TRAFFIC_CAMERA_KIND = "traffic_camera"
+
+
+def declared_record_kind(target: Mapping[str, Any]) -> str:
+    """The entity row's ``record_kind`` — the subject subtype the target declares.
+
+    Defaults to the target's ``technology`` slug; a target may pin
+    ``record_kind = "traffic_camera"`` only when its technology is a
+    fixed/PTZ camera (the ``surveillance-video`` domain) — an ALPR or drone
+    layer wearing the traffic-camera kind is exactly the F-329 mistyping.
+    """
+    technology = str(target.get("technology") or "").strip()
+    declared = str(target.get("record_kind") or "").strip()
+    if not declared:
+        return technology
+    if declared == _TRAFFIC_CAMERA_KIND:
+        if _technology_domains().get(technology) == "surveillance-video":
+            return declared
+        raise TechnologyNotDeclared(
+            f"target {target.get('id')!r} declares record_kind='traffic_camera' with "
+            f"technology={technology!r} — the legacy traffic-camera kind is legal only "
+            "for a fixed/PTZ camera target (F-329)."
+        )
+    if declared == technology:
+        return declared
+    raise TechnologyNotDeclared(
+        f"target {target.get('id')!r} declares record_kind={declared!r} — the "
+        "subject subtype must be the declared technology slug or the explicit "
+        f"{_TRAFFIC_CAMERA_KIND!r} escape."
+    )
+
+
+class TechnologyNotDeclared(Exception):
+    """A registry defect: the target carries no usable technology declaration.
+
+    Deliberately NOT a per-record rejection: a camera-registry target without a
+    validated ``technology`` slug is a broken registry row, and the run must
+    fail loudly rather than re-emit the legacy ``traffic_camera`` blanket
+    (PKG-07 / P35.15a).
+    """
+
+
+def assert_target_technology(target: Mapping[str, Any]) -> str:
+    """The target's validated technology slug, or :class:`TechnologyNotDeclared`."""
+    slug = str(target.get("technology") or "").strip()
+    if not slug:
+        raise TechnologyNotDeclared(
+            f"registry target {target.get('id')!r} carries no 'technology' slug — "
+            "PKG-07 requires every camera-registry target to declare a member of "
+            "ontology/vocab/technology.yaml (no silent traffic_camera default)."
+        )
+    if slug not in technology_slugs():
+        raise TechnologyNotDeclared(
+            f"registry target {target.get('id')!r} declares technology={slug!r}, "
+            "which is not an active member of ontology/vocab/technology.yaml — "
+            "register it via the ontology or re-point to a member slug."
+        )
+    return slug
+
+
+def target_technology_violations() -> list[str]:
+    """``sig-connectors validate`` rules for the per-target technology slug."""
+    violations: list[str] = []
+    for row in target_table().get("targets", []):
+        tech = str(row.get("technology") or "").strip()
+        label = f"target {row.get('id')!r} (source {row.get('source_id')!r})"
+        if not tech:
+            violations.append(f"{label}: missing 'technology' slug (PKG-07)")
+            continue
+        if tech not in technology_slugs():
+            violations.append(
+                f"{label}: technology={tech!r} is not an active member of "
+                "ontology/vocab/technology.yaml"
+            )
+            continue
+        try:
+            declared_record_kind(row)
+        except TechnologyNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+    return violations
+
+
+def declared_technologies() -> dict[tuple[str, str], str]:
+    """``(source_id, target_id)`` -> declared technology slug, for subject-keyed
+    seams (the camera-site ER record builder) that must resolve a subject's own
+    target declaration without importing the connector at build time."""
+    out: dict[tuple[str, str], str] = {}
+    for row in target_table().get("targets", []):
+        tech = str(row.get("technology") or "").strip()
+        if tech:
+            out[(str(row.get("source_id") or ""), str(row.get("id") or ""))] = tech
+    return out
+
+
 class PredicateNotAllowed(Exception):
     """A schema error: the connector tried to write outside its predicate allowlist."""
 
@@ -310,6 +443,10 @@ def expand_registry_rows(
             # An ArcGIS layer on a host the allowlist does not name still runs
             # at the reviewed 10/min ArcGIS budget (I8 NEW-3), never unbounded.
             rpm = _ARCGIS_REVIEWED_RPM
+        # P35.15a (PKG-07): a target without a declared technology slug never
+        # expands — the emit path must never mint the legacy `traffic_camera`
+        # blanket typing (F-329).
+        technology = assert_target_technology(row)
         for page in expand(row):
             target = {
                 "id": str(row["id"]),
@@ -326,6 +463,8 @@ def expand_registry_rows(
                     row.get("sensitivity_class") or vocab()["default_sensitivity_class"]
                 ),
                 "enum_source": str(row.get("enum_source", "")),
+                "technology": technology,
+                "record_kind": declared_record_kind(row),
             }
             if rpm is not None:
                 target["rate_limit_per_min"] = int(rpm)
@@ -592,6 +731,15 @@ class CameraRegistryEntry:
     geo_tier: int
     sensitivity_class: str
     license_spdx: str
+    #: P35.15a / PKG-07 (F-329, F-523): the registry target's declared
+    #: ``technology`` slug — an active member of ontology/vocab/technology.yaml.
+    #: Emitted as the ``technology`` claim AND as the subject record's subtype
+    #: (``record_kind``); never inferred from a name substring.
+    technology: str
+    #: The entity row's ``record_kind`` — the declared subject subtype, i.e. the
+    #: technology slug by default; ``"traffic_camera"`` only when the target
+    #: literally declares it (see :func:`declared_record_kind`).
+    record_kind: str
     #: An authoritative operator label — set only when the registry evidence
     #: itself names the camera operator (the target's ``operator`` field or a
     #: feature ``operator_fields`` value). Only this mints ``camera_operator``.
@@ -614,9 +762,25 @@ class CameraRegistryEntry:
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
             raise ValueError("a CameraRegistryEntry requires a camera_ref (the registry key)")
+        # PKG-07: an entry never emits without its validated declared
+        # technology — the slug membership is asserted at target expansion and
+        # re-asserted here so a hand-built entry cannot smuggle a non-member
+        # value into the claim surface.
+        assert_target_technology({"id": self.target_id, "technology": self.technology})
+        if not str(self.record_kind).strip():
+            raise ValueError("a CameraRegistryEntry requires a record_kind (the subtype)")
 
     @property
     def subject_id(self) -> str:
+        # The ``traffic_camera:`` scheme is the subject's IDENTITY anchor under
+        # ``sig.connector.subject`` — ~232k existing subjects minted under it
+        # stay the identity root for their (source, target, ref). P35.15a does
+        # NOT re-scheme it: minting ``<technology>:…`` keys would fork every
+        # existing subject into a second current row the next ingest (the
+        # same-source constraint means the twin could never merge — append-only
+        # makes the fork permanent). The declared-subtype correction rides the
+        # ``technology`` claim + the entity row's ``record_kind``; P35.15b's
+        # backfill writes technology claims onto these existing subjects.
         return f"traffic_camera:{self.source_id}:{self.target_id}:{self.camera_ref}"
 
     def evidence(self, source_url: str, retrieved_date: str, feature_index: int) -> dict[str, Any]:
@@ -666,9 +830,13 @@ class CameraRegistryEntry:
     ) -> list[dict[str, Any]]:
         """The append-only claim rows for this entry, confined to the allowlist (P2).
 
-        One ``traffic_camera`` entity row (carrying the whole predicate surface
-        plus the excluded-field NAMES — never their values) plus one claim row
-        per set predicate. The coordinate claims carry the published
+        One camera-registry entity row (``predicate_id="traffic_camera"``, the
+        registry-record assertion) whose ``record_kind`` is the subject's
+        declared subtype — the target's technology slug, or ``traffic_camera``
+        only when the target literally declares it — carrying the whole
+        predicate surface plus the excluded-field NAMES (never their values);
+        plus one claim row per set predicate, including the ``technology``
+        claim (P35.15a / PKG-07). The coordinate claims carry the published
         (tier-applied) coordinate and the sensitivity facts that produced it;
         the state is a ``us.state_abbr`` jurisdiction candidate and the camera
         ref a ``dot511.camera_ref`` candidate identifier — never resolutions
@@ -678,7 +846,11 @@ class CameraRegistryEntry:
         rows: list[dict[str, Any]] = [
             _stamp(
                 {
-                    "record_kind": "traffic_camera",
+                    # PKG-07 (F-329/F-523): the record kind is the subject's
+                    # declared subtype — an ALPR target's rows read ``alpr-*``,
+                    # ``traffic_camera`` survives only on a target that
+                    # literally declares it.
+                    "record_kind": self.record_kind,
                     "subject_id": self.subject_id,
                     "predicate_id": assert_predicate_allowed("traffic_camera"),
                     "external_id": self.camera_ref,
@@ -686,6 +858,7 @@ class CameraRegistryEntry:
                     "state": self.state,
                     "agency": self.agency,
                     "target_id": self.target_id,
+                    "technology": self.technology,
                     "latitude": self.latitude,
                     "longitude": self.longitude,
                     "coordinate_source": self.coordinate_source,
@@ -709,6 +882,10 @@ class CameraRegistryEntry:
             )
         )
         rows.append(self._claim("external_id", self.camera_ref, self.camera_ref, ev))
+        # PKG-07 (P35.15a): the declared technology rides the claim surface —
+        # value and raw are the registry slug verbatim (the slug IS the raw
+        # declaration; the target row is its evidence via source_url+locator).
+        rows.append(self._claim("technology", self.technology, self.technology, ev))
         rows.append(
             self._claim(
                 "camera_jurisdiction",
@@ -1073,6 +1250,12 @@ def _entry_from_raw(
             "unmatched_target",
             "the capture's source URI matches no configured registry target",
         )
+    # PKG-07 (P35.15a): the declared technology + record kind come from the
+    # matched registry row — a target without a member slug fails the RUN
+    # (TechnologyNotDeclared is deliberately not a per-record rejection: a
+    # broken registry row is a config defect, never a silently untyped row).
+    technology = assert_target_technology(target)
+    record_kind = declared_record_kind(target)
     ref_pair = _first_field(fields, vocab()["id_fields"])
     if ref_pair is None:
         raise CoordinateRejected(
@@ -1097,6 +1280,8 @@ def _entry_from_raw(
         target_id=str(target.get("id") or "unknown_target"),
         state=str(target.get("state") or ""),
         agency=str(target.get("agency") or ""),
+        technology=technology,
+        record_kind=record_kind,
         operator=operator,
         latitude=plat,
         longitude=plon,
@@ -1163,10 +1348,17 @@ def load_claims_for_l1(claims: Iterable[Mapping[str, Any]]) -> list[dict[str, An
     reproducibility fingerprint excludes (SIG-INGEST-003). Entity and claim rows
     get an identity; rejection rows keep their own keys.
     """
-    stamped_kinds = {"traffic_camera", "claim"}
     out: list[dict[str, Any]] = []
     for claim in claims:
-        if claim.get("record_kind") in stamped_kinds:
+        # Entity rows are the registry-record assertions (predicate
+        # ``traffic_camera``); their record_kind is the declared subtype
+        # (P35.15a — any technology slug or an explicit ``traffic_camera``).
+        # Rejection rows share the predicate but keep their own keys.
+        is_entity_row = (
+            claim.get("predicate_id") == "traffic_camera"
+            and claim.get("record_kind") != "camera_record_rejected"
+        )
+        if claim.get("record_kind") == "claim" or is_entity_row:
             out.append(
                 {
                     **claim,
@@ -1212,8 +1404,12 @@ __all__ = [
     "CoordinateRejected",
     "Dot511Connector",
     "PredicateNotAllowed",
+    "TechnologyNotDeclared",
     "assert_predicate_allowed",
+    "assert_target_technology",
     "canary_findings",
+    "declared_record_kind",
+    "declared_technologies",
     "enumerated_outcomes",
     "extract_coordinate",
     "is_media_field",
@@ -1222,6 +1418,8 @@ __all__ = [
     "predicate_allowlist",
     "publishable_coordinate",
     "registry_targets",
+    "target_technology_violations",
+    "technology_slugs",
     "vocab",
     "vocab_version",
 ]

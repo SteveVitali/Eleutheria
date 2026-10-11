@@ -112,6 +112,9 @@ __all__ = [
     "direction_bearing",
     "names_agree",
     "device_class",
+    "declared_device_class",
+    "DeviceClassFinding",
+    "device_class_findings",
     "fold_human_verdicts",
     "infer_duplicate_targets",
     "infer_lineages",
@@ -132,7 +135,10 @@ __all__ = [
 
 #: The resolver version stamped on every decision (bump on a behaviour change).
 #: 1.1.0 — P31.11: consumes human review verdicts and duplicate-target lineage.
-CAMERA_SITE_RESOLVER_VERSION = "camera-sites/1.1.0"
+#: 1.2.0 — P35.15a / PKG-07: device class comes from the subject's declared
+#:   `technology` slug first; the substring rules are a legacy-only fallback,
+#:   and declared-vs-substring disagreements are recorded findings.
+CAMERA_SITE_RESOLVER_VERSION = "camera-sites/1.2.0"
 
 _EARTH_RADIUS_M = 6_371_008.8
 
@@ -173,6 +179,19 @@ class CameraRecord:
     operator: str | None = None
     jurisdiction: str | None = None
     camera_type: str | None = None
+    #: P35.15a / PKG-07 (NEW-7 / FM-05): the subject's declared SKOS technology
+    #: slug — the latest ``technology`` claim value, the connector's
+    #: target-declared classification. ``None`` marks a legacy record that
+    #: predates P35.15a's declaration requirement; its class falls back to the
+    #: substring rules and the run counts it under
+    #: ``records_without_declared_technology``.
+    technology: str | None = None
+    #: Every DISTINCT current ``technology`` value the subject asserts
+    #: (``technology`` is a multi-cardinality predicate). Size > 1 marks a
+    #: subject whose declared subtypes MIX — reported by the run, never coerced
+    #: to one; ``technology`` still carries the latest claim's value for class
+    #: derivation (the shared temporal contract every other field follows).
+    declared_technologies: tuple[str, ...] = ()
     claim_ids: tuple[str, ...] = ()
     #: P31.11 target-level lineage (ADR-R9-HUMANER): the connector fetch target
     #: this record's subject was minted under (``traffic_camera:<src>:<target>``
@@ -203,6 +222,18 @@ class _ClassRule:
 
 
 @dataclass(frozen=True)
+class _TechnologyRule:
+    """P35.15a / PKG-07: a declared SKOS technology slug prefix -> device class.
+
+    Ordered like ``class_rules``: first matching prefix wins. A slug equal to a
+    prefix, or beginning ``prefix + "-"``, matches (``alpr-fixed`` classes under
+    the ``alpr`` rule)."""
+
+    name: str
+    slug_prefixes: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
 class CameraSiteRules:
     """The versioned camera-site rules (``camera_site_rules.toml``), injectable in tests."""
 
@@ -227,6 +258,11 @@ class CameraSiteRules:
     )
     default_class: str = "unspecified"
     class_rules: tuple[_ClassRule, ...] = ()
+    #: P35.15a / PKG-07: the declared-technology rules consulted FIRST — a record
+    #: carrying a ``technology`` claim classes by its slug prefix; the substring
+    #: ``class_rules`` remain only as the legacy fallback for records that carry
+    #: no declaration (pre-backfill spine rows).
+    technology_rules: tuple[_TechnologyRule, ...] = ()
     incompatible_classes: frozenset[frozenset[str]] = frozenset()
     soft_conflict_fields: tuple[str, ...] = ("jurisdiction", "camera_type")
     unresolved_jurisdictions: frozenset[str] = frozenset({"unresolved", "", "unknown"})
@@ -268,6 +304,13 @@ class CameraSiteRules:
                     type_substrings=tuple(r.get("type_substrings", ())),
                 )
                 for r in classes["rule"]
+            ),
+            technology_rules=tuple(
+                _TechnologyRule(
+                    name=str(r["class"]),
+                    slug_prefixes=tuple(str(p).lower() for p in r.get("technology_prefixes", ())),
+                )
+                for r in classes.get("technology_rule", ())
             ),
             incompatible_classes=frozenset(frozenset(p) for p in classes["incompatible"]),
             soft_conflict_fields=tuple(d["soft_conflicts"]["fields"]),
@@ -328,8 +371,12 @@ def normalize_ref(ref: str | None) -> str | None:
     return text or None
 
 
-def device_class(record: CameraRecord, rules: CameraSiteRules) -> str:
-    """The recorded device class of ``record`` (first matching rule; else the default)."""
+def _substring_class(record: CameraRecord, rules: CameraSiteRules) -> str:
+    """The pre-P35.15a heuristic class: first matching source/operator/type
+    substring rule, else the default. Retained ONLY as the fallback for records
+    carrying no declared technology (pre-P35.15b-backfill rows) and as the
+    comparison arm of :func:`device_class_findings` — never to classify a
+    declared record."""
     source = record.source_id.lower()
     operator = (record.operator or "").lower()
     camera_type = (record.camera_type or "").lower()
@@ -343,6 +390,131 @@ def device_class(record: CameraRecord, rules: CameraSiteRules) -> str:
         if any(s in camera_type for s in rule.type_substrings):
             return rule.name
     return rules.default_class
+
+
+def declared_device_class(record: CameraRecord, rules: CameraSiteRules) -> str | None:
+    """The device class the record's DECLARED technology slug implies, or ``None``
+    when the record carries no declaration (legacy row — the substring rules
+    decide). A declared slug matching no ``technology_rule`` is the default
+    class — never ``None``, so a declaration always owns the classification."""
+    slug = (record.technology or "").strip().lower()
+    if not slug:
+        slug = next(
+            ((t or "").strip().lower() for t in record.declared_technologies if (t or "").strip()),
+            "",
+        )
+    if not slug:
+        return None
+    for rule in rules.technology_rules:
+        if any(slug == p or slug.startswith(p + "-") for p in rule.slug_prefixes):
+            return rule.name
+    return rules.default_class
+
+
+def device_class(record: CameraRecord, rules: CameraSiteRules) -> str:
+    """The recorded device class of ``record``.
+
+    P35.15a / PKG-07 (NEW-7 / FM-05): the subject's DECLARED technology slug is
+    authoritative — a record carrying a ``technology`` claim classes by the
+    ``technology_rule`` table. Only a record with no declaration falls back to
+    the legacy substring rules (the spine's pre-backfill rows); the class a
+    substring would have produced never overrides a declaration — a
+    disagreement is surfaced by :func:`device_class_findings` instead."""
+    declared = declared_device_class(record, rules)
+    if declared is not None:
+        return declared
+    return _substring_class(record, rules)
+
+
+@dataclass(frozen=True)
+class DeviceClassFinding:
+    """P35.15a: a declared-technology audit finding — recorded, never silently
+    coerced.
+
+    ``declared_substring_mismatch`` — the subject's declared class DISAGREES
+    with the non-default class the legacy substring rules would have given it
+    (the declaration wins classification; the finding keeps the disagreement
+    visible).
+
+    ``multiple_declared_technologies`` — the subject asserts more than one
+    current ``technology`` claim value (a subject whose declared subtypes mix;
+    the multi-cardinality predicate permits it, so it is reported rather than
+    reconciled)."""
+
+    kind: str
+    subject_id: str
+    technologies: tuple[str, ...]
+    declared_class: str
+    substring_class: str
+    matched_by: str  # which legacy signal disagreed: source/operator/camera_type/default
+
+
+def device_class_findings(
+    records: Sequence[CameraRecord], rules: CameraSiteRules
+) -> tuple[DeviceClassFinding, ...]:
+    """Declared-technology audit findings over the run's records.
+
+    A ``declared_substring_mismatch`` finding is emitted only when a record
+    declares a technology AND the substring rules would have classed it as a
+    DIFFERENT, non-default class — the substring rules having no opinion
+    (``default_class``) on a declared record is the expected NEW-7 coverage
+    gap, not a disagreement. A ``multiple_declared_technologies`` finding marks
+    a subject asserting more than one current technology slug.
+    """
+    out: list[DeviceClassFinding] = []
+    for r in records:
+        declared_values = tuple(
+            sorted(
+                {(t or "").strip().lower() for t in r.declared_technologies if (t or "").strip()}
+            )
+        )
+        slug = (r.technology or "").strip()
+        if not slug and not declared_values:
+            continue  # no declaration at all — the legacy/undeclared path
+        declared = declared_device_class(r, rules)
+        assert declared is not None  # a declaration always resolves a class
+        if len(declared_values) > 1:
+            out.append(
+                DeviceClassFinding(
+                    kind="multiple_declared_technologies",
+                    subject_id=r.subject_id,
+                    technologies=declared_values,
+                    declared_class=declared,
+                    substring_class="",
+                    matched_by="claim",
+                )
+            )
+        heuristic = _substring_class(r, rules)
+        if heuristic == rules.default_class or heuristic == declared:
+            continue
+        # Which legacy signal fired — recorded, so the disagreement is auditable.
+        source = r.source_id.lower()
+        operator = (r.operator or "").lower()
+        camera_type = (r.camera_type or "").lower()
+        matched_by = "default"
+        for rule in rules.class_rules:
+            if rule.name != heuristic:
+                continue
+            if any(source.startswith(p) for p in rule.source_prefixes) or any(
+                s in source for s in rule.source_substrings
+            ):
+                matched_by = "source_id"
+            elif any(s in operator for s in rule.operator_substrings):
+                matched_by = "operator"
+            elif any(s in camera_type for s in rule.type_substrings):
+                matched_by = "camera_type"
+            break
+        out.append(
+            DeviceClassFinding(
+                kind="declared_substring_mismatch",
+                subject_id=r.subject_id,
+                technologies=declared_values or (slug,),
+                declared_class=declared,
+                substring_class=heuristic,
+                matched_by=matched_by,
+            )
+        )
+    return tuple(out)
 
 
 _COMPASS = {
@@ -901,6 +1073,12 @@ def _assess(
             "distance_m": round(d, 2),
             "sources": [left.source_id, right.source_id],
             "device_classes": [classes[left_i], classes[right_i]],
+            # P35.15a / PKG-07: the declared technology slugs behind those
+            # classes — auditable per pair, never inferred post-hoc.
+            "declared_technologies": [
+                sorted({t for t in (left.declared_technologies or (left.technology,)) if t}),
+                sorted({t for t in (right.declared_technologies or (right.technology,)) if t}),
+            ],
             "shared_upstream_ref": ref_a if ref_equal else None,
             "names_agree": names_agree(a.name, b.name),
             "unique_within_colocation": unique_colocation,
@@ -1758,6 +1936,18 @@ class CameraSiteResult:
     #: P31.11: decided pairs whose records are absent from this run — recorded
     #: nowhere, counted here so the run admits they were seen and skipped.
     human_verdicts_unmatched: int = 0
+    #: P35.15a / PKG-07: the declared-technology classification audit. The
+    #: findings are the subjects whose declared class DISAGREES with the class
+    #: the legacy substring rules would have given them (the declaration wins;
+    #: the disagreement stays visible) plus subjects asserting multiple
+    #: declared technology slugs; ``records_without_declared_technology`` marks
+    #: the subjects still carrying no ``technology`` claim (the P35.15b
+    #: backfill remainder), and ``mixed_technology_subjects`` marks subjects
+    #: whose current ``technology`` claims assert more than one slug — never
+    #: silently reconciled, counted here.
+    device_class_findings: tuple[DeviceClassFinding, ...] = ()
+    records_without_declared_technology: int = 0
+    mixed_technology_subjects: int = 0
 
     @property
     def dedup_ratio(self) -> float:
@@ -1900,6 +2090,26 @@ class CameraSiteResult:
             "blocking_candidate_pairs": self.blocking_size,
             "unblockable_records": self.unblockable,
             "incompatible_class_pairs_blocked": self.incompatible_blocked,
+            # P35.15a / PKG-07: the declared-technology classification audit —
+            # declared-vs-substring disagreements stay visible, and the run
+            # records how many records still lack a declaration (the P35.15b
+            # backfill remainder) or assert multiple declared slugs.
+            "declared_technology_records": (
+                self.observation_count - self.records_without_declared_technology
+            ),
+            "records_without_declared_technology": self.records_without_declared_technology,
+            "mixed_technology_subjects": self.mixed_technology_subjects,
+            "device_class_findings": [
+                {
+                    "kind": f.kind,
+                    "subject_id": f.subject_id,
+                    "technologies": list(f.technologies),
+                    "declared_class": f.declared_class,
+                    "substring_class": f.substring_class,
+                    "matched_by": f.matched_by,
+                }
+                for f in self.device_class_findings
+            ],
             "tier6_discarded": self.discarded,
             "gold_set_version": self.gold_version,
             "kappa": self.kappa,
@@ -1952,7 +2162,8 @@ def run_key(
     measured auto-write tiers, the folded human verdicts (P31.11 — a new review
     decision changes the outcome, so it must change the key), and every field of
     every record (source, coordinates, reference, name, direction, operator,
-    jurisdiction, type, claim ids, target id, capture digests). Two runs over the
+    jurisdiction, type, declared technology + the multi-slug set (P35.15a),
+    claim ids, target id, capture digests). Two runs over the
     same inputs share a key (so the re-run is +0); ANY change a decision could depend
     on mints a new key, and readers take the latest COMPLETED run whole — never a union of
     a stale run's edges with a new one's.
@@ -2076,6 +2287,20 @@ def resolve_camera_sites(
         records=records,
         human_verdicts=verdicts,
     )
+    # P35.15a / PKG-07: the declared-technology audit — disagreements between a
+    # subject's declared slug and the legacy substring class are findings (the
+    # declaration wins classification); subjects still lacking a declaration
+    # (pre-backfill) or carrying mixed record_kind subtypes are counted, never
+    # silently reconciled.
+    findings = device_class_findings(records, rs)
+    undeclared = sum(
+        1 for r in records if not (r.technology or "").strip() and not r.declared_technologies
+    )
+    mixed = sum(
+        1
+        for r in records
+        if len({(t or "").strip().lower() for t in r.declared_technologies} - {""}) > 1
+    )
     return CameraSiteResult(
         rules_version=rs.version,
         resolver_version=CAMERA_SITE_RESOLVER_VERSION,
@@ -2105,4 +2330,7 @@ def resolve_camera_sites(
         holdout_size=0 if gold is None else len(gold.holdout()),
         gold_size=0 if gold is None else len(gold.pairs),
         disputed=0 if gold is None else len(gold.disputed()),
+        device_class_findings=findings,
+        records_without_declared_technology=undeclared,
+        mixed_technology_subjects=mixed,
     )

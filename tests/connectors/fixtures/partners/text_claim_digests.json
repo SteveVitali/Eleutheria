@@ -1,5 +1,5 @@
 {
-  "_note": "P31.5 shadow-diff golden: the content digest (db.claim_sink.content_digest) of every record the connectors emit over the partner fixture set (tests/partner_fixtures.py), computed at the P31.5 base commit 34406ff, before the partner entity-ref claims existed. tests/connectors/test_partner_refs_shadow.py asserts the post-P31.5 records without an object_ref are exactly these. P32.3 (ADR-122): dot_511_wa re-goldened — the registry agency label now emits camera_registry_publisher (provenance) instead of camera_operator; WA has no authoritative operator field so no operator claims mint. P35.9 (ACQ-05): usaspending_awards re-goldened — award claims now carry the sweep-slice provenance fields (slice/index_keyword/agency/recipient_search/program_number/acq_keyword_terms) in evidence, and the person-shaped fixture recipient (SIG-FIXTURE-A-002 'JOHN Q CITIZEN') emits no recipient claim at all — the P8-6 recipient drop, recorded as recipient_dropped=person_shaped on the notice row and recipient_dropped_count=1 on the slice outcome row.",
+  "_note": "P31.5 shadow-diff golden: the content digest (db.claim_sink.content_digest) of every record the connectors emit over the partner fixture set (tests/partner_fixtures.py), computed at the P31.5 base commit 34406ff, before the partner entity-ref claims existed. tests/connectors/test_partner_refs_shadow.py asserts the post-P31.5 records without an object_ref are exactly these. P32.3 (ADR-122): dot_511_wa re-goldened \u2014 the registry agency label now emits camera_registry_publisher (provenance) instead of camera_operator; WA has no authoritative operator field so no operator claims mint. P35.9 (ACQ-05): usaspending_awards re-goldened \u2014 award claims now carry the sweep-slice provenance fields (slice/index_keyword/agency/recipient_search/program_number/acq_keyword_terms) in evidence, and the person-shaped fixture recipient (SIG-FIXTURE-A-002 'JOHN Q CITIZEN') emits no recipient claim at all \u2014 the P8-6 recipient drop, recorded as recipient_dropped=person_shaped on the notice row and recipient_dropped_count=1 on the slice outcome row. P35.15a (PKG-07, F-329/F-523): dot_511_wa re-goldened \u2014 each camera-registry subject now emits a `technology` claim carrying the target's declared SKOS slug (fixed-camera-ptz) and the entity row's record_kind IS that declared subtype instead of the blanket `traffic_camera` literal; the dot_511 vocab_version stamp (2026.10.11.1) normalizes back to the golden-era 2026.10.10.1 via GOLDEN_DOT511_VOCAB.",
   "base_commit": "34406ff",
   "runs": {
     "atlas_issue_records": [
@@ -47,20 +47,22 @@
       "034e8fe9f66929f0e21136de2ae4a55d825aed8eb9b2a8767656a86c849832ed",
       "08e1487c4861c26f624c8854173d934e38ef3c00cfc9aed3eba10c2b5e69e030",
       "13dbaceb53a4d45ff3478f4dacdc5dd824202dcf4cba73668b39a0a8e3800ab3",
-      "1d3c3821ba7d55cdc50b04b2f9182fa158a1ac6583f122e7f974e12108030fb4",
       "2466fb6fdbdbb3cf3bb43cc3f45db91873eeaf3607aeb90fadc8398d31811695",
       "37c8a952136e1b85b919b0539ceb2875fa9fd4257c06f3f563393eb113a7b8b3",
       "3915176a8978b1e0f2d9764f42f87dd515dcccfa7dd08d39c151a824f1103f95",
+      "4d89c35a553fa7b425462c640af4d183e3f005fcd9a1d2d49ef82ac19bccef86",
       "54aa279c682b2f9839b5294c63066dbe28dd42494088eb954a1b418dbdb655b1",
-      "5a769dbd8474408c82c4c24213f133aae2d9e012f4c2d6001bb80baa7b969959",
       "630f0399023c1db2166e1d3c7ab3459644b1bcd4e312d1f32da8e2aec61c8b7e",
+      "797bdd0bcc1fe7f771e336baa65b954c8dc56b4b3a830b9ec6f669f9821f4f51",
       "a4c0c8b1c2d939c98cead40f4b2163132b57ff46b077b2a89c06884e4410f91c",
       "af2bb137147e495b998cedc130288f9d0d94f83c85d80736ab5c1ed36e9505ac",
       "b160256b3172d901d9c5cbd85396b852995504507d7dd3d901bd9af7e490b894",
+      "b88749f76270fe3dfc0fae844c84ea0eb00daef4cc459b7b5c99221a37c11810",
       "be28b97481d489225ddb9fb554461b8b249d96f4e02b3aa3b6ead68cb82e212a",
       "cb1648bf0e1b974e9563b419520c0606411db7ec13cc566d11bef38b0b92561c",
       "cd4ac78836f1896f3d87b2a1122f5ccff2565dc2d88d25ad334b390b0934c19e",
       "d13d3d6d5216d4aaf170c327041598a6b1867f2a53d0a09c1cf6784356486141",
+      "dfb264a3f2504c4453e409faa0289f7e4c5eecd9c17fd8bcf57a45497f28a577",
       "e39cc60d8e479cd088ff26b89371c44382ca04acb6236221bf7522579a69fd15",
       "f3743076b9e8adc3197c6fe7c01a53071d2d866e4035f479f7535c7a6d35c6b8"
     ],

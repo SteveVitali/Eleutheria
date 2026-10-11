@@ -63,6 +63,7 @@ from policy.eligibility import (
 
 from .manifest import canonical_json, sha256_hex
 from .published_record import (
+    PROJECTION_VERSION,
     claim_index_from_jsonl,
     projection_root,
     record_digest,
@@ -198,7 +199,7 @@ def descriptor_document(
         "ruleset_version": str(repro.get("ruleset_version") or ""),
         "resolver_version": str(repro.get("resolver_version") or ""),
         "policy_version": "publication-eligibility/1",
-        "projection_version": "sig.published-record/1",
+        "projection_version": PROJECTION_VERSION,
         "search_index_version": SEARCH_INDEX_VERSION,
         "renderer": {
             "package": "sig-exports",
