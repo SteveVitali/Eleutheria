@@ -341,6 +341,13 @@ def test_chunked_commit_issues_no_update_or_delete(clean_dsn: str) -> None:
 
 
 # --- P35.14a closed vocabulary at the sink -----------------------------------
+#
+# These sinks take `autocommit=True` connections like `from_dsn` produces: the
+# sink's `conn.transaction()` chunks must really COMMIT for the second
+# connection's assertions to see the rows. A non-autocommit conn leaves every
+# write inside its implicit transaction — invisible to the read conn AND
+# holding row locks that block `clean_dsn`'s teardown TRUNCATE forever (the
+# a068ded5 CI stall).
 
 
 def _closed_vocab_claim(predicate: str, **kw: object) -> dict[str, object]:
@@ -361,7 +368,11 @@ def test_unknown_predicate_quarantines_and_no_claim_lands(clean_dsn: str) -> Non
     predicate), the full record as payload, nothing in claim."""
     from db.claim_sink import PgClaimSink
 
-    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink = PgClaimSink(
+        psycopg.connect(clean_dsn, autocommit=True),
+        connector_name="cv",
+        code_commit="p35.14a-test",
+    )
     claim = _closed_vocab_claim("sig.test.never_registered")
     sink.assert_claims([claim])
     assert sink.report.inserted == 0 and sink.report.quarantined == 1
@@ -379,7 +390,11 @@ def test_unknown_genre_quarantines_and_no_claim_lands(clean_dsn: str) -> None:
     defaulted and no vocab_artifact_genre row is minted."""
     from db.claim_sink import PgClaimSink
 
-    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink = PgClaimSink(
+        psycopg.connect(clean_dsn, autocommit=True),
+        connector_name="cv",
+        code_commit="p35.14a-test",
+    )
     claim = _closed_vocab_claim("sig.test.chunk_flag", evidence_genre="sig_test_genre")
     sink.assert_claims([claim])
     assert sink.report.inserted == 0 and sink.report.quarantined == 1
@@ -401,12 +416,20 @@ def test_quarantine_is_idempotent_by_payload_digest(clean_dsn: str) -> None:
     from db.claim_sink import PgClaimSink
 
     claim = _closed_vocab_claim("sig.test.never_registered")
-    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink = PgClaimSink(
+        psycopg.connect(clean_dsn, autocommit=True),
+        connector_name="cv",
+        code_commit="p35.14a-test",
+    )
     sink.assert_claims([claim])
     assert sink.report.quarantined == 1 and sink.report.inserted == 0
     # A re-run of the same rejected record appends no second row — the digest
     # dedups, and the report counts what it actually appended (zero).
-    sink2 = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink2 = PgClaimSink(
+        psycopg.connect(clean_dsn, autocommit=True),
+        connector_name="cv",
+        code_commit="p35.14a-test",
+    )
     sink2.assert_claims([claim])
     assert sink2.report.quarantined == 0 and sink2.report.inserted == 0
     with psycopg.connect(clean_dsn) as conn:
@@ -419,7 +442,11 @@ def test_register_vocabulary_rejects_unregistered_ids(clean_dsn: str) -> None:
     priming call now, never a mint."""
     from db.claim_sink import PgClaimSink
 
-    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink = PgClaimSink(
+        psycopg.connect(clean_dsn, autocommit=True),
+        connector_name="cv",
+        code_commit="p35.14a-test",
+    )
     with pytest.raises(ValueError, match="closed"):
         sink.register_vocabulary((("sig.test.never_registered", "string"),))
     # A registered id validates without error and its claim lands.
@@ -434,7 +461,11 @@ def test_unknown_qualifier_quarantines_under_closed_vocabulary(clean_dsn: str) -
     against the claim's digest instead of minting a vocab row."""
     from db.claim_sink import PgClaimSink
 
-    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink = PgClaimSink(
+        psycopg.connect(clean_dsn, autocommit=True),
+        connector_name="cv",
+        code_commit="p35.14a-test",
+    )
     claim = _closed_vocab_claim(
         "sig.test.chunk_flag",
         qualifiers=[{"qualifier_id": "sig.test.qualifier_never_registered", "value": "x"}],

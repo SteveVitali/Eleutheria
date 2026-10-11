@@ -43,6 +43,7 @@ placeholder (pending)
 placeholder (filled at closeout)
 placeholder ______
 placeholder re:DRAFT-[A-Z]+-[0-9]+
+placeholder pending at write
 
 # ── Generated region (B3 §3.13; SEED-16, later P34.29's generator) ────────────────────────────────────────
 # The heading is "### RETURN PASS — current"; it is written here without the leading "###" because
