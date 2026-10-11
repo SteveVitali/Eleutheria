@@ -24,6 +24,8 @@ success is an engineering check, never a live-access proof or a rights decision
 | `sd_ubicquia_agreement_2023.pdf` | `sd-ubicquia-agreement-2023` | Public-safety agreement: parties, not-to-exceed ceiling, contracted unit count, vendor-only signature date (city execution **not visually verified**) |
 | `sd_technology_index.html` | `sd-technology-index` | Technology index page — three reviewed links + one posted date |
 | `sd_pab_index.html` | `sd-pab-index` | Privacy Advisory Board reports index — the ALPR recommendation listing (existence + link only) |
+| `bia_tribal_leadership_layer.html` | `camreg_tribal_all_leaders_directory` → `bia-tld-layer-metadata` | **P35.11 / ADR-185 S8 screened lane:** the ArcGIS REST layer-metadata page for the BIA Tribal Leaders Directory — stated name + the verbatim BIA use disclaimer; **facts + citations only**, no row data ever |
+| `tolc_lgds_ast_hearing_notice.pdf` | `legis_tribal_tohono_oodham_notice` → `tolc-lgds-ast-hearing-notice-2025-11-19` | **P35.11 / ADR-185 S8 screened lane:** the Tohono O'odham Legislative Branch public-hearing notice on the Border Patrol LGDS + Automated Surveillance Tower proposals — committee, technology names, hearing date; **the named chairperson is deliberately absent** (screened lane) |
 | `malformed_document.pdf` | — (negative control) | `%PDF-` magic with no valid objects — `pdf_text_pages` yields no pages → explicit `ContentDrift`, never a partial claim |
 
 Oversized and encrypted documents are generated in-test (`tmp_path`), not

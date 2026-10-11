@@ -1,4 +1,36 @@
 {
+  "bia-tld-layer-metadata": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 603,
+        "kind": "byte_range",
+        "start": 577
+      },
+      "predicate": "title",
+      "raw_value": "TribalLeadership_Directory"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "end": 603,
+        "kind": "byte_range",
+        "start": 577
+      },
+      "predicate": "document",
+      "raw_value": "TribalLeadership_Directory"
+    },
+    {
+      "field": "use_restriction",
+      "locator": {
+        "end": 1601,
+        "kind": "byte_range",
+        "start": 1535
+      },
+      "predicate": "use_restriction",
+      "raw_value": "not intended for legal, survey, engineering or navigation purposes"
+    }
+  ],
   "okc-council-memo-2026-08": [
     {
       "field": "lifecycle",
@@ -405,6 +437,53 @@
       },
       "predicate": "disclosure_field_state",
       "raw_value": "City Date:"
+    }
+  ],
+  "tolc-lgds-ast-hearing-notice-2025-11-19": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Border Patrol Presentation on Additional Technology Proposals"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "document",
+      "raw_value": "Border Patrol Presentation on Additional Technology Proposals"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Linear Ground Detection System"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Automated Surveillance Towers"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Domestic Affairs Committee"
     }
   ],
   "tulsa-mou-template": [

@@ -13324,3 +13324,59 @@ jurisdiction_place = "Norman"
 [sources.policy_norman_ok_alpr_policy_amendment.rights]
 spdx = "UNDETERMINED"
 redistributable = false
+
+# --- P35.11 / R11-ACQ-07: the ADR-185 S8 tribal screened lane ------------------
+# The two IND-TRIBAL members (plan AP-T2-201 cand I5-C225; plan AP-T2-210 cand
+# I9b-C095) land under the operator's B-37 answer "TR facts+cite" (ADR-185,
+# GATE-G4 ING-GO-A): the lane emits facts + citations only — the
+# `dossier_documents` clause_fields path over each item's own metadata/notice
+# document. The row-level ingestion the plan families named (the 601-row
+# arcgis_query; the notice corpus) is NOT this lane — it stays gated behind
+# `CG-LATER-tribal-data-governance-rule-i7-new-6` (OPEN). No outside contact
+# was made; the run discloses no human review occurred.
+
+[sources.camreg_tribal_all_leaders_directory]
+name = "Tribal Leaders Directory (BIA Branch of Geospatial Support, ArcGIS FeatureServer)"
+source_kind = "government_portal"
+homepage_url = "https://www.arcgis.com/home/item.html?id=3c6ae1b6fa9f414cbd36758905b196c3"
+default_tier = "R4"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "dossier_documents clause_fields over the layer's own ArcGIS REST metadata page only (P35.11 / ADR-185 S8 screened lane); the 601-row arcgis_query is a recorded non-target outcome (camera_registry_targets.toml [[enumerated]]) and stays gated behind the tribal-data-governance rule"
+auth_model = "none"
+cadence = "weekly (item description: 'most recent weekly update')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "R11-ACQ-07 row (plan AP-T2-201, cand I5-C225, IND-TRIBAL flagged S8/S5, ticket ACQ-22 -> Wave A). ADR-185 screened lane — B-37 'TR facts+cite': facts + citations only; the 601-row layer (577 'Tribe' + 24 'Affiliate' per the I5 live read; leader name/phone/email fields never pulled) is not ingested. STAYS GATED: ingestion_permitted=false pending the wave-open HG-03 flip list (OP-26); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence, not a resolved record. Proposed id 'camreg_tribal_all_leaders_directory'. US-TRIBAL geography reference spine, not a surveillance source."
+publisher = "Bureau of Indian Affairs, Branch of Geospatial Support (via ArcGIS Online)"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+jurisdiction = "US"
+jurisdiction_place = "US-TRIBAL (all BIA-listed nations)"
+[sources.camreg_tribal_all_leaders_directory.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+
+[sources.legis_tribal_tohono_oodham_notice]
+name = "Tohono O'odham Legislative Branch — public-hearing notice: Border Patrol LGDS + Automated Surveillance Tower proposals (Domestic Affairs Committee, 2025-11-19)"
+source_kind = "government_portal"
+homepage_url = "https://tolc-nsn.org/"
+default_tier = "R4"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "dossier_documents clause_fields over the single published notice PDF (P35.11 / ADR-185 S8 screened lane); no notice-corpus crawl"
+auth_model = "none"
+cadence = "on-change (irregular upstream: Legislative Council notices)"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "R11-ACQ-07 row (plan AP-T2-210, cand I9b-C095, IND-TRIBAL flagged S8, ticket ACQ-22 -> Wave A). ADR-185 screened lane — B-37 'TR facts+cite': facts + citations only; the notice names a committee chairperson in an institutional role — never emitted (the screened field map carries no person-name field and the shared Part VIII guard + officer-naming gate apply). STAYS GATED: ingestion_permitted=false pending the wave-open HG-03 flip list (OP-26); rights UNDETERMINED \u2014 'NONE-FOUND (checked: document only)'; a tribal sovereign publisher is outside the US public-record basis. Plan's proposed id 'legis_tribal_tohono_oodham_na_odham_legislat' exceeds the 40-char registry bound — shortened."
+publisher = "Tohono O'odham Nation, Legislative Branch (Domestic Affairs Committee)"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US-AZ"
+jurisdiction_place = "Tohono O'odham Nation"
+[sources.legis_tribal_tohono_oodham_notice.rights]
+spdx = "UNDETERMINED"
+redistributable = false

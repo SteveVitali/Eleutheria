@@ -27,7 +27,10 @@ schema = "sig.iam-identities/1"
 # never a silent skip. P35.6/ACQ-01 +10: the ten `sig-ingest-r11-*` batch jobs
 # the generator declares in ops/cadence.toml (created PAUSED by
 # scheduled-ops.sh --paused before this leg's re-count) — 88 → 98.
-expected_job_count = 98
+# P35.11/ACQ-07 +2: the two ADR-185 S8 tribal screened-lane jobs the Wave-A
+# cadence rows declare (created PAUSED; their sources stay gated until the
+# wave-open HG-03 flip list) — 98 → 100.
+expected_job_count = 100
 
 # --- the three service runtime identities (P34.42a) ---------------------------
 [[service_account]]

@@ -762,6 +762,36 @@ def build_parser() -> argparse.ArgumentParser:
         help="also write the verdict JSON to this path",
     )
 
+    wag = sub.add_parser(
+        "wave-a-gate",
+        help="P35.11 (I8 ACQ-07; OM-19/OM-20): the Wave-A leg go/no-go — "
+        "judges a recorded inputs JSON (the ING-GO-A verbatim, the window "
+        "instant, the leg order, the declared run set + wave-open flip "
+        "list, the Legistar-trigger mitigation, serialisation, AR-2 backup "
+        "and prestate) and emits sig.wave-a-gate/1; exit 0 = go, exit 42 = "
+        "no-go (the leg refuses and queues), exit 2 = usage",
+    )
+    wag.add_argument(
+        "--inputs",
+        required=True,
+        help="the recorded inputs JSON (see ops/src/ops/wave_a.py for the shape)",
+    )
+    wag.add_argument(
+        "--out",
+        dest="out",
+        default=None,
+        help="also write the verdict JSON to this path",
+    )
+
+    wap = sub.add_parser(
+        "wave-a-plan",
+        help="P35.11 (I8 ACQ-07): the deterministic Wave-A step plan "
+        "(L1 roll+load-seed+manual first runs one at a time → L2 +0 "
+        "re-runs → L3 trigger resume) → sig.wave-a-plan/1; plan-only "
+        "output, never a mutation",
+    )
+    wap.add_argument("--json", action="store_true", help="emit the JSON record")
+
     acsw = sub.add_parser(
         "acceptance-sweep",
         help="P34.47 (plan §5.1/§13.1): the 11A live-read acceptance sweep "
@@ -4724,6 +4754,16 @@ def main(argv: list[str] | None = None) -> int:
         from . import roll_gate
 
         return roll_gate.main(["--inputs", args.inputs] + (["--out", args.out] if args.out else []))
+    if args.command == "wave-a-gate":
+        from . import wave_a
+
+        return wave_a.gate_main(
+            ["--inputs", args.inputs] + (["--out", args.out] if args.out else [])
+        )
+    if args.command == "wave-a-plan":
+        from . import wave_a
+
+        return wave_a.plan_main(["--json"] if args.json else [])
     if args.command == "acceptance-sweep":
         from . import acceptance
 

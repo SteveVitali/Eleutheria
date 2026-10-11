@@ -1052,6 +1052,31 @@ job = "sig-ingest-fema-hsgp-allocations"
 scheduler = "sig-sched-fema-hsgp-allocations"
 note = "USAspending assistance-listing 97.067 prime-award slices (bounded 2-page reviewed window); funding evidence only — funded ≠ deployed."
 
+# --- P35.11 / R11-ACQ-07: the ADR-185 S8 tribal screened lane -----------------
+# Created --paused under R6 (scheduled-ops.sh): each screened source runs a
+# single-source manual execution inside the Wave-A window first, verifies,
+# re-runs +0, and only then its trigger resumes (L3) — never resumed while
+# the source stays gated. Crons sit on day 24, AFTER the Wave-A window, so no
+# scheduled first fire can precede the verified manual run.
+
+[[sources]]
+id = "camreg_tribal_all_leaders_directory"
+cadence = "monthly"              # the upstream 'most recent weekly update' rides the monthly floor
+cron = "41 7 24 * *"             # day 24, 07:41 UTC — first fire after Wave A
+job = "sig-ingest-camreg-tribal-all-leaders-directory"
+scheduler = "sig-sched-camreg-tribal-all-leaders-directory"
+task_timeout = "30m"
+note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): dossier_documents clause_fields over the BIA layer's metadata page only; the 601-row arcgis_query is a recorded non-target outcome ([[enumerated]] 'screened_lane')."
+
+[[sources]]
+id = "legis_tribal_tohono_oodham_notice"
+cadence = "monthly"              # irregular upstream — on-change floor
+cron = "43 7 24 * *"             # day 24, 07:43 UTC — first fire after Wave A
+job = "sig-ingest-legis-tribal-tohono-oodham-notice"
+scheduler = "sig-sched-legis-tribal-tohono-oodham-notice"
+task_timeout = "30m"
+note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): the single Tohono O'odham hearing-notice PDF; institutional facts only — the named chairperson is never emitted (officer-naming gate)."
+
 # --- P34.6 (SIG-OPS-001, ADR-175): the monthly logical export -----------------
 # Declared here — cadence.toml is the ops schedule of record. The DEPLOYER is
 # the scheduler of record (P35.1a); until then this row is the OM-19 queue

@@ -1403,3 +1403,59 @@ listings = [
   { label_contains = "PAB Recommendation on the 2025 ALPR Annual Surveillance Report", url_contains = "pab-final-recommendation-alpr-2025" },
   { label_contains = "Annual Reports", url_contains = "pab/annual-reports" },
 ]
+
+# --- P35.11 / R11-ACQ-07: the ADR-185 S8 tribal screened lane ------------------
+# Facts + citations only (B-37 "TR facts+cite"): each source captures ONE
+# bounded document — TR1 the ArcGIS REST layer-metadata page (never the 601-row
+# query — that outcome is recorded non-target in camera_registry_targets.toml),
+# TR2 the single published notice PDF. The screened field maps carry only
+# crosswalk rows whose claims are institutional facts/citations — no person-
+# name, registrant, row-level or device predicates exist to emit. Sources stay
+# ingestion_permitted=false: these are the reviewed target registry rows the
+# fixture run replays over; a wave-open HG-03 flip list (OP-26) is the only
+# route to a live fetch.
+
+[camreg_tribal_all_leaders_directory]
+kind = "dossier_documents"
+
+# The BIA layer's own ArcGIS REST metadata page (HTML service-directory view):
+# the citation document for the reference spine — its stated name and the
+# verbatim BIA use disclaimer. NOT the /query endpoint: no row is ever
+# fetched (leader name/phone/email fields stay unread under S8).
+[[camreg_tribal_all_leaders_directory.targets]]
+id = "bia-tld-layer-metadata"
+doc_id = "bia-tld-layer-metadata"
+url = "https://services1.arcgis.com/UxqqIfhng71wUT9x/arcgis/rest/services/TribalLeadership_Directory/FeatureServer/0"
+kind = "clause_fields"
+subject_id = "sig:dataset:bia-tribal-leaders-directory"
+document_genre = "portal_document"
+review_note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): the layer's own metadata page is the bounded citation — its stated name and the verbatim BIA use disclaimer are facts; the 601-row arcgis_query is a recorded non-target outcome ([[enumerated]] 'screened_lane') and the row-level read stays gated behind CG-LATER-tribal-data-governance-rule-i7-new-6 (OPEN)."
+fields = [
+  { field = "title", literal = "TribalLeadership_Directory", value = "Tribal Leaders Directory" },
+  { field = "document", literal = "TribalLeadership_Directory", value = "TribalLeadership_Directory (FeatureServer layer 0, item 3c6ae1b6fa9f414cbd36758905b196c3)" },
+  { field = "use_restriction", literal = "not intended for legal, survey, engineering or navigation purposes", value = "BIA disclaimer: illustrative and reference purposes only — not for legal, survey, engineering or navigation use" },
+]
+
+[legis_tribal_tohono_oodham_notice]
+kind = "dossier_documents"
+
+# The single published hearing notice (113,819-byte PDF, live-read I9b-F123):
+# the committee's announcement of the Border Patrol LGDS + Automated
+# Surveillance Tower proposals. Institutional facts only — the chairperson the
+# notice names is an institutional role and is deliberately NOT a configured
+# field (S8 lane; the Part VIII person-name guard would refuse it anyway).
+[[legis_tribal_tohono_oodham_notice.targets]]
+id = "tolc-lgds-ast-hearing-notice-2025-11-19"
+doc_id = "tolc-lgds-ast-hearing-notice-2025-11-19"
+url = "https://tolc-nsn.org/docs/UPDATED_PublicHrgsNotice_LGDS&AutomatedSurveillanceTower_Proposals_111925.pdf"
+kind = "clause_fields"
+subject_id = "sig:document:tolc-lgds-ast-2025-11-19"
+document_genre = "agenda_document"
+review_note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): the verbatim literals below were verified in the I9b live read (F123) — committee name, the two technology names, the hearing date. The committee chairperson the notice names is never emitted (institutional-role name; officer-naming gate)."
+fields = [
+  { field = "title", literal = "Border Patrol Presentation on Additional Technology Proposals", value = "Notice of public hearing — Border Patrol LGDS + Automated Surveillance Tower proposals (Domestic Affairs Committee, 2025-11-19)" },
+  { field = "document", literal = "Border Patrol Presentation on Additional Technology Proposals", value = "UPDATED_PublicHrgsNotice_LGDS&AutomatedSurveillanceTower_Proposals_111925.pdf" },
+  { field = "technology", literal = "Linear Ground Detection System", value = "Linear Ground Detection System (LGDS)" },
+  { field = "technology", literal = "Automated Surveillance Towers", value = "Automated Surveillance Tower" },
+  { field = "enacting_body", literal = "Domestic Affairs Committee", value = "Tohono O'odham Legislative Branch — Domestic Affairs Committee" },
+]
