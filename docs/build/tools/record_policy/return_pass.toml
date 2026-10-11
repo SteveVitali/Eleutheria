@@ -768,3 +768,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-confor
   go = '''pre-authorised: GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires at the next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true'''
   live_dependants = ["P35.14b"]
+[[row]]
+key = "P35.14b"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) then the append-only typed-identity write (`--apply`, INSERT-only, +0 on rerun); verify + read-back; the VALIDATE follow-up is a later sqitch row; no deferral opens'''
+gates_cell = '''hosted, production write; never pre-authorised (§3.3 named class: hosted sqitch change altering an existing table / ACCESS EXCLUSIVE) — only the operator's explicit verbatim in-ticket go authorises, no GATE list entry can; AR-3 + AR-2: first weekday 14:00-20:00Z slot ≥ the freeze end, operator present, AR-2 restore point `SUCCESSFUL` first (excluded: weekends and outside-14:00-20:00Z, 03:00-06:30Z daily, before 2026-10-13T12:00Z (the AR-3 freeze)); live AC human-completed'''
+operator_cell = '''verbatim go quoted with `date -u`; AR-2 `SUCCESSFUL` + pre-state (`sqitch.plan` head, table counts, `spine_watermark`); `sqitch deploy --verify` with `lock_timeout`; typed-identity dry-run → `--apply`; read-back; rollback = `sqitch revert` (DDL rollback), corruption-only PITR-clone'''
+rerun_cell = '''`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` · landed row 273 (PR #275 — leg queued behind the verbatim go)'''
+
+  [[row.legs]]
+  id = "P35.14b-live-typing-check"
+  obligations = []
+  earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), after the operator's explicit verbatim in-ticket go, operator present, AR-2 restore point verified first'''
+  excluded = ["weekends and outside-14:00-20:00Z", "03:00-06:30Z daily", "before 2026-10-13T12:00Z (the AR-3 freeze)"]
+  go = '''verbatim-go: never pre-authorised (OM-20 / §3.3 named class) — only the operator's explicit verbatim in-ticket go collected at execution time; no GATE-G4 list entry can authorise; silence is never consent'''
+  rerun = '''implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true'''
+  live_dependants = []

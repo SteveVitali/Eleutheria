@@ -436,14 +436,17 @@ def read_deployment_anchors(
     and ``organization`` joins only for ``sig.connector.subject``-keyed entities —
     a subject-minted agency anchors its own vendor/oversight claims exactly as it
     did when every subject minted ``deployment``, while an org minted as a claim
-    object (a partner ref) stays a non-anchor.
+    object (a partner ref) stays a non-anchor. The subject keying is probed on
+    ``entity_identifier`` — the guard's designated read surface and already
+    readable under ``sig_materialize`` (``entity_identity_key`` postdates the
+    read-surface grants).
     """
     etype = _current_type_expr(conn, "e")
     anchor_types = " OR ".join(
         [
             f"{etype} IN ('deployment', 'physical_asset')",
             f"({etype} = 'organization' AND EXISTS ("
-            "SELECT 1 FROM entity_identity_key k "
+            "SELECT 1 FROM entity_identifier k "
             "WHERE k.entity_id = e.entity_id AND k.scheme = %s))",
         ]
     )
