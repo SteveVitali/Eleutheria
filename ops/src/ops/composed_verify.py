@@ -308,6 +308,27 @@ def run_composed_verification(
     # Shared ops machinery (run_completion / rematerialize) indexes result
     # rows positionally — it owns its own tuple-row connection.
     tconn = psycopg.connect(dsn, autocommit=True)
+    # P35.14a closed vocabulary: the sink never mints vocab_predicate rows,
+    # so the fixture-only predicates the composed document carries
+    # (contracted_camera_count / camera_presence — not registry members) are
+    # seeded as honest fixture rows before the claim legs run, the same
+    # posture journey_verify.py's fixture seeder takes.
+    conn.execute(
+        "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+        "VALUES('authoritative_source_wins','fixture') ON CONFLICT DO NOTHING"
+    )
+    for predicate_id, datatype in (
+        (COUNT_PREDICATE, "integer"),
+        (UNDATED_PREDICATE, "string"),
+    ):
+        conn.execute(
+            "INSERT INTO vocab_predicate"
+            "(predicate_id,vocab_version,value_datatype,object_type,definition,"
+            " volatility_class,half_life_days,resolution_strategy) "
+            "VALUES(%s,'1.0.0',%s,'literal','composed fixture','MODERATE',365,"
+            "'authoritative_source_wins') ON CONFLICT DO NOTHING",
+            (predicate_id, datatype),
+        )
     state: dict[str, Any] = {}
     try:
         # =====================================================================

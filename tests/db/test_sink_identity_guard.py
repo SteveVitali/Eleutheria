@@ -51,24 +51,28 @@ def _dsn(params: dict[str, object]) -> str:
     )
 
 
-_FIXTURE_PREDICATES = (
-    "sig.test.b",
-    "sig.test.big",
-    "sig.test.blank",
-    "sig.test.d",
-    "sig.test.f",
-    "sig.test.guard_lat",
-    "sig.test.guard_name",
-    "sig.test.name",
-    "sig.test.none",
-    "sig.test.obs",
-    "sig.test.operator",
-    "sig.test.org",
-    "sig.test.raw",
-    "sig.test.s",
-    "sig.test.subf",
-    "sig.test.subi",
-)
+_FIXTURE_PREDICATES = {
+    "sig.test.b": "boolean",
+    "sig.test.big": "integer",
+    "sig.test.blank": "string",
+    "sig.test.d": "string",
+    "sig.test.f": "number",
+    "sig.test.guard_lat": "number",
+    "sig.test.guard_name": "string",
+    "sig.test.name": "string",
+    "sig.test.none": "string",
+    "sig.test.obs": "string",
+    "sig.test.operator": "string",
+    "sig.test.org": "string",
+    "sig.test.raw": "string",
+    "sig.test.s": "string",
+    "sig.test.subf": "number",
+    "sig.test.subi": "integer",
+    "sig.test.undo0": "integer",
+    "sig.test.undo1": "integer",
+    "sig.test.undo2": "integer",
+    "sig.test.undo3": "integer",
+}
 
 
 @pytest.fixture
@@ -80,9 +84,11 @@ def clean_dsn(sig_database: dict[str, object]) -> Iterator[str]:
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
         # P35.14a closed vocabulary: fixture claims must name registered
-        # vocab_predicate rows — the sink never mints one.
-        for pred in _FIXTURE_PREDICATES:
-            register_vocab_predicate(conn, pred)
+        # vocab_predicate rows — the sink never mints one. The datatype is
+        # declared honestly: it used to be inferred by the removed
+        # auto-register path (number/integer/boolean pins below).
+        for pred, datatype in _FIXTURE_PREDICATES.items():
+            register_vocab_predicate(conn, pred, datatype=datatype)
     yield dsn
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
