@@ -5,14 +5,17 @@
 checker (ticket 271, I8 ACQ-07, OM-19/OM-20).
 
 Wave A is the first live ingestion wave of the Round-11 acquisition build-out.
-Its three legs, **in order**, inside ``2026-10-19 → 2026-10-23 14:00–20:00Z``
-under the recorded ING-GO-A (GATE-G4 §3 — "Window + flips at open"):
+Its three legs run **in order** inside the contract window
+2026-10-19 → 2026-10-23 14:00–20:00Z (future-ok: scheduled: contract
+window) under the recorded ING-GO-A (GATE-G4 §3 — "Window + flips
+at open"):
 
 * **L1 — image roll + manual first runs.** Pre-state capture (job/trigger
   JSON, ``sources.toml`` sha, ``cadence --check``), an AR-2 on-demand backup,
   the Legistar-trigger mitigation (pause ``sig-sched-legistar`` before the
-  roll, or roll after its ``2026-10-20 05:00Z`` fire — the only in-window
-  fire of ``0 5 20 * *``), then ``sig-ops roll-jobs --record`` on one pinned
+  roll, or roll after the trigger's one in-window fire
+  (2026-10-20 05:00Z; future-ok: scheduled: ``0 5 20 * *``), then
+  ``sig-ops roll-jobs --record`` on one pinned
   digest, ``sig-connectors load-seed --source state_alpr_statute_inventory_2026``,
   and the three manual first runs — ``legistar``, ``usaspending``,
   ``procportal_nyc_ny`` (CROL) — **one at a time, each verified before the
@@ -36,9 +39,9 @@ Criteria (each one refuse-on-fail; never a soft warn):
 * ``go`` — the ING-GO-A verbatim decision recorded with a ``date -u``
   timestamp (GATE DECISIONS; silence is never consent; ING-GO-A is a
   one-shot authorisation for this window — a re-entry re-collects it).
-* ``window`` — the supplied ``now`` inside 2026-10-19 → 10-23,
-  14:00–20:00Z UTC, a weekday — evaluated against the *supplied* instant,
-  never the wall clock.
+* ``window`` — the supplied ``now`` inside the contract window,
+  2026-10-19 → 10-23 14:00–20:00Z UTC (future-ok: scheduled: window),
+  a weekday — evaluated on the *supplied* instant, never the wall clock.
 * ``leg`` — the requested leg is the next un-greened leg in order:
   ``completed`` must be exactly the ordered prefix of ``("L1","L2","L3")``
   before ``leg`` (a missed leg refuses, never skips).
@@ -50,8 +53,9 @@ Criteria (each one refuse-on-fail; never a soft warn):
 * ``screened`` — a screened-lane source runs only when the wave-open
   HG-03 flip list names it AND the "no human review occurred" disclosure
   is recorded; trivially holds when none is in ``run_set``.
-* ``trigger`` — L1 only: ``sig-sched-legistar`` recorded paused before the
-  roll, or the roll instant is at/after ``2026-10-20T05:00Z``.
+* ``trigger`` — L1 only: ``sig-sched-legistar`` recorded paused
+  before the roll, or the roll instant is at/after the trigger fire
+  (2026-10-20T05:00Z; future-ok: scheduled: the trigger fire).
 * ``serialize`` — no ``sig-materialize`` active and no other manual run in
   flight (one manual run at a time).
 * ``backup`` — L1 only: the newest AR-2 backup read is ``SUCCESSFUL``.
@@ -73,7 +77,8 @@ from typing import Any
 SCHEMA = "sig.wave-a-gate/1"
 WAVE = "A"
 
-#: Contract: the Wave-A window — 2026-10-19 → 10-23, each day 14:00–20:00Z.
+#: Contract: window 2026-10-19 → 10-23 (future-ok: scheduled: window),
+#: each day 14:00–20:00Z.
 WINDOW_START = "2026-10-19T14:00:00Z"  # future-ok: scheduled: the contract's window (OM-19)
 WINDOW_END = "2026-10-23T20:00:00Z"  # future-ok: scheduled: exclusive end (OM-19)
 WINDOW_START_HH = 14
@@ -100,9 +105,10 @@ SCREENED_SOURCES: tuple[str, ...] = (
 NEVER_SOURCES: frozenset[str] = frozenset({"doj_ctas_awards"})
 
 #: The Legistar trigger mitigation (ticket deliverable 4): ``0 5 20 * *``
-#: fires once inside the window at 2026-10-20 05:00Z — pause the trigger
-#: before the roll, or delay the roll until at/after that fire so a
-#: scheduled execution can never overlap a manual first run.
+#: fires once in-window at 2026-10-20 05:00Z (future-ok: scheduled: fire)
+#: — pause the trigger before the roll, or delay the
+#: roll until at/after that fire so a scheduled execution can never
+#: overlap a manual first run.
 LEGISTAR_TRIGGER = "sig-sched-legistar"
 LEGISTAR_NEXT_FIRE = "2026-10-20T05:00:00Z"  # future-ok: scheduled: 0 5 20 * * (OM-19)
 
@@ -366,7 +372,8 @@ def evaluate(inputs: dict) -> Verdict:
                 ok,
                 f"{LEGISTAR_TRIGGER} paused={paused} · "
                 f"now>={LEGISTAR_NEXT_FIRE}={after_fire} — pause the trigger "
-                "before the roll or delay the roll past its 2026-10-20 "
+                "before the roll or delay the roll past its "
+                "2026-10-20 "  # future-ok: scheduled: the fire time
                 "05:00Z fire (a scheduled fire never overlaps a manual "
                 "first run)",
                 {"paused": paused, "after_fire": after_fire},

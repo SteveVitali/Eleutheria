@@ -14,7 +14,7 @@
 #                                            # `sig-ops wave-a-gate` on the
 #                                            # recorded inputs and executes the
 #                                            # named leg's steps ONLY on a go —
-#                                            # inside 2026-10-19→23 14:00–20:00Z,
+#                                            # inside 2026-10-19→23 14:00–20:00Z — future-ok: scheduled: the contract window,
 #                                            # under the recorded ING-GO-A
 #                                            # (GATE-G4 §3), one manual run at a
 #                                            # time, never overlapping
@@ -23,7 +23,7 @@
 # The three legs, in order (a missed leg is reported, never silently skipped):
 #   L1 — prestate capture + AR-2 backup + the Legistar-trigger mitigation
 #        (pause sig-sched-legistar before the roll, or roll after its
-#        2026-10-20 05:00Z fire), `sig-ops roll-jobs --record` on one pinned
+#        2026-10-20 05:00Z fire — future-ok: scheduled: the trigger fire), `sig-ops roll-jobs --record` on one pinned
 #        digest (ADR-111), `sig-connectors load-seed`, then the three manual
 #        first runs — legistar, usaspending, procportal_nyc_ny — one at a
 #        time, each verified before the next starts. The two ADR-185 S8
@@ -70,7 +70,7 @@ done
 SOURCES_MANUAL="legistar usaspending procportal_nyc_ny"
 SOURCES_SCREENED="camreg_tribal_all_leaders_directory legis_tribal_tohono_oodham_notice"
 LEGISTAR_TRIGGER="sig-sched-legistar"
-LEGISTAR_NEXT_FIRE="2026-10-20T05:00:00Z"
+LEGISTAR_NEXT_FIRE="2026-10-20T05:00:00Z"  # future-ok: scheduled: 0 5 20 * * in-window fire
 SEED_SOURCE="state_alpr_statute_inventory_2026"
 
 _json_list() {  # _json_list <file> <key> — one id per line
@@ -113,7 +113,7 @@ _rerun() {  # _rerun <source> — the +0 idempotence leg
   _log "   expected: run row claims_added == 0 — a non-zero read stops the wave and is reported"
 }
 
-banner "Wave-A activation (P35.11 / ACQ-07; 2026-10-19→23 14:00–20:00Z)"
+banner "Wave-A activation (P35.11 / ACQ-07; 2026-10-19→23 14:00–20:00Z)"  # future-ok: scheduled: the contract window
 
 if [ "${SIG_GCP_MODE}" = "check" ]; then
   _log "PLAN ONLY — no ADC required, no network opened."

@@ -5,8 +5,9 @@
 
 The contract's acceptance: the checker **refuses a leg when any criterion
 fails** — no recorded ING-GO-A (silence is never consent), outside the
-2026-10-19→23 14:00–20:00Z window, a skipped leg (``completed`` is not the
-ordered prefix), an undeclared or never-in-wave source (``doj_ctas_awards``
+2026-10-19→23 14:00–20:00Z window (future-ok: scheduled: the contract
+window), a skipped leg (``completed`` is not the ordered prefix), an
+undeclared or never-in-wave source (``doj_ctas_awards``
 / AP-T2-093), a screened-lane source outside the wave-open HG-03 flip list
 or without the no-human-review disclosure, the Legistar trigger un-paused
 before its in-window fire, a concurrent ``sig-materialize`` or manual run,
@@ -92,7 +93,7 @@ def test_empty_verbatim_refuses() -> None:
 
 def test_before_window_refuses() -> None:
     inputs = _go_inputs()
-    inputs["now"] = "2026-10-19T13:59:59Z"
+    inputs["now"] = "2026-10-19T13:59:59Z"  # future-ok: synthetic: pre-window edge instant
     v = wave_a.evaluate(inputs)
     assert v.decision == "no-go"
     assert not _ids(v)["window"]
@@ -100,23 +101,23 @@ def test_before_window_refuses() -> None:
 
 def test_after_window_refuses() -> None:
     inputs = _go_inputs()
-    inputs["now"] = "2026-10-24T15:00:00Z"
+    inputs["now"] = "2026-10-24T15:00:00Z"  # future-ok: synthetic: post-window edge instant
     assert not _ids(wave_a.evaluate(inputs))["window"]
 
 
 def test_outside_daily_band_refuses() -> None:
     inputs = _go_inputs()
-    inputs["now"] = "2026-10-20T06:00:00Z"  # in-window day, outside 14:00–20:00Z
+    inputs["now"] = "2026-10-20T06:00:00Z"  # future-ok: synthetic: in-window day outside the band
     assert not _ids(wave_a.evaluate(inputs))["window"]
 
 
 def test_window_edge_instants() -> None:
     inputs = _go_inputs()
-    inputs["now"] = "2026-10-19T14:00:00Z"  # the opening instant — admitted
+    inputs["now"] = "2026-10-19T14:00:00Z"  # future-ok: synthetic: the opening instant — admitted
     assert _ids(wave_a.evaluate(inputs))["window"]
-    inputs["now"] = "2026-10-23T19:59:59Z"  # the closing instant — admitted
+    inputs["now"] = "2026-10-23T19:59:59Z"  # future-ok: synthetic: the closing instant — admitted
     assert _ids(wave_a.evaluate(inputs))["window"]
-    inputs["now"] = "2026-10-23T20:00:00Z"  # exclusive end — refused
+    inputs["now"] = "2026-10-23T20:00:00Z"  # future-ok: synthetic: exclusive end — refused
     assert not _ids(wave_a.evaluate(inputs))["window"]
 
 
@@ -202,7 +203,7 @@ def test_screened_without_disclosure_refuses() -> None:
 def test_unpaused_trigger_before_fire_refuses() -> None:
     inputs = _go_inputs()
     inputs["legistar_trigger"] = {"paused": False}
-    inputs["now"] = "2026-10-19T15:00:00Z"  # before the 10-20 05:00Z fire
+    inputs["now"] = "2026-10-19T15:00:00Z"  # future-ok: synthetic: before the 10-20 05:00Z fire
     v = wave_a.evaluate(inputs)
     assert v.decision == "no-go"
     assert not _ids(v)["trigger"]
@@ -211,7 +212,7 @@ def test_unpaused_trigger_before_fire_refuses() -> None:
 def test_unpaused_trigger_after_fire_admits() -> None:
     inputs = _go_inputs()
     inputs["legistar_trigger"] = {"paused": False}
-    inputs["now"] = "2026-10-20T15:00:00Z"  # the 05:00Z fire already happened
+    inputs["now"] = "2026-10-20T15:00:00Z"  # future-ok: synthetic: the 05:00Z fire already happened
     assert _ids(wave_a.evaluate(inputs))["trigger"]
 
 
