@@ -271,6 +271,8 @@ landing here. Regenerate this file after any backlog edit:
   - sources: RISK-P4-07
 - **BL-093** — SIG-ONTO-060 scope-list amendment — the realised capability-scope enum exceeds the declared list (15/45 out-of-list; docs/governance/capability-scope-amendment-proposal.md, P35.14a): SEED-12b withheld the closed-list relaxation because it would weaken a MUST without the operator's words (plan §6.5; ADR-150 pattern; G.7.5). The proposal + evidence are committed; the operator decides apply/reject — no Round-11 row applies it. Homes RISK-R11-35. Trigger: the operator's decision on the proposal. · _process_ · S · status=open
   - sources: RISK-R11-35
+- **BL-094** — SIG-GEO-005 hosted Mobility CHECK + the named VALIDATE follow-up (P35.14b residue): the engineered half landed (subject-scheme→entity-type map, `entity_typing_mobility_check` deploy/revert/verify, the Mobility-CHECK reject/admit test); the hosted deploy rides the queued never-pre-authorised RETURN PASS leg `P35.14b-live-typing-check` (verbatim in-ticket go + AR-3/AR-2 window only), and the deliberate `VALIDATE CONSTRAINT` on `physical_asset_mobility_vocab` — plus any further vocab-valued column the conformance audit flags — is a named later sqitch row, never in-place. Trigger: the queued leg lands and a later sqitch row validates the constraint / the audit flags more columns. Homes RISK-R11-36. · _schema-refinement_ · S · status=open
+  - sources: RISK-R11-36
 
 ## P39+
 

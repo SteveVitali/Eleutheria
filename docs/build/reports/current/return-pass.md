@@ -41,6 +41,6 @@
 | P35.1a | the queued in-ticket production-write leg: `scheduled-ops.sh --apply` reconciling Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED triggers + the d… | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266; mutation leg queued … |
 | P35.11 | the queued Wave-A production sequence: L1 rolls the connector digest, loads `state_alpr_statute_inventory_2026`, then runs legistar → usa_spending → procportal_… | L2 |
 | P35.14a | the queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — genres + strategies + 280 predicates + 5,600 directness rows + the widened CHECK), ver… | `implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` · landed row 272 (PR #274 — write queued unde… |
-| P35.14b | the queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout` — the mobility CHECK NOT VALID + the entity_type_decision … | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` · landed row 273 (PR #275 — leg queued behin… |
+| P35.14b | the queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) then the append-only typed-identity write (`--apply`, INS… | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` · landed row 273 (PR #275 — leg queued behin… |
 
 ← back: CURRENT.md
