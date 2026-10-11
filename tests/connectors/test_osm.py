@@ -172,7 +172,11 @@ def test_all_four_surveillance_keys_are_normalized_and_mobility_inferred() -> No
 def test_mobility_and_type_maps() -> None:
     assert map_mobility("fixed") == "fixed"
     assert map_mobility("dome") == "fixed"
-    assert map_mobility("drone") == "mobile"
+    # SIG-GEO-005 (P35.14a): upstream mobile/vehicle/drone map onto registered
+    # Mobility members — `mobile` is not an enum member and is never emitted.
+    assert map_mobility("mobile") == "redeployable"
+    assert map_mobility("vehicle") == "vehicle_mounted"
+    assert map_mobility("drone") == "airborne"
     assert map_mobility("something_new") == "unknown"  # never guessed
     assert map_surveillance_type("ALPR") == "alpr"
     assert map_surveillance_type("gunshot_detector") == "acoustic_gunshot_detector"

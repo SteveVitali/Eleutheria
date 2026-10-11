@@ -3,11 +3,18 @@
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 #
 # The SIG technology vocabulary (§13.1) — SKOS source of truth. 14 domains, 36
-# families, 104 technologies; every family carries an -unspecified leaf
+# families, 104 technologies (144 entries: 104 active + 40 retired, P35.14a);
+# every family carries an -unspecified leaf
 # (SIG-ONTO-020/054); every technology carries a distinguishing criterion, an
 # evidence signature, and a salience L/M/H/C (SIG-ONTO-056). Slugs are
 # lowercase-hyphenated, stable forever, encode family-discriminator, never a
-# vendor (SIG-ONTO-053/055). Authored source; the SKOS artifact is generated from it.
+# vendor (SIG-ONTO-053/055). P35.14a (SIG-ONTO-055): the 40 non-family-prefixed
+# slugs were retired — `status: retired` + `superseded_by`, never deleted
+# (SIG-ONTO-053) — and superseded by family-prefixed successors; retired slugs
+# stay resolvable so historical claim values keep reading. The SKOS generator
+# emits retired concepts under a `retired/` path with owl:deprecated +
+# dcterms:isReplacedBy, and fails on a reflexive or cyclic skos:broader graph.
+# Authored source; the SKOS artifact is generated from it.
 scheme: technology
 title: SIG technology vocabulary (§13.1)
 version: 1.0.0
@@ -117,6 +124,18 @@ domains:
       - fixed camera
       - surveillance camera
       salience: L
+      status: retired
+      superseded_by: fixed-camera-cctv
+    - slug: fixed-camera-cctv
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of camera-fixed-cctv
+      label: Fixed CCTV
+      distinguishing_criterion: 'Fixed field-of-view video camera.'
+      evidence_signature:
+      - CCTV
+      - fixed camera
+      - surveillance camera
+      salience: L
+      supersedes: camera-fixed-cctv
     - slug: camera-ptz
       label: Pan-tilt-zoom camera
       distinguishing_criterion: Operator-steerable pan/tilt/zoom camera.
@@ -124,6 +143,17 @@ domains:
       - PTZ camera
       - pan tilt zoom
       salience: M
+      status: retired
+      superseded_by: fixed-camera-ptz
+    - slug: fixed-camera-ptz
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of camera-ptz
+      label: Pan-tilt-zoom camera
+      distinguishing_criterion: 'Operator-steerable pan/tilt/zoom camera.'
+      evidence_signature:
+      - PTZ camera
+      - pan tilt zoom
+      salience: M
+      supersedes: camera-ptz
     - slug: fixed-camera-unspecified
       label: Fixed and PTZ cameras (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -141,6 +171,17 @@ domains:
       - camera registry
       - register your camera
       salience: M
+      status: retired
+      superseded_by: private-camera-integration-registry
+    - slug: private-camera-integration-registry
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of private-camera-registry
+      label: Private-camera registry
+      distinguishing_criterion: 'A register of privately owned cameras with no live feed access.'
+      evidence_signature:
+      - camera registry
+      - register your camera
+      salience: M
+      supersedes: private-camera-registry
     - slug: private-camera-integration
       label: Private-camera integration
       distinguishing_criterion: Live private feeds integrated into an agency platform.
@@ -148,6 +189,17 @@ domains:
       - camera integration
       - connect your camera
       salience: H
+      status: retired
+      superseded_by: private-camera-integration-live-feeds
+    - slug: private-camera-integration-live-feeds
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of private-camera-integration
+      label: Private-camera integration
+      distinguishing_criterion: 'Live private feeds integrated into an agency platform.'
+      evidence_signature:
+      - camera integration
+      - connect your camera
+      salience: H
+      supersedes: private-camera-integration
     - slug: private-camera-per-incident-request
       label: Per-incident private-camera request
       distinguishing_criterion: Consent-gated, per-incident footage requests from private owners.
@@ -155,6 +207,17 @@ domains:
       - footage request
       - per-incident camera request
       salience: M
+      status: retired
+      superseded_by: private-camera-integration-per-incident-request
+    - slug: private-camera-integration-per-incident-request
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of private-camera-per-incident-request
+      label: Per-incident private-camera request
+      distinguishing_criterion: 'Consent-gated, per-incident footage requests from private owners.'
+      evidence_signature:
+      - footage request
+      - per-incident camera request
+      salience: M
+      supersedes: private-camera-per-incident-request
     - slug: private-camera-integration-unspecified
       label: Private-camera registry and integration (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -218,6 +281,18 @@ domains:
       - BWC
       - body cam
       salience: M
+      status: retired
+      superseded_by: body-worn-camera-recorded
+    - slug: body-worn-camera-recorded
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of bwc-recorded
+      label: Recorded body-worn camera
+      distinguishing_criterion: 'Records to storage for later review.'
+      evidence_signature:
+      - body-worn camera
+      - BWC
+      - body cam
+      salience: M
+      supersedes: bwc-recorded
     - slug: bwc-livestream
       label: Live-streaming body-worn camera
       distinguishing_criterion: Streams live into an integration/RTCC platform.
@@ -226,6 +301,18 @@ domains:
       - live body camera
       - real-time streaming
       salience: H
+      status: retired
+      superseded_by: body-worn-camera-livestream
+    - slug: body-worn-camera-livestream
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of bwc-livestream
+      label: Live-streaming body-worn camera
+      distinguishing_criterion: 'Streams live into an integration/RTCC platform.'
+      evidence_signature:
+      - BWC livestream
+      - live body camera
+      - real-time streaming
+      salience: H
+      supersedes: bwc-livestream
     - slug: body-worn-camera-unspecified
       label: Body-worn cameras (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -264,6 +351,17 @@ domains:
       - face verification
       - 1:1 match
       salience: C
+      status: retired
+      superseded_by: face-recognition-verification-1to1
+    - slug: face-recognition-verification-1to1
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of face-verification-1to1
+      label: 1:1 face verification
+      distinguishing_criterion: 'Confirms a claimed identity against one template.'
+      evidence_signature:
+      - face verification
+      - 1:1 match
+      salience: C
+      supersedes: face-verification-1to1
     - slug: face-identification-1ton
       label: 1:N face identification
       distinguishing_criterion: Searches a face against a gallery of many.
@@ -272,6 +370,18 @@ domains:
       - 1:N search
       - facial recognition
       salience: C
+      status: retired
+      superseded_by: face-recognition-identification-1ton
+    - slug: face-recognition-identification-1ton
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of face-identification-1ton
+      label: 1:N face identification
+      distinguishing_criterion: 'Searches a face against a gallery of many.'
+      evidence_signature:
+      - face recognition
+      - 1:N search
+      - facial recognition
+      salience: C
+      supersedes: face-identification-1ton
     - slug: face-retrospective
       label: Retrospective face search
       distinguishing_criterion: Searches recorded imagery after the fact.
@@ -279,6 +389,17 @@ domains:
       - retrospective facial recognition
       - RFR
       salience: C
+      status: retired
+      superseded_by: face-recognition-retrospective
+    - slug: face-recognition-retrospective
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of face-retrospective
+      label: Retrospective face search
+      distinguishing_criterion: 'Searches recorded imagery after the fact.'
+      evidence_signature:
+      - retrospective facial recognition
+      - RFR
+      salience: C
+      supersedes: face-retrospective
     - slug: face-live
       label: Live face recognition
       distinguishing_criterion: Matches faces against a watchlist in real time.
@@ -287,6 +408,18 @@ domains:
       - LFR
       - real-time face
       salience: C
+      status: retired
+      superseded_by: face-recognition-live
+    - slug: face-recognition-live
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of face-live
+      label: Live face recognition
+      distinguishing_criterion: 'Matches faces against a watchlist in real time.'
+      evidence_signature:
+      - live facial recognition
+      - LFR
+      - real-time face
+      salience: C
+      supersedes: face-live
     - slug: face-clustering
       label: Face clustering
       distinguishing_criterion: Groups unlabelled faces across media without a named gallery.
@@ -294,6 +427,17 @@ domains:
       - face clustering
       - face grouping
       salience: C
+      status: retired
+      superseded_by: face-recognition-clustering
+    - slug: face-recognition-clustering
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of face-clustering
+      label: Face clustering
+      distinguishing_criterion: 'Groups unlabelled faces across media without a named gallery.'
+      evidence_signature:
+      - face clustering
+      - face grouping
+      salience: C
+      supersedes: face-clustering
     - slug: face-recognition-unspecified
       label: Face recognition (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -367,6 +511,17 @@ domains:
       - Rapid DNA
       - booking DNA
       salience: C
+      status: retired
+      superseded_by: dna-rapid
+    - slug: dna-rapid
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of rapid-dna
+      label: Rapid DNA
+      distinguishing_criterion: 'Field/booking rapid DNA analysis.'
+      evidence_signature:
+      - Rapid DNA
+      - booking DNA
+      salience: C
+      supersedes: rapid-dna
     - slug: dna-unspecified
       label: DNA identification (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -384,6 +539,17 @@ domains:
       - tattoo recognition
       - tattoo matching
       salience: C
+      status: retired
+      superseded_by: other-biometric-tattoo-recognition
+    - slug: other-biometric-tattoo-recognition
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of tattoo-recognition
+      label: Tattoo recognition
+      distinguishing_criterion: 'Identifies/matches by tattoo imagery.'
+      evidence_signature:
+      - tattoo recognition
+      - tattoo matching
+      salience: C
+      supersedes: tattoo-recognition
     - slug: gait-recognition
       label: Gait recognition
       distinguishing_criterion: Identifies by walking gait.
@@ -391,6 +557,17 @@ domains:
       - gait recognition
       - gait analysis
       salience: C
+      status: retired
+      superseded_by: other-biometric-gait-recognition
+    - slug: other-biometric-gait-recognition
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of gait-recognition
+      label: Gait recognition
+      distinguishing_criterion: 'Identifies by walking gait.'
+      evidence_signature:
+      - gait recognition
+      - gait analysis
+      salience: C
+      supersedes: gait-recognition
     - slug: voice-recognition
       label: Voice recognition
       distinguishing_criterion: Identifies by voiceprint.
@@ -399,6 +576,18 @@ domains:
       - speaker identification
       - voiceprint
       salience: C
+      status: retired
+      superseded_by: other-biometric-voice-recognition
+    - slug: other-biometric-voice-recognition
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of voice-recognition
+      label: Voice recognition
+      distinguishing_criterion: 'Identifies by voiceprint.'
+      evidence_signature:
+      - voice recognition
+      - speaker identification
+      - voiceprint
+      salience: C
+      supersedes: voice-recognition
     - slug: other-biometric-unspecified
       label: Other biometrics (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -464,6 +653,17 @@ domains:
       - DFR
       - drone as first responder
       salience: H
+      status: retired
+      superseded_by: uas-first-responder
+    - slug: uas-first-responder
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of drone-as-first-responder
+      label: Drone as first responder
+      distinguishing_criterion: 'Autonomous/rapid-launch drone dispatched to calls.'
+      evidence_signature:
+      - DFR
+      - drone as first responder
+      salience: H
+      supersedes: drone-as-first-responder
     - slug: uas-unspecified
       label: Unmanned aerial systems (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -481,6 +681,17 @@ domains:
       - aerostat
       - tethered balloon
       salience: H
+      status: retired
+      superseded_by: aerostat-tethered
+    - slug: aerostat-tethered
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of tethered-aerostat
+      label: Tethered aerostat
+      distinguishing_criterion: 'A tethered balloon carrying sensors.'
+      evidence_signature:
+      - aerostat
+      - tethered balloon
+      salience: H
+      supersedes: tethered-aerostat
     - slug: persistent-aerial-surveillance
       label: Persistent aerial surveillance
       distinguishing_criterion: Wide-area, long-dwell aerial imaging.
@@ -489,6 +700,18 @@ domains:
       - wide-area motion imagery
       - WAMI
       salience: C
+      status: retired
+      superseded_by: aerostat-persistent
+    - slug: aerostat-persistent
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of persistent-aerial-surveillance
+      label: Persistent aerial surveillance
+      distinguishing_criterion: 'Wide-area, long-dwell aerial imaging.'
+      evidence_signature:
+      - persistent surveillance
+      - wide-area motion imagery
+      - WAMI
+      salience: C
+      supersedes: persistent-aerial-surveillance
     - slug: aerostat-unspecified
       label: Aerostats and persistent aerial (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -509,6 +732,17 @@ domains:
       - UGV
       - ground robot
       salience: M
+      status: retired
+      superseded_by: ground-robotics-ugv
+    - slug: ground-robotics-ugv
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of ugv
+      label: Unmanned ground vehicle
+      distinguishing_criterion: 'A ground robot carrying sensors.'
+      evidence_signature:
+      - UGV
+      - ground robot
+      salience: M
+      supersedes: ugv
     - slug: robot-dog
       label: Quadruped robot
       distinguishing_criterion: A legged robot platform (e.g. quadruped).
@@ -516,6 +750,17 @@ domains:
       - robot dog
       - quadruped robot
       salience: M
+      status: retired
+      superseded_by: ground-robotics-dog
+    - slug: ground-robotics-dog
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of robot-dog
+      label: Quadruped robot
+      distinguishing_criterion: 'A legged robot platform (e.g. quadruped).'
+      evidence_signature:
+      - robot dog
+      - quadruped robot
+      salience: M
+      supersedes: robot-dog
     - slug: ground-robotics-unspecified
       label: Ground robotics (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -554,6 +799,18 @@ domains:
       - content interception
       - Title III
       salience: C
+      status: retired
+      superseded_by: lawful-intercept-content
+    - slug: lawful-intercept-content
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of wiretap-content
+      label: Content interception
+      distinguishing_criterion: 'Interception of communications content.'
+      evidence_signature:
+      - wiretap
+      - content interception
+      - Title III
+      salience: C
+      supersedes: wiretap-content
     - slug: metadata-interception
       label: Metadata interception
       distinguishing_criterion: Collection of communications metadata.
@@ -562,6 +819,18 @@ domains:
       - trap and trace
       - metadata
       salience: C
+      status: retired
+      superseded_by: lawful-intercept-metadata
+    - slug: lawful-intercept-metadata
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of metadata-interception
+      label: Metadata interception
+      distinguishing_criterion: 'Collection of communications metadata.'
+      evidence_signature:
+      - pen register
+      - trap and trace
+      - metadata
+      salience: C
+      supersedes: metadata-interception
     - slug: tower-dump
       label: Tower dump
       distinguishing_criterion: Bulk request of all handsets seen by a tower in a window.
@@ -569,6 +838,17 @@ domains:
       - tower dump
       - cell tower dump
       salience: C
+      status: retired
+      superseded_by: lawful-intercept-tower-dump
+    - slug: lawful-intercept-tower-dump
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of tower-dump
+      label: Tower dump
+      distinguishing_criterion: 'Bulk request of all handsets seen by a tower in a window.'
+      evidence_signature:
+      - tower dump
+      - cell tower dump
+      salience: C
+      supersedes: tower-dump
     - slug: lawful-intercept-unspecified
       label: Lawful intercept and metadata (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -587,6 +867,18 @@ domains:
       - bluetooth beacon
       - MAC address sensor
       salience: H
+      status: retired
+      superseded_by: wifi-bluetooth-tracking-sensor
+    - slug: wifi-bluetooth-tracking-sensor
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of wifi-bluetooth-sensor
+      label: Wi-Fi/Bluetooth sensor
+      distinguishing_criterion: 'Detects/tracks devices by Wi-Fi/Bluetooth radio emissions.'
+      evidence_signature:
+      - wifi tracking
+      - bluetooth beacon
+      - MAC address sensor
+      salience: H
+      supersedes: wifi-bluetooth-sensor
     - slug: wifi-bluetooth-tracking-unspecified
       label: Wi-Fi / Bluetooth tracking (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -606,6 +898,16 @@ domains:
       evidence_signature:
       - logical extraction
       salience: C
+      status: retired
+      superseded_by: mobile-forensics-logical
+    - slug: mobile-forensics-logical
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of extraction-logical
+      label: Logical extraction
+      distinguishing_criterion: 'Logical acquisition of accessible device data.'
+      evidence_signature:
+      - logical extraction
+      salience: C
+      supersedes: extraction-logical
     - slug: extraction-physical
       label: Physical extraction
       distinguishing_criterion: Bit-level physical acquisition of device storage.
@@ -613,6 +915,17 @@ domains:
       - physical extraction
       - full file system
       salience: C
+      status: retired
+      superseded_by: mobile-forensics-physical
+    - slug: mobile-forensics-physical
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of extraction-physical
+      label: Physical extraction
+      distinguishing_criterion: 'Bit-level physical acquisition of device storage.'
+      evidence_signature:
+      - physical extraction
+      - full file system
+      salience: C
+      supersedes: extraction-physical
     - slug: cloud-account-extraction
       label: Cloud-account extraction
       distinguishing_criterion: Acquisition of cloud account data via tokens/credentials.
@@ -620,6 +933,17 @@ domains:
       - cloud extraction
       - cloud analyzer
       salience: C
+      status: retired
+      superseded_by: mobile-forensics-cloud-account
+    - slug: mobile-forensics-cloud-account
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of cloud-account-extraction
+      label: Cloud-account extraction
+      distinguishing_criterion: 'Acquisition of cloud account data via tokens/credentials.'
+      evidence_signature:
+      - cloud extraction
+      - cloud analyzer
+      salience: C
+      supersedes: cloud-account-extraction
     - slug: exploit-service
       label: Exploit service
       distinguishing_criterion: Vendor exploit service to unlock/extract devices.
@@ -627,6 +951,17 @@ domains:
       - exploit service
       - device unlock
       salience: C
+      status: retired
+      superseded_by: mobile-forensics-exploit-service
+    - slug: mobile-forensics-exploit-service
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of exploit-service
+      label: Exploit service
+      distinguishing_criterion: 'Vendor exploit service to unlock/extract devices.'
+      evidence_signature:
+      - exploit service
+      - device unlock
+      salience: C
+      supersedes: exploit-service
     - slug: mobile-forensics-unspecified
       label: Mobile device forensics (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -647,6 +982,17 @@ domains:
       - ad-tech location
       - mobile advertising ID
       salience: C
+      status: retired
+      superseded_by: location-data-adtech-purchase
+    - slug: location-data-adtech-purchase
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of adtech-location-purchase
+      label: Ad-tech location purchase
+      distinguishing_criterion: 'Purchase of advertising-derived device location data.'
+      evidence_signature:
+      - ad-tech location
+      - mobile advertising ID
+      salience: C
+      supersedes: adtech-location-purchase
     - slug: location-data-subscription
       label: Location-data subscription platform
       distinguishing_criterion: Subscription platform for querying device location history.
@@ -661,6 +1007,17 @@ domains:
       - geofence warrant
       - reverse location
       salience: C
+      status: retired
+      superseded_by: location-data-geofence-warrant
+    - slug: location-data-geofence-warrant
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of geofence-warrant-data
+      label: Geofence data
+      distinguishing_criterion: 'Location data obtained via geofence process.'
+      evidence_signature:
+      - geofence warrant
+      - reverse location
+      salience: C
+      supersedes: geofence-warrant-data
     - slug: location-data-unspecified
       label: Location-data acquisition (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -678,6 +1035,17 @@ domains:
       - data broker
       - person search
       salience: C
+      status: retired
+      superseded_by: records-broker-person
+    - slug: records-broker-person
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of person-records-broker
+      label: Person-records broker
+      distinguishing_criterion: 'Commercial broker of person records (addresses, associates).'
+      evidence_signature:
+      - data broker
+      - person search
+      salience: C
+      supersedes: person-records-broker
     - slug: utility-records
       label: Utility records
       distinguishing_criterion: Access to utility subscriber records.
@@ -685,6 +1053,17 @@ domains:
       - utility records
       - utility subpoena
       salience: H
+      status: retired
+      superseded_by: records-broker-utility
+    - slug: records-broker-utility
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of utility-records
+      label: Utility records
+      distinguishing_criterion: 'Access to utility subscriber records.'
+      evidence_signature:
+      - utility records
+      - utility subpoena
+      salience: H
+      supersedes: utility-records
     - slug: records-broker-unspecified
       label: Person- and utility-records brokers (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -731,6 +1110,18 @@ domains:
       - risk score
       - pretrial risk
       salience: C
+      status: retired
+      superseded_by: risk-analytics-assessment
+    - slug: risk-analytics-assessment
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of risk-assessment
+      label: Risk assessment
+      distinguishing_criterion: 'Algorithmic risk scoring of individuals.'
+      evidence_signature:
+      - risk assessment
+      - risk score
+      - pretrial risk
+      salience: C
+      supersedes: risk-assessment
     - slug: behavioral-analytics
       label: Behavioural analytics
       distinguishing_criterion: Detects anomalous behaviour patterns.
@@ -738,6 +1129,17 @@ domains:
       - behavioral analytics
       - anomaly detection
       salience: H
+      status: retired
+      superseded_by: risk-analytics-behavioral
+    - slug: risk-analytics-behavioral
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of behavioral-analytics
+      label: Behavioural analytics
+      distinguishing_criterion: 'Detects anomalous behaviour patterns.'
+      evidence_signature:
+      - behavioral analytics
+      - anomaly detection
+      salience: H
+      supersedes: behavioral-analytics
     - slug: risk-analytics-unspecified
       label: Risk and behavioural analytics (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -755,6 +1157,17 @@ domains:
       - social media monitoring
       - SMM
       salience: C
+      status: retired
+      superseded_by: osint-monitoring-social-media
+    - slug: osint-monitoring-social-media
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of social-media-monitoring
+      label: Social-media monitoring
+      distinguishing_criterion: 'Monitors social media for people/events.'
+      evidence_signature:
+      - social media monitoring
+      - SMM
+      salience: C
+      supersedes: social-media-monitoring
     - slug: osint-platform
       label: OSINT platform
       distinguishing_criterion: Aggregated open-source intelligence tooling.
@@ -762,6 +1175,17 @@ domains:
       - OSINT platform
       - open source intelligence
       salience: H
+      status: retired
+      superseded_by: osint-monitoring-platform
+    - slug: osint-monitoring-platform
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of osint-platform
+      label: OSINT platform
+      distinguishing_criterion: 'Aggregated open-source intelligence tooling.'
+      evidence_signature:
+      - OSINT platform
+      - open source intelligence
+      salience: H
+      supersedes: osint-platform
     - slug: osint-monitoring-unspecified
       label: OSINT and social-media monitoring (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -818,6 +1242,17 @@ domains:
       - camera federation
       - video hub
       salience: H
+      status: retired
+      superseded_by: federation-hub-camera
+    - slug: federation-hub-camera
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of camera-federation-hub
+      label: Camera federation hub
+      distinguishing_criterion: 'Federates many camera systems into one search surface.'
+      evidence_signature:
+      - camera federation
+      - video hub
+      salience: H
+      supersedes: camera-federation-hub
     - slug: federation-hub-unspecified
       label: Camera federation hub (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -835,6 +1270,17 @@ domains:
       - investigative platform
       - link analysis
       salience: C
+      status: retired
+      superseded_by: investigative-platform-third-party
+    - slug: investigative-platform-third-party
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of third-party-investigative-platform
+      label: Third-party investigative platform
+      distinguishing_criterion: 'Aggregated investigative analytics over multiple data sources.'
+      evidence_signature:
+      - investigative platform
+      - link analysis
+      salience: C
+      supersedes: third-party-investigative-platform
     - slug: investigative-platform-unspecified
       label: Third-party investigative platform (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
@@ -874,6 +1320,18 @@ domains:
       - inmate communications
       - call monitoring
       salience: C
+      status: retired
+      superseded_by: custodial-monitoring-jail-communications
+    - slug: custodial-monitoring-jail-communications
+      # P35.14a / SIG-ONTO-055: family-prefixed successor of jail-communications-monitoring
+      label: Jail-communications monitoring
+      distinguishing_criterion: 'Monitoring/analysis of custodial phone/messaging.'
+      evidence_signature:
+      - jail calls
+      - inmate communications
+      - call monitoring
+      salience: C
+      supersedes: jail-communications-monitoring
     - slug: custodial-monitoring-unspecified
       label: Custodial communications monitoring (unspecified)
       distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator

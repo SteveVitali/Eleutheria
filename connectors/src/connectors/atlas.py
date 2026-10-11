@@ -243,6 +243,21 @@ def normalize_evidence_genre(raw: str) -> str | None:
     return _genre_by_alias().get(raw.strip().lower())
 
 
+def artifact_genre_for_method(method: str) -> str | None:
+    """The closed registry genre a recognised method maps onto (P35.14a).
+
+    The nine Atlas method labels are NOT artifact genres — the claim stamps the
+    registered ``artifact_genre`` from ``atlas_vocab.toml`` and keeps the method
+    label as ``atlas_method`` provenance. ``None`` means the method carries no
+    mapping (a vocabulary defect — never guessed).
+    """
+    spec = vocab()["evidence_genres"].get(method)
+    if spec is None:
+        return None
+    genre = spec.get("artifact_genre")
+    return str(genre) if genre is not None else None
+
+
 def _genre_column(header: Iterable[str]) -> str | None:
     """The feed's evidence-genre column, if it records one at all (§23.3)."""
     present = set(header)
@@ -540,7 +555,11 @@ class AtlasConnector(Connector):
             "crosswalk_lossy": bool(mapping.get("lossy", False)),
             "agency_identifier": identity.as_identifier(),
             "identity_route": identity.route,
-            "evidence_genre": genre,
+            # P35.14a: `evidence_genre` is the CLOSED registry genre the sink
+            # stamps the artifact with; the Atlas method label (osint,
+            # news_reporting, …) is preserved as `atlas_method` provenance.
+            "evidence_genre": artifact_genre_for_method(genre) if genre else None,
+            "atlas_method": genre,
             "evidence_genre_granularity_loss": loss,
             "atlas_version": atlas_version(),
             "raw_agency": agency,
@@ -658,6 +677,7 @@ __all__ = [
     "AtlasConnector",
     "PredicateNotAllowed",
     "agency_identity",
+    "artifact_genre_for_method",
     "assert_predicate_allowed",
     "atlas_version",
     "canary_findings",

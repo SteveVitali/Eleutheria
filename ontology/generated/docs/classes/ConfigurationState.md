@@ -46,6 +46,8 @@ URI: [sig:class/ConfigurationState](https://ontology.sig-project.org/schema/clas
         
       ConfigurationState : live_stream_permitted_to
         
+      ConfigurationState : mfa_required
+        
       ConfigurationState : national_lookup_enabled
         
       ConfigurationState : observed_via
@@ -110,6 +112,7 @@ URI: [sig:class/ConfigurationState](https://ontology.sig-project.org/schema/clas
 | [live_stream_permitted_to](../slots/live_stream_permitted_to.md) | * <br/> [Uriorcurie](../types/Uriorcurie.md) |  | direct |
 | [third_party_integration](../slots/third_party_integration.md) | * <br/> [Uriorcurie](../types/Uriorcurie.md) |  | direct |
 | [audit_case_code_required](../slots/audit_case_code_required.md) | 0..1 <br/> [Boolean](../types/Boolean.md) |  | direct |
+| [mfa_required](../slots/mfa_required.md) | 0..1 <br/> [Boolean](../types/Boolean.md) | Whether the deployment's access configuration requires multi-factor authentic... | direct |
 | [observed_via](../slots/observed_via.md) | 0..1 <br/> [ObservedVia](../enums/ObservedVia.md) |  | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The entity's stable minted identity (L2 identity only, §8 | [Entity](../classes/Entity.md) |
 
@@ -262,6 +265,16 @@ attributes:
     domain_of:
     - ConfigurationState
     range: boolean
+  mfa_required:
+    name: mfa_required
+    description: 'Whether the deployment''s access configuration requires multi-factor
+      authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted
+      from evidence, never assumed.'
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - ConfigurationState
+    range: boolean
   observed_via:
     name: observed_via
     from_schema: https://ontology.sig-project.org/schema/entities
@@ -384,6 +397,17 @@ attributes:
     multivalued: true
   audit_case_code_required:
     name: audit_case_code_required
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: ConfigurationState
+    domain_of:
+    - ConfigurationState
+    range: boolean
+  mfa_required:
+    name: mfa_required
+    description: 'Whether the deployment''s access configuration requires multi-factor
+      authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted
+      from evidence, never assumed.'
     from_schema: https://ontology.sig-project.org/schema/entities
     rank: 1000
     owner: ConfigurationState

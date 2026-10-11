@@ -387,6 +387,9 @@ class _Staged:
     #: every typed field the claim row preserves, plus the default-provenance
     #: map (``typed.defaulted``) stamped on the row.
     typed: TypedAssertion
+    #: The raw claim record — kept so a closed-vocabulary rejection can carry
+    #: the full payload into ``assertion_quarantine`` (P35.14a).
+    record: Mapping[str, Any]
 
 
 def _coerce_observed_at(value: Any) -> datetime | None:
@@ -404,30 +407,19 @@ def _coerce_observed_at(value: Any) -> datetime | None:
         return None
 
 
-def _value_datatype(value: Any) -> str:
-    if isinstance(value, bool):
-        return "boolean"
-    if isinstance(value, int):
-        return "integer"
-    if isinstance(value, float):
-        return "number"
-    return "string"
-
-
 # --- the chunk statements (all INSERT/SELECT; every array is passed as text[] and
 # cast in SQL, so a list that happens to be all-NULL still has a type) -----------
 
-_REGISTER_PREDICATES = (
-    "INSERT INTO vocab_predicate"
-    "(predicate_id, vocab_version, value_datatype, object_type, definition,"
-    " volatility_class, half_life_days, resolution_strategy) "
-    "SELECT p.predicate_id, %s, p.value_datatype, 'literal', p.definition, 'MODERATE', 365,"
-    " 'authoritative_source_wins' "
-    "FROM unnest(%s::text[], %s::text[], %s::text[])"
-    " AS p(predicate_id, value_datatype, definition) "
-    "ORDER BY p.predicate_id "
-    "ON CONFLICT (predicate_id) DO NOTHING"
+# P35.14a (L1 NEW-2 / FM-15): the predicate vocabulary is CLOSED. The sink never
+# mints a ``vocab_predicate`` row — every claim predicate and qualifier id must
+# already resolve against the ontology-owned registry rows the
+# ``vocab_registry_seed_p35_14a`` sqitch seed inserts; an unregistered id is a
+# quarantined ``assertion_quarantine`` row (``unknown_predicate``), never a
+# fabricated vocab row with generic defaults no resolver can adjudicate.
+_REGISTERED_PREDICATES = (
+    "SELECT predicate_id FROM vocab_predicate WHERE predicate_id = ANY(%s::text[])"
 )
+_REGISTERED_GENRES = "SELECT genre_id FROM vocab_artifact_genre"
 
 # The float column goes text -> float8 -> numeric: the same float8 -> numeric
 # assignment cast the row-at-a-time path applied to a Python float, so the stored
@@ -758,7 +750,6 @@ class PgClaimSink:
         self._rights_resolver = rights_resolver
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
-        self._strategy_ready = False
         # (source_id, spdx, attribution, terms_url) -> rights_id. P34.21a: the
         # key is per SOURCE + rights tuple — never SPDX alone, which is the F-387
         # defect (the first record for a licence was reused for every source
@@ -766,15 +757,17 @@ class PgClaimSink:
         # map").
         self._rights_by_key: dict[tuple[str, str, str | None, str | None], str] = {}
         self._known_predicates: set[str] = set()
+        # Registered artifact genres, lazily read from vocab_artifact_genre —
+        # the closed genre vocabulary (P35.14a).
+        self._known_genres: set[str] | None = None
         # (scheme, value) -> entity_id, filled through the identity guard.
         self._entity_by_key: dict[tuple[str, str], str] = {}
         # Partner organisations whose ``organization`` row this sink has written.
         self._org_rows: set[str] = set()
         # (source_id, artifact_type) -> (capture_id, extraction_id)
         self._capture_by_source: dict[tuple[str, str], tuple[str, str]] = {}
-        # The open chunk: staged claims + the predicates they introduce.
+        # The open chunk: staged claims.
         self._staged: list[_Staged] = []
-        self._pending_predicates: dict[str, str] = {}
         # P32.2: the binding of the in-flight assert_claims call — the actual
         # CaptureBinding, a Rejection (the whole call fails closed into
         # quarantine), or None (the legacy synthetic path).
@@ -866,7 +859,6 @@ class PgClaimSink:
         self._journal.clear()
         return (
             self._run_id,
-            self._strategy_ready,
             self.report.inserted,
             self.report.duplicates,
             self.report.entities,
@@ -875,7 +867,6 @@ class PgClaimSink:
     def _restore_chunk_snapshot(self, snapshot: tuple[Any, ...]) -> None:
         (
             self._run_id,
-            self._strategy_ready,
             self.report.inserted,
             self.report.duplicates,
             self.report.entities,
@@ -887,7 +878,6 @@ class PgClaimSink:
                 cache.pop(key, None)
         self._journal.clear()
         self._staged = []
-        self._pending_predicates = {}
 
     def _remember(self, cache: dict[Any, Any], key: Any, value: Any) -> None:
         cache[key] = value
@@ -921,51 +911,81 @@ class PgClaimSink:
 
     # --- prerequisites (all INSERT ... ON CONFLICT DO NOTHING, append-only) ----
 
-    def _ensure_resolution_strategy(self, strategy_id: str) -> None:
-        self._conn.execute(
-            "INSERT INTO vocab_resolution_strategy(strategy_id, definition) "
-            "VALUES (%s, %s) ON CONFLICT (strategy_id) DO NOTHING",
-            (strategy_id, "connector-asserted claim (P19.4 PgClaimSink)"),
-        )
-
     def register_vocabulary(self, predicates: Iterable[tuple[str, str]]) -> None:
-        """Pre-register predicate ids this sink's claims will name as qualifiers.
+        """Verify the predicate ids this sink's claims will name as qualifiers.
 
         A qualifier id MUST already be a registered ``vocab_predicate`` or it
         fails closed into ``assertion_quarantine`` (SIG-TRUST-001). A
         qualifier-only id — ``count_scope``, ``count_scope_detail``,
-        ``evidence_origin`` (P32.3 / ADR-122) — has no claim path to the
-        auto-registration a ``predicate_id`` gets, so the connector declares it
-        explicitly with the SAME connector-declared registration write. It is
-        declared vocabulary, never a guessed qualifier (the unknown-qualifier
-        quarantine keeps its teeth).
+        ``evidence_origin`` (P32.3 / ADR-122) — has no claim path, so the
+        connector declares it explicitly. P35.14a (L1 NEW-2): the vocabulary is
+        CLOSED — declaration is a *verification* that the ontology-seeded rows
+        exist, never a ``vocab_predicate`` write. An id the seed does not carry
+        is a registry defect and raises here, loudly, before any claim is
+        staged.
         """
-        for predicate_id, datatype in predicates:
-            self._pending_predicates.setdefault(str(predicate_id), str(datatype))
-        self._register_predicates()
-
-    def _register_predicates(self) -> None:
-        """Register the chunk's new predicates in one statement (cached per sink)."""
-        pending = self._pending_predicates
-        if not pending:
+        ids = [str(predicate_id) for predicate_id, _ in predicates]
+        if not ids:
             return
-        self._pending_predicates = {}
-        if not self._strategy_ready:
-            self._ensure_resolution_strategy("authoritative_source_wins")
-            self._strategy_ready = True
-        ids = sorted(pending)
-        self._conn.execute(
-            _REGISTER_PREDICATES,
-            (
-                self._vocab_version,
-                ids,
-                [pending[p] for p in ids],
-                [f"connector predicate {p!r} (registered by PgClaimSink)" for p in ids],
-            ),
-        )
-        for predicate in ids:
-            self._known_predicates.add(predicate)
-            self._journal.append((self._known_predicates, predicate))
+        found = {row[0] for row in self._conn.execute(_REGISTERED_PREDICATES, (ids,)).fetchall()}
+        missing = [i for i in ids if i not in found]
+        if missing:
+            raise ValueError(
+                f"register_vocabulary: {sorted(missing)!r} not in vocab_predicate — "
+                "the predicate vocabulary is closed (P35.14a); register the id "
+                "through the ontology registry, never through the sink"
+            )
+        self._known_predicates.update(found)
+
+    def _registered_genres(self) -> set[str]:
+        """The closed artifact-genre vocabulary (``vocab_artifact_genre``, P35.14a)."""
+        if self._known_genres is None:
+            self._known_genres = {
+                str(row[0]) for row in self._conn.execute(_REGISTERED_GENRES).fetchall()
+            }
+        return self._known_genres
+
+    def _gate_predicates(self, staged: list[_Staged]) -> list[_Staged]:
+        """Closed-vocabulary gate: drop staged claims whose predicate is unregistered.
+
+        P35.14a (L1 NEW-2 / FM-15, SIG-TRUST-001): a predicate with no
+        ``vocab_predicate`` row never becomes a claim — the assertion lands in
+        ``assertion_quarantine`` (``unknown_predicate``) with the full record as
+        its payload, visible in the run report. The evidence chain the staging
+        pass already resolved stays: the capture/extraction/run rows are the
+        rejection's own provenance. Registered ids cache into
+        ``_known_predicates`` so a chunk pays one SELECT, not one per claim.
+        """
+        unknown = {s.predicate for s in staged} - self._known_predicates
+        if not unknown:
+            return staged
+        found = {
+            str(row[0])
+            for row in self._conn.execute(_REGISTERED_PREDICATES, (sorted(unknown),)).fetchall()
+        }
+        self._known_predicates.update(found)
+        survivors: list[_Staged] = []
+        for s in staged:
+            if s.predicate in self._known_predicates:
+                survivors.append(s)
+                continue
+            source_id = str(s.record.get("source_id") or self._connector_name)
+            self._quarantine(
+                s.record,
+                Rejection(
+                    QuarantineReason.UNKNOWN_PREDICATE,
+                    f"predicate {s.predicate!r} is not registered in "
+                    "vocab_predicate — the vocabulary is closed (P35.14a); "
+                    "register it through the ontology, never through the sink",
+                    quarantine_payload(
+                        s.record,
+                        connector_name=self._connector_name,
+                        source_id=source_id,
+                    ),
+                ),
+                source_id=source_id,
+            )
+        return survivors
 
     def _rights_id(
         self,
@@ -1409,13 +1429,29 @@ class PgClaimSink:
         subject = typed.subject
         predicate = typed.predicate
 
-        value = claim.get("value")
         source_id = str(claim.get("source_id") or self._connector_name)
         spdx = str(claim.get("license") or claim.get("spdx") or "")
         attribution = claim.get("source_attribution") or claim.get("attribution")
         terms_url = claim.get("terms_url") or claim.get("source_terms_url")
 
         genre = str(claim.get("evidence_genre") or "connector_run")
+        if genre not in self._registered_genres():
+            # P35.14a: the artifact-genre vocabulary is closed — an unregistered
+            # genre quarantines the assertion (unknown_genre); no vocab row and
+            # no unresolvable claim is minted.
+            self._quarantine(
+                claim,
+                Rejection(
+                    QuarantineReason.UNKNOWN_GENRE,
+                    f"evidence_genre {genre!r} is not a registered artifact genre "
+                    "(vocab_artifact_genre); never guessed or defaulted",
+                    quarantine_payload(
+                        claim, connector_name=self._connector_name, source_id=source_id
+                    ),
+                ),
+                source_id=source_id,
+            )
+            return
         # P34.21a / ADR-194: rights resolve per SOURCE, not per licence — the
         # (source, spdx, attribution, terms) tuple is the record's identity.
         rights_id = self._rights_id(
@@ -1424,8 +1460,6 @@ class PgClaimSink:
             None if attribution is None else str(attribution),
             None if terms_url is None else str(terms_url),
         )
-        if predicate not in self._known_predicates:
-            self._pending_predicates.setdefault(predicate, _value_datatype(value))
         run_id = self._ensure_run()
         if isinstance(active, CaptureBinding):
             capture_id = self._ensure_actual_capture(
@@ -1486,6 +1520,7 @@ class PgClaimSink:
                 capture_id=capture_id,
                 object_ref=object_ref,
                 typed=typed,
+                record=claim,
             )
         )
 
@@ -1662,7 +1697,9 @@ class PgClaimSink:
         staged, self._staged = self._staged, []
         if not staged:
             return
-        self._register_predicates()
+        staged = self._gate_predicates(staged)
+        if not staged:
+            return
         refs: dict[tuple[str, str], tuple[str, str, str]] = {}
         for s in staged:
             subject_key = (SUBJECT_SCHEME, s.subject)

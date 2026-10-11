@@ -29,7 +29,9 @@ NON_US_COUNTRY_NAMESPACES = COUNTRY_NAMESPACES - {"us"}
 
 # The us.* permissible values that existed before P18.1, frozen so the "no US enum
 # was widened" guard is falsifiable. P18.1 adds only non-US children; if a later
-# change adds a us.* value it must update this set deliberately.
+# change adds a us.* value it must update this set deliberately. P35.14a does so
+# once: `us.le.rtcc` (SIG-ONTO-057) — a US law-enforcement sub-type, deliberately
+# registered, deliberately un-frozen below.
 FROZEN_US_VALUES: dict[str, frozenset[str]] = {
     "OrganizationType": frozenset(
         {
@@ -45,6 +47,7 @@ FROZEN_US_VALUES: dict[str, frozenset[str]] = {
             "us.gov.county",
             "us.gov.special_district",
             "us.fusion_center",
+            "us.le.rtcc",  # P35.14a / SIG-ONTO-057: RTCC organisation type
         }
     ),
     "JurisdictionType": frozenset(),  # generic levels only; no us.* values

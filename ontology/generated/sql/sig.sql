@@ -137,6 +137,7 @@
 --     * Slot: national_lookup_enabled
 --     * Slot: federal_sharing_enabled
 --     * Slot: audit_case_code_required
+--     * Slot: mfa_required Description: Whether the deployment's access configuration requires multi-factor authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted from evidence, never assumed.
 --     * Slot: observed_via
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: UsageAggregate Description: Aggregated usage; direction is the point (§11.16). NO per-search, per-plate, or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, §18.1).
@@ -420,12 +421,6 @@
 -- # Class: Organization_address
 --     * Slot: Organization_id Description: Autocreated FK slot
 --     * Slot: address
--- # Class: Organization_succession
---     * Slot: Organization_id Description: Autocreated FK slot
---     * Slot: succession_id
--- # Class: Organization_succession_kind
---     * Slot: Organization_id Description: Autocreated FK slot
---     * Slot: succession_kind
 -- # Class: Product_implements_technology
 --     * Slot: Product_id Description: Autocreated FK slot
 --     * Slot: implements_technology
@@ -1167,25 +1162,6 @@ CREATE TABLE "Organization_address" (
 CREATE INDEX "ix_Organization_address_Organization_id" ON "Organization_address" ("Organization_id");
 CREATE INDEX "ix_Organization_address_address" ON "Organization_address" (address);
 
-CREATE TABLE "Organization_succession" (
-	"Organization_id" TEXT,
-	succession_id TEXT,
-	PRIMARY KEY ("Organization_id", succession_id),
-	FOREIGN KEY("Organization_id") REFERENCES "Organization" (id),
-	FOREIGN KEY(succession_id) REFERENCES "Organization" (id)
-);
-CREATE INDEX "ix_Organization_succession_Organization_id" ON "Organization_succession" ("Organization_id");
-CREATE INDEX "ix_Organization_succession_succession_id" ON "Organization_succession" (succession_id);
-
-CREATE TABLE "Organization_succession_kind" (
-	"Organization_id" TEXT,
-	succession_kind VARCHAR(12),
-	PRIMARY KEY ("Organization_id", succession_kind),
-	FOREIGN KEY("Organization_id") REFERENCES "Organization" (id)
-);
-CREATE INDEX "ix_Organization_succession_kind_Organization_id" ON "Organization_succession_kind" ("Organization_id");
-CREATE INDEX "ix_Organization_succession_kind_succession_kind" ON "Organization_succession_kind" (succession_kind);
-
 CREATE TABLE "AccountabilityEvent_organizations" (
 	"AccountabilityEvent_id" TEXT,
 	organizations_id TEXT,
@@ -1388,6 +1364,7 @@ CREATE TABLE "ConfigurationState" (
 	national_lookup_enabled BOOLEAN,
 	federal_sharing_enabled BOOLEAN,
 	audit_case_code_required BOOLEAN,
+	mfa_required BOOLEAN,
 	observed_via VARCHAR(17),
 	id TEXT NOT NULL,
 	PRIMARY KEY (id),

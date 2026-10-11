@@ -120,12 +120,6 @@ classes:
         range: edtf
       valid_to:
         range: edtf
-      succession:
-        range: Organization
-        multivalued: true
-      succession_kind:
-        range: SuccessionKind
-        multivalued: true
       publication_review:
         range: boolean
         description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).
@@ -494,6 +488,12 @@ classes:
         multivalued: true
       audit_case_code_required:
         range: boolean
+      mfa_required:
+        range: boolean
+        description: >-
+          Whether the deployment's access configuration requires multi-factor
+          authentication (SIG-ONTO-035): an observed ConfigurationState fact —
+          asserted from evidence, never assumed.
       observed_via:
         range: ObservedVia
 

@@ -25,24 +25,34 @@ external_taxonomies:
 crosswalks:
   # EFF Atlas — coarse, procurement-visible; mapping onto SIG's finer families is lossy.
   - {sig_concept: alpr-unspecified, taxonomy: eff_atlas, external_concept: Automated License Plate Readers, relation: broadMatch, lossy: true}
-  - {sig_concept: face-identification-1ton, taxonomy: eff_atlas, external_concept: Face Recognition, relation: closeMatch, lossy: true}
+  - {sig_concept: face-recognition-identification-1ton, taxonomy: eff_atlas, external_concept: Face Recognition, relation: closeMatch, lossy: true}
   - {sig_concept: gunshot-detection-fixed, taxonomy: eff_atlas, external_concept: Gunshot Detection, relation: closeMatch, lossy: false}
   - {sig_concept: uas-general, taxonomy: eff_atlas, external_concept: Drones/UAVs, relation: closeMatch, lossy: true}
-  - {sig_concept: camera-federation-hub, taxonomy: eff_atlas, external_concept: Third-Party Investigative Platforms, relation: relatedMatch, lossy: true}
+  - {sig_concept: federation-hub-camera, taxonomy: eff_atlas, external_concept: Third-Party Investigative Platforms, relation: relatedMatch, lossy: true}
   # EFF Street-Level Surveillance — civil-liberties argument axis.
   - {sig_concept: cell-site-simulator-general, taxonomy: eff_sls, external_concept: Cell-Site Simulators, relation: closeMatch, lossy: false}
-  - {sig_concept: extraction-physical, taxonomy: eff_sls, external_concept: Mobile Device Forensic Tools, relation: broadMatch, lossy: true}
-  - {sig_concept: social-media-monitoring, taxonomy: eff_sls, external_concept: Social Media Monitoring, relation: closeMatch, lossy: false}
+  - {sig_concept: mobile-forensics-physical, taxonomy: eff_sls, external_concept: Mobile Device Forensic Tools, relation: broadMatch, lossy: true}
+  - {sig_concept: osint-monitoring-social-media, taxonomy: eff_sls, external_concept: Social Media Monitoring, relation: closeMatch, lossy: false}
   - {sig_concept: electronic-monitoring-ankle, taxonomy: eff_sls, external_concept: Electronic Monitoring, relation: closeMatch, lossy: false}
   # ALPR Accountability Atlas — issue categories (epistemic-labelled events).
   - {sig_concept: alpr-unspecified, taxonomy: alpr_accountability_atlas, external_concept: ALPR, relation: broadMatch, lossy: true}
   # OSM physical layer — SIG inherits OSM's global device schema (SIG-CHART-030).
   - {sig_concept: alpr-fixed, taxonomy: osm_surveillance, external_concept: "surveillance:type=ALPR", relation: closeMatch, lossy: true}
-  - {sig_concept: camera-fixed-cctv, taxonomy: osm_surveillance, external_concept: "man_made=surveillance", relation: broadMatch, lossy: true}
-  - {sig_concept: camera-ptz, taxonomy: osm_surveillance, external_concept: "camera:type=dome", relation: relatedMatch, lossy: true}
+  - {sig_concept: fixed-camera-cctv, taxonomy: osm_surveillance, external_concept: "man_made=surveillance", relation: broadMatch, lossy: true}
+  - {sig_concept: fixed-camera-ptz, taxonomy: osm_surveillance, external_concept: "camera:type=dome", relation: relatedMatch, lossy: true}
   # CCOPS inventory categories — legal-trigger axis.
-  - {sig_concept: face-identification-1ton, taxonomy: ccops_inventory, external_concept: Biometric Surveillance, relation: broadMatch, lossy: true}
+  - {sig_concept: face-recognition-identification-1ton, taxonomy: ccops_inventory, external_concept: Biometric Surveillance, relation: broadMatch, lossy: true}
   - {sig_concept: rtcc-platform, taxonomy: ccops_inventory, external_concept: Real-Time Crime Center, relation: closeMatch, lossy: true}
   # French Technopolice — international alignment (§5.3).
   - {sig_concept: video-analytics-object, taxonomy: fr_technopolice, external_concept: "vidéosurveillance algorithmique (VSA)", relation: closeMatch, lossy: true}
   - {sig_concept: alpr-fixed, taxonomy: fr_technopolice, external_concept: "LAPI", relation: closeMatch, lossy: true}
+
+# Wikidata QID → vendor links (SIG-STORE-044): the OSM community's own vendor
+# entity resolution (`manufacturer:wikidata` on 83.4% of mapped ALPRs) inherited
+# as a first-class crosswalk identifier — a `manufacturer_qid`/`operator_qid`/
+# `brand_qid` claim value resolves to the SIG vendor organization named here.
+# Rows are added only for QIDs observed in committed fixtures or review; an
+# unlisted QID is still a valid outward identifier (SIG-STORE-043), just not yet
+# entity-resolved.
+wikidata_vendor_links:
+  - {qid: "Q108327891", vendor: "Motorola Solutions", note: "osm fixture overpass_snapshot 1001"}

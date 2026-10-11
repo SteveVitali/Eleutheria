@@ -19,13 +19,13 @@ TAX = {
   }),
   "surveillance-video": ("Video surveillance", {
     "fixed-camera": ("Fixed and PTZ cameras", [
-      ("camera-fixed-cctv","Fixed CCTV","Fixed field-of-view video camera.",["CCTV","fixed camera","surveillance camera"],L),
-      ("camera-ptz","Pan-tilt-zoom camera","Operator-steerable pan/tilt/zoom camera.",["PTZ camera","pan tilt zoom"],M),
+      ("fixed-camera-cctv","Fixed CCTV","Fixed field-of-view video camera.",["CCTV","fixed camera","surveillance camera"],L),
+      ("fixed-camera-ptz","Pan-tilt-zoom camera","Operator-steerable pan/tilt/zoom camera.",["PTZ camera","pan tilt zoom"],M),
     ]),
-    "private-camera-integration": ("Private-camera registry and integration", [
-      ("private-camera-registry","Private-camera registry","A register of privately owned cameras with no live feed access.",["camera registry","register your camera"],M),
-      ("private-camera-integration","Private-camera integration","Live private feeds integrated into an agency platform.",["camera integration","connect your camera"],H),
-      ("private-camera-per-incident-request","Per-incident private-camera request","Consent-gated, per-incident footage requests from private owners.",["footage request","per-incident camera request"],M),
+    "private-camera-integration-live-feeds": ("Private-camera registry and integration", [
+      ("private-camera-integration-registry","Private-camera registry","A register of privately owned cameras with no live feed access.",["camera registry","register your camera"],M),
+      ("private-camera-integration-live-feeds","Private-camera integration","Live private feeds integrated into an agency platform.",["camera integration","connect your camera"],H),
+      ("private-camera-integration-per-incident-request","Per-incident private-camera request","Consent-gated, per-incident footage requests from private owners.",["footage request","per-incident camera request"],M),
     ]),
     "video-analytics": ("Video analytics", [
       ("video-analytics-object","Object-detection analytics","Automated detection/classification of objects in a video stream.",["video analytics","object detection","person of interest search"],H),
@@ -37,8 +37,8 @@ TAX = {
   }),
   "body-worn-video": ("Body-worn and in-car video", {
     "body-worn-camera": ("Body-worn cameras", [
-      ("bwc-recorded","Recorded body-worn camera","Records to storage for later review.",["body-worn camera","BWC","body cam"],M),
-      ("bwc-livestream","Live-streaming body-worn camera","Streams live into an integration/RTCC platform.",["BWC livestream","live body camera","real-time streaming"],H),
+      ("body-worn-camera-recorded","Recorded body-worn camera","Records to storage for later review.",["body-worn camera","BWC","body cam"],M),
+      ("body-worn-camera-livestream","Live-streaming body-worn camera","Streams live into an integration/RTCC platform.",["BWC livestream","live body camera","real-time streaming"],H),
     ]),
     "in-car-video": ("In-car video", [
       ("in-car-video-recorded","In-car video","Dash/in-car camera system.",["in-car video","dash cam","ICV"],L),
@@ -46,11 +46,11 @@ TAX = {
   }),
   "biometric-id": ("Biometric identification", {
     "face-recognition": ("Face recognition", [
-      ("face-verification-1to1","1:1 face verification","Confirms a claimed identity against one template.",["face verification","1:1 match"],C),
-      ("face-identification-1ton","1:N face identification","Searches a face against a gallery of many.",["face recognition","1:N search","facial recognition"],C),
-      ("face-retrospective","Retrospective face search","Searches recorded imagery after the fact.",["retrospective facial recognition","RFR"],C),
-      ("face-live","Live face recognition","Matches faces against a watchlist in real time.",["live facial recognition","LFR","real-time face"],C),
-      ("face-clustering","Face clustering","Groups unlabelled faces across media without a named gallery.",["face clustering","face grouping"],C),
+      ("face-recognition-verification-1to1","1:1 face verification","Confirms a claimed identity against one template.",["face verification","1:1 match"],C),
+      ("face-recognition-identification-1ton","1:N face identification","Searches a face against a gallery of many.",["face recognition","1:N search","facial recognition"],C),
+      ("face-recognition-retrospective","Retrospective face search","Searches recorded imagery after the fact.",["retrospective facial recognition","RFR"],C),
+      ("face-recognition-live","Live face recognition","Matches faces against a watchlist in real time.",["live facial recognition","LFR","real-time face"],C),
+      ("face-recognition-clustering","Face clustering","Groups unlabelled faces across media without a named gallery.",["face clustering","face grouping"],C),
     ]),
     "fingerprint": ("Fingerprint identification", [
       ("fingerprint-tenprint","Ten-print identification","Matches full ten-print sets (AFIS).",["AFIS","ten-print","fingerprint database"],C),
@@ -62,12 +62,12 @@ TAX = {
     ]),
     "dna": ("DNA identification", [
       ("dna-forensic","Forensic DNA","Laboratory forensic DNA profiling.",["DNA profiling","CODIS"],C),
-      ("rapid-dna","Rapid DNA","Field/booking rapid DNA analysis.",["Rapid DNA","booking DNA"],C),
+      ("dna-rapid","Rapid DNA","Field/booking rapid DNA analysis.",["Rapid DNA","booking DNA"],C),
     ]),
     "other-biometric": ("Other biometrics", [
-      ("tattoo-recognition","Tattoo recognition","Identifies/matches by tattoo imagery.",["tattoo recognition","tattoo matching"],C),
-      ("gait-recognition","Gait recognition","Identifies by walking gait.",["gait recognition","gait analysis"],C),
-      ("voice-recognition","Voice recognition","Identifies by voiceprint.",["voice recognition","speaker identification","voiceprint"],C),
+      ("other-biometric-tattoo-recognition","Tattoo recognition","Identifies/matches by tattoo imagery.",["tattoo recognition","tattoo matching"],C),
+      ("other-biometric-gait-recognition","Gait recognition","Identifies by walking gait.",["gait recognition","gait analysis"],C),
+      ("other-biometric-voice-recognition","Voice recognition","Identifies by voiceprint.",["voice recognition","speaker identification","voiceprint"],C),
     ]),
   }),
   "acoustic": ("Acoustic sensing", {
@@ -81,17 +81,17 @@ TAX = {
   "robotics-aerial": ("Aerial robotics", {
     "uas": ("Unmanned aerial systems", [
       ("uas-general","Unmanned aerial system","A drone operated for surveillance tasks.",["UAS","drone","UAV"],H),
-      ("drone-as-first-responder","Drone as first responder","Autonomous/rapid-launch drone dispatched to calls.",["DFR","drone as first responder"],H),
+      ("uas-first-responder","Drone as first responder","Autonomous/rapid-launch drone dispatched to calls.",["DFR","drone as first responder"],H),
     ]),
     "aerostat": ("Aerostats and persistent aerial", [
-      ("tethered-aerostat","Tethered aerostat","A tethered balloon carrying sensors.",["aerostat","tethered balloon"],H),
-      ("persistent-aerial-surveillance","Persistent aerial surveillance","Wide-area, long-dwell aerial imaging.",["persistent surveillance","wide-area motion imagery","WAMI"],C),
+      ("aerostat-tethered","Tethered aerostat","A tethered balloon carrying sensors.",["aerostat","tethered balloon"],H),
+      ("aerostat-persistent","Persistent aerial surveillance","Wide-area, long-dwell aerial imaging.",["persistent surveillance","wide-area motion imagery","WAMI"],C),
     ]),
   }),
   "robotics-ground": ("Ground robotics", {
     "ground-robotics": ("Ground robotics", [
-      ("ugv","Unmanned ground vehicle","A ground robot carrying sensors.",["UGV","ground robot"],M),
-      ("robot-dog","Quadruped robot","A legged robot platform (e.g. quadruped).",["robot dog","quadruped robot"],M),
+      ("ground-robotics-ugv","Unmanned ground vehicle","A ground robot carrying sensors.",["UGV","ground robot"],M),
+      ("ground-robotics-dog","Quadruped robot","A legged robot platform (e.g. quadruped).",["robot dog","quadruped robot"],M),
     ]),
   }),
   "comms-intercept": ("Communications interception", {
@@ -99,31 +99,31 @@ TAX = {
       ("cell-site-simulator-general","Cell-site simulator","Simulates a cell tower to locate/identify handsets.",["cell-site simulator","IMSI catcher"],C),
     ]),
     "lawful-intercept": ("Lawful intercept and metadata", [
-      ("wiretap-content","Content interception","Interception of communications content.",["wiretap","content interception","Title III"],C),
-      ("metadata-interception","Metadata interception","Collection of communications metadata.",["pen register","trap and trace","metadata"],C),
-      ("tower-dump","Tower dump","Bulk request of all handsets seen by a tower in a window.",["tower dump","cell tower dump"],C),
+      ("lawful-intercept-content","Content interception","Interception of communications content.",["wiretap","content interception","Title III"],C),
+      ("lawful-intercept-metadata","Metadata interception","Collection of communications metadata.",["pen register","trap and trace","metadata"],C),
+      ("lawful-intercept-tower-dump","Tower dump","Bulk request of all handsets seen by a tower in a window.",["tower dump","cell tower dump"],C),
     ]),
     "wifi-bluetooth-tracking": ("Wi-Fi / Bluetooth tracking", [
-      ("wifi-bluetooth-sensor","Wi-Fi/Bluetooth sensor","Detects/tracks devices by Wi-Fi/Bluetooth radio emissions.",["wifi tracking","bluetooth beacon","MAC address sensor"],H),
+      ("wifi-bluetooth-tracking-sensor","Wi-Fi/Bluetooth sensor","Detects/tracks devices by Wi-Fi/Bluetooth radio emissions.",["wifi tracking","bluetooth beacon","MAC address sensor"],H),
     ]),
   }),
   "device-forensics": ("Mobile device forensics", {
     "mobile-forensics": ("Mobile device forensics", [
-      ("extraction-logical","Logical extraction","Logical acquisition of accessible device data.",["logical extraction"],C),
-      ("extraction-physical","Physical extraction","Bit-level physical acquisition of device storage.",["physical extraction","full file system"],C),
-      ("cloud-account-extraction","Cloud-account extraction","Acquisition of cloud account data via tokens/credentials.",["cloud extraction","cloud analyzer"],C),
-      ("exploit-service","Exploit service","Vendor exploit service to unlock/extract devices.",["exploit service","device unlock"],C),
+      ("mobile-forensics-logical","Logical extraction","Logical acquisition of accessible device data.",["logical extraction"],C),
+      ("mobile-forensics-physical","Physical extraction","Bit-level physical acquisition of device storage.",["physical extraction","full file system"],C),
+      ("mobile-forensics-cloud-account","Cloud-account extraction","Acquisition of cloud account data via tokens/credentials.",["cloud extraction","cloud analyzer"],C),
+      ("mobile-forensics-exploit-service","Exploit service","Vendor exploit service to unlock/extract devices.",["exploit service","device unlock"],C),
     ]),
   }),
   "data-acquisition": ("Commercial data acquisition", {
     "location-data": ("Location-data acquisition", [
-      ("adtech-location-purchase","Ad-tech location purchase","Purchase of advertising-derived device location data.",["ad-tech location","mobile advertising ID"],C),
+      ("location-data-adtech-purchase","Ad-tech location purchase","Purchase of advertising-derived device location data.",["ad-tech location","mobile advertising ID"],C),
       ("location-data-subscription","Location-data subscription platform","Subscription platform for querying device location history.",["location data platform","location intelligence"],C),
-      ("geofence-warrant-data","Geofence data","Location data obtained via geofence process.",["geofence warrant","reverse location"],C),
+      ("location-data-geofence-warrant","Geofence data","Location data obtained via geofence process.",["geofence warrant","reverse location"],C),
     ]),
-    "records-broker": ("Person- and utility-records brokers", [
-      ("person-records-broker","Person-records broker","Commercial broker of person records (addresses, associates).",["data broker","person search"],C),
-      ("utility-records","Utility records","Access to utility subscriber records.",["utility records","utility subpoena"],H),
+    "records-broker": ("Person- and records-broker-utility brokers", [
+      ("records-broker-person","Person-records broker","Commercial broker of person records (addresses, associates).",["data broker","person search"],C),
+      ("records-broker-utility","Utility records","Access to utility subscriber records.",["utility records","utility subpoena"],H),
     ]),
   }),
   "analytics-inference": ("Analytics and inference", {
@@ -132,12 +132,12 @@ TAX = {
       ("predictive-policing-person","Person-based predictive policing","Predicts who will be involved in crime.",["person-based prediction","heat list","risk list"],C),
     ]),
     "risk-analytics": ("Risk and behavioural analytics", [
-      ("risk-assessment","Risk assessment","Algorithmic risk scoring of individuals.",["risk assessment","risk score","pretrial risk"],C),
-      ("behavioral-analytics","Behavioural analytics","Detects anomalous behaviour patterns.",["behavioral analytics","anomaly detection"],H),
+      ("risk-analytics-assessment","Risk assessment","Algorithmic risk scoring of individuals.",["risk assessment","risk score","pretrial risk"],C),
+      ("risk-analytics-behavioral","Behavioural analytics","Detects anomalous behaviour patterns.",["behavioral analytics","anomaly detection"],H),
     ]),
     "osint-monitoring": ("OSINT and social-media monitoring", [
-      ("social-media-monitoring","Social-media monitoring","Monitors social media for people/events.",["social media monitoring","SMM"],C),
-      ("osint-platform","OSINT platform","Aggregated open-source intelligence tooling.",["OSINT platform","open source intelligence"],H),
+      ("osint-monitoring-social-media","Social-media monitoring","Monitors social media for people/events.",["social media monitoring","SMM"],C),
+      ("osint-monitoring-platform","OSINT platform","Aggregated open-source intelligence tooling.",["OSINT platform","open source intelligence"],H),
     ]),
   }),
   "integration-platform": ("Integration platforms", {
@@ -148,10 +148,10 @@ TAX = {
       ("cad-rms-integration","CAD/RMS integration","Integrates computer-aided dispatch / records management data.",["CAD integration","RMS integration"],M),
     ]),
     "federation-hub": ("Camera federation hub", [
-      ("camera-federation-hub","Camera federation hub","Federates many camera systems into one search surface.",["camera federation","video hub"],H),
+      ("federation-hub-camera","Camera federation hub","Federates many camera systems into one search surface.",["camera federation","video hub"],H),
     ]),
     "investigative-platform": ("Third-party investigative platform", [
-      ("third-party-investigative-platform","Third-party investigative platform","Aggregated investigative analytics over multiple data sources.",["investigative platform","link analysis"],C),
+      ("investigative-platform-third-party","Third-party investigative platform","Aggregated investigative analytics over multiple data sources.",["investigative platform","link analysis"],C),
     ]),
   }),
   "person-monitoring": ("Person monitoring", {
@@ -159,7 +159,7 @@ TAX = {
       ("electronic-monitoring-ankle","Electronic monitoring","GPS/RF monitoring of a supervised person.",["electronic monitoring","ankle monitor","GPS monitoring"],C),
     ]),
     "custodial-monitoring": ("Custodial communications monitoring", [
-      ("jail-communications-monitoring","Jail-communications monitoring","Monitoring/analysis of custodial phone/messaging.",["jail calls","inmate communications","call monitoring"],C),
+      ("custodial-monitoring-jail-communications","Jail-communications monitoring","Monitoring/analysis of custodial phone/messaging.",["jail calls","inmate communications","call monitoring"],C),
     ]),
   }),
   "facility-screening": ("Facility screening", {

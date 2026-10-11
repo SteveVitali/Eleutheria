@@ -29,6 +29,7 @@ _CLAIM_SINK_MODULE = REPO_ROOT / "db" / "src" / "db" / "claim_sink.py"
 # The append-only tables the sink writes; truncated for a deterministic count.
 _SPINE_TABLES = (
     "claim_evidence",
+    "assertion_quarantine",
     "claim",
     "extraction",
     "evidence_capture",
@@ -78,6 +79,11 @@ def clean_dsn(sig_database: dict[str, object]) -> Iterator[str]:
     truncate = "TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE"
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
+        # P35.14a closed vocabulary: fixture claims must name a registered
+        # vocab_predicate row; the sink never mints one.
+        from conftest import register_vocab_predicate
+
+        register_vocab_predicate(conn, "sig.test.chunk_flag")
     yield dsn
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
@@ -332,3 +338,111 @@ def test_chunked_commit_issues_no_update_or_delete(clean_dsn: str) -> None:
         assert head.startswith(("INSERT", "SELECT")), f"unexpected statement: {stmt!r}"
         assert " UPDATE " not in f" {head} " and not head.startswith("UPDATE")
         assert " DELETE " not in f" {head} " and not head.startswith("DELETE")
+
+
+# --- P35.14a closed vocabulary at the sink -----------------------------------
+
+
+def _closed_vocab_claim(predicate: str, **kw: object) -> dict[str, object]:
+    claim: dict[str, object] = {
+        "subject_id": "cv-subj",
+        "predicate_id": predicate,
+        "value": "v",
+        "source_id": "cv_source",
+        "license": "CC0-1.0",
+        "record_kind": "claim",
+    }
+    claim.update(kw)
+    return claim
+
+
+def test_unknown_predicate_quarantines_and_no_claim_lands(clean_dsn: str) -> None:
+    """An unregistered predicate fails closed: assertion_quarantine(unknown_
+    predicate), the full record as payload, nothing in claim."""
+    from db.claim_sink import PgClaimSink
+
+    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    claim = _closed_vocab_claim("sig.test.never_registered")
+    sink.assert_claims([claim])
+    assert sink.report.inserted == 0 and sink.report.quarantined == 1
+    with psycopg.connect(clean_dsn) as conn:
+        (count,) = conn.execute("SELECT count(*) FROM claim").fetchone()
+        assert count == 0
+        rows = conn.execute("SELECT reason, payload FROM assertion_quarantine").fetchall()
+        assert [r[0] for r in rows] == ["unknown_predicate"]
+        assert rows[0][1]["record"]["predicate_id"] == "sig.test.never_registered"
+
+
+def test_unknown_genre_quarantines_and_no_claim_lands(clean_dsn: str) -> None:
+    """A registered predicate with an unregistered evidence_genre fails closed:
+    assertion_quarantine(unknown_genre) — the genre is never guessed or
+    defaulted and no vocab_artifact_genre row is minted."""
+    from db.claim_sink import PgClaimSink
+
+    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    claim = _closed_vocab_claim("sig.test.chunk_flag", evidence_genre="sig_test_genre")
+    sink.assert_claims([claim])
+    assert sink.report.inserted == 0 and sink.report.quarantined == 1
+    with psycopg.connect(clean_dsn) as conn:
+        (count,) = conn.execute("SELECT count(*) FROM claim").fetchone()
+        assert count == 0
+        rows = conn.execute("SELECT reason, payload FROM assertion_quarantine").fetchall()
+        assert [r[0] for r in rows] == ["unknown_genre"]
+        assert rows[0][1]["record"]["evidence_genre"] == "sig_test_genre"
+        (genre_count,) = conn.execute(
+            "SELECT count(*) FROM vocab_artifact_genre WHERE genre_id = 'sig_test_genre'"
+        ).fetchone()
+        assert genre_count == 0
+
+
+def test_quarantine_is_idempotent_by_payload_digest(clean_dsn: str) -> None:
+    """Re-asserting the same rejected record does not grow the quarantine —
+    the digest-anchored insert stays idempotent across runs."""
+    from db.claim_sink import PgClaimSink
+
+    claim = _closed_vocab_claim("sig.test.never_registered")
+    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink.assert_claims([claim])
+    assert sink.report.quarantined == 1 and sink.report.inserted == 0
+    # A re-run of the same rejected record appends no second row — the digest
+    # dedups, and the report counts what it actually appended (zero).
+    sink2 = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    sink2.assert_claims([claim])
+    assert sink2.report.quarantined == 0 and sink2.report.inserted == 0
+    with psycopg.connect(clean_dsn) as conn:
+        (count,) = conn.execute("SELECT count(*) FROM assertion_quarantine").fetchone()
+        assert count == 1
+
+
+def test_register_vocabulary_rejects_unregistered_ids(clean_dsn: str) -> None:
+    """register_vocabulary validates against vocab_predicate — it is a known-set
+    priming call now, never a mint."""
+    from db.claim_sink import PgClaimSink
+
+    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    with pytest.raises(ValueError, match="closed"):
+        sink.register_vocabulary((("sig.test.never_registered", "string"),))
+    # A registered id validates without error and its claim lands.
+    sink.register_vocabulary((("sig.test.chunk_flag", "string"),))
+    sink.assert_claims([_closed_vocab_claim("sig.test.chunk_flag")])
+    assert sink.report.inserted == 1 and sink.report.quarantined == 0
+
+
+def test_unknown_qualifier_quarantines_under_closed_vocabulary(clean_dsn: str) -> None:
+    """Qualifiers resolve through the same closed registry: the claim lands but
+    an unregistered qualifier_id never reaches claim_qualifier — it quarantines
+    against the claim's digest instead of minting a vocab row."""
+    from db.claim_sink import PgClaimSink
+
+    sink = PgClaimSink(psycopg.connect(clean_dsn), connector_name="cv", code_commit="p35.14a-test")
+    claim = _closed_vocab_claim(
+        "sig.test.chunk_flag",
+        qualifiers=[{"qualifier_id": "sig.test.qualifier_never_registered", "value": "x"}],
+    )
+    sink.assert_claims([claim])
+    assert sink.report.inserted == 1 and sink.report.quarantined == 1
+    with psycopg.connect(clean_dsn) as conn:
+        rows = conn.execute("SELECT reason FROM assertion_quarantine").fetchall()
+        assert [r[0] for r in rows] == ["unknown_qualifier"]
+        (count,) = conn.execute("SELECT count(*) FROM claim_qualifier").fetchone()
+        assert count == 0

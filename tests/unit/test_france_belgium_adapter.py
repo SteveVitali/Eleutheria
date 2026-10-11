@@ -65,7 +65,9 @@ def test_belgium_terms_are_real_namespaced_ontology_values(sv: object) -> None:
 
 def test_no_us_enum_was_widened_for_france_or_belgium(sv: object) -> None:
     # SIG-ONTO-068 / §5.3: the frozen us.* org-type set is unchanged; France and
-    # Belgium added NO us.* term. (The P18.1 baseline froze this set.)
+    # Belgium added NO us.* term. (The P18.1 baseline froze this set; P35.14a
+    # deliberately added `us.le.rtcc` — SIG-ONTO-057 — recorded here, not a
+    # France/Belgium onboarding artefact.)
     us_org = {v for v in _enum_values(sv, "OrganizationType") if v.startswith("us.")}
     assert us_org == {
         "us.le.municipal_police",
@@ -80,6 +82,7 @@ def test_no_us_enum_was_widened_for_france_or_belgium(sv: object) -> None:
         "us.gov.county",
         "us.gov.special_district",
         "us.fusion_center",
+        "us.le.rtcc",  # P35.14a / SIG-ONTO-057
     }
 
 

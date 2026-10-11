@@ -9,7 +9,10 @@
 # Coverage is measured against the 144,312 elements tagged surveillance:type=ALPR
 # as of 2026-08-20 (R1-F1.5); see docs/2_canonical_design_spec.md §23.2.
 
-version = "2026.08.27"
+# 2026.10.13: P35.14a / SIG-GEO-005 — [mobility] `mobile`/`vehicle`/`drone`
+# remapped onto registered Mobility members (redeployable / vehicle_mounted /
+# airborne); the unregistered `mobile` literal is gone.
+version = "2026.10.13"
 
 # The selection predicate: an element is an in-scope surveillance asset iff it
 # carries this tag (§23.2, 99.7% ALPR coverage).
@@ -81,9 +84,12 @@ raw_value_only_keys = ["description"]
 # `mobility`; fixed 92%, ~8% non-fixed). Values lowercased/stripped before lookup;
 # an unrecognised value leaves mobility "unknown" (never guessed).
 [mobility]
+# P35.14a (SIG-GEO-005): `mobile` is not a registered Mobility enum member —
+# the upstream values map onto the registered members, never onto an
+# unregistered literal.
 "fixed"    = "fixed"
 "dome"     = "fixed"
 "panning"  = "fixed"
-"mobile"   = "mobile"
-"vehicle"  = "mobile"
-"drone"    = "mobile"
+"mobile"   = "redeployable"
+"vehicle"  = "vehicle_mounted"
+"drone"    = "airborne"

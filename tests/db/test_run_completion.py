@@ -52,10 +52,15 @@ def _dsn(params: dict[str, object]) -> str:
 
 @pytest.fixture
 def clean_dsn(sig_database: dict[str, object]) -> Iterator[str]:
+    from conftest import register_vocab_predicate
+
     dsn = _dsn(sig_database)
     truncate = "TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE"
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
+        # P35.14a closed vocabulary: fixture predicates must be registered.
+        register_vocab_predicate(conn, "sig.test.resume")
+        register_vocab_predicate(conn, "sig.test.fail")
     yield dsn
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)

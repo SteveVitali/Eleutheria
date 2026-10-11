@@ -606,6 +606,26 @@ class OSMConnector(Connector):
                 mobility = self._first_mobility(values)
             rows.append(self._claim_row(ref, raw, key, value, values))
 
+        # SIG-ONTO-028: operator absence is a first-class, countable state — an
+        # element with no `operator`/`operator:wikidata` tag earns an explicit
+        # `operator_absent: true` claim, so the ~116,800-device backlog is
+        # countable on the spine rather than implicit in a missing tag.
+        if "operator" not in tags and "operator:wikidata" not in tags:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": ref.subject_id,
+                        "osm_type": ref.osm_type,
+                        "osm_id": ref.osm_id,
+                        "osm_version": int(raw["osm_version"]),
+                        "predicate_id": "operator_absent",
+                        "value": True,
+                        "raw_value": None,  # P2: the absence is the fact
+                    }
+                )
+            )
+
         # The asset row itself — the ODbL physical_asset projection input. Carries
         # the version (edit detection), geometry, inferred mobility, and a
         # first_observed placeholder (None => resolved later from history, NEVER the
@@ -719,6 +739,10 @@ def _stamp(row: dict[str, Any]) -> dict[str, Any]:
     row.setdefault("source_id", OSM_SOURCE_ID)
     row["license"] = ODBL_LICENSE
     row["compartment"] = ODBL_COMPARTMENT
+    if row.get("record_kind") == "claim":
+        # P35.14a: the closed artifact genre for OSM claims is `osm_node_set`
+        # (D2), never the connector_run (D3) fallback.
+        row.setdefault("evidence_genre", "osm_node_set")
     return row
 
 

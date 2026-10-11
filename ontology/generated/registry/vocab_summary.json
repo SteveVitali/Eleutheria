@@ -81,24 +81,41 @@
       "subscription",
       "recommendation"
     ],
-    "count": 184,
+    "count": 280,
     "ids": [
+      "accountability_event",
       "acquisition_channel",
+      "acquisition_cost",
       "acquisition_method",
       "active_device_count",
+      "actually_provides_capability",
       "affected_party_class",
+      "agency_county",
+      "agency_latitude",
+      "agency_longitude",
+      "agency_name",
+      "agency_ori9",
+      "agency_registry_entry",
+      "agency_state",
+      "agency_type",
+      "agenda_item",
       "ai_surveillance_supplier",
       "ai_surveillance_tech_from_china",
       "ai_surveillance_tech_from_us",
       "amends_contract",
       "amount",
+      "approval_status",
       "as_of",
       "asset_data_controller",
       "asset_exists_at_location",
       "asset_operator",
       "asset_type",
+      "atlas_category_retired",
       "audit_case_code_required",
+      "audit_cell_redacted",
+      "audit_mechanism",
       "authorization_state",
+      "authorizes",
       "award_date",
       "bill_chamber",
       "bill_external_id",
@@ -130,36 +147,55 @@
       "candidate_promotion_status",
       "citation",
       "claimed_device_count",
+      "complaint_count",
       "conditions",
       "configured_access_edge",
       "configured_retention_days",
       "configured_sharing_partner",
       "configured_sharing_partner_set",
+      "constrains_capability",
       "constrains_technology",
       "content_term",
+      "contract",
+      "contract_amount",
       "contract_end_date",
+      "contract_number",
       "contract_signed_date",
       "contract_start_date",
+      "contract_term_end",
       "contract_value",
       "contracted_device_count",
       "count_scope",
       "count_scope_detail",
       "country",
       "currency",
+      "data_access",
       "data_system_retention",
       "data_system_scope",
+      "deployed",
+      "deployment_ended",
       "deployment_exists",
+      "deployment_lifecycle_transition",
+      "deployment_location",
+      "deprecation_reason",
       "description",
       "direction",
       "disclosure_field_state",
+      "disparate_impact",
+      "distributes_list_to",
       "document",
+      "effective_date",
       "effective_from",
+      "effective_to",
+      "effectiveness_claim",
       "enacting_body",
       "end_date",
+      "enrolls_asset_into",
       "event_date",
       "event_deployments",
       "event_epistemic_status",
       "event_organizations",
+      "event_source",
       "event_technologies",
       "event_type",
       "evidence_origin",
@@ -167,15 +203,23 @@
       "facial_recognition_status",
       "federal_award_id",
       "federal_sharing_enabled",
+      "federates_search_to",
+      "filed_date",
       "first_observed",
       "fixed_asset_location",
       "funder",
       "funding_amount",
+      "funding_instrument",
       "funding_program_name",
       "hit_volume_observed",
       "holds_data_collected_by",
       "hotlist_hit_windowed_count",
       "implements_technology",
+      "in_operation",
+      "in_use",
+      "in_use_without_policy_count",
+      "ingests_feed_from",
+      "installation_date",
       "installed_device_count",
       "instrument_type",
       "integration_edge_active",
@@ -183,19 +227,32 @@
       "jurisdiction",
       "jurisdiction_boundary",
       "jurisdiction_parent",
+      "last_checked",
       "legal_authority",
+      "legal_instrument",
+      "legal_proceeding",
+      "legislative_bill",
       "lifecycle_transition",
+      "live_stream_permitted_to",
       "manufacturer",
       "manufacturer_qid",
       "mapped_device_count",
       "mapping_source",
       "matched_keyword",
+      "mfa_required",
       "national_lookup_enabled",
+      "nibrs_participant",
+      "nibrs_start_date",
+      "non_compliance_finding",
       "non_hit_proportion_observed",
       "notice_type",
       "observed_use_edge",
+      "observed_via",
       "offense_category_filter",
+      "operates_in_country",
+      "operating_cost",
       "operational_state",
+      "operator_absent",
       "operator_qid",
       "operator_stated",
       "operator_type",
@@ -204,13 +261,23 @@
       "organization_legal_name",
       "organization_ori",
       "organization_type",
+      "osm_element_deleted",
+      "oversight_body",
       "parent_cooperative_contract",
       "period",
+      "physical_removed_from_street",
+      "pilot_status",
       "place_of_performance",
+      "platform",
+      "policy_clause",
+      "policy_compliance_share",
       "policy_enforcement_mechanism",
+      "policy_status",
       "pooled_lookup_participation",
       "portal_exists",
+      "portal_index",
       "portal_last_updated_declared",
+      "portal_stated_permitted_use",
       "portal_stated_prohibited_use",
       "posted_date",
       "power_arrangement",
@@ -224,40 +291,67 @@
       "proceeding_party_role",
       "proceeding_posture",
       "proceeding_recap_id",
+      "procured_technology",
+      "procurement_date",
+      "procurement_notice",
       "procurement_state",
       "product_capabilities",
+      "product_name",
       "product_status",
       "product_vendor",
       "products",
       "program_name",
+      "pushes_alerts_to",
       "quantities",
+      "quantity",
       "recipient",
+      "records_request",
       "records_response_status",
+      "released_documents",
       "renewal_options",
+      "replaced_by",
+      "reporting_cadence",
       "request_text",
       "requesting_party",
+      "requests_data_from",
+      "requires_authorization_of",
+      "resells_data_from",
       "response_date",
       "response_deadline",
       "response_status",
+      "retention_days",
       "retention_period",
+      "retention_window_observed",
       "role_assignment",
       "scan_volume_observed",
       "seller",
+      "sharing_partner",
       "sharing_partner_degree",
       "sharing_restriction",
+      "signage_visibility",
       "signed_date",
       "smart_city_surveillance",
       "smart_policing",
       "start_date",
       "state_lookup_enabled",
+      "statutory_basis",
       "statutory_citation",
       "subscribed_hotlist_topic",
+      "subscribes_to",
+      "succeeds",
       "sunset_date",
       "surveillance_zone",
       "target_agency",
       "technology",
+      "technology_category",
+      "third_party_integration",
       "title",
+      "traffic_camera",
+      "training",
       "unmapped_surveillance_tag",
+      "upstream_ref",
+      "usage_count",
+      "usage_search_aggregate",
       "usage_search_windowed_count",
       "use_restriction",
       "uses_ai_surveillance",
@@ -265,6 +359,8 @@
       "vehicles_detected_windowed_count",
       "vendor",
       "vendor_default_retention",
+      "vendor_name",
+      "vendor_subsidy",
       "windowed_search_count",
       "written_policy_value"
     ],
@@ -274,6 +370,7 @@
     "counts": {
       "domains": 14,
       "families": 36,
+      "retired_technologies": 40,
       "technologies": 104
     },
     "families_without_unspecified_leaf": [],
@@ -283,625 +380,1153 @@
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "acoustic-sensing-general"
+        "slug": "acoustic-sensing-general",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "acoustic-sensing-unspecified"
+        "slug": "acoustic-sensing-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "adtech-location-purchase"
+        "slug": "adtech-location-purchase",
+        "status": "retired",
+        "superseded_by": "location-data-adtech-purchase"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "aerostat-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "alpr-checkpoint"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "alpr-covert"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "alpr-fixed"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "alpr-mobile"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "alpr-trailer"
+        "slug": "aerostat-persistent",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "alpr-unspecified"
+        "slug": "aerostat-tethered",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "behavioral-analytics"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "body-worn-camera-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "bwc-livestream"
+        "salience": "C",
+        "slug": "aerostat-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "bwc-recorded"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "cad-rms-integration"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "cad-rms-unspecified"
+        "slug": "alpr-checkpoint",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "camera-federation-hub"
+        "slug": "alpr-covert",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "alpr-fixed",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "alpr-mobile",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "alpr-trailer",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "alpr-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "behavioral-analytics",
+        "status": "retired",
+        "superseded_by": "risk-analytics-behavioral"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "body-worn-camera-livestream",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "body-worn-camera-recorded",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "body-worn-camera-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "bwc-livestream",
+        "status": "retired",
+        "superseded_by": "body-worn-camera-livestream"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "bwc-recorded",
+        "status": "retired",
+        "superseded_by": "body-worn-camera-recorded"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "cad-rms-integration",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "cad-rms-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "camera-federation-hub",
+        "status": "retired",
+        "superseded_by": "federation-hub-camera"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "L",
-        "slug": "camera-fixed-cctv"
+        "slug": "camera-fixed-cctv",
+        "status": "retired",
+        "superseded_by": "fixed-camera-cctv"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "camera-ptz"
+        "slug": "camera-ptz",
+        "status": "retired",
+        "superseded_by": "fixed-camera-ptz"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "camera-trailer-unspecified"
+        "slug": "camera-trailer-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "camera-trailer-video"
+        "slug": "camera-trailer-video",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "cell-site-simulator-general"
+        "slug": "cell-site-simulator-general",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "cell-site-simulator-unspecified"
+        "slug": "cell-site-simulator-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "cloud-account-extraction"
+        "slug": "cloud-account-extraction",
+        "status": "retired",
+        "superseded_by": "mobile-forensics-cloud-account"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "custodial-monitoring-unspecified"
+        "slug": "custodial-monitoring-jail-communications",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "dna-forensic"
+        "slug": "custodial-monitoring-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "dna-unspecified"
+        "slug": "dna-forensic",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "dna-rapid",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "dna-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "drone-as-first-responder"
+        "slug": "drone-as-first-responder",
+        "status": "retired",
+        "superseded_by": "uas-first-responder"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "electronic-monitoring-ankle"
+        "slug": "electronic-monitoring-ankle",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "electronic-monitoring-unspecified"
+        "slug": "electronic-monitoring-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "exploit-service"
+        "slug": "exploit-service",
+        "status": "retired",
+        "superseded_by": "mobile-forensics-exploit-service"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "extraction-logical"
+        "slug": "extraction-logical",
+        "status": "retired",
+        "superseded_by": "mobile-forensics-logical"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "extraction-physical"
+        "slug": "extraction-physical",
+        "status": "retired",
+        "superseded_by": "mobile-forensics-physical"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "face-clustering"
+        "slug": "face-clustering",
+        "status": "retired",
+        "superseded_by": "face-recognition-clustering"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "face-identification-1ton"
+        "slug": "face-identification-1ton",
+        "status": "retired",
+        "superseded_by": "face-recognition-identification-1ton"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "face-live"
+        "slug": "face-live",
+        "status": "retired",
+        "superseded_by": "face-recognition-live"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "face-recognition-unspecified"
+        "slug": "face-recognition-clustering",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "face-retrospective"
+        "slug": "face-recognition-identification-1ton",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "face-verification-1to1"
+        "slug": "face-recognition-live",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "face-recognition-retrospective",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "face-recognition-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "face-recognition-verification-1to1",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "face-retrospective",
+        "status": "retired",
+        "superseded_by": "face-recognition-retrospective"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "face-verification-1to1",
+        "status": "retired",
+        "superseded_by": "face-recognition-verification-1to1"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "federation-hub-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "fingerprint-latent"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "fingerprint-mobile"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "fingerprint-tenprint"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "fingerprint-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "fixed-camera-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "gait-recognition"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "geofence-warrant-data"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "M",
-        "slug": "ground-robotics-unspecified"
+        "slug": "federation-hub-camera",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "gunshot-detection-fixed"
+        "slug": "federation-hub-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "gunshot-detection-unspecified"
+        "salience": "C",
+        "slug": "fingerprint-latent",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "fingerprint-mobile",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "fingerprint-tenprint",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "fingerprint-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "L",
-        "slug": "in-car-video-recorded"
+        "slug": "fixed-camera-cctv",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "fixed-camera-ptz",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "fixed-camera-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "gait-recognition",
+        "status": "retired",
+        "superseded_by": "other-biometric-gait-recognition"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "geofence-warrant-data",
+        "status": "retired",
+        "superseded_by": "location-data-geofence-warrant"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ground-robotics-dog",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ground-robotics-ugv",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ground-robotics-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "gunshot-detection-fixed",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "gunshot-detection-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "L",
-        "slug": "in-car-video-unspecified"
+        "slug": "in-car-video-recorded",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "L",
+        "slug": "in-car-video-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "investigative-platform-unspecified"
+        "slug": "investigative-platform-third-party",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "iris-recognition"
+        "slug": "investigative-platform-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "iris-unspecified"
+        "slug": "iris-recognition",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "jail-communications-monitoring"
+        "slug": "iris-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "lawful-intercept-unspecified"
+        "slug": "jail-communications-monitoring",
+        "status": "retired",
+        "superseded_by": "custodial-monitoring-jail-communications"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "location-data-subscription"
+        "slug": "lawful-intercept-content",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "location-data-unspecified"
+        "slug": "lawful-intercept-metadata",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "metadata-interception"
+        "slug": "lawful-intercept-tower-dump",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "mobile-forensics-unspecified"
+        "slug": "lawful-intercept-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "osint-monitoring-unspecified"
+        "slug": "location-data-adtech-purchase",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "location-data-geofence-warrant",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "location-data-subscription",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "location-data-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "metadata-interception",
+        "status": "retired",
+        "superseded_by": "lawful-intercept-metadata"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "mobile-forensics-cloud-account",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "mobile-forensics-exploit-service",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "mobile-forensics-logical",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "mobile-forensics-physical",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "mobile-forensics-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "osint-platform"
+        "slug": "osint-monitoring-platform",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "other-biometric-unspecified"
+        "slug": "osint-monitoring-social-media",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "persistent-aerial-surveillance"
+        "slug": "osint-monitoring-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "osint-platform",
+        "status": "retired",
+        "superseded_by": "osint-monitoring-platform"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "person-records-broker"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "plate-data-commercial-purchase"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "plate-data-commercial-unspecified"
+        "slug": "other-biometric-gait-recognition",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "predictive-policing-person"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "predictive-policing-place"
+        "slug": "other-biometric-tattoo-recognition",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "predictive-policing-unspecified"
+        "slug": "other-biometric-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "other-biometric-voice-recognition",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "persistent-aerial-surveillance",
+        "status": "retired",
+        "superseded_by": "aerostat-persistent"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "person-records-broker",
+        "status": "retired",
+        "superseded_by": "records-broker-person"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "private-camera-integration"
+        "slug": "plate-data-commercial-purchase",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "H",
-        "slug": "private-camera-integration-unspecified"
+        "slug": "plate-data-commercial-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "predictive-policing-person",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "predictive-policing-place",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "predictive-policing-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "private-camera-integration",
+        "status": "retired",
+        "superseded_by": "private-camera-integration-live-feeds"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "private-camera-integration-live-feeds",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "private-camera-per-incident-request"
+        "slug": "private-camera-integration-per-incident-request",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "private-camera-registry"
+        "slug": "private-camera-integration-registry",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "rapid-dna"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "records-broker-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "risk-analytics-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "risk-assessment"
+        "salience": "H",
+        "slug": "private-camera-integration-unspecified",
+        "status": "active",
+        "superseded_by": null
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "robot-dog"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "rtcc-platform"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "rtcc-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "school-surveillance-suite"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "school-surveillance-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "social-media-monitoring"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "tattoo-recognition"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "tethered-aerostat"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "third-party-investigative-platform"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "C",
-        "slug": "tower-dump"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "uas-general"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "uas-unspecified"
+        "slug": "private-camera-per-incident-request",
+        "status": "retired",
+        "superseded_by": "private-camera-integration-per-incident-request"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "M",
-        "slug": "ugv"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "utility-records"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "vehicle-fingerprint-reid"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "vehicle-fingerprint-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "video-analytics-loitering"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "video-analytics-object"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "video-analytics-unspecified"
+        "slug": "private-camera-registry",
+        "status": "retired",
+        "superseded_by": "private-camera-integration-registry"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "voice-recognition"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "weapon-detection-scanner"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "weapon-detection-unspecified"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "wifi-bluetooth-sensor"
-      },
-      {
-        "has_distinguishing_criterion": true,
-        "has_evidence_signature": true,
-        "salience": "H",
-        "slug": "wifi-bluetooth-tracking-unspecified"
+        "slug": "rapid-dna",
+        "status": "retired",
+        "superseded_by": "dna-rapid"
       },
       {
         "has_distinguishing_criterion": true,
         "has_evidence_signature": true,
         "salience": "C",
-        "slug": "wiretap-content"
+        "slug": "records-broker-person",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "records-broker-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "records-broker-utility",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "risk-analytics-assessment",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "risk-analytics-behavioral",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "risk-analytics-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "risk-assessment",
+        "status": "retired",
+        "superseded_by": "risk-analytics-assessment"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "robot-dog",
+        "status": "retired",
+        "superseded_by": "ground-robotics-dog"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "rtcc-platform",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "rtcc-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "school-surveillance-suite",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "school-surveillance-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "social-media-monitoring",
+        "status": "retired",
+        "superseded_by": "osint-monitoring-social-media"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "tattoo-recognition",
+        "status": "retired",
+        "superseded_by": "other-biometric-tattoo-recognition"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "tethered-aerostat",
+        "status": "retired",
+        "superseded_by": "aerostat-tethered"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "third-party-investigative-platform",
+        "status": "retired",
+        "superseded_by": "investigative-platform-third-party"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "tower-dump",
+        "status": "retired",
+        "superseded_by": "lawful-intercept-tower-dump"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "uas-first-responder",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "uas-general",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "uas-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "M",
+        "slug": "ugv",
+        "status": "retired",
+        "superseded_by": "ground-robotics-ugv"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "utility-records",
+        "status": "retired",
+        "superseded_by": "records-broker-utility"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "vehicle-fingerprint-reid",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "vehicle-fingerprint-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "video-analytics-loitering",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "video-analytics-object",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "video-analytics-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "voice-recognition",
+        "status": "retired",
+        "superseded_by": "other-biometric-voice-recognition"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "weapon-detection-scanner",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "weapon-detection-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "wifi-bluetooth-sensor",
+        "status": "retired",
+        "superseded_by": "wifi-bluetooth-tracking-sensor"
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "wifi-bluetooth-tracking-sensor",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "H",
+        "slug": "wifi-bluetooth-tracking-unspecified",
+        "status": "active",
+        "superseded_by": null
+      },
+      {
+        "has_distinguishing_criterion": true,
+        "has_evidence_signature": true,
+        "salience": "C",
+        "slug": "wiretap-content",
+        "status": "retired",
+        "superseded_by": "lawful-intercept-content"
       }
     ]
   },

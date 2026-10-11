@@ -288,7 +288,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T1-002"
 notes = "ACQ-01 generated target (plan AP-T1-002, cand I5-C003). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "its_devicelist_devicelocdetail"
@@ -303,7 +303,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T1-007"
 notes = "ACQ-01 generated target (plan AP-T1-007, cand I5-C001). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "cctv_wvdoh_wvdot_assets_mapserver_layer_22"
@@ -318,7 +318,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T1-008"
 notes = "ACQ-01 generated target (plan AP-T1-008, cand I5-C009). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "midrive_cameras"
@@ -333,7 +333,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T1-011"
 notes = "ACQ-01 generated target (plan AP-T1-011, cand I5-C002). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "automated_safety_cameras_asc"
@@ -363,7 +363,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T1-090"
 notes = "ACQ-01 generated target (plan AP-T1-090, cand I5-C017). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "cctv_wvpa_wvdot_assets_mapserver_layer_23"
@@ -378,7 +378,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T2-003"
 notes = "ACQ-01 generated target (plan AP-T2-003, cand I5-C010). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "statewide_cctv_view"
@@ -393,7 +393,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T2-018"
 notes = "ACQ-01 generated target (plan AP-T2-018, cand I5-C006). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "its_atm_existing_devices_ndot_statewide_its_atm_masterplan_layer_3"
@@ -408,7 +408,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T2-103"
 notes = "ACQ-01 generated target (plan AP-T2-103, cand I5-C014). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "closed_circuit_television_cctv_itd_intelligenttransportationsystems_layer_0"
@@ -423,7 +423,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T2-105"
 notes = "ACQ-01 generated target (plan AP-T2-105, cand I5-C018). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 [[enumerated]]
 id = "fl511_api"
 state = "FL"

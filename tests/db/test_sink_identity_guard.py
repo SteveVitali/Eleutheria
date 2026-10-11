@@ -51,12 +51,38 @@ def _dsn(params: dict[str, object]) -> str:
     )
 
 
+_FIXTURE_PREDICATES = (
+    "sig.test.b",
+    "sig.test.big",
+    "sig.test.blank",
+    "sig.test.d",
+    "sig.test.f",
+    "sig.test.guard_lat",
+    "sig.test.guard_name",
+    "sig.test.name",
+    "sig.test.none",
+    "sig.test.obs",
+    "sig.test.operator",
+    "sig.test.org",
+    "sig.test.raw",
+    "sig.test.s",
+    "sig.test.subf",
+    "sig.test.subi",
+)
+
+
 @pytest.fixture
 def clean_dsn(sig_database: dict[str, object]) -> Iterator[str]:
+    from conftest import register_vocab_predicate
+
     dsn = _dsn(sig_database)
     truncate = "TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE"
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
+        # P35.14a closed vocabulary: fixture claims must name registered
+        # vocab_predicate rows — the sink never mints one.
+        for pred in _FIXTURE_PREDICATES:
+            register_vocab_predicate(conn, pred)
     yield dsn
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)

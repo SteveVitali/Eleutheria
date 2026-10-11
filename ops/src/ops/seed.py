@@ -216,7 +216,7 @@ _FRANCE_CLAIMS: list[dict[str, Any]] = [
     {
         "subject_id": _DEPLOYMENT_FR,
         "predicate_id": "implements_technology",
-        "value": "camera-fixed-cctv",
+        "value": "fixed-camera-cctv",
         "raw_value": "vidéoprotection",
         "observed_at": "2026-08-20",
         "source_id": "raa_prefectures",
