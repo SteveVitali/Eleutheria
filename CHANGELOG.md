@@ -24,6 +24,22 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Declared technology typing on camera-registry records** (P35.15a /
+  PKG-07; cites F-329, F-523, NEW-7/FM-05, SIG-ONTO-052a–056,
+  SIG-ONTO-027, SIG-RECON-013-family) — every camera-registry target now
+  declares an active-member SKOS technology slug
+  (`alpr-fixed`, `fixed-camera-ptz`, `fixed-camera-cctv`, …, validated
+  against `ontology/vocab/technology.yaml`; a missing/retired slug fails
+  the run closed, never falls back), `dot_511` emits it as a `technology`
+  claim per subject plus the entity row's declared subtype (the blanket
+  `traffic_camera` record_kind is gone — it survives only as an explicit
+  target declaration on surveillance-video targets), and the declared
+  class drives entity resolution (substring heuristics demoted to
+  recorded mismatch findings). The sites export column, map assets, the
+  `sig.published-record/2` projection's `technology` field, dossier rows
+  and the `/map/` Technology facet all read it. Subject identity is
+  unchanged (`traffic_camera:<src>:<tgt>:<ref>` — no identity fork under
+  append-only rules); the ~200k-subject hosted backfill is P35.15b.
 - **Host-level opt-out register + affirmative rights-reservation refusal**
   (P36.1a; cites SIG-INGEST-046c, §26 rule 7 under SIG-INGEST-036) — the two
   E2-06 controls, exercised on fixtures only: a committed, append-only
