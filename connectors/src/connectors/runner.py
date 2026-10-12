@@ -250,6 +250,12 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "camreg_suffolk_ny_red_light": "dot_511",
     "camreg_medford_or_ate": "dot_511",
     "camreg_ctdot_speed_safety": "dot_511",
+    # P36.7 (ACQ-11): the DC OVSJG camera-rebate programme register — one
+    # gated `camreg_*` source carrying the layer-33 `arcgis_outstatistics`
+    # target; programme_area aggregate rows only, never registrant-level.
+    # The gated row stays refused by the loader until the operator's OP-26
+    # Wave-B flip under ING-GO-B.
+    "camreg_dc_ovsjg_camera_rebate": "dot_511",
     # P26.9 (SOURCES.8): municipal / transit / non-US camera registries — one
     # source row per publisher; all route through the `dot_511` connector over
     # the merged target registry (data/camera_registry_targets.toml). Gated
@@ -448,6 +454,12 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "procportal_kcmo_mo": "procurement",
     "procportal_nyc_ny": "procurement",
     "procportal_chicago_il": "procurement",
+    # P36.7 (ACQ-11): Cook County awarded contracts + WA DES contract sales —
+    # Socrata `where`-slice surfaces only (rows_window=false); WA DES adds
+    # the customer_type public-entity screen. Both gated pending the
+    # operator's OP-26 Wave-B flip under ING-GO-B.
+    "procportal_cook_il_awards": "procurement",
+    "procportal_wa_des_contract_sales": "procurement",
     # P26.15 (SOURCES.14): the EU procurement surface — TED (Tenders Electronic
     # Daily) OJ S notices via the procurement connector's bounded Search-API
     # sweep (keyless documented POST /v3/notices/search; a tender notice is

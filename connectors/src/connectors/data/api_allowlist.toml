@@ -328,6 +328,24 @@ tos_basis = "City of New York Socrata open-data portal — the documented SoQL /
 rate_limit_per_min = 10
 counsel_reviewed = false
 
+# P36.7 (ACQ-11): the two Wave-B Socrata procurement registers — each host's
+# /resource/<id>.json is the documented programmatic rows API the reviewed
+# `where` slices fetch against (both sources stay gated until the
+# operator's OP-26 Wave-B flip).
+[[api_host]]
+host = "datacatalog.cookcountyil.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "Cook County, IL Socrata open-data portal — the documented SoQL /resource rows API (dataset qh8j-6k63 'Cook County Procurement — Awarded Contracts & Amendments'; source gated — licence review pending)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.wa.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "State of Washington Socrata open-data portal — the documented SoQL /resource rows API (dataset n8q6-4twj 'DES Statewide Contract Sales Data'; source gated — no licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
 [[api_host]]
 host = "data.calgary.ca"
 endpoint_prefix = "/resource/"

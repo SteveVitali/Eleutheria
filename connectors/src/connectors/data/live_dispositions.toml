@@ -481,10 +481,6 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.camreg_dc_private_security_camera]
-disposition = "promote"
-class_ticket = "P36.7"
-
 [sources.camreg_de_delaware_checkbook_expenditure]
 disposition = "promote"
 class_ticket = "P37.48"
@@ -981,10 +977,6 @@ class_ticket = "P36.11"
 disposition = "promote"
 class_ticket = "P37.52"
 
-[sources.procportal_il_cook_county_procurement]
-disposition = "promote"
-class_ticket = "P36.7"
-
 [sources.procportal_ny_northeastern_regional]
 disposition = "promote"
 class_ticket = "P37.52"
@@ -1004,10 +996,6 @@ class_ticket = "P37.48"
 [sources.procportal_us_naspo_valuepoint_portfolio]
 disposition = "promote"
 class_ticket = "P37.52"
-
-[sources.procportal_wa_washington_des_statewide]
-disposition = "promote"
-class_ticket = "P36.7"
 
 [sources.procportal_wa_wsipc_rfp_24]
 disposition = "promote"

@@ -1,0 +1,41 @@
+[
+  {
+    "contract_number": "05720",
+    "contract_title": "PUBLIC SAFETY VIDEO EQUIPMENT",
+    "vendor_name": "CDW GOVERNMENT LLC",
+    "customer_name": "CITY OF SPOKANE",
+    "customer_type": "Cities Including Towns",
+    "sales_year": "2025",
+    "quarter": "Q1",
+    "sales": "77200.00"
+  },
+  {
+    "contract_number": "02315",
+    "contract_title": "VIDEO RECORDING EQUIPMENT",
+    "vendor_name": "JOHN SMITH",
+    "customer_name": "PORT OF SEATTLE",
+    "customer_type": "Port Districts",
+    "sales_year": "2025",
+    "quarter": "Q3",
+    "sales": "31500.00"
+  },
+  {
+    "contract_number": "06316",
+    "contract_title": "DIGITAL EVIDENCE MANAGEMENT",
+    "vendor_name": "AXON ENTERPRISE INC",
+    "customer_name": "CITY OF VANCOUVER",
+    "customer_type": "Miscellaneous",
+    "sales_year": "2025",
+    "quarter": "Q2",
+    "sales": "150000.00"
+  },
+  {
+    "contract_number": "06316",
+    "contract_title": "DIGITAL EVIDENCE MANAGEMENT",
+    "vendor_name": "AXON ENTERPRISE INC",
+    "customer_name": "CITY OF BELLEVUE",
+    "sales_year": "2025",
+    "quarter": "Q2",
+    "sales": "61000.00"
+  }
+]

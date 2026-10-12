@@ -881,8 +881,8 @@ def test_pruned_fallback_is_deterministic_under_replay() -> None:
 
 
 def test_portal_where_defs_and_tenant_scope() -> None:
-    """AC: the dormant `cook_county` def composes B00329 clauses; only the CROL
-    tenant names a portal_where today (Cook County/WA DES rows are P36.7's)."""
+    """AC: the `cook_county`/`wa_des` defs compose B00329 clauses; the CROL
+    tenant plus P36.7's two ACQ-11 tenants name portal_where today."""
     from connectors.procurement import (
         _socrata_where_clause,
         acq_keyword_term_set,
@@ -890,13 +890,19 @@ def test_portal_where_defs_and_tenant_scope() -> None:
     )
 
     defs = portal_where_defs()
-    assert {"crol", "cook_county"} <= set(defs)
+    assert {"crol", "cook_county", "wa_des"} <= set(defs)
     cc = defs["cook_county"]
     clause = _socrata_where_clause(cc["fields"], acq_keyword_term_set(cc["terms"])[:2])
     assert "upper(vendor_name) like '%FLOCK%'" in clause
     assert "upper(description) like '%AXON%'" in clause
+    # P36.7 (ACQ-11): `wa_des` adds per-term equality on contract_number —
+    # the reviewed contract ids surface reseller rows.
+    wa = defs["wa_des"]
+    wa_clause = _socrata_where_clause(wa["fields"], ["05720"], exact_fields=wa["exact_fields"])
+    assert "upper(vendor_name) like '%05720%'" in wa_clause
+    assert "upper(contract_number) = '05720'" in wa_clause
     wired = [tid for tid, row in portal_tenants().items() if row.get("portal_where")]
-    assert wired == ["new_york_ny"]
+    assert wired == ["new_york_ny", "cook_county_il", "washington_des"]
     # Every other socrata tenant emits only the plain rows window.
     for source_id in (
         "procportal_austin_tx",

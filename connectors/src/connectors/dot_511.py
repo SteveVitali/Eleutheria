@@ -441,6 +441,12 @@ _PERIOD_KINDS = frozenset({"month", "verbatim"})
 #: is only legal on ``socrata_aggregate``.
 _COUNT_FUNCTIONS = frozenset({"sum", "verbatim"})
 
+#: P36.7 (ACQ-11): the aggregate SUBJECT kind is closed vocabulary too —
+#: ``camera_site`` mints an ATE camera subject; ``programme_area`` mints a
+#: programme-area aggregate subject (the DC rebate table's PSA groups)
+#: that is explicitly NOT a camera, a geometry, or a registrant.
+_SUBJECT_KINDS = frozenset({"camera_site", "programme_area"})
+
 #: Declared field names land verbatim inside the SoQL ``$select``/``$group``
 #: and ArcGIS ``outStatistics`` query text — a bare column identifier only,
 #: never an expression or quoted literal smuggled through the registry row.
@@ -464,22 +470,31 @@ class AggregateSpec:
     ``subject_field`` names the published key the aggregate subject resolves
     on (a camera/site/enforcement-space code); ``period_field`` +
     ``period_kind`` name the published period column and how it reads;
-    ``count_field`` + ``count_function`` name the published measure column
-    and the platform function that totals it; ``measure`` is the claim's
-    declared unit (``"violations"``); ``discriminator_field`` names an
-    optional published column that disambiguates concurrent count series on
-    the same subject × period (DC's ``ENFORCEMENT_TYPE`` — its published
-    value rides the claim's ``series`` field so the red-light, speed and
-    other series on one space-month never collide).
+    ``count_fields`` + ``count_function`` name the published measure
+    column(s) and the platform function that totals them; ``measure`` is
+    the claim's declared unit (``"violations"``); ``discriminator_field``
+    names an optional published column that disambiguates concurrent count
+    series on the same subject × period (DC's ``ENFORCEMENT_TYPE`` — its
+    published value rides the claim's ``series`` field so the red-light,
+    speed and other series on one space-month never collide);
+    ``subject_kind`` names the aggregate subject class — a camera site vs
+    a programme area (P36.7 ACQ-11: the rebate table's PSA groups are
+    programme-level rows, never cameras).
     """
 
     subject_field: str
     period_field: str
     period_kind: str
-    count_field: str
+    count_fields: tuple[str, ...]
     count_function: str
     measure: str
     discriminator_field: str | None
+    subject_kind: str = "camera_site"
+
+    @property
+    def count_field(self) -> str:
+        """The single-measure count column (P36.6 back-compat accessor)."""
+        return self.count_fields[0]
 
 
 def _aggregate_field(row: Mapping[str, Any], key: str, target_id: Any) -> str:
@@ -536,12 +551,56 @@ def assert_target_aggregate(row: Mapping[str, Any]) -> AggregateSpec | None:
             f"registry target {target_id!r} declares no 'aggregate_measure' — "
             "the count's unit must be declared, never implied"
         )
+    # P36.7 (ACQ-11): the count MEASURES may be plural — the DC rebate
+    # programme publishes per-status count columns (RECEIVED, APPROVED,
+    # DECLINED, …) in one row, each of which is its own measure series on
+    # the same subject × period. Declare them via `aggregate_count_fields`
+    # (a list) or the legacy scalar `aggregate_count_field` — never both.
+    plural_declared = row.get("aggregate_count_fields")
+    singular_declared = str(row.get("aggregate_count_field") or "").strip()
+    if plural_declared is not None and singular_declared:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares BOTH "
+            "aggregate_count_field and aggregate_count_fields — one "
+            "declaration, never an ambiguous pair"
+        )
+    if plural_declared is not None:
+        if not isinstance(plural_declared, (list, tuple)) or not plural_declared:
+            raise AggregateSpecNotDeclared(
+                f"registry target {target_id!r} declares aggregate_count_fields="
+                f"{plural_declared!r} — a non-empty list of published measure "
+                "columns is required"
+            )
+        count_fields = tuple(
+            _aggregate_field_value(target_id, "aggregate_count_fields", str(f))
+            for f in plural_declared
+        )
+    else:
+        count_fields = (_aggregate_field(row, "aggregate_count_field", target_id),)
+    if len(count_fields) > 1 and count_function == "verbatim":
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: 'verbatim' reads ONE published "
+            "count column — a multi-measure slice must declare a statistic "
+            "function per column"
+        )
     discriminator = str(row.get("aggregate_discriminator_field") or "").strip()
+    if len(count_fields) > 1 and discriminator:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares multi-measure count "
+            "fields AND a discriminator — a claim carries one series "
+            "dimension; split the surfaces instead"
+        )
+    subject_kind = str(row.get("aggregate_subject_kind") or "camera_site").strip()
+    if subject_kind not in _SUBJECT_KINDS:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares aggregate_subject_kind="
+            f"{subject_kind!r}, which is not a member ({sorted(_SUBJECT_KINDS)})"
+        )
     return AggregateSpec(
         subject_field=_aggregate_field(row, "aggregate_subject_field", target_id),
         period_field=_aggregate_field(row, "aggregate_period_field", target_id),
         period_kind=period_kind,
-        count_field=_aggregate_field(row, "aggregate_count_field", target_id),
+        count_fields=count_fields,
         count_function=count_function,
         measure=measure,
         discriminator_field=(
@@ -549,7 +608,20 @@ def assert_target_aggregate(row: Mapping[str, Any]) -> AggregateSpec | None:
             if discriminator
             else None
         ),
+        subject_kind=subject_kind,
     )
+
+
+def _aggregate_field_value(target_id: Any, key: str, value: str) -> str:
+    """One already-extracted bare-identifier element of a list declaration."""
+    if not _FIELD_NAME_RE.fullmatch(value.strip()):
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares {key} element {value!r} — "
+            "an aggregate declaration field must be a bare published column "
+            "identifier, never an expression (the query text is committed "
+            "registry data, fail closed)"
+        )
+    return value.strip()
 
 
 def target_aggregate_violations() -> list[str]:
@@ -735,16 +807,21 @@ def _socrata_aggregate_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     period_expr = (
         f"date_trunc_ym({spec.period_field})" if spec.period_kind == "month" else spec.period_field
     )
-    count_expr = (
-        f"{spec.count_function}({spec.count_field})"
-        if spec.count_function != "verbatim"
-        else spec.count_field
-    )
     select_parts = [
         f"{spec.subject_field} AS subject",
         f"{period_expr} AS period",
-        f"{count_expr} AS count",
     ]
+    # P36.7 (ACQ-11): a multi-measure slice aliases each count column
+    # ``count_<field>``; a single-measure slice keeps the canonical
+    # ``count`` alias (P36.6 shape unchanged).
+    if spec.count_function == "verbatim":
+        select_parts.append(f"{spec.count_field} AS count")
+    elif len(spec.count_fields) == 1:
+        select_parts.append(f"{spec.count_function}({spec.count_field}) AS count")
+    else:
+        select_parts.extend(
+            f"{spec.count_function}({field}) AS count_{field}" for field in spec.count_fields
+        )
     order_parts = [spec.subject_field, period_expr]
     if spec.discriminator_field is not None:
         select_parts.append(f"{spec.discriminator_field} AS discriminator")
@@ -796,16 +873,18 @@ def _arcgis_outstatistics_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     group_fields = [spec.subject_field, spec.period_field]
     if spec.discriminator_field is not None:
         group_fields.append(spec.discriminator_field)
-    out_statistics = json.dumps(
-        [
-            {
-                "statisticType": spec.count_function,
-                "onStatisticField": spec.count_field,
-                "outStatisticFieldName": "count",
-            }
-        ],
-        separators=(",", ":"),
-    )
+    # P36.7 (ACQ-11): a multi-measure slice emits one statistic per
+    # declared count column, each aliased ``count_<field>`` so a status
+    # series never shares the canonical ``count`` name.
+    statistics = [
+        {
+            "statisticType": spec.count_function,
+            "onStatisticField": field,
+            "outStatisticFieldName": ("count" if len(spec.count_fields) == 1 else f"count_{field}"),
+        }
+        for field in spec.count_fields
+    ]
+    out_statistics = json.dumps(statistics, separators=(",", ":"))
     params_base = {
         "where": str(row.get("where") or "1=1").strip() or "1=1",
         "groupByFieldsForStatistics": ",".join(group_fields),
@@ -957,9 +1036,11 @@ def expand_registry_rows(
                     "period_field": aggregate.period_field,
                     "period_kind": aggregate.period_kind,
                     "count_field": aggregate.count_field,
+                    "count_fields": list(aggregate.count_fields),
                     "count_function": aggregate.count_function,
                     "measure": aggregate.measure,
                     "discriminator_field": aggregate.discriminator_field,
+                    "subject_kind": aggregate.subject_kind,
                 }
             for key, value in declared_fields.items():
                 target[key] = value
@@ -1974,9 +2055,18 @@ class Dot511Connector(Connector):
                 if is_aggregate:
                     # P36.6 (ACQ-10): the row is a grouped subject × period
                     # count record — never geometry, never a per-violation row.
+                    # P36.7 (ACQ-11): a `programme_area` subject mints a
+                    # `programme_aggregate` record — the rebate table's
+                    # PSA groups are programme rows, never camera sites.
+                    aggregate_record_kind = (
+                        "programme_aggregate"
+                        if str((target.get("aggregate") or {}).get("subject_kind") or "")
+                        == "programme_area"
+                        else "enforcement_aggregate"
+                    )
                     out.append(
                         {
-                            "record_kind": "enforcement_aggregate",
+                            "record_kind": aggregate_record_kind,
                             "feature_index": index,
                             "fields": dict(fields),
                             "excluded_fields": excluded,
@@ -2029,12 +2119,24 @@ class Dot511Connector(Connector):
                 )
             fields, excluded = partition_fields(attributes)
             geometry = feature.get("geometry")
+            # P36.7 (ACQ-11): a `programme_area` subject mints a
+            # `programme_aggregate` record — the rebate table's PSA groups
+            # are programme rows, never camera sites.
+            if is_aggregate:
+                aggregate_kind = (
+                    "programme_aggregate"
+                    if str((target.get("aggregate") or {}).get("subject_kind") or "")
+                    == "programme_area"
+                    else "enforcement_aggregate"
+                )
+            else:
+                aggregate_kind = "camera_feature"
             out.append(
                 {
                     # P36.6 (ACQ-10): an outStatistics feature's attributes are
                     # one group row (subject + period + count) — never a
                     # geometry, never a per-violation row.
-                    "record_kind": ("enforcement_aggregate" if is_aggregate else "camera_feature"),
+                    "record_kind": aggregate_kind,
                     "feature_index": index,
                     "fields": dict(fields),
                     "excluded_fields": excluded,
@@ -2068,10 +2170,13 @@ class Dot511Connector(Connector):
         rejected = 0
         for raw in raw_claims:
             target: Mapping[str, Any] = raw.get("target") or {}
-            if raw.get("record_kind") == "enforcement_aggregate":
+            if raw.get("record_kind") in ("enforcement_aggregate", "programme_aggregate"):
                 # P36.6 (ACQ-10): a site-period aggregate row emits its
                 # subject identity + the enforcement_count claim; a row
                 # missing its subject/period/count fails closed, recorded.
+                # P36.7 (ACQ-11): a programme-area aggregate row emits the
+                # same shape on a programme_count claim — programme-level
+                # only, never a camera subject.
                 try:
                     rows = _aggregate_claim_rows(ctx.source.id, raw, target)
                 except (CoordinateRejected, ValueError) as exc:
@@ -2367,7 +2472,11 @@ def _aggregate_claim_rows(
             subject_field=str(spec_map["subject_field"]),
             period_field=str(spec_map["period_field"]),
             period_kind=str(spec_map["period_kind"]),
-            count_field=str(spec_map["count_field"]),
+            count_fields=(
+                tuple(str(f) for f in spec_map["count_fields"])
+                if spec_map.get("count_fields")
+                else (str(spec_map["count_field"]),)
+            ),
             count_function=str(spec_map["count_function"]),
             measure=str(spec_map["measure"]),
             discriminator_field=(
@@ -2375,6 +2484,7 @@ def _aggregate_claim_rows(
                 if spec_map.get("discriminator_field")
                 else None
             ),
+            subject_kind=str(spec_map.get("subject_kind") or "camera_site"),
         )
     except KeyError as exc:
         raise CoordinateRejected(
@@ -2384,16 +2494,23 @@ def _aggregate_claim_rows(
     kind = str(target.get("kind") or "")
     if kind == "arcgis_outstatistics":
         # outStatistics attributes keep the PUBLISHED group-column names; the
-        # count lands under its declared outStatisticFieldName "count".
+        # count lands under its declared outStatisticFieldName ("count", or
+        # "count_<field>" per measure on a multi-measure slice — P36.7).
         subject = fields.get(spec.subject_field)
         period = fields.get(spec.period_field)
-        count = fields.get("count")
+        count_by_field = {
+            f: fields.get("count" if len(spec.count_fields) == 1 else f"count_{f}")
+            for f in spec.count_fields
+        }
         series = fields.get(spec.discriminator_field) if spec.discriminator_field else None
     else:
         # socrata_aggregate rows carry the canonical $select aliases.
         subject = fields.get("subject")
         period = fields.get("period")
-        count = fields.get("count")
+        count_by_field = {
+            f: fields.get("count" if len(spec.count_fields) == 1 else f"count_{f}")
+            for f in spec.count_fields
+        }
         series = fields.get("discriminator")
     subject_text = str(subject or "").strip()
     if not subject_text:
@@ -2405,20 +2522,33 @@ def _aggregate_claim_rows(
         raise CoordinateRejected(
             "missing", "aggregate row carries no period label (group column empty)"
         )
-    try:
-        count_int = int(float(str(count)))
-    except (TypeError, ValueError):
-        raise CoordinateRejected(
-            "malformed", f"aggregate count {count!r} is not a number"
-        ) from None
+    counts: dict[str, int] = {}
+    for field, count in count_by_field.items():
+        try:
+            counts[field] = int(float(str(count)))
+        except (TypeError, ValueError):
+            raise CoordinateRejected(
+                "malformed", f"aggregate count for {field} {count!r} is not a number"
+            ) from None
     series_text = str(series).strip() if series is not None else ""
     technology = assert_target_technology(target)
-    record_kind = declared_record_kind(target)
     target_id = str(target.get("id") or "unknown_target")
     state = str(target.get("state") or "")
     agency = str(target.get("agency") or "")
     license_spdx = str(target.get("license_spdx") or "")
-    subject_id = f"traffic_camera:{source_id}:{target_id}:{subject_text}"
+    # P36.7 (ACQ-11): a `programme_area` subject mints a `programme_area:`
+    # aggregate subject — the published area bucket the operator groups its
+    # programme counts by, never a camera site.
+    if spec.subject_kind == "programme_area":
+        subject_id = f"programme_area:{source_id}:{target_id}:{subject_text}"
+        entity_predicate = "programme_area"
+        entity_record_kind = "programme_area"
+        count_predicate = "programme_count"
+    else:
+        subject_id = f"traffic_camera:{source_id}:{target_id}:{subject_text}"
+        entity_predicate = "traffic_camera"
+        entity_record_kind = declared_record_kind(target)
+        count_predicate = "enforcement_count"
     evidence = {
         "source_url": str(raw["source_uri"]),
         "extraction_method": _EXTRACTION_METHODS.get(kind, "arcgis_feature_json"),
@@ -2444,58 +2574,81 @@ def _aggregate_claim_rows(
             row["candidate_identifier"] = dict(candidate)
         return _stamp(row, source_id=source_id, license_spdx=license_spdx)
 
-    rows: list[dict[str, Any]] = [
-        _stamp(
-            {
-                "record_kind": record_kind,
-                "subject_id": subject_id,
-                "predicate_id": assert_predicate_allowed("traffic_camera"),
-                "external_id": subject_text,
-                "raw_value": subject_text,
-                "state": state,
-                "agency": agency,
-                "target_id": target_id,
-                "technology": technology,
-                "aggregate_measure": spec.measure,
-                "excluded_fields": list(raw.get("excluded_fields") or ()),
-                "evidence_genre": "camera_registry",
-                "evidence": evidence,
-            },
-            source_id=source_id,
-            license_spdx=license_spdx,
-        ),
-        _claim(
-            "camera_external_ref",
-            subject_text,
-            subject_text,
-            candidate={"scheme": "dot511.camera_ref", "value": subject_text},
-        ),
-        _claim("external_id", subject_text, subject_text),
-        _claim("technology", technology, technology),
-        _claim(
-            "camera_jurisdiction",
-            state,
-            state,
-            candidate={
-                "scheme": str(target.get("jurisdiction_scheme") or "us.state_abbr"),
-                "value": state,
-            },
-        ),
-        _claim("camera_registry_publisher", agency, agency),
-    ]
-    operator = str(target.get("operator") or "").strip()
-    if operator:
-        op = _claim("camera_operator", operator, operator)
-        jurisdiction_scheme = str(target.get("jurisdiction_scheme") or "us.state_abbr")
-        if state and jurisdiction_scheme != "sig.unresolved":
-            op["partner_jurisdiction"] = f"{jurisdiction_scheme}:{state}"
-        rows.append(op)
-    count_claim = _claim("enforcement_count", count_int, str(count_int))
-    count_claim["period"] = period_text
-    count_claim["measure"] = spec.measure
-    if series_text:
-        count_claim["series"] = series_text
-    rows.append(count_claim)
+    entity_row = _stamp(
+        {
+            "record_kind": entity_record_kind,
+            "subject_id": subject_id,
+            "predicate_id": assert_predicate_allowed(entity_predicate),
+            "external_id": subject_text,
+            "raw_value": subject_text,
+            "state": state,
+            "agency": agency,
+            "target_id": target_id,
+            "technology": technology,
+            "aggregate_measure": spec.measure,
+            "excluded_fields": list(raw.get("excluded_fields") or ()),
+            "evidence_genre": "camera_registry",
+            "evidence": evidence,
+        },
+        source_id=source_id,
+        license_spdx=license_spdx,
+    )
+    if spec.subject_kind == "programme_area":
+        # P36.7 (ACQ-11): the programme-area emit — the published area bucket
+        # carries its identity, the register's publisher provenance, and the
+        # programme's declared technology; a programme subject is never a
+        # camera, so the camera_* claims and the operator claim stay off.
+        rows = [
+            entity_row,
+            _claim("external_id", subject_text, subject_text),
+            _claim("technology", technology, technology),
+            _claim("camera_registry_publisher", agency, agency),
+        ]
+    else:
+        rows = [
+            entity_row,
+            _claim(
+                "camera_external_ref",
+                subject_text,
+                subject_text,
+                candidate={"scheme": "dot511.camera_ref", "value": subject_text},
+            ),
+            _claim("external_id", subject_text, subject_text),
+            _claim("technology", technology, technology),
+            _claim(
+                "camera_jurisdiction",
+                state,
+                state,
+                candidate={
+                    "scheme": str(target.get("jurisdiction_scheme") or "us.state_abbr"),
+                    "value": state,
+                },
+            ),
+            _claim("camera_registry_publisher", agency, agency),
+        ]
+        operator = str(target.get("operator") or "").strip()
+        if operator:
+            op = _claim("camera_operator", operator, operator)
+            jurisdiction_scheme = str(target.get("jurisdiction_scheme") or "us.state_abbr")
+            if state and jurisdiction_scheme != "sig.unresolved":
+                op["partner_jurisdiction"] = f"{jurisdiction_scheme}:{state}"
+            rows.append(op)
+    # P36.7 (ACQ-11): a multi-measure group row fans out into one claim per
+    # declared count column — each is its own measure series on the same
+    # subject × period (the rebate table's RECEIVED/APPROVED/DECLINED
+    # statuses); `series` names the published column verbatim.
+    multi = len(spec.count_fields) > 1
+    for field in spec.count_fields:
+        count_claim = _claim(count_predicate, counts[field], str(counts[field]))
+        count_claim["period"] = period_text
+        count_claim["measure"] = spec.measure
+        if multi:
+            count_claim["series"] = field
+        elif series_text:
+            count_claim["series"] = series_text
+        count_claim["aggregate_subject_field"] = spec.subject_field
+        count_claim["aggregate_count_field"] = field
+        rows.append(count_claim)
     return rows
 
 
@@ -2508,14 +2661,20 @@ def _rejection_row(
 ) -> dict[str, Any]:
     """The recorded disposition for a record that failed closed — never a claim."""
     fields: Mapping[str, Any] = raw.get("fields") or {}
+    # P36.7 (ACQ-11): a `programme_aggregate` row's rejection mints a
+    # `programme_area:` subject — a programme row that fails closed is never
+    # dressed in a camera subject id or predicate.
+    entity_predicate = (
+        "programme_area" if raw.get("record_kind") == "programme_aggregate" else "traffic_camera"
+    )
     return _stamp(
         {
             "record_kind": "camera_record_rejected",
             "subject_id": (
-                f"traffic_camera:{source_id}:"
+                f"{entity_predicate}:{source_id}:"
                 f"{target.get('id') or 'unknown'}:rejected:{raw.get('feature_index')}"
             ),
-            "predicate_id": assert_predicate_allowed("traffic_camera"),
+            "predicate_id": assert_predicate_allowed(entity_predicate),
             "raw_value": reason,
             "rejection_reason": reason,
             "rejection_detail": detail,
@@ -2552,7 +2711,7 @@ def load_claims_for_l1(claims: Iterable[Mapping[str, Any]]) -> list[dict[str, An
         # (P35.15a — any technology slug or an explicit ``traffic_camera``).
         # Rejection rows share the predicate but keep their own keys.
         is_entity_row = (
-            claim.get("predicate_id") == "traffic_camera"
+            claim.get("predicate_id") in ("traffic_camera", "programme_area")
             and claim.get("record_kind") != "camera_record_rejected"
         )
         if claim.get("record_kind") == "claim" or is_entity_row:

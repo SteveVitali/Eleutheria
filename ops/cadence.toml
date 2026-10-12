@@ -943,8 +943,8 @@ cron = "17 7 19 * *"
 job = "sig-ingest-r11-procurement-01"
 scheduler = "sig-sched-r11-procurement-01"
 task_timeout = "6h"
-members = ["procportal_il_cook_county_procurement", "procportal_wa_washington_des_statewide", "camreg_dc_private_security_camera"]
-note = "Round-11 batch r11-procurement-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+members = ["procportal_cook_il_awards", "procportal_wa_des_contract_sales", "camreg_dc_ovsjg_camera_rebate"]
+note = "Round-11 batch r11-procurement-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.7 (ACQ-11) review: the three members are the ticket's final source ids \u2014 the ACQ-01 generated rows (procportal_il_cook_county_procurement / procportal_wa_washington_des_statewide / camreg_dc_private_security_camera) are replaced by their I8-design ids; all three stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 
 [[batches]]
 id = "r11-tier2-01"

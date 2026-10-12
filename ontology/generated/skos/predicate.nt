@@ -2078,6 +2078,25 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/program_name> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/program_name> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/program_name> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <http://www.w3.org/2004/02/skos/core#definition> "A published programme-area aggregate subject assertion (the register's own row for one grouping column of a camera-related programme aggregate table — DC's PSA). The subject is the published area bucket the operator groups its programme counts by, never a camera device, a geometry, a registrant, a name, or an address (P36.7 / R11-ACQ-11)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <http://www.w3.org/2004/02/skos/core#prefLabel> "programme_area"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <http://www.w3.org/2004/02/skos/core#definition> "The operator-published aggregate count of programme outcomes — applications received, under review, approved, declined, rebates funded, cameras funded — for a programme-area subject over a declared period. A claim carries its `period` and `measure` fields beside the integer value, plus `series` naming the published measure column when one row fans out into per-status series. Aggregate rows only: never a per-registrant, name, address, location, plate, or device record (P36.7 / R11-ACQ-11) — distinct from `enforcement_count` (enforcement outcomes) and from the connector-forbidden `camera_count` device-count genre." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "programme_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "interval_union" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to> <http://www.w3.org/2004/02/skos/core#definition> "A party the subject pushes alerts to (pathway relationship)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
