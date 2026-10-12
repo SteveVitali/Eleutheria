@@ -34,7 +34,7 @@ autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-12T04:24Z
+updatedAt:       2026-10-12T04:54Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -934,3 +934,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-12 — P36.4 ticket — r11/P36.4-official-camera-layers · PR #279 (base r11/P36.3-…) · head `68a68bfd` 5/5 green (`ci: pass #279@68a68bf` — run 38195078063; `logs/ci-P36.4.json`) · ACQ-08: ten official camera layers gated; GeometryKind dispatch + area emit; no fetch/flip · chainTip → r11/P36.4-… · next → P36.5 (278) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-12 — P36.4 post-closeout record — closeout head `dfd9a06f` 5/5 green head-bound (`ci: pass #279@dfd9a06` — run 38196492443; `logs/ci-P36.4-2.json`, P35.10 second-boundary precedent) · ticket entry 390 B; head-State archive + RETURN PASS compaction held the 48 KiB probe · next → P36.5 (278) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-12 — P36.5 ticket — r11/P36.5-agency-alpr-flock-layers · PR #280 (base r11/P36.4-…) · head `2a2a2501` 5/5 green (`ci: pass #280@2a2a250` — run 38203023396; `logs/ci-P36.5.json`) · ACQ-09: fifteen ALPR/Flock layers gated; removal `valid_to` + coordinate precision; FDOT pair same-run; no fetch/flip · chainTip → r11/P36.5-… · next → P36.6 (279) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-12 — P36.5 post-closeout record — closeout head `9f61053a` 5/5 green head-bound (`ci: pass #280@9f61053` — run 38204510802; `logs/ci-P36.5-2.json`, P35.10 second-boundary precedent) · ticket entry 419 B; head-State archive + RETURN PASS compaction (≈1.4 KiB) held the 48 KiB probe (48,746 B) · next → P36.6 (279) · harness: devin-desktop/swe-2-high/subagent
