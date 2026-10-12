@@ -1,0 +1,42 @@
+[
+  {
+    "contract_number": "05720",
+    "contract_title": "PUBLIC SAFETY VIDEO EQUIPMENT",
+    "vendor_name": "AXON ENTERPRISE INC",
+    "customer_name": "CITY OF SEATTLE",
+    "customer_type": "Cities Including Towns",
+    "sales_year": "2025",
+    "quarter": "Q1",
+    "sales": "421500.00"
+  },
+  {
+    "contract_number": "06913",
+    "contract_title": "RADIO COMMUNICATION EQUIPMENT AND SERVICES",
+    "vendor_name": "MOTOROLA SOLUTIONS INC",
+    "customer_name": "KING COUNTY",
+    "customer_type": "County",
+    "sales_year": "2025",
+    "quarter": "Q2",
+    "sales": "189300.00"
+  },
+  {
+    "contract_number": "99199",
+    "contract_title": "OFFICE PRODUCTS",
+    "vendor_name": "STAPLES CONTRACT & COMMERCIAL LLC",
+    "customer_name": "CITY OF TACOMA",
+    "customer_type": "Cities Including Towns",
+    "sales_year": "2025",
+    "quarter": "Q1",
+    "sales": "12400.00"
+  },
+  {
+    "contract_number": "04220",
+    "contract_title": "BODY WORN CAMERAS AND ACCESSORIES",
+    "vendor_name": "AXON ENTERPRISE INC",
+    "customer_name": "EVERGREEN PRIVATE ACADEMY",
+    "customer_type": "Private Schools",
+    "sales_year": "2025",
+    "quarter": "Q1",
+    "sales": "88000.00"
+  }
+]

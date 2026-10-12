@@ -272,6 +272,11 @@ procurement_portals = [
   "procportal_kcmo_mo",
   "procportal_nyc_ny",
   "procportal_chicago_il",
+  # P36.7 (ACQ-11): Cook County awarded-contracts + WA DES contract sales —
+  # both gated (ingestion_permitted=false) pending the operator's OP-26
+  # Wave-B flip under ING-GO-B.
+  "procportal_cook_il_awards",
+  "procportal_wa_des_contract_sales",
 ]
 
 # The artifact_type genres this connector may stamp on a captured procurement
@@ -311,6 +316,9 @@ procportal_sf_ca       = "procportal_sf_ca"
 procportal_kcmo_mo     = "procportal_kcmo_mo"
 procportal_nyc_ny      = "procportal_nyc_ny"
 procportal_chicago_il  = "procportal_chicago_il"
+# P36.7 (ACQ-11): the Wave-B where-slice-only registers — both gated.
+procportal_cook_il_awards       = "procportal_cook_il_awards"
+procportal_wa_des_contract_sales = "procportal_wa_des_contract_sales"
 
 # P26.15 (SOURCES.14): the EU procurement surface — TED (Tenders Electronic
 # Daily) Search API, the OJ S notices for ~30 European countries.
@@ -951,6 +959,68 @@ terms = [
   "counter-uas",
   "body-worn",
 ]
+# P36.7 (ACQ-11): the WA DES statewide master-contract sales register term
+# set — the I6-F056 evidence query's vendor literals plus the seven reviewed
+# master-contract numbers the aggregate surfaced (05720 is the NASPO
+# ValuePoint PA for Axon, I6-C004; 02315/06316/04220 Axon; 06913/00318/02702
+# Motorola). Contract ids ride `exact_fields` equality clauses — a vendor
+# term equality-matched against a contract number is a harmless miss, and a
+# contract number never matches as a vendor substring.
+[acq_keyword_terms.wa_des]
+label = "Washington DES statewide contract sales term set"
+classes = [
+  "ate_keywords",
+  "mobile_forensics_keywords",
+  "smm_keywords",
+  "data_broker_keywords",
+  "counter_uas_keywords",
+]
+terms = [
+  "flock",
+  "axon",
+  "motorola",
+  "cellebrite",
+  "neology",
+  "genetec",
+  "skydio",
+  "shotspotter",
+  "soundthinking",
+  "brinc",
+  "clearview",
+  "verra",
+  "rekor",
+  "briefcam",
+  "palantir",
+  "verkada",
+  "graykey",
+  "grayshift",
+  "dataminr",
+  "babel street",
+  "skopenow",
+  "shadowdragon",
+  "voyager",
+  "cobwebs",
+  "fivecast",
+  "lexisnexis",
+  "thomson reuters",
+  "transunion",
+  "penlink",
+  "fog data",
+  "surveillance",
+  "license plate",
+  "gunshot",
+  "drone",
+  "facial recognition",
+  "counter-uas",
+  "body-worn",
+  "05720",
+  "02315",
+  "06316",
+  "04220",
+  "06913",
+  "00318",
+  "02702",
+]
 
 # --- P35.9: named SoQL where-clause definitions -----------------------------
 # A [portal_where] row names one reviewed SoQL filter composition built per
@@ -974,6 +1044,17 @@ limit = 500
 [portal_where.cook_county]
 fields = [ "vendor_name", "description" ]
 terms = "cook_county"
+group_size = 8
+limit = 500
+# P36.7 (ACQ-11): WA DES — `exact_fields` adds per-term equality on
+# contract_number so the seven reviewed contract ids surface reseller rows
+# (a sale whose vendor name is a reseller, not the surveillance OEM). The
+# tenant's required_field/required_values (customer_type public-entity
+# allowlist) restricts the row scope — see procurement_portal_tenants.toml.
+[portal_where.wa_des]
+fields = [ "vendor_name" ]
+exact_fields = [ "contract_number" ]
+terms = "wa_des"
 group_size = 8
 limit = 500
 

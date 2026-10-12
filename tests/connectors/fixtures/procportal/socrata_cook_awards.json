@@ -1,0 +1,38 @@
+[
+  {
+    "contract_number": "2055-18411",
+    "description": "Flock Safety License Plate Reader Services",
+    "vendor_name": "INSIGHT PUBLIC SECTOR LLC",
+    "department": "Sheriff's Office - Information Technology",
+    "amount": "900000.00",
+    "start_date": "2026-05-01T00:00:00.000",
+    "end_date": "2027-04-30T00:00:00.000"
+  },
+  {
+    "contract_number": "2055-17874",
+    "description": "LICENSE PLATE READERS",
+    "vendor_name": "FLOCK SAFETY",
+    "department": "Office of the Sheriff",
+    "amount": "74750.00",
+    "start_date": "2022-10-01T00:00:00.000",
+    "end_date": "2023-09-30T00:00:00.000"
+  },
+  {
+    "contract_number": "2055-17001",
+    "description": "TASER ENERGY WEAPONS, BODY-WORN CAMERAS AND DIGITAL EVIDENCE MANAGEMENT SYSTEM",
+    "vendor_name": "AXON ENTERPRISE INC",
+    "department": "Office of the Sheriff",
+    "amount": "58900000.00",
+    "start_date": "2024-01-15T00:00:00.000",
+    "end_date": "2033-01-14T00:00:00.000"
+  },
+  {
+    "contract_number": "2055-16002",
+    "description": "OFFICE SUPPLIES AND TONER CARTRIDGES",
+    "vendor_name": "STAPLES CONTRACT & COMMERCIAL LLC",
+    "department": "Office of the President",
+    "amount": "120000.00",
+    "start_date": "2024-03-01T00:00:00.000",
+    "end_date": "2025-02-28T00:00:00.000"
+  }
+]
