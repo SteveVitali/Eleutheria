@@ -230,6 +230,26 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "camreg_thomasville_ga_flock_location": "dot_511",
     "camreg_leon_county_fl_overwatch_viewer": "dot_511",
     "camreg_ga_peachtree_corners_flock_camera": "dot_511",
+    # P36.6 (ACQ-10): R11 automated-traffic-enforcement layers — nine new
+    # gated `camreg_*` sources. `camreg_dc_ddot_ate` is the CC-BY-4.0
+    # licence-mismatch fallback carrying the DC ASC sites + outStatistics
+    # violations-by-month pair; `camreg_montgomery_md_ate` consolidates the
+    # two generated Montgomery rows into one source carrying the site ×
+    # quarter aggregates + the 2024 site layer in the same run (I8 §5.3 R1).
+    # The consolidated deldot_red_light target rides dot_511_de's existing
+    # mapping and camreg_chicago_il's two aggregate targets ride its P26.9
+    # mapping below. All route through `dot_511` over the merged target
+    # registry; the gated rows stay refused by the loader until the
+    # operator's OP-26 Wave-B flip under ING-GO-B.
+    "camreg_dc_ddot_ate": "dot_511",
+    "camreg_montgomery_md_ate": "dot_511",
+    "camreg_nyc_mta_bus_lane_ate": "dot_511",
+    "camreg_tacoma_wa_ate": "dot_511",
+    "camreg_howard_md_school_zone_ate": "dot_511",
+    "camreg_lakeland_fl_red_light": "dot_511",
+    "camreg_suffolk_ny_red_light": "dot_511",
+    "camreg_medford_or_ate": "dot_511",
+    "camreg_ctdot_speed_safety": "dot_511",
     # P26.9 (SOURCES.8): municipal / transit / non-US camera registries — one
     # source row per publisher; all route through the `dot_511` connector over
     # the merged target registry (data/camera_registry_targets.toml). Gated

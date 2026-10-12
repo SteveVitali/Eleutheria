@@ -134,8 +134,14 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # source `camreg_fdot_flock` carrying both targets in the same run
     # (I8 §5.2 — a removal fact is never asserted against a stale
     # inventory): 596 → 595 registered; every P36.5 row stays
-    # ingestion_permitted=false, so loadable is unchanged.
-    assert "registered sources: 595" in out
+    # ingestion_permitted=false, so loadable is unchanged. P36.6 (ACQ-10)
+    # consolidated the ACQ-01-generated Delaware red-light row into
+    # dot_511_de and the generated Montgomery speedcameras row into
+    # camreg_montgomery_md_ate (−2), renamed the other seven generated
+    # rows to their design ids, and added the CC-BY-4.0 licence-mismatch
+    # fallback camreg_dc_ddot_ate (+1): 595 → 594 registered; every P36.6
+    # row stays ingestion_permitted=false, so loadable is unchanged.
+    assert "registered sources: 594" in out
     assert "self-checks OK" in out
 
 
@@ -265,9 +271,16 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # removal-status targets in the same run (I8 §5.2): 596 → 595
     # registered; every P36.5 row stays ingestion_permitted=false —
     # loadable 236 unchanged, flip-ready still the one standing exception.
+    # P36.6 (ACQ-10) consolidated the ACQ-01-generated Delaware red-light row
+    # into dot_511_de and the generated Montgomery speedcameras row into
+    # camreg_montgomery_md_ate (−2), renamed the other seven generated rows
+    # to their design ids, and added the CC-BY-4.0 licence-mismatch fallback
+    # camreg_dc_ddot_ate (+1): 595 → 594 registered; every P36.6 row stays
+    # ingestion_permitted=false — loadable 236 unchanged, flip-ready still
+    # the one standing exception.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 595" in out
+    assert "registered sources: 594" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out

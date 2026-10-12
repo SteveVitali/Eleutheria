@@ -247,6 +247,18 @@ def _validate() -> int:
         for msg in status_violations:
             print(f"VALIDATION FAILED: P36.5 status/coordinate semantics: {msg}")
         return 1
+    # P36.6 / ACQ-10 (I8 NEW-7): an aggregate target's declaration must be a
+    # complete member of the closed vocabulary — subject/period/count columns
+    # as bare identifiers, a declared period kind and count function, and a
+    # measure — never an expression smuggled into the committed query text or
+    # a guessed grouping surface.
+    from .dot_511 import target_aggregate_violations
+
+    aggregate_violations = target_aggregate_violations()
+    if aggregate_violations:
+        for msg in aggregate_violations:
+            print(f"VALIDATION FAILED: P36.6 aggregate declaration: {msg}")
+        return 1
     # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
     # under the fail-closed rules — a malformed row is a validation failure,
     # never a silent "no opt-outs".

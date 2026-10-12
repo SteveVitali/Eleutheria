@@ -432,6 +432,79 @@ verified = 2026-09-18
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Socrata 'Red Light Camera Locations' dataset thvf-6diy; same gated Chicago terms basis. FLIPPED 2026-09-18 (GL-GATE-07)."
 
+# --- P36.6 (ACQ-10): Chicago per-camera violation usage series --------------
+# Two socrata_aggregate targets on the already-flipped camreg_chicago_il (the
+# plan's licence-match widen passed — same portal, same publisher, the
+# LicenseRef-PublicRecord-FactualCompilation basis + Chicago's C5 revocation
+# clause ride the existing flip). Each emits camera × month enforcement_count
+# claims over the design's committed 2023-10-onward first window — never the
+# per-violation/citation rows Part VIII prohibits.
+
+[[targets]]
+id = "chicago_speed_violations_monthly"
+source_id = "camreg_chicago_il"
+kind = "socrata_aggregate"
+platform = "socrata"
+url = "https://data.cityofchicago.org/resource/hhkd-xvj4.json"
+layer_url = "https://data.cityofchicago.org/resource/hhkd-xvj4.json"
+# P36.6 (ACQ-10, I8 NEW-7): the published rows are already per-camera-DAY
+# counts (catalog description 'the daily volume of violations ... for each
+# camera', I4-C053) — the transport groups them to camera × month:
+# subject camera_id, period date_trunc_ym(violation_date), sum(violations)
+# AS count. address/intersection/latitude/longitude stay OUT of the group —
+# the subject's location evidence lives on the registered location layers
+# (chicago_il_speed_cameras), never re-asserted off an aggregate row.
+aggregate_subject_field = "camera_id"
+aggregate_period_field = "violation_date"
+aggregate_period_kind = "month"
+aggregate_count_field = "violations"
+aggregate_count_function = "sum"
+aggregate_measure = "violations"
+where = "violation_date >= '2023-10-01'"
+agency = "City of Chicago Department of Transportation"
+operator = "City of Chicago Department of Transportation"
+state = "US-IL"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 5760
+observed_fields = "camera_id,intersection,violation_date,violations,latitude,longitude"
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-026"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+rights_note = "Rides the existing camreg_chicago_il flip (GL-GATE-07, LicenseRef-PublicRecord-FactualCompilation) — the plan's licence-match widen passed (same data.cityofchicago.org portal, same CDOT publisher, same licence surface as the flipped location datasets). Chicago's C5 revocation clause applies to these targets exactly as to the location layers."
+notes = "P36.6 (ACQ-10) registration review (plan AP-T1-026, cand I4-C053). 'Speed Camera Violations' hhkd-xvj4 — 'daily volume of violations that have occurred in Children's Safety Zones for each camera ... July 1, 2014 until present, minus the most recent 14 days' (catalog description verbatim; the 14-day publisher lag is asserted cadence, never smoothed). The group row count was NOT read — observed_count=5,760 is the ACQ-10 plan estimate (≈160 cameras × 36 months of the committed 2023-10 window); a group table outgrowing its planned pages fails loud on the paging bound. Aggregate camera × month rows ONLY — the published per-day rows are never emitted row-level, and no plate/owner/citation surface exists in the schema (I4-C053). The published schema's `address` column is a denied field (F-330): deliberately absent from the declared surface — never requested, never emitted; its name is recorded here as the exclusion."
+place_geoid = "1714000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Chicago, IL.
+jurisdiction_place = "Chicago"
+technology = "ate-speed"
+
+[[targets]]
+id = "chicago_redlight_violations_monthly"
+source_id = "camreg_chicago_il"
+kind = "socrata_aggregate"
+platform = "socrata"
+url = "https://data.cityofchicago.org/resource/spqx-js37.json"
+layer_url = "https://data.cityofchicago.org/resource/spqx-js37.json"
+aggregate_subject_field = "camera_id"
+aggregate_period_field = "violation_date"
+aggregate_period_kind = "month"
+aggregate_count_field = "violations"
+aggregate_count_function = "sum"
+aggregate_measure = "violations"
+where = "violation_date >= '2023-10-01'"
+agency = "City of Chicago Department of Transportation"
+operator = "City of Chicago Department of Transportation"
+state = "US-IL"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 10800
+observed_fields = "camera_id,intersection,violation_date,violations,latitude,longitude"
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-027"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+rights_note = "Rides the existing camreg_chicago_il flip (GL-GATE-07, LicenseRef-PublicRecord-FactualCompilation) — the plan's licence-match widen passed (same data.cityofchicago.org portal, same CDOT publisher, same licence surface as the flipped location datasets). Chicago's C5 revocation clause applies to these targets exactly as to the location layers."
+notes = "P36.6 (ACQ-10) registration review (plan AP-T1-027, cand I4-C054). 'Red Light Camera Violations' spqx-js37 — 'daily volume of violations created by the City of Chicago Red Light Program for each camera ... July 1, 2014 until present, minus the most recent 14 days' (catalog description verbatim). The group row count was NOT read — observed_count=10,800 is the ACQ-10 plan estimate (≈300 cameras × 36 months of the committed 2023-10 window); a group table outgrowing its planned pages fails loud on the paging bound. Aggregate camera × month rows ONLY — the published per-day rows are never emitted row-level, and no plate/owner/citation surface exists in the schema (I4-C054). The published schema's `address` column is a denied field (F-330): deliberately absent from the declared surface — never requested, never emitted; its name is recorded here as the exclusion."
+place_geoid = "1714000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Chicago, IL.
+jurisdiction_place = "Chicago"
+technology = "ate-red-light"
+
 [[targets]]
 id = "calgary_ab_traffic_cameras"
 technology = "fixed-camera-ptz"
@@ -3822,20 +3895,75 @@ notes = "Arcgis item c83d85929ead4c01b1d684594391cf09 'Intelligent Transportatio
 # object_id_field are pinned at the family ticket's registration review
 # (the note on each row says so — nothing here is silently verified).
 
+# P36.6 (ACQ-10): the generated Delaware red-light target consolidated under
+# `dot_511_de` as `deldot_red_light` in dot_511_targets.toml (plan R1) — the
+# `camreg_de_traffic_devices_red` source row is gone, its target rides
+# dot_511_de's rights basis and r11-layers-01 cadence seat.
+
 [[targets]]
-id = "traffic_devices_red_light_signals_de_boundary_and_point_layer_28"
-source_id = "camreg_de_traffic_devices_red"
+id = "dc_asc_sites"
+source_id = "camreg_dc_ddot_ate"
 kind = "arcgis_query"
 platform = "arcgis"
-url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/28"
-layer_url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/28"
-agency = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap"
-state = "US-DE"
+url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/43"
+layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/43"
+agency = "District of Columbia, District Department of Transportation (via DC GIS / OCTO)"
+operator = "District Department of Transportation"
+state = "US-DC"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
-enum_source = "r11-acq-01:AP-T1-003"
-notes = "ACQ-01 generated target (plan AP-T1-003, cand I5-C005). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "fixed-camera-unspecified"
+observed_count = 550
+observed_fields = "ENFORCEMENT_SPACE_CODE,SITE_CODE,ENFORCEMENT_TYPE,LOCATION_DESCRIPTION,SPEED_LIMIT,DEVICE_MOBILITY,CAMERA_STATUS,ACTIVE_STATUS,CAMERA_LATITUDE,CAMERA_LONGITUDE,WARD,ANC,SMD"
+coordinate_mode = "fields"
+object_id_field = "ENFORCEMENT_SPACE_CODE"
+camera_ref_field = "ENFORCEMENT_SPACE_CODE"
+out_fields = ["SITE_CODE", "ENFORCEMENT_TYPE", "LOCATION_DESCRIPTION", "SPEED_LIMIT", "DEVICE_MOBILITY", "CAMERA_STATUS", "ACTIVE_STATUS", "CAMERA_LATITUDE", "CAMERA_LONGITUDE", "WARD", "ANC", "SMD"]
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-025"
+license_spdx = "CC-BY-4.0"
+rights_note = "Hub item 03d94dc6579949ae9d7c9dd8ffebeb89 licenseInfo declares 'This work is licensed under a Creative Commons Attribution 4.0 International License' verbatim (I7-U025 row-captured) — the licence-mismatch widen under dot_511_dc (CC0-1.0) FAILED, so this target rides the new gated camreg_dc_ddot_ate source. Rights batch RB-06 `a` (GL-GATE-07 re-confirmed batch-wide) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch. CC-BY-4.0 attribution: 'District of Columbia, District Department of Transportation (via DC GIS / OCTO)'."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-025, cand I4-C051). Layer 43 'Automated Safety Cameras (ASC)' — the live-read description (I4-F036): 'ASC is currently enforcing Posted Speed Limit (Speed), Stop Sign (Failure to come to a complete STOP), Red-Light (Running Red-Light), Bus Lane, Bus Zone, School Bus Stop-Arm, and Truck Restriction routes' — SEVEN enforcement types on one layer, so the row types ate-unspecified (the family is evidenced; the per-site subtype is the published ENFORCEMENT_TYPE discriminator, kept verbatim in the capture allowlist). The count was NOT read in evidence — observed_count=550 is the ACQ-10 plan estimate (≈550 sites, design 'est. claims 5,500'); a layer outgrowing its planned pages fails loud on exceededTransferLimit. CAMERA_LATITUDE/CAMERA_LONGITUDE are the declared coordinate source (coordinate_mode=fields); ENFORCEMENT_SPACE_CODE is the declared subject key — the same column the violations-by-month table groups on (I4-C052). out_fields allowlists all thirteen published fields (I4-F036) — every one is a registry-surface column, none is a person/feed field; ENFORCEMENT_SPACE_CODE is the object-id + subject key."
+place_geoid = "1150000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Washington, DC.
+jurisdiction_place = "Washington"
+technology = "ate-unspecified"
+
+[[targets]]
+id = "dc_asc_violations_by_month"
+source_id = "camreg_dc_ddot_ate"
+kind = "arcgis_outstatistics"
+platform = "arcgis"
+url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/46"
+layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/46"
+# P36.6 (ACQ-10, I8 NEW-7): the published table IS a per-space × month summary
+# ('a summary of the warnings and violations issued by month and year by
+# different ASC enforcement types', I4-F037) — the outStatistics group
+# consolidates it to enforcement-space × month × type: subject
+# ENFORCEMENT_SPACE_CODE, period YEAR_MONTH verbatim, sum(NUM_VIOLATIONS)
+# AS count, ENFORCEMENT_TYPE riding the claim's series field so the
+# concurrent red-light/speed/stop-sign series on one space-month never
+# collide. CAMERA_STATUS + LAST_RECORD stay OUT of the group — never a
+# per-violation or per-camera-status row.
+aggregate_subject_field = "ENFORCEMENT_SPACE_CODE"
+aggregate_period_field = "YEAR_MONTH"
+aggregate_period_kind = "verbatim"
+aggregate_count_field = "NUM_VIOLATIONS"
+aggregate_count_function = "sum"
+aggregate_measure = "violations"
+aggregate_discriminator_field = "ENFORCEMENT_TYPE"
+where = "YEAR_MONTH >= '2023-10'"
+agency = "District of Columbia, District Department of Transportation (via DC GIS / OCTO)"
+operator = "District Department of Transportation"
+state = "US-DC"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 19800
+observed_fields = "ENFORCEMENT_SPACE_CODE,YEAR_MONTH,CAMERA_STATUS,NUM_VIOLATIONS,ENFORCEMENT_TYPE,LAST_RECORD"
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-006"
+license_spdx = "CC-BY-4.0"
+rights_note = "Hub item 394b99f2501e418a97394a6ae164431f licenseInfo declares CC-BY-4.0 verbatim (I7-U006 row-captured) — the licence-mismatch widen under dot_511_dc (CC0-1.0) FAILED, so this target rides the new gated camreg_dc_ddot_ate source. Rights batch RB-06 `a` (GL-GATE-07 re-confirmed batch-wide) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch. CC-BY-4.0 attribution: 'District of Columbia, District Department of Transportation (via DC GIS)'."
+notes = "P36.6 (ACQ-10) registration review (plan AP-T1-006, cand I4-C052). Table 46 'ASC Violation Count By Month' fields (I4-F037): ENFORCEMENT_SPACE_CODE/YEAR_MONTH/CAMERA_STATUS/NUM_VIOLATIONS/ENFORCEMENT_TYPE/LAST_RECORD. The group row count was NOT read — observed_count=19,800 is the ACQ-10 plan estimate (≈79,200 claims ÷ ~4 claims/row); a group table outgrowing its planned pages fails loud on exceededTransferLimit. The first-window bound (YEAR_MONTH >= '2023-10', the design's committed 2023-10-onward window, I8 §5.3) treats YEAR_MONTH as the publisher's own period label (verbatim period_kind); if the operator's Wave-B read finds a non-lexicographic representation the query fails loud in capture, never silently widens. CAMERA_STATUS and LAST_RECORD are deliberately OUTSIDE the group/allowlist — the transport emits enforcement_count aggregates only, never a per-violation, per-status, or citation row (Part VIII)."
+place_geoid = "1150000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Washington, DC.
+jurisdiction_place = "Washington"
+technology = "ate-unspecified"
 
 [[targets]]
 id = "fdot_d3_flock_inventory"
@@ -4136,84 +4264,207 @@ jurisdiction_place = "Alabaster"
 technology = "alpr-fixed"
 
 [[targets]]
-id = "mta_bus_automated_camera_enforced_routes_beginning_october_2019"
-source_id = "camreg_ny_new_york_city_mta_bus"
+id = "mta_able_enforced_routes"
+source_id = "camreg_nyc_mta_bus_lane_ate"
 kind = "socrata_rows"
 platform = "socrata"
-url = "https://data.ny.gov/d/ki2b-sg5y"
-layer_url = "https://data.ny.gov/d/ki2b-sg5y"
+url = "https://data.ny.gov/resource/ki2b-sg5y.json"
+layer_url = "https://data.ny.gov/resource/ki2b-sg5y.json"
+# P36.6 (ACQ-10, SIG-GEO-003): the published rows are route/programme
+# register lines — an enforced corridor (a bus route under ABLE/ACE camera
+# enforcement), never a device point and never a bounded zone. `line`
+# geometry_kind asserts the route shape ONLY: the dataset carries no path
+# geometry, so no fixed_asset_location and no camera_latitude/longitude
+# claim emits — nothing is fabricated (P4); a capture that DID carry
+# path geometry fails closed until a polyline→WKT emit path exists.
+geometry_kind = "line"
+camera_ref_field = "route"
+deployment_date_field = "implementation_date"
+out_fields = ["program", "route", "implementation_date"]
 agency = "Metropolitan Transportation Authority (New York City Transit / MTA Bus) via data.ny.gov"
+operator = "Metropolitan Transportation Authority"
 state = "US-NY"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 25
+observed_fields = "program,route,implementation_date"
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-028"
-notes = "ACQ-01 generated target (plan AP-T1-028, cand I4-C058). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — the Socrata catalog licence field for ki2b-sg5y was checked (I4-Q029: NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-028, cand I4-C058) — reconciled id 'mta_able_enforced_routes' (I8 §5.3). 'MTA Bus Automated Camera Enforced Routes: Beginning October 2019' — 'ABLE, launched as a pilot in 2019, and later expanded and rebranded as ACE in 2024, uses cameras mounted on buses to capture vehicles obstructing bus lanes, double parked, or parked illegally at bus stops' (catalog description verbatim, I4-C058). The row count was NOT read in evidence — observed_count=25 is the ACQ-10 plan estimate (design 'est. claims 200' ÷ ~8 claims/route); a dataset outgrowing its planned pages fails loud on the paging bound. `route` is the declared subject key (the enforced-corridor ref) AND emits camera_roadway verbatim; `implementation_date` is the declared deployment-date column (emits installation_date); `program` carries NO claim — no registered predicate asserts a programme-name fact, so the published value stays captured-but-unclaimed rather than fabricate a predicate (P4). ate-bus-lane is the declared type (bus-mounted ATE enforcing bus lanes/stops — the ontology member's evidence signature matches verbatim)."
+place_geoid = "3651000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for New York City, NY.
 jurisdiction_place = "New York City"
-technology = "fixed-camera-unspecified"
+technology = "ate-bus-lane"
 
 [[targets]]
-id = "automated_enforcement_locations_tacoma"
-source_id = "camreg_wa_tacoma_automated_enforcement"
+id = "tacoma_automated_enforcement"
+source_id = "camreg_tacoma_wa_ate"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services3.arcgis.com/SCwJH1pD8WSn5T5y/arcgis/rest/services/AutomatedEnforcementLocations_Tacoma/FeatureServer/0"
 layer_url = "https://services3.arcgis.com/SCwJH1pD8WSn5T5y/arcgis/rest/services/AutomatedEnforcementLocations_Tacoma/FeatureServer/0"
 agency = "City of Tacoma, Public Works (ArcGIS Online, owner IT.DataCurator)"
+operator = "City of Tacoma Public Works"
 state = "US-WA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "location,cameratype,x,y,direction_of_travel,speed_limit"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["location", "cameratype", "x", "y", "direction_of_travel", "speed_limit"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-029"
-notes = "ACQ-01 generated target (plan AP-T1-029, cand I4-C061). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "Item ed8eb6a8c87643faa3ea1c6864301c05 licenseInfo 'Disclaimer | City of Tacoma Open Data' (a disclaimer link, not a licence grant); accessInformation 'City of Tacoma, Public Works'; layer copyrightText 'City of Tacoma' (I4-F038). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-029, cand I4-C061) — reconciled id 'tacoma_automated_enforcement' (I8 §5.3). 'Automated Enforcement Locations (Tacoma)' — the live-read description verbatim: 'locations and attributes of speed cameras, created as part of the Automated Enforcement program for City of Tacoma' (I4-F038) → ate-speed (the publisher names the speed-camera discriminator; cameratype is kept verbatim in the allowlist as the per-row evidence). The count was NOT read in evidence — observed_count=50 is the ACQ-10 plan estimate (≈50 sites); a layer outgrowing its planned pages fails loud on exceededTransferLimit. out_fields allowlists six published fields (I4-F038): location/cameratype/x/y/direction_of_travel/speed_limit — every one a registry-surface column. The published schema's `address` column is a denied field (F-330): deliberately absent from the declared surface — never requested, never emitted; its name is recorded here as the exclusion. The x/y attribute pair is kept verbatim (degrees or projected — if projected values fail range checks the outSR=4326 point geometry is the coordinate source, never a claimed projected coordinate)."
+place_geoid = "5370000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Tacoma, WA.
 jurisdiction_place = "Tacoma"
-technology = "fixed-camera-unspecified"
+technology = "ate-speed"
+
+# --- P36.6 (ACQ-10): Montgomery County MD consolidated ATE -----------------
+# Three targets on the ONE gated source camreg_montgomery_md_ate (plan R1):
+# the two Socrata site × quarter violation aggregates (uv5p-zm58 speed,
+# 3cju-6hst red-light — datasets the publisher ALREADY aggregates, so
+# count_function='verbatim' reads the published total; no $group is emitted)
+# and the MCPD 'SpeedCameras_2024' ArcGIS site snapshot. The school-bus
+# stop-arm violations dataset (I4-C057, fp9s-vfdj) is a per-violation table —
+# citation rows are Part VIII-prohibited and stay out of this batch; its
+# generated placeholder row remains for its own family ticket.
 
 [[targets]]
-id = "speedcameras_2024_mcpd_speed_camera_locations_as_of_august_2024"
-source_id = "camreg_md_montgomery_county_speedcameras"
-kind = "arcgis_query"
-platform = "arcgis"
-url = "https://services2.arcgis.com/gEFt9c3jUfWMXCEP/arcgis/rest/services/SpeedCameras_2024/FeatureServer"
-layer_url = "https://services2.arcgis.com/gEFt9c3jUfWMXCEP/arcgis/rest/services/SpeedCameras_2024/FeatureServer"
-agency = "Montgomery County (MD) Police Department (ArcGIS Online, owner <staff account id redacted>)"
+id = "montgomery_speed_violations_quarterly"
+source_id = "camreg_montgomery_md_ate"
+kind = "socrata_aggregate"
+platform = "socrata"
+url = "https://data.montgomerycountymd.gov/resource/uv5p-zm58.json"
+layer_url = "https://data.montgomerycountymd.gov/resource/uv5p-zm58.json"
+# P36.6 (ACQ-10, I8 NEW-7): the published rows ARE the aggregate — site ×
+# quarter totals (schema site_number/address/directions/quarter_name/total/
+# latitude/longitude, I4-C055). count_function='verbatim' selects the
+# published `total` AS count with no $group — the publisher's own group row.
+# address/directions/latitude/longitude stay OUT of the select — the
+# subject's site evidence lives on the site-layer target, never re-asserted
+# off an aggregate row.
+aggregate_subject_field = "site_number"
+aggregate_period_field = "quarter_name"
+aggregate_period_kind = "verbatim"
+aggregate_count_field = "total"
+aggregate_count_function = "verbatim"
+aggregate_measure = "violations"
+agency = "Montgomery County, MD, Department of Police (Socrata)"
+operator = "Montgomery County Police Department"
 state = "US-MD"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
-enum_source = "r11-acq-01:AP-T1-030"
-notes = "ACQ-01 generated target (plan AP-T1-030, cand I4-C062). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+observed_count = 1200
+observed_fields = "site_number,directions,quarter_name,total,latitude,longitude"
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-009"
+license_spdx = "CC0-1.0"
+rights_note = "Dataset licence field 'Public Domain' → CC0-1.0 (the P26.10 procportal_nyc_ny public-domain precedent). Rights batch RB-06 `a` (GL-GATE-07 re-confirmed batch-wide) is the approved basis; the consolidated source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review (plan AP-T1-009, cand I4-C055) — consolidated under camreg_montgomery_md_ate per I8 §5.3 (R1). 'Automated Speed Enforcement Violations' uv5p-zm58: 'speeding violations captured through automated enforcement (speed cameras). Update Frequency: Quarterly' (catalog description verbatim). The group row count was NOT read — observed_count=1,200 is the ACQ-10 plan estimate (design 'est. claims 9,600' ÷ ~8 claims/row); a table outgrowing its planned pages fails loud on the paging bound. Site × quarter aggregates ONLY — never a per-violation or citation row (Part VIII). The published schema's `address` column is a denied field (F-330): deliberately absent from the declared surface — never requested, never emitted; its name is recorded here as the exclusion."
+county_geoid = "24031"  # P36.6 (ACQ-10, I8 R4): Census county GEOID for Montgomery County, MD.
 jurisdiction_place = "Montgomery County"
-technology = "fixed-camera-unspecified"
+technology = "ate-speed"
 
 [[targets]]
-id = "schzonehighligh_school_zones_where_automated_enforcement_is_applied"
-source_id = "camreg_howard_county_md_schzonehighligh"
+id = "montgomery_redlight_violations_quarterly"
+source_id = "camreg_montgomery_md_ate"
+kind = "socrata_aggregate"
+platform = "socrata"
+url = "https://data.montgomerycountymd.gov/resource/3cju-6hst.json"
+layer_url = "https://data.montgomerycountymd.gov/resource/3cju-6hst.json"
+aggregate_subject_field = "site_number"
+aggregate_period_field = "quarter_name"
+aggregate_period_kind = "verbatim"
+aggregate_count_field = "total"
+aggregate_count_function = "verbatim"
+aggregate_measure = "violations"
+agency = "Montgomery County, MD, Department of Police (Socrata)"
+operator = "Montgomery County Police Department"
+state = "US-MD"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 600
+observed_fields = "site_number,directions,quarter_name,total,latitude,longitude"
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-010"
+license_spdx = "CC0-1.0"
+rights_note = "Dataset licence field 'Public Domain' → CC0-1.0 (the P26.10 procportal_nyc_ny public-domain precedent). Rights batch RB-06 `a` (GL-GATE-07 re-confirmed batch-wide) is the approved basis; the consolidated source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review (plan AP-T1-010, cand I4-C056) — consolidated under camreg_montgomery_md_ate per I8 §5.3 (R1). 'Automated Red Light Violations' 3cju-6hst: 'violations for running red lights at traffic signals captured by automated enforcement (red-light cameras)' (catalog description verbatim). The group row count was NOT read — observed_count=600 is the ACQ-10 plan estimate (design 'est. claims 2,400' ÷ ~8 claims/row); a table outgrowing its planned pages fails loud on the paging bound. Site × quarter aggregates ONLY — never a per-violation or citation row (Part VIII). The published schema's `address` column is a denied field (F-330): deliberately absent from the declared surface — never requested, never emitted; its name is recorded here as the exclusion."
+county_geoid = "24031"  # P36.6 (ACQ-10, I8 R4): Census county GEOID for Montgomery County, MD.
+jurisdiction_place = "Montgomery County"
+technology = "ate-red-light"
+
+[[targets]]
+id = "montgomery_speed_cameras_2024"
+source_id = "camreg_montgomery_md_ate"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services2.arcgis.com/gEFt9c3jUfWMXCEP/arcgis/rest/services/SpeedCameras_2024/FeatureServer/0"
+layer_url = "https://services2.arcgis.com/gEFt9c3jUfWMXCEP/arcgis/rest/services/SpeedCameras_2024/FeatureServer/0"
+agency = "Montgomery County (MD) Police Department (ArcGIS Online, owner <staff account id redacted>)"
+operator = "Montgomery County Police Department"
+state = "US-MD"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 200
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-030"
+rights_note = "No licence text located — Hub item 71702a6aebe74eea9ac6511d05748791 licenseInfo/accessInformation checked (I4-C062: NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the consolidated source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-030, cand I4-C062) — consolidated under camreg_montgomery_md_ate per I8 §5.3 (R1). 'SpeedCameras_2024' — MCPD speed camera locations as of August 2024 (Hub snippet, I4-Q030); agency-org item on the 'Montgomery County Police Dept' org → ate-speed, a DATED point snapshot asserted as-of-2024-08 (SIG-INGEST-025b). The enumerated endpoint was the service root; layer 0 is the single published layer — if the operator's Wave-B read finds sublayers the target fails loud, never silently re-points. The count was NOT read in evidence — observed_count=200 is the ACQ-10 plan estimate (design 'est. claims 2,000' ÷ ~10 claims/site); the layer schema was not enumerated, so out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it."
+county_geoid = "24031"  # P36.6 (ACQ-10, I8 R4): Census county GEOID for Montgomery County, MD.
+jurisdiction_place = "Montgomery County"
+technology = "ate-speed"
+
+[[targets]]
+id = "howard_school_zone_areas"
+source_id = "camreg_howard_md_school_zone_ate"
 kind = "socrata_rows"
 platform = "socrata"
-url = "https://opendata.howardcountymd.gov/d/h9kb-3hx7"
-layer_url = "https://opendata.howardcountymd.gov/d/h9kb-3hx7"
+url = "https://opendata.howardcountymd.gov/resource/h9kb-3hx7.json"
+layer_url = "https://opendata.howardcountymd.gov/resource/h9kb-3hx7.json"
+# P36.6 (ACQ-10, SIG-GEO-003): the published rows are school-zone POLYGONS —
+# enforcement AREAS under MD's school-zone speed-monitoring programme (Transp.
+# §21-809 names the school-zone + speed discriminator), never device points.
+# `area` geometry_kind routes each the_geom polygon to a fixed_asset_location
+# WKT claim + a geometry_kind="area" claim; no camera_latitude/longitude
+# device-point claims emit.
+geometry_kind = "area"
+out_fields = ["id", "the_geom"]
 agency = "Howard County, MD (Socrata)"
 state = "US-MD"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 30
+observed_fields = "id,the_geom"
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-031"
-notes = "ACQ-01 generated target (plan AP-T1-031, cand I4-C064). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — the Socrata catalog licence field for h9kb-3hx7 was checked (I4-Q028: NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-031, cand I4-C064) — reconciled id 'howard_school_zone_areas' (I8 §5.3). 'SchZoneHighligh' — 'School zone where automated enforcement is applied.' (catalog description verbatim, I4-C064). Howard County school zones are enforced by SPEED monitoring systems under MD Transp. §21-809 → ate-speed (the statutory programme names the discriminator). Schema: id + the_geom (GeoJSON polygon column) only — the published surface is a zone id and its area; the row count was NOT read in evidence — observed_count=30 is the ACQ-10 plan estimate (design 'est. claims 300' ÷ ~10 claims/zone); a dataset outgrowing its planned pages fails loud on the paging bound."
+county_geoid = "24027"  # P36.6 (ACQ-10, I8 R4): Census county GEOID for Howard County, MD.
 jurisdiction_place = "Howard County"
-technology = "fixed-camera-unspecified"
+technology = "ate-speed"
 
 [[targets]]
-id = "red_light_cameras_and_direction_city_of_lakeland_fl_arcgis_organisation"
-source_id = "camreg_lakeland_fl_red_light_cameras"
+id = "lakeland_red_light_cameras"
+source_id = "camreg_lakeland_fl_red_light"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/mcbQY5xNGGGM1vBX/arcgis/rest/services/Red_Light_Cameras_and_Direction_WFL1/FeatureServer/0"
 layer_url = "https://services1.arcgis.com/mcbQY5xNGGGM1vBX/arcgis/rest/services/Red_Light_Cameras_and_Direction_WFL1/FeatureServer/0"
 agency = "City of Lakeland, FL (via ArcGIS Online)"
+operator = "City of Lakeland"
 state = "US-FL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 11
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-036"
-notes = "ACQ-01 generated target (plan AP-T1-036, cand I9b-C084). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — Hub item 31d8970bf98b441fb6b45a78a8291d54 checked via hub search JSON (I9b-Q089: NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-036, cand I9b-C084) — reconciled id 'lakeland_red_light_cameras' (I8 §5.3). 'Red Light Cameras and Direction' → ate-red-light (the layer title names the discriminator). count=11 via returnCountOnly (live-read 2026-09-30, I9b-F110). The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it. City layer corroborated by the FLHSMV red-light report jurisdiction list (I9b-C056 Appendix F) — independent lineage, recorded."
+place_geoid = "1238250"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Lakeland, FL.
 jurisdiction_place = "Lakeland"
-technology = "fixed-camera-unspecified"
+technology = "ate-red-light"
 
 [[targets]]
 id = "flock_location_city_of_thomasville_ga"
@@ -4308,20 +4559,28 @@ jurisdiction_place = "Lincoln"
 technology = "fixed-camera-ptz"
 
 [[targets]]
-id = "tpva_red_light_camera_locations_2015_suffolk_county_ny_traffic_and_parking_violations_agency"
-source_id = "camreg_suffolk_county_ny_tpva_red_light"
+id = "suffolk_tpva_red_light_2015"
+source_id = "camreg_suffolk_ny_red_light"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services.arcgis.com/JsDD4qdG5r2a7hR5/arcgis/rest/services/TPVA_Red_Light_Camera_Locations_2015/FeatureServer/0"
 layer_url = "https://services.arcgis.com/JsDD4qdG5r2a7hR5/arcgis/rest/services/TPVA_Red_Light_Camera_Locations_2015/FeatureServer/0"
-agency = "Suffolk County, NY (SCOpenData via ArcGIS Online)"
+agency = "Suffolk County, NY Traffic and Parking Violations Agency (SCOpenData via ArcGIS Online)"
+operator = "Suffolk County Traffic and Parking Violations Agency"
 state = "US-NY"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 215
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-048"
-notes = "ACQ-01 generated target (plan AP-T1-048, cand I9b-C083). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead CC-BY-4.0."
+license_spdx = "CC-BY-4.0"
+rights_note = "Hub item licence field declares 'CC-BY-4.0' verbatim (I9b-Q089 row-captured). Rights batch RB-06 `a` (GL-GATE-07 re-confirmed batch-wide) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch. CC-BY-4.0 attribution: 'Suffolk County, NY (SCOpenData)'."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-048, cand I9b-C083) — reconciled id 'suffolk_tpva_red_light_2015' (I8 §5.3). 'TPVA Red Light Camera Locations 2015' → ate-red-light. count=215 via returnCountOnly (live-read 2026-09-30, I9b-F109). A STATIC 2015 baseline snapshot — the 2015 window is asserted, never re-asserted as current (SIG-INGEST-025b). The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it. A same-name personal-account mirror exists — skipped per NEW-5 (this is the SCOpenData agency-org copy)."
+county_geoid = "36103"  # P36.6 (ACQ-10, I8 R4): Census county GEOID for Suffolk County, NY.
 jurisdiction_place = "Suffolk County"
-technology = "fixed-camera-unspecified"
+technology = "ate-red-light"
 
 [[targets]]
 id = "parks_cameras_city_of_omaha_maintained_cameras_college_world_series"
@@ -4347,20 +4606,27 @@ jurisdiction_place = "Omaha"
 technology = "fixed-camera-cctv"
 
 [[targets]]
-id = "red_light_speed_camera_city_of_medford_or_arcgis_organisation"
-source_id = "camreg_medford_or_red_light_speed"
+id = "medford_red_light_speed_cameras"
+source_id = "camreg_medford_or_ate"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services.arcgis.com/ogdeCdziRfIzuoFs/arcgis/rest/services/Red_Light_Speed_Camera/FeatureServer/0"
 layer_url = "https://services.arcgis.com/ogdeCdziRfIzuoFs/arcgis/rest/services/Red_Light_Speed_Camera/FeatureServer/0"
 agency = "City of Medford, OR (via ArcGIS Online)"
+operator = "City of Medford"
 state = "US-OR"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 5
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-068"
-notes = "ACQ-01 generated target (plan AP-T1-068, cand I9b-C082). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — Hub item 4568b09185cf4bb28c7db73aad9f8203 licenseInfo empty (I9b-Q089 checked, NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-068, cand I9b-C082) — reconciled id 'medford_red_light_speed_cameras' (I8 §5.3). 'Red Light_Speed Camera' covers BOTH red-light and speed enforcement and names no per-site discriminator → ate-unspecified (the ATE family is evidenced, the subtype is not — never a guessed subtype). count=5 via returnCountOnly (live-read 2026-09-30, I9b-F108). Same ArcGIS org as the registered camreg_jmh_us Flock layer and camreg_medford_or_drone_deployments_fs — the org-level channel is partly known; this ATE layer is a separate gated source, not a retype of either (I8 §5.2 same-org check resolved). The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it."
+place_geoid = "4147000"  # P36.6 (ACQ-10, I8 R4): Census place GEOID for Medford, OR.
 jurisdiction_place = "Medford"
-technology = "fixed-camera-unspecified"
+technology = "ate-unspecified"
 
 [[targets]]
 id = "hyattsville_cctv_camera_program_2024"
@@ -4387,19 +4653,30 @@ jurisdiction_place = "Hyattsville"
 technology = "fixed-camera-cctv"
 
 [[targets]]
-id = "approximate_speed_safety_camera_locations_public"
-source_id = "camreg_ct_approximate_speed_safety"
+id = "ctdot_approximate_speed_safety"
+source_id = "camreg_ctdot_speed_safety"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/FCaUeJ5SOVtImake/arcgis/rest/services/Approximate_Speed_Safety_Camera_Locations_Public/FeatureServer/0"
 layer_url = "https://services1.arcgis.com/FCaUeJ5SOVtImake/arcgis/rest/services/Approximate_Speed_Safety_Camera_Locations_Public/FeatureServer/0"
 agency = "Connecticut Department of Transportation (ArcGIS Online owner CTDOT_OpenData)"
+operator = "Connecticut Department of Transportation"
 state = "US-CT"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 89
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+# P36.6 (ACQ-10, P4): the publisher's OWN precision caveat — 'approximate
+# locations of Speed Safety enforcement cameras' — is declared, never
+# smoothed; the entity + coordinate claims stamp coordinate_precision=
+# 'approximate' verbatim (P36.5 member).
+coordinate_precision = "approximate"
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-075"
-notes = "ACQ-01 generated target (plan AP-T1-075, cand I5-C015). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-technology = "fixed-camera-unspecified"
+rights_note = "Item ff30d1a91cb447eb8f6d7cccb2222a17 licenseInfo is an informational-use disclaimer ('The data presented here is for informational purposes only...', I5-Q023) — not a licence grant. Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review of the ACQ-01 generated row (plan AP-T1-075, cand I5-C015) — reconciled id 'ctdot_approximate_speed_safety' (I8 §5.3). 'Approximate Speed Safety Camera Locations Public' — 'approximate locations of Speed Safety enforcement cameras for the Work Zone Speed Control pilot authorized by CGS 13a-262' (item description verbatim, I5-C015) → ate-work-zone (the statutory programme names the discriminator). count=89 via returnCountOnly (live-read 2026-09-30, I5-F030); extent (-73.61,41.03,-71.86,41.99) inside CT. The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it."
+technology = "ate-work-zone"
 
 [[targets]]
 id = "police_halo_cameras_denver_police_department"
@@ -4634,7 +4911,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "automated_school_bus_camera_violations"
-source_id = "camreg_md_montgomery_county_automated"
+source_id = "camreg_montgomery_md_ate"
 kind = "socrata_rows"
 platform = "socrata"
 url = "https://data.montgomerycountymd.gov/d/fp9s-vfdj"
@@ -4644,7 +4921,7 @@ state = "US-MD"
 jurisdiction_scheme = "iso.3166_2"
 observed_count = 0
 enum_source = "r11-acq-01:AP-T2-049"
-notes = "ACQ-01 generated target (plan AP-T2-049, cand I4-C057). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)."
+notes = "ACQ-01 generated target (plan AP-T2-049, cand I4-C057) — rides the renamed camreg_montgomery_md_ate source after the P36.6 consolidation; NOT covered by the P36.6 review. observed_count/out_fields/object_id_field pinned at the family ticket's registration review (ACQ-20); licence lead CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern). Part VIII recorded: the published rows are per-violation school-bus stop-arm events (citation grain — a Part VIII-prohibited surface, flagged S3); the ACQ-20 review must re-register this row as an aggregate-only transport or exclude it — the per-violation rows are never emitted."
 jurisdiction_place = "Montgomery County"
 technology = "fixed-camera-unspecified"
 

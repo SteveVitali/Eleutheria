@@ -312,6 +312,27 @@ notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP
 technology = "fixed-camera-ptz"
 
 [[targets]]
+id = "deldot_red_light"
+source_id = "dot_511_de"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/28"
+layer_url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/28"
+agency = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap (state ArcGIS Enterprise)"
+operator = "Delaware Department of Transportation"
+state = "US-DE"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 60
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-003"
+rights_note = "Service copyrightText 'DelDOT' (verbatim, I5-F010/F012); no licence grant located — the target rides dot_511_de's recorded rights basis (Rights batch RB-01 `a`, GL-GATE-07 US public-record factual compilation re-confirmed batch-wide). The source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch."
+notes = "P36.6 (ACQ-10) registration review (plan AP-T1-003, cand I5-C005) — the ACQ-01 generated source 'camreg_de_traffic_devices_red' consolidated here per plan R1: the same DelDOT/FirstMap DE_Boundary_and_Point service as the layer-26 camera target, the same rights basis, one ingestion event. count=60 via returnCountOnly (live-read 2026-09-30, I5-F067). Layer 28 'Traffic Devices - Red Light Signals' — the service description names 'Red Light Cameras' among its features (I5-F010); the candidate's LABELLED inference ('Red Light Signals' = the enforcement-camera intersections, I5-C005) is the design's ate-red-light typing basis — recorded, never smoothed; the published schema was not enumerated in the live-read evidence, so out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it. Rides dot_511_de's existing r11-layers-01 cadence seat (a source holds one seat)."
+technology = "ate-red-light"
+
+[[targets]]
 id = "its_devicelist_devicelocdetail"
 source_id = "dot_511_vt"
 kind = "arcgis_query"
@@ -383,20 +404,11 @@ rights_note = "No licence text located — item 2bb761d0aec94f8c9995a83607aa79a3
 notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP-T1-011, cand I5-C002). count=681 via returnCountOnly (live-read 2026-09-30, I5-F006). STALE SNAPSHOT, RECORDED: dataLastEditDate 2021-01-14 (I5-F005 editingInfo) — the layer has not been edited since 2021; the live Mi Drive surface may differ and the staleness is asserted, never smoothed. The `Image` feed-content URL field is deliberately absent from out_fields — never requested, never emitted (Part VIII). Lat/Lon attribute fields are the published coordinate source (coordinate_mode=fields). MDOT is the layer's own operator."
 technology = "fixed-camera-ptz"
 
-[[targets]]
-id = "automated_safety_cameras_asc"
-source_id = "dot_511_dc"
-kind = "arcgis_query"
-platform = "arcgis"
-url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/43"
-layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/43"
-agency = "District of Columbia, District Department of Transportation (via DC GIS / OCTO)"
-state = "US-DC"
-jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
-enum_source = "r11-acq-01:AP-T1-025"
-notes = "ACQ-01 generated target (plan AP-T1-025, cand I4-C051). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead CC-BY-4.0."
-technology = "fixed-camera-unspecified"
+# P36.6 (ACQ-10): the DC Automated Safety Cameras rows moved to
+# camera_registry_targets.toml under the gated `camreg_dc_ddot_ate` source —
+# the plan's licence-match widen under dot_511_dc FAILED (the ASC items
+# declare CC-BY-4.0; dot_511_dc resolved CC0-1.0), so the fallback source
+# carries `dc_asc_sites` + `dc_asc_violations_by_month`.
 
 [[targets]]
 id = "ncdot_cameras"

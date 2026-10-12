@@ -883,8 +883,8 @@ cron = "17 7 18 * *"
 job = "sig-ingest-r11-ate-01"
 scheduler = "sig-sched-r11-ate-01"
 task_timeout = "6h"
-members = ["camreg_de_traffic_devices_red", "camreg_md_montgomery_county_automated", "camreg_ny_new_york_city_mta_bus", "camreg_wa_tacoma_automated_enforcement", "camreg_md_montgomery_county_speedcameras", "camreg_howard_county_md_schzonehighligh", "camreg_lakeland_fl_red_light_cameras", "camreg_suffolk_county_ny_tpva_red_light", "camreg_medford_or_red_light_speed", "camreg_ct_approximate_speed_safety"]
-note = "Round-11 batch r11-ate-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+members = ["camreg_dc_ddot_ate", "camreg_montgomery_md_ate", "camreg_nyc_mta_bus_lane_ate", "camreg_tacoma_wa_ate", "camreg_howard_md_school_zone_ate", "camreg_lakeland_fl_red_light", "camreg_suffolk_ny_red_light", "camreg_medford_or_ate", "camreg_ctdot_speed_safety"]
+note = "Round-11 batch r11-ate-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.6 (ACQ-10) review: the batch is the ticket's nine GATED sources \u2014 camreg_dc_ddot_ate is the licence-mismatch fallback the plan names for the DC ASC pair (CC-BY-4.0 vs dot_511_dc's CC0-1.0); camreg_montgomery_md_ate consolidates the two generated Montgomery rows into ONE member carrying all three targets in the same run (I8 \u00a75.3 R1). The DE red-light target consolidated under dot_511_de rides that source's r11-layers-01 seat, and the two Chicago aggregate targets ride camreg_chicago_il's existing camreg-batch-02 seat (a source holds one seat). The nine rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 
 [[batches]]
 id = "r11-disclosures-01"

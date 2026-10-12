@@ -1,0 +1,58 @@
+{
+  "displayFieldName": "ENFORCEMENT_SPACE_CODE",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "ENFORCEMENT_SPACE_CODE", "type": "esriFieldTypeString", "alias": "Enforcement Space Code"},
+    {"name": "SITE_CODE", "type": "esriFieldTypeString", "alias": "Site Code"},
+    {"name": "ENFORCEMENT_TYPE", "type": "esriFieldTypeString", "alias": "Enforcement Type"},
+    {"name": "LOCATION_DESCRIPTION", "type": "esriFieldTypeString", "alias": "Location Description"},
+    {"name": "SPEED_LIMIT", "type": "esriFieldTypeInteger", "alias": "Speed Limit"},
+    {"name": "DEVICE_MOBILITY", "type": "esriFieldTypeString", "alias": "Device Mobility"},
+    {"name": "CAMERA_STATUS", "type": "esriFieldTypeString", "alias": "Camera Status"},
+    {"name": "ACTIVE_STATUS", "type": "esriFieldTypeString", "alias": "Active Status"},
+    {"name": "CAMERA_LATITUDE", "type": "esriFieldTypeDouble", "alias": "Camera Latitude"},
+    {"name": "CAMERA_LONGITUDE", "type": "esriFieldTypeDouble", "alias": "Camera Longitude"},
+    {"name": "WARD", "type": "esriFieldTypeString", "alias": "Ward"},
+    {"name": "ANC", "type": "esriFieldTypeString", "alias": "ANC"},
+    {"name": "SMD", "type": "esriFieldTypeString", "alias": "SMD"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "ENFORCEMENT_SPACE_CODE": "ES-0101",
+        "SITE_CODE": "SC-201",
+        "ENFORCEMENT_TYPE": "Speed",
+        "LOCATION_DESCRIPTION": "600 block of Eastern Ave NE (EB)",
+        "SPEED_LIMIT": 25,
+        "DEVICE_MOBILITY": "Fixed",
+        "CAMERA_STATUS": "Active",
+        "ACTIVE_STATUS": "Active",
+        "CAMERA_LATITUDE": 38.8812,
+        "CAMERA_LONGITUDE": -76.9967,
+        "WARD": "7",
+        "ANC": "7B",
+        "SMD": "7B04"
+      },
+      "geometry": {"x": -76.9967, "y": 38.8812}
+    },
+    {
+      "attributes": {
+        "ENFORCEMENT_SPACE_CODE": "ES-0207",
+        "SITE_CODE": "SC-344",
+        "ENFORCEMENT_TYPE": "Red-Light",
+        "LOCATION_DESCRIPTION": "Georgia Ave NW & Missouri Ave NW (NB)",
+        "SPEED_LIMIT": 30,
+        "DEVICE_MOBILITY": "Fixed",
+        "CAMERA_STATUS": "Active",
+        "ACTIVE_STATUS": "Active",
+        "CAMERA_LATITUDE": 38.9458,
+        "CAMERA_LONGITUDE": -77.0271,
+        "WARD": "4",
+        "ANC": "4B",
+        "SMD": "4B01"
+      },
+      "geometry": {"x": -77.0271, "y": 38.9458}
+    }
+  ]
+}

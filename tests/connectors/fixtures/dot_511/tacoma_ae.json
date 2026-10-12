@@ -1,0 +1,42 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "location", "type": "esriFieldTypeString", "alias": "Location"},
+    {"name": "cameratype", "type": "esriFieldTypeString", "alias": "Camera Type"},
+    {"name": "x", "type": "esriFieldTypeDouble", "alias": "X"},
+    {"name": "y", "type": "esriFieldTypeDouble", "alias": "Y"},
+    {"name": "direction_of_travel", "type": "esriFieldTypeString", "alias": "Direction of Travel"},
+    {"name": "speed_limit", "type": "esriFieldTypeInteger", "alias": "Speed Limit"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 7,
+        "location": "S 19th St & S Jackson Ave",
+        "cameratype": "Speed",
+        "x": -122.4497,
+        "y": 47.2336,
+        "direction_of_travel": "EB",
+        "speed_limit": 25,
+        "address": "1900 S Jackson Ave",
+        "plate_number": "BXY4412"
+      },
+      "geometry": {"x": -122.4497, "y": 47.2336}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 9,
+        "location": "S 56th St & S Tyler St",
+        "cameratype": "Red Light",
+        "x": -122.4711,
+        "y": 47.1925,
+        "direction_of_travel": "NB",
+        "speed_limit": 35
+      },
+      "geometry": {"x": -122.4711, "y": 47.1925}
+    }
+  ]
+}
