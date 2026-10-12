@@ -29,7 +29,14 @@ The genres it recognises (the "new document genres" ``sig-parsing classify`` rep
   may evidence a ``deployed`` claim;
 * ``vendor_disclosure``  — a vendor/product disclosure, a federation registry, an
   RTCC integration announcement (vendor/product facts, never a deployment);
-* ``agenda_minutes``     — a council/board agenda or minutes item.
+* ``agenda_minutes``     — a council/board agenda or minutes item;
+* ``statutory_report``   — a statute-mandated filing (a registration list, an
+  annual statutory report, a mandated audit). The text classifier carries no
+  marker set for it — a statutory filing's markers overlap policy/deployment
+  language, so the genre is the reviewed declaration a
+  ``government_mandated_disclosure`` adapter makes for a capture whose own text
+  classifies to no genre (P36.8 / R11-ACQ-12); it is never text-derived into a
+  stronger claim surface.
 """
 
 from __future__ import annotations
@@ -54,6 +61,12 @@ class DocumentGenre(StrEnum):
     DEPLOYMENT_REPORT = "deployment_report"
     VENDOR_DISCLOSURE = "vendor_disclosure"
     AGENDA_MINUTES = "agenda_minutes"
+    # P36.8 (R11-ACQ-12): a statute-mandated filing genre. It is deliberately
+    # absent from the marker table — statutory filings share vocabulary with
+    # policy and deployment documents, so the classifier never guesses it; a
+    # reviewed adapter declares it as the fallback for captures that classify
+    # to no genre.
+    STATUTORY_REPORT = "statutory_report"
     UNKNOWN = "unknown"
 
 

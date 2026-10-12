@@ -108,6 +108,22 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "ccops_oakland": "government_mandated_disclosure",
     "ccops_cambridge": "government_mandated_disclosure",
     "ccops_somerville": "government_mandated_disclosure",
+    # P36.8 / R11-ACQ-12 (I8 §5.5): the ten statutory ALPR-regime publishers —
+    # state/federal publishers on the same generalized connector. All stay
+    # `ingestion_permitted=false` (HG-03 RB-03 `a`; the operator's OP-26
+    # Wave-B flip under ING-GO-B is the only route to a live fetch);
+    # replay/shadow run over committed fixtures in
+    # `tests/connectors/fixtures/statrep/`.
+    "statrep_wa_ago_alpr_registry": "government_mandated_disclosure",
+    "statrep_mn_bca": "government_mandated_disclosure",
+    "statrep_va_vsp_alpr": "government_mandated_disclosure",
+    "statrep_va_vscc_alpr": "government_mandated_disclosure",
+    "statrep_ne_crime_commission_alpr": "government_mandated_disclosure",
+    "statrep_vt_dps_alpr": "government_mandated_disclosure",
+    "statrep_il_isp_alpr": "government_mandated_disclosure",
+    "statrep_austin_tx_auditor": "government_mandated_disclosure",
+    "statrep_md_dls_mandated_reports": "government_mandated_disclosure",
+    "statrep_va_rga": "government_mandated_disclosure",
     # P31.13 (BREADTH.2): the FEMA Homeland Security Grant Program federal-
     # assistance allocations surface — the procurement connector's USAspending
     # award-search path (`award_class = "assistance"` reviewed slices; funder →

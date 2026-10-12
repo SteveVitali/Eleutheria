@@ -1,0 +1,13 @@
+LAW ENFORCEMENT USE OF ALPR — UPDATE
+
+Virginia State Crime Commission
+Date: January 21, 2026
+Technology: ALPR
+
+Under Code of Virginia § 2.2-5517, the Virginia State Police approved eight
+ALPR systems for statewide use. Participating agencies subscribe to Vigilant
+Solutions and Thomson Reuters CLEAR plate-data services.
+
+Queries conducted: 1,842
+
+The Virginia State Police retains non-hit scan data for no more than 24 hours under § 2.2-5518.

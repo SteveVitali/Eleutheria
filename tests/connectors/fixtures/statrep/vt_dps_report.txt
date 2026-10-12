@@ -1,0 +1,17 @@
+2019 ANNUAL REPORT — AUTOMATED LICENSE PLATE RECOGNITION SYSTEMS
+
+Vermont Department of Public Safety
+Filed with the Vermont General Assembly under 23 V.S.A. § 1607
+Date: January 15, 2019
+Technology: ALPR
+
+The Vermont Intelligence Center maintains the statewide ALPR database and
+coordinates access for participating law-enforcement agencies.
+
+Operating agencies:
+• Burlington Police Department
+• Vermont State Police
+• Williston Police Department
+
+Aggregate activity for the covered year:
+Queries conducted: 14,230

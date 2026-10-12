@@ -1001,10 +1001,6 @@ class_ticket = "P37.52"
 disposition = "promote"
 class_ticket = "P37.52"
 
-[sources.statrep_austin_tx_auditor_apd_license]
-disposition = "promote"
-class_ticket = "P36.8"
-
 [sources.statrep_ca_california_auditor_alpr]
 disposition = "promote"
 class_ticket = "P37.16a"
@@ -1053,17 +1049,9 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P36.9b"
 
-[sources.statrep_il_illinois_automated_license]
-disposition = "promote"
-class_ticket = "P36.8"
-
 [sources.statrep_il_illinois_freedom_from]
 disposition = "promote"
 class_ticket = "P36.9b"
-
-[sources.statrep_md_maryland_legislative_library]
-disposition = "promote"
-class_ticket = "P36.8"
 
 [sources.statrep_md_maryland_required_chapters]
 disposition = "promote"
@@ -1077,10 +1065,6 @@ class_ticket = "P36.9b"
 disposition = "promote"
 class_ticket = "P36.9b"
 
-[sources.statrep_mn_agencies_that_use]
-disposition = "promote"
-class_ticket = "P36.8"
-
 [sources.statrep_mn_minnesota_court_administrator]
 disposition = "promote"
 class_ticket = "P36.9b"
@@ -1092,10 +1076,6 @@ class_ticket = "P36.9b"
 [sources.statrep_nc_onslow_county_schools_gaggle]
 disposition = "promote"
 class_ticket = "P36.10"
-
-[sources.statrep_ne_nebraska_crime_commission]
-disposition = "promote"
-class_ticket = "P36.8"
 
 [sources.statrep_new_york_ny_nyc_doi_oig]
 disposition = "promote"
@@ -1165,25 +1145,9 @@ class_ticket = "P37.47"
 disposition = "promote"
 class_ticket = "P37.49"
 
-[sources.statrep_va_virginia_alpr_reporting]
-disposition = "promote"
-class_ticket = "P36.8"
-
-[sources.statrep_va_virginia_crime_commission]
-disposition = "promote"
-class_ticket = "P36.8"
-
-[sources.statrep_va_virginia_general_assembly]
-disposition = "promote"
-class_ticket = "P36.8"
-
 [sources.statrep_vt_vermont_law_enforcement]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.statrep_vt_vermont_safety_automated]
-disposition = "promote"
-class_ticket = "P36.8"
 
 [sources.statrep_wa_2026_automated_safety]
 disposition = "promote"
@@ -1201,6 +1165,3 @@ class_ticket = "P36.9b"
 disposition = "promote"
 class_ticket = "P36.9b"
 
-[sources.statrep_wa_washington_attorney_general]
-disposition = "promote"
-class_ticket = "P36.8"
