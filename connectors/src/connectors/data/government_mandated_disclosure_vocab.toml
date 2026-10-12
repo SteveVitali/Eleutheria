@@ -25,7 +25,15 @@
 # `technology_anchor_pattern` / `legal_authority_pattern` carry the reviewed
 # field-literal, anchor-literal and citation patterns these municipalities'
 # filings actually use.
-vocab_version = "2026.09.26"
+# 2026.10.12 — r11/P36.8 (ACQ-12): the statutory ALPR-regime generalization —
+# ten state/federal publishers in [sources] under iso.3166_2 jurisdictions;
+# [technology_map] types technology literals with PKG-07 slugs (fail-closed —
+# an unmapped literal mints NO claim, never a guessed slug); statutory_report
+# joins [genre_claim_types] (disclosure_use only where the filing states use);
+# ten [adapters.<publisher>] rows carry the reviewed per-publisher specs
+# (entries, field_patterns, use_fields, reports_use, document_genre,
+# technology_mapped, default_technology, agency_anchor_pattern, scope_terms).
+vocab_version = "2026.10.12"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -131,13 +139,17 @@ field_states = ["answered", "present_but_empty", "absent"]
 
 # The genre -> permitted claim-types gate. A document of genre G may only produce
 # claims whose type is in the list. `disclosure_use`/`compliance_finding` appear
-# ONLY under deployment_report — the other genres may yield the
-# ordinance/inventory/disclosure surface but never a use or compliance claim.
+# ONLY under deployment_report and statutory_report — a statutory_report may
+# yield a use claim ONLY where the filing itself reports use (the adapter's
+# reports_use declaration / literal pattern feeds the document-level guard);
+# the other genres may yield the ordinance/inventory/disclosure surface but
+# never a use or compliance claim.
 [genre_claim_types]
 procurement_record = ["inventory_entry", "disclosure"]
 vendor_disclosure  = ["inventory_entry", "disclosure"]
 agenda_minutes     = ["ordinance", "inventory_entry", "disclosure"]
 policy_document    = ["ordinance", "inventory_entry", "disclosure"]
+statutory_report   = ["ordinance", "inventory_entry", "disclosure", "disclosure_use"]
 deployment_report  = ["ordinance", "inventory_entry", "disclosure", "disclosure_use", "compliance_finding"]
 
 # The per-agency AGGREGATE row schema gate (Part VIII / §18.1-analogue). Every
@@ -224,6 +236,93 @@ sf = "ccops_sf"
 oakland = "ccops_oakland"
 cambridge = "ccops_cambridge"
 somerville = "ccops_somerville"
+# --- P36.8 / R11-ACQ-12 (I8 §5.5): the ten statutory ALPR-regime publishers.
+# The adapter key -> registry source id map; every registry row stays
+# ingestion_permitted=false (HG-03 RB-03 `a` — the operator's OP-26 Wave-B flip
+# under ING-GO-B is the only route to a live fetch). Jurisdictions are
+# iso.3166_2 — state and federal publishers, not municipalities.
+mn_bca         = "statrep_mn_bca"
+wa_ago         = "statrep_wa_ago_alpr_registry"
+va_vsp         = "statrep_va_vsp_alpr"
+va_vscc        = "statrep_va_vscc_alpr"
+ne_crime       = "statrep_ne_crime_commission_alpr"
+vt_dps         = "statrep_vt_dps_alpr"
+il_isp         = "statrep_il_isp_alpr"
+austin_auditor = "statrep_austin_tx_auditor"
+md_dls         = "statrep_md_dls_mandated_reports"
+va_rga         = "statrep_va_rga"
+
+# --- P36.8/ACQ-12: statutory technology-literal -> SKOS slug map ---------------
+# The reviewed literal -> ontology-slug table statutory filings' technology
+# names ride (PKG-07's slug set, SIG-ONTO-021). The connector normalizes the
+# extracted literal (lowercase, punctuation collapsed to single spaces) before
+# lookup; a literal that hits NO key mints NO technology claim — never a
+# guessed slug. Values must be ACTIVE members of
+# ontology/vocab/technology.yaml (`sig-connectors validate` enforces it). An
+# adapter opts in with `technology_mapped = true`; adapters without the flag
+# keep the historical verbatim behaviour (CCOPS diff 0).
+[technology_map]
+"alpr"                                = "alpr-unspecified"
+"license plate reader"                = "alpr-unspecified"
+"license plate readers"               = "alpr-unspecified"
+"licence plate reader"                = "alpr-unspecified"
+"licence plate readers"               = "alpr-unspecified"
+"license plate recognition"           = "alpr-unspecified"
+"automatic license plate reader"      = "alpr-unspecified"
+"automatic license plate readers"     = "alpr-unspecified"
+"automated license plate reader"      = "alpr-unspecified"
+"automated license plate readers"     = "alpr-unspecified"
+"automated license plate recognition" = "alpr-unspecified"
+"automatic license plate recognition" = "alpr-unspecified"
+"automated number plate recognition"  = "alpr-unspecified"
+"anpr"                                = "alpr-unspecified"
+"lpr"                                 = "alpr-unspecified"
+"alpr system"                         = "alpr-unspecified"
+"alpr systems"                        = "alpr-unspecified"
+"license plate reader system"         = "alpr-unspecified"
+"license plate reader systems"        = "alpr-unspecified"
+"plate reader"                        = "alpr-unspecified"
+"plate readers"                       = "alpr-unspecified"
+"fixed license plate reader"          = "alpr-fixed"
+"fixed license plate readers"         = "alpr-fixed"
+"fixed alpr"                          = "alpr-fixed"
+"fixed camera alpr"                   = "alpr-fixed"
+"stationary license plate reader"     = "alpr-fixed"
+"mobile license plate reader"         = "alpr-mobile"
+"mobile license plate readers"        = "alpr-mobile"
+"mobile alpr"                         = "alpr-mobile"
+"vehicle-mounted license plate reader" = "alpr-mobile"
+"vehicle mounted license plate reader" = "alpr-mobile"
+"covert license plate reader"         = "alpr-covert"
+"covert alpr"                         = "alpr-covert"
+"checkpoint license plate reader"     = "alpr-checkpoint"
+"trailer-mounted license plate reader" = "alpr-trailer"
+"trailer mounted license plate reader" = "alpr-trailer"
+"facial recognition"                  = "face-recognition-unspecified"
+"face recognition"                    = "face-recognition-unspecified"
+"frt"                                 = "face-recognition-unspecified"
+"shotspotter"                         = "gunshot-detection-unspecified"
+"gunshot detection"                   = "gunshot-detection-unspecified"
+"acoustic gunshot detection"          = "gunshot-detection-unspecified"
+"cell-site simulator"                 = "cell-site-simulator-unspecified"
+"cell site simulator"                 = "cell-site-simulator-unspecified"
+"stingray"                            = "cell-site-simulator-unspecified"
+"body-worn camera"                    = "body-worn-camera-unspecified"
+"body worn camera"                    = "body-worn-camera-unspecified"
+"body-worn cameras"                   = "body-worn-camera-unspecified"
+"automated traffic enforcement"       = "ate-unspecified"
+"red light camera"                    = "ate-unspecified"
+"speed camera"                        = "ate-unspecified"
+"drone"                               = "uas-unspecified"
+"drones"                              = "uas-unspecified"
+"unmanned aerial system"              = "uas-unspecified"
+"unmanned aerial vehicle"             = "uas-unspecified"
+"uav"                                 = "uas-unspecified"
+"uas"                                 = "uas-unspecified"
+"cctv"                                = "fixed-camera-unspecified"
+"video surveillance"                  = "fixed-camera-unspecified"
+"real-time crime center"              = "rtcc-unspecified"
+"rtcc"                                = "rtcc-unspecified"
 
 # --- P25.5: per-source index→document adapter specs (reviewed data) ------------
 #
@@ -388,3 +487,284 @@ mandated_sections = [
   { field = "civil_rights_impact", heading = "Whether the civil rights and liberties of any communities or groups" },
   { field = "new_agreements", heading = "A disclosure of any new agreements made in the past 12 months" },
 ]
+
+# =============================================================================
+# P36.8 / R11-ACQ-12 (I8 §5.5): the statutory ALPR-regime publishers.
+#
+# Ten state/federal publishers ride the same fail-closed machinery the CCOPS
+# adapters use — every claim routes through disclosure_claim (genre gate,
+# use-predicate guard, Part VIII aggregate schema). The statutory keys:
+#
+#   document_genre        reviewed fallback genre — applies ONLY when the
+#                         capture's own text classifies to no genre; a
+#                         text-derived genre always stands.
+#   technology_mapped     opt-in: extracted technology literals pass through
+#                         [technology_map]; an unmapped literal mints NO claim.
+#   default_technology    the reviewed slug the filing class itself declares
+#                         (validated against ontology/vocab/technology.yaml;
+#                         never emitted AS a claim — it is the aggregate field
+#                         and the filing-level typing only).
+#   reports_use           the filing class is BY STATUTE a use report (MN BCA's
+#                         "agencies that use" list; the Nebraska annual form).
+#   reports_use_pattern   a verbatim literal whose presence in the document's
+#                         own text is the use statement.
+#   entries               page-carried registration/location rows: an "agency"
+#                         row is a registration ASSERTION (inventory_entry —
+#                         WA AGO did not verify them, I9a-C036); a "location"
+#                         row is a published fixed-reader literal — a
+#                         deployment_location disclosure_use where the filing
+#                         reports use, verbatim, never geocoded (SIG-GEO-003).
+#   field_patterns        reviewed literal -> disclosure-claim patterns.
+#   use_fields            reviewed literal -> disclosure_use patterns; run ONLY
+#                         where the filing reports use; the predicate must be
+#                         a deployment predicate (validated).
+#   agency_anchor_pattern derives the per-filing agency from the resolved
+#                         index link's anchor text (Nebraska's per-agency PDFs).
+#   scope_terms           the surveillance-relevance screen for broad mandated-
+#                         report catalogues (MD DLS, VA RGA) — a link is
+#                         admissible only when a scope term appears in its
+#                         anchor or URL (surveillance-relevant entries only).
+#
+# Every source stays ingestion_permitted=false (HG-03 RB-03 `a`).
+
+[adapters.wa_ago]
+jurisdiction = "US-WA"
+agency = "Washington State Office of the Attorney General"
+ordinance_citation = "RCW 10.130 (Automated License Plate Reader System registration)"
+ordinance_literals = ["RCW 10.130", "10.130", "ESSB 6002"]
+enacting_body_literal = "Washington State Legislature"
+enacting_body = "Washington State Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-unspecified"
+doc_url_contains = "/alpr"
+doc_suffixes = [".pdf"]
+# RCW 10.130.030 registers agencies that "operate or intend to operate" — a
+# registration is an agency ASSERTION (the AGO states it does not verify the
+# entries, I9a-C036), modelled as inventory_entry; no use_status — a
+# registration is never a verified deployment.
+entries = [
+  { kind = "agency", pattern = '(?is)<li[^>]*class="registration"[^>]*>\s*<strong>(?P<agency>[^<]+)</strong>\s*(?:&mdash;|&#8212;|—|–|-)?\s*(?P<tech>ALPR(?:\s+system)?|automatic license plate reader(?:s)?)?', status = "registered" },
+]
+mandated_sections = []
+
+[adapters.mn_bca]
+jurisdiction = "US-MN"
+agency = "Minnesota Bureau of Criminal Apprehension"
+ordinance_citation = "Minn. Stat. § 13.824 (Automated License Plate Reader Data)"
+ordinance_literals = ["13.824", "Minn. Stat. 13.824"]
+enacting_body_literal = "Minnesota Legislature"
+enacting_body = "Minnesota Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-unspecified"
+doc_url_contains = "/documents/"
+doc_suffixes = [".pdf"]
+# The statute's own list is a use statement — "agencies that use license plate
+# readers" (Minn. Stat. 13.824 subd. 8(b)) — so agency rows carry use_status
+# and the published fixed-location literals are deployment_location use
+# claims keyed to the agency heading that precedes them. Location strings
+# stay LITERALS — never geocoded in Round 11 (a new geometry lineage needs
+# its own review, I8 §5.5).
+reports_use = true
+entries = [
+  { kind = "agency", pattern = '(?is)<h3[^>]*class="agency"[^>]*>\s*(?P<agency>[^<]+?)\s*</h3>', status = "reported_in_use", use_status = true, technology_literal = "LPR" },
+  { kind = "location", pattern = '(?is)<li[^>]*class="fixed-location"[^>]*>\s*(?P<location>[^<]+?)\s*</li>', technology = "alpr-fixed" },
+]
+mandated_sections = []
+
+[adapters.va_vsp]
+jurisdiction = "US-VA"
+agency = "Virginia Department of State Police"
+ordinance_citation = "Code of Virginia § 2.2-5517 (ALPR reporting requirements)"
+ordinance_literals = ["2.2-5517", "§ 2.2-5517"]
+enacting_body_literal = "Virginia General Assembly"
+enacting_body = "Virginia General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(ALPR|automated\s+license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|automated\s+license\s+plate\s+recognition|license\s+plate\s+readers?|license\s+plate\s+recognition|ANPR|LPR|facial\s+recognition|UAS|drones?)'
+legal_authority_pattern = '2\.2-5517'
+# The reporting spec's own required metrics — recorded as mandated-field
+# states (answered / present_but_empty / absent), never a populated value.
+mandated_sections = [
+  { field = "cameras_by_type", heading = "Cameras owned or leased by type" },
+  { field = "queries", heading = "Queries conducted" },
+  { field = "stops", heading = "Stops initiated" },
+]
+
+[adapters.va_vscc]
+jurisdiction = "US-VA"
+agency = "Virginia State Crime Commission"
+ordinance_citation = "Code of Virginia § 2.2-5517 (ALPR reporting requirements)"
+ordinance_literals = ["2.2-5517", "§ 2.2-5517"]
+enacting_body_literal = "Virginia General Assembly"
+enacting_body = "Virginia General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(ALPR|automated\s+license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|automated\s+license\s+plate\s+recognition|license\s+plate\s+readers?|license\s+plate\s+recognition|ANPR|LPR|facial\s+recognition|UAS|drones?)'
+legal_authority_pattern = '2\.2-5517|Virginia\s+State\s+Crime\s+Commission'
+# The VSCC update reports agency use (surveyed query counts, approved
+# systems) — the use predicates emit only where the report's own text
+# carries the use literal.
+reports_use_pattern = '(?i)queries\s+conducted|in\s+use\s+by|operating\s+(?:ALPR|license\s+plate)'
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)queries?\s+conducted\s*[:\-]?\s*(?P<value>[\d,]+)' },
+]
+field_patterns = [
+  { predicate = "vendor_name", pattern = '(?i)(?P<value>Flock Safety|Vigilant Solutions|Thomson Reuters CLEAR|Motorola Solutions)' },
+  { predicate = "retention_period", pattern = '(?i)for\s+no\s+more\s+than\s+(?P<value>\d+[ \t]+hours|\d+[ \t]+days)' },
+]
+mandated_sections = []
+
+[adapters.ne_crime]
+jurisdiction = "US-NE"
+agency = "Nebraska Commission on Law Enforcement and Criminal Justice"
+ordinance_citation = "Neb. Rev. Stat. § 60-3206 (ALPR Privacy Act — annual report)"
+ordinance_literals = ["60-3206", "ALPR Privacy Act"]
+enacting_body_literal = "Nebraska Legislature"
+enacting_body = "Nebraska Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-unspecified"
+doc_url_contains = "/alpr-reports/"
+doc_suffixes = [".pdf"]
+# Each per-agency filing names its agency in the index link's anchor
+# ("Bellevue Police Department — 2024 ALPR Report") — the reviewed pattern
+# derives the agency, never the publisher name.
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–|-)\s*\d{4}\s+ALPR'
+# The filed form names its own agency ("Agency: <name>") — the reviewed
+# field literal when the document itself carries it.
+agency_field_pattern = '(?im)agency\s*:\s*([^\n]{2,80})'
+# The filed form is BY STATUTE the annual use report — only agencies that
+# use ALPRs file under 60-3206(3)(a); the count literals the form carries
+# are measured-use claims.
+reports_use = true
+technology_field_pattern = '(?im)technology\s*:\s*(ALPR|automated\s+license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|automated\s+license\s+plate\s+recognition|license\s+plate\s+readers?|license\s+plate\s+recognition|ANPR|LPR|facial\s+recognition|UAS|drones?)'
+legal_authority_pattern = '60-3206|ALPR\s+Privacy\s+Act'
+field_patterns = [
+  { predicate = "retention_period", pattern = '(?im)data\s+retention\s*[:\-]?\s*(?P<value>[^\n]{3,60})' },
+  { predicate = "sharing_partner", pattern = '(?im)data\s+shared\s+with\s*[:\-]?\s*(?P<value>[^\n]{3,60})' },
+]
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)confirmed\s+non-?correlated\s+matches?\s*[:\-]?\s*(?P<value>[\d,]+)' },
+  { predicate = "usage_count", pattern = '(?im)manual\s+entries\s*[:\-]?\s*(?P<value>[\d,]+)' },
+]
+mandated_sections = []
+
+[adapters.vt_dps]
+jurisdiction = "US-VT"
+agency = "Vermont Department of Public Safety"
+ordinance_citation = "23 V.S.A. § 1607 (Automated License Plate Recognition — annual report)"
+ordinance_literals = ["23 V.S.A.", "1607", "§ 1607"]
+enacting_body_literal = "Vermont General Assembly"
+enacting_body = "Vermont General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(ALPR|automated\s+license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|automated\s+license\s+plate\s+recognition|license\s+plate\s+readers?|license\s+plate\s+recognition|ANPR|LPR|facial\s+recognition|UAS|drones?)'
+legal_authority_pattern = '23\s+V\.?S\.?A\.?\s*§?\s*1607'
+# The DPS report names its operating agencies and reports query counts —
+# the agency rows ride the same `entries` mechanism the index pages use,
+# the query literal is a measured-use claim where the report carries it.
+reports_use_pattern = '(?i)queries?\s+conducted|operating\s+agencies'
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)queries?\s+conducted\s*[:\-]?\s*(?P<value>[\d,]+)' },
+]
+entries = [
+  { kind = "agency", pattern = '(?im)^\s*•\s*(?P<agency>[A-Z][^\n•;]{2,80}(?:Police|Sheriff|Constab|Department|Agency|Barracks)[^\n•;]*)', status = "reported_operating", use_status = true },
+]
+# The DPS report's per-agency table lives IN the filing — document_entries
+# lets the `entries` mechanism run over a document's bytes (index-page
+# adapters leave it off so resolved filings never re-fire page rows).
+document_entries = true
+mandated_sections = []
+
+[adapters.il_isp]
+jurisdiction = "US-IL"
+agency = "Illinois State Police"
+ordinance_citation = "625 ILCS 5/11-208.3 (Tamara Clayton Expressway Camera Act)"
+ordinance_literals = ["625 ILCS", "11-208.3", "Expressway Camera Act"]
+enacting_body_literal = "Illinois General Assembly"
+enacting_body = "Illinois General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+# The ISP transparency page's filings are the expressway-corridor fixed
+# ALPR regime (I9a-C019); the default slug types the filing class, never
+# minted as a claim without a literal.
+default_technology = "alpr-fixed"
+doc_url_contains = "/content/dam/"
+doc_suffixes = [".pdf"]
+# The resolved filing names its technology in the index link's own anchor
+# ("FY2024 ALPR Annual Report") — the reviewed anchor literal, never a
+# questionnaire field (the transparency page is not one).
+technology_anchor_pattern = '(?i)(?:FY\d{4}\s+)?(?P<tech>ALPR|license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?)'
+legal_authority_pattern = '625\s+ILCS|11-208\.3|Expressway\s+Camera\s+Act'
+mandated_sections = []
+
+[adapters.austin_auditor]
+jurisdiction = "US-TX"
+agency = "Austin Police Department"
+ordinance_citation = "APD License Plate Reader Audit (Office of the City Auditor)"
+ordinance_literals = ["audit", "Audit"]
+enacting_body_literal = "Office of the City Auditor"
+enacting_body = "Office of the City Auditor"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "alpr-fixed"
+technology_field_pattern = '(?im)technology\s*:\s*(ALPR|automated\s+license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|automated\s+license\s+plate\s+recognition|license\s+plate\s+readers?|license\s+plate\s+recognition|ANPR|LPR|facial\s+recognition|UAS|drones?)'
+legal_authority_pattern = 'City\s+Auditor|audit\s+report'
+# The audit covers APD's ALPR trial in operation — the report's own text is
+# the use statement.
+reports_use_pattern = '(?i)in\s+(?:use|operation)|trial|deployed'
+use_fields = [
+  { predicate = "in_use", pattern = '(?i)(?P<value>ALPR\s+(?:trial|system)\s+in\s+(?:use|operation))', value = true },
+]
+field_patterns = [
+  { predicate = "vendor_name", pattern = '(?i)(?P<value>Flock Safety|Vigilant Solutions|Motorola Solutions)' },
+  { predicate = "audit_mechanism", pattern = '(?i)(?P<value>quarterly\s+audits?|audit\s+procedures?)' },
+]
+mandated_sections = []
+
+[adapters.md_dls]
+jurisdiction = "US-MD"
+agency = "Maryland Department of Legislative Services"
+ordinance_citation = "Maryland State Government Article § 2-1257 (mandated report deposit)"
+ordinance_literals = ["2-1257", "Mandated Reports", "mandated report"]
+enacting_body_literal = "Maryland General Assembly"
+enacting_body = "Maryland General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+doc_suffixes = [".pdf"]
+# The DLS catalogue deposits EVERY mandated report — the scope screen keeps
+# surveillance-relevant entries only (an index-wide ingest is scope creep).
+# No default slug: the resolved filing names its own technology via the
+# anchor literal or its own field; an unmappable filing emits the ordinance
+# + artifact rows only, never a guessed type.
+scope_terms = ["alpr", "license plate", "licence plate", "surveillance", "facial recognition", "drone", "uav", "shotspotter", "gunshot", "cell-site", "cell site", "stingray", "body-worn", "body worn", "real-time crime", "cctv", "video surveillance", "automated traffic enforcement", "speed camera", "red light"]
+technology_anchor_pattern = '(?i)(?P<tech>ALPR|license\s+plate\s+readers?|facial\s+recognition|shotspotter|gunshot\s+detection|cell[-\s]site\s+simulator|body[-\s]worn\s+cameras?|video\s+surveillance|cctv|automated\s+traffic\s+enforcement|drones?|uas|uav)'
+# The catalogue anchor names the filing agency before the report title —
+# "Maryland State Police — ALPR Annual Report".
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–|-)'
+legal_authority_pattern = '2-1257|mandated\s+report'
+mandated_sections = []
+
+[adapters.va_rga]
+jurisdiction = "US-VA"
+agency = "Virginia Division of Legislative Automated Systems"
+ordinance_citation = "Reports to the General Assembly (RGA) — mandated report deposit"
+ordinance_literals = ["Reports to the General Assembly", "mandated"]
+enacting_body_literal = "Virginia General Assembly"
+enacting_body = "Virginia General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+doc_suffixes = [".pdf"]
+# The RGA deposit catalogue is the same broad-index shape as Maryland's DLS
+# library — the scope screen admits surveillance-relevant entries only, and
+# a resolved filing names its own technology or emits no typed claim.
+scope_terms = ["alpr", "license plate", "licence plate", "surveillance", "facial recognition", "drone", "uav", "shotspotter", "gunshot", "cell-site", "cell site", "stingray", "body-worn", "body worn", "real-time crime", "cctv", "video surveillance", "automated traffic enforcement", "speed camera", "red light"]
+technology_anchor_pattern = '(?i)(?P<tech>ALPR|license\s+plate\s+readers?|facial\s+recognition|shotspotter|gunshot\s+detection|cell[-\s]site\s+simulator|body[-\s]worn\s+cameras?|video\s+surveillance|cctv|automated\s+traffic\s+enforcement|drones?|uas|uav)'
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–|-)'
+legal_authority_pattern = 'Reports\s+to\s+the\s+General\s+Assembly|mandated'
+mandated_sections = []

@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P36.7 closeout (row 280 — ACQ-11: three procurement and programme registers registered gated; `programme_area`/`programme_count` predicates + the ADR-208 PSA×month deviation; no live leg); next → P36.8 (row 281).

@@ -893,8 +893,8 @@ cron = "27 7 21 * *"
 job = "sig-ingest-r11-disclosures-01"
 scheduler = "sig-sched-r11-disclosures-01"
 task_timeout = "6h"
-members = ["statrep_mn_agencies_that_use", "statrep_va_virginia_general_assembly", "statrep_wa_washington_attorney_general", "statrep_va_virginia_alpr_reporting", "statrep_va_virginia_crime_commission", "statrep_ne_nebraska_crime_commission", "statrep_vt_vermont_safety_automated", "statrep_md_maryland_legislative_library", "statrep_il_illinois_automated_license", "statrep_austin_tx_auditor_apd_license"]
-note = "Round-11 batch r11-disclosures-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+members = ["statrep_mn_bca", "statrep_va_rga", "statrep_wa_ago_alpr_registry", "statrep_va_vsp_alpr", "statrep_va_vscc_alpr", "statrep_ne_crime_commission_alpr", "statrep_vt_dps_alpr", "statrep_md_dls_mandated_reports", "statrep_il_isp_alpr", "statrep_austin_tx_auditor"]
+note = "Round-11 batch r11-disclosures-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.8 (ACQ-12) review: the ten member rows renamed to the I8 \u00a75.5 design ids; the 21st-of-month window sits after the 15th release cut and before disclosures-02 (I8 \u00a77.3). The rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 
 [[batches]]
 id = "r11-disclosures-02"

@@ -1,0 +1,14 @@
+NEBRASKA ALPR PRIVACY ACT — ANNUAL AGENCY REPORT
+
+Nebraska Commission on Law Enforcement and Criminal Justice
+Filed under Neb. Rev. Stat. § 60-3206 (ALPR Privacy Act)
+
+Date: January 15, 2025
+Agency: Bellevue Police Department
+Technology: ALPR
+
+Reported activity for the covered year:
+Confirmed non-correlated matches: 3
+Manual entries: 12
+Data shared with: no outside entities
+Data retention: deleted within 180 days

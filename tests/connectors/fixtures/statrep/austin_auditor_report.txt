@@ -1,0 +1,10 @@
+APD LICENSE PLATE READER AUDIT — MAY 2025
+
+City of Austin Office of the City Auditor
+Date: May 15, 2025
+Technology: ALPR
+
+This audit report reviewed APD's ALPR trial deployed March 2024 through
+March 2025. The ALPR system in use operated fixed cameras supplied by Flock
+Safety under a trial agreement. The audit found that APD Risk Management
+conducts quarterly audits of system access.

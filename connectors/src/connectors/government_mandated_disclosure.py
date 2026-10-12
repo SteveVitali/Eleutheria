@@ -2,7 +2,9 @@
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """The `government_mandated_disclosure` connector — municipal surveillance-ordinance
-(CCOPS) disclosures (§22.6 H3, SIG-INGEST-049*, P24.7 / CCOPS.1 / GL-CCOPS-01).
+(CCOPS) disclosures (§22.6 H3, SIG-INGEST-049*, P24.7 / CCOPS.1 / GL-CCOPS-01),
+generalized to statutory state/federal disclosure publishers (P36.8 / R11-ACQ-12,
+I8 NEW-8).
 
 This is the one genuinely-missing connector class the P17-FLIP-01 deferral recorded:
 municipal surveillance-ordinance disclosures are **their own source class** —
@@ -65,10 +67,38 @@ reports technologies in use *without* the policy the ordinance requires is a
 finding class available nowhere else; it lands as a ``compliance_finding`` claim
 carrying the disclosure's own metric (SF: 37 technologies / 26%).
 
-The three sources stay ``ingestion_permitted=false`` / rights ``UNDETERMINED``
-until a rights packet + operator flip (HG-03/HG-04): a ``run --mode live`` against
-any of them REFUSES at the loader gate (exit 3); ``replay``/``shadow`` run over
-committed fixtures with no network (SIG-INGEST-018/019).
+**P36.8 (R11-ACQ-12) — the statutory generalization.** The same claim model
+covers statute-mandated filings from state and federal publishers (I8 NEW-8):
+registration lists, annual statutory reports, mandated audits. The additions are
+**config-driven** — no CCOPS adapter path changes:
+
+* a ``statutory_report`` genre in ``[genre_claim_types]`` — a filing whose own
+  text classifies to no genre takes the adapter's reviewed ``document_genre``
+  declaration; ``disclosure_use`` stays admissible only where the filing
+  **itself reports use** (the adapter's ``reports_use`` declaration or a fired
+  ``reports_use_pattern`` — a registration is an agency *assertion*
+  ``inventory_entry``, never a verified deployment);
+* a ``[technology_map]`` literal → PKG-07 SKOS slug table — mapped adapters emit
+  the slug as the technology claim value (the literal stays ``raw_value``
+  verbatim); an unmapped literal mints NO technology claim and is recorded on
+  the artifact, never a guessed slug (SIG-ONTO-021);
+* ``[adapters.<publisher>].entries`` — the reviewed per-row patterns a
+  registration/index page itself carries (agency registration rows →
+  ``inventory_entry``; fixed-reader location literals → ``deployment_location``
+  ``disclosure_use``, kept as the published string, never geocoded);
+* ``field_patterns`` / ``use_fields`` — reviewed literal → ``disclosure`` /
+  ``use-predicate → disclosure_use`` extraction (the use block runs only when
+  the filing reports use);
+* ``scope_terms`` — the surveillance-relevance screen for broad report
+  catalogues (Maryland DLS, Virginia RGA): only matching anchors/URLs resolve.
+
+The three paying CCOPS sources flipped under ADR-085 (P29.3/GL-GATE-07);
+the ten ``statrep_*`` ACQ-12 sources stay ``ingestion_permitted=false`` /
+rights ``UNDETERMINED`` until a rights packet + operator flip (HG-03 — the
+operator's OP-26 Wave-B execution under ING-GO-B): a ``run --mode live``
+against any gated source REFUSES at the loader gate (exit 3);
+``replay``/``shadow`` run over committed fixtures with no network
+(SIG-INGEST-018/019).
 """
 
 from __future__ import annotations
@@ -78,7 +108,7 @@ import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from functools import cache
+from functools import cache, partial
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -92,6 +122,7 @@ from parsing.document import (
     html_text,
     page_locator_for,
     pdf_text_pages,
+    utf8_text,
 )
 from parsing.genre import DEPLOYMENT_GENRES, DocumentGenre, classify_genre
 from parsing.locator import Locator
@@ -269,6 +300,220 @@ def source_adapter(source_id: str) -> Mapping[str, Any] | None:
     if key is None:
         return None
     return vocab().get("adapters", {}).get(key)
+
+
+# --- the statutory technology vocabulary (P36.8 / R11-ACQ-12, PKG-07) ---------
+
+
+@cache
+def technology_map() -> dict[str, str]:
+    """The reviewed literal -> SKOS slug table (``[technology_map]``).
+
+    Keys are already normalized (lower, punctuation collapsed to single
+    spaces). Values must be ACTIVE members of
+    ``ontology/vocab/technology.yaml`` — :func:`technology_map_violations`
+    enforces it at registration review (``sig-connectors validate``).
+    """
+    return {str(k): str(v) for k, v in (vocab().get("technology_map") or {}).items()}
+
+
+@cache
+def technology_slugs() -> frozenset[str]:
+    """Every ACTIVE technology slug in the generated registry.
+
+    The same committed vocabulary PKG-07 reads (P35.15a); imported lazily so
+    the disclosure connector never duplicates the slug list.
+    """
+    from .dot_511 import technology_slugs as _slugs
+
+    return _slugs()
+
+
+def _norm_literal(text: str) -> str:
+    """The normalized lookup key for a technology literal."""
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", str(text).lower())).strip()
+
+
+def _declared_genre(adapter: Mapping[str, Any]) -> DocumentGenre | None:
+    """The adapter's reviewed fallback genre, or ``None``.
+
+    Applies ONLY when the capture's own text classifies to no genre — a
+    text-derived genre always stands (the pathways rule: genre is re-derived
+    from the document, never trusted from a label).
+    """
+    declared = str(adapter.get("document_genre") or "").strip()
+    if not declared:
+        return None
+    try:
+        return DocumentGenre(declared)
+    except ValueError as exc:
+        raise ValueError(
+            f"adapter declares document_genre={declared!r}, which is not a "
+            f"DocumentGenre member — a configuration error, fail closed."
+        ) from exc
+
+
+class TechnologySlugNotDeclared(Exception):
+    """A registry defect: a declared technology slug is not an active member.
+
+    ``[technology_map]`` values and adapter ``default_technology`` /
+    ``entries[].technology`` declarations are reviewed PKG-07 slugs; a slug
+    outside ``ontology/vocab/technology.yaml`` is a broken declaration that
+    fails loudly — never a silent pass-through or a ``traffic_camera`` guess.
+    """
+
+
+def _assert_declared_slug(slug: str, *, where: str) -> str:
+    if slug not in technology_slugs():
+        raise TechnologySlugNotDeclared(
+            f"{where} declares technology slug {slug!r}, which is not an active "
+            "member of ontology/vocab/technology.yaml (PKG-07) — register it "
+            "via the ontology or re-point to a member slug."
+        )
+    return slug
+
+
+def _adapter_default_technology(adapter: Mapping[str, Any]) -> str | None:
+    """The adapter's declared subject-matter slug, validated, or ``None``."""
+    slug = str(adapter.get("default_technology") or "").strip()
+    if not slug:
+        return None
+    return _assert_declared_slug(slug, where="adapter default_technology")
+
+
+def _entry_technology(entry: Mapping[str, Any], adapter: Mapping[str, Any]) -> str | None:
+    """An entry row's declared slug (falls back to the adapter default)."""
+    slug = str(entry.get("technology") or adapter.get("default_technology") or "").strip()
+    if not slug:
+        return None
+    return _assert_declared_slug(slug, where="adapter entries[].technology")
+
+
+def _mapped_technologies(
+    techs: list[tuple[str, str]], adapter: Mapping[str, Any]
+) -> tuple[list[tuple[str, str]], list[str]]:
+    """Map extracted technology literals through ``[technology_map]``.
+
+    A ``technology_mapped`` adapter emits the PKG-07 slug as the claim value
+    with the document's literal preserved in ``raw_value``; a literal no map
+    key matches mints NO technology claim — the unmapped literal is returned
+    for recording on the artifact row, never guessed (SIG-ONTO-021). Adapters
+    without the flag keep the historical verbatim behaviour (CCOPS diff 0).
+    """
+    if not adapter.get("technology_mapped"):
+        return list(techs), []
+    mapped: list[tuple[str, str]] = []
+    unmapped: list[str] = []
+    seen: set[str] = set()
+    for display, raw in techs:
+        slug = technology_map().get(_norm_literal(display))
+        if slug is None:
+            unmapped.append(display)
+            continue
+        _assert_declared_slug(slug, where="[technology_map]")
+        if slug not in seen:
+            seen.add(slug)
+            mapped.append((slug, raw))
+    return mapped, unmapped
+
+
+def _reports_actual_use(adapter: Mapping[str, Any], text: str) -> bool:
+    """Whether the filing itself reports use — the declared or literal evidence.
+
+    ``reports_use = true`` is the reviewed declaration for a filing class that
+    is BY STATUTE a use report (MN BCA's "agencies that use LPRs" list, the
+    Nebraska annual Privacy-Act report form). ``reports_use_pattern`` is the
+    reviewed literal whose presence in the document's own text is the use
+    statement. Neither is consulted for deployment-genre documents (those
+    report use unconditionally) — the document gate still refuses a use claim
+    from a filing reporting none.
+    """
+    if adapter.get("reports_use"):
+        return True
+    pattern = adapter.get("reports_use_pattern")
+    return bool(pattern and re.search(str(pattern), text))
+
+
+def _entry_literal(entry: Mapping[str, Any], match: re.Match[str]) -> str:
+    """The captured literal an entry row names (named group, group 1, or 0)."""
+    group = str(entry.get("group") or "")
+    if group and group in match.groupdict():
+        raw = match.group(group)
+    elif match.lastindex:
+        raw = match.group(1)
+    else:
+        raw = match.group(0)
+    return str(raw or "").strip()
+
+
+def _index_entries(
+    data: bytes, adapter: Mapping[str, Any]
+) -> list[tuple[int, int, str, Mapping[str, Any], re.Match[str]]]:
+    """Every ``[adapters.*.entries]`` pattern match in document order.
+
+    Each hit is ``(offset, entry_index, kind, entry, match)``; ``kind`` is
+    ``"agency"`` (a registration row naming an agency — an ``inventory_entry``
+    assertion, never a verified deployment) or ``"location"`` (a fixed-reader
+    location literal — a ``deployment_location`` ``disclosure_use`` where the
+    filing reports use). Sorting by offset lets location rows inherit the
+    agency heading that precedes them on the page.
+    """
+    text = utf8_text(data)
+    found: list[tuple[int, int, str, Mapping[str, Any], re.Match[str]]] = []
+    for i, entry in enumerate(adapter.get("entries") or ()):
+        pattern = re.compile(str(entry["pattern"]), re.IGNORECASE | re.DOTALL)
+        for match in pattern.finditer(text):
+            found.append((match.start(), i, str(entry.get("kind") or "agency"), entry, match))
+    found.sort(key=lambda hit: hit[0])
+    return found
+
+
+def technology_map_violations() -> list[str]:
+    """``sig-connectors validate`` rules for the PKG-07 literal/slug mapping.
+
+    Every ``[technology_map]`` value and every adapter-declared slug
+    (``default_technology``, ``entries[].technology``) must be an ACTIVE
+    member of the generated technology registry; entry ``kind`` values must
+    be the closed set and ``use_fields`` predicates must be use predicates
+    (a use claim for a non-use fact is a configuration error, fail closed).
+    """
+    violations: list[str] = []
+    slugs = technology_slugs()
+    for literal, slug in sorted(technology_map().items()):
+        if slug not in slugs:
+            violations.append(
+                f"[technology_map] {literal!r} -> {slug!r}: not an active member "
+                "of ontology/vocab/technology.yaml"
+            )
+    for key, adapter in sorted((vocab().get("adapters") or {}).items()):
+        for slug_field in ("default_technology",):
+            slug = str(adapter.get(slug_field) or "").strip()
+            if slug and slug not in slugs:
+                violations.append(
+                    f"[adapters.{key}].{slug_field} = {slug!r}: not an active "
+                    "member of ontology/vocab/technology.yaml"
+                )
+        for i, entry in enumerate(adapter.get("entries") or ()):
+            kind = str(entry.get("kind") or "")
+            if kind not in {"agency", "location"}:
+                violations.append(
+                    f"[adapters.{key}].entries[{i}]: kind {kind!r} not in {{'agency', 'location'}}"
+                )
+            slug = str(entry.get("technology") or "").strip()
+            if slug and slug not in slugs:
+                violations.append(
+                    f"[adapters.{key}].entries[{i}].technology = {slug!r}: not an "
+                    "active member of ontology/vocab/technology.yaml"
+                )
+        for i, field in enumerate(adapter.get("use_fields") or ()):
+            predicate = str(field.get("predicate") or "")
+            if predicate not in deployment_predicates():
+                violations.append(
+                    f"[adapters.{key}].use_fields[{i}].predicate = {predicate!r}: "
+                    "not a deployment predicate — a disclosure_use claim may "
+                    "carry use facts only"
+                )
+    return violations
 
 
 # --- the schema gates ---------------------------------------------------------
@@ -605,6 +850,12 @@ def _matching_doc_links(
     host = urlparse(index_url).netloc.lower()
     anchor_re = spec.get("anchor_pattern")
     anchor_pattern = re.compile(str(anchor_re), re.I) if anchor_re else None
+    # P36.8: the surveillance-relevance screen for broad statutory report
+    # catalogues (Maryland DLS, Virginia RGA) — a reviewed literal list; a
+    # link is admissible only when a scope term appears in its anchor or URL.
+    scope_terms = tuple(
+        str(t).lower() for t in (spec.get("scope_terms") or adapter.get("scope_terms") or ())
+    )
     out = []
     for link in html_links(data, index_url):
         lowered = link.url.lower()
@@ -616,6 +867,10 @@ def _matching_doc_links(
         if suffixes and not path.endswith(suffixes):
             continue
         if anchor_pattern is not None and not anchor_pattern.search(link.anchor):
+            continue
+        if scope_terms and not any(
+            term in lowered or term in link.anchor.lower() for term in scope_terms
+        ):
             continue
         out.append(link)
     return out
@@ -886,7 +1141,14 @@ def _document_text(parsed: Mapping[str, Any]) -> tuple[str, tuple[str, ...], str
     if pages:
         return "\n".join(pages), pages, "pdf_text"
     text = str(parsed.get("text") or "")
-    return text, (text,) if text else (), "selector_template"
+    # `text_layer` names the committed text-extract layer (a large upstream
+    # capture committed as its extracted text, §5.0); the default stays the
+    # selector-template HTML layer.
+    return (
+        text,
+        (text,) if text else (),
+        str(parsed.get("text_layer") or "selector_template"),
+    )
 
 
 def _evidence_record(
@@ -918,7 +1180,14 @@ def _extract_index_page(ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapp
     data = ctx.captures.get(capture.digest)
     adapter = source_adapter(ctx.source.id) or {}
     genre = classify_genre(capture.source_uri, data).genre
-    out: list[Mapping[str, Any]] = [_evidence_record(capture, parsed, genre)]
+    # P36.8: a capture classifying to no genre takes the adapter's reviewed
+    # document_genre declaration (statutory report pages carry none of the
+    # classifier's marker sets); a text-derived genre always stands.
+    declared = _declared_genre(adapter)
+    if genre is DocumentGenre.UNKNOWN and declared is not None:
+        genre = declared
+    artifact: dict[str, Any] = dict(_evidence_record(capture, parsed, genre))
+    out: list[Mapping[str, Any]] = [artifact]
     permitted = genre_claim_types().get(genre, frozenset())
     literals_found: list[str] = []
     doc = DocumentContext(
@@ -929,6 +1198,7 @@ def _extract_index_page(ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapp
         jurisdiction=str(adapter.get("jurisdiction", "")),
         reporting_period=_retrieved_date(capture),
         agency=str(adapter.get("agency", "")),
+        reports_actual_use=_reports_actual_use(adapter, str(parsed.get("text") or "")),
     )
     if adapter and "ordinance" in permitted:
         for literal in adapter.get("ordinance_literals", ()):
@@ -966,6 +1236,14 @@ def _extract_index_page(ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapp
                     technology=None,
                 )
             )
+    # P36.8: the page-carried registration/location entries a statutory
+    # publisher's index carries (WA AGO registration list, MN BCA agency +
+    # fixed-location list). A Part VIII collision suppresses the claim and is
+    # recorded on the evidence row — never silently dropped.
+    suppressed: list[str] = []
+    out.extend(_extract_statutory_entries(doc, adapter, data, suppressed))
+    if suppressed:
+        artifact["part_viii_suppressions"] = suppressed
     out.append(
         {
             "record_kind": "index_page",
@@ -979,6 +1257,159 @@ def _extract_index_page(ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapp
             "ordinance_literals_found": literals_found,
         }
     )
+    return out
+
+
+def _extract_statutory_entries(
+    doc: DocumentContext,
+    adapter: Mapping[str, Any],
+    data: bytes,
+    suppressed: list[str],
+) -> list[Mapping[str, Any]]:
+    """The registration/location entries a statutory filing page carries (P36.8).
+
+    ``entries`` rows are reviewed ``[adapters.*]`` data: an ``agency`` row is a
+    registration assertion — an ``inventory_entry`` ``approval_status`` keyed
+    to the named agency, never a verified deployment (procured ≠ deployed);
+    it additionally mints a ``technology`` claim ONLY where the row itself
+    names a mappable technology literal (a ``tech`` capture group — a declared
+    slug with no row literal is never emitted as a claim). A ``location`` row
+    is the published fixed-reader location literal — a ``deployment_location``
+    ``disclosure_use`` keyed to the agency heading that precedes it, emitted
+    only where the filing reports use (``doc.reports_actual_use``), and kept
+    as the verbatim string the statute publishes — never a geocode or
+    coordinate (SIG-GEO-003).
+    """
+    out: list[Mapping[str, Any]] = []
+    if not (adapter.get("entries") or ()):
+        return out
+    current_agency: str | None = None
+
+    def emit(make: Any) -> None:
+        try:
+            out.append(make())
+        except PartVIIIViolation as exc:
+            suppressed.append(str(exc))
+
+    for _offset, _i, kind, entry, match in _index_entries(data, adapter):
+        literal = _entry_literal(entry, match)
+        if not literal:
+            continue
+        loc = byte_range_locator(data, literal) or Locator.row(_i).to_row()
+        tech_field = _entry_technology(entry, adapter)
+        if kind == "agency":
+            current_agency = literal
+            emit(
+                partial(
+                    disclosure_claim,
+                    doc,
+                    claim_type="inventory_entry",
+                    predicate="approval_status",
+                    value=str(entry.get("status") or "registered"),
+                    raw_value=literal,
+                    extraction_method="selector_template",
+                    locator=loc,
+                    agency=current_agency,
+                    technology=tech_field,
+                )
+            )
+            # The row's own technology literal mints the typed claim — a
+            # declared slug alone is never emitted (SIG-ONTO-021).
+            tech_literal = str(match.groupdict().get("tech") or "").strip()
+            slug = (
+                technology_map().get(_norm_literal(tech_literal))
+                if tech_literal and adapter.get("technology_mapped")
+                else None
+            )
+            if slug:
+                emit(
+                    lambda loc=loc, tech_literal=tech_literal, slug=slug, agency=current_agency: (
+                        disclosure_claim(
+                            doc,
+                            claim_type="inventory_entry",
+                            predicate="technology",
+                            value=slug,
+                            raw_value=tech_literal,
+                            extraction_method="selector_template",
+                            locator=loc,
+                            agency=agency,
+                            technology=slug,
+                        )
+                    )
+                )
+            # `use_status` — the filing's own per-agency statement of use (MN
+            # BCA's list is literally "agencies that use LPRs"; WA AGO's is a
+            # registration list, no use_status). The use claim rides ONLY
+            # where the filing reports use — never inferred.
+            if entry.get("use_status") and doc.reports_actual_use:
+                emit(
+                    lambda loc=loc, literal=literal, tf=tech_field, agency=current_agency: (
+                        disclosure_claim(
+                            doc,
+                            claim_type="disclosure_use",
+                            predicate="in_use",
+                            value=True,
+                            raw_value=literal,
+                            extraction_method="selector_template",
+                            locator=loc,
+                            agency=agency,
+                            technology=tf,
+                        )
+                    )
+                )
+            # `technology_literal` — a verbatim literal the filing itself
+            # carries for the row class (the BCA page's own "License Plate
+            # Readers" heading types every listed agency); it is checked
+            # against the document text, mints the mapped slug, and is never
+            # a declared slug emitted on faith.
+            tech_page_literal = str(entry.get("technology_literal") or "").strip()
+            page_slug = (
+                technology_map().get(_norm_literal(tech_page_literal))
+                if tech_page_literal and adapter.get("technology_mapped")
+                else None
+            )
+            if page_slug and tech_page_literal in utf8_text(data):
+                emit(
+                    lambda tp=tech_page_literal, slug=page_slug, agency=current_agency: (
+                        disclosure_claim(
+                            doc,
+                            claim_type="inventory_entry",
+                            predicate="technology",
+                            value=slug,
+                            raw_value=tp,
+                            extraction_method="selector_template",
+                            locator=byte_range_locator(data, tp) or Locator.page(1).to_row(),
+                            agency=agency,
+                            technology=slug,
+                        )
+                    )
+                )
+        elif kind == "location":
+            if not doc.reports_actual_use:
+                continue
+            if not current_agency:
+                # A location literal before any agency heading is
+                # unattributable — recorded, never emitted agency-less.
+                suppressed.append(
+                    f"location literal {literal!r} precedes any agency entry; "
+                    "unattributed, suppressed."
+                )
+                continue
+            emit(
+                lambda loc=loc, literal=literal, agency=current_agency, tf=tech_field: (
+                    disclosure_claim(
+                        doc,
+                        claim_type="disclosure_use",
+                        predicate="deployment_location",
+                        value=literal,
+                        raw_value=literal,
+                        extraction_method="selector_template",
+                        locator=loc,
+                        agency=agency,
+                        technology=tf,
+                    )
+                )
+            )
     return out
 
 
@@ -1002,6 +1433,12 @@ def _extract_disclosure_document(
     data = ctx.captures.get(capture.digest)
     adapter = source_adapter(ctx.source.id) or {}
     genre = DocumentGenre(str(parsed.get("genre", "unknown")))
+    # P36.8: a filing whose text classifies to no genre takes the adapter's
+    # reviewed document_genre declaration; a text-derived genre always stands
+    # (never trusted from a label).
+    declared = _declared_genre(adapter)
+    if genre is DocumentGenre.UNKNOWN and declared is not None:
+        genre = declared
     artifact = _evidence_record(capture, parsed, genre)
     out: list[Mapping[str, Any]] = [artifact]
     text, pages, method = _document_text(parsed)
@@ -1036,8 +1473,35 @@ def _extract_disclosure_document(
     spec = _configured_target(ctx, capture.source_uri) or {}
     anchor = str(spec.get("anchor") or "")
     period = _reporting_period(text, filename, anchor)
-    techs = _document_technologies(filename, pages if pages else (text,), adapter, anchor)
+    raw_techs = _document_technologies(filename, pages if pages else (text,), adapter, anchor)
+    techs, unmapped_techs = _mapped_technologies(raw_techs, adapter)
+    if unmapped_techs:
+        # SIG-ONTO-021: an unmapped literal mints NO technology claim — the
+        # literal is recorded on the artifact, never guessed into a slug.
+        artifact["unmapped_technology_literals"] = list(unmapped_techs)
+    default_tech = _adapter_default_technology(adapter)
     permitted = genre_claim_types().get(genre, frozenset())
+    agency = str(adapter.get("agency", ""))
+    agency_pattern = adapter.get("agency_anchor_pattern")
+    if agency_pattern and anchor:
+        agency_match = re.search(str(agency_pattern), anchor)
+        if agency_match:
+            agency = (
+                str(agency_match.groupdict().get("agency") or "")
+                or (agency_match.group(1) if agency_match.lastindex else "")
+            ).strip() or agency
+    else:
+        # The filing's own agency field (Nebraska's per-agency report forms
+        # carry "Agency: <name>") — the reviewed literal, never the publisher
+        # name, when the filing names its subject agency.
+        agency_field = adapter.get("agency_field_pattern")
+        if agency_field:
+            agency_match = re.search(str(agency_field), text)
+            if agency_match:
+                agency = (
+                    str(agency_match.groupdict().get("agency") or "")
+                    or (agency_match.group(1) if agency_match.lastindex else "")
+                ).strip() or agency
     doc = DocumentContext(
         source_id=ctx.source.id,
         source_url=capture.source_uri,
@@ -1045,12 +1509,18 @@ def _extract_disclosure_document(
         genre=genre,
         jurisdiction=str(adapter.get("jurisdiction", "")),
         reporting_period=period or _retrieved_date(capture),
-        agency=str(adapter.get("agency", "")),
-        technology=(techs[0][0] if len(techs) == 1 else (_COMBINED_FILING_TECH if techs else None)),
-        # A deployment-genre filing IS a use report; every other genre reports
-        # none (the epistemic guard independently refuses a use claim that
-        # slips through).
-        reports_actual_use=genre in DEPLOYMENT_GENRES,
+        agency=agency,
+        technology=(
+            techs[0][0]
+            if len(techs) == 1
+            else (default_tech if default_tech else (_COMBINED_FILING_TECH if techs else None))
+        ),
+        # A deployment-genre filing IS a use report; a statutory filing
+        # reports use where the adapter's reviewed reports_use declaration or
+        # literal pattern says so; every other filing reports none (the
+        # epistemic guard independently refuses a use claim that slips
+        # through).
+        reports_actual_use=(genre in DEPLOYMENT_GENRES or _reports_actual_use(adapter, text)),
     )
     if "ordinance" in permitted:
         literal = next(
@@ -1099,7 +1569,10 @@ def _extract_disclosure_document(
                     technology=None,
                 )
             )
-    if "disclosure" not in permitted or not techs or period is None:
+    # A filing whose technology literals all mapped to nothing mints no
+    # claims at all unless the adapter's reviewed default slug types the
+    # filing itself — an unmapped literal is never guessed (SIG-ONTO-021).
+    if "disclosure" not in permitted or period is None or (not techs and not default_tech):
         return finish()
     for tech in techs:
         tech_loc = page_locator_for(pages, tech[1]) or Locator.page(1).to_row()
@@ -1167,6 +1640,67 @@ def _extract_disclosure_document(
                         locator=loc,
                     )
                 )
+    # P36.8: the reviewed literal -> claim patterns statutory filings carry.
+    # `field_patterns` mint `disclosure` claims (retention, audit, vendor,
+    # sharing); `use_fields` mint use-predicate `disclosure_use` claims and
+    # run ONLY where the filing reports use — a count literal in a filing
+    # that reports no use is never a deployment fact.
+    seen_fields: set[tuple[str, str]] = set()
+    for field in adapter.get("field_patterns", ()):
+        pattern = re.compile(str(field["pattern"]), re.IGNORECASE)
+        for match in pattern.finditer(text):
+            literal = str(
+                match.groupdict().get("value")
+                or (match.group(1) if match.lastindex else match.group(0))
+            ).strip()
+            key = (str(field["predicate"]), literal)
+            if not literal or key in seen_fields:
+                continue
+            seen_fields.add(key)
+            emit(
+                lambda literal=literal, field=field: disclosure_claim(
+                    doc,
+                    claim_type="disclosure",
+                    predicate=str(field["predicate"]),
+                    value=literal,
+                    raw_value=literal,
+                    extraction_method=method,
+                    locator=page_locator_for(pages, literal) or Locator.page(1).to_row(),
+                )
+            )
+    if doc.reports_actual_use:
+        seen_use: set[tuple[str, str]] = set()
+        for field in adapter.get("use_fields", ()):
+            pattern = re.compile(str(field["pattern"]), re.IGNORECASE)
+            for match in pattern.finditer(text):
+                literal = str(
+                    match.groupdict().get("value")
+                    or (match.group(1) if match.lastindex else match.group(0))
+                ).strip()
+                key = (str(field["predicate"]), literal)
+                if not literal or key in seen_use:
+                    continue
+                seen_use.add(key)
+                emit(
+                    lambda literal=literal, field=field: disclosure_claim(
+                        doc,
+                        claim_type="disclosure_use",
+                        predicate=str(field["predicate"]),
+                        # `value` pins the asserted value (``in_use = true``);
+                        # absent, the captured literal IS the value.
+                        value=field["value"] if "value" in field else literal,
+                        raw_value=literal,
+                        extraction_method=method,
+                        locator=page_locator_for(pages, literal) or Locator.page(1).to_row(),
+                    )
+                )
+    # A document filing may itself carry a per-agency table (the same
+    # `entries` mechanism the index pages use — VT DPS's report names its
+    # operating agencies) — gated behind the reviewed `document_entries`
+    # declaration so a registration index's spec-matching document links do
+    # not re-fire the page's entry rows inside every resolved filing.
+    if adapter.get("document_entries"):
+        out.extend(_extract_statutory_entries(doc, adapter, data, suppressed))
     return finish()
 
 
@@ -1564,7 +2098,12 @@ class GovernmentMandatedDisclosureConnector(Connector):
                 if adapter is not None
                 else []
             )
-            if not links:
+            # P36.8: a statutory registration index whose claims live ON the
+            # page (WA AGO / MN BCA entry rows) is non-drift when the reviewed
+            # entry patterns match, even with no spec-matching document link;
+            # a catalogue index still drifts when it links nothing.
+            entry_hits = bool(_index_entries(data, adapter or {}))
+            if not links and not entry_hits:
                 raise ContentDrift(
                     ctx.source.id,
                     f"index page {capture.source_uri} carries no filing links "
@@ -1596,6 +2135,14 @@ class GovernmentMandatedDisclosureConnector(Connector):
                 text = html_text(data)
                 if text:
                     out["text"] = text
+            elif verdict.file_format is FileFormat.PLAINTEXT:
+                # A committed text extract of a large upstream filing (§5.0 —
+                # the original's sha256 rides the fixture SOURCES.md); the
+                # verbatim text is the extraction layer, never re-hosted.
+                text = utf8_text(data)
+                if text.strip():
+                    out["text"] = text
+                    out["text_layer"] = "plaintext_extract"
             return out
         return {
             "kind": "document",
