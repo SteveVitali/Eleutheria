@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 282,
+    "count": 284,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -303,6 +303,8 @@
       "product_vendor",
       "products",
       "program_name",
+      "programme_area",
+      "programme_count",
       "pushes_alerts_to",
       "quantities",
       "quantity",

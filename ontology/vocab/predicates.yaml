@@ -9255,3 +9255,81 @@ predicates:
     template: D6
     subscription: D6
     recommendation: D6
+
+- predicate_id: programme_area
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    A published programme-area aggregate subject assertion (the register's own
+    row for one grouping column of a camera-related programme aggregate table —
+    DC's PSA). The subject is the published area bucket the operator groups its
+    programme counts by, never a camera device, a geometry, a registrant, a
+    name, or an address (P36.7 / R11-ACQ-11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P36.7 assessment: camera_registry D1 (the register's own group row is its own fact); connector_run D3; all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D1
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+- predicate_id: programme_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: multi
+  definition: >-
+    The operator-published aggregate count of programme outcomes —
+    applications received, under review, approved, declined, rebates funded,
+    cameras funded — for a programme-area subject over a declared period. A
+    claim carries its `period` and `measure` fields beside the integer value,
+    plus `series` naming the published measure column when one row fans out
+    into per-status series. Aggregate rows only: never a per-registrant,
+    name, address, location, plate, or device record (P36.7 / R11-ACQ-11) —
+    distinct from `enforcement_count` (enforcement outcomes) and from the
+    connector-forbidden `camera_count` device-count genre.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count
+  volatility_class: VOLATILE
+  half_life: 6mo
+  resolution_strategy: interval_union
+  # P36.7 assessment: camera_registry D2 (the operator-published aggregate); connector_run D3; all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D2
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
