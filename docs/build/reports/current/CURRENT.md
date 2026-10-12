@@ -4,11 +4,11 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `5ac5065363576d497243b39e20444cf0715524b1` · inputs hashed: 1020 · wall-clock receipt: `receipt.json`
+> input_commit: `b3b132966acfe5173e2be6821452ad2a6ba3fd71` · inputs hashed: 1020 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.4` · lastCompleted `P36.3`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.3` · lastCompleted `P35.15b`
 - chainTip `r11/P35.15b-technology-backfill` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42…` · updatedAt `2026-10-11T22:18Z`
 
 ## Obligations
@@ -24,9 +24,7 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-| check | obligation | message |
-|---|---|---|
-| ledger/last-completed | P36.3 | lastCompleted 'P36.3''s BUILD_INDEX row names no existing evidence file |
+- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
 
 ## Evidence domains — recorded evidence only
 
