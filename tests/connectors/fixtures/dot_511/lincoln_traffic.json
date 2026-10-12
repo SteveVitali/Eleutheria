@@ -1,0 +1,18 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"}
+  ],
+  "features": [
+    {
+      "attributes": {"OBJECTID": 310},
+      "geometry": {"x": -96.6817, "y": 40.8136}
+    },
+    {
+      "attributes": {"OBJECTID": 311},
+      "geometry": {"x": -96.7026, "y": 40.8144}
+    }
+  ]
+}

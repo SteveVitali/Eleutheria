@@ -1,0 +1,31 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "PAN_RANGE", "type": "esriFieldTypeDouble", "alias": "Pan Range"},
+    {"name": "TILT_RANGE", "type": "esriFieldTypeDouble", "alias": "Tilt Range"},
+    {"name": "BLIND_AREA", "type": "esriFieldTypeString", "alias": "Blind Area"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 601,
+        "PAN_RANGE": 355.0,
+        "TILT_RANGE": 90.0,
+        "BLIND_AREA": "NE quadrant"
+      },
+      "geometry": {"x": -104.9903, "y": 39.7392}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 602,
+        "PAN_RANGE": 355.0,
+        "TILT_RANGE": 90.0,
+        "BLIND_AREA": "SW quadrant"
+      },
+      "geometry": {"x": -105.0200, "y": 39.7520}
+    }
+  ]
+}

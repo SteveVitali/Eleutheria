@@ -224,6 +224,17 @@ def _validate() -> int:
         for msg in tech_violations:
             print(f"VALIDATION FAILED: PKG-07 technology slug: {msg}")
         return 1
+    # SIG-GEO-003 (P36.4 / ACQ-08): a target's declared `geometry_kind` must be
+    # a member of the ontology's GeometryKind enum (point|line|area, P36.3) —
+    # a row naming a shape the vocabulary does not know fails closed here and
+    # at target expansion/emit, never silently point-flattened.
+    from .dot_511 import target_geometry_violations
+
+    geometry_violations = target_geometry_violations()
+    if geometry_violations:
+        for msg in geometry_violations:
+            print(f"VALIDATION FAILED: SIG-GEO-003 geometry kind: {msg}")
+        return 1
     # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
     # under the fail-closed rules — a malformed row is a validation failure,
     # never a silent "no opt-outs".

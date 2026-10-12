@@ -1,0 +1,27 @@
+{
+  "displayFieldName": "DeviceType",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "DeviceType", "type": "esriFieldTypeString", "alias": "Device Type"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 501,
+        "DeviceType": "CCTV",
+        "NETWORK_ADDRESS": "10.255.0.51"
+      },
+      "geometry": {"x": -72.5769, "y": 44.2601}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 502,
+        "DeviceType": "CCTV",
+        "NETWORK_ADDRESS": "10.255.0.52"
+      },
+      "geometry": {"x": -73.2120, "y": 44.4759}
+    }
+  ]
+}

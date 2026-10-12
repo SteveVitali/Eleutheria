@@ -243,6 +243,61 @@ def declared_technologies() -> dict[tuple[str, str], str]:
     return out
 
 
+# --- the declared geometry kind (P36.3 enum / P36.4 ACQ-08, SIG-GEO-003) ------
+
+
+@cache
+def geometry_kinds() -> frozenset[str]:
+    """Every ``GeometryKind`` member of the ontology enum (P36.3, SIG-GEO-003).
+
+    Read from the authored schema (``ontology/schema/common.yaml``) — the same
+    source ``make gen`` consumes — so a registry row can never declare a shape
+    the closed vocabulary does not know. Members: ``point`` | ``line`` |
+    ``area``.
+    """
+    import yaml
+    from ontology.generate import schema_path
+
+    with (schema_path().parent / "common.yaml").open("rb") as fh:
+        data = yaml.safe_load(fh)
+    return frozenset(str(k) for k in data["enums"]["GeometryKind"]["permissible_values"])
+
+
+class GeometryKindNotDeclared(Exception):
+    """A registry defect: the target declares an unknown ``geometry_kind``.
+
+    Deliberately NOT a per-record rejection: a camera-registry target whose
+    declared shape is not a ``GeometryKind`` member is a broken registry row —
+    the run fails loudly rather than silently point-flattening an area or
+    line record (SIG-GEO-003).
+    """
+
+
+def assert_target_geometry_kind(target: Mapping[str, Any]) -> str:
+    """The target's declared ``geometry_kind`` (default ``point``), validated."""
+    kind = str(target.get("geometry_kind") or "point").strip()
+    if kind not in geometry_kinds():
+        raise GeometryKindNotDeclared(
+            f"registry target {target.get('id')!r} declares "
+            f"geometry_kind={kind!r}, which is not a GeometryKind member "
+            f"({sorted(geometry_kinds())}) — register the member in "
+            "ontology/schema/common.yaml or re-point to a member."
+        )
+    return kind
+
+
+def target_geometry_violations() -> list[str]:
+    """``sig-connectors validate`` rules for the per-target geometry kind."""
+    violations: list[str] = []
+    for row in target_table().get("targets", []):
+        label = f"target {row.get('id')!r} (source {row.get('source_id')!r})"
+        try:
+            assert_target_geometry_kind(row)
+        except GeometryKindNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+    return violations
+
+
 class PredicateNotAllowed(Exception):
     """A schema error: the connector tried to write outside its predicate allowlist."""
 
@@ -331,6 +386,13 @@ def _arcgis_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     page_size = min(_ARCGIS_PAGE_SIZE, max(1, int(row.get("page_size") or _ARCGIS_PAGE_SIZE)))
     pages = max(1, -(-observed // page_size))
     params_base = dict(_ARCGIS_QUERY_PARAMS)
+    # P36.4 (ACQ-08): a reviewed server-side attribute filter narrows the
+    # capture at the service — Vermont's ITS DeviceList serves every ITS
+    # device class, so ``where = "DeviceType='CCTV'"`` fetches only the
+    # camera rows and the raw capture never carries the non-camera devices.
+    where = str(row.get("where") or "").strip()
+    if where:
+        params_base["where"] = where
     out_fields = _row_out_fields(row)
     if out_fields:
         names = list(out_fields)
@@ -447,6 +509,11 @@ def expand_registry_rows(
         # expands — the emit path must never mint the legacy `traffic_camera`
         # blanket typing (F-329).
         technology = assert_target_technology(row)
+        # P36.4 (ACQ-08, SIG-GEO-003): the declared geometry kind is validated
+        # at expansion — a row naming a shape the ontology does not know is a
+        # broken registry row, never a silently point-flattened emit.
+        geometry_kind = assert_target_geometry_kind(row)
+        where = str(row.get("where") or "").strip()
         for page in expand(row):
             target = {
                 "id": str(row["id"]),
@@ -465,7 +532,10 @@ def expand_registry_rows(
                 "enum_source": str(row.get("enum_source", "")),
                 "technology": technology,
                 "record_kind": declared_record_kind(row),
+                "geometry_kind": geometry_kind,
             }
+            if where:
+                target["where"] = where
             if rpm is not None:
                 target["rate_limit_per_min"] = int(rpm)
             out_fields = _row_out_fields(row)
@@ -701,6 +771,139 @@ def publishable_coordinate(
     return (published[0], published[1], tier)
 
 
+# --- area geometry (P36.4 / SIG-GEO-003 — fail closed) -------------------------
+
+
+def _checked_ring(ring: Any, index: int) -> list[tuple[float, float]]:
+    """One ArcGIS polygon ring as validated ``(lon, lat)`` pairs.
+
+    A ring must be a list of ≥4 positions, each a numeric in-range ``[x, y]``
+    (outSR=4326: x = longitude, y = latitude), closed first==last. Any other
+    shape is :class:`CoordinateRejected` — a malformed area record is recorded
+    on a rejection row, never emitted.
+    """
+    if not isinstance(ring, (list, tuple)) or len(ring) < 4:
+        raise CoordinateRejected(
+            "malformed", f"rings[{index}] is not a closed ring of at least 4 positions"
+        )
+    points: list[tuple[float, float]] = []
+    for j, pos in enumerate(ring):
+        if not isinstance(pos, (list, tuple)) or len(pos) < 2:
+            raise CoordinateRejected("malformed", f"rings[{index}][{j}] is not an [x, y] position")
+        x = _as_float(pos[0])
+        y = _as_float(pos[1])
+        if x is None or y is None:
+            raise CoordinateRejected("malformed", f"rings[{index}][{j}]: values are not numeric")
+        if not (-180.0 <= x <= 180.0 and -90.0 <= y <= 90.0):
+            raise CoordinateRejected(
+                "out_of_range", f"rings[{index}][{j}]: x={x} y={y} outside valid ranges"
+            )
+        points.append((x, y))
+    if points[0] != points[-1]:
+        raise CoordinateRejected(
+            "malformed", f"rings[{index}] is not closed (first != last position)"
+        )
+    return points
+
+
+def _ring_signed_area(ring: list[tuple[float, float]]) -> float:
+    """The shoelace signed area of a closed ring (Y-up: >0 counter-clockwise)."""
+    area = 0.0
+    for i in range(len(ring) - 1):
+        x1, y1 = ring[i]
+        x2, y2 = ring[i + 1]
+        area += x1 * y2 - x2 * y1
+    return area / 2.0
+
+
+def _ring_centroid(ring: list[tuple[float, float]]) -> tuple[float, float]:
+    """The shoelace centroid ``(x, y)`` of a closed ring.
+
+    A degenerate (zero-area) ring falls back to the vertex mean — still
+    deterministic, and the ring would already have failed closed when it
+    produced a malformed polygon.
+    """
+    a = 0.0
+    cx = 0.0
+    cy = 0.0
+    for i in range(len(ring) - 1):
+        x1, y1 = ring[i]
+        x2, y2 = ring[i + 1]
+        cross = x1 * y2 - x2 * y1
+        a += cross
+        cx += (x1 + x2) * cross
+        cy += (y1 + y2) * cross
+    a *= 0.5
+    if abs(a) < 1e-15:
+        xs = [p[0] for p in ring[:-1]]
+        ys = [p[1] for p in ring[:-1]]
+        return (sum(xs) / len(xs), sum(ys) / len(ys))
+    return (cx / (6 * a), cy / (6 * a))
+
+
+def _fmt_wkt(value: float) -> str:
+    """Deterministic WKT ordinate formatting (shortest round-trip repr)."""
+    return repr(float(value))
+
+
+def _ring_wkt(ring: list[tuple[float, float]]) -> str:
+    return "(" + ", ".join(f"{_fmt_wkt(x)} {_fmt_wkt(y)}" for x, y in ring) + ")"
+
+
+def area_geometry(geometry: Any) -> tuple[str, float, float, int]:
+    """The ``(wkt, centroid_lat, centroid_lon, ring_count)`` of an ArcGIS polygon.
+
+    For a ``geometry_kind = "area"`` target the feature's ``geometry.rings``
+    carries the published polygon (outSR=4326). ArcGIS ring orientation
+    distinguishes parts: exterior rings wind clockwise (negative signed area),
+    interior rings (holes) counter-clockwise and group under the most recent
+    exterior. One exterior yields ``POLYGON``; several yield ``MULTIPOLYGON``.
+    The centroid is DERIVED — the shoelace centroid of the largest-area
+    exterior ring, recorded on the entity row for positioning; the record
+    never mints a device-point coordinate claim.
+
+    Fail closed (a malformed/unsupported shape is recorded on a rejection row,
+    never emitted): no geometry → ``missing``; a point ``x``/``y`` geometry on
+    an area target → ``unsupported_geometry`` (schema drift); non-numeric,
+    out-of-range, unclosed or degenerate rings → ``malformed``/
+    ``out_of_range``.
+    """
+    if not isinstance(geometry, Mapping):
+        raise CoordinateRejected("missing", "area target feature carries no geometry")
+    if "x" in geometry or "y" in geometry:
+        raise CoordinateRejected(
+            "unsupported_geometry",
+            "an area-target feature carried point geometry (x/y) — schema drift",
+        )
+    rings = geometry.get("rings")
+    if not isinstance(rings, list) or not rings:
+        raise CoordinateRejected("missing", "area target feature carries no 'rings'")
+    checked = [_checked_ring(ring, i) for i, ring in enumerate(rings)]
+    polygons: list[list[Any]] = []  # each [exterior_ring, [hole_ring, …]]
+    for ring in checked:
+        if _ring_signed_area(ring) < 0:
+            polygons.append([ring, []])
+        else:
+            if not polygons:
+                raise CoordinateRejected(
+                    "malformed", "first ring is not an exterior (clockwise) ring"
+                )
+            polygons[-1][1].append(ring)
+    if not polygons:
+        raise CoordinateRejected("malformed", "no exterior (clockwise) ring present")
+    if len(polygons) == 1:
+        exterior, holes = polygons[0]
+        wkt = "POLYGON(" + ", ".join([_ring_wkt(exterior), *map(_ring_wkt, holes)]) + ")"
+    else:
+        members = []
+        for exterior, holes in polygons:
+            members.append("(" + ", ".join([_ring_wkt(exterior), *map(_ring_wkt, holes)]) + ")")
+        wkt = "MULTIPOLYGON(" + ", ".join(members) + ")"
+    largest = max(polygons, key=lambda p: abs(_ring_signed_area(p[0])))
+    cx, cy = _ring_centroid(largest[0])
+    return (wkt, cy, cx, len(checked))
+
+
 # --- the camera-registry entry -------------------------------------------------
 
 
@@ -725,8 +928,12 @@ class CameraRegistryEntry:
     #: a publisher is not an evidenced camera operator (P32.3 / SIG-TRUST-003,
     #: ADR-122). The OSM contributor label is the canonical case.
     agency: str
-    latitude: float
-    longitude: float
+    #: The published (post-tier) device-point coordinates. ``None`` on a
+    #: non-point record (P36.4): an area record carries ``geometry_wkt`` +
+    #: a derived centroid instead, and never mints ``camera_latitude`` /
+    #: ``camera_longitude`` claims (SIG-GEO-003).
+    latitude: float | None
+    longitude: float | None
     coordinate_source: str
     geo_tier: int
     sensitivity_class: str
@@ -758,6 +965,22 @@ class CameraRegistryEntry:
     #: The evidence extraction method stamped per platform (P26.9):
     #: ``arcgis_feature_json`` or ``socrata_rows_json``.
     extraction_method: str = "arcgis_feature_json"
+    #: P36.4 (ACQ-08, SIG-GEO-003): the record's declared ``GeometryKind``
+    #: member — ``point`` for every existing device-point target; ``area``
+    #: for a programme-area record (Seattle SPD CCTV pilot areas), whose
+    #: publisher's geometry is a polygon, never a device point.
+    geometry_kind: str = "point"
+    #: For a non-point record: the publisher's geometry serialised as WKT
+    #: (``POLYGON``/``MULTIPOLYGON``, lon-lat axis order, outSR=4326 source).
+    geometry_wkt: str | None = None
+    #: For an area record: the DERIVED label position — the shoelace centroid
+    #: of the largest exterior ring, post-tier. Recorded on the entity row as
+    #: ``centroid_*`` fields; never a published device coordinate.
+    centroid_latitude: float | None = None
+    centroid_longitude: float | None = None
+    #: The number of rings the published polygon carried (transparency for
+    #: multi-ring / hole handling).
+    ring_count: int = 0
 
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
@@ -769,6 +992,25 @@ class CameraRegistryEntry:
         assert_target_technology({"id": self.target_id, "technology": self.technology})
         if not str(self.record_kind).strip():
             raise ValueError("a CameraRegistryEntry requires a record_kind (the subtype)")
+        # SIG-GEO-003 (P36.4): the declared shape is a GeometryKind member and
+        # the record carries the geometry its kind requires — a point record
+        # must have a published coordinate; an area record must have its WKT
+        # and a derived centroid. A hand-built entry that violates the shape
+        # contract fails closed here, never a half-formed claim surface.
+        if self.geometry_kind not in geometry_kinds():
+            raise GeometryKindNotDeclared(
+                f"entry for {self.target_id!r} declares geometry_kind={self.geometry_kind!r}"
+            )
+        if self.geometry_kind == "point" and (self.latitude is None or self.longitude is None):
+            raise ValueError("a point CameraRegistryEntry requires published coordinates")
+        if self.geometry_kind != "point" and (
+            self.geometry_wkt is None
+            or self.centroid_latitude is None
+            or self.centroid_longitude is None
+        ):
+            raise ValueError(
+                "a non-point CameraRegistryEntry requires geometry_wkt + a derived centroid"
+            )
 
     @property
     def subject_id(self) -> str:
@@ -843,31 +1085,43 @@ class CameraRegistryEntry:
         (SIG-INGEST-034).
         """
         ev = self.evidence(source_url, retrieved_date, feature_index)
+        entity: dict[str, Any] = {
+            # PKG-07 (F-329/F-523): the record kind is the subject's
+            # declared subtype — an ALPR target's rows read ``alpr-*``,
+            # ``traffic_camera`` survives only on a target that
+            # literally declares it.
+            "record_kind": self.record_kind,
+            "subject_id": self.subject_id,
+            "predicate_id": assert_predicate_allowed("traffic_camera"),
+            "external_id": self.camera_ref,
+            "raw_value": self.camera_ref,
+            "state": self.state,
+            "agency": self.agency,
+            "target_id": self.target_id,
+            "technology": self.technology,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "coordinate_source": self.coordinate_source,
+            "geo_tier": self.geo_tier,
+            "sensitivity_class": self.sensitivity_class,
+            "excluded_fields": list(self.excluded_fields),
+            "evidence_genre": "camera_registry",
+            "evidence": ev,
+        }
+        if self.geometry_kind != "point":
+            # SIG-GEO-003 (P36.4): the declared shape, the published polygon
+            # and the derived centroid ride the entity row — a point record
+            # stays byte-identical to its pre-P36.4 emit (the default shape
+            # needs no restatement); ``latitude``/``longitude`` stay ``None``
+            # because a programme area is not a device point.
+            entity["geometry_kind"] = self.geometry_kind
+            entity["geometry_wkt"] = self.geometry_wkt
+            entity["centroid_latitude"] = self.centroid_latitude
+            entity["centroid_longitude"] = self.centroid_longitude
+            entity["ring_count"] = self.ring_count
         rows: list[dict[str, Any]] = [
             _stamp(
-                {
-                    # PKG-07 (F-329/F-523): the record kind is the subject's
-                    # declared subtype — an ALPR target's rows read ``alpr-*``,
-                    # ``traffic_camera`` survives only on a target that
-                    # literally declares it.
-                    "record_kind": self.record_kind,
-                    "subject_id": self.subject_id,
-                    "predicate_id": assert_predicate_allowed("traffic_camera"),
-                    "external_id": self.camera_ref,
-                    "raw_value": self.camera_ref,
-                    "state": self.state,
-                    "agency": self.agency,
-                    "target_id": self.target_id,
-                    "technology": self.technology,
-                    "latitude": self.latitude,
-                    "longitude": self.longitude,
-                    "coordinate_source": self.coordinate_source,
-                    "geo_tier": self.geo_tier,
-                    "sensitivity_class": self.sensitivity_class,
-                    "excluded_fields": list(self.excluded_fields),
-                    "evidence_genre": "camera_registry",
-                    "evidence": ev,
-                },
+                entity,
                 source_id=self.source_id,
                 license_spdx=self.license_spdx,
             )
@@ -911,13 +1165,32 @@ class CameraRegistryEntry:
                 # scoped-name identity (SIG-TRUST-004).
                 op["partner_jurisdiction"] = f"{self.jurisdiction_scheme}:{self.state}"
             rows.append(op)
-        rows.append(self._claim("camera_latitude", self.latitude, str(self.latitude), ev))
-        rows.append(self._claim("camera_longitude", self.longitude, str(self.longitude), ev))
-        rows.append(
-            self._claim(
-                "camera_coordinate_source", self.coordinate_source, self.coordinate_source, ev
+        if self.geometry_kind == "point":
+            rows.append(self._claim("camera_latitude", self.latitude, str(self.latitude), ev))
+            rows.append(self._claim("camera_longitude", self.longitude, str(self.longitude), ev))
+            rows.append(
+                self._claim(
+                    "camera_coordinate_source",
+                    self.coordinate_source,
+                    self.coordinate_source,
+                    ev,
+                )
             )
-        )
+        else:
+            # SIG-GEO-003 (P36.4): a non-point registry record declares its
+            # shape — the published polygon is a ``fixed_asset_location``
+            # geometry-wkt claim and the kind rides ``geometry_kind``. No
+            # ``camera_latitude``/``camera_longitude`` device-point claims
+            # emit: a programme area is not a point.
+            rows.append(self._claim("geometry_kind", self.geometry_kind, self.geometry_kind, ev))
+            rows.append(
+                self._claim(
+                    "fixed_asset_location",
+                    self.geometry_wkt,
+                    str(self.geometry_wkt),
+                    ev,
+                )
+            )
         for predicate, value in (
             ("camera_name", self.name),
             ("camera_roadway", self.roadway),
@@ -1256,14 +1529,39 @@ def _entry_from_raw(
     # broken registry row is a config defect, never a silently untyped row).
     technology = assert_target_technology(target)
     record_kind = declared_record_kind(target)
+    geometry_kind = assert_target_geometry_kind(target)
     ref_pair = _first_field(fields, vocab()["id_fields"])
     if ref_pair is None:
         raise CoordinateRejected(
             "missing", "no camera identity field matched the id_fields aliases"
         )
-    lat, lon, coord_source = extract_coordinate(fields, raw.get("geometry"))
     sensitivity_class = str(target.get("sensitivity_class") or vocab()["default_sensitivity_class"])
-    plat, plon, tier = publishable_coordinate(lat, lon, sensitivity_class)
+    # SIG-GEO-003 (P36.4): the record's declared shape picks the geometry path.
+    # A point record resolves its operator-published coordinate as before; an
+    # area record serialises the published polygon rings to WKT + a derived
+    # centroid and never mints a device-point coordinate.
+    lat: float | None = None
+    lon: float | None = None
+    centroid_lat: float | None = None
+    centroid_lon: float | None = None
+    geometry_wkt: str | None = None
+    ring_count = 0
+    if geometry_kind == "area":
+        geometry_wkt, centroid_raw_lat, centroid_raw_lon, ring_count = area_geometry(
+            raw.get("geometry")
+        )
+        centroid_lat, centroid_lon, tier = publishable_coordinate(
+            centroid_raw_lat, centroid_raw_lon, sensitivity_class
+        )
+        coord_source = "geometry:rings"
+    elif geometry_kind == "point":
+        lat, lon, coord_source = extract_coordinate(fields, raw.get("geometry"))
+        lat, lon, tier = publishable_coordinate(lat, lon, sensitivity_class)
+    else:
+        raise CoordinateRejected(
+            "unsupported_geometry",
+            f"target declares geometry_kind {geometry_kind!r}, which has no emit path",
+        )
 
     def _s(aliases_key: str) -> str | None:
         pair = _first_field(fields, vocab()[aliases_key])
@@ -1283,8 +1581,8 @@ def _entry_from_raw(
         technology=technology,
         record_kind=record_kind,
         operator=operator,
-        latitude=plat,
-        longitude=plon,
+        latitude=lat,
+        longitude=lon,
         coordinate_source=coord_source,
         geo_tier=tier,
         sensitivity_class=sensitivity_class,
@@ -1299,6 +1597,11 @@ def _entry_from_raw(
         extraction_method=_EXTRACTION_METHODS.get(
             str(target.get("kind") or "arcgis_query"), "arcgis_feature_json"
         ),
+        geometry_kind=geometry_kind,
+        geometry_wkt=geometry_wkt,
+        centroid_latitude=centroid_lat,
+        centroid_longitude=centroid_lon,
+        ring_count=ring_count,
     )
 
 
@@ -1394,6 +1697,12 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
         if geometry is not None:
             if not isinstance(geometry, Mapping):
                 findings.append(f"features[{i}] geometry is not an object")
+            elif "rings" in geometry:
+                # P36.4: a polygon (area) layer carries `rings`, not x/y —
+                # programme-area records are valid shapes, not point drift.
+                rings = geometry["rings"]
+                if not isinstance(rings, list) or not all(isinstance(r, list) for r in rings):
+                    findings.append(f"features[{i}] geometry 'rings' is not a list of rings")
             elif not all(isinstance(geometry.get(k), (int, float)) for k in ("x", "y")):
                 findings.append(f"features[{i}] geometry lacks numeric x/y")
     return findings
@@ -1403,21 +1712,26 @@ __all__ = [
     "CameraRegistryEntry",
     "CoordinateRejected",
     "Dot511Connector",
+    "GeometryKindNotDeclared",
     "PredicateNotAllowed",
     "TechnologyNotDeclared",
+    "area_geometry",
     "assert_predicate_allowed",
+    "assert_target_geometry_kind",
     "assert_target_technology",
     "canary_findings",
     "declared_record_kind",
     "declared_technologies",
     "enumerated_outcomes",
     "extract_coordinate",
+    "geometry_kinds",
     "is_media_field",
     "load_claims_for_l1",
     "partition_fields",
     "predicate_allowlist",
     "publishable_coordinate",
     "registry_targets",
+    "target_geometry_violations",
     "target_technology_violations",
     "technology_slugs",
     "vocab",

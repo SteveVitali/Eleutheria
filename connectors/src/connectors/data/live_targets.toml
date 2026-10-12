@@ -510,6 +510,26 @@ kind = "dot_511_targets"
 [dot_511_md]
 kind = "dot_511_targets"
 
+# --- P36.4 (ACQ-08): R11 official camera layers -------------------------------
+# The five new `dot_511_*` sources (de/vt/wv/mi/nc) stay gated
+# (ingestion_permitted=false) — the rows record the endpoint the operator's
+# OP-26 Wave-B flip will drive; the live gate refuses before any target is read.
+
+[dot_511_de]
+kind = "dot_511_targets"
+
+[dot_511_vt]
+kind = "dot_511_targets"
+
+[dot_511_wv]
+kind = "dot_511_targets"
+
+[dot_511_mi]
+kind = "dot_511_targets"
+
+[dot_511_nc]
+kind = "dot_511_targets"
+
 # --- P26.9 (SOURCES.8): municipal / transit / non-US camera registries --------
 # Each `camreg_*` source resolves its live targets from the verified [[targets]]
 # rows of data/camera_registry_targets.toml — the same "dot_511_targets" kind:
@@ -527,6 +547,18 @@ kind = "dot_511_targets"
 kind = "dot_511_targets"
 
 [camreg_winnipeg_mb]
+kind = "dot_511_targets"
+
+# P36.4 (ACQ-08): three municipal camreg layers stay gated — recorded for the
+# operator's OP-26 Wave-B flip (denver/seattle ride their existing rows above).
+
+[camreg_ne_lincoln_traffic_cameras]
+kind = "dot_511_targets"
+
+[camreg_omaha_ne_parks_cameras]
+kind = "dot_511_targets"
+
+[camreg_hyattsville_md_cctv_camera_2024]
 kind = "dot_511_targets"
 
 [camreg_act_au]

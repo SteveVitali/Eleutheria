@@ -3721,7 +3721,7 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_seattle_wa.md"
-notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — items b90315ad1deb4985aeb3071b8baa06a1 (Traffic Cameras CDL, 662) + f3879db110b84473b4e3d669157c6a39 (ATSC view, 114) carry ONLY a no-warranty disclaimer in licenseInfo — no licence grant located this run; Seattle open-data terms page not retrievable. Blocker: licence grant + HG-03-class decision (D-SOURCES.8-1). URL media field blocklisted."
+notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — items b90315ad1deb4985aeb3071b8baa06a1 (Traffic Cameras CDL, 662) + f3879db110b84473b4e3d669157c6a39 (ATSC view, 114) carry ONLY a no-warranty disclaimer in licenseInfo — no licence grant located this run; Seattle open-data terms page not retrievable. Blocker: licence grant + HG-03-class decision (D-SOURCES.8-1). URL media field blocklisted. P36.4 (ACQ-08) licence check 2026-10-12: the SPD CCTV Pilot Areas item (same City of Seattle ArcGIS org ZOyb2t4B0UYuYNYH) passes this row's resolved GL-GATE-07 basis \u2014 the new target seattle_police_department_cctv_pilot_areas rides the existing LicenseRef-PublicRecord-FactualCompilation licence; its polygon rows emit as programme areas (geometry_kind=area), never device points. No rights-state change."
 [sources.camreg_seattle_wa.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -4895,7 +4895,7 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_denver_co.md"
-notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CO)."
+notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CO). P36.4 (ACQ-08) licence check 2026-10-12: the POLICE_HALO_P HALO-cameras item passes this row's resolved GL-GATE-07 public-record basis (same City and County of Denver ArcGIS org/publisher) \u2014 the new target police_halo_cameras_denver_police_department rides the existing LicenseRef-PublicRecord-FactualCompilation licence. No rights-state change."
 [sources.camreg_denver_co.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City and County of Denver camera registry"
@@ -7888,13 +7888,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "daily"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-002, cand I5-C003, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_de'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-002, cand I5-C003, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_de'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap (state ArcGIS Enterprise)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DE"
@@ -7976,13 +7976,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-007, cand I5-C001, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_vt'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-007, cand I5-C001, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_vt'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "Vermont Agency of Transportation, Operations & Safety Bureau ITS group (via ArcGIS Online, owner OSB_VTrans)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VT"
@@ -7998,13 +7998,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-008, cand I5-C009, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_wv'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-008, cand I5-C009, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_wv'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "West Virginia Department of Transportation, Division of Highways (WVDOT GIS server)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WV"
@@ -8043,13 +8043,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-011, cand I5-C002, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_mi'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-011, cand I5-C002, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_mi'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "Michigan Department of Transportation (via ArcGIS Online, owner MDOT_GIS)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MI"
@@ -8724,13 +8724,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-044, cand I5-C107, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_lincoln_ne_traffic_cameras_traffic'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-044, cand I5-C107, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_lincoln_ne_traffic_cameras_traffic'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-01 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "City of Lincoln, NE Traffic Operations (via Lincoln-Lancaster County ArcGIS Online org wpJGOi6N4Rq5cqFv)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NE"
@@ -8992,13 +8992,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-056, cand I5-C106, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_omaha_ne_parks_cameras'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-056, cand I5-C106, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_omaha_ne_parks_cameras'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-01 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "Douglas-Omaha GIS (DOGIS) for City of Omaha Parks (via ArcGIS Online org pDAi2YK0L0QxVJHj)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NE"
@@ -9305,13 +9305,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-070, cand I3-C082, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_hyattsville_md_cctv_camera_2024'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-070, cand I3-C082, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_hyattsville_md_cctv_camera_2024'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-01 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "City of Hyattsville, MD (cohgis)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
@@ -9686,13 +9686,13 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "rest_api (arcgis feature layer query \u2014 registry rows only; connector map wired by P36.4)"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-090, cand I5-C017, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_nc'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-090, cand I5-C017, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_nc'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
 publisher = "North Carolina Department of Transportation (ArcGIS Online org NuWFvHYDMVmmxMeM, which hosts GISUnit.NCDOT.GOV items)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"

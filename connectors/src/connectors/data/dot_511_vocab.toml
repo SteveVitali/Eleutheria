@@ -51,7 +51,14 @@
 # target's declared SKOS slug is emitted under; the entity row's record_kind
 # becomes the declared subtype, never the hard-coded `traffic_camera` blanket.
 # Additive only.
-vocab_version = "2026.10.11.1"
+# 2026.10.12.1 (P36.4 / R11-ACQ-08, SIG-GEO-003): `geometry_kind` +
+# `fixed_asset_location` join the allowlist — the registered predicates an
+# area record (a published camera programme-area polygon, never a device
+# point) emits under; point records are unchanged. Field aliases added:
+# `LOCATION_PARTICULARS` + `Loc_Name` (name), `City_Ward` (sub-state
+# jurisdiction detail), `Lon` (MiDrive's title-case longitude pair). Additive
+# only.
+vocab_version = "2026.10.12.1"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -78,6 +85,15 @@ predicate_allowlist = [
   # P35.15a / PKG-07: the target's declared SKOS technology slug, emitted as a
   # `technology` claim on the subject (a registered predicates.yaml member).
   "technology",
+  # P36.4 (ACQ-08, SIG-GEO-003): a non-point registry record declares its
+  # GeometryKind member on `geometry_kind` and its published polygon as a
+  # `fixed_asset_location` geometry-wkt claim — never a device-point
+  # `camera_latitude`. Both are registered predicates.yaml members (P36.3 /
+  # P31.8). Point records still emit no `geometry_kind` claim — `point` is
+  # the model's existing default shape; the claim exists so a non-point
+  # record can never be silently flattened.
+  "geometry_kind",
+  "fixed_asset_location",
 ]
 
 # Predicate GENRES this connector MUST NOT write (scope-creep guard): the
@@ -153,6 +169,9 @@ lon_fields = [
   "Cam_Long", "cam_long", "Loc_Long", "loc_long", "longitude2", "lon",
   # P26.13: Nottingham title-case Long, the Spanish Puerto Gaitán schema.
   "Long", "longitud",
+  # P36.4 (ACQ-08): MiDrive's title-case `Lon` pairs with its `Lat` column
+  # (coordinate_mode=fields — the published attribute pair is the source).
+  "Lon",
 ]
 
 # P26.9: Socrata point-object fields — the GeoJSON-ish dict-valued columns a
@@ -206,6 +225,9 @@ county_fields = [
   # area, Nottingham district code/name, the Spanish `sector`.
   "WARD", "WARDNAME", "PSA", "DIVISION", "TOWN", "LOCAL_AUTH", "MUN",
   "CAMERA_AREA", "District_Code", "District_Name", "sector",
+  # P36.4 (ACQ-08): Hyattsville's council-ward label (sub-state jurisdiction
+  # detail, as published).
+  "City_Ward",
 ]
 
 # Human-readable camera name / description.
@@ -224,6 +246,8 @@ name_fields = [
   # P26.13: catalog-sweep registries — title/upper-case address columns (DC
   # MPD, Rochester, York), Lambeth's CAMERA_LOCATION, the Spanish `nombre`.
   "ADDRESS", "Address", "ADDRESS_2", "CAMERA_LOCATION", "nombre",
+  # P36.4 (ACQ-08): WVDOH's location label and Hyattsville's site-name field.
+  "LOCATION_PARTICULARS", "Loc_Name",
 ]
 
 # Reported camera/device status.

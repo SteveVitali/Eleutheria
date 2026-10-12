@@ -1,0 +1,19 @@
+{
+  "displayFieldName": "LOCATION_PARTICULARS",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "LOCATION_PARTICULARS", "type": "esriFieldTypeString", "alias": "Location Particulars"}
+  ],
+  "features": [
+    {
+      "attributes": {"OBJECTID": 77, "LOCATION_PARTICULARS": "I-79 MM 155 near Morgantown"},
+      "geometry": {"x": -80.0150, "y": 39.6100}
+    },
+    {
+      "attributes": {"OBJECTID": 78, "LOCATION_PARTICULARS": "I-64 MM 58 near Charleston"},
+      "geometry": {"x": -81.6330, "y": 38.3490}
+    }
+  ]
+}

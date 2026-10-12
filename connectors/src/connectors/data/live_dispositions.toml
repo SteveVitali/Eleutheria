@@ -605,10 +605,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P36.6"
 
-[sources.camreg_hyattsville_md_cctv_camera_2024]
-disposition = "promote"
-class_ticket = "P36.4"
-
 [sources.camreg_ie_d_dublin_traffic_poles_with]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -673,10 +669,6 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P36.5"
 
-[sources.camreg_ne_lincoln_traffic_cameras]
-disposition = "promote"
-class_ticket = "P36.4"
-
 [sources.camreg_nj_new_jersey_yourmoney]
 disposition = "promote"
 class_ticket = "P37.48"
@@ -692,10 +684,6 @@ class_ticket = "P36.6"
 [sources.camreg_oakland_ca_shotspotter_2013_2015]
 disposition = "promote"
 class_ticket = "P37.48"
-
-[sources.camreg_omaha_ne_parks_cameras]
-disposition = "promote"
-class_ticket = "P36.4"
 
 [sources.camreg_peoria_il_drone_usage]
 disposition = "promote"
@@ -917,10 +905,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P36.10"
 
-[sources.dot_511_de]
-disposition = "promote"
-class_ticket = "P36.4"
-
 [sources.dot_511_gb]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -929,14 +913,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.dot_511_mi]
-disposition = "promote"
-class_ticket = "P36.4"
-
-[sources.dot_511_nc]
-disposition = "promote"
-class_ticket = "P36.4"
-
 [sources.dot_511_nm]
 disposition = "promote"
 class_ticket = "P37.47"
@@ -944,14 +920,6 @@ class_ticket = "P37.47"
 [sources.dot_511_nv]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.dot_511_vt]
-disposition = "promote"
-class_ticket = "P36.4"
-
-[sources.dot_511_wv]
-disposition = "promote"
-class_ticket = "P36.4"
 
 [sources.grant_al_alabama_adeca_newsroom]
 disposition = "promote"

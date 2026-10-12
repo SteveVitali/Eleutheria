@@ -1,0 +1,43 @@
+{
+  "displayFieldName": "Loc_Name",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Loc_Name", "type": "esriFieldTypeString", "alias": "Location Name"},
+    {"name": "City_Ward", "type": "esriFieldTypeString", "alias": "City Ward"},
+    {"name": "Installed", "type": "esriFieldTypeString", "alias": "Installed"},
+    {"name": "Operating", "type": "esriFieldTypeString", "alias": "Operating"},
+    {"name": "Cam_Type", "type": "esriFieldTypeString", "alias": "Camera Type"},
+    {"name": "Status", "type": "esriFieldTypeString", "alias": "Status"},
+    {"name": "Inst_Date", "type": "esriFieldTypeString", "alias": "Install Date"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 201,
+        "Loc_Name": "Jefferson St & 42nd Ave",
+        "City_Ward": "Ward 2",
+        "Installed": "Yes",
+        "Operating": "Yes",
+        "Cam_Type": "Fixed",
+        "Status": "Active",
+        "Inst_Date": "2024-03-01"
+      },
+      "geometry": {"x": -76.9500, "y": 38.9550}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 202,
+        "Loc_Name": "Rhode Island Ave & 38th St",
+        "City_Ward": "Ward 1",
+        "Installed": "Yes",
+        "Operating": "Yes",
+        "Cam_Type": "Fixed",
+        "Status": "Active",
+        "Inst_Date": "2024-04-15"
+      },
+      "geometry": {"x": -76.9390, "y": 38.9420}
+    }
+  ]
+}

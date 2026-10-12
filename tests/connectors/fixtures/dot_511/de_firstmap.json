@@ -1,0 +1,34 @@
+{
+  "displayFieldName": "PERMITNUM",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "PERMITNUM", "type": "esriFieldTypeString", "alias": "Permit Number"},
+    {"name": "DEVICE_TYPE", "type": "esriFieldTypeString", "alias": "Device Type"},
+    {"name": "MODEL", "type": "esriFieldTypeString", "alias": "Model"},
+    {"name": "OWNER", "type": "esriFieldTypeString", "alias": "Owner"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 11,
+        "PERMITNUM": "CAM-0011",
+        "DEVICE_TYPE": "CCTV",
+        "MODEL": "PTZ-DOME",
+        "OWNER": "DelDOT"
+      },
+      "geometry": {"x": -75.5244, "y": 39.1572}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 12,
+        "PERMITNUM": "CAM-0012",
+        "DEVICE_TYPE": "CCTV",
+        "MODEL": "PTZ-DOME",
+        "OWNER": "DelDOT"
+      },
+      "geometry": {"x": -75.6050, "y": 39.6780}
+    }
+  ]
+}
