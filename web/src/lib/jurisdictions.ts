@@ -133,6 +133,9 @@ export const JURISDICTION_NAMES: Readonly<Record<string, string>> = {
   "US-CA": "California, United States",
   "US-CO": "Colorado, United States",
   "US-CT": "Connecticut, United States",
+  // P36.6 (ACQ-10): the DC ASC pair (camreg_dc_ddot_ate) is the first
+  // US-DC iso.3166_2 emitter in the camera registry.
+  "US-DC": "District of Columbia, United States",
   "US-DE": "Delaware, United States",
   "US-FL": "Florida, United States",
   "US-GA": "Georgia, United States",
