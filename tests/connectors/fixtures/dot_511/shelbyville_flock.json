@@ -1,0 +1,31 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "DirectionFacing", "type": "esriFieldTypeString", "alias": "Direction Facing"},
+    {"name": "JanHits", "type": "esriFieldTypeInteger", "alias": "January Hits"},
+    {"name": "FebHits", "type": "esriFieldTypeInteger", "alias": "February Hits"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 41,
+        "DirectionFacing": "NB",
+        "JanHits": 1473,
+        "FebHits": 1210
+      },
+      "geometry": {"x": -86.4602, "y": 35.4834}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 42,
+        "DirectionFacing": "SB",
+        "JanHits": 988,
+        "FebHits": 1042
+      },
+      "geometry": {"x": -86.4711, "y": 35.4702}
+    }
+  ]
+}

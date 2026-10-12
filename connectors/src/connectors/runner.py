@@ -208,6 +208,28 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "camreg_ne_lincoln_traffic_cameras": "dot_511",
     "camreg_omaha_ne_parks_cameras": "dot_511",
     "camreg_hyattsville_md_cctv_camera_2024": "dot_511",
+    # P36.5 (ACQ-09): R11 agency ALPR/Flock layers — fifteen gated `camreg_*`
+    # sources. The FDOT District-3 pair consolidates into one
+    # `camreg_fdot_flock` source carrying the inventory + removal-status
+    # targets in the same run (I8 §5.2 — the removal ledger's valid_to bounds
+    # never delete the paired inventory rows). All route through `dot_511`
+    # over the merged target registry; the gated rows stay refused by the
+    # loader until the operator's OP-26 Wave-B flip under ING-GO-B.
+    "camreg_fdot_flock": "dot_511",
+    "camreg_pueblo_co_flock": "dot_511",
+    "camreg_rocky_mount_nc_lpr_cameras": "dot_511",
+    "camreg_shelbyville_tn_flock_cameras": "dot_511",
+    "camreg_temecula_ca_flock_wfl1": "dot_511",
+    "camreg_marble_falls_tx_flock_locations": "dot_511",
+    "camreg_va_prince_william_county": "dot_511",
+    "camreg_milford_ct_flocklprcam": "dot_511",
+    "camreg_elgin_il_lpr_cameras": "dot_511",
+    "camreg_south_fulton_ga_lpr_cameras": "dot_511",
+    "camreg_va_pittsylvania_county_stationary": "dot_511",
+    "camreg_alabaster_al_lpr_cameras": "dot_511",
+    "camreg_thomasville_ga_flock_location": "dot_511",
+    "camreg_leon_county_fl_overwatch_viewer": "dot_511",
+    "camreg_ga_peachtree_corners_flock_camera": "dot_511",
     # P26.9 (SOURCES.8): municipal / transit / non-US camera registries — one
     # source row per publisher; all route through the `dot_511` connector over
     # the merged target registry (data/camera_registry_targets.toml). Gated

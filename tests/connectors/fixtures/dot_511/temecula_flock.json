@@ -1,0 +1,43 @@
+{
+  "displayFieldName": "NAME",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "ID", "type": "esriFieldTypeInteger", "alias": "ID"},
+    {"name": "NUM", "type": "esriFieldTypeInteger", "alias": "NUM"},
+    {"name": "NAME", "type": "esriFieldTypeString", "alias": "NAME"},
+    {"name": "LAT", "type": "esriFieldTypeDouble", "alias": "LAT"},
+    {"name": "LONG", "type": "esriFieldTypeDouble", "alias": "LONG"},
+    {"name": "ROTATION", "type": "esriFieldTypeDouble", "alias": "ROTATION"},
+    {"name": "ANGLE", "type": "esriFieldTypeString", "alias": "ANGLE"},
+    {"name": "URL", "type": "esriFieldTypeString", "alias": "URL"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "ID": 21,
+        "NUM": 21,
+        "NAME": "Rancho California Rd & Ynez Rd",
+        "LAT": 33.5067,
+        "LONG": -117.1484,
+        "ROTATION": 45.0,
+        "ANGLE": "NE",
+        "URL": "https://streams.example.invalid/temecula/cam21.m3u8"
+      },
+      "geometry": {"x": -117.1484, "y": 33.5067}
+    },
+    {
+      "attributes": {
+        "ID": 22,
+        "NUM": 22,
+        "NAME": "Margarita Rd & Winchester Rd",
+        "LAT": 33.5349,
+        "LONG": -117.1608,
+        "ROTATION": 90.0,
+        "ANGLE": "E",
+        "URL": "https://streams.example.invalid/temecula/cam22.m3u8"
+      },
+      "geometry": {"x": -117.1608, "y": 33.5349}
+    }
+  ]
+}

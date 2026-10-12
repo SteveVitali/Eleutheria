@@ -437,10 +437,6 @@ class_ticket = "P37.50"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.camreg_alabaster_al_lpr_cameras]
-disposition = "promote"
-class_ticket = "P36.5"
-
 [sources.camreg_au_ckan_package_search]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -505,10 +501,6 @@ class_ticket = "P36.6"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.camreg_elgin_il_lpr_cameras]
-disposition = "promote"
-class_ticket = "P36.5"
-
 [sources.camreg_es_md_madrid_c_maras_de]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -521,14 +513,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.camreg_fl_d3_flock_camera]
-disposition = "promote"
-class_ticket = "P36.5"
-
-[sources.camreg_fl_flock_removal_status]
-disposition = "promote"
-class_ticket = "P36.5"
-
 [sources.camreg_fr_92_grand_paris_seine_ouest_vid]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -540,10 +524,6 @@ class_ticket = "P37.53"
 [sources.camreg_ga_flock_cameras_asof]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.camreg_ga_peachtree_corners_flock_camera]
-disposition = "promote"
-class_ticket = "P36.5"
 
 [sources.camreg_ga_savannah_flock_camera]
 disposition = "promote"
@@ -633,17 +613,9 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P36.6"
 
-[sources.camreg_leon_county_fl_overwatch_viewer]
-disposition = "promote"
-class_ticket = "P36.5"
-
 [sources.camreg_ma_massachusetts_capital]
 disposition = "promote"
 class_ticket = "P37.52"
-
-[sources.camreg_marble_falls_tx_flock_locations]
-disposition = "promote"
-class_ticket = "P36.5"
 
 [sources.camreg_md_montgomery_county_automated]
 disposition = "promote"
@@ -664,10 +636,6 @@ class_ticket = "P36.6"
 [sources.camreg_mi_detroit_dpd_shotspotter]
 disposition = "promote"
 class_ticket = "P37.48"
-
-[sources.camreg_milford_ct_flocklprcam]
-disposition = "promote"
-class_ticket = "P36.5"
 
 [sources.camreg_nj_new_jersey_yourmoney]
 disposition = "promote"
@@ -693,41 +661,17 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_pueblo_co_flock]
-disposition = "promote"
-class_ticket = "P36.5"
-
-[sources.camreg_rocky_mount_nc_lpr_cameras]
-disposition = "promote"
-class_ticket = "P36.5"
-
 [sources.camreg_santa_fe_nm_park_cameras]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.camreg_shelbyville_tn_flock_cameras]
-disposition = "promote"
-class_ticket = "P36.5"
 
 [sources.camreg_si_048_ko_evje_videonadzor_na]
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_south_fulton_ga_lpr_cameras]
-disposition = "promote"
-class_ticket = "P36.5"
-
 [sources.camreg_suffolk_county_ny_tpva_red_light]
 disposition = "promote"
 class_ticket = "P36.6"
-
-[sources.camreg_temecula_ca_flock_wfl1]
-disposition = "promote"
-class_ticket = "P36.5"
-
-[sources.camreg_thomasville_ga_flock_location]
-disposition = "promote"
-class_ticket = "P36.5"
 
 [sources.camreg_ua_18_korosten]
 disposition = "promote"
@@ -760,14 +704,6 @@ class_ticket = "P37.49"
 [sources.camreg_us_socrata_hosted_vendor]
 disposition = "promote"
 class_ticket = "P37.48"
-
-[sources.camreg_va_pittsylvania_county_stationary]
-disposition = "promote"
-class_ticket = "P36.5"
-
-[sources.camreg_va_prince_william_county]
-disposition = "promote"
-class_ticket = "P36.5"
 
 [sources.camreg_wa_tacoma_automated_enforcement]
 disposition = "promote"

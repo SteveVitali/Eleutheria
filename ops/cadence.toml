@@ -933,8 +933,8 @@ cron = "17 7 17 * *"
 job = "sig-ingest-r11-layers-02"
 scheduler = "sig-sched-r11-layers-02"
 task_timeout = "6h"
-members = ["camreg_fl_d3_flock_camera", "camreg_fl_flock_removal_status", "camreg_pueblo_co_flock", "camreg_rocky_mount_nc_lpr_cameras", "camreg_shelbyville_tn_flock_cameras", "camreg_temecula_ca_flock_wfl1", "camreg_marble_falls_tx_flock_locations", "camreg_va_prince_william_county", "camreg_milford_ct_flocklprcam", "camreg_elgin_il_lpr_cameras", "camreg_south_fulton_ga_lpr_cameras", "camreg_va_pittsylvania_county_stationary", "camreg_alabaster_al_lpr_cameras", "camreg_thomasville_ga_flock_location", "camreg_leon_county_fl_overwatch_viewer", "camreg_ga_peachtree_corners_flock_camera"]
-note = "Round-11 batch r11-layers-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+members = ["camreg_fdot_flock", "camreg_pueblo_co_flock", "camreg_rocky_mount_nc_lpr_cameras", "camreg_shelbyville_tn_flock_cameras", "camreg_temecula_ca_flock_wfl1", "camreg_marble_falls_tx_flock_locations", "camreg_va_prince_william_county", "camreg_milford_ct_flocklprcam", "camreg_elgin_il_lpr_cameras", "camreg_south_fulton_ga_lpr_cameras", "camreg_va_pittsylvania_county_stationary", "camreg_alabaster_al_lpr_cameras", "camreg_thomasville_ga_flock_location", "camreg_leon_county_fl_overwatch_viewer", "camreg_ga_peachtree_corners_flock_camera"]
+note = "Round-11 batch r11-layers-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.5 (ACQ-09) review: the batch is the ticket's fifteen GATED sources \u2014 the ACQ-01-generated pair camreg_fl_d3_flock_camera + camreg_fl_flock_removal_status consolidates into ONE member camreg_fdot_flock carrying both targets in the same run (I8 \u00a75.2 \u2014 a removal fact is never asserted against a stale inventory). Monthly cadence even for the 'once' layers: the 2026 removal wave (FDOT's order, I9a NEW-2) makes currency the value. The fifteen rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 
 [[batches]]
 id = "r11-procurement-01"

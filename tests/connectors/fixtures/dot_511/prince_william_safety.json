@@ -1,0 +1,44 @@
+{
+  "displayFieldName": "camera",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "camera", "type": "esriFieldTypeString", "alias": "camera"},
+    {"name": "status", "type": "esriFieldTypeString", "alias": "status"},
+    {"name": "cameratype", "type": "esriFieldTypeString", "alias": "cameratype"},
+    {"name": "district", "type": "esriFieldTypeString", "alias": "district"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 11,
+        "camera": "Old Bridge Rd & Occoquan Rd",
+        "status": "Active",
+        "cameratype": "Permanent",
+        "district": "Occoquan"
+      },
+      "geometry": {"x": -77.3242, "y": 38.6851}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 12,
+        "camera": "Dale Blvd & Minnieville Rd",
+        "status": "Proposed",
+        "cameratype": "Permanent",
+        "district": "Neabsco"
+      },
+      "geometry": {"x": -77.3411, "y": 38.6490}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 13,
+        "camera": "Sudley Rd & Sudley Manor Dr",
+        "status": "Proposed",
+        "cameratype": "Flex",
+        "district": "Brentsville"
+      },
+      "geometry": {"x": -77.4984, "y": 38.7903}
+    }
+  ]
+}

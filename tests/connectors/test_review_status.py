@@ -128,8 +128,14 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # registered the two gated ADR-185 S8 tribal screened-lane rows
     # (camreg_tribal_all_leaders_directory + legis_tribal_tohono_oodham_notice;
     # 594 → 596 registered; both ingestion_permitted=false pending the
-    # wave-open HG-03 flip list, so loadable is unchanged).
-    assert "registered sources: 596" in out
+    # wave-open HG-03 flip list, so loadable is unchanged). P36.5 (ACQ-09)
+    # consolidated the two ACQ-01-generated FDOT rows
+    # (camreg_fl_d3_flock_camera + camreg_fl_flock_removal_status) into ONE
+    # source `camreg_fdot_flock` carrying both targets in the same run
+    # (I8 §5.2 — a removal fact is never asserted against a stale
+    # inventory): 596 → 595 registered; every P36.5 row stays
+    # ingestion_permitted=false, so loadable is unchanged.
+    assert "registered sources: 595" in out
     assert "self-checks OK" in out
 
 
@@ -254,9 +260,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # ingestion_permitted=false pending the wave-open HG-03 flip list —
     # loadable 236 unchanged, flip-ready still the one standing exception:
     # their rights stay unresolved, so they do not join flip-ready).
+    # P36.5 (ACQ-09) consolidated the two ACQ-01-generated FDOT rows into
+    # ONE source `camreg_fdot_flock` carrying the inventory +
+    # removal-status targets in the same run (I8 §5.2): 596 → 595
+    # registered; every P36.5 row stays ingestion_permitted=false —
+    # loadable 236 unchanged, flip-ready still the one standing exception.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 596" in out
+    assert "registered sources: 595" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out

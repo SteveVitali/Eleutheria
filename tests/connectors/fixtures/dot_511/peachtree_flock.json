@@ -1,0 +1,31 @@
+{
+  "displayFieldName": "Name",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Name", "type": "esriFieldTypeString", "alias": "Name"},
+    {"name": "FolderPath", "type": "esriFieldTypeString", "alias": "FolderPath"},
+    {"name": "PopupInfo", "type": "esriFieldTypeString", "alias": "PopupInfo"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 41,
+        "Name": "Peachtree Pkwy & Peachtree Corners Cir",
+        "FolderPath": "Flock Cameras/Zone A",
+        "PopupInfo": "<b>Peachtree Pkwy</b><br/>Flock Falcon"
+      },
+      "geometry": {"x": -84.2202, "y": 33.9699}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 42,
+        "Name": "Spalding Dr & Holcomb Bridge Rd",
+        "FolderPath": "Flock Cameras/Zone B",
+        "PopupInfo": "<b>Spalding Dr</b><br/>Flock Falcon"
+      },
+      "geometry": {"x": -84.2007, "y": 33.9884}
+    }
+  ]
+}

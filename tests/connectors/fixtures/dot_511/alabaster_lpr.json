@@ -1,0 +1,40 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Type", "type": "esriFieldTypeString", "alias": "Type"},
+    {"name": "Company", "type": "esriFieldTypeString", "alias": "Company"},
+    {"name": "Agency", "type": "esriFieldTypeString", "alias": "Agency"},
+    {"name": "CameraNumber", "type": "esriFieldTypeInteger", "alias": "Camera Number"},
+    {"name": "SerialNumber", "type": "esriFieldTypeString", "alias": "Serial Number"},
+    {"name": "Status", "type": "esriFieldTypeString", "alias": "Status"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 81,
+        "Type": "LPR",
+        "Company": "Flock Safety",
+        "Agency": "Alabaster PD",
+        "CameraNumber": 104,
+        "SerialNumber": "SN-A-88412",
+        "Status": "Active"
+      },
+      "geometry": {"x": -86.8173, "y": 33.2443}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 82,
+        "Type": "LPR",
+        "Company": "Flock Safety",
+        "Agency": "Alabaster PD",
+        "CameraNumber": 107,
+        "SerialNumber": "SN-A-88590",
+        "Status": "Active"
+      },
+      "geometry": {"x": -86.8240, "y": 33.2319}
+    }
+  ]
+}

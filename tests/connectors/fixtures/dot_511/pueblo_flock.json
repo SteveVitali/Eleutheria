@@ -1,0 +1,40 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Date_installed", "type": "esriFieldTypeString", "alias": "Date Installed"},
+    {"name": "Company", "type": "esriFieldTypeString", "alias": "Company"},
+    {"name": "Serial", "type": "esriFieldTypeString", "alias": "Serial"},
+    {"name": "Pole", "type": "esriFieldTypeString", "alias": "Pole"},
+    {"name": "Lat", "type": "esriFieldTypeDouble", "alias": "Lat"},
+    {"name": "Long", "type": "esriFieldTypeDouble", "alias": "Long"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 114,
+        "Date_installed": "2024-11-02",
+        "Company": "Flock Safety",
+        "Serial": "FS-88214",
+        "Pole": "Steel",
+        "Lat": 38.2544,
+        "Long": -104.6091
+      },
+      "geometry": {"x": -104.6091, "y": 38.2544}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 115,
+        "Date_installed": "2025-01-17",
+        "Company": "Flock Safety",
+        "Serial": "FS-90031",
+        "Pole": "Wood",
+        "Lat": 38.2719,
+        "Long": -104.5994
+      },
+      "geometry": {"x": -104.5994, "y": 38.2719}
+    }
+  ]
+}

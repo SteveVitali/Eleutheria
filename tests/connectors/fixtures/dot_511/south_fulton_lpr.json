@@ -1,0 +1,34 @@
+{
+  "displayFieldName": "Name",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Name", "type": "esriFieldTypeString", "alias": "Name"},
+    {"name": "Location", "type": "esriFieldTypeString", "alias": "Location"},
+    {"name": "created_user", "type": "esriFieldTypeString", "alias": "Created User"},
+    {"name": "last_edited_user", "type": "esriFieldTypeString", "alias": "Last Edited User"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 51,
+        "Name": "Cam 01",
+        "Location": "Old National Hwy & Flat Shoals Rd",
+        "created_user": "gis_admin",
+        "last_edited_user": "j.doe"
+      },
+      "geometry": {"x": -84.4670, "y": 33.5956}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 52,
+        "Name": "Cam 02",
+        "Location": "Campbellton Rd & Enon Rd",
+        "created_user": "gis_admin",
+        "last_edited_user": "j.doe"
+      },
+      "geometry": {"x": -84.5312, "y": 33.6108}
+    }
+  ]
+}
