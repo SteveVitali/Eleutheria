@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "68a68bfd76cd236d3a29bb02eeefdb5513d26997",
+  "input_commit": "dfd9a06fb770e7c8e467916c24f4f0519d36bb23",
   "manifest_inputs": 1021,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -8426,7 +8426,7 @@
       },
       {
         "key": "P34.46",
-        "obligations_cell": "the queued L2 deploy slot (rehearsed schema roll + ADR-159 dispositions + `sig-api` digest roll + `/status/` notice + trigger pause/resume) and the queued L3 48 h soak; landed: `@r11-verify-membership` rework, re-rehearsal green, `sig-ops roll-gate`, go-request/notice/changelog drafts + pause list; no deferral opens",
+        "obligations_cell": "the queued L2 deploy slot (rehearsed schema roll + ADR-159 dispositions + `sig-api` roll + `/status/` notice + trigger pause/resume) and the queued L3 48 h soak; landed: `@r11-verify-membership` rework, re-rehearsal green, `sig-ops roll-gate`, go-request/notice/changelog drafts + pause list; no deferral opens",
         "gates_cell": "hosted, never pre-authorised (IN-TICKET PAUSE — L44 rewrites `claim_evidence` under ACCESS EXCLUSIVE): L2 needs the operator's verbatim in-ticket go in GATE DECISIONS, operator present, a weekday 14:00-20:00Z slot not before 2026-10-14T14:00Z (excluded: weekends and outside-14:00-20:00Z), `live:P34.39a` (`pass`), AR-2 SUCCESSFUL, `sig-ops roll-gate` green on fresh inputs (lock, disk, `lock_timeout`, plan diff = 0 — else re-rehearse); L3 runs 48 h after L2",
         "operator_cell": "record the verbatim in-ticket go (silence is never consent) and be present in the slot; the go request + notice + changelog drafts ship verbatim-confirmed; no hosted `sqitch revert` — schema failures fix forward",
         "rerun_cell": "`implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` (scope: one leg per run — L2 the slot, then L3 the soak) · landed row 258 (PR #261 — L2/L3 queued)",
@@ -8460,7 +8460,7 @@
         "key": "P35.67",
         "obligations_cell": "the queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`; docs/build/reports/POST_CUTOVER_PROBE_CHECKLIST.md) after OP-09 + the L2 cert-renewal read ≈ 2026-11-22; read-only, OM-14 zero-mutation; probe verb + checklist + capture/replay landed; no deferral opens",
         "gates_cell": "hosted, read-only (the argv contract is pinned in tests); L1 needs live:OP-09 (`dig +noall +answer surveillancegraph.org NS` answering the Cloudflare pair); L2 is calendar-bounded (≈ 2026-11-22)",
-        "operator_cell": "execute OP-09 (docs/build/reports/DNS_CUTOVER_RUNBOOK.md), then run each leg and land probe-run.json + capture in this row's ledger",
+        "operator_cell": "execute OP-09 (docs/build/reports/DNS_CUTOVER_RUNBOOK.md), then run each leg and land probe-run.json + capture in the row's ledger",
         "rerun_cell": "`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` · landed row 263 (PR #265 — legs queued on OP-09)",
         "obligations": []
       },
@@ -18510,7 +18510,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a71f6c11c1259e9c63adfc17eb15654cf7e8a82a7a7c64b1fe9fc1a534a15209",
+  "manifest_sha256": "13419af006423b2f331a729b1a4454b69b0fc58c29e73b9f6d4ef80c2b753e6a",
   "current_md": {
     "lines": 63,
     "bytes": 15427,
