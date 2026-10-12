@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P36.4 closeout (row 277 — ACQ-08: ten official camera layers registered gated; `GeometryKind` dispatch + `area` emit in `dot_511`; no live leg); next → P36.5 (row 278).
