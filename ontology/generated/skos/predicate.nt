@@ -1011,6 +1011,16 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/end_date> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/end_date> <https://ontology.sig-project.org/schema/valueDatatype> "edtf" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/end_date> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <http://www.w3.org/2004/02/skos/core#definition> "The operator-published aggregate count of automated-enforcement outcomes (warnings/violations) for a camera or programme subject over a declared period — a claim carries its `period` and `measure` fields beside the integer value, keyed camera × month or site × quarter as published. Aggregate rows only: never a per-violation, plate, person, trip or citation record (P36.6 / R11-ACQ-10, I8 NEW-7) — the aggregate admission is distinct from the connector-forbidden `camera_count` device-count genre, and Part VIII prohibits the row-level surfaces this predicate deliberately replaces." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "enforcement_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "interval_union" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/enrolls_asset_into> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/enrolls_asset_into> <http://www.w3.org/2004/02/skos/core#definition> "A programme or network the subject enrols an asset into (pathway relationship)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/enrolls_asset_into> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .

@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 281,
+    "count": 282,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -190,6 +190,7 @@
       "effectiveness_claim",
       "enacting_body",
       "end_date",
+      "enforcement_count",
       "enrolls_asset_into",
       "event_date",
       "event_deployments",
