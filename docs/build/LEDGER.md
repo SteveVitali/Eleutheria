@@ -7,10 +7,11 @@
 <!-- Archived head line byte-for-byte (head State line pre-P36.5) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.5.txt, sha256 678f3a2931458b19… (BM-LEDGER-08). -->
 <!-- Archived head line byte-for-byte (head State line pre-P36.6) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.6.txt, sha256 59e4fe793efc41dd… (BM-LEDGER-08). -->
 <!-- Archived head line byte-for-byte (head State line pre-P36.7) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.7.txt, sha256 d7f57db707d6f975… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.8) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.8.txt, sha256 6f29471de7e85c06… (BM-LEDGER-08). -->
 
 > **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; the clause text is archived byte-for-byte (comment above) and binds unchanged; per-ticket subset: manifest `## Operating rules`. Prior modes archived (comments5/6/7 folds).
 >
-> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P36.7 closeout (row 280 — ACQ-11: three procurement and programme registers registered gated; `programme_area`/`programme_count` predicates + the ADR-208 PSA×month deviation; no live leg); next → P36.8 (row 281).
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P36.8 closeout (row 281 — ACQ-12: ten statutory ALPR-regime disclosures registered gated + the `government_mandated_disclosure` generalization beyond municipal CCOPS; `statutory_report` reviewed fallback genre + the literal→slug technology map; no live leg); next → P36.9a (row 282).
 > - **Clauses (digests; full text archived — comment above).** Dispatch — one `swe-2-high` orchestrator (`orchestrate-build`), a fresh sub-agent per ticket; `returnPass` keys never re-dispatched; isolation check at T6, P34.1, each sub-round GATE and every restart (§8.5) · Orient ≤ 48 KiB — O1 this head · O3 `### RETURN PASS — current` · O4 `current_projection.py verify` + `docs/build/reports/current/CURRENT.md` · O5 the last 3 lines · O6 next row's manifest line + contract header; never LEDGER/DEFERRALS/BUILD_INDEX whole; re-measure Loads ≤ ~150k else split · Clock (OM-04) — `date -u` or a named git/GitHub time; read-backs wait fire + `lastAttemptTime` · CI (OM-05; H2) — `ci-boundary.sh --ledger docs/build/LEDGER.md --ticket <lastCompleted> --stack` before dispatch; red/pending/unknown → `blockedOn`; `merge-base --is-ancestor origin/main <chainTip>` recorded · Records (OM-13) — append-only ends (`--staged` pre-closeout, `--range` boundaries); corrections appended (ADR-146); `sqitch.plan` L44–52 never re-stamped (C-10); `FLIPPED`/`DONE` transitions need evidence · Harness (OM-01, A-21) — `harness:`/`Harness:` = devin-desktop/swe-2-high/subagent; operator stays author; every agent commit trailered; another harness/model → stop and ask · Pauses (A-15, A-2b) — HG gates, one ING-GO/wave, spend >$300/mo, red CI, unlisted OM-20 mutation, gate markers, usage-limit event; OM-18 stop and ask; silence is never consent · Digest (A-2) — `digest.sh` per wave/pause/end/usage-limit · Pre-authorisation (OM-20) — only live `pre-authorization` rows: the 13 11A (expires GATE-G4) + B-9 Class-R standing go; the OM-20 class list is never pre-authorised · Gates — no GATE while an OM-19 leg is due; GATE-ANNOUNCE on REVIEW-R11's S0/S1; HG-03 flips in an operator-signed commit/row (OP-26) · Live legs (OM-19, AR-1…9) — outside window/go → queue in RETURN PASS; due legs at each boundary on `r11/<id>-live-<n>`; AR-2 first; AR-3 windows · Live API (A-20) — basis label + `/status/` notice + OM-20 listing or in-ticket go · Contact (P16, C-8, U-011) — alias first; no outside contact; no agent claims a human check · Numbers — next ADR ≥ 191; re-run `later_register.py` on planning-data change · Skills — no B6 §5.3 override in force.
 
 ## CURRENT STATE
@@ -18,8 +19,8 @@
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B — the generated `returnPass:` id list rides the B3 V2 hard bound (fail > 512 B; it grows with the queued-leg set); no history; the PHASE LOG and git carry the history of values. -->
 ```
 projectStatus:   IN_PROGRESS                             # Round 11 running (GATE-B, C10)
-nextTicket:      P36.8                               # row 281 (11B)
-lastCompleted:   P36.7                               # row 280 (procurement + programme registers; no live leg)
+nextTicket:      P36.9a                              # row 282 (11B — UAV + FRT half of ACQ-13)
+lastCompleted:   P36.8                               # row 281 (statutory ALPR disclosures ×10 + gmd generalization; no live leg)
 blockedOn:       (nothing)                          # real blocks only
 pauseRequested:  false                               # set at C10 (GATE-B go)
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67
@@ -30,13 +31,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator's main checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P36.7-procurement-and-programme-registers # PR #282 open
+chainTip:        r11/P36.8-statutory-disclosures-alpr-regimes # PR #283 open
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-12T21:06Z
+updatedAt:       2026-10-12T23:13Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -941,3 +942,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-12 — P36.6 post-closeout record — closeout head `4a30bbe3` 5/5 green head-bound (`ci: pass #281@4a30bbe` — python/docs/composed/security/web, run 38290715009; `logs/ci-P36.6.json`, P35.10 second-boundary precedent) · ticket entry 385 B; the 48 KiB probe held (47,376 B) · next → P36.7 (280) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-12 — P36.7 ticket — r11/P36.7-procurement-and-programme-registers · PR #282 (base r11/P36.6-…) · head `b0d89b7c` 5/5 green (`ci: pass #282@b0d89b7c` — run 38308521896; `logs/ci-P36.7.json`) · ACQ-11: three procurement + programme registers gated; `programme_area`/`programme_count` + ADR-208 (PSA×month deviation); no fetch/flip · chainTip → r11/P36.7-… · next → P36.8 (281) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-12 — P36.7 post-closeout record — closeout head `8de838a2` 5/5 green head-bound (`ci: pass #282@8de838a` — python/docs/composed/security/web, run 38310399317; `logs/ci-P36.7-2.json`, P35.10 second-boundary precedent) · ticket entry 404 B; the impl+closeout ran in one worker session · next → P36.8 (281) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-12 — P36.8 ticket — r11/P36.8-statutory-disclosures-alpr-regimes · PR #283 (base r11/P36.7-…) · head `0759d80e` 5/5 green (`ci: pass #283@0759d80` — run 38319511156; `logs/ci-P36.8.json`) · ACQ-12: ten statutory ALPR disclosures gated + `government_mandated_disclosure` generalized (statutory fallback genre, literal→slug map, per-publisher adapters); no fetch/flip · chainTip → r11/P36.8-… · next → P36.9a (282) · harness: devin-desktop/swe-2-high/subagent
