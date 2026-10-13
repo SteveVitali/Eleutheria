@@ -21,6 +21,7 @@ fails if the behaviour it names is removed:
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 from exports.research_dossier import (
@@ -62,7 +63,17 @@ def test_packet_records_bind_every_claim_to_captured_bytes() -> None:
         assert c.get("document_id") in artifacts, f"{c['predicate_id']} cites a missing document"
         assert c.get("evidence", {}).get("locator"), f"{c['predicate_id']} has no locator"
         assert c["evidence"].get("source_url")
-        assert c["evidence"].get("retrieved_date")
+        # P34.22b: a replayed record carries the fixture commit date as its
+        # retrieval stamp; a hand-authored stand-in carries none.
+        if c.get("capture_kind") == "stand-in":
+            assert not c["evidence"].get("retrieved_date"), (
+                f"{c['predicate_id']}: a stand-in was never retrieved"
+            )
+            assert c["evidence"].get("fixture_committed_at")
+        else:
+            assert c["evidence"].get("retrieved_date"), (
+                f"{c['predicate_id']}: a fixture replay carries the commit date"
+            )
 
 
 def test_three_dossier_documents_replayed_verbatim() -> None:
@@ -230,10 +241,17 @@ def test_retention_announced_effective_date_preserved() -> None:
     q7 = next(a for a in d["answers"] if a["question"] == "q7")
     ret = next(x for x in q7["assertions"] if x["predicate"] == "retention_period")
     assert ret["value"] == "7 days"
-    # Stated effective 2026-10-01 — NOT the capture date (2026-10-01 replay) and
-    # never an observed operational date.
+    # Stated effective 2026-10-01 — a real document date — while observed_at is
+    # the usage-page fixture's real authoring commit (P34.22b), never promoted
+    # to an operational sighting and never equal to the stated date.
     assert ret["valid_from"] == "2026-10-01"
-    assert ret["observed_at"] == "2026-10-01"
+    usage_commit = (
+        datetime.fromisoformat(d["capture"]["fixtures"]["okc-flock-usage-2026"]["committed_at"])
+        .date()
+        .isoformat()
+    )
+    assert ret["observed_at"] == usage_commit
+    assert ret["observed_at"] != ret["valid_from"]
     exc = next(x for x in q7["assertions"] if "investigation" in str(x["value"]))
     assert exc["predicate"] == "use_restriction"
     # The announced 30→7 transition is a separate stated fact (journalism).
@@ -319,7 +337,9 @@ def test_print_html_renders_scope_and_citations() -> None:
     d = _dossier()
     html = render_dossier_print_html(d)
     assert "count_scope" in html
-    assert "retrieved" in html
+    # P34.22b: the honest capture label — a stand-in replay stamp or an
+    # explicit stand-in provenance, never a bare fabricated "retrieved".
+    assert "stand-in" in html
     assert "independent_review" in html or "not_run" in html
 
 

@@ -69,3 +69,7 @@ Grant Program (assistance listing 97.067) prime-grant allocations surface.
 Rights basis: USAspending is federal open data (public domain); the reviewed
 bounded window is two pages under the documented POST endpoint
 (ADR-083 allow-listed).
+
+## Date corrections (P34.22b / ADR-146 — appended 2026-10-04T02:05:32Z)
+
+- The "P25.5 live-extraction fixtures (added 2026-09-17)" provenance above was dated one day AFTER the event: the fixtures were committed by `7b52f2b4` at 2026-09-16T02:04:41Z (local 2026-09-15 22:04 -04:00). Recorded text kept byte-identical; true date 2026-09-16 (register: docs/build/reports/memory-repair/date_corrections.csv).

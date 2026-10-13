@@ -41,8 +41,10 @@ from __future__ import annotations
 import copy
 import dataclasses
 import json
+import subprocess
 from collections.abc import Mapping, Sequence
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -64,17 +66,67 @@ from . import seed_correction
 DOSSIER_ID = "okc-flock-alpr"
 DEPLOYMENT = "sig:deployment:okc-okcpd-flock"
 JURISDICTION = "us.state_abbr:OK"
-#: The packet's as-of pair: after the announced 2026-10-01 retention change —
-#: the effective date is a STATED date (announced), never operational evidence.
-AS_OF_WORLD = "2026-10-02"
-AS_OF_BELIEF = "2026-10-02"
-_FIXTURE_RETRIEVED = datetime(2026, 10, 1, tzinfo=UTC)
+
+#: The capture-kind vocabulary (P34.22b / B4 G1 R4, ADR-146): ``stand-in``
+#: marks a packet-AUTHORED record over hand-authored bytes — it carries NO
+#: retrieval date (nothing was ever retrieved) plus ``committed_at`` /
+#: ``fixture_commit`` provenance; ``fixture_replay`` marks a connector-EMITTED
+#: record replayed over committed fixture bytes — its retrieval/observation
+#: fields carry the fixture's real authoring commit time, read from git.
+CAPTURE_KIND_STAND_IN = "stand-in"
+CAPTURE_KIND_FIXTURE_REPLAY = "fixture_replay"
+
 _ALLOW_ALL = "User-agent: *\nAllow: /\n"
 
 _REPO = Path(__file__).resolve().parents[3]
 _DOSSIER_FIX = _REPO / "tests" / "connectors" / "fixtures" / "dossier"
 _OKC_FIX = _REPO / "tests" / "connectors" / "fixtures" / "okc"
 _PACK_FIX = _REPO / "tests" / "acceptance" / "fixtures" / "okc_sources.json"
+
+
+@cache
+def _fixture_commit(path: Path) -> tuple[str, datetime]:
+    """``(short-sha, UTC committer datetime)`` of the commit that last touched
+    the fixture — the stand-in bytes' real authoring time. P34.22b (B1 §5.4):
+    every capture date is read from git, never typed."""
+    out = subprocess.check_output(
+        [
+            "git",
+            "-C",
+            str(_REPO),
+            "log",
+            "-1",
+            "--format=%h %cI",
+            "--",
+            str(path.relative_to(_REPO)),
+        ],
+        text=True,
+    ).strip()
+    sha, _, iso = out.partition(" ")
+    return sha, datetime.fromisoformat(iso).astimezone(UTC)
+
+
+def _refuse_retrieval_after_commit(retrieved_at: datetime, fixture: Path) -> None:
+    """B4 G1 R4: a replay's retrieval stamp can never postdate the bytes it
+    replays — refuse loudly, never silently correct (P34.22b)."""
+    sha, committed = _fixture_commit(fixture)
+    if retrieved_at > committed:
+        raise ValueError(
+            f"retrieved_at {retrieved_at.isoformat()} is after the fixture's "
+            f"commit time {committed.isoformat()} ({fixture.name} @ {sha}) — "
+            "a stand-in replay may carry the bytes' authoring date, never a "
+            "fabricated capture"
+        )
+
+
+def _refuse_as_of_after_build(as_of: str, build_time: datetime) -> None:
+    """The packet as-of may not postdate the build itself (B1 §5.4)."""
+    if date.fromisoformat(as_of) > build_time.date():
+        raise ValueError(
+            f"as_of {as_of!r} is after the build time {build_time.isoformat()} — "
+            "the packet cannot assert the world later than its own build"
+        )
+
 
 #: doc_id → (fixture file, media type) for the dossier_okc targets — the
 #: reviewed target row names the URL; the canned transport serves committed
@@ -123,10 +175,34 @@ _DOC_CONNECTORS: dict[str, dict[str, Any]] = {
 
 
 class _MapTransport:
-    """URL-keyed canned responses — no real network (SIG-INGEST-011)."""
+    """URL-keyed canned responses — no real network (SIG-INGEST-011).
 
-    def __init__(self, responses: Mapping[str, tuple[bytes, str]]) -> None:
-        self._responses = dict(responses)
+    P34.22b (B1 §5.4 / B4 G1 R4): each response carries its fixture's real
+    commit time ``(bytes, media_type, committed_at)``; the replay's
+    ``retrieved_at`` defaults to it. An override later than the fixture's
+    commit is refused — a replay can never carry a retrieval date that
+    postdates the bytes it replays.
+    """
+
+    def __init__(
+        self,
+        responses: Mapping[str, tuple[bytes, str, datetime]],
+        *,
+        retrieved_at: datetime | None = None,
+    ) -> None:
+        self._responses: dict[str, tuple[bytes, str, datetime]] = {}
+        for url, (payload, media, committed) in responses.items():
+            stamp = retrieved_at or committed
+            if stamp > committed:
+                raise ValueError(
+                    f"retrieved_at {stamp.isoformat()} is after the fixture's "
+                    f"commit time {committed.isoformat()} for {url} — a "
+                    "stand-in replay may carry the bytes' authoring date, "
+                    "never a fabricated capture"
+                )
+            self._responses[url] = (payload, media, stamp)
+        commits = [committed for _, _, committed in responses.values()]
+        self._not_found_stamp = retrieved_at or (min(commits) if commits else datetime.now(UTC))
 
     def robots(self, robots_url: str) -> Any:
         from connectors.net import RobotsResult
@@ -139,12 +215,16 @@ class _MapTransport:
         from connectors.stages import FetchResult
 
         if url in self._responses:
-            payload, media = self._responses[url]
+            payload, media, stamp = self._responses[url]
             return FetchResult(
-                url=url, status=200, body=payload, media_type=media, retrieved_at=_FIXTURE_RETRIEVED
+                url=url, status=200, body=payload, media_type=media, retrieved_at=stamp
             )
         return FetchResult(
-            url=url, status=404, body=b"", media_type="text/plain", retrieved_at=_FIXTURE_RETRIEVED
+            url=url,
+            status=404,
+            body=b"",
+            media_type="text/plain",
+            retrieved_at=self._not_found_stamp,
         )
 
 
@@ -165,7 +245,17 @@ def _strip_transient(record: Mapping[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in record.items() if k not in ("claim_id", "sys_period")}
 
 
-def _dossier_records() -> list[dict[str, Any]]:
+def _stamp_replay(record: Mapping[str, Any]) -> dict[str, Any]:
+    """An emitted record replayed over committed stand-in bytes — the only
+    additive mark the packet puts on a connector emit (P34.22b): the
+    ``fixture_replay`` capture kind, so no reader mistakes the record for a
+    live capture. Everything else is verbatim."""
+    out = _strip_transient(record)
+    out["capture_kind"] = CAPTURE_KIND_FIXTURE_REPLAY
+    return out
+
+
+def _dossier_records(retrieved_at: datetime | None = None) -> list[dict[str, Any]]:
     """Replay the three ``dossier_okc`` targets through the real connector."""
     from connectors.dossier_documents import DossierDocumentsConnector
     from connectors.live_targets import live_targets
@@ -176,11 +266,18 @@ def _dossier_records() -> list[dict[str, Any]]:
 
     source_id = "dossier_okc"
     targets = copy.deepcopy(list(live_targets(source_id)))
-    responses: dict[str, tuple[bytes, str]] = {}
+    responses: dict[str, tuple[bytes, str, datetime]] = {}
     for target in targets:
         doc_id = str(target.get("doc_id") or target.get("id"))
         name, media = _DOSSIER_FIXTURES[doc_id]
-        responses[str(target["url"])] = ((_DOSSIER_FIX / name).read_bytes(), media)
+        fixture = _DOSSIER_FIX / name
+        if retrieved_at is not None:
+            _refuse_retrieval_after_commit(retrieved_at, fixture)
+        responses[str(target["url"])] = (
+            fixture.read_bytes(),
+            media,
+            _fixture_commit(fixture)[1],
+        )
     # The documented fixture-runner carve-out: the registry row itself stays
     # ingestion_permitted=false (D-R10-SOURCES-1 OPEN); the in-memory flip is a
     # replay posture only — never a rights decision.
@@ -192,16 +289,16 @@ def _dossier_records() -> list[dict[str, Any]]:
     ctx = RunContext(
         source=source,
         run=IngestRun("dossier_documents", "1.0.0", "p32.18-packet", "r1", "v1", ()),
-        fetcher=_fetcher("dossier_documents", _MapTransport(responses)),
+        fetcher=_fetcher("dossier_documents", _MapTransport(responses, retrieved_at=retrieved_at)),
         captures=InMemoryCaptureStore(),
         claim_sink=InMemoryClaimSink(),
         parameters={"targets": targets},
     )
     report = run(DossierDocumentsConnector(), ctx)
-    return [_strip_transient(r) for r in report.claims]
+    return [_stamp_replay(r) for r in report.claims]
 
 
-def _document_records() -> list[dict[str, Any]]:
+def _document_records(retrieved_at: datetime | None = None) -> list[dict[str, Any]]:
     """Replay the three P23.5 shadow-fixture connectors; adapt emits into
     packet records (document_id + reviewed dossier_field) plus one authored
     evidence_artifact row per fixture — the digest is over the committed
@@ -219,6 +316,8 @@ def _document_records() -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for name, spec in _DOC_CONNECTORS.items():
         fixture = _OKC_FIX / str(spec["fixture"])
+        if retrieved_at is not None:
+            _refuse_retrieval_after_commit(retrieved_at, fixture)
         body = fixture.read_bytes()
         parsed = json.loads(body)
         doc = parsed["documents"][0]
@@ -228,7 +327,17 @@ def _document_records() -> list[dict[str, Any]]:
             source=source,
             run=IngestRun(name, "1.0.0", "p32.18-packet", "r1", "v1", ()),
             fetcher=_fetcher(
-                name, _MapTransport({f"https://{name}/x": (body, "application/json")})
+                name,
+                _MapTransport(
+                    {
+                        f"https://{name}/x": (
+                            body,
+                            "application/json",
+                            _fixture_commit(fixture)[1],
+                        )
+                    },
+                    retrieved_at=retrieved_at,
+                ),
             ),
             captures=InMemoryCaptureStore(),
             claim_sink=InMemoryClaimSink(),
@@ -237,7 +346,7 @@ def _document_records() -> list[dict[str, Any]]:
         connector = registered_connectors()[name]()
         report = run(connector, ctx)
         for raw in report.claims:
-            claim = _strip_transient(raw)
+            claim = _stamp_replay(raw)
             pred = str(claim.get("predicate_id") or "")
             claim["dossier_field"] = spec["fields"].get(pred)
             claim["document_id"] = doc_id
@@ -253,9 +362,12 @@ def _document_records() -> list[dict[str, Any]]:
         records.append(
             _fixture_artifact(
                 doc_id=doc_id,
+                fixture=fixture,
                 fixture_bytes=body,
                 source_url=str(doc["source_url"]),
-                retrieved_date=str(doc.get("retrieved_date", "2026-09-01")),
+                stated_retrieved_date=(
+                    str(doc["retrieved_date"]) if doc.get("retrieved_date") else None
+                ),
                 connector=name,
                 genre=str(doc.get("genre") or "document"),
             )
@@ -266,15 +378,20 @@ def _document_records() -> list[dict[str, Any]]:
 def _fixture_artifact(
     *,
     doc_id: str,
+    fixture: Path,
     fixture_bytes: bytes,
     source_url: str,
-    retrieved_date: str,
+    stated_retrieved_date: str | None,
     connector: str,
     genre: str,
 ) -> dict[str, Any]:
-    """An evidence_artifact row over a committed fixture — labelled so no
-    reader mistakes the stand-in bytes for a live capture (D-R10-SOURCES-1)."""
-    return {
+    """An evidence_artifact row over a committed fixture — a hand-authored
+    ``stand-in`` record (P34.22b / B4 G1 R4): it carries NO retrieval date
+    (nothing was ever retrieved), only the bytes' real authoring commit and
+    their digest, so no reader mistakes the stand-in for a live capture
+    (D-R10-SOURCES-1)."""
+    sha, committed = _fixture_commit(fixture)
+    row: dict[str, Any] = {
         "record_kind": "evidence_artifact",
         "connector": connector,
         "document_id": doc_id,
@@ -283,17 +400,24 @@ def _fixture_artifact(
         "media_type": "application/json",
         "method": "fixture_transcription",
         "access_mode": "committed_fixture",
-        "capture_kind": "shadow_transcription_fixture",
+        "capture_kind": CAPTURE_KIND_STAND_IN,
+        "committed_at": committed.isoformat(),
+        "fixture_commit": sha,
+        "fixture_path": str(fixture.relative_to(_REPO)),
         "source_uri": source_url,
         "source_id": connector,
-        "retrieved_date": retrieved_date,
         "evidence_genre": genre,
         "sensitivity_class": "C1",
         "note": (
             "digest is over the committed reviewed-transcription fixture bytes, "
-            "not a live capture — D-R10-SOURCES-1 owns the actual-fetch obligation"
+            "not a live capture — the row carries the fixture's real authoring "
+            "commit, never a retrieval date (D-R10-SOURCES-1 owns the "
+            "actual-fetch obligation)"
         ),
     }
+    if stated_retrieved_date:
+        row["document_stated_retrieved_date"] = stated_retrieved_date
+    return row
 
 
 # --------------------------------------------------------------------------- #
@@ -301,11 +425,15 @@ def _fixture_artifact(
 # --------------------------------------------------------------------------- #
 
 _PACK_DOC_ID = "okc-p06-evidence-fixture"
-_PACK_RETRIEVED = "2026-09-01"
 
 
 def _pack_bytes() -> bytes:
     return _PACK_FIX.read_bytes()
+
+
+def _pack_committed() -> datetime:
+    """The evidence-pack fixture's real authoring commit time (git-derived)."""
+    return _fixture_commit(_PACK_FIX)[1]
 
 
 def _locator(literal: str) -> dict[str, Any]:
@@ -338,7 +466,13 @@ def _pack_claim(
     valid_from: str | None = None,
     valid_to: str | None = None,
 ) -> dict[str, Any]:
-    """One authored packet claim cited to a fixture byte range."""
+    """One authored packet claim cited to a fixture byte range.
+
+    P34.22b (B4 G1 R4): a hand-authored claim over stand-in bytes carries
+    ``capture_kind: stand-in`` and NO retrieval date — the citation binds the
+    committed bytes by locator + the fixture's real authoring commit, never a
+    fabricated capture.
+    """
     claim: dict[str, Any] = {
         "record_kind": "claim",
         "connector": "ops.dossier_packet",
@@ -352,10 +486,11 @@ def _pack_claim(
         "predicate_id": predicate,
         "value": value,
         "raw_value": literal,
+        "capture_kind": CAPTURE_KIND_STAND_IN,
         "assertion_rationale": rationale,
         "evidence": {
             "source_url": source_url,
-            "retrieved_date": _PACK_RETRIEVED,
+            "fixture_committed_at": _pack_committed().isoformat(),
             "extraction_method": "fixture_transcription",
             "locator": _locator(literal),
         },
@@ -586,9 +721,10 @@ def _pack_records() -> list[dict[str, Any]]:
     records.append(
         _fixture_artifact(
             doc_id=_PACK_DOC_ID,
+            fixture=_PACK_FIX,
             fixture_bytes=_pack_bytes(),
             source_url=_CONTRACT_URL,
-            retrieved_date=_PACK_RETRIEVED,
+            stated_retrieved_date=None,
             connector="ops.dossier_packet",
             genre="evidence_fixture",
         )
@@ -601,9 +737,69 @@ def _pack_records() -> list[dict[str, Any]]:
 # --------------------------------------------------------------------------- #
 
 
-def packet_records() -> list[dict[str, Any]]:
+def packet_records(retrieved_at: datetime | None = None) -> list[dict[str, Any]]:
     """Every record the reviewed packet carries, in stable order."""
-    return _dossier_records() + _document_records() + _pack_records()
+    return _dossier_records(retrieved_at) + _document_records(retrieved_at) + _pack_records()
+
+
+def _fixture_manifest() -> dict[str, dict[str, str]]:
+    """``document_id`` → the committed fixture the packet replays + the bytes'
+    real authoring commit (git-derived, never typed — P34.22b / B4 G1 R4)."""
+    out: dict[str, dict[str, str]] = {}
+    for doc_id, (name, _media) in _DOSSIER_FIXTURES.items():
+        fx = _DOSSIER_FIX / name
+        sha, committed = _fixture_commit(fx)
+        out[doc_id] = {
+            "path": str(fx.relative_to(_REPO)),
+            "commit": sha,
+            "committed_at": committed.isoformat(),
+        }
+    for _connector, spec in _DOC_CONNECTORS.items():
+        fx = _OKC_FIX / str(spec["fixture"])
+        doc = json.loads(fx.read_bytes())["documents"][0]
+        sha, committed = _fixture_commit(fx)
+        out[str(doc["id"])] = {
+            "path": str(fx.relative_to(_REPO)),
+            "commit": sha,
+            "committed_at": committed.isoformat(),
+        }
+    sha, committed = _fixture_commit(_PACK_FIX)
+    out[_PACK_DOC_ID] = {
+        "path": str(_PACK_FIX.relative_to(_REPO)),
+        "commit": sha,
+        "committed_at": committed.isoformat(),
+    }
+    return out
+
+
+def _packet_anchor() -> datetime:
+    """The packet's evidence anchor: the NEWEST fixture authoring commit —
+    the earliest instant at which every cited byte existed (and the replay's
+    true time bound)."""
+    return max(datetime.fromisoformat(f["committed_at"]) for f in _fixture_manifest().values())
+
+
+def _scenario_as_of(records: Sequence[Mapping[str, Any]]) -> dict[str, str]:
+    """The OKC "announced vs operative" scenario frame (P34.22b): derived —
+    the day after the usage page's STATED retention effective date. A
+    scenario label, never a capture date and never the packet ``as_of``."""
+    stated = next(
+        str(r["valid_from"])
+        for r in records
+        if r.get("record_kind") == "claim"
+        and r.get("predicate_id") == "retention_period"
+        and r.get("valid_from")
+    )
+    day = (date.fromisoformat(stated) + timedelta(days=1)).isoformat()
+    return {
+        "world": day,
+        "belief": day,
+        "basis": (
+            f"the day after the stated {stated} retention effective date — the "
+            "announced-vs-operative scenario frame; a declared scenario, never "
+            "a capture or observation date"
+        ),
+    }
 
 
 def _digest_of(records: Sequence[Mapping[str, Any]], predicate: str, scope: str) -> str:
@@ -620,13 +816,18 @@ def _digest_of(records: Sequence[Mapping[str, Any]], predicate: str, scope: str)
 
 
 def _search_entry(
-    question: str, sources: list[str], note: str, outcome: str = "found"
+    question: str,
+    sources: list[str],
+    note: str,
+    *,
+    searched_at: str,
+    outcome: str = "found",
 ) -> dict[str, Any]:
     return {
         "question": question,
         "outcome": outcome,
         "sources_searched": sources,
-        "searched_at": AS_OF_WORLD,
+        "searched_at": searched_at,
         "note": note,
     }
 
@@ -635,9 +836,26 @@ _DOCS = ["okc-flock-usage-2026", "okc-council-memo-2026-08", "okc-flock-amendmen
 _SHADOW = ["okc-statute-47-7-606-1", "okc-ops-manual-5-118", "okc-contract-c241032"]
 
 
-def build_packet() -> dict[str, Any]:
-    """The reviewed ``sig.dossier-packet/1`` for the OKC pilot dossier."""
-    records = packet_records()
+def build_packet(
+    *,
+    retrieved_at: datetime | None = None,
+    as_of: str | None = None,
+    build_time: datetime | None = None,
+) -> dict[str, Any]:
+    """The reviewed ``sig.dossier-packet/1`` for the OKC pilot dossier.
+
+    P34.22b chronology (B1 §5.4 / B4 G1 R4): every capture date comes from the
+    fixtures' real authoring commit times, read from git. ``retrieved_at``
+    later than a fixture's commit or ``as_of`` later than the build is
+    REFUSED, never silently corrected; ``as_of``/``searched_at`` default to
+    the evidence anchor (the newest fixture commit).
+    """
+    build_time = build_time or datetime.now(UTC)
+    anchor = _packet_anchor()
+    anchor_date = anchor.date().isoformat()
+    as_of_date = as_of or anchor_date
+    _refuse_as_of_after_build(as_of_date, build_time)
+    records = packet_records(retrieved_at)
     active90 = _digest_of(records, "active_device_count", "city_limits")
     private100 = _digest_of(records, "claimed_device_count", "city_limits")
     derived = seed_correction.correction_packet()["derived_labels"][0]
@@ -651,7 +869,14 @@ def build_packet() -> dict[str, Any]:
             "entity_id": DEPLOYMENT,
             "jurisdiction_slug": "oklahoma-city-ok",
         },
-        "as_of": {"world": AS_OF_WORLD, "belief": AS_OF_BELIEF},
+        "as_of": {"world": as_of_date, "belief": as_of_date},
+        "scenario_as_of": _scenario_as_of(records),
+        "capture": {
+            "kind": CAPTURE_KIND_FIXTURE_REPLAY,
+            "live_verification": False,
+            "anchor": anchor.isoformat(),
+            "fixtures": _fixture_manifest(),
+        },
         "records": records,
         "declared": {
             "derived": [
@@ -697,41 +922,48 @@ def build_packet() -> dict[str, Any]:
                 "q1",
                 ["okc-contract-c241032", _PACK_DOC_ID],
                 "buyer/vendor named by the procurement record + council report",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q2",
                 _DOCS + [_PACK_DOC_ID],
                 "technology class from the usage page + journalism (fixed ALPR)",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q3",
                 _DOCS + _SHADOW + [_PACK_DOC_ID],
                 "count universe partitioned: metro community map / city-owned official "
                 "/ private journalism / contracted units — different scopes, co-visible",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q4",
                 [_PACK_DOC_ID, "okc-flock-usage-2026"],
                 "external access stated: nationwide sharing platform + withdrawal "
                 "announcement — configured access, never local hardware ownership",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q5",
                 _DOCS + ["okc-contract-c241032"],
                 "renewal funding $270,000 + covered period + unsigned-signature field "
                 "states recorded (execution unverified)",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q6",
                 _SHADOW + ["okc-flock-amendment-2026"],
                 "statute + manual scope + amendment precedence captured; "
                 "applicability to the Flock program deliberately partial",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q7",
                 _DOCS + [_PACK_DOC_ID],
                 "city page states 7-day retention effective 2026-10-01 with the "
                 "investigation exception preserved verbatim",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q8",
@@ -739,18 +971,21 @@ def build_packet() -> dict[str, Any]:
                 "109 partner agencies (aggregate degree), the refused roster, the "
                 "actor-scoped federal-disclosure restriction + law-enforcement-only "
                 "policy lane",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q9",
                 _DOCS + [_PACK_DOC_ID],
                 "lifecycle labels, posted/as-of dates and the stated renewal horizon "
                 "— publication/effective/as-of kinds kept distinct",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q10",
                 [_PACK_DOC_ID, "okc-council-memo-2026-08"],
                 "the council's recorded response (5–3 vote, public opposition) — "
                 "no audit/oversight report exists in the evidence pack",
+                searched_at=anchor_date,
             ),
         ],
         "follow_ups": [
@@ -870,7 +1105,8 @@ def evidence_pack_markdown(packet: Mapping[str, Any] | None = None) -> str:
         lines.append(
             f"| `{doc_id}` | {cap.get('byte_size')} | "
             f"`{str(cap.get('capture_digest'))[:32]}…` | "
-            f"{cap.get('method')} / {cap.get('access_mode')} | {n} |"
+            f"{cap.get('method')} / {cap.get('access_mode')} / "
+            f"{cap.get('capture_kind', '—')} | {n} |"
         )
     lines += [
         "",
@@ -909,10 +1145,14 @@ def evidence_pack_markdown(packet: Mapping[str, Any] | None = None) -> str:
         "inconsistent; the packet keeps the lifecycle label verbatim and asserts "
         "no reconciled original date.",
         "- The 7-day retention rule is a STATED rule with a stated effective date "
-        "(2026-10-01). As-of " + AS_OF_WORLD + " the change is announced; "
+        "(2026-10-01). On the scenario frame "
+        + pkt["scenario_as_of"]["world"]
+        + " the change is announced; "
         "operational implementation is unverified (follow-up in the packet).",
-        "- Retrieval/capture dates (fixture replay 2026-10-01) are kept distinct "
-        "from stated valid dates on every claim.",
+        "- Replay capture dates are each fixture's real authoring commit time, "
+        "read from git (never a fetch); the evidence anchor is "
+        f"{pkt['capture']['anchor']}. Stated document dates stay distinct from "
+        "capture chronology on every claim.",
         "",
         "## Rights, review and acquisition posture",
         "",
@@ -1069,7 +1309,8 @@ def write(out_dir: Path) -> dict[str, Path]:
 __all__ = [
     "DOSSIER_ID",
     "DEPLOYMENT",
-    "AS_OF_WORLD",
+    "CAPTURE_KIND_STAND_IN",
+    "CAPTURE_KIND_FIXTURE_REPLAY",
     "build_packet",
     "packet_records",
     "evidence_pack_markdown",

@@ -138,6 +138,27 @@ derivative_permitted = true
 terms_url = "https://www.openstreetmap.org/copyright"
 retrieval_date = 2026-08-20
 
+# P34.22b / ADR-146 (table row 2): additive date corrections — the recorded
+# values above stay byte-identical (ADR-146 D2: no committed artifact is
+# edited to fix a date); a reader prefers `effective_date` / `true`, which
+# carries the real event date of the GL-GATE-03 RIGHTS.1 re-run (commit
+# e1cedcad, committed 2026-09-13T19:56:51Z; register:
+# docs/build/reports/memory-repair/date_corrections.csv). GL-GATE-03's
+# authority stays 2026-09-09; ingestion_permitted is untouched.
+[[sources.osm_overpass.date_corrections]]
+field = "last_verified"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.osm_overpass.date_corrections]]
+field = "rights_reviewed_on"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
 [sources.osm_replication]
 name = "OSM replication diffs"
 source_kind = "upstream_project"
@@ -241,6 +262,16 @@ redistributable = true
 derivative_permitted = true
 terms_url = "https://github.com/FoggedLens/deflock/blob/main/LICENSE"
 retrieval_date = 2026-08-20
+
+# P34.22b / ADR-146 (table row 2): additive date correction — the recorded
+# value stays byte-identical; `true` carries the real event date of the
+# GL-GATE-03 RIGHTS.1 re-run (commit e1cedcad, 2026-09-13T19:56:51Z).
+[[sources.deflock_repo.date_corrections]]
+field = "rights_reviewed_on"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
 
 [sources.deflock_app_repo]
 name = "DeFlock — app repo (FoggedLens/deflock-app)"
@@ -2083,6 +2114,30 @@ derivative_permitted = true
 terms_url = "https://www.okc.gov/"
 retrieval_date = 2026-09-10
 
+# P34.22b / ADR-146 (table row 2): additive date corrections — the recorded
+# values above stay byte-identical; `true` carries the real event date of the
+# GL-GATE-03 RIGHTS.1 re-run (commit e1cedcad, 2026-09-13T19:56:51Z).
+[[sources.okc_procurement.date_corrections]]
+field = "last_verified"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.okc_procurement.date_corrections]]
+field = "rights_reviewed_on"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.okc_procurement.date_corrections]]
+field = "rights.retrieval_date"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
 [sources.okc_council]
 name = "Oklahoma City Council — agendas & minutes (CivicClerk)"
 source_kind = "government_portal"
@@ -2106,6 +2161,30 @@ derivative_permitted = true
 terms_url = "https://oklahomacityok.portal.civicclerk.com/"
 retrieval_date = 2026-09-10
 
+# P34.22b / ADR-146 (table row 2): additive date corrections — the recorded
+# values above stay byte-identical; `true` carries the real event date of the
+# GL-GATE-03 RIGHTS.1 re-run (commit e1cedcad, 2026-09-13T19:56:51Z).
+[[sources.okc_council.date_corrections]]
+field = "last_verified"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.okc_council.date_corrections]]
+field = "rights_reviewed_on"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.okc_council.date_corrections]]
+field = "rights.retrieval_date"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
 [sources.okcpd_policy]
 name = "Oklahoma City Police Department — policy (Operations Manual)"
 source_kind = "government_portal"
@@ -2128,6 +2207,30 @@ derivative_permitted = true
 terms_url = "https://www.okc.gov/"
 retrieval_date = 2026-09-10
 
+# P34.22b / ADR-146 (table row 2): additive date corrections — the recorded
+# values above stay byte-identical; `true` carries the real event date of the
+# GL-GATE-03 RIGHTS.1 re-run (commit e1cedcad, 2026-09-13T19:56:51Z).
+[[sources.okcpd_policy.date_corrections]]
+field = "last_verified"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.okcpd_policy.date_corrections]]
+field = "rights_reviewed_on"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.okcpd_policy.date_corrections]]
+field = "rights.retrieval_date"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
 [sources.ok_statute]
 name = "Oklahoma statutes (47 O.S. §7-606.1 et seq.)"
 source_kind = "government_portal"
@@ -2149,6 +2252,30 @@ redistributable = true
 derivative_permitted = true
 terms_url = "https://www.oscn.net/"
 retrieval_date = 2026-09-10
+
+# P34.22b / ADR-146 (table row 2): additive date corrections — the recorded
+# values above stay byte-identical; `true` carries the real event date of the
+# GL-GATE-03 RIGHTS.1 re-run (commit e1cedcad, 2026-09-13T19:56:51Z).
+[[sources.ok_statute.date_corrections]]
+field = "last_verified"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.ok_statute.date_corrections]]
+field = "rights_reviewed_on"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
+
+[[sources.ok_statute.date_corrections]]
+field = "rights.retrieval_date"
+recorded = 2026-09-10
+true = 2026-09-13
+evidence = "e1cedcad"
+adr = "ADR-146"
 
 [sources.journalrecord]
 name = "The Journal Record (Oklahoma City)"

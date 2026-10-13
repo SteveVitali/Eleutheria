@@ -166,7 +166,10 @@ allow ops/gcp/protect.sh 2026-12-14T00:00:00Z 2026-11-06T00:00:00Z 2026-11-13T12
 allow ops/gcp/protect.sh 2026-12-14T00:00:00Z 2026-12-06T00:00:00Z 2026-12-13T12:00:00Z"
 # Captured JSON fixtures cannot carry inline comments; these are real-world API field values
 # (`"start_date"`, `"End Date"`, `"text"` — outside the R5 field-name list) whose expiries sit just
-# past the covered literal. P34.22b's fixture-run regeneration is the named remover.
+# past the covered literal, so each entry dies with the value it names (R5). The literals are
+# real-world document values inside committed capture fixtures, not chain dates — the fixture-run
+# regeneration wrote NEW superseding artifact dirs and kept these inputs byte-identical, so the
+# entries stay until their literals pass (no removal removes a real-world value).
 allow tests/connectors/fixtures/promoted/openstates_jurisdictions_p1.json 2027-02-03T00:00:00Z "start_date"
 allow tests/connectors/fixtures/fema_hsgp_page1.json 2027-10-01T00:00:00Z "End Date"
 allow tests/connectors/fixtures/partners/usaspending_awards.json 2027-01-01T00:00:00Z "End Date"

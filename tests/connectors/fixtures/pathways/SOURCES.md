@@ -53,3 +53,7 @@ classifies `vendor_disclosure`, never deployment_report) and yields
 `vendor_product`/`technology` claims only where the document's own text carries
 a reviewed literal — a `deployment` claim requires a deployment-report genre
 (§46 gate, unweakened).
+
+## Date corrections (P34.22b / ADR-146 — appended 2026-10-04T02:05:32Z)
+
+- The "P25.5 live-extraction fixtures (added 2026-09-17)" provenance above was dated one day AFTER the event: the fixtures were committed by `7b52f2b4` at 2026-09-16T02:04:41Z (local 2026-09-15 22:04 -04:00). Recorded text kept byte-identical; true date 2026-09-16 (register: docs/build/reports/memory-repair/date_corrections.csv).

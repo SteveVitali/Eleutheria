@@ -29,7 +29,8 @@ fails if the behaviour it names is removed:
   is transported; row-level acquisition stays ``prohibited_until_review``;
 * **temporal honesty** — the 2023-12-15 vendor-signed date, the 2025
   report period and the 2026-02-15 posted date stay document dates,
-  never promoted to the 2026-10-01 replay retrieved/observed date;
+  never promoted to capture dates — the replay's retrieved/observed
+  stamps carry each fixture's real authoring commit (git-derived, P34.22b);
 * **gates** — release valid, ``review.status = not_run`` keeps
   ``pilot_complete`` honest (D-R10-HUMAN-1 OPEN), the bounded live RETURN
   PASS is prepared-not-executed under ``D-P32.20-1``, the CPRA follow-up
@@ -39,6 +40,7 @@ fails if the behaviour it names is removed:
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 from exports.research_dossier import (
@@ -86,7 +88,10 @@ def test_packet_is_valid_sig_dossier_packet() -> None:
     assert validate_packet(packet) == []
     assert packet["dossier_id"] == sd.DOSSIER_ID
     assert packet["subject"]["entity_id"] == sd.DEPLOYMENT
-    assert packet["as_of"] == {"world": "2026-10-01", "belief": "2026-10-01"}
+    # P34.22b: the as-of pair is the evidence anchor — the newest fixture
+    # authoring commit — never a typed replay date.
+    anchor_day = datetime.fromisoformat(packet["capture"]["anchor"]).date().isoformat()
+    assert packet["as_of"] == {"world": anchor_day, "belief": anchor_day}
 
 
 def test_packet_records_bind_every_claim_to_captured_bytes() -> None:
@@ -102,7 +107,17 @@ def test_packet_records_bind_every_claim_to_captured_bytes() -> None:
         assert c.get("document_id") in artifacts, f"{c['predicate_id']} cites a missing document"
         assert c.get("evidence", {}).get("locator"), f"{c['predicate_id']} has no locator"
         assert c["evidence"].get("source_url")
-        assert c["evidence"].get("retrieved_date")
+        # P34.22b: a replayed record carries the fixture commit date as its
+        # retrieval stamp; a hand-authored stand-in carries none.
+        if c.get("capture_kind") == "stand-in":
+            assert not c["evidence"].get("retrieved_date"), (
+                f"{c['predicate_id']}: a stand-in was never retrieved"
+            )
+            assert c["evidence"].get("fixture_committed_at")
+        else:
+            assert c["evidence"].get("retrieved_date"), (
+                f"{c['predicate_id']}: a fixture replay carries the commit date"
+            )
 
 
 def test_four_dossier_documents_replayed_verbatim() -> None:
@@ -393,8 +408,17 @@ def test_q5_execution_partial_signed_date_document_date() -> None:
     assert len(signed) == 1
     assert signed[0]["value"] == "2023-12-15"
     assert signed[0]["valid_from"] is None  # never promoted to a valid window
-    assert signed[0]["observed_at"] == "2026-10-01"
-    assert signed[0]["retrieved_date"] == "2026-10-01"
+    # P34.22b: the replay stamps carry the agreement fixture's real authoring
+    # commit — never a typed replay date.
+    agreement_commit = (
+        datetime.fromisoformat(
+            d["capture"]["fixtures"]["sd-ubicquia-agreement-2023"]["committed_at"]
+        )
+        .date()
+        .isoformat()
+    )
+    assert signed[0]["observed_at"] == agreement_commit
+    assert signed[0]["retrieved_date"] == agreement_commit
     # The unresolved field-state rides the question's inventory.
     assert any(
         f["field"] == "execution_state" and f["state"] == "present_but_empty"
@@ -428,13 +452,21 @@ def test_q8_sharing_mode_evidenced_actors_not() -> None:
 
 
 def test_q9_dates_are_document_dates() -> None:
+    """The report-period and posted dates stay document-stated values; the
+    replay stamps track each citing fixture's authoring commit."""
     d = _dossier()
     q9 = _answer(d, "q9")
     vals = {x["value"] for x in q9["assertions"]}
     assert "2025" in vals and any("2026-02-15" in str(v) for v in vals)
     for x in q9["assertions"]:
-        assert x["observed_at"] == "2026-10-01"
-        assert x["retrieved_date"] == "2026-10-01"
+        fx = d["capture"]["fixtures"].get(x["document_id"])
+        if x.get("capture_kind") == "stand-in" or fx is None:
+            assert x["retrieved_date"] is None
+        else:
+            commit_day = datetime.fromisoformat(fx["committed_at"]).date().isoformat()
+            assert x["observed_at"] == commit_day
+            assert x["retrieved_date"] == commit_day
+            assert x["retrieved_date"] not in (str(x["value"]), x.get("valid_from"))
 
 
 def test_q11_support_profile_all_probative() -> None:

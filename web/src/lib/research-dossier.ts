@@ -84,6 +84,15 @@ export interface ResearchAssertion {
   claim_digest?: string | null;
   capture_digest?: string | null;
   capture_method?: string | null;
+  /**
+   * P34.22b (B4 G1 R4): the capture posture — `stand-in` (hand-authored
+   * committed bytes, never retrieved) or `fixture_replay` (a connector replay
+   * whose retrieval stamp is the fixture's authoring commit). A stand-in
+   * carries NO retrieved_date; its authoring commit rides `committed_at`.
+   */
+  capture_kind?: string | null;
+  /** The cited bytes' real authoring commit time (ISO), when declared. */
+  committed_at?: string | null;
   source_id?: string | null;
   source_url?: string | null;
   retrieved_date?: string | null;
@@ -118,7 +127,27 @@ export interface LedgerRow {
   locator?: unknown;
   source_url?: string | null;
   retrieved_date?: string | null;
+  /** P34.22b: the capture posture of the bound bytes (stand-in / fixture_replay). */
+  capture_kind?: string | null;
+  committed_at?: string | null;
   state: "rendered" | "withheld" | "suppressed" | string;
+}
+
+/** P34.22b: one declared fixture in a packet/dossier capture manifest. */
+export interface CaptureFixture {
+  path: string;
+  /** The commit that authored the bytes — absent when unknowable at authoring time (the fixture cannot name its own future commit). */
+  commit?: string | null;
+  committed_at: string;
+}
+
+/** The packet/dossier capture block: what kind of evidence backs the records. */
+export interface CaptureBlock {
+  kind?: string;
+  live_verification?: boolean;
+  /** The evidence anchor — the newest fixture authoring commit. */
+  anchor?: string;
+  fixtures?: Record<string, CaptureFixture>;
 }
 
 export interface ChecklistItem {
@@ -170,6 +199,10 @@ export interface ResearchDossier {
     jurisdiction_slug?: string | null;
   };
   as_of: { world?: string; belief?: string };
+  /** A labelled scenario frame (e.g. OKC announced-vs-operative) — never a capture date. */
+  scenario_as_of?: { world?: string; belief?: string; basis?: string } | null;
+  /** P34.22b: the capture provenance manifest — what backs the records and when the bytes were authored. */
+  capture?: CaptureBlock;
   source_families: string[];
   review_status: string;
   review: Record<string, unknown>;

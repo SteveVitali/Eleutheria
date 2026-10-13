@@ -32,12 +32,32 @@ export function getStaticPaths() {
 const dossier = Astro.props.dossier;
 const slug = researchDossierSlug(dossier);
 
+// P34.22b (B4 G1 R4): the capture stamp is labelled by its kind — a
+// fixture_replay stamp is the fixture's authoring commit (never a bare
+// "retrieved"), and a stand-in assertion carries NO retrieval date, so the
+// bytes' authoring commit is rendered as provenance instead of a fabricated
+// capture day.
+function captureStamp(x: ResearchAssertion): string | null {
+  const kind = x.capture_kind ?? "";
+  if (x.retrieved_date) {
+    if (kind === "fixture_replay") return `stand-in replay ${x.retrieved_date} (fixture commit)`;
+    if (kind === "stand-in") return `stand-in ${x.retrieved_date}`;
+    return `retrieved ${x.retrieved_date}`;
+  }
+  if (kind === "stand-in" || kind === "fixture_replay") {
+    const day = (x.committed_at ?? "").slice(0, 10);
+    return day ? `stand-in — committed ${day}` : "stand-in — committed bytes, no retrieval date";
+  }
+  return null;
+}
+
 function dates(x: ResearchAssertion): string {
   const parts: string[] = [];
   if (x.valid_from || x.valid_to) parts.push(`valid ${x.valid_from ?? ""}–${x.valid_to ?? ""}`);
   if (x.valid_edtf) parts.push(`valid ${x.valid_edtf}`);
   if (x.observed_at) parts.push(`observed ${x.observed_at}`);
-  if (x.retrieved_date) parts.push(`retrieved ${x.retrieved_date}`);
+  const stamp = captureStamp(x);
+  if (stamp) parts.push(stamp);
   return parts.join(" · ");
 }
 
@@ -58,6 +78,22 @@ function locatorText(x: ResearchAssertion): string {
     portfolio, distinct from the <a href="/dossier/">inventory overview</a>.
     As-of world {dossier.as_of.world}, belief {dossier.as_of.belief}.
   </p>
+  {dossier.capture?.kind && (
+    <p class="sig-kind" data-testid="research-dossier-capture">
+      Capture: <strong>{dossier.capture.kind}</strong>
+      {dossier.capture.fixtures && ` — ${Object.keys(dossier.capture.fixtures).length} committed stand-in fixture(s)`}
+      {dossier.capture.anchor && ` · evidence anchor ${dossier.capture.anchor}`}
+      {typeof dossier.capture.live_verification === "boolean" &&
+        ` · live verification ${dossier.capture.live_verification ? "yes" : "no"}`}.
+      A stand-in is committed hand-authored bytes — never a live retrieval.
+    </p>
+  )}
+  {dossier.scenario_as_of?.world && (
+    <p class="sig-kind" data-testid="research-dossier-scenario">
+      Scenario frame {dossier.scenario_as_of.world}
+      {dossier.scenario_as_of.basis && ` — ${dossier.scenario_as_of.basis}`}
+    </p>
+  )}
 
   <section aria-labelledby="rubric-heading" data-testid="research-dossier-rubric">
     <h2 id="rubric-heading">Completeness</h2>

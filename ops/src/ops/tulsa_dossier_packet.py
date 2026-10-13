@@ -35,7 +35,8 @@ The ticket's core distinctions are enforced by construction:
   is a D6 ``written_policy_value``, never an access edge.
 * **policy effective ≠ retrieval date** — ``effective_from`` claims carry
   the policies' stated dates (2023-07-07 / 2023-10-04) while
-  ``observed_at``/``retrieved_date`` stay the replay date (2026-10-01);
+  ``observed_at``/``retrieved_date`` carry each fixture's real authoring
+  commit date (git-derived, P34.22b);
   2023 documents are not asserted to be the current versions.
 * **unsupported ≠ zero** — counts, spend, partners and use are ``unknown``
   with named sources searched, a search date and a precise next action.
@@ -70,23 +71,27 @@ from exports.research_dossier import (
     validate_packet,
 )
 
-from .dossier_packet import _fetcher, _MapTransport, _strip_transient
+from .dossier_packet import (
+    CAPTURE_KIND_FIXTURE_REPLAY,
+    CAPTURE_KIND_STAND_IN,
+    _fetcher,
+    _fixture_commit,
+    _MapTransport,
+    _refuse_as_of_after_build,
+    _refuse_retrieval_after_commit,
+    _stamp_replay,
+)
 
 DOSSIER_ID = "tulsa-tpd-alpr"
 DEPLOYMENT = "sig:deployment:tulsa-tpd-alpr"
 JURISDICTION = "us.state_abbr:OK"
-#: The packet's as-of pair — the replay-scenario date. The shared transport
-#: labels the fixture replay's ``retrieved_at``/``observed_at`` 2026-10-01
-#: (the recorded stand-in replay date, same as the emitted claims carry);
-#: the as-of pair names the scenario day the dossier's claims hold at.
-#: The policies' STATED effective dates (2023-07-07 / 2023-10-04) are
-#: document dates and are never promoted to capture/observation dates, and
-#: the captured 2023 policy files are not asserted to be the current
-#: enforceable versions (the live pass re-checks the policies index).
-AS_OF_WORLD = "2026-10-01"
-AS_OF_BELIEF = "2026-10-01"
-_REPLAY_DATE = "2026-10-01"
-_GENERATED_AT = datetime(2026, 10, 1, tzinfo=UTC)
+#: P34.22b chronology: the packet's as-of/searched dates are the evidence
+#: ANCHOR — the newest fixture authoring commit, git-derived — never a typed
+#: replay date. The policies' STATED effective dates (2023-07-07 /
+#: 2023-10-04) are document dates and are never promoted to
+#: capture/observation dates, and the captured 2023 policy files are not
+#: asserted to be the current enforceable versions (the live pass re-checks
+#: the policies index).
 
 _REPO = Path(__file__).resolve().parents[3]
 _DOSSIER_FIX = _REPO / "tests" / "connectors" / "fixtures" / "dossier"
@@ -115,7 +120,7 @@ _SAFETY_GUIDE_URL = (
 # --------------------------------------------------------------------------- #
 
 
-def _dossier_records() -> list[dict[str, Any]]:
+def _dossier_records(retrieved_at: datetime | None = None) -> list[dict[str, Any]]:
     """Replay the three ``dossier_tulsa`` targets through the real connector."""
     from connectors.dossier_documents import DossierDocumentsConnector
     from connectors.live_targets import live_targets
@@ -126,11 +131,18 @@ def _dossier_records() -> list[dict[str, Any]]:
 
     source_id = "dossier_tulsa"
     targets = copy.deepcopy(list(live_targets(source_id)))
-    responses: dict[str, tuple[bytes, str]] = {}
+    responses: dict[str, tuple[bytes, str, datetime]] = {}
     for target in targets:
         doc_id = str(target.get("doc_id") or target.get("id"))
         name, media = _DOSSIER_FIXTURES[doc_id]
-        responses[str(target["url"])] = ((_DOSSIER_FIX / name).read_bytes(), media)
+        fixture = _DOSSIER_FIX / name
+        if retrieved_at is not None:
+            _refuse_retrieval_after_commit(retrieved_at, fixture)
+        responses[str(target["url"])] = (
+            fixture.read_bytes(),
+            media,
+            _fixture_commit(fixture)[1],
+        )
     # The documented fixture-runner carve-out (same posture as P32.18): the
     # registry row itself stays ingestion_permitted=false (D-R10-SOURCES-1
     # OPEN); the in-memory flip is a replay posture only — never a rights
@@ -143,13 +155,13 @@ def _dossier_records() -> list[dict[str, Any]]:
     ctx = RunContext(
         source=source,
         run=IngestRun("dossier_documents", "1.0.0", "p32.19-packet", "r1", "v1", ()),
-        fetcher=_fetcher("dossier_documents", _MapTransport(responses)),
+        fetcher=_fetcher("dossier_documents", _MapTransport(responses, retrieved_at=retrieved_at)),
         captures=InMemoryCaptureStore(),
         claim_sink=InMemoryClaimSink(),
         parameters={"targets": targets},
     )
     report = run(DossierDocumentsConnector(), ctx)
-    return [_strip_transient(r) for r in report.claims]
+    return [_stamp_replay(r) for r in report.claims]
 
 
 # --------------------------------------------------------------------------- #
@@ -168,9 +180,12 @@ def _operator_claim() -> dict[str, Any]:
     ceiling: it says who runs the program per its own policy; it says
     nothing about an executed procurement, a buyer, a funder, or the MOU's
     blank parties. ``valid_from`` is the policy's STATED effective date —
-    distinct from the replay's ``observed_at``/``retrieved_date``
-    (2026-10-01).
+    distinct from the replay's ``observed_at`` (the 113C fixture's real
+    authoring commit date). A hand-authored claim over stand-in bytes
+    carries ``capture_kind: stand-in`` and NO retrieval date (P34.22b /
+    B4 G1 R4).
     """
+    _sha, _committed = _fixture_commit(_DOSSIER_FIX / "tulsa_policy_113c.pdf")
     return {
         "record_kind": "claim",
         "connector": "ops.tulsa_dossier_packet",
@@ -187,6 +202,7 @@ def _operator_claim() -> dict[str, Any]:
         "dossier_field": "q1",
         "sensitivity_class": "C1",
         "geo_tier": 0,
+        "capture_kind": CAPTURE_KIND_STAND_IN,
         "assertion_rationale": (
             "the operating agency named on the face of its own enacted ALPR "
             "policy (113C) — an operator attribution, never evidence of an "
@@ -195,19 +211,19 @@ def _operator_claim() -> dict[str, Any]:
         ),
         "evidence": {
             "source_url": _POLICY_URL,
-            "retrieved_date": _REPLAY_DATE,
+            "fixture_committed_at": _committed.isoformat(),
             "extraction_method": "pdf_text",
             "locator": {"kind": "page", "page": 1},
         },
-        "observed_at": _REPLAY_DATE,
+        "observed_at": _committed.date().isoformat(),
         "valid_from": "2023-07-07",
         "valid_from_kind": "exact",
     }
 
 
-def packet_records() -> list[dict[str, Any]]:
+def packet_records(retrieved_at: datetime | None = None) -> list[dict[str, Any]]:
     """Every record the reviewed packet carries, in stable order."""
-    return _dossier_records() + [_operator_claim()]
+    return _dossier_records(retrieved_at) + [_operator_claim()]
 
 
 # --------------------------------------------------------------------------- #
@@ -215,14 +231,40 @@ def packet_records() -> list[dict[str, Any]]:
 # --------------------------------------------------------------------------- #
 
 
+def _fixture_manifest() -> dict[str, dict[str, str]]:
+    """``document_id`` → the committed fixture the packet replays + the bytes'
+    real authoring commit (git-derived, never typed — P34.22b / B4 G1 R4)."""
+    out: dict[str, dict[str, str]] = {}
+    for doc_id, (name, _media) in _DOSSIER_FIXTURES.items():
+        fx = _DOSSIER_FIX / name
+        sha, committed = _fixture_commit(fx)
+        out[doc_id] = {
+            "path": str(fx.relative_to(_REPO)),
+            "commit": sha,
+            "committed_at": committed.isoformat(),
+        }
+    return out
+
+
+def _packet_anchor() -> datetime:
+    """The packet's evidence anchor: the NEWEST fixture authoring commit —
+    the earliest instant at which every cited byte existed."""
+    return max(datetime.fromisoformat(f["committed_at"]) for f in _fixture_manifest().values())
+
+
 def _search_entry(
-    question: str, sources: list[str], note: str, outcome: str = "found"
+    question: str,
+    sources: list[str],
+    note: str,
+    *,
+    searched_at: str,
+    outcome: str = "found",
 ) -> dict[str, Any]:
     return {
         "question": question,
         "outcome": outcome,
         "sources_searched": sources,
-        "searched_at": AS_OF_WORLD,
+        "searched_at": searched_at,
         "note": note,
     }
 
@@ -233,8 +275,25 @@ _S2_SEARCH = (
 )
 
 
-def build_packet() -> dict[str, Any]:
-    """The reviewed ``sig.dossier-packet/1`` for the Tulsa pilot dossier."""
+def build_packet(
+    *,
+    retrieved_at: datetime | None = None,
+    as_of: str | None = None,
+    build_time: datetime | None = None,
+) -> dict[str, Any]:
+    """The reviewed ``sig.dossier-packet/1`` for the Tulsa pilot dossier.
+
+    P34.22b chronology (B1 §5.4 / B4 G1 R4): every capture date comes from the
+    fixtures' real authoring commit times, read from git. ``retrieved_at``
+    later than a fixture's commit or ``as_of`` later than the build is
+    REFUSED, never silently corrected; ``as_of``/``searched_at`` default to
+    the evidence anchor (the newest fixture commit).
+    """
+    build_time = build_time or datetime.now(UTC)
+    anchor = _packet_anchor()
+    anchor_date = anchor.date().isoformat()
+    as_of_date = as_of or anchor_date
+    _refuse_as_of_after_build(as_of_date, build_time)
     packet: dict[str, Any] = {
         "schema": PACKET_SCHEMA,
         "dossier_id": DOSSIER_ID,
@@ -248,8 +307,14 @@ def build_packet() -> dict[str, Any]:
             "entity_id": DEPLOYMENT,
             "jurisdiction_slug": "tulsa-ok",
         },
-        "as_of": {"world": AS_OF_WORLD, "belief": AS_OF_BELIEF},
-        "records": packet_records(),
+        "as_of": {"world": as_of_date, "belief": as_of_date},
+        "capture": {
+            "kind": CAPTURE_KIND_FIXTURE_REPLAY,
+            "live_verification": False,
+            "anchor": anchor.isoformat(),
+            "fixtures": _fixture_manifest(),
+        },
+        "records": packet_records(retrieved_at),
         "declared": {
             "partial": [
                 {
@@ -301,12 +366,14 @@ def build_packet() -> dict[str, Any]:
                 ["tulsa-policy-113c", "tulsa-mou-template"],
                 "operator evidenced by TPD's own enacted policy; MOU party "
                 "fields recorded present_but_empty — buyer/funder not evidenced",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q2",
                 ["tulsa-policy-113c"],
                 "two distinct ALPR products named verbatim — Flock Safety fixed "
                 "and Axon Fleet 3 in-car, kept separate",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q3",
@@ -314,6 +381,7 @@ def build_packet() -> dict[str, Any]:
                 "no device count anywhere in the captured pack; the S2 "
                 "Commercial Corridor Safety Guide excerpt is a count LEAD only "
                 "(date/scope unestablished) — follow-up opens it",
+                searched_at=anchor_date,
                 outcome="searched_not_found",
             ),
             _search_entry(
@@ -323,6 +391,7 @@ def build_packet() -> dict[str, Any]:
                 "clause — terms, never configured access; the TPD Flock page's "
                 "registration-vs-integration distinction is a reviewed lead, "
                 "uncaptured",
+                searched_at=anchor_date,
                 outcome="searched_not_found",
             ),
             _search_entry(
@@ -332,6 +401,7 @@ def build_packet() -> dict[str, Any]:
                 "contract; the MOU's Date/signature fields are "
                 "present_but_empty — 'searched, not found', never 'no contract "
                 "exists'",
+                searched_at=anchor_date,
                 outcome="searched_not_found",
             ),
             _search_entry(
@@ -340,6 +410,7 @@ def build_packet() -> dict[str, Any]:
                 "enacting body + the two policies' stated effective dates + the "
                 "MOU's offered terms; authority beyond department policy "
                 "declared partial",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q7",
@@ -348,12 +419,14 @@ def build_packet() -> dict[str, Any]:
                 "113E's uniform period reviewed absent (field-state, never a "
                 "fabricated value); use restrictions captured from all three "
                 "documents",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q8",
                 _DOCS,
                 "approval-based sharing rule evidenced from 113E; no executed "
                 "sharing instrument, roster or observed share in the pack",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q9",
@@ -363,6 +436,7 @@ def build_packet() -> dict[str, Any]:
                 "instruments, both values co-visible under the same-scope "
                 "rule, never promoted to retrieval dates; version-currentness "
                 "not proven by the captured files",
+                searched_at=anchor_date,
             ),
             _search_entry(
                 "q10",
@@ -370,6 +444,7 @@ def build_packet() -> dict[str, Any]:
                 "no oversight artifact exists in the captured pack and the "
                 "bounded research pass found none — follow-up names the "
                 "oversight corpora to check",
+                searched_at=anchor_date,
                 outcome="searched_not_found",
             ),
         ],
@@ -501,7 +576,8 @@ def build_packet() -> dict[str, Any]:
             "field-states — no executed contract, no named participants, no "
             "actual sharing edge is asserted",
             "policy effective dates (2023-07-07 / 2023-10-04) are document "
-            "dates distinct from the 2026-10-01 replay/retrieval date; the "
+            "dates distinct from capture dates — replayed records carry each "
+            "fixture's real authoring commit time (git-derived, P34.22b); the "
             "2023 files are not asserted to be the current versions; the two "
             "instruments' distinct stated dates surface under the same-scope "
             "conflict rule — both rendered, never collapsed to one timeline",
@@ -548,9 +624,10 @@ def follow_up_drafts() -> dict[str, Any]:
         _gap("tulsa-gap-executed-sharing", "sharing_agreement"),
         _gap("tulsa-gap-oversight", "oversight_review"),
     ]
+    anchor = _packet_anchor()
     res = run_detectors(
         MaterializedInputs(coverage=coverage),
-        now=_GENERATED_AT,
+        now=anchor,
         jurisdiction_resolver=lambda _s, _j: JurisdictionInfo(
             records_law_key="OK",
             target_agency="Tulsa Police Department",
@@ -559,7 +636,7 @@ def follow_up_drafts() -> dict[str, Any]:
     return {
         "schema": "sig.dossier-follow-up-drafts/1",
         "dossier_id": DOSSIER_ID,
-        "generated_at": AS_OF_WORLD,
+        "generated_at": anchor.date().isoformat(),
         "posture": "drafted_not_sent",
         "records_requests_sent": 0,
         "coverage_gaps": coverage,
@@ -621,7 +698,8 @@ def evidence_pack_markdown(packet: Mapping[str, Any] | None = None) -> str:
         lines.append(
             f"| `{doc_id}` | {cap.get('byte_size')} | "
             f"`{str(cap.get('capture_digest'))[:32]}…` | "
-            f"{cap.get('method')} / {cap.get('access_mode')} | {n} |"
+            f"{cap.get('method')} / {cap.get('access_mode')} / "
+            f"{cap.get('capture_kind', '—')} | {n} |"
         )
     lines += [
         "",
@@ -667,7 +745,9 @@ def evidence_pack_markdown(packet: Mapping[str, Any] | None = None) -> str:
         "",
         "- Policy effective dates are STATED document dates — 113C "
         "2023-07-07, 113E 2023-10-04 (`valid_from`, `effective_from`) — kept "
-        "distinct from the replay's retrieved/observed date (2026-10-01).",
+        "distinct from capture dates: replayed records carry each fixture's "
+        "real authoring commit time, read from git (never a fetch); the "
+        f"evidence anchor is {pkt['capture']['anchor']}.",
         "- The captured 2023 policy files are NOT asserted to be the current "
         "enforceable versions: the published index's currency is a live-pass "
         "question (the packet declares the limitation, never a recency claim).",
@@ -844,7 +924,8 @@ def write(out_dir: Path) -> dict[str, Path]:
 __all__ = [
     "DOSSIER_ID",
     "DEPLOYMENT",
-    "AS_OF_WORLD",
+    "CAPTURE_KIND_STAND_IN",
+    "CAPTURE_KIND_FIXTURE_REPLAY",
     "build_packet",
     "packet_records",
     "follow_up_drafts",

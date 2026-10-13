@@ -59,7 +59,11 @@ from exports.research_dossier import (
 )
 
 _FIX = Path(__file__).resolve().parent.parent / "connectors" / "fixtures" / "dossier"
+#: The canned transport's stamp — a simulated live-fetch date, the ONE date
+#: source every synthetic record/assertion in this file derives from (P34.22b:
+#: a date is bound to the clock that stamped it, never re-typed downstream).
 _RETRIEVED = datetime(2026, 10, 1, tzinfo=UTC)
+_RETRIEVED_DATE = _RETRIEVED.date().isoformat()
 _ALLOW_ALL = "User-agent: *\nAllow: /\n"
 CONNECTOR = "dossier_documents"
 
@@ -163,7 +167,7 @@ def _search_entry(qid: str, outcome: str = "searched_not_found") -> dict[str, An
         "question": qid,
         "sought": f"the {qid} answer",
         "sources_searched": ["dossier_contracts", "dossier_admin"],
-        "searched_at": "2026-10-01",
+        "searched_at": _RETRIEVED_DATE,
         "outcome": outcome,
         "scope_note": "city-owned deployment scope only",
         "note": "recorded search",
@@ -198,7 +202,7 @@ def _packet(
             "jurisdiction": "Oklahoma City, Oklahoma",
             "jurisdiction_slug": "oklahoma-city",
         },
-        "as_of": {"world": "2026-10-01", "belief": "2026-10-01"},
+        "as_of": {"world": _RETRIEVED_DATE, "belief": _RETRIEVED_DATE},
         "records": records,
         "search_log": [_search_entry(q) for q in unknown_qs],
         "follow_ups": [_follow_up(q) for q in unknown_qs],
@@ -243,11 +247,11 @@ def _fake_claim(
         "assertion_rationale": "test assertion",
         "evidence": {
             "source_url": f"https://example/{doc}",
-            "retrieved_date": "2026-10-01",
+            "retrieved_date": _RETRIEVED_DATE,
             "extraction_method": "html_text",
             "locator": {"locator": "clause 1"},
         },
-        "observed_at": "2026-10-01",
+        "observed_at": _RETRIEVED_DATE,
         "source_attribution": "dossier_test",
     }
     if qualifiers:
@@ -279,7 +283,7 @@ def _artifact(doc: str = "synth-doc") -> dict[str, Any]:
         "evidence_genre": "executed_contract",
         "access_mode": "document",
         "method": "html_text",
-        "retrieved_date": "2026-10-01",
+        "retrieved_date": _RETRIEVED_DATE,
         "sensitivity_class": "C1",
     }
 
@@ -581,8 +585,9 @@ def test_date_semantics_preserved(okc_records: list[dict[str, Any]]) -> None:
     q9 = next(a for a in dossier["answers"] if a["question"] == "q9")
     as_of_claim = next(x for x in q9["assertions"] if x["predicate"] == "as_of")
     assert as_of_claim["value"] == "2026-08-18"
-    # The record's declared data-currency date is NOT its retrieval date.
-    assert as_of_claim["retrieved_date"] == "2026-10-01"
+    # The record's declared data-currency date is NOT its retrieval date —
+    # the stamp is the transport's own, derived never re-typed.
+    assert as_of_claim["retrieved_date"] == _RETRIEVED_DATE
     assert as_of_claim["retrieved_date"] != as_of_claim["value"]
 
 
@@ -851,7 +856,7 @@ def test_print_html_preserves_qualifiers_and_citations() -> None:
     assert "disputed" in html_doc
     assert "count_scope=city_limits" in html_doc  # the qualifier survives print
     assert "cap-synth-doc" in html_doc  # the capture digest is a printed citation
-    assert "retrieved 2026-10-01" in html_doc  # the capture date is shown
+    assert f"retrieved {_RETRIEVED_DATE}" in html_doc  # the capture date is shown
     assert "valid 2026-01-01" in html_doc  # the document's own date is shown
     assert "≠" in html_doc  # the conflict marker survives
     assert "next_decision_date" in html_doc

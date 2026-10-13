@@ -1,0 +1,65 @@
+{
+  "artifacts": {
+    "JOURNEY_PORTFOLIO.json": {
+      "sha256": "c02ee18ee2addfac7e279793b31e6f352bed3c119a89c4a058103a1f01914263"
+    },
+    "JOURNEY_PORTFOLIO.md": {
+      "sha256": "d3776d69e0ea07b914357ae4455b444d88f8a8d8d4188562099863a94801d767"
+    },
+    "corpus_export/": {
+      "files": 10,
+      "tree_sha256": "68710c51be7df1d9926ad01032a806b9b87a6f508e64d01a6b02c91fd0a808ac"
+    },
+    "corpus_registry/": {
+      "files": 262,
+      "tree_sha256": "57131e4f2f0003739fcc5890fa544ee752f33f68806f7e142f06f1064195c599"
+    },
+    "corpus_release/": {
+      "files": 179,
+      "tree_sha256": "2eb7ae3b2ae11b61285cf47a8de07056efd7bf6fc476f4b34eb73a1570f78977"
+    }
+  },
+  "basis": "ADR-146 D2 + B1 \u00a75.5 \u2014 the superseded run's bytes are historical evidence and keep them (their digests are recorded below and cited elsewhere); the fixed builders regenerate the same artifact set here with clock-true dates (git-derived fixture commits, declared stand-ins, no fabricated retrieval dates).",
+  "generated_by": "sig-ops journey-verify --candidate docs/build/reports/p32.23a-release-candidate --intake-proof docs/build/reports/p32.24-investigation-journey-verification/INTAKE_JOURNEY.json --renderer p34.22b",
+  "notes": "CORRECTION.md lives with the superseded dir and gains the pointer line; the authored docs (README, USABILITY_TASK_PROTOCOL, WALKTHROUGH_LOG) and the Docker-gated INTAKE_JOURNEY proof stay with the original run \u2014 the committed proof was this run's input, not regenerated.",
+  "schema": "sig.supersedes-manifest/1",
+  "superseded_artifacts": {
+    "CORRECTION.md": {
+      "sha256": "d017a8be06009e6f819597a6743fd47162c0cfbafdf21b387b315447387f3df6"
+    },
+    "INTAKE_JOURNEY.json": {
+      "sha256": "430b08a579af3986350e2e5e74f756fc393a4450a541a94caf34eec180e636b7"
+    },
+    "JOURNEY_PORTFOLIO.json": {
+      "sha256": "0e4598d870736b544b94aa079aba4932ac37b324fde0df9129398c12463bcc5f"
+    },
+    "JOURNEY_PORTFOLIO.md": {
+      "sha256": "362757a84d790ccb24da44a9a4f8bf8bf5d6621d3c21ac01be119c279c439acb"
+    },
+    "README.md": {
+      "sha256": "f14f4a2cea132df41e70c6cb62b5f24961589fb3dd058ecc3d6ecb7d95f802a2"
+    },
+    "USABILITY_TASK_PROTOCOL.md": {
+      "sha256": "ff5c42247a23cc25a99a401240e4cbfd5d6496fa19fa359b999cdc3a3a5278a9"
+    },
+    "WALKTHROUGH_LOG.md": {
+      "sha256": "fcc9384bf7b498a028aeacd04cab6245bafb6fb039c5aa24355c250ae6352e74"
+    },
+    "corpus_export/": {
+      "files": 10,
+      "tree_sha256": "68710c51be7df1d9926ad01032a806b9b87a6f508e64d01a6b02c91fd0a808ac"
+    },
+    "corpus_registry/": {
+      "files": 262,
+      "tree_sha256": "8638c9bf61153df695d44dda313756d5576051b611b137545d3d5c08fc20ebb6"
+    },
+    "corpus_release/": {
+      "files": 179,
+      "tree_sha256": "9e21aff478c7ab18077776a935fb0a866b348151949f44ffd114ea515fc64b1d"
+    }
+  },
+  "supersedes": "../p32.24-investigation-journey-verification/",
+  "supersedes_ticket": "P32.24",
+  "ticket": "P34.22b",
+  "written": "2026-10-04T02:01:04Z"
+}
