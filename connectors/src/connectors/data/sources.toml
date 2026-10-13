@@ -8403,29 +8403,6 @@ jurisdiction_place = "Howard County"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_co_arvada_facial_recognition]
-name = "Facial Recognition Technology - Arvada Police Department (SB22-113 accountability report page)"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.arvadaco.gov/917/Facial-Recognition-Technology"
-default_tier = "R4"
-custody_posture = "DERIVE"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "annual"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-032, cand I4-C103, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_arvada_co_facial_recognition_technol'."
-publisher = "City of Arvada, CO (CivicPlus site)"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US-CO"
-jurisdiction_place = "Arvada"
-[sources.statrep_co_arvada_facial_recognition.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
 [sources.ccops_columbia_mo]
 name = "City of Columbia MO: 2025 Annual Surveillance Technology Report (Law Enforcement Surveillance Oversight Ordinance)"
 source_kind = "government_mandated_disclosure"
@@ -8449,7 +8426,7 @@ jurisdiction_place = "Columbia"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_me_safety_maine_law]
+[sources.statrep_me_dps_uav]
 name = "Annual Report of the Department of Public Safety on Maine Law Enforcement Agencies' Use of Unmanned Aerial Vehicles (25 "
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://lldc.mainelegislature.org/Open/Rpts/tl685_35_p23_2016.pdf"
@@ -8457,17 +8434,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9a (ACQ-13a)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-034, cand I9b-C053, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_me_safety_maine_law'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-034, cand I9b-C053, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9a). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_me_safety_maine_law'. Reconciled id 'statrep_me_dps_uav' (I8 \u00a75.6 ACQ-13a) \u2014 the generated garbled id renamed to the design's id under P36.9a."
 publisher = "Maine Department of Public Safety (report to the Joint Standing Committee on Judiciary); held by the Maine State Law and"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-ME"
-[sources.statrep_me_safety_maine_law.rights]
+[sources.statrep_me_dps_uav.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8599,7 +8576,7 @@ cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-040, cand I3-C039, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_mn_bca' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
+notes = "R11-ACQ-01 generated row (plan AP-T1-040, cand I3-C039, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_mn_bca' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8. P36.9a (ACQ-13a): this row also carries the I4-C005 Minn. Stat. 626.19 UAV annual-report family as its second index target — plan AP-T1-088's generated row statrep_mn_unmanned_aerial_vehicle is absorbed here (plan R1 consolidation: one source row per publisher, two reviewed surfaces)."
 publisher = "Minnesota Department of Public Safety, Bureau of Criminal Apprehension"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MN"
@@ -8607,7 +8584,7 @@ jurisdiction = "US-MN"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_wa_facial_recognition_watech]
+[sources.statrep_wa_watech_frt]
 name = "Facial Recognition | WaTech (Technology Services Board posting of FR Notices of Intent and Accountability Reports, ch. 4"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://watech.wa.gov/node/2066"
@@ -8615,21 +8592,21 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9a (ACQ-13a)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-041, cand I4-C100, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_wa_facial_recognition_watech'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-041, cand I4-C100, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9a). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_wa_facial_recognition_watech'. Reconciled id 'statrep_wa_watech_frt' (I8 \u00a75.6 ACQ-13a) \u2014 the generated id renamed to the design's id under P36.9a."
 publisher = "Washington Technology Solutions (WaTech) / Technology Services Board, State of Washington"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
-[sources.statrep_wa_facial_recognition_watech.rights]
+[sources.statrep_wa_watech_frt.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_co_colorado_agency_facial]
+[sources.statrep_co_frt_accountability]
 name = "Colorado agency facial recognition accountability reports (C.R.S. 24-18-301 to -309, SB22-113)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.arvadaco.gov/917/Facial-Recognition-Technology"
@@ -8637,17 +8614,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9a (ACQ-13a)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-042, cand I4-C102, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_co_colorado_agency_facial'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-042, cand I4-C102, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9a). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_co_colorado_agency_facial'. Reconciled id 'statrep_co_frt_accountability' (I8 \u00a75.6 ACQ-13a) \u2014 the generated id renamed to the design's id under P36.9a; the generated statrep_co_arvada_facial_recognition row (plan AP-T1-032, cand I4-C103) is absorbed as this row's first target (plan R1 consolidation)."
 publisher = "Colorado state and local agencies using FR (statutory family; exemplar City of Arvada)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CO"
-[sources.statrep_co_colorado_agency_facial.rights]
+[sources.statrep_co_frt_accountability.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8874,7 +8851,7 @@ jurisdiction = "US-WA"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_mi_detroit_police_department]
+[sources.statrep_detroit_mi_frt_weekly]
 name = "Detroit Police Department Weekly Report on Facial Recognition (to the Board of Police Commissioners)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://detroitmi.gov/sites/detroitmi.localhost/files/events/2026-01/251229%20BOPC%20Facial%20Rec%20Report.pdf"
@@ -8882,18 +8859,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) weekly-PDF index \u2014 generalized government_mandated_disclosure adapter wired by P36.9a (ACQ-13a)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-053, cand I4-C108, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_detroit_mi_weekly_facial_recognition'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-053, cand I4-C108, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9a). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_detroit_mi_weekly_facial_recognition'. Reconciled id 'statrep_detroit_mi_frt_weekly' (I8 \u00a75.6 ACQ-13a) \u2014 the generated id renamed to the design's id under P36.9a; the weekly index is enumerated and per-week counts ride disclosure_use/usage_count only (never per-incident rows, never officer names \u2014 Part VIII/\u00a743.4)."
 publisher = "City of Detroit, MI - Detroit Police Department / Board of Police Commissioners"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MI"
 jurisdiction_place = "Detroit"
-[sources.statrep_mi_detroit_police_department.rights]
+[sources.statrep_detroit_mi_frt_weekly.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9591,29 +9568,7 @@ jurisdiction_place = "Davie"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_mn_unmanned_aerial_vehicle]
-name = "Unmanned Aerial Vehicle (UAV) annual reports (Minn. Stat. 626.19)"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://dps.mn.gov/divisions/bca/data-and-reports/uav-uav-annual-reports"
-default_tier = "R4"
-custody_posture = "DERIVE"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "annual"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-088, cand I4-C005, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_mn_unmanned_aerial_vehicle'."
-publisher = "Minnesota Department of Public Safety, Bureau of Criminal Apprehension"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US-MN"
-[sources.statrep_mn_unmanned_aerial_vehicle.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.statrep_il_illinois_freedom_from]
+[sources.statrep_il_icjia_drone]
 name = "Illinois Freedom From Drone Surveillance Act annual report (725 ILCS 167)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://icjia.illinois.gov/about/publications/sfy-25-drone-surveillance-report"
@@ -9621,17 +9576,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) + PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9a (ACQ-13a)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-089, cand I4-C006, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_il_illinois_freedom_from'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-089, cand I4-C006, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9a). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_il_illinois_freedom_from'. Reconciled id 'statrep_il_icjia_drone' (I8 \u00a75.6 ACQ-13a) \u2014 the generated id renamed to the design's id under P36.9a."
 publisher = "Illinois Criminal Justice Information Authority"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
-[sources.statrep_il_illinois_freedom_from.rights]
+[sources.statrep_il_icjia_drone.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 

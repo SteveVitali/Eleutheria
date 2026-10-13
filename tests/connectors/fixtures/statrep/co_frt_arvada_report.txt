@@ -1,0 +1,15 @@
+ARVADA POLICE DEPARTMENT
+Facial Recognition Accountability Report — Calendar Year 2025
+Published under C.R.S. 24-18-301 through 24-18-309 (SB22-113), enacted by
+the Colorado General Assembly
+Date: January 15, 2026
+Technology: facial recognition system
+
+Use statistics (calendar year 2025):
+97 of 13,396 investigations used facial recognition; 44 returned a positive
+match and 53 returned no match.
+
+Provider access:
+The department accesses Lumen through the Colorado Information Sharing
+Consortium; the department does not maintain its own facial recognition
+system.

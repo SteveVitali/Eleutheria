@@ -124,6 +124,17 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "statrep_austin_tx_auditor": "government_mandated_disclosure",
     "statrep_md_dls_mandated_reports": "government_mandated_disclosure",
     "statrep_va_rga": "government_mandated_disclosure",
+    # P36.9a / R11-ACQ-13a (I8 §5.6): the UAV + FRT half of the statutory
+    # disclosures-II family — five registry ids (the I4-C005 UAV reports are
+    # `statrep_mn_bca`'s second target; the Arvada page I4-C103 is the
+    # consolidated first target of `statrep_co_frt_accountability`). Same gate
+    # posture: all stay `ingestion_permitted=false` (HG-03 RB-03 `a`; Detroit
+    # RB-04 `a`) pending the operator's OP-26 Wave-B flip under ING-GO-B.
+    "statrep_co_frt_accountability": "government_mandated_disclosure",
+    "statrep_wa_watech_frt": "government_mandated_disclosure",
+    "statrep_detroit_mi_frt_weekly": "government_mandated_disclosure",
+    "statrep_me_dps_uav": "government_mandated_disclosure",
+    "statrep_il_icjia_drone": "government_mandated_disclosure",
     # P31.13 (BREADTH.2): the FEMA Homeland Security Grant Program federal-
     # assistance allocations surface — the procurement connector's USAspending
     # award-search path (`award_class = "assistance"` reviewed slices; funder →

@@ -1627,6 +1627,12 @@ targets = [
 kind = "index_page"
 targets = [
   { id = "lpr_agency_list", url = "https://dps.mn.gov/agencies-use-lprs-lpr", kind = "index_page", max_documents = 4 },
+  # P36.9a (I4-C005 / plan AP-T1-088, R1 consolidation — the generated
+  # statrep_mn_unmanned_aerial_vehicle row is absorbed here): the Minn. Stat.
+  # 626.19 UAV annual-report series (2020–2025 + the 2020 addendum). The
+  # per-target doc filter narrows the shared BCA document tree to the UAV
+  # filings; the adapter's own reviewed literals type them uas-unspecified.
+  { id = "uav_annual_reports", url = "https://dps.mn.gov/divisions/bca/data-and-reports/uav-uav-annual-reports", kind = "index_page", max_documents = 8, doc_url_contains = "uav", doc_suffixes = [".pdf"] },
 ]
 
 # VA VSP — the § 2.2-5517(J) ALPR Reporting Requirements spec (v2, 2026-03):
@@ -1693,4 +1699,63 @@ targets = [
 kind = "index_page"
 targets = [
   { id = "va-rga-mandated-reports-index", url = "https://rga.lis.virginia.gov/", kind = "index_page", max_documents = 20 },
+]
+# =============================================================================
+# P36.9a / R11-ACQ-13a (I8 §5.6): the UAV + FRT half of the statutory
+# disclosures-II family — Wave-B batch `r11-disclosures-02` (`27 7 22 * *`).
+#
+# Same posture as the P36.8 block above: declarative reviewed surfaces only —
+# every source stays ingestion_permitted=false (HG-03 RB-03 `a`; Detroit is
+# RB-04 `a`) and the operator's OP-26 Wave-B flip under ING-GO-B is the only
+# route to a live fetch, so these rows fetch nothing today.
+
+# CO FRT accountability — the C.R.S. 24-18-301..-309 / SB22-113 statutory
+# family (I4-C102); the Arvada page (I4-C103 — plan AP-T1-032 consolidated
+# into this row, R1) is the first enumerated member: the page carries the
+# city's yearly use statistics and links the accountability-report filings
+# under /DocumentCenter/; the filing agency rides each link's anchor.
+[statrep_co_frt_accountability]
+kind = "index_page"
+targets = [
+  { id = "co_arvada_frt_accountability", url = "https://www.arvadaco.gov/917/Facial-Recognition-Technology", kind = "index_page", max_documents = 4 },
+]
+
+# WA WaTech / Technology Services Board — the RCW 43.386 posting page
+# (I4-C100): state agencies' facial-recognition Notices of Intent and
+# accountability reports. The adapter's scope_terms screen admits FR/NOI
+# filings only; the filing agency rides each link's anchor.
+[statrep_wa_watech_frt]
+kind = "index_page"
+targets = [
+  { id = "watech-tsb-fr-filings", url = "https://watech.wa.gov/node/2066", kind = "index_page", max_documents = 8 },
+]
+
+# Detroit — the DPD Directive 307.5-5.1 weekly facial-recognition report
+# series posted to the Board of Police Commissioners pages (I4-C108; the
+# reviewed filing shape is the 251229-week PDF under
+# /sites/detroitmi.localhost/files/events/<YYYY-MM>/). The weekly index is
+# enumerated; per-week counts emit as disclosure_use/usage_count claims
+# ONLY — no per-incident rows, no officer names (Part VIII / §43.4).
+[statrep_detroit_mi_frt_weekly]
+kind = "index_page"
+targets = [
+  { id = "detroit-bopc-fr-weekly", url = "https://detroitmi.gov/boards/board-police-commissioners", kind = "index_page", max_documents = 12 },
+]
+
+# ME DPS — the 25 M.R.S. § 4501 UAV-use annual report deposited with the Law
+# and Legislative Reference Library (I9b-C053): one reviewed filing; the
+# statewide aggregate counts ride its own literals.
+[statrep_me_dps_uav]
+kind = "disclosure_document"
+targets = [
+  { id = "me-dps-uav-annual-report-2016", url = "https://lldc.mainelegislature.org/Open/Rpts/tl685_35_p23_2016.pdf", kind = "disclosure_document" },
+]
+
+# IL ICJIA — the Freedom From Drone Surveillance Act (725 ILCS 167) annual
+# publications index (I4-C006): the SFY report filings enumerate every agency
+# that OWNS a drone — inventory-level assertions, never per-incident data.
+[statrep_il_icjia_drone]
+kind = "index_page"
+targets = [
+  { id = "il-icjia-drone-sfy-reports", url = "https://icjia.illinois.gov/about/publications/sfy-25-drone-surveillance-report", kind = "index_page", max_documents = 8 },
 ]

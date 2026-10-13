@@ -1,0 +1,12 @@
+WATECH — FACIAL RECOGNITION ACCOUNTABILITY REPORT
+Filed with the Technology Services Board under RCW 43.386, enacted by the
+Washington State Legislature
+Date: August 28, 2025
+Technology: facial recognition
+
+This accountability report covers the Washington Technology Solutions
+facial recognition service pilot filed under the agency's Notice of Intent
+(08-28-2023). It describes the service's purpose, the data it operates on,
+and the accountability measures in place for the pilot period.
+
+Provider: the pilot operates on the agency's hosted service.
