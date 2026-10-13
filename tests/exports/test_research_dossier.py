@@ -619,12 +619,17 @@ def test_actor_roles_stay_distinct() -> None:
 def test_decision_windows() -> None:
     records = [
         _artifact(),
-        _fake_claim("q5", "contract_end_date", "2027-06-30", doc="synth-doc"),
+        _fake_claim(
+            "q5",
+            "contract_end_date",
+            "2027-06-30",  # future-ok: synthetic: synth-doc
+            doc="synth-doc",
+        ),
         _fake_claim("q9", "posted_date", "2026-08-18", doc="synth-doc"),
     ]
     dossier = build_dossier(_packet(records, unknown_qs=()))
     dw = dossier["decision_windows"]
-    assert dw["next_decision_date"] == "2027-06-30"
+    assert dw["next_decision_date"] == "2027-06-30"  # future-ok: synthetic: synth-doc claim
     preds = {w["predicate"] for w in dw["windows"]}
     assert {"contract_end_date", "posted_date"} <= preds
 

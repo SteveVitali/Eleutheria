@@ -182,14 +182,14 @@ def test_access_log_only_records_restricted_and_sealed(conn: object) -> None:
     cur.execute(
         "INSERT INTO evidence_access_log(capture_id,requester,purpose,storage_tier,"
         "retention_expires_at) VALUES(%s,'researcher','takedown review','sealed',"
-        "'2026-12-01T00:00:00Z')",
+        "'2026-12-01T00:00:00Z')",  # future-ok: synthetic: SQL fixture
         (capture,),
     )
     with pytest.raises(psycopg.errors.CheckViolation):
         cur.execute(
             "INSERT INTO evidence_access_log(capture_id,requester,purpose,storage_tier,"
             "retention_expires_at) VALUES(%s,'researcher','browsing','public',"
-            "'2026-12-01T00:00:00Z')",
+            "'2026-12-01T00:00:00Z')",  # future-ok: synthetic: SQL fixture
             (capture,),
         )
 

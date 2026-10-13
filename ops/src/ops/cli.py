@@ -1090,7 +1090,8 @@ def build_parser() -> argparse.ArgumentParser:
         "release-candidate",
         help="P32.23a (SIG-TRUST-010, ADR-142): build the ONE unpublished "
         "release candidate from the frozen repaired-input snapshot. The S3 "
-        "human-evaluation spine is deferred (2026-10-19, no final decision) — "
+        "human-evaluation spine is deferred (the operator's recorded GATE "
+        "DECISIONS decision, commit a33cd6ec — no final decision) — "
         "the candidate runs under the PROVISIONAL ruleset with the deferral "
         "disclosed everywhere, verifies the frozen population frame "
         "fail-closed, rematerializes in dependency order + proves +0, exports "
@@ -1205,8 +1206,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     rpub.add_argument(
         "--candidate",
-        default="docs/build/reports/p32.23a-release-candidate",
-        help="the committed P32.23a candidate packet directory (default: the landed packet)",
+        required=True,
+        help="the candidate packet directory whose CANDIDATE_MANIFEST.json "
+        "carries the release pins — no default (P34.22a): the publish "
+        "verifies the candidate named on the command line; the p32.23a "
+        "packet is rehearsal evidence of a superseded candidate (B-4), "
+        "never a production subject",
     )
     rpub.add_argument(
         "--out",
@@ -3284,12 +3289,15 @@ def _cmd_release_publish(args: argparse.Namespace) -> int:
         gate_readout=args.gate_readout,
     )
     counts = proof["counts"]
+    subject = proof.get("subject") or {}
     print(
         f"sig-ops release-publish: verdict={proof['verdict']} "
         f"(checks={proof['total_checks']}: {counts['pass']} pass, "
         f"{counts['fail']} fail, {counts['deferred']} deferred, "
         f"{counts['not_applicable']} n/a)"
     )
+    if subject.get("posture"):
+        print(f"  posture: {subject['posture']}")
     for check in proof["checks"]:
         if check["status"] == "fail":
             print(

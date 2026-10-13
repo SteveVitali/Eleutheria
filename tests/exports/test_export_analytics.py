@@ -387,9 +387,11 @@ def test_decision_point_is_the_earliest_derivable_watch_date() -> None:
     payload = _analytic(export, "decision_point")
     dp = payload["decision_point"]
     assert dp is not None
-    # SIG-UI-014b: s1 auto-renews → expiry − notice = 2027-04-01; s2 does not → the
-    # expiry itself 2027-01-31; s3 has no expiry → no derivable date. Earliest wins.
-    assert dp["date"] == "2027-01-31"
+    # SIG-UI-014b: s1 auto-renews → expiry − notice is the decision point
+    # (2027-04-01; future-ok: synthetic: SIG-UI-014b); s2 does not → the expiry
+    # itself (2027-01-31; future-ok: synthetic: SIG-UI-014b); s3 has none → no
+    # derivable date. Earliest wins.
+    assert dp["date"] == "2027-01-31"  # future-ok: synthetic: SIG-UI-014b scenario
     assert dp["subject_id"] == "s2"
     assert dp["label"] == "Contract 2"
     assert payload["rule"]
@@ -422,7 +424,10 @@ def test_decision_point_derivation_matches_the_web_wire_contract() -> None:
             ]
         },
     )
-    assert _analytic(export, "decision_point")["decision_point"]["date"] == "2027-04-01"
+    assert (
+        _analytic(export, "decision_point")["decision_point"]["date"]
+        == "2027-04-01"  # future-ok: synthetic: SIG-UI-014b scenario
+    )
 
 
 # --- provenance + queue meta -----------------------------------------------------

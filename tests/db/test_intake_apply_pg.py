@@ -572,7 +572,10 @@ def test_failed_transaction_leaves_nothing(seed_conn: Any, rev_conn: Any, bridge
     the old claim stays open, no application row, no applied event."""
     seed = _seed_claim(seed_conn, "failtx01")
     report = _seed_report(seed_conn, "failtx01", [seed["claim_id"]])
-    proposal = _proposal_correct(seed, scope={"observed_at": "2999-01-01T00:00:00Z"})
+    proposal = _proposal_correct(
+        seed,
+        scope={"observed_at": "2999-01-01T00:00:00Z"},  # future-ok: synthetic: sentinel observed_at
+    )
     pseq = _propose(rev_conn, report["report_id"], "correct", proposal)
     _approve(rev_conn, report["report_id"], "correct", pseq)
     with pytest.raises(psycopg.errors.CheckViolation):

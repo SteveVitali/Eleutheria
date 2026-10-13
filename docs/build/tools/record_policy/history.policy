@@ -136,3 +136,38 @@ seed-commit b4f52e4d
 # to a declared commit, wherever it sits in a judged range.
 seed-commit a58fa2fa
 seed-commit d130b54d
+
+# ── P34.22a whole-tree future-date test — first-run entries ──────────────────────────────────────
+# tests/unit/test_no_future_date_literals.py (P34.22a) sweeps code, data, migrations and tests for
+# ISO literals later than HEAD. Real-world and scheduled values in comment-capable files carry
+# `future-ok:` markers instead; the entries below cover the literals that cannot carry an inline
+# marker — JSON fixtures (no comments) and values embedded inside multi-line strings — each by its
+# own fixed text, each with an expiry just past the covered literal so the entry dies with the
+# value it names (R5: an expired entry no longer exempts).
+# The sqitch L44–52 base fixture mirrors the plan's own allow-listed change ids for the
+# byte-identical C-10 assertion — same texts, same expiry as the `allow db/sqitch.plan` entries above.
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z claim_assertion_bindings [camera_site_human_decisions claim_evidence ingest_run_capture access_control] 2026-10-03T12:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z partner_org_scoped_identity_key [claim_assertion_bindings entity_identity_key] 2026-10-10T12:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z shared_temporal_contract [partner_org_scoped_identity_key camera_site_resolution claim_assertion_bindings] 2026-10-11T00:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z publication_dispositions [shared_temporal_contract domain_entities] 2026-10-12T00:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z human_eval_campaign [publication_dispositions materialize_role review_campaign access_control] 2026-10-16T00:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z disposition_decided_at_authority [publication_dispositions] 2026-09-27T14:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z intake_storage [disposition_decided_at_authority access_control] 2026-10-18T00:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z intake_application_bridge [intake_storage publication_dispositions entity_identity_key claim_evidence claim_assertion_bindings] 2026-10-19T00:00:00Z
+allow tests/unit/fixtures/sqitch_plan_L44-52_at_p34.22a_base.txt 2026-10-19T21:00:00Z recovery_apply [intake_application_bridge] 2026-10-19T21:00:00Z
+# The AR-3 windows live inside a multi-line shell string (one start/stop pair per line —
+# `read -r start stop`), so no inline marker is possible; the expiry lands right after the last
+# window closes.
+allow ops/gcp/alerts.sh 2026-12-14T00:00:00Z AR3_WINDOWS="2026-10-06T00:00:00Z 2026-10-13T12:00:00Z
+allow ops/gcp/alerts.sh 2026-12-14T00:00:00Z 2026-11-06T00:00:00Z 2026-11-13T12:00:00Z
+allow ops/gcp/alerts.sh 2026-12-14T00:00:00Z 2026-12-06T00:00:00Z 2026-12-13T12:00:00Z"
+allow ops/gcp/protect.sh 2026-12-14T00:00:00Z AR3_WINDOWS="2026-10-06T00:00:00Z 2026-10-13T12:00:00Z
+allow ops/gcp/protect.sh 2026-12-14T00:00:00Z 2026-11-06T00:00:00Z 2026-11-13T12:00:00Z
+allow ops/gcp/protect.sh 2026-12-14T00:00:00Z 2026-12-06T00:00:00Z 2026-12-13T12:00:00Z"
+# Captured JSON fixtures cannot carry inline comments; these are real-world API field values
+# (`"start_date"`, `"End Date"`, `"text"` — outside the R5 field-name list) whose expiries sit just
+# past the covered literal. P34.22b's fixture-run regeneration is the named remover.
+allow tests/connectors/fixtures/promoted/openstates_jurisdictions_p1.json 2027-02-03T00:00:00Z "start_date"
+allow tests/connectors/fixtures/fema_hsgp_page1.json 2027-10-01T00:00:00Z "End Date"
+allow tests/connectors/fixtures/partners/usaspending_awards.json 2027-01-01T00:00:00Z "End Date"
+allow tests/acceptance/fixtures/okc_sources.json 2027-07-01T00:00:00Z 2027-06-30

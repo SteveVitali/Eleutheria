@@ -72,7 +72,8 @@ def _lstate(next_ticket: str, last_completed: str) -> str:
         "memoryRoot: docs/build\ndispatchTarget: subagent\n"
         "buildWorktree: .\nbuildBranchBase: devin/base\npinnedBaseSha: deadbeef\n"
         "chainTip: devin/base\nbenchmarkSet: N/A\nautonomy: checkpoint\n"
-        "mergePolicy: NONE\nround: 10\nupdatedAt: 2026-10-15\n```\n"
+        "mergePolicy: NONE\nround: 10\n"
+        "updatedAt: 2026-10-15\n```\n"  # future-ok: synthetic: fixture
     )
 
 
@@ -92,9 +93,10 @@ def _lstate_r11(next_ticket: str, last_completed: str) -> str:
         "buildWorktree: .\nbuildBranchBase: devin/base\npinnedBaseSha: deadbeef\n"
         "chainTip: devin/base\nbenchmarkSet: N/A\nautonomy: checkpoint\n"
         "mergePolicy: NONE\nround: 11\nharness: devin-desktop/swe-2-high/subagent\n"
-        "updatedAt: 2026-10-15T00:00:00Z\n```\n"
+        "updatedAt: 2026-10-15T00:00:00Z\n```\n"  # future-ok: synthetic: fixture ledger
         "<!-- Rounds 1-10 head archived; sha256 pointer. -->\n\n"
-        "## PHASE LOG — Round 11\n\n- 2026-10-15 — SEED-10 repair — head archived\n"
+        "## PHASE LOG — Round 11\n\n"
+        "- 2026-10-15 — SEED-10 repair — head archived\n"  # future-ok: synthetic: fixture
     )
 
 
@@ -690,7 +692,11 @@ def test_foreign_host_lock_is_never_reclaimed_here(tmp_path: pathlib.Path) -> No
 
 
 def _events_tree(root: pathlib.Path, diverge: bool = False, event_only: bool = False) -> None:
-    anchors, _ = obligation_events.build_anchors(root, "2026-10-15", "deadbeef")
+    anchors, _ = obligation_events.build_anchors(
+        root,
+        "2026-10-15",  # future-ok: synthetic: fixture
+        "deadbeef",
+    )
     events_rel = root / obligation_events.EVENTS_PATH
     events_rel.parent.mkdir(parents=True, exist_ok=True)
     with events_rel.open("w") as fh:
@@ -704,7 +710,12 @@ def _events_tree(root: pathlib.Path, diverge: bool = False, event_only: bool = F
     if diverge:
         # flip a compatibility cell without a matching transition event
         d = root / "docs/tickets/DEFERRALS.md"
-        d.write_text(d.read_text().replace("OPEN cites BL-001", "DONE 2026-10-15 cites BL-001"))
+        d.write_text(
+            d.read_text().replace(
+                "OPEN cites BL-001",
+                "DONE 2026-10-15 cites BL-001",  # future-ok: synthetic: fixture
+            )
+        )
 
 
 def test_activation_check_ready_on_consistent_state(tmp_path: pathlib.Path) -> None:

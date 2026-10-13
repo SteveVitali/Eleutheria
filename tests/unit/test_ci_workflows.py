@@ -209,8 +209,9 @@ MAKEFILE = REPO_ROOT / "Makefile"
 
 
 def test_every_job_of_every_workflow_pins_ubuntu_24_04() -> None:
-    """S6R-27 / FEA-16: `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19, so the
-    runner never floats — the pin does not hinge on P34.1's date."""
+    """S6R-27 / FEA-16: `ubuntu-latest` moves to Ubuntu 26 on
+    2026-10-19 (future-ok: scheduled: ubuntu move) — the runner never floats;
+    the pin does not hinge on P34.1's date."""
     jobs = [(p.name, n, j) for p in WORKFLOWS for n, j in _doc(p)["jobs"].items()]
     assert len(jobs) >= 9
     floating = [(wf, n, j.get("runs-on")) for wf, n, j in jobs]

@@ -53,7 +53,7 @@ def test_no_delete_path_in_the_export_script() -> None:
 def test_run_writes_a_fresh_as_of_prefix() -> None:
     env = _env(
         SIG_GCP_PROJECT="example-proj",
-        SIG_EXPORT_AS_OF="2026-10-05T12:34:56Z",
+        SIG_EXPORT_AS_OF="2026-10-05T12:34:56Z",  # future-ok: synthetic: leg fixture
     )
     proc = subprocess.run(
         ["bash", str(SCRIPT), "--check", "run"],
@@ -65,9 +65,14 @@ def test_run_writes_a_fresh_as_of_prefix() -> None:
     )
     assert proc.returncode == 0, proc.stderr
     # the output prefix names the as-of stamp (colons stripped) under national/
-    assert "exports/national/2026-10-05T123456Z" in proc.stdout
+    assert (
+        "exports/national/2026-10-05T123456Z"  # future-ok: synthetic: stamp
+        in proc.stdout
+    )
     # a second as-of stamps a DIFFERENT prefix — never an overwrite
-    env["SIG_EXPORT_AS_OF"] = "2026-10-06T00:00:00Z"
+    env["SIG_EXPORT_AS_OF"] = (
+        "2026-10-06T00:00:00Z"  # future-ok: synthetic: export-leg fixture timestamp
+    )
     proc2 = subprocess.run(
         ["bash", str(SCRIPT), "--check", "run"],
         capture_output=True,
@@ -83,7 +88,10 @@ def test_run_writes_a_fresh_as_of_prefix() -> None:
 
 
 def test_fetch_syncs_bucket_to_local_without_delete() -> None:
-    env = _env(SIG_GCP_PROJECT="example-proj", SIG_EXPORT_AS_OF="2026-10-05T00:00:00Z")
+    env = _env(
+        SIG_GCP_PROJECT="example-proj",
+        SIG_EXPORT_AS_OF="2026-10-05T00:00:00Z",  # future-ok: synthetic: fixture
+    )
     proc = subprocess.run(
         ["bash", str(SCRIPT), "--check", "fetch"],
         capture_output=True,

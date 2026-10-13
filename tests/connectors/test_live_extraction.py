@@ -203,7 +203,7 @@ def test_raa_fanout_is_bounded_and_yields_arrete_claims() -> None:
     # the five-year sunset, marked derived — never stored.
     assert claims["effective_from"]["value"] == "2026-01-05"
     sunset = claims["sunset_date"]
-    assert sunset["value"] == "2031-01-05"
+    assert sunset["value"] == "2031-01-05"  # future-ok: real-world: recorded arrêté sunset
     assert sunset["derived"] is True
     assert sunset["derivation"] == "csi_l252_five_year_validity"
     assert claims["jurisdiction"]["value"] == "89"

@@ -64,7 +64,7 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     subject_id: "contract:okcpd-alpr",
     subject_label: "Oklahoma City PD — ALPR contract renewal decision",
     closing_condition: "Renewal evidence is filed, or the decision date passes with a recorded outcome.",
-    evidence_sought: "Council agenda item or executed renewal/non-renewal for the 2027-01-02 decision.",
+    evidence_sought: "Council agenda item or executed renewal/non-renewal for the 2027-01-02 decision.",  // future-ok: real-world: recorded contract decision date
     assignee_class: "local_group",
     effort_estimate: "moderate",
     geographic_scope: "jurisdiction",

@@ -78,7 +78,8 @@ DEFERRALS = (
     + _row(
         "D-P21.4-3",
         "P",
-        "DONE 2026-10-14 — reconciled by event (was OPEN (BL-034)); "
+        "DONE "
+        "2026-10-14 — reconciled by event (was OPEN (BL-034)); "  # future-ok: synthetic: fixture
         "records DONE 2026-09-16 go-public executed",
     )
     + _row("D-T9.1-4", "F", "DONE 2026-01-05 verified")
@@ -149,7 +150,7 @@ ASSESSMENTS = (
             "evidence_refs": ["docs/build/runs/P00.1.md"],
             "limitations": "—",
             "assessor": "test",
-            "assessed_at": "2026-10-14",
+            "assessed_at": "2026-10-14",  # future-ok: synthetic: fixture ledger
             "supersedes": None,
             "seq": 0,
         }

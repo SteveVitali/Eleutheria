@@ -289,8 +289,11 @@ _FRANCE_CLAIMS: list[dict[str, Any]] = [
     {
         "subject_id": _INSTRUMENT_FR,
         "predicate_id": "sunset_date",
-        "value": "2031-02-01",
-        "raw_value": "2031-02-01 (cinq ans, renouvelable — dérivé)",
+        "value": "2031-02-01",  # future-ok: real-world: recorded arrêté sunset
+        "raw_value": (
+            "2031-02-01 (cinq ans, "  # future-ok: real-world: recorded sunset
+            "renouvelable — dérivé)"
+        ),
         "observed_at": "2026-02-01",
         "source_id": "raa_prefectures",
         "spdx": "ODbL-1.0",

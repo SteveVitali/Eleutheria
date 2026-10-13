@@ -7,9 +7,9 @@
  * (§39.5a), and evidence viewer (§39.6). Static-first (SIG-UI-036): the surfaces read
  * these typed fixtures at build time, not a live API. Everything keys to the same
  * worked Oklahoma City case the rest of the shell renders — the 42-vs-38 contested
- * device count and the Appendix-D auto-renewal contract (expiry 2027-04-02, 90-day
- * notice → decision date 2027-01-02), so the watch, the recommender, and the viewer
- * all speak about the same jurisdiction the dossier does.
+ * device count and the Appendix-D auto-renewal contract (expiry 2027-04-02 — future-ok: real-world: recorded contract expiry;
+ * 90-day notice → decision date 2027-01-02 — future-ok: real-world: recorded decision date), so the watch,
+ * the recommender, and the viewer all speak about the same jurisdiction the dossier does.
  */
 
 import { beliefPinnedPermalink } from "./citation";
@@ -37,7 +37,7 @@ export const WATCH_ITEMS: ContractWatchItem[] = [
     termination: { auto_renews: true, notice_window_days: 90, expiry_date: "2027-04-02" },
     renewal_window_days: 90,
     approving_body: "Oklahoma City Council",
-    next_scheduled_meeting: "2026-12-16",
+    next_scheduled_meeting: "2026-12-16",  // future-ok: scheduled: scheduled council meeting
     replacement_procurement: null,
     contested: true,
   },
@@ -48,7 +48,7 @@ export const WATCH_ITEMS: ContractWatchItem[] = [
     termination: { auto_renews: false, notice_window_days: null, expiry_date: "2026-11-30" },
     renewal_window_days: null,
     approving_body: "Oklahoma City Council",
-    next_scheduled_meeting: "2026-11-18",
+    next_scheduled_meeting: "2026-11-18",  // future-ok: scheduled: scheduled council meeting
     replacement_procurement: "RFP-2026-RTCC-002 (successor solicitation, published 2026-09-01)",
     contested: false,
   },
@@ -59,7 +59,7 @@ export const WATCH_ITEMS: ContractWatchItem[] = [
     termination: { auto_renews: true, notice_window_days: 60, expiry_date: "2027-02-15" },
     renewal_window_days: 60,
     approving_body: "Tulsa City Council",
-    next_scheduled_meeting: "2026-12-09",
+    next_scheduled_meeting: "2026-12-09",  // future-ok: scheduled: scheduled council meeting
     replacement_procurement: null,
     contested: false,
   },
@@ -72,7 +72,7 @@ export const DECISION_POINT: DecisionPoint = {
   decision_type: "renewal",
   subject_id: "agency:okcpd",
   label: "OKCPD ALPR contract renewal (Flock Safety)",
-  date: "2027-01-02",
+  date: "2027-01-02",  // future-ok: real-world: recorded contract decision date
 };
 
 const permalinkFor = (claimId: string, asOf: string): string =>
@@ -221,7 +221,7 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
 const CONTRACT_TEXT =
   "MASTER AGREEMENT for automated licence-plate reader services. " +
   "Vendor shall provide and maintain forty-two (42) fixed ALPR camera units within the City, " +
-  "together with one Real-Time Crime Center integration hub. This Agreement expires 2027-04-02 " +
+  "together with one Real-Time Crime Center integration hub. This Agreement expires 2027-04-02 " +  // future-ok: real-world: recorded contract expiry
   "and renews automatically for successive one-year terms unless either party gives written " +
   "notice not less than ninety (90) days before expiry.";
 

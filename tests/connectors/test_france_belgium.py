@@ -130,7 +130,7 @@ def test_prefectoral_order_maps_onto_legal_instrument_prefectoral_order() -> Non
     assert instrument.is_prefectoral_order
     assert instrument.abstract_instrument_type == "prefectoral_order"
     # Five-year renewable validity is derived from the effective date (CSI L252).
-    assert instrument.sunset_date == "2031-02-01"
+    assert instrument.sunset_date == "2031-02-01"  # future-ok: real-world: recorded arrêté sunset
     assert instrument.raw["sunset_date_derived"] is True
 
 

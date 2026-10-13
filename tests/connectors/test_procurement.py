@@ -958,7 +958,7 @@ def test_fema_assistance_row_normalizes_funder_not_buyer() -> None:
             "Awarding Sub Agency": "Federal Emergency Management Agency",
             "Award Amount": 15250000.0,
             "Start Date": "2024-10-01",
-            "End Date": "2027-09-30",
+            "End Date": "2027-09-30",  # future-ok: real-world: recorded award end
             "Award Type": "02 - BLOCK GRANT",
             "Assistance Listings": [
                 {

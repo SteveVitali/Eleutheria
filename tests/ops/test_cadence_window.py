@@ -29,9 +29,21 @@ def _t(text: str) -> datetime:
     [
         # batch-05 (the OSM replay): monthly on the 10th at 03:35.
         ("35 3 10 * *", "2026-09-25T00:00", "2026-09-10T03:35"),
-        ("35 3 10 * *", "2026-10-10T03:34", "2026-09-10T03:35"),
-        ("35 3 10 * *", "2026-10-10T03:35", "2026-10-10T03:35"),
-        ("35 3 10 * *", "2026-10-11T12:00", "2026-10-10T03:35"),
+        (
+            "35 3 10 * *",
+            "2026-10-10T03:34",  # future-ok: synthetic: cron-window fixture
+            "2026-09-10T03:35",
+        ),
+        (
+            "35 3 10 * *",
+            "2026-10-10T03:35",  # future-ok: synthetic: cron-window fixture
+            "2026-10-10T03:35",  # future-ok: synthetic: cron-window fixture
+        ),
+        (
+            "35 3 10 * *",
+            "2026-10-11T12:00",  # future-ok: synthetic: cron-window fixture
+            "2026-10-10T03:35",  # future-ok: synthetic: cron-window fixture
+        ),
         # every 6 hours
         ("0 */6 * * *", "2026-09-24T23:15", "2026-09-24T18:00"),
         # weekly Monday (dow 1)
@@ -69,11 +81,27 @@ def test_a_batch_member_uses_its_batch_cron_and_the_key_changes_per_window() -> 
     config = load_cadence()
     cron = cron_for_source(config, "camreg_osm_surveillance")
     assert cron == "35 3 10 * *"  # camreg-batch-05
-    before = logical_run_key("camreg_osm_surveillance", cron, _t("2026-10-10T03:00"))
-    after = logical_run_key("camreg_osm_surveillance", cron, _t("2026-10-10T04:00"))
-    restart = logical_run_key("camreg_osm_surveillance", cron, _t("2026-10-11T09:00"))
+    before = logical_run_key(
+        "camreg_osm_surveillance",
+        cron,
+        _t("2026-10-10T03:00"),  # future-ok: synthetic: cron-window fixture
+    )
+    after = logical_run_key(
+        "camreg_osm_surveillance",
+        cron,
+        _t("2026-10-10T04:00"),  # future-ok: synthetic: cron-window fixture
+    )
+    restart = logical_run_key(
+        "camreg_osm_surveillance",
+        cron,
+        _t("2026-10-11T09:00"),  # future-ok: synthetic: cron-window fixture
+    )
     assert before == "camreg_osm_surveillance@2026-09-10T03:35Z"
-    assert after == restart == "camreg_osm_surveillance@2026-10-10T03:35Z"
+    assert (
+        after
+        == restart
+        == "camreg_osm_surveillance@2026-10-10T03:35Z"  # future-ok: synthetic: cron-window fixture
+    )
     assert cron_for_source(config, "no_such_source") is None
 
 

@@ -327,13 +327,16 @@ def build_slice() -> SliceGraph:
             Fact(
                 "expiry",
                 "Contract term ends",
-                "2027-06-30",
-                ev.for_quote("okc-council-2026-08-18", "through 2027-06-30"),
+                "2027-06-30",  # future-ok: real-world: recorded OKC renewal end
+                ev.for_quote(
+                    "okc-council-2026-08-18",
+                    "through 2027-06-30",  # future-ok: real-world: recorded OKC renewal end
+                ),
             ),
             Fact(
                 "next_decision_date",
                 "Next decision date",
-                "2027-06-30",
+                "2027-06-30",  # future-ok: real-world: recorded OKC renewal end
                 ev.for_quote("okc-council-2026-08-18", "returns to the council before another"),
                 note="Renewed one year; returns to council before the next renewal.",
             ),

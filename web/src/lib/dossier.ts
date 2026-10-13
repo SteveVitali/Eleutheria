@@ -187,9 +187,10 @@ export interface LegalRegime {
 
 /**
  * The renewal decision date (SIG-UI-014b). An expiry date is the WRONG figure to
- * surface: a contract expiring 2027-04-02 with auto-renewal and a 90-day notice
- * window has a real deadline of 2027-01-02 — after which the decision is made by
- * default. So when the contract auto-renews, the decision date is the expiry minus
+ * surface: a contract expiring 2027-04-02 (future-ok: real-world: recorded contract expiry) with
+ * auto-renewal and a 90-day notice window has a real deadline of 2027-01-02 — future-ok: real-world: recorded
+ * decision date — after which the decision is made by default. So when the
+ * contract auto-renews, the decision date is the expiry minus
  * the notice window; otherwise the decision must be taken by the expiry itself.
  * The renewal watch (P15.4, §39.5) keys its alerts on this exact value.
  */

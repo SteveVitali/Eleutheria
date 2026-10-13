@@ -52,7 +52,7 @@ def test_identity_pins_ruleset_snapshot_and_deferred_evaluation() -> None:
     assert ev["status"] == "deferred"
     assert ev["decision"] is None and ev["decision_ref"] is None
     assert ev["basis"] == "provisional-policy"
-    assert "HUMAN-H4" in ev["deferred_by"] and "2026-10-19" in ev["deferred_by"]
+    assert "HUMAN-H4" in ev["deferred_by"] and "a33cd6ec" in ev["deferred_by"]
     assert ev["policy_id"] == "eval-confidence/1"
     assert ev["mode"] == "shadow"
     assert ev["applied"] == []
@@ -151,7 +151,7 @@ def _export_dir(tmp_path: Path, coverage: dict | None = None) -> Path:
                 "schema": "p27.4/exclusions/1.0.0",
                 "refused": [{"compartment": "ud", "source": "muckrock", "rows": 2}],
                 "totals": {"refused_slices": 1, "refused_rows": 2},
-                "generated_at": "2026-10-19T00:00:00Z",
+                "generated_at": "2026-10-19T00:00:00Z",  # future-ok: synthetic: fixture
                 "note": "test",
             }
         ),
@@ -337,7 +337,7 @@ def _staged(publication_id: str = "sig-pub-abc") -> dict:
         publication_id=publication_id,
         descriptor={
             "schema": "sig.publication-descriptor/1",
-            "data_release_id": "sig-2026-10-19-12345678",
+            "data_release_id": "sig-2026-10-19-12345678",  # future-ok: synthetic: fixture
             "ruleset_version": rc.PROVISIONAL_RULESET,
         },
         manifest_sha256="m" * 64,

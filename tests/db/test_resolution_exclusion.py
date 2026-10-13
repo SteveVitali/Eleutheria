@@ -45,10 +45,22 @@ def test_overlapping_current_resolutions_are_rejected(conn: object) -> None:
     _seed_resolution_vocab(conn)
     subject, predicate = prereqs["subject_id"], prereqs["predicate_id"]
 
-    _insert_resolution(conn, subject, predicate, "2026-01-01", "2026-12-31")
+    _insert_resolution(
+        conn,
+        subject,
+        predicate,
+        "2026-01-01",
+        "2026-12-31",  # future-ok: synthetic: interval fixture
+    )
     with pytest.raises(psycopg.errors.ExclusionViolation) as excinfo:
         with conn.transaction():
-            _insert_resolution(conn, subject, predicate, "2026-06-01", "2027-06-01")
+            _insert_resolution(
+                conn,
+                subject,
+                predicate,
+                "2026-06-01",
+                "2027-06-01",  # future-ok: synthetic: interval fixture
+            )
     assert "resolution_no_overlap" in str(excinfo.value)
 
 
@@ -58,7 +70,13 @@ def test_non_overlapping_resolutions_are_allowed(conn: object) -> None:
     subject, predicate = prereqs["subject_id"], prereqs["predicate_id"]
 
     _insert_resolution(conn, subject, predicate, "2026-01-01", "2026-06-01")
-    _insert_resolution(conn, subject, predicate, "2026-06-01", "2027-01-01")
+    _insert_resolution(
+        conn,
+        subject,
+        predicate,
+        "2026-06-01",
+        "2027-01-01",  # future-ok: synthetic: interval fixture
+    )
     count = conn.execute(
         "SELECT count(*) FROM resolution WHERE subject_id=%s", (subject,)
     ).fetchone()[0]
@@ -73,14 +91,26 @@ def test_superseded_resolution_frees_the_valid_window(conn: object) -> None:
     _seed_resolution_vocab(conn)
     subject, predicate = prereqs["subject_id"], prereqs["predicate_id"]
 
-    _insert_resolution(conn, subject, predicate, "2026-01-01", "2026-12-31")
+    _insert_resolution(
+        conn,
+        subject,
+        predicate,
+        "2026-01-01",
+        "2026-12-31",  # future-ok: synthetic: interval fixture
+    )
     conn.execute(
         "UPDATE resolution SET sys_period = tstzrange(lower(sys_period), "
         "clock_timestamp(), '[)') WHERE subject_id=%s",
         (subject,),
     )
     # Same valid window is now free because the prior decision is not current.
-    _insert_resolution(conn, subject, predicate, "2026-01-01", "2026-12-31")
+    _insert_resolution(
+        conn,
+        subject,
+        predicate,
+        "2026-01-01",
+        "2026-12-31",  # future-ok: synthetic: interval fixture
+    )
     current = conn.execute(
         "SELECT count(*) FROM resolution WHERE subject_id=%s AND upper_inf(sys_period)",
         (subject,),
