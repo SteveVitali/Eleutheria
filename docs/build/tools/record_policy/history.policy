@@ -369,3 +369,11 @@ seed-commit 64648080
 # edited the committed line — append-only is preserved by this declaration.
 # Scope: findings attributed to 21a392ca only; no other commit borrows the exemption.
 seed-commit 21a392ca
+# ── P36.9b blockedOn-clear kind repair ──────────────────────────────────────
+# The orchestrator's 54e3a111 PHASE LOG entry kind `blockedOn cleared` was
+# undeclared in record_policy/phase_log_kinds.txt (V4); the in-place kind
+# repair `blockedOn cleared` → `correction` at 49607976 (the
+# ef1fb3bf/d778706b/145b68a3/6fe93216/64648080/21a392ca sanctioned pattern)
+# edited the committed line — append-only is preserved by this declaration.
+# Scope: findings attributed to 49607976 only; no other commit borrows the exemption.
+seed-commit 49607976
