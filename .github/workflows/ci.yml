@@ -86,6 +86,14 @@ jobs:
       - name: Current-state projection verify (current_projection.py)
         run: python3 docs/build/tools/current_projection.py verify
 
+      # P34.29 (B3 §3.13 item 4, V6): the RETURN PASS generated region —
+      # `### RETURN PASS — current` must equal `return_pass.py generate`
+      # byte-for-byte, `returnPass:` must equal its sorted ticket column, and
+      # every owed obligation must sit in exactly one home. Also inside
+      # `make docs-check` (docs-check-returnpass); explicit for visibility.
+      - name: RETURN PASS generated-region check (return_pass.py)
+        run: python3 docs/build/tools/return_pass.py check
+
       # BM-HIST-01 (SEED-02): the lines this PR adds or removes in build-memory
       # records — record dates, append-only regions, record shape, gate records,
       # readouts. check-history.sh hands off to docs/build/tools/memory_guard.py.

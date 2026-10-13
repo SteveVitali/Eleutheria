@@ -50,6 +50,12 @@ CORE_INPUTS = [
     "docs/build/BUILD_INDEX.md",
     "docs/build/COVERAGE_MATRIX.csv",
     "docs/build/BACKLOG.csv",
+    # P34.29 (B3 M5): landings come from the S1b dispositions + the committed
+    # RETURN PASS map — these are hashed inputs, so a stale map or disposition
+    # edit fails `verify`.
+    "docs/build/tools/record_policy/return_pass.toml",
+    "docs/build/planning/2026-09-30-next-phase/universe/UNIVERSE_DISPOSED.csv",
+    "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
     f"{OBLIGATIONS_REL}/events.jsonl",
     f"{OBLIGATIONS_REL}/coverage_assessments.jsonl",
     f"{OBLIGATIONS_REL}/reconciliations.json",
@@ -316,6 +322,60 @@ def classify_conflicts(
     return by_event, by_doc, inconsistencies
 
 
+def _return_pass_inputs(root: pathlib.Path):
+    """Committed RETURN PASS table + the disposition inputs (P34.29; B3 M5).
+    Returns (table_rows, membership, dispositions, unit_rows) — all empty when
+    the P34.29 inputs are absent, so pre-M5 trees still project (the
+    event-head landing then stands, unchanged)."""
+    empty: tuple = ([], {}, {}, {})
+    try:
+        rp = _load("return_pass")
+    except Exception:
+        return empty
+    if not (root / rp.MAP_REL).is_file() or not (root / rp.UNIVERSE_REL).is_file():
+        return empty
+    ledger_path = root / "docs/build/LEDGER.md"
+    ledger = ledger_path.read_text(encoding="utf-8") if ledger_path.is_file() else ""
+    rows = []
+    for r in rp.committed_table_rows(ledger) or []:
+        rows.append(
+            {k: (rp._norm(v) if isinstance(v, str) else v) for k, v in r.items()}
+        )
+    membership = {oid: r["key"] for r in rows for oid in r["obligations"]}
+    return rows, membership, rp.load_dispositions(root), rp.load_unit_rows(root)
+
+
+def _disposition_landing(
+    oid: str,
+    head_landing: str,
+    membership: dict[str, str],
+    dispositions: dict[str, str],
+    unit_rows: dict[str, list[str]],
+) -> tuple[str, str]:
+    """The owed obligation's landing per its S1b disposition (B3 M5 / F-28:
+    landings come from the dispositions, not inferred from free text).
+    ``(landing, source)`` — the event-head value stands only where the
+    disposition inputs are silent (a recorded watch bound)."""
+    if oid in membership:
+        return f"RETURN PASS — {membership[oid]}", "return-pass-map/1"
+    m = re.match(r"^([a-z\-]+)\((.*)\)$", dispositions.get(oid, ""))
+    if m:
+        kind, ref = m.group(1), m.group(2)
+        if kind == "live-return-pass":
+            # disposed to RETURN PASS but named by no row — return_pass.py
+            # check is the CI wall for that; the projection shows intent
+            return f"RETURN PASS ({ref})", "disposition live-return-pass"
+        if kind == "ticket":
+            resolved = unit_rows.get(ref, [])
+            if resolved:
+                return " + ".join(resolved), f"disposition ticket({ref})"
+            return f"ticket({ref})", "disposition (unresolved unit)"
+        return f"{ref} [{kind}]", f"disposition {kind}"
+    if dispositions.get(oid):
+        return dispositions[oid], "disposition"
+    return head_landing, "event-head"
+
+
 def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) -> dict:
     diags, _meta = audit_current_state.audit(root)
     rows = obligation_events.parse_obligation_rows(root)
@@ -334,6 +394,12 @@ def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) 
     )
     by_event, by_doc, inconsistencies = classify_conflicts(diags, events, documented)
 
+    # P34.29 (B3 M5 / V9, F-28): an owed obligation's landing comes from its
+    # S1b disposition / the committed RETURN PASS table — never inferred from
+    # the free-text landing the anchor recorded. Terminal obligations keep the
+    # recorded head landing (the disposition *is* the terminal record).
+    rp_rows, rp_membership, dispositions, unit_rows = _return_pass_inputs(root)
+
     obligations: list[dict] = []
     for row in rows:
         oid = row["id"]
@@ -344,14 +410,22 @@ def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) 
             key=lambda e: e.get("seq", -1),
         )
         head = chain[-1] if chain else None
+        head_landing = head["landing"] if head else "—"
+        status = head["to_status"] if head else row["status"]
+        landing, landing_source = (head_landing, "event-head")
+        if status in OWED:
+            landing, landing_source = _disposition_landing(
+                oid, head_landing, rp_membership, dispositions, unit_rows
+            )
         obligations.append(
             {
                 "id": oid,
-                "status": head["to_status"] if head else row["status"],
+                "status": status,
                 "status_source": f"event-head {head['event_id']}" if head else "cell (no events)",
                 "kind": row["kind"],
                 "owner": head["owner"] if head else "—",
-                "landing": head["landing"] if head else "—",
+                "landing": landing,
+                "landing_source": landing_source,
                 "backlog_home": head["backlog_home"] if head else "—",
                 "item": row["item"],
                 "unblocked_by": row["unblocked_by"],
@@ -418,7 +492,8 @@ def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) 
             "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md "
             "compatibility cells remain the control authority; this projection is "
             "derived from hashed inputs and never writes them (shadow mode; the "
-            "single-writer protocol is D-R10-MEMORY-1 → P32.8)"
+            "single-writer cutover deferral is D-R10-MEMORY-1, landed per its "
+            "disposition)"
         ),
         "input_commit": manifest["input_commit"],
         "manifest_inputs": len(manifest["inputs"]),
@@ -435,10 +510,18 @@ def build_projection(root: pathlib.Path, out_dir: pathlib.Path, manifest: dict) 
             "coverage_historical_rows": len(coverage_historical),
             "reconciled_by_event": len(by_event),
             "reconciled_by_documentation": len(by_doc),
+            "return_pass_rows": len(rp_rows),
             "known_inconsistencies": len(inconsistencies),
             "conflicted": len(inconsistencies),
         },
         "obligations": obligations,
+        # P34.29 (B3 M5): the committed RETURN PASS table, verbatim — the
+        # generated LEDGER region stays the authority; this is the advisory
+        # read of the same bytes.
+        "return_pass": {
+            "authority": "docs/build/LEDGER.md `### RETURN PASS — current` (generated by return_pass.py)",
+            "rows": rp_rows,
+        },
         "coverage": {
             "historical_csv": {
                 "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -484,7 +567,7 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         "> **Authority:** `docs/build/LEDGER.md` CURRENT STATE + the DEFERRALS.md",
         "> compatibility cells remain the control authority. This view is derived from",
         "> the hashed `input-manifest/1` (`manifest.json`); it never writes control",
-        "> state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.",
+        "> state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-1`.",
         f"> input_commit: `{projection['input_commit']}` · inputs hashed: "
         f"{projection['manifest_inputs']} · wall-clock receipt: `receipt.json`",
         "",
@@ -518,6 +601,25 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
             f"{_verify_cell(o['landing'])} | {_verify_cell(o['verify'])} |"
         )
     sections.append(("obligations", obl_lines))
+
+    # P34.29 (B3 M5): the committed RETURN PASS table, verbatim — compact
+    # columns; the generated LEDGER region remains the authority.
+    rp_rows = projection["return_pass"]["rows"]
+    if rp_rows:
+        rp_lines = [
+            "- the generated LEDGER region `### RETURN PASS — current` is the",
+            "  authority (`return_pass.py`); owed obligations in a row land there.",
+            "| ticket | obligations | re-run line |",
+            "|---|---|---|",
+        ]
+        for r in rp_rows:
+            rp_lines.append(
+                f"| {r['key']} | {_verify_cell(r['obligations_cell'])} | "
+                f"{_verify_cell(r['rerun_cell'])} |"
+            )
+    else:
+        rp_lines = ["- none — no `### RETURN PASS — current` region committed"]
+    sections.append(("return-pass", rp_lines))
 
     inc_lines: list[str] = []
     if projection["known_inconsistencies"]:
@@ -608,6 +710,7 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
                     lines += body + [""]
                 continue
             title = {
+                "return-pass": "## RETURN PASS — owed live legs (generated region)",
                 "inconsistencies": "## Known inconsistencies (preserved, never synthesized)",
                 "domains": "## Evidence domains — recorded evidence only",
                 "funnel": "## Source funnel (recorded baseline, domain-labelled)",
@@ -626,7 +729,7 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         return doc, {}
 
     pages: dict[str, str] = {}
-    spill_order = ["obligations", "coverage", "funnel", "adrs"]
+    spill_order = ["obligations", "coverage", "funnel", "adrs", "return-pass"]
     spilled: set[str] = set()
 
     def _replace_section(name: str, body: list[str]) -> None:
