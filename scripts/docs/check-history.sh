@@ -301,7 +301,7 @@ while IFS="$(printf '\t')" read -r st path; do
   case "$path" in
     "$LEDGER_REL") cls=ledger ;;
     docs/tickets/DEFERRALS.md) cls=deferrals ;;
-    docs/build/readouts/_TEMPLATE.md) cls="" ;;
+    docs/build/readouts/*_TEMPLATE.md) cls="" ;;
     docs/build/readouts/*.md) cls=readout ;;
     docs/build/BUILD_INDEX.md) cls=index ;;
     "$MANIFEST_REL") cls=manifest ;;

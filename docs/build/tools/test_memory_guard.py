@@ -1259,6 +1259,140 @@ def test_g4b_signing_needs_the_operator_confirmation_of_drafted_text(repo: Path)
     )
 
 
+def test_g4b_restored_readout_missing_the_sentence_fails(repo: Path) -> None:
+    """P34.28: the grandfather clause ends at M4 — a readout carrying its `## Readout history
+    (restored …)` section but missing the guard sentence is a violation, not a warning
+    (P34.27 appended the sentence to every restored readout)."""
+    write(
+        repo,
+        "docs/build/readouts/GRANDPA.md",
+        "# old readout\n\nStatus: SIGNED\n\n## Readout history (restored from `deadbeef^`)\n"
+        "> # old readout\n> Status: PENDING\n",
+    )
+    base = commit(repo, T_BASE, "add a restored-history readout")
+    append(repo, "docs/build/readouts/GRANDPA.md", "- a later note\n")
+    commit(repo)
+    rc, doc, out = run_guard(repo, "all", "--range", f"{base}..HEAD")
+    got = rules(doc)
+    assert rc == 1, out
+    assert ("readouts", "G4b-guard", "docs/build/readouts/GRANDPA.md") in got
+    # and it is a violation, not merely a warning
+    assert not any(
+        f["rule"] == "G4b-guard" and f["path"].endswith("GRANDPA.md")
+        for c in doc.get("checks", [])
+        for f in c["warnings"]
+    )
+
+
+def test_g4b_pre_restoration_readout_missing_the_sentence_warns(repo: Path) -> None:
+    """A genuinely pre-restoration readout (replayed or pre-M4 history) still warns, not
+    fails — the forward rule keys on the restored-history boundary."""
+    write(
+        repo,
+        "docs/build/readouts/ANCIENT.md",
+        "# old readout\n\nStatus: SIGNED\n\n## Notes\n- written before the convention\n",
+    )
+    base = commit(repo, T_BASE, "add a pre-guard readout")
+    append(repo, "docs/build/readouts/ANCIENT.md", "- a later note\n")
+    commit(repo)
+    rc, doc, out = run_guard(repo, "all", "--range", f"{base}..HEAD")
+    warns = rules(doc, "warnings")
+    assert ("readouts", "G4b-guard", "docs/build/readouts/ANCIENT.md") in warns
+    assert ("readouts", "G4b-guard", "docs/build/readouts/ANCIENT.md") not in rules(doc)
+    assert rc == 0, out
+
+
+def test_g4b_template_files_are_not_readouts(repo: Path) -> None:
+    """`*_TEMPLATE.md` names are templates: never judged as live readouts — even one that
+    carries a signed Status line and no guard sentence produces no readout violations."""
+    write(
+        repo,
+        "docs/build/readouts/_GATE_TEMPLATE.md",
+        "# GATE-<id> — template\n\nStatus: SIGNED\n\n## Signature\n",
+    )
+    commit(repo)
+    rc, doc, out = judge(repo)
+    assert rc == 0, out
+    assert not any(
+        r[2] == "docs/build/readouts/_GATE_TEMPLATE.md" for r in rules(doc, "violations")
+    )
+
+
+def test_g4b_signature_must_resolve_its_named_gate_decisions_row(repo: Path) -> None:
+    """A signature's `GATE DECISIONS row:` line must resolve to a real row whose answer the
+    decision line equals — quoting another row's answer under this row's name fails."""
+    add_rows(
+        repo,
+        '| 2026-09-28T02:10:00Z | GATE-G2 | GATE-G2 | publish | "yes, publish" (chat) | go | decision |',
+        '| 2026-09-28T02:20:00Z | GATE-G2 | GATE-G9 | withdraw | "no" (chat) | held | decision |',
+    )
+    append(
+        repo, "docs/build/LEDGER.md", "- 2026-09-28 — GATE-G2 pause — waiting for the operator\n"
+    )
+    replace(repo, "docs/build/readouts/GATE-G2.md", "Status: PENDING", "Status: SIGNED")
+    # quote "no" — GATE-G9's answer — but name GATE-G2's row: mismatch must fail
+    append(
+        repo,
+        "docs/build/readouts/GATE-G2.md",
+        'Operator decision (verbatim, received 2026-09-28T02:20:00Z via chat): "no"\n'
+        "GATE DECISIONS row: 2026-09-28T02:10:00Z | GATE-G2\n"
+        "Signed by: the operator. Recorded by claude-code/claude-opus-5-5/subagent, which does not sign.\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("readouts", "G4b-verbatim", "docs/build/readouts/GATE-G2.md") in rules(
+        doc
+    )
+
+
+def test_g4b_signature_names_a_missing_row_fails(repo: Path) -> None:
+    """A `GATE DECISIONS row:` line that resolves to no row fails — the signature must name
+    the record it repeats (ADR-147 rule 1)."""
+    add_rows(
+        repo,
+        '| 2026-09-28T02:10:00Z | GATE-G2 | GATE-G2 | publish | "yes, publish" (chat) | go | decision |',
+    )
+    append(
+        repo, "docs/build/LEDGER.md", "- 2026-09-28 — GATE-G2 pause — waiting for the operator\n"
+    )
+    replace(repo, "docs/build/readouts/GATE-G2.md", "Status: PENDING", "Status: SIGNED")
+    append(
+        repo,
+        "docs/build/readouts/GATE-G2.md",
+        'Operator decision (verbatim, received 2026-09-28T02:10:00Z via chat): "yes, publish"\n'
+        "GATE DECISIONS row: 2026-09-29T00:00:00Z | GATE-G9\n"  # no such row
+        "Signed by: the operator. Recorded by claude-code/claude-opus-5-5/subagent, which does not sign.\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("readouts", "G4b-verbatim", "docs/build/readouts/GATE-G2.md") in rules(
+        doc
+    )
+
+
+def test_g4b_signature_without_the_row_line_fails(repo: Path) -> None:
+    """No `GATE DECISIONS row:` line at all — the signature must name its record."""
+    add_rows(
+        repo,
+        '| 2026-09-28T02:10:00Z | GATE-G2 | GATE-G2 | publish | "yes, publish" (chat) | go | decision |',
+    )
+    append(
+        repo, "docs/build/LEDGER.md", "- 2026-09-28 — GATE-G2 pause — waiting for the operator\n"
+    )
+    replace(repo, "docs/build/readouts/GATE-G2.md", "Status: PENDING", "Status: SIGNED")
+    append(
+        repo,
+        "docs/build/readouts/GATE-G2.md",
+        'Operator decision (verbatim, received 2026-09-28T02:10:00Z via chat): "yes, publish"\n'
+        "Signed by: the operator. Recorded by claude-code/claude-opus-5-5/subagent, which does not sign.\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 1 and ("readouts", "G4b-verbatim", "docs/build/readouts/GATE-G2.md") in rules(
+        doc
+    )
+
+
 # ── synthetic fixtures: G1 blame mode on a restored block ───────────────────
 
 

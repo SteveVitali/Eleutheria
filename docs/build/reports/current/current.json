@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "63da1561abda06a6e8fd15ef399c136b2a39a0f2",
-  "manifest_inputs": 958,
+  "input_commit": "c55f29807ef76827eb09a2aaea94968a4300fdb3",
+  "manifest_inputs": 961,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.28",
-    "lastCompleted": "P34.27",
+    "nextTicket": "P34.29",
+    "lastCompleted": "P34.28",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.27-remaining-append-only-restorations",
+    "chainTip": "r11/P34.28-readout-authorship-and-signed-gate-check",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-04T20:07Z"
+    "updatedAt": "2026-10-04T22:30Z"
   },
   "counts": {
-    "obligations": 153,
-    "owed": 85,
-    "open": 82,
+    "obligations": 154,
+    "owed": 86,
+    "open": 83,
     "partial": 3,
     "terminal": 68,
-    "events": 632,
+    "events": 633,
     "transitions": 25,
     "coverage_assessments": 199,
     "coverage_historical_rows": 777,
@@ -6052,7 +6052,7 @@
       "unblocked_by": "owner: PLAN-11B (row 239), to place it in an 11B row — or, only in the operator's own words, a waiver ADR (never by default) · trigger: PLAN-11B's dispatch in 11A",
       "verify": "a landed row whose new sqitch change stores ODbL-compartment physical-asset records in a physically separate table, with a test that no CC-BY table holds them; SIG-LIC-006's coverage row re-verdicted by a `coverage-assessment/1` event",
       "proxy": "separation holds at the export boundary today: compartment stamping and the export licence gate (ADR-011; `tests/connectors/test_osm.py`)",
-      "line": 975,
+      "line": 977,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6096,7 +6096,7 @@
       "unblocked_by": "owner: operator merge; trigger: the first merge sitting after this PR reaches `main`; P38.1 audits it",
       "verify": "every `CI` workflow run on `main` after the merge shows a non-`cancelled` conclusion (`gh run list --branch main --workflow CI` / the check-runs API); P38.1's audit names this row",
       "proxy": "the rule is asserted on the workflow by `test_ci_cancel_in_progress_pr_only` and exercised by this PR's own head runs",
-      "line": 985,
+      "line": 987,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6162,7 +6162,7 @@
       "unblocked_by": "owner: the P34/P35 toolchain row that moves the Lighthouse runner (or the upstream release that clears the chain); trigger: a `@lhci/cli`/`lighthouse` release whose tree drops the advisories — failing that, before the entries' 2026-11-30 `expires` makes the nightly gate fail loudly",
       "verify": "`scripts/ci/npm_audit_gate.sh --full` green with the entries REMOVED (the gate already notes when an entry covers no current finding); `npm --prefix web audit --json` shows the chain gone",
       "proxy": "the per-PR production gate (`--omit=dev`) can never see these packages — the `--prod-audit` cross-check makes a dev-only entry that ships void; nightly judges the full tree every night",
-      "line": 986,
+      "line": 988,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6206,7 +6206,7 @@
       "unblocked_by": "owner: P38.1a audits it (operator merge for the post-merge leg); trigger: the first `nightly` run after this PR and the first merge sitting",
       "verify": "`python3 docs/build/tools/verify_recorded_ci.py --all` green in a nightly run record; P38.1a's audit names this row",
       "proxy": "the verifier is wired into the docs job + `ci-local` and verified #195's own record against GitHub head-bound",
-      "line": 987,
+      "line": 989,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6250,7 +6250,7 @@
       "unblocked_by": "owner: the operator (the copy-batch sitting); trigger: the copy-batch sitting before republish #1 — P34.17's L2 refuses to ship a `pending` sentence",
       "verify": "every `/data-collection/` row in `docs/build/reports/copy-batches/batch-01.md` reads `confirmed` with the operator's verbatim words and a `date -u` stamp in the file's confirmation log",
       "proxy": "the ship gate is the compensating control — P34.17's L2 refuses `pending` copy so unconfirmed sentences cannot ship silently, and `tests/unit/test_data_collection_page.py` pins every sentence to its row",
-      "line": 988,
+      "line": 990,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6294,7 +6294,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P34.3-live-<n>` dispatch or the operator; trigger: a `date -u` outside 03:00–10:00Z, and for the `sig-pg` legs also outside the AR-3 windows with no `sig-materialize` execution running",
       "verify": "re-run `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true` (the contract's re-run line), equivalently `ops/gcp/protect.sh --apply` then `--verify` printing `11 OK, 0 DRIFT`; the QA-7 site checks (`/`, `/map/` 200, `/tiles/…` 206 on both origins; the direct bucket URL 403/404) recorded in `docs/build/runs/P34.3.md`",
       "proxy": "the script enforces the same window guard itself (exit 42 inside a closed window — it cannot be accidentally forced), the AR-2 backup gates the first patch on `SUCCESSFUL`, every mutation is idempotent read-then-SKIP with an inline rollback on the stop rules, and `--verify --from-state` is offline-proven both directions (`tests/ops/test_protect_iac.py` over recorded JSON)",
-      "line": 998,
+      "line": 1000,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6338,7 +6338,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P34.4-live-<n>` dispatch or the operator; trigger: a `date -u` outside 03:00–10:00Z (the roll leg also outside AR-3); the jobfail leg's second trigger is a green `sig-probe` sweep after the roll",
       "verify": "re-run `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true` (the contract's re-run line), equivalently `ops/gcp/alerts.sh --apply all` then `ops/gcp/alerts.sh --apply jobfail` then `ops/gcp/alerts.sh --verify` printing `9 OK, 0 DRIFT` (six policies + channel + two uptime checks all `OK`, workflow `disabled_manually`, probe image pinned)",
       "proxy": "the script enforces the same window guard itself (exit 42 inside a closed window — it cannot be accidentally forced), every mutation is idempotent read-then-SKIP with a printed rollback (create→delete by id; update→captured prior def via `--policy-from-file`; roll→recorded before-digest; disable→`gh workflow enable`), the jobfail extension self-gates on a green sweep, and `--verify --from-state` is offline-proven both directions (`tests/ops/test_alerts_iac.py`, 33 tests over fixture + stubbed-CLI state)",
-      "line": 1008,
+      "line": 1010,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6382,7 +6382,7 @@
       "unblocked_by": "owner: the operator; trigger: after D-P34.4-1's leg A runs — the delivery test posts the synthetic alert and the e-mail should follow within minutes (notification rate limit 86400s means a same-day repeat may not re-send)",
       "verify": "the operator records receipt (date + which e-mail) in `docs/build/runs/P34.4.md` (or a reply naming it); the run ledger's delivered-alert log block flips `human-confirmed` from `no human check performed` to the recorded confirmation",
       "proxy": "the delivery test itself proves every machine hop (webhook → SIG-ALERT log line → log-match condition → incident) — the e-mail leg is the one hop only a human sees; the channel definition is committed with the address redacted",
-      "line": 1009,
+      "line": 1011,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6426,7 +6426,7 @@
       "unblocked_by": "owner: P35.2 (SIG-OPS-006's owner row); trigger: P35.2's alerting-as-code mechanism landing — it takes the committed `ops/monitoring/` defs as its substrate (ADR-192)",
       "verify": "`sig-ops monitoring-defs verify --live` stays `0 DRIFT` and the three policies' committed defs gain `notificationRateLimit` matching live",
       "proxy": "the policies already auto-close and notify on every new incident; the daily re-notify is the >24h backstop — the gap is bounded and the verify diff will flag it if live is patched first",
-      "line": 1010,
+      "line": 1012,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6470,7 +6470,7 @@
       "unblocked_by": "owner: the operator; trigger: the alert e-mail landing (expected within ~a day of creation — the $0.01 threshold is already exceeded by month-to-date spend)",
       "verify": "the operator records receipt (date + which e-mail) in `docs/build/runs/P34.5.md`; the recorded string feeds `--fired-confirmed`; `ops/gcp/cost-guard.sh --verify` then reports `test-budget gone`",
       "proxy": "the delete leg is name-checked (only the exact displayName) and refuses (exit 42) without `--fired-confirmed` — the \"deleted after it fires\" ordering is enforced by the script, not just documented; until then the budget costs nothing",
-      "line": 1022,
+      "line": 1024,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6514,7 +6514,7 @@
       "unblocked_by": "owner: the operator (OP-12); trigger: any time — `sig_billing_export` is already live",
       "verify": "`ops/gcp/cost-guard.sh --apply exportcheck` prints the row count once `gcp_billing_export_v1_<billing-account>` exists (within ~a day of linking); the first `measured` rows then land in `docs/build/reports/spend/spend_ledger.csv`",
       "proxy": "the dataset + the verification query + the ledger are all landed; nothing claims a measured figure until `exportcheck` reads one",
-      "line": 1023,
+      "line": 1025,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6558,7 +6558,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner or a re-run of this row; trigger: `exportcheck` reporting ≥1 row in `gcp_billing_export_v1_<billing-account>` for month `2026-10`; re-run prompt `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true`",
       "verify": "the ledger's `pending` rows replaced by `measured` (GCP, export-sourced) and `operator-reported` (non-GCP) rows; the ~$90–100 inference row stays as `estimate` (superseded, not edited)",
       "proxy": "the pending placeholders + the documented query mean the report cannot silently lapse — `SPEND_LEDGER.md`'s rules forbid a blank month being read as zero",
-      "line": 1024,
+      "line": 1026,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6602,7 +6602,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P34.6-live-<n>` dispatch or the operator; trigger: a `date -u` outside 03:00–10:00Z with no `sig-materialize` execution running, the newest `sig-pg` backup `SUCCESSFUL`, and the latest `sig-probe` sweep green — or its red confirmed as the recorded stale-targets class via `--probe-note`",
       "verify": "re-run `implement-spec spec=docs/tickets/207_P34.6__restore-drill-and-logical-export.md live_verification=true` (the contract's re-run line), equivalently `ops/gcp/restore-drill.sh --apply all` then `--verify` printing `0 DRIFT`; `record.json` (`sig.restore-drill/1`) names T, RTO, RPO and equal per-table counts",
       "proxy": "the script enforces the same window guard itself (exit 42 inside a closed window — it cannot be accidentally forced), the delete is name-checked (`assert_drill_name` refuses `sig-pg` outright — `tests/ops/test_cloudsql_drill.py` + `test_restore_drill_iac.py` pin it), and `--verify --from-state` is offline-proven both directions",
-      "line": 1036,
+      "line": 1038,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6669,7 +6669,7 @@
       "unblocked_by": "owner: the operator (the verbatim in-ticket go) or the OM-19 leg-runner once a go lands; trigger: the recorded go + a `date -u` outside 03:00–10:00Z AND outside AR-3 (the export loads `sig-pg`'s single vCPU)",
       "verify": "`ops/gcp/logical-export.sh --verify` prints `export:monthly-export-object` OK; the object exists at `gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/` and survives `sig-pg` lifecycle events (the contract's \"outside the instance's lifecycle\" point)",
       "proxy": "the script refuses without `--go` (exit 42, tested); the cadence row is inert to `scheduled-ops.sh` so nothing silently schedules; the monthly debt cannot lapse invisibly — DEFERRALS + the cadence.toml row both name it",
-      "line": 1037,
+      "line": 1039,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6713,7 +6713,7 @@
       "unblocked_by": "owner: the operator (the verbatim in-ticket go) or the OM-19 leg-runner once a go lands; trigger: the recorded go (no extra window beyond the apply-side guards)",
       "verify": "`ops/gcp/logical-export.sh --verify` prints `export:lifecycle-monthly-100d` + `export:lifecycle-adhoc-30d` OK",
       "proxy": "`pg/seed-*/` is never matched by either rule (the relabel prefix is deliberate), and read-then-compare refusal means a foreign rule can't be silently overwritten",
-      "line": 1038,
+      "line": 1040,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6757,7 +6757,7 @@
       "unblocked_by": "owner: the operator (the verbatim in-ticket go) or the OM-19 leg-runner once a go lands; trigger: the recorded go",
       "verify": "`ops/gcp/logical-export.sh --verify` prints `export:seed-prefix` OK; `gcloud storage ls gs://<project>-sig-backups/pg/` still lists both originals",
       "proxy": "the leg can only copy — the `_read` verb allowlist and the absence of any `rm`/`mv`/`delete` call are pinned by `test_relabel_copies_seeds_and_never_deletes`; GCP_DEPLOYMENT.md's appended note already names the two objects seed dumps",
-      "line": 1039,
+      "line": 1041,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6801,7 +6801,7 @@
       "unblocked_by": "owner: the operator (the verbatim go / the quarterly cadence packet) or the OM-19 leg-runner; trigger: the recorded go or the GATE-G4 listing — then the same window rules as leg 1",
       "verify": "the same `sig.restore-drill/1` record with `sig-pg-drill-b-<stamp>` as `clone_instance`; `--verify` `0 DRIFT`",
       "proxy": "`fullrestore` refuses without `--go` (exit 42, tested) and the name-checked delete covers the `-b-` shape too (`assert_drill_name` accepts it — the variant is never outside the safe-name rule)",
-      "line": 1040,
+      "line": 1042,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6845,7 +6845,7 @@
       "unblocked_by": "owner: the P34.46 run (or the OM-19 leg-runner after it); trigger: P34.46's schema-changing deploy landing",
       "verify": "`ops/gcp/restore-drill.sh --apply clone/counts/…` re-run post-deploy; the record's `sqitch_equal` must stay true (the clone carries the new tip)",
       "proxy": "the drill record compares `sqitch.changes` tips on both sides — a schema-drifted clone would fail the check loudly, so a stale drill can't read as green",
-      "line": 1041,
+      "line": 1043,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6889,7 +6889,7 @@
       "unblocked_by": "owner: the operator (OP-09); trigger: the operator's execution sitting by GATE-G4, before P35.5's R2 leg",
       "verify": "post-switch: `dig +noall +answer surveillancegraph.org NS` returns the Cloudflare pair, `dig … A` → `136.81.80.102`, `dig +dnssec … A` carries the `ad` flag with only Cloudflare's DS, `curl -sSI https://surveillancegraph.org/` → `200` with the managed cert intact; **P35.67** (row 263) is the verifying probe row — TLS, cert renewal status, every route, mail, second leg ≈ 11-22",
       "proxy": "the runbook's rollback is a single registrar revert (the Squarespace zone is never deleted), the grey-cloud rule is pinned by `tests/unit/test_dns_cutover.py`, and P34.4's TLS-expiry alert fires at ≈21 days if renewal slips toward 2026-12-22 — a bad cut-over cannot fail silently",
-      "line": 1052,
+      "line": 1054,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6933,7 +6933,7 @@
       "unblocked_by": "owner: the operator's merge + the P38.1a audit (which already owns D-P34.2-2's post-merge leg); trigger: the first `nightly` cron tick or `workflow_dispatch` run after this PR merges",
       "verify": "`gh run list --workflow nightly.yml` shows the completed run; its `nightly-*` report artifact carries `replay` with judged > 0 and the oracle comparison at 0 missed / 0 breached / 0 unexpected; a red stage fails the report gate loudly (artifacts upload `if: always()`)",
       "proxy": "the stage is pinned by `tests/unit/test_ci_workflows.py` (fails if the replay step or its gate wiring is removed); `memory_guard.py replay a33177c7..HEAD` ran locally green — 651 judged, 0 disagreements (`docs/build/reports/memory-repair/P34.7-replay.json`); a non-empty span that evaluates nothing exits 3 by fixture",
-      "line": 1053,
+      "line": 1055,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -6977,7 +6977,7 @@
       "unblocked_by": "owner: the upstream `http-cache-semantics`/`astro` release that clears the range, or the P34/P35 toolchain row that moves the builder; trigger: a `http-cache-semantics` release `>4.2.0` (or an astro release without the dep) — failing that, before the entry's `expires` makes the gate fail loudly",
       "verify": "`bash scripts/ci/npm_audit_gate.sh --out docs/build/logs` green with the entry REMOVED (the gate already notes when an entry covers no current finding); `npm --prefix web audit --omit=dev` shows no `http-cache-semantics` finding",
       "proxy": "the per-PR production gate is exactly the job that caught this; the dated `expires` and the \"entry covers no current finding\" note keep the grant from going stale silently",
-      "line": 1054,
+      "line": 1056,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7022,7 +7022,7 @@
       "unblocked_by": "owner: P34.40 (the dark roll); trigger: P34.40's nginx change",
       "verify": "`ops/web/nginx.conf` maps `error_page 403`/`410` onto the branded assets, `/task/` 403 → 404, and `/terms` returns a real 3xx to the API terms — verified in the composed e2e after the roll",
       "proxy": "the branded /403.html + /410.html assets and the noindex `/terms/` forwarder page already ship in the allow-listed build and are covered by the axe + zero-JS sweeps",
-      "line": 1055,
+      "line": 1057,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7066,7 +7066,7 @@
       "unblocked_by": "owner: the P34.46 API roll (or the OM-19 leg-runner once a go lands); trigger: the recorded verbatim in-ticket operator go for the API-side F-337 suppression",
       "verify": "re-run: (1) read-only confirm the current exposure (`/v1/claim/<claim_id>` on each committed target); (2) narrow the Miami candidates — join `claim_qualifier`/`raw_context` or the claims' `claim_evidence` captures to the upstream AOS locator (`raw_context` carries `aos_id`): the claim linked to AOS000960 is suppressed, the claim linked to AOS005165 is NOT written (the `candidate_claim_ids` entry exists only for fail-closed safety until this join runs); (3) INSERT the `publication_disposition` rows — one per suppressed claim id, disposition `withdraw`, kind `rights_withdrawal`, authority the withdrawal entry's `authority` string — append-only, never UPDATE/DELETE; (4) verify `/v1/search`, `/v1/entity`, `/v1/claim` no longer serve the nine rows; the restore path is a superseding disposition row, never a delete",
       "proxy": "the committed `sig.publication-withdrawals/1` list plus the export/API-layer matching (`policy.withdrawals`, `_apply_publication_withdrawals`, `web/src/lib/withdrawals.ts`) mean every artifact BUILT after this lands already excludes the rows — engine-verified by `tests/exports/test_p34_19_express_terms.py`; the remaining API exposure is recorded, not hidden",
-      "line": 1067,
+      "line": 1069,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7110,7 +7110,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner (`r11/P34.17-live-<n>`) or the operator; trigger: ALL of — the verbatim HG-11 go in GATE DECISIONS · batch #1 rows `confirmed` · `live:P34.3` versioning verified on · a `probe-run/1` record ≤ 24 h · `date -u` outside 03:00–10:00Z",
       "verify": "re-run `implement-spec spec=docs/tickets/220_P34.17__web-honesty-wave-and-republish-1.md live_verification=true` (scope limited to the L2 republish); verify = the publish's own probe sweep: `/visual-language/` `http-absent` on apex/web/bucket origins, `/sources/` + `/status/` 200, `data-intake-email=\"set\"` on `/dispute/`, and the release record naming `sig-2026-09-27-ce480ab1`",
       "proxy": "the publish gates make a premature publish fail closed: the copy gate refuses any `pending` batch row, the allow-list refuses unlisted top-level entries, the internal-marker sweep refuses curation/loopback/`demo_` content, and `/dispute/` is refused while `data-intake-email=\"unset\"` — a publish without the injected operator address cannot go green",
-      "line": 1079,
+      "line": 1081,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7154,7 +7154,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner (`r11/P34.18-live-2` from the chain tip) or the operator; trigger: ALL of — the verbatim in-ticket go in GATE DECISIONS · `date -u` ≥ 2026-10-13T12:00Z outside 03:00–06:30Z · AR-2 backup SUCCESSFUL + pre-state captured · a `probe-run/1` record ≤ 24 h",
       "verify": "re-run `implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true` (scope: leg L2 only); verify = the hosted read-back maps every renamed `source_id` (counts only — never a printed handle) and `n_tup_upd`/`n_tup_del` on spine tables are unchanged (insert-only)",
       "proxy": "the command is dry-run-by-default (`--apply` to write) and insert-only — rollback is a superseding row/the map object's prior generation, never `UPDATE`/`DELETE`; the alias projection already resolves old ids at read/export time so a delayed L2 never publishes a wrong answer, it only delays the hosted registry's own neutral ids",
-      "line": 1091,
+      "line": 1093,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7198,7 +7198,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner (`r11/P34.21a-live-1` from the chain tip) or the operator; trigger: ALL of — `date -u` ≥ 2026-10-13T12:00Z and outside 03:00–06:30Z (preferred 14:00–20:00Z weekdays) · the S5-3 pre-authorisation unexpired and un-voided (re-checked at the leg, OM-20) · `live:P34.3` data protection live · an AR-2 on-demand backup SUCCESSFUL + pre-state captured (spine watermark, per-table counts, the count of attribution-required rows with empty attribution — the 09-27 read was 61,603 empty + 3,272 wrong-upstream) · a `probe-run/1` record ≤ 24 h old",
       "verify": "re-run `implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (scope: leg L1 hosted backfill only, on branch `r11/P34.21a-live-1`); verify = dry-run counts recorded → `--apply` → hosted read-back: 0 attribution-required claims whose effective record has empty attribution, the wrong-upstream rows now crediting their own source, `n_tup_upd`/`n_tup_del` on spine tables unchanged, a second `--apply` writing 0 rows",
       "proxy": "the command is dry-run-by-default and INSERT-only — an accidental early run writes nothing without `--apply`, and a wrong `--apply` rolls forward by superseding `rights_decision` rows (the effective record is the latest decision); the repo-tip sink already writes per-source rights, so a delayed leg only delays the hosted correction, never produces new wrong credits",
-      "line": 1104,
+      "line": 1106,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7242,7 +7242,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner or the operator; trigger: ALL of — the verbatim A-0.2 go in GATE DECISIONS exported as `SIG_PUBLIC_GATE_GO` · `live:P34.3` proven on the saved describe · the sha256-verified pre-state captured (`--apply prestate` + `list` output committed to the leg record) · `date -u` outside 03:00–10:00Z",
       "verify": "re-run `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L1 only); verify = `--verify` green: no unconditional anonymous object binding, every exclusion conditioned-in, the anonymous probes 200/403-404 as designed — plus the leg record's own evidence lines",
       "proxy": "the script is dry-run by default and refuses `--apply` without the go, the saved+sha256-verified pre-state, `live:P34.3` on, or inside the window band; it carries no object-deletion path (pinned by `tests/ops/test_public_gate_iac.py`); rollback = `set-iam-policy` with the saved policy JSON, printed beside every plan",
-      "line": 1116,
+      "line": 1118,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7286,7 +7286,7 @@
       "unblocked_by": "owner: the OM-19 leg-runner or the operator; trigger: ALL of — the verbatim republish go in GATE DECISIONS · `D-P34.21a-1` + `D-P34.18-1` DONE · batch-02 rows for the shipped sentences `confirmed` · a `probe-run/1` ≤ 24 h · `date -u` outside 03:00–10:00Z",
       "verify": "re-run `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L2 only); verify = the publish's own gates + probe sweep: export-mode build carries `web/attribution_corrections.json` + the SL-20 note on `/sources/`, per-row attribution holder + `terms_url` green in the attribution sample, denied routes `http-absent` on every origin, the corrected export's `LICENCES.json`/manifest served",
       "proxy": "the publish path fails closed without any prerequisite (copy gate, attribution gate, allow-list, absence probes, release-namespace protection are all in the command); `export.sh run` writes a new timestamped prefix and carries no delete path (pinned by `tests/ops/test_p34_21b_export_legs.py`) — a premature run publishes nothing and deletes nothing",
-      "line": 1117,
+      "line": 1119,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7330,7 +7330,7 @@
       "unblocked_by": "owner: P34.46 (the API roll lands the code + grants); trigger: the P34.46 deploy completing on the hosted environment",
       "verify": "a read-back on the live service: the 404/complete/bytes/terms/basis assertions above over real responses (never fixture), plus a hosted `SET ROLE sig_read_public` read of the allow-list probes mirroring `tests/db/test_public_read_allowlist.py`",
       "proxy": "the behaviour is pinned pre-deploy: `tests/api/test_api_honesty.py` (scope 404, honest complete, basis label on every response), `tests/db/test_public_read_allowlist.py` (the exact grant set + denial probes), `tests/api/test_store_pg.py` (fixture-source exclusion on the PG store) all ran green in CI (#226) — an early slip only delays the roll, never serves the old dishonest answers",
-      "line": 1118,
+      "line": 1120,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7374,7 +7374,7 @@
       "unblocked_by": "owner: the sqitch fix row ahead of P34.46 (a new appended change; P34.46's L1 re-rehearsal is the consumer); trigger: before P34.46's schema deploy — its go/no-go cannot pass a tip that fails at `intake_storage`",
       "verify": "on a fresh `sig-pg-drill-l44-*` clone through `ops/gcp/restore-drill.sh --apply clone/rehearse/deleteclone`, `sqitch deploy --verify` to the plan tip exits 0 and `sqitch verify` exits 0; `record.json` shows all L44–52 + rework changes `ok` with per-change timings",
       "proxy": "the failure cannot pass silently — it exits the deploy 2 and reverts (both rehearsal records pin the class and the measured prefix: max `ACCESS EXCLUSIVE` on `claim_evidence` 13.344 s observed / 13.844 s bound, temp delta ~272.9 MB, deploy-to-failure 86.5–109.0 s), so the fix row's re-rehearsal has a diff baseline",
-      "line": 1119,
+      "line": 1121,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -7405,6 +7405,52 @@
             "interpretation": "preserved"
           },
           "recorded_at": "2026-10-04"
+        }
+      ]
+    },
+    {
+      "id": "D-P34.28-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.28-1:e0",
+      "kind": "P",
+      "owner": "the operator (OP-25)",
+      "landing": "the operator supplies the OP-25 public key, committed verbatim into docs/build/tools/record_policy/allowed_signers — the header-only state retires; due before GATE-G4 (its packet lists OP-25 as outstanding)",
+      "backlog_home": "BL-084",
+      "item": "OP-25 — the operator's gate-signing key itself: a passphrase- or hardware-backed key created and held by the operator, never loaded into an agent-reachable ssh-agent; its public half lands verbatim in `docs/build/tools/record_policy/allowed_signers`",
+      "unblocked_by": "owner: the operator (OP-25) · trigger: the operator supplies the OP-25 public key, committed verbatim — the header-only state retires · due: before GATE-G4 (its packet lists OP-25 as outstanding)",
+      "verify": "`allowed_signers` carries the operator's `<principals> <key-type> <key>` line; `check_gate_signatures.py` over a range with a gate-affecting record passes only for a commit or GATE DECISIONS row signed by that key — a throwaway-key signature still fails",
+      "proxy": "fail-closed by construction: while the file is header-only, every gate-affecting record — a signed-status `Status:` move, a GATE DECISIONS decision/waiver/pre-authorization row, an `ingestion_permitted` false→true flip — is red in CI",
+      "line": 1192,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.28-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.28-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.28",
+          "owner": "the operator (OP-25)",
+          "landing": "the operator supplies the OP-25 public key, committed verbatim into docs/build/tools/record_policy/allowed_signers — the header-only state retires; due before GATE-G4 (its packet lists OP-25 as outstanding)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P34.28.md",
+            "docs/tickets/233_P34.28__readout-authorship-and-signed-gate-check.md"
+          ],
+          "observed_at": "2026-10-04",
+          "recorded_at": "2026-10-04",
+          "source_commit": "0d0ecde0aa94ba78e6caac133ecd04e331232427",
+          "reason": "migration anchor appended by P34.28 (row 233) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1192,
+            "row_sha256": "f4d85228cf94177cfa3b6b4d5e784db3215a7dcac08f48a3a3bc8ca1547f8ff4",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
         }
       ]
     }
@@ -11723,14 +11769,14 @@
           "label": "historical/csv"
         },
         "SIG-MEM-008": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "docs/build/tools/memory_guard.py;docs/build/readouts/_GATE_TEMPLATE.md;docs/build/readouts/_HUMAN_TEMPLATE.md;scripts/docs/check-build-memory.sh;scripts/docs/check-history.sh",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-MEM-009": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "docs/build/readouts/_GATE_TEMPLATE.md;docs/build/readouts/_HUMAN_TEMPLATE.md;docs/build/tools/memory_guard.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -11891,8 +11937,8 @@
           "label": "historical/csv"
         },
         "SIG-SEC-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.28-1)",
+          "evidence": "docs/build/tools/check_gate_signatures.py;docs/build/tools/record_policy/allowed_signers;.github/workflows/ci.yml;Makefile",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -15497,10 +15543,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "62f2c0ba28ac7604a57544fffd265372b8e3a7e15b2141848b0109320a9d985f",
+  "manifest_sha256": "af0a9304413f5cae5e2ee4bebd931f0fa56fc14c0e6e3098fb7de1bb1cf89d81",
   "current_md": {
     "lines": 74,
-    "bytes": 13354,
+    "bytes": 13360,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

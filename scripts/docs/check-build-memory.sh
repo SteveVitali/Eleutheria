@@ -1083,7 +1083,7 @@ if [ -d "$BUILD/readouts" ]; then
   nro=0; nmiss=0; firstm=""
   for ro in "$BUILD"/readouts/*.md; do
     [ -f "$ro" ] || continue
-    b="$(basename "$ro")"; [ "$b" = "_TEMPLATE.md" ] && continue
+    b="$(basename "$ro")"; case "$b" in *_TEMPLATE.md) continue ;; esac
     nro=$((nro + 1))
     tr '\n' ' ' < "$ro" | sed -E 's/[[:space:]>]+/ /g' | grep -qiF "$GUARD_SENT" && continue
     if created_after_marker "docs/build/readouts/$b"; then
@@ -1091,7 +1091,9 @@ if [ -d "$BUILD/readouts" ]; then
     else nmiss=$((nmiss + 1)); [ -n "$firstm" ] || firstm="$b"; fi
   done
   count readout-guard "$nro" "$nro"
-  [ "$nmiss" -gt 0 ] && warn readout "$nmiss readout(s) predate the guard sentence (first: $firstm); readouts created after the guards marker must carry it (BM-INDEX-03)" "docs/build/readouts"
+  # P34.28: the grandfather clause is retired — P34.27 appended the sentence to every
+  # grandfathered readout, so any readout missing it fails, not warns (BM-INDEX-03).
+  [ "$nmiss" -gt 0 ] && viol readout "$nmiss readout(s) lack the guard sentence (first: $firstm); every readout carries it permanently — P34.27 appended it to the grandfathered set (BM-INDEX-03)" "docs/build/readouts"
 fi
 if [ -d "$BUILD/runs" ]; then
   nrun=0; nmiss=0; firstm=""
