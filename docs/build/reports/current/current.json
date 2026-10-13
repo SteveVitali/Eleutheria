@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "7ad254355afcfd4f34a29db90fcba767a7084434",
-  "manifest_inputs": 952,
+  "input_commit": "72e4bb50669c530d639421b528b0cdc8ef04b982",
+  "manifest_inputs": 954,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.24a",
-    "lastCompleted": "P34.23",
+    "nextTicket": "P34.25",
+    "lastCompleted": "P34.24a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.23-versioning-discipline-one-version-source",
+    "chainTip": "r11/P34.24a-sqitch-hygiene-and-round-trip-ci",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -27,13 +27,13 @@
   },
   "counts": {
     "obligations": 151,
-    "owed": 85,
-    "open": 82,
+    "owed": 83,
+    "open": 80,
     "partial": 3,
-    "terminal": 66,
-    "events": 623,
-    "transitions": 18,
-    "coverage_assessments": 193,
+    "terminal": 68,
+    "events": 625,
+    "transitions": 20,
+    "coverage_assessments": 194,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -4371,12 +4371,12 @@
     },
     {
       "id": "D-P32.10a-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P32.10a-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P32.10a-1:e1",
       "kind": "V",
       "owner": "engineering",
-      "landing": "P32.5",
-      "backlog_home": "BL-058",
+      "landing": "P34.24a",
+      "backlog_home": "BL-084",
       "item": "whole-plan `sqitch verify` divides by zero on a fully deployed DB: `verify/shared_temporal_contract.sql` asserts `spine_watermark count(*) = 27` but `publication_dispositions` (P32.5) added a 28th facet (`publication_disposition`) — stale since P32.5, invisible to `make check`/`make test-db` (those `deploy` only)",
       "unblocked_by": "a maintainer decision on the repair shape (e.g. the `= 27` assertion becomes count-derived/`>=`, or verify assertions stop pinning exact global counts)",
       "verify": "`sqitch verify` over a fully deployed container exits 0 (today: `ERROR: division by zero` at `verify/shared_temporal_contract.sql:30`, `count(*)=28`)",
@@ -4410,6 +4410,31 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.10a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P32.10a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P32.10a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.24a",
+          "owner": "engineering",
+          "landing": "P34.24a",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.24a.md",
+            "docs/build/logs/sqitch-roundtrip-20261004T070815Z.log",
+            "docs/build/pr/P34.24a.md",
+            "scripts/ci/sqitch_roundtrip.sh",
+            "db/verify/shared_temporal_contract.sql"
+          ],
+          "observed_at": "2026-10-04",
+          "recorded_at": "2026-10-04",
+          "source_commit": "87564ac7401ed2ef4f5478cd9996cc96eaab618c",
+          "reason": "stale whole-plan verify repaired via sqitch rework: shared_temporal_contract@r11-sqitch-hygiene verify now asserts the 27 named facets it installed (no global count), so publication_dispositions' 28th facet no longer breaks it; whole-plan `sqitch verify` green on a template0 database in PR #225 CI run 37186259271 (python job 111388734589 'Sqitch whole-plan round trip' step 2026-10-04T07:43Z, all green) and locally in sqitch-roundtrip-20261004T070815Z.log; a verify-lint guard now rejects unscoped global count(*) assertions"
         }
       ]
     },
@@ -4459,12 +4484,12 @@
     },
     {
       "id": "D-P32.16a-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P32.16a-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P32.16a-1:e1",
       "kind": "V",
       "owner": "engineering",
-      "landing": "P32.16a",
-      "backlog_home": "BL-058",
+      "landing": "P34.24a",
+      "backlog_home": "BL-084",
       "item": "whole-plan `sqitch revert` fails at `revert/extensions.sql`: `DROP EXTENSION postgis` is refused because `postgis_topology` and `postgis_tiger_geocoder` depend on it (needs CASCADE or an ordered drop) — pre-existing since the base `extensions` change, invisible to `make check`/`make test-db` (deploy/verify only); every later change reverts cleanly (P32.16a`s own revert is green)",
       "unblocked_by": "a maintainer decision on the repair shape (CASCADE vs ordered drops vs a new change that owns the teardown)",
       "verify": "`sqitch revert` over a fully deployed container exits 0 (today: `ERROR: cannot drop extension postgis because other objects depend on it` at `revert/extensions.sql:7`)",
@@ -4498,6 +4523,31 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.16a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P32.16a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P32.16a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.24a",
+          "owner": "engineering",
+          "landing": "P34.24a",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.24a.md",
+            "docs/build/logs/sqitch-roundtrip-20261004T070815Z.log",
+            "docs/build/pr/P34.24a.md",
+            "scripts/ci/sqitch_roundtrip.sh",
+            "docs/adr/ADR-196-sqitch-lifecycle-verify-contract-and-extension-ownership.md"
+          ],
+          "observed_at": "2026-10-04",
+          "recorded_at": "2026-10-04",
+          "source_commit": "87564ac7401ed2ef4f5478cd9996cc96eaab618c",
+          "reason": "failed whole-plan revert closed by the extension-ownership decision (ADR-196): the round-trip DB is created TEMPLATE template0 so the plan owns exactly the extensions it creates; whole-plan `sqitch revert -y` exits clean in PR #225 CI run 37186259271 (python job 111388734589, 2026-10-04T07:43Z: `extensions after full revert: plpgsql`, `sqitch.changes rows: 0`) then redeploy + verify pass; mirrored locally in sqitch-roundtrip-20261004T070815Z.log and wired into every PR via make test-sqitch-roundtrip"
         }
       ]
     },
@@ -11518,8 +11568,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-045": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "scripts/ci/sqitch_roundtrip.sh;db/verify/shared_temporal_contract.sql;tests/db/conftest.py;.github/workflows/ci.yml;Makefile;docs/build/runs/P34.24a.md;docs/adr/ADR-196-sqitch-lifecycle-verify-contract-and-extension-ownership.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12203,6 +12253,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.24a); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-045:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-045",
+        "domain": "composed-db",
+        "verdict": "MET",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.24a-sqitch-hygiene-and-round-trip-ci @ 87564ac7401ed2ef4f5478cd9996cc96eaab618c",
+        "limitations": "offline + composed-DB domain: the whole plan deploys, verifies, reverts and redeploys cleanly on a template0 database, proven locally (docs/build/logs/sqitch-roundtrip-20261004T070815Z.log) and on every PR via the python-job `Sqitch whole-plan round trip` step (PR #225 run 37186259271, 2026-10-04T07:43Z, all green); plan lines 44-52 keep their stamped dates (C-10) and the defective verify was repaired by tag+rework, never in-place; the hosted head read is NOT claimed — no verbatim operator go, P34.24b reads it from the PITR clone; whole-plan revert is defined only on a database the plan owns (ADR-196: ambient-extension databases are deploy-only)",
+        "supersedes": "SIG-ENG-045:r11-1",
+        "assessment_id": "SIG-ENG-045:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-046",
@@ -14231,6 +14291,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-045",
+          "verdict": "MET",
+          "assessed_at": "2026-10-04"
+        },
+        {
           "requirement": "SIG-PUB-012",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
@@ -15142,10 +15207,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "5a1ebef2ad1c5a841047c2d007f45cd1ff93db1ba6d3f757a0a696e3237f68de",
+  "manifest_sha256": "9cd66a5f10a3c54c1918ec4b96d52a2e2d93992cb6ec23dfa5af71eca0d25ae8",
   "current_md": {
     "lines": 74,
-    "bytes": 13098,
+    "bytes": 13121,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

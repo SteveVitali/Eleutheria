@@ -36,9 +36,10 @@ Deploy against a running Postgres with the sqitch CLI (or its Docker image):
 # with a local sqitch binary:
 cd db && sqitch deploy db:pg://user:pw@host:5432/sig
 
-# or with the official image (no local Perl needed):
+# or with the official image (no local Perl needed; digest-pinned, ADR-196):
 docker run --rm -e PGPASSWORD=pw -v "$PWD/db":/repo -w /repo \
-  sqitch/sqitch deploy db:pg://user@host:5432/sig
+  sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3 \
+  deploy db:pg://user@host:5432/sig
 ```
 
 ## Testing

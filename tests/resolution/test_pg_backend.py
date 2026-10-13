@@ -25,7 +25,6 @@ from __future__ import annotations
 import importlib.util
 import os
 import re
-import time
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -33,12 +32,6 @@ from typing import Any
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DB_DIR = REPO_ROOT / "db"
-PG_IMAGE = "postgis/postgis:18-3.6"
-SQITCH_IMAGE = "sqitch/sqitch:latest"
-PG_USER = "sig"
-PG_PASSWORD = "sig"
-PG_DB = "sig"
 
 
 def _docker_reachable() -> bool:
@@ -69,65 +62,20 @@ def _load_db_conftest() -> Any:
 
 @pytest.fixture(scope="module")
 def pg_dsn() -> Iterator[str]:
-    """Start PG18+PostGIS, deploy the real ``db/sqitch.plan``, yield a DSN string."""
+    """Start PG18+PostGIS, deploy the real ``db/sqitch.plan``, yield a DSN string.
+
+    Shared ``tests/db`` harness helpers (P34.24a): the plan database is created
+    ``TEMPLATE template0`` (ADR-196 — the plan owns its extensions) and sqitch
+    deploys with ``--verify`` from the digest-pinned image.
+    """
     db = _load_db_conftest()
     if not db._docker_reachable():
         db._require_or_skip("the Docker daemon is not reachable")
 
-    import docker
-    import psycopg
-    from testcontainers.core.container import DockerContainer
-    from testcontainers.core.network import Network
-
-    network = Network()
-    network.create()
-    container = (
-        DockerContainer(PG_IMAGE)
-        .with_env("POSTGRES_USER", PG_USER)
-        .with_env("POSTGRES_PASSWORD", PG_PASSWORD)
-        .with_env("POSTGRES_DB", PG_DB)
-        .with_exposed_ports(5432)
-        .with_network(network)
-        .with_network_aliases("db")
-    )
-    container.start()
-    try:
-        host = container.get_container_host_ip()
-        port = int(container.get_exposed_port(5432))
-        deadline = time.time() + 120
-        last_err: Exception | None = None
-        while time.time() < deadline:
-            try:
-                with psycopg.connect(
-                    host=host,
-                    port=port,
-                    user=PG_USER,
-                    password=PG_PASSWORD,
-                    dbname=PG_DB,
-                    connect_timeout=3,
-                ):
-                    break
-            except Exception as exc:  # noqa: BLE001 - retry loop
-                last_err = exc
-                time.sleep(1)
-        else:
-            raise RuntimeError(f"Postgres never became ready: {last_err}")
-        client = docker.from_env()
-        client.containers.run(
-            SQITCH_IMAGE,
-            command=["deploy", f"db:pg://{PG_USER}:{PG_PASSWORD}@db:5432/{PG_DB}"],
-            network=network.name,
-            working_dir="/repo",
-            volumes={str(DB_DIR): {"bind": "/repo", "mode": "ro"}},
-            environment={"PGPASSWORD": PG_PASSWORD},
-            remove=True,
-            stdout=True,
-            stderr=True,
-        )
-        yield f"postgresql://{PG_USER}:{PG_PASSWORD}@{host}:{port}/{PG_DB}"
-    finally:
-        container.stop()
-        network.remove()
+    with db.pg_container() as (network, host, port):
+        db.create_plan_database(host, port, db.PG_DB)
+        db.run_sqitch(network, "deploy", "--verify", dbname=db.PG_DB)
+        yield f"postgresql://{db.PG_USER}:{db.PG_PASSWORD}@{host}:{port}/{db.PG_DB}"
 
 
 # The OKCPD near-duplicate pair (+ a Tulsa sheriff that must NOT match them) seeded

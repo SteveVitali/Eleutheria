@@ -103,13 +103,13 @@ STEPS="resolution camera-sites edges contradictions coverage accountability dete
 do_schema() {
   _log "-- schema: sqitch deploy (as the schema owner, over cloud-sql-proxy :${SIG_PROXY_PORT})"
   if [ "${SIG_GCP_MODE}" = "check" ]; then
-    _plan "SQITCH_PASSWORD=\$(gcloud secrets versions access latest --secret=${SIG_SECRET_PG_PASSWORD}) docker run --rm -e SQITCH_PASSWORD -v db:/repo sqitch/sqitch:latest deploy --verify db:pg://sig@host.docker.internal:${SIG_PROXY_PORT}/sig"
+    _plan "SQITCH_PASSWORD=\$(gcloud secrets versions access latest --secret=${SIG_SECRET_PG_PASSWORD}) docker run --rm -e SQITCH_PASSWORD -v db:/repo sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3 deploy --verify db:pg://sig@host.docker.internal:${SIG_PROXY_PORT}/sig"
     return 0
   fi
   SQITCH_PASSWORD="$(gcloud secrets versions access latest \
     --secret="${SIG_SECRET_PG_PASSWORD}" --project "${SIG_GCP_PROJECT}")"
   export SQITCH_PASSWORD
-  run docker run --rm -e SQITCH_PASSWORD -v "${_repo}/db:/repo" -w /repo sqitch/sqitch:latest \
+  run docker run --rm -e SQITCH_PASSWORD -v "${_repo}/db:/repo" -w /repo sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3 \
     deploy --verify "db:pg://sig@host.docker.internal:${SIG_PROXY_PORT}/sig"
   unset SQITCH_PASSWORD
 }

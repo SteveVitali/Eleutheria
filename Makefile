@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-planning docs-check-trailers security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -44,6 +44,14 @@ test:
 test-db:
 	SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db
 
+## Whole-plan sqitch lifecycle proof (P34.24a / ADR-196, SIG-ENG-045): a fresh
+## PG18+PostGIS container, a database created TEMPLATE template0 (the plan owns
+## its extensions), then deploy -> verify -> revert -y -> clean-state asserts ->
+## redeploy -> verify, all from the digest-pinned sqitch image, logged to
+## docs/build/logs/sqitch-roundtrip-*.log. Needs Docker; never skips silently.
+test-sqitch-roundtrip:
+	bash scripts/ci/sqitch_roundtrip.sh
+
 ## The fast local gate — the `python` CI job's commands.
 check: lint format-check typecheck test verify-gen
 
@@ -58,6 +66,7 @@ check: lint format-check typecheck test verify-gen
 ci-local: sync
 	$(MAKE) lint format-check typecheck
 	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true $(MAKE) test
+	$(MAKE) test-sqitch-roundtrip
 	$(MAKE) verify-gen
 	$(MAKE) docs-check
 	bash scripts/docs/check-build-memory.sh .

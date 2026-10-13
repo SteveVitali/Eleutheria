@@ -26,9 +26,7 @@
 | D-R10-MEMORY-1 | OPEN | P32.8 | P32.8 | Both worker closeout and orchestrator repair use one authoritative-chain protocol; stale-worktree/uncertain-PR/crash tests and cutover commit recorded |
 | D-R10-USERS-1 | OPEN | P32.24 | P32.24 | Frozen-release task results with actual numerator/denominator, uncertainty/comprehension failures and accessibility session; no simulated agents counted as user… |
 | D-P32.3-1 | OPEN | operator | BL-058 | every `sig.org.name` key in `entity_identifier` has a recorded disposition (`same_as`/`distinct` decision rows or an accepted "keep" record); the report's `spli… |
-| D-P32.10a-1 | OPEN | engineering | P32.5 | `sqitch verify` over a fully deployed container exits 0 (today: `ERROR: division by zero` at `verify/shared_temporal_contract.sql:30`, `count(*)=28`) |
 | D-P32.16-1 | OPEN | operator | GATE-G3 | `ops/config.toml [intake]` carries `operational=true`, a named owner and `staffed=true` in a reviewed change; the packet's §7 exclusions are enumerated on file;… |
-| D-P32.16a-1 | OPEN | engineering | P32.16a | `sqitch revert` over a fully deployed container exits 0 (today: `ERROR: cannot drop extension postgis because other objects depend on it` at `revert/extensions.… |
 | D-P32.18-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds… |
 | D-P32.19-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds… |
 | D-P32.20-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds… |

@@ -193,6 +193,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-193](ADR-193-cost-guard-budget-scope-and-spend-ledger.md) | Cost guard: project-scoped ceiling budget, test-threshold lifecycle, spend ledger conventions (P34.5) | P34.5 (Round 11 / P34, row 206; requirement SIG-OPS-009; answers | accepted (the apply legs ran live 2026-10-02; the test-budget |
 | [ADR-194](ADR-194-source-scoped-rights-records-and-attribution-corrections.md) | Source-scoped rights records and append-only attribution corrections (P34.21a) | P34.21a (Round 11 / P34, row 223; answers E2-12; fixes defect F-387) | accepted |
 | [ADR-195](ADR-195-versioning-discipline-one-version-source.md) | Versioning discipline and one version source (P34.23) | P34.23 (Round 11 / P34, row 227 — REL-10; owns SIG-REL-014) | accepted |
+| [ADR-196](ADR-196-sqitch-lifecycle-verify-contract-and-extension-ownership.md) | Sqitch lifecycle hygiene: the verify contract, extension ownership, and the CI round trip (P34.24a) | P34.24a (Round 11 / P34, row 228 — owns SIG-ENG-045; closes | accepted |
 
 ## Notes
 

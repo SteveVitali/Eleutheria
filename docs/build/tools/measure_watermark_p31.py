@@ -38,7 +38,8 @@ sys.path.insert(0, str(REPO_ROOT / "tests" / "db"))
 from db.occurrences import LEGACY_WATERMARK_SQL, WATERMARK_SQL  # noqa: E402
 
 PG_IMAGE = "postgis/postgis:18-3.6"
-SQITCH_IMAGE = "sqitch/sqitch:latest"
+# P34.24a / ADR-196: digest-pinned — never a mutable tag.
+SQITCH_IMAGE = "sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3"
 PG_USER = PG_PASSWORD = PG_DB = "sig"
 
 BATCH = 100_000
