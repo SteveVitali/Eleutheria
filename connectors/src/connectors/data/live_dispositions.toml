@@ -417,10 +417,6 @@ class_ticket = "P37.50"
 disposition = "promote"
 class_ticket = "P37.50"
 
-[sources.agenda_pasadena_ca_policy_620_cellular]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.agenda_savannah_ga_2023_05_25]
 disposition = "promote"
 class_ticket = "P37.50"
@@ -669,14 +665,6 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P37.48"
 
-[sources.ccops_anchorage_ak]
-disposition = "promote"
-class_ticket = "P36.10"
-
-[sources.ccops_austin_tx]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.ccops_ca_calistoga_police_department]
 disposition = "promote"
 class_ticket = "P37.53"
@@ -692,14 +680,6 @@ class_ticket = "P37.16a"
 [sources.ccops_ca_san_diego_sunshine_act_goods]
 disposition = "promote"
 class_ticket = "P37.16a"
-
-[sources.ccops_columbia_mo]
-disposition = "promote"
-class_ticket = "P36.10"
-
-[sources.ccops_dayton_oh]
-disposition = "promote"
-class_ticket = "P36.10"
 
 [sources.ccops_gb_eng_barnet_traffic_cctv]
 disposition = "promote"
@@ -793,10 +773,6 @@ class_ticket = "P36.11"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.ccops_st_louis_mo]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.dot_511_gb]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -857,10 +833,6 @@ class_ticket = "P36.11"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.legis_ca_california_code_53166]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.legis_gu_governor_guam_press]
 disposition = "promote"
 class_ticket = "P36.11"
@@ -910,37 +882,17 @@ class_ticket = "P37.47"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.policy_bangor_me_general_order_59]
-disposition = "promote"
-class_ticket = "P36.10"
-
-[sources.policy_ca_orange_county_policy_610]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.policy_chicago_il_oemc_link_your]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.policy_houston_tx_general_orders]
-disposition = "promote"
-class_ticket = "P36.10"
 
 [sources.policy_lafayette_in_camera_registration]
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.policy_little_rock_ar_general_order_332]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.policy_maricopa_county_az_mcso_policies]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.policy_nm_albuquerque_apd_standard]
-disposition = "promote"
-class_ticket = "P36.10"
 
 [sources.policy_norman_ok_alpr_policy_amendment]
 disposition = "promote"
@@ -949,14 +901,6 @@ class_ticket = "P37.47"
 [sources.policy_ok_oklahoma_dac_uved]
 disposition = "promote"
 class_ticket = "P37.16a"
-
-[sources.policy_pflugerville_tx_isd_gaggle_page]
-disposition = "promote"
-class_ticket = "P36.10"
-
-[sources.policy_st_cloud_mn_area_school_district]
-disposition = "promote"
-class_ticket = "P36.10"
 
 [sources.policy_us_private_camera_registry]
 disposition = "promote"
@@ -1031,19 +975,9 @@ class_ticket = "P37.69a"
 
 
 
-[sources.statrep_nc_onslow_county_schools_gaggle]
-disposition = "promote"
-class_ticket = "P36.10"
-
 [sources.statrep_new_york_ny_nyc_doi_oig]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.statrep_ny_whitesboro_central_school]
-disposition = "promote"
-class_ticket = "P36.10"
-
-
 
 [sources.statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
 disposition = "promote"

@@ -53,7 +53,19 @@
 # appendix emits its published site literals verbatim; the DIAC SOP is a
 # policy_document — no use claims; the DHS adapter types each filing by
 # its own literal, the SORN row likewise — no guessed slug).
-vocab_version = "2026.10.13b"
+# 2026.10.13c — r11/P36.10 (R11-ACQ-14, I8 §5.7, same-day third migration):
+# the CCOPS-reports + district self-disclosure lanes of batch
+# `r11-documents-01` — nine [sources] keys -> the design ids (five further
+# CCOPS municipalities on the index->document / document adapters; four
+# district self-disclosure pages as reviewed `disclosure_document` targets).
+# New adapter keys: `period_from_capture` (an undated living self-disclosure
+# page's honest covered period is its capture date — declared, never a
+# fabricated filing date) and `field_patterns[].claim_type`/`value` (the
+# district rows mint vendor_name/product_name `inventory_entry` claims —
+# the vendor the page itself names, never student data, never an asserted
+# deployment). The I9b-C040 family list is the discovery channel and
+# carries NO registry row / no adapter.
+vocab_version = "2026.10.13c"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -304,6 +316,27 @@ pa_wzssc       = "statrep_pa_wzssc"
 seattle_oig    = "statrep_seattle_wa_oig"
 us_dhs_privacy = "statrep_us_dhs_privacy_compliance"
 us_dhs_sorn    = "legis_us_dhs_sorn_plate_data"
+
+# --- P36.10 / R11-ACQ-14 (I8 §5.7): the CCOPS-reports + district self-
+# disclosure lanes of batch `r11-documents-01`. Five further CCOPS
+# municipalities join the same index->document / document adapters (BL-054
+# carry — the stale CCOPS denominator update, I6 NEW-3 / I9a NEW-6); the
+# four district self-disclosure pages are reviewed `disclosure_document`
+# targets whose page literals mint vendor/product `inventory_entry` claims
+# — never student data, never a deployment fact (Part VIII). The I9b-C040
+# family list is the discovery channel: it carries NO registry row and NO
+# adapter. Same gate posture — all nine stay ingestion_permitted=false
+# (HG-03 RB-03 `a`) pending the operator's OP-26 Wave-B flip under
+# ING-GO-B (P36.12).
+columbia_mo      = "ccops_columbia_mo"
+st_louis_mo      = "ccops_st_louis_mo"
+dayton_oh        = "ccops_dayton_oh"
+anchorage_ak     = "ccops_anchorage_ak"
+austin_tx        = "ccops_austin_tx"
+st_cloud_isd742  = "policy_st_cloud_mn_isd742"
+onslow_nc        = "policy_onslow_nc_schools"
+pflugerville_isd = "policy_pflugerville_tx_isd"
+whitesboro_csd   = "policy_whitesboro_ny_csd"
 
 # --- P36.8/ACQ-12: statutory technology-literal -> SKOS slug map ---------------
 # The reviewed literal -> ontology-slug table statutory filings' technology
@@ -1351,4 +1384,188 @@ technology_mapped = true
 agency_field_pattern = '(?im)(?P<agency>ICE|CBP|USCIS|FEMA|TSA|USSS|OBIM)-\d{3}'
 technology_field_pattern = '(?im)technology\s*:\s*(license\s+plate\s+readers?|automated\s+license\s+plate\s+readers?|automated\s+targeting\s+system|border\s+crossing\s+information)'
 legal_authority_pattern = '5\s+U\.?S\.?C\.?\s*§?\s*552a|Privacy\s+Act\s+of\s+1974'
+mandated_sections = []
+
+# =============================================================================
+# P36.10 / R11-ACQ-14 (I8 §5.7): the CCOPS-reports lane + the district
+# self-disclosure lane of batch `r11-documents-01`.
+#
+#   columbia_mo / st_louis_mo / dayton_oh — municipal surveillance-oversight
+#     reporting pages (ordinance-mandated annual reports / use policies).
+#   anchorage_ak — the ordinance text itself (AO 2023-78 amending AMC
+#     ch. 3.102): a governance document — policy_document genre, ordinance
+#     claims only where its literals locate.
+#   austin_tx — the TRUST Act resolution (File ID 26-1072): a council
+#     resolution directing an ordinance — policy_document genre, never a
+#     use report.
+#   st_cloud_isd742 / onslow_nc / pflugerville_isd / whitesboro_csd — the
+#     four district self-disclosure pages of the I9b-C040 family (the
+#     family list is the discovery channel and carries no registry row):
+#     `document_genre = "policy_document"`, `period_from_capture` (the
+#     undated page asserts vendor use as-of-capture), and
+#     `field_patterns[].claim_type = "inventory_entry"` minting the
+#     vendor_name/product_name the page itself names — never student
+#     data, never a deployment fact (Part VIII; procured != deployed).
+#
+# Every row stays ingestion_permitted=false (HG-03 RB-03 `a`).
+
+[adapters.columbia_mo]
+jurisdiction = "US-MO"
+agency = "Columbia Police Department"
+ordinance_citation = "City of Columbia Law Enforcement Surveillance Oversight Ordinance"
+ordinance_literals = ["Law Enforcement Surveillance Oversight Ordinance", "Surveillance Oversight Ordinance"]
+enacting_body_literal = "City Council"
+enacting_body = "Columbia City Council"
+# The 2025 annual surveillance technology report page (I6-C018): the filing
+# names its technologies in its own "Surveillance Technology:" fields;
+# the covered year comes from the filing's own date literals.
+document_genre = "statutory_report"
+technology_mapped = true
+# A single annual-report filing covers several technologies — capture every
+# "Surveillance Technology:" field literal (the combined-filing precedent).
+technology_field_multi = true
+technology_field_pattern = '(?im)surveillance\s+technology\s*:\s*(license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|cctv|closed[\s-]circuit\s+television|video\s+surveillance|body[\s-]worn\s+cameras?)'
+legal_authority_pattern = 'Law\s+Enforcement\s+Surveillance\s+Oversight\s+Ordinance|Surveillance\s+Oversight\s+Ordinance'
+mandated_sections = []
+
+[adapters.st_louis_mo]
+jurisdiction = "US-MO"
+agency = "St. Louis Metropolitan Police Department"
+ordinance_citation = "City of St. Louis Ordinance 71842 / Executive Order 78 (surveillance technology reporting)"
+ordinance_literals = ["Ordinance 71842", "Executive Order 78", "Ord. 71842", "71842"]
+enacting_body_literal = "Board of Aldermen"
+enacting_body = "St. Louis Board of Aldermen"
+# The SLMPD surveillance-reports index (I6-C016): annual report PDFs linked
+# off the documents page; each filing's own "Technology:" field types it.
+# The adapter-level scope screen matches the live target's anchor_pattern —
+# staff-directory / press links never resolve as filings.
+scope_terms = ["annual report", "surveillance"]
+document_genre = "statutory_report"
+technology_mapped = true
+technology_field_multi = true
+technology_field_pattern = '(?im)technology\s*:\s*(license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|cctv|closed[\s-]circuit\s+television|video\s+surveillance|body[\s-]worn\s+cameras?|cell[\s-]site\s+simulators?|drones?|unmanned\s+aerial\s+(?:systems?|vehicles?)|gunshot\s+detection|shotspotter)'
+legal_authority_pattern = 'Ordinance\s+71842|Executive\s+Order\s+78|Ord\.?\s*71842'
+mandated_sections = []
+
+[adapters.dayton_oh]
+jurisdiction = "US-OH"
+agency = "Dayton Police Department"
+# Dayton's CivicPlus surveillance-technology page (I6-C017) lists the annual
+# reports, use policies and notifications — the archive document pattern is
+# /Archive.aspx?ADID=…. No verified ordinance number is on record (I6-C017);
+# the adapter declares NO ordinance literals — a citation claim lands only
+# where a literal locates, never from a guessed instrument.
+ordinance_literal_required = true
+document_genre = "statutory_report"
+technology_mapped = true
+technology_field_multi = true
+doc_url_contains = "archive.aspx"
+scope_terms = ["surveillance", "use polic"]
+technology_field_pattern = '(?im)(?:surveillance\s+)?technology\s*:\s*(license\s+plate\s+readers?|automatic\s+license\s+plate\s+readers?|cctv|closed[\s-]circuit\s+television|video\s+surveillance|body[\s-]worn\s+cameras?|cell[\s-]site\s+simulators?|drones?|unmanned\s+aerial\s+(?:systems?|vehicles?)|gunshot\s+detection|shotspotter)'
+# No verified ordinance/statute citation is on record for Dayton (I6-C017)
+# — no legal_authority_pattern is declared; a filing's authority literal
+# lands only where the filing itself names one.
+mandated_sections = []
+
+[adapters.anchorage_ak]
+jurisdiction = "US-AK"
+agency = "Anchorage Municipal Assembly"
+ordinance_citation = "Anchorage Municipal Code ch. 3.102, Municipal Use of Surveillance Technologies (AO 2023-78)"
+ordinance_literals = ["3.102", "AO 2023-78", "Municipal Use of Surveillance Technologies"]
+enacting_body_literal = "Anchorage Municipal Assembly"
+enacting_body = "Anchorage Municipal Assembly"
+# The AO 2023-78 PDF (I9b-C088): the ordinance text itself, amending AMC
+# ch. 3.102 to add a body-worn-camera policy requirement — a governance
+# document, not a use report. The AO's own subject types the filing.
+document_genre = "policy_document"
+technology_mapped = true
+# The ordinance title's "surveillance technologies" class literal stays
+# unmapped (SIG-ONTO-021 — recorded on the artifact, never guessed); the
+# body-worn-camera literal maps. `technology_field_multi` reads every
+# occurrence so the unmapped literal is exercised too.
+technology_field_multi = true
+default_technology = "body-worn-camera-unspecified"
+technology_field_pattern = '(?im)(body[\s-]worn\s+cameras?|surveillance\s+technolog(?:y|ies))'
+legal_authority_pattern = 'Anchorage\s+Municipal\s+Code|3\.102|AO\s+2023-78'
+mandated_sections = []
+
+[adapters.austin_tx]
+jurisdiction = "US-TX"
+agency = "Austin City Council"
+ordinance_citation = "City of Austin Resolution 2026-02-05 (File ID 26-1072) — the TRUST Act"
+ordinance_literals = ["26-1072", "Transparent and Responsible Use of Surveillance Technology", "TRUST"]
+enacting_body_literal = "City Council"
+enacting_body = "Austin City Council"
+# The TRUST resolution PDF (I9a-C022): a council resolution DIRECTING the
+# City Manager to return with an ordinance — a governance document, never
+# a use report. No default_technology: the resolution regulates the
+# surveillance-technology class as such.
+document_genre = "policy_document"
+technology_mapped = true
+technology_field_pattern = '(?im)(surveillance\s+technolog(?:y|ies))'
+legal_authority_pattern = 'File\s+ID\s+26-1072|Transparent\s+and\s+Responsible\s+Use\s+of\s+Surveillance\s+Technology|TRUST\s+Act'
+mandated_sections = []
+
+# --- the four district self-disclosure pages (I9b-C030/C041/C042/C043) ----
+# The I9b-C040 family list is the discovery channel and carries no registry
+# row. Each page is an undated living self-disclosure: `period_from_capture`
+# makes the capture date the aggregate row's honest covered period, and
+# `field_patterns[].claim_type = "inventory_entry"` mints the vendor /
+# product the page itself names — the district's disclosure is a vendor-use
+# statement only: never student data, never a deployment fact beyond the
+# page's own words (Part VIII; procured != deployed). `school-surveillance-
+# unspecified` is the coarsest supported family slug (SIG-ONTO-021).
+
+[adapters.st_cloud_isd742]
+jurisdiction = "US-MN"
+agency = "St. Cloud Area School District (ISD 742)"
+ordinance_literal_required = true
+document_genre = "policy_document"
+period_from_capture = true
+default_technology = "school-surveillance-unspecified"
+field_patterns = [
+  { predicate = "vendor_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Securly)' },
+  { predicate = "product_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Securly\s+Home)' },
+]
+mandated_sections = []
+
+[adapters.onslow_nc]
+jurisdiction = "US-NC"
+agency = "Onslow County Schools"
+ordinance_literal_required = true
+document_genre = "policy_document"
+period_from_capture = true
+default_technology = "school-surveillance-unspecified"
+field_patterns = [
+  { predicate = "vendor_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Gaggle)' },
+  { predicate = "product_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Gaggle\s+Safety\s+Management)' },
+]
+mandated_sections = []
+
+[adapters.pflugerville_isd]
+jurisdiction = "US-TX"
+agency = "Pflugerville Independent School District"
+ordinance_literal_required = true
+document_genre = "policy_document"
+period_from_capture = true
+default_technology = "school-surveillance-unspecified"
+field_patterns = [
+  { predicate = "vendor_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Gaggle)' },
+]
+mandated_sections = []
+
+[adapters.whitesboro_csd]
+jurisdiction = "US-NY"
+agency = "Whitesboro Central School District"
+ordinance_literal_required = true
+document_genre = "policy_document"
+period_from_capture = true
+default_technology = "school-surveillance-unspecified"
+field_patterns = [
+  # The page names the product ("Lightspeed Alert"); the reviewed vendor is
+  # Lightspeed Systems — `value` pins the asserted vendor while raw_value
+  # keeps the page literal verbatim (P2).
+  { predicate = "vendor_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Lightspeed\s+(?:Systems|Alert))', value = "Lightspeed Systems" },
+  { predicate = "product_name", claim_type = "inventory_entry", pattern = '(?i)(?P<value>Lightspeed\s+Alert)' },
+]
 mandated_sections = []

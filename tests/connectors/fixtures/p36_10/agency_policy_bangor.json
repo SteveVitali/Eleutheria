@@ -1,0 +1,29 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat policy_bangor_me_pd. Faithfully transcribes the reviewed Bangor Police Department General Order 2-59 'Unmanned Aerial Systems' header clause (I9b-C108, live-read F137): 'This policy is effective October 5, 2025 and amends or supersedes all previous policies'. The §-headed clause text is synthetic but the literals are the reviewed verbatim strings. Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "bangor-go-2-59",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.bangormaine.gov/DocumentCenter/View/4872/BPD---Policy--for-Unmanned-Aerial-Systems-PDF",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:bangor-me-pd-uas-2-59",
+      "text": "Bangor Police Department — General Order.\n\n§ 2-59 Unmanned Aerial Systems.\nThis policy is effective October 5, 2025 and amends or supersedes all previous policies. This policy governs the department's use of unmanned aerial systems.\n",
+      "clauses": [
+        {
+          "clause": "2-59",
+          "predicate": "policy_clause",
+          "value": "effective 2025-10-05; amends or supersedes all previous policies",
+          "value_kind": "text"
+        },
+        {
+          "clause": "2-59",
+          "predicate": "policy_clause",
+          "value": "policy governs the department's use of unmanned aerial systems",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

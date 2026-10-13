@@ -1,0 +1,19 @@
+City of Columbia, Missouri — Police Department
+2025 Annual Surveillance Technology Report
+
+Date: March 15, 2026
+
+Pursuant to the City of Columbia Law Enforcement Surveillance Oversight
+Ordinance, the Columbia Police Department is required to document and
+publicly report its use of surveillance technology. The Columbia City Council
+enacted the ordinance establishing annual public reporting.
+
+Surveillance Technology: License Plate Readers
+Surveillance Technology: CCTV
+
+License plate readers capture plate images at fixed locations; the CCTV
+network covers downtown intersections. Each system is reported at the
+department level; no per-vehicle or per-person fields are published.
+
+Retention: plate data retained for up to 90 days.
+Sharing: data shared with the Missouri State Highway Patrol.

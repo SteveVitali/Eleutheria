@@ -14,7 +14,11 @@
 # header — otherwise TOML nests it under that table.
 
 # The connectors' shared vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.10"
+# 2026.10.13 — r11/P36.10 (R11-ACQ-14, I8 §5.7): the `agency_policy`
+# generalization — ONE connector serves a closed `source_ids` seat set (the
+# seven ACQ-14 agency-policy rows) through the shared policy/statute clause
+# surface; the three per-name OKC blocks are unchanged.
+vocab_version = "2026.10.13"
 
 # Part VIII §0.7 / §43.2 (SIG-PUB-002/003): content tokens that mark plate,
 # per-trip, per-person, or per-search data. Any predicate id OR raw value carrying
@@ -88,5 +92,38 @@ predicate_allowlist = [
   "legal_instrument",
   "statutory_citation",
   "use_restriction",
+  "authorization_state",
+]
+
+# --- P36.10 / R11-ACQ-14 (I8 §5.7): the `agency_policy` generalization -------
+# ONE connector serves the seven reviewed agency-policy registry seats through
+# the same clause-literal pipeline the OKC vertical reads. `source_ids` is the
+# closed seat set: a run whose source holds no seat fails closed at extraction
+# (a claim can never be stamped under an undeclared source). `genre` stays
+# `policy_document` for every seat (statutory text is clause-organised, the
+# ok_statute precedent); the genre is re-derived from each document's text.
+# The predicate surface is the union of the OKC policy/statute lists — a
+# reviewed `document_page` target's inline clause literals are the per-source
+# facts; a use/deployment predicate is absent by design (procured ≠
+# authorized ≠ deployed — a policy document never asserts a deployment).
+[connectors.agency_policy]
+genre = "policy_document"
+extractor = "policy_clauses"
+source_ids = [
+  "policy_houston_tx_hpd",
+  "policy_albuquerque_nm_apd",
+  "policy_bangor_me_pd",
+  "policy_little_rock_ar_pd",
+  "policy_orange_county_ca_sheriff",
+  "policy_pasadena_ca_pd",
+  "legis_ca_gov_code_53166",
+]
+predicate_allowlist = [
+  "policy_clause",
+  "legal_instrument",
+  "statutory_citation",
+  "retention_period",
+  "use_restriction",
+  "sharing_restriction",
   "authorization_state",
 ]

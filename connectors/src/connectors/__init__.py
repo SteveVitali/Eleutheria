@@ -55,6 +55,7 @@ from importlib.metadata import version as _dist_version
 # adapter (§52 Phase 18); it reuses connectors.procurement.Contract, which Python
 # imports transitively regardless of registration order here.
 from . import accountability as accountability  # noqa: E402,F401
+from . import agency_policy as agency_policy  # noqa: E402,F401
 from . import agency_registry as agency_registry  # noqa: E402,F401
 from . import atlas as atlas  # noqa: E402,F401
 from . import audit_structural as audit_structural  # noqa: E402,F401
