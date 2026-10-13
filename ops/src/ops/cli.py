@@ -513,6 +513,91 @@ def build_parser() -> argparse.ArgumentParser:
         help="(plan-hashes) path to the base ref's sqitch.plan (C-10 diff)",
     )
 
+    disp = sub.add_parser(
+        "disposition",
+        help="P34.26 / ADR-124+159 (G2-ADR124 + D-K2-1 [A-10]): the INSERT-only "
+        "allow-disposition verb (record --allow --from <sig.disposition-list/1>; "
+        "dry-run by default, --apply writes) and the read-only flagged-"
+        "organisation census (sig.org-census/1). DSN via SIG_DISPOSITION_DSN "
+        "env (or --dsn-env's variable), never argv",
+    )
+    disp.add_argument(
+        "action",
+        choices=["record", "census"],
+        help="record: verify + record allow dispositions from a "
+        "sig.disposition-list/1 file; census: the read-only "
+        "publication_review_required census -> sig.org-census/1 artifacts",
+    )
+    disp.add_argument(
+        "--allow",
+        action="store_true",
+        help="(record) the disposition being recorded — required today "
+        "(only 'allow' is supported; the flag keeps the intent explicit)",
+    )
+    disp.add_argument(
+        "--from",
+        dest="from_list",
+        default=None,
+        help="(record) path to the sig.disposition-list/1 input file",
+    )
+    mode = disp.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="(record) verify and print the plan; write nothing (default)",
+    )
+    mode.add_argument(
+        "--apply",
+        action="store_true",
+        help="(record) actually INSERT the verified allow rows "
+        "(one transaction; never UPDATE/DELETE)",
+    )
+    disp.add_argument(
+        "--authority",
+        default=None,
+        help="(record) REQUIRED — the deciding authority (the ADR-159 rule + registry id)",
+    )
+    disp.add_argument(
+        "--decided-by",
+        dest="decided_by",
+        default=None,
+        help="(record) REQUIRED — the recording actor: a role or rule token, never a personal name",
+    )
+    disp.add_argument(
+        "--dsn-env",
+        dest="dsn_env",
+        default="SIG_DISPOSITION_DSN",
+        help="name of the env var carrying the DSN (default "
+        "SIG_DISPOSITION_DSN; a DSN is never accepted on argv)",
+    )
+    disp.add_argument(
+        "--out-dir",
+        dest="out_dir",
+        default=None,
+        help="(census) output directory for the sig.org-census/1 artifacts "
+        "(CENSUS.md / CENSUS.csv / census.json / allow-list.json)",
+    )
+    disp.add_argument(
+        "--spine",
+        dest="spine",
+        default="fixture",
+        help="(census) the spine name stamped on the report "
+        "(e.g. 'sig-pg (read-only sig_read_public)' — honest provenance)",
+    )
+    disp.add_argument(
+        "--role",
+        dest="role",
+        default=None,
+        help="(census) role to SET ROLE to for the read — the hosted leg "
+        "uses sig_read_public (least privilege; the fixture omits it)",
+    )
+    disp.add_argument(
+        "--out",
+        dest="out",
+        default=None,
+        help="write the JSON plan/census record to this path as well as stdout",
+    )
+
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
     keepalive = sub.add_parser(
         "keepalive-check",
@@ -2146,6 +2231,134 @@ def _cmd_sqitch_rehearsal(args: argparse.Namespace) -> int:
     return _emit(hashes)
 
 
+def _cmd_disposition(args: argparse.Namespace) -> int:
+    """P34.26: the ADR-124 allow verb (record) + the flagged-org census."""
+    import os
+
+    from psycopg import sql
+
+    from . import dispositions as disp
+
+    def _dsn() -> str | None:
+        value = os.environ.get(args.dsn_env, "").strip()
+        if not value:
+            print(
+                f"sig-ops disposition: {args.dsn_env} must be set "
+                "(env only — a DSN on argv leaks into the process list).",
+                file=sys.stderr,
+            )
+            return None
+        return value
+
+    def _emit(payload: dict) -> int:
+        text = json.dumps(payload, indent=2, sort_keys=True)
+        print(text)
+        if args.out:
+            with open(args.out, "w", encoding="utf-8") as fh:
+                fh.write(text + "\n")
+            print(f"sig-ops disposition: -> {args.out}", file=sys.stderr)
+        return 0
+
+    if args.action == "record":
+        if not args.allow:
+            print(
+                "sig-ops disposition record: --allow is required "
+                "(only 'allow' is supported; the flag keeps intent explicit).",
+                file=sys.stderr,
+            )
+            return 2
+        if not args.from_list:
+            print(
+                "sig-ops disposition record: --from <sig.disposition-list/1> is required.",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            disp.validate_actor_fields(
+                authority=args.authority or "", decided_by=args.decided_by or ""
+            )
+        except disp.DispositionListError as exc:
+            print(f"sig-ops disposition record: REFUSED — {exc}", file=sys.stderr)
+            return 2
+        try:
+            lst = disp.load_disposition_list_file(args.from_list)
+        except (OSError, json.JSONDecodeError, disp.DispositionListError) as exc:
+            print(f"sig-ops disposition record: bad --from file — {exc}", file=sys.stderr)
+            return 2
+        dsn = _dsn()
+        if dsn is None:
+            return 2
+        mode = "apply" if args.apply else "dry-run"
+        # Verify on the live spine first (reads only) — the plan is printed
+        # before any write so a refusal is always visible with its reason.
+        with disp._connect(dsn) as conn:
+            row = conn.execute(disp.REGISTRY_PRESENT_SQL).fetchone()
+            if row is None or not row[0]:
+                print(
+                    "sig-ops disposition record: REFUSED — "
+                    "publication_disposition is not deployed on this spine "
+                    "(the ADR-124 registry lands with the Round-10 schema).",
+                    file=sys.stderr,
+                )
+                return 2
+            verdicts = disp.plan_allows(conn, lst.entries)
+            if args.apply:
+                # One transaction: every verified allow lands or none does.
+                try:
+                    with conn.transaction():
+                        applied = disp.apply_allows(
+                            conn,
+                            verdicts,
+                            authority=str(args.authority),
+                            decided_by=str(args.decided_by),
+                        )
+                except Exception as exc:
+                    print(
+                        f"sig-ops disposition record: apply failed — {exc}",
+                        file=sys.stderr,
+                    )
+                    return 1
+                verdicts = applied
+        return _emit(
+            disp.build_plan(
+                lst,
+                verdicts,
+                mode=mode,
+                authority=str(args.authority),
+                decided_by=str(args.decided_by),
+            )
+        )
+
+    if args.action == "census":
+        if not args.out_dir:
+            print(
+                "sig-ops disposition census: --out-dir <dir> is required.",
+                file=sys.stderr,
+            )
+            return 2
+        dsn = _dsn()
+        if dsn is None:
+            return 2
+        with disp._connect_readonly(dsn) as conn:
+            if args.role:
+                # Least privilege: the hosted leg reads as the SELECT-only
+                # public role; SET ROLE is pinned for the session.
+                conn.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(args.role)))
+            result = disp.run_census(conn)
+        paths = disp.write_census(result, args.out_dir, spine_name=str(args.spine))
+        for name, path in paths.items():
+            print(f"sig-ops disposition census: {name} -> {path}", file=sys.stderr)
+        return _emit(
+            disp.census_record(
+                result,
+                spine_name=str(args.spine),
+                generated_at="(see CENSUS.md / census.json)",
+            )
+        )
+
+    return 2
+
+
 def _cmd_keepalive_check(args: argparse.Namespace) -> int:
     from .alerts import alert_exit_code
     from .observe import verify_keepalive
@@ -3352,6 +3565,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_cloudsql_drill(args)
     if args.command == "sqitch-rehearsal":
         return _cmd_sqitch_rehearsal(args)
+    if args.command == "disposition":
+        return _cmd_disposition(args)
     if args.command == "keepalive-check":
         return _cmd_keepalive_check(args)
     if args.command == "probe":

@@ -1,0 +1,26 @@
+{
+  "definitions": {
+    "adr159_outcome": "auto_allow_eligible | already allowed | recorded deny | not yet reviewed",
+    "degree": "distinct claim subjects whose claims reference the org via object_entity (the K2 organisation-edge measure \u2014 NEW-1 re-measured, never pinned)",
+    "edge_share": "degree / the flagged-org graph's distinct (subject, org) pairs (the denominator this report prints)",
+    "identifiers": "external entity_identifier scheme:value pairs held; label-bearing schemes (*.name, sig.curator.handle, \u2026) are counted in label_identifier_count, never listed",
+    "materialized_degree": "live incident edges over relationship + entity_role + organization_relation (open sys_period where bitemporal)",
+    "person_name_screen": "policy.intake.screen_part_viii + the partner_identity never-a-person rule over cached_canonical_name + literal party claim values \u2014 result only, screened text never recorded",
+    "registry_match": "an entity_identifier in an ADR-159 registry scheme whose asserting claim reaches an ingestion_permitted source (tier-0 match record)"
+  },
+  "disposition_registry_present": false,
+  "edge_denominator": 43662,
+  "flagged_total": 1559,
+  "generated_at": "2026-10-04T16:01:18Z",
+  "obligation": "D-R11-ADR124-1",
+  "outcome_counts": {
+    "not yet reviewed": 1559
+  },
+  "person_screen_flagged": 5,
+  "policy_version": "publication-eligibility/1",
+  "record_type": "sig.org-census/1",
+  "registry_match_counts": {},
+  "rule": "ADR-159 registry auto-allow (G2-ADR124 + D-K2-1 [A-10])",
+  "spine": "sig-pg (read-only sig_read_public)",
+  "top50_edge_share": 0.9259997251614677
+}
