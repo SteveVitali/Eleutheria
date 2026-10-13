@@ -17,7 +17,7 @@
 projectStatus:   IN_PROGRESS                             # Round 11 running (GATE-B, C10)
 nextTicket:      P36.10                              # row 284 (11B — CCOPS reports + police policies)
 lastCompleted:   P36.9b                              # row 283 (statutory CSS/interception/ATE/DHS disclosures ×11; no live leg)
-blockedOn:       worker close protocol broken (P34.2, P36.9b) # real blocks only
+blockedOn:       (nothing)                          # real blocks only
 pauseRequested:  false                               # set at C10 (GATE-B go)
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67
 manifest:        docs/tickets/00_MANIFEST.md
@@ -33,7 +33,7 @@ autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-13T19:02:54Z
+updatedAt:       2026-10-13T19:38:28Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -950,3 +950,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-13 — P36.9b correction — closeout head `cdb40865` docs-fail (run 38440628005): my ticket entry read 3,213 B (> 2 KiB, BM-LEDGER-06) and the orient probe 52,166 B > 48 KiB (BM-ORIENT-01) · repaired forward: entry trimmed in place 3,213→809 B (no record dropped — the run ledger + BUILD_INDEX carry the full text; the P36.1a precedent), State line tightened, the two head pointers folded byte-for-byte into `LEDGER_head_comments12_pre-P36.9b.txt` (BM-LEDGER-08) · chainTip → r11/P36.9b-… · next → P36.10 (284) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-13 — P36.9b post-closeout record — record head `c6cf1cf6` 5/5 green head-bound (`ci: pass #286@c6cf1cf` — python/docs/composed/security/web, run 38442945872; `logs/ci-P36.9b-2.json` boundary + gh-run read) · ticket record complete — PR #286 stays open on the stack for operator integration; earlier record heads verbatim: `cdb40865` docs-fail (BM-LEDGER-06/01 → `1fe59d73` trim+fold), `1fe59d73` docs-fail (recorded-ci NON_CI_KINDS → `c6cf1cf6` kind repair) · chainTip → r11/P36.9b-… · next → P36.10 (284) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-13 — P36.9b orchestrator repair — repair — close-records: the worker's sanctioned in-place kind repair `21a392ca` (`boundary-3 confirm` → `post-closeout record + boundary-3 confirm`; ef1fb3bf/d778706b/145b68a3/6fe93216/64648080 pattern) landed WITHOUT its `seed-commit` declaration — `memory_guard --range 2dbd4633..01c689e9` flags LEDGER.md:947 · fix: `seed-commit 21a392ca` appended to `history.policy` (scope: findings attributed to 21a392ca only) + projection regen · recorded, not smoothed: `history.policy` tail carries a duplicated `64648080` comment+line (pre-existing; set-semantics no-op) · boundary read `blockedOn: CI stack on #286@01c689e (external)` = the operator's own #285 merge to main, recorded verbatim, not a chain defect · SECOND orchestrator repair of Round 11 (P34.2, P36.9b) → OM-02 `blockedOn: worker close protocol broken (P34.2, P36.9b)` — the operator clears · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-13 — P36.9b blockedOn cleared — the operator's words verbatim: "clear blockedOn and proceed" (received 2026-10-13T19:38:28Z, Devin Desktop chat) — the OM-02 two-repair stop cleared by the operator; the 21a392ca declaration repair itself verified (`--range 2dbd4633..95ae281c` 0 violations/686 items before this clear); dispatch prompt for subsequent workers now carries the seed-commit-declaration requirement for in-place kind repairs · chainTip → r11/P36.9b-… · next → P36.10 (284) · harness: devin-desktop/swe-2-high/subagent
