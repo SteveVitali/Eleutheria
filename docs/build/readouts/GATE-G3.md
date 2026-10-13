@@ -36,3 +36,25 @@ Authority: repository operator. Date: 2026-10-19.
 - **C-3 — the operator's own words, adopted at GATE-P**, a present statement of 2026-10-01T04:54:19Z, never a 2026-09-16, 09-24 or 09-28 statement (TS-19): *"The 'counsel' determinations of 2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer all the human review steps and proceed' was my decision to defer the human review legs."* — agent-drafted, adopted by the operator at 2026-10-01T04:54:19Z (GATE-P log round 19, line C-3, option "Adopt both sentences (Recommended)"); sha256 `1461ae213fac4749cd26d24d1ca22de1db893686d1b0fdef88cb64c296eca6c6`.
 - **Related records.** The LEDGER § GATE DECISIONS `### Round 11` correction entry (SEED-07) and BUILD_INDEX row 190 (retro-indexed by SEED-09) carry the same true times.
 <!-- agent-drafted:end -->
+
+## Readout history (restored from `95c8a73f^`)
+
+<!-- P34.27 (B2): `95c8a73f` (2026-09-28T03:49:46Z) replaced the pending readout
+     below in place — the signing commit replaced the pending readout in place (release candidate accepted). The removed lines are restored verbatim;
+     the current record stands unchanged. sha256:
+     `docs/build/reports/memory-repair/restorations_p34.27.csv`.
+     An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval. -->
+
+> # GATE-G3 — pending readout
+> Status: PENDING. No approval, human work or publication is asserted.
+> - [ ] No unresolved public-safety/rights/unsupported-affirmation blocker or OPEN obligation scoped as required-for-publication remains.
+> - [ ] Only actual operator decision signs the gate; absent/declined approval leaves candidate unpublished.
+> - [ ] Three dossiers meet the fixed pilot rubric and independent semantic review, or the operator explicitly records a reduced/incomplete publication scope without claiming pilot completion.
+> Authority, actual date, input/campaign/release digests, evidence, deviations and decision: **not yet recorded**.
+> An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.
+
+## Annotations (append-only)
+
+- **2026-10-04 — P34.27 (B2; grandfathered readout):** this readout predates
+  the guard-sentence convention; the sentence is appended, never retrofitted
+  into the record — *An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.* The `Status:` line is not edited.

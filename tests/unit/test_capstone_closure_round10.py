@@ -338,7 +338,18 @@ def test_gate_accept_readout_state_matches_the_recorded_decision() -> None:
     sign itself, and it closes none of the owed register.
     """
     readout = READOUT_ACCEPT.read_text(encoding="utf-8")
-    if "PENDING" in readout:
+    # P34.27 appends a verbatim `## Readout history` block quoting the pending
+    # template (`> Status: PENDING…`) — history is not the declared state, so
+    # the declaration is judged on the first *unquoted* Status: line.
+    declared = next(
+        (
+            line
+            for line in readout.split("\n")
+            if re.match(r"\s*Status:\s*\S", line) and not line.lstrip().startswith(">")
+        ),
+        "",
+    )
+    if "PENDING" in declared:
         assert "APPROVED" not in readout and "SIGN" not in re.sub(
             r"SIGN[A-Z]*ATURE", "", readout
         ), "GATE-ACCEPT readout asserts a decision that has not happened"

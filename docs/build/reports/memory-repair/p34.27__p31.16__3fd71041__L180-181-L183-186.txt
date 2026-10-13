@@ -1,0 +1,6 @@
+| 5 publish / roll `sig-web` / retire live `/map/points.json` | **NOT DONE — HG-11 gate-pending (RETURN PASS)** |
+| 6 flip surface-half deferrals / close R8-1 / tick HG-11 | **NOT DONE — HG-11 gate-pending (RETURN PASS)** |
+**Stop line:** execution stops here at the diff summary. Nothing public was
+touched: `surveillancegraph.org` + run.app origin served 200 throughout,
+`/map/points.json` still serves the launch 17.1 MB object, no `sig-public` or
+`sig-web` object was written, no deferral was flipped, HG-11 was not ticked.

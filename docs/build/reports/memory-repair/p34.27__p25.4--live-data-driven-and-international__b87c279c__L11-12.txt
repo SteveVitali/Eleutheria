@@ -1,0 +1,2 @@
+- **Gate status:** HG-03/HG-04 per source. **Creds available (2026-09-15):** `SIG_DATA_GOV_KEY`.
+- **Live stage:** operator-gated real fetches into the hosted Cloud SQL spine.

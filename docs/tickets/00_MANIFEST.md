@@ -888,6 +888,38 @@ Round-11 rules (plan §3.3; operator decisions cited by line and time):
 - **2026-10-01 — SUPERSEDE rows 184–187** (2026-10-01T14:09:11Z; SEED-13a; ADR-152; decided at GATE-P, A-6 2026-10-01T04:03:25Z with Q-L3-2 = a; L3 §6.3): `HUMAN-H4`, `P32.22a`, `HUMAN-H5` and `P32.23` are superseded, not executed. Each row keeps its text byte for byte with an appended gate-cell token — 184 `superseded-by(T-EVAL-IND segment: EV1, HUMAN-H6, HUMAN-H7)` · 185 `superseded-by(T-EVAL-IND segment: EV-F)` · 186 `superseded-by(T-EVAL-IND segment: HUMAN-H8)` · 187 `superseded-by(CONF-02 = P34.45, CONF-09 = P37.44; decision leg: T-EVAL-IND segment EV-D, EV-R)` — so the validator's lowest-unlanded `nextTicket` rule skips them; the four contracts gain an appended `> Amended` note and the readouts `docs/build/readouts/HUMAN-H4.md` / `HUMAN-H5.md` an appended "Superseded — not executed" section; no HUMAN-H6/H7 file is created. **T-EVAL-IND** (plan §11.3; L3 §6.5) fires only when GATE DECISIONS records, with evidence, (a) the operator's own words that at least two people independent of the project are available to label, with an explicit contact exception to U-011, (b) the frame-affecting set landed and (c) the Q-24 aim; on firing, `decompose-spec mode=extend` seeds EV1 → HUMAN-H6 → EV-F → HUMAN-H8 → EV-D → EV-R (HUMAN-H7 once dossier live passes exist) and a second line is appended here. **Placeholder → real id map:** CONF-02 = P34.45, CONF-09 = P37.44. `D-R10-HUMAN-1` and `D-R6.1-EVAL` stay OPEN, non-blocking.
 - **2026-10-01 — LEG-LEVEL `live:` EDGES recorded** (2026-10-01T16:30:13Z; Stage-B unit SEED-13e, T3 close-out; no row added, removed or reordered; the plan rows stay as ratified): three edges the 11A contracts carry at leg level that `data/round11_plan.csv` does not — **P34.45**'s ER re-run leg `live:P34.46` (A-20's disclosure needs the basis label that P34.46's API roll deploys; SEED-13d, agent reading) · **P34.43** L2 (`sig_recovery` login) `live:P34.46` (the role exists on hosted only after L52 `recovery_apply` deploys) · **P34.21b** L2 (republish #2) `live:P34.21a` (hosted backfill) **and** `live:P34.18` (hosted rename, ≥ 2026-10-13T12:00Z), while its depends cell names only P34.21a. Row order already satisfies them (P34.18 row 221 < P34.21a 223 < P34.21b 224; for P34.43 253 and P34.45 257 the edge is a wait on P34.46's L2, row 258, not a row dependency); `check_order.py` and `gen_t3.py check` report 0 errors. **Feasibility before GATE-G4** (the S5-3 11A pre-authorisations expire there): P34.46 L2 opens ≥ 2026-10-14T14:00Z on its own in-ticket go; P34.43 L2 and the P34.45 ER re-run follow in the 14:00–20:00Z weekday slots, inside the plan's GATE-G4 estimate (≈ 10-15 → 10-17, plan §8.8) — feasible, with no slack. Because P34.47 cannot pass while a leg is due (a held go included), a slip of P34.46 L2 moves GATE-G4 rather than voiding the pre-authorisations; if GATE-G4 is nevertheless held with either leg unrun, that leg goes on the 11B OM-20 list or gets its own in-ticket go — the fallback both contracts state (P34.43 § Live stage and OM-20 line; P34.45 § Live stage, expiry bullet). Review: `docs/build/planning/2026-09-30-next-phase/reviews/T3-sizing-review.md`.
 
+- **2026-10-04 — P34.27 CONTRACT-AMENDMENT RECORD (B2 §5.3; append-only):**
+  twelve executed contracts carry appended `> Amended 2026-10-04:` blocks
+  quoting the lines history rewrote in place — `P25.4` + `P25.5`
+  (`b87c279c`, register `loss`), `P29.3` (`b4bd0068`, register `loss`), and
+  `P25.1` (`03450cb8`), `P21.1`/`P21.3`/`P21.4`/`P21.5`/`P21.7`/`P21.8`/
+  `P21.9` (`a583df05`), `P22.3` (`d8bcd3ab`) — all register `benign`
+  pre-execution amendments, restored for completeness. Current contract
+  text stands; nothing re-decided (BM-TICKET-04).
+- **2026-10-04 — P34.27 CORRECTION (B2 §5.6; append-only):** `d8bcd3ab`
+  (2026-09-10T00:19:22Z) edited the 2026-09-09 `ROUND 3 + ROUND 4 seeded`
+  Plan-extensions line in place, replacing the seed-spec path. Original
+  wording verbatim from `d8bcd3ab^`:
+
+  - **2026-09-09 — ROUND 3 + ROUND 4 seeded** by `decompose-spec mode=extend spec=~/MetaHarness/sig-golive-spec.md tail=minimal worktree=~/Eleutheria`, forked from chain tip `devin/p22-3-build-memory-v2-migration` (PR #69) on branch `devin/sig-golive-plan` (stacked PR). New rows **67–87** under the three-lane policy (GL-META-00): Lane A markers (`GATE-G1`/REL.1, `HUMAN-H1`/GOV.1, `HUMAN-H2`/LEGAL.1, `HUMAN-H3`/ACCT.1, `GATE-G2`/Go-public, `GATE-ACCEPT`); Lane B return-pass rows pointing at the existing `P21.1/P21.3/P21.4/P21.5/P21.7/P21.8/P21.9` contracts (no duplicate files); Lane C new-code contracts (`LIVE.1a`, `DEPLOY.1`, `SCHED.1`, `OBS.1`, `CI.1`, `META.1`, `JURIS.2`, `CCOPS.1`). `nextTicket: GATE-G1`.
+
+  The current line stands as the latest state; nothing re-decided.
+- **2026-10-04 — P34.27 CORRECTION (B2 §5.6; append-only):** `b132bbbb`
+  (2026-09-27T10:50:13Z) edited the 2026-09-27 `INSERT` Plan-extensions
+  line in place (`row 170.5` / `sequence cell 170a` relabel). Original
+  wording verbatim from `b132bbbb^`:
+
+  - **2026-09-27 — INSERT** `170a_P32.10a__disposition-single-clock-authority.md` (row **170.5**, physically between rows 170 and 171; fractional stable index per the P20.4 row-54.5 precedent): single clock authority for `disposition.decided_at` — P32.10's full-suite run caught 4 intermittent reds in `tests/db/test_publication_dispositions.py` because `new_disposition` stamps `decided_at` host-side while the shared eligibility fragments filter on the container's `clock_timestamp()` (Docker Desktop VM lag → transiently future-dated). Engineering-only defect repair, `live_verification=false`; the flake would otherwise randomly red `make check` for the rest of the round. `nextTicket: P32.10a`.
+
+  The current line stands as the latest state; nothing re-decided.
+- **2026-10-04 — P34.27 ID DISAMBIGUATION (B2; `cbe5fd48` transition-justified;
+  register rec: no content restore):** ticket ids `P23.1`–`P23.7` before
+  `cbe5fd48` (2026-09-09T22:12:07Z) name the Round-2 tail contracts
+  CAP.1, CAP.2, CAP.3, GATE-ACCEPT, REC.1, REC.2, REC.3; after the same-day
+  renumbering they name the go-live markers GATE-G1 (integrate-and-release)
+  through GATE-G2 / P24.x companions in rows 67–73. The removed banner +
+  blockquote + rows survive at `cbe5fd48^` (git keeps them; not re-inlined).
+
 ## Decomposition decisions (go-live round; Phase-4 adversarial review)
 - **Three lanes, three homes (GL-META-00).** New-code work → full `implement-spec` contracts (Lane C); human prerequisites → HUMAN/GATE markers (Lane A); return-pass re-runs → manifest rows pointing at the existing P21.x contract + its DEFERRALS row (Lane B, no new contract). This keeps the plan honest (no duplicated contracts) and matches how the sig-postbuild build recorded its gate-skipped tickets.
 - **Sequencing (spec §4 critical path + operator runbook).** REL.1 (GATE-G1) first as the non-blocking release milestone; the three human markers (GOV.1/LEGAL.1/ACCT.1) next (parallel in reality, serialized in the chain for a clean stack); then the go-live re-runs RIGHTS.1 → LIVE.1a → LIVE.1(fetch) → LIVE.2 → Go-public → INFRA.1/CONTRIB.1/SOURCES.1; then Round 4 DEPLOY.1 → SCHED.1 → OBS.1 → CI.1 → META.1 → JURIS.2 → CCOPS.1; then the minimal tail. Go-public (GATE-G2) placed immediately after LIVE.2 (it gates only the public cutover + `v0.2.0`, not the staging publish).

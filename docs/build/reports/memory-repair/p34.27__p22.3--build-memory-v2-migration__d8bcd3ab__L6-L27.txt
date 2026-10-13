@@ -1,0 +1,2 @@
+- **Run:** `implement-spec spec=~/MetaHarness/build-memory-v2-spec.md#EL.1 worktree=~/Eleutheria live_verification=false`
+- `~/MetaHarness/build-memory-v2-spec.md` Part I §3–§10; `~/agent-skills/skills/build-memory/layout.md` and `SKILL.md` (migrate mode).

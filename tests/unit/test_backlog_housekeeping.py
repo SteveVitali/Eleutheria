@@ -165,8 +165,15 @@ _REF_RE = re.compile(r"docs/build/[A-Za-z0-9_.{}-]+(?:/[A-Za-z0-9_.{}-]+)*/?")
 def test_live_rerun_ticket_refs_resolve() -> None:
     # Lane-B contracts are re-run verbatim — their `docs/build/…` Load pointers
     # must resolve in the post-P22.3 layout (report files live under reports/).
+    # `>`-quoted lines are verbatim restorations/amendment quotes (B2 §5.3),
+    # never live pointers, so they are out of the scan.
     for rel in _LIVE_RERUN_CONTRACTS:
-        for m in _REF_RE.finditer((REPO_ROOT / rel).read_text()):
+        text = "\n".join(
+            line
+            for line in (REPO_ROOT / rel).read_text().split("\n")
+            if not line.lstrip().startswith(">")
+        )
+        for m in _REF_RE.finditer(text):
             ref = m.group(0).rstrip("/")
             if "{" in ref or ref.endswith("_"):  # template/templated refs
                 continue
