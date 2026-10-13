@@ -9,6 +9,7 @@ import { join } from "node:path";
 
 import {
   capRows,
+  getCaptureDiff,
   getCorrections,
   getCorrectionsProvenance,
   getCoverage,
@@ -320,6 +321,19 @@ describe("P31.14 web data layer — fixtures mode still serves the committed con
     expect(getDecisionPoint()).not.toBeNull();
     expect(getJurisdictionClaims().length).toBeGreaterThan(0);
     expect(getQueueAsOf()).toBeTruthy();
+  });
+});
+
+describe("P34.20 — the fixture capture diff never reaches an export build (SIG-EVUI-D05)", () => {
+  it("export mode returns null — no fixture diff can render off real bytes", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    expect(getCaptureDiff()).toBeNull();
+  });
+  it("fixtures mode still returns the committed diff pair (SIG-UI-029)", () => {
+    process.env.SIG_DATA_SOURCE = "fixtures";
+    const pair = getCaptureDiff();
+    expect(pair).not.toBeNull();
+    expect(pair!.length).toBe(2);
   });
 });
 

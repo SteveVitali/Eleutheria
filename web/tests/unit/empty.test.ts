@@ -57,3 +57,82 @@ describe("empty-state copy (SIG-UI-007, §3.1)", () => {
     expect(emptyState("mapAssets").cta).toEqual(RESEARCH_QUEUE_CTA);
   });
 });
+
+describe("cause-class empty states (P34.20, K14 §6.4, SIG-EVUI-D08, F-409/F-410)", () => {
+  // The five surfaces whose emptiness has a NAMED cause — each renders the
+  // K14 five-part pattern, never a "research gap" and never a queue CTA.
+  const CAUSE_SURFACES = [
+    "watch",
+    "watchSubscriptions",
+    "recommender",
+    "citations",
+    "evidenceIndex",
+  ] as const;
+
+  it("every cause-class surface carries all five parts (label, missing+why, nearby, action, change)", () => {
+    for (const surface of CAUSE_SURFACES) {
+      const parts = emptyState(surface).parts;
+      expect(parts, `${surface} must carry the K14 five-part pattern`).toBeDefined();
+      expect(parts!.state.length, `${surface} state label`).toBeGreaterThan(0);
+      expect(parts!.missing.length, `${surface} missing+why`).toBeGreaterThan(0);
+      expect(parts!.nearby.length, `${surface} nearby`).toBeGreaterThan(0);
+      expect(parts!.action.label.length, `${surface} action label`).toBeGreaterThan(0);
+      expect(parts!.action.href, `${surface} action href`).toMatch(/^\//);
+      expect(parts!.change.length, `${surface} when-it-may-change`).toBeGreaterThan(0);
+    }
+  });
+
+  it("the state label is a typed kind — never a bare 'empty'", () => {
+    for (const surface of CAUSE_SURFACES) {
+      const state = emptyState(surface).parts!.state.toLowerCase();
+      expect(state.trim(), `${surface} state`).not.toBe("empty");
+      expect(state, `${surface} state must name a kind`).toMatch(/no |not |none /);
+    }
+  });
+
+  it("no cause-class copy says 'research gap' or 'research-queue'", () => {
+    for (const surface of CAUSE_SURFACES) {
+      const copy = emptyState(surface);
+      const all = [
+        copy.heading,
+        copy.body,
+        copy.cta.label,
+        ...Object.values({
+          s: copy.parts!.state,
+          m: copy.parts!.missing,
+          n: copy.parts!.nearby,
+          c: copy.parts!.change,
+        }),
+      ].join(" ");
+      expect(all.toLowerCase(), `${surface} must not call a pipeline gap a research gap`).not.toContain(
+        "research gap",
+      );
+    }
+  });
+
+  it("no cause-class surface routes the visitor to the research queue as the remedy", () => {
+    for (const surface of CAUSE_SURFACES) {
+      const copy = emptyState(surface);
+      expect(copy.cta.href, `${surface} cta`).not.toBe("/research-queue/");
+      expect(copy.parts!.action.href, `${surface} action`).not.toBe("/research-queue/");
+    }
+  });
+
+  it("every cause-class part binds a copy-batch row id (B-2 — pending until confirmed)", () => {
+    for (const surface of CAUSE_SURFACES) {
+      const ids = emptyState(surface).parts!.batchIds;
+      for (const [part, id] of Object.entries(ids)) {
+        expect(id, `${surface}.${part} batch id`).toMatch(/^EW-\d+$/);
+      }
+    }
+  });
+
+  it("heading/body/cta mirror the five parts so the two render paths cannot drift", () => {
+    for (const surface of CAUSE_SURFACES) {
+      const copy = emptyState(surface);
+      expect(copy.heading, `${surface} heading`).toBe(copy.parts!.state);
+      expect(copy.body, `${surface} body`).toBe(copy.parts!.missing);
+      expect(copy.cta, `${surface} cta`).toEqual(copy.parts!.action);
+    }
+  });
+});

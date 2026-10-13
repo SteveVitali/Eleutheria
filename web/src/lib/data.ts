@@ -886,8 +886,15 @@ export function getDecisionPoint(): DecisionPoint | null {
   return DECISION_POINT;
 }
 
-/** The two captures the evidence viewer diffs field-by-field (SIG-UI-029). */
-export function getCaptureDiff(): [Capture, Capture] {
+/**
+ * The two captures the evidence viewer diffs field-by-field (SIG-UI-029) —
+ * fixtures mode only. In export mode the export carries no capture-diff
+ * payload (the interim artifact list replaces the document views, P34.20 /
+ * SIG-EVUI-D05): an export-mode build must never render the committed fixture
+ * diff, so this returns `null` and the page skips the section honestly.
+ */
+export function getCaptureDiff(): [Capture, Capture] | null {
+  if (dataSource() === "export") return null;
   return DIFF_CAPTURES;
 }
 

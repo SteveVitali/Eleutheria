@@ -173,6 +173,9 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
     touches_open_contradiction: false,
     answers_open_task: true,
     capture_status: "paywalled",
+    // P34.20: paywalled — the connector ran but stored no document; the fixture
+    // demonstrates the honest run-record label (SIG-EVUI-D04).
+    capture_classification: "synthetic",
     permalink: permalinkFor("news-paywalled-2026-08", "2026-08-10"),
     as_of: "2026-08-10",
   },
@@ -187,6 +190,8 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
     touches_open_contradiction: false,
     answers_open_task: false,
     capture_status: "link_rotted",
+    // P34.20: link-rotted — SIG did not store the document; run record.
+    capture_classification: "synthetic",
     permalink: permalinkFor("portal-rotted-2025", "2025-05-01"),
     as_of: "2025-05-01",
   },
@@ -202,6 +207,9 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
     touches_open_contradiction: false,
     answers_open_task: false,
     capture_status: "retrievable",
+    // P34.20 (K8 NEW-9): the source's own link — the fixture demonstrates the
+    // S-6-gated upstream URL label.
+    upstream_url: "https://www.flocksafety.com/",
     permalink: permalinkFor("brochure-flock-marketing", "2026-01-01"),
     as_of: "2026-01-01",
   },

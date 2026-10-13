@@ -34,14 +34,16 @@ const { view } = Astro.props as { view: ClaimView };
 // Enforce the SIG-UI-028 completeness contract at build: an incomplete view fails the build.
 assertClaimView(view);
 
+// P34.20 / SIG-EVUI-D05: the fixture capture diff is fixtures-mode data — in
+// export mode `getCaptureDiff()` is null and no diff renders.
 const DIFF_CAPTURES = getCaptureDiff();
 const sealed = isSealed(view.capture);
 const highlighted = claimHighlightedDocument(view);
 const meta = sealed ? sealedMetadata(view.capture) : null;
 const contested = isClaimContested(view);
 // The field-by-field capture diff is shown for the claim about the portal artifact.
-const showDiff = view.claim_id === "active-device-count";
-const diff = showDiff ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
+const showDiff = DIFF_CAPTURES !== null && view.claim_id === "active-device-count";
+const diff = showDiff && DIFF_CAPTURES ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
 ---
 
 <BaseLayout title={`Evidence — ${view.claim_label}`} path={`/evidence/${view.claim_id}/`}>
@@ -123,7 +125,7 @@ const diff = showDiff ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
         <h2>What changed between captures</h2>
         <p>
           Two captures of the same artifact, diffed field by field —
-          {DIFF_CAPTURES[0].captured_at} vs {DIFF_CAPTURES[1].captured_at}.
+          {DIFF_CAPTURES![0].captured_at} vs {DIFF_CAPTURES![1].captured_at}.
         </p>
         <table>
           <thead>
