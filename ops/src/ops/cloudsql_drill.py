@@ -17,9 +17,10 @@ injectable (``ops/backup.py``'s runner pattern, P24.1).
 Two hard rules encoded here:
 
 - **The delete is name-checked.** ``assert_drill_name`` accepts only the
-  producer's own shape ``sig-pg-drill-<STAMP>`` / ``sig-pg-drill-b-<STAMP>``
-  (``<STAMP>`` = ``%Y%m%dt%H%Mz``) and refuses ``sig-pg`` itself outright — a
-  deletion command built from it can never name production.
+  producer's own shapes ``sig-pg-drill-<STAMP>`` / ``sig-pg-drill-b-<STAMP>``
+  / ``sig-pg-drill-l44-<STAMP>`` (``<STAMP>`` = ``%Y%m%dt%H%Mz``) and refuses
+  ``sig-pg`` itself outright — a deletion command built from it can never
+  name production.
 - **The drill reads plan state only (C-10).** The sqitch comparison reads
   ``sqitch.changes``; nothing here touches ``db/sqitch.plan`` lines 44–52,
   and D-P32.10a-1's ``sqitch verify`` division-by-zero is a *verify-command*
@@ -38,10 +39,13 @@ from typing import Any, Protocol
 #: does not match (it lacks the ``-drill-`` infix); the pattern is deliberately
 #: tighter than the contract's ``sig-pg-drill-*`` wildcard — only the stamp
 #: shape the producer emits is deletable, so a hand-typed or truncated name
-#: fails closed. ``-b-`` marks the full-backup variant's instance (leg 3).
+#: fails closed. ``-b-`` marks the full-backup variant's instance (leg 3);
+#: ``-l44-`` marks the P34.24b L44–52 deploy-rehearsal clone (row 230 names
+#: it ``sig-pg-drill-l44-<stamp>`` so this name-checked delete applies
+#: unchanged).
 # lowercase t/z — Cloud SQL instance names allow [a-z0-9-] only (found by
 # the 2026-10-02 live leg: %Y%m%dT%H%MZ made an INVALID_ARGUMENT submit).
-DRILL_INSTANCE_RE = re.compile(r"^sig-pg-drill(?:-b)?-[0-9]{8}t[0-9]{4}z$")
+DRILL_INSTANCE_RE = re.compile(r"^sig-pg-drill(?:-b|-l44)?-[0-9]{8}t[0-9]{4}z$")
 
 #: The production instance name — refused explicitly before the pattern is
 #: even consulted, so the refusal is a distinct, greppable message.
@@ -105,14 +109,15 @@ def assert_drill_name(name: str) -> str:
 
     Refuses ``sig-pg`` outright (a distinct error so a refusal to touch
     production is greppable) and any name outside
-    ``sig-pg-drill(-b)?-<YYYYmmddtHHMMz>``.
+    ``sig-pg-drill(-b|-l44)?-<YYYYmmddtHHMMz>``.
     """
     if name == PRODUCTION_INSTANCE:
         raise DrillNameError(f"{name!r} is the production instance — never a drill target")
     if not DRILL_INSTANCE_RE.match(name):
         raise DrillNameError(
             f"{name!r} is not a drill instance — expected sig-pg-drill-<YYYYmmddtHHMMz> "
-            "(or sig-pg-drill-b-<stamp> for the full-backup variant)"
+            "(sig-pg-drill-b-<stamp> for the full-backup variant, "
+            "sig-pg-drill-l44-<stamp> for the P34.24b rehearsal)"
         )
     return name
 

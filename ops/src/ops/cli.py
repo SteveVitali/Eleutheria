@@ -51,7 +51,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .gcs import GcsBucket
@@ -465,6 +465,52 @@ def build_parser() -> argparse.ArgumentParser:
         "--out",
         default=None,
         help="write the drill record JSON here (default: stdout only)",
+    )
+    reh = sub.add_parser(
+        "sqitch-rehearsal",
+        help="P34.24b: the L44-52 deploy rehearsal on a drill clone — read-only "
+        "snapshots, the pg_locks/index sampler and the sig.sqitch-rehearsal/1 "
+        "record assembly (DSN via SIG_REHEARSAL_DSN env, never argv)",
+    )
+    reh.add_argument(
+        "action",
+        choices=["snapshot", "sample", "record", "plan-hashes"],
+        help="snapshot: one read-only capture (sqitch tip, sizes, counters); "
+        "sample: the lock/index poller until --stop-file exists; "
+        "record: assemble the rehearsal record from measured parts; "
+        "plan-hashes: the C-10 plan/L44-52 sha256 pair",
+    )
+    reh.add_argument(
+        "--instance",
+        default=None,
+        help="the rehearsal target for snapshot/sample — must match "
+        "sig-pg-drill(-b|-l44)?-<stamp> (sig-pg is refused outright)",
+    )
+    reh.add_argument("--out", default=None, help="write JSON output here")
+    reh.add_argument(
+        "--stop-file",
+        default=None,
+        help="(sample) stop sampling when this file exists",
+    )
+    reh.add_argument(
+        "--interval-ms",
+        type=float,
+        default=None,
+        help="(sample) poll cadence in ms (default 250)",
+    )
+    reh.add_argument(
+        "--deadline-s",
+        type=float,
+        default=None,
+        help="(sample) backstop duration (default 4h)",
+    )
+    for opt in ("meta", "pre", "post", "samples", "deploy-log", "verify", "source"):
+        reh.add_argument(f"--{opt}", default=None, help=f"(record) input path for {opt}")
+    reh.add_argument("--plan", default=None, help="(plan-hashes) path to db/sqitch.plan")
+    reh.add_argument(
+        "--base-plan",
+        default=None,
+        help="(plan-hashes) path to the base ref's sqitch.plan (C-10 diff)",
     )
 
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
@@ -1977,6 +2023,129 @@ def _cmd_cloudsql_drill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_sqitch_rehearsal(args: argparse.Namespace) -> int:
+    """P34.24b: the clone-rehearsal reads + record assembly."""
+    import os
+
+    from .cloudsql_drill import DrillNameError
+    from .sqitch_rehearsal import (
+        DEFAULT_SAMPLE_INTERVAL_S,
+        assert_rehearsal_target,
+        build_record,
+        parse_deploy_log,
+        plan_line_hashes,
+        sample_loop,
+        snapshot,
+    )
+
+    def _emit(payload: dict) -> int:
+        text = json.dumps(payload, indent=2, sort_keys=True)
+        print(text)
+        if args.out:
+            with open(args.out, "w", encoding="utf-8") as fh:
+                fh.write(text + "\n")
+            print(f"sig-ops sqitch-rehearsal: -> {args.out}", file=sys.stderr)
+        return 0
+
+    if args.action in {"snapshot", "sample"}:
+        try:
+            instance = assert_rehearsal_target(args.instance or "")
+        except DrillNameError as exc:
+            print(f"sig-ops sqitch-rehearsal: REFUSED — {exc}", file=sys.stderr)
+            return 42
+        dsn = os.environ.get("SIG_REHEARSAL_DSN", "").strip()
+        if not dsn:
+            print(
+                "sig-ops sqitch-rehearsal: SIG_REHEARSAL_DSN must be set "
+                "(env only — a DSN on argv leaks into the process list).",
+                file=sys.stderr,
+            )
+            return 2
+        if args.action == "snapshot":
+            from .sqitch_rehearsal import _connect
+
+            with _connect(dsn) as conn:
+                snap = snapshot(conn)
+            snap["instance"] = instance
+            return _emit(snap)
+        if not args.out or not args.stop_file:
+            print(
+                "sig-ops sqitch-rehearsal: sample needs --out and --stop-file",
+                file=sys.stderr,
+            )
+            return 2
+        n = sample_loop(
+            dsn,
+            args.out,
+            args.stop_file,
+            interval_s=(args.interval_ms or 250) / 1000.0
+            if args.interval_ms
+            else DEFAULT_SAMPLE_INTERVAL_S,
+            deadline_s=args.deadline_s or 4 * 3600,
+        )
+        print(
+            f"sig-ops sqitch-rehearsal: {n} samples -> {args.out}",
+            file=sys.stderr,
+        )
+        return 0
+
+    if args.action == "record":
+        needed = ("meta", "pre", "post", "samples", "deploy_log")
+        missing = [n for n in needed if getattr(args, n.replace("-", "_")) is None]
+        if missing or not args.out:
+            print(
+                f"sig-ops sqitch-rehearsal: record needs --meta --pre --post "
+                f"--samples --deploy-log --out (missing: {missing or ['--out']})",
+                file=sys.stderr,
+            )
+            return 2
+
+        def _load_json(p: str) -> Any:
+            with open(p, encoding="utf-8") as fh:
+                return json.load(fh)
+
+        def _load_jsonl(p: str) -> list[Any]:
+            with open(p, encoding="utf-8") as fh:
+                return [json.loads(line) for line in fh if line.strip()]
+
+        with open(args.deploy_log, encoding="utf-8") as fh:
+            deploy_log = parse_deploy_log(fh)
+        meta = _load_json(args.meta)
+        deploy = {**(meta.pop("deploy", {}) or {}), **deploy_log}
+        verify = _load_json(args.verify) if args.verify else None
+        source = _load_json(args.source) if args.source else None
+        record = build_record(
+            meta=meta,
+            pre=_load_json(args.pre),
+            post=_load_json(args.post),
+            samples=_load_jsonl(args.samples),
+            deploy=deploy,
+            verify=verify,
+            source=source,
+            sample_interval_s=float(meta.get("sample_interval_s") or 0.25),
+        )
+        return _emit(record)
+
+    # plan-hashes — the C-10 evidence pair (working tree vs base)
+    if not args.plan:
+        print(
+            "sig-ops sqitch-rehearsal: plan-hashes needs --plan <path>",
+            file=sys.stderr,
+        )
+        return 2
+    with open(args.plan, encoding="utf-8") as fh:
+        hashes = plan_line_hashes(fh.read())
+    if args.base_plan:
+        with open(args.base_plan, encoding="utf-8") as fh:
+            base = plan_line_hashes(fh.read())
+        hashes["plan_l44_52_base_sha256"] = base["plan_l44_52_sha256"]
+        hashes["plan_l44_52_byte_identical"] = (
+            base["plan_l44_52_sha256"] == hashes["plan_l44_52_sha256"]
+        )
+        hashes["plan_base_sha256"] = base["plan_sha256"]
+    return _emit(hashes)
+
+
 def _cmd_keepalive_check(args: argparse.Namespace) -> int:
     from .alerts import alert_exit_code
     from .observe import verify_keepalive
@@ -3181,6 +3350,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_backup_drill(args)
     if args.command == "cloudsql-drill":
         return _cmd_cloudsql_drill(args)
+    if args.command == "sqitch-rehearsal":
+        return _cmd_sqitch_rehearsal(args)
     if args.command == "keepalive-check":
         return _cmd_keepalive_check(args)
     if args.command == "probe":
