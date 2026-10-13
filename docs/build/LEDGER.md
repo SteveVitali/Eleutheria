@@ -4,6 +4,7 @@
 <!-- Archived head lines byte-for-byte (the twelve per-ticket State-line archive pointers P34.47-closeout…P35.10, comments8 fold) → docs/build/reports/memory-repair/LEDGER_head_comments8_pre-P35.10.txt (sha256 e84885364235…) — P35.10 closeout (orient >48 KiB, BM-LEDGER-08). -->
 <!-- Archived head lines byte-for-byte (the four per-ticket State-line archive pointers P35.14b…P36.3, comments10 fold) → docs/build/reports/memory-repair/LEDGER_head_comments10_pre-P36.3.txt (sha256 93dcb1908ecca3…) — P36.3 closeout (orient >48 KiB, BM-LEDGER-08). -->
 <!-- Archived head lines byte-for-byte (the comments11 fold pointer + the pre-P36.9b State-line pointer, comments12 fold) → docs/build/reports/memory-repair/LEDGER_head_comments12_pre-P36.9b.txt (sha256 95e5ac7826f30a…) — P36.9b post-closeout repair (orient >48 KiB, BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.10) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.10.txt, sha256 9d886bb7d9e6459a… (BM-LEDGER-08). -->
 
 > **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; the clause text is archived byte-for-byte (comment above) and binds unchanged; per-ticket subset: manifest `## Operating rules`. Prior modes archived (comments5/6/7 folds).
 >
