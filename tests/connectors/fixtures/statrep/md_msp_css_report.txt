@@ -1,0 +1,15 @@
+Maryland Department of State Police
+Annual Report on Cell-Site Simulator Use
+
+Date: January 31, 2025
+Technology: cell-site simulator
+
+Under Chapters 222 and 223 of the Acts of 2020 (Maryland General Assembly),
+the Department of State Police submits this annual report on the use of
+cell-site simulator technology for the preceding calendar year.
+
+Cell-site simulator deployments during the reporting period: 4
+Exigent circumstances deployments: 1
+
+All figures are institutional aggregates; the report publishes no target
+identifiers, case names, or individual records.

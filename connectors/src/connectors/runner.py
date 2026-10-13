@@ -135,6 +135,27 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "statrep_detroit_mi_frt_weekly": "government_mandated_disclosure",
     "statrep_me_dps_uav": "government_mandated_disclosure",
     "statrep_il_icjia_drone": "government_mandated_disclosure",
+    # P36.9b (R11-ACQ-13b, I8 §5.6): the b half of statutory disclosures II —
+    # the CSS, interception, ATE, Seattle OIG and federal DHS/SORN rows of
+    # batch `r11-disclosures-02`. Eleven registry ids after the plan's R1
+    # consolidations (the I4-C068 municipal ATE reports are index-enumerated
+    # under `statrep_wa_wtsc_ate`; the four component DHS surfaces are the
+    # five index targets of `statrep_us_dhs_privacy_compliance`; the SORNs
+    # are Federal Register document pages — no API adapter). Same gate
+    # posture: all stay `ingestion_permitted=false` (HG-03 RB-03 `a`; RB-05
+    # `a` federal, RB-06 `a` WTSC) pending the operator's OP-26 Wave-B flip
+    # under ING-GO-B.
+    "statrep_wa_wtsc_ate": "government_mandated_disclosure",
+    "statrep_hi_judiciary_interception": "government_mandated_disclosure",
+    "statrep_mn_court_interception": "government_mandated_disclosure",
+    "statrep_md_msp_css": "government_mandated_disclosure",
+    "statrep_de_diac": "government_mandated_disclosure",
+    "statrep_seattle_wa_sdot_ate": "government_mandated_disclosure",
+    "statrep_fl_flhsmv_red_light": "government_mandated_disclosure",
+    "statrep_pa_wzssc": "government_mandated_disclosure",
+    "statrep_seattle_wa_oig": "government_mandated_disclosure",
+    "statrep_us_dhs_privacy_compliance": "government_mandated_disclosure",
+    "legis_us_dhs_sorn_plate_data": "government_mandated_disclosure",
     # P31.13 (BREADTH.2): the FEMA Homeland Security Grant Program federal-
     # assistance allocations surface — the procurement connector's USAspending
     # award-search path (`award_class = "assistance"` reviewed slices; funder →

@@ -1,0 +1,17 @@
+Minnesota State Court Administrator
+Report to the Minnesota Legislature - Interception of Communications
+
+Date: February 14, 2024
+Technology: lawful interception
+
+Pursuant to Minn. Stat. 626A.391 and the Minnesota Rules of Criminal
+Procedure, the state court administrator reports to the Minnesota Legislature
+on applications for interception orders, pen register / trap and trace
+orders, and mobile tracking device orders for calendar year 2023.
+
+Interception order applications filed: 0
+Pen register or trap and trace applications filed: 12
+Mobile tracking device applications filed: 6
+
+The report is the statute's institution-level count of applications and
+orders; no case-level or person-level fields appear.

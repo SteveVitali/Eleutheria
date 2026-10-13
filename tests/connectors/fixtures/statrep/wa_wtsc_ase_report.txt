@@ -1,0 +1,17 @@
+Washington Traffic Safety Commission
+Automated Safety Enforcement - Annual Report to the Washington State Legislature
+
+Date: January 15, 2026
+Technology: automated traffic safety cameras
+
+Pursuant to RCW 46.63.220(6)(b)(ii), the Washington Traffic Safety Commission
+compiled this statewide report for the transportation committees of the
+Washington State Legislature. Cities and counties operating automated traffic
+safety cameras reported aggregate outcomes for the 2025 calendar year under
+RCW 46.63.220(6)(b)(i).
+
+Infractions issued: 41,903
+Municipal reports received: 29
+
+All figures are program-level aggregates; the report publishes no vehicle
+owner, plate, or trip-level information.

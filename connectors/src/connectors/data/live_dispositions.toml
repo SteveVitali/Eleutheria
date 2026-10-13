@@ -897,9 +897,6 @@ class_ticket = "P37.51"
 disposition = "promote"
 class_ticket = "P37.51"
 
-[sources.legis_us_dhs_system_records]
-disposition = "promote"
-class_ticket = "P36.9b"
 
 [sources.legis_us_federal_register_api]
 disposition = "promote"
@@ -1009,13 +1006,7 @@ class_ticket = "P37.16a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.statrep_de_delaware_information_analysis]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_fl_florida_highway_safety]
-disposition = "promote"
-class_ticket = "P36.9b"
 
 [sources.statrep_fr_cnil_utilisation_de]
 disposition = "promote"
@@ -1037,17 +1028,8 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.statrep_hi_hawai_judiciary_under]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_md_maryland_required_chapters]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_mn_minnesota_court_administrator]
-disposition = "promote"
-class_ticket = "P36.9b"
 
 [sources.statrep_nc_onslow_county_schools_gaggle]
 disposition = "promote"
@@ -1061,13 +1043,7 @@ class_ticket = "P37.47"
 disposition = "promote"
 class_ticket = "P36.10"
 
-[sources.statrep_pa_pennsylvania_work_zone]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_seattle_wa_2024_2025_automated]
-disposition = "promote"
-class_ticket = "P36.9b"
 
 [sources.statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
 disposition = "promote"
@@ -1085,25 +1061,10 @@ class_ticket = "P37.49"
 disposition = "promote"
 class_ticket = "P37.49"
 
-[sources.statrep_us_dhs_cbp_border]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_us_dhs_cbp_pia]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_us_dhs_component_privacy]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_us_dhs_obim_pia]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_us_dhs_privacy_impact]
-disposition = "promote"
-class_ticket = "P36.9b"
 
 [sources.statrep_us_ice_287_monthly]
 disposition = "promote"
@@ -1125,15 +1086,6 @@ class_ticket = "P37.49"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.statrep_wa_2026_automated_safety]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_wa_automated_traffic_safety]
-disposition = "promote"
-class_ticket = "P36.9b"
 
-[sources.statrep_wa_seattle_oig_annual]
-disposition = "promote"
-class_ticket = "P36.9b"
 
