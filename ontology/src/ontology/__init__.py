@@ -12,4 +12,6 @@ committed artifacts against a fresh generation (SIG-ENG-016). See
 :mod:`ontology.generate`.
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-ontology")

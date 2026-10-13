@@ -12,4 +12,6 @@ publication), ``downstream`` (the six application classes), and ``bundle`` (the
 orchestrator that builds a reproducible, licence-computed release).
 """
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-exports")

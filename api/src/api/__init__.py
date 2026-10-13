@@ -7,7 +7,9 @@
 ``sig-api serve`` runs it against the demo store.
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-api")
 
 from .app import API_VERSION, create_app  # noqa: E402  (version must precede app import)
 from .store import InMemoryStore, ReadStore  # noqa: E402

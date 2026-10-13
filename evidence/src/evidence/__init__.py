@@ -13,4 +13,6 @@ handling (:mod:`evidence.disappearance`), and ingest-run reproducibility
 (:mod:`evidence.ingest_run`). Every connector writes captures through this store.
 """
 
-__version__ = "0.0.0"
+from importlib.metadata import version as _dist_version
+
+__version__ = _dist_version("sig-evidence")

@@ -7,6 +7,43 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+Post-`0.1.0` changes land here first, each entry naming its ticket and
+requirement ids (G3 §9.4, SIG-REL-014). At each tag the heading becomes
+`## [0.N.0] — tagged by the operator (see git show v0.N.0)` — the tag object
+carries the true date, so no date is typed here — and the section ends with
+"Production releases built from this range: …". A PR touching the
+public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
+`api/src/api/{routes,app,models}.py`,
+`exports/src/exports/{release*,spine_export,manifest}.py`,
+`ops/public_routes.toml`, `ops/disclosures.toml`, `policy/**`,
+`ontology/src/**`) must add an entry here or carry a
+`Changelog: none (<reason>)` commit trailer — the `docs` CI job enforces it
+(`docs/build/tools/changelog_gate.py`).
+
+### Added
+
+- **Versioning discipline + one version source** (P34.23, SIG-REL-014) —
+  every package derives `__version__` via `importlib.metadata` (no `0.0.0`
+  reported anywhere); `scripts/bump_version.py` bumps all 14 pyprojects and
+  `web/package.json` together (dry-run default); `resolver_version` in
+  export manifests is now the `resolution` package version + `+g<commit8>`
+  instead of the exports placeholder; the CHANGELOG gate joins the `docs`
+  CI job; `docs/build/reports/releases/` holds the operator tag procedure,
+  `TAG_TEMPLATE.md`, and the prepared `TAG_v0.1.0.md` (not tagged —
+  operator action, OP-08).
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
 ## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`)
 
 First tagged snapshot of the Surveillance Infrastructure Graph (SIG): the complete

@@ -27,7 +27,7 @@ from resolution.temporal_identity import OrganizationRelationType
 
 def _run(ruleset_version: str = "r1", run_id: str = "run-1") -> ERRun:
     return ERRun(
-        resolver_version="0.0.0",
+        resolver_version="0.1.0",
         model_version="1",
         ruleset_version=ruleset_version,
         code_commit="deadbeef",
@@ -71,7 +71,7 @@ def test_stage_runs_between_normalize_and_load() -> None:
 def test_run_record_enforces_deterministic_environment() -> None:
     with pytest.raises(ValueError, match="LC_ALL"):
         ERRun(
-            resolver_version="0.0.0",
+            resolver_version="0.1.0",
             model_version="1",
             ruleset_version="r1",
             code_commit="x",

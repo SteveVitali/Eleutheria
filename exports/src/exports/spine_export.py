@@ -2533,12 +2533,12 @@ def run_spine_export(
     append-only spine (§16). When the caller already holds an open transaction (the
     test seam) the reads run inside it unchanged.
     """
-    from . import __version__
     from .shaping import (
         _queries_for,
         build_shaped_dataset,
         fetch_shaping_raw,
     )
+    from .versioning import default_resolver_version
 
     generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     as_of = as_of or generated_at
@@ -2584,7 +2584,10 @@ def run_spine_export(
             as_of_snapshot=as_of_snapshot,
             as_of_belief=as_of_belief,
             ruleset_version=ruleset_version,
-            resolver_version=resolver_version or __version__,
+            # SIG-REL-014 (G3 §3.2 ★): the resolver's code identity — the
+            # resolution package version + the tree's commit — never the
+            # exports placeholder the pre-REL-10 manifests carried.
+            resolver_version=resolver_version or default_resolver_version(),
             dataset_slug=dataset_slug,
         )
 
