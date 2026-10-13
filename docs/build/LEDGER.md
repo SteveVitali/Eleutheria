@@ -3,12 +3,7 @@
 <!-- Archived head lines byte-for-byte (the five per-ticket archive pointers P34.46…cs_comment-P35.11, comments9 fold) → docs/build/reports/memory-repair/LEDGER_head_comments9_pre-P35.14b.txt (sha256 3efde664c12a9137…) — P35.14b closeout (orient >48 KiB, BM-LEDGER-08). -->
 <!-- Archived head lines byte-for-byte (the twelve per-ticket State-line archive pointers P34.47-closeout…P35.10, comments8 fold) → docs/build/reports/memory-repair/LEDGER_head_comments8_pre-P35.10.txt (sha256 e84885364235…) — P35.10 closeout (orient >48 KiB, BM-LEDGER-08). -->
 <!-- Archived head lines byte-for-byte (the four per-ticket State-line archive pointers P35.14b…P36.3, comments10 fold) → docs/build/reports/memory-repair/LEDGER_head_comments10_pre-P36.3.txt (sha256 93dcb1908ecca3…) — P36.3 closeout (orient >48 KiB, BM-LEDGER-08). -->
-<!-- Archived head line byte-for-byte (head State line pre-P36.4) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.4.txt, sha256 de655c1949f954f3… (BM-LEDGER-08). -->
-<!-- Archived head line byte-for-byte (head State line pre-P36.5) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.5.txt, sha256 678f3a2931458b19… (BM-LEDGER-08). -->
-<!-- Archived head line byte-for-byte (head State line pre-P36.6) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.6.txt, sha256 59e4fe793efc41dd… (BM-LEDGER-08). -->
-<!-- Archived head line byte-for-byte (head State line pre-P36.7) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.7.txt, sha256 d7f57db707d6f975… (BM-LEDGER-08). -->
-<!-- Archived head line byte-for-byte (head State line pre-P36.8) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.8.txt, sha256 6f29471de7e85c06… (BM-LEDGER-08). -->
-<!-- Archived head line byte-for-byte (head State line pre-P36.9a) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.9a.txt, sha256 306cb1fbcae44bb7… (BM-LEDGER-08). -->
+<!-- Archived head lines byte-for-byte (the six per-ticket State-line archive pointers P36.4…P36.9a, comments11 fold) → docs/build/reports/memory-repair/LEDGER_head_comments11_pre-P36.9a.txt (sha256 0573236577a09ada…) — P36.9a closeout (orient >48 KiB, BM-LEDGER-08). -->
 
 > **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; the clause text is archived byte-for-byte (comment above) and binds unchanged; per-ticket subset: manifest `## Operating rules`. Prior modes archived (comments5/6/7 folds).
 >
