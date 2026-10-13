@@ -513,6 +513,39 @@ def technology_map_violations() -> list[str]:
                     "not a deployment predicate — a disclosure_use claim may "
                     "carry use facts only"
                 )
+        for i, field in enumerate(adapter.get("field_patterns") or ()):
+            # P36.10: a `field_patterns` entry may declare `claim_type` (the
+            # district self-disclosure pages mint `inventory_entry` rows) and
+            # `value` (the reviewed asserted value over the page literal).
+            # Validate the declaration here so a bad adapter fails `validate`,
+            # not mid-run: the claim type must be a registered non-use type,
+            # the predicate must be inside the class allowlist, and a
+            # deployment predicate may never ride a non-use claim (a use
+            # fact belongs on `use_fields`, fail closed).
+            predicate = str(field.get("predicate") or "")
+            claim_type = str(field.get("claim_type") or "disclosure")
+            if claim_type not in claim_types():
+                violations.append(
+                    f"[adapters.{key}].field_patterns[{i}].claim_type = {claim_type!r}: "
+                    f"not a {CCOPS_CONNECTOR} claim type {sorted(claim_types())}"
+                )
+            elif claim_type in USE_CLAIM_TYPES:
+                violations.append(
+                    f"[adapters.{key}].field_patterns[{i}].claim_type = {claim_type!r}: "
+                    "a use claim belongs on `use_fields` — field_patterns mint "
+                    "non-use claims only"
+                )
+            if predicate not in predicate_allowlist():
+                violations.append(
+                    f"[adapters.{key}].field_patterns[{i}].predicate = {predicate!r}: "
+                    "outside the class predicate allowlist (SIG-INGEST-033/049b)"
+                )
+            elif predicate in deployment_predicates():
+                violations.append(
+                    f"[adapters.{key}].field_patterns[{i}].predicate = {predicate!r}: "
+                    "a deployment predicate may ride only a `disclosure_use` claim "
+                    "via `use_fields` — never a field_patterns claim"
+                )
     return violations
 
 
@@ -1473,6 +1506,16 @@ def _extract_disclosure_document(
     spec = _configured_target(ctx, capture.source_uri) or {}
     anchor = str(spec.get("anchor") or "")
     period = _reporting_period(text, filename, anchor)
+    if period is None and adapter.get("period_from_capture"):
+        # P36.10 (R11-ACQ-14): an undated living self-disclosure page (the
+        # district product-disclosure surfaces) asserts its vendor use
+        # **as-of-capture** — the reviewed `period_from_capture` declaration
+        # makes the capture date the aggregate row's honest covered period
+        # (the DocumentContext's retrieval-date fallback already carries the
+        # same value). A date literal in the text always wins over the
+        # declaration; without the flag an undated filing still mints no
+        # claims (fail closed).
+        period = _retrieved_date(capture)
     raw_techs = _document_technologies(filename, pages if pages else (text,), adapter, anchor)
     techs, unmapped_techs = _mapped_technologies(raw_techs, adapter)
     if unmapped_techs:
@@ -1655,7 +1698,13 @@ def _extract_disclosure_document(
     # sharing); `use_fields` mint use-predicate `disclosure_use` claims and
     # run ONLY where the filing reports use — a count literal in a filing
     # that reports no use is never a deployment fact.
-    seen_fields: set[tuple[str, str]] = set()
+    # P36.10: a `field_patterns` entry may declare `claim_type` (the district
+    # self-disclosure pages mint `inventory_entry` rows — the vendor/product
+    # the page itself names, never a deployment fact) and `value` (the
+    # reviewed asserted value, e.g. the vendor's corporate name, while
+    # `raw_value` keeps the page literal verbatim — the `use_fields` pin
+    # precedent). Absent both keys every existing adapter is byte-identical.
+    seen_fields: set[tuple[str, str, str]] = set()
     for field in adapter.get("field_patterns", ()):
         pattern = re.compile(str(field["pattern"]), re.IGNORECASE)
         for match in pattern.finditer(text):
@@ -1663,16 +1712,19 @@ def _extract_disclosure_document(
                 match.groupdict().get("value")
                 or (match.group(1) if match.lastindex else match.group(0))
             ).strip()
-            key = (str(field["predicate"]), literal)
+            key = (str(field["predicate"]), str(field.get("claim_type") or "disclosure"), literal)
             if not literal or key in seen_fields:
                 continue
             seen_fields.add(key)
             emit(
                 lambda literal=literal, field=field: disclosure_claim(
                     doc,
-                    claim_type="disclosure",
+                    claim_type=str(field.get("claim_type") or "disclosure"),
                     predicate=str(field["predicate"]),
-                    value=literal,
+                    # `value` pins the reviewed asserted value; absent, the
+                    # captured literal IS the value (P2 verbatim raw_value
+                    # stands either way).
+                    value=str(field["value"]) if "value" in field else literal,
                     raw_value=literal,
                     extraction_method=method,
                     locator=page_locator_for(pages, literal) or Locator.page(1).to_row(),
@@ -1687,10 +1739,10 @@ def _extract_disclosure_document(
                     match.groupdict().get("value")
                     or (match.group(1) if match.lastindex else match.group(0))
                 ).strip()
-                key = (str(field["predicate"]), literal)
-                if not literal or key in seen_use:
+                use_key = (str(field["predicate"]), literal)
+                if not literal or use_key in seen_use:
                     continue
-                seen_use.add(key)
+                seen_use.add(use_key)
                 emit(
                     lambda literal=literal, field=field: disclosure_claim(
                         doc,

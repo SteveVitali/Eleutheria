@@ -1890,3 +1890,191 @@ targets = [
   { id = "sorn-cbp-007-border-crossing-2016-12", url = "https://www.federalregister.gov/documents/2016/12/13/2016-29898/privacy-act-of-1974-department-of-homeland-securityus-customs-and-border-protection-007-border", kind = "disclosure_document" },
   { id = "sorn-cbp-006-automated-targeting-2012", url = "https://www.federalregister.gov/documents/2012/05/22/2012-12396/privacy-act-of-1974-us-customs-and-border-protection-dhscbp-006-automated-targeting-system-system-of", kind = "disclosure_document" },
 ]
+
+# =============================================================================
+# P36.10 / R11-ACQ-14 (I8 §5.7, batch `r11-documents-01`): the CCOPS-reports,
+# agency-policy and district self-disclosure lanes. All sixteen rows stay
+# `ingestion_permitted=false` (HG-03 RB-03 `a`; the two CSS-policy rows
+# RB-07 `a` — facts and citations only); replay/shadow run over the
+# committed synthetic fixtures (tests/connectors/fixtures/p36_10/ +
+# SOURCES.md) — the operator's OP-26 Wave-B flip under ING-GO-B (P36.12) is
+# the only route to a live fetch. URLs are the I7 candidate rows' reviewed
+# surfaces (I6-C016/C017/C018, I9a-C022, I9b-C088/C030/C041/C042/C043/C108/
+# C109, I4-C109/C110/C120, I5-C110/C111).
+
+# --- the five CCOPS rows (the BL-054 denominator update) --------------------
+
+# Columbia MO — the 2025 annual surveillance-technology report page under
+# the Law Enforcement Surveillance Oversight Ordinance (I6-C018). A single
+# reviewed filing page, not an index.
+[ccops_columbia_mo]
+kind = "disclosure_document"
+targets = [
+  { id = "columbia-mo-2025-surveillance-report", url = "https://www.como.gov/police/surveillance-technology-report-2025/", kind = "disclosure_document" },
+]
+
+# St. Louis MO — the SLMPD surveillance-reports documents page (I6-C016):
+# Ordinance 71842 / Executive Order 78 annual-report PDFs linked off the
+# .cfm index; the reviewed anchor screen admits the report filings only.
+[ccops_st_louis_mo]
+kind = "index_page"
+targets = [
+  { id = "st-louis-mo-surveillance-reports-index", url = "https://www.stlouis-mo.gov/government/departments/public-safety/police/documents/surveillance-reports.cfm", kind = "index_page", max_documents = 8, anchor_pattern = '(?i)annual\s+report|surveillance' },
+]
+
+# Dayton OH — the CivicPlus surveillance-technology page (I6-C017) listing
+# the annual reports, use policies and notifications; filings resolve under
+# the reviewed Archive.aspx document pattern + the surveillance scope term.
+[ccops_dayton_oh]
+kind = "index_page"
+targets = [
+  { id = "dayton-oh-surveillance-technology-index", url = "https://www.daytonohio.gov/1172/Surveillance-Technology", kind = "index_page", max_documents = 12 },
+]
+
+# Anchorage AK — the ordinance text itself (I9b-C088): AO 2023-78 amending
+# AMC ch. 3.102 'Municipal Use of Surveillance Technologies' to add a
+# body-worn-camera policy requirement — a governance document.
+[ccops_anchorage_ak]
+kind = "disclosure_document"
+targets = [
+  { id = "anchorage-ao-2023-78", url = "https://www.muni.org/Departments/Assembly/Documents/AO%202023-78.pdf", kind = "disclosure_document" },
+]
+
+# Austin TX — the TRUST Act resolution (I9a-C022): File ID 26-1072, Council
+# 2026-02-05, directing the City Manager to return with a surveillance-
+# technology ordinance — a governance document, never a use report.
+[ccops_austin_tx]
+kind = "disclosure_document"
+targets = [
+  { id = "austin-trust-resolution-26-1072", url = "https://services.austintexas.gov/edims/document.cfm?id=466941", kind = "disclosure_document" },
+]
+
+# --- the seven agency_policy seats (document_page targets) -------------------
+# The `agency_policy` generalization: each target carries the reviewed
+# `section` the live parse slices verbatim plus the inline clause→predicate
+# literals (SIG-INGEST-038 data) whose `literal` MUST appear in the slice —
+# an absent marker or literal is a recorded ContentDrift, never a claim
+# asserted beyond the capture. The index/viewer surfaces that cannot be
+# clause-sliced by the current machinery (HPD's General Orders index, the
+# APD SOP index, the PowerDMS document viewer) are bare `document_page`
+# probes — the okc_procurement capture-probe precedent: a live fetch lands,
+# parse drifts closed, and no claim is asserted. Their clause maps land on
+# the reviewed captured text layer at the wave (P36.12).
+
+# Orange County Sheriff-Coroner — Policy 610, Cellular Site Simulator Usage
+# and Privacy (I4-C109, RB-07 `a` — facts and citations only): the Lexipol
+# policy cites Gov. Code §53166 and the 610.7.2 internal annual report.
+[policy_orange_county_ca_sheriff]
+kind = "document_page"
+targets = [
+  { id = "oc-sheriff-policy-610-css", url = "https://ocsheriff.gov/sites/ocsd/files/2023-06/Policy%20610%20Cellular%20Site%20Simulator%20Usage%20and%20Privacy.pdf", kind = "document_page", doc_id = "oc-sheriff-policy-610", subject_id = "sig:policy:orange-county-ca-sheriff-css-610", section = "610.1", clauses = [
+    { clause = "610.1", predicate = "statutory_citation", value = "California Government Code § 53166", literal = "Government Code section 53166", value_kind = "text" },
+    { clause = "610.1", predicate = "policy_clause", value = "authorized uses of the cellular site simulator technology by the Orange County Sheriff's Department", literal = "authorized uses of the cellular site simulator technology by the Orange County Sheriff's Department", value_kind = "text" },
+  ] },
+  { id = "oc-sheriff-policy-610-reporting", url = "https://ocsheriff.gov/sites/ocsd/files/2023-06/Policy%20610%20Cellular%20Site%20Simulator%20Usage%20and%20Privacy.pdf", kind = "document_page", doc_id = "oc-sheriff-policy-610-6107", subject_id = "sig:policy:orange-county-ca-sheriff-css-610", section = "610.7", clauses = [
+    { clause = "610.7", predicate = "policy_clause", value = "internal annual report to the Sheriff covering use of the technology", literal = "internal annual report to the Sheriff", value_kind = "text" },
+  ] },
+]
+
+# Pasadena PD — Policy 620, Cellular Site Simulator Usage and Privacy
+# (I4-C110, RB-07 `a`): City Council agenda 2024-01-22 item 8 Attachment A;
+# the Lexipol policy carries the CPOC consultation + the annual report to
+# the Chief/IPA/Public Safety Committee/City Council.
+[policy_pasadena_ca_pd]
+kind = "document_page"
+targets = [
+  { id = "pasadena-policy-620-css", url = "https://ww2.cityofpasadena.net/2024%20Agendas/Jan_22_24/AR%208%20ATTACHMENT%20A.pdf", kind = "document_page", doc_id = "pasadena-policy-620", subject_id = "sig:policy:pasadena-ca-pd-css-620", section = "620.1", clauses = [
+    { clause = "620.1", predicate = "policy_clause", value = "changes in consultation with the Community Police Oversight Commission and the Independent Police Auditor", literal = "Community Police Oversight Commission", value_kind = "text" },
+  ] },
+  { id = "pasadena-policy-620-reports", url = "https://ww2.cityofpasadena.net/2024%20Agendas/Jan_22_24/AR%208%20ATTACHMENT%20A.pdf", kind = "document_page", doc_id = "pasadena-policy-620-6208", subject_id = "sig:policy:pasadena-ca-pd-css-620", section = "620.8", clauses = [
+    { clause = "620.8", predicate = "policy_clause", value = "annual report to the Chief, the Independent Police Auditor, the Public Safety Committee and/or the City Council, and the CPOC with the number of times the technology was used", literal = "ANNUAL REPORT", value_kind = "text" },
+  ] },
+]
+
+# California Gov. Code § 53166 (I4-C120, RB-03 `a`): the statewide usage-and-
+# privacy-policy mandate for cellular communications interception
+# technology — posted conspicuously; acquisition gated on a council
+# resolution/ordinance (sheriffs: website notice).
+[legis_ca_gov_code_53166]
+kind = "document_page"
+targets = [
+  { id = "ca-gov-code-53166", url = "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=53166", kind = "document_page", doc_id = "ca-gov-code-53166", subject_id = "sig:policy:ca-gov-code-53166", section = "53166", clauses = [
+    { clause = "53166", predicate = "statutory_citation", value = "California Government Code § 53166", literal = "§ 53166", value_kind = "text" },
+    { clause = "53166", predicate = "policy_clause", value = "usage and privacy policy posted conspicuously on the local agency's Internet Web site", literal = "the usage and privacy policy shall be posted conspicuously on that Internet Web site", value_kind = "text" },
+    { clause = "53166", predicate = "use_restriction", value = "acquisition requires a local legislative-body resolution or ordinance (sheriffs: website notice)", literal = "shall not acquire cellular communications interception technology unless", value_kind = "text" },
+  ] },
+]
+
+# Bangor ME — General Order 2-59 'Unmanned Aerial Systems' (I9b-C108,
+# effective 2025-10-05; DocumentCenter PDF).
+[policy_bangor_me_pd]
+kind = "document_page"
+targets = [
+  { id = "bangor-go-2-59-uas", url = "https://www.bangormaine.gov/DocumentCenter/View/4872/BPD---Policy--for-Unmanned-Aerial-Systems-PDF", kind = "document_page", doc_id = "bangor-go-2-59", subject_id = "sig:policy:bangor-me-pd-uas-2-59", section = "2-59", clauses = [
+    { clause = "2-59", predicate = "policy_clause", value = "effective 2025-10-05; amends or supersedes all previous policies", literal = "This policy is effective October 5, 2025 and amends or supersedes all previous policies", value_kind = "text" },
+  ] },
+]
+
+# Houston PD — the General Orders index (I5-C110): the reviewed surface
+# lists 400-12 Surveillance Equipment, 400-28 Body Worn Cameras and 400-29
+# Automated License Plate Recognition. The index carries no clause marker
+# the live path can slice — a bare capture probe (the okc_procurement
+# precedent); the per-order clause maps land on the reviewed capture at
+# the wave.
+[policy_houston_tx_hpd]
+kind = "document_page"
+targets = [
+  { id = "hpd-general-orders-index", url = "https://www.houstontx.gov/police/general_orders/index.htm", kind = "document_page" },
+]
+
+# Albuquerque APD — the Standard Operating Procedures index (I5-C111): the
+# reviewed surface lists SOP 1-22 'Automated License Plate Reader Program'
+# (effective 2023-07-17, annual review) among the General/Procedural/
+# Administrative orders. Same bare-probe posture as the HPD index.
+[policy_albuquerque_nm_apd]
+kind = "document_page"
+targets = [
+  { id = "apd-sop-index", url = "https://www.cabq.gov/police/standard-operating-procedures", kind = "document_page" },
+]
+
+# Little Rock PD — General Order G.O. 332 'Small Unmanned Aircraft Systems'
+# (I9b-C109, dated 2025-09-17; PowerDMS public portal — the district's own
+# site served a bot-verification page to the candidate row, F001). The
+# viewer surface is a bare capture probe; the clause map lands on the
+# reviewed captured text layer at the wave.
+[policy_little_rock_ar_pd]
+kind = "document_page"
+targets = [
+  { id = "littlerock-go-332-suas", url = "https://public.powerdms.com/LITTLEROCKPD/documents/2098788", kind = "document_page" },
+]
+
+# --- the four district self-disclosure pages (I9b-C040 family members) ------
+# Reviewed `disclosure_document` targets on the generalized disclosure
+# connector: the vendor/product literals mint `inventory_entry` claims —
+# the district's disclosure is a vendor-use statement only: never student
+# data, never a deployment fact beyond the page's own words. The I9b-C040
+# family list is the discovery channel and carries no registry row.
+
+[policy_st_cloud_mn_isd742]
+kind = "disclosure_document"
+targets = [
+  { id = "isd742-securly-parent-page", url = "https://tech.isd742.org/parent-connect/securly", kind = "disclosure_document" },
+]
+
+[policy_onslow_nc_schools]
+kind = "disclosure_document"
+targets = [
+  { id = "onslow-gaggle-safety-management", url = "https://www.onslow.k12.nc.us/departments/instructional-technology/cybersecurity-at-ocs/gaggle-safety-management", kind = "disclosure_document" },
+]
+
+[policy_pflugerville_tx_isd]
+kind = "disclosure_document"
+targets = [
+  { id = "pfisd-gaggle-page", url = "https://www.pfisd.net/programs/safety-emergency-mgmt/gaggle", kind = "disclosure_document" },
+]
+
+[policy_whitesboro_ny_csd]
+kind = "disclosure_document"
+targets = [
+  { id = "whitesboro-lightspeed-alert", url = "https://www.wboro.org/departments/information-and-instructional-technology/lightspeed-alert", kind = "disclosure_document" },
+]

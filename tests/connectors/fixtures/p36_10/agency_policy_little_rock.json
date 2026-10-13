@@ -1,0 +1,23 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat policy_little_rock_ar_pd. Faithfully transcribes the reviewed Little Rock Police Department General Order G.O. 332 'Small Unmanned Aircraft Systems' header (I9b-C109, live-read F138): 'LITTLE ROCK POLICE DEPARTMENT GENERAL ORDER G. O. 332 SMALL UNMANNED AIRCRAFT SYSTEMS DATE: ... 09/17/2025 ... REPLACES: 06/17/2025'. The §-headed clause text is synthetic but the literals are the reviewed verbatim strings. Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "littlerock-go-332",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://public.powerdms.com/LITTLEROCKPD/documents/2098788",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:little-rock-ar-pd-suas-332",
+      "text": "Little Rock Police Department — General Order.\n\n§ 332 Small Unmanned Aircraft Systems.\nThis general order is dated 09/17/2025 and replaces 06/17/2025. This order establishes the department policy for small unmanned aircraft systems.\n",
+      "clauses": [
+        {
+          "clause": "332",
+          "predicate": "policy_clause",
+          "value": "G.O. 332 Small Unmanned Aircraft Systems: dated 2025-09-17, replaces 2025-06-17",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+City of St. Louis — Metropolitan Police Department
+Annual Report STU 2025 — Surveillance Technology Usage
+
+Date: January 31, 2026
+
+Reports are generated to comply with Executive Order 78 and City of St.
+Louis Ordinance 71842. The Board of Aldermen enacted Ordinance 71842
+effective May 6, 2024.
+
+Technology: License Plate Readers
+Technology: CCTV
+
+Frequency of use, deployments, and data-sharing recipients are reported
+at the department level in aggregate; no per-incident detail is published
+in this report.
+
+Retention: plate reader data retained for up to 120 days.

@@ -156,6 +156,34 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "statrep_seattle_wa_oig": "government_mandated_disclosure",
     "statrep_us_dhs_privacy_compliance": "government_mandated_disclosure",
     "legis_us_dhs_sorn_plate_data": "government_mandated_disclosure",
+    # P36.10 (R11-ACQ-14, I8 §5.7): the CCOPS-reports + agency-policies family
+    # of batch `r11-documents-01`. Five further CCOPS municipalities ride the
+    # generalized `government_mandated_disclosure` index→document connector;
+    # the seven agency-policy rows are the reviewed seats of the new
+    # `agency_policy` connector (ONE connector serving a closed `source_ids`
+    # set — `connectors/src/connectors/agency_policy.py`); the four district
+    # self-disclosure pages are reviewed `document_page` targets whose vendor
+    # inventory literals emit `inventory_entry` claims — never student data.
+    # All sixteen stay `ingestion_permitted=false` (HG-03 RB-03 `a`; the two
+    # CSS-policy rows RB-07 `a` — facts and citations only) pending the
+    # operator's OP-26 Wave-B flip under ING-GO-B (P36.12); replay/shadow run
+    # over committed fixtures only.
+    "ccops_columbia_mo": "government_mandated_disclosure",
+    "ccops_st_louis_mo": "government_mandated_disclosure",
+    "ccops_dayton_oh": "government_mandated_disclosure",
+    "ccops_anchorage_ak": "government_mandated_disclosure",
+    "ccops_austin_tx": "government_mandated_disclosure",
+    "policy_houston_tx_hpd": "agency_policy",
+    "policy_albuquerque_nm_apd": "agency_policy",
+    "policy_bangor_me_pd": "agency_policy",
+    "policy_little_rock_ar_pd": "agency_policy",
+    "policy_orange_county_ca_sheriff": "agency_policy",
+    "policy_pasadena_ca_pd": "agency_policy",
+    "legis_ca_gov_code_53166": "agency_policy",
+    "policy_st_cloud_mn_isd742": "government_mandated_disclosure",
+    "policy_onslow_nc_schools": "government_mandated_disclosure",
+    "policy_pflugerville_tx_isd": "government_mandated_disclosure",
+    "policy_whitesboro_ny_csd": "government_mandated_disclosure",
     # P31.13 (BREADTH.2): the FEMA Homeland Security Grant Program federal-
     # assistance allocations surface — the procurement connector's USAspending
     # award-search path (`award_class = "assistance"` reviewed slices; funder →

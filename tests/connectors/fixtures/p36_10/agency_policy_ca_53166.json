@@ -1,0 +1,35 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat legis_ca_gov_code_53166. Faithfully transcribes the reviewed California Government Code § 53166 text (I4-C120, live-read I4-F094): the usage and privacy policy shall be posted conspicuously on the agency's Internet Web site, and a local agency shall not acquire cellular communications interception technology unless the legislative body approves by resolution or ordinance (sheriffs: website notice). The §-headed clause text is synthetic but the literals are the reviewed verbatim strings. Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "ca-gov-code-53166",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=53166",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:ca-gov-code-53166",
+      "text": "California Government Code.\n\n§ 53166.\n(a) Each local agency that uses cellular communications interception technology shall develop a usage and privacy policy governing that use; the usage and privacy policy shall be posted conspicuously on that Internet Web site.\n(b) A local agency shall not acquire cellular communications interception technology unless the acquisition is approved by its legislative body by resolution or ordinance.\n",
+      "clauses": [
+        {
+          "clause": "53166",
+          "predicate": "statutory_citation",
+          "value": "California Government Code § 53166",
+          "value_kind": "text"
+        },
+        {
+          "clause": "53166",
+          "predicate": "policy_clause",
+          "value": "usage and privacy policy posted conspicuously on the local agency's Internet Web site",
+          "value_kind": "text"
+        },
+        {
+          "clause": "53166",
+          "predicate": "use_restriction",
+          "value": "acquisition requires a local legislative-body resolution or ordinance (sheriffs: website notice)",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

@@ -8411,7 +8411,7 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
@@ -8905,7 +8905,7 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
@@ -8928,7 +8928,7 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
@@ -9172,7 +9172,7 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
@@ -9210,7 +9210,7 @@ jurisdiction_place = "Hyattsville"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_ca_orange_county_policy_610]
+[sources.policy_orange_county_ca_sheriff]
 name = "Policy 610 Cellular Site Simulator Usage and Privacy - Orange County Sheriff-Coroner Department"
 source_kind = "government_portal"
 homepage_url = "https://ocsheriff.gov/sites/ocsd/files/2023-06/Policy%20610%20Cellular%20Site%20Simulator%20Usage%20and%20Privacy.pdf"
@@ -9218,22 +9218,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-071, cand I4-C109, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-07 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-DerivedFacts-Citations (facts + citations only)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_orange_county_ca_policy_610_cellular'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-071, cand I4-C109, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-07 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-DerivedFacts-Citations (facts + citations only)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_orange_county_ca_policy_610_cellular'. Reconciled id 'policy_orange_county_ca_sheriff' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "Orange County Sheriff-Coroner Department, CA"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
 jurisdiction_place = "Orange County"
-[sources.policy_ca_orange_county_policy_610.rights]
+[sources.policy_orange_county_ca_sheriff.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.agenda_pasadena_ca_policy_620_cellular]
+[sources.policy_pasadena_ca_pd]
 name = "Pasadena Police Department Policy 620 Cellular Site Simulator Usage and Privacy (City Council agenda 2024-01-22, item 8,"
 source_kind = "government_portal"
 homepage_url = "https://ww2.cityofpasadena.net/2024%20Agendas/Jan_22_24/AR%208%20ATTACHMENT%20A.pdf"
@@ -9241,18 +9241,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-072, cand I4-C110, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-07 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-DerivedFacts-Citations (facts + citations only)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_pasadena_ca_policy_620_cellular'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-072, cand I4-C110, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-07 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-DerivedFacts-Citations (facts + citations only)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_pasadena_ca_policy_620_cellular'. Reconciled id 'policy_pasadena_ca_pd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "City of Pasadena, CA (City Council agenda)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
 jurisdiction_place = "Pasadena"
-[sources.agenda_pasadena_ca_policy_620_cellular.rights]
+[sources.policy_pasadena_ca_pd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9593,7 +9593,7 @@ jurisdiction_place = "Seattle"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.legis_ca_california_code_53166]
+[sources.legis_ca_gov_code_53166]
 name = "California Government Code \u00a7 53166 - cellular communications interception technology usage and privacy policies and acqu"
 source_kind = "government_portal"
 homepage_url = "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=53166"
@@ -9601,17 +9601,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-094, cand I4-C120, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'legis_ca_california_code_53166'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-094, cand I4-C120, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'legis_ca_california_code_53166'. Reconciled id 'legis_ca_gov_code_53166' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "California Legislature"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
-[sources.legis_ca_california_code_53166.rights]
+[sources.legis_ca_gov_code_53166.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9623,7 +9623,7 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
@@ -9682,7 +9682,7 @@ jurisdiction = "US-OK"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_st_cloud_mn_area_school_district]
+[sources.policy_st_cloud_mn_isd742]
 name = "St. Cloud Area School District (ISD 742) - 'Securly' parent page: Securly Home parent portal on district-issued devices"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://tech.isd742.org/parent-connect/securly"
@@ -9690,22 +9690,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-101, cand I9b-C030, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_st_cloud_mn_area_school_district'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-101, cand I9b-C030, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_st_cloud_mn_area_school_district'. Reconciled id 'policy_st_cloud_mn_isd742' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "St. Cloud Area School District ISD 742, MN"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MN"
 jurisdiction_place = "St. Cloud"
-[sources.policy_st_cloud_mn_area_school_district.rights]
+[sources.policy_st_cloud_mn_isd742.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_nc_onslow_county_schools_gaggle]
+[sources.policy_onslow_nc_schools]
 name = "Onslow County Schools (NC) - 'Gaggle Safety Management' page (Cybersecurity at OCS)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.onslow.k12.nc.us/departments/instructional-technology/cybersecurity-at-ocs/gaggle-safety-management"
@@ -9713,22 +9713,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-102, cand I9b-C041, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_onslow_county_nc_schools_gaggle_safet'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-102, cand I9b-C041, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_onslow_county_nc_schools_gaggle_safet'. Reconciled id 'policy_onslow_nc_schools' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "Onslow County Schools, NC"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"
 jurisdiction_place = "Onslow County"
-[sources.statrep_nc_onslow_county_schools_gaggle.rights]
+[sources.policy_onslow_nc_schools.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_pflugerville_tx_isd_gaggle_page]
+[sources.policy_pflugerville_tx_isd]
 name = "Pflugerville ISD (TX) - 'Gaggle' page (Safety & Emergency Management programs)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.pfisd.net/programs/safety-emergency-mgmt/gaggle"
@@ -9736,22 +9736,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-103, cand I9b-C042, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_pflugerville_tx_isd_gaggle_page'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-103, cand I9b-C042, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_pflugerville_tx_isd_gaggle_page'. Reconciled id 'policy_pflugerville_tx_isd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "Pflugerville Independent School District, TX"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
 jurisdiction_place = "Pflugerville"
-[sources.policy_pflugerville_tx_isd_gaggle_page.rights]
+[sources.policy_pflugerville_tx_isd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_ny_whitesboro_central_school]
+[sources.policy_whitesboro_ny_csd]
 name = "Whitesboro Central School District (NY) - 'Lightspeed Alert' page (Information and Instructional Technology)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.wboro.org/departments/information-and-instructional-technology/lightspeed-alert"
@@ -9759,22 +9759,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-104, cand I9b-C043, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_whitesboro_ny_central_school_district'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-104, cand I9b-C043, family 'government_mandated_disclosure(self-disclosure page)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_whitesboro_ny_central_school_district'. Reconciled id 'policy_whitesboro_ny_csd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "Whitesboro Central School District, NY"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NY"
 jurisdiction_place = "Whitesboro"
-[sources.statrep_ny_whitesboro_central_school.rights]
+[sources.policy_whitesboro_ny_csd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_bangor_me_general_order_59]
+[sources.policy_bangor_me_pd]
 name = "Bangor Police Department General Order 2-59 'Unmanned Aerial Systems' (effective 2025-10-05)"
 source_kind = "government_portal"
 homepage_url = "https://www.bangormaine.gov/DocumentCenter/View/4872/BPD---Policy--for-Unmanned-Aerial-Systems-PDF"
@@ -9782,22 +9782,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-105, cand I9b-C108, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_bangor_me_general_order_59'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-105, cand I9b-C108, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_bangor_me_general_order_59'. Reconciled id 'policy_bangor_me_pd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "City of Bangor, ME (Police Department)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-ME"
 jurisdiction_place = "Bangor"
-[sources.policy_bangor_me_general_order_59.rights]
+[sources.policy_bangor_me_pd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_houston_tx_general_orders]
+[sources.policy_houston_tx_hpd]
 name = "Houston Police Department General Orders"
 source_kind = "government_portal"
 homepage_url = "https://www.houstontx.gov/police/general_orders/index.htm"
@@ -9805,22 +9805,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-106, cand I5-C110, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_houston_tx_general_orders'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-106, cand I5-C110, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_houston_tx_general_orders'. Reconciled id 'policy_houston_tx_hpd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "Houston Police Department"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
 jurisdiction_place = "Houston"
-[sources.policy_houston_tx_general_orders.rights]
+[sources.policy_houston_tx_hpd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_nm_albuquerque_apd_standard]
+[sources.policy_albuquerque_nm_apd]
 name = "APD Standard Operating Procedures (incl. SOP 1-22 Automated License Plate Reader Program)"
 source_kind = "government_portal"
 homepage_url = "https://www.cabq.gov/police/standard-operating-procedures"
@@ -9828,22 +9828,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-107, cand I5-C111, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_albuquerque_nm_apd_standard_operating'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-107, cand I5-C111, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_albuquerque_nm_apd_standard_operating'. Reconciled id 'policy_albuquerque_nm_apd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "Albuquerque Police Department"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NM"
 jurisdiction_place = "Albuquerque"
-[sources.policy_nm_albuquerque_apd_standard.rights]
+[sources.policy_albuquerque_nm_apd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.policy_little_rock_ar_general_order_332]
+[sources.policy_little_rock_ar_pd]
 name = "Little Rock Police Department General Order G.O. 332 'Small Unmanned Aircraft Systems' (2025-09-17; PowerDMS public port"
 source_kind = "government_portal"
 homepage_url = "https://public.powerdms.com/LITTLEROCKPD/documents/2098788"
@@ -9851,18 +9851,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 agency_policy document_page connector wired by P36.10 (ACQ-14)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-108, cand I9b-C109, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_little_rock_ar_general_order_332'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-108, cand I9b-C109, family 'agency_policy(okc_documents generalised)', ticket ACQ-14 -> live ACQ-16, class ticket P36.10). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'policy_little_rock_ar_general_order_332'. Reconciled id 'policy_little_rock_ar_pd' (I8 \u00a75.7 ACQ-14) \u2014 the generated id renamed to the design's id under P36.10."
 publisher = "City of Little Rock, AR (Police Department; via PowerDMS public portal)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AR"
 jurisdiction_place = "Little Rock"
-[sources.policy_little_rock_ar_general_order_332.rights]
+[sources.policy_little_rock_ar_pd.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 

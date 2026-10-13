@@ -14,7 +14,12 @@ This module owns the machinery the three connector modules share so the eight-st
 framework boilerplate is not triplicated (the same reasoning as ADR-071's
 one-connector-three-extractors, applied here as one base + three registered
 subclasses because each OKC source is a distinct registry row with its own predicate
-allowlist):
+allowlist). P36.10 (R11-ACQ-14) generalizes the same machinery one step further:
+:mod:`connectors.agency_policy` is ONE registered connector serving a closed set of
+reviewed registry seats (the vocab's ``source_ids`` declaration), so the seven
+ACQ-14 policy publishers share the clause pipeline without a subclass each — the
+three OKC sources' emitted claims are byte-identical (their per-name config path
+is untouched).
 
 * **The document capture shape and the sig-parsing extractors** — a procurement
   document reaches this layer as an extracted text grid read by the layer-4 table
@@ -79,6 +84,7 @@ __all__ = [
     "assert_person_naming_permitted",
     "connector_config",
     "default_sensitivity_class",
+    "extract_documents",
     "forbidden_tokens",
     "okc_claim",
     "parse_okc_document",
@@ -303,13 +309,22 @@ def okc_claim(
 # --- the per-kind sig-parsing extractors --------------------------------------
 
 
-def _document_context(connector_name: str, doc: Mapping[str, Any]) -> DocumentContext:
+def _document_context(
+    connector_name: str, doc: Mapping[str, Any], *, source_id: str | None = None
+) -> DocumentContext:
     """Derive the document context, re-deriving the genre from the text (never a label).
 
     The genre is computed from the document's own text via
     :func:`parsing.genre.classify_genre`; a fixture ``genre`` label that disagrees
     with the derived genre is rejected, so a document cannot be relabelled to unlock a
     predicate surface it does not belong to.
+
+    P36.10 (R11-ACQ-14): a connector whose config declares ``source_ids`` — a
+    closed set of reviewed registry seats — is the **multi-source** shape (the
+    ``agency_policy`` generalization): the run's own source id is stamped on
+    every claim and MUST hold a declared seat; a seat-less source is a
+    registry/config error that fails closed. A single-source connector's
+    ``source_id`` config row stands unchanged (the OKC path is byte-identical).
     """
     cfg = connector_config(connector_name)
     text = str(doc.get("text", ""))
@@ -321,17 +336,25 @@ def _document_context(connector_name: str, doc: Mapping[str, Any]) -> DocumentCo
             f"document {doc.get('id')!r} is labelled {declared!r} but the {connector_name!r} "
             f"connector reads {expected.value!r} documents (SIG-INGEST-033)."
         )
+    sid = source_id if source_id is not None else str(cfg["source_id"])
     if derived is not DocumentGenre.UNKNOWN and derived is not expected:
         raise ContentDrift(
-            str(cfg["source_id"]),
+            sid,
             f"fetched document classifies as {derived.value!r}, not the "
             f"{expected.value!r} this connector reads",
             details=f"document {doc.get('id')!r}; the genre used is DERIVED from the "
             "text, never a label (no relabelling, SIG-INGEST-033)",
         )
+    seats = frozenset(str(s) for s in cfg.get("source_ids", ()))
+    if seats and sid not in seats:
+        raise ValueError(
+            f"the {connector_name!r} connector serves only its declared source_ids "
+            f"{sorted(seats)}; {sid!r} holds no seat — a registry/config error, "
+            "fail closed (SIG-INGEST-033)."
+        )
     return DocumentContext(
         connector=connector_name,
-        source_id=str(cfg["source_id"]),
+        source_id=sid,
         source_url=str(doc["source_url"]),
         retrieved_date=str(doc.get("retrieved_date", "2026-09-01")),
         genre=expected,
@@ -660,18 +683,22 @@ def _live_document_envelope(
     }
 
 
-def extract_documents(connector_name: str, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+def extract_documents(
+    connector_name: str, parsed: Mapping[str, Any], *, source_id: str | None = None
+) -> list[Mapping[str, Any]]:
     """Extract every claim from a fixture's document set (pure function of the capture).
 
     Each document's ``kind`` selects the sig-parsing extractor (table vs clause), and
     every claim routes through :func:`okc_claim`, so the predicate allowlist and the
-    Part VIII guard run for every claim.
+    Part VIII guard run for every claim. ``source_id`` is the multi-source seat
+    (P36.10 `agency_policy`); a single-source connector leaves it ``None`` and its
+    config's own ``source_id`` stands — the OKC path is byte-identical.
     """
     cfg = connector_config(connector_name)
     default_kind = str(cfg["extractor"])
     out: list[Mapping[str, Any]] = []
     for doc in parsed.get("documents", []):
-        ctx = _document_context(connector_name, doc)
+        ctx = _document_context(connector_name, doc, source_id=source_id)
         kind = str(doc.get("kind", default_kind))
         extractor = _EXTRACTORS.get(kind)
         if extractor is None:
