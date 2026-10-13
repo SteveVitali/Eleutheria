@@ -1,0 +1,6 @@
+<!-- Archived head line byte-for-byte (head State line pre-P36.4) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.4.txt, sha256 de655c1949f954f3… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.5) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.5.txt, sha256 678f3a2931458b19… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.6) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.6.txt, sha256 59e4fe793efc41dd… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.7) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.7.txt, sha256 d7f57db707d6f975… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.8) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.8.txt, sha256 6f29471de7e85c06… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.9a) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.9a.txt, sha256 306cb1fbcae44bb7… (BM-LEDGER-08). -->

@@ -1536,19 +1536,29 @@ def _extract_disclosure_document(
             if literal and pages
             else (byte_range_locator(data, literal) if literal else None)
         )
-        emit(
-            lambda: disclosure_claim(
-                doc,
-                claim_type="ordinance",
-                predicate="ordinance_citation",
-                value=str(adapter["ordinance_citation"]),
-                raw_value=literal or str(adapter["ordinance_citation"]),
-                extraction_method=method,
-                locator=loc or Locator.page(1).to_row(),
-                agency=str(adapter.get("enacting_body") or doc.agency),
-                technology=None,
+        # P36.9a (ACQ-13a): `ordinance_literal_required` — a source covering
+        # several statutory mandates (MN BCA carries the § 13.824 LPR list AND
+        # the § 626.19 UAV reports under one registry row) must not stamp the
+        # source-level citation on a filing that never names it. The reviewed
+        # flag emits the citation ONLY where an ordinance literal is located
+        # in the filing's own text (the index-page path already locates);
+        # without the flag the historical fallback emit stands (diff 0 for
+        # every existing adapter). The filing's own authority still lands via
+        # `legal_authority` (verbatim from the text).
+        if literal is not None or not adapter.get("ordinance_literal_required"):
+            emit(
+                lambda: disclosure_claim(
+                    doc,
+                    claim_type="ordinance",
+                    predicate="ordinance_citation",
+                    value=str(adapter["ordinance_citation"]),
+                    raw_value=literal or str(adapter["ordinance_citation"]),
+                    extraction_method=method,
+                    locator=loc or Locator.page(1).to_row(),
+                    agency=str(adapter.get("enacting_body") or doc.agency),
+                    technology=None,
+                )
             )
-        )
         body_literal = str(adapter.get("enacting_body_literal") or "")
         body_loc = (
             page_locator_for(pages, body_literal)
@@ -2003,6 +2013,12 @@ def _document_artifact_row(
     }
     if record.get("genre"):
         row["document_genre"] = str(record["genre"])
+    if record.get("unmapped_technology_literals"):
+        # P36.9a: the unmapped literal the extractor recorded (SIG-ONTO-021) is
+        # carried onto the artifact row — a technology literal with no map
+        # member is never guessed, and the refusal is visible downstream
+        # (P36.8 set the field but never propagated it to the emitted row).
+        row["unmapped_technology_literals"] = list(record["unmapped_technology_literals"])
     if record.get("part_viii_suppressions"):
         # A raw literal the Part VIII sweep refused (e.g. a technology name that
         # literally contains a forbidden token): the claim was suppressed and the

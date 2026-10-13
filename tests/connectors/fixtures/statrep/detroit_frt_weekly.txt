@@ -1,0 +1,15 @@
+DETROIT POLICE DEPARTMENT
+Weekly Report on Facial Recognition
+Submitted to the Board of Police Commissioners under DPD Directive 307.5-5.1
+Date: December 29, 2025
+Technology: facial recognition
+
+Reporting window: week ending 12-29-2025
+
+Facial recognition searches this week: 12
+Fulfilled requests this week: 9
+Leads — match: 4
+Leads — no match: 6
+Leads — in progress: 2
+Searches in violation of department directive: 0
+Year-to-date searches: 468
