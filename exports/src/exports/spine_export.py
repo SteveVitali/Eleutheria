@@ -58,9 +58,13 @@ from db.dispositions import (
 from db.occurrences import BELIEF_NOW, BELIEF_PARAM, claim_source_cte
 from inference.accountability import read_materialized_accountability_links
 from inference.materialize import read_materialized_coverage
+from policy.licensing import _registry as _license_registry
 from policy.licensing import (
     compute_export_license,
     export_refusal_reason,
+)
+from policy.licensing import (
+    license_url as policy_license_url,
 )
 from policy.rights import RightsRecord
 from policy.source_aliases import resolve_public_text
@@ -80,7 +84,14 @@ from . import analytics, provo
 from . import compartments as C
 from .audit import _LATEST_DECISION_CTE
 from .bundle import Bundle, build_bundle
-from .manifest import Artifact, BuildSpec, Manifest, canonical_json, sha256_hex
+from .manifest import (
+    PUBLICATION_BASIS,
+    Artifact,
+    BuildSpec,
+    Manifest,
+    canonical_json,
+    sha256_hex,
+)
 from .shaping import (
     LAT_PREDICATE,
     LON_PREDICATE,
@@ -1788,55 +1799,110 @@ def _terms_disclosure_payload(
     }
 
 
+def _compartment_tile_attribution(
+    rows: Sequence[C.ExportRow], index: Mapping[str, RightsRecord]
+) -> str | None:
+    """The drawn sources' own credit for a compartment's tile archive (E2-12).
+
+    The deduplicated attribution strings of the slice records actually drawn in
+    this compartment — the line the PMTiles metadata + map sources carry instead
+    of the generic "© The SIG project" fallback. ``None`` when no slice record
+    carries attribution (the renderer's licence-level fallback applies).
+    """
+    lines: dict[str, None] = {}
+    for row in rows:
+        record = index.get(row.source_id)
+        text = (record.attribution if record is not None else "") or ""
+        if text.strip():
+            lines.setdefault(text.strip())
+    return " · ".join(sorted(lines)) if lines else None
+
+
 def _compartment_attribution(
     compartment: str,
     rows: Sequence[C.ExportRow],
     *,
+    index: Mapping[str, RightsRecord],
+    license_id: str,
+    license_url: str | None,
+    source_names: Mapping[str, str],
+    registry: Mapping[str, Any] | None,
     generated_at: str,
 ) -> dict[str, Any] | None:
-    """The ``<compartment>/ATTRIBUTION.json`` payload for an affected compartment.
+    """The ``<compartment>/ATTRIBUTION.json`` payload for a compartment.
 
-    File-level rights disclosure (SIG-LIC-001/011): each express-terms source
-    whose rows sit in this compartment is named with its captured terms
-    verbatim and the operator-accepted publication basis. ``None`` when the
-    compartment carries no affected source (no artifact written).
+    P34.21a (E2-12, ADR-194, SIG-CONTRIB-020/SIG-LIC-011): EVERY source whose
+    rows sit in this compartment is named — not only the express-terms set —
+    with the effective attribution + terms URL its own rights record carries,
+    the licence the file computes to, its licence URL (``null`` for a
+    project LicenseRef — the terms then live in ``terms_url``/the recorded
+    basis), the ``attribution_required`` fact, and the row count this export
+    contributes. Express-terms sources additionally carry their captured terms
+    verbatim + the operator-accepted publication basis (P34.19, ADR-183 —
+    additive keys, unchanged). ``None`` when the compartment carries no rows
+    (honest absence — never an empty artifact).
     """
+    reg = _license_registry(registry)["licenses"]
+    facts = reg.get(license_id, {})
     per_source: dict[str, dict[str, Any]] = {}
+    any_express_terms = False
     for row in rows:
+        # Key on the slice key (source or source@rights_id): a source sliced
+        # under two rights records appears once per record, each named by its
+        # own effective attribution/terms (SIG-LIC-004a).
+        record = index.get(row.source_id)
         base = _base_source_id(row.source_id)
-        entry = policy_disclosure.disclosure_for(base)
-        if entry is None:
-            continue
         rec = per_source.setdefault(
-            base,
+            row.source_id,
             {
                 "source_id": base,
-                "name": entry["name"],
-                "spdx": entry["spdx_registry"],
-                "terms_url": entry["terms_url"],
-                "captured_terms_verbatim": entry["captured_terms_verbatim"],
-                "captured_terms_evidence": entry["captured_terms_evidence"],
-                "publication_basis": entry["publication_basis"],
+                "name": source_names.get(base) or base,
+                "license": license_id,
+                "license_url": license_url,
+                "attribution_required": bool(facts.get("attribution_required", True)),
+                "attribution": record.attribution if record is not None else "",
+                "terms_url": record.terms_url if record is not None else "",
+                "rights_ids": [],
                 "slice_source_ids": [],
                 "rows": 0,
             },
         )
+        rights_id = str(row.data.get("rights_id") or "")
+        if rights_id and rights_id not in rec["rights_ids"]:
+            rec["rights_ids"].append(rights_id)
+        disclosure = policy_disclosure.disclosure_for(base)
+        if disclosure is not None and "captured_terms_verbatim" not in rec:
+            any_express_terms = True
+            rec["captured_terms_verbatim"] = disclosure["captured_terms_verbatim"]
+            rec["captured_terms_evidence"] = disclosure["captured_terms_evidence"]
+            rec["publication_basis"] = disclosure["publication_basis"]
         rec["rows"] = int(rec["rows"]) + 1
         if row.source_id not in rec["slice_source_ids"]:
             rec["slice_source_ids"].append(row.source_id)
     if not per_source:
         return None
+    note = (
+        "Every source whose rows sit in this compartment is named with the "
+        "effective attribution its own rights record carries (E2-12 / ADR-194) — "
+        "the credit a re-user must carry (SIG-CONTRIB-020, SIG-LIC-011)."
+    )
+    if any_express_terms:
+        note += (
+            " Sources carrying captured_terms_verbatim publish under the "
+            "operator's recorded acceptance of the express-terms risk (P34.19, "
+            "ADR-183); the captured terms are verbatim. Scheduled refreshes of "
+            "the same sources are covered (SB-2); a new source with a "
+            "non-commercial clause follows A-9 (facts and pointers only)."
+        )
     return {
-        "schema": "sig.compartment-attribution/1",
+        "schema": "sig.compartment-attribution/2",
         "compartment": compartment,
         "generated_at": generated_at,
-        "note": (
-            "Express-terms disclosure (P34.19, ADR-183): these sources' rows are "
-            "published under the operator's recorded acceptance of the express-terms "
-            "risk; the captured terms below are verbatim. Scheduled refreshes of the "
-            "same sources are covered (SB-2); a new source with a non-commercial "
-            "clause follows A-9 (facts and pointers only)."
-        ),
+        "license": license_id,
+        "license_url": license_url,
+        "attribution_required": bool(facts.get("attribution_required", True)),
+        "publication_basis": PUBLICATION_BASIS,
+        "note": note,
         "sources": [per_source[k] for k in sorted(per_source)],
     }
 
@@ -2076,12 +2142,22 @@ def build_spine_export(
         web_licenses[path] = _SIG_SPDX
         web_compartments[path] = _WEB_COMPARTMENT
     for comp, rows in sorted(slices.rows_by_compartment.items()):
-        payload = _compartment_attribution(comp, rows, generated_at=generated_at)
+        comp_license = str(comp_licenses.get(comp, _SIG_SPDX))
+        payload = _compartment_attribution(
+            comp,
+            rows,
+            index=slices.index,
+            license_id=comp_license,
+            license_url=policy_license_url(comp_license, registry),
+            source_names=source_names,
+            registry=registry,
+            generated_at=generated_at,
+        )
         if payload is None:
             continue
         path = f"{comp}/ATTRIBUTION.json"
         web_artifacts[path] = _web_bytes(payload)
-        web_licenses[path] = str(comp_licenses.get(comp, _SIG_SPDX))
+        web_licenses[path] = comp_license
         web_compartments[path] = comp
 
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
@@ -2095,7 +2171,14 @@ def build_spine_export(
         geojson_bytes = bundle.artifact_bytes.get(geojson_path)
         if geojson_bytes is None:
             continue
-        rendered, renderer = _render_tiles(pt.compartment, geojson_bytes, pt.license)
+        rendered, renderer = _render_tiles(
+            pt.compartment,
+            geojson_bytes,
+            pt.license,
+            attribution=_compartment_tile_attribution(
+                slices.rows_by_compartment.get(pt.compartment, []), slices.index
+            ),
+        )
         tile_path = f"{_WEB_DIR}/tiles/{pt.compartment}-sites.pmtiles"
         web_artifacts[tile_path] = rendered
         tile_renderers[pt.compartment] = renderer
@@ -2153,14 +2236,23 @@ def _web_bytes(payload: Any) -> bytes:
     )
 
 
-def _render_tiles(compartment: str, geojson_bytes: bytes, license_id: str) -> tuple[bytes, str]:
+def _render_tiles(
+    compartment: str,
+    geojson_bytes: bytes,
+    license_id: str,
+    *,
+    attribution: str | None = None,
+) -> tuple[bytes, str]:
     """Render one compartment's sites.geojson → PMTiles bytes (+ renderer name).
 
     Thin alias over :func:`exports.tiles.render_compartment_sites_pmtiles` (the shared
     per-compartment renderer — ODbL keeps its OSM notice, slimmed render properties,
-    z0–z14 via tippecanoe or the pure-Python encoder).
+    z0–z14 via tippecanoe or the pure-Python encoder). ``attribution`` is the drawn
+    sources' own credit (P34.21a / E2-12); absent it, the licence-level fallback stands.
     """
-    return render_compartment_sites_pmtiles(compartment, geojson_bytes, license_id)
+    return render_compartment_sites_pmtiles(
+        compartment, geojson_bytes, license_id, attribution=attribution
+    )
 
 
 def _extended_manifest(

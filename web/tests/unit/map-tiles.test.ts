@@ -17,6 +17,8 @@ import {
   compartmentLayerId,
   compartmentSourceId,
   isSelfHostedTileUrl,
+  mapAttributionLine,
+  tileSourceAttribution,
 } from "../../src/lib/map-tiles";
 
 describe("static PMTiles v3, self-hosted, attributed (SIG-GEO-012/013, SIG-UI-038)", () => {
@@ -109,5 +111,71 @@ describe("per-licence-compartment tile sources (P30.3, ADR-106; P31.15, ADR-R9-T
   it("ODbL layers carry the OpenStreetMap notice", () => {
     expect(compartmentAttribution("ODbL-1.0")).toMatch(/openstreetmap/i);
     expect(compartmentAttribution("CC-BY-SA-4.0")).toContain("CC-BY-SA-4.0");
+  });
+});
+
+describe("per-source attribution from ATTRIBUTION.json (P34.21a / E2-12)", () => {
+  it("a drawn source's own credit wins over the generic SIG line", () => {
+    const t = {
+      compartment: "sig_graph",
+      license: "CC-BY-4.0",
+      path: "/tiles/sig_graph-sites.pmtiles",
+      attribution: "Oklahoma City Council open data",
+    };
+    expect(tileSourceAttribution(t)).toBe("Oklahoma City Council open data");
+    const style = buildPublicMapStyle([t]);
+    expect(style.sources["sig_sig_graph"]?.attribution).toBe(
+      "Oklahoma City Council open data",
+    );
+  });
+
+  it("ODbL always carries the OSM notice, never a substituted credit", () => {
+    const t = {
+      compartment: "osm_physical",
+      license: "ODbL-1.0",
+      path: "/tiles/osm_physical-sites.pmtiles",
+      attribution: "some upstream mirror",
+    };
+    expect(tileSourceAttribution(t)).toBe(OSM_ATTRIBUTION);
+  });
+
+  it("absent/blank attribution falls back to the licence-level line", () => {
+    const noCredit = {
+      compartment: "sig_graph",
+      license: "CC-BY-4.0",
+      path: "/tiles/sig_graph-sites.pmtiles",
+    };
+    const blank = { ...noCredit, attribution: "   " };
+    expect(tileSourceAttribution(noCredit)).toContain("CC-BY-4.0");
+    expect(tileSourceAttribution(blank)).toContain("CC-BY-4.0");
+  });
+
+  it("the page line joins each drawn compartment's own credit, deduplicated", () => {
+    const tiles = [
+      {
+        compartment: "sig_graph",
+        license: "CC-BY-4.0",
+        path: "/tiles/sig_graph-sites.pmtiles",
+        attribution: "Council A open data",
+      },
+      {
+        compartment: "osm_physical",
+        license: "ODbL-1.0",
+        path: "/tiles/osm_physical-sites.pmtiles",
+      },
+      {
+        compartment: "portal",
+        license: "CC-BY-4.0",
+        path: "/tiles/portal-sites.pmtiles",
+        attribution: "Council A open data",
+      },
+    ];
+    const line = mapAttributionLine(tiles);
+    expect(line).toContain("Council A open data");
+    expect(line).toMatch(/openstreetmap/i);
+    // the duplicated credit appears once
+    expect(line.split("Council A open data").length - 1).toBe(1);
+    // no archives → the committed fallback line (OSM + SIG)
+    expect(mapAttributionLine([])).toBe(MAP_ATTRIBUTION_LINE);
   });
 });

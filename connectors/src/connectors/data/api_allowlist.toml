@@ -373,7 +373,7 @@ counsel_reviewed = false
 [[api_host]]
 host = "utility.arcgis.com"
 endpoint_prefix = "/usrsvcs/"
-tos_basis = "Esri utility.arcgis.com usrsvcs proxy — the documented REST query API path serving ArcGIS Online-published layers (Sheffield City Council open data, OGL-3.0)."
+tos_basis = "Esri utility.arcgis.com usrsvcs proxy — the documented REST query API path serving ArcGIS Online-published layers (Sheffield City Council open data, OGL-UK-3.0)."
 rate_limit_per_min = 10
 counsel_reviewed = false
 

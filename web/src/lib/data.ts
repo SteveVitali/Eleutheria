@@ -640,6 +640,30 @@ interface ReproducibilityInputs {
  * leaves the background-only style and the island's inline fallback points; an
  * export build yields one z0–z14 archive per compartment.
  */
+/**
+ * The per-source attribution one compartment's ATTRIBUTION.json carries
+ * (P34.21a / E2-12): each drawn source's own credit, deduplicated and joined.
+ * `undefined` when the export predates the attribution index or no source
+ * carries an attribution — the licence-level fallback line stands.
+ */
+function compartmentAttributionFromIndex(compartment: string): string | undefined {
+  const path = `${exportDir()}/${compartment}/ATTRIBUTION.json`;
+  let doc: { sources?: Array<{ attribution?: string }> };
+  try {
+    doc = JSON.parse(readFileSync(path, "utf-8"));
+  } catch {
+    return undefined; // an export without the attribution index degrades honestly
+  }
+  const lines = [
+    ...new Set(
+      (doc.sources ?? [])
+        .map((s) => (typeof s.attribution === "string" ? s.attribution.trim() : ""))
+        .filter((a) => a.length > 0),
+    ),
+  ];
+  return lines.length > 0 ? lines.join(" · ") : undefined;
+}
+
 export function getCompartmentTileSources(): CompartmentTileSource[] {
   if (dataSource() === "fixtures") return [];
   const path = `${exportDir()}/manifest.json`;
@@ -657,6 +681,8 @@ export function getCompartmentTileSources(): CompartmentTileSource[] {
       compartment: String(a.compartment),
       license: String(a.license),
       path: `/tiles/${a.path!.slice("web/tiles/".length)}`,
+      // P34.21a / E2-12: the drawn sources' own credit, never the generic line.
+      attribution: compartmentAttributionFromIndex(String(a.compartment)),
     }))
     .sort((x, y) => x.compartment.localeCompare(y.compartment));
 }

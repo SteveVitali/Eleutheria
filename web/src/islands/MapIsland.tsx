@@ -60,6 +60,7 @@ import {
   compartmentAttribution,
   compartmentLayerId,
   compartmentSourceId,
+  tileSourceAttribution,
   PMTILES_PROTOCOL,
 } from "../lib/map-tiles";
 import type { CompartmentTileSource } from "../lib/map-tiles";
@@ -78,6 +79,8 @@ import { useWorkspaceState } from "./workspace";
 export interface CompartmentOption {
   id: string;
   license: string;
+  /** The drawn sources' own credit from ATTRIBUTION.json (P34.21a / E2-12). */
+  attribution?: string;
 }
 
 export interface MapIslandProps {
@@ -203,7 +206,11 @@ export default function MapIsland({
   const activeAttribution = useMemo(() => {
     const lines = compartments
       .filter((c) => activeCompartments.has(c.id))
-      .map((c) => compartmentAttribution(c.license));
+      .map((c) =>
+        c.license === "ODbL-1.0"
+          ? compartmentAttribution(c.license)
+          : (c.attribution?.trim() || compartmentAttribution(c.license)),
+      );
     return [...new Set(lines)].join(" · ");
   }, [compartments, activeCompartments]);
 
@@ -249,7 +256,7 @@ export default function MapIsland({
             map.addSource(sourceId, {
               type: "vector",
               url: `${PMTILES_PROTOCOL}${t.path}`,
-              attribution: compartmentAttribution(t.license),
+              attribution: tileSourceAttribution(t),
             });
             map.addLayer({
               id: layerId,

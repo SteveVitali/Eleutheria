@@ -225,7 +225,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 562
 verified = 2026-09-18
 object_id_field = "OBJECTID"
-license_spdx = "OGL-3.0"
+license_spdx = "OGL-UK-3.0"
 notes = "ArcGIS Hub item df2bf0314b184b449ff595df02e320cf 'CCTV Cameras' (owner nccgisteam) declares 'Data is released under the terms of the Open Government Licence (OGL)' with the v3 URL verbatim. Location/CameraNum/District_Name fields, Lat/Long + point geometry."
 
 [[targets]]
@@ -241,7 +241,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 222
 verified = 2026-09-18
 object_id_field = "OBJECTID"
-license_spdx = "OGL-3.0"
+license_spdx = "OGL-UK-3.0"
 notes = "ArcGIS Hub item 25888f6f64e64cc6a938115a8f12f333 'CCTV' (owner gis_CYC) cites the Open Government Licence (OGL v3.0) under the Ordnance Survey derived-data exemption verbatim. SITE_ID/ASSET_TYPE/ADDRESS_2 fields, point geometry."
 
 [[targets]]
@@ -257,7 +257,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 441
 verified = 2026-09-18
 object_id_field = "OBJECTID"
-license_spdx = "OGL-3.0"
+license_spdx = "OGL-UK-3.0"
 notes = "ArcGIS Hub item 669df23dcc5d48bb98ad1b5d180927c6 'CCTV' (owner GlasgowGIS) declares 'This information is supplied under the Open Government License v3.0' verbatim (OSMA attribution noted). LOCATION/CCTV_NO/DIVISION fields, point geometry (native 27700; outSR=4326)."
 
 [[targets]]
@@ -273,7 +273,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 108
 verified = 2026-09-18
 object_id_field = "OBJECTID"
-license_spdx = "OGL-3.0"
+license_spdx = "OGL-UK-3.0"
 notes = "ArcGIS Hub item 082112796ccd448bb1abba9e9603e9f0 'CCTV Locations' (owner NAC_OpenData) declares 'This information is supplied under the Open Government License v3.0' verbatim with the required Crown-copyright attribution statement. CAMERA_ID/LOCATION/CAMERA_TYPE fields, point geometry."
 
 [[targets]]
@@ -289,7 +289,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 35
 verified = 2026-09-18
 object_id_field = "OBJECTID"
-license_spdx = "OGL-3.0"
+license_spdx = "OGL-UK-3.0"
 notes = "ArcGIS Hub item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner [account withheld]) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. CCTV_NUMBER/CAMERA_LOCATION fields, point geometry (native 27700; outSR=4326)."
 
 [[targets]]

@@ -57,3 +57,20 @@ must be recorded as an append-only event that readers resolve through.
   NEW `rights_decision`; never edit a row.
 - A consumer needs per-claim (not per-source) resolution — extend the log with a claim-scoped
   decision kind in a new ADR.
+
+## Status updates
+
+- **Status:** Qualified by ADR-194 (2026-10-03)
+- **Status note (2026-10-03, P34.21a):** ADR-194 adds a second decision kind — the *source-scoped
+  attribution correction* — on top of this log. Where decision §2 reads "a decision's
+  `prior_rights_id` must reference an UNDETERMINED record … so a decision can only lift unresolved
+  rights — it can never relicense", the P34.21a corrections writer relaxes the *prior* side only: a
+  corrected record may also carry a **resolved** prior when the corrected record keeps that prior's
+  `spdx_expression`, `redistributable`, and `derivative_permitted` — only `attribution_text` /
+  `terms_url` change (recorded identifier normalisations declared in the artifact's `spdx_aliases`
+  excepted). Nothing is ever relicensed: the writer refuses any correction row that would change a
+  resolved record's licence, and an UNDETERMINED prior resolves under the original lift semantics
+  unchanged. The correction fixes the F-387 record defect (SPDX-keyed `rights_record` reuse
+  mis-crediting sources), keeps every claim's recorded `rights_id` as assertion-time provenance,
+  and lands as INSERT-only `rights_record` + `rights_decision` rows named `sig-db
+  attribution-corrections`.

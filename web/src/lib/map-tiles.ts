@@ -157,6 +157,13 @@ export interface CompartmentTileSource {
   license: string;
   /** Same-origin path, e.g. `/tiles/osm_physical-sites.pmtiles`. */
   path: string;
+  /**
+   * The per-source attribution the compartment's `ATTRIBUTION.json` carries
+   * (P34.21a, E2-12): the credit of the upstream sources actually drawn in this
+   * archive — never the generic SIG line. Absent when the export predates the
+   * attribution index (the licence-level fallback line is used).
+   */
+  attribution?: string;
 }
 
 /** The source id a compartment's archive is registered under (shared by style + island). */
@@ -175,6 +182,29 @@ export function compartmentAttribution(license: string): string {
 }
 
 /**
+ * The attribution one drawn compartment carries (P34.21a / E2-12): the
+ * per-source credit its `ATTRIBUTION.json` recorded, else the licence-level
+ * fallback. The generic SIG line is a fallback only — the drawn sources' own
+ * attribution always wins when the export carries it.
+ */
+export function tileSourceAttribution(t: CompartmentTileSource): string {
+  const specific = t.attribution?.trim();
+  if (t.license === "ODbL-1.0") return OSM_ATTRIBUTION;
+  return specific || compartmentAttribution(t.license);
+}
+
+/**
+ * The attribution line the page + island render for the compartments actually
+ * drawn (E2-12): each drawn compartment's own credit, deduplicated, joined.
+ * With no archives (the fixtures build) the committed OSM+SIG line stands.
+ */
+export function mapAttributionLine(tiles: readonly CompartmentTileSource[]): string {
+  if (tiles.length === 0) return MAP_ATTRIBUTION_LINE;
+  const lines = [...new Set(tiles.map(tileSourceAttribution))];
+  return lines.join(" · ");
+}
+
+/**
  * The public style for a build: the plain background plus ONE source per licence
  * compartment, each with its own attribution — never a merged archive (ADR-106), and
  * no basemap (Q8). The empty-tiles case yields the committed background-only style.
@@ -188,7 +218,7 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
     sources[id] = {
       type: "vector",
       url: `${PMTILES_PROTOCOL}${t.path}`,
-      attribution: compartmentAttribution(t.license),
+      attribution: tileSourceAttribution(t),
     };
     layers.push({
       id: compartmentLayerId(t.compartment),

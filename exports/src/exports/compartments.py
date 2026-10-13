@@ -222,6 +222,61 @@ def row_rights(record: RightsRecord, registry: Mapping[str, Any] | None = None) 
     return downstream_obligations(record, registry)
 
 
+class AttributionGateError(LicenseIncompatibilityError):
+    """An attribution-required row reached the export with no attribution (E2-12)."""
+
+
+def attribution_gate_violations(
+    rows: Iterable[Mapping[str, Any]],
+) -> list[tuple[str, int | None, str]]:
+    """The E2-12 / ADR-194 publish-time gate, row-level.
+
+    Scans serialised export rows (each carrying a ``_rights`` block from
+    :func:`enrich_rows` / :func:`row_rights`) and returns
+    ``(source_id, row_no, path_hint)`` for every row whose licence declares
+    ``attribution_required = true`` but whose effective attribution is absent
+    or whitespace — the defect E2-12 names. An empty list is the pass. Shared
+    by the export build (``enrich_rows``) and the publish-time scan
+    (``ops.publish.assert_attribution_complete``) so both stages apply the
+    same rule to the same bytes.
+    """
+    violations: list[tuple[str, int | None, str]] = []
+    for i, row in enumerate(rows, start=1):
+        rights = row.get(RIGHTS_KEY)
+        if not isinstance(rights, Mapping):
+            continue
+        if not rights.get("attribution_required", False):
+            continue
+        attribution = rights.get("attribution")
+        if attribution is None or not str(attribution).strip():
+            violations.append(
+                (
+                    str(rights.get("source_id") or row.get("source_id") or "(unknown)"),
+                    i,
+                    "",
+                )
+            )
+    return violations
+
+
+def assert_attribution_rows(rows: Iterable[Mapping[str, Any]], *, context: str) -> None:
+    """Fail the build when an attribution-required row carries no attribution.
+
+    P34.21a / ADR-194 (E2-12): the publish-time gate at the export-build seam —
+    a row whose licence requires credit must never leave the build with an
+    empty ``_rights.attribution`` (the F-387 defect shipped exactly that).
+    """
+    violations = attribution_gate_violations(rows)
+    if violations:
+        raise AttributionGateError(
+            f"export gate refused {context}: {len(violations)} row(s) carry "
+            "attribution_required=true with empty attribution (E2-12 / ADR-194 — "
+            "the row names no upstream to credit):\n  "
+            + "\n  ".join(f"{src} (row {n})" for src, n, _ in violations[:20])
+            + ("\n  …" if len(violations) > 20 else "")
+        )
+
+
 def enrich_rows(
     table: ExportTable,
     index: Mapping[str, RightsRecord],
@@ -230,7 +285,10 @@ def enrich_rows(
     """Materialise ``table``'s rows with their per-row rights provenance stamped in.
 
     Every returned row carries the domain payload plus a :data:`RIGHTS_KEY` block; a
-    row can never leave the build without its provenance (SIG-EXPORT-006).
+    row can never leave the build without its provenance (SIG-EXPORT-006). P34.21a:
+    the batch is then passed through the attribution gate — an attribution-required
+    row with empty credit fails the build (E2-12), so the defect can never reach a
+    file again.
     """
     cache: dict[str, dict[str, Any]] = {}
     out: list[dict[str, Any]] = []
@@ -245,6 +303,7 @@ def enrich_rows(
         merged = dict(row.data)
         merged[RIGHTS_KEY] = cache[row.source_id]
         out.append(merged)
+    assert_attribution_rows(out, context=f"table {table.name!r}")
     return out
 
 
@@ -263,6 +322,9 @@ def most_permissive_license(
 __all__ = [
     "RIGHTS_KEY",
     "UnknownSourceError",
+    "AttributionGateError",
+    "attribution_gate_violations",
+    "assert_attribution_rows",
     "ExportRow",
     "ExportTable",
     "PlacedTable",

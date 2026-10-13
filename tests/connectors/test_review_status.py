@@ -147,7 +147,7 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # CC0-1.0, fbi_cde_agency_registry CC0-1.0, eff_data_driven CC-BY-4.0, muckrock
 # LicenseRef at REFERENCE) = 12 loadable. The same-day unblock pass (operator
 # determination, ADR-085) flipped the rights-resolved France pair (raa_prefectures
-# ODbL-1.0, decp_fr LicenceOuverte-2.0 — the cohort gate went per-source) plus
+# ODbL-1.0, decp_fr etalab-2.0 — the cohort gate went per-source) plus
 # ccops_seattle/nyc_post/sf and pathways_rtcc/css/acoustic on the derived-facts +
 # mandated-disclosure basis = 20 loadable, 13 flip-ready. Counsel (HG-02) then
 # approved the five held sources (madada, declarationcamera_be, aspi,

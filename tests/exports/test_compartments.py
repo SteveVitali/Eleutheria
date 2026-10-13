@@ -159,15 +159,15 @@ def test_derived_facts_cannot_merge_into_other_compartments() -> None:
 # --- P27.2 (LAUNCH.2): the flipped-source licence set stays compartment-separated ------------
 
 
-def test_licence_ouverte_lands_in_its_own_compartment() -> None:
+def test_etalab_lands_in_its_own_compartment() -> None:
     # decp_fr's declared licence (ADR-084) gets the france_licence_ouverte compartment —
     # recorded under its own expression, never silently mapped into CC-BY (pending HG-02).
-    comp = C.compartment_for_license("LicenceOuverte-2.0", None, None)
+    comp = C.compartment_for_license("etalab-2.0", None, None)
     assert comp == "france_licence_ouverte"
-    idx = _idx(_rr("decp_fr", "LicenceOuverte-2.0"))
+    idx = _idx(_rr("decp_fr", "etalab-2.0"))
     placed = C.place_table(C.ExportTable("t", (C.ExportRow("decp_fr", {}),)), idx)
     assert placed.compartment == "france_licence_ouverte"
-    assert placed.license == "LicenceOuverte-2.0"
+    assert placed.license == "etalab-2.0"
 
 
 def test_p272_flipped_licence_mix_stays_separated() -> None:
@@ -176,8 +176,8 @@ def test_p272_flipped_licence_mix_stays_separated() -> None:
     flips = {
         "ted_eu": "CC-BY-4.0",
         "usaspending": "CC0-1.0",
-        "decp_fr": "LicenceOuverte-2.0",
-        "camreg_sheffield_gb": "OGL-3.0",
+        "decp_fr": "etalab-2.0",
+        "camreg_sheffield_gb": "OGL-UK-3.0",
         "camreg_winnipeg_mb": "OGL-Canada-2.0",
         "camreg_baltimore_md": "CC-BY-3.0",
         "camreg_ottawa_on": "LicenseRef-Ottawa-ODL-2.0",
@@ -193,7 +193,7 @@ def test_p272_flipped_licence_mix_stays_separated() -> None:
     C.assert_separated(placed)
     by_license = {p.license: p.compartment for p in placed}
     assert by_license["ODbL-1.0"] == "osm_physical"  # ODbL keeps its own compartment
-    assert by_license["LicenceOuverte-2.0"] == "france_licence_ouverte"
+    assert by_license["etalab-2.0"] == "france_licence_ouverte"
     assert by_license["LicenseRef-DerivedFacts-Citations"] == "derived_facts"
     assert by_license["LicenseRef-PublicRecord-FactualCompilation"] == "public_record"
     assert by_license["LicenseRef-OperatorAccepted-DBRight"] == "operator_accepted"
