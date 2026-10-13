@@ -1,0 +1,18 @@
+Delaware Information and Analysis Center
+Privacy, Civil Rights, and Civil Liberties Protection Policy
+
+Date: March 1, 2023
+Technology: fusion center
+
+The Delaware Information and Analysis Center (DIAC) maintains this privacy
+standard operating procedure under 28 CFR Part 23 and section 511 of the
+Implementing Recommendations of the 9/11 Commission Act of 2007, as required
+of fusion centers receiving federal funds.
+
+The policy governs the collection, use, retention, and dissemination of
+information by the Delaware Information and Analysis Center, including
+access controls, audit logging, training, and the annual privacy-policy
+review conducted by the DIAC privacy officer with oversight-board approval.
+
+This is a governance instrument; it reports no operational use, and no
+individual records appear in this publication.

@@ -1,0 +1,24 @@
+Seattle Department of Transportation
+Automated Traffic Safety Camera Program - Annual Report 2024-2025
+
+Date: September 15, 2025
+Technology: automated traffic safety cameras
+
+Under RCW 46.63.220 and the City of Seattle's automated traffic safety
+camera program, the Seattle Department of Transportation reports annually to
+the Washington State Legislature and publishes this program summary.
+
+Infractions issued: 30,241
+Cameras in the program: 71
+
+Appendix B - Camera locations (the program's published site list)
+
+Program operator: Seattle Department of Transportation
+- Broadview Thomson K8 / Greenwood Ave N
+- Olympic View Elementary / 92nd Ave NE
+- Aurora Ave N & N 105th St
+- Spokane St / West Seattle Bridge
+
+All location entries above are the filing's own published site literals.
+The program reports aggregates only - no plates, trips, or owner records
+appear in this report.

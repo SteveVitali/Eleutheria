@@ -1,0 +1,16 @@
+U.S. Department of Homeland Security
+Privacy Impact Assessment - DHS/CBP/PIA-080
+
+Date: October 14, 2022
+Technology: commercial telemetry data
+
+CBP Commercial Telemetry Data Evaluation
+
+Under Section 208 of the E-Government Act of 2002 (44 U.S.C. 3501 note), the
+Department of Homeland Security publishes this privacy impact assessment for
+the U.S. Customs and Border Protection commercial telemetry data evaluation
+pilot. The assessment describes the program, the categories of information
+purchased from commercial vendors, and the privacy mitigations applied.
+
+This publication is the program-level assessment; it contains no individual
+records and reports no operational counts.

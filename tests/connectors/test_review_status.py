@@ -147,8 +147,14 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # statrep_co_frt_accountability first target; statrep_mn_unmanned_
     # aerial_vehicle → the statrep_mn_bca second target): 594 → 592
     # registered; every row stays ingestion_permitted=false, so loadable is
+    # unchanged. P36.9b (ACQ-13b) renamed eleven generated rows to their
+    # I8 §5.6 design ids and consolidated five generated rows into sibling
+    # sources (statrep_wa_automated_traffic_safety → the statrep_wa_wtsc_ate
+    # index; statrep_us_dhs_{component_privacy,obim_pia,cbp_border,cbp_pia}
+    # → statrep_us_dhs_privacy_compliance's five targets): 592 → 587
+    # registered; every row stays ingestion_permitted=false, so loadable is
     # unchanged.
-    assert "registered sources: 592" in out
+    assert "registered sources: 587" in out
     assert "self-checks OK" in out
 
 
@@ -290,9 +296,15 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # generated rows into their publisher's source row as targets (−2):
     # 594 → 592 registered; every row stays ingestion_permitted=false —
     # loadable 236 unchanged, flip-ready still the one standing exception.
+    # P36.9b (ACQ-13b) renamed eleven generated rows to their design ids and
+    # consolidated five generated rows into sibling sources (the municipal
+    # ATE row → the statrep_wa_wtsc_ate index; the four component DHS rows →
+    # statrep_us_dhs_privacy_compliance's five targets): 592 → 587
+    # registered; every row stays ingestion_permitted=false — loadable 236
+    # unchanged, flip-ready still the one standing exception.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 592" in out
+    assert "registered sources: 587" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out

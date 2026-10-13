@@ -42,7 +42,18 @@
 # Minn. Stat. 626.19 UAV family (per-target link filters; the filing's own
 # 626.19 literal lands as legal_authority — the source-level 13.824 citation
 # stays LPR-family only via ordinance_literal_required).
-vocab_version = "2026.10.13"
+# 2026.10.13b — r11/P36.9b (ACQ-13b, same-day second migration): the CSS /
+# interception / ATE / DHS half of the statutory disclosures-II family —
+# eleven [sources] keys -> the I8 §5.6 design ids; interception,
+# work-zone ATE, fusion-center (coarse rtcc-unspecified — the dedicated
+# concept is D-P36.9b-1, pending the ontology), social-media/telemetry/HART
+# literals join [technology_map]; eleven reviewed [adapters.<publisher>]
+# rows land (interception filings emit institution-level counts only —
+# judge and prosecutor names are never extracted; the Seattle ATSC
+# appendix emits its published site literals verbatim; the DIAC SOP is a
+# policy_document — no use claims; the DHS adapter types each filing by
+# its own literal, the SORN row likewise — no guessed slug).
+vocab_version = "2026.10.13b"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -273,6 +284,27 @@ detroit_frt    = "statrep_detroit_mi_frt_weekly"
 me_dps_uav     = "statrep_me_dps_uav"
 il_icjia       = "statrep_il_icjia_drone"
 
+# --- P36.9b / R11-ACQ-13b (I8 §5.6): the CSS / interception / ATE / DHS
+# half of the disclosures-II family (batch r11-disclosures-02). Eleven
+# registry ids after the plan's R1 consolidations — the I4-C068 municipal
+# ATE reports are index-enumerated under statrep_wa_wtsc_ate; the four
+# component DHS surfaces are statrep_us_dhs_privacy_compliance's five
+# index targets; the SORNs are Federal Register document pages (no API
+# adapter). Same gate posture: all stay ingestion_permitted=false (HG-03
+# RB-03 `a`; RB-05 `a` federal, RB-06 `a` WTSC) pending the operator's
+# OP-26 Wave-B flip under ING-GO-B.
+wa_wtsc        = "statrep_wa_wtsc_ate"
+hi_judiciary   = "statrep_hi_judiciary_interception"
+mn_court       = "statrep_mn_court_interception"
+md_msp         = "statrep_md_msp_css"
+de_diac        = "statrep_de_diac"
+seattle_sdot   = "statrep_seattle_wa_sdot_ate"
+fl_flhsmv      = "statrep_fl_flhsmv_red_light"
+pa_wzssc       = "statrep_pa_wzssc"
+seattle_oig    = "statrep_seattle_wa_oig"
+us_dhs_privacy = "statrep_us_dhs_privacy_compliance"
+us_dhs_sorn    = "legis_us_dhs_sorn_plate_data"
+
 # --- P36.8/ACQ-12: statutory technology-literal -> SKOS slug map ---------------
 # The reviewed literal -> ontology-slug table statutory filings' technology
 # names ride (PKG-07's slug set, SIG-ONTO-021). The connector normalizes the
@@ -356,6 +388,53 @@ il_icjia       = "statrep_il_icjia_drone"
 "video surveillance"                  = "fixed-camera-unspecified"
 "real-time crime center"              = "rtcc-unspecified"
 "rtcc"                                = "rtcc-unspecified"
+
+# P36.9b: the interception, work-zone ATE, fusion-center and federal DHS
+# filings' own spellings. The retired wiretap/metadata/tower-dump slugs are
+# superseded — the lawful-intercept-* family members are the active types.
+# Florida's statute names its red-light cameras "traffic infraction
+# detectors" (s. 316.0083) — the specific ate-red-light type. The proposed
+# `fusion-center` concept is pending the ontology (D-P36.9b-1): the rtcc
+# family's evidence signature already homes "fusion platform", so
+# rtcc-unspecified is the coarsest supported value.
+"wiretap"                             = "lawful-intercept-content"
+"wiretap order"                       = "lawful-intercept-content"
+"wiretap orders"                      = "lawful-intercept-content"
+"content interception"                = "lawful-intercept-content"
+"interception of wire oral or electronic communications" = "lawful-intercept-content"
+"pen register"                        = "lawful-intercept-metadata"
+"trap and trace"                      = "lawful-intercept-metadata"
+"lawful interception"                 = "lawful-intercept-unspecified"
+"wiretaps"                            = "lawful-intercept-content"
+"pen register or trap and trace"      = "lawful-intercept-metadata"
+"cell-site simulators"                = "cell-site-simulator-unspecified"
+"cell site simulators"                = "cell-site-simulator-unspecified"
+"closed circuit television"           = "fixed-camera-unspecified"
+"closed-circuit television"           = "fixed-camera-unspecified"
+"work zone speed camera"              = "ate-work-zone"
+"work zone speed safety camera"       = "ate-work-zone"
+"automated work zone speed enforcement" = "ate-work-zone"
+"traffic infraction detector"         = "ate-red-light"
+"traffic infraction detectors"        = "ate-red-light"
+"red light cameras"                   = "ate-unspecified"
+"automated traffic safety camera"     = "ate-unspecified"
+"automated traffic safety cameras"    = "ate-unspecified"
+"automated safety enforcement"        = "ate-unspecified"
+"traffic safety camera"               = "ate-unspecified"
+"traffic safety cameras"              = "ate-unspecified"
+"school zone speed camera"            = "ate-unspecified"
+"school zone speed cameras"           = "ate-unspecified"
+"speed cameras"                      = "ate-unspecified"
+"speed safety cameras"               = "ate-unspecified"
+"work zone speed cameras"             = "ate-work-zone"
+"work zone speed safety cameras"      = "ate-work-zone"
+"fusion center"                       = "rtcc-unspecified"
+"fusion centre"                       = "rtcc-unspecified"
+# P35.14a / SIG-ONTO-055: `social-media-monitoring` is retired — the filing's
+# own literal rides the active family-prefixed successor.
+"social media monitoring"             = "osint-monitoring-social-media"
+"commercial telemetry data"           = "location-data-adtech-purchase"
+"homeland advanced recognition technology" = "other-biometric-unspecified"
 
 # --- P25.5: per-source index→document adapter specs (reviewed data) ------------
 #
@@ -971,4 +1050,305 @@ document_entries = true
 entries = [
   { kind = "agency", pattern = '(?im)^\s*•\s*(?P<agency>[A-Z][^\n•—]{2,80}?)\s*—\s*[\d,]+\s+drones?', status = "reported_owned", technology = "uas-unspecified", technology_literal = "drone" },
 ]
+mandated_sections = []
+
+# =============================================================================
+# P36.9b / R11-ACQ-13b (I8 §5.6): the b half of the statutory disclosures-II
+# family — CSS, interception, ATE, Seattle OIG and the federal DHS/SORN rows
+# (batch `r11-disclosures-02`, `27 7 22 * *`).
+#
+# Same posture as the P36.8/P36.9a blocks: declarative reviewed surfaces
+# only — every source stays ingestion_permitted=false (HG-03 RB-03 `a`;
+# RB-05 `a` federal, RB-06 `a` WTSC) and the operator's OP-26 Wave-B flip
+# under ING-GO-B is the only route to a live fetch, so these specs fetch
+# nothing today.
+
+[adapters.wa_wtsc]
+jurisdiction = "US-WA"
+# The WTSC ASE page (RCW 46.63.220(6)) links the statewide legislative
+# report AND the ~29 municipal RCW 46.63.220(6)(b)(i) filings — the filing
+# agency rides each link's anchor; the publisher default covers the
+# statewide row.
+agency = "Washington Traffic Safety Commission"
+ordinance_citation = "RCW 46.63.220(6) (automated traffic safety camera reporting — statewide + municipal annual reports)"
+ordinance_literals = ["46.63.220", "RCW 46.63", "automated safety enforcement"]
+enacting_body_literal = "Washington State Legislature"
+enacting_body = "Washington State Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "ate-unspecified"
+doc_suffixes = [".pdf"]
+# The ASE page links program material beyond the statutory reports — the
+# scope screen admits the report links only (the admission screen, never
+# labelling).
+scope_terms = ["automated safety enforcement report", "automated traffic safety camera", "traffic safety camera report", "automated safety enforcement"]
+# "City of Auburn — Automated Traffic Safety Camera Annual Report 2025" /
+# "WTSC — 2026 Automated Safety Enforcement Report": the agency precedes
+# the report title.
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–)\s*(?:automated|traffic|red.light|speed|\d{4})'
+technology_anchor_pattern = '(?i)(?P<tech>automated\s+(?:safety\s+enforcement|traffic\s+safety\s+cameras?)|traffic\s+safety\s+cameras?|red.light\s+cameras?|speed\s+(?:safety\s+)?cameras?)'
+technology_field_pattern = '(?im)technology\s*:\s*(automated\s+traffic\s+safety\s+cameras?|automated\s+safety\s+enforcement|red.light\s+cameras?|speed\s+(?:safety\s+)?cameras?)'
+legal_authority_pattern = 'RCW\s+46\.63\.220|46\.63\.220'
+# The statutory reports carry institution-level infraction counts — never
+# plate, trip or per-incident fields (Part VIII).
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)(?:notices?\s+of\s+infraction|infractions?)\s+(?:issued|filed)[^0-9\n]{0,60}(?P<value>\d[\d,]*)' },
+]
+mandated_sections = []
+
+[adapters.hi_judiciary]
+jurisdiction = "US-HI"
+agency = "Hawai'i State Judiciary"
+ordinance_citation = "HRS § 803-47(b) (interception applications — annual report to the Legislature)"
+ordinance_literals = ["803-47", "HRS §803", "HRS 803"]
+enacting_body_literal = "Hawaii State Legislature"
+enacting_body = "Hawai'i State Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "lawful-intercept-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(interception\s+of\s+wire[,\s]+oral[,]?\s*(?:or|and)?\s*electronic\s+communications?|wiretaps?)'
+legal_authority_pattern = 'HRS\s*§?\s*803-47|803-47'
+# HRS § 803-47(b) makes the filing BY STATUTE the annual report of
+# interception applications — institution-level counts only, riding the
+# filing's own literals; a statutory "no applications" is the coverage
+# fact pinned to 0. Judge and prosecutor names are NEVER extracted
+# (their appendices are Tier 2 S5, §43.4).
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)applications?\s+for\s+orders?\s+(?:authorizing\s+or\s+approving\s+)?(?:the\s+)?interception[^0-9\n]{0,60}[:\-]?\s*(?P<value>\d[\d,]*)' },
+  { predicate = "usage_count", pattern = '(?im)there\s+were\s+no\s+applications', value = "0" },
+]
+mandated_sections = []
+
+[adapters.mn_court]
+jurisdiction = "US-MN"
+agency = "Minnesota State Court Administrator"
+ordinance_citation = "Minn. Stat. § 626A.391 / Minn. R. Crim. P. (interception, pen register and mobile-tracking warrant reporting)"
+ordinance_literals = ["626A.391", "Minn. Stat. 626A", "626A"]
+enacting_body_literal = "Minnesota Legislature"
+enacting_body = "Minnesota Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "lawful-intercept-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(lawful\s+interception|wiretaps?|pen\s+register|trap\s+and\s+trace|interception\s+of\s+wire[,\s]+oral[,]?\s*(?:or|and)?\s*electronic\s+communications?)'
+legal_authority_pattern = '626A\.391|Minn\.?\s*Stat\.?\s*626A|Minnesota\s+Rules\s+of\s+Criminal\s+Procedure'
+# The court administrator's report is BY STATUTE the annual institution-
+# level count of applications and orders — never per-case fields, never
+# the appendix's judge/prosecutor names (§43.4).
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)interception\s+(?:order|warrant)\s+applications?\s*(?:filed)?\s*[:\-]?\s*(?P<value>\d[\d,]*)' },
+  { predicate = "usage_count", pattern = '(?im)pen\s+register\s+(?:or\s+)?trap\s+and\s+trace\s+(?:order\s+)?applications?\s*(?:filed)?\s*[:\-]?\s*(?P<value>\d[\d,]*)' },
+  { predicate = "usage_count", pattern = '(?im)mobile\s+tracking\s+device\s+(?:order\s+)?applications?\s*(?:filed)?\s*[:\-]?\s*(?P<value>\d[\d,]*)' },
+]
+mandated_sections = []
+
+[adapters.md_msp]
+jurisdiction = "US-MD"
+agency = "Maryland Department of State Police"
+ordinance_citation = "2020 Md. Laws chs. 222/223 (cell-site simulator annual report)"
+ordinance_literals = ["Chapters 222 and 223", "Chapter 222", "Chapter 223"]
+enacting_body_literal = "Maryland General Assembly"
+enacting_body = "Maryland General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "cell-site-simulator-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(cell[\s-]site\s+simulators?|stingray)'
+legal_authority_pattern = 'Chapters?\s+22[23]|2020\s+(?:Md\.?|Maryland)\s+Laws'
+# The Chapters 222/223 filing is BY STATUTE the annual cell-site-simulator
+# deployment report — institution-level deployment/exigent counts only.
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)cell[\s-]site\s+simulator\s+deployments?[^0-9\n]{0,60}[:\-]?\s*(?P<value>\d[\d,]*)' },
+  { predicate = "usage_count", pattern = '(?im)exigent\s+(?:circumstances?|emergency)\s+(?:uses?|deployments?)[^0-9\n]{0,60}[:\-]?\s*(?P<value>\d[\d,]*)' },
+]
+mandated_sections = []
+
+[adapters.de_diac]
+jurisdiction = "US-DE"
+agency = "Delaware Information and Analysis Center"
+ordinance_citation = "28 C.F.R. Part 23 (fusion-center privacy policy — the DIAC Privacy SOP)"
+ordinance_literals = ["28 CFR Part 23", "28 C.F.R. Part 23", "Part 23"]
+enacting_body_literal = "U.S. Department of Justice"
+enacting_body = "U.S. Department of Justice"
+# The reviewed surface is the fusion center's PUBLISHED privacy policy — a
+# governance document, not a use report: policy_document genre permits
+# ordinance/inventory/disclosure claims only (no use claims).
+document_genre = "policy_document"
+technology_mapped = true
+# The proposed `fusion-center` concept is pending the ontology
+# (D-P36.9b-1): the rtcc family's evidence signature already homes
+# "fusion platform", so rtcc-unspecified is the coarsest supported value
+# (SIG-ONTO-021 — declared, never guessed).
+default_technology = "rtcc-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(fusion\s+cent(?:er|re)|real[\s-]time\s+crime\s+cent(?:er|re))'
+legal_authority_pattern = '28\s+C\.?F\.?R\.?\s*Part\s+23|28\s+CFR\s+Part\s+23'
+mandated_sections = []
+
+[adapters.seattle_sdot]
+jurisdiction = "US-WA"
+agency = "Seattle Department of Transportation"
+ordinance_citation = "RCW 46.63.220 / City of Seattle ATSC program (automated traffic safety camera annual report)"
+ordinance_literals = ["46.63.220", "automated traffic safety camera"]
+enacting_body_literal = "Washington State Legislature"
+enacting_body = "Washington State Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "ate-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(automated\s+traffic\s+safety\s+cameras?|red.light\s+cameras?|school\s+(?:zone\s+)?speed\s+cameras?|block[\s-]the[\s-]box\s+cameras?|transit[\s-]only\s+lane\s+cameras?)'
+legal_authority_pattern = 'RCW\s+46\.63|46\.63\.220|SMC\s+11\.\d+'
+# The ATSC annual report is the program's own use statement (camera counts
+# by program, infraction totals) — and its appendix site table emits the
+# filing's OWN published site literals as verbatim deployment_location
+# strings keyed to the program heading — never geocoded, never an asserted
+# deployment beyond the filing's own words (I8 §5.6; SIG-GEO-003).
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)(?:notices?\s+of\s+infraction|infractions?)\s+(?:issued|filed)[^0-9\n]{0,60}(?P<value>\d[\d,]*)' },
+  { predicate = "usage_count", pattern = '(?im)cameras?\s+(?:in\s+(?:the\s+)?program|installed|operating)[^0-9\n]{0,40}[:\-]?\s*(?P<value>\d[\d,]*)' },
+]
+document_entries = true
+entries = [
+  { kind = "agency", pattern = '(?im)^\s*Program\s+operator\s*[:\-]\s*(?P<agency>[^\n]{4,80})', status = "reported_use" },
+  { kind = "location", pattern = '(?im)^\s*-\s*([A-Z][A-Za-z0-9 .&/]{4,90})\s*$', technology = "ate-unspecified" },
+]
+mandated_sections = []
+
+[adapters.fl_flhsmv]
+jurisdiction = "US-FL"
+agency = "Florida Department of Highway Safety and Motor Vehicles"
+ordinance_citation = "s. 316.0083(4), F.S. (red light camera annual reporting — department summary + jurisdiction filings)"
+ordinance_literals = ["316.0083", "red light camera", "traffic infraction detector"]
+enacting_body_literal = "Florida Legislature"
+enacting_body = "Florida Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "ate-red-light"
+# The cabinet-reports page links the FY summary reports + the jurisdictions'
+# survey-responses compilations under /pdf/cabinetreports/ — the other
+# cabinet report links fail the path + scope filters.
+doc_url_contains = "/pdf/cabinetreports/"
+doc_suffixes = [".pdf"]
+scope_terms = ["red light camera", "red-light camera", "traffic infraction detector"]
+technology_anchor_pattern = '(?i)(?P<tech>red.light\s+cameras?|traffic\s+infraction\s+detectors?)'
+technology_field_pattern = '(?im)technology\s*:\s*(red.light\s+cameras?|traffic\s+infraction\s+detectors?)'
+legal_authority_pattern = '316\.0083|s\.\s*316\.0083'
+# The s. 316.0083(4)(b) summary is BY STATUTE the annual use report —
+# statewide violation/citation aggregates, institution-level only.
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)(?:notices?\s+of\s+violation|violations?|citations?)\s+(?:issued|filed|reported)[^0-9\n]{0,60}[:\-]?\s*(?P<value>\d[\d,]*)' },
+]
+mandated_sections = []
+
+[adapters.pa_wzssc]
+jurisdiction = "US-PA"
+# The WZSSC program files jointly — PennDOT leads with the PA Turnpike
+# Commission and the State Police; the lead agency names the row.
+agency = "Pennsylvania Department of Transportation"
+ordinance_citation = "75 Pa.C.S. § 3369(h)(4) (work zone speed safety camera annual report)"
+ordinance_literals = ["3369(h)", "75 Pa.C.S. 3369", "work zone speed safety camera"]
+enacting_body_literal = "Pennsylvania General Assembly"
+enacting_body = "Pennsylvania General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "ate-work-zone"
+technology_field_pattern = '(?im)technology\s*:\s*(work[\s-]zone\s+speed\s+(?:safety\s+)?cameras?|automated\s+work[\s-]zone\s+speed\s+enforcement)'
+legal_authority_pattern = '75\s+Pa\.?\s*C\.?S\.?\s*3369|3369\(h\)'
+# The § 3369(h)(4) filing is BY STATUTE the annual program report —
+# statewide violation aggregates only.
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)(?:violations?|notices?)\s+(?:issued|mailed|filed)[^0-9\n]{0,60}[:\-]?\s*(?P<value>\d[\d,]*)' },
+]
+mandated_sections = []
+
+[adapters.seattle_oig]
+jurisdiction = "US-WA"
+# The OIG reviews the OPERATING department's surveillance use under SMC
+# 14.18 — the disclosed agency is the reviewed subject (SPD), never the
+# reviewer. A filing's own Technology: literal types it; an unmapped
+# literal mints NO technology claim and no default is declared (the row
+# covers several technologies — SIG-ONTO-021, never a guessed slug).
+agency = "Seattle Police Department"
+ordinance_citation = "SMC 14.18 (Seattle surveillance ordinance — OIG annual usage review)"
+ordinance_literals = ["14.18", "SMC 14.18", "surveillance ordinance"]
+enacting_body_literal = "Seattle City Council"
+enacting_body = "Seattle City Council"
+document_genre = "statutory_report"
+technology_mapped = true
+doc_suffixes = [".pdf"]
+# The OIG reports page also lists audits and non-surveillance reviews —
+# the scope screen admits the SMC 14.18 surveillance usage reviews only.
+scope_terms = ["surveillance", "usage review", "14.18"]
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–)\s*(?:surveillance|usage|SMC)'
+technology_anchor_pattern = '(?i)(?P<tech>automatic\s+license\s+plate\s+readers?|license\s+plate\s+readers?|acoustic\s+gunshot\s+detection|gunshot\s+detection|social\s+media\s+monitoring|closed[\s-]circuit\s+television|cctv)'
+technology_field_pattern = '(?im)technology\s*:\s*(automatic\s+license\s+plate\s+readers?|license\s+plate\s+readers?|acoustic\s+gunshot\s+detection|gunshot\s+detection|social\s+media\s+monitoring|closed[\s-]circuit\s+television|cctv)'
+legal_authority_pattern = 'SMC\s+14\.18|14\.18|Seattle\s+Municipal\s+Code'
+# The usage review IS the mandated use statement (frequency/patterns of
+# use, sharing, security, impacts) — its own count literals carry the
+# use claims; names of officers/operators are never extracted.
+reports_use_pattern = '(?i)usage\s+review|frequency\s+of\s+use'
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)(?:searches?|queries|uses?|deployments?)\s+(?:in\s+the\s+review\s+period|reported)[^0-9\n]{0,40}[:\-]?\s*(?P<value>\d[\d,]*)' },
+]
+mandated_sections = []
+
+[adapters.us_dhs_privacy]
+jurisdiction = "US"
+# The federal PIA/SORN compliance surfaces: the PIA hub + the component
+# indexes enumerate publication-page links; the three named-program
+# targets (OBIM HART, CBP BSS, CBP telemetry) are publication pages whose
+# links resolve the filing PDFs under /sites/default/files/. A filing's
+# component rides its own DHS/<component>/PIA-... literal.
+agency = "U.S. Department of Homeland Security"
+ordinance_citation = "E-Government Act of 2002 § 208 (44 U.S.C. § 3501 note — privacy impact assessments)"
+ordinance_literals = ["Section 208", "E-Government Act", "§ 208"]
+# A SORN or component page naming only the Privacy Act gets no § 208
+# stamp — the literal-required guard keeps the instrument honest; the
+# filing's own authority still lands as legal_authority.
+ordinance_literal_required = true
+enacting_body_literal = "United States Congress"
+enacting_body = "United States Congress"
+document_genre = "statutory_report"
+technology_mapped = true
+# The PIA surfaces link filings whose anchors/paths carry the DHS/PIA
+# naming convention — the reviewed scope screen admits those links only
+# (FOIA/nav links and unrelated publication pages are never filings).
+scope_terms = ["pia", "privacy impact assessment"]
+# No default_technology — the row covers several programs; each filing is
+# typed by its own literal (telemetry, HART, social-media) and an unmapped
+# program mints ordinance claims only (SIG-ONTO-021 — never guessed).
+agency_anchor_pattern = '(?im)DHS/(?P<agency>[A-Z]{2,6})/'
+# A filing's own "DHS/<component>/PIA-NNN" literal derives the component
+# agency when no index anchor carries it — verbatim from the filing.
+agency_field_pattern = '(?im)DHS/(?P<agency>[A-Z]{2,6})/PIA'
+technology_anchor_pattern = '(?i)(?P<tech>commercial\s+telemetry\s+data|homeland\s+advanced\s+recognition\s+technology|social\s+media\s+monitoring|border\s+surveillance\s+systems?)'
+technology_field_pattern = '(?im)technology\s*:\s*(commercial\s+telemetry\s+data|homeland\s+advanced\s+recognition\s+technology|social\s+media\s+monitoring|border\s+surveillance\s+systems?)'
+legal_authority_pattern = 'Section\s+208|E[\s-]Government\s+Act|5\s+U\.?S\.?C\.?\s*§?\s*552a|Privacy\s+Act\s+of\s+1974'
+mandated_sections = []
+
+[adapters.us_dhs_sorn]
+jurisdiction = "US"
+# The I3-C072 SORN family rides Federal Register document pages (no API
+# adapter — I8 §5.6): each notice is a disclosure_document whose Privacy
+# Act authority lands verbatim. A filing's own technology literal types
+# it — and the literal "license plate readers" hits the Part VIII
+# forbidden-token gate: suppressed, recorded on the artifact row, never
+# emitted (the filings name plate data verbatim; Part VIII binds).
+agency = "U.S. Department of Homeland Security"
+ordinance_citation = "Privacy Act of 1974, 5 U.S.C. § 552a (system of records notices)"
+ordinance_literals = ["5 U.S.C. 552a", "Privacy Act of 1974", "552a"]
+enacting_body_literal = "United States Congress"
+enacting_body = "United States Congress"
+document_genre = "statutory_report"
+technology_mapped = true
+# No default_technology — each notice is typed by its own literal or emits
+# ordinance claims only (SIG-ONTO-021).
+# The notice's own system identifier (ICE-009 / CBP-007 / ...) derives the
+# component agency — verbatim from the filing, never the publisher string.
+agency_field_pattern = '(?im)(?P<agency>ICE|CBP|USCIS|FEMA|TSA|USSS|OBIM)-\d{3}'
+technology_field_pattern = '(?im)technology\s*:\s*(license\s+plate\s+readers?|automated\s+license\s+plate\s+readers?|automated\s+targeting\s+system|border\s+crossing\s+information)'
+legal_authority_pattern = '5\s+U\.?S\.?C\.?\s*§?\s*552a|Privacy\s+Act\s+of\s+1974'
 mandated_sections = []
