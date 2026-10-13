@@ -57,6 +57,39 @@ class CaptureMetadata:
     title: str | None = None
     excerpt: str | None = None
     byte_size: int | None = None
+    #: P32.2's byte-bearing marker (``actual`` | ``synthetic`` | ``legacy``):
+    #: only an ``actual`` capture has bytes stored in an OCFL object — a
+    #: ``synthetic`` one is a run record that never carried bytes. ``None``
+    #: = unknown (a meta built without the classification — treated as
+    #: "not proven byte-bearing" by :func:`bytes_available`).
+    capture_classification: str | None = None
+
+
+def bytes_available(meta: CaptureMetadata) -> bool:
+    """Are this capture's bytes actually in the public archive? (P34.25)
+
+    ``bytes_available`` may be claimed only where bytes are public: the
+    capture's storage tier is ``public`` AND the capture is recorded as
+    byte-bearing (``capture_classification == 'actual'``). A public-tier
+    ``synthetic`` run record or a ``legacy``/unclassified row that cannot
+    prove stored bytes does not claim availability.
+    """
+    return meta.tier.bytes_are_public and meta.capture_classification == "actual"
+
+
+def bytes_unavailable_reason(meta: CaptureMetadata) -> str | None:
+    """The safe machine-readable reason :func:`bytes_available` is False.
+
+    ``tier:<value>`` when the storage tier withholds the bytes;
+    ``classification:<value>`` when the capture is not proven byte-bearing
+    (``synthetic``, ``legacy``, or unclassified). ``None`` when the bytes
+    are public.
+    """
+    if bytes_available(meta):
+        return None
+    if not meta.tier.bytes_are_public:
+        return f"tier:{meta.tier.value}"
+    return f"classification:{meta.capture_classification or 'unclassified'}"
 
 
 def public_representation(meta: CaptureMetadata) -> dict[str, object]:
@@ -66,6 +99,9 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
     * ``restricted``— full metadata, **redacted excerpt**; bytes access-controlled.
     * ``sealed``    — **metadata only**: existence, source, date, digest, claims;
       no excerpt, no title body, and the bytes are never exposed.
+
+    ``bytes_available`` is honest (P34.25): only a public-tier capture
+    proven byte-bearing (``capture_classification == 'actual'``) claims it.
     """
     base: dict[str, object] = {
         "capture_id": meta.capture_id,
@@ -76,7 +112,7 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
         "media_type": meta.media_type,
         "tier": meta.tier.value,
         "claims_supported": list(meta.claims_supported),
-        "bytes_available": meta.tier.bytes_are_public,
+        "bytes_available": bytes_available(meta),
     }
     if meta.tier is StorageTier.SEALED:
         # Existence, source, date, digest, claims supported — and nothing else.

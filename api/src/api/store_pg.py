@@ -137,6 +137,39 @@ from .store import (
 #: The connector subject identifier scheme (kept in step with db.claim_sink).
 _SUBJECT_SCHEME = "sig.connector.subject"
 
+#: The hand-seeded OKC fixture source ids (ops/src/ops/seed.py; J4 NEW-6,
+#: P34.25): claims asserted under these ids are fixture material, never live
+#: evidence — three are unregistered ids, ``deflock`` is gated with no rights
+#: block, and none carried a rights review. They are excluded at the store
+#: seam so no live API output can cite them: claim reads drop any claim whose
+#: selected establishing occurrence is fixture-sourced, the distinct-source
+#: joins drop the ids outright, and a fixture-source capture answers not-found.
+SEED_FIXTURE_SOURCE_IDS: frozenset[str] = frozenset(
+    {"deflock", "okc_council_statement", "okc-contract-c241032", "osm"}
+)
+
+#: The exclusion predicate for claim queries bound through the shared
+#: eligible-occurrence lateral (alias ``occ``): a claim whose selected
+#: occurrence is fixture-sourced is not served; a claim with no eligible
+#: occurrence (``occ.source_id IS NULL``) keeps today's behaviour.
+_OCC_NOT_FIXTURE = "(occ.source_id IS NULL OR occ.source_id <> ALL(%s))"
+
+
+def _not_seeded_sql(claim_alias: str = "c") -> str:
+    """SQL boolean — "this claim is not stamped fixture material" (P34.25, J4 NEW-6).
+
+    ``ops.seed`` stamps ``evidence_origin='seed_fixture'`` on every fixture
+    claim (P32.3 / SIG-TRUST-004). The public read surface never serves one —
+    independent of which source id its selected occurrence happens to carry.
+    """
+    return (
+        "NOT EXISTS (SELECT 1 FROM claim_qualifier sfq"
+        f"            WHERE sfq.claim_id = {claim_alias}.claim_id"
+        "              AND sfq.qualifier_id = 'evidence_origin'"
+        "              AND sfq.value_text = 'seed_fixture')"
+    )
+
+
 # --- connection pool sizing (P31.1, ADR-108) ------------------------------------
 #
 # Budget: Cloud SQL `db-custom-1-3840` has max_connections = 100, 3 reserved for
@@ -234,7 +267,8 @@ _SEARCH_SOURCES_SQL = (
     "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
     "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
     " WHERE c.subject_id = ANY(%s::uuid[]) AND c.sensitivity_tier = 0 "
-    " ORDER BY c.subject_id, ea.source_id"
+    "   AND ea.source_id <> ALL(%s) "  # P34.25: fixture source ids never serve
+    "   AND " + _not_seeded_sql("c") + " ORDER BY c.subject_id, ea.source_id"
 )
 
 
@@ -529,8 +563,16 @@ class PgReadStore:
             + " WHERE c.subject_id = %s AND c.predicate_id = %s "
             "   AND c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             f"  AND {claim_eligible_sql('c')} "  # P32.5 shared selector (current dispositions)
+            f"  AND {_OCC_NOT_FIXTURE} "  # P34.25/J4 NEW-6: fixture sources never serve
+            f"  AND {_not_seeded_sql('c')} "  # P34.25/J4 NEW-6: seeded claims never serve
             "   AND c.sys_period @> %s::timestamptz",  # as-of belief (§9.4)
-            (as_of_belief, entity_id, predicate_id, as_of_belief),
+            (
+                as_of_belief,
+                entity_id,
+                predicate_id,
+                sorted(SEED_FIXTURE_SOURCE_IDS),
+                as_of_belief,
+            ),
         ).fetchall()
         claims: list[Claim] = []
         for r in rows:
@@ -615,7 +657,8 @@ class PgReadStore:
             for p in self._conn.execute(
                 "SELECT DISTINCT predicate_id FROM claim c "
                 "WHERE c.subject_id = %s AND c.sensitivity_tier = 0 "
-                f" AND {claim_eligible_sql('c')} ORDER BY predicate_id",
+                f" AND {claim_eligible_sql('c')}"
+                f" AND {_not_seeded_sql('c')} ORDER BY predicate_id",
                 (resolved,),
             ).fetchall()
         ]
@@ -679,8 +722,10 @@ class PgReadStore:
                 "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
                 " WHERE c.subject_id = %s AND c.sensitivity_tier = 0 "
                 f"  AND {claim_eligible_sql('c')} "  # P32.5: a withheld claim attributes nothing
+                "   AND ea.source_id <> ALL(%s) "  # P34.25/J4 NEW-6: no fixture ids
+                f"  AND {_not_seeded_sql('c')} "  # P34.25/J4 NEW-6: no fixture claims
                 " ORDER BY ea.source_id",
-                (entity_id,),
+                (entity_id, sorted(SEED_FIXTURE_SOURCE_IDS)),
             ).fetchall()
         ]
 
@@ -699,8 +744,10 @@ class PgReadStore:
             "  FROM claim c "
             + occurrence_lateral(BELIEF_NOW)
             + COUNT_QUALIFIER_JOIN
-            + " WHERE c.claim_id = %s AND c.sensitivity_tier = 0",
-            (claim_id,),
+            + " WHERE c.claim_id = %s AND c.sensitivity_tier = 0"
+            f" AND {_OCC_NOT_FIXTURE}"
+            f" AND {_not_seeded_sql('c')}",
+            (claim_id, sorted(SEED_FIXTURE_SOURCE_IDS)),
         ).fetchone()
         if row is None:
             return None
@@ -776,13 +823,18 @@ class PgReadStore:
                 return None
         row = self._conn.execute(
             "SELECT ec.capture_id, ea.source_id, ec.source_uri, ec.retrieved_at, "
-            "       ec.content_digest, ec.media_type, ec.storage_tier "
+            "       ec.content_digest, ec.media_type, ec.storage_tier, "
+            f"       {self._capture_classification_sql()} "
             "  FROM evidence_capture ec "
             "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
             " WHERE ec.artifact_id = %s AND ec.capture_id = %s",
             (artifact_id, capture_id),
         ).fetchone()
         if row is None:
+            return None
+        # P34.25/J4 NEW-6: a fixture-source artifact is not a live answer —
+        # the capture is not found on the public surface.
+        if str(row[1]) in SEED_FIXTURE_SOURCE_IDS:
             return None
         claims_supported = tuple(
             str(c[0])
@@ -799,7 +851,23 @@ class PgReadStore:
             media_type=str(row[5]),
             tier=StorageTier(row[6]),
             claims_supported=claims_supported,
+            capture_classification=None if row[7] is None else str(row[7]),
         )
+
+    def _capture_classification_sql(self) -> str:
+        """The P32.2 byte-bearing marker as a select expression, or ``NULL``.
+
+        A pre-P32.2 spine has no ``capture_classification`` column; the read
+        degrades honestly (the meta carries ``None`` — "not proven
+        byte-bearing", so ``bytes_available`` stays false).
+        """
+        has_col = self._conn.execute(
+            "SELECT EXISTS ("
+            "  SELECT 1 FROM information_schema.columns"
+            "   WHERE table_name = 'evidence_capture'"
+            "     AND column_name = 'capture_classification')"
+        ).fetchone()
+        return "ec.capture_classification" if (has_col and has_col[0]) else "NULL"
 
     @_pooled
     def rights_for(self, source_ids: tuple[str, ...]) -> list[RightsRecord]:
@@ -854,11 +922,13 @@ class PgReadStore:
         return out
 
     @_pooled
-    def coverage_for(self, scope: str) -> list[CoverageRecord]:
+    def coverage_for(self, scope: str) -> list[CoverageRecord] | None:
         # Persisted rows if any (P21.2), else compute-on-read (none yet for coverage).
+        # P34.25: a scope the store does not hold is ``None`` — the route
+        # answers 404 ``scope_not_available`` rather than an empty statement.
         entity_id = self._resolve_entity(scope.split(":")[0]) or self._resolve_entity(scope)
         if entity_id is None:
-            return []
+            return None
         rows = self._conn.execute(
             "SELECT predicate_id, absence_kind, sources_searched "
             "  FROM coverage_record WHERE subject_id = %s",
@@ -918,7 +988,9 @@ class PgReadStore:
             if ids:
                 for entity_id, label in conn.execute(_SEARCH_LABELS_SQL, (ids,)).fetchall():
                     labels[str(entity_id)] = None if label is None else str(label)
-                for entity_id, source_id in conn.execute(_SEARCH_SOURCES_SQL, (ids,)).fetchall():
+                for entity_id, source_id in conn.execute(
+                    _SEARCH_SOURCES_SQL, (ids, sorted(SEED_FIXTURE_SOURCE_IDS))
+                ).fetchall():
                     sources.setdefault(str(entity_id), []).append(str(source_id))
         return [
             EntityRecord(
@@ -933,21 +1005,14 @@ class PgReadStore:
     @_pooled
     def dossier(self, scope: str) -> DossierRecord | None:
         entity_id = self._resolve_entity(scope.split(":")[-1]) or self._resolve_entity(scope)
-        # A jurisdiction/subject dossier is computed-on-read from its entities'
-        # claims; None only when the scope resolves to nothing (→ 404).
-        subjects = []
-        if entity_id is not None:
-            subjects = [entity_id]
-        else:
-            subjects = [
-                str(e[0])
-                for e in self._conn.execute(
-                    "SELECT DISTINCT subject_id FROM claim c WHERE c.sensitivity_tier = 0 "
-                    f" AND {claim_eligible_sql('c')} LIMIT 25"
-                ).fetchall()
-            ]
-        if not subjects:
+        # P34.25 (C3 NEW-1): a scope the store does not hold answers 404
+        # ``scope_not_available`` — never the arbitrary 25-subject sample the
+        # pre-P34.25 fallback served. The real jurisdiction dossier is
+        # P35.57's after JUR-02a; today an entity-resolvable scope is the
+        # dossier scope.
+        if entity_id is None:
             return None
+        subjects = [entity_id]
         source_ids: set[str] = set()
         for s in subjects:
             source_ids.update(self._source_ids_for_entity(s))
@@ -1076,9 +1141,11 @@ class PgReadStore:
             + COUNT_QUALIFIER_JOIN
             + " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             f"  AND {claim_eligible_sql('c')} "  # P32.5 shared selector (current dispositions)
+            f"  AND {_OCC_NOT_FIXTURE} "  # P34.25/J4 NEW-6: fixture sources never serve
+            f"  AND {_not_seeded_sql('c')} "  # P34.25/J4 NEW-6: seeded claims never serve
             "   AND c.sys_period @> %s::timestamptz "  # as-of belief (§9.4)
             " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
-            (belief, belief),
+            (belief, sorted(SEED_FIXTURE_SOURCE_IDS), belief),
         ).fetchall()
         groups: dict[tuple[str, str], list[Claim]] = {}
         for r in rows:
@@ -1251,6 +1318,16 @@ class PgReadStore:
         if view is None:
             view = self._annotation_view()
         return view.watermark
+
+    @_pooled
+    def spine_watermark(self) -> str | None:
+        """The live-spine watermark this store answers from (P34.25 basis label).
+
+        The bounded O(#facets) probe — never the annotation compute. ``None``
+        when the probe yields no watermark (an empty spine), disclosed as a
+        missing value rather than fabricated.
+        """
+        return self._spine_watermark() or None
 
     def warmup(self) -> None:
         """Kick off the one-per-instance annotation compute in the background.

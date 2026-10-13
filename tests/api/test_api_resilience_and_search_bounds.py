@@ -261,9 +261,11 @@ def test_search_response_change_is_additive(client: TestClient) -> None:
     body = client.get("/v1/search", params={"q": "oklahoma"}).json()
     # Every pre-P31.1 field is still present with its old meaning.
     assert {"query", "results", "coverage", "license", "as_of"} <= set(body)
+    # Additive fields only: the P31.1 paging pair and the P34.25 basis label.
     assert set(body) - {"query", "results", "coverage", "license", "as_of"} == {
         "limit",
         "next_cursor",
+        "basis",
     }
 
 

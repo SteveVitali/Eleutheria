@@ -138,6 +138,9 @@ def build_demo_store() -> InMemoryStore:
             claims_supported=("portal",),
             title="Portal snapshot",
             excerpt="active_device_count=38",
+            # A byte-bearing demo capture (P34.25): 'actual' is the only
+            # classification that may claim public bytes.
+            capture_classification="actual",
         ),
         artifact_id="art:portal",
     )

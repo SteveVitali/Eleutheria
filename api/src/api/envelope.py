@@ -92,7 +92,9 @@ def coverage_statement(scope: str, records: Iterable[CoverageRecord]) -> Coverag
     evaluated = len(views) - not_evaluable
     return CoverageStatement(
         scope=scope,
-        complete=not_evaluable == 0,
+        # P34.25 (C3 NEW-10): coverage never says complete with nothing
+        # evaluated — an empty record set is "not evaluated", not "complete".
+        complete=evaluated > 0 and not_evaluable == 0,
         evaluated=evaluated,
         not_evaluable=not_evaluable,
         records=views,
@@ -100,8 +102,12 @@ def coverage_statement(scope: str, records: Iterable[CoverageRecord]) -> Coverag
 
 
 def empty_coverage(scope: str) -> CoverageStatement:
-    """A coverage statement for a resource with nothing left unevaluated."""
-    return CoverageStatement(scope=scope, complete=True, evaluated=0, not_evaluable=0, records=[])
+    """A coverage statement for a point resource with no coverage records.
+
+    P34.25 (C3 NEW-10): ``evaluated=0`` can never be ``complete`` — an envelope
+    that evaluated nothing does not claim completeness.
+    """
+    return CoverageStatement(scope=scope, complete=False, evaluated=0, not_evaluable=0, records=[])
 
 
 def attribution_for(rights: Iterable[RightsRecord]) -> list[Attribution]:

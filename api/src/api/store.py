@@ -174,7 +174,11 @@ class ReadStore(Protocol):
 
     def rights_for(self, source_ids: tuple[str, ...]) -> list[RightsRecord]: ...
 
-    def coverage_for(self, scope: str) -> list[CoverageRecord]: ...
+    def coverage_for(self, scope: str) -> list[CoverageRecord] | None:
+        """The coverage records for a scope the store holds — ``None`` for a
+        scope it does not hold at all (P34.25: an unavailable scope answers
+        404 ``scope_not_available``, never an empty-but-complete statement)."""
+        ...
 
     def captures(self) -> list[Capture]: ...
 
@@ -212,6 +216,17 @@ class ReadStore(Protocol):
         append-only spine (e.g. the seeded in-memory store). When set, it states
         the spine state the served set describes (P25.10, SIG-API-005/006): a
         cached answer always says which spine state it answers for.
+        """
+        ...
+
+    def spine_watermark(self) -> str | None:
+        """The append-only spine watermark this store answers from (P34.25).
+
+        The ``live-spine`` basis label pins every response to this watermark
+        — a cheap O(#facets) probe, never the annotation compute. ``None``
+        when the store does not derive from an append-only spine (the
+        seeded in-memory store), disclosed as a missing watermark rather
+        than a fabricated one.
         """
         ...
 
@@ -306,8 +321,9 @@ class InMemoryStore:
     def rights_for(self, source_ids: tuple[str, ...]) -> list[RightsRecord]:
         return [self._rights[s] for s in source_ids if s in self._rights]
 
-    def coverage_for(self, scope: str) -> list[CoverageRecord]:
-        return list(self._coverage.get(scope, []))
+    def coverage_for(self, scope: str) -> list[CoverageRecord] | None:
+        records = self._coverage.get(scope)
+        return None if records is None else list(records)
 
     def captures(self) -> list[Capture]:
         return list(self._snapshot_captures)
@@ -350,6 +366,10 @@ class InMemoryStore:
 
     def annotation_watermark(self) -> str | None:
         # Seeded records, not a spine-derived set: there is no watermark to disclose.
+        return None
+
+    def spine_watermark(self) -> str | None:
+        # Seeded records, not a spine-derived store: no watermark exists.
         return None
 
     def warmup(self) -> None:

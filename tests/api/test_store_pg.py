@@ -54,6 +54,9 @@ def seeded(pg_dsn: str) -> dict[str, Any]:
     sink = PgClaimSink.from_dsn(
         pg_dsn, connector_name="okc", connector_version="1.0.0", code_commit="p19.4"
     )
+    # The seed_fixture qualifier id must be registered before the claim carries
+    # it (the unknown-qualifier quarantine keeps its teeth — seed.py does this).
+    sink.register_vocabulary([("evidence_origin", "string")])
     sink.assert_claims(
         [
             {
@@ -62,9 +65,12 @@ def seeded(pg_dsn: str) -> dict[str, Any]:
                 "predicate_id": _PREDICATE,
                 "value": 299,
                 "raw_value": "299",
-                "source_id": "deflock",
+                # P34.25: non-fixture source ids — the hand-seeded fixture ids
+                # (deflock/okc_council_statement/…) are excluded from live API
+                # answers, so this wiring test seeds live-source stand-ins.
+                "source_id": "okc_community_map",
                 "license": "CC-BY-4.0",
-                "source_attribution": "DeFlock",
+                "source_attribution": "community map",
                 "evidence_genre": "news_article",
                 "observed_at": "2026-08-20",
                 "claim_id": "c1",
@@ -76,12 +82,30 @@ def seeded(pg_dsn: str) -> dict[str, Any]:
                 "predicate_id": _PREDICATE,
                 "value": 190,
                 "raw_value": "190",
-                "source_id": "okc_council_statement",
+                "source_id": "okc_council_minutes",
                 "license": "CC-BY-4.0",
-                "source_attribution": "the OKCPD chief",
+                "source_attribution": "the council record",
                 "evidence_genre": "news_article",
                 "observed_at": "2026-08-18",
                 "claim_id": "c2",
+                "sys_period": "[x,)",
+            },
+            {
+                "record_kind": "claim",
+                "subject_id": _SUBJECT_IDENT,
+                "predicate_id": _PREDICATE,
+                "value": 777,
+                "raw_value": "777",
+                # J4 NEW-6/P34.25: a hand-seeded fixture source id + the
+                # evidence_origin=seed_fixture stamp — the exact shape ops.seed
+                # writes; it must appear in NO live answer.
+                "source_id": "deflock",
+                "license": "CC0-1.0",
+                "source_attribution": "fixture",
+                "evidence_genre": "news_article",
+                "observed_at": "2026-08-19",
+                "claim_id": "fx1",
+                "qualifiers": [{"qualifier_id": "evidence_origin", "value": "seed_fixture"}],
                 "sys_period": "[x,)",
             },
         ]
@@ -119,6 +143,19 @@ def seeded(pg_dsn: str) -> dict[str, Any]:
             " RETURNING claim_id",
             (entity_id, _PREDICATE, extraction_id, run_id, rights_id),
         )
+        # The fixture claim's handles, for the exclusion test.
+        fx = conn.execute(
+            "SELECT c.claim_id, ce.capture_id, ec.artifact_id FROM claim c"
+            "  JOIN claim_evidence ce ON ce.claim_id = c.claim_id"
+            "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id"
+            "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id"
+            " WHERE ea.source_id = 'deflock'"
+        ).fetchone()
+        handles["fixture"] = {
+            "claim_id": str(fx[0]),
+            "capture_id": str(fx[1]),
+            "artifact_id": str(fx[2]),
+        }
         # A sealed (tier-2) claim that the publication boundary must NOT publish.
         conn.execute(
             "INSERT INTO claim"
@@ -151,7 +188,10 @@ def test_all_v1_routes_and_id_return_200_over_pg(client: Any, seeded: dict[str, 
         "claim": f"/v1/claim/{seeded['claim_id']}",
         "evidence": f"/v1/evidence/{seeded['artifact_id']}/{seeded['capture_id']}",
         "search": "/v1/search?q=okc",
-        "dossier": "/v1/dossier/jurisdiction:okc",
+        # P34.25: a dossier scope is the held entity scope — an arbitrary
+        # jurisdiction label the store does not hold answers 404, never the
+        # old 25-subject sample.
+        "dossier": f"/v1/dossier/{_SUBJECT_IDENT}",
         "coverage": f"/v1/coverage/{ent}",
         "contradiction": "/v1/contradiction",
         "task": "/v1/task",
@@ -203,6 +243,39 @@ def test_as_of_belief_returns_historical_value(seeded: dict[str, Any]) -> None:
     assert {299, 190} <= now_values, f"a now-belief read must see the current claims: {now_values}"
     assert 999 not in now_values, "the sealed (tier-2) claim must never be published (§0.7)"
     store.close()
+
+
+def test_seed_fixture_claims_never_appear_in_live_answers(
+    seeded: dict[str, Any], client: Any
+) -> None:
+    """J4 NEW-6 / P34.25: the OKC fixture id ``deflock`` and the
+    ``evidence_origin=seed_fixture`` claim stamp are excluded at the store
+    seam — no route may serve them."""
+    from api.store_pg import PgReadStore
+
+    ent = seeded["entity_id"]
+    fx = seeded["fixture"]
+    store = PgReadStore(seeded["dsn"])
+    try:
+        # The claim itself is not served — value 777 reaches no read.
+        now_values = {
+            c.value for c in store.claims_for(ent, _PREDICATE, as_of_belief=datetime.now(tz=UTC))
+        }
+        assert 777 not in now_values and {299, 190} <= now_values
+        # The single-claim route 404s on the fixture claim.
+        assert store.stored_claim(fx["claim_id"]) is None
+        assert client.get(f"/v1/claim/{fx['claim_id']}").status_code == 404
+        # The fixture-source artifact's capture 404s.
+        assert store.capture(fx["artifact_id"], fx["capture_id"]) is None
+        assert client.get(f"/v1/evidence/{fx['artifact_id']}/{fx['capture_id']}").status_code == 404
+        # No source list cites the fixture id — entity dossier surfaces.
+        entity = store.entity("deployment", ent)
+        assert entity is not None
+        assert "deflock" not in entity.source_ids
+        dossier = store.dossier(_SUBJECT_IDENT)
+        assert dossier is not None and "deflock" not in dossier.source_ids
+    finally:
+        store.close()
 
 
 def test_watermark_keyed_serve_path_discloses_and_invalidates(

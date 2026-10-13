@@ -11,6 +11,7 @@ prints help, keeping the skeleton convention every stage shares.
 from __future__ import annotations
 
 import argparse
+import os
 
 from . import __version__
 
@@ -152,7 +153,11 @@ def _serve(
         from .release_search import ReleaseSearchStore
 
         release_search = ReleaseSearchStore(release_registry)
-    uvicorn.run(create_app(store, release_search), host=host, port=port)
+    # P34.25 (A-20=a): the promoted release this service is pinned to, where one
+    # exists — the live-spine basis label discloses it on every response; unset
+    # answers "not pinned".
+    release_id = os.environ.get("SIG_RELEASE_ID") or None
+    uvicorn.run(create_app(store, release_search, release_id=release_id), host=host, port=port)
     return 0
 
 

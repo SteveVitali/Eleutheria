@@ -42,6 +42,20 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **API honesty: scope, completeness, bytes, terms, basis, grants** (P34.25,
+  S0 RI-02, SIG-SEC-011; extends SIG-REL-010) — `/v1/dossier/{scope}` and
+  `/v1/coverage/{scope}` now answer a typed 404 `scope_not_available` for a
+  scope the store does not hold (the arbitrary 25-subject dossier fallback is
+  removed); coverage never reports `complete: true` with zero evaluated
+  records; `bytes_available` is claimed only for public-tier captures recorded
+  byte-bearing (`capture_classification = 'actual'`), with
+  `bytes_unavailable_reason` disclosing why otherwise; the hand-seeded OKC
+  fixture sources never appear in live PostgreSQL answers; `/terms` no longer
+  names a nonexistent editorial board or counsel; every response carries the
+  `X-SIG-Basis: live-spine` header and a `basis` body field; and the
+  `sig_read_public` role is narrowed by the `public_read_allowlist` migration
+  to exactly the published read surface.
+
 ### Security
 
 ## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`)

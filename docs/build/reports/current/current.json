@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "72e4bb50669c530d639421b528b0cdc8ef04b982",
-  "manifest_inputs": 954,
+  "input_commit": "7129ba8af9ecf43962da5d138aebca95a6d8f0f3",
+  "manifest_inputs": 955,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.25",
-    "lastCompleted": "P34.24a",
+    "nextTicket": "P34.24b",
+    "lastCompleted": "P34.25",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.24a-sqitch-hygiene-and-round-trip-ci",
+    "chainTip": "r11/P34.25-api-honesty-code",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -26,14 +26,14 @@
     "updatedAt": "2026-10-04T06:04:21Z"
   },
   "counts": {
-    "obligations": 151,
-    "owed": 83,
-    "open": 80,
+    "obligations": 152,
+    "owed": 84,
+    "open": 81,
     "partial": 3,
     "terminal": 68,
-    "events": 625,
+    "events": 626,
     "transitions": 20,
-    "coverage_assessments": 194,
+    "coverage_assessments": 195,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -7192,6 +7192,50 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.25-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.25-1:e0",
+      "kind": "V",
+      "owner": "P34.46 (the API roll lands the code + grants)",
+      "landing": "the P34.46 deploy completing on the hosted environment, then the live read-back of the honesty surface (typed 404s, honest complete, bytes availability, terms, basis label, hosted sig_read_public allow-list probes)",
+      "backlog_home": "BL-084",
+      "item": "The live API-honesty verification — once the P34.46 API roll has deployed the P34.25 code + `public_read_allowlist` migration to the hosted spine: probe the public `/v1/dossier/{unknown}` + `/v1/coverage/{unknown}` for the typed 404 `scope_not_available`, `/v1/coverage` on a held zero-record scope for `complete:false`, a public capture's `bytes_available`/`bytes_unavailable_reason`, `/terms` for the absence of board/counsel, `X-SIG-Basis: live-spine` + the `basis` body field on a sampled route set, and — as `sig_read_public` on the hosted database — the exact allow-list grant set (`has_table_privilege` probes + one denied-table read)",
+      "unblocked_by": "owner: P34.46 (the API roll lands the code + grants); trigger: the P34.46 deploy completing on the hosted environment",
+      "verify": "a read-back on the live service: the 404/complete/bytes/terms/basis assertions above over real responses (never fixture), plus a hosted `SET ROLE sig_read_public` read of the allow-list probes mirroring `tests/db/test_public_read_allowlist.py`",
+      "proxy": "the behaviour is pinned pre-deploy: `tests/api/test_api_honesty.py` (scope 404, honest complete, basis label on every response), `tests/db/test_public_read_allowlist.py` (the exact grant set + denial probes), `tests/api/test_store_pg.py` (fixture-source exclusion on the PG store) all ran green in CI (#226) — an early slip only delays the roll, never serves the old dishonest answers",
+      "line": 1107,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.25-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.25-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.25",
+          "owner": "P34.46 (the API roll lands the code + grants)",
+          "landing": "the P34.46 deploy completing on the hosted environment, then the live read-back of the honesty surface (typed 404s, honest complete, bytes availability, terms, basis label, hosted sig_read_public allow-list probes)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-04",
+          "recorded_at": "2026-10-04",
+          "source_commit": "b9c4a6cdfbd9a0cd8c0cf3b8cd417e052acbde2b",
+          "reason": "migration anchor appended by P34.25 (row 229) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1107,
+            "row_sha256": "d45b7db0afb5716f893c4d9be8d2b59fa098c9bb9335cbca4bbb637546e888c0",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "coverage": {
@@ -11682,8 +11726,8 @@
           "label": "historical/csv"
         },
         "SIG-SEC-011": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.25-1)",
+          "evidence": "api/src/api/store_pg.py;api/src/api/store.py;api/src/api/routes.py;api/src/api/app.py;api/src/api/basis_middleware.py;api/src/api/envelope.py;api/src/api/models.py;api/src/api/terms.py;evidence/src/evidence/tiers.py;db/sqitch.plan;db/deploy/public_read_allowlist.sql;db/revert/public_read_allowlist.sql;db/verify/public_read_allowlist.sql;docs/build/runs/P34.25.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13595,6 +13639,16 @@
         "assessment_id": "SIG-SEC-011:r11-1"
       },
       {
+        "requirement_id": "SIG-SEC-011",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-P34.25-1)",
+        "assessed_at": "2026-10-04",
+        "code_revision": "r11/P34.25-api-honesty-code @ b9c4a6cdfbd9a0cd8c0cf3b8cd417e052acbde2b",
+        "limitations": "engineered + fixture-verified, not hosted: the public API no longer answers questions it cannot answer — typed 404 scope_not_available for unheld dossier/coverage scopes (the LIMIT-25 fallback removed), coverage never complete with 0 evaluated, bytes_available only for public-tier captures recorded byte-bearing (capture_classification='actual') with bytes_unavailable_reason, the four OKC fixture source ids and evidence_origin=seed_fixture claims excluded at every PG read path (fixture capture -> not-found), /terms names no board or counsel, and X-SIG-Basis: live-spine + a basis body field on every response including errors. sig_read_public is narrowed by the new public_read_allowlist sqitch change to exactly the published read surface (15 relations + column-limited publication_disposition), proven by the 49-test DB allow-list suite (exact aclexplode grant-set equality, SET-ROLE reads, denial probes on 32 internal relations, zero sequence privileges, sig_materialize preservation set); whole-plan sqitch round-trip green after the ADR-196 @r11-read-allowlist rework of the two verifies the narrowing ends. NOT yet met at the hosted domain: the migration + code deploy with P34.46's API roll (~2026-10-21); the live read-back is D-P34.25-1. Release parity and real jurisdiction dossier scope remain P35.57's; this row ships no production mutation",
+        "supersedes": null,
+        "assessment_id": "SIG-SEC-011:r11-2"
+      },
+      {
         "requirement_id": "SIG-STORE-004",
         "domain": "implementation",
         "verdict": "PARTIAL",
@@ -14226,6 +14280,11 @@
           "requirement": "SIG-REL-014",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-SEC-011",
+          "verdict": "MET-ENGINEERED(D-P34.25-1)",
+          "assessed_at": "2026-10-04"
         },
         {
           "requirement": "SIG-STORE-004",
@@ -15207,10 +15266,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "9cd66a5f10a3c54c1918ec4b96d52a2e2d93992cb6ec23dfa5af71eca0d25ae8",
+  "manifest_sha256": "c086c7e375f8f2ab659c15350b47bc7e1ff8e48be884a3e591029436a8394890",
   "current_md": {
     "lines": 74,
-    "bytes": 13121,
+    "bytes": 13157,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
