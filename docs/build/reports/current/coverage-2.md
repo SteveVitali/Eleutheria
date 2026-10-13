@@ -19,6 +19,7 @@
 | SIG-OPS-011 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-012 | hosted | MISSING | 2026-10-01 | — |
 | SIG-PUB-002 | public | PARTIAL | 2026-10-03 | — |
+| SIG-PUB-002 | public | PARTIAL | 2026-10-03 | SIG-PUB-002:r11-1 |
 | SIG-PUB-007 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
 | SIG-PUB-008 | public | WAIVED(ADR-163) | 2026-10-01 | — |
 | SIG-PUB-012 | composed-db | PARTIAL | 2026-10-01 | — |

@@ -10,11 +10,17 @@
 // export's own compartment rows (getSourceLicenceTable), so it can never drift
 // from what the published downloads carry. Static, zero-JS.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getSourceLicenceTable, getTermsDisclosure } from "../lib/data";
+import {
+  getAttributionCorrections,
+  getSourceLicenceTable,
+  getTermsDisclosure,
+} from "../lib/data";
 import { fmtInt } from "../lib/format";
 
 const sources = getSourceLicenceTable();
 const disclosure = getTermsDisclosure();
+const corrections = getAttributionCorrections();
+const correctedOn = corrections?.corrected_on ?? null;
 const correctedCount = sources.filter((s) => s.creditUnderCorrection).length;
 const expressSources = new Set(disclosure.sources.map((s) => s.source_id));
 ---
@@ -64,6 +70,16 @@ const expressSources = new Set(disclosure.sources.map((s) => s.source_id));
       Some credits are wrong or missing where the licence requires one; the
       correction notice above marks them, and the next data release replaces
       them.
+    </p>
+  )}
+  {corrections !== null && corrections.corrections.length > 0 && (
+    // P34.21b / E2-12: the dated correction note — rendered only when THIS
+    // export's effective rights resolve through recorded ADR-194 correction
+    // decisions (the artifact carries each corrected source's decided_at).
+    // `{correctedOn}` is injected DATA, not drafted copy.
+    <p data-copy="SL-20" data-testid="attribution-correction-note">
+      Corrected {correctedOn}: earlier downloads credited some rows to the
+      wrong source.
     </p>
   )}
 

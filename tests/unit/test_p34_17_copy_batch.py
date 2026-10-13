@@ -74,19 +74,24 @@ def _norm(text: str) -> str:
 
 
 def _batch_rows() -> dict[tuple[str, str], dict[str, str]]:
-    """(page, id) → row. Ids are page-scoped (`title` repeats)."""
+    """(page, id) → row. Ids are page-scoped (`title` repeats).
+
+    Every committed ``batch-*.md`` satisfies a binding — the P34.20 gate scans
+    them all, and later waves' rows (EW-*, SL-20, TB-01) live in batch-02.
+    """
     rows: dict[tuple[str, str], dict[str, str]] = {}
-    for line in BATCH_PATH.read_text(encoding="utf-8").splitlines():
-        if not line.startswith("|"):
-            continue
-        cells = [c.strip() for c in line.split("|")]
-        cells = cells[1:-1] if cells and cells[0] == "" else cells
-        if len(cells) != 5:
-            continue
-        rid, page, text, sha, status = cells
-        if rid in ("id", "—") or set(rid) <= {"-", ":"}:
-            continue
-        rows[(page, rid)] = {"page": page, "text": text, "sha256": sha, "status": status}
+    for batch in sorted(BATCH_PATH.parent.glob("batch-*.md")):
+        for line in batch.read_text(encoding="utf-8").splitlines():
+            if not line.startswith("|"):
+                continue
+            cells = [c.strip() for c in line.split("|")]
+            cells = cells[1:-1] if cells and cells[0] == "" else cells
+            if len(cells) != 5:
+                continue
+            rid, page, text, sha, status = cells
+            if rid in ("id", "—") or set(rid) <= {"-", ":"}:
+                continue
+            rows[(page, rid)] = {"page": page, "text": text, "sha256": sha, "status": status}
     return rows
 
 

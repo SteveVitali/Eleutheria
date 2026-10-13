@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "ba33476ffd636a745296e52f210d08c5a0d45aff",
-  "manifest_inputs": 947,
+  "input_commit": "270512b7d41668aaf5a0eba26d05ea475f9519fe",
+  "manifest_inputs": 948,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.21b",
-    "lastCompleted": "P34.21a",
+    "nextTicket": "P34.22a",
+    "lastCompleted": "P34.21b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,23 +17,23 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.21a-attribution-gate-sink-rights-and-backfill",
+    "chainTip": "r11/P34.21b-attribution-re-export-and-republish-2",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-03T19:27:03Z"
+    "updatedAt": "2026-10-03T21:04:16Z"
   },
   "counts": {
-    "obligations": 149,
-    "owed": 83,
-    "open": 80,
+    "obligations": 151,
+    "owed": 85,
+    "open": 82,
     "partial": 3,
     "terminal": 66,
-    "events": 621,
+    "events": 623,
     "transitions": 18,
-    "coverage_assessments": 192,
+    "coverage_assessments": 193,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -7054,6 +7054,94 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.21b-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.21b-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner or the operator",
+      "landing": "the L1 gate leg (verbatim A-0.2 go in GATE DECISIONS + live:P34.3 proven on the saved describe + sha256-verified pre-state captured + date -u outside 03:00-10:00Z)",
+      "backlog_home": "BL-084",
+      "item": "The L1 gate leg — `ops/gcp/public-gate.sh --apply apply --prestate <dir>`: the saved-prestate capture (`--apply prestate` → describe + `get-iam-policy` + the committed read-only object listing), the derived fetch-target exclusions (`prefixes`/`list`, each `# reason=` recorded), the printed IAM diff (`plan`), then the apply: one `set-iam-policy` replacing the unconditional anonymous binding with the `p34-21b-live-prefixes` conditioned `roles/storage.legacyObjectReader` keep + one tombstone `gcloud storage cp` (SIG-OPS-004 — never a delete), then the anonymous post-checks (excluded 200 / non-excluded 403 or 404 / tombstone 200)",
+      "unblocked_by": "owner: the OM-19 leg-runner or the operator; trigger: ALL of — the verbatim A-0.2 go in GATE DECISIONS exported as `SIG_PUBLIC_GATE_GO` · `live:P34.3` proven on the saved describe · the sha256-verified pre-state captured (`--apply prestate` + `list` output committed to the leg record) · `date -u` outside 03:00–10:00Z",
+      "verify": "re-run `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L1 only); verify = `--verify` green: no unconditional anonymous object binding, every exclusion conditioned-in, the anonymous probes 200/403-404 as designed — plus the leg record's own evidence lines",
+      "proxy": "the script is dry-run by default and refuses `--apply` without the go, the saved+sha256-verified pre-state, `live:P34.3` on, or inside the window band; it carries no object-deletion path (pinned by `tests/ops/test_public_gate_iac.py`); rollback = `set-iam-policy` with the saved policy JSON, printed beside every plan",
+      "line": 1105,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.21b-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.21b-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.21b",
+          "owner": "the OM-19 leg-runner or the operator",
+          "landing": "the L1 gate leg (verbatim A-0.2 go in GATE DECISIONS + live:P34.3 proven on the saved describe + sha256-verified pre-state captured + date -u outside 03:00-10:00Z)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-03",
+          "recorded_at": "2026-10-03",
+          "source_commit": "fd24f9cd0d3d3e6a8605e5992f88261618359c9f",
+          "reason": "migration anchor appended by P34.21b (row 224) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1105,
+            "row_sha256": "59df6009757650a39b384dde57fb92f749861ce1711546b67f379ffa4053bb1e",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.21b-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.21b-2:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner or the operator",
+      "landing": "the L2 re-export + republish #2 leg (verbatim republish go in GATE DECISIONS + D-P34.21a-1 and D-P34.18-1 DONE + batch-02 rows confirmed + a sig.probe-run/1 <= 24 h + date -u outside 03:00-10:00Z)",
+      "backlog_home": "BL-084",
+      "item": "The L2 re-export + republish #2 — `SIG_EXPORT_AS_OF=<new> ops/gcp/export.sh --apply run` writing a NEW `exports/national/<as-of>/` prefix (prior prefixes never deleted) → `fetch` → `sig-ops publish-web --export-dir exports/out/national --apply` (the one repository-owned publish path: export-mode build, partition + clean proof, copy + attribution gates, the sync that never deletes release trees, post-sync absence probes)",
+      "unblocked_by": "owner: the OM-19 leg-runner or the operator; trigger: ALL of — the verbatim republish go in GATE DECISIONS · `D-P34.21a-1` + `D-P34.18-1` DONE · batch-02 rows for the shipped sentences `confirmed` · a `probe-run/1` ≤ 24 h · `date -u` outside 03:00–10:00Z",
+      "verify": "re-run `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L2 only); verify = the publish's own gates + probe sweep: export-mode build carries `web/attribution_corrections.json` + the SL-20 note on `/sources/`, per-row attribution holder + `terms_url` green in the attribution sample, denied routes `http-absent` on every origin, the corrected export's `LICENCES.json`/manifest served",
+      "proxy": "the publish path fails closed without any prerequisite (copy gate, attribution gate, allow-list, absence probes, release-namespace protection are all in the command); `export.sh run` writes a new timestamped prefix and carries no delete path (pinned by `tests/ops/test_p34_21b_export_legs.py`) — a premature run publishes nothing and deletes nothing",
+      "line": 1106,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.21b-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.21b-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.21b",
+          "owner": "the OM-19 leg-runner or the operator",
+          "landing": "the L2 re-export + republish #2 leg (verbatim republish go in GATE DECISIONS + D-P34.21a-1 and D-P34.18-1 DONE + batch-02 rows confirmed + a sig.probe-run/1 <= 24 h + date -u outside 03:00-10:00Z)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-03",
+          "recorded_at": "2026-10-03",
+          "source_commit": "fd24f9cd0d3d3e6a8605e5992f88261618359c9f",
+          "reason": "migration anchor appended by P34.21b (row 224) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1106,
+            "row_sha256": "0c3e2a25705a76c2b7c2b9edf68da07b276dd6e012800051817a96af5f05dc9e",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "coverage": {
@@ -9757,7 +9845,7 @@
         },
         "SIG-PUB-002": {
           "verdict": "PARTIAL",
-          "evidence": "policy/src/policy/publication.py:8;policy/src/policy/source_aliases.py;connectors/src/connectors/personal_id_rekey.py;exports/src/exports/shaping.py;docs/build/runs/P34.18.md",
+          "evidence": "policy/src/policy/publication.py:8;policy/src/policy/source_aliases.py;connectors/src/connectors/personal_id_rekey.py;exports/src/exports/shaping.py;docs/build/runs/P34.18.md;ops/src/ops/republish_probe.py;docs/build/runs/P34.21b.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13097,6 +13185,16 @@
         "assessment_id": "SIG-PUB-002:r11-1"
       },
       {
+        "requirement_id": "SIG-PUB-002",
+        "domain": "public",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-03",
+        "code_revision": "r11/P34.21b-attribution-re-export-and-republish-2 @ 6fdb91eefdaeff1c8408830619cec5cc2ff4fbb0",
+        "limitations": "the republish probe is engineered and verified at implementation domain: sig.probe-run/1 carries the absence leg, the count-only handle crawl over repo/export/tiles/build trees plus a downloaded sig-public listing (matched handles never printed), the ranged tile sample and the attribution sample, with honest 'skipped' legs and a <=24 h freshness requirement. Not yet met at the public domain: the re-export + republish #2 that serves the re-keyed pages is the queued leg D-P34.21b-2 (verbatim republish go, D-P34.21a-1/D-P34.18-1 DONE, batch-02 confirmed, probe <=24 h, window); P34.47's live crawl must still prove no handle surfaces on the served site; the hosted rename D-P34.18-1 also remains open",
+        "supersedes": "SIG-PUB-002:r11-1",
+        "assessment_id": "SIG-PUB-002:r11-2"
+      },
+      {
         "requirement_id": "SIG-PUB-007",
         "domain": "public",
         "verdict": "AT-RISK-INTEGRATION",
@@ -14561,6 +14659,11 @@
           "assessed_at": "2026-10-03"
         },
         {
+          "requirement": "SIG-PUB-002",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-03"
+        },
+        {
           "requirement": "SIG-PUB-007",
           "verdict": "AT-RISK-INTEGRATION",
           "assessed_at": "2026-10-01"
@@ -15039,10 +15142,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "71895d1dab6221903408d1b673e389ba354768e8b16f58260b27476868dbb4d6",
+  "manifest_sha256": "ab7f062e3d32004c16be38966e613c70f9e0d102e0a145efcf7f73f8a24f8272",
   "current_md": {
     "lines": 74,
-    "bytes": 13058,
+    "bytes": 13097,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

@@ -40,6 +40,7 @@ SHELL_SCRIPTS = [
     "restore-drill.sh",
     "restore-point.sh",
     "logical-export.sh",
+    "public-gate.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -56,6 +57,7 @@ EXECUTABLE_SCRIPTS = [
     "restore-drill.sh",
     "restore-point.sh",
     "logical-export.sh",
+    "public-gate.sh",
 ]
 
 

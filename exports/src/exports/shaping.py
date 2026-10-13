@@ -199,6 +199,12 @@ class ShapingClaim:
     #: subject or referenced entity is withheld, is not publishable (and is
     #: honestly counted in ``claims_excluded_not_publishable``).
     publication_permitted: bool = True
+    #: P34.21b (E2-12 / ADR-194): when the effective rights resolve through a
+    #: recorded ``rights_decision``, its ``decided_at`` + ``basis`` — the
+    #: export names the attribution corrections it carries from the basis
+    #: marker. ``None`` when the recorded rights stand (no decision).
+    effective_decision_decided_at: datetime | None = None
+    effective_decision_basis: str | None = None
 
     @property
     def publishable(self) -> bool:
@@ -621,7 +627,11 @@ QUERIES: dict[str, str] = {
         # P32.5/ADR-124: the shared eligibility selector — one fragment, every
         # consumer (API + export + analytics + tiles all decide identically).
         # ``{PUB_GATE}`` expands to ``true`` on a pre-P32.5 spine (no registry).
-        "       {PUB_GATE} AS publication_permitted"
+        "       {PUB_GATE} AS publication_permitted,"
+        # P34.21b (E2-12): the effective decision's stamp + basis (trailing
+        # columns, NULL when the recorded rights stand) — the export names the
+        # ADR-194 attribution corrections it carries from these.
+        "       ld.decided_at, ld.basis"
         "  FROM claim c"
         "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
         "  LEFT JOIN latest_decision ld"
@@ -781,6 +791,9 @@ def _queries_for(has_decisions: bool, *, has_dispositions: bool = True) -> dict[
                 "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id",
                 "",
             )
+            # No rights_decision table → no decision columns to project: the
+            # trailing pair collapses to NULLs (the parse defaults apply).
+            .replace("ld.decided_at, ld.basis", "NULL, NULL")
         )
     return out
 
@@ -1416,6 +1429,10 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
         # recorded registry the pre-change posture applies (no dispositions can
         # exist, so nothing is withheld by them).
         publication_permitted = r[20] if len(r) > 20 else True
+        # P34.21b: the decision stamp + basis are trailing columns 22–23 —
+        # absent on a pre-P27.2 row set (they default to "no decision").
+        decision_decided_at = r[21] if len(r) > 21 else None
+        decision_basis = r[22] if len(r) > 22 else None
         observed_date = (
             observed_at.date()
             if isinstance(observed_at, datetime)
@@ -1472,6 +1489,10 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
                 observed_instant=observed_instant,
                 observed_basis=observed_basis,
                 publication_permitted=bool(publication_permitted),
+                effective_decision_decided_at=(
+                    decision_decided_at if isinstance(decision_decided_at, datetime) else None
+                ),
+                effective_decision_basis=(None if decision_basis is None else str(decision_basis)),
             )
         )
     return claims

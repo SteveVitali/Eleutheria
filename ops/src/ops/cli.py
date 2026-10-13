@@ -363,6 +363,76 @@ def build_parser() -> argparse.ArgumentParser:
         "dry-run: assertions + release record + the printed sync plan only.",
     )
 
+    rprobe = sub.add_parser(
+        "republish-probe",
+        help="P34.21b: the republish-#2 pre-flight probe — emits a "
+        "sig.probe-run/1 record (absence probes over the denied routes, the "
+        "count-only handle crawl over the trees the republish will serve + a "
+        "downloaded sig-public listing, a tile sample, and the attribution "
+        "sample proving required rows carry holder + terms_url). The leg "
+        "requires the record's generated_at to be no older than 24 hours; "
+        "legs it cannot run are 'skipped', never fabricated. Read-only.",
+    )
+    rprobe.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path — its http-absent targets are the absence "
+        "leg (default: the packaged file / SIG_OPS_CADENCE).",
+    )
+    rprobe.add_argument(
+        "--export-dir",
+        action="append",
+        default=[],
+        help="an export tree the republish will serve — handle-crawled (repeatable).",
+    )
+    rprobe.add_argument(
+        "--tiles-dir",
+        action="append",
+        default=[],
+        help="a tiles tree to handle-crawl (repeatable).",
+    )
+    rprobe.add_argument(
+        "--build-dir",
+        action="append",
+        default=[],
+        help="a built site tree to handle-crawl (repeatable).",
+    )
+    rprobe.add_argument(
+        "--bucket-listing",
+        default=None,
+        help="a downloaded `gcloud storage ls` capture of sig-public — counted "
+        "objects + count-only handle scan.",
+    )
+    rprobe.add_argument(
+        "--tile-url",
+        action="append",
+        default=[],
+        help="a tile URL to ranged-GET (repeatable; the tile sample leg).",
+    )
+    rprobe.add_argument(
+        "--public-dir",
+        default=None,
+        help="the partitioned public export root — the attribution sample scans "
+        "its *.jsonl rows for holder + terms_url.",
+    )
+    rprobe.add_argument(
+        "--handle-list",
+        default=None,
+        help="the C3 personal-handle list (gitignored; absent → the crawl leg "
+        "reports 'skipped', never a fake pass).",
+    )
+    rprobe.add_argument(
+        "--dist",
+        default=None,
+        help="the built site tree — its .sig-release.json supplies the "
+        "release/export identifiers in the record.",
+    )
+    rprobe.add_argument(
+        "--out",
+        default=None,
+        help="write the sig.probe-run/1 record here (default: stdout).",
+    )
+
     drill = sub.add_parser(
         "backup-drill",
         help="dump the compose PG and restore into a fresh DB, asserting the graph reproduces",
@@ -1787,6 +1857,42 @@ def _cmd_publish_web(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_republish_probe(args: argparse.Namespace) -> int:
+    """P34.21b: emit the sig.probe-run/1 pre-republish probe record."""
+    from .republish_probe import (
+        DEFAULT_HANDLE_LIST,
+        read_release_record,
+        run_republish_probe,
+    )
+
+    dist = Path(args.dist).resolve() if args.dist else None
+    handle_list = Path(args.handle_list).resolve() if args.handle_list else DEFAULT_HANDLE_LIST
+    record = run_republish_probe(
+        cadence_path=args.cadence,
+        handle_list=handle_list,
+        export_dirs=[Path(d).resolve() for d in args.export_dir],
+        tiles_dirs=[Path(d).resolve() for d in args.tiles_dir],
+        build_dirs=[Path(d).resolve() for d in args.build_dir],
+        bucket_listing=Path(args.bucket_listing).resolve() if args.bucket_listing else None,
+        tile_urls=list(args.tile_url),
+        public_dir=Path(args.public_dir).resolve() if args.public_dir else None,
+        release=read_release_record(dist),
+    )
+    text = json.dumps(record, indent=2, sort_keys=True)
+    if args.out:
+        Path(args.out).write_text(text + "\n", encoding="utf-8")
+        print(f"sig-ops republish-probe: record -> {args.out}")
+    else:
+        print(text)
+    print(
+        f"sig-ops republish-probe: overall={record['overall']} "
+        f"generated_at={record['generated_at']} — a republish leg needs this "
+        "record no older than 24h (P34.21b L2).",
+        file=sys.stderr,
+    )
+    return 0 if record["overall"] != "fail" else 1
+
+
 def _cmd_backup_drill(args: argparse.Namespace) -> int:
     from .backup import DrillError, restore_drill
 
@@ -3064,6 +3170,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_deploy(args)
     if args.command == "publish-web":
         return _cmd_publish_web(args)
+    if args.command == "republish-probe":
+        return _cmd_republish_probe(args)
     if args.command == "backup-drill":
         return _cmd_backup_drill(args)
     if args.command == "cloudsql-drill":

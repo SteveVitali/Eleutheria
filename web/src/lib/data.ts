@@ -1010,6 +1010,58 @@ export function getSourceLicenceTable(): SourceLicenceRow[] {
   return sourceLicenceTable(exportDir());
 }
 
+// --------------------------------------------------------------------------- //
+// The dated attribution-correction record (P34.21b / E2-12, ADR-194): when the
+// export's effective rights resolve through append-only attribution-correction
+// decisions, `<exportDir>/web/attribution_corrections.json` names each corrected
+// source with the decision's `decided_at`. `/sources/` renders the dated note —
+// "earlier downloads credited some rows to the wrong source" — only when this
+// artifact exists; a pre-backfill export emits none and the page shows nothing
+// (honest absence, never a fabricated correction).
+// --------------------------------------------------------------------------- //
+
+export interface AttributionCorrection {
+  /** The corrected source's public (re-keyed) identifier. */
+  source_id: string;
+  /** The correction decision's recorded decided_at (ISO-8601). */
+  decided_at: string;
+}
+
+export interface AttributionCorrections {
+  schema: "sig.attribution-corrections/1";
+  corrections: AttributionCorrection[];
+  /**
+   * The latest correction `decided_at` (ISO date rendered by the note) —
+   * `null` for an empty list.
+   */
+  corrected_on: string | null;
+}
+
+/** `null` = the export carries no corrections (or fixtures mode) — no note. */
+export function getAttributionCorrections(): AttributionCorrections | null {
+  if (dataSource() === "fixtures") return null;
+  const path = `${exportDir()}/web/attribution_corrections.json`;
+  if (!existsSync(path)) return null;
+  const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
+  const doc = parsed as {
+    schema?: unknown;
+    corrections?: Array<{ source_id?: unknown; decided_at?: unknown }>;
+  };
+  if (doc?.schema !== "sig.attribution-corrections/1" || !Array.isArray(doc.corrections)) {
+    throw new Error(`${path}: not a valid sig.attribution-corrections/1 artifact`);
+  }
+  const corrections: AttributionCorrection[] = doc.corrections.map((c) => ({
+    source_id: String(c.source_id),
+    decided_at: String(c.decided_at),
+  }));
+  const corrected_on =
+    corrections
+      .map((c) => c.decided_at.slice(0, 10))
+      .sort()
+      .at(-1) ?? null;
+  return { schema: "sig.attribution-corrections/1", corrections, corrected_on };
+}
+
 // --- Reference / component-demo pages (SIG-UI-037). These render the API-wire-contract
 // exemplars (not spine surfaces); routed through the data layer so the pages import no
 // fixture module directly. Identical in both modes.
