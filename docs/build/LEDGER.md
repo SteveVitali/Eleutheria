@@ -11,11 +11,11 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B — the generated `returnPass:` id list rides the B3 V2 hard bound (fail > 512 B; it grows with the queued-leg set); no history; the PHASE LOG and git carry the history of values. -->
 ```
-projectStatus:   IN_PROGRESS                             # Round 11 running (GATE-B, C10)
+projectStatus:   PAUSED                                 # OM-18 stop-and-ask on P34.42a's production contradiction
 nextTicket:      P35.66                              # row 288 (11B — residential demotion, PUB-004/005/013; depends P35.14b)
 lastCompleted:   P36.15                              # row 287 (redaction pipeline wired end to end, review-gated derivatives; no live leg)
-blockedOn:       (nothing)                          # real blocks only
-pauseRequested:  false                               # set at C10 (GATE-B go)
+blockedOn:       D-P34.42a-1                        # operator declaration decision; leg not consumed
+pauseRequested:  true                                # OM-18 pause — awaiting the operator's call
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
@@ -30,7 +30,7 @@ autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-14T11:02:55Z
+updatedAt:       2026-10-14T11:26:38Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -967,3 +967,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-14 — P36.15 post-closeout record — final-head boundary-confirm + lock deviation: record head `56ef2e12` 5/5 green head-bound (`ci: pass #291@56ef2e1` — python/docs/composed/security/web, run 38540382761; `logs/ci-P36.15-orchestrator.json`) · stack read: #290…#246 pass; main `3871ff6` descends:no merges:11 open-other:1 · **Deviation (recorded, not smoothed):** the chain lock `docs/build/LEDGER.md.drive-lock` taken by this orchestrator session at 04:01:03Z was present at the P34.39a boundary but absent at the P36.15 boundary though never released here; no other Eleutheria orchestrator found (`devin acp` cwds checked) and the P36.15 run ledger records no lock touch — re-taken at 09:13:58Z; nobody removes a lock they did not take · chainTip → r11/P36.15-… · next → P35.66 (288) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-14 — P34.42a post-closeout record — live leg 1 ran on r11/P34.42a-live-1 · PR #292 (base r11/P36.15-redaction-pipeline) · head `dff8225d` 5/5 green head-bound (`ci: pass #292@dff8225` — python/docs/composed/security/web, run 38548802321; `logs/ci-P34.42a-live-1.json`; pre-leg boundary `ci: pass #291@1f043d1` run 38543512067) · the OM-19 IAM leg ran inside its window (10:02–10:09Z): prestate → identities → bindings → `sig-api`/`sig-web` same-image revisions onto `sig-api-rt`/`sig-web-rt` (serving, `/health` 200) → **STOPPED at `sig-alerts`** — the service mounts `sig-alert-webhook-token` (env `SIG_ALERT_WEBHOOK_TOKEN`) and the landed declaration denies `sig-alerts-rt` any secret access — a production read contradicting a record fired the voided-by clause → `invoker` never ran → scripted `rollback` restored the recorded prestate (verified field-for-field; 39/39 routes byte-identical per service) · **Deferrals:** opened `D-P34.42a-1` (operator call: declare `sig-alerts-rt` a consumer of `sig-alert-webhook-token`, then `P34.42a-live-2`); no other row touched · RETURN PASS: the `P34.42a` row stays — leg not consumed; `live:P34.42a` unsatisfied for P34.42b · records under `docs/build/reports/p34.42a-iam/` (operator e-mail redacted; IAM metadata only) · chainTip → r11/P36.15-redaction-pipeline (unchanged — a live-leg branch, not a chain row) · next → P35.66 (288) · layer: live-executed (leg ran; verdict stopped+rolled-back) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-14 — P34.42a post-closeout record + boundary-confirm — record head `13e91050` 5/5 green head-bound (`ci: pass #292@13e9105` — python/docs/composed/security/web, run 38551637090; `logs/ci-P34.42a-live-1-final.json`) · every pushed head verbatim: `dff8225d` green (run 38548802321), `19d15e90` docs-fail (projection STALE — generated before the `updatedAt` refresh → `13e91050` regen fix-forward) · leg verdict stands: stopped + rolled-back, `D-P34.42a-1` OPEN, `live:P34.42a` unsatisfied for P34.42b · PR #292 stays open for operator integration · chainTip → r11/P36.15-redaction-pipeline (unchanged) · next → P35.66 (288) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-14 — P34.42a pause — OM-18 stop-and-ask: a pre-authorised live step met a new fact (`sig-alerts` consumes `sig-alert-webhook-token`; the landed declaration gives `sig-alerts-rt` no secret access) → the leg stopped, voided the row for P34.42a and rolled back byte-identically (39/39 routes) · record head `20ddc5b` 5/5 green head-bound (`ci: pass #292@20ddc5b` — python/docs/composed/security/web, run 38553863159; `logs/ci-P34.42a-live-1-orchestrator.json`) · CURRENT STATE → `projectStatus: PAUSED`, `pauseRequested: true`, `blockedOn: D-P34.42a-1`; the operator's declaration call is required before any `P34.42a-live-2` retry · chainTip → r11/P36.15-redaction-pipeline (unchanged) · next → P35.66 (288; not dispatched while paused) · harness: devin-desktop/swe-2-high/subagent
