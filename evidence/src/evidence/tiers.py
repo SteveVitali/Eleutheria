@@ -20,6 +20,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import StrEnum
 
+from .redaction import REDACTION_MARKER, RedactionDerivative
+
 
 class StorageTier(StrEnum):
     """The three evidence storage tiers (SIG-EVID-009)."""
@@ -68,6 +70,11 @@ class CaptureMetadata:
     #: authorized review sees *why*; the public rep stays the four sealed
     #: fields (SIG-EVID-010) and never carries them.
     seal_rules: tuple[str, ...] = ()
+    #: P36.15 (SIG-PUB-015/016): the redaction derivative once one exists —
+    #: populated by the store's read path (the child row with
+    #: ``parent_capture_id = capture_id``). Every excerpt surface serves the
+    #: derivative, never the parent's raw bytes, where one exists.
+    derivative: RedactionDerivative | None = None
 
 
 def bytes_available(meta: CaptureMetadata) -> bool:
@@ -97,6 +104,26 @@ def bytes_unavailable_reason(meta: CaptureMetadata) -> str | None:
     return f"classification:{meta.capture_classification or 'unclassified'}"
 
 
+def publishable_excerpt(meta: CaptureMetadata) -> str | None:
+    """The excerpt any public surface may serve for this capture (SIG-PUB-016).
+
+    * A ``restricted`` capture serves the literal ``[redacted]``.
+    * A ``public`` capture with a redaction derivative serves the
+      **derivative's** excerpt — the parent's raw excerpt is withheld, never
+      served, once a reviewed derivative exists (P36.15). Where the derivative
+      carries no recorded excerpt, ``None`` is served (fail-closed — the raw
+      excerpt does not leak back in).
+    * Otherwise the capture's own excerpt.
+    """
+    if meta.tier is StorageTier.RESTRICTED:
+        return REDACTION_MARKER
+    if meta.tier is StorageTier.SEALED:
+        return None
+    if meta.derivative is not None:
+        return meta.derivative.excerpt
+    return meta.excerpt
+
+
 def public_representation(meta: CaptureMetadata) -> dict[str, object]:
     """What may be published for a capture, by tier (SIG-EVID-009/010).
 
@@ -104,6 +131,12 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
     * ``restricted``— full metadata, **redacted excerpt**; bytes access-controlled.
     * ``sealed``    — **metadata only**: existence, source, date, digest, claims;
       no excerpt, no title body, and the bytes are never exposed.
+
+    The excerpt is :func:`publishable_excerpt` (SIG-PUB-015/016, P36.15): where a
+    redaction derivative exists its own recorded excerpt is served and the
+    parent's raw excerpt never reaches a public surface; the representation
+    names the derivative (its capture id + digest + method/version) so a
+    consumer can always resolve which bytes stand behind the excerpt.
 
     ``bytes_available`` is honest (P34.25): only a public-tier capture
     proven byte-bearing (``capture_classification == 'actual'``) claims it.
@@ -125,7 +158,9 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
         return base
     base["title"] = meta.title
     base["byte_size"] = meta.byte_size
-    base["excerpt"] = "[redacted]" if meta.tier is StorageTier.RESTRICTED else meta.excerpt
+    base["excerpt"] = publishable_excerpt(meta)
+    if meta.derivative is not None:
+        base["redaction_derivative"] = meta.derivative.to_row()
     return base
 
 

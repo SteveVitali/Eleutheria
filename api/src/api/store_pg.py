@@ -92,6 +92,7 @@ from db.occurrences import (
     spine_watermark,
 )
 from db.temporal import AsOf
+from evidence.redaction import RedactionDerivative
 from evidence.tiers import CaptureMetadata, StorageTier
 from exports.shaping import (
     JurisdictionGroup,
@@ -847,6 +848,9 @@ class PgReadStore:
                 "SELECT claim_id FROM claim_evidence WHERE capture_id = %s", (capture_id,)
             ).fetchall()
         )
+        # P36.15 (SIG-PUB-015/016): the excerpt surface is derivative-sourced —
+        # where a redaction derivative row exists its own recorded excerpt is
+        # served and the parent's raw excerpt never reaches the surface.
         return CaptureMetadata(
             capture_id=str(row[0]),
             source_id=str(row[1]),
@@ -856,8 +860,59 @@ class PgReadStore:
             media_type=str(row[5]),
             tier=StorageTier.SEALED if sealed else StorageTier(row[6]),
             claims_supported=claims_supported,
+            excerpt=self._capture_excerpt(str(row[0])),
             capture_classification=None if row[7] is None else str(row[7]),
             seal_rules=seal_rules,
+            derivative=self._capture_derivative(str(row[0])),
+        )
+
+    def _capture_excerpt(self, capture_id: str) -> str | None:
+        """The recorded excerpt bound to this capture in ``claim_evidence``.
+
+        The excerpt is a property OF the bound capture's bytes — a derivative
+        capture carries its own (redacted) binding rows, so this selector is the
+        same for parent and derivative alike (SIG-PUB-016).
+        """
+        row = self._conn.execute(
+            "SELECT excerpt FROM claim_evidence "
+            " WHERE capture_id = %s AND excerpt IS NOT NULL "
+            " ORDER BY claim_id LIMIT 1",
+            (capture_id,),
+        ).fetchone()
+        return None if row is None else str(row[0])
+
+    def _capture_derivative(self, capture_id: str) -> RedactionDerivative | None:
+        """The newest redaction derivative of this capture, or ``None``.
+
+        ``capture_id`` is uuidv7 — time-ordered — so ``DESC`` picks the newest
+        derivative (a re-redaction is a NEW derivative row, never an edit;
+        the newest reviewed one is what surfaces read, P36.15). A spine
+        predating the ``redaction_version`` column answers ``None`` — honest
+        absence, never an error.
+        """
+        has_col = self._conn.execute(
+            "SELECT EXISTS ("
+            "  SELECT 1 FROM information_schema.columns"
+            "   WHERE table_name = 'evidence_capture'"
+            "     AND column_name = 'redaction_version')"
+        ).fetchone()
+        if not (has_col and has_col[0]):
+            return None
+        row = self._conn.execute(
+            "SELECT capture_id, content_digest, redaction_method, redaction_version "
+            "  FROM evidence_capture "
+            " WHERE parent_capture_id = %s AND redaction_applied "
+            " ORDER BY capture_id DESC LIMIT 1",
+            (capture_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return RedactionDerivative(
+            capture_id=str(row[0]),
+            content_digest=str(row[1]),
+            method=str(row[2] or ""),
+            version=str(row[3] or ""),
+            excerpt=self._capture_excerpt(str(row[0])),
         )
 
     def _capture_seal_state(self, capture_id: str) -> tuple[bool, tuple[str, ...]]:

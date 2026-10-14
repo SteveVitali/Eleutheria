@@ -32,6 +32,8 @@ import json
 from dataclasses import dataclass
 from datetime import date
 
+from evidence.tiers import CaptureMetadata, publishable_excerpt
+
 # --- SIG-UI-010: the twelve sections, in order -------------------------------
 
 SECTION_ORDER: tuple[tuple[str, str], ...] = (
@@ -66,22 +68,61 @@ KIND_RESEARCH_DOSSIER = "research_dossier"
 
 @dataclass(frozen=True)
 class DocumentRef:
-    """A link to a document at its exact locator (SIG-UI-014, §D.4)."""
+    """A link to a document at its exact locator (SIG-UI-014, §D.4).
+
+    ``excerpt`` MUST be the publishable excerpt for the bound capture
+    (:func:`evidence.tiers.publishable_excerpt`) — where the capture carries a
+    redaction derivative the excerpt is the derivative's, never the parent's
+    raw text (SIG-PUB-015/016, P36.15), and ``derivative_capture_digest`` names
+    the derivative those bytes came from. :meth:`for_capture` builds a ref
+    straight from :class:`evidence.tiers.CaptureMetadata` with that wiring.
+    """
 
     source_family: str
     stable_locator: str
     locator: dict[str, object]
     capture_digest: str = ""
     excerpt: str = ""
+    derivative_capture_digest: str = ""
+
+    @classmethod
+    def for_capture(
+        cls,
+        meta: CaptureMetadata,
+        *,
+        source_family: str,
+        stable_locator: str,
+        locator: dict[str, object],
+    ) -> DocumentRef:
+        """Build a ref whose excerpt is derivative-sourced (P36.15).
+
+        The excerpt served is :func:`evidence.tiers.publishable_excerpt(meta)`:
+        restricted → the ``[redacted]`` literal; a derivative-bearing capture →
+        the derivative's recorded excerpt (the parent's raw excerpt never
+        reaches the dossier); sealed → empty (existence only, SIG-EVID-010).
+        """
+        return cls(
+            source_family=source_family,
+            stable_locator=stable_locator,
+            locator=locator,
+            capture_digest=meta.content_digest,
+            excerpt=publishable_excerpt(meta) or "",
+            derivative_capture_digest=(
+                meta.derivative.content_digest if meta.derivative is not None else ""
+            ),
+        )
 
     def as_json(self) -> dict[str, object]:
-        return {
+        out: dict[str, object] = {
             "source_family": self.source_family,
             "stable_locator": self.stable_locator,
             "locator": self.locator,
             "capture_digest": self.capture_digest,
             "excerpt": self.excerpt,
         }
+        if self.derivative_capture_digest:
+            out["derivative_capture_digest"] = self.derivative_capture_digest
+        return out
 
 
 @dataclass(frozen=True)

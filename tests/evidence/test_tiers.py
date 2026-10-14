@@ -5,6 +5,9 @@
 
 from __future__ import annotations
 
+import dataclasses
+
+from evidence.redaction import RedactionDerivative
 from evidence.tiers import (
     SEALED_PUBLIC_FIELDS,
     CaptureMetadata,
@@ -12,6 +15,7 @@ from evidence.tiers import (
     bytes_available,
     bytes_unavailable_reason,
     public_representation,
+    publishable_excerpt,
 )
 
 
@@ -81,3 +85,57 @@ def test_audited_tiers() -> None:
     assert not StorageTier.PUBLIC.bytes_are_audited
     assert StorageTier.RESTRICTED.bytes_are_audited
     assert StorageTier.SEALED.bytes_are_audited
+
+
+# --- P36.15: derivative-sourced excerpts (SIG-PUB-015/016) --------------------
+
+
+def _derivative() -> RedactionDerivative:
+    return RedactionDerivative(
+        capture_id="cap-1-redacted",
+        content_digest="bderiv",
+        method="text-layer-substitution",
+        version="1",
+        excerpt="the derivative's redacted excerpt",
+    )
+
+
+def test_public_with_derivative_serves_the_derivative_excerpt() -> None:
+    """SIG-PUB-016: once a derivative exists the parent's raw excerpt never
+    reaches a public representation — the derivative's own excerpt is served."""
+    meta = dataclasses.replace(_meta(StorageTier.PUBLIC), derivative=_derivative())
+    rep = public_representation(meta)
+    assert rep["excerpt"] == "the derivative's redacted excerpt"
+    assert "secret body text" not in repr(rep)
+    assert rep["redaction_derivative"] == {
+        "capture_id": "cap-1-redacted",
+        "content_digest": "bderiv",
+        "redaction_method": "text-layer-substitution",
+        "redaction_version": "1",
+    }
+    assert publishable_excerpt(meta) == "the derivative's redacted excerpt"
+
+
+def test_derivative_without_an_excerpt_fails_closed() -> None:
+    """A derivative with no recorded excerpt serves ``None`` — the parent's
+    raw excerpt does NOT leak back in (fail closed, SIG-PUB-016)."""
+    deriv = RedactionDerivative(
+        capture_id="cap-1-redacted",
+        content_digest="bderiv",
+        method="text-layer-substitution",
+        version="1",
+    )
+    meta = dataclasses.replace(_meta(StorageTier.PUBLIC), derivative=deriv)
+    assert publishable_excerpt(meta) is None
+    assert "secret body text" not in repr(public_representation(meta))
+
+
+def test_restricted_and_sealed_behaviour_survives_a_derivative() -> None:
+    """The tier ladder still binds above the derivative rule."""
+    deriv = _derivative()
+    restricted = dataclasses.replace(_meta(StorageTier.RESTRICTED), derivative=deriv)
+    assert public_representation(restricted)["excerpt"] == "[redacted]"
+    sealed = dataclasses.replace(_meta(StorageTier.SEALED), derivative=deriv)
+    rep = public_representation(sealed)
+    assert set(rep) <= SEALED_PUBLIC_FIELDS
+    assert "excerpt" not in rep

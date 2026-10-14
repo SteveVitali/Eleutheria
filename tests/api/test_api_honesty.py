@@ -20,7 +20,11 @@
 
 from __future__ import annotations
 
+import dataclasses
+import json
+
 from api.store import EntityRecord, InMemoryStore
+from evidence.redaction import RedactionDerivative
 from evidence.tiers import CaptureMetadata, StorageTier
 from starlette.testclient import TestClient
 
@@ -122,6 +126,29 @@ def test_non_public_tiers_never_claim_bytes() -> None:
         body = _evidence_client(_meta(tier, "actual")).get("/v1/evidence/art:x/cap:x").json()
         assert body["bytes_available"] is False
         assert body["bytes_unavailable_reason"] == f"tier:{tier.value}"
+
+
+def test_evidence_endpoint_serves_the_derivative_excerpt() -> None:
+    """P36.15 (SIG-PUB-015/016): where a redaction derivative exists, the API
+    excerpt surface serves the derivative's excerpt and names the derivative —
+    the parent's raw excerpt never reaches the response."""
+    meta = dataclasses.replace(
+        _meta(StorageTier.PUBLIC, "actual"),
+        excerpt="the raw parent excerpt with Officer Jane M. Doe",
+        derivative=RedactionDerivative(
+            capture_id="cap:x-red",
+            content_digest="d" + "1" * 40,
+            method="text-layer-substitution",
+            version="1",
+            excerpt="the derivative excerpt with [redacted]",
+        ),
+    )
+    body = _evidence_client(meta).get("/v1/evidence/art:x/cap:x").json()
+    rep = body["representation"]
+    assert rep["excerpt"] == "the derivative excerpt with [redacted]"
+    assert rep["redaction_derivative"]["capture_id"] == "cap:x-red"
+    assert rep["redaction_derivative"]["redaction_method"] == "text-layer-substitution"
+    assert "Jane M. Doe" not in json.dumps(body)
 
 
 # --- /terms: no board, no counsel (E2 H-5) --------------------------------------
