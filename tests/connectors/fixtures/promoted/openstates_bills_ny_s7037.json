@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "id": "ocd-bill/ny-2025-2026-S7037",
+      "identifier": "S 7037",
+      "title": "Enacts the social media monitoring safety act; and makes an appropriation therefor",
+      "session": "2025-2026",
+      "jurisdiction": {
+        "id": "ocd-jurisdiction/country:us/state:ny/government",
+        "name": "New York",
+        "classification": "state"
+      },
+      "from_organization": {
+        "name": "Senate",
+        "classification": "upper"
+      },
+      "latest_action_description": "REFERRED TO FINANCE",
+      "latest_action_date": "2025-04-01",
+      "latest_passage_date": "",
+      "openstates_url": "https://openstates.org/ny/bills/2025-2026/S7037/",
+      "sources": [
+        {
+          "url": "https://legislation.nysenate.gov/pdf/bills/2025/s7037",
+          "note": "official legislature page"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "per_page": 20,
+    "page": 1,
+    "max_page": 1,
+    "total_items": 1
+  }
+}

@@ -34,7 +34,10 @@
 # surveillance reform — the federal-instrument phrasing federal bill titles
 # carry that the state-ordinance set does not). Shared vocabulary: both
 # terms apply to the OpenStates path too.
-vocab_version = "2026.09.18.2"
+# 2026.10.14 (P36.11 / R11-ACQ-15): +1 term `threat_assessment` for the pinned
+# AZ HB 2574 widen target (I9b-C068) — the statewide behavioral threat-
+# assessment platform phrasing the existing set does not cover.
+vocab_version = "2026.10.14"
 
 # Part VIII §0.7 / §43.2 guard for emitted bill rows (the mechanical form of
 # "no plate / per-trip / per-person / per-search data"). A matched literal or
@@ -255,4 +258,18 @@ patterns = [
   "warrantless surveillance", "surveillance reform",
   "surveillance transparency", "surveillance accountability",
   "surveillance state",
+]
+
+# --- P36.11 / R11-ACQ-15 -------------------------------------------------------
+# +1 term for the pinned Arizona bill (I9b-C068): HB 2574's subject is a
+# statewide connected behavioral threat-assessment platform — school-safety
+# monitoring software. typed_claim like the rest of the set; the bill record
+# stays a PROPOSED instrument (never promoted to a §11.14 LegalInstrument).
+[[terms]]
+id = "threat_assessment"
+kind = "technology"
+label = "behavioral threat assessment platform"
+claim_shape = "typed_claim"
+patterns = [
+  "threat assessment", "behavioral threat", "threat-assessment",
 ]
