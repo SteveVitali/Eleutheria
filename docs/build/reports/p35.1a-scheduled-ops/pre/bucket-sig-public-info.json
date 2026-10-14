@@ -1,0 +1,17 @@
+{
+  "creation_time": "2026-09-15T16:02:42+0000",
+  "default_storage_class": "STANDARD",
+  "generation": 1789488161959904923,
+  "location": "US-CENTRAL1",
+  "location_type": "region",
+  "metageneration": 4,
+  "name": "zeta-medley-508121-u7-sig-public",
+  "public_access_prevention": "inherited",
+  "soft_delete_policy": {
+    "effectiveTime": "2026-09-15T16:02:42.109000+00:00",
+    "retentionDurationSeconds": "604800"
+  },
+  "storage_url": "gs://zeta-medley-508121-u7-sig-public/",
+  "uniform_bucket_level_access": true,
+  "update_time": "2026-09-16T13:50:11+0000"
+}

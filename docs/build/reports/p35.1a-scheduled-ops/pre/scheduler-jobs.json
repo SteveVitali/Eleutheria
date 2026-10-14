@@ -1,0 +1,2222 @@
+[
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-uk-surveillance-camera-commissioner:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-uk-surveillance-camera-commissioner",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 17 * *",
+    "scheduleTime": "2026-10-17T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T03:26:34.931209Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batonrouge-la:run"
+    },
+    "lastAttemptTime": "2026-09-28T08:00:00.889415Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batonrouge-la",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 8 28 * *",
+    "scheduleTime": "2026-10-28T08:00:03.843134Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:17.530903Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-york-gb:run"
+    },
+    "lastAttemptTime": "2026-09-28T16:00:01.036155Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-york-gb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 16 28 * *",
+    "scheduleTime": "2026-10-28T16:00:03.374896Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:45:31.052663Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-sam-gov:run"
+    },
+    "lastAttemptTime": "2026-10-12T05:00:37.629508Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-sam-gov",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 1 * 1",
+    "scheduleTime": "2026-10-19T05:00:04.726198Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:33.376969Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ccops-cambridge:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ccops-cambridge",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 19 * *",
+    "scheduleTime": "2026-10-19T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T09:55:23.848875Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dhs-oig-reports:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dhs-oig-reports",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 15 * *",
+    "scheduleTime": "2026-10-15T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T03:26:32.266583Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ted-eu:run"
+    },
+    "lastAttemptTime": "2026-10-05T06:00:00.928688Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ted-eu",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 5 * *",
+    "scheduleTime": "2026-11-05T06:00:01.350444Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T16:25:13.508987Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-osm-element-history:run"
+    },
+    "lastAttemptTime": "2026-10-05T05:00:00.896112Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-osm-element-history",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 5 * *",
+    "scheduleTime": "2026-11-05T05:00:03.119012Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:26.855178Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-procportal-nyc-ny:run"
+    },
+    "lastAttemptTime": "2026-09-30T12:00:01.210065Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-procportal-nyc-ny",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 12 30 * *",
+    "scheduleTime": "2026-10-30T12:00:03.852481Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T05:00:46.797674Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ccops-nyc-post:run"
+    },
+    "lastAttemptTime": "2026-10-09T05:00:00.842341Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ccops-nyc-post",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 9 * *",
+    "scheduleTime": "2026-11-09T05:00:00.738157Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:46.865726Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-peel-on:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-peel-on",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 12 29 * *",
+    "scheduleTime": "2026-10-29T12:00:01.369565Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:46:01.572416Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-probe:run"
+    },
+    "lastAttemptTime": "2026-10-14T12:00:45.081411Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-probe",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 */6 * * *",
+    "scheduleTime": "2026-10-14T18:00:02.414394Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:13:40.304789Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-fbi-cde:run"
+    },
+    "lastAttemptTime": "2026-10-01T05:00:00.847762Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-fbi-cde",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 1 1,4,7,10 *",
+    "scheduleTime": "2027-01-01T05:00:02.971100Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:27.567691Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-legistar:run"
+    },
+    "lastAttemptTime": "2026-09-20T05:00:01.040454Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-legistar",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 20 * *",
+    "scheduleTime": "2026-10-20T05:00:03.945185Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:56.346686Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-austin-tx:run"
+    },
+    "lastAttemptTime": "2026-09-28T04:00:00.827172Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-austin-tx",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 28 * *",
+    "scheduleTime": "2026-10-28T04:00:03.038501Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:13.412600Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-civicclerk:run"
+    },
+    "lastAttemptTime": "2026-09-22T05:00:00.879999Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-civicclerk",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 22 * *",
+    "scheduleTime": "2026-10-22T05:00:02.549595Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:08.290032Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-decp-fr:run"
+    },
+    "lastAttemptTime": "2026-10-13T04:12:03.185878Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-decp-fr",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "12 4 * * 2",
+    "scheduleTime": "2026-10-20T04:12:02.364002Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:13:51.983377Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-muckrock:run"
+    },
+    "lastAttemptTime": "2026-10-01T06:00:00.761215Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-muckrock",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 1 * *",
+    "scheduleTime": "2026-11-01T06:00:02.755222Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-16T04:08:09.561208Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-procportal-austin-tx:run"
+    },
+    "lastAttemptTime": "2026-09-30T06:00:01.200744Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-procportal-austin-tx",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 30 * *",
+    "scheduleTime": "2026-10-30T06:00:02.858913Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T05:00:42.584290Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-osm-overpass:run"
+    },
+    "lastAttemptTime": "2026-10-12T04:12:09.091495Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-osm-overpass",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "12 4 * * 1",
+    "scheduleTime": "2026-10-19T04:12:01.035511Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:13:46.170222Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-siouxfalls-sd:run"
+    },
+    "lastAttemptTime": "2026-09-29T06:00:01.031712Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-siouxfalls-sd",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 29 * *",
+    "scheduleTime": "2026-10-29T06:00:02.575936Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:23.070614Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ccops-oakland:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ccops-oakland",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 18 * *",
+    "scheduleTime": "2026-10-18T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T09:55:20.182241Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-washington-dc:run"
+    },
+    "lastAttemptTime": "2026-09-28T12:00:00.831501Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-washington-dc",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 12 28 * *",
+    "scheduleTime": "2026-10-28T12:00:03.862807Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:45:15.176481Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ccops-somerville:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ccops-somerville",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 20 * *",
+    "scheduleTime": "2026-10-20T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T09:55:24.916139Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-rochester-ny:run"
+    },
+    "lastAttemptTime": "2026-09-29T14:00:01.108961Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-rochester-ny",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 14 29 * *",
+    "scheduleTime": "2026-10-29T14:00:04.063137Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:46:09.300570Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ccops-sf:run"
+    },
+    "lastAttemptTime": "2026-10-10T05:00:00.964768Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ccops-sf",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 10 * *",
+    "scheduleTime": "2026-11-10T05:00:03.554455Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:53.417889Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-aspi:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-aspi",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 16 * *",
+    "scheduleTime": "2026-10-16T05:00:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:31.255870Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-fema-hsgp-allocations:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-fema-hsgp-allocations",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 21 * *",
+    "scheduleTime": "2026-10-21T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T09:55:26.349119Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-carnegie-ai-gsi:run"
+    },
+    "lastAttemptTime": "2026-10-14T05:00:01.015570Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-carnegie-ai-gsi",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 14 * *",
+    "scheduleTime": "2026-11-14T05:00:03.020726Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:17.904224Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dhs-fusion-center-assessments:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dhs-fusion-center-assessments",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 16 * *",
+    "scheduleTime": "2026-10-16T06:09:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T03:26:33.637668Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-act-au:run"
+    },
+    "lastAttemptTime": "2026-09-29T04:00:00.994365Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-act-au",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 29 * *",
+    "scheduleTime": "2026-10-29T04:00:03.716991Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:21.371083Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-procportal-kcmo-mo:run"
+    },
+    "lastAttemptTime": "2026-09-30T10:00:00.904497Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-procportal-kcmo-mo",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 10 30 * *",
+    "scheduleTime": "2026-10-30T10:00:00.163829Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T05:00:45.509664Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-primegov:run"
+    },
+    "lastAttemptTime": "2026-09-21T05:00:00.861579Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-primegov",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 21 * *",
+    "scheduleTime": "2026-10-21T05:00:03.446845Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:02.831128Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-procportal-sf-ca:run"
+    },
+    "lastAttemptTime": "2026-09-30T08:00:00.909218Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-procportal-sf-ca",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 8 30 * *",
+    "scheduleTime": "2026-10-30T08:00:04.694092Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T05:00:43.961704Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-pathways-drones:run"
+    },
+    "lastAttemptTime": "2026-10-13T05:00:00.847820Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-pathways-drones",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 13 * *",
+    "scheduleTime": "2026-11-13T05:00:03.358171Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:11.095286Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-nola-la:run"
+    },
+    "lastAttemptTime": "2026-09-28T06:00:00.922215Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-nola-la",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 28 * *",
+    "scheduleTime": "2026-10-28T06:00:00.767887Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:15.456817Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-usaspending:run"
+    },
+    "lastAttemptTime": "2026-10-03T05:00:00.967383Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-usaspending",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 3 * *",
+    "scheduleTime": "2026-11-03T05:00:00.296821Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:15.591581Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-madada:run"
+    },
+    "lastAttemptTime": "2026-10-07T05:00:00.843539Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-madada",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 7 * *",
+    "scheduleTime": "2026-11-07T05:00:00.657985Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:33.398336Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ok-statute:run"
+    },
+    "lastAttemptTime": "2026-09-17T05:00:00.943614Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ok-statute",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 17 * *",
+    "scheduleTime": "2026-10-17T05:00:00Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:37.134Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-congress-gov:run"
+    },
+    "lastAttemptTime": "2026-10-13T05:00:08.460819Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-congress-gov",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 3 * 2",
+    "scheduleTime": "2026-10-20T05:00:02.013566Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T09:39:43.015713Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-raa-prefectures:run"
+    },
+    "lastAttemptTime": "2026-10-14T04:12:00.923109Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-raa-prefectures",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "12 4 * * 3",
+    "scheduleTime": "2026-10-21T04:12:00.139734Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:13:57.285384Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-frwm:run"
+    },
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-frwm",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 15 * *",
+    "scheduleTime": "2026-10-15T05:00:00Z",
+    "state": "ENABLED",
+    "status": {
+      "code": -1
+    },
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:24.448961Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-okcpd-policy:run"
+    },
+    "lastAttemptTime": "2026-09-18T05:00:00.904868Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-okcpd-policy",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 18 * *",
+    "scheduleTime": "2026-10-18T05:00:02.140913Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:44.180408Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-06:run"
+    },
+    "lastAttemptTime": "2026-10-11T03:42:00.864229Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-06",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "42 3 11 * *",
+    "scheduleTime": "2026-11-11T03:42:02.145785Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:42.490671Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-07:run"
+    },
+    "lastAttemptTime": "2026-10-12T03:49:00.859399Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-07",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "49 3 12 * *",
+    "scheduleTime": "2026-11-12T03:49:01.027762Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:43.788330Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-04:run"
+    },
+    "lastAttemptTime": "2026-10-09T03:28:00.947900Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-04",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "28 3 9 * *",
+    "scheduleTime": "2026-11-09T03:28:01.072262Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:39.794288Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-05:run"
+    },
+    "lastAttemptTime": "2026-10-10T03:35:00.893497Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-05",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "35 3 10 * *",
+    "scheduleTime": "2026-11-10T03:35:03.700497Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:41.202462Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-02:run"
+    },
+    "lastAttemptTime": "2026-10-07T03:14:00.910486Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-02",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "14 3 7 * *",
+    "scheduleTime": "2026-11-07T03:14:02.326688Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:36.604292Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-03:run"
+    },
+    "lastAttemptTime": "2026-10-08T03:21:00.830351Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-03",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "21 3 8 * *",
+    "scheduleTime": "2026-11-08T03:21:01.143807Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:38.202540Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-01:run"
+    },
+    "lastAttemptTime": "2026-10-06T03:07:00.869193Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-01",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "7 3 6 * *",
+    "scheduleTime": "2026-11-06T03:07:01.888287Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:34.973815Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-batch-08:run"
+    },
+    "lastAttemptTime": "2026-10-13T03:56:00.775147Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-batch-08",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "56 3 13 * *",
+    "scheduleTime": "2026-11-13T03:56:01.586914Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-19T06:41:48.607337Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-winnipeg-mb:run"
+    },
+    "lastAttemptTime": "2026-09-28T10:00:00.859716Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-winnipeg-mb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 10 28 * *",
+    "scheduleTime": "2026-10-28T10:00:02.035244Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:19.468238Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-baltimore-md:run"
+    },
+    "lastAttemptTime": "2026-09-29T08:00:00.805625Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-baltimore-md",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 8 29 * *",
+    "scheduleTime": "2026-10-29T08:00:03.055533Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:24.768676Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-eff-data-driven:run"
+    },
+    "lastAttemptTime": "2026-10-04T05:00:01.415082Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-eff-data-driven",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 4 * *",
+    "scheduleTime": "2026-11-04T05:00:02.793293Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:21.110025Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-gao-surveillance-reports:run"
+    },
+    "lastAttemptTime": "2026-10-14T06:09:00.797901Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-gao-surveillance-reports",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "9 6 14 * *",
+    "scheduleTime": "2026-11-14T06:09:02.984913Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-26T03:26:30.570962Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-openstates:run"
+    },
+    "lastAttemptTime": "2026-10-13T05:00:03.426023Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-openstates",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 2 * 2",
+    "scheduleTime": "2026-10-20T05:00:02.527282Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:39.514815Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-pathways-rtcc:run"
+    },
+    "lastAttemptTime": "2026-10-11T05:00:00.933638Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-pathways-rtcc",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 11 * *",
+    "scheduleTime": "2026-11-11T05:00:04.154652Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:58.972774Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-escribe:run"
+    },
+    "lastAttemptTime": "2026-09-23T05:00:00.869394Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-escribe",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 23 * *",
+    "scheduleTime": "2026-10-23T05:00:03.916802Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:14.940648Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-goldcoast-au:run"
+    },
+    "lastAttemptTime": "2026-09-29T16:00:00.812427Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-goldcoast-au",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 16 29 * *",
+    "scheduleTime": "2026-10-29T16:00:02.672054Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:46:16.603437Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-ottawa-on:run"
+    },
+    "lastAttemptTime": "2026-09-29T10:00:00.999373Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-ottawa-on",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 10 29 * *",
+    "scheduleTime": "2026-10-29T10:00:00.727657Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:26.465078Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-ccops-seattle:run"
+    },
+    "lastAttemptTime": "2026-10-08T05:00:02.252519Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-ccops-seattle",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 8 * *",
+    "scheduleTime": "2026-11-08T05:00:01.284095Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:40.385489Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-pathways-fr-css:run"
+    },
+    "lastAttemptTime": "2026-10-12T05:00:00.852219Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-pathways-fr-css",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 12 * *",
+    "scheduleTime": "2026-11-12T05:00:00.652601Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:05.477142Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-okc-procurement:run"
+    },
+    "lastAttemptTime": "2026-09-19T05:00:00.933496Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-okc-procurement",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 19 * *",
+    "scheduleTime": "2026-10-19T05:00:04.373689Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:15:49.751718Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-northayrshire-gb:run"
+    },
+    "lastAttemptTime": "2026-09-28T20:00:01.326521Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-northayrshire-gb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 20 28 * *",
+    "scheduleTime": "2026-10-28T20:00:04.796823Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:45:46.284448Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-glasgow-gb:run"
+    },
+    "lastAttemptTime": "2026-09-28T18:00:00.896461Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-glasgow-gb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 18 28 * *",
+    "scheduleTime": "2026-10-28T18:00:01.082958Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:45:38.938703Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-nottingham-gb:run"
+    },
+    "lastAttemptTime": "2026-09-28T14:00:02.215668Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-nottingham-gb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 14 28 * *",
+    "scheduleTime": "2026-10-28T14:00:01.019536Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:45:23.397914Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-eff-atlas:run"
+    },
+    "lastAttemptTime": "2026-10-02T05:00:00.795848Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-eff-atlas",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 2 * *",
+    "scheduleTime": "2026-11-02T05:00:01.887263Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:14:08.788132Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-lambeth-gb:run"
+    },
+    "lastAttemptTime": "2026-09-28T22:00:01.129603Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-lambeth-gb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 22 28 * *",
+    "scheduleTime": "2026-10-28T22:00:01.075382Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:45:53.649115Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-dc:run"
+    },
+    "lastAttemptTime": "2026-09-27T04:00:00.863622Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-dc",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 27 * *",
+    "scheduleTime": "2026-10-27T04:00:03.200064Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:44.905472Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-or:run"
+    },
+    "lastAttemptTime": "2026-09-25T06:00:01.047413Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-or",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 25 * *",
+    "scheduleTime": "2026-10-25T06:00:02.827834Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:23.573486Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-mo:run"
+    },
+    "lastAttemptTime": "2026-09-27T06:00:00.893748Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-mo",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 27 * *",
+    "scheduleTime": "2026-10-27T06:00:04.539733Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:50.735472Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-ky:run"
+    },
+    "lastAttemptTime": "2026-09-24T04:00:09.546155Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-ky",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 24 * *",
+    "scheduleTime": "2026-10-24T04:00:03.589718Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:00.475301Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-il:run"
+    },
+    "lastAttemptTime": "2026-09-24T06:00:00.869580Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-il",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 24 * *",
+    "scheduleTime": "2026-10-24T06:00:00.566970Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:07.030904Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-ia:run"
+    },
+    "lastAttemptTime": "2026-09-26T04:00:00.900834Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-ia",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 26 * *",
+    "scheduleTime": "2026-10-26T04:00:00.204199Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:30.955274Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-wa:run"
+    },
+    "lastAttemptTime": "2026-09-26T06:00:00.919381Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-wa",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 6 26 * *",
+    "scheduleTime": "2026-10-26T06:00:01.082195Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:37.893987Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-dot-511-ut:run"
+    },
+    "lastAttemptTime": "2026-09-25T04:00:00.753923Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-dot-511-ut",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 25 * *",
+    "scheduleTime": "2026-10-25T04:00:01.487404Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T19:08:15.975657Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-sheffield-gb:run"
+    },
+    "lastAttemptTime": "2026-09-30T04:00:00.911020Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-sheffield-gb",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 4 30 * *",
+    "scheduleTime": "2026-10-30T04:00:00.378001Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T02:45:27.976792Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-eyes-on-flock:run"
+    },
+    "lastAttemptTime": "2026-10-11T05:00:22.069724Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-eyes-on-flock",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 5 23 * 0",
+    "scheduleTime": "2026-10-18T05:00:03.636903Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-17T07:16:21.771485Z"
+  },
+  {
+    "attemptDeadline": "180s",
+    "httpTarget": {
+      "headers": {
+        "User-Agent": "Google-Cloud-Scheduler"
+      },
+      "httpMethod": "POST",
+      "oauthToken": {
+        "scope": "https://www.googleapis.com/auth/cloud-platform",
+        "serviceAccountEmail": "sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      },
+      "uri": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/zeta-medley-508121-u7/jobs/sig-ingest-camreg-puertogaitan-co:run"
+    },
+    "lastAttemptTime": "2026-09-29T18:00:01.251898Z",
+    "name": "projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-camreg-puertogaitan-co",
+    "retryConfig": {
+      "maxBackoffDuration": "3600s",
+      "maxDoublings": 5,
+      "maxRetryDuration": "0s",
+      "minBackoffDuration": "5s"
+    },
+    "schedule": "0 18 29 * *",
+    "scheduleTime": "2026-10-29T18:00:01.905592Z",
+    "state": "ENABLED",
+    "status": {},
+    "timeZone": "Etc/UTC",
+    "userUpdateTime": "2026-09-18T11:46:23.782165Z"
+  }
+]
