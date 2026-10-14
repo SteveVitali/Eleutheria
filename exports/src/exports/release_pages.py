@@ -621,7 +621,7 @@ def release_landing(
    <a href="integrity_manifest.json"><code>integrity_manifest.json</code></a> ·
    <a href="descriptor.json"><code>descriptor.json</code></a></p>
 <p class="mut">Records live under <code>/r/{_e(pub)}/c/&lt;compartment&gt;/…</code>.
-Completeness: {_e((entry.get("completeness") or {}).get("state"))}.</p>
+Completeness: {_e(_display_label((entry.get("completeness") or {}).get("state")))}.</p>
 """
     return _layout(
         title=f"Release {pub[:15]}…",
@@ -737,6 +737,83 @@ def error_page(*, title: str, detail: str) -> bytes:
 # Zero JavaScript; every dynamic string escaped; ≤50 rows per page.
 # --------------------------------------------------------------------------- #
 
+#: Machine tokens that must never appear as visible labels on a public page
+#: (C4 NEW-28). The wire ``value=`` keeps the raw token — only the human text
+#: is translated.
+_DISPLAY_LABELS = {
+    "unreported": "not reported",
+    "public-point": "public point",
+    "no-public-point": "no public point",
+    "not_evaluable": "not evaluable",
+}
+
+
+def _display_label(v: Any) -> str:
+    """The human label for a raw enum token (display only — the wire value
+    is unchanged)."""
+    return _DISPLAY_LABELS.get(str(v), str(v))
+
+
+def search_error_page(
+    *,
+    action: str,
+    publication_id: str,
+    compartment: str,
+    status: int,
+    code: str,
+    detail: str,
+    tombstone: Mapping[str, Any] | None = None,
+) -> bytes:
+    """The HTML error state of the released-corpus search (C4 NEW-13 /
+    DR-C4-10, P34.36).
+
+    An HTML client gets a real page — the same zero-JS skeleton as the
+    results page — for every error status, never a raw JSON body. The page
+    states the status, the machine code and the plain detail, links back to
+    the search form, and for a 410 shows the public-safe tombstone fields
+    (reason category + authority + decided date — never the privileged
+    rationale). No licence line: the page shows no record data.
+    """
+    titles = {
+        400: "the request could not be understood",
+        404: "not found",
+        409: "the cursor does not belong to this search",
+        410: "this release is withdrawn",
+        422: "the query was refused",
+        429: "the query was rate limited",
+        503: "search is not ready",
+    }
+    state = titles.get(int(status), "the search failed")
+    tomb_block = ""
+    if tombstone:
+        tomb_block = (
+            '<p><span class="k">Reason category</span> '
+            f"{_e(tombstone.get('reason_category'))} · "
+            '<span class="k">Authority</span> '
+            f"{_e(tombstone.get('authority'))} · "
+            '<span class="k">Policy</span> '
+            f"{_e(tombstone.get('policy_version'))}</p>"
+        )
+    body = f"""
+<div class="warn">
+<p><strong>{_e(status)} — {_e(state)}.</strong></p>
+<p>{_e(detail)}</p>
+{tomb_block}
+<p class="mut">Error code <code>{_e(code)}</code>. Nothing is lost: the same
+answer is available as a JSON body to non-HTML clients.</p>
+</div>
+<p><a href="{_e(action)}">Back to this compartment's search form</a> ·
+   <a href="/r/{_e(publication_id)}/c/{_e(compartment)}/">browse the
+   compartment's static pages</a></p>
+"""
+    # No "immutable release" stamp: an error body is dynamic output, never
+    # pinned, citable bytes (the tombstone/error-page precedent).
+    return _layout(
+        title=f"Search {compartment} — {status}",
+        body=body,
+        publication_id=None,
+    )
+
 
 def search_page(
     *,
@@ -763,12 +840,18 @@ def search_page(
         opts = [f'<option value="">{_e(label)} — any</option>']
         for value, count in options:
             sel = " selected" if filters.get(name) == value else ""
-            opts.append(f'<option value="{_e(value)}"{sel}>{_e(value)} ({_e(count)})</option>')
+            # Display labels are humanised (never a raw enum name); the wire
+            # value= keeps the raw token so the form keeps filtering.
+            opts.append(
+                f'<option value="{_e(value)}"{sel}>'
+                f"{_e(_display_label(value))} ({_e(count)})</option>"
+            )
         return f'<label>{_e(label)} <select name="{_e(name)}">{"".join(opts)}</select></label>'
 
     loc_value = filters.get("location") or "any"
     loc_opts = "".join(
-        f'<option value="{_e(v)}"{" selected" if loc_value == v else ""}>{_e(v)}</option>'
+        f'<option value="{_e(v)}"{" selected" if loc_value == v else ""}>'
+        f"{_e(_display_label(v))}</option>"
         for v in ("any", "public-point", "no-public-point")
     )
     controls = "".join(
@@ -809,20 +892,30 @@ def search_page(
             f'<td><a href="{_e(hit.get("href"))}">{_e(label)}</a>'
             f'<br><code class="mut">{_e(hit.get("record_key"))}</code></td>'
             f"<td>{_e(hit.get('kind'))}</td>"
-            f"<td>{_e(jur)}</td>"
-            f"<td>{_e(loc)}</td>"
+            f"<td>{_e(_display_label(jur))}</td>"
+            f"<td>{_e(_display_label(loc))}</td>"
             f"<td>{_e(srcs)}</td>"
             "</tr>"
         )
     scope = result.get("scope") or {}
     qd = result.get("query") or {}
     exact = " — exact identifier lookup" if qd.get("exact_id") else ""
+    # Access-time denials are part of the honest scope (C4 NEW-12): when the
+    # current policy withholds indexed records the page names the count and
+    # the public-safe reason, never a bare eligible number.
+    excluded = scope.get("excluded_records_by_reason") or {}
+    excluded_txt = ""
+    if excluded:
+        excluded_txt = " · withheld under the current policy — " + ", ".join(
+            f"{_e(str(k).replace('_', ' '))}: {_e(v)}" for k, v in sorted(excluded.items())
+        )
     summary = (
         f'<p class="mut">{_e(len(result.get("results") or []))} row(s) on this page'
         f"{_e(exact)} · {_e(scope.get('indexed_records'))} indexed / "
         f"{_e(scope.get('eligible_records'))} eligible released records in this "
-        "compartment. A page is a bound, not the corpus size — follow "
-        "&ldquo;next&rdquo; to continue; total counts are not computed.</p>"
+        f"compartment{_e(excluded_txt)}. A page is a bound, not the corpus "
+        "size — follow &ldquo;next&rdquo; to continue; total counts are not "
+        "computed.</p>"
     )
     if rows:
         table = (
@@ -831,9 +924,11 @@ def search_page(
             f"<tbody>{''.join(rows)}</tbody></table>"
         )
     else:
+        # C4 NEW-4 / DR-C4-05: the empty state asserts only the query's
+        # result — never research status, never a recorded absence.
         table = (
-            "<p><em>No released records in this compartment match — this is a "
-            "recorded absence, not missing research and not a failed query.</em></p>"
+            "<p><em>No released record in this compartment matches.</em> "
+            "Try broader terms or fewer filters.</p>"
         )
     cur = result.get("next_cursor")
     if cur:
@@ -849,7 +944,7 @@ def search_page(
         qp["cursor"] = str(cur)
         nav = (
             f'<p><a href="{_e(action)}?{_e(urllib.parse.urlencode(qp))}">'
-            "next 50 &rarr;</a> · "
+            f"next {_e(limit)} &rarr;</a> · "
             f'<a href="{_e(action)}">start over</a></p>'
         )
     else:
@@ -876,9 +971,5 @@ required).</p>
         title=f"Search {compartment}",
         body=body,
         publication_id=publication_id,
-        footer_note=(
-            "Dynamic released-search route — the same eligible corpus the "
-            "static browse pages enumerate."
-        ),
         licence=licence,
     )

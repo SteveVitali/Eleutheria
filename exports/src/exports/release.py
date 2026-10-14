@@ -105,8 +105,9 @@ PUBLICATION_RE = re.compile(r"^p-[0-9a-f]{64}$")
 _PAGE_SIZE = 50
 
 #: Compartments that never carry record routes (metadata/web are surfaces,
-#: not record compartments).
-_NON_RECORD_COMPARTMENTS = frozenset({"metadata", "web", "web_mixed", "code", "ontology"})
+#: not record compartments) — and are therefore never searchable
+#: (P34.36 / C4 NEW-29: they answer 404, never the readiness 503).
+NON_RECORD_COMPARTMENTS = frozenset({"metadata", "web", "web_mixed", "code", "ontology"})
 
 
 class ReleaseError(Exception):
@@ -348,6 +349,15 @@ def build_release(
     manifest_bytes = (export_dir / "manifest.json").read_bytes()
 
     comps = _export_compartments(export_dir)
+    # Non-record compartments are page surfaces — a sites.jsonl under one is
+    # a malformed export, and minting a searchable record namespace for it is
+    # the defect P34.36 (C4 NEW-29) bars. Fail closed, loudly.
+    non_record = sorted(set(comps) & NON_RECORD_COMPARTMENTS)
+    if non_record:
+        raise ReleaseError(
+            "non-record compartment(s) carry sites.jsonl — they can never "
+            f"hold record routes or a search index: {', '.join(non_record)}"
+        )
     claim_index = _claim_index(export_dir)
     source_to_comp = _source_to_compartment(export_dir, comps)
 
@@ -651,7 +661,18 @@ def build_release(
         dossier_count += 1
 
     # --- release landing + descriptor (both covered by the manifest) --------- #
-    completeness = {"state": "complete", "failures": []}
+    # Completeness over an empty corpus is not evaluable (P34.36 / F5
+    # PKG-03b): a verified zero-record release says so, never a bare
+    # "complete" on an empty denominator.
+    completeness = (
+        {
+            "state": "not_evaluable",
+            "failures": [],
+            "detail": "no published records — completeness is not evaluable",
+        }
+        if total_records == 0
+        else {"state": "complete", "failures": []}
+    )
     descriptor_rel = f"releases/{pub}/descriptor.json"
     emit(
         descriptor_rel,

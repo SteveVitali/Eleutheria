@@ -981,3 +981,57 @@ def test_duplicate_site_rows_dedupe_to_one_record(tmp_path: Path) -> None:
     ]
     report = validate_release(build.out_dir)
     assert report.state == "complete", report.failures
+
+
+# --------------------------------------------------------------------------- #
+# P34.36 — completeness at 0 records + non-record compartments (NEW-29 part)   #
+# --------------------------------------------------------------------------- #
+
+
+def test_zero_record_completeness_is_not_evaluable(tmp_path: Path) -> None:
+    """Completeness over zero published records is honest about itself:
+    "not_evaluable", never a bare "complete" on an empty denominator. Build
+    validation still passes — the release is verified, just unevaluable."""
+    export = _write_export(tmp_path / "export", n_records=0)
+    build = _build(tmp_path, export)
+    pub = build.publication_id
+    entry = json.loads((build.out_dir / f"releases/{pub}/catalog_entry.json").read_text())
+    assert entry["record_count"] == 0
+    assert entry["completeness"]["state"] == "not_evaluable"
+    # the landing renders a human label, never the raw enum name
+    landing = (build.out_dir / f"releases/{pub}/index.html").read_text()
+    assert "not evaluable" in landing
+    assert "not_evaluable" not in landing
+    # validation of the emitted tree is unaffected
+    assert validate_release(build.out_dir).state == "complete"
+    # …and a non-empty release still reports "complete"
+    export2 = _write_export(tmp_path / "export2", n_records=2)
+    build2 = _build(tmp_path, export2, name="rel2")
+    entry2 = json.loads(
+        (build2.out_dir / f"releases/{build2.publication_id}/catalog_entry.json").read_text()
+    )
+    assert entry2["completeness"]["state"] == "complete"
+
+
+def test_non_record_compartment_sites_are_refused(tmp_path: Path) -> None:
+    """``web``/``metadata``/… are page surfaces — they never carry record
+    routes. A sites.jsonl under a non-record compartment is a malformed input,
+    and the build says so instead of minting a searchable record namespace."""
+    export = _write_export(tmp_path / "export", n_records=2)
+    (export / "web" / "sites.jsonl").write_text(
+        json.dumps(_site_row(0, "src_a", "CC-BY-4.0")) + "\n", encoding="utf-8"
+    )
+    manifest = json.loads((export / "manifest.json").read_text())
+    manifest["artifacts"].append(
+        {
+            "path": "web/sites.jsonl",
+            "compartment": "web",
+            "license": "CC-BY-4.0",
+            "sha256": "x",
+            "byte_size": 1,
+            "media_type": "application/json",
+        }
+    )
+    (export / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ReleaseError):
+        _build(tmp_path, export)

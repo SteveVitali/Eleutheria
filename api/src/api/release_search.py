@@ -40,8 +40,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from exports.release import ReleaseRegistry, route_access
-from exports.release_pages import search_page
+from exports.release import NON_RECORD_COMPARTMENTS, ReleaseRegistry, route_access
+from exports.release_pages import search_error_page, search_page
 from policy.eligibility import TargetKind, access_decision, latest_disposition
 
 from exports import search_index as si
@@ -165,29 +165,27 @@ class ReleaseSearchStore:
 
     # -- the withdrawal barrier ------------------------------------------- #
 
-    def _denied_sets(self) -> tuple[set[str], set[str]]:
-        """(denied entity ids, denied claim ids) under the CURRENT registry —
-        evaluated at access time so a withhold recorded in a later release
-        still denies under this one (ADR-124/132)."""
+    def _denied_targets(self) -> tuple[dict[str, str], dict[str, str]]:
+        """({entity id → reason}, {claim id → reason}) under the CURRENT
+        registry — evaluated at access time so a withhold recorded in a
+        later release still denies under this one (ADR-124/132). The reason
+        is the public-safe reason category the tombstone would state (C4
+        NEW-12: denials are counted under it in the search scope)."""
         registry = ReleaseRegistry(self.registry_root)
-        entities: dict[str, list] = {}
-        claims: dict[str, list] = {}
+        grouped: dict[tuple[TargetKind, str], list] = {}
         for rec in registry.withdrawals():
-            if rec.target_kind is TargetKind.ENTITY:
-                entities.setdefault(rec.target_id, []).append(rec)
-            elif rec.target_kind is TargetKind.CLAIM:
-                claims.setdefault(rec.target_id, []).append(rec)
-        denied_entities = {
-            tid
-            for tid, rs in entities.items()
-            if not access_decision(latest_disposition(rs)).permitted
+            grouped.setdefault((rec.target_kind, rec.target_id), []).append(rec)
+        denied: dict[TargetKind, dict[str, str]] = {
+            TargetKind.ENTITY: {},
+            TargetKind.CLAIM: {},
         }
-        denied_claims = {
-            tid
-            for tid, rs in claims.items()
-            if not access_decision(latest_disposition(rs)).permitted
-        }
-        return denied_entities, denied_claims
+        for (kind, tid), rs in grouped.items():
+            decision = access_decision(latest_disposition(rs))
+            if not decision.permitted and kind in denied:
+                denied[kind][tid] = str(
+                    decision.reason_category.value if decision.reason_category else "denied"
+                )
+        return denied[TargetKind.ENTITY], denied[TargetKind.CLAIM]
 
     # -- the query --------------------------------------------------------- #
 
@@ -211,20 +209,36 @@ class ReleaseSearchStore:
                 "withdrawn under the current publication-disposition policy",
                 extra={"tombstone": tomb},
             )
+        # C4 NEW-29 (P34.36): non-record compartments are page surfaces —
+        # they can never mint a search index, so the honest answer is 404
+        # "not searchable", not the readiness 503 (which would imply a cold
+        # index that could warm up).
+        if comp in NON_RECORD_COMPARTMENTS:
+            raise si.SearchIndexError(
+                404,
+                "compartment_not_searchable",
+                f"{comp} is not a searchable record compartment — it carries "
+                "pages and metadata only",
+            )
         comp_dir = self.staged / f"r/{pub}/c/{comp}"
         if not comp_dir.is_dir():
             raise si.SearchIndexError(
                 404, "unknown_compartment", f"compartment {comp} is not part of {pub}"
             )
-        denied_entities, denied_claims = self._denied_sets()
+        denied_entities, denied_claims = self._denied_targets()
 
-        def denied(row: tuple) -> bool:
-            if row[1] in denied_entities:
-                return True
+        def denied(row: tuple) -> str | None:
+            """The record's public-safe exclusion reason, or None — counted
+            into the scope (NEW-12) AND skipped before pagination."""
+            reason = denied_entities.get(row[1])
+            if reason is not None:
+                return reason
             if denied_claims:
                 claims = json.loads(row[7])
-                return bool(denied_claims.intersection(claims))
-            return False
+                hits = sorted({denied_claims[c] for c in claims if c in denied_claims})
+                if hits:
+                    return hits[0]
+            return None
 
         has_denies = bool(denied_entities or denied_claims)
         with self._conn(pub, comp) as (conn, meta):
@@ -253,6 +267,15 @@ class ReleaseSearchStore:
             return {"verified_indexes": len(self._verified)}
 
 
+def wants_html(request: Any) -> bool:
+    """The one negotiation rule for the search route (C4 NEW-13): explicit
+    ``format=html`` wins, else a browser ``Accept: text/html`` selects the
+    no-JS representation — for successes AND errors alike."""
+    fmt = request.query_params.get("format")
+    accept = request.headers.get("accept", "")
+    return fmt == "html" or (fmt is None and "text/html" in accept)
+
+
 def render_search_html(
     store: ReleaseSearchStore,
     pub: str,
@@ -275,4 +298,19 @@ def render_search_html(
         },
         facet_options=facets,
         result=result,
+    )
+
+
+def render_search_error_html(pub: str, comp: str, exc: si.SearchIndexError) -> bytes:
+    """The no-JS error representation (C4 NEW-13 / DR-C4-10) — an HTML page
+    for every error status, carrying the same code/detail the JSON body has
+    plus the public-safe tombstone fields on a 410."""
+    return search_error_page(
+        action=SEARCH_PATH.format(publication_id=pub, compartment=comp),
+        publication_id=pub,
+        compartment=comp,
+        status=exc.status,
+        code=exc.code,
+        detail=exc.detail,
+        tombstone=exc.extra.get("tombstone"),
     )

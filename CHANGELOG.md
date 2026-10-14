@@ -75,6 +75,23 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   `X-SIG-Basis: live-spine` header and a `basis` body field; and the
   `sig_read_public` role is narrowed by the `public_read_allowlist` migration
   to exactly the published read surface.
+- **Release-search states tell the truth** (P34.36; cites SIG-FIND-003,
+  SIG-UI-040, SIG-UI-050; owns S1 F-154 at the fixture layer) — the
+  released-corpus search's empty page now asserts only that no released
+  record in the compartment matches (the "recorded absence" claim is
+  removed); HTML clients get a real HTML error page for every error status
+  (`format=html` or `Accept: text/html`, including a search-scoped 422 for
+  malformed parameters) while JSON clients keep the `{detail, code}`
+  contract; `eligible_records` and `excluded_records_by_reason` now count
+  records the current policy withholds at access time (the `denied` hook
+  carries the public-safe reason category; `indexed_records` stays the
+  pinned index truth); the no-JS pager names the actual `limit`, drops the
+  duplicated browse sentence, and humanises display labels while wire
+  values stay raw; non-record compartments (`metadata`, `web`,
+  `web_mixed`, `code`, `ontology`) answer 404 `compartment_not_searchable`
+  instead of a readiness 503, and `build_release` fails closed if one ever
+  carries `sites.jsonl`; a zero-record release reports completeness
+  `not_evaluable` instead of `complete`.
 
 ### Security
 
