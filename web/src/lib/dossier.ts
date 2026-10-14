@@ -32,6 +32,11 @@ import type { AbsenceKind, CompetingClaim, Support } from "./epistemic";
 import { beliefPinnedPermalink } from "./citation";
 import type { AsOfEcho } from "./fixtures";
 import { adapterFor, adapterPublicationPermitted } from "./publication";
+import {
+  namingDecisions,
+  namingRecordPermits,
+  type OfficerNamingRecord,
+} from "./officer-naming";
 
 // --- SIG-UI-010: the twelve sections, in the exact §39.2 order ---------------
 
@@ -110,12 +115,16 @@ export interface Row {
   note?: string;
   /**
    * True when this row's value is a public-employee name — gated by the
-   * jurisdiction-conditional publication rule (SIG-PUB-017). See
+   * jurisdiction-conditional publication rule (SIG-PUB-017) AND the persisted
+   * officer-naming concurrence record (SIG-PUB-007/008; P35.28). The row's
+   * `subject_id`/`predicate_id` are the record's match keys. See
    * `applyPublicationPolicy`.
    */
   isPublicEmployeeName?: boolean;
   /** The record's origin jurisdiction (defaults to the dossier's own). */
   originJurisdiction?: string;
+  /** The persisted officer-naming decision governing this row, when one exists. */
+  namingDecisionId?: string;
   /**
    * Set by `applyPublicationPolicy` when the value was withheld under the
    * governing regime — the value is cleared and this flag drives the render.
@@ -301,31 +310,50 @@ export function sectionTitlesFor(lang: string): Record<string, string> {
 }
 
 /**
- * Apply the jurisdiction-conditional publication policy to a dossier at build time
- * (SIG-PUB-017, §44). For every row flagged `isPublicEmployeeName`, the governing
- * adapter (the dossier's `jurisdictionCode`) and the record's origin jurisdiction
- * are checked; when publication is NOT permitted the value is withheld — cleared and
- * marked `withheld` with the governing regime named in a note. This can ONLY ever
- * withhold (Part VIII §0.7): a permitted name is returned unchanged, so the FR/BE
- * dossiers show everything the US one does except the gated name.
+ * Apply the publication gates to a dossier at build time (SIG-PUB-017, §44 +
+ * the P35.28 officer-naming gate, §43.4, SIG-PUB-007/008). For every row
+ * flagged `isPublicEmployeeName` BOTH legs must permit: the jurisdiction rule
+ * (the governing adapter's code + the record's origin jurisdiction, §43.8) AND
+ * a persisted two-reviewer concurrence record naming the row's
+ * `(subject_id, predicate_id)` (`sig.officer-naming-decisions/1`). A missing,
+ * non-concur, or inconsistent record withholds the name whatever the
+ * jurisdiction says — default deny — as does an unknown or restrictive
+ * jurisdiction; the refusal reason names the failing leg(s). This can ONLY
+ * ever withhold (Part VIII §0.7): a doubly-permitted name is returned with its
+ * `namingDecisionId` recorded as provenance.
  */
-export function applyPublicationPolicy(dossier: Dossier): Dossier {
+export function applyPublicationPolicy(
+  dossier: Dossier,
+  opts?: { namingDecisions?: readonly OfficerNamingRecord[] },
+): Dossier {
   const adapter = adapterFor(dossier.jurisdictionCode ?? "US");
+  const decisions = opts?.namingDecisions ?? namingDecisions();
   const gateRow = (row: Row): Row => {
     if (!row.isPublicEmployeeName) return row;
-    const permitted = adapterPublicationPermitted(
+    const jurisdictionOk = adapterPublicationPermitted(
       adapter,
       row.originJurisdiction ?? adapter.code,
       { isPublicEmployeeName: true },
     );
-    if (permitted) return row;
+    const recordVerdict = namingRecordPermits(
+      row.subject_id ?? "",
+      row.predicate_id ?? "",
+      decisions,
+    );
+    if (jurisdictionOk && recordVerdict.permitted) {
+      return { ...row, namingDecisionId: recordVerdict.decisionId };
+    }
+    const reasons: string[] = [];
+    if (!recordVerdict.permitted) reasons.push(recordVerdict.reason);
+    if (!jurisdictionOk) {
+      reasons.push(`not publishable under ${adapter.profile} (SIG-PUB-017)`);
+    }
     return {
       ...row,
       value: null,
       withheld: true,
-      note:
-        `Public-employee name withheld: not publishable under ${adapter.profile} ` +
-        `(SIG-PUB-017).`,
+      ...(recordVerdict.decisionId ? { namingDecisionId: recordVerdict.decisionId } : {}),
+      note: `Public-employee name withheld: ${reasons.join("; ")}.`,
     };
   };
   return {

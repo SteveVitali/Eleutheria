@@ -28,6 +28,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
+import { applyPublicationPolicy } from "./dossier";
 import type { Dossier } from "./dossier";
 import { RESEARCH_PORTFOLIO_FIXTURE } from "./research-dossier-fixture";
 import {
@@ -144,9 +145,19 @@ export function exportDir(): string {
  * The dossiers the site renders. In `fixtures` mode this is the committed fixture
  * set; in `export` mode it is `<exportDir>/web/dossiers.json` — the web-shaped
  * dossier bundle the jurisdiction export emits (the same `Dossier` contract).
+ *
+ * Every dossier passes through `applyPublicationPolicy` HERE — the single data
+ * funnel — so the officer-naming + jurisdiction gates (SIG-PUB-007/008/017,
+ * P35.28) bind on ALL dossier surfaces: the page still applies the gate at
+ * render (`[slug].astro`, idempotent — it only ever withholds), and the print
+ * export, the static JSON endpoint, and the map/list readers inherit it through
+ * this funnel (the E1/NEW-12 defect class: a gated row must never reach a
+ * built surface ungated).
  */
 export function getDossiers(): Dossier[] {
-  if (dataSource() === "fixtures") return DOSSIERS;
+  if (dataSource() === "fixtures") {
+    return DOSSIERS.map((d) => applyPublicationPolicy(d));
+  }
   const path = `${exportDir()}/web/dossiers.json`;
   let raw: string;
   try {
@@ -171,7 +182,7 @@ export function getDossiers(): Dossier[] {
   // P30.3: the SIG-PUB-017 jurisdiction DEMONSTRATIONS (Paris / Brussels fixture dossiers)
   // carry demo facts; a real-data build never lists them as dossiers (§3.1). The P27.5
   // fixture-export harness ships them as an optional presentation artifact instead.
-  return [...exportDossiers, ...jurisdictionDemos()];
+  return [...exportDossiers, ...jurisdictionDemos()].map((d) => applyPublicationPolicy(d));
 }
 
 /** The SIG-PUB-017 demo dossiers in export mode: only when the bundle ships them (P30.3). */

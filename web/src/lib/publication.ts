@@ -32,10 +32,21 @@ export interface PublicationAdapter {
   profile: string;
 }
 
-/** Whether each jurisdiction permits publishing a public-employee name (SIG-PUB-017). */
+/**
+ * Whether each jurisdiction permits publishing a public-employee name
+ * (SIG-PUB-017). Mirrors `policy/src/policy/data/jurisdictions.toml` verbatim —
+ * the full committed set (P35.28 alignment: the map previously carried only
+ * US/FR/BE, so US-CA/UK/EU/DE fell through to the conservative default; the
+ * mirror now names every row the Python gate reads, still conservative on any
+ * unlisted code).
+ */
 const PUBLIC_EMPLOYEE_NAMES_PUBLISHABLE: Record<string, boolean> = {
   US: true, // presumptively-public public-employee names (US-DEFAULT)
+  "US-CA": true, // presumptively-public (jurisdictions.toml)
+  UK: true, // presumptively-public (jurisdictions.toml)
+  EU: false, // redact-by-default under the EU data-protection regimes
   FR: false, // redact-by-default under FR-GDPR
+  DE: false, // redact-by-default under DE-GDPR
   BE: false, // redact-by-default under BE-GDPR
 };
 
@@ -47,6 +58,7 @@ export const PUBLICATION_ADAPTERS: Record<string, PublicationAdapter> = {
   US: { code: "US", lang: "en", profile: "US-DEFAULT" },
   FR: { code: "FR", lang: "fr", profile: "FR-GDPR" },
   BE: { code: "BE", lang: "nl-BE", profile: "BE-GDPR" },
+  UK: { code: "UK", lang: "en-GB", profile: "GB" },
 };
 
 /** The adapter for a jurisdiction code, or a conservative US-shaped fallback. */
