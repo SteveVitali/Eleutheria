@@ -1,0 +1,2 @@
+<!-- Archived line: the head State line before P34.45's closeout, byte-for-byte → docs/build/reports/memory-repair/LEDGER_state_line_pre-P34.45.txt, sha256 c6d3fa69ee55339d364ab6b0be9de3051009d2bdaae8c900ac9a5f436a605743 (P34.45; BM-LEDGER-08). -->
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P34.45's entry (PR #259 — honest evaluation posture; ER re-run leg queued); next → P34.46 (row 258).

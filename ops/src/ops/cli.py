@@ -598,6 +598,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the JSON plan/census record to this path as well as stdout",
     )
 
+    rgate = sub.add_parser(
+        "roll-gate",
+        help="P34.46 (FEA-07; plan §5.9): the L2 deploy-slot go/no-go — "
+        "judges a recorded inputs JSON (rehearsal record, disk, lock_timeout, "
+        "plan diff, P34.39a verdict, AR-2 backup, the verbatim go, the "
+        "window instant) and emits sig.roll-gate/1; exit 0 = go, exit 42 = "
+        "no-go (the leg refuses and queues), exit 2 = usage",
+    )
+    rgate.add_argument(
+        "--inputs",
+        required=True,
+        help="the recorded inputs JSON (see ops/src/ops/roll_gate.py for the shape)",
+    )
+    rgate.add_argument(
+        "--out",
+        dest="out",
+        default=None,
+        help="also write the verdict JSON to this path",
+    )
+
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
     keepalive = sub.add_parser(
         "keepalive-check",
@@ -4119,6 +4139,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_release_publish(args)
     if args.command == "composed-verify":
         return _cmd_composed_verify(args)
+    if args.command == "roll-gate":
+        from . import roll_gate
+
+        return roll_gate.main(["--inputs", args.inputs] + (["--out", args.out] if args.out else []))
     parser.print_help()
     return 0
 

@@ -1,0 +1,22 @@
+{
+  "kind": "sig.trigger-pause-list/1",
+  "computed_at": "2026-10-09T10:10:00Z",
+  "computed_by": "L1 prep (agent; no human check performed)",
+  "method": "live `gcloud scheduler jobs list` (79 triggers, all ENABLED) + ops/cadence.toml; next-fire computed per cron (Etc/UTC, minute resolution) against the pause band [slot-1h, planned_end+1h]",
+  "candidate_slot": {
+    "note": "earliest contract-legal slot; the REAL slot is operator-picked inside the weekday 14:00-20:00Z window — this list MUST be recomputed at the chosen slot before it is quoted in the go request",
+    "start": "2026-10-14T14:00:00Z",
+    "planned_end": "2026-10-14T15:30:00Z",
+    "pause_band": ["2026-10-14T13:00:00Z", "2026-10-14T16:30:00Z"]
+  },
+  "spine_writing_triggers_in_band": [],
+  "verdict": "empty for the candidate slot — no ingest/materialize/recovery/quality-write trigger fires in the band",
+  "nearest_fires": [
+    {"job": "sig-sched-gao-surveillance-reports", "cron": "9 6 14 * *", "next_fire_utc": "2026-10-14T06:09:00Z", "writes_spine": true, "in_band": false},
+    {"job": "sig-sched-raa-prefectures", "cron": "12 4 * * 3", "next_fire_utc": "2026-10-14T04:12:00Z", "writes_spine": true, "in_band": false},
+    {"job": "sig-sched-probe", "cron": "0 */6 * * *", "next_fires_utc": ["2026-10-14T12:00:00Z", "2026-10-14T18:00:00Z"], "writes_spine": false, "note": "HTTP sweep — writes ops/probes GCS records only; also outside the band unless the slot slips past 17:00Z"}
+  ],
+  "scheduler_evidence": "gcloud scheduler jobs list --location=us-central1 --project=zeta-medley-508121-u7 (79 jobs, all ENABLED) at 2026-10-09T10:1xZ",
+  "manual_jobs": "sig-materialize / sig-replay-ingest / sig-sink-bench / sig-export are Cloud Run jobs with NO scheduler trigger (manual legs only; newest sig-materialize execution Completed 2026-09-27T00:44:31Z — none running)",
+  "resume_rule": "resume the paused list in reverse order after verification; the pause list and resume are logged"
+}

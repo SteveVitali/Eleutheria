@@ -1,0 +1,15 @@
+{
+  "rehearsal": {
+    "deploy_exit": 0,
+    "verify_exit": 0,
+    "claim_evidence_lock": {"observed_s": 13.344, "upper_bound_s": 13.844},
+    "plan_tip_sha256": "eef95739db72e06150c34e4a04af9e10faac2f3f0fadad3ed45f1f098822895e"
+  },
+  "disk": {"free_bytes": 11811160064, "claim_evidence_bytes": 501301248},
+  "deploy_session": {"lock_timeout_ms": 1200000},
+  "plan_diff": {"diff_lines": 0, "deploy_set_sha256": "eef95739db72e06150c34e4a04af9e10faac2f3f0fadad3ed45f1f098822895e", "rehearsed_tip_sha256": "eef95739db72e06150c34e4a04af9e10faac2f3f0fadad3ed45f1f098822895e"},
+  "readback": {"verdict": "pass", "record": "readback-2026-10-10.json"},
+  "backup": {"status": "SUCCESSFUL", "id": "1791600000000", "type": "ON_DEMAND"},
+  "go": {"verbatim": "go — deploy the rehearsed tip, the allow dispositions, the sig-api roll by digest, the notice and the trigger pause/resume", "recorded_at": "2026-10-14T14:05:00Z"},
+  "now": "2026-10-14T15:00:00Z"
+}

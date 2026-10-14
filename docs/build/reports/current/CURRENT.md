@@ -4,23 +4,23 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `e9cb8e1533fa9005241575a6335269357b1d5314` · inputs hashed: 999 · wall-clock receipt: `receipt.json`
+> input_commit: `8c848cd6750ecfbd0efd531ffb6dee9a57c4e514` · inputs hashed: 1000 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.46` · lastCompleted `P34.45`
-- chainTip `r11/P34.45-honest-evaluation-posture` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P…` · updatedAt `2026-10-09T08:54Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.47` · lastCompleted `P34.46`
+- chainTip `r11/P34.46-round10-schema-allows-and-api-roll-v2` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P…` · updatedAt `2026-10-09T11:09Z`
 
 ## Obligations
 
-- 160 obligations · **91 owed** (88 OPEN, 3 PARTIAL) · 69 terminal
-- 644 events (30 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 160 obligations · **90 owed** (87 OPEN, 3 PARTIAL) · 70 terminal
+- 645 events (31 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 91 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 90 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
-- `return-pass` → see [return-pass.md](return-pass.md) (complete — 33 rows)
+- `return-pass` → see [return-pass.md](return-pass.md) (complete — 34 rows)
 
 ## Known inconsistencies (preserved, never synthesized)
 
