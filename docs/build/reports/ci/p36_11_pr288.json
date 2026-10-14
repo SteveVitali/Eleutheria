@@ -1,0 +1,411 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 288,
+  "pr": 288,
+  "head_sha": "aa5a82e1d363cabc1605b1c1eb9d50e1dcc70c31",
+  "head_ref": "r11/P36.11-grant-council-procurement-documents-bills",
+  "base": "r11/P36.10-ccops-reports-and-police-policies",
+  "read_at": "2026-10-14T00:57:31Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `r11/P34.30-memory-cutover-disposition-and-transition-rule` is #232, already merged",
+  "stack_digest": "00cdc64eeae38d35b53e6465e09e9d742cb167d12e6766da826c0678064233dc",
+  "local_head": "aa5a82e1d363cabc1605b1c1eb9d50e1dcc70c31",
+  "external": {
+    "read_at": "2026-10-14T00:57:52Z",
+    "since": "2026-10-13",
+    "fetch": "ok",
+    "main_sha": "85cef5bc5685c8a6224a502d3dd569d96769fdad",
+    "chain_descends": false,
+    "descends_note": "origin/main 85cef5b is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 288,
+        "parent": 287,
+        "ancestor": true
+      },
+      {
+        "child": 287,
+        "parent": 286,
+        "ancestor": true
+      },
+      {
+        "child": 286,
+        "parent": 284,
+        "ancestor": true
+      },
+      {
+        "child": 284,
+        "parent": 283,
+        "ancestor": true
+      },
+      {
+        "child": 283,
+        "parent": 282,
+        "ancestor": true
+      },
+      {
+        "child": 282,
+        "parent": 281,
+        "ancestor": true
+      },
+      {
+        "child": 281,
+        "parent": 280,
+        "ancestor": true
+      },
+      {
+        "child": 280,
+        "parent": 279,
+        "ancestor": true
+      },
+      {
+        "child": 279,
+        "parent": 278,
+        "ancestor": true
+      },
+      {
+        "child": 278,
+        "parent": 277,
+        "ancestor": true
+      },
+      {
+        "child": 277,
+        "parent": 276,
+        "ancestor": true
+      },
+      {
+        "child": 276,
+        "parent": 275,
+        "ancestor": true
+      },
+      {
+        "child": 275,
+        "parent": 274,
+        "ancestor": true
+      },
+      {
+        "child": 274,
+        "parent": 273,
+        "ancestor": true
+      },
+      {
+        "child": 273,
+        "parent": 272,
+        "ancestor": true
+      },
+      {
+        "child": 272,
+        "parent": 271,
+        "ancestor": true
+      },
+      {
+        "child": 271,
+        "parent": 270,
+        "ancestor": true
+      },
+      {
+        "child": 270,
+        "parent": 269,
+        "ancestor": true
+      },
+      {
+        "child": 269,
+        "parent": 268,
+        "ancestor": true
+      },
+      {
+        "child": 268,
+        "parent": 267,
+        "ancestor": true
+      },
+      {
+        "child": 267,
+        "parent": 266,
+        "ancestor": true
+      },
+      {
+        "child": 266,
+        "parent": 265,
+        "ancestor": true
+      },
+      {
+        "child": 265,
+        "parent": 264,
+        "ancestor": true
+      },
+      {
+        "child": 264,
+        "parent": 263,
+        "ancestor": true
+      },
+      {
+        "child": 263,
+        "parent": 262,
+        "ancestor": true
+      },
+      {
+        "child": 262,
+        "parent": 261,
+        "ancestor": true
+      },
+      {
+        "child": 261,
+        "parent": 259,
+        "ancestor": true
+      },
+      {
+        "child": 259,
+        "parent": 258,
+        "ancestor": true
+      },
+      {
+        "child": 258,
+        "parent": 257,
+        "ancestor": true
+      },
+      {
+        "child": 257,
+        "parent": 256,
+        "ancestor": true
+      },
+      {
+        "child": 256,
+        "parent": 255,
+        "ancestor": true
+      },
+      {
+        "child": 255,
+        "parent": 253,
+        "ancestor": true
+      },
+      {
+        "child": 253,
+        "parent": 252,
+        "ancestor": true
+      },
+      {
+        "child": 252,
+        "parent": 251,
+        "ancestor": true
+      },
+      {
+        "child": 251,
+        "parent": 250,
+        "ancestor": true
+      },
+      {
+        "child": 250,
+        "parent": 246,
+        "ancestor": true
+      },
+      {
+        "child": 246,
+        "parent": 245,
+        "ancestor": true
+      },
+      {
+        "child": 245,
+        "parent": 243,
+        "ancestor": true
+      },
+      {
+        "child": 243,
+        "parent": 242,
+        "ancestor": true
+      },
+      {
+        "child": 242,
+        "parent": 241,
+        "ancestor": true
+      },
+      {
+        "child": 241,
+        "parent": 240,
+        "ancestor": true
+      },
+      {
+        "child": 240,
+        "parent": 239,
+        "ancestor": true
+      },
+      {
+        "child": 239,
+        "parent": 238,
+        "ancestor": true
+      },
+      {
+        "child": 238,
+        "parent": 237,
+        "ancestor": true
+      },
+      {
+        "child": 237,
+        "parent": 236,
+        "ancestor": true
+      },
+      {
+        "child": 236,
+        "parent": 235,
+        "ancestor": true
+      },
+      {
+        "child": 235,
+        "parent": 234,
+        "ancestor": true
+      },
+      {
+        "child": 234,
+        "parent": 233,
+        "ancestor": true
+      }
+    ],
+    "merged_since": [
+      {
+        "number": 285,
+        "head_ref": "claude/accept-r10-adopt-chain-record",
+        "head_sha": "6b83ff681d7464eeab6f1cdb3865c6cc5faf1828",
+        "base": "main",
+        "merged_at": "2026-10-13T15:00:30Z",
+        "on_stack": false
+      },
+      {
+        "number": 232,
+        "head_ref": "r11/P34.30-memory-cutover-disposition-and-transition-rule",
+        "head_sha": "107221340339fb9d35bd8bdfe40413edcadb5b3e",
+        "base": "main",
+        "merged_at": "2026-10-13T03:33:53Z",
+        "on_stack": true
+      },
+      {
+        "number": 231,
+        "head_ref": "r11/P34.29-return-pass-generator-and-projection-fixes",
+        "head_sha": "6d9ec3716a60d96caccbe244274b3cd17b31d822",
+        "base": "main",
+        "merged_at": "2026-10-13T03:33:42Z",
+        "on_stack": true
+      },
+      {
+        "number": 230,
+        "head_ref": "r11/P34.28-readout-authorship-and-signed-gate-check",
+        "head_sha": "180886035b316ca7b6c1841f8bafbbeab2b101d9",
+        "base": "main",
+        "merged_at": "2026-10-13T03:33:31Z",
+        "on_stack": true
+      },
+      {
+        "number": 229,
+        "head_ref": "r11/P34.27-remaining-append-only-restorations",
+        "head_sha": "139f304fa9878ecb621a9c4fdb9ae6548aa02742",
+        "base": "main",
+        "merged_at": "2026-10-13T03:33:19Z",
+        "on_stack": true
+      },
+      {
+        "number": 228,
+        "head_ref": "r11/P34.26-adr-124-allow-dispositions",
+        "head_sha": "d7280abbcf441c4287f4df68bdedb8d927c5d8a4",
+        "base": "main",
+        "merged_at": "2026-10-13T03:33:06Z",
+        "on_stack": true
+      },
+      {
+        "number": 227,
+        "head_ref": "r11/P34.24b-sqitch-l44-52-clone-rehearsal",
+        "head_sha": "9504906c0640a4fb334cffe6295c53786d6ecf7a",
+        "base": "main",
+        "merged_at": "2026-10-13T03:32:53Z",
+        "on_stack": true
+      },
+      {
+        "number": 226,
+        "head_ref": "r11/P34.25-api-honesty-code",
+        "head_sha": "81060cc9299a295bd38e180db843c68cfb4991db",
+        "base": "main",
+        "merged_at": "2026-10-13T03:32:42Z",
+        "on_stack": true
+      },
+      {
+        "number": 225,
+        "head_ref": "r11/P34.24a-sqitch-hygiene-and-round-trip-ci",
+        "head_sha": "dad3d05bc65ed9373d59e0e23120c30806760983",
+        "base": "main",
+        "merged_at": "2026-10-13T03:32:31Z",
+        "on_stack": true
+      },
+      {
+        "number": 224,
+        "head_ref": "r11/P34.23-versioning-discipline-one-version-source",
+        "head_sha": "2b34ddcca0c8765619ceb2ba2f55f206c937baa0",
+        "base": "main",
+        "merged_at": "2026-10-13T03:32:19Z",
+        "on_stack": true
+      },
+      {
+        "number": 223,
+        "head_ref": "r11/P34.22b-date-truth-fixtures-and-sources-dates-v2",
+        "head_sha": "2e357211d03eeb1233df404b114bd694184c1f85",
+        "base": "main",
+        "merged_at": "2026-10-13T03:32:07Z",
+        "on_stack": true
+      },
+      {
+        "number": 221,
+        "head_ref": "r11/P34.22a-date-truth-release-constants-future-date-test",
+        "head_sha": "9021b91b3463e2dcf786cb6e82d75e5d6b45baff",
+        "base": "main",
+        "merged_at": "2026-10-13T03:31:55Z",
+        "on_stack": true
+      },
+      {
+        "number": 220,
+        "head_ref": "r11/P34.21b-attribution-re-export-and-republish-2",
+        "head_sha": "d27b4fa6820f99f817495536eb2246d0a2fe7e21",
+        "base": "main",
+        "merged_at": "2026-10-13T03:31:44Z",
+        "on_stack": true
+      },
+      {
+        "number": 219,
+        "head_ref": "r11/P34.21a-attribution-gate-sink-rights-and-backfill",
+        "head_sha": "fd24f9cd0d3d3e6a8605e5992f88261618359c9f",
+        "base": "main",
+        "merged_at": "2026-10-13T03:31:32Z",
+        "on_stack": true
+      },
+      {
+        "number": 218,
+        "head_ref": "r11/P34.20-watch-and-evidence-empty-state-truth",
+        "head_sha": "13919de4f190af599a1958164038a4ad21eb4595",
+        "base": "main",
+        "merged_at": "2026-10-13T03:31:20Z",
+        "on_stack": true
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #288@aa5a82e (external): off-stack merge #285 (`claude/accept-r10-adopt-chain-record` → `main`) into main at 2026-10-13T15:00:30Z — not a chain row (since 2026-10-13)",
+  "exit": 3
+}
