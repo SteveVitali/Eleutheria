@@ -855,6 +855,79 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run", action="store_true", help="plan + count only; append nothing"
     )
 
+    readback = sub.add_parser(
+        "scheduled-readback",
+        help="P34.39a (D-P31.4-1): READ-ONLY read-back of a scheduled-ingest "
+        "execution — the execution result, every member's ops/runs row, the "
+        "ingest_run_completion row, the claim-table update/delete counters, "
+        "probe health and Cloud SQL metrics, judged against the deferral's "
+        "success criteria. Clock-guarded: before the fire it refuses (exit 42, "
+        "queued) with the leg re-run prompt. Never executes or cancels a job, "
+        "never writes to production",
+    )
+    readback.add_argument(
+        "--batch",
+        default="camreg-batch-05",
+        help="cadence.toml [[batches]] id (default: camreg-batch-05)",
+    )
+    readback.add_argument(
+        "--date",
+        default="2026-10-10",  # future-ok: scheduled: D-P31.4-1's 10-10T03:35Z fire
+        help="the run date to read back "
+        "(YYYY-MM-DD; default: 2026-10-10)",  # future-ok: scheduled: D-P31.4-1
+    )
+    readback.add_argument(
+        "--now",
+        default=None,
+        help="ISO-8601 'now' override (tests / fixture replay; default: the clock)",
+    )
+    readback.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    readback.add_argument(
+        "--region",
+        default=None,
+        help="GCP region/location (default: SIG_GCP_REGION else us-central1)",
+    )
+    readback.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="restricted bucket holding ops/runs + ops/probes (default: SIG_OPS_GCS_BUCKET)",
+    )
+    readback.add_argument(
+        "--dsn",
+        default=None,
+        help="read-only PostgreSQL DSN for completion rows / claim-table counters "
+        "(else SIG_STAGING_DSN / SIG_PG_* parts); omitted = those criteria "
+        "degrade to not_evaluable, loudly",
+    )
+    readback.add_argument(
+        "--api-url",
+        default=None,
+        help="the read API's base URL for an authenticated /health read (optional)",
+    )
+    readback.add_argument(
+        "--baseline",
+        default=None,
+        help="a prior --write-baseline JSON (pre-run counters/disk/counts)",
+    )
+    readback.add_argument(
+        "--write-baseline",
+        default=None,
+        metavar="FILE",
+        help="capture the pre-run baseline JSON to FILE instead of running the "
+        "read-back (D-P31.4-1's baseline bullet; read-only, unguarded)",
+    )
+    readback.add_argument(
+        "--fixtures-dir",
+        default=None,
+        help="replay a recorded fixture directory (scheduler.json, "
+        "executions.json, run_rows/, probes/, db.json, monitoring.json) instead "
+        "of live reads — the identical report shape, offline",
+    )
+    readback.add_argument(
+        "--cadence", default=None, help="ops/cadence.toml path (default packaged)"
+    )
+    readback.add_argument("--out", default=None, help="also write the report JSON to this path")
+
     cadence_cmd = sub.add_parser(
         "cadence",
         help="print the resolved scheduled-ops table from ops/cadence.toml "
@@ -2592,6 +2665,94 @@ def _cmd_backfill_run_completions(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_scheduled_readback(args: argparse.Namespace) -> int:
+    """P34.39a / D-P31.4-1: the read-only post-run read-back of a scheduled run.
+
+    Every gather is a read. Before the fire (or before the trigger's
+    ``lastAttemptTime`` + a finished execution) the leg is *queued* — exit
+    ``scheduled_readback.READBACK_QUEUED`` (42) with the re-run prompt, never a
+    fabricated green.
+    """
+    from datetime import UTC, date, datetime
+
+    from .scheduled import load_cadence
+    from .scheduled_readback import capture_baseline, run_readback
+
+    cadence = load_cadence(args.cadence)
+    batch = next((b for b in cadence.batches if b.id == args.batch), None)
+    if batch is None:
+        print(f"scheduled-readback: no [[batches]] row with id {args.batch!r}")
+        return 2
+    try:
+        run_date = date.fromisoformat(args.date)
+    except ValueError:
+        print("scheduled-readback: --date must be YYYY-MM-DD", file=sys.stderr)
+        return 2
+    if args.now:
+        try:
+            now = datetime.fromisoformat(str(args.now).replace("Z", "+00:00"))
+        except ValueError:
+            print("scheduled-readback: --now must be ISO-8601", file=sys.stderr)
+            return 2
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=UTC)
+    else:
+        now = datetime.now(UTC)
+    project = args.project or os.environ.get("SIG_GCP_PROJECT", "").strip()
+    region = args.region or os.environ.get("SIG_GCP_REGION", "").strip() or "us-central1"
+    fixtures_dir = Path(args.fixtures_dir) if args.fixtures_dir else None
+    if args.write_baseline is None and not project and fixtures_dir is None:
+        print(
+            "scheduled-readback: needs --project / SIG_GCP_PROJECT "
+            "(or --fixtures-dir for a recorded replay)",
+            file=sys.stderr,
+        )
+        return 2
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    bucket_name = args.gcs_bucket or os.environ.get("SIG_OPS_GCS_BUCKET", "").strip() or None
+
+    if args.write_baseline:
+        doc = capture_baseline(
+            batch=batch,
+            run_date=run_date,
+            now=now,
+            project=project or "unknown",
+            region=region,
+            dsn=dsn,
+            api_url=args.api_url,
+        )
+        text = json.dumps(doc, indent=2, sort_keys=True, default=str)
+        out = Path(args.write_baseline)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(text + "\n", encoding="utf-8")
+        print(text)
+        return 0
+
+    try:
+        report, code = run_readback(
+            batch=batch,
+            run_date=run_date,
+            now=now,
+            project=project,
+            region=region,
+            bucket_name=bucket_name,
+            dsn=dsn,
+            api_url=args.api_url,
+            baseline_path=Path(args.baseline) if args.baseline else None,
+            fixtures_dir=fixtures_dir,
+        )
+    except ValueError as bad:
+        print(f"scheduled-readback: {bad}", file=sys.stderr)
+        return 2
+    text = json.dumps(report, indent=2, sort_keys=True, default=str)
+    print(text)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(text + "\n", encoding="utf-8")
+    return code
+
+
 def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     from .alerts import utcnow
     from .scheduled import load_cadence, run_object_uri, scheduled_ingest, store_run_row
@@ -3583,6 +3744,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_cadence(args)
     if args.command == "backfill-run-completions":
         return _cmd_backfill_run_completions(args)
+    if args.command == "scheduled-readback":
+        return _cmd_scheduled_readback(args)
     if args.command == "sink-bench":
         return _cmd_sink_bench(args)
     if args.command == "roll-jobs":

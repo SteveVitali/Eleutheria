@@ -4,17 +4,17 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `ef1fb3bf9c77b123f1f59c13005843783c4742ea` · inputs hashed: 982 · wall-clock receipt: `receipt.json`
+> input_commit: `5686684479f92b300dbcd6bc882ecce0ae91b1cf` · inputs hashed: 983 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.39a` · lastCompleted `P34.38`
-- chainTip `r11/P34.38-sources-pilot-prep-and-registry-rows` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.50` · updatedAt `2026-10-07T14:04Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.39b` · lastCompleted `P34.39a`
+- chainTip `r11/P34.39a-osm-replay-read-back` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.50` · updatedAt `2026-10-07T18:34Z`
 
 ## Obligations
 
 - 156 obligations · **87 owed** (84 OPEN, 3 PARTIAL) · 69 terminal
-- 637 events (27 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 638 events (28 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
 - `obligations` → see [obligations.md](obligations.md) (complete — 87 rows)
 
@@ -44,6 +44,7 @@
 | P34.21a | D-P34.21a-1 | `implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (scope: leg L1 only, on `r11/P34.21a-live-1`… |
 | P34.21b | D-P34.21b-1 · D-P34.21b-2 | -1: `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L1 only, on `r11/P34.21b-live-1`… |
 | P34.38 | the queued BidNet terms-capture leg (no deferral id of its own — it works the recorded E4-R6a answer; the rights decision keeps its manifest home at row 350) | `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (scope: the BidNet terms capture only) · landed as… |
+| P34.39a | the queued live read-back verdict for the obligation homed on the P31.4 row above (this row carries the clock-guarded leg only); the pinned image predates P31.7… | `implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` · landed as row 247 (PR #245; command + fixtures + baseline shipp… |
 
 ## Known inconsistencies (preserved, never synthesized)
 
@@ -74,13 +75,7 @@
 
 ## Governing ADRs
 
-| ADR | scope | file |
-|---|---|---|
-| ADR-073 | build-memory v2 — docs/build/ is the committed memory root; LEDGER.md holds the  | docs/adr/ADR-073-build-memory-committed-under-docs-build-scratch-retired.md |
-| ADR-119 | P30.4 leak-scope policy — governs what a closeout/report may contain (referenced | docs/adr/ADR-119-project-id-leak-check-scoped-to-code-and-config.md |
-| ADR-120 | the Round-10 six-stream program + the memory extension this projection serves (S | docs/adr/ADR-120-six-stream-integrity-investigation-and-memory-extension.md |
-| ADR-125 | evidence-audit/1 + recovery-plan/1 — the offline audit/dry-run contracts the mem | docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md |
-| ADR-126 | obligation-event/1 + coverage-assessment/1 + current-projection/1 + input-manife | docs/adr/ADR-126-obligation-events-and-current-projection.md |
+- `adrs` → see [adrs.md](adrs.md) (complete — 5 rows)
 
 ## Reading this view
 

@@ -1,0 +1,10 @@
+{
+ "name": "projects/proj/locations/us-central1/jobs/sig-sched-camreg-batch-05",
+ "schedule": "35 3 10 * *",
+ "state": "ENABLED",
+ "scheduleTime": "2026-10-10T03:35:00Z",
+ "lastAttemptTime": "2026-10-10T03:35:00.1Z",
+ "httpTarget": {
+  "uri": "https://run.googleapis.com/.../jobs/sig-ingest-camreg-batch-05:run"
+ }
+}

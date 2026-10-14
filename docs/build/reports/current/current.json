@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ef1fb3bf9c77b123f1f59c13005843783c4742ea",
-  "manifest_inputs": 982,
+  "input_commit": "5686684479f92b300dbcd6bc882ecce0ae91b1cf",
+  "manifest_inputs": 983,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.39a",
-    "lastCompleted": "P34.38",
+    "nextTicket": "P34.39b",
+    "lastCompleted": "P34.39a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.38-sources-pilot-prep-and-registry-rows",
+    "chainTip": "r11/P34.39a-osm-replay-read-back",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-07T14:04Z"
+    "updatedAt": "2026-10-07T18:34Z"
   },
   "counts": {
     "obligations": 156,
@@ -31,13 +31,13 @@
     "open": 84,
     "partial": 3,
     "terminal": 69,
-    "events": 637,
-    "transitions": 27,
+    "events": 638,
+    "transitions": 28,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 20,
+    "return_pass_rows": 21,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -4109,12 +4109,12 @@
     {
       "id": "D-P31.4-1",
       "status": "OPEN",
-      "status_source": "event-head D-P31.4-1:e0",
+      "status_source": "event-head D-P31.4-1:e1",
       "kind": "V",
       "owner": "scheduled (cron)",
       "landing": "RETURN PASS — P31.4",
       "landing_source": "return-pass-map/1",
-      "backlog_home": "BL-057",
+      "backlog_home": "BL-084",
       "item": "the 2026-10-10 `sig-sched-camreg-batch-05` OSM replay — the first full OSM run on the rolled image (`sig-api@sha256:feff986c…`, per-capture flush + resume + GCS capture store) — completes inside the projection",
       "unblocked_by": "the cron at 2026-10-10T03:35Z (automatic)",
       "verify": "the batch-05 run rows under `gs://…-sig-restricted/ops/runs/camreg_osm_surveillance/2026-10-10/` show `outcome` ok/partial, `fetches` 158 (or fewer only with `resumed` entries), `claims_added` ≈ 1.37M; the execution finishes in well under 1 h (ADR-111 projects ≈ 12–15 min; ADR-107/ADR-111 revisit trigger (a) otherwise); an `ingest_run_completion` for it; `n_tup_upd/del` 0",
@@ -4148,6 +4148,32 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P31.4-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P31.4-1",
+          "seq": 1,
+          "expected_previous_event": "D-P31.4-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.39a",
+          "owner": "scheduled (cron)",
+          "landing": "automatic at the 2026-10-10T03:35Z cron — the read-back leg re-runs `implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` once the sig-ingest-camreg-batch-05 execution has finished; a pass closes through a DONE transition carrying the read-back report",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.39a.md",
+            "docs/build/reports/p34.39a-osm-replay-read-back/README.md",
+            "docs/build/reports/p34.39a-osm-replay-read-back/baseline-2026-10-07.json",
+            "docs/build/reports/p34.39a-osm-replay-read-back/queued-2026-10-07.json",
+            "ops/src/ops/scheduled_readback.py",
+            "docs/tickets/247_P34.39a__osm-replay-read-back.md"
+          ],
+          "observed_at": "2026-10-07",
+          "recorded_at": "2026-10-07",
+          "source_commit": "60b60b5b",
+          "reason": "progress note, not a close (P34.39a): the read-back command landed (`sig-ops scheduled-readback` — read-only, AR-4 clock-guarded, 23 focused tests + fixture replay) and the pre-run baseline was captured live (claim 2,640,429; claim-table n_tup_upd/del all 0; camreg_osm_surveillance 1,241,521 claims via the evidence chain — the pre-P31.2 reuse-by-key runs fold several sources into one ingest_run, so run-level attribution mis-attributes; the method rides in the baseline record). The live guard ran 2026-10-07 and refused with exit 42 — queued, not failed: the fire is in the future, the trigger has no lastAttemptTime, and no post-fire execution exists. The pinned image (sig-api@sha256:feff986c…) predates P31.7 re-sighting bookkeeping; the report discloses it. Still owed: the post-fire read-back verdict. Row stays OPEN."
         }
       ]
     },
@@ -7972,6 +7998,14 @@
         "gates_cell": "public read-only GET of `https://www.bidnetdirect.com/terms` under the project UA (SIG-INGEST-036), robots `Crawl-delay: 5` honoured; gated on `live:P35.38a` — the UA's owned `/data-collection/` page live (probed 2026-10-07T12:09Z: `/` 200, `/data-collection/` 404 → not yet); the operator's recorded E4-R6a answer (\"a — capture bidnetdirect.com terms, then decide\", round 17 2026-10-01T04:49:27Z) is the go; the terms land verbatim in `docs/build/reports/rights/bidnet_direct.md`, never paraphrased",
         "operator_cell": "nothing for the leg itself — wait until `live:P35.38a` holds; the rights decision on the captured terms stays the operator's at GATE-G6 at the latest (S6R-28)",
         "rerun_cell": "`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (scope: the BidNet terms capture only) · landed as row 246 (PR #243; prep shipped — the leg queued, never executed)",
+        "obligations": []
+      },
+      {
+        "key": "P34.39a",
+        "obligations_cell": "the queued live read-back verdict for the obligation homed on the P31.4 row above (this row carries the clock-guarded leg only); the pinned image predates P31.7, so re-sightings are disclosed, never required",
+        "gates_cell": "hosted, date-bound (§(f3)); read-only, no gate — the window opens at the recorded Cloud Scheduler fire `2026-10-10T03:35:00Z` plus `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-batch-05` execution; until all three hold the guard exits 42 (queued), never a fabricated verdict",
+        "operator_cell": "nothing for the leg itself — the recorded schedule is the go (read-only reads only)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` · landed as row 247 (PR #245; command + fixtures + baseline shipped — the live verdict leg queued, never executed)",
         "obligations": []
       }
     ]
@@ -17972,12 +18006,13 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "d9449ea12f6dc9de557cee0db515d2a2802808c6c72fa7e500e953f7050f97bf",
+  "manifest_sha256": "7e5dc08581ab2d45b041bd9b2daabf3723b5c74292c83cc61c85ced2dbd2cd59",
   "current_md": {
-    "lines": 92,
-    "bytes": 20216,
+    "lines": 87,
+    "bytes": 19736,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
+      "adrs.md",
       "coverage-1.md",
       "coverage-2.md",
       "coverage-3.md",

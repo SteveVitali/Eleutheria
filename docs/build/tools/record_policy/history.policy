@@ -189,6 +189,12 @@ allow tests/connectors/fixtures/promoted/openstates_jurisdictions_p1.json 2027-0
 allow tests/connectors/fixtures/fema_hsgp_page1.json 2027-10-01T00:00:00Z "End Date"
 allow tests/connectors/fixtures/partners/usaspending_awards.json 2027-01-01T00:00:00Z "End Date"
 allow tests/acceptance/fixtures/okc_sources.json 2027-07-01T00:00:00Z 2027-06-30
+# P34.39a (D-P31.4-1; ticket 247): the scheduled_readback pass fixtures are recorded
+# JSON/JSONL captures of the real 2026-10-10T03:35Z camreg-batch-05 replay — JSON cannot
+# carry an inline marker, so the scheduled clock is allow-listed per path-glob, with the
+# expiry just past the last fixture literal (the 06:00:06Z probe) so the entry dies with
+# the values it names (R5); after the fire lands the literals are past-dated on their own.
+allow tests/ops/fixtures/scheduled_readback/* 2026-10-11T00:00:00Z 2026-10-10
 
 # ── PLAN-11B C13 executed-flag exemption (ticket 239; recorded 2026-10-06) ────────────────────
 # Commit f9c407c8 (the C13 Phase-4 split commit) named `P35.1b`/`P35.1c` in its subject, so

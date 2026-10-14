@@ -1,0 +1,91 @@
+{
+ "completions": [
+  {
+   "completion_id": "cccccccc-0000-0000-0000-000000000001",
+   "run_id": "11111111-2222-3333-4444-555566667777",
+   "source_id": "camreg_osm_surveillance",
+   "status": "ok",
+   "finished_at": "2026-10-10T03:50:01Z",
+   "claims_considered": 1370400,
+   "claims_inserted": 0,
+   "claims_duplicate": 1369210,
+   "run_record_uri": "gs://bucket/ops/runs/camreg_osm_surveillance/2026-10-10/2026-10-10T03-50-01Z.json",
+   "backfilled_from": null,
+   "detail": null,
+   "recorded_at": "2026-10-10T03:50:02Z"
+  }
+ ],
+ "counters": {
+  "claim": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "claim_evidence": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "claim_qualifier": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "entity": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "entity_identifier": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "entity_identity_key": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "evidence_artifact": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "evidence_blob": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "evidence_capture": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "extraction": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "ingest_run": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "ingest_run_capture": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "ingest_run_completion": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "organization": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "rights_record": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "source_registry": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  },
+  "assertion_quarantine": {
+   "n_tup_upd": 0,
+   "n_tup_del": 0
+  }
+ },
+ "claim_counts": {
+  "camreg_osm_surveillance": 1399000
+ }
+}
