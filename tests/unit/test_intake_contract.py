@@ -308,6 +308,9 @@ def _correct_proposal() -> dict:
         "target_id": _CLAIM,
         "claim_digest": "a" * 64,
         "evidence_digest": "b" * 64,
+        # P34.37 (C4 NEW-18): the declared object_type binds the value shape —
+        # {value_text, value_num, unit} is exactly what 'quantity' admits.
+        "object_type": "quantity",
         "value": {"value_text": "225", "value_num": 225, "unit": "cameras"},
     }
 
@@ -376,13 +379,50 @@ def test_proposal_fingerprint_and_target_shapes() -> None:
 
 def test_proposal_part_viii_screen() -> None:
     bad = _correct_proposal()
-    bad["value"] = {"value_text": "the license plate ABC-123"}
+    # Shape-valid for 'quantity' so the refusal is the Part VIII screen, not
+    # the NEW-18 shape check.
+    bad["value"] = {"value_text": "the license plate ABC-123", "value_num": 225}
     with pytest.raises(pint.IntakeFieldError):
         pint.validate_proposal("correct", bad)
     bad2 = _correct_proposal()
     bad2["correction_reason"] = "per-trip travel history"
     with pytest.raises(pint.IntakeFieldError):
         pint.validate_proposal("correct", bad2)
+
+
+def test_proposal_value_shape_bound_to_object_type() -> None:
+    """C4 NEW-18: a proposal that would be unapplicable at the bridge is
+    refused AT PROPOSAL TIME — the declared object_type pins
+    required ⊆ present ⊆ required ∪ optional over [proposal.object_value],
+    the same table the bridge re-checks at apply."""
+    # A required column missing for the declared type.
+    missing_col = _correct_proposal()
+    del missing_col["value"]["value_num"]
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", missing_col)
+    # A column the declared type does not admit.
+    extra_col = _correct_proposal()
+    extra_col["value"]["object_entity"] = _CLAIM
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", extra_col)
+    # An out-of-scope type fails closed (geometry is never bridgeable).
+    unknown_type = _correct_proposal()
+    unknown_type["object_type"] = "geometry"
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", unknown_type)
+    # object_type is required when a value is proposed.
+    missing_type = {k: v for k, v in _correct_proposal().items() if k != "object_type"}
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", missing_type)
+    # A correctly-shaped proposal for its declared type still passes.
+    literal = _correct_proposal()
+    literal["object_type"] = "literal"
+    literal["value"] = {"value_text": "updated description"}
+    assert pint.validate_proposal("correct", literal)["object_type"] == "literal"
+    # One table of record feeds the bridge's apply-side check — no drift.
+    rules = pint.object_value_rules()
+    assert rules["literal"] == (frozenset({"value_text"}), frozenset({"unit"}))
+    assert "value_geom" not in rules and "geometry" not in rules
 
 
 def test_proposal_outcome_shapes() -> None:

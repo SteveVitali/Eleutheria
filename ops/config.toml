@@ -87,6 +87,15 @@ operational = false
 owner = ""
 # Whether a reviewer rotation actually covers the published response SLAs.
 staffed = false
+# How many edge-proxy hops the abuse limiter trusts when normalising the
+# client address for its pseudonym (P34.37, C4 NEW-16). Each trusted hop is
+# documented to append the peer it observed to Forwarded/X-Forwarded-For, so
+# N means "the Nth-from-right forwarding entry is the real client" and
+# everything left of it is client-claimed and ignored. 0 — the default and
+# the current posture (no documented proxy chain in front of the receiver) —
+# uses the direct TCP peer only; a client-supplied forwarding header is never
+# trusted on its own.
+trusted_proxy_hops = 0
 # The retention schedule the operator ratified (S4 §8): payloads until 30 days
 # after final disposition, with a 90-day review/reminder ceiling; extensions
 # only via a recorded legal_hold intake event by an authorized reviewer.

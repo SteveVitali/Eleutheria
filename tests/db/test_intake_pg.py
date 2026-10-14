@@ -433,7 +433,9 @@ def test_public_response_only_when_published_flagged(recv_conn: object, rev_conn
     status = PgIntakeReceiverStore(recv_conn).public_status(receipt)
     assert status["state"] == "decided"
     assert status["public_response"] == "We corrected it."
-    # Coarse only — no rationale, no actor, no payload.
+    # Coarse only — no rationale, no actor, no payload. The P34.37 additive
+    # keys (outcome + the post-publication linkage) are reporter-safe by
+    # construction and present as NULL until `published`.
     assert set(status) <= {
         "report_id",
         "receipt_id",
@@ -442,7 +444,13 @@ def test_public_response_only_when_published_flagged(recv_conn: object, rev_conn
         "lifecycle_event",
         "state",
         "public_response",
+        "outcome",
+        "correction_ref",
+        "publication_id",
+        "tombstone",
     }
+    assert status["outcome"] == "correct"
+    assert status["publication_id"] is None  # nothing links until `published`
 
 
 # --------------------------------------------------------------------------- #
@@ -543,13 +551,46 @@ def test_durable_submit_restart_receipt_moderation(sig_database: dict[str, objec
     assert status.status_code == 200
     assert status.json()["state"] == "received"
 
-    # The private curation surface (fresh connection too) shows it in the queue.
-    curation = create_curation_app(enabled=True, intake_store=PgIntakeReviewerStore.from_dsn(dsn))
+    # The private curation surface (fresh connection too) shows it in the
+    # queue. A PG-backed app refuses the published demo tokens (C4 NEW-30) —
+    # the fixture provisions the invite handles via env like production.
+    from api.tier_tokens import load_tier_token_store
+
+    tokens = load_tier_token_store(
+        env={
+            "SIG_CURATION_TOKEN_SIG_REVIEWER": "pg-reviewer-token",
+            "SIG_CURATION_TOKEN_SIG_CURATOR": "pg-curator-token",
+        }
+    )
+    curation = create_curation_app(
+        enabled=True,
+        intake_store=PgIntakeReviewerStore.from_dsn(dsn),
+        tier_token_store=tokens,
+    )
     cur = TestClient(curation, raise_server_exceptions=True)
+    # The published demo keys are dead on a DSN-backed app.
+    assert (
+        cur.get(
+            "/v1/curation/intake", headers={"Authorization": "Bearer reviewer-demo-key"}
+        ).status_code
+        == 401
+    )
     queue = cur.get(
-        "/v1/curation/intake", headers={"Authorization": "Bearer reviewer-demo-key"}
+        "/v1/curation/intake", headers={"Authorization": "Bearer pg-reviewer-token"}
     ).json()["pending"]
     assert any(r["receipt_id"] == receipt for r in queue)
+    # C4 NEW-8 (P34.37): the reviewer DETAIL route over the PG store — the
+    # 500 was psycopg UUID/datetime values reaching the JSON encoder
+    # verbatim; every row field serialises clean now.
+    detail = cur.get(
+        f"/v1/curation/intake/{receipt}",
+        headers={"Authorization": "Bearer pg-reviewer-token"},
+    )
+    assert detail.status_code == 200, detail.text
+    body = detail.json()
+    assert body["lifecycle_event"] == "received"
+    assert isinstance(body["report_id"], str)  # a UUID serialised, not a 500
+    assert [e["event"] for e in body["events"]] == ["received"]
     decided = cur.post(
         f"/v1/curation/intake/{receipt}/events",
         json={
@@ -560,19 +601,21 @@ def test_durable_submit_restart_receipt_moderation(sig_database: dict[str, objec
                 "public_response": "Corrected in the next release.",
                 "public_response_publish": True,
                 # P32.16a: an applying outcome carries the structured proposal
-                # the bridge would validate before any canonical write.
+                # the bridge would validate before any canonical write —
+                # object_type pins the value shape (P34.37, C4 NEW-18).
                 "proposal": {
                     "target_kind": "claim",
                     "target_id": str(uuid.uuid4()),
                     "claim_digest": "a" * 64,
                     "evidence_digest": "b" * 64,
+                    "object_type": "quantity",
                     "value": {"value_text": "225", "value_num": 225, "unit": "cameras"},
                 },
             },
         },
-        headers={"Authorization": "Bearer reviewer-demo-key"},
+        headers={"Authorization": "Bearer pg-reviewer-token"},
     )
-    assert decided.status_code == 201
+    assert decided.status_code == 201, decided.text
     seq = decided.json()["event_seq"]
     approved = cur.post(
         f"/v1/curation/intake/{receipt}/events",
@@ -581,14 +624,12 @@ def test_durable_submit_restart_receipt_moderation(sig_database: dict[str, objec
             "detail": {
                 "outcome": "correct",
                 "reason": "verified fixture",
-                "public_response": "Corrected in the next release.",
-                "public_response_publish": True,
                 "approves_seq": seq,
             },
         },
-        headers={"Authorization": "Bearer curator-demo-key"},
+        headers={"Authorization": "Bearer pg-curator-token"},
     )
-    assert approved.status_code == 201
+    assert approved.status_code == 201, approved.text
 
     # The reporter sees the coarse decided state + the approved response — and
     # nothing else. The whole chain survived two fresh connections.
@@ -597,6 +638,7 @@ def test_durable_submit_restart_receipt_moderation(sig_database: dict[str, objec
         json={"receipt_id": receipt, "status_token": accepted["status_token"]},
     )
     assert final.json()["state"] == "decided"
+    assert final.json()["outcome"] == "correct"  # NEW-17: the outcome reaches the reporter
     assert final.json()["response"] == "Corrected in the next release."
 
     # Cleanup: the test rows are committed; expunge leaves an audited

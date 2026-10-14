@@ -95,6 +95,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Security
 
+- **Correction-intake + moderation hardening before any operational flip**
+  (P34.37; cites SIG-FIND-006, SIG-FIND-008; C4 NEW-8/15/16/17/18/19/30,
+  DR-C4-11/12) — the non-operational correction receiver and its curation
+  moderation surface are made safe to operate: the PostgreSQL reviewer
+  detail route serialises UUID/datetime values instead of 500ing; the
+  operating gate additionally fails closed unless `[intake].owner` is set
+  and `[intake].staffed = true` (an unowned, unstaffed receiver can never
+  answer as operating); the abuse limiter keys on the edge-normalised
+  client address via `[intake].trusted_proxy_hops` (a raw client-supplied
+  `Forwarded`/`X-Forwarded-For` is never trusted on its own) and refused
+  submissions no longer consume the allowance; demo curation tokens are
+  refused whenever a DSN backs the service; the reporter status view shows
+  the decided outcome, the approved public response and the
+  correction/release link once published (new `intake_reporter_outcome`
+  sqitch change — additive columns on `intake.report_public`, grants
+  unchanged); a proposal's value shape is validated against its declared
+  `object_type` at proposal time and re-checked against the resolved target
+  type at bridge apply (`object_type_mismatch`); the intake form gains a
+  viewport meta, a real category placeholder, contract-shaped deep-link
+  prefill, and copy that no longer promises anonymous/one-click intake —
+  the Round-11 public channel stays e-mail-only (WV-05/ADR-180), and
+  `[intake].operational` remains `false` (B-8).
+
 ## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`)
 
 First tagged snapshot of the Surveillance Infrastructure Graph (SIG): the complete

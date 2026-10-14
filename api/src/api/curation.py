@@ -959,7 +959,27 @@ def create_curation_app(
     every existing test drives).
     """
     is_enabled = curation_enabled() if enabled is None else enabled
-    store = tier_token_store if tier_token_store is not None else load_tier_token_store()
+    # C4 NEW-30 (DR-C4-11): a DSN-backed service is a REAL deployment — the
+    # published demo tokens must never authenticate there. That holds whether
+    # the store is loaded here or injected (an injected demo store is
+    # stripped), and whether the DSN backs the review queue or the intake
+    # reviewer store. A pre-constructed PG store object is DSN-backed too —
+    # "a DSN is set" is the posture, not the parameter type.
+    dsn_backed = bool(dsn) or isinstance(intake_store, str)
+    if not dsn_backed:
+        from db.intake import PgIntakeReviewerStore
+        from resolution.review_pg import PgReviewQueue
+
+        dsn_backed = isinstance(review_queue, PgReviewQueue) or isinstance(
+            intake_store, PgIntakeReviewerStore
+        )
+    store = (
+        tier_token_store
+        if tier_token_store is not None
+        else load_tier_token_store(allow_demo_fallback=not dsn_backed)
+    )
+    if dsn_backed:
+        store = store.without_demo_tokens()
     app = FastAPI(
         title="SIG curation service (authenticated, non-public)",
         version=__version__,

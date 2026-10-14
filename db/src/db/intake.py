@@ -27,6 +27,7 @@ durable commit" (S4 §8).
 from __future__ import annotations
 
 import json
+import uuid
 from datetime import datetime
 from typing import Any, Protocol, overload
 
@@ -130,12 +131,23 @@ def _row(row: None) -> None: ...
 @overload
 def _row(row: dict[str, Any]) -> dict[str, Any]: ...
 def _row(row: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Serialise one psycopg dict row to JSON-safe values.
+
+    ``uuid.UUID`` values become strings and datetimes ISO-8601 — psycopg
+    returns both natively, and a route that passed them through verbatim
+    500s on JSON serialisation (C4 NEW-8). List values (``claim_ids``,
+    ``evidence_urls``) get the same treatment element-wise.
+    """
     if row is None:
         return None
     out = dict(row)
-    for key in ("received_at", "issued_at", "at", "expunged_at"):
-        if key in out and out[key] is not None:
-            out[key] = out[key].isoformat()
+    for key, value in out.items():
+        if isinstance(value, uuid.UUID):
+            out[key] = str(value)
+        elif isinstance(value, datetime):
+            out[key] = value.isoformat()
+        elif isinstance(value, list):
+            out[key] = [str(v) if isinstance(v, uuid.UUID) else v for v in value]
     return out
 
 
@@ -211,7 +223,8 @@ class PgIntakeReceiverStore:
     def public_status(self, receipt_id: str) -> dict[str, Any] | None:
         row = self._conn.execute(
             "SELECT report_id, receipt_id, category, received_at,"
-            " lifecycle_event, state, public_response"
+            " lifecycle_event, state, public_response, outcome,"
+            " correction_ref, publication_id, tombstone"
             " FROM intake.report_public WHERE receipt_id = %s",
             (receipt_id,),
         ).fetchone()

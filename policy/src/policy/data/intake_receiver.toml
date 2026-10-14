@@ -263,6 +263,23 @@ reason_categories = [
   "policy_restriction", "suppressed",
 ]
 
+# P34.37 (C4 NEW-18): the claim value columns each object_type admits —
+# (required ⊆ present ⊆ required ∪ optional). This is the ONE table of
+# record: `policy.intake.validate_proposal` refuses an ill-shaped value at
+# proposal time (an approved proposal must never be unapplicable), and the
+# P32.16a bridge re-validates the same shape against the resolved spine
+# object_type at apply. `value_geom`/spatial is deliberately absent —
+# geometry corrections are outside this bridge's first scope (fail closed).
+[proposal.object_value]
+literal = { required = ["value_text"], optional = ["unit"] }
+quantity = { required = ["value_num", "value_text"], optional = ["unit"] }
+money = { required = ["value_json", "value_text"], optional = ["unit"] }
+duration = { required = ["value_json", "value_text"], optional = [] }
+interval = { required = ["value_json", "value_text"], optional = [] }
+vocab_term = { required = ["value_text"], optional = [] }
+entity_ref = { required = ["object_entity", "value_text"], optional = [] }
+document_ref = { required = ["value_json", "value_text"], optional = [] }
+
 [proposal.limits]
 target_id_max_chars = 128
 predicate_id_max_chars = 128
@@ -277,10 +294,17 @@ correction_ref_max_chars = 500
 # reviewed so the bridge can refuse stale/changed records. Value proposals
 # name the corrected value; suppression proposals name target + reason.
 [proposal.required]
-correct = ["target_kind", "target_id", "claim_digest", "evidence_digest", "value"]
+# P34.37 (C4 NEW-18): `object_type` names the claim/predicate object type the
+# proposed `value` is shaped for — the reviewer asserts it after reading the
+# target, so the shape check runs at proposal time and an approved proposal
+# can never be unapplicable on `value_shape_mismatch`.
+correct = [
+  "target_kind", "target_id", "claim_digest", "evidence_digest",
+  "object_type", "value",
+]
 annotate = [
   "target_kind", "target_id", "claim_digest", "evidence_digest",
-  "predicate_id", "value",
+  "predicate_id", "object_type", "value",
 ]
 suppress = ["target_kind", "target_id", "reason_category"]
 delete = ["target_kind", "target_id", "reason_category"]
@@ -288,11 +312,11 @@ delete = ["target_kind", "target_id", "reason_category"]
 [proposal.allowed]
 correct = [
   "target_kind", "target_id", "claim_digest", "evidence_digest",
-  "predicate_id", "value", "scope", "correction_reason",
+  "predicate_id", "object_type", "value", "scope", "correction_reason",
 ]
 annotate = [
   "target_kind", "target_id", "claim_digest", "evidence_digest",
-  "predicate_id", "value", "scope", "correction_reason",
+  "predicate_id", "object_type", "value", "scope", "correction_reason",
 ]
 suppress = [
   "target_kind", "target_id", "claim_digest", "evidence_digest",

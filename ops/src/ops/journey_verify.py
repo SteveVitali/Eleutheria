@@ -2090,10 +2090,13 @@ def run_intake_journey(
                     "target_id": target["claim_id"],
                     "claim_digest": target["claim_digest"],
                     "evidence_digest": target["evidence_digest"],
-                    # The bridge validates the proposal against the TARGET
-                    # claim's object_type (a `correct` keeps the disputed
-                    # claim's shape) — a literal target admits value_text +
-                    # unit only, never a stray numeric column.
+                    # P34.37 (C4 NEW-18): the declared object_type binds the
+                    # value shape at proposal time; the bridge re-checks it
+                    # against the resolved target type at apply. A `correct`
+                    # keeps the disputed claim's shape — a literal target
+                    # admits value_text + unit only, never a stray numeric
+                    # column.
+                    "object_type": str(target["object_type"]),
                     "value": (
                         {"value_text": "225", "unit": "cameras"}
                         if target.get("object_type") == "literal"
@@ -2353,6 +2356,9 @@ def _seed_journey_target(dsn: str, key: str) -> dict[str, Any]:
             "capture_id": capture_id,
             "claim_digest": claim_state_digest(dict(row)),
             "evidence_digest": claim_evidence_digest(evidence_rows),
+            # P34.37 (C4 NEW-18): the proposal declares the object_type its
+            # value is shaped for — the seed writes 'quantity' claims.
+            "object_type": str(row["object_type"]),
         }
     finally:
         conn.close()
