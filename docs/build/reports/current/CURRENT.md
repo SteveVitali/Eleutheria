@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `9a02c24f713f11a22815d17a684549c4ad766fad` · inputs hashed: 1033 · wall-clock receipt: `receipt.json`
+> input_commit: `1590f51e36d8f4a994715a9d3e56f0d5d0abc11d` · inputs hashed: 1033 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
