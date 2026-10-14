@@ -69,12 +69,23 @@ __all__ = [
     "COMPLETE_TOTAL",
     "COMPLETE_MAX",
     "CORRECTION_ROUTE",
+    "ACQ_LIVE_CAPTURE",
+    "ACQ_COMMITTED_TRANSCRIPTION",
+    "ACQ_STAND_IN",
+    "ACQUISITION_KINDS",
+    "ACQUISITION_LABELS",
+    "REVIEW_STATUS_LABELS",
+    "DOSSIER_ARTIFACT_LICENCE",
+    "PUBLIC_ORIGIN",
+    "acquisition_label",
+    "review_label",
     "build_dossier",
     "build_portfolio",
     "render_portfolio_json",
     "render_dossier_print_html",
     "validate_packet",
     "capture_chronology_violations",
+    "displayed_date_violations",
 ]
 
 PACKET_SCHEMA = "sig.dossier-packet/1"
@@ -85,6 +96,103 @@ GENERATOR_VERSION = "research-dossier/1"
 #: The durable public correction route a dossier's q12 points at (P32.14–P32.16:
 #: the corrections log is the public face of the canonical correction path).
 CORRECTION_ROUTE = "/corrections/"
+
+# --------------------------------------------------------------------------- #
+# P34.35 (C4 NEW-2/NEW-3, F-152/F-153, F-16; DR-C4-03/04): the disclosure
+# vocabulary — how a rendered assertion's bytes were obtained, and the review
+# label derived from the recorded review status. The wire values are the
+# snake_case enum; the display strings are what page and print render.
+# --------------------------------------------------------------------------- #
+
+ACQ_LIVE_CAPTURE = "live_capture"
+ACQ_COMMITTED_TRANSCRIPTION = "committed_transcription"
+ACQ_STAND_IN = "stand_in"
+ACQUISITION_KINDS: tuple[str, ...] = (
+    ACQ_LIVE_CAPTURE,
+    ACQ_COMMITTED_TRANSCRIPTION,
+    ACQ_STAND_IN,
+)
+#: The three-way acquisition vocabulary a reader sees (DR-C4-03).
+ACQUISITION_LABELS: dict[str, str] = {
+    ACQ_LIVE_CAPTURE: "live capture",
+    ACQ_COMMITTED_TRANSCRIPTION: "committed transcription",
+    ACQ_STAND_IN: "stand-in",
+}
+
+#: The review headline is DERIVED from the recorded ``review.status`` — never
+#: hard-coded (F-153). Only ``completed`` may use the word "reviewed": a
+#: ``not_run`` dossier reads as what it is — no human check has run
+#: (ADR-152; the independent check stays owed under D-R10-HUMAN-1/T-EVAL-IND).
+REVIEW_STATUS_LABELS: dict[str, str] = {
+    "completed": "independently reviewed",
+    "pending": "independent review pending",
+    "not_run": "independent review not yet run",
+}
+
+#: The licence of the dossier artifact itself — SIG-original documentation /
+#: graph data under §42.4 (the LICENSE file's per-artifact table). A packet may
+#: declare a different ``licence``; the default is the §42.4 SIG licence.
+DOSSIER_ARTIFACT_LICENCE = "CC-BY-4.0"
+
+#: The canonical public origin the permalink resolves against (P27.6 / ADR-093;
+#: the same origin ``web/astro.config.mjs`` pins so links never churn).
+PUBLIC_ORIGIN = "https://surveillancegraph.org"
+
+
+def review_label(status: Any) -> str:
+    """The rendered review label for a recorded ``review.status`` (F-153).
+
+    An unrecognised status is echoed, never mistaken for a check that ran —
+    ``validate_packet`` already restricts the legal marks to the three above.
+    """
+    key = str(status or "not_run")
+    return REVIEW_STATUS_LABELS.get(key, f"review status recorded as {key}")
+
+
+def acquisition_label(claim: Mapping[str, Any], capture: Mapping[str, Any] | None) -> str:
+    """How a rendered assertion's bytes were obtained (P34.35 / DR-C4-03).
+
+    Derived from the evidence record — the bound ``evidence_artifact``'s method
+    and access mode, the record's declared ``capture_kind``, and the recorded
+    retrieval stamps — never inferred from a URL:
+
+    * ``committed_transcription`` — the bound bytes are a committed
+      transcription fixture (``fixture_transcription`` method/extraction or a
+      ``committed_fixture`` access mode): real captured bytes transcribed into
+      the repo (the OKC shadow / P06.1 evidence fixtures).
+    * ``stand_in`` — hand-authored committed bytes standing in for a document
+      that was never retrieved (``stand-in`` / ``fixture_replay`` postures), or
+      — fail-closed — any claim whose record carries no live-retrieval stamp
+      and no transcription marker.
+    * ``live_capture`` — a record carrying a real retrieval stamp and no
+      stand-in/transcription marker (the P37.16a/b posture).
+    """
+    evidence = claim.get("evidence") or {}
+    cap = capture or {}
+    kind = str(claim.get("capture_kind") or cap.get("capture_kind") or "")
+    method = str(cap.get("method") or "")
+    access = str(cap.get("access_mode") or "")
+    extraction = str(evidence.get("extraction_method") or "")
+    if "transcription" in method or "transcription" in extraction or access == "committed_fixture":
+        return ACQ_COMMITTED_TRANSCRIPTION
+    if kind in {"stand-in", "fixture_replay"}:
+        return ACQ_STAND_IN
+    if any(
+        v is not None
+        for v in (
+            evidence.get("retrieved_date"),
+            claim.get("retrieved_date"),
+            claim.get("retrieved_at"),
+            cap.get("retrieved_date"),
+            cap.get("retrieved_at"),
+        )
+    ):
+        return ACQ_LIVE_CAPTURE
+    # Fail closed: nothing records a live fetch or committed transcription, so
+    # the bytes cannot be presented as captured — a stand-in is the only
+    # non-overclaiming label left.
+    return ACQ_STAND_IN
+
 
 # --------------------------------------------------------------------------- #
 # The fixed twelve-question S2 rubric (SIG-DOS-002). Order is canonical: q1..q12
@@ -294,11 +402,18 @@ def capture_chronology_violations(
     * Every ``retrieved_*``/``observed_at``/``searched_at`` stamp on a record
       (top level or under ``evidence``) must be ≤ its fixture's declared
       commit — the replay carries the bytes' authoring time, never later.
+    * P34.35 (DR-C4-15): EVERY such stamp — bound or not — must also be ≤ the
+      build clock. A displayed date later than the moment the dossier is
+      composed is fabricated whether or not a fixture bound caught it; the
+      same holds for a ``committed_at``/``fixture_committed_at`` authoring
+      stamp and for ``search_log.searched_at``.
     * A ``capture_kind == "stand-in"`` record carries NO retrieval field
       (nothing was retrieved); its declared ``committed_at`` /
       ``fixture_committed_at`` may not exceed the manifest bound.
     * ``scenario_as_of`` is exempt by construction: it is a labelled scenario
-      frame, never a capture date.
+      frame, never a capture date. Stated document dates (``valid_from`` /
+      ``valid_to`` / ``valid_edtf`` / a document-stated retrieval date) are
+      real-world claims about the record, not displayed capture stamps.
     """
     problems: list[str] = []
     capture = packet.get("capture") or {}
@@ -334,6 +449,14 @@ def capture_chronology_violations(
                     f"search_log[{i}].searched_at {entry.get('searched_at')!r} is "
                     f"after the evidence anchor {anchor.isoformat()}"
                 )
+    for i, entry in enumerate(packet.get("search_log") or ()):
+        searched = _stamp_dt(entry.get("searched_at"))
+        if searched is not None and searched > now:
+            problems.append(
+                f"search_log[{i}].searched_at {entry.get('searched_at')!r} is "
+                f"after the build time {now.date().isoformat()} — a displayed "
+                "date can never postdate the build clock (DR-C4-15)"
+            )
 
     for i, record in enumerate(packet.get("records") or ()):
         if not isinstance(record, Mapping):
@@ -370,14 +493,95 @@ def capture_chronology_violations(
                     f"{label}: {f} {v!r} is after fixture {doc!r} commit "
                     f"{bound.isoformat()} — a replay never postdates its bytes"
                 )
+            if dt > now:
+                problems.append(
+                    f"{label}: {f} {v!r} is after the build time "
+                    f"{now.date().isoformat()} — a displayed date can never "
+                    "postdate the build clock (DR-C4-15)"
+                )
         for f in _DECLARED_AUTHORING_FIELDS:
             for v in (record.get(f), evidence.get(f)):
                 dt = _stamp_dt(v)
-                if dt is not None and bound is not None and dt > bound:
+                if dt is None:
+                    continue
+                if bound is not None and dt > bound:
                     problems.append(
                         f"{label}: declared {f} {v!r} is after fixture {doc!r} "
                         f"commit {bound.isoformat()}"
                     )
+                if dt > now:
+                    problems.append(
+                        f"{label}: declared {f} {v!r} is after the build time "
+                        f"{now.date().isoformat()} — a displayed date can "
+                        "never postdate the build clock (DR-C4-15)"
+                    )
+    return problems
+
+
+#: Dossier fields that carry a displayed CLOCK stamp — never later than the
+#: build time (DR-C4-15). Stated document dates (valid_*), the scenario frame,
+#: and document-stated retrieval dates are real-world claims, exempt here.
+_DISPLAYED_STAMP_FIELDS: frozenset[str] = frozenset(
+    {
+        "retrieved_at",
+        "retrieved_date",
+        "observed_at",
+        "searched_at",
+        "committed_at",
+        "fixture_committed_at",
+        "generated_at",
+        "completed_at",
+    }
+)
+
+
+def displayed_date_violations(
+    dossier: Mapping[str, Any], *, now: datetime | None = None
+) -> list[str]:
+    """P34.35 (DR-C4-15): every DISPLAYED date on the composed dossier must be
+    ≤ the build clock ([] = clean).
+
+    Walks the rendered fields — the as-of pair, the review record's stamps,
+    every assertion's retrieval/observation/commit stamps, the search log and
+    ledger's capture stamps — and refuses any stamp that postdates ``now``
+    (default: the real clock at call time). ``build_dossier`` runs this after
+    composing so a planted future date fails the build rather than shipping.
+    Stated document dates (``valid_*``), the scenario frame, and the decision
+    windows are real-world claims and are not walked.
+    """
+    problems: list[str] = []
+    now = now or datetime.now(UTC)
+
+    def check(path: str, value: Any) -> None:
+        dt = _stamp_dt(value)
+        if dt is not None and dt > now:
+            problems.append(
+                f"{path} {value!r} is after the build time "
+                f"{now.date().isoformat()} — a displayed date can never "
+                "postdate the build clock"
+            )
+
+    as_of = dossier.get("as_of") or {}
+    for key in ("world", "belief"):
+        check(f"as_of.{key}", as_of.get(key))
+
+    def walk(node: Any, path: str) -> None:
+        if isinstance(node, Mapping):
+            for key, value in node.items():
+                if key in ("valid_from", "valid_to", "valid_edtf", "next_decision_date"):
+                    continue
+                if key in _DISPLAYED_STAMP_FIELDS:
+                    check(f"{path}.{key}", value)
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for i, item in enumerate(node):
+                walk(item, f"{path}[{i}]")
+
+    walk(dossier.get("review") or {}, "review")
+    walk(dossier.get("capture") or {}, "capture")
+    walk(dossier.get("answers") or [], "answers")
+    walk(dossier.get("ledger") or [], "ledger")
+    walk(dossier.get("search_log") or [], "search_log")
     return problems
 
 
@@ -547,6 +751,9 @@ def _assertion(claim: Mapping[str, Any], capture: Mapping[str, Any] | None) -> d
         # P34.22b: the capture posture survives normalization — a stand-in /
         # fixture-replay provenance is rendered, never silently dropped.
         "capture_kind": claim.get("capture_kind") or (capture or {}).get("capture_kind"),
+        # P34.35 (DR-C4-03): the three-way acquisition label — how the bytes
+        # were obtained, derived from the evidence record (never the URL).
+        "acquisition": acquisition_label(claim, capture),
         "committed_at": (capture or {}).get("committed_at") or evidence.get("fixture_committed_at"),
         "source_id": claim.get("source_id"),
         "source_url": evidence.get("source_url"),
@@ -1108,8 +1315,44 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
     # --- the completion checklist (independent — re-derives, never trusts) ----
     checklist = _checklist(answers, packet, claims, violations, completeness)
 
+    # --- P34.35: evidence acquisition posture (C4 NEW-2, F-16/DR-C4-03) -------
+    # The fact-to-capture ledger already names how every fact's bytes were
+    # obtained; the posture block makes "which dossier facts rest on
+    # hand-authored stand-ins" a direct read, never a join the reader must do.
+    acquisition_counts: dict[str, int] = {k: 0 for k in ACQUISITION_KINDS}
+    questions_with_non_live: set[str] = set()
+    stand_in_facts: list[str] = []
+    for row in ledger:
+        acq = row.get("acquisition")
+        if acq not in ACQUISITION_KINDS:
+            continue  # withheld/derived rows carry no bytes to classify
+        acquisition_counts[str(acq)] += 1
+        if acq != ACQ_LIVE_CAPTURE:
+            questions_with_non_live.add(str(row["question"]))
+        if acq == ACQ_STAND_IN:
+            stand_in_facts.append(str(row["fact"]))
+    evidence_posture = {
+        "acquisition_counts": acquisition_counts,
+        "has_non_live": bool(questions_with_non_live),
+        "questions_with_non_live": sorted(questions_with_non_live),
+        "stand_in_facts": stand_in_facts,
+    }
+
+    # --- P34.35: licence + permalink (C4 NEW-22/NEW-23, SIG-LIC-011) ----------
+    # The dossier artifact carries the §42.4 SIG licence (a packet may declare
+    # otherwise); the evidence records' own SPDX marks pass downstream.
+    record_spdx = sorted(
+        {str(r["spdx"]) for r in records if r.get("spdx")}
+        | {
+            str((r.get("evidence") or {})["spdx"])
+            for r in records
+            if (r.get("evidence") or {}).get("spdx")
+        }
+    )
+
     subject = packet.get("subject") or {}
-    return {
+    slug = str(subject.get("slug") or packet.get("dossier_id") or "")
+    dossier = {
         "schema": DOSSIER_SCHEMA,
         "generator": GENERATOR_VERSION,
         "kind": "research_dossier",
@@ -1130,7 +1373,18 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
         "capture": dict(packet.get("capture") or {}),
         "source_families": sorted({str(c.get("source_id")) for c in claims if c.get("source_id")}),
         "review_status": review_status,
+        # P34.35 (F-153): the review label derives from the recorded status —
+        # no template may hard-code "reviewed".
+        "review_label": review_label(review_status),
         "review": dict(packet.get("review") or {"status": "not_run"}),
+        # P34.35 (C4 NEW-22/NEW-23): licence, permalink, acquisition posture —
+        # every page and print carries all three plus the per-page as-of.
+        "licence": {
+            "artifact": str(packet.get("licence") or DOSSIER_ARTIFACT_LICENCE),
+            "record_spdx": record_spdx,
+        },
+        "permalink": f"{PUBLIC_ORIGIN}/research-dossier/{slug}/",
+        "evidence_posture": evidence_posture,
         "answers": answers,
         "ledger": ledger,
         "search_log": search_log,
@@ -1142,6 +1396,15 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
         "what_we_dont_know": _what_we_dont_know(answers),
         "release": {"valid": not violations, "violations": violations},
     }
+
+    # P34.35 (DR-C4-15): every displayed date must be ≤ the build clock — a
+    # planted future date anywhere in the rendered record fails the build.
+    future = displayed_date_violations(dossier)
+    if future:
+        raise ValueError(
+            f"refusing to render a dossier with future displayed dates: {'; '.join(future)}"
+        )
+    return dossier
 
 
 def _ledger_row(
@@ -1173,6 +1436,9 @@ def _ledger_row(
         "locator": a.get("locator"),
         "retrieved_date": a.get("retrieved_date"),
         "capture_kind": a.get("capture_kind"),
+        # P34.35 (F-16): the ledger names how each fact's bytes were obtained —
+        # which dossier facts rest on hand-authored stand-ins is a query away.
+        "acquisition": a.get("acquisition"),
         "committed_at": a.get("committed_at"),
         "extraction_method": a.get("extraction_method"),
         "scope": a.get("scope"),
@@ -1349,11 +1615,13 @@ def _checklist(
     )
     review = packet.get("review") or {}
     rstatus = str(review.get("status") or "not_run")
+    # P34.35 (F-153): the detail names the check and echoes the RECORDED
+    # status — a `not_run` mark must never carry the word "reviewed".
     add(
         "independent_semantic_review",
         "pass" if rstatus == "completed" else ("pending" if rstatus == "pending" else "fail"),
-        "material governance/contract/relationship assertions independently "
-        f"reviewed — recorded status: {rstatus} (D-R10-HUMAN-1)",
+        "material governance/contract/relationship assertions carry an "
+        f"independent review mark — recorded status: {rstatus} (D-R10-HUMAN-1)",
     )
     redacted = [c for c in claims if c.get("field_state") == "redacted"]
     withheld_qs = [a["question"] for a in answers if a["state"] == "withheld"]
@@ -1545,17 +1813,35 @@ def _capture_stamp_label(x: Mapping[str, Any]) -> str:
     return ""
 
 
+def _acquisition_text(x: Mapping[str, Any]) -> str:
+    """The rendered acquisition label for an assertion row (P34.35)."""
+    acq = str(x.get("acquisition") or ACQ_STAND_IN)
+    return ACQUISITION_LABELS.get(acq, acq)
+
+
 def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
     """The standalone print/PDF form (SIG-DOS-003): qualifiers, scope labels,
     original dates + their kind, citations (capture digest + locator), competing
     values, search bases, follow-ups, checklist and the rubric — every page
-    footer carries the as-of pair + dossier id so a paper copy stays citable."""
+    footer carries the as-of pair + dossier id so a paper copy stays citable.
+
+    P34.35: the footer additionally carries the licence + permalink on EVERY
+    printed page (C4 NEW-22/NEW-23), each assertion row names how its bytes
+    were obtained (DR-C4-03), the headline derives its review wording from the
+    recorded ``review_status`` (F-153), and page one discloses any non-live
+    evidence posture above the fold (DR-C4-03 / F-16).
+    """
     comp = dossier["completeness"]
+    licence = dossier.get("licence") or {}
+    licence_txt = str(licence.get("artifact") or DOSSIER_ARTIFACT_LICENCE)
+    permalink = str(dossier.get("permalink") or "")
+    rl = str(dossier.get("review_label") or review_label(dossier.get("review_status")))
     footer = (
         f"<p class='footer'>Research dossier {_e(dossier['dossier_id'])} — as-of world "
         f"{_e((dossier.get('as_of') or {}).get('world'))}, belief "
         f"{_e((dossier.get('as_of') or {}).get('belief'))} · score "
-        f"{comp['total']}/{comp['max']} · {_e(dossier['review_status'])} review · "
+        f"{comp['total']}/{comp['max']} · {_e(rl)} · "
+        f"licence {_e(licence_txt)} · permalink {_e(permalink)} · "
         "schema " + _e(dossier["schema"]) + "</p>"
     )
     pages: list[str] = []
@@ -1579,9 +1865,26 @@ def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
                     f"<p class='basis'>scenario frame: {_e(scenario.get('world'))} "
                     f"— {_e(scenario.get('basis'))}</p>"
                 )
+            # P34.35 (DR-C4-03): a page resting on any non-live evidence says
+            # so on page one — above the fold, derived from the posture block.
+            posture = dossier.get("evidence_posture") or {}
+            if posture.get("has_non_live"):
+                counts = posture.get("acquisition_counts") or {}
+                bits = []
+                for kind in (ACQ_STAND_IN, ACQ_COMMITTED_TRANSCRIPTION):
+                    n = int(counts.get(kind) or 0)
+                    if n:
+                        bits.append(f"{n} fact(s) on {ACQUISITION_LABELS[kind]} bytes")
+                provenance += (
+                    "<p class='basis'>Evidence disclosure: this dossier rests on "
+                    "non-live evidence"
+                    + (" — " + _e(", ".join(bits)) if bits else "")
+                    + ". Nothing on this page is a live capture; every fact "
+                    "names how its bytes were obtained.</p>"
+                )
             parts.append(
                 f"<h1>{_e(dossier['subject']['label'])}</h1>"
-                f"<p class='kind'>Reviewed research dossier — evidence-complete "
+                f"<p class='kind'>Research dossier — {_e(rl)} — evidence-complete "
                 f"portfolio (not the inventory overview)</p>"
                 f"<p class='score'>Rubric {comp['total']}/{comp['max']} — "
                 f"pilot_complete: {_e(comp['pilot_complete'])} · blocking: "
@@ -1596,7 +1899,8 @@ def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
             if a.get("assertions"):
                 parts.append(
                     "<table><thead><tr><th>predicate</th><th>value</th><th>scope</th>"
-                    "<th>dates</th><th>source / locator</th><th>capture</th></tr></thead><tbody>"
+                    "<th>dates</th><th>source / locator</th><th>obtained</th>"
+                    "<th>capture</th></tr></thead><tbody>"
                 )
                 for x in a["assertions"]:
                     dates = " · ".join(
@@ -1628,6 +1932,7 @@ def render_dossier_print_html(dossier: Mapping[str, Any]) -> str:
                         f"<td>{_e(value_txt)}{conflict}</td>"
                         f"<td>{_e(scope or 'unscoped')}</td>"
                         f"<td>{dates}</td><td>{_e(x.get('source_id'))} · {_e(loc_txt)}</td>"
+                        f"<td>{_e(_acquisition_text(x))}</td>"
                         f"<td>{_e((x.get('capture_digest') or '—')[:16])}…</td></tr>"
                     )
                 parts.append("</tbody></table>")

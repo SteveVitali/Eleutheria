@@ -15,6 +15,7 @@ import {
   researchDossierPath,
   researchDossierJsonPath,
   researchDossierSlug,
+  reviewLabel,
   rubricGateLine,
 } from "../../lib/research-dossier";
 
@@ -34,9 +35,11 @@ const dossiers = [...portfolio.dossiers].sort((a, b) =>
   </p>
   <p>
     This is <strong>not</strong> the <a href="/dossier/">inventory overview</a>, which
-    is built mechanically from published claims. A research dossier exists only when
-    a reviewed packet was authored for it — absence here means none is published,
-    not that the questions have no answers.
+    is built mechanically from published claims.
+  </p>
+  <p data-copy="RD-04">
+    A research dossier exists only when a packet was authored for it — absence
+    here means none is published, not that the questions have no answers.
   </p>
 
   {dossiers.length === 0 && <EmptyState surface="researchDossierIndex" />}
@@ -52,7 +55,7 @@ const dossiers = [...portfolio.dossiers].sort((a, b) =>
           <span aria-hidden="true"> · </span>
           {d.completeness.pilot_complete ? "pilot complete" : "incomplete"}
           <span aria-hidden="true"> · </span>
-          {d.review_status} review
+          {reviewLabel(d.review_status)}
           <span aria-hidden="true"> · </span>
           <a href={researchDossierJsonPath(researchDossierSlug(d))}>JSON</a>
         </span>

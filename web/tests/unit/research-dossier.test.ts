@@ -8,18 +8,28 @@
 // the portfolio identically in fixtures mode.
 import { describe, it, expect } from "vitest";
 import {
+  ACQUISITION_LABELS,
   ANSWER_STATES,
   COMPLETE_TOTAL,
   COMPLETE_MAX,
   REQUIRED_MINIMUM,
   DOSSIER_PORTFOLIO_SCHEMA,
   RESEARCH_DOSSIER_SCHEMA,
+  acquisitionLabel,
+  assertNoFutureDisplayDates,
+  derivedAcquisition,
+  dossierLicenceText,
+  dossierPermalink,
   emptyPortfolio,
+  evidencePosture,
   researchDossierSlug,
   researchDossierPath,
   researchDossierJsonPath,
+  reviewLabel,
   rubricGateLine,
   stateLabel,
+  type ResearchAssertion,
+  type ResearchDossier,
 } from "../../src/lib/research-dossier";
 import {
   RESEARCH_DOSSIER_FIXTURE,
@@ -130,5 +140,146 @@ describe("the fact-to-capture ledger + conflicting claims", () => {
     const values = q3.assertions.map((x) => x.value).sort();
     expect(values).toEqual([190, 299]);
     expect(q3.assertions.every((x) => x.conflicting)).toBe(true);
+  });
+});
+
+// --------------------------------------------------------------------------- //
+// P34.35 — acquisition labels, review label, true dates, licence/permalink
+// --------------------------------------------------------------------------- //
+
+describe("the acquisition vocabulary (P34.35, DR-C4-03)", () => {
+  it("the three display labels mirror the export contract", () => {
+    expect(ACQUISITION_LABELS.live_capture).toBe("live capture");
+    expect(ACQUISITION_LABELS.committed_transcription).toBe("committed transcription");
+    expect(ACQUISITION_LABELS.stand_in).toBe("stand-in");
+  });
+
+  it("every fixture assertion carries a legal acquisition label", () => {
+    for (const a of RESEARCH_DOSSIER_FIXTURE.answers) {
+      for (const x of a.assertions) {
+        expect(Object.values(ACQUISITION_LABELS)).toContain(acquisitionLabel(x));
+      }
+    }
+    // the fixture exercises stand-in AND committed transcription honestly
+    const all = RESEARCH_DOSSIER_FIXTURE.answers.flatMap((a) => a.assertions);
+    const acq = new Set(all.map((x) => x.acquisition));
+    expect(acq.has("stand_in")).toBe(true);
+    expect(acq.has("committed_transcription")).toBe(true);
+  });
+
+  it("derives the label from the evidence record, never the URL", () => {
+    const live: ResearchAssertion = {
+      predicate: "p", value: 1, scope: {}, qualifiers: [],
+      source_url: "https://example/doc", retrieved_date: "2026-10-01",
+      access_mode: "document", capture_method: "html_text",
+    };
+    const transcription: ResearchAssertion = {
+      predicate: "p", value: 1, scope: {}, qualifiers: [],
+      capture_kind: "fixture_replay",
+      access_mode: "committed_fixture", capture_method: "fixture_transcription",
+    };
+    const standIn: ResearchAssertion = {
+      predicate: "p", value: 1, scope: {}, qualifiers: [],
+      capture_kind: "stand-in", committed_at: "2026-09-27",
+    };
+    expect(acquisitionLabel(live)).toBe("live capture");
+    expect(acquisitionLabel(transcription)).toBe("committed transcription");
+    expect(acquisitionLabel(standIn)).toBe("stand-in");
+    // fail-closed: no retrieval stamp and no marker → stand-in, never a capture
+    expect(derivedAcquisition({})).toBe("stand_in");
+  });
+
+  it("a fixture dossier mixing the three postures discloses non-live evidence", () => {
+    const mixed = structuredClone(RESEARCH_DOSSIER_FIXTURE);
+    mixed.answers[0].assertions.push({
+      predicate: "vendor", value: "Flock Safety", scope: {}, qualifiers: [],
+      acquisition: "live_capture", retrieved_date: "2026-10-01", access_mode: "document",
+    });
+    const posture = evidencePosture(mixed);
+    expect(posture.has).toBe(true);
+    expect(posture.questions).toContain("q1");
+  });
+
+  it("a dossier resting only on live captures needs no disclosure", () => {
+    const liveOnly = structuredClone(RESEARCH_DOSSIER_FIXTURE) as ResearchDossier;
+    delete liveOnly.evidence_posture;
+    for (const a of liveOnly.answers) {
+      for (const x of a.assertions) {
+        const rec = x as unknown as Record<string, unknown>;
+        delete rec.acquisition;
+        delete rec.extraction_method;
+        x.capture_kind = "document";
+        x.access_mode = "document";
+        x.capture_method = "html_text";
+        x.retrieved_date = "2026-10-01";
+      }
+    }
+    const posture = evidencePosture(liveOnly);
+    expect(posture.has).toBe(false);
+    expect(posture.counts.stand_in ?? 0).toBe(0);
+  });
+});
+
+describe("the review label (P34.35, F-153, DR-C4-04)", () => {
+  it("derives from the recorded review_status — only completed may say 'reviewed'", () => {
+    expect(reviewLabel("completed")).toBe("independently reviewed");
+    expect(reviewLabel("pending")).toBe("independent review pending");
+    expect(reviewLabel("not_run")).toBe("independent review not yet run");
+    expect(reviewLabel("not_run")).not.toContain("reviewed");
+    expect(reviewLabel("pending")).not.toContain("reviewed");
+    // an unrecognised status echoes honestly, never claims a check
+    expect(reviewLabel("bogus")).not.toContain("reviewed");
+  });
+
+  it("the fixture carries the derived label for its not_run record", () => {
+    expect(RESEARCH_DOSSIER_FIXTURE.review_status).toBe("not_run");
+    expect(RESEARCH_DOSSIER_FIXTURE.review_label).toBe("independent review not yet run");
+  });
+});
+
+describe("licence, permalink, as-of (P34.35, C4 NEW-22/NEW-23)", () => {
+  it("the dossier carries all three", () => {
+    expect(RESEARCH_DOSSIER_FIXTURE.licence?.artifact).toBe("CC-BY-4.0");
+    expect(dossierLicenceText(RESEARCH_DOSSIER_FIXTURE)).toContain("CC-BY-4.0");
+    expect(RESEARCH_DOSSIER_FIXTURE.permalink).toBe(
+      "https://surveillancegraph.org/research-dossier/okc-alpr/",
+    );
+    expect(dossierPermalink(RESEARCH_DOSSIER_FIXTURE)).toContain("/research-dossier/okc-alpr/");
+    expect(RESEARCH_DOSSIER_FIXTURE.as_of.world).toBeTruthy();
+    expect(RESEARCH_DOSSIER_FIXTURE.as_of.belief).toBeTruthy();
+  });
+
+  it("evidence_posture records which facts rest on stand-ins (F-16)", () => {
+    const posture = RESEARCH_DOSSIER_FIXTURE.evidence_posture!;
+    expect(posture.has_non_live).toBe(true);
+    expect(posture.stand_in_facts.length).toBeGreaterThan(0);
+    expect(posture.questions_with_non_live).toContain("q1");
+  });
+});
+
+describe("the build-time date guard (P34.35, DR-C4-15)", () => {
+  it("passes the honest fixture", () => {
+    expect(() => assertNoFutureDisplayDates(RESEARCH_DOSSIER_FIXTURE)).not.toThrow();
+  });
+
+  it("a planted future displayed date fails the build", () => {
+    const d = structuredClone(RESEARCH_DOSSIER_FIXTURE);
+    d.answers[0].assertions[0].committed_at = "2999-01-01";
+    expect(() => assertNoFutureDisplayDates(d)).toThrow(/build time|build clock/);
+    const d2 = structuredClone(RESEARCH_DOSSIER_FIXTURE);
+    d2.as_of.world = "2999-12-31";
+    expect(() => assertNoFutureDisplayDates(d2)).toThrow();
+    const d3 = structuredClone(RESEARCH_DOSSIER_FIXTURE);
+    d3.search_log[0].searched_at = "2999-01-01";
+    expect(() => assertNoFutureDisplayDates(d3)).toThrow();
+    const d4 = structuredClone(RESEARCH_DOSSIER_FIXTURE);
+    (d4.review as Record<string, unknown>).completed_at = "2999-01-01";
+    expect(() => assertNoFutureDisplayDates(d4)).toThrow();
+  });
+
+  it("stated document dates are exempt — a future valid_from is a real-world claim", () => {
+    const d = structuredClone(RESEARCH_DOSSIER_FIXTURE);
+    d.answers[0].assertions[0].valid_from = "2999-01-01";
+    expect(() => assertNoFutureDisplayDates(d)).not.toThrow();
   });
 });

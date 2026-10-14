@@ -1,0 +1,56 @@
+{
+  "artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "0dd2f42f76feafd93566763f33381ab92f488c7d579be7e8be068b772e10394e"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "0a2b4d9705479fb5773071e2f44fd4f0327a2e3fc968649c94b0ec07ce71e3d0"
+    },
+    "okc_dossier.json": {
+      "sha256": "0a1cc230410e2a258ccc44f229684bd0101abfa49d8fb84f082952681876bdde"
+    },
+    "okc_dossier.print.html": {
+      "sha256": "741f5c63a5f2f08da5dbb3d08061a5b121d1f2b484570d72914211360cb8f532"
+    },
+    "okc_dossier_packet.json": {
+      "sha256": "e9e555d304850a849bbf873a7d7f1260a48ef2f38bcbb90ffa3df10dbd1988be"
+    },
+    "okc_dossier_portfolio.json": {
+      "sha256": "a207782ef5579f50d0f3e452049114d3ed2834bfcd0d5d83062ffb89383a7e7f"
+    },
+    "okc_seed_correction_packet.json": {
+      "sha256": "c8cee267752c90a3b5e0e21a48561bb322039aab3cfa2fc5cab7fd6073073af2"
+    }
+  },
+  "basis": "ADR-146 D2 + B1 \u00a75.5 \u2014 the superseded run's bytes are historical evidence and keep them (their digests are recorded below and cited elsewhere); the P34.35 builders regenerate the same artifact set here with the disclosure fields added: per-assertion acquisition labels (live capture / committed transcription / stand-in), an evidence_posture roll-up, the review_label derived from the recorded review_status, and licence + permalink + per-page as-of on every page and print.",
+  "generated_by": "sig-ops dossier-packet",
+  "notes": "CORRECTION.md lives with the original superseded dir and gains the pointer line naming this successor.",
+  "schema": "sig.supersedes-manifest/1",
+  "superseded_artifacts": {
+    "EVIDENCE_PACK.md": {
+      "sha256": "0dd2f42f76feafd93566763f33381ab92f488c7d579be7e8be068b772e10394e"
+    },
+    "LIVE_RETURN_PASS.json": {
+      "sha256": "0a2b4d9705479fb5773071e2f44fd4f0327a2e3fc968649c94b0ec07ce71e3d0"
+    },
+    "okc_dossier.json": {
+      "sha256": "ba951ee7432ea2bdf212b1c5815c5aedfc8a2da6cd548c5a321633fcef7a4ddb"
+    },
+    "okc_dossier.print.html": {
+      "sha256": "78f1dd4bbe2175316c0ca1a3f872a8fe086335db98d8a584bcd2d94d18f1e0aa"
+    },
+    "okc_dossier_packet.json": {
+      "sha256": "e9e555d304850a849bbf873a7d7f1260a48ef2f38bcbb90ffa3df10dbd1988be"
+    },
+    "okc_dossier_portfolio.json": {
+      "sha256": "e0fd0feffb7d0413cad59139c6eb0ca94ee7da5747b08df1a701fc1111a4ad86"
+    },
+    "okc_seed_correction_packet.json": {
+      "sha256": "c8cee267752c90a3b5e0e21a48561bb322039aab3cfa2fc5cab7fd6073073af2"
+    }
+  },
+  "supersedes": "../p32.18-okc-dossier_2026-10-04/",
+  "supersedes_ticket": "P32.18",
+  "ticket": "P34.35",
+  "written": "2026-10-07T04:54:36Z"
+}
