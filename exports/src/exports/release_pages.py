@@ -161,6 +161,7 @@ def _layout(
     footer_note: str = "",
     licence: str | None = None,
     report_href: str | None = None,
+    description: str | None = None,
 ) -> bytes:
     """The shared archive page skeleton (P34.34a): site nav, the title +
     immutable-release stamp, then a footer carrying the dispute/correction
@@ -169,7 +170,9 @@ def _layout(
     explicit human-readable basis (e.g. "per compartment"); ``None`` is the
     honest state for pages that show no data (tombstones, error pages).
     ``report_href`` is the record-level deep link (P34.37): emitted only on
-    record pages, where the record context is known."""
+    record pages, where the record context is known. ``description`` is the
+    page's ``<meta name="description">`` (P34.41 — the namespace landing's
+    one-line answer to "what is this URL")."""
     pub = (
         f'<p class="mut">Immutable release <code>{_e(publication_id)}</code> — '
         "these bytes are version-pinned; cite this URL, not a &ldquo;latest&rdquo; alias.</p>"
@@ -182,10 +185,12 @@ def _layout(
         else ""
     )
     report_link = f' <a href="{_e(report_href)}">Report this record</a>.' if report_href else ""
+    desc = f'<meta name="description" content="{_e(description)}">' if description else ""
     html = (
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
         f"<title>{_e(title)} — SIG released record</title>"
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        f"{desc}"
         f"<style>{_STYLE}</style></head><body>"
         f"<header>{_site_nav()}<h1>{_e(title)}</h1>{pub}</header>"
         f"<main>{body}</main>"
@@ -672,6 +677,53 @@ Completeness: {_e(_display_label((entry.get("completeness") or {}).get("state"))
     )
 
 
+def namespace_landing(entry: Mapping[str, Any]) -> bytes:
+    """``/r/<pub>/index.html`` — the immutable namespace root landing
+    (P34.41 / C4 NEW-29): ``/r/<pub>/`` answers this page instead of a
+    bare 403 from a directory with no index.
+
+    The page orients a citation visitor at the namespace root: what the
+    publication id is, where the compartment record routes live, and the
+    release landing + integrity manifest + descriptor pointers — the same
+    facts ``/releases/<pub>/`` carries, framed for the namespace itself."""
+    pub = str(entry["publication_id"])
+    comp_lis = "".join(
+        f'<li><a href="/r/{_e(pub)}/c/{_e(c["compartment"])}/">'
+        f"{_e(c['compartment'])}</a> — {_e(c.get('license'))} · "
+        f"{_e(c.get('record_count'))} records</li>"
+        for c in entry.get("compartments") or []
+    )
+    repro = entry.get("reproducibility") or {}
+    body = f"""
+<p><span class="k">Publication</span> <code>{_e(pub)}</code></p>
+<p><span class="k">Data release</span> <code>{_e(entry.get("data_release_id"))}</code> ·
+   <span class="k">As-of world</span> {_e(repro.get("as_of_world"))} ·
+   <span class="k">As-of belief</span> {_e(repro.get("as_of_belief"))} ·
+   <span class="k">Ruleset</span> {_e(repro.get("ruleset_version"))}</p>
+<p>This is the immutable record namespace for one activated release: every
+route under <code>/r/{_e(pub)}/</code> is pinned to the bytes the
+release's integrity manifest covers — cite these URLs directly.</p>
+<h2>Compartments</h2>
+<ul>{comp_lis}</ul>
+<h2>Release record</h2>
+<p><a href="/releases/{_e(pub)}/">release landing</a> ·
+   <a href="/releases/{_e(pub)}/catalog_entry.json"><code>catalog_entry.json</code></a> ·
+   <a href="/releases/{_e(pub)}/integrity_manifest.json"><code>integrity_manifest.json</code></a> ·
+   <a href="/releases/{_e(pub)}/descriptor.json"><code>descriptor.json</code></a></p>
+"""
+    return _layout(
+        title=f"Release namespace {pub[:15]}…",
+        body=body,
+        publication_id=pub,
+        licence="per compartment — see the release landing",
+        description=(
+            f"Immutable SIG release namespace {pub} — the pinned record "
+            "routes, evidence anchors and compartment indexes of one "
+            "activated release."
+        ),
+    )
+
+
 def releases_index(entries: Iterable[Mapping[str, Any]], *, latest: str | None) -> bytes:
     """``/releases/index.html`` — the catalog of activated immutable releases."""
     lis = (
@@ -727,6 +779,12 @@ record instead:</p>
     )
 
 
+#: The corrections page a tombstone links to (P34.41): the public-safe
+#: correction route — never an embedded e-mail address (the shared footer
+#: already links ``/dispute/`` for the report path).
+CORRECTIONS_HREF = "/corrections/"
+
+
 def tombstone_page(
     *,
     path: str,
@@ -734,24 +792,61 @@ def tombstone_page(
     authority: str,
     decided: str,
     policy_version: str,
+    target_kind: str | None = None,
+    target_id: str | None = None,
+    disposition_ref: str | None = None,
+    release_label: str | None = None,
+    superseded_by: str | None = None,
 ) -> bytes:
     """The deterministic 410 tombstone — content-free, public-safe fields
     only (reason CATEGORY + authority + decided DATE + policy version —
-    never the privileged rationale)."""
+    never the privileged rationale).
+
+    P34.41 carries the full ``sig.tombstone/1`` field set onto the page
+    (the JSON body the deny map serves is the same document shape):
+    ``target_kind``/``target_id`` name what was withdrawn, ``decided`` is
+    the withdrawal instant, ``disposition_ref`` is the content-derived
+    reference to the recorded disposition, ``superseded_by`` names a
+    recorded successor when one exists, ``release_label`` names the data
+    release, and every tombstone links the corrections page — never an
+    embedded e-mail address."""
+    target_row = (
+        f'<p><span class="k">Target</span> {_e(target_kind)} <code>{_e(target_id)}</code></p>'
+        if target_kind or target_id
+        else ""
+    )
+    ref_row = (
+        f'<p><span class="k">Disposition</span> <code>{_e(disposition_ref)}</code></p>'
+        if disposition_ref
+        else ""
+    )
+    release_row = (
+        f'<p><span class="k">Data release</span> <code>{_e(release_label)}</code></p>'
+        if release_label
+        else ""
+    )
+    superseded_row = (
+        f'<p><span class="k">Superseded by</span> <code>{_e(superseded_by)}</code></p>'
+        if superseded_by
+        else ""
+    )
     body = f"""
 <div class="tomb">
 <h2>This record is not publicly available</h2>
 <p><span class="k">Route</span> <code>{_e(path)}</code></p>
+{target_row}
 <p><span class="k">State</span> withdrawn — the artifact is denied whole under the
 current publication-disposition policy; immutable release bytes are never
 rewritten.</p>
 <p><span class="k">Reason category</span> {_e(reason_category)} ·
    <span class="k">Authority</span> {_e(authority)} ·
-   <span class="k">Decided</span> {_e(decided[:10])} ·
+   <span class="k">Withdrawn</span> {_e(decided[:10])} ·
    <span class="k">Policy</span> {_e(policy_version)}</p>
+{ref_row}{release_row}{superseded_row}
 <p class="mut">The recorded identity is retained so citations resolve to an
 honest state rather than a generic 404. Withdrawals apply to every release —
-including rolled-back ones.</p>
+including rolled-back ones. Corrections and disputes are handled through
+<a href="{_e(CORRECTIONS_HREF)}">the corrections page</a>.</p>
 </div>
 """
     return _layout(
@@ -759,6 +854,57 @@ including rolled-back ones.</p>
         body=body,
         publication_id=None,
         footer_note="Honest unavailability — a tombstone, not silently stale bytes.",
+    )
+
+
+def entity_stub_tombstone(
+    *,
+    entity_type: str,
+    entity_id: str,
+    reason_category: str,
+    authority: str,
+    decided: str,
+    policy_version: str,
+    disposition_ref: str | None = None,
+    release_label: str | None = None,
+) -> bytes:
+    """The ``/entity/<type>/<id>/`` convenience stub under a withdrawal
+    (P34.41): the mutable alias answers the tombstone honestly instead of
+    pointing at denied bytes — generated from the same deny set the nginx
+    map carries."""
+    ref_row = (
+        f'<p><span class="k">Disposition</span> <code>{_e(disposition_ref)}</code></p>'
+        if disposition_ref
+        else ""
+    )
+    release_row = (
+        f'<p><span class="k">Data release</span> <code>{_e(release_label)}</code></p>'
+        if release_label
+        else ""
+    )
+    body = f"""
+<div class="tomb">
+<h2>This entity is not publicly available</h2>
+<p><span class="k">Route</span> <code>{_e(f"/entity/{entity_type}/{entity_id}/")}</code></p>
+<p><span class="k">Entity</span> <code>{_e(entity_type)}/{_e(entity_id)}</code></p>
+<p><span class="k">State</span> withdrawn — the current-view alias is denied under
+the current publication-disposition policy; the convenience pointer is never a
+citation.</p>
+<p><span class="k">Reason category</span> {_e(reason_category)} ·
+   <span class="k">Authority</span> {_e(authority)} ·
+   <span class="k">Withdrawn</span> {_e(decided[:10])} ·
+   <span class="k">Policy</span> {_e(policy_version)}</p>
+{ref_row}{release_row}
+<p class="mut">Withdrawn records stay honest rather than silently absent:
+corrections and disputes are handled through
+<a href="{_e(CORRECTIONS_HREF)}">the corrections page</a>.</p>
+</div>
+"""
+    return _layout(
+        title=f"{entity_type} {entity_id} withdrawn",
+        body=body,
+        publication_id=None,
+        footer_note="Mutable overlay page — never an immutable citation.",
     )
 
 

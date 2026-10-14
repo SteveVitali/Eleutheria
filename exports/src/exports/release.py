@@ -69,6 +69,7 @@ from .published_record import (
     record_from_site_row,
 )
 from .release_pages import (
+    CORRECTIONS_HREF,
     EXTERNAL_LINK_PREFIXES,
     EXTERNAL_LINK_ROUTES,
     browse_page,
@@ -76,8 +77,10 @@ from .release_pages import (
     dossier_page,
     dossier_slug,
     entity_stub,
+    entity_stub_tombstone,
     evidence_page,
     jurisdiction_page,
+    namespace_landing,
     record_page,
     release_landing,
     releases_index,
@@ -721,6 +724,15 @@ def build_release(
         compartment="metadata",
         licence="CC-BY-4.0",
     )
+    # The namespace root landing (P34.41 / C4 NEW-29): ``/r/<pub>/`` resolves
+    # to a real page — never a 403 from a directory with no index. Immutable
+    # like every other ``r/`` byte; covered by the manifest below.
+    emit(
+        f"r/{pub}/index.html",
+        namespace_landing(catalog_entry),
+        compartment="metadata",
+        licence="CC-BY-4.0",
+    )
 
     # --- the integrity manifest (external digest over every emitted artifact) - #
     artifacts.sort(key=lambda a: a["path"])
@@ -1143,10 +1155,21 @@ def _stage_tree(release_dir: Path, staged: Path, pub: str) -> None:
 
 
 def _entity_overlay(
-    staged: Path, release_dir: Path, pub: str, catalog_entry: Mapping[str, Any]
+    staged: Path,
+    release_dir: Path,
+    pub: str,
+    catalog_entry: Mapping[str, Any],
+    denied_stubs: Mapping[str, DispositionRecord] | None = None,
 ) -> int:
     """Emit ``/entity/<type>/<uuid>/`` convenience stubs for the ACTIVE
-    release — mutable pointers, never citations."""
+    release — mutable pointers, never citations.
+
+    ``denied_stubs`` is the withdrawal barrier's stub deny set
+    (``entity/<type>/<id>`` route → the effective denying disposition): a
+    stub for a denied record emits the ``sig.tombstone/1`` stub page
+    instead of a link into denied bytes — the stubs are generated FROM the
+    deny set, never a divergent hand list."""
+    denied = denied_stubs or {}
     count = 0
     for comp in catalog_entry.get("compartments") or []:
         idx = release_dir / f"r/{pub}/c/{comp['compartment']}/records.index.jsonl"
@@ -1155,14 +1178,23 @@ def _entity_overlay(
             # never parse a tombstone as an index
             continue
         for row in _iter_jsonl(idx):
-            stub = entity_stub(
-                entity_type=str(row["entity_type"]),
-                entity_id=str(row["entity_id"]),
-                latest_publication=pub,
-                record_href="/" + str(row["path"]),
-            )
+            stub_route = f"entity/{row['entity_type']}/{row['entity_id']}"
+            if stub_route in denied:
+                stub = _stub_tombstone(
+                    str(row["entity_type"]),
+                    str(row["entity_id"]),
+                    denied[stub_route],
+                    release_label=str(catalog_entry.get("data_release_id") or "") or None,
+                )
+            else:
+                stub = entity_stub(
+                    entity_type=str(row["entity_type"]),
+                    entity_id=str(row["entity_id"]),
+                    latest_publication=pub,
+                    record_href="/" + str(row["path"]),
+                )
             _write(
-                staged / f"entity/{row['entity_type']}/{row['entity_id']}/index.html",
+                staged / f"{stub_route}/index.html",
                 stub,
             )
             count += 1
@@ -1249,8 +1281,10 @@ def activate(
     staged = registry.root / "staged"
     _stage_tree(release_dir, staged, pub)
     # The withdrawal barrier applies to EVERY staged release, current AND
-    # historical (a withhold in R2 denies under an R1 rollback).
-    applied = apply_withdrawals(staged, registry.withdrawals())
+    # historical (a withhold in R2 denies under an R1 rollback). The stubs
+    # this activation emits point at THIS release — the deny set scopes
+    # them to pub.
+    applied = apply_withdrawals(staged, registry.withdrawals(), active_pub=pub)
     # P34.34a (DR-C4-01): the staged corpus gets the same link-resolution
     # crawl the release passed alone — now over the composed tree, where an
     # explicitly denied route (the withdrawal barrier's 410 tombstone)
@@ -1273,7 +1307,9 @@ def activate(
         )
     _update_compat(registry, entry)
 
-    stubs = _entity_overlay(staged, release_dir, pub, entry)
+    stubs = _entity_overlay(
+        staged, release_dir, pub, entry, denied_stubs=applied.get("entity_stubs")
+    )
     _emit_overlay(registry)
 
     now = now or datetime.now(UTC)
@@ -1288,7 +1324,7 @@ def activate(
             "state": report.state,
             "artifacts_checked": report.artifacts_checked,
         },
-        "withdrawals_applied": applied,
+        "withdrawals_applied": _apply_summary(applied),
         "entity_stubs": stubs,
     }
     _write(registry._path(f"activations/{pub}.json"), canonical_json(activation))
@@ -1348,8 +1384,10 @@ def rollback(
             f"staged tree for {pub} is absent — cannot roll back to a "
             "release whose bytes were never staged"
         )
-    applied = apply_withdrawals(staged, registry.withdrawals())
-    stubs = _entity_overlay(staged, registry.root / "staged", pub, entry)
+    applied = apply_withdrawals(staged, registry.withdrawals(), active_pub=pub)
+    stubs = _entity_overlay(
+        staged, registry.root / "staged", pub, entry, denied_stubs=applied.get("entity_stubs")
+    )
     _emit_overlay(registry)
     now = now or datetime.now(UTC)
     latest = {
@@ -1370,12 +1408,12 @@ def rollback(
                 "manifest_sha256": entry.get("manifest_sha256"),
                 "activated_at": now.isoformat(),
                 "action": "rollback",
-                "withdrawals_applied": applied,
+                "withdrawals_applied": _apply_summary(applied),
                 "entity_stubs": stubs,
             }
         ),
     )
-    return {"latest": pub, "stubs": stubs, "withdrawals_applied": applied}
+    return {"latest": pub, "stubs": stubs, "withdrawals_applied": _apply_summary(applied)}
 
 
 def clear_latest_pointer(
@@ -1420,14 +1458,14 @@ def clear_latest_pointer(
                 "activated_at": now.isoformat(),
                 "action": "rollback",
                 "cleared_latest": previous.get("publication_id"),
-                "withdrawals_applied": applied,
+                "withdrawals_applied": _apply_summary(applied),
             }
         ),
     )
     return {
         "cleared": True,
         "previous_latest": previous.get("publication_id"),
-        "withdrawals_applied": applied,
+        "withdrawals_applied": _apply_summary(applied),
     }
 
 
@@ -1447,7 +1485,10 @@ def record_withdrawal(
     registry.save_withdrawals(current)
     staged = registry.root / "staged"
     if staged.exists():
-        apply_withdrawals(staged, current)
+        # The stubs the tree carries point at the CURRENT latest pointer —
+        # the deny set's stub scope follows it.
+        latest = registry.latest() or {}
+        apply_withdrawals(staged, current, active_pub=latest.get("publication_id"))
     return len(entries)
 
 
@@ -1456,32 +1497,191 @@ def record_withdrawal(
 # --------------------------------------------------------------------------- #
 
 
-def _route_targets(staged: Path) -> Iterator[tuple[str, str, str]]:
-    """Yield ``(route_kind, target_id, rel_path)`` for every route a
-    withdrawal can deny: entity records, evidence pages, whole release
-    namespaces, and individual artifact files."""
+def _route_targets(staged: Path) -> Iterator[tuple[str, str, str, str]]:
+    """Yield ``(route_kind, target_id, rel_path, shape)`` for every route a
+    withdrawal can deny: entity record pages + their ``.json`` twins,
+    evidence pages, whole release namespaces, and the ``/entity/<t>/<id>/``
+    convenience stubs (``entity_stub`` — folded into the deny set under the
+    stub rule below, not a bare entity lookup).
+
+    ``shape`` is ``"page"`` for a directory/index route (``<route>/`` +
+    ``<route>/index.html`` + the no-slash form all alias it) and ``"file"``
+    for an exact-path file route — the deny map derives its alias set from
+    it (P34.41: every alias of a denied route must answer the same 410
+    tombstone)."""
     r_root = staged / "r"
-    for pub_dir in sorted(r_root.glob("*")) if r_root.exists() else []:
-        pub = pub_dir.name
-        yield ("release", pub, f"r/{pub}")
-        for rec in pub_dir.glob("c/*/entity/*/*/"):
+    if r_root.exists():
+        for pub_dir in sorted(r_root.glob("*")):
+            pub = pub_dir.name
+            yield ("release", pub, f"r/{pub}", "page")
+            for rec in pub_dir.glob("c/*/entity/*/*/"):
+                yield (
+                    "entity",
+                    rec.name,
+                    f"{rec.relative_to(staged).as_posix()}".rstrip("/"),
+                    "page",
+                )
+            for jf in pub_dir.glob("c/*/entity/*/*.json"):
+                yield (
+                    "entity",
+                    jf.stem,
+                    jf.relative_to(staged).as_posix(),
+                    "file",
+                )
+            for ev in pub_dir.glob("c/*/evidence/*/"):
+                yield (
+                    "artifact",
+                    ev.name,
+                    f"{ev.relative_to(staged).as_posix()}".rstrip("/"),
+                    "page",
+                )
+    entity_root = staged / "entity"
+    if entity_root.exists():
+        for stub_dir in sorted(entity_root.glob("*/*/")):
             yield (
-                "entity",
-                rec.name,
-                f"{rec.relative_to(staged).as_posix()}".rstrip("/"),
+                "entity_stub",
+                stub_dir.name,
+                stub_dir.relative_to(staged).as_posix().rstrip("/"),
+                "page",
             )
-        for jf in pub_dir.glob("c/*/entity/*/*.json"):
-            yield (
-                "entity",
-                jf.stem,
-                jf.relative_to(staged).as_posix(),
-            )
-        for ev in pub_dir.glob("c/*/evidence/*/"):
-            yield (
-                "artifact",
-                ev.name,
-                f"{ev.relative_to(staged).as_posix()}".rstrip("/"),
-            )
+
+
+# --------------------------------------------------------------------------- #
+# sig.tombstone/1 — the deny-map body (P34.41)                                  #
+# --------------------------------------------------------------------------- #
+
+#: The serving-only subtree ``apply_withdrawals`` regenerates: one
+#: ``sig.tombstone/1`` body per denied route, served BY the deny map's
+#: ``error_page 410`` internal redirect — never a public route itself
+#: (nginx.conf marks the whole prefix ``internal``). Hash-named so the map
+#: stays deterministic and can never collide with a content route.
+TOMBSTONE_BODY_DIR = "conf/tombstone"
+
+#: nginx ``location =`` URIs carry a route verbatim — fail closed on any
+#: character outside the URI-unreserved set plus ``/`` so a malformed route
+#: can never emit a broken conf line (a route here is an artifact filename
+#: — alnum plus ``-._~/`` in practice). No ``%``: nginx matches locations
+#: on the decoded URI, so a literal percent could never match safely.
+_CONF_URI_SAFE = re.compile(r"^/[A-Za-z0-9._~/-]+$")
+
+
+def _tombstone_body_rel(route: str, ext: str) -> str:
+    """The deterministic staged path of one denied route's nginx body file
+    (``conf/tombstone/<sha24>.<ext>``)."""
+    return f"{TOMBSTONE_BODY_DIR}/{sha256_hex(route.encode('utf-8'))[:24]}.{ext}"
+
+
+def _disposition_ref(eff: DispositionRecord) -> str:
+    """The content-derived public reference for a recorded disposition:
+    ``sha256:`` over the public-safe columns ``withdrawals.json``
+    serialises — a stable handle a tombstone may name without exposing the
+    row's privileged fields."""
+    body = canonical_json(
+        {
+            "target_kind": eff.target_kind.value,
+            "target_id": eff.target_id,
+            "disposition": eff.disposition.value,
+            "reason_category": eff.reason_category.value,
+            "authority": eff.authority,
+            "decided_at": eff.decided_at.isoformat() if eff.decided_at else None,
+            "policy_version": eff.policy_version,
+            "evidence_claim_id": eff.evidence_claim_id,
+            "supersedes": eff.supersedes,
+            "seq": eff.seq,
+        }
+    )
+    return "sha256:" + sha256_hex(body)
+
+
+def _decided_iso(eff: DispositionRecord) -> str:
+    return eff.decided_at.isoformat() if eff.decided_at else "unrecorded"
+
+
+def _tombstone_doc(
+    eff: DispositionRecord, route: str, *, release_label: str | None
+) -> dict[str, Any]:
+    """The ``sig.tombstone/1`` body one denied route serves (P34.41): the
+    machine form of the tombstone page — target identity, the withdrawal
+    instant, the public-safe reason class, the content-derived disposition
+    reference, the release label and the corrections link. ``superseded_by``
+    names a recorded successor when one exists (the effective disposition
+    is by definition current — no superseding record is known at deny
+    time). Never the privileged rationale, never an e-mail address."""
+    dec = access_decision(eff)
+    reason = dec.reason_category.value if dec.reason_category else None
+    return {
+        "schema": TOMBSTONE_SCHEMA,
+        "permitted": False,
+        "route": route,
+        "target_kind": eff.target_kind.value,
+        "target_id": eff.target_id,
+        "disposition": eff.disposition.value,
+        "reason_class": reason,
+        "withdrawn_at": _decided_iso(eff),
+        "authority": dec.authority,
+        "policy_version": dec.policy_version,
+        "disposition_ref": _disposition_ref(eff),
+        "superseded_by": None,
+        "release": release_label,
+        "corrections": CORRECTIONS_HREF,
+        # Back-compat fields earlier consumers read (P32.13/P32.14).
+        "reason_category": reason,
+        "decided": _decided_iso(eff),
+    }
+
+
+def _record_entity_ref(route: str, pub: str) -> tuple[str, str] | None:
+    """``r/<pub>/c/<comp>/entity/<type>/<id>`` (or its ``.json`` twin) →
+    ``(entity_type, entity_id)`` for a denied route, else ``None``."""
+    rel = route[: -len(".json")] if route.endswith(".json") else route
+    parts = rel.split("/")
+    if (
+        len(parts) == 7
+        and parts[0] == "r"
+        and parts[1] == pub
+        and parts[2] == "c"
+        and parts[4] == "entity"
+    ):
+        return parts[5], parts[6]
+    return None
+
+
+def _entity_types(staged: Path, entity_id: str) -> set[str]:
+    """Every entity ``<type>`` an id is staged under — the existing stub
+    dirs plus the record routes of every activated release (so a denied
+    entity's stub alias is covered even before the overlay emits it)."""
+    types: set[str] = set()
+    for d in (staged / "entity").glob(f"*/{entity_id}"):
+        types.add(d.parent.name)
+    r_root = staged / "r"
+    if r_root.exists():
+        for d in r_root.glob(f"*/c/*/entity/*/{entity_id}"):
+            types.add(d.parent.name)
+        for jf in r_root.glob(f"*/c/*/entity/*/{entity_id}.json"):
+            types.add(jf.parent.name)
+    return types
+
+
+def _stub_tombstone(
+    entity_type: str,
+    entity_id: str,
+    eff: DispositionRecord,
+    *,
+    release_label: str | None = None,
+) -> bytes:
+    dec = access_decision(eff)
+    return entity_stub_tombstone(
+        entity_type=entity_type,
+        entity_id=entity_id,
+        reason_category=(
+            dec.reason_category.value if dec.reason_category else "withheld_after_review"
+        ),
+        authority=str(dec.authority or "recorded disposition"),
+        decided=_decided_iso(eff),
+        policy_version=dec.policy_version,
+        disposition_ref=_disposition_ref(eff),
+        release_label=release_label,
+    )
 
 
 def _claim_route_index(staged: Path) -> dict[str, list[str]]:
@@ -1503,92 +1703,221 @@ def _claim_route_index(staged: Path) -> dict[str, list[str]]:
     return out
 
 
-def apply_withdrawals(staged: Path, records: Sequence[DispositionRecord]) -> dict[str, Any]:
+def _denied_pub_of(route: str) -> str | None:
+    """The ``<pub>`` a denied route lives under (``r/``, ``releases/`` and
+    the ``s/``/``v/`` snapshot namespaces all carry it at position 1)."""
+    parts = route.split("/")
+    return parts[1] if parts[0] in ("r", "releases", "s", "v") and len(parts) > 1 else None
+
+
+def apply_withdrawals(
+    staged: Path,
+    records: Sequence[DispositionRecord],
+    *,
+    active_pub: str | None = None,
+) -> dict[str, Any]:
     """Apply the CURRENT withdrawal registry to the staged public tree.
 
-    For every route under a current denying disposition: artifact bytes are
-    removed whole (immutable artifacts are denied, never rewritten) and a
-    content-free tombstone takes the route (HTML index pages /
-    ``sig.tombstone/1`` JSON bodies), plus one ``location =`` deny rule in
-    ``conf/withdrawn_routes.conf`` that nginx matches BEFORE the ``/r/``
-    prefix location — before any origin file or CDN access.
+    One deny set drives everything (P34.41): for every route under a
+    current denying disposition — page routes AND exact-path file routes —
+    the artifact bytes are removed whole (immutable artifacts are denied,
+    never rewritten), a ``sig.tombstone/1`` tombstone takes the route (the
+    HTML index page on a page route, the JSON body on a ``.json`` file
+    route), and ``conf/withdrawn_routes.conf`` carries a ``location =``
+    deny for EVERY alias (``/<route>``, ``/<route>/``,
+    ``/<route>/index.html``; ``/<route>`` for a file route) with
+    ``error_page 410`` onto the staged ``conf/tombstone/<hash>`` body — so
+    nginx answers 410 with the route's OWN tombstone, matched BEFORE any
+    origin file or CDN access, never a generic 410 page (C4 NEW-14).
+
+    ``active_pub`` scopes the ``/entity/<t>/<id>/`` convenience-stub deny:
+    the stubs are mutable pointers at the ACTIVE release's records, so a
+    stub denies when its entity is under an entity-level disposition OR
+    its record route under ``active_pub`` is denied (claim, artifact or
+    release deny). The map covers a denied stub predictively — even before
+    the activation overlay emits its page.
     """
     records = list(records)
     by_target: dict[tuple[str, str], list[DispositionRecord]] = {}
     for r in records:
         by_target.setdefault((r.target_kind.value, r.target_id), []).append(r)
 
-    claim_index = _claim_route_index(staged)
-    # route → the effective denying record (drives the tombstone's safe fields)
-    denied: dict[str, DispositionRecord] = {}
-
-    def _deny(target_kind: str, target_id: str, route: str) -> None:
-        eff = latest_disposition(by_target.get((target_kind, target_id), []))
+    def _eff(kind: str, tid: str) -> DispositionRecord | None:
+        eff = latest_disposition(by_target.get((kind, tid), []))
         if eff is not None and not access_decision(eff).permitted:
-            denied.setdefault(route, eff)
+            return eff
+        return None
 
-    for kind, tid, rel in _route_targets(staged):
-        if kind == "release":
-            _deny(TargetKind.RELEASE_ARTIFACT.value, tid, rel)
+    claim_index = _claim_route_index(staged)
+    # route → the effective denying record (drives the tombstone's safe
+    # fields): page routes vs exact-path file routes are kept apart so the
+    # map emits each shape's alias set.
+    denied: dict[str, DispositionRecord] = {}
+    denied_files: dict[str, DispositionRecord] = {}
+
+    def _deny(target_kind: str, target_id: str, route: str, shape: str) -> None:
+        eff = _eff(target_kind, target_id)
+        if eff is not None:
+            (denied_files if shape == "file" else denied).setdefault(route, eff)
+
+    stub_targets: list[tuple[str, str]] = []
+    for kind, tid, rel, shape in _route_targets(staged):
+        if kind == "entity_stub":
+            stub_targets.append((tid, rel))
             continue
-        _deny(kind, tid, rel)
+        if kind == "release":
+            _deny(TargetKind.RELEASE_ARTIFACT.value, tid, rel, shape)
+            continue
+        _deny(kind, tid, rel, shape)
 
     # claim-level withdrawals deny every record route asserting the claim
-    for (kind, tid), rs in by_target.items():
+    for (kind, tid), _rs in by_target.items():
         if kind != TargetKind.CLAIM.value:
             continue
-        eff = latest_disposition(rs)
-        if eff is None or access_decision(eff).permitted:
+        eff = _eff(kind, tid)
+        if eff is None:
             continue
         for route in claim_index.get(tid, []):
-            denied.setdefault(route, eff)
+            (denied_files if route.endswith(".json") else denied).setdefault(route, eff)
 
-    # release-level withdrawal denies everything under the namespace
-    for (kind, tid), rs in by_target.items():
+    # release-level withdrawal denies everything under the namespaces
+    for (kind, tid), _rs in by_target.items():
         if kind != TargetKind.RELEASE_ARTIFACT.value:
             continue
-        eff = latest_disposition(rs)
-        if eff is None or access_decision(eff).permitted:
+        eff = _eff(kind, tid)
+        if eff is None:
             continue
-        for base in (f"r/{tid}", f"releases/{tid}"):
+        for base in (f"r/{tid}", f"releases/{tid}", f"s/{tid}", f"v/{tid}"):
             for path in staged.glob(f"{base}/**/*"):
-                if path.is_file():
-                    rel = path.relative_to(staged).as_posix()
-                    if rel.endswith("index.html"):
-                        # a page route is its directory — the tombstone page
-                        # takes the route, not a JSON body over the HTML file
-                        rel = rel[: -len("index.html")].rstrip("/")
-                    denied.setdefault(rel, eff)
+                if not path.is_file():
+                    continue
+                rel = path.relative_to(staged).as_posix()
+                if rel.endswith("index.html"):
+                    # a page route is its directory — the tombstone page
+                    # takes the route, not a JSON body over the HTML file
+                    denied.setdefault(rel[: -len("index.html")].rstrip("/"), eff)
+                else:
+                    denied_files.setdefault(rel, eff)
+        # the namespace roots deny even when the glob found no files (a
+        # pre-P34.41 staged tree has no r/<pub>/index.html — the root must
+        # still tombstone, never 403).
+        denied.setdefault(f"r/{tid}", eff)
+        denied.setdefault(f"releases/{tid}", eff)
+
+    # --- entity stubs: generated FROM the deny set ------------------------ #
+    # A stub denies when (a) its entity is under an entity-level deny —
+    # covering every stub the tree carries plus each type the entity is
+    # staged under, predictively — or (b) the ACTIVE release's own record
+    # route for the entity is denied (the stub points at denied bytes).
+    stub_denies: dict[str, DispositionRecord] = {}
+    for tid, rel in stub_targets:
+        eff = _eff(TargetKind.ENTITY.value, tid)
+        if eff is not None:
+            stub_denies[rel] = eff
+    for (kind, tid), _rs in by_target.items():
+        if kind != TargetKind.ENTITY.value:
+            continue
+        eff = _eff(kind, tid)
+        if eff is None:
+            continue
+        for etype in sorted(_entity_types(staged, tid)):
+            stub_denies.setdefault(f"entity/{etype}/{tid}", eff)
+    if active_pub:
+        for route, eff in list(denied.items()) + list(denied_files.items()):
+            ref = _record_entity_ref(route, active_pub)
+            if ref is not None:
+                stub_denies.setdefault(f"entity/{ref[0]}/{ref[1]}", eff)
+    for route, eff in stub_denies.items():
+        denied.setdefault(route, eff)
+
+    # --- page_index coverage ---------------------------------------------- #
+    # A page_index.json page that embeds a denied target id is denied whole
+    # — the route answers its tombstone — and the staged index entry is
+    # marked withdrawn in place (the "show the tombstone" half of the
+    # contract: the listing names the deny, never a silently stale entry).
+    denied_ids: dict[str, DispositionRecord] = {}
+    for (kind, tid), _rs in by_target.items():
+        if kind not in (
+            TargetKind.ENTITY.value,
+            TargetKind.CLAIM.value,
+            TargetKind.ARTIFACT.value,
+        ):
+            continue
+        eff = _eff(kind, tid)
+        if eff is not None:
+            denied_ids[tid] = eff
+    if denied_ids:
+        for idx_path in sorted(staged.rglob("page_index.json")):
+            if not idx_path.is_file():
+                continue
+            doc = _read_json(idx_path)
+            pages = doc.get("pages") if isinstance(doc, dict) else None
+            if not isinstance(pages, list):
+                continue
+            changed = False
+            for entry in pages:
+                if not isinstance(entry, dict):
+                    continue
+                embedded = {
+                    str(v)
+                    for key in (
+                        "entity_ids",
+                        "claim_ids",
+                        "artifact_ids",
+                        "entities",
+                        "claims",
+                        "artifacts",
+                    )
+                    for v in (entry.get(key) or [])
+                }
+                hit = next((tid for tid in sorted(embedded) if tid in denied_ids), None)
+                if hit is None:
+                    continue
+                eff = denied_ids[hit]
+                route = str(entry.get("route") or "").strip("/")
+                if route:
+                    if "." in route.rsplit("/", 1)[-1]:
+                        denied_files.setdefault(route, eff)
+                    else:
+                        denied.setdefault(route, eff)
+                if not entry.get("withdrawn"):
+                    entry["withdrawn"] = True
+                    entry["withdrawal_reason"] = eff.reason_category.value
+                    changed = True
+            if changed:
+                # the staged index may be a hardlink to release bytes —
+                # break the link before annotating (P32.25/ADR-144)
+                if os.stat(idx_path).st_nlink > 1:
+                    data = idx_path.read_bytes()
+                    idx_path.unlink()
+                    idx_path.write_bytes(data)
+                _atomic_write(idx_path, canonical_json(doc))
+
+    # The release label for a denied route — read the catalog entries
+    # BEFORE any tombstone lands (a withdrawn release's own catalog_entry
+    # is itself denied).
+    pub_labels: dict[str, str] = {}
+    rel_root = staged / "releases"
+    if rel_root.exists():
+        for ce in sorted(rel_root.glob("*/catalog_entry.json")):
+            label = ce.parent.name
+            try:
+                doc = _read_json(ce)
+                if isinstance(doc, dict) and doc.get("data_release_id"):
+                    label = str(doc["data_release_id"])
+            except (OSError, ValueError):
+                pass
+            pub_labels[ce.parent.name] = label
+
+    def _label_for(route: str) -> str | None:
+        pub = _denied_pub_of(route) or (active_pub if route.startswith("entity/") else None)
+        return pub_labels.get(pub) if pub else None
 
     # materialise tombstones + remove denied bytes (whole-deny only)
     for route in sorted(denied):
         path = staged / route
         eff = denied[route]
         dec = access_decision(eff)
-        decided = eff.decided_at.isoformat() if eff.decided_at else "unrecorded"
-        if route.endswith(".json"):
-            # staged artifacts are hardlinks to the release dir — break the
-            # link before writing so the immutable release input can never be
-            # mutated by a tombstone write (P32.25/ADR-144)
-            if path.exists() and not path.is_dir() and os.stat(path).st_nlink > 1:
-                path.unlink()
-            _write(
-                path,
-                canonical_json(
-                    {
-                        "schema": TOMBSTONE_SCHEMA,
-                        "permitted": False,
-                        "reason_category": (
-                            dec.reason_category.value if dec.reason_category else None
-                        ),
-                        "authority": dec.authority,
-                        "policy_version": dec.policy_version,
-                        "decided": decided,
-                        "route": route,
-                    }
-                ),
-            )
-            continue
         if path.exists() and not path.is_dir():
             # a normalized page route that arrived as a file (never expected —
             # remove the denied bytes whole, then take the route)
@@ -1606,39 +1935,129 @@ def apply_withdrawals(staged: Path, records: Sequence[DispositionRecord]) -> dic
             index = path / "index.html"
             if index.exists() and index.is_file() and os.stat(index).st_nlink > 1:
                 index.unlink()
-        _write(
-            path / "index.html",
-            tombstone_page(
+        if route.startswith("entity/") and route.count("/") == 2:
+            # the /entity/<t>/<id>/ convenience stub — the stub-shaped
+            # tombstone, generated from the deny set like the map line.
+            etype, _, eid = route.partition("/")[2].partition("/")
+            page = _stub_tombstone(etype, eid, eff, release_label=_label_for(route))
+        else:
+            page = tombstone_page(
                 path="/" + route + "/",
                 reason_category=(
                     dec.reason_category.value if dec.reason_category else "withheld_after_review"
                 ),
                 authority=str(dec.authority or "recorded disposition"),
-                decided=decided,
+                decided=_decided_iso(eff),
                 policy_version=dec.policy_version,
+                target_kind=eff.target_kind.value,
+                target_id=eff.target_id,
+                disposition_ref=_disposition_ref(eff),
+                release_label=_label_for(route),
+            )
+        _write(path / "index.html", page)
+
+    for route in sorted(denied_files):
+        path = staged / route
+        eff = denied_files[route]
+        # staged artifacts are hardlinks to the release dir — break the
+        # link before writing so the immutable release input can never be
+        # mutated by a tombstone write (P32.25/ADR-144)
+        if path.exists() and not path.is_dir() and os.stat(path).st_nlink > 1:
+            path.unlink()
+        if route.endswith(".json"):
+            _write(
+                path,
+                canonical_json(_tombstone_doc(eff, route, release_label=_label_for(route))),
+            )
+        else:
+            # artifact bytes denied whole — the conf deny answers the route
+            # (a deleted file without its deny line would answer 404).
+            if path.exists() and path.is_dir():
+                shutil.rmtree(path)
+            elif path.exists():
+                path.unlink()
+
+    # -- the deny map: every alias of every denied route ------------------- #
+    tomb_dir = staged / TOMBSTONE_BODY_DIR
+    if tomb_dir.exists():
+        shutil.rmtree(tomb_dir)
+    alias_map: dict[str, str] = {}
+    for route in sorted(denied):
+        body = "/" + _tombstone_body_rel(route, "html")
+        _write(
+            staged / _tombstone_body_rel(route, "html"),
+            (staged / route / "index.html").read_bytes(),
+        )
+        for alias in (f"/{route}", f"/{route}/", f"/{route}/index.html"):
+            alias_map[alias] = body
+    for route in sorted(denied_files):
+        body = "/" + _tombstone_body_rel(route, "json")
+        _write(
+            staged / _tombstone_body_rel(route, "json"),
+            canonical_json(
+                _tombstone_doc(denied_files[route], route, release_label=_label_for(route))
             ),
         )
-
+        alias_map[f"/{route}"] = body
     conf = staged / "conf" / "withdrawn_routes.conf"
     lines = [
-        "# Generated by the SIG release tooling — withdrawn release routes.",
-        "# location = exact matches evaluate BEFORE the /r/ prefix location,",
-        "# so denial happens before any origin file or CDN access (ADR-132).",
+        "# Generated by the SIG release tooling — withdrawn release routes (P34.41).",
+        "# location = exact matches evaluate BEFORE the /r/ prefix location, so a",
+        "# withdrawal denies before any origin file or CDN access (ADR-132). Every",
+        "# alias of a denied route — the no-slash form, the trailing-slash form",
+        "# and /index.html for a page route; the exact path for a file route —",
+        "# answers 410 with that route's own sig.tombstone/1 body: error_page",
+        "# internal-redirects to the staged conf/tombstone/ body (the prefix is",
+        "# `internal` in nginx.conf), never a generic nginx 410 (C4 NEW-14).",
     ]
-    for route in sorted(denied):
-        uri = "/" + route + ("/" if not route.endswith(".json") else "")
-        lines.append(f"location = {uri} {{ return 410; }}")
+    for alias, body in sorted(alias_map.items()):
+        if not _CONF_URI_SAFE.match(alias):
+            raise ReleaseError(
+                f"withdrawn route {alias!r} is not URI-safe — refusing to "
+                "emit a deny line that would corrupt the generated conf"
+            )
+        lines.append(f"location = {alias} {{ error_page 410 {body}; return 410; }}")
     _write(conf, ("\n".join(lines) + "\n").encode("utf-8"))
-    return {"denied": len(denied), "routes": sorted(denied)}
+    return {
+        "denied": len(denied) + len(denied_files),
+        "routes": sorted(set(denied) | set(denied_files)),
+        "entity_stubs": stub_denies,
+    }
+
+
+def _apply_summary(applied: Mapping[str, Any]) -> dict[str, Any]:
+    """The JSON-safe receipt view of an :func:`apply_withdrawals` report —
+    ``entity_stubs`` is the internal route→disposition map the overlay
+    consumes; receipts and the CLI carry the sorted route list."""
+    out = dict(applied)
+    stubs = applied.get("entity_stubs") or {}
+    out["entity_stubs"] = sorted(stubs) if isinstance(stubs, Mapping) else stubs
+    return out
+
+
+def _norm_route(route: str) -> str:
+    """Canonical deny-map form of a queried route: strip the slashes and
+    fold the ``/index.html`` alias onto its page route."""
+    norm = route.strip("/")
+    if norm.endswith("/index.html"):
+        norm = norm[: -len("index.html")].rstrip("/")
+    return norm
 
 
 def route_access(registry_dir: Path | str, route: str) -> dict[str, Any]:
     """The serving barrier's pure check: may ``route`` be publicly served
     under the CURRENT withdrawal registry? Returns the decision + the
-    public-safe tombstone payload for a denial."""
+    public-safe tombstone payload for a denial.
+
+    P34.41: the ``/entity/<type>/<id>/`` convenience stubs are covered too
+    — a stub is denied when its entity is under an entity-level deny, when
+    the latest release's own namespace is denied, or when a denied claim
+    binds the record route the stub points at (the same rule the generated
+    deny map encodes)."""
     registry = ReleaseRegistry(Path(registry_dir))
     records = registry.withdrawals()
-    parts = route.strip("/").split("/")
+    norm = _norm_route(route)
+    parts = norm.split("/")
     kind = None
     target = None
     if len(parts) >= 2 and parts[0] == "r":
@@ -1654,21 +2073,35 @@ def route_access(registry_dir: Path | str, route: str) -> dict[str, Any]:
     elif len(parts) >= 2 and parts[0] == "releases":
         kind = TargetKind.RELEASE_ARTIFACT
         target = parts[1]
-    if kind is None or target is None:
-        return {"permitted": True, "tombstone": None}
+    elif len(parts) >= 3 and parts[0] == "entity":
+        # the /entity/<type>/<id>/ convenience alias
+        kind = TargetKind.ENTITY
+        target = parts[2].removesuffix(".json")
     # A route under a withdrawn release namespace is denied even when the
     # route's own target has no disposition — the namespace deny dominates.
-    if parts[0] == "r":
+    # The entity stub follows the release its pointer names (the current
+    # latest): a denied latest namespace denies its stubs. The ``s/``/``v/``
+    # snapshot namespaces and the ``releases/`` landings carry the pub at the
+    # same position — a release deny dominates them too, exactly as the deny
+    # map's glob does.
+    ns_pub = None
+    if len(parts) >= 2 and parts[0] in ("r", "releases", "s", "v"):
+        ns_pub = parts[1]
+    elif parts[0] == "entity":
+        ns_pub = (registry.latest() or {}).get("publication_id")
+    if ns_pub:
         eff_release = latest_disposition(
             [
                 r
                 for r in records
-                if r.target_kind == TargetKind.RELEASE_ARTIFACT and r.target_id == parts[1]
+                if r.target_kind == TargetKind.RELEASE_ARTIFACT and r.target_id == ns_pub
             ]
         )
         dec_release = access_decision(eff_release)
         if not dec_release.permitted:
             return {"permitted": False, "tombstone": dec_release.tombstone()}
+    if kind is None or target is None:
+        return {"permitted": True, "tombstone": None}
     eff = latest_disposition(
         [r for r in records if r.target_kind == kind and r.target_id == target]
     )
@@ -1684,16 +2117,28 @@ def route_access(registry_dir: Path | str, route: str) -> dict[str, Any]:
         for r in records:
             if r.target_kind == TargetKind.CLAIM:
                 by_claim.setdefault(r.target_id, []).append(r)
-        norm = route.strip("/")
         for tid, rs in by_claim.items():
             eff_c = latest_disposition(rs)
             if eff_c is None or access_decision(eff_c).permitted:
                 continue
-            if norm in {rt.rstrip("/") for rt in idx.get(tid, [])}:
+            bound = {_norm_route(rt) for rt in idx.get(tid, [])}
+            if norm in bound:
                 return {
                     "permitted": False,
                     "tombstone": access_decision(eff_c).tombstone(),
                 }
+            if parts[0] == "entity" and ns_pub:
+                # the stub denies when the record route it would point at
+                # (under the ACTIVE release) is claim-denied.
+                suffix = f"/entity/{parts[1]}/{target}"
+                if any(
+                    rt.startswith(f"r/{ns_pub}/c/") and rt.removesuffix(".json").endswith(suffix)
+                    for rt in bound
+                ):
+                    return {
+                        "permitted": False,
+                        "tombstone": access_decision(eff_c).tombstone(),
+                    }
     return {"permitted": dec.permitted, "tombstone": dec.tombstone()}
 
 

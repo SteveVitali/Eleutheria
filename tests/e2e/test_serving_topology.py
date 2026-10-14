@@ -326,15 +326,77 @@ def test_conf_fragments_activate_on_reload(serving_stack) -> None:
         cwd=str(REPO_ROOT),
     )
     assert proc.returncode == 0, proc.stderr
-    # A withdrawal barrier fragment (the shape `release-serve apply` writes).
+    # A hand-written withdrawal fragment still answers the branded 410 (the
+    # chrome fragment's server-level error_page) — the legacy shape keeps
+    # working; the GENERATED barrier below is the real proof.
     (site / "conf" / "withdrawn_e2e.conf").write_text(
         "location = /r/pub-e2e/page/ { return 410; }\n"
     )
+
+    # P34.41: the REAL generated barrier. Withdraw one entity of the mounted
+    # registry's release, then land the generated deny map + tombstone bodies
+    # + the staged release/entity trees into the site — the same bytes
+    # `release-serve apply` produces for the bucket sync.
+    import shutil as _shutil
+    from datetime import UTC, datetime
+
+    from exports.release import record_withdrawal
+    from policy.eligibility import (
+        Disposition,
+        ReasonCategory,
+        TargetKind,
+        new_disposition,
+    )
+
+    registry = serving_stack["registry"]
+    pub = serving_stack["pub"]
+    record_withdrawal(
+        registry,
+        [
+            new_disposition(
+                target_kind=TargetKind.ENTITY,
+                target_id="ent-src_a-1",
+                disposition=Disposition.WITHDRAW,
+                reason_category=ReasonCategory.SAFETY_WITHDRAWAL,
+                authority="e2e-authority",
+                decided_at=datetime(2026, 9, 27, tzinfo=UTC),
+            )
+        ],
+    )
+    staged = registry / "staged"
+    _shutil.copytree(staged / "r", site / "r", dirs_exist_ok=True)
+    _shutil.copytree(staged / "entity", site / "entity", dirs_exist_ok=True)
+    _shutil.copy2(staged / "conf" / "withdrawn_routes.conf", site / "conf")
+    _shutil.copytree(staged / "conf" / "tombstone", site / "conf" / "tombstone")
     _web_reload(env)
 
     # The withdrawn route is denied — with the branded 410 page served.
     status, _h, body = _http(f"{EDGE}/r/pub-e2e/page/")
     assert status == 410 and b"sig-410-branded" in body
+
+    rec = f"/r/{pub}/c/sig_graph/entity/deployment/ent-src_a-1"
+    # EVERY alias of the denied record route answers 410 with that route's
+    # own sig.tombstone/1 body — never the branded/generic 410 page.
+    for alias in (rec, f"{rec}/", f"{rec}/index.html"):
+        status, _h, body = _http(f"{EDGE}{alias}")
+        assert status == 410, alias
+        assert b"ent-src_a-1" in body and b"sig-410-branded" not in body, alias
+    status, headers, body = _http(f"{EDGE}{rec}.json")
+    assert status == 410
+    doc = json.loads(body)
+    assert doc["schema"] == "sig.tombstone/1" and doc["permitted"] is False
+    assert doc["target_id"] == "ent-src_a-1"
+    # the convenience stub is denied too — generated from the same deny set
+    status, _h, body = _http(f"{EDGE}/entity/deployment/ent-src_a-1/")
+    assert status == 410 and b"ent-src_a-1" in body
+    # the tombstone body prefix is internal — never directly fetchable
+    status, _h, _b = _http(f"{EDGE}/conf/tombstone/")
+    assert status in (403, 404)
+    # unaffected aliases still serve, and /r/<pub>/ is a landing, not a 403
+    status, _h, _b = _http(f"{EDGE}/r/{pub}/")
+    assert status == 200
+    status, _h, body = _http(f"{EDGE}/r/{pub}/c/sig_graph/entity/deployment/ent-src_a-2/")
+    assert status == 200 and b"ent-src_a-2" in body
 
     # A directory without an index → 403 → the branded page, not stock nginx.
     status, _h, body = _http(f"{EDGE}/noindex_dir/")
