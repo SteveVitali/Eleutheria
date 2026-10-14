@@ -1,0 +1,20 @@
+window OK: 2026-10-14T12:49:06Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+window OK: 2026-10-14T12:49:07Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+-- identities: create the declared runtime SAs (idempotent) --
++ gcloud iam service-accounts create sig-api-rt --display-name sig-api-rt runtime --project zeta-medley-508121-u7
+Created service account [sig-api-rt].
+Service account email: sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+   rollback: gcloud iam service-accounts delete sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
++ gcloud iam service-accounts create sig-web-rt --display-name sig-web-rt runtime --project zeta-medley-508121-u7
+Created service account [sig-web-rt].
+Service account email: sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+   rollback: gcloud iam service-accounts delete sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
++ gcloud iam service-accounts create sig-alerts-rt --display-name sig-alerts-rt runtime --project zeta-medley-508121-u7
+Created service account [sig-alerts-rt].
+Service account email: sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+   rollback: gcloud iam service-accounts delete sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+iam-service-accounts identities: done (mode=apply)

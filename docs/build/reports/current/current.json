@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d15b4834a8a30aea72591d07dde2af46e6738a6f",
+  "input_commit": "9a02c24f713f11a22815d17a684549c4ad766fad",
   "manifest_inputs": 1033,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -9,7 +9,7 @@
     "lastCompleted": "P36.15",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -27,17 +27,17 @@
   },
   "counts": {
     "obligations": 164,
-    "owed": 93,
-    "open": 90,
+    "owed": 92,
+    "open": 89,
     "partial": 3,
-    "terminal": 71,
-    "events": 652,
-    "transitions": 34,
+    "terminal": 72,
+    "events": 653,
+    "transitions": 35,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 39,
+    "return_pass_rows": 38,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8268,12 +8268,12 @@
     },
     {
       "id": "D-P34.42a-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P34.42a-1:e1",
+      "status": "DONE",
+      "status_source": "event-head D-P34.42a-1:e2",
       "kind": "P",
       "owner": "the P34.42a-live-2 worker (engineering), under the operator's recorded decision",
-      "landing": "RETURN PASS — P34.42a",
-      "landing_source": "return-pass-map/1",
+      "landing": "satisfied by the operator-approved option-(a) retry: `sig-alerts-rt` declared a consumer of `sig-alert-webhook-token` and granted `roles/secretmanager.secretAccessor` by the scripted `bindings` step; the verbatim IAM leg re-ran on `r11/P34.42a-live-2` and every required verification is green",
+      "landing_source": "event-head",
       "backlog_home": "BL-084",
       "item": "The operator decision the P34.42a IAM leg's 2026-10-14 stop routes here: the live `sig-alerts` service mounts `sig-alert-webhook-token` as env `SIG_ALERT_WEBHOOK_TOKEN` (`secretKeyRef` key `latest` — `docs/build/reports/p34.42a-iam/pre/service-sig-alerts.json`), so its runtime SA must hold `roles/secretmanager.secretAccessor` on that secret — but the landed declaration (`ops/iam_identities.toml`, PR #252) asserts `sig-alerts-rt` carries no secret access and omits it from the secret's `consumers` (which names only `sig-probe-rt`/`sig-quality-probe-rt`). Cloud Run refused the same-image revision; the leg stopped per the voided-by/stop rules and rolled back to the recorded prestate (verified byte-for-byte: service identities, digests, IAM policies, SA list, bindings all restored; 39/39 routes byte-identical per service). The call: (a) amend the declaration — `sig-alerts-rt` joins `sig-alert-webhook-token`'s consumers + the scripted `bindings` step gains that one grant — then re-run the verbatim leg on `r11/P34.42a-live-2`, or (b) re-design the receiver so it never mounts the token (larger; the declaration's \"no secret access\" claim stands)",
       "unblocked_by": "owner: the operator · trigger: the operator's call on the declaration fix — amend the TOML (a) or re-scope sig-alerts (b) · due: before P34.42b's `live:` edge (`live:P34.42a` is its precondition)",
@@ -8338,6 +8338,34 @@
           "recorded_at": "2026-10-14",
           "source_commit": "d15b4834a8a30aea72591d07dde2af46e6738a6f",
           "reason": "progress note, not a close: at the OM-18 pause the operator answered \"approve, proceed\" (recorded verbatim in the LEDGER GATE DECISIONS confirmation row at 2026-10-14T12:27:08Z). Recorder's reading: the operator chose D-P34.42a-1 option (a) — the least-privilege declaration correction only — and authorized one verbatim IAM-leg re-run on `r11/P34.42a-live-2`; no broader IAM or production change is approved. The obligation stays OPEN until the live leg's poststate and verification evidence satisfy it."
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.42a-1:e2",
+          "kind": "transition",
+          "obligation_id": "D-P34.42a-1",
+          "seq": 2,
+          "expected_previous_event": "D-P34.42a-1:e1",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.42a",
+          "owner": "the P34.42a-live-2 worker (engineering), under the operator's recorded decision",
+          "landing": "satisfied by the operator-approved option-(a) retry: `sig-alerts-rt` declared a consumer of `sig-alert-webhook-token` and granted `roles/secretmanager.secretAccessor` by the scripted `bindings` step; the verbatim IAM leg re-ran on `r11/P34.42a-live-2` and every required verification is green",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.42a.md",
+            "docs/build/reports/p34.42a-iam-live2/README.md",
+            "docs/build/reports/p34.42a-iam-live2/pre/service-sig-alerts.json",
+            "docs/build/reports/p34.42a-iam-live2/post/service-sig-alerts-iam.json",
+            "docs/build/reports/p34.42a-iam-live2/post/secret-sig-alert-webhook-token-iam.json",
+            "docs/build/reports/p34.42a-iam-live2/anonymous-probe.txt",
+            "docs/tickets/DEFERRALS.md",
+            "ops/iam_identities.toml"
+          ],
+          "observed_at": "2026-10-14",
+          "source_commit": "9a02c24f713f11a22815d17a684549c4ad766fad",
+          "reason": "DONE on the live-2 evidence (2026-10-14, all times date -u): the operator's recorded \"approve, proceed\" (GATE DECISIONS confirmation 2026-10-14T12:27:08Z) was option (a) only — `ops/iam_identities.toml` now declares `sig-alerts-rt` a consumer of `sig-alert-webhook-token` and the scripted bindings step applies exactly that one accessor grant. Leg 2 ran inside the AR-3 window (12:48-12:53Z): prestate captured and semantically equal to leg-1's post-rollback state; `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt` created; the four declared bindings applied; same-image revisions `sig-api-00011-wic`/`sig-web-00005-hbr`/`sig-alerts-00007-qcs` deployed serving 100% on their runtime SAs; `sig-alerts` invoker = the recorded caller SA only (`allUsers` revoked — anonymous probe now HTTP 403 after ~90s propagation; `sig-api`/`sig-web` stay public by declaration at 200). Poststate: `sig-ops iam diff --leg services` clean; `check-revisions` clean (byte-identical images); `route-compare verify` 39/39 byte-identical per service; troubleshooter reads unavailable (recorded non-fatal) but the captured-policy analysis finds no basic role, no delete on the spine/evidence stores and no foreign-secret accessor on any runtime SA — no GRANTED pair. `live:P34.42a` is satisfied; the declaration-production contradiction is resolved by the declared truth.",
+          "recorded_at": "2026-10-14"
         }
       ]
     }
@@ -8564,16 +8592,6 @@
         "operator_cell": "nothing until the window + ADC hold — dry-run default, ADC/window-gated; rollback = re-import the URL-map prestate / redeploy at the prior digest",
         "rerun_cell": "`implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (scope: one leg per run — L1, then L2) · landed row 249 (PR #250 — legs queued exit 42)",
         "obligations": []
-      },
-      {
-        "key": "P34.42a",
-        "obligations_cell": "the queued IAM leg (G1-01/F-272 services half): create `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt`, the least-privilege bindings + `sig-pg-password` access, one same-image `--service-account` revision per service, `sig-alerts` onto IAM invocation — declared in `ops/iam_identities.toml`; engineered halves landed; `D-P34.42a-1` — leg 1 ran 2026-10-14 and STOPPED at `revisions` (production mounts `sig-alert-webhook-token` on `sig-alerts`, which the declaration denies `sig-alerts-rt`), rolled back to the recorded prestate",
-        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, preferred 14:00-20:00Z weekdays — apply exits 42; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4); voided-by a red probe or failed restore point — leg 1's contradicting production read fired the voided-by clause (stop + rollback + `D-P34.42a-1`); operator answered \"approve, proceed\" at 2026-10-14T12:27:08Z — recorder's reading: option (a) only, so the scripted mutation list may gain exactly the declared `sig-alerts-rt` → `sig-alert-webhook-token` accessor grant; AR-2 `prestate` before mutation; poststate `iam diff` + `check-revisions` + byte-compare + troubleshooter (GRANTED = hard fail) or roll back",
-        "operator_cell": "operator's verbatim answer, recorded 2026-10-14T12:27:08Z: \"approve, proceed\" — option (a) only (declare `sig-alerts-rt` a consumer of `sig-alert-webhook-token` + the one scripted accessor grant), then the verbatim re-run on `r11/P34.42a-live-2`; dry-run default; rollback = `rollback` replaying the recorded prestate",
-        "rerun_cell": "`implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true` (scope: the IAM leg only) · landed row 251 (PR #252 — leg 1 ran 2026-10-14: stopped at `revisions` on the undeclared `sig-alert-webhook-token` consumer, prestate restored; `D-P34.42a-1` OPEN; operator-approved retry branch `r11/P34.42a-live-2`)",
-        "obligations": [
-          "D-P34.42a-1"
-        ]
       },
       {
         "key": "P34.42b",
@@ -18746,7 +18764,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "da16f403c1f384b504d0e51bf1b4d1a7b9423089b8998a3cf1b6394f2adb73ac",
+  "manifest_sha256": "d102e7e620282f757edd6cf0beeee616fc7254056131f9be7f54037202b697e6",
   "current_md": {
     "lines": 63,
     "bytes": 15603,
