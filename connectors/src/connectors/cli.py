@@ -27,6 +27,7 @@ orchestration choice is reversible (SIG-INGEST-021, ADR-014). The sub-commands:
 from __future__ import annotations
 
 import argparse
+from typing import TYPE_CHECKING
 
 from policy.licensing import LicenseIncompatibilityError, compartments
 
@@ -36,6 +37,14 @@ from .loader import assert_export_compatible, is_loadable, source_export_license
 from .registry import get, sources
 from .review import flip_ready, gate_breakdown, is_flip_ready, review_metadata_violations
 from .stages import registered_connectors, stage_names
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from resolution.review_pg import PgReviewQueue
+    from resolution.review_queue import ReviewQueue
+
+    from .capture_ocfl import OcflCaptureStore
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -100,6 +109,51 @@ def build_parser() -> argparse.ArgumentParser:
         default="unknown",
         help="code commit recorded on the ingest_run (default: 'unknown')",
     )
+    rp = sub.add_parser(
+        "redact-propose",
+        help=(
+            "P36.15 (SIG-PUB-015): enqueue a redaction proposal as a "
+            "'redaction' review_item on the curation mechanism — scope (spans or "
+            "literal strings, resolved + digest-bound), method, version. The "
+            "proposal carries digests of the removed text, never the text."
+        ),
+    )
+    rp.add_argument("--capture-dir", required=True, help="OCFL capture root")
+    rp.add_argument("--parent-capture-id", required=True, help="evidence_capture row id")
+    rp.add_argument("--parent-digest", required=True, help="parent's content multihash")
+    rp.add_argument("--media-type", required=True, help="parent capture media type")
+    rp.add_argument(
+        "--method", required=True, help="redaction method (e.g. text-layer-substitution)"
+    )
+    rp.add_argument("--version", required=True, help="redaction method version")
+    rp.add_argument(
+        "--span",
+        action="append",
+        default=None,
+        help="code-point span 'start:end' over the decoded document (repeatable)",
+    )
+    rp.add_argument(
+        "--text",
+        action="append",
+        default=None,
+        help="literal string to remove — every occurrence is spanned (repeatable)",
+    )
+    rp.add_argument("--note", default="", help="bounded human-readable scope note")
+    rp.add_argument("--queue-json", default=None, help="a JSON-serialised ReviewQueue file")
+    rp.add_argument("--dsn", default=None, help="PostgreSQL DSN for the review queue")
+    ra = sub.add_parser(
+        "redact-apply",
+        help=(
+            "P36.15 (SIG-PUB-015/016): apply a *reviewed* redaction — the latest "
+            "recorded decision on the review item must be a human accept; the "
+            "derivative is written as a NEW OCFL object carrying the "
+            "sig.redaction-review/1 record. Exit 3 when no accept is recorded."
+        ),
+    )
+    ra.add_argument("--capture-dir", required=True, help="OCFL capture root")
+    ra.add_argument("--item", required=True, help="the redaction review_item id")
+    ra.add_argument("--queue-json", default=None, help="a JSON-serialised ReviewQueue file")
+    ra.add_argument("--dsn", default=None, help="PostgreSQL DSN for the review queue")
     rev = sub.add_parser(
         "review-status",
         help="per-source rights-review gate breakdown + flip-ready count (P21.1)",
@@ -466,6 +520,128 @@ def _technology_backfill(args: argparse.Namespace) -> int:
     return 1 if report.get("refused") else 0
 
 
+def _redact_queue(
+    args: argparse.Namespace,
+) -> tuple[ReviewQueue | PgReviewQueue | None, Path | None]:
+    """The review mechanism for the redact verbs: a JSON-file queue, or the PG
+    ``review_item``/``review_decision`` tables behind ``--dsn``. Returns
+    ``(queue, path)`` — ``path`` is where a JSON queue serialises back."""
+    import json as _json
+    from pathlib import Path as _Path
+
+    from resolution.review_queue import ReviewQueue
+
+    if args.dsn:
+        from resolution.review_pg import PgReviewQueue
+
+        return PgReviewQueue.from_dsn(args.dsn), None
+    if not args.queue_json:
+        return None, None
+    path = _Path(args.queue_json)
+    queue = ReviewQueue.from_dict(_json.loads(path.read_text())) if path.exists() else ReviewQueue()
+    return queue, path
+
+
+def _redact_store(capture_dir: str) -> OcflCaptureStore:
+    from evidence.ocfl import OcflStore
+    from evidence.storage import LocalFileStore
+
+    from .capture_ocfl import OcflCaptureStore
+
+    return OcflCaptureStore(OcflStore(LocalFileStore(capture_dir)))
+
+
+def _redact_propose(args: argparse.Namespace) -> int:
+    """Enqueue a redaction proposal for human review (P36.15, step 1)."""
+    import json as _json
+    import sys
+
+    from evidence.redaction import RedactionError, RedactionSpan
+
+    from .redaction_pipeline import enqueue_proposal, propose_redaction
+
+    queue, path = _redact_queue(args)
+    if queue is None:
+        print("a review queue is required: --queue-json FILE or --dsn DSN")
+        return 2
+    spans = None
+    if args.span:
+        try:
+            spans = tuple(
+                RedactionSpan(start=int(s.split(":")[0]), end=int(s.split(":")[1]))
+                for s in args.span
+            )
+        except (ValueError, IndexError):
+            print("--span takes 'start:end' code-point offsets")
+            return 2
+    store = _redact_store(args.capture_dir)
+    if not store.has(args.parent_digest):
+        print(f"no capture with digest {args.parent_digest} in {args.capture_dir}")
+        return 4
+    try:
+        item = propose_redaction(
+            parent_capture_id=args.parent_capture_id,
+            parent_digest=args.parent_digest,
+            parent_bytes=store.get(args.parent_digest),
+            media_type=args.media_type,
+            spans=spans,
+            literals=args.text,
+            method=args.method,
+            version=args.version,
+            scope_note=args.note,
+        )
+        inserted = enqueue_proposal(queue, item)
+    except RedactionError as err:
+        print(f"REDACTION REFUSED: {err}", file=sys.stderr)
+        return 3
+    if path is not None:
+        import json as _json2
+
+        from resolution.review_queue import ReviewQueue as _ReviewQueue
+
+        assert isinstance(queue, _ReviewQueue)  # a file path means the JSON queue
+        path.write_text(_json2.dumps(queue.to_dict(), indent=2, sort_keys=True))
+    print(
+        _json.dumps(
+            {"item_id": item.item_id, "inserted": inserted, "item": item.to_row()},
+            indent=2,
+            sort_keys=True,
+            default=str,
+        )
+    )
+    print("next: a human records accept/reject on the queue item; then redact-apply.")
+    return 0
+
+
+def _redact_apply(args: argparse.Namespace) -> int:
+    """Apply a reviewed redaction — derivative OCFL object + record (P36.15)."""
+    import json as _json
+    import sys
+
+    from evidence.redaction import RedactionError, RedactionReviewRequired
+
+    from .redaction_pipeline import run_redaction
+
+    queue, _path = _redact_queue(args)
+    if queue is None:
+        print("a review queue is required: --queue-json FILE or --dsn DSN")
+        return 2
+    store = _redact_store(args.capture_dir)
+    try:
+        result = run_redaction(store, queue, item_id=args.item)
+    except RedactionReviewRequired as missing:
+        # The gate-style refusal: no recorded human accept → exit 3 (like
+        # `run --mode live` on a non-green source) — a redaction attempted
+        # without its review fails loudly, never silently.
+        print(f"REDACTION REFUSED (exit 3): {missing}", file=sys.stderr)
+        return 3
+    except RedactionError as err:
+        print(f"REDACTION FAILED (exit 4): {err}", file=sys.stderr)
+        return 4
+    print(_json.dumps(result.to_row(), indent=2, sort_keys=True, default=str))
+    return 0
+
+
 def _run(args: argparse.Namespace) -> int:
     # Importing the package registers every source connector (SIG-INGEST-021).
     from pathlib import Path
@@ -584,5 +760,9 @@ def main(argv: list[str] | None = None) -> int:
         return personal_id_rekey.main(argv_tail)
     if args.command == "technology-backfill":
         return _technology_backfill(args)
+    if args.command == "redact-propose":
+        return _redact_propose(args)
+    if args.command == "redact-apply":
+        return _redact_apply(args)
     parser.print_help()
     return 0
