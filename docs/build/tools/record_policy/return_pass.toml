@@ -56,8 +56,8 @@ kind = "obligation"
 obligations = ["D-P31.4-1"]
 obligations_cell = '''D-P31.4-1'''
 gates_cell = '''hosted, date-bound (§(f3)); read-only, no gate'''
-operator_cell = '''nothing; the read waits for the `sig-sched-camreg-batch-05` OSM replay (cron 2026-10-10T03:35Z) to end'''
-rerun_cell = '''chain row 247 **P34.39a** (11A, clock-guarded; prerequisite of P34.46); verify = the D-P31.4-1 command in DEFERRALS; P34.39b (row 248) carries the first-fire + peel-on reads (non-blocking) · landed row 145 (PR #140)'''
+operator_cell = '''the operator's call on `D-P34.39a-1` — the read-back ran 2026-10-14 and recorded `fail` on two tooling artifacts while every production-facing criterion passed; closing D-P31.4-1 needs the operator's accept of the substantive record or a criteria-fix re-read'''
+rerun_cell = '''chain row 247 **P34.39a** (11A — leg ran 2026-10-14, verdict `fail` → `deferral-row`; a `P34.39a-live-2` re-read rides the operator's call on D-P34.39a-1); verify = the D-P31.4-1 command in DEFERRALS; P34.39b (row 248) carries the first-fire + peel-on reads (non-blocking) · landed row 145 (PR #140)'''
 
 [[row]]
 key = "P32.18"
@@ -373,24 +373,6 @@ rerun_cell = '''`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep
   go = '''none — the operator's recorded E4-R6a answer is the go (a public GET, not a production write)'''
   rerun = '''implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true'''
   live_dependants = []
-
-[[row]]
-key = "P34.39a"
-kind = "leg"
-obligations = []
-obligations_cell = '''the queued live read-back verdict for the obligation homed on the P31.4 row above (this row carries the clock-guarded leg only); the pinned image predates P31.7 — re-sightings disclosed, never required'''
-gates_cell = '''hosted, date-bound (§(f3)); read-only, no gate — the window opens at the recorded Cloud Scheduler fire `2026-10-10T03:35:00Z` plus `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-batch-05` execution; until all three hold the guard exits 42, never a fabricated verdict'''
-operator_cell = '''nothing for the leg itself — the recorded schedule is the go (read-only reads only)'''
-rerun_cell = '''`implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` · landed row 247 (PR #245 — leg queued)'''
-
-  [[row.legs]]
-  id = "P34.39a-osm-replay-readback"
-  obligations = []
-  earliest = '''2026-10-10T03:35:00Z — plus scheduler `lastAttemptTime` and a finished post-fire execution (the clock guard holds until all three)'''
-  excluded = []
-  go = '''none — the recorded schedule is the go (read-only)'''
-  rerun = '''implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true'''
-  live_dependants = ["P34.46"]
 
 [[row]]
 key = "P34.39b"
