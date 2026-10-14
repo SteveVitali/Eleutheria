@@ -1,0 +1,7 @@
+anonymous invocation probe — sig-alerts (live-2)
+probe time (post-confirmation): 2026-10-14T12:51Z / retry 12:52Z
+curl -s https://sig-alerts-873541617837.us-central1.run.app/health  => HTTP 403 (x2)
+control: sig-api anonymous /health => HTTP 200 ; sig-web anonymous / => HTTP 200
+note: a probe taken ~60s after the allUsers revoke returned HTTP 501 (app's own
+"unsupported method" page) — the revoke had not propagated yet. After ~90s the
+front end consistently denies anonymous calls with 403. IAM-invoked confirmed.
