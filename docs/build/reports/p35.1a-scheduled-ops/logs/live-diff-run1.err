@@ -1,0 +1,54 @@
+DRIFT:
+  schedule sig-sched-camreg-tribal-all-leaders-directory: missing live — declared trigger not deployed
+  schedule sig-sched-legis-tribal-tohono-oodham-notice: missing live — declared trigger not deployed
+  schedule sig-sched-live-diff: missing live — declared trigger not deployed
+  schedule sig-sched-pg-logical-export: missing live — declared trigger not deployed
+  schedule sig-sched-r11-ate-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-disclosures-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-disclosures-02: missing live — declared trigger not deployed
+  schedule sig-sched-r11-documents-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-layers-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-layers-02: missing live — declared trigger not deployed
+  schedule sig-sched-r11-procurement-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-tier2-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-tier2-02: missing live — declared trigger not deployed
+  schedule sig-sched-r11-tier2-03: missing live — declared trigger not deployed
+  schedule sig-sched-sam-gov: cron live='0 5 1 * 1' declared='0 5 * * 1'
+  job_config aspi-egress-probe: live job neither cadence-owned nor on [[manual_jobs]] — unlisted drift (fleet hygiene owns the disposition)
+  job_config ccops-sf-egress-probe: live job neither cadence-owned nor on [[manual_jobs]] — unlisted drift (fleet hygiene owns the disposition)
+  job_config muckrock-egress-probe: live job neither cadence-owned nor on [[manual_jobs]] — unlisted drift (fleet hygiene owns the disposition)
+  job_config okc-doc-egress-probe: live job neither cadence-owned nor on [[manual_jobs]] — unlisted drift (fleet hygiene owns the disposition)
+  job_config sig-ingest-camreg-tribal-all-leaders-directory: missing live — declared job not deployed
+  job_config sig-ingest-legis-tribal-tohono-oodham-notice: missing live — declared job not deployed
+  job_config sig-ingest-r11-ate-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-disclosures-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-disclosures-02: missing live — declared job not deployed
+  job_config sig-ingest-r11-documents-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-layers-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-layers-02: missing live — declared job not deployed
+  job_config sig-ingest-r11-procurement-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-tier2-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-tier2-02: missing live — declared job not deployed
+  job_config sig-ingest-r11-tier2-03: missing live — declared job not deployed
+  job_config sig-ingest-resume-test: live job neither cadence-owned nor on [[manual_jobs]] — unlisted drift (fleet hygiene owns the disposition)
+  job_config sig-sink-bench: live job neither cadence-owned nor on [[manual_jobs]] — unlisted drift (fleet hygiene owns the disposition)
+  image sig-ingest-ccops-cambridge: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-ccops-oakland: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-ccops-somerville: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-dhs-fusion-center-assessments: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  image sig-ingest-dhs-oig-reports: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  image sig-ingest-fema-hsgp-allocations: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-gao-surveillance-reports: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  image sig-ingest-uk-surveillance-camera-commissioner: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  public_posture zeta-medley-508121-u7-sig-web: allUsers object access live=True declared=False
+  ubla zeta-medley-508121-u7-sig-backups: uniform bucket-level access live=False declared=True
+  ubla zeta-medley-508121-u7-sig-public: uniform bucket-level access live=False declared=True
+  ubla zeta-medley-508121-u7-sig-restricted: uniform bucket-level access live=False declared=True
+  ubla zeta-medley-508121-u7-sig-web: uniform bucket-level access live=False declared=True
+  versioning zeta-medley-508121-u7-sig-public: versioning live=False declared=True
+  versioning zeta-medley-508121-u7-sig-restricted: versioning live=False declared=True
+  versioning zeta-medley-508121-u7-sig-web: versioning live=False declared=True
+  lifecycle zeta-medley-508121-u7-sig-public: noncurrent-days live=None declared=30
+  lifecycle zeta-medley-508121-u7-sig-restricted: noncurrent-days live=None declared=90
+  lifecycle zeta-medley-508121-u7-sig-web: noncurrent-days live=None declared=30
+  ! no GCS bucket configured (--gcs-bucket / SIG_OPS_GCS_BUCKET) — run row not uploaded

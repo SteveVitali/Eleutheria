@@ -1,0 +1,88 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "47fed17f-2f53-47dd-8dab-fa268a24d638"
+    },
+    "creationTimestamp": "2026-09-16T16:10:21.788793Z",
+    "generation": 8,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-25T01:47:38.426702Z"
+    },
+    "name": "okc-doc-egress-probe",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZcROa6+aQ",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/okc-doc-egress-probe",
+    "uid": "fd1f38d7-0cc8-42a8-96fb-3cd4e1b97261"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "jum_hox_gup"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-c",
+                  "import urllib.request\nimport socket\nsocket.setdefaulttimeout(25)\nprint('=== ROBOTS ===')\ntry:\n    r=urllib.request.urlopen('https://www.okc.gov/robots.txt')\n    print(r.read().decode('latin-1'))\nexcept Exception as e:\n    print('robots ERR '+str(e)[:200])\nprint('=== MANUAL PAGE ===')\ntry:\n    r=urllib.request.urlopen('https://www.okc.gov/Services/Public-Safety/Police/OKCPD-Operations-Manual')\n    h=r.read().decode('latin-1')\n    print('status '+str(r.status)+' bytes '+str(len(h)))\n    for tok in h.split():\n        low=tok.lower()\n        if '.pdf' in low or 'manual' in low or 'showpublisheddocument' in low:\n            print('TOK '+tok[:220])\nexcept Exception as e:\n    print('page ERR '+str(e)[:200])"
+                ],
+                "command": [
+                  "python"
+                ],
+                "env": [
+                  {
+                    "name": "SIG_CODE_COMMIT",
+                    "value": "sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2",
+                "resources": {
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "300"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 4,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-09-16T16:26:56.856048Z",
+      "creationTimestamp": "2026-09-16T16:25:09.571043Z",
+      "name": "okc-doc-egress-probe-qmkxb"
+    },
+    "observedGeneration": 8
+  }
+}

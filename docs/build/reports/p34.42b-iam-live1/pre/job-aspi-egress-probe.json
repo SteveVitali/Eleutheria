@@ -1,0 +1,85 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "3dd82511-e9b0-4284-9a63-4914a70ce655"
+    },
+    "creationTimestamp": "2026-09-16T02:23:23.010009Z",
+    "generation": 1,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-16T02:23:23.010009Z"
+    },
+    "name": "aspi-egress-probe",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZbkGVhM/Q",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/aspi-egress-probe",
+    "uid": "4c2da777-52b8-448c-b340-6b5348a95b28"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "vor_xul_kev"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-sS",
+                  "-o",
+                  "/dev/null",
+                  "-w",
+                  "%{http_code} %{content_type} %{url_effective}",
+                  "--max-time",
+                  "30",
+                  "https://chinatechmap.aspi.org.au/"
+                ],
+                "image": "curlimages/curl:8.10.1",
+                "resources": {
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 3,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "600"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 1,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-09-16T02:26:30.137108Z",
+      "creationTimestamp": "2026-09-16T02:23:29.458993Z",
+      "name": "aspi-egress-probe-gf9w5"
+    },
+    "observedGeneration": 1
+  }
+}

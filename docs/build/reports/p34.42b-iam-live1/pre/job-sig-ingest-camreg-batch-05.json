@@ -1,0 +1,147 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "c0b99eca-349e-4fb9-865b-738d6083af74"
+    },
+    "creationTimestamp": "2026-09-19T06:41:09.920252Z",
+    "generation": 5,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-25T01:47:03.130654Z"
+    },
+    "name": "sig-ingest-camreg-batch-05",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZddFXc63Y",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/sig-ingest-camreg-batch-05",
+    "uid": "3685d136-82a3-420d-ba8e-39c0305bc85a"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/cloudsql-instances": "zeta-medley-508121-u7:us-central1:sig-pg",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "mop_rof_zag"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-c",
+                  "exec sig-ops scheduled-ingest --batch camreg-batch-05 --sink pg"
+                ],
+                "command": [
+                  "sh"
+                ],
+                "env": [
+                  {
+                    "name": "SIG_GCP_PROJECT",
+                    "value": "zeta-medley-508121-u7"
+                  },
+                  {
+                    "name": "SIG_OPS_GCS_BUCKET",
+                    "value": "zeta-medley-508121-u7-sig-restricted"
+                  },
+                  {
+                    "name": "SIG_OPS_CADENCE",
+                    "value": "/app/ops/cadence.toml"
+                  },
+                  {
+                    "name": "SIG_PG_USER",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_PG_DB",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_CLOUDSQL_CONNECTION",
+                    "value": "zeta-medley-508121-u7:us-central1:sig-pg"
+                  },
+                  {
+                    "name": "SIG_PG_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "latest",
+                        "name": "sig-pg-password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "SIG_COMMIT_CHUNK_SIZE",
+                    "value": "10000"
+                  },
+                  {
+                    "name": "SIG_CAPTURE_DIR",
+                    "value": "/mnt/captures/evidence/captures"
+                  },
+                  {
+                    "name": "SIG_CODE_COMMIT",
+                    "value": "sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2",
+                "resources": {
+                  "limits": {
+                    "cpu": "2",
+                    "memory": "8Gi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "mountPath": "/mnt/captures",
+                    "name": "captures"
+                  }
+                ]
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "129600",
+            "volumes": [
+              {
+                "csi": {
+                  "driver": "gcsfuse.run.googleapis.com",
+                  "volumeAttributes": {
+                    "bucketName": "zeta-medley-508121-u7-sig-restricted"
+                  }
+                },
+                "name": "captures"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 5,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-10-10T03:48:14.925924Z",
+      "creationTimestamp": "2026-10-10T03:35:01.019678Z",
+      "name": "sig-ingest-camreg-batch-05-nm64j"
+    },
+    "observedGeneration": 5
+  }
+}

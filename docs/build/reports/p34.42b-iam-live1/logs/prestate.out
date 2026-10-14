@@ -1,0 +1,6 @@
+==============================================================
+SIG GCP IaC — P34.42b — least-privilege JOB identities + editor removal (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+-- prestate (2026-10-14T17:34:42Z): the IAM restore point under /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre (read-only) --
+ERROR: (gcloud.run.jobs.describe) Cannot find job [sig-ingest-camreg-tribal-all-leaders-directory].

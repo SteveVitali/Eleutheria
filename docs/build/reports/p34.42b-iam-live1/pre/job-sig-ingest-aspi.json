@@ -1,0 +1,137 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "8321ae72-82f5-42b6-81b4-cd488ad85f40"
+    },
+    "creationTimestamp": "2026-09-16T21:12:07.724621Z",
+    "generation": 5,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-25T08:17:10.597611Z"
+    },
+    "name": "sig-ingest-aspi",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZcSlfRbOg",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/sig-ingest-aspi",
+    "uid": "1f3b755c-86f7-485a-9c6b-791bafb24ca1"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/cloudsql-instances": "zeta-medley-508121-u7:us-central1:sig-pg",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "hol_guv_goq"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-c",
+                  "exec sig-ops scheduled-ingest --source aspi_mapping_chinas_tech_giants --sink pg"
+                ],
+                "command": [
+                  "sh"
+                ],
+                "env": [
+                  {
+                    "name": "SIG_GCP_PROJECT",
+                    "value": "zeta-medley-508121-u7"
+                  },
+                  {
+                    "name": "SIG_OPS_GCS_BUCKET",
+                    "value": "zeta-medley-508121-u7-sig-restricted"
+                  },
+                  {
+                    "name": "SIG_OPS_CADENCE",
+                    "value": "/app/ops/cadence.toml"
+                  },
+                  {
+                    "name": "SIG_PG_USER",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_PG_DB",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_CLOUDSQL_CONNECTION",
+                    "value": "zeta-medley-508121-u7:us-central1:sig-pg"
+                  },
+                  {
+                    "name": "SIG_PG_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "latest",
+                        "name": "sig-pg-password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "SIG_CAPTURE_DIR",
+                    "value": "/mnt/captures/evidence/captures"
+                  },
+                  {
+                    "name": "SIG_CODE_COMMIT",
+                    "value": "sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5",
+                "resources": {
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "mountPath": "/mnt/captures",
+                    "name": "captures"
+                  }
+                ]
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "1800",
+            "volumes": [
+              {
+                "csi": {
+                  "driver": "gcsfuse.run.googleapis.com",
+                  "volumeAttributes": {
+                    "bucketName": "zeta-medley-508121-u7-sig-restricted"
+                  }
+                },
+                "name": "captures"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "lastTransitionTime": "2026-09-16T21:12:07.848421Z",
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "observedGeneration": 5
+  }
+}
