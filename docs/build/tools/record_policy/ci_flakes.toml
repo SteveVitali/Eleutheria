@@ -42,3 +42,33 @@ evidence_runs = ["35296544560"]
 reason = "test defect, not an environment flake: a substring assertion on str(row) collided with an ISO timestamp (H2 NEW-8; F-316)"
 tracking = "P34.2 deliverable 5 — the assertion walks the row's fields; this entry is residual cover only"
 expires = "2026-10-08"
+
+[[flake]]
+id = "DOCKERHUB-RATE-1"
+job = "web"
+step = "e2e / composed testcontainer image pulls"
+pattern = "toomanyrequests.*pull rate limit|pull rate limit.*toomanyrequests"
+evidence_runs = ["37988558340"]
+reason = "Docker Hub unauthenticated pull-rate limit on GitHub-hosted runner egress IPs; transient and external — identical green job on other heads same day"
+tracking = "escalate to the operator if recurring — authenticated pulls or a registry mirror would retire it"
+expires = "2026-12-01"
+
+[[flake]]
+id = "DOCKERHUB-RATE-2"
+job = "composed"
+step = "testcontainer image pulls (postgis, sqitch)"
+pattern = "toomanyrequests.*pull rate limit|pull rate limit.*toomanyrequests"
+evidence_runs = ["37991996497"]
+reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1, on the composed job's image pulls"
+tracking = "same as DOCKERHUB-RATE-1 — escalate to the operator for authenticated pulls or a mirror if recurring"
+expires = "2026-12-01"
+
+[[flake]]
+id = "DOCKERHUB-RATE-3"
+job = "python"
+step = "testcontainer image pulls (sqitch/postgis in tests/db)"
+pattern = "toomanyrequests.*pull rate limit|pull rate limit"
+evidence_runs = ["37992428702"]
+reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1/-2, on the python job's tests/db image pull"
+tracking = "same as DOCKERHUB-RATE-1 — three jobs on the same class; ESCALATED to the operator (OM-18 three-use rule)"
+expires = "2026-12-01"

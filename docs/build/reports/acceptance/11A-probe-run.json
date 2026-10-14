@@ -1,0 +1,11 @@
+{
+  "checks": {},
+  "generated_at": "2026-10-09T13:16:47Z",
+  "leg": "P34.47-sweep-packet",
+  "overall": "suppressed",
+  "probe": "sig-11a-acceptance",
+  "rerun_prompt": "implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true (scope: the sweep and the packet)",
+  "suppressed": "p34_46_l2: P34.46's L2 deploy has not landed \u2014 its slot leg is still queued in the RETURN PASS map (live:P34.46 fails); window: now 2026-10-09T13:16:47+00:00 < window floor 2026-10-14T14:00:00+00:00",
+  "target": "11a-live-surfaces",
+  "version": "sig.probe-run/1"
+}

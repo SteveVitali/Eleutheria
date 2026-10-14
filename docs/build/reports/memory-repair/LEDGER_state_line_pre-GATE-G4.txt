@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P34.47's entry (PR #262 — sub-round 11A acceptance: sweep machinery + note + GATE-G4 packet draft; the live sweep leg queued exit 42); next → GATE-G4 (row 260 — a real human pause).
