@@ -386,3 +386,13 @@ seed-commit 49607976
 # preserved by this declaration.
 # Scope: findings attributed to 917dd2a5 only; no other commit borrows the exemption.
 seed-commit 917dd2a5
+
+# ── P36.15 boundary-record kind repair ───────────────────────────────────────
+# cfe69f67's PHASE LOG entry kind `final-head boundary-confirm` was undeclared in
+# record_policy/phase_log_kinds.txt (V4); the in-place kind repair to
+# `P36.15 post-closeout record — final-head boundary-confirm + lock deviation`
+# (4ce44ed9; the ef1fb3bf/d778706b/145b68a3/6fe93216/64648080/21a392ca/49607976/
+# 917dd2a5 sanctioned pattern) edited the committed line — append-only is
+# preserved by this declaration.
+# Scope: findings attributed to 4ce44ed9 only; no other commit borrows the exemption.
+seed-commit 4ce44ed9
