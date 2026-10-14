@@ -415,6 +415,19 @@ def test_live_return_pass_is_bounded_and_unexecuted() -> None:
     assert any("rights" in g for g in rp["non_goals"])
 
 
+def test_live_return_pass_records_green_source_targets() -> None:
+    """E4-B5 = a — O4/O5/O6 ride the existing green sources; no invented
+    reapproval is recorded."""
+    rp = dp.live_return_pass()
+    riding = {t["doc_id"]: t["existing_source"] for t in rp["targets"] if t.get("existing_source")}
+    assert riding == {
+        "okc-statute-47-7-606-1": "ok_statute",
+        "okc-ops-manual-5-118": "okcpd_policy",
+        "okc-purchasing-index": "okc_procurement",
+    }
+    assert any("E4-B5" in n for n in rp["green_source_notes"])
+
+
 def test_evidence_pack_names_captures_and_gaps() -> None:
     md = dp.evidence_pack_markdown()
     assert "present_but_empty" in md  # signature uncertainty surfaced

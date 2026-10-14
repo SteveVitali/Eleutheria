@@ -28,10 +28,11 @@ Ceilings: ≤5 families (incl. the three pilot cities) · ≤2 incremental non-p
 | `SRC-022` | DOJ COPS technology/equipment award documents | 17 | no_recorded_award_gap — award/funding family — S5 admits one only when a named local procurement has a traceable award gap; no dossier |
 | `SRC-008` | Safe Oklahoma Grant program awards and reports disco | 16 | no_recorded_award_gap — award/funding family — S5 admits one only when a named local procurement has a traceable award gap; no dossier |
 | `SRC-026` | UK Algorithmic Transparency Recording Standard publi | 15 | p31_owned — joins to a P31.12/.13-owned source — consumed/improved under prior decisions only, never re-onboarded (SIG-ACQ |
-| `SRC-024` | DLA LESO 1033 equipment holdings/transfers subset | 14 | preflight_screening_owed — Part VIII screening is owed work — an unscreened family cannot enter a bounded batch |
-| `SRC-025` | FAA Part 107 waiver issued records | 13 | preflight_screening_owed — Part VIII screening is owed work — an unscreened family cannot enter a bounded batch |
+| `SRC-024` | DLA LESO 1033 equipment holdings/transfers subset | 14 | preflight_screening_owed — Part VIII screening is owed work — a family flagged for possible excluded-category content cannot enter a boun |
+| `SRC-025` | FAA Part 107 waiver issued records | 13 | preflight_screening_owed — Part VIII screening is owed work — a family flagged for possible excluded-category content cannot enter a boun |
 | `SRC-023` | DHS privacy impact assessments commercial LPR | 9 | p31_owned — joins to a P31.12/.13-owned source — consumed/improved under prior decisions only, never re-onboarded (SIG-ACQ |
-| `SRC-027` | San Diego ALPR network audit metadata and safe aggre | -8 | prohibited_metadata_only — prohibited_until_review — metadata-only research path; an explicit content-admissibility + rights decision is  |
+| `SRC-027` | San Diego ALPR network audit metadata and safe aggre | -8 | blocked — blocked disposition — rights/sensitive rejection is score-independent |
+| `SRC-027` | San Diego ALPR network audit metadata and safe aggre | -8 | prohibited_metadata_only — rejected — the Part VIII excluded content is permanently barred (E4-B3: the workbook path stays metadata-only  |
 | `SRC-027` | San Diego ALPR network audit metadata and safe aggre | -8 | portfolio_member — inside a pilot-city lineage group — its targets ride the dossier family's own live return pass, never a new fa |
 | `SRC-012` | Seattle OIG annual surveillance usage reviews | 22 | capacity — eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order — the two inc |
 | `SRC-010` | Sourcewell public safety cooperative contracts | 20 | capacity — eligible acquisition-shape candidate outranked by the selected family under acq-score/1 rank order — the two i |
@@ -59,18 +60,18 @@ Stages: `discovery` → `candidate_qualification` → `approval_gate` → `captu
 
 Blocked / failed / rights-gated targets stay visible with reasons + retry budget:
 
-- `SRC-002` (tulsa-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
-- `SRC-003` (san-diego-municipal): recorded 403 on a prior retrieval — retry budget 2/target
-- `SRC-004` (san-diego-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
-- `SRC-007` (oklahoma-state): rights undetermined (3 lanes) — routed to review — retry budget 2/target
-- `SRC-001` (okc-municipal): recorded 403 on a prior retrieval — retry budget 2/target
-- `SRC-006` (oklahoma-state): rights undetermined (3 lanes) — routed to review — retry budget 2/target
-- `SRC-011` (california-state-auditor): rights undetermined (3 lanes) — routed to review — retry budget 2/target
+- `SRC-002` (tulsa-municipal): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b) — retry budget 2/target
+- `SRC-003` (san-diego-municipal): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b); recorded 403 on a prior retrieval — retry budget 2/target
+- `SRC-004` (san-diego-municipal): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b) — retry budget 2/target
+- `SRC-007` (oklahoma-state): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b) — retry budget 2/target
+- `SRC-001` (okc-municipal): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b); recorded 403 on a prior retrieval — retry budget 2/target
+- `SRC-006` (oklahoma-state): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b) — retry budget 2/target
+- `SRC-011` (california-state-auditor): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b) — retry budget 2/target
 - `SRC-012` (seattle-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-009` (oklahoma-state): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-010` (sourcewell-cooperative): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-015` (nyc-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
-- `SRC-005` (san-diego-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
+- `SRC-005` (san-diego-municipal): screening_required — drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b) — retry budget 2/target
 - `SRC-016` (nyc-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-022` (us-federal-doj-cops): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-008` (oklahoma-state): rights undetermined (3 lanes) — routed to review — retry budget 2/target
@@ -85,7 +86,7 @@ Blocked / failed / rights-gated targets stay visible with reasons + retry budget
 - `SRC-020` (boston-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-019` (berkeley-municipal): rights undetermined (3 lanes) — routed to review — retry budget 2/target
 - `SRC-023` (us-federal-dhs): rights undetermined (3 lanes) — routed to review — retry budget 2/target
-- `SRC-027` (san-diego-municipal): prohibited_until_review — metadata-only path only — retry budget 2/target
+- `SRC-027` (san-diego-municipal): rejected — excluded content permanently barred (E4-B3); blocked — rights/sensitive rejection — retry budget 2/target
 
 ## Before/after gap ledger — unique contributions
 
@@ -134,7 +135,7 @@ Blocked / failed / rights-gated targets stay visible with reasons + retry budget
 
 ### `oklahoma-state` → **continue**
 
-- basis: acq-score/1 = 24 (P0 dossier), kind=new_target, join=net_new; effort M estimated (never measured); 2 in-batch candidates (SRC-007, SRC-006); in-family excluded SRC-009, SRC-008
+- basis: acq-score/1 = 24 (P0 dossier), kind=improvement, join=existing_unpermitted; effort M estimated (never measured); 2 in-batch candidates (SRC-007, SRC-006); in-family excluded SRC-009, SRC-008
 - unique closure: the batch's only family closing recorded OKC dossier gaps from a non-municipal provenance — the OMES statewide contract channel (q5 documentary leads) plus the DAC UVED program/authority chain (q6, the P0-dossier gap); a state record is not city self-report
 - cost: 4 targets / ≤10 docs; effort M; measured_minutes none
 - condition: HG-03: OMES portal access terms + state/vendor document rights and the OSCN historical-version basis reviewed
@@ -146,7 +147,7 @@ Blocked / failed / rights-gated targets stay visible with reasons + retry budget
 
 ### `california-state-auditor` → **continue**
 
-- basis: acq-score/1 = 23 (P1 bounded pilot), kind=new_target, join=net_new; effort L-M estimated (never measured); 1 in-batch candidates (SRC-011)
+- basis: acq-score/1 = 23 (P1 bounded pilot), kind=improvement, join=existing_unpermitted; effort L-M estimated (never measured); 1 in-batch candidates (SRC-011)
 - unique closure: the batch's only non-municipal independent provenance (I=3, a state auditor) — findings + agency survey + recommendations give the CA portfolio city a governance baseline no self-report can provide
 - cost: 2 targets / ≤10 docs; effort L-M; measured_minutes none
 - condition: HG-03: the report + survey pages' rights reviewed (municipal/state publication is not auto-CC0)

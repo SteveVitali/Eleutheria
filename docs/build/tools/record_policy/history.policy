@@ -236,3 +236,14 @@ seed-commit d778706b
 # reworded subject.
 # Scope: findings attributed to 145b68a3 only; no other commit borrows the exemption.
 seed-commit 145b68a3
+
+# ── P34.38 kind-vocabulary repair (recorded 2026-10-07) ──────────────────────────────────────────
+# Commit ef1fb3bf is the verifier-backed vocabulary repair: the boundary record commit a62117ca's
+# PHASE LOG entry used kind `boundary record`, which is not in record_policy/phase_log_kinds.txt
+# (V4) — caught head-bound by the docs job's ledger-contract check (run 37639988135, verbatim:
+# "[kind-vocabulary] PHASE LOG kind 'boundary record' is not in … phase_log_kinds.txt (V4)").
+# ef1fb3bf corrects the kind token in place to `correction` — the minimal repair that keeps the
+# entry's recorded evidence verbatim; no payload bytes change. The sanctioned in-place pattern of
+# P34.34a's d778706b and P34.35's 145b68a3.
+# Scope: findings attributed to ef1fb3bf only; no other commit borrows the exemption.
+seed-commit ef1fb3bf

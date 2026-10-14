@@ -34,7 +34,7 @@
     }
   ],
   "dossier_id": "san-diego-sdpd-alpr",
-  "generated_at": "2026-10-01",
+  "generated_at": "2026-09-27",
   "note": "drafts only — no filer or consent is fabricated (SIG-TASK-018) and no request is transmitted; the packet's follow_ups name the precise action + closing condition per question",
   "posture": "drafted_not_sent",
   "records_request_drafts": [

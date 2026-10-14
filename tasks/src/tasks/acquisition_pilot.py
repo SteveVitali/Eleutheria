@@ -40,6 +40,7 @@ metadata-only **SRC-027** outside it by construction.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -47,6 +48,7 @@ from pathlib import Path
 from typing import Any
 
 from .acquisition import (
+    PART_VIII_EXCLUDED_CATEGORIES,
     PreflightStatus,
     QueueDisposition,
     QueueEntry,
@@ -373,12 +375,23 @@ def _rejection_reasons(
                 "before any acquisition",
             )
         )
-    elif p.preflight.status == PreflightStatus.SCREENING_REQUIRED:
+    elif p.preflight.status == PreflightStatus.REJECTED:
+        out.append(
+            (
+                RejectReason.PROHIBITED,
+                "rejected — the Part VIII excluded content is permanently "
+                "barred (E4-B3: the workbook path stays metadata-only "
+                "forever; the link-label metadata path is kept)",
+            )
+        )
+    elif p.preflight.status == PreflightStatus.SCREENING_REQUIRED and p.preflight.flags:
         out.append(
             (
                 RejectReason.SCREENING_OWED,
-                "Part VIII screening is owed work — an unscreened family "
-                "cannot enter a bounded batch",
+                "Part VIII screening is owed work — a family flagged for "
+                "possible excluded-category content cannot enter a bounded "
+                "batch (a flagless screening_required means a screen is "
+                "drafted, not that excluded content is suspected)",
             )
         )
     if p.lineage_group in portfolio_groups:
@@ -663,10 +676,19 @@ def check_batch(batch: PilotBatch, entries: Sequence[QueueEntry]) -> list[str]:
                 v.append(f"{cid}: blocked disposition cannot enter the batch")
             if e.passport.preflight.status in (
                 PreflightStatus.PROHIBITED_UNTIL_REVIEW,
-                PreflightStatus.SCREENING_REQUIRED,
                 PreflightStatus.REJECTED,
+            ) or (
+                e.passport.preflight.status == PreflightStatus.SCREENING_REQUIRED
+                and e.passport.preflight.flags
             ):
-                v.append(f"{cid}: preflight {e.passport.preflight.status.value} excludes it")
+                # A flagless screening_required = a screen is drafted (the
+                # B-42 agent clear is recorded by the capture rows); flags =
+                # suspected excluded-category content, never selectable.
+                v.append(
+                    f"{cid}: preflight {e.passport.preflight.status.value}"
+                    + (" (flagged)" if e.passport.preflight.flags else "")
+                    + " excludes it"
+                )
             if not e.passport.independent_yield:
                 v.append(f"{cid}: non-independent lineage class cannot add lineage value")
     # SRC-027 can never be in the acquired batch anywhere.
@@ -1251,8 +1273,15 @@ def _blocked_targets(entries: Sequence[QueueEntry]) -> list[dict[str, Any]]:
         reasons: list[str] = []
         if p.preflight.status == PreflightStatus.PROHIBITED_UNTIL_REVIEW:
             reasons.append("prohibited_until_review — metadata-only path only")
+        if p.preflight.status == PreflightStatus.REJECTED:
+            reasons.append("rejected — excluded content permanently barred (E4-B3)")
         if p.preflight.status == PreflightStatus.SCREENING_REQUIRED:
-            reasons.append("screening_required — Part VIII screen owed")
+            reasons.append(
+                "screening_required — Part VIII screen owed"
+                if p.preflight.flags
+                else "screening_required — drafted screen recorded; the "
+                "B-42 agent clear is owed at capture (P37.16a/b)"
+            )
         if e.disposition == QueueDisposition.BLOCKED:
             reasons.append("blocked — rights/sensitive rejection")
         if e.disposition == QueueDisposition.REFUSED_DUPLICATE:
@@ -1283,6 +1312,42 @@ def _blocked_targets(entries: Sequence[QueueEntry]) -> list[dict[str, Any]]:
 # Gate packets (bounded live slices)                                          #
 # --------------------------------------------------------------------------- #
 
+#: B5 — target URLs that already sit on a permitted registry source and ride
+#: that source's recorded basis (no invented reapproval — D-R10-SOURCES-1's
+#: own text). The OSCN statute URL is SRC-007's secondary URL AND the
+#: registered target of the green ``ok_statute`` source
+#: (``live_targets.toml`` L311, O4 in the OKC return pass).
+_GREEN_SOURCE_TARGET_URLS: dict[str, str] = {
+    "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582": "ok_statute",
+}
+
+
+def _bounded_questions(batch: PilotBatch, by_id: dict[str, QueueEntry]) -> list[str]:
+    """Derive the bounded questions from the *selected* incremental families.
+
+    E4 NEW-8 — the old packet hard-coded questions for ``SRC-010`` Sourcewell
+    (a rejected family) instead of the selected ``SRC-006``/``SRC-007``/
+    ``SRC-011``. Questions are now built from the selection itself, and
+    ``check_pilot`` fails any packet that names a candidate outside the
+    acquired batch.
+    """
+    questions: list[str] = []
+    for sel in batch.families:
+        if sel.slot != "incremental":
+            continue
+        preds = {cid: ", ".join(by_id[cid].passport.target_predicates) for cid in sel.candidate_ids}
+        questions.append(
+            f"{' + '.join(sel.candidate_ids)} ({sel.lineage_group} — "
+            f"{sel.role}): do the reviewed targets land the expected "
+            f"predicates ({'; '.join(f'{c}: {p}' for c, p in preds.items())}) "
+            "as extractable facts under the rights-reviewed slice, "
+            "HG-03-gated and byte-bounded?"
+        )
+        for cid in sel.candidate_ids:
+            for extra in by_id[cid].passport.extra_questions:
+                questions.append(f"{cid}: {extra}")
+    return questions
+
 
 def return_pass_packet(batch: PilotBatch, entries: Sequence[QueueEntry]) -> dict[str, Any]:
     """``sig.acq-pilot-return-pass/1`` — the exact gate packet for the two
@@ -1304,18 +1369,27 @@ def return_pass_packet(batch: PilotBatch, entries: Sequence[QueueEntry]) -> dict
             p = entry.passport
             urls = [u for u in (p.discovery.primary_url, p.discovery.secondary_url) if u]
             for i, url in enumerate(urls, 1):
-                targets.append(
-                    {
-                        "doc_id": f"{cid.lower()}-target-{i}",
-                        "candidate_id": cid,
-                        "url": url,
-                        "kind": "document_capture",
-                        "goal": (
-                            "bounded capture under HG-03 — actual bytes, locator + "
-                            "capture digest; expected predicates: " + ", ".join(p.target_predicates)
-                        ),
-                    }
-                )
+                target: dict[str, Any] = {
+                    "doc_id": f"{cid.lower()}-target-{i}",
+                    "candidate_id": cid,
+                    "url": url,
+                    "kind": "document_capture",
+                    "goal": (
+                        "bounded capture under HG-03 — actual bytes, locator + "
+                        "capture digest; expected predicates: " + ", ".join(p.target_predicates)
+                    ),
+                }
+                # B5 — a target whose URL already sits on a permitted registry
+                # source rides that source's recorded basis; it needs no
+                # invented reapproval (D-R10-SOURCES-1's own text).
+                if url in _GREEN_SOURCE_TARGET_URLS:
+                    target["existing_source"] = _GREEN_SOURCE_TARGET_URLS[url]
+                    target["goal"] += (
+                        f"; rides the existing green source "
+                        f"{_GREEN_SOURCE_TARGET_URLS[url]!r} — its recorded "
+                        "basis applies (E4-B5 = a)"
+                    )
+                targets.append(target)
         lead = by_id[sel.candidate_ids[0]]
         families.append(
             {
@@ -1356,8 +1430,15 @@ def return_pass_packet(batch: PilotBatch, entries: Sequence[QueueEntry]) -> dict
             "rights lanes — raw document, fact extraction, derived publication — "
             "are separately decided; a state/local cooperative is not a federal "
             "public-domain assumption)",
-            "Part VIII preflight per family — SRC-010/011 carry no flags but "
-            "are status not_assessed; the screening must run before capture",
+            "Part VIII preflight per family — "
+            + ", ".join(
+                f"{cid} carries {len(by_id[cid].passport.preflight.flags)} "
+                f"flag(s), status {by_id[cid].passport.preflight.status.value}"
+                for fam in families
+                for cid in fam["candidate_ids"]
+            )
+            + "; the drafted screens (ADR-185) precede capture, and the B-42 "
+            "agent clear is recorded by the capture rows, never here",
             "municipal-publication review where observed (both incremental "
             "families carry municipal_publication_observed)",
             "resource bounds identical to the replay path (html_text/pdf_text "
@@ -1376,16 +1457,16 @@ def return_pass_packet(batch: PilotBatch, entries: Sequence[QueueEntry]) -> dict
             "no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query "
             "transport — SRC-027 stays metadata-only outside the acquired batch",
         ],
-        "bounded_questions": [
-            "SRC-010 (sourcewell-cooperative): does the master cooperative "
-            "contract's master identifier → vendor → participation → ordering "
-            "chain land as extractable contract predicates under the "
-            "rights-reviewed slice (the contract back-chain the municipal "
-            "packets only mirror)?",
-            "SRC-011 (california-state-auditor): do the audit findings, agency "
-            "survey answers and recommendations land as one-auditor-provenance "
-            "independent oversight (respondent survey answers are never "
-            "treated as independently verified)?",
+        # E4 NEW-8: derived from the SELECTED incremental families — never
+        # hard-coded. check_pilot fails a packet that names a family outside
+        # the acquired batch.
+        "bounded_questions": _bounded_questions(batch, by_id),
+        "green_source_notes": [
+            f"{t['doc_id']} rides the existing green source "
+            f"{t['existing_source']!r} (E4-B5 = a — no invented reapproval)"
+            for fam in families
+            for t in fam["targets"]
+            if t.get("existing_source")
         ],
         "families": families,
         "portfolio_return_passes": [pf.return_pass_deferral for pf in PORTFOLIO],
@@ -1825,6 +1906,73 @@ def check_pilot(
             v.append(f"{fam['family']}: an approval ref is claimed — none exists")
         if len(fam["targets"]) > fam["document_cap"]:
             v.append(f"{fam['family']}: targets over document cap")
+    # E4 NEW-8 — bounded questions must name the SELECTED incremental
+    # families and never a rejected or unknown candidate (the old packet
+    # asked about SRC-010 Sourcewell, which is not in the batch).
+    batch_cids = {cid for f in fams for cid in f["candidate_ids"]}
+    incremental_cids = {
+        cid for f in fams if f["slot"] == "incremental" for cid in f["candidate_ids"]
+    }
+    question_text = "\n".join(str(q) for q in rp.get("bounded_questions", []))
+    for cid in sorted(set(re.findall(r"SRC-\d+", question_text))):
+        if cid not in batch_cids:
+            v.append(
+                f"bounded_questions names {cid} — not a candidate inside the "
+                "acquired batch (rejected/unknown family)"
+            )
+    for cid in sorted(incremental_cids):
+        if cid not in question_text:
+            v.append(f"bounded_questions never names selected incremental candidate {cid}")
+    # P34.38 / ADR-185 — the drafted Part VIII screens are committed inputs
+    # the pilot-check covers: one screen per batch family, every member of
+    # the acquired batch screened, each recorded ``screening_required`` by
+    # ``agent (draft)``, and the B-42 "agent clears, disclosed" clear NEVER
+    # claimed here (it lands on the P37.16a/b capture rows).
+    screens_path = base / "docs/build/reports/acquisition/PART_VIII_SCREENS.json"
+    if not screens_path.exists():
+        v.append("PART_VIII_SCREENS.json missing — the drafted screens are committed inputs")
+    else:
+        screens_doc = json.loads(screens_path.read_text())
+        if screens_doc.get("schema") != "sig.part-viii-screen-drafts/1":
+            v.append("PART_VIII_SCREENS.json: schema is not sig.part-viii-screen-drafts/1")
+        if screens_doc.get("clear_recorded_here") is not False:
+            v.append(
+                "PART_VIII_SCREENS.json claims a clear — the B-42 clear is "
+                "recorded by the P37.16a/b capture rows, never here"
+            )
+        screens = screens_doc.get("screens", [])
+        batch_groups = {f["lineage_group"] for f in fams}
+        seen_groups = {s.get("family") for s in screens}
+        for group in sorted(batch_groups - seen_groups):
+            v.append(f"PART_VIII_SCREENS.json: no drafted screen for batch family {group}")
+        for group in sorted(seen_groups - batch_groups):
+            v.append(f"PART_VIII_SCREENS.json: screen for non-batch family {group}")
+        by_id = _entry_by_id(entries)
+        for s in screens:
+            fam = s.get("family", "?")
+            pf = s.get("preflight", {})
+            if pf.get("status") != "screening_required":
+                v.append(f"screens: {fam} preflight is not screening_required")
+            if pf.get("screener") != "agent (draft)":
+                v.append(f"screens: {fam} screener is not 'agent (draft)'")
+            if not pf.get("screened_on"):
+                v.append(f"screens: {fam} has no screened_on date")
+            for flag in pf.get("flags", []):
+                if flag not in PART_VIII_EXCLUDED_CATEGORIES:
+                    v.append(f"screens: {fam} flag {flag!r} is not a Part VIII category")
+            for cid in s.get("members", []):
+                if cid not in batch_cids:
+                    v.append(f"screens: {fam} screens {cid} — outside the acquired batch")
+                    continue
+                e = by_id.get(cid)
+                if (
+                    e is not None
+                    and e.passport.preflight.status != PreflightStatus.SCREENING_REQUIRED
+                ):
+                    v.append(
+                        f"screens: {cid} queue preflight is "
+                        f"{e.passport.preflight.status.value}, not screening_required"
+                    )
     if not readout["descriptive_only"]:
         v.append("descriptive-only label missing")
     # P31 non-duplication across the whole batch.

@@ -1207,6 +1207,9 @@ def live_return_pass() -> dict[str, Any]:
             "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582",
             "kind": "document_page",
             "goal": "verify the effective statutory version on the live OSCN page",
+            # E4-B5 = a — the URL is the registered target of the green
+            # ok_statute source; its recorded basis applies.
+            "existing_source": "ok_statute",
         },
         {
             "doc_id": "okc-ops-manual-5-118",
@@ -1216,6 +1219,8 @@ def live_return_pass() -> dict[str, Any]:
             ),
             "kind": "document_page",
             "goal": "capture the 6th-edition manual §5-118 pages (real PDF)",
+            # E4-B5 = a — registered target of the green okcpd_policy source.
+            "existing_source": "okcpd_policy",
         },
         {
             "doc_id": "okc-purchasing-index",
@@ -1225,6 +1230,8 @@ def live_return_pass() -> dict[str, Any]:
                 "locate the executed-contract record for C241032 "
                 "(edge WAF may refuse — record the refusal)"
             ),
+            # E4-B5 = a — registered target of the green okc_procurement source.
+            "existing_source": "okc_procurement",
         },
     ]
     return {
@@ -1232,6 +1239,12 @@ def live_return_pass() -> dict[str, Any]:
         "packet_id": "okc-dossier-live-pass",
         "status": "prepared_not_executed",
         "deferral": "D-P32.18-1",
+        "green_source_notes": [
+            "O4 (okc-statute-47-7-606-1), O5 (okc-ops-manual-5-118) and O6 "
+            "(okc-purchasing-index) ride the existing green sources "
+            "ok_statute / okcpd_policy / okc_procurement — E4-B5 = a: no "
+            "invented reapproval; the recorded basis applies"
+        ],
         "reason_deferred": (
             "live_verification=false: D-R10-SOURCES-1 stays OPEN — source/evidence-use "
             "review and the HG-03 rights decision are pending"

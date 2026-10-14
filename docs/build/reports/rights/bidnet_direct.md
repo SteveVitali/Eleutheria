@@ -96,3 +96,17 @@ LINK — a multi-tenant vendor portal republishing agency solicitations
 PENDING REVIEW (D-SOURCES.9-4) — the access posture is verified and robots is
 honourable, but the vendor ToS is uncaptured; the source stays
 `ingestion_permitted=false` until the terms are reviewed (HG-03 class).
+
+## Terms-capture leg — QUEUED 2026-10-07 (P34.38, E4-R6a = a)
+
+The operator's recorded answer E4-R6a is "a — capture bidnetdirect.com terms,
+then decide" (round 17, 2026-10-01T04:49:27Z). The capture is gated on
+`live:P35.38a` (the project UA's owned explanation page must be live first).
+Probe at 2026-10-07T12:09Z (`date -u`): `https://surveillancegraph.org/` →
+HTTP 200; `https://surveillancegraph.org/data-collection/` → HTTP 404 — the
+precondition does NOT hold, so no GET of `https://www.bidnetdirect.com/terms`
+was attempted. The leg is queued in the LEDGER's RETURN PASS with the re-run
+prompt `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true`
+(scope: the BidNet terms capture only). This packet's Terms section is
+unchanged — the verbatim capture remains owed; the rights decision is the
+operator's at GATE-G6 at the latest (S6R-28). D-SOURCES.9-4 stays OPEN.

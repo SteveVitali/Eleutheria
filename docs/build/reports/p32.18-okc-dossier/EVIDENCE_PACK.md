@@ -1,17 +1,17 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 # P32.18 — Oklahoma City dossier evidence pack (offline)
 
-Packet `sig.dossier-packet/1` / dossier `okc-flock-alpr` — as-of 2026-10-02 (world) / 2026-10-02 (belief). Every row names the bytes the claims were read from and how those bytes were obtained. `live_verification=false`: nothing below is a live capture.
+Packet `sig.dossier-packet/1` / dossier `okc-flock-alpr` — as-of 2026-10-03 (world) / 2026-10-03 (belief). Every row names the bytes the claims were read from and how those bytes were obtained. `live_verification=false`: nothing below is a live capture.
 
 | document | bytes | capture digest (multihash) | how obtained | claims |
 |---|---|---|---|---|
-| `okc-contract-c241032` | 1386 | `bcnadubksduuhzyywfancroisfb3wzu7…` | fixture_transcription / committed_fixture | 5 |
-| `okc-council-memo-2026-08` | 931 | `bcnaol6wye4ttw7lbce4hoqkkdaivd4t…` | pdf_text / document | 4 |
-| `okc-flock-amendment-2026` | 1068 | `bcnag5e56hd5r7dfvvlk357ctoff7dx6…` | pdf_text / document | 7 |
-| `okc-flock-usage-2026` | 444 | `bcnamnoklnmhz4rddujrv57uivhjcdyq…` | html_text / document | 5 |
-| `okc-ops-manual-5-118` | 1540 | `bcnapwpreim3d6ym7jc5723pj4tsbup6…` | fixture_transcription / committed_fixture | 2 |
-| `okc-p06-evidence-fixture` | 7423 | `bcnacnhz3jv2erz6b4tqhzyofdrngyzl…` | fixture_transcription / committed_fixture | 12 |
-| `okc-statute-47-7-606-1` | 1363 | `bcnahazrkd4qp7mfdjnuugfyb2xay5zv…` | fixture_transcription / committed_fixture | 2 |
+| `okc-contract-c241032` | 1386 | `bcnadubksduuhzyywfancroisfb3wzu7…` | fixture_transcription / committed_fixture / stand-in | 5 |
+| `okc-council-memo-2026-08` | 931 | `bcnaol6wye4ttw7lbce4hoqkkdaivd4t…` | pdf_text / document / fixture_replay | 4 |
+| `okc-flock-amendment-2026` | 1068 | `bcnag5e56hd5r7dfvvlk357ctoff7dx6…` | pdf_text / document / fixture_replay | 7 |
+| `okc-flock-usage-2026` | 444 | `bcnamnoklnmhz4rddujrv57uivhjcdyq…` | html_text / document / fixture_replay | 5 |
+| `okc-ops-manual-5-118` | 1540 | `bcnapwpreim3d6ym7jc5723pj4tsbup6…` | fixture_transcription / committed_fixture / stand-in | 2 |
+| `okc-p06-evidence-fixture` | 7441 | `bcnaa6v2z35pxf3vszq76ktb4gxdlj67…` | fixture_transcription / committed_fixture / stand-in | 12 |
+| `okc-statute-47-7-606-1` | 1363 | `bcnahazrkd4qp7mfdjnuugfyb2xay5zv…` | fixture_transcription / committed_fixture / stand-in | 2 |
 
 ## Document inventory and what each supports
 
@@ -29,8 +29,8 @@ Packet `sig.dossier-packet/1` / dossier `okc-flock-alpr` — as-of 2026-10-02 (w
 
 - `signed_date` and `execution_state` on the amendment are `present_but_empty`: a partially-evidenced signature block means execution is unknown — the packet asserts neither signing nor execution.
 - The council memo's original-approval references are internally inconsistent; the packet keeps the lifecycle label verbatim and asserts no reconciled original date.
-- The 7-day retention rule is a STATED rule with a stated effective date (2026-10-01). As-of 2026-10-02 the change is announced; operational implementation is unverified (follow-up in the packet).
-- Retrieval/capture dates (fixture replay 2026-10-01) are kept distinct from stated valid dates on every claim.
+- The 7-day retention rule is a STATED rule with a stated effective date (2026-10-01). On the scenario frame 2026-10-02 the change is announced; operational implementation is unverified (follow-up in the packet).
+- Replay capture dates are each fixture's real authoring commit time, read from git (never a fetch); the evidence anchor is 2026-10-03T14:11:51+00:00. Stated document dates stay distinct from capture chronology on every claim.
 
 ## Rights, review and acquisition posture
 

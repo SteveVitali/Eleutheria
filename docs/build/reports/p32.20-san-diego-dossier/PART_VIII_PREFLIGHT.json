@@ -1,15 +1,22 @@
 {
-  "acquisition_status": "prohibited_until_review",
+  "acquisition_status": "rejected",
+  "decision": {
+    "answer": "a",
+    "decided_by": "operator",
+    "decided_on": "2026-10-01T04:51:39Z",
+    "effect": "the per-query network-audit workbooks are metadata-only permanently — the workbook acquisition path is rejected; the link-label metadata path is kept",
+    "ref": "E4-B3"
+  },
   "deferral": "D-P32.20-1",
   "dossier_id": "san-diego-sdpd-alpr",
-  "generated_at": "2026-10-01",
+  "generated_at": "2026-09-27",
   "permitted_metadata": [
     "link labels and existence metadata on the public index",
     "period labels (2024–2026) on the link metadata",
     "published annual aggregate documents through the normal gate"
   ],
   "preconditions": [
-    "explicit content-admissibility decision (HG-03 family)",
+    "the content-admissibility decision is RECORDED (E4-B3 = a): workbook bytes rejected permanently — any aggregate path needs an approved production method, never workbook transport",
     "source/rights review under D-R10-SOURCES-1",
     "a bounded acquisition method that never transports workbook bytes — approved aggregate production only"
   ],
@@ -24,7 +31,7 @@
     "q8": "could evidence outbound sharing actors/mode IF an approved safe aggregate exists; otherwise the unknown stands"
   },
   "review_basis": "index link labels and acquisition-queue metadata reviewed; no workbook bytes fetched or staged at any point",
-  "rights_posture": "dossier_san_diego stays ingestion_permitted=false; the network-audit family stays prohibited_until_review — this record is a preflight, never a fetch",
+  "rights_posture": "dossier_san_diego stays ingestion_permitted=false; the network-audit workbook path is rejected (E4-B3) — this record is a preflight, never a fetch",
   "safe_aggregate_path": {
     "description": "a safe annual/agency-level aggregate produced under an approved workflow could close the declared-vs-observed sharing gap on q8; SRC-027 is optional research — the dossier does not depend on it",
     "status": "open_question"

@@ -21,7 +21,7 @@ import json
 from pathlib import Path
 
 import pytest
-from tasks.acquisition import build_queue
+from tasks.acquisition import PreflightStatus, build_queue
 from tasks.acquisition_pilot import (
     BATCH_SCHEMA,
     CEILINGS,
@@ -316,7 +316,7 @@ def test_blocked_targets_visible_with_reasons_and_budget(readout):
     blocked = {b["candidate_id"]: b for b in readout["funnel"]["blocked_targets_visible"]}
     # Every gate-blocked/prohibited/undetermined target stays visible.
     assert "SRC-027" in blocked
-    assert any("prohibited" in r for r in blocked["SRC-027"]["reasons"])
+    assert any("rejected" in r for r in blocked["SRC-027"]["reasons"])
     assert "SRC-024" in blocked
     assert any("screening" in r for r in blocked["SRC-024"]["reasons"])
     assert any("403" in r for r in blocked["SRC-001"]["reasons"])
@@ -426,6 +426,120 @@ def test_return_pass_non_goals_and_preconditions(readout):
     assert "Part VIII" in prec
 
 
+def test_bounded_questions_name_selected_families(readout):
+    """E4 NEW-8 — the bounded questions come from the SELECTED incremental
+    families (SRC-006/007, SRC-011), never a rejected alternative."""
+    blob = "\n".join(readout["return_pass"]["bounded_questions"])
+    for cid in ("SRC-006", "SRC-007", "SRC-011"):
+        assert cid in blob
+    assert "SRC-010" not in blob
+
+
+def test_old_return_pass_fails_pilot_check(readout, entries):
+    """The pre-fix packet (frozen fixture) asked about SRC-010 Sourcewell —
+    a rejected alternative never inside the batch. check_pilot must catch
+    exactly that error."""
+    old = json.loads(
+        (REPO_ROOT / "tests/tasks/fixtures/acq_pilot_return_pass_src010_bug.json").read_text()
+    )
+    assert "SRC-010" in "\n".join(old["bounded_questions"])  # the fixture IS the bug
+    bad = copy.deepcopy(readout)
+    bad["return_pass"] = old
+    violations = check_pilot(bad, entries)
+    assert any("SRC-010" in v for v in violations)
+
+
+def test_pilot_targets_on_green_sources_named(readout):
+    """E4-B5 = a — a target whose URL already sits on a permitted registry
+    source rides that source's recorded basis (no invented reapproval)."""
+    rp = readout["return_pass"]
+    riding = [
+        t["doc_id"] for fam in rp["families"] for t in fam["targets"] if t.get("existing_source")
+    ]
+    # src-007-target-2 is the OSCN statute URL = the green ok_statute target.
+    assert riding == ["src-007-target-2"]
+    assert any("ok_statute" in n for n in rp["green_source_notes"])
+
+
+def test_five_families_carry_drafted_screens(entries):
+    """P34.38 / ADR-185 §2 (E4-B2 → B-42): every pilot family carries a
+    drafted ``screening_required`` preflight recorded by ``agent (draft)`` —
+    a flagless screen, since the draft found no unremediable excluded
+    category. The B-42 'agent clears, disclosed' clear is recorded by the
+    P37.16a/b capture rows, never here."""
+    selected = {cid for f in select_batch(entries).families for cid in f.candidate_ids}
+    assert selected == {
+        "SRC-001",
+        "SRC-002",
+        "SRC-003",
+        "SRC-004",
+        "SRC-005",
+        "SRC-006",
+        "SRC-007",
+        "SRC-011",
+    }
+    for e in entries:
+        if e.passport.candidate_id in selected:
+            assert e.passport.preflight.status == PreflightStatus.SCREENING_REQUIRED
+            assert not e.passport.preflight.flags
+            assert "agent (draft)" in e.passport.preflight.notes
+    # A FLAGGED screening_required still sits outside the batch entirely.
+    for cid in ("SRC-024", "SRC-025"):
+        assert cid not in selected
+
+
+def test_pilot_check_covers_the_drafted_screens(readout, entries, tmp_path):
+    """P34.38 / ADR-185 — pilot-check fails a screens artifact that claims a
+    clear, drops a batch family, or screens a non-batch family."""
+    screens_dst = _stage_screens(tmp_path)
+    (tmp_path / "docs/tickets").mkdir(parents=True)
+    (tmp_path / "docs/tickets/DEFERRALS.md").write_text(
+        _REGISTER_HEAD + "| D-P32.21-1 | P | x | y | z | w | p | OPEN |\n"
+    )
+    # The committed artifact is green.
+    assert check_pilot(readout, entries, root=tmp_path) == []
+
+    doc = json.loads(screens_dst.read_text())
+
+    # A claimed clear is the B-42 violation — it never lives in this file.
+    bad = copy.deepcopy(doc)
+    bad["clear_recorded_here"] = True
+    screens_dst.write_text(json.dumps(bad))
+    assert any("clear" in v for v in check_pilot(readout, entries, root=tmp_path))
+
+    # A dropped family is a missing screen.
+    bad = copy.deepcopy(doc)
+    bad["screens"] = [s for s in bad["screens"] if s["family"] != "okc-municipal"]
+    screens_dst.write_text(json.dumps(bad))
+    assert any("okc-municipal" in v for v in check_pilot(readout, entries, root=tmp_path))
+
+    # A screen for a non-batch family, a non-draft screener, or a member
+    # outside the batch are all violations.
+    bad = copy.deepcopy(doc)
+    bad["screens"].append(
+        {
+            "family": "sourcewell-cooperative",
+            "members": ["SRC-010"],
+            "preflight": {
+                "status": "screening_required",
+                "screener": "agent (draft)",
+                "screened_on": "2026-10-07",
+                "lanes": [],
+                "flags": [],
+                "notes": "x",
+            },
+        }
+    )
+    screens_dst.write_text(json.dumps(bad))
+    vs = check_pilot(readout, entries, root=tmp_path)
+    assert any("sourcewell-cooperative" in v for v in vs)
+    assert any("SRC-010" in v for v in vs)
+    bad = copy.deepcopy(doc)
+    bad["screens"][0]["preflight"]["screener"] = "operator"
+    screens_dst.write_text(json.dumps(bad))
+    assert any("screener" in v for v in check_pilot(readout, entries, root=tmp_path))
+
+
 # --------------------------------------------------------------------------- #
 # Readout + check_pilot invariants                                            #
 # --------------------------------------------------------------------------- #
@@ -515,6 +629,17 @@ _REGISTER_HEAD = (
 )
 
 
+def _stage_screens(root: Path) -> Path:
+    """The drafted screens are a committed check_pilot input — stage the real
+    artifact into a synthetic root so tmp-rooted check_pilot runs validate."""
+    dst = root / "docs/build/reports/acquisition/PART_VIII_SCREENS.json"
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(
+        (REPO_ROOT / "docs/build/reports/acquisition/PART_VIII_SCREENS.json").read_text()
+    )
+    return dst
+
+
 def _close_event(evidence: list[str], to_status: str = "DONE") -> str:
     return json.dumps(
         {
@@ -536,6 +661,7 @@ def test_check_pilot_accepts_a_closure_only_with_recorded_evidence(readout, entr
     violation (F5 NEW-2): a closed row passes only with an obligation-event
     transition to that status citing evidence outside the register."""
     (tmp_path / "docs/tickets").mkdir(parents=True)
+    _stage_screens(tmp_path)
     register = tmp_path / "docs/tickets/DEFERRALS.md"
     events = tmp_path / "docs/build/reports/obligations/events.jsonl"
     events.parent.mkdir(parents=True)

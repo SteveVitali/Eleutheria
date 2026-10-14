@@ -1,0 +1,214 @@
+{
+  "schema": "sig.url-reconciliation/1",
+  "generated_at": "2026-10-07",
+  "ticket": "P34.38",
+  "obligation": "D-R10-SOURCES-1",
+  "purpose": "E4 NEW-7 / §4.3 item 1 — reconcile each of the 21 dossier return-pass targets against the research record before any live capture. Documentary only: NO URL was fetched to reconcile it; a 'differs' or unrecorded URL is marked for the B1 binding, never silently replaced.",
+  "research_record": [
+    "docs/build/planning/2026-09-25-six-streams/data/source-candidates.csv",
+    "docs/build/planning/2026-09-30-next-phase/design/E4-rights-packets.md (§4.2 per-target facts)",
+    "connectors/src/connectors/data/live_targets.toml (existing green-source targets)",
+    "tasks/src/tasks/data/acquisition_queue.toml"
+  ],
+  "status_vocabulary": {
+    "reconciled": "the return-pass/live_targets URL is the URL the research record carries",
+    "differs": "the return-pass/live_targets URL differs from the research-recorded URL; both recorded, neither fetched; the B1 decision binds which URL is authoritative",
+    "no_research_record": "the URL appears in no research record — authored alongside the stand-in documents (F-16); marked for the B1 binding"
+  },
+  "return_passes": [
+    "docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_PASS.json",
+    "docs/build/reports/p32.19-tulsa-dossier/LIVE_RETURN_PASS.json",
+    "docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json"
+  ],
+  "targets": [
+    {
+      "target_letter": "O1",
+      "doc_id": "okc-flock-usage-2026",
+      "return_pass_url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage",
+      "research_url": "https://www.okc.gov/Services/Public-Safety/Police/Flock-Safety-license-plate-reader-LPR-usage-in-Oklahoma-City",
+      "status": "differs",
+      "research_ref": "source-candidates.csv SRC-001 primary_url",
+      "note": "different path shape than the researched usage page — marked for B1, never silently replaced (E4 §4.3: several of these are stand-in URLs; a live pass run as written would record link_rotted/404 or fetch something other than what was reviewed)"
+    },
+    {
+      "target_letter": "O2",
+      "doc_id": "okc-council-memo-2026-08",
+      "return_pass_url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "acquisition packet mentions a two-page council memo, no URL (E4 §4.2)",
+      "note": "stand-in-authored URL — marked for the B1 binding"
+    },
+    {
+      "target_letter": "O3",
+      "doc_id": "okc-flock-amendment-2026",
+      "return_pass_url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf",
+      "research_url": "https://www.okc.gov/files/assets/city/v/1/police/documents/flock/flock-amendment-august-2026.pdf",
+      "status": "differs",
+      "research_ref": "source-candidates.csv SRC-001 secondary_url (research: 'amendment later returned 403')",
+      "note": "research URL recorded a 403 — marked for B1, never silently replaced"
+    },
+    {
+      "target_letter": "O4",
+      "doc_id": "okc-statute-47-7-606-1",
+      "return_pass_url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582",
+      "research_url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582",
+      "status": "reconciled",
+      "research_ref": "source-candidates.csv SRC-007 secondary_url; live_targets.toml ok_statute target (L311)",
+      "note": "rides the existing green ok_statute source (B5) — no new rights decision owed for the bytes"
+    },
+    {
+      "target_letter": "O5",
+      "doc_id": "okc-ops-manual-5-118",
+      "return_pass_url": "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf",
+      "research_url": "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf",
+      "status": "reconciled",
+      "research_ref": "live_targets.toml okcpd_policy target okcpd-ops-manual-5-118 (L328)",
+      "note": "rides the existing green okcpd_policy source (B5)"
+    },
+    {
+      "target_letter": "O6",
+      "doc_id": "okc-purchasing-index",
+      "return_pass_url": "https://www.okc.gov/departments/finance/purchasing",
+      "research_url": "https://www.okc.gov/departments/finance/purchasing",
+      "status": "reconciled",
+      "research_ref": "live_targets.toml okc_procurement target okc-purchasing-index (L343; edge WAF may refuse — the refusal is recorded)",
+      "note": "rides the existing green okc_procurement source (B5)"
+    },
+    {
+      "target_letter": "T1",
+      "doc_id": "tulsa-mou-template",
+      "return_pass_url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "review depth 'three-page blank MOU', no URL (E4 §4.2)",
+      "note": "blank template — proves structure only; marked for the B1 binding"
+    },
+    {
+      "target_letter": "T2",
+      "doc_id": "tulsa-policy-113c",
+      "return_pass_url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "not in the research record (E4 §4.2)",
+      "note": "marked for the B1 binding"
+    },
+    {
+      "target_letter": "T3",
+      "doc_id": "tulsa-policy-113e",
+      "return_pass_url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "not in the research record (E4 §4.2)",
+      "note": "marked for the B1 binding"
+    },
+    {
+      "target_letter": "T4",
+      "doc_id": "tpd-flock-page",
+      "return_pass_url": "https://www.tulsapolice.org/flock-safety",
+      "research_url": "https://www.tulsapolice.org/flock-safety",
+      "status": "reconciled",
+      "research_ref": "source-candidates.csv SRC-002 primary_url",
+      "note": "B1/B2 decision needed (not on a green source)"
+    },
+    {
+      "target_letter": "T5",
+      "doc_id": "tpd-policies-index",
+      "return_pass_url": "https://www.tulsapolice.org/policies-and-procedures",
+      "research_url": "https://www.tulsapolice.org/policies-and-procedures",
+      "status": "reconciled",
+      "research_ref": "source-candidates.csv SRC-002 secondary_url",
+      "note": "B1/B2 decision needed (not on a green source)"
+    },
+    {
+      "target_letter": "T6",
+      "doc_id": "tulsa-corridor-safety-guide",
+      "return_pass_url": "https://www.cityoftulsa.org/government/departments/planning-and-neighborhoods/community-planning/commercial-corridor-safety-guide/",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "a P32.19 lead, not in the research record (E4 §4.2)",
+      "note": "marked for the B1 binding"
+    },
+    {
+      "target_letter": "S1",
+      "doc_id": "sd-asr-2025-vigilant",
+      "return_pass_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf",
+      "research_url": "https://www.sandiego.gov/sites/default/files/2026-02/sdpd-annual-surveillance-report-2025.pdf",
+      "status": "differs",
+      "research_ref": "source-candidates.csv SRC-003 secondary_url",
+      "note": "research URL carries the dated 2026-02 path — marked for B1, never silently replaced"
+    },
+    {
+      "target_letter": "S2",
+      "doc_id": "sd-ubicquia-agreement-2023",
+      "return_pass_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf",
+      "research_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf",
+      "status": "reconciled",
+      "research_ref": "source-candidates.csv SRC-004 secondary_url",
+      "note": "signature blocks name persons — officer-naming gate applies (E4 §4.2 VIII note)"
+    },
+    {
+      "target_letter": "S3",
+      "doc_id": "sd-technology-index",
+      "return_pass_url": "https://www.sandiego.gov/police/data-transparency/technology",
+      "research_url": "https://www.sandiego.gov/police/data-transparency/technology",
+      "status": "reconciled",
+      "research_ref": "source-candidates.csv SRC-003 primary_url",
+      "note": "B1/B2 decision needed (not on a green source)"
+    },
+    {
+      "target_letter": "S4",
+      "doc_id": "sd-pab-index",
+      "return_pass_url": "https://www.sandiego.gov/pab/reports",
+      "research_url": "https://www.sandiego.gov/pab/reports",
+      "status": "reconciled",
+      "research_ref": "source-candidates.csv SRC-005 primary_url",
+      "note": "B1/B2 decision needed (not on a green source)"
+    },
+    {
+      "target_letter": "S5",
+      "doc_id": "sd-alpr-program-page",
+      "return_pass_url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr",
+      "research_url": "https://www.sandiego.gov/police/data-transparency/technology/view?tech=Automated+License+Plate+Recognition+(ALPR)",
+      "status": "differs",
+      "research_ref": "source-candidates.csv SRC-027 primary_url",
+      "note": "query vs view path shape — marked for B1, never silently replaced"
+    },
+    {
+      "target_letter": "S6",
+      "doc_id": "sd-alpr-use-policy",
+      "return_pass_url": "https://www.sandiego.gov/sites/default/files/alpr-use-policy.pdf",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "index-linked; recorded 403 (E4 §4.2)",
+      "note": "B4 applies: per-target byte bound + one bounded retry recorded on the target row"
+    },
+    {
+      "target_letter": "S7",
+      "doc_id": "sd-pab-recommendation-2025",
+      "return_pass_url": "https://www.sandiego.gov/sites/default/files/pab-final-recommendation-alpr-2025.pdf",
+      "research_url": "https://www.sandiego.gov/sites/default/files/2026-05/pab-final-recommendation-alpr-2025-asr-00235352xbde34.pdf",
+      "status": "differs",
+      "research_ref": "source-candidates.csv SRC-005 secondary_url (~16 MB, over the byte bound)",
+      "note": "B4 applies: per-target byte bound + one bounded retry recorded on the target row"
+    },
+    {
+      "target_letter": "S8",
+      "doc_id": "sd-council-memo-2025-12-10",
+      "return_pass_url": "https://www.sandiego.gov/city-clerk/officialdocs/council-documents",
+      "research_url": null,
+      "status": "no_research_record",
+      "research_ref": "a lead, not in the research record (E4 §4.2)",
+      "note": "marked for the B1 binding"
+    },
+    {
+      "target_letter": "S9",
+      "doc_id": "sd-network-audit-links",
+      "return_pass_url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr",
+      "research_url": "https://www.sandiego.gov/police/data-transparency/technology/view?tech=Automated+License+Plate+Recognition+(ALPR)",
+      "status": "reconciled",
+      "research_ref": "≈ SRC-027 (acquisition queue; link/label metadata only — E4 §4.2)",
+      "note": "B3 applies: workbook path rejected (E4-B3 = a, metadata-only permanently); link-label metadata path kept"
+    }
+  ]
+}

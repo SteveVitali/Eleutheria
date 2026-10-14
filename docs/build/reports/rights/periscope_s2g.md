@@ -43,3 +43,12 @@ A per-agency eBid procurement portal platform (records/procurement surface).
 ## Counsel-needed flag
 
 PENDING REVIEW — skeleton packet; the source stays `ingestion_permitted=false`.
+
+## Recorded operator answer — superseded (P34.38, E4-R6b = a)
+
+The operator's recorded answer E4-R6b is "a — close periscope_s2g as
+superseded" (round 17, 2026-10-01T04:49:27Z, decision_catalog.csv). This line
+records that answer as DATA — it is not a rights decision made by the agent,
+and it flips nothing: the source stays `ingestion_permitted=false` until the
+supersession is reflected in the register. The D-SOURCES.9-4 DEFERRALS
+annotation is SEED-14's (T4), not this ticket's.

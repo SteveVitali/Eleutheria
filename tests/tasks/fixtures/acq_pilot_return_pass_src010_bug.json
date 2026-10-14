@@ -1,0 +1,120 @@
+{
+  "bounded_questions": [
+    "SRC-010 (sourcewell-cooperative): does the master cooperative contract's master identifier \u2192 vendor \u2192 participation \u2192 ordering chain land as extractable contract predicates under the rights-reviewed slice (the contract back-chain the municipal packets only mirror)?",
+    "SRC-011 (california-state-auditor): do the audit findings, agency survey answers and recommendations land as one-auditor-provenance independent oversight (respondent survey answers are never treated as independently verified)?"
+  ],
+  "deferral": "D-P32.21-1",
+  "families": [
+    {
+      "approval_refs": [],
+      "candidate_ids": [
+        "SRC-007",
+        "SRC-006"
+      ],
+      "document_cap": 10,
+      "excluded_candidate_ids": [
+        "SRC-009",
+        "SRC-008"
+      ],
+      "family": "oklahoma-state",
+      "kind": "new_target",
+      "new_protocol_families": 0,
+      "protocols": [
+        "html_text",
+        "pdf_text"
+      ],
+      "registered_source": null,
+      "retry_budget_per_target": 2,
+      "slot": "incremental",
+      "targets": [
+        {
+          "candidate_id": "SRC-007",
+          "doc_id": "src-007-target-1",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: legal.authority, program.administration, temporal.applicability",
+          "kind": "document_capture",
+          "url": "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html"
+        },
+        {
+          "candidate_id": "SRC-007",
+          "doc_id": "src-007-target-2",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: legal.authority, program.administration, temporal.applicability",
+          "kind": "document_capture",
+          "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
+        },
+        {
+          "candidate_id": "SRC-006",
+          "doc_id": "src-006-target-1",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: contract.procurement, identity.vendor, funding.channel",
+          "kind": "document_capture",
+          "url": "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html"
+        },
+        {
+          "candidate_id": "SRC-006",
+          "doc_id": "src-006-target-2",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: contract.procurement, identity.vendor, funding.channel",
+          "kind": "document_capture",
+          "url": "https://oklahoma.gov/omes/services/purchasing/solicitations/0900000569.html"
+        }
+      ]
+    },
+    {
+      "approval_refs": [],
+      "candidate_ids": [
+        "SRC-011"
+      ],
+      "document_cap": 10,
+      "excluded_candidate_ids": [],
+      "family": "california-state-auditor",
+      "kind": "new_target",
+      "new_protocol_families": 0,
+      "protocols": [
+        "html_text",
+        "pdf_text"
+      ],
+      "registered_source": null,
+      "retry_budget_per_target": 2,
+      "slot": "incremental",
+      "targets": [
+        {
+          "candidate_id": "SRC-011",
+          "doc_id": "src-011-target-1",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: oversight.audit, governance.finding, usage.disclosure",
+          "kind": "document_capture",
+          "url": "https://information.auditor.ca.gov/reports/2019-118/index.html"
+        },
+        {
+          "candidate_id": "SRC-011",
+          "doc_id": "src-011-target-2",
+          "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: oversight.audit, governance.finding, usage.disclosure",
+          "kind": "document_capture",
+          "url": "https://information.auditor.ca.gov/reports/2019-118/surveys.html"
+        }
+      ]
+    }
+  ],
+  "non_goals": [
+    "no source rights flip or ingestion_permitted change",
+    "no operator-gate completion or fabricated approval ref",
+    "no records request sent and no outreach",
+    "no spending",
+    "no publication or public release",
+    "no broad blind crawler \u2014 targets are the reviewed URLs only",
+    "no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query transport \u2014 SRC-027 stays metadata-only outside the acquired batch"
+  ],
+  "packet_id": "acq-pilot-p32.21-live-pass",
+  "portfolio_return_passes": [
+    "D-P32.18-1",
+    "D-P32.19-1",
+    "D-P32.20-1"
+  ],
+  "preconditions": [
+    "HG-03 exact-target source/rights review per target URL (the three rights lanes \u2014 raw document, fact extraction, derived publication \u2014 are separately decided; a state/local cooperative is not a federal public-domain assumption)",
+    "Part VIII preflight per family \u2014 SRC-010/011 carry no flags but are status not_assessed; the screening must run before capture",
+    "municipal-publication review where observed (both incremental families carry municipal_publication_observed)",
+    "resource bounds identical to the replay path (html_text/pdf_text only, page/byte caps) \u2014 new protocol families: 0 of 2 allowed",
+    "\u226410 approved documents/aggregate rows per family; \u22642 incremental families; \u22645 families total \u2014 the caps are hard, expansion is a new scope decision"
+  ],
+  "reason_deferred": "live_verification=false: D-R10-SOURCES-1 stays OPEN \u2014 every rights lane in the reviewed queue is undetermined and no approval reference exists for any bounded slice; HG-03 and the Part VIII preflight are operator preconditions",
+  "schema": "sig.acq-pilot-return-pass/1",
+  "status": "prepared_not_executed"
+}

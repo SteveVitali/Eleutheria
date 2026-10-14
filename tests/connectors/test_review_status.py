@@ -116,8 +116,10 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
     # P32.12 added the three gated dossier_* pilot rows (339 → 342 registered;
-    # still ingestion_permitted=false, so loadable is unchanged).
-    assert "registered sources: 342" in out
+    # still ingestion_permitted=false, so loadable is unchanged). P34.38 added
+    # the three gated pilot-acquisition rows ok_omes_contracts / ok_dac_uved /
+    # ca_state_auditor (342 → 345 registered; all ingestion_permitted=false).
+    assert "registered sources: 345" in out
     assert "self-checks OK" in out
 
 
@@ -226,10 +228,11 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # ccops_somerville, US municipal → LicenseRef-PublicRecord-FactualCompilation;
     # 228 → 236 loadable). flip-ready stays 1 (the new rows land already flipped).
     # P32.12 added the three gated dossier_* pilot rows (339 → 342 registered;
-    # all ingestion_permitted=false, so loadable stays 236).
+    # all ingestion_permitted=false, so loadable stays 236). P34.38 added the
+    # three gated pilot-acquisition rows (342 → 345 registered, still gated).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 342" in out
+    assert "registered sources: 345" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out

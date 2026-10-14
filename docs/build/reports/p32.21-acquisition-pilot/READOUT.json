@@ -58,7 +58,7 @@
         ],
         "family_id": "oklahoma-state",
         "lineage_group": "oklahoma-state",
-        "rationale": "the structured acquisition/procurement shape (S5) \u2014 contract/procurement-chain predicates, the relationship class a dossier's contract-chain gap needs; a net-new target \u2014 a new provenance family; wins the acquisition slot under acq-score/1 rank order (score 23); closes recorded dossier gaps via SRC-007; in-family excluded from the acquired batch: SRC-009, SRC-008",
+        "rationale": "the structured acquisition/procurement shape (S5) \u2014 contract/procurement-chain predicates, the relationship class a dossier's contract-chain gap needs; an improvement under the registered ok_omes_contracts row \u2014 a first-class acquisition; wins the acquisition slot under acq-score/1 rank order (score 23); closes recorded dossier gaps via SRC-007; in-family excluded from the acquired batch: SRC-009, SRC-008",
         "role": "contract/acquisition chain",
         "rule": "P-SEL-2",
         "slot": "incremental"
@@ -70,7 +70,7 @@
         "excluded_candidate_ids": [],
         "family_id": "california-state-auditor",
         "lineage_group": "california-state-auditor",
-        "rationale": "the independent oversight shape (S5) \u2014 oversight/governance predicates yielding provenance distinct from municipal self-report; a net-new target \u2014 a new provenance family; wins the oversight slot under acq-score/1 rank order (score 23)",
+        "rationale": "the independent oversight shape (S5) \u2014 oversight/governance predicates yielding provenance distinct from municipal self-report; an improvement under the registered ca_state_auditor row \u2014 a first-class acquisition; wins the oversight slot under acq-score/1 rank order (score 23)",
         "role": "independent oversight",
         "rule": "P-SEL-3",
         "slot": "incremental"
@@ -151,7 +151,7 @@
       },
       {
         "candidate_id": "SRC-024",
-        "detail": "Part VIII screening is owed work \u2014 an unscreened family cannot enter a bounded batch",
+        "detail": "Part VIII screening is owed work \u2014 a family flagged for possible excluded-category content cannot enter a bounded batch (a flagless screening_required means a screen is drafted, not that excluded content is suspected)",
         "family": "DLA LESO 1033 equipment holdings/transfers subset",
         "lineage_group": "us-federal-dla",
         "reason": "preflight_screening_owed",
@@ -159,7 +159,7 @@
       },
       {
         "candidate_id": "SRC-025",
-        "detail": "Part VIII screening is owed work \u2014 an unscreened family cannot enter a bounded batch",
+        "detail": "Part VIII screening is owed work \u2014 a family flagged for possible excluded-category content cannot enter a bounded batch (a flagless screening_required means a screen is drafted, not that excluded content is suspected)",
         "family": "FAA Part 107 waiver issued records",
         "lineage_group": "us-federal-faa",
         "reason": "preflight_screening_owed",
@@ -175,7 +175,15 @@
       },
       {
         "candidate_id": "SRC-027",
-        "detail": "prohibited_until_review \u2014 metadata-only research path; an explicit content-admissibility + rights decision is owed before any acquisition",
+        "detail": "blocked disposition \u2014 rights/sensitive rejection is score-independent",
+        "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
+        "lineage_group": "san-diego-municipal",
+        "reason": "blocked",
+        "score": -8
+      },
+      {
+        "candidate_id": "SRC-027",
+        "detail": "rejected \u2014 the Part VIII excluded content is permanently barred (E4-B3: the workbook path stays metadata-only forever; the link-label metadata path is kept)",
         "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
         "lineage_group": "san-diego-municipal",
         "reason": "prohibited_metadata_only",
@@ -310,7 +318,7 @@
         "family": "Tulsa Flock policies integration and executed contract search",
         "lineage_group": "tulsa-municipal",
         "reasons": [
-          "rights undetermined (3 lanes) \u2014 routed to review"
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
         ],
         "retry_budget": 2
       },
@@ -320,6 +328,7 @@
         "family": "San Diego technology inventory and annual reports",
         "lineage_group": "san-diego-municipal",
         "reasons": [
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)",
           "recorded 403 on a prior retrieval"
         ],
         "retry_budget": 2
@@ -330,7 +339,7 @@
         "family": "San Diego Sunshine Act goods/services contracts",
         "lineage_group": "san-diego-municipal",
         "reasons": [
-          "rights undetermined (3 lanes) \u2014 routed to review"
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
         ],
         "retry_budget": 2
       },
@@ -340,7 +349,7 @@
         "family": "Oklahoma DAC UVED program and authority chain",
         "lineage_group": "oklahoma-state",
         "reasons": [
-          "rights undetermined (3 lanes) \u2014 routed to review"
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
         ],
         "retry_budget": 2
       },
@@ -350,6 +359,7 @@
         "family": "OKC Flock council amendment policy packet",
         "lineage_group": "okc-municipal",
         "reasons": [
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)",
           "recorded 403 on a prior retrieval"
         ],
         "retry_budget": 2
@@ -360,7 +370,7 @@
         "family": "Oklahoma OMES statewide contracts and solicitations",
         "lineage_group": "oklahoma-state",
         "reasons": [
-          "rights undetermined (3 lanes) \u2014 routed to review"
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
         ],
         "retry_budget": 2
       },
@@ -370,7 +380,7 @@
         "family": "California State Auditor ALPR audit survey and follow-up",
         "lineage_group": "california-state-auditor",
         "reasons": [
-          "rights undetermined (3 lanes) \u2014 routed to review"
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
         ],
         "retry_budget": 2
       },
@@ -420,7 +430,7 @@
         "family": "San Diego Privacy Advisory Board recommendations",
         "lineage_group": "san-diego-municipal",
         "reasons": [
-          "rights undetermined (3 lanes) \u2014 routed to review"
+          "screening_required \u2014 drafted screen recorded; the B-42 agent clear is owed at capture (P37.16a/b)"
         ],
         "retry_budget": 2
       },
@@ -570,7 +580,8 @@
         "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
         "lineage_group": "san-diego-municipal",
         "reasons": [
-          "prohibited_until_review \u2014 metadata-only path only"
+          "rejected \u2014 excluded content permanently barred (E4-B3)",
+          "blocked \u2014 rights/sensitive rejection"
         ],
         "retry_budget": 2
       }
@@ -596,11 +607,11 @@
             "complete_passports": 1,
             "excluded_from_batch": [],
             "hard_refused": [],
-            "kind": "new_target",
+            "kind": "improvement",
             "qualified_for_review": [
               "SRC-011"
             ],
-            "registry_join": "net_new"
+            "registry_join": "existing_unpermitted"
           },
           "capture": {
             "basis": "no capture \u2014 the live slice is a gate packet",
@@ -730,11 +741,11 @@
           "extraction": {
             "basis": "offline_replay",
             "claims_by_source": {
-              "okc_council_statement": 2,
               "deflock": 1,
               "dossier_okc": 16,
               "ok_statute": 2,
               "okc-contract-c241032": 1,
+              "okc_council_statement": 2,
               "okc_procurement": 5,
               "okcpd_policy": 2,
               "src:okc-council": 7,
@@ -823,14 +834,14 @@
               "SRC-008"
             ],
             "hard_refused": [],
-            "kind": "new_target",
+            "kind": "improvement",
             "qualified_for_review": [
               "SRC-006",
               "SRC-007",
               "SRC-008",
               "SRC-009"
             ],
-            "registry_join": "net_new"
+            "registry_join": "existing_unpermitted"
           },
           "capture": {
             "basis": "no capture \u2014 the live slice is a gate packet",
@@ -1407,7 +1418,7 @@
       "verdict": "continue"
     },
     {
-      "basis": "acq-score/1 = 24 (P0 dossier), kind=new_target, join=net_new; effort M estimated (never measured); 2 in-batch candidates (SRC-007, SRC-006); in-family excluded SRC-009, SRC-008",
+      "basis": "acq-score/1 = 24 (P0 dossier), kind=improvement, join=existing_unpermitted; effort M estimated (never measured); 2 in-batch candidates (SRC-007, SRC-006); in-family excluded SRC-009, SRC-008",
       "conditions": [
         "HG-03: OMES portal access terms + state/vendor document rights and the OSCN historical-version basis reviewed",
         "Part VIII screening (status not_assessed) before capture",
@@ -1424,7 +1435,7 @@
       "verdict": "continue"
     },
     {
-      "basis": "acq-score/1 = 23 (P1 bounded pilot), kind=new_target, join=net_new; effort L-M estimated (never measured); 1 in-batch candidates (SRC-011)",
+      "basis": "acq-score/1 = 23 (P1 bounded pilot), kind=improvement, join=existing_unpermitted; effort L-M estimated (never measured); 1 in-batch candidates (SRC-011)",
       "conditions": [
         "HG-03: the report + survey pages' rights reviewed (municipal/state publication is not auto-CC0)",
         "survey answers carry the Auditor's provenance as one account \u2014 never independently verified respondent facts",
@@ -1443,8 +1454,10 @@
   ],
   "return_pass": {
     "bounded_questions": [
-      "SRC-010 (sourcewell-cooperative): does the master cooperative contract's master identifier \u2192 vendor \u2192 participation \u2192 ordering chain land as extractable contract predicates under the rights-reviewed slice (the contract back-chain the municipal packets only mirror)?",
-      "SRC-011 (california-state-auditor): do the audit findings, agency survey answers and recommendations land as one-auditor-provenance independent oversight (respondent survey answers are never treated as independently verified)?"
+      "SRC-007 + SRC-006 (oklahoma-state \u2014 contract/acquisition chain): do the reviewed targets land the expected predicates (SRC-007: legal.authority, program.administration, temporal.applicability; SRC-006: contract.procurement, identity.vendor, funding.channel) as extractable facts under the rights-reviewed slice, HG-03-gated and byte-bounded?",
+      "SRC-007: Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?",
+      "SRC-011 (california-state-auditor \u2014 independent oversight): do the reviewed targets land the expected predicates (SRC-011: oversight.audit, governance.finding, usage.disclosure) as extractable facts under the rights-reviewed slice, HG-03-gated and byte-bounded?",
+      "SRC-011: Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified \u2014 and under what attribution may findings be quoted?"
     ],
     "deferral": "D-P32.21-1",
     "families": [
@@ -1460,13 +1473,13 @@
           "SRC-008"
         ],
         "family": "oklahoma-state",
-        "kind": "new_target",
+        "kind": "improvement",
         "new_protocol_families": 0,
         "protocols": [
           "html_text",
           "pdf_text"
         ],
-        "registered_source": null,
+        "registered_source": "ok_dac_uved",
         "retry_budget_per_target": 2,
         "slot": "incremental",
         "targets": [
@@ -1480,7 +1493,8 @@
           {
             "candidate_id": "SRC-007",
             "doc_id": "src-007-target-2",
-            "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: legal.authority, program.administration, temporal.applicability",
+            "existing_source": "ok_statute",
+            "goal": "bounded capture under HG-03 \u2014 actual bytes, locator + capture digest; expected predicates: legal.authority, program.administration, temporal.applicability; rides the existing green source 'ok_statute' \u2014 its recorded basis applies (E4-B5 = a)",
             "kind": "document_capture",
             "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
           },
@@ -1508,13 +1522,13 @@
         "document_cap": 10,
         "excluded_candidate_ids": [],
         "family": "california-state-auditor",
-        "kind": "new_target",
+        "kind": "improvement",
         "new_protocol_families": 0,
         "protocols": [
           "html_text",
           "pdf_text"
         ],
-        "registered_source": null,
+        "registered_source": "ca_state_auditor",
         "retry_budget_per_target": 2,
         "slot": "incremental",
         "targets": [
@@ -1535,6 +1549,9 @@
         ]
       }
     ],
+    "green_source_notes": [
+      "src-007-target-2 rides the existing green source 'ok_statute' (E4-B5 = a \u2014 no invented reapproval)"
+    ],
     "non_goals": [
       "no source rights flip or ingestion_permitted change",
       "no operator-gate completion or fabricated approval ref",
@@ -1552,7 +1569,7 @@
     ],
     "preconditions": [
       "HG-03 exact-target source/rights review per target URL (the three rights lanes \u2014 raw document, fact extraction, derived publication \u2014 are separately decided; a state/local cooperative is not a federal public-domain assumption)",
-      "Part VIII preflight per family \u2014 SRC-010/011 carry no flags but are status not_assessed; the screening must run before capture",
+      "Part VIII preflight per family \u2014 SRC-007 carries 0 flag(s), status screening_required, SRC-006 carries 0 flag(s), status screening_required, SRC-011 carries 0 flag(s), status screening_required; the drafted screens (ADR-185) precede capture, and the B-42 agent clear is recorded by the capture rows, never here",
       "municipal-publication review where observed (both incremental families carry municipal_publication_observed)",
       "resource bounds identical to the replay path (html_text/pdf_text only, page/byte caps) \u2014 new protocol families: 0 of 2 allowed",
       "\u226410 approved documents/aggregate rows per family; \u22642 incremental families; \u22645 families total \u2014 the caps are hard, expansion is a new scope decision"
