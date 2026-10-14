@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "e5ebf62acc4b3221c4a99e0e31995ad0dda30f63",
+  "input_commit": "a4b4c5e24cf02f94c4b9d5eafb7596ec5b42c6e9",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "adb3034adaf8848d55d3761e70f75ecac4162dbc7ce3517a788087151be8314d"
+      "sha256": "349afe4e7f872cac748e660347e17482db7832f1910c7f41edb0fb0d97c3f080"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -817,16 +817,20 @@
       "sha256": "f637e7d89c2bd4bfd213e8b10755e7c5bad2b5cea04fc288ced6605ec4846b54"
     },
     {
+      "path": "docs/adr/ADR-209-officer-naming-persisted-concurrence-registry.md",
+      "sha256": "ddbfe4570ec3215a6d75d2c20e4de87edad0d3e2b45469671831dcafe51637a0"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "65331b596ba7e0389ca926e84e019c152bac436f76e33e963b52be0f7a4182c6"
+      "sha256": "870d430ba82fd7c105c0d816c7bf816484d7c30a9f9ef54d3bde5b3efa644ab6"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "d5434275626fe429941d55b50abe384835fc99647f00bad4258d66202949b5d3"
+      "sha256": "3756ad49af4efb19f5c8361c7c9f0c89cf23477de42b716cd2499b3f34034479"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "c37512b12be56eff9ec27566e65673fb2945a0a0c373e7a4d5221131304513a9"
+      "sha256": "f754881cc362c10886cbd9c7ade687f5c8d34638e3fd7d6d074b57409bdae91d"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -834,7 +838,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "7c9e039e13ea3292787d8b0363650b4f143a742afd66e80d08f2759a18552723"
+      "sha256": "5e809f5bb210e2e5bfcd6d0d307e04b75e6964ec3f48a378406f40522f84cc48"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1911,6 +1915,10 @@
     {
       "path": "docs/build/runs/P35.1a.md",
       "sha256": "c6ba4049b8f4c4e619cea67860097355ed1d79e73d9688e6321d9ecacfb10c47"
+    },
+    {
+      "path": "docs/build/runs/P35.28.md",
+      "sha256": "9c5f3f34d8cb4a845e65400fa40028387fd8388d66198619814eaa1d4890a5be"
     },
     {
       "path": "docs/build/runs/P35.38a.md",
