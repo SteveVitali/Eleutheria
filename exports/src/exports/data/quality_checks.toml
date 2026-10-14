@@ -1,0 +1,435 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.quality-checks/1 — the versioned graph-quality check registry
+# (SIG-CONF-006; ADR-154 decision 1; L3 §3.2, P34.44a).
+#
+# The 27 deduplicated checks GQ-01…GQ-27 (L3 §3.1: L1's INV-01…17 + L2's
+# C1…C14 → 23, plus L3's four new checks and the B4 G10/DR-C3-03 marker rule).
+# A change to this file is reviewed like a ruleset; the ratchet rules are
+# enforced by exports.quality.diff_registry (SIG-CONF-007):
+#   * a baseline may move only TOWARD its check's threshold;
+#   * loosening a baseline or threshold needs a new ADR cited in the change;
+#   * a check flips to `enforce` only in its named fixing row.
+#
+# Fields (per SIG-CONF-006):
+#   id          "GQ-nn"
+#   statement   the check in one sentence (plain)
+#   population  what the check quantifies over
+#   placement   [I] ingest/sink · [M] nightly spine probe · [R] release gate
+#               · [P] pull request · [S] scheduled public probe
+#   mode        "enforce" | "ratchet" | "report"
+#   direction   "lower_is_better" | "higher_is_better"
+#   threshold   "none" | "<= N" | "< N" | "> N" | ">= N" | "== N"
+#   baseline    ratchet floor/ceiling (number) or "pending" — pending means L2
+#               had no single measured value; P34.44b's baseline run sets it
+#   unit        "count" | "share" | "ratio"
+#   basis_class B0 by-construction · B1 mechanical census · B2 mechanical
+#               sample · B3 agent review · B4 maintainer check · B5
+#               independent human (SIG-CONF-001). B3/B4 may NEVER gate.
+#   fixing      ticket ids of the row(s) that remove the cause (may be [])
+#   from        the L1/L2/L3 source ids the check deduplicates
+#   note        seed provenance ("today" values are L2's measured baselines —
+#               placeholders until P34.44b's measured baseline run)
+
+version = "1"
+schema = "sig.quality-checks/1"
+
+[[check]]
+id = "GQ-01"
+statement = "Every emitted predicate, genre and enum is in the generated registry; unregistered values are quarantined"
+population = "claims emitted in the target run / current claims"
+placement = ["I", "P"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 6
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.14a", "P35.14b"]
+from = "INV-01"
+note = "L1 NEW-2: 6 predicates unregistered"
+
+[[check]]
+id = "GQ-02"
+statement = "Replaying a connector with rows re-ordered, re-paged or unchanged inserts 0 claims and mints no new ER run"
+population = "connector replay runs (one rotating source per night)"
+placement = ["P", "M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.22"]
+from = "INV-02"
+note = "fails (L1 probe 1); replay needs the capture-replay seam (P34.44b job)"
+
+[[check]]
+id = "GQ-03"
+statement = "Exact current repeats of (subject, predicate, value, source) are at most 1 % of current claims"
+population = "current claims"
+placement = ["M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0.01"
+baseline = 0.175
+unit = "share"
+basis_class = "B2"
+fixing = ["P35.22"]
+from = "INV-03, C4"
+note = "L2 M08: 17.5 %; large-table check — TABLESAMPLE … REPEATABLE, disclosed as a block-sampled estimate (L2 §5)"
+
+[[check]]
+id = "GQ-04"
+statement = "Within one capture, one subject key maps to exactly one upstream row; the key field is pinned per target"
+population = "upstream rows per capture"
+placement = ["I"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 5278
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.24"]
+from = "INV-04, C1"
+note = "L2 M07: 5,278 colliding subjects"
+
+[[check]]
+id = "GQ-05"
+statement = "Key stability: share of a source's subjects whose latest point moved > 0.0005 degrees since the previous run"
+population = "per-source subjects with a published point"
+placement = ["M"]
+mode = "report"
+direction = "lower_is_better"
+threshold = "<= 0.005"
+unit = "share"
+basis_class = "B1"
+fixing = ["P35.24"]
+from = "INV-05"
+note = "unmeasured (L1 NEW-11); warn band > 0.1 %; needs two runs per source"
+
+[[check]]
+id = "GQ-06"
+statement = "Entity type agrees with the subject scheme; every camera target declares a technology; exports carry it; nothing is typed traffic_camera unless its target says so"
+population = "entities, subjects and exported rows"
+placement = ["I", "R"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 180036
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.14a", "P35.14b", "P35.15a", "P35.15b"]
+from = "INV-06, C6"
+note = "L2 M21/M22: 10,238 entities + 180,036 subjects mistyped (subject count is the placeholder baseline); type fix is PKG-11, technology PKG-07"
+
+[[check]]
+id = "GQ-07"
+statement = "camera_operator is an agency entity or the explicit literal 'unknown'; publisher strings are blocklisted"
+population = "current camera_operator claims"
+placement = ["I", "M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 172588
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.26"]
+from = "C7 (SIG-ONTO-028)"
+note = "L2 M23: 172,588 (74.2 %) publisher-as-operator"
+
+[[check]]
+id = "GQ-08"
+statement = "0 published points at (0,0); 0 axis swaps or sign flips; 0 points more than 2 km outside the claimed polygon without a disclosed conflict"
+population = "published points"
+placement = ["R", "S"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 2807
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.16", "P35.19"]
+from = "INV-07, C2, DR-C3-05"
+note = "L2 M16–M18: 2,807 outside; 562 swaps; 14 null; 5 flips. The null/swap/flip half turns enforce once V9 lands (REL-04b → P35.58, after PKG-06b adds withholding); the R placement consumes V9 rather than re-implementing it"
+
+[[check]]
+id = "GQ-09"
+statement = "Dossier keys are (scheme, code); no bucket mixes schemes; 'unresolved' is not a jurisdiction; polygon-assigned points carry their basis"
+population = "dossier keys and published points"
+placement = ["R"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.17", "P35.18"]
+from = "INV-08, DR-C3-11"
+note = "fails (I1 NEW-1; L2 M19: 153,050 assignable points); K4 JUR-02 also cited"
+
+[[check]]
+id = "GQ-10"
+statement = "Duplicate accounting: published site rows equal records after derivation-collapse; every point with two or more lineages within 25 m is collapsed or listed as a possible duplicate; the count interval is published; same-layer co-located distinct records are classed multi-view, not duplicates"
+population = "published site rows vs lineage roots"
+placement = ["R"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 1.02"
+baseline = 2.25
+unit = "ratio"
+basis_class = "B1"
+fixing = ["P35.47"]
+from = "INV-09, C3a, DR-C3-10"
+note = "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58)"
+
+[[check]]
+id = "GQ-11"
+statement = "Undeclared copying: any layer pair with more than 50 % of the smaller layer within 1 m and no declared lineage"
+population = "source-layer pairs"
+placement = ["M", "I"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 11
+unit = "count"
+basis_class = "B2"
+fixing = ["P35.25"]
+from = "C3b (SIG-EPIS-029)"
+note = "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication"
+
+[[check]]
+id = "GQ-12"
+statement = "No resolution counts more than one independence class from one source or lineage; a class is never a claim id"
+population = "current resolutions"
+placement = ["M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.25"]
+from = "INV-10 (SIG-RECON-018)"
+note = "fails (L1 NEW-4); needs the lineage/independence-class seam (CONF-04)"
+
+[[check]]
+id = "GQ-13"
+statement = "Contradiction recall: every current resolution with two or more considered values beyond the predicate's tolerance is contested or carries dissent"
+population = "current resolutions with two or more distinct considered values"
+placement = ["M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 19121
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.27"]
+from = "C5"
+note = "L2 M14: 0 of 19,121 contested"
+
+[[check]]
+id = "GQ-14"
+statement = "No map, network or search node is labelled by its UUID when a label exists; unlabeled sites are at most 5 % or carry a derived label"
+population = "published map/network/search nodes and site rows"
+placement = ["R"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.29", "P35.30"]
+from = "INV-11"
+note = "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled — two populations, baseline pending"
+
+[[check]]
+id = "GQ-15"
+statement = "Every published edge has observed or valid time (or an explicit 'undated'), currency and source; 0 edges starting 1970-01-01; 0 live duplicate edges per (from, to, kind); freshness says 'not evaluable', not 'ok'"
+population = "published and live edges"
+placement = ["I", "M", "R"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.26", "P35.30", "P35.20a", "P35.20b"]
+from = "INV-12, C9, DR-C3-07"
+note = "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' — baseline pending"
+
+[[check]]
+id = "GQ-16"
+statement = "One resolved: the coverage numerator is a subset of the denominator by join; dossier, map and coverage agree"
+population = "published coverage metrics"
+placement = ["R"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.20a", "P35.20b"]
+from = "INV-13, DR-C3-04"
+note = "fails (C3 NEW-5); the R placement consumes V6"
+
+[[check]]
+id = "GQ-17"
+statement = "Each exported row's attribution equals its registry source's; 0 empty where required; 0 upstream rows credited to SIG"
+population = "exported rows"
+placement = ["R", "S"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = 66768
+unit = "count"
+basis_class = "B1"
+fixing = ["P34.21a", "P34.21b"]
+from = "INV-14, C10, DR-C3-09"
+note = "L2 M35: 66,138 empty + 630 SIG-credited (summed for the placeholder baseline); R consumes V8; S runs the same mechanical scan on the served release"
+
+[[check]]
+id = "GQ-18"
+statement = "Share of current claims bound to a byte-bearing capture with a locator, per source — non-decreasing, and 100 % for every source re-run after activation"
+population = "current claims per source"
+placement = ["M", "R"]
+mode = "ratchet"
+direction = "higher_is_better"
+threshold = ">= 1.0"
+baseline = 0.0
+unit = "share"
+basis_class = "B1"
+fixing = ["P35.61"]
+from = "INV-16, C8"
+note = "L2 M33: 0 of 2,782,187 bound; flips to the full requirement at the G2 activation (also J3 TX-08)"
+
+[[check]]
+id = "GQ-19"
+statement = "Upstream count reconciliation per target per run: SIG subjects against the upstream's own count taken at fetch"
+population = "target runs"
+placement = ["I"]
+mode = "report"
+direction = "lower_is_better"
+threshold = "<= 0.01"
+unit = "share"
+basis_class = "B1"
+fixing = ["P35.32", "P35.34"]
+from = "C11 (SIG-CONF-009)"
+note = "Surrey -13 %, ACT -4.2 % (L2 M40); not_evaluable until PKG-12/J3 TX-04 run telemetry lands — never a pass"
+
+[[check]]
+id = "GQ-20"
+statement = "Release diff: id retention at least 99.9 %; every per-dossier delta beyond 5 % is explained; the top-N changes are listed; per-check deltas carried"
+population = "candidate vs previous release"
+placement = ["R"]
+mode = "enforce"
+direction = "higher_is_better"
+threshold = ">= 0.999"
+unit = "share"
+basis_class = "B1"
+fixing = []
+from = "C12"
+note = "seeded enforce (L2 M11: retention 1.000); the R placement consumes V14 — nothing to fix"
+
+[[check]]
+id = "GQ-21"
+statement = "Accountability join rate: deployments with an operator entity; operators that are also procurement buyers"
+population = "deployment entities / operator entities"
+placement = ["M"]
+mode = "report"
+direction = "higher_is_better"
+threshold = "none"
+unit = "share"
+basis_class = "B1"
+fixing = []
+from = "INV-17"
+note = "about 0 (L1 NEW-12); report-only — no floor yet"
+
+[[check]]
+id = "GQ-22"
+statement = "Topical relevance precision of procurement, agenda and grant records that reach graph views"
+population = "the weekly rotating sample of procurement/agenda/grant records"
+placement = ["S"]
+mode = "report"
+direction = "higher_is_better"
+threshold = ">= 0.9"
+unit = "share"
+basis_class = "B3"
+fixing = []
+from = "C13"
+note = "B3 (agent-labelled) evidence NEVER gates — report forever (SIG-CONF-003); warn band only; 0 of 9 (L2 M44)"
+
+[[check]]
+id = "GQ-23"
+statement = "Derivation census: 100 % of C1 collapses carry the same id in the declared namespace, unique in both captures, with coordinates within the measured copy tolerance; 100 % of C2 collapses are bijective within a documented lineage whose measured overlap is at least 0.9"
+population = "collapse decisions (C1/C2)"
+placement = ["M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.46"]
+from = "new (replaces INV-15 for copy tiers)"
+note = "n/a — collapse tiers do not exist yet; any failure demotes that lineage's collapse tier on the next run and alerts; flips to enforce in CONF-07a (P35.46)"
+
+[[check]]
+id = "GQ-24"
+statement = "Inferential auto-write lock: 0 auto-written same-device decisions in any identity-inference tier (3g across independent lineages, 1g without a namespace, 4g, 5g) while no B5 evaluation certifies that tier; the rules digest is checked"
+population = "auto-write match decisions"
+placement = ["M", "R"]
+mode = "enforce"
+direction = "lower_is_better"
+threshold = "<= 0"
+unit = "count"
+basis_class = "B1"
+fixing = ["P34.45"]
+from = "new (INV-15 successor)"
+note = "L2 M04/NEW-15: 11,106 auto-write pairs incl. 4,693 at tier 3 — expected to fail until CONF-02 (P34.45)"
+
+[[check]]
+id = "GQ-25"
+statement = "Origin distinctness: no collapse or cluster contains two records that one origin publisher lists as distinct (distinct pinned, unique ids in one namespace)"
+population = "collapses and clusters"
+placement = ["M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.46"]
+from = "new"
+note = "unmeasured; flips to enforce in CONF-07a (P35.46)"
+
+[[check]]
+id = "GQ-26"
+statement = "Metamorphic ER invariants: input order and page size do not change clusters; removing a declared mirror does not change the distinct-record count; a re-run adds +0"
+population = "ER re-runs over the corpus"
+placement = ["P", "M"]
+mode = "ratchet"
+direction = "lower_is_better"
+threshold = "<= 0"
+baseline = "pending"
+unit = "count"
+basis_class = "B1"
+fixing = ["P35.23"]
+from = "new"
+note = "unmeasured; P placement rides the real-data regression corpus (CONF-08/P35.23); flips to enforce there"
+
+[[check]]
+id = "GQ-27"
+statement = "Every published quality or evaluation figure names its basis class, n, population, source-mix digest, ruleset and window; 'human-verified', 'independently reviewed' or 'certified' appears only with a B5 completion marker"
+population = "published quality/evaluation figures"
+placement = ["R", "P"]
+mode = "enforce"
+direction = "lower_is_better"
+threshold = "<= 0"
+unit = "count"
+basis_class = "B1"
+fixing = ["P34.17", "P34.45"]
+from = "DR-C3-03; B4 G10 claim markers; SIG-EVAL-006"
+note = "fails (F-06, F-108); the R placement consumes V13 and the P placement scans build output; flips coordinated with H-4 (P34.17)/CONF-02 (P34.45)"

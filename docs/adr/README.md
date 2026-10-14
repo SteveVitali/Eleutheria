@@ -201,6 +201,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-201](ADR-201-ingest-capture-rewrite-condition.md) | The ingest identity's prefix-scoped capture-rewrite grant (P34.42b) | P34.42b (Round 11 / P34, row 252 — G1-01 / F-272, SIG-SEC-007; the | accepted |
 | [ADR-202](ADR-202-execution-host-and-db-login-credentials.md) | The execution host pattern and DB-login credentials (P34.43) | P34.43 (Round 11 / P34, row 253 — SIG-SEC-007's last leg, | accepted |
 | [ADR-203](ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md) | Protective seal: the two-carrier deny set and the counts-only at-rest audit (P34.49) | P34.49 (Round 11 / P34, row 254 — TS-07's at-rest half: F-406, the | accepted |
+| [ADR-204](ADR-204-quality-registry-schema-outcome-vocabulary-and-the-ruleset-diff.md) | The quality-check registry schema, the outcome vocabulary, and the ruleset diff (P34.44a) | P34.44a (Round 11 / P34, row 255 — ADR-154 decision 1's registry + | accepted |
 
 ## Notes
 

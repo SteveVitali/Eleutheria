@@ -1,0 +1,2 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01): per-entry clause text through P34.43 is archived byte-for-byte (`docs/build/reports/memory-repair/LEDGER_head_state_pre-P34.49.txt`); the PHASE LOG ends with P34.43's entry (PR #255 — exec host + DB logins; legs queued) and P34.49's (PR #256 — Part VIII screen + seal; legs queued); next → P34.44a (row 255).
+

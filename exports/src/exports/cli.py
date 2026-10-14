@@ -389,6 +389,35 @@ def build_parser() -> argparse.ArgumentParser:
     )
     dossier.add_argument("--out", required=True, help="Output directory.")
 
+    quality = subparsers.add_parser(
+        "quality",
+        help="P34.44a (SIG-CONF-006/007, ADR-154): the versioned quality-check "
+        "registry — validate it, and diff a change under the ratchet rules.",
+    )
+    qsub = quality.add_subparsers(dest="quality_command", required=True)
+    qval = qsub.add_parser(
+        "validate",
+        help="Validate quality_checks.toml (SIG-CONF-006); --manifest checks "
+        "that every fixing row resolves to a manifest ticket.",
+    )
+    qval.add_argument("--registry", default=None, help="registry path (default: bundled)")
+    qval.add_argument("--manifest", default=None, help="00_MANIFEST.md path")
+    qdiff = qsub.add_parser(
+        "diff",
+        help="The ratchet's ruleset diff (SIG-CONF-007): baselines move only "
+        "toward thresholds; loosenings need --adr; a ratchet→enforce flip is "
+        "legal only when --ticket is the check's fixing row.",
+    )
+    qdiff.add_argument("--old", required=True, help="registry TOML before the change")
+    qdiff.add_argument("--new", required=True, help="registry TOML after the change")
+    qdiff.add_argument("--ticket", required=True, help="the manifest row landing the change")
+    qdiff.add_argument(
+        "--adr",
+        action="append",
+        default=[],
+        help="a new-ADR id the change cites (repeatable) — required for loosenings",
+    )
+
     return parser
 
 
@@ -1187,6 +1216,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_push(args.in_dir, args.store, args.endpoint_url, args.provider)
     if args.command == "release":
         return _run_release(args)
+    if args.command == "quality":
+        return _run_quality(args)
     parser.print_help()
     return 0
 
@@ -1303,4 +1334,63 @@ def _run_release(args: argparse.Namespace) -> int:
         out_path.write_bytes(_cj(registry.catalog()) + b"\n")
         print(f"wrote {out_path}")
         return 0
+    return 2
+
+
+def _manifest_rows(path: str | None) -> set[str]:
+    """The ticket ids declared by the manifest (``NNN_Px.y__name.md`` rows)."""
+    import re
+
+    manifest = Path(path) if path else _repo_root() / "docs/tickets/00_MANIFEST.md"
+    return set(re.findall(r"\d+_(P\d+\.\d+[a-z]?)__", manifest.read_text(encoding="utf-8")))
+
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[3]
+
+
+def _run_quality(args: argparse.Namespace) -> int:
+    """The P34.44a registry verbs — validate / diff (offline, read-only)."""
+    import dataclasses
+
+    from . import quality as q
+
+    if args.quality_command == "validate":
+        try:
+            registry = q.load_registry(args.registry, known_rows=_manifest_rows(args.manifest))
+        except (q.RegistryError, FileNotFoundError) as e:
+            print(f"sig-exports quality validate: {e}")
+            return 4
+        print(
+            json.dumps(
+                {
+                    "schema": q.SCHEMA,
+                    "version": registry.version,
+                    "checks": len(registry.checks),
+                    "digest": registry.digest,
+                },
+                indent=2,
+            )
+        )
+        return 0
+    if args.quality_command == "diff":
+        try:
+            known = _manifest_rows(None)
+            old = q.load_registry(args.old, known)
+            new = q.load_registry(args.new, known)
+        except (q.RegistryError, FileNotFoundError) as e:
+            print(f"sig-exports quality diff: {e}")
+            return 4
+        violations = q.diff_registry(old, new, ticket=args.ticket, adr_ids=tuple(args.adr))
+        print(
+            json.dumps(
+                {
+                    "version": "sig.quality-diff/1",
+                    "ticket": args.ticket,
+                    "violations": [dataclasses.asdict(v) for v in violations],
+                },
+                indent=2,
+            )
+        )
+        return 4 if violations else 0
     return 2
