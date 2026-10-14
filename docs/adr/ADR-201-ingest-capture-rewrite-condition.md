@@ -107,3 +107,17 @@ delete).
 - A second workload class needs a conditioned storage grant — the
   `CONDITIONABLE_ROLES` allow-list is deliberately a set of one; widening it
   is a reviewable declaration change, not a silent edit.
+
+### Trigger evaluation — P34.43 (2026-10-08): FIRED (trigger 3) — answered
+
+P34.43's execution host is the second workload class: its
+`sig-quality-probe-rt` `exec` leg needs `objectViewer` on
+`objects/evidence/captures/` and `objectCreator` on `objects/ops/probes/`,
+both prefix-conditioned on the restricted bucket, so `CONDITIONABLE_ROLES`
+widens from a set of one to the three managed roles the conditioned-grant
+shape needs. The widening is the reviewable declaration change the trigger
+names — made deliberately in `ops/src/ops/iam_identities.py` with the
+same validate-then-render path — and the recorded answer is ADR-202: the
+roles chosen for the new bindings carry **no** object-delete or replace
+permission, so the blast-radius posture this ADR established is preserved.
+The decision stands; the set-of-one was scaffolding, not the invariant.

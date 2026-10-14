@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed one-off execution-host declaration for hosted return passes and
+# quality probes (P34.43; G2 ACT-13, L3 CP-0, SIG-CONF-013). This file is DATA,
+# not code — `sig-ops exec-host` renders it; ops/gcp/exec-host.sh owns the
+# (windowed, pre-authorised S5-3/OM-20) mutations.
+#
+# The host is EPHEMERAL by construction: each run creates a Cloud Run job named
+# `sig-exec-<purpose>-<UTCstamp>` on the least-privilege runtime identity,
+# executes it once, then deletes exactly the job it created (the name-checked
+# cleanup). A `sig-exec-*` job present in `run jobs list` at rest is a leaked
+# cleanup — `sig-ops iam diff --leg exec` flags it. The exec host never joins
+# the 88-job cadence map and never carries a scheduler trigger.
+schema = "sig.exec-host/1"
+
+# The job-name prefix every one-off execution shares. Per-run job names are
+# `<prefix>-<purpose>-<yyyymmddT hhmmssZ>`; the cleanup only ever deletes the
+# exact name the run created.
+job_prefix = "sig-exec"
+
+# The runtime identity — P34.42b's reserved `sig-quality-probe-rt`, attached
+# here (its `sig_audit` credential accessor is this row's grant, per the
+# iam_identities.toml reservation comment). Least privilege: Cloud SQL client,
+# conditioned read on the restricted bucket's captures prefix (the read-only
+# mount), a PREFIX-SCOPED objectCreator on ops/probes/ only (probe-run records
+# — never on evidence/captures/), and the DB-login secrets it consumes.
+service_account = "sig-quality-probe-rt"
+
+# The workload image: the sig-api repository — the shared workspace image the
+# ops verbs already run on (materialize.sh precedent). A tag is resolved to its
+# digest at apply time (ADR-111); an unpinned or `:latest` image is refused.
+image_repo = "sig-api"
+
+# Container shape: one task, no retries (a failed one-off run is recorded and
+# re-run deliberately, never retried silently), a bounded task timeout. The
+# declared container `command` is the shell the image carries (the shared
+# ops/api image has no ENTRYPOINT — CMD is the serve default): `--command`
+# selects it at create and `--args` per execution carries `-c,<the run's
+# command>` — the materialize/export jobs' same pattern.
+command = "sh"
+tasks = 1
+max_retries = 0
+task_timeout = "3600s"
+cpu = "1"
+memory = "2Gi"
+
+# The Cloud SQL connector: the hosted spine socket the DB logins reach.
+cloudsql_instance = "sig-pg"         # ${SIG_SQL_INSTANCE}
+
+# Where the per-use `sig.probe-run/1` record lands (SIG-CONF-013, SIG-OPS-011):
+# a fresh timestamped object under the restricted bucket's ops/probes/ prefix —
+# the conditioned objectCreator below is scoped exactly there.
+# The bucket-relative prefix the probe-run record lands under — the IAM
+# `objectCreator` condition on this identity is `ops/probes/` exactly
+# (ops/iam_identities.toml), and the record path is
+# `<probe_prefix>/exec-host/<date>/<stamp>.json`.
+probe_prefix = "ops/probes/"
+
+# The read-only capture-store mount (SIG-STORE-048, SIG-CONF-013): gcsfuse
+# mounts the restricted bucket READ-ONLY at mount.path (readonly on the
+# volume — the CSI driver field); the workload's captures root is mount.prefix
+# under it. Cloud Run GCS volumes mount at bucket granularity — the read-only
+# guarantee is (a) the volume's readonly flag and (b) IAM: the SA holds
+# objectViewer conditioned to evidence/captures/ and no create/delete anywhere
+# on the bucket (the conditioned objectCreator exists ONLY for ops/probes/ —
+# asserted by the read-only IAM analysis).
+[mount]
+bucket = "sig-restricted"            # gs://${SIG_GCP_PROJECT}-sig-restricted
+path = "/mnt/captures"
+readonly = true
+prefix = "evidence/captures/"        # the workload's root inside the mount
+
+# Every secret env binding a run may request; a run names a SUBSET — never all
+# by default. Values live in Secret Manager only (HG-09); the env var carries
+# the value inside the container, never a file, never a command-line arg.
+[[secret_env]]
+env = "SIG_AUDIT_PASSWORD"
+secret = "sig-audit-password"        # the sig_audit login credential (L1)
+
+[[secret_env]]
+env = "SIG_RECOVERY_PASSWORD"
+secret = "sig-recovery-password"     # the sig_recovery_login credential (L2)

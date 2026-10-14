@@ -105,18 +105,23 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
         "sig-scheduler",
     ]
     assert [sa.id for sa in decl.service_accounts if sa.reserved] == [
-        "sig-quality-probe-rt",
         "sig-release-rt",
         "sig-status-rt",
         "sig-scheduler",
     ]
-    # The services-leg project/bucket grants are exactly the P34.42a set.
+    # P34.43: sig-quality-probe-rt is no longer reserved — the [[oneoff]]
+    # exec family binds it (its grants were always declared as P34.43's;
+    # the P34.44b scheduled probe may still land on the same identity).
+    assert [o.service_account for o in decl.oneoffs] == ["sig-quality-probe-rt"]
+    # The project grants are the P34.42a services set plus the exec leg's
+    # Cloud SQL client binding on sig-quality-probe-rt (P34.43).
     assert [(r.service_account, r.role) for r in decl.project_roles] == [
         ("sig-api-rt", "roles/cloudsql.client"),
         ("sig-ingest-rt", "roles/cloudsql.client"),
         ("sig-probe-rt", "roles/cloudsql.client"),
         ("sig-export-rt", "roles/cloudsql.client"),
         ("sig-materialize-rt", "roles/cloudsql.client"),
+        ("sig-quality-probe-rt", "roles/cloudsql.client"),
     ]
     assert ("sig-web-rt", "sig-web", "roles/storage.objectViewer") in [
         (r.service_account, r.bucket, r.role) for r in decl.bucket_roles
@@ -138,11 +143,12 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     assert jobs_rule is not None
     assert jobs_rule.grant == ("sig-probe-rt",)
     assert jobs_rule.revoke == ("allUsers", "default-compute")
-    # The 11-secret consumer matrix is complete; the services-leg accessor
-    # grant set is unchanged (sig-api-rt on sig-pg-password), the jobs-leg
-    # grants are the job-class consumers, and the five job-only secrets carry
-    # a jobs_revoke on default-compute.
-    assert len(decl.secrets) == 11
+    # The 13-secret consumer matrix is complete (P34.43 adds the two DB-login
+    # credentials consumed by the exec identity alone); the services-leg
+    # accessor grant set is unchanged (sig-api-rt on sig-pg-password), the
+    # jobs-leg grants are the job-class consumers, and the five job-only
+    # secrets carry a jobs_revoke on default-compute.
+    assert len(decl.secrets) == 13
     api_env = next(s for s in decl.secrets if s.name == "sig-api-env")
     assert api_env.consumers == ()  # recorded, 0 versions, never deleted
     revoked = {s.name for s in decl.secrets if "default-compute" in s.jobs_revoke}

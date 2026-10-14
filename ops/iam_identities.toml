@@ -70,15 +70,15 @@ purpose = "sig-materialize — Cloud SQL client + read on the restricted bucket 
 
 # --- reserved identities: created by the jobs leg with NO grants, so the ------
 # declaration never claims a grant that is not in force. Their owning rows
-# attach workloads + grants: sig-quality-probe-rt → P34.44b (its sig_audit
-# secret accessor is granted by P34.43), sig-release-rt → P35.53,
-# sig-status-rt → P36.43. `sig-scheduler` is the Cloud Scheduler invoker
-# identity — never a workload runtime SA (P25.7; it already exists live).
+# attach workloads + grants: sig-quality-probe-rt → P34.43 the exec host
+# (P34.44b may still bind its scheduled probe to the same identity),
+# sig-release-rt → P35.53, sig-status-rt → P36.43. `sig-scheduler` is the
+# Cloud Scheduler invoker identity — never a workload runtime SA (P25.7; it
+# already exists live).
 [[service_account]]
 id = "sig-quality-probe-rt"
-display_name = "sig quality probe runtime (reserved)"
-purpose = "reserved for P34.44b — created with no grants until that row lands"
-reserved = true
+display_name = "sig quality probe runtime"
+purpose = "sig-exec-* one-off execution host + P34.44b's scheduled probe — Cloud SQL client, conditioned read on evidence/captures/, conditioned create on ops/probes/, the two DB-login secrets; nothing else"
 
 [[service_account]]
 id = "sig-release-rt"
@@ -119,6 +119,12 @@ role = "roles/cloudsql.client"
 service_account = "sig-materialize-rt"
 role = "roles/cloudsql.client"
 
+# Exec host (P34.43): the Cloud SQL connector client — the sig_audit and
+# sig_recovery_login sessions ride the Cloud SQL Auth socket.
+[[project_role]]
+service_account = "sig-quality-probe-rt"
+role = "roles/cloudsql.client"
+
 # --- bucket-level bindings (bucket names are the -suffixed derived names) -----
 [[bucket_role]]
 service_account = "sig-web-rt"
@@ -148,6 +154,7 @@ bucket = "sig-restricted"
 role = "roles/storage.objectUser"
 condition_title = "p34-42b-capture-rewrite"
 condition_prefix = "evidence/captures/"   # → resource.name.startsWith('projects/_/buckets/<project>-sig-restricted/objects/evidence/captures/')
+condition_description = "P34.42b/ADR-201: OCFL inventory-head rewrite under evidence/captures/ only (SIG-STORE-048)"
 
 # Probe: append-only sweep rows under ops/probes/ + read-back for history
 # folding (no delete anywhere — every object name is timestamped).
@@ -172,6 +179,30 @@ role = "roles/storage.objectCreator"
 service_account = "sig-materialize-rt"
 bucket = "sig-restricted"
 role = "roles/storage.objectViewer"
+
+# Exec host (P34.43, SIG-CONF-013): the capture store mounts read-only —
+# objectViewer conditioned to evidence/captures/ only (the mount is ALSO
+# readOnly at the Cloud Run volumeMount — belt and braces; the IAM side is
+# what the "read-only mount" audit reads back). NO unconditioned storage role:
+# the exec host can never create/delete a capture.
+[[bucket_role]]
+service_account = "sig-quality-probe-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectViewer"
+condition_title = "p34-43-captures-readonly"
+condition_prefix = "evidence/captures/"
+condition_description = "P34.43/SIG-CONF-013: the exec host reads the capture store under evidence/captures/ only — read-only by mount flag and by IAM"
+
+# The probe-run record: create under ops/probes/ ONLY — never a capture path,
+# never a delete (objectCreator carries no delete and no read of other objects;
+# the timestamped name keeps each use a fresh object — WORM-shaped).
+[[bucket_role]]
+service_account = "sig-quality-probe-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectCreator"
+condition_title = "p34-43-probe-records"
+condition_prefix = "ops/probes/"
+condition_description = "P34.43/SIG-CONF-013: every exec-host use writes one sig.probe-run/1 object under ops/probes/ — create there only"
 
 # --- the service → identity map (one same-image revision each, AR-8) -----------
 [[service]]
@@ -247,6 +278,18 @@ leg = "jobs"
 grant = ["sig-probe-rt"]
 revoke = ["allUsers", "default-compute"]
 
+# --- the one-off execution host (P34.43; SIG-CONF-013, ADR-202) ---------------
+# `sig-exec` is an EPHEMERAL job family, not a cadence class: every run
+# creates `sig-exec-<purpose>-<stamp>` on this identity, executes once, and
+# the name-checked cleanup deletes exactly that job — a `sig-exec-*` row in
+# `run jobs list` at rest is a leaked cleanup (the `exec` leg's diff flags
+# it). `sig-ops iam plan --leg exec` renders identity + this SA's bindings
+# only; the windowed leg is ops/gcp/exec-host.sh.
+[[oneoff]]
+name = "sig-exec"
+service_account = "sig-quality-probe-rt"
+job_prefix = "sig-exec"
+
 # --- project-role removal (P34.42b, LAST mutation) ------------------------------
 # Only after a read shows no workload still runs as the default compute SA:
 # it loses roles/editor (G1-01) and keeps no basic role.
@@ -310,3 +353,16 @@ consumers = ["operator"]
 [[secret]]
 name = "sig-zenodo-sandbox-token"
 consumers = ["operator"]
+
+# The P34.43 DB-login credentials (HG-09; ADR-202): Secret Manager-held
+# passwords whose ONLY accessor is the exec host's runtime identity. The
+# sig_audit login's password is mounted as SIG_AUDIT_PASSWORD on the one-off
+# job that requested it; sig-recovery-password is L2's (live:P34.46) —
+# declared together so the consumer matrix stays single-sourced.
+[[secret]]
+name = "sig-audit-password"
+consumers = ["sig-quality-probe-rt"]
+
+[[secret]]
+name = "sig-recovery-password"
+consumers = ["sig-quality-probe-rt"]

@@ -43,6 +43,8 @@ SHELL_SCRIPTS = [
     "public-gate.sh",
     "iam-service-accounts.sh",
     "iam-job-identities.sh",
+    "exec-host.sh",
+    "db-logins.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",

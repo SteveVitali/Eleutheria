@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ffb8dfc54c4592e205f3753f1d1a438615691b1c",
-  "manifest_inputs": 989,
+  "input_commit": "398d903561d640162a7c46fee7c9dfccc43e33f5",
+  "manifest_inputs": 991,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.43",
-    "lastCompleted": "P34.42b",
+    "nextTicket": "P34.49",
+    "lastCompleted": "P34.43",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.42b-least-privilege-job-identities-remove-editor",
+    "chainTip": "r11/P34.43-execution-host-and-least-privilege-db-logins-v2",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-08T12:43Z"
+    "updatedAt": "2026-10-08T16:28Z"
   },
   "counts": {
-    "obligations": 157,
-    "owed": 88,
-    "open": 85,
+    "obligations": 158,
+    "owed": 89,
+    "open": 86,
     "partial": 3,
     "terminal": 69,
-    "events": 641,
+    "events": 642,
     "transitions": 30,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 25,
+    "return_pass_rows": 26,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -7894,6 +7894,56 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.43-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.43-1:e0",
+      "kind": "P",
+      "owner": "P37.3 (the SIG-STORE-048 disposition row, alongside D-P34.42b-1)",
+      "landing": "GCS IAM gains per-object or content-type scoping, or the exec host gains a dedicated bucket for probe records — then the grants are re-scoped tighter",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "Standing review of the execution host's TWO conditioned IAM grants (ADR-202): `sig-quality-probe-rt` holds `roles/storage.objectViewer` scoped to `objects/evidence/captures/` and `roles/storage.objectCreator` scoped to `objects/ops/probes/` on the restricted bucket — read inside the captures prefix, create inside the probe-record prefix, delete nowhere",
+      "unblocked_by": "owner: P37.3 (the SIG-STORE-048 disposition row, alongside D-P34.42b-1) · trigger: GCS IAM gains per-object or content-type scoping, or the exec host gains a dedicated bucket for probe records — then the grants are re-scoped tighter",
+      "verify": "the two bindings are gone (or re-scoped) in `ops/iam_identities.toml` AND `gcloud storage buckets get-iam-policy gs://<project>-sig-restricted` shows no `p34-43-captures-readonly`/`p34-43-probe-records` binding; until then a periodic re-check confirms the expressions are still prefix-scoped",
+      "proxy": "the bindings are declared, conditioned and diffed byte-for-byte (`sig-ops iam diff` asserts the expressions; the loader refuses a condition outside `CONDITIONABLE_ROLES`); the exec leg's `analysis` action proves `storage.objects.create` under `evidence/captures/` and `storage.objects.delete` anywhere on the bucket are NOT_GRANTED via the read-only troubleshooter",
+      "line": 1227,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.43-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.43-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.43",
+          "owner": "P37.3 (the SIG-STORE-048 disposition row, alongside D-P34.42b-1)",
+          "landing": "GCS IAM gains per-object or content-type scoping, or the exec host gains a dedicated bucket for probe records — then the grants are re-scoped tighter",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md",
+            "docs/adr/ADR-202-execution-host-and-db-login-credentials.md",
+            "ops/iam_identities.toml",
+            "ops/gcp/exec-host.sh",
+            "tests/ops/test_iam_exec_leg.py"
+          ],
+          "observed_at": "2026-10-08",
+          "source_commit": "902a01e5e3847b1520b21776b15c01416a2e0dc8",
+          "reason": "migration anchor appended by P34.43 (row 253) for the deferral row it added — standing review of the execution host's two conditioned IAM grants (sig-quality-probe-rt holds roles/storage.objectViewer on the restricted bucket scoped to objects/evidence/captures/ and roles/storage.objectCreator scoped to objects/ops/probes/; ADR-202); appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1227,
+            "row_sha256": "546f4e60c1b8a5d8852d9f5ccdf01102f90b3e91be92f5f6807c649184a12729",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-08"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -8141,6 +8191,14 @@
         "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42 until then; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)",
         "operator_cell": "nothing until the window opens and ADC is armed — dry-run default, window/execution-gated; rollback replays the recorded prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed as row 252 (PR #253 — the leg queued exit 42)",
+        "obligations": []
+      },
+      {
+        "key": "P34.43",
+        "obligations_cell": "the queued L1 exec-host + `sig_audit` legs and the queued L2 `sig_recovery` login leg (SIG-CONF-013); the engineered halves landed — declaration, engine, IAM exec leg, both scripts, the `audit_login` sqitch change; the conditioned-grant standing review (→ P37.3) keeps its own DEFERRALS home",
+        "gates_cell": "hosted, window-bound (AR-3 + AR-2): L1 earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily — apply exits 42 until then; OM-20 pre-authorised — L1 by S5-3 (OM-20 11A list; expires GATE-G4), L2 by S5-3 (OM-20 11A list; expires GATE-G4 — L2 after GATE-G4 needs the 11B list or an in-ticket go) and additionally waits on `live:P34.46` (`db-logins.sh --role sig_recovery` exits 42 while `pg_roles` lacks the group); voided-by a red probe, a failed restore point or a contradicting read; AR-2 = `prestate` + the on-demand `sig-pg` backup verified SUCCESSFUL before role statements; a `/health` failure stops before mutation",
+        "operator_cell": "nothing until each window or gate holds and ADC is armed — dry-run default, window/ADC-gated; the hosted `audit_login` deploy is P34.46's; rollback drops only prestate-proven leg-created resources",
+        "rerun_cell": "`implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` (scope: one leg per run — exec host, then `sig_audit`, then L2 after `live:P34.46`) · landed as row 253 (PR #255; engineered + fixture-verified — all legs queued exit 42)",
         "obligations": []
       }
     ]
@@ -18141,10 +18199,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a38bdf67b316af422bbb4453735955b39b885a454580c2056e61899de7ca537e",
+  "manifest_sha256": "c8547ee3af89eef20aca82d4aa8014b4713c53630c84df24afe027aec0555013",
   "current_md": {
     "lines": 63,
-    "bytes": 15453,
+    "bytes": 15454,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

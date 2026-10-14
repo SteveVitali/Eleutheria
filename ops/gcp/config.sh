@@ -178,6 +178,29 @@ export SIG_SA_SCHEDULER="sig-scheduler"             # invoker only, never a runt
 export SIG_IAM_JOBS_EARLIEST="${SIG_IAM_EARLIEST}"
 export SIG_IAM_JOBS_STATE_DIR="${SIG_IAM_JOBS_STATE_DIR:-${TMPDIR:-/tmp}/p34.42b-iam}"
 
+# --- execution host + least-privilege DB logins (P34.43 / SIG-CONF-013) ------
+# The one-off Cloud Run execution host (ops/exec_host.toml, rendered by
+# `sig-ops exec-host`; the windowed leg is ops/gcp/exec-host.sh) and the two
+# least-privilege DB logins (ops/gcp/db-logins.sh): sig_audit (L1) and
+# sig_recovery_login (L2 — gated live:P34.46, enforced by the catalog read).
+# Same contract window as the IAM legs (OM-19, row 253): applies ≥
+# SIG_EXEC_EARLIEST and never 03:00–06:30Z; SIG_EXEC_NOW /
+# SIG_DBLOGINS_NOW override the clock for the offline guard tests only.
+export SIG_EXEC_EARLIEST="2026-10-13T12:00:00Z"  # future-ok: scheduled: contract window
+export SIG_EXEC_STATE_DIR="${SIG_EXEC_STATE_DIR:-${TMPDIR:-/tmp}/p34.43-exec}"
+export SIG_DBLOGINS_STATE_DIR="${SIG_DBLOGINS_STATE_DIR:-${TMPDIR:-/tmp}/p34.43-db}"
+export SIG_EXEC_SA="${SIG_SA_QUALITY_PROBE}"    # the exec host's runtime identity
+export SIG_EXEC_PREFIX="sig-exec"               # every one-off job is <prefix>-<purpose>-<stamp>
+export SIG_EXEC_BUCKET="${SIG_BUCKET_RESTRICTED}"
+export SIG_EXEC_MOUNT="/mnt/captures"           # the read-only captures mount
+export SIG_EXEC_CAPTURE_PREFIX="evidence/captures/"
+export SIG_EXEC_PROBE_PREFIX="ops/probes"       # one sig.probe-run/1 per use
+export SIG_SECRET_AUDIT_PASSWORD="sig-audit-password"
+export SIG_SECRET_RECOVERY_PASSWORD="sig-recovery-password"
+export SIG_DB_ROLE_AUDIT="sig_audit"
+export SIG_DB_ROLE_RECOVERY="sig_recovery_login"
+export SIG_DBLOGINS_EARLIEST="${SIG_EXEC_EARLIEST}"
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented
