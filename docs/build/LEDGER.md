@@ -11,11 +11,11 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B — the generated `returnPass:` id list rides the B3 V2 hard bound (fail > 512 B; it grows with the queued-leg set); no history; the PHASE LOG and git carry the history of values. -->
 ```
-projectStatus:   IN_PROGRESS                             # operator resolved D-P35.1a-1; P34.42b next
+projectStatus:   PAUSED                                 # OM-18 stop — P34.42b declared-vs-live drift
 nextTicket:      P35.66                              # row 288 (11B — residential demotion, PUB-004/005/013; depends P35.14b)
 lastCompleted:   P36.15                              # row 287 (redaction pipeline wired end to end, review-gated derivatives; no live leg)
-blockedOn:       (nothing)                          # real blocks only
-pauseRequested:  false                               # OM-18 pause cleared by the 17:09Z selections
+blockedOn:       D-P34.42b-2                         # operator reconciles 100-job declaration vs 88 live
+pauseRequested:  true                                # OM-18 — operator decision required
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
@@ -30,7 +30,7 @@ autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-14T18:28:20Z
+updatedAt:       2026-10-14T18:46:14Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -974,3 +974,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-14T17:28:31Z — P35.1a orchestrator repair — the first decision-record head `336c5282` on `r11/P35.1a-live-1` failed docs (`gate-signature-check`: the two new rows were written as unsigned `pre-authorization`/`decision` records, run `38605064279`; the projection digest also went stale after the append-only DEFERRALS repair) · per the P34.42a precedent, the poisoned tip is left historical/unincorporated and the same operator selections are re-recorded as GATE DECISIONS `confirmation` rows on `r11/P34.42b-live-1`, forked from the last green pause head `213909bd` · no production change · chainTip → `r11/P36.15-redaction-pipeline` (unchanged) · next → P34.42b live leg · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-14 — P34.42b post-closeout record — live leg 1 ran on r11/P34.42b-live-1 · PR #295 (base r11/P36.15-redaction-pipeline) · head `e5faef52` 5/5 green head-bound (`ci: pass #295@e5faef5` — python/docs/composed/security/web, run 38609315111; `logs/ci-P34.42b-live-1.json`) · the OM-19 leg ran inside its AR-3 slot (Wed reads 17:33–17:37Z): `--check all` plan → live re-count **88** → `--apply prestate` refused exit 1 on the first declared-but-absent describe — the declaration maps 100 jobs incl. the twelve post-queue `sig-ingest-r11-*`/tribal jobs the P35.1a retry was to create PAUSED first, while the recorded ordering runs this leg first → **STOPPED before any apply** — the fresh authorization's voided-by fired (production read contradicts the record) · **Deferrals:** opened `D-P34.42b-2` (operator call: reconcile the declared-vs-live count — scoped PAUSED create / declaration amendment / other ordering — and re-confirm the P35.1a-live-2 ordering against the two-way SA/job dependency); no other row touched · RETURN PASS: `P34.42b` stays queued — leg not consumed · records under `docs/build/reports/p34.42b-iam-live1/` (operator e-mail redacted; no secret material) · no production mutation; no rollback owed · chainTip → r11/P36.15-… (unchanged — a live-leg branch, not a chain row) · next → P35.66 (288) · layer: live-executed (reads ran; apply stopped OM-18) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-14 — P34.42b post-closeout record + boundary-confirm — record head `aa9c241d` 5/5 green head-bound (`ci: pass #295@aa9c241` — python/docs/composed/security/web, run 38613061860; `logs/ci-P34.42b-live-1-final2.json`) · every pushed head verbatim: `e5faef52` green (run 38609315111), `f4966f19` docs-fail (BM-ORIENT-01 — orient recipe 49,624 B > 48 KiB → `aa9c241d` RETURN PASS cell compaction 2,279→1,561 B, P35.15a/P35.1a precedent; no record dropped — DEFERRALS + the run ledger carry the full text) · stack read: #291…#263 pass · PR #295 stays open for operator integration; `D-P34.42b-2` OPEN routes the declared-vs-live reconciliation + the P35.1a-live-2 ordering re-confirm; P34.42b RETURN PASS row stays queued — leg not consumed, no production mutation ran · chainTip → r11/P36.15-… (unchanged) · next → P35.66 (288) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-14 — P34.42b pause — OM-18 stop after live-1: record head `018b45da` green (`ci: pass #295@018b45d`, run 38615462551; stack #291…#263 pass; main `c3ef6fb` descends:no; `logs/ci-P34.42b-live-1-orchestrator.json`) · production untouched — only read-only `prestate` ran; declared 100 jobs vs live 88 voided authorization · `D-P34.42b-2` OPEN routes scoped create/declaration amendment/other ordering + the P35.1a ordering re-confirm · RETURN PASS keeps P34.42b + P35.1a queued · CURRENT STATE → PAUSED / pauseRequested / blockedOn `D-P34.42b-2` · harness: devin-desktop/swe-2-high/subagent
