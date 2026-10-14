@@ -1659,6 +1659,12 @@ def build_parser() -> argparse.ArgumentParser:
         "sig_audit (L1) + sig_recovery_login (L2, gated live:P34.46) — "
         "plan|apply|verify over --dsn",
     )
+    sub.add_parser(
+        "at-rest",
+        help="P34.49 / ADR-185 (F-406): the Part VIII at-rest audit — "
+        "scan|seal-plan|seal-apply over the OCFL capture root "
+        "(ops/at_rest_audit.toml); counts only, no byte is deleted",
+    )
     return parser
 
 
@@ -3952,6 +3958,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import db_logins
 
         return db_logins.main(raw[1:])
+    if raw and raw[0] == "at-rest":
+        from . import at_rest_audit
+
+        return at_rest_audit.main(raw[1:])
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)

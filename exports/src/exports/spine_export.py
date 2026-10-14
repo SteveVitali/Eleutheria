@@ -262,6 +262,9 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # a withheld artifact loses its public bindings exactly as it loses its
     # route. Claims themselves reach this join already gated (the shaping
     # ``{PUB_CLAIM_GATE}`` selected the claim set the sites were built from).
+    # P34.49/ADR-185: a capture under a current `seal` record loses its public
+    # binding exactly as a withheld artifact does — the {CAPTURE_SEAL_GATE}
+    # twin of the deny-set consult, never a second rule.
     "evidence_bindings": (
         "claim_evidence",
         "SELECT ce.claim_id::text, ce.capture_id::text, ec.artifact_id::text, ce.role"
@@ -270,6 +273,7 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "  JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
         " WHERE ea.sensitivity_tier = 0"
         "   AND {PUB_ARTIFACT_GATE}"
+        "   AND {CAPTURE_SEAL_GATE}"
         " ORDER BY ce.claim_id, ce.capture_id",
     ),
 }
@@ -310,6 +314,14 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
     # P32.13: the artifact twin of the same rule — one selector, never a
     # second eligibility definition.
     artifact_gate = artifact_eligible_sql("ea.artifact_id") if has_registry else "true"
+    # P34.49/ADR-185: the capture-seal twin — ``capture_currently_sealed`` is
+    # the SQL helper the seal_register change installs; a pre-seal spine
+    # answers ``true`` (honest absence).
+    seal_gate = (
+        "NOT capture_currently_sealed(ce.capture_id)"
+        if _table_present(cur, "capture_seal")
+        else "true"
+    )
     raw: dict[str, Any] = {}
     for key, (guard, sql) in EXPORT_QUERIES.items():
         cur.execute("SELECT to_regclass(%s) IS NOT NULL", (guard,))
@@ -325,12 +337,48 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
                 .replace("{OLD_CLAIM_GATE}", old_claim_gate)
                 .replace("{PUB_TASK_GATE}", task_gate)
                 .replace("{PUB_ARTIFACT_GATE}", artifact_gate)
+                .replace("{CAPTURE_SEAL_GATE}", seal_gate)
                 .replace("upper_inf(c.sys_period)", belief_filter)
             )
             cur.execute(final, tuple([belief] * final.count("%s")) or None)
             raw[key] = cur.fetchall()
         except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
             raw[key] = []
+    # P34.49/ADR-185: fail-closed post-check on the emitted bindings — no
+    # binding may name a capture under a CURRENT seal (the {CAPTURE_SEAL_GATE}
+    # query fragment is the consult; this defensive filter is the assert, and
+    # the dropped count is a counts-only record, never material).
+    if _table_present(cur, "capture_seal"):
+        cur.execute(
+            "SELECT DISTINCT s.capture_id::text FROM capture_seal s"
+            "  WHERE s.action = 'seal' AND NOT EXISTS ("
+            "    SELECT 1 FROM capture_seal u"
+            "     WHERE u.capture_id = s.capture_id AND u.action = 'unseal'"
+            "       AND (u.recorded_at, u.seal_seq) > (s.recorded_at, s.seal_seq))"
+        )
+        sealed_ids = {str(r[0]) for r in cur.fetchall()}
+        bindings = raw.get("evidence_bindings") or []
+        kept = [r for r in bindings if str(r[1]) not in sealed_ids]
+        # ``dropped`` is the post-check's own catch (0 while the query gate
+        # holds — nonzero means the consult failed and the assert fired);
+        # ``suppressed`` is the counts-only record of how many claim→capture
+        # bindings the seal removes from the publishable tier. Both are
+        # row-shaped like every other ``raw`` value (single-column counts).
+        raw["sealed_bindings_dropped"] = [(len(bindings) - len(kept),)]
+        raw["evidence_bindings"] = kept
+        raw["sealed_bindings_suppressed"] = [(0,)]
+        if _table_present(cur, "claim_evidence"):
+            try:
+                cur.execute(
+                    "SELECT count(*) FROM claim_evidence WHERE capture_currently_sealed(capture_id)"
+                )
+                row = cur.fetchone()
+                raw["sealed_bindings_suppressed"] = [(int(row[0]) if row else 0,)]
+            except Exception:  # noqa: BLE001 - honest absence
+                raw["sealed_bindings_suppressed"] = [(0,)]
+    else:
+        raw["sealed_bindings_dropped"] = [(0,)]
+        raw["sealed_bindings_suppressed"] = [(0,)]
     # P34.18 / ADR-178 (S0 RI-01): the keyed-digest alias projection — every
     # retired identifier token in a supplementary row (source ids, evidence
     # titles/locators, subject refs, attribution strings) resolves or redacts

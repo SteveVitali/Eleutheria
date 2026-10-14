@@ -201,6 +201,17 @@ export SIG_DB_ROLE_AUDIT="sig_audit"
 export SIG_DB_ROLE_RECOVERY="sig_recovery_login"
 export SIG_DBLOGINS_EARLIEST="${SIG_EXEC_EARLIEST}"
 
+# P34.49 Part VIII at-rest audit (ops/gcp/at-rest-audit.sh — the L1 scan leg +
+# the L2 protective-seal leg over the exec host). The legs ride the P34.43
+# host's window: applies ≥ SIG_ATREST_EARLIEST and never 03:00–06:30Z;
+# SIG_ATREST_NOW overrides the clock for the offline guard test only.
+export SIG_ATREST_EARLIEST="${SIG_EXEC_EARLIEST}"
+export SIG_ATREST_STATE_DIR="${SIG_ATREST_STATE_DIR:-${TMPDIR:-/tmp}/p34.49-atrest}"
+export SIG_ATREST_REPORT_PREFIX="ops/probes/at-rest"   # the exec identity's only write scope
+export SIG_ATREST_DENY_OBJECT="ops/seal/deny-set.json"       # sig.seal-deny/1 — a new VERSION per update
+export SIG_ATREST_PUB002_OBJECT="ops/seal/pub002-listing.json"  # counts-only operator listing
+export SIG_ATREST_AUTHOR="${SIG_ATREST_AUTHOR:-}"            # the recorded operator id (L2)
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented

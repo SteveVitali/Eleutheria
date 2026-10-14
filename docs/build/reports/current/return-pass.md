@@ -30,5 +30,6 @@
 | P34.42a | the queued IAM leg (G1-01/F-272 services half): create `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt`, the least-privilege bindings + `sig-pg-password` access, one s… | `implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true` (scope: the IAM leg only) · landed as row 251 (PR #… |
 | P34.42b | the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; the engineered halves landed) | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed a… |
 | P34.43 | the queued L1 exec-host + `sig_audit` legs and the queued L2 `sig_recovery` login leg (SIG-CONF-013); the engineered halves landed — declaration, engine, IAM ex… | `implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` (scope: one leg per run — exec host, then … |
+| P34.49 | the queued L1 read-only scan and the queued L2 protective-seal leg (F-406, I7 S1–S9, SIG-PUB-002; ADR-203's deny set) — the engineered halves landed (screen, `s… | `implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true` (scope: one leg per run — L1 scan, then L2 seal after L1's reco… |
 
 ← back: CURRENT.md

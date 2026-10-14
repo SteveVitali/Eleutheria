@@ -63,6 +63,11 @@ class CaptureMetadata:
     #: = unknown (a meta built without the classification — treated as
     #: "not proven byte-bearing" by :func:`bytes_available`).
     capture_classification: str | None = None
+    #: P34.49 (ADR-185): the F-406/I7/PUB-002 class ids this capture is
+    #: protectively sealed under — recorded on the restricted surface so an
+    #: authorized review sees *why*; the public rep stays the four sealed
+    #: fields (SIG-EVID-010) and never carries them.
+    seal_rules: tuple[str, ...] = ()
 
 
 def bytes_available(meta: CaptureMetadata) -> bool:

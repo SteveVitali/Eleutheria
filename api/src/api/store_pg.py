@@ -836,6 +836,11 @@ class PgReadStore:
         # the capture is not found on the public surface.
         if str(row[1]) in SEED_FIXTURE_SOURCE_IDS:
             return None
+        # P34.49/ADR-185: the protective-seal consult — a capture whose latest
+        # capture_seal action is `seal` serves the sealed representation
+        # (existence + digest only, SIG-EVID-010) on every publishable path,
+        # whatever tier the row carries. Suppression, never deletion.
+        sealed, seal_rules = self._capture_seal_state(str(row[0]))
         claims_supported = tuple(
             str(c[0])
             for c in self._conn.execute(
@@ -849,10 +854,28 @@ class PgReadStore:
             retrieved_at=row[3].date().isoformat() if row[3] else "",
             content_digest=str(row[4]),
             media_type=str(row[5]),
-            tier=StorageTier(row[6]),
+            tier=StorageTier.SEALED if sealed else StorageTier(row[6]),
             claims_supported=claims_supported,
             capture_classification=None if row[7] is None else str(row[7]),
+            seal_rules=seal_rules,
         )
+
+    def _capture_seal_state(self, capture_id: str) -> tuple[bool, tuple[str, ...]]:
+        """The ``capture_seal`` consult (P34.49/ADR-185): the latest recorded
+        action wins — a capture is sealed until a superseding ``unseal`` row
+        lands. A pre-seal_register spine answers ``(False, ())`` — honest
+        absence, never an error."""
+        has = self._conn.execute("SELECT to_regclass('capture_seal') IS NOT NULL").fetchone()
+        if not (has and has[0]):
+            return False, ()
+        row = self._conn.execute(
+            "SELECT action, rules FROM capture_seal WHERE capture_id = %s"
+            " ORDER BY recorded_at DESC, seal_seq DESC LIMIT 1",
+            (capture_id,),
+        ).fetchone()
+        if row is None or str(row[0]) != "seal":
+            return False, ()
+        return True, tuple(str(r) for r in (row[1] or ()))
 
     def _capture_classification_sql(self) -> str:
         """The P32.2 byte-bearing marker as a select expression, or ``NULL``.

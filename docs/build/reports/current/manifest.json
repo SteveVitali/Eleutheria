@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "398d903561d640162a7c46fee7c9dfccc43e33f5",
+  "input_commit": "7bf00d049e997fec44821c45221b687d84aea1ce",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "09281e0c609bee70f8969e0eadabdd63f604a2fecad5cf18cb00f6051a584642"
+      "sha256": "5388d8b9164198f3233bc495131a98a7b0c9ed642ed15af473a72d03af481a1e"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -789,16 +789,20 @@
       "sha256": "f91783bc91ec5fbfcb703394ffdfb08d9ed889d761bcd07ebba980c5fecb9fae"
     },
     {
+      "path": "docs/adr/ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md",
+      "sha256": "3cd8c38e8988a5b7c4bc128e83a33546e631f71a979a362f48cf57ee56fcf9fc"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "a5faa406ce1fcb6745ece7045f673f952f17456cdfb877fda8ff0abf2477a725"
+      "sha256": "f056f08564473619d35bb909a237b1d0552931e0236e3fb949cb5093023ee07d"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "f8e3a79fa03c793cddbcadf55457ff1d22271b32468c8c5f66b6921a392e11e5"
+      "sha256": "ed7dbce239dcc90772c385bd01a100d5e1b04d36656ae0cad6d89e395e27d21e"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "29ed69df0cfd71492ef8fe3b965a5cb22b82350e0ee3353e9473f12f86d676ab"
+      "sha256": "8be21a8cc40c90d9ed50ff5980850f670d3d8c325cba24ab527d09d64221ec5b"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -806,7 +810,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "4e6bde2814bbbbb3efaf35f0d96c5204561ca74b89951f57d5da5e16611ef2b0"
+      "sha256": "c25d45dc19f62908ad035c1d0b23787e9a74793820640003b5c0c982786f096f"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -878,7 +882,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "aec0f8b6e0fed8513708beb2bd60ac33106d92be7743b8d004c7ac0e172c397e"
+      "sha256": "c1f029fb488db13ace9e15d5f025f57135f18736257735353096f4eec6956678"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1805,6 +1809,10 @@
       "sha256": "a534791cf09b129ceb2475c6670a797dcff4bca5af8daaadecd469d29e7206a3"
     },
     {
+      "path": "docs/build/runs/P34.49.md",
+      "sha256": "c93a3adda863003d183ac74fd5d2dbd02ba9f937dd7c7541869b65fea042deda"
+    },
+    {
       "path": "docs/build/runs/P34.5.md",
       "sha256": "d8efc1fbf2953124c0b7ecbf4e33457d274232f8ab13b214b417133ba4563471"
     },
@@ -1938,7 +1946,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "6e0e1c272683294740ebf26a931e4d1b8f2b54598c349f1d9a89082dad03f0ff"
+      "sha256": "aa2b12fcd7900710a25065a10ff79cf34b6dc6abe2a78ffe2b2bae3d1f6cd62d"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
@@ -3354,7 +3362,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "4395dde1d7124a92f56d542d94b365a73476f4e67b647f2bcc2b5af580d41992"
+      "sha256": "110cc58d0738d38340eb91d7ef170c097b7420cdcc378c6a6dada0dc7e9fa3eb"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

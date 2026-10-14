@@ -526,3 +526,30 @@ rerun_cell = '''`implement-spec spec=docs/tickets/253_P34.43__execution-host-and
   go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4 — L2 after GATE-G4 needs the 11B list or an in-ticket go) and additionally waits on `live:P34.46`'''
   rerun = '''implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true'''
   live_dependants = ["P35.61"]
+
+[[row]]
+key = "P34.49"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued L1 read-only scan and the queued L2 protective-seal leg (F-406, I7 S1–S9, SIG-PUB-002; ADR-203's deny set) — the engineered halves landed (screen, `sig-ops at-rest`, `seal_register`, consults, `at-rest-audit.sh`); routed rows (P37.3 sealed-copies; the OSM `user`/`uid` fix) keep their own DEFERRALS homes'''
+gates_cell = '''hosted, window-bound (AR-3 + AR-2): both legs earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z daily — apply exits 42; both pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4); voided-by a red probe, a failed restore point or a contradicting read. L1 also gated on the P34.43 exec host landed (`assert_exec_host` exits 42 while absent) + the `sig_audit` read posture. L2 also gated on L1's recorded counts, an AR-2 SUCCESSFUL backup, `SIG_ATREST_AUTHOR`, and the hosted `seal_register` deploy (absent → exit 42/fail-loud; P34.46's plan advance)'''
+operator_cell = '''nothing until each window and gate holds and ADC is armed — dry-run default; sealing is suppression only: append-only `capture_seal` rows + `withhold` dispositions + a new deny-set version, never a deleted/overwritten byte; rollback = a superseding `unseal` row + the prior deny-set version; true purge stays the operator's WV-11 action (ADR-181/189)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true` (scope: one leg per run — L1 scan, then L2 seal after L1's recorded counts) · landed as row 254 (engineered + fixture-verified — both legs queued exit 42)'''
+
+  [[row.legs]]
+  id = "P34.49-scan"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-06:30Z daily"]
+  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
+  rerun = '''implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true'''
+  live_dependants = []
+
+  [[row.legs]]
+  id = "P34.49-seal"
+  obligations = []
+  earliest = '''2026-10-13T12:00Z'''
+  excluded = ["03:00-06:30Z daily"]
+  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
+  rerun = '''implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true'''
+  live_dependants = []
