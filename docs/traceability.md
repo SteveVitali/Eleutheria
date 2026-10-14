@@ -2321,3 +2321,11 @@ present) and DOCKER-DOWN (full DB + composed suite re-run green with
 | GL-CI-01 — `make docs-check` + `check-build-memory.sh` enforced on PRs | `ci.yml` `docs` job (`if: pull_request`): `make docs-check` step + explicit `bash scripts/docs/check-build-memory.sh .` step | `test_ci_docs_job_*`; local: `make docs-check` exit 0, `check-build-memory.sh .` exit 0 |
 | Universal phase-gate (every new behaviour has a test that fails if removed) | the two new test files pin every job/step/scanner behaviour | 24 new tests; `SIG_REQUIRE_DB_TESTS=1 make check` 2876 passed / 2 skipped / 0 failed |
 | RISK-P24-03 — a scanning gate silently no-oping / green-looking non-run | `docs/risk_register.md` Phase 24 row; workflow-shape tests fail if a step is removed; report step is the nightly gate | `test_ci_workflows.py` + `test_security_scanners.py` suite |
+
+---
+
+**Frozen historical view** (appended by P34.33 — the B4 G9 amendment to SIG-ENG-031; ADR-199):
+this file is the frozen Phase-0…P18 traceability view and is kept for history. The live
+traceability authority is `docs/build/COVERAGE_MATRIX.csv` — the coverage matrix is the
+traceability matrix, re-verdicted per Round-11 row (B4 §G9; `docs/build/TICKET_VS_SPEC.md`
+is the matching frozen ticket-vs-spec view).

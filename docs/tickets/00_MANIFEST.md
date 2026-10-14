@@ -432,7 +432,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 
 <!-- six-stream-round10:end -->
 
-### Round 11 — P34 11A "Safe, honest, truthful" · rows 201–260, to GATE-G4
+### Round 11 — P34 11A "Safe, honest, truthful" · rows 201–260, to GATE-G4 · spec: Part XII (§56)
 
 > **Round 11 — seeded 2026-10-01T14:07:00Z by Stage-B unit SEED-13a (plan Appendix A T3)** from `docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv` as it stands: 310 chain rows, 201–510, with the plan's ids. T3 assigns no new ids — the seed ADRs, the spec §56 owners and the LEDGER already cite them — so row 203 keeps the id `P35.38a` in phase P34 (S6c moved it to the head of 11A). **Banners:** the five sub-rounds, plus one boundary after each acquisition wave's activation row inside a sub-round (rows 271, 290, 345, 481), so the per-wave operator digest (A-15 "Gate pauses + wave digest (Recommended)", 2026-10-01T04:21:56Z; it runs "after the last row under a chain-table banner") gets a boundary at every wave: nine banners, nine digest boundaries besides the pauses. **Files:** every file below is `Kind: skeleton` until its author rewrites it under the same name — 11A by SEED-13b (rows 201–220), SEED-13c (221–240) and SEED-13d (241–260) before GATE-B; 11B by PLAN-11B; 11C by PLAN-11C; 11D and the tail by PLAN-11D. A skeleton is never dispatched. **Cells:** Kind is the plan's (`plan` = a contract-authoring row run like a ticket: its contract invokes `decompose-spec mode=extend`); Lane A = gate marker, C = everything else; the Gate cell is a short form (pause class, OM-20 status, the GATE-P answer lines) and the plan's full text is each contract's `Gate status` header. Map: `docs/build/planning/2026-09-30-next-phase/stageB/T3_contract_map.csv`; generator and consistency check: `docs/build/planning/2026-09-30-next-phase/tools/s13/gen_t3.py` (`check`).
 
@@ -499,7 +499,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 259 | `259_P34.47__sub-round-11a-acceptance.md` | 34 | capstone | C | **11A** — Sub-round 11A acceptance: live-read sweep + GATE-G4 packet; depends P34.46; 0.5 run | none |
 | 260 | `260_GATE-G4__11a-check-in.md` | 34 | gate | A | **[marker `GATE-G4`]** — 11A check-in (budget, publication, rights; pre-authorises 11B named mutations); depends P34.47; 0.0 run | operator check-in (S5-2 packet): verbatim lines; silence = pause (OM-18); never guessed past |
 
-### Round 11 — P35 11B "Correct and traceable" · part 1, to the Wave A activation (rows 261–271)
+### Round 11 — P35 11B "Correct and traceable" · part 1, to the Wave A activation (rows 261–271) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
@@ -515,7 +515,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 270 | `270_P35.10__state-alpr-statute-seed-2026.md` | 35 | ticket | C | **11B** — State ALPR statute seed 2026 and duty rows; depends P35.6; 0.5 run | GATE-P answers recorded; no pause · answers: B-39 |
 | 271 | `271_P35.11__wave-a-activation.md` | 35 | ticket | C | **11B** — Wave A activation (widening group); depends P35.7, P35.8, P35.9, P35.10, P34.3, P34.4, P34.5, P34.6, P34.46, P36.1a, P35.38a; 0.5 run; live legs: 3: L1 image roll + manual first runs (14:00-20:00Z) \| L2 +0 re-run \| L3 resume schedules | ING-GO-A verbatim at the GATE, else in-ticket pause · answers: B-11, A-7 |
 
-### Round 11 — P35 11B "Correct and traceable" · part 2, typing and Wave B to its activation (rows 272–290)
+### Round 11 — P35 11B "Correct and traceable" · part 2, typing and Wave B to its activation (rows 272–290) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
@@ -539,7 +539,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 289 | `289_P36.74__flock-portal-connector-probe-only.md` | 36 | ticket | C | **11B** — Flock transparency-portal connector — probe-only (WV-10): a portal page is fetched only when served without a bot challenge; any challenge ends the attempt (A-17 D3-Q3 b; round 26); depends P35.6, P35.14b, P35.15b, P36.1a(S2), P35.28, P36.15, P35.66, P34.49, P35.38a; 0.5 run | ING-GO-B verbatim at the GATE, else in-ticket pause · HG-03 lines executed by the operator (OP-26) · answers: WV-10, S6R-01, A-17 |
 | 290 | `290_P36.12__wave-b-activation.md` | 35 | ticket | C | **11B** — Wave B activation (Tier 1); depends P35.11, P36.4, P36.5, P36.6, P36.7, P36.8, P36.9b, P36.10, P36.11, P34.42b, P36.1a(S2), P35.28, P36.15, P35.66, P36.74, P35.38a; 1.0 run; live legs: 9-10: one leg per family-day 10-26 -> 11-05 (ACQ-08..15 + the Flock transparency-portal probe family, P36.74 (WV-10)) + materialize; legs whose go is held run even while the chain waits (OM-19) | ING-GO-B verbatim at the GATE, else in-ticket pause · HG-03 lines executed by the operator (OP-26) |
 
-### Round 11 — P35 11B "Correct and traceable" · part 3, to GATE-G5 (rows 291–343)
+### Round 11 — P35 11B "Correct and traceable" · part 3, to GATE-G5 (rows 291–343) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
@@ -597,14 +597,14 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 342 | `342_P35.64__sub-round-11b-acceptance.md` | 35 | capstone | C | **11B** — Sub-round 11B acceptance: live-read sweep + GATE-G5 packet; depends P35.63, PLAN-11C; 0.5 run | none |
 | 343 | `343_GATE-G5__11b-check-in.md` | 35 | gate | A | **[marker `GATE-G5`]** — 11B check-in (budget, publication, rights; ING-GO-B; pre-authorises 11C named mutations); depends P35.64; 0.0 run | operator check-in (S5-2 packet): verbatim lines; silence = pause (OM-18); never guessed past |
 
-### Round 11 — P36 11C "Explorable core" · part 1, Wave C (rows 344–345)
+### Round 11 — P36 11C "Explorable core" · part 1, Wave C (rows 344–345) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
 | 344 | `344_P37.1__osm-camera-site-origin.md` | 36 | ticket | C | **11C** — OSM as a camera-site origin (code); depends P35.15b, P35.14b, P35.25, P36.3; 1.0 run | none |
 | 345 | `345_P37.2__wave-c-osm-national-alpr-layer.md` | 36 | ticket | C | **11C** — Wave C: OSM becomes the origin of the national ALPR layer; depends P36.12(sequence, one manual job at a time, not live), P37.1, P34.46, P35.66, P35.38a; 1.0 run; live legs: 5: pre-grow \| tier bump after the go \| national run \| 24 h soak read \| revert | in-ticket pause, never pre-authorised (tier-bump go) · ING-GO-C verbatim at the GATE, else in-ticket pause · answers: B-11, S5-4 |
 
-### Round 11 — P36 11C "Explorable core" · part 2, to GATE-G6 (rows 346–420)
+### Round 11 — P36 11C "Explorable core" · part 2, to GATE-G6 (rows 346–420) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
@@ -684,7 +684,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 419 | `419_P36.73__sub-round-11c-acceptance.md` | 36 | capstone | C | **11C** — Sub-round 11C acceptance: live-read sweep + GATE-G6 packet; depends P36.72b, P36.70, PLAN-11D; 0.5 run | none |
 | 420 | `420_GATE-G6__11c-check-in.md` | 36 | gate | A | **[marker `GATE-G6`]** — 11C check-in (budget, publication, rights; ING-GO-C/D; Wave-D scope; pre-authorises 11D named mutations); depends P36.73; 0.0 run | operator check-in (S5-2 packet): verbatim lines; silence = pause (OM-18); never guessed past |
 
-### Round 11 — P37 11D "Explored and proven" · part 1, to the Wave D activation (rows 421–481)
+### Round 11 — P37 11D "Explored and proven" · part 1, to the Wave D activation (rows 421–481) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
@@ -750,7 +750,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 480 | `480_P37.69b__ogc-wfs-family.md` | 37 | ticket | C | **11D** — OGC WFS family (ACQ-23b); depends P37.69a; 1.0 run | HG-03 lines executed by the operator (OP-26) |
 | 481 | `481_P37.54__wave-d-activation.md` | 37 | ticket | C | **11D** — Wave D activation (Tier 2 + ACQ-23a/b + Axon Connect, DocumentCloud, Sourcewell/OMNIA); depends P37.47, P37.48, P37.49, P37.50, P37.69a, P37.69b, P37.51, P37.52, P37.53, P36.76, P36.77, P36.78, P35.38a; 1.0 run; live legs: 2: window 11-23 -> 12-04 \| window 12-14 -> 12-18 | ING-GO-D verbatim at the GATE, else in-ticket pause · HG-03 lines executed by the operator (OP-26) · answers: B-11 |
 
-### Round 11 — P37 11D "Explored and proven" · part 2, to the CAP-01 journeys (rows 482–500)
+### Round 11 — P37 11D "Explored and proven" · part 2, to the CAP-01 journeys (rows 482–500) · spec: Part XII (§56)
 
 | # | Ticket file | Phase | Kind | Lane | Scope | Gate |
 |---|---|---|---|---|---|---|
@@ -774,7 +774,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 499 | `499_P37.68c__ux-capstone-organizer-journeys.md` | 37 | capstone | C | **11D** — Round-11 UX capstone — c: organizer journeys O1-O4; depends P37.68b; 1.0 run | GATE-P answers recorded; no pause · answers: B-29 |
 | 500 | `500_P37.68d__ux-capstone-per-ask-checks-and-walkthrough-packet.md` | 37 | capstone | C | **11D** — Round-11 UX capstone — d: U-003.1..11 per-ask checks, ROUTES.csv check, budgets, axe, cost, operator walkthrough packet; depends P37.68c; 1.0 run | GATE-P answers recorded; no pause · answers: B-29 |
 
-### Round 11 — P38 tail · rows 501–510, to GATE-ANNOUNCE
+### Round 11 — P38 tail · rows 501–510, to GATE-ANNOUNCE · spec: Part XII (§56)
 
 > GATE-ANNOUNCE (row 510) also depends on **REVIEW-R11**, the closing Claude Code review — a unit outside the chain, not a row here. **Re-anchoring rule (plan §8.3, S6R-19):** if a REVIEW-R11 S0/S1 finding needs a fix, `decompose-spec mode=extend` appends the fix rows after row 510 under a new `### Round 11` banner, then a new GATE-ANNOUNCE row after the last of them, and row 510 receives the appended token `superseded-by(row <n>)` — the pattern rows 184–187 use. No row is renumbered.
 

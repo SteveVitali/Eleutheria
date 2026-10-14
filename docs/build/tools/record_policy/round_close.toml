@@ -1,0 +1,67 @@
+# docs/build/tools/record_policy/round_close.toml — the G9/G7-item-5 policy the
+# round-close record checker reads (`check_round_close.py`; P34.33; ADR-199).
+# Written 2026-10-05 (date -u). Changing this file is reviewed like code.
+
+schema = "round-close-policy/1"
+
+# ── Round banners ↔ spec parts (G9; F-32 §52) ────────────────────────────────────
+# Every `### Round N` banner inside the manifest's `## The chain` block that opens a
+# chain table cites an existing spec part/section. Rounds 2–9 are *exempt, listed* —
+# historical banners are never retrofitted (F-32 §52). A mapped round must carry the
+# required literal(s) in its banner text, and the cite must resolve to a spec heading.
+[banners]
+exempt_rounds = [2, 3, 4, 5, 6, 7, 8, 9]
+
+[banners.required_cites]
+# Round 11 → Part XII, §56 (the Round-11 contract extension, opened by Appendix G.7).
+11 = ["Part XII", "§56"]
+
+# ── Capstone two-sum packets (G7 item 5; SIG-ENG-041) ────────────────────────────
+# A closure/acceptance packet under a declared pattern whose headline gives coverage
+# counts must state both sums — `engineering closed` (MET + MET-DIFFERENTLY +
+# MET-ENGINEERED) and `requirement satisfied` (MET + MET-DIFFERENTLY) — recomputed
+# from docs/build/COVERAGE_MATRIX.csv, in the declared grammar:
+#
+#   coverage two-sum: engineering closed = <N> · requirement satisfied = <M>
+#   coverage two-sum [<layer>]: …    (a status layer = an achieved_domain value)
+#
+# The declared patterns cover the Round-11 acceptance packets P34.47 / P35.64 /
+# P36.73 / P38 write: they land as docs/build/readouts/GATE-*.md (GATE-G4's packet
+# draft is `docs/build/readouts/GATE-G4.md` per row 259's contract) and the Round-11
+# capstone lands under docs/build/CAPSTONE_*.md — so `GATE-*.md` deliberately widens
+# the contract's `GATE-ACCEPT*.md` to cover them (ADR-199 D4).
+[packets]
+patterns = [
+    "docs/build/readouts/ACCEPT-*.md",
+    "docs/build/readouts/GATE-*.md",
+    "docs/build/CAPSTONE_*.md",
+]
+
+# Exempt by date, listed: the historical packets whose coverage headlines predate the
+# verdict vocabulary (SEED-15, 2026-10-01). An exemption is verified — the file must
+# exist, must carry a coverage-count claim (else the exemption is vacuous) and must
+# contain the listed recorded date.
+[[packets.exempt]]
+path = "docs/build/readouts/ACCEPT-R8.md"
+date = "2026-09-24"
+note = "Round-8 acceptance; 'MET-DIFFERENTLY count 77' — predates the two-sum grammar"
+
+[[packets.exempt]]
+path = "docs/build/readouts/GATE-ACCEPT.md"
+date = "2026-09-13"
+note = "Round-10 gate acceptance; 'MET-DIFFERENTLY count is 77' — predates the vocabulary"
+
+[[packets.exempt]]
+path = "docs/build/readouts/ACCEPT-R10.md"
+date = "2026-09-28"
+note = "the '34 MET' packet — superseded by C-13 (GATE-P; ADR-150's vocabulary governs Round-11 re-verdicts)"
+
+[[packets.exempt]]
+path = "docs/build/CAPSTONE_CLOSURE.md"
+date = "2026-09-13"
+note = "the Round-10 capstone closure packet (frozen artifact; living_records.toml [frozen])"
+
+[[packets.exempt]]
+path = "docs/build/CAPSTONE_GAP_ANALYSIS.md"
+date = "2026-09-28"
+note = "the P19.2 whole-spec gap analysis with its appended P33.1 pass — predates the vocabulary"

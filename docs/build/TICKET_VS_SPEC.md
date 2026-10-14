@@ -374,3 +374,11 @@ not a re-derivation of coverage (P19.2 owns verdicts).
 3 + 9 + 10 + 4 = 26. The two fold-back rows P02.2 and P15.3 are *also* touched by amendments A7/A1
 respectively (a single deliverable both folded back **and** reflected in an enumeration/softening);
 they are counted once, under fold-back. Every `ticket-added` row carries a disposition.
+
+---
+
+**Frozen historical view** (appended by P34.33 — the B4 G9 amendment to SIG-ENG-031; ADR-199):
+this file is the frozen Phase-0…P18 ticket-vs-spec view and is kept for history. The live
+traceability authority is `docs/build/COVERAGE_MATRIX.csv` — the coverage matrix is the
+traceability matrix, re-verdicted per Round-11 row (B4 §G9; `docs/traceability.md` is the
+matching frozen requirement-implementation view).

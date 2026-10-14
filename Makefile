@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -136,7 +136,7 @@ verify-gen: gen
 ## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
 ## history guard, the spec-source checker and the coverage-matrix checker — all
 ## stdlib python3, so the uv-less CI `docs` job runs them too.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -249,6 +249,17 @@ docs-check-planning:
 docs-check-adr:
 	python3 docs/build/tools/adr_index_check.py
 	python3 docs/build/tools/adr_triggers.py check
+
+## Round-close record checks (P34.33; B4 G9/G7-item-5/G10; amended SIG-ENG-031):
+## RISK ids unique via dated appended disambiguation, every deferred risk row
+## routed to a backlog home, each `### Round` chain banner citing an existing
+## spec part, the frozen traceability/TICKET_VS_SPEC pointers, and the capstone
+## two-sum on coverage-count packets. `--round-tail <round-start>` adds the
+## round-review section, `adr_triggers --round-tail` and the tail probe-sweep
+## legs — the REC-tail invocation P38 and the sub-round acceptance rows run.
+## Exits 1 violations / 2 usage / 3 vacuous (SIG-ENG-042).
+docs-check-round-close:
+	python3 docs/build/tools/check_round_close.py check
 
 ## OM-01 commit-trailer check (SEED-02b; plan §3.3, A-21): every commit of
 ## CHANGE_RANGE carries a recognised harness trailer or is an operator commit.
