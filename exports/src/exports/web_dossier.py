@@ -26,7 +26,10 @@ function of that slice — deterministic, byte-reproducible.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from typing import Any
+
+from policy.officer import OfficerNamingRecord, employee_name_publishable
 
 _AS_OF: dict[str, Any] = {
     "as_of_world": "2026-08-20",
@@ -362,13 +365,19 @@ def _okc_dossier() -> dict[str, Any]:
                         "label": "Procurement approval",
                         "value": "Approved 2025-03-25 (see authorization block)",
                     },
-                    # A public-employee name, publishable under US-DEFAULT (SIG-PUB-017);
-                    # applyPublicationPolicy leaves it shown (contrast: FR/BE withhold).
+                    # A public-employee name row: subject/predicate key the
+                    # persisted naming decision (P35.28). US-DEFAULT permits the
+                    # jurisdiction leg (SIG-PUB-017), but the row publishes ONLY
+                    # when a recorded two-reviewer concurrence names this
+                    # (subject_id, predicate_id) — the registry is empty today,
+                    # so the builder gate withholds it (default deny).
                     {
                         "label": "Approving official",
                         "value": "Chief Wade Gourley",
                         "isPublicEmployeeName": True,
                         "originJurisdiction": "US",
+                        "subject_id": "agency:okcpd",
+                        "predicate_id": "approving_official",
                     },
                 ],
             },
@@ -578,12 +587,16 @@ def _france_dossier() -> dict[str, Any]:
                         "value": "Arrêté en vigueur depuis le 2026-02-01",
                     },
                     # The public-employee-name row the FR-GDPR publication gate
-                    # withholds (SIG-PUB-017; contrast: the US dossier publishes it).
+                    # withholds (SIG-PUB-017) — and the officer-naming gate
+                    # withholds regardless of jurisdiction while no two-reviewer
+                    # concurrence is recorded (P35.28, default deny).
                     {
                         "label": "Signataire de l'arrêté",
                         "value": "M. le préfet de l'Ain",
                         "isPublicEmployeeName": True,
                         "originJurisdiction": "FR",
+                        "subject_id": "agency:france:prefecture-ain",
+                        "predicate_id": "signing_officer",
                     },
                 ],
             },
@@ -617,12 +630,69 @@ def _france_dossier() -> dict[str, Any]:
     }
 
 
-def build_web_dossiers(jurisdiction: str) -> list[dict[str, Any]]:
-    """Return the web dossier bundle for ``jurisdiction`` (``okc``, ``france``)."""
+def _gate_public_employee_names(
+    dossier: dict[str, Any],
+    decisions: Iterable[OfficerNamingRecord] | None = None,
+) -> dict[str, Any]:
+    """Apply the officer-naming gate to every flagged name row (P35.28).
+
+    Runs at the BUILDER so every surface the bundle feeds — the dossier page,
+    the print export, the JSON form, the index — inherits the gate: a
+    ``isPublicEmployeeName`` row shows its value only when a persisted
+    two-reviewer concurrence record names the row's ``(subject_id,
+    predicate_id)`` AND the jurisdiction rule permits (SIG-PUB-017); both legs
+    are evaluated by :func:`policy.officer.employee_name_publishable`. Anything
+    else is rendered WITHHELD with the refusal reason recorded on the row —
+    never silently dropped (§3.1) — and a recorded decision's id travels with
+    the row either way (``namingDecisionId``).
+    """
+    subject_jurisdiction = str(dossier.get("jurisdictionCode", "US"))
+    for section in dossier.get("sections", []):
+        for row in section.get("rows", []):
+            if not row.get("isPublicEmployeeName"):
+                continue
+            verdict = employee_name_publishable(
+                str(row.get("subject_id", "")),
+                str(row.get("predicate_id", "")),
+                subject_jurisdiction=subject_jurisdiction,
+                record_origin_jurisdiction=str(row.get("originJurisdiction", subject_jurisdiction)),
+                decisions=decisions,
+            )
+            if verdict.permitted:
+                row["namingDecisionId"] = verdict.decision_id
+            else:
+                row["value"] = None
+                row["withheld"] = True
+                if verdict.decision_id is not None:
+                    row["namingDecisionId"] = verdict.decision_id
+                row["note"] = (
+                    "Public-employee name withheld under the officer-naming gate "
+                    "(§43.4, SIG-PUB-007/008 — default deny; "
+                    f"{verdict.reason})."
+                )
+    return dossier
+
+
+def build_web_dossiers(
+    jurisdiction: str,
+    *,
+    naming_decisions: Iterable[OfficerNamingRecord] | None = None,
+) -> list[dict[str, Any]]:
+    """Return the web dossier bundle for ``jurisdiction`` (``okc``, ``france``).
+
+    Every emitted dossier passes through the officer-naming gate
+    (:func:`_gate_public_employee_names`): a public-employee name row needs a
+    persisted concur record AND a permitting jurisdiction, else it withholds
+    (P35.28, default deny). ``naming_decisions`` overrides the committed
+    registry (the test seam); ``None`` reads
+    ``policy/data/officer_naming_decisions.json``.
+    """
     if jurisdiction == "france":
-        return [_france_dossier()]
-    if jurisdiction != "okc":
+        dossiers = [_france_dossier()]
+    elif jurisdiction == "okc":
+        dossiers = [_okc_dossier()]
+    else:
         raise ValueError(
             f"no jurisdiction dossier bundle for {jurisdiction!r} (buildable: 'okc', 'france')"
         )
-    return [_okc_dossier()]
+    return [_gate_public_employee_names(d, naming_decisions) for d in dossiers]

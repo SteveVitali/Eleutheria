@@ -48,7 +48,7 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
@@ -63,7 +63,9 @@ from parsing.locator import Locator
 from parsing.tables import parse_table, table_claims
 from policy.officer import (
     OfficerNamingProngs,
+    OfficerNamingRecord,
     ReviewerConcurrence,
+    decision_to_record,
     evaluate_officer_naming,
 )
 from policy.publication import is_categorically_excluded
@@ -222,6 +224,9 @@ def assert_person_naming_permitted(
     *,
     prongs: OfficerNamingProngs | None = None,
     reviewers: tuple[ReviewerConcurrence, ...] = (),
+    subject_id: str | None = None,
+    record_sink: Callable[[OfficerNamingRecord], None] | None = None,
+    recorded_by: str = "",
 ) -> None:
     """Route a person-named claim through the five-prong officer-naming test (§43.4).
 
@@ -231,6 +236,13 @@ def assert_person_naming_permitted(
     prongs + no reviewers — refuses the claim (:class:`OfficerNamingRefused`). The OKC
     document connectors never emit a person-named claim; the gate is here so a future
     fixture cannot smuggle one past Part VIII.
+
+    When ``record_sink`` is given the evaluated decision is emitted through it as an
+    :class:`~policy.officer.OfficerNamingRecord` — permit AND refusal alike (the
+    record is the audit of what the gate decided and why, §3.1). This is the
+    ingest→persist leg of P35.28: the SAME serialized record the publication gate
+    reads (:func:`policy.officer.employee_name_publishable`), so ingest-time
+    evaluate and publish-time gate can never diverge — one decision, not two.
     """
     if predicate not in person_naming_predicates():
         return
@@ -238,6 +250,16 @@ def assert_person_naming_permitted(
         prongs or OfficerNamingProngs(False, False, False, False, False),
         reviewers,
     )
+    if record_sink is not None:
+        record_sink(
+            decision_to_record(
+                subject_id or "",
+                predicate,
+                decision,
+                recorded_at=datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
+                recorded_by=recorded_by or "connectors.okc_documents",
+            )
+        )
     if not decision.permitted:
         raise OfficerNamingRefused(
             f"predicate {predicate!r} names a natural person; the officer-naming test "
@@ -270,6 +292,7 @@ def okc_claim(
     extraction_method: str,
     locator: Mapping[str, Any],
     subject_id: str | None = None,
+    naming_record_sink: Callable[[OfficerNamingRecord], None] | None = None,
 ) -> dict[str, Any]:
     """Build one typed, evidenced, Part VIII-guarded OKC document claim.
 
@@ -282,7 +305,12 @@ def okc_claim(
     """
     assert_predicate_allowed(ctx.connector, predicate)
     assert_part_viii_safe(predicate, raw_value)
-    assert_person_naming_permitted(predicate)
+    assert_person_naming_permitted(
+        predicate,
+        subject_id=subject_id or ctx.subject_id,
+        record_sink=naming_record_sink,
+        recorded_by=f"connector:{ctx.connector}",
+    )
     sensitivity = default_sensitivity_class()
     return {
         "record_kind": "claim",

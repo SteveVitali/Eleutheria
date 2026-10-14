@@ -254,6 +254,93 @@ def test_non_person_predicate_bypasses_the_officer_gate() -> None:
     okc.assert_person_naming_permitted("contract_amount")
 
 
+# --- P35.28: the ingest evaluation emits the persisted record -------------------
+
+
+def test_ingest_evaluation_emits_the_persisted_record() -> None:
+    # The record_sink leg (P35.28): the ingest-time evaluation emits the SAME
+    # serialized record the publication gate reads — permit AND refusal alike —
+    # so ingest-time evaluate and publish-time gate can never diverge.
+    from policy.officer import (
+        OfficerNamingRecord,
+        evaluate_record,
+        record_concurs,
+    )
+
+    emitted: list[OfficerNamingRecord] = []
+    prongs = OfficerNamingProngs(True, True, True, True, True)
+    reviewers = (
+        ReviewerConcurrence("rev-a", True, "official conduct on the face of an R1 record"),
+        ReviewerConcurrence("rev-b", True, "public in-jurisdiction; claim fails without it"),
+    )
+    okc.assert_person_naming_permitted(
+        "officer_name",
+        prongs=prongs,
+        reviewers=reviewers,
+        subject_id="agency:fixture-pd",
+        record_sink=emitted.append,
+        recorded_by="connector:test",
+    )
+    assert len(emitted) == 1
+    record = emitted[0]
+    assert isinstance(record, OfficerNamingRecord)
+    assert record.subject_id == "agency:fixture-pd"
+    assert record.predicate_id == "officer_name"
+    assert record.permitted is True and record_concurs(record) is True
+    assert evaluate_record(record).permitted is True
+    assert record.recorded_by == "connector:test"
+    assert record.recorded_at  # the recording act's date -u stamp
+    assert record.decision_id.startswith("ond-")
+
+    # A refusal is recorded too — the record is the audit of what the gate
+    # decided and why (§3.1), not only the permits.
+    refused: list[OfficerNamingRecord] = []
+    with pytest.raises(okc.OfficerNamingRefused):
+        okc.assert_person_naming_permitted(
+            "officer_name",
+            subject_id="agency:fixture-pd",
+            record_sink=refused.append,
+        )
+    assert len(refused) == 1
+    assert refused[0].permitted is False and record_concurs(refused[0]) is False
+    assert refused[0].reason  # the refusal reason is on the record
+
+
+def test_okc_claim_routes_the_naming_record_through_the_sink(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # okc_claim passes the sink through so a caller persisting records sees the
+    # same decision object the gate produced (one decision, not two). The real
+    # allowlists admit no person-naming predicate — the refusal lands upstream —
+    # so the test widens the allowlist for this call only.
+    from policy.officer import OfficerNamingRecord
+
+    monkeypatch.setattr(okc, "predicate_allowlist", lambda name: frozenset({"officer_name"}))
+    ctx = okc.DocumentContext(
+        connector="okc_procurement",
+        source_id="okc_procurement",
+        source_url="https://example.test/contract.pdf",
+        retrieved_date="2026-10-14",
+        genre=DocumentGenre.PROCUREMENT_RECORD,
+        subject_id="contract:fixture",
+    )
+    emitted: list[OfficerNamingRecord] = []
+    with pytest.raises(okc.OfficerNamingRefused):
+        okc.okc_claim(
+            ctx,
+            predicate="officer_name",
+            value="Some Person",
+            raw_value="Some Person",
+            extraction_method="table",
+            locator={},
+            naming_record_sink=emitted.append,
+        )
+    assert len(emitted) == 1
+    assert emitted[0].subject_id == "contract:fixture"
+    assert emitted[0].recorded_by == "connector:okc_procurement"
+    assert emitted[0].permitted is False
+
+
 # --- Part VIII §43.3: the sensitivity tier travels with the claim -------------
 
 

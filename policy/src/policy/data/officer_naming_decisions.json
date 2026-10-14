@@ -1,0 +1,16 @@
+{
+  "schema": "sig.officer-naming-decisions/1",
+  "generated_for": "P35.28 / SIG-PUB-007..010 — the officer-naming gate on the publication path, default deny (§43.4; H-9; ADR-163 boundary)",
+  "recorded_at": "2026-10-14",
+  "policy": {
+    "match_keys": [
+      "subject_id",
+      "predicate_id"
+    ],
+    "semantics": "Append-only officer-naming decision registry: one entry per recorded §43.4 evaluation (the five SIG-PUB-007 prongs + the two-reviewer written concurrence of SIG-PUB-008). The publication gate (policy.officer.employee_name_publishable / web officer-naming.ts) reads the LATEST entry matching a name row's (subject_id, predicate_id); a changed decision is a NEW entry carrying `supersedes`, never an edit (P1-P3). Absent record, non-concur, inconsistent record, failed prong, or a jurisdiction deny (SIG-PUB-017) all read as WITHHOLD — the gate never permits without a recorded concur.",
+    "human_act": "A naming concurrence is the operator's recorded two-reviewer act — reviewer positions are written human positions, never agent-drafted stand-ins (SIG-MEM-009; WV-03/ADR-163 waived only the HG-11 second-reviewer ROLE, never this rule). The registry is EMPTY until such an act is recorded: the officer-naming gate denies by default.",
+    "carveouts": "home_address and routine_audit_row entries record the SIG-PUB-009/010 refusals verbatim — they stay outside the test and can never permit.",
+    "spine_mirror": "A recorded naming decision mirrors onto the spine as publication_disposition rows (P32.5/ADR-124, policy_version 'sig.officer-naming-decisions/1', target_kind 'claim') when a live spine carries the claim — the file registry is the build-time carrier the static export/web path reads."
+  },
+  "decisions": []
+}
