@@ -219,6 +219,7 @@ R10-A6 and every landed ADR body above are unchanged.
 | # | Section | Change | Authority |
 |---|---|---|---|
 | R11-X1 | Part XII, §56 (new); §0.3 | Round-11 contract extension: SIG-MEM-005…012, SIG-ENG-040…046, SIG-OPS-001…012, SIG-STORE-048, SIG-SEC-007…011, SIG-REL-001…015 and SIG-CONF-001…014 — 62 new ids, append-only, draft → final map in `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`; `SIG-OPS-*` opened and the `REL` and `CONF` families registered in §0.3. The transparency and UX families are appended later by their planning rows (§56.8) | plan §6.1–§6.2 (ratified at GATE-P); ADR-146…150, ADR-152…154 |
+| R11-X2 | §56.10 (new); §0.3 | Transparency family: `SIG-TRANSP-001`…`SIG-TRANSP-043` — 43 new ids, append-only, carrying J3 §11 D01–D25 as amended by K9 §10 D26–D34 and K10 §18 D35–D43 (adopted by K13's UXR-A10); draft → final map in `docs/build/reports/plan-11b/TRANSP_id_map.csv`; `TRANSP` registered in §0.3. D26–D43 are written once here — PLAN-11C cites the final ids (§56.8). The K13 UX set itself is still appended by PLAN-11C | plan §6.2 (ratified at GATE-P); row 239 (PLAN-11B); ADR-162 |
 
 ### G.7.2 Waivers adopted by the operator
 

@@ -124,6 +124,7 @@ every `SIG-*` id referenced anywhere in this document is either defined or liste
 | `MEM` | Current build memory and reliable closeout (§55; extended by §56) |
 | `REL` | Release identity, promotion, rollback, withdrawal and versioning (§56) |
 | `CONF` | Confidence basis, graph-quality checks and their public disclosure (§56) |
+| `TRANSP` | Public transparency surfaces: source index and pages, captures and runs, downloads and distribution, status lane, citations and release diffs (§56.10, appended by PLAN-11B) |
 
 ## 0.4 The execution model
 
@@ -7967,6 +7968,96 @@ No independent human evaluation exists or is planned in Round 11 (ADR-152). Conf
 
 New requirement rows enter the coverage matrix as MISSING with their owner's routing; planning does not turn them MET, and their verdicts follow SIG-ENG-041. The draft-id → final-id map is `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`. Landed-status text for this part is appended, dated from the clock, as its rows land; at the time of writing nothing in this part has landed.
 
+### 56.10 Transparency (opens the `TRANSP` family)
+
+This family (appended 2026-10-05 by PLAN-11B, row 239, `decompose-spec mode=extend`) carries the ratified transparency requirements the design phase wrote as drafts: J3 §11's `SIG-TRANSP-D01…D25`, amended by K9 §10's `D26…D34` and K10 §18's `D35…D43`, adopted wholesale by K13's UXR-A10 (plan §5.6, §6.2). The draft → final map is `docs/build/reports/plan-11b/TRANSP_id_map.csv`; the amendments the later designs made to J3's drafts are folded into the final text below, not into separate ids — K9 supersedes D01's index columns with D28's table, replaces D02's funnel with D26/D27's registry-row counting and partition, narrows D07 by D29–D31, extends D14 with D32's per-source statements slice, and K10 gives D03 the §4 publish-matrix reference, re-keys D06 by D36 and gives D09 the D38/D39 texts. D26–D43 are listed under the K13 UX set as well; they are written once, here, and PLAN-11C cites these final ids (§56.8). ADR-162 (transparency and distribution) records the operator's ratification of the design space; SIG-EXPORT-002's RO-Crate clause stands as written (G.7.5 — the design decided linked files, D-J3-7). Nothing in this section weakens a MUST elsewhere.
+
+**SIG-TRANSP-001 (MUST).** *Source index.* SIG MUST publish a source index listing every registered source with name, publisher, publisher type, technology classes, geography, lifecycle status, upstream licence, SIG publication basis, raw-bytes lane, last run and freshness state. Its column set and no-JavaScript presentation are SIG-TRANSP-028's (the K9 table supersedes this draft's own index-columns clause). Owner: P36.48. Also: P35.40 (the source universe it lists).
+
+**SIG-TRANSP-002 (MUST).** *Named source counts.* Every public count of sources MUST name one published counting definition; a published counting funnel MUST list the source ids behind every difference between adjacent steps. The counting mechanics — a source is a registry row and every count is the number of registry rows satisfying a named predicate — are SIG-TRANSP-026's, and the lifecycle partition is SIG-TRANSP-027's (they replace this draft's funnel definition). Owner: P35.40. Also: P35.35.
+
+**SIG-TRANSP-003 (MUST).** *Source pages.* Each source MUST have a page carrying the J3 §4.3 field set; every field MUST be a value or a named absence kind; every field's publication follows the registry publish verdicts of SIG-TRANSP-035 (the K10 amendment). Owner: P36.47. Also: P36.69 (the page's second half), P36.45 (the publish matrix).
+
+**SIG-TRANSP-004 (MUST).** *Upstream ground truth.* A source page MUST link to the upstream ground truth (homepage, dataset endpoint, terms) after credential scrubbing, and MUST show the terms capture date and digest where one exists. Owner: P36.47.
+
+**SIG-TRANSP-005 (MUST).** *Capture history.* A source page MUST show capture history (full UTC time, digest, bytes, media type, changed/unchanged, classification, bytes-available) and MUST NOT state bytes are available unless the lane is raw-ok and the bytes exist in the public archive; a synthetic capture is labelled. Owner: P36.69. Also: P36.51, P37.36.
+
+**SIG-TRANSP-006 (MUST).** *Per-run log.* A source page MUST show a per-run log with outcome, times, duration, fetches, records parsed, claims considered/added/duplicate, rejected counts by reason class and error classes from a closed vocabulary — keyed to executions per SIG-TRANSP-036 (the K10 re-keying). Owner: P36.46. Also: P35.33 (the run/capture export it renders).
+
+**SIG-TRANSP-007 (MUST).** *Cadence disclosure.* Freshness MUST distinguish cadence (declared, next scheduled day, observed) — the shared verdict function, predicate volatility and the two last-change dates are SIG-TRANSP-029/030/031's (the K9 narrowing). Owner: P35.41.
+
+**SIG-TRANSP-008 (MUST).** *Coverage and dossier contribution.* A source page MUST show coverage by jurisdiction and technology and its contribution to each dossier, and each dossier MUST link back to its sources with the same numbers (one shared artifact). Owner: P36.69. Also: P35.44 (the dossier contribution export).
+
+**SIG-TRANSP-009 (MUST).** *Rights record and collection conduct.* A source page MUST show the rights-review record and collection conduct without naming persons — the record content per SIG-TRANSP-038 and the conduct rendered from observed runs per SIG-TRANSP-039 (the K10 texts). Owner: P36.47. Also: P36.69.
+
+**SIG-TRANSP-010 (MUST).** *Issues log.* SIG MUST publish an issues log per source (auto-detected classes + curated known issues) with opened/closed dates, append-only. Owner: P36.49.
+
+**SIG-TRANSP-011 (MUST).** *Per-claim provenance panel.* Every released record MUST carry a per-claim provenance panel (J3 §5.2) stating one binding state and never implying a document SIG does not hold; `legacy_synthetic` claims render the run-level text. Owner: P35.36.
+
+**SIG-TRANSP-012 (MUST).** *View original.* "View original" MUST follow the lane × Part VIII × bytes-stored table (J3 §5.3); no raw link for a screened or restricted lane. Owner: P36.51. Also: P37.36.
+
+**SIG-TRANSP-013 (MUST).** *Figure → evidence.* Every material number on a public page MUST be rendered with a pointer to a manifest-listed artifact and a visible link to its evidence (J3 §5.4). Owner: P35.37.
+
+**SIG-TRANSP-014 (MUST).** *Downloads center.* SIG MUST publish a downloads center per release listing every downloadable file with licence, attribution, size, row count, sha256 and format, plus per-source slices and claim-level statements files (the per-source statements slice is the K9 amendment). Owner: P36.50.
+
+**SIG-TRANSP-015 (MUST).** *Attribution in bundles.* Each downloadable bundle MUST carry `ATTRIBUTION.txt` generated from the source registry, and the publish MUST fail on any required-but-empty attribution. Owner: P36.50.
+
+**SIG-TRANSP-016 (MUST).** *Data dictionary.* SIG MUST publish a data dictionary generated from the ontology and the exporter column registry, and a Table Schema for every tabular resource. Owner: P35.39.
+
+**SIG-TRANSP-017 (MUST).** *Linked metadata.* SIG MUST publish DCAT 3 and PROV-O metadata as linked files; public content pages MUST stay free of `<script>` elements, including JSON-LD, unless a new ADR exempts a named page (the D-J3-7 "linked files only" decision; the SIG-EXPORT-002 RO-Crate clause stands as written, G.7.5). Owner: P35.39.
+
+**SIG-TRANSP-018 (MUST).** *Signed release files.* Release files MUST be signed (detached signature over `SHA256SUMS`) with a published public key — the release pipeline's minisign key under SIG-REL-015's custody split (operator-held; D-J3-8). Owner: P36.50.
+
+**SIG-TRANSP-019 (MUST).** *Zero-egress distribution.* Downloads MUST be served from a zero-or-low-egress host with a non-listable origin, per-file size caps, rate limits and an egress alert with a documented kill switch (D-J3-4/A-3: R2, $50/month ceiling). Owner: P35.5.
+
+**SIG-TRANSP-020 (MUST).** *Raw-bytes lane.* Raw captured bytes MUST NOT be published except for raw-ok sources after the Part VIII byte screen; redactions MUST be new captures; a withdrawal MUST delete, purge and tombstone. Owner: P37.36. Also: P35.31.
+
+**SIG-TRANSP-021 (MUST).** *Status lane.* SIG MUST publish a status page and heartbeat updated at least every 6 hours from scrubbed run records, labelled separately from the release as-of; gated/refused sources appear as counts only (D-J3-11). Owner: P36.43.
+
+**SIG-TRANSP-022 (MUST).** *Scrub gate.* Every transparency surface MUST pass the scrub gate (J3 S-1…S-14); a secret-shaped value anywhere in the publish set MUST abort the publish. Owner: P35.31.
+
+**SIG-TRANSP-023 (MUST).** *Immutable citations.* Every public page MUST cite an immutable URL (`/s/<pub>/` or `/r/<pub>/`) with the release id; a legacy as-of selector MUST resolve at the edge to a real release or answer 400/404/409, never current content (SIG-UI-035's amended clause; SIG-REL-008's containment complements it). Owner: P35.42. Also: P36.66a/b (the snapshots and selectors).
+
+**SIG-TRANSP-024 (MUST).** *Release diff and changelog.* Each release MUST publish an id-level diff against the previous activated release and a human changelog; `/v1/changes` MUST be backed by it; prior releases publish their manifests and a disclosure, not their bytes (D-J3-10). Owner: P36.67.
+
+**SIG-TRANSP-025 (MUST).** *JSON twins and API parity.* Every transparency page MUST have a JSON twin, and the API MUST serve the same release-backed data (J3 §6.10; the API-side parity rule is SIG-REL-010). Owner: P37.42. Also: P35.57.
+
+**SIG-TRANSP-026 (MUST).** *Source = registry row.* SIG MUST define a source as a registry row and MUST publish every source count as the number of registry rows satisfying a named predicate; identifiers that carry data without a registry row MUST be listed as anomalies and never counted. Owner: P35.40.
+
+**SIG-TRANSP-027 (MUST).** *Lifecycle partition.* The sources table MUST assign every registry row exactly one lifecycle state from a published precedence list, and MUST show the partition counts, which MUST sum to the registry row count. Owner: P35.40. Also: P36.48.
+
+**SIG-TRANSP-028 (MUST).** *Sources table.* The sources table MUST offer the K9 §4.1 columns in pre-rendered views, sortable ascending and descending by every sortable column through plain links, and filterable by single-dimension facet pages, all without JavaScript. Owner: P36.48.
+
+**SIG-TRANSP-029 (MUST).** *One freshness verdict.* A source's freshness verdict MUST come from one function shared with alerting, evaluated at the release as-of on release pages and at status time on status pages, and MUST never be shown without its evaluation time. Owner: P35.41.
+
+**SIG-TRANSP-030 (MUST).** *Honest volatility.* Volatility MUST be derived from the ontology predicate registry over all of the source's published claims, and staleness MUST state its evaluable and not-evaluable counts; "unknown" and "0 stale" MUST NOT be shown for an unevaluable source. Owner: P35.41.
+
+**SIG-TRANSP-031 (MUST).** *Two change dates.* "Last upstream change" MUST come from the upstream's declared last-modified value where available, else from a canonical records digest; a byte-only change MUST NOT move it; "last change in SIG's records" MUST be shown separately. Owner: P35.41.
+
+**SIG-TRANSP-032 (MUST).** *Per-source extracts.* Every published source MUST have a per-release derived extract (sites where applicable, statements always) with sha256, size, licence and registry attribution, and a version index listing every activated release containing the source, with added/removed/changed counts. Owner: P36.68.
+
+**SIG-TRANSP-033 (MUST).** *Table download.* The sources table MUST be downloadable as CSV and JSON with a generated Table Schema, and the API MUST serve the same rows. Owner: P36.48. Also: P35.39.
+
+**SIG-TRANSP-034 (MUST).** *Two clocks separated.* Release pages MUST NOT show values that depend on the reader's current time (next run, current verdict); those appear only on status-lane pages labelled with the status time. Owner: P36.43. Also: P35.41.
+
+**SIG-TRANSP-035 (MUST).** *Registry publish matrix.* Every registry field MUST carry a publish verdict (publish / transform / never); fields without a verdict MUST NOT be published, and free-text registry notes, contact fields, credential variable names and internal paths MUST never reach a public artifact. Owner: P36.45.
+
+**SIG-TRANSP-036 (MUST).** *Execution-keyed history.* A source page's ingestion history MUST have one row per execution across every execution store, each with its link basis and clock basis; values that describe a shared run MUST NOT be presented as the execution's. Owner: P36.46. Also: P35.32 (the ingest_run_report store).
+
+**SIG-TRANSP-037 (MUST).** *No-record honesty.* A source whose published data has no execution record MUST say so on its page and in the table. Owner: P36.46. Also: P36.47, P36.48.
+
+**SIG-TRANSP-038 (MUST).** *Rights review record.* The rights review record MUST list every rights decision with basis, gate, reviewer role and date, and MUST state plainly when an approval came from a standing delegated rule rather than a per-source review, when it went beyond the recorded rule, when captured terms conflict, and when a counsel review is operator-reported without a written opinion. Owner: P36.47.
+
+**SIG-TRANSP-039 (MUST).** *Observed conduct.* Collection conduct MUST be rendered from observed run records (robots outcomes per host, refusals, rate limits) and never from the registry's declared robots policy; a disclosure decision to withhold robots outcomes MUST itself be stated. Owner: P36.47. Also: P36.46.
+
+**SIG-TRANSP-040 (MUST).** *Shared dossier artifact.* A source's contribution to each dossier MUST come from one artifact shared with the dossier page and MUST state how records were assigned to the jurisdiction. Owner: P36.69. Also: P35.44.
+
+**SIG-TRANSP-041 (MUST).** *Capture change kind.* Each capture row MUST state its change kind and the file action allowed by the lane × Part VIII × bytes-stored table (J3 §5.3); download links MUST exist only for raw-ok, screened, retained bytes. Owner: P36.69. Also: P36.51.
+
+**SIG-TRANSP-042 (MUST).** *Source changelog.* Each source MUST have a changelog generated from append-only records and release diffs, dated by those records' clocks, never by version-control dates. Owner: P37.41.
+
+**SIG-TRANSP-043 (MUST).** *Published entities.* Source pages MUST list published entities (capped, with the total and the cap stated) and link to the full per-source data. Owner: P36.69.
+
 # Appendix A — Requirement traceability matrix
 
 This appendix is the **proof of the superset claim** made in §0.1. It walks all **480 atomic
@@ -10019,6 +10110,7 @@ R10-A6 and every landed ADR body above are unchanged.
 | # | Section | Change | Authority |
 |---|---|---|---|
 | R11-X1 | Part XII, §56 (new); §0.3 | Round-11 contract extension: SIG-MEM-005…012, SIG-ENG-040…046, SIG-OPS-001…012, SIG-STORE-048, SIG-SEC-007…011, SIG-REL-001…015 and SIG-CONF-001…014 — 62 new ids, append-only, draft → final map in `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`; `SIG-OPS-*` opened and the `REL` and `CONF` families registered in §0.3. The transparency and UX families are appended later by their planning rows (§56.8) | plan §6.1–§6.2 (ratified at GATE-P); ADR-146…150, ADR-152…154 |
+| R11-X2 | §56.10 (new); §0.3 | Transparency family: `SIG-TRANSP-001`…`SIG-TRANSP-043` — 43 new ids, append-only, carrying J3 §11 D01–D25 as amended by K9 §10 D26–D34 and K10 §18 D35–D43 (adopted by K13's UXR-A10); draft → final map in `docs/build/reports/plan-11b/TRANSP_id_map.csv`; `TRANSP` registered in §0.3. D26–D43 are written once here — PLAN-11C cites the final ids (§56.8). The K13 UX set itself is still appended by PLAN-11C | plan §6.2 (ratified at GATE-P); row 239 (PLAN-11B); ADR-162 |
 
 ### G.7.2 Waivers adopted by the operator
 

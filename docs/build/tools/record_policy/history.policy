@@ -137,6 +137,21 @@ seed-commit b4f52e4d
 seed-commit a58fa2fa
 seed-commit d130b54d
 
+# ── PLAN-11B C3 contract-rewrite commit (ticket 239; recorded 2026-10-05) ─────────────────────────
+# Commit 427c5efb rewrote the seven C3 skeletons (rows 272–278) into the full execute-grade
+# contracts ticket 239's deliverable demands — a planned bulk rewrite, the same class as the
+# Stage-B seeds and the P34.18/ADR-178 re-key. Its subject named ticket ids (`P35.14a/b`,
+# `P36.3`, …), so `executed()` (B2 §7) marked the seven contracts "executing" mid-range and every
+# rewritten skeleton line read as a frozen-contract edit (658 append-only findings, all attributed
+# to 427c5efb — verified by the docs job's history run, run 37363207636). The rewrite is the
+# sanctioned deliverable, not a correction of an executed contract; the branch rule forbids
+# force-push, so the exempting declaration lands as a later commit rather than a reworded subject.
+# Consequence recorded for later contexts: these seven files now read "executed" in any range that
+# contains 427c5efb, and in later ranges they read executed once runs/<id>.md or a BUILD_INDEX row
+# exists at base — i.e., normal BM-TICKET-04 semantics resume; subsequent edits must conform to it.
+# Scope: findings attributed to 427c5efb only; no other commit borrows the exemption.
+seed-commit 427c5efb
+
 # ── P34.22a whole-tree future-date test — first-run entries ──────────────────────────────────────
 # tests/unit/test_no_future_date_literals.py (P34.22a) sweeps code, data, migrations and tests for
 # ISO literals later than HEAD. Real-world and scheduled values in comment-capable files carry
@@ -174,3 +189,23 @@ allow tests/connectors/fixtures/promoted/openstates_jurisdictions_p1.json 2027-0
 allow tests/connectors/fixtures/fema_hsgp_page1.json 2027-10-01T00:00:00Z "End Date"
 allow tests/connectors/fixtures/partners/usaspending_awards.json 2027-01-01T00:00:00Z "End Date"
 allow tests/acceptance/fixtures/okc_sources.json 2027-07-01T00:00:00Z 2027-06-30
+
+# ── PLAN-11B C13 executed-flag exemption (ticket 239; recorded 2026-10-06) ────────────────────
+# Commit f9c407c8 (the C13 Phase-4 split commit) named `P35.1b`/`P35.1c` in its subject, so
+# `executed()` (B2 §7) marked row 291's contract "executing" mid-range and the sanctioned
+# skeleton→full-contract rewrite authored by C6's f17eb537 — together with the lines the
+# fix-forward 08c1840b restored verbatim to the authored text before appending the split —
+# read as frozen-contract edits (148 append-only findings on
+# docs/tickets/291_P35.1b__fleet-hygiene.md: 114 attributed to f17eb537, 34 to 08c1840b;
+# docs-job history run 37472154666). The rewrite is PLAN-11B's deliverable — the same class
+# as 427c5efb above — and the branch rule forbids force-push, so the exemption lands declared
+# rather than as a reworded subject. The C13 re-scope itself lands in the contract as a
+# conforming appended `> Amended 2026-10-06:` note (BM-TICKET-04); row 291a's file
+# (291a_P35.1c__dispatcher-consolidation.md) is new in-range and unjudged.
+# Consequence recorded for later contexts: 291's contract reads "executed" in any range that
+# contains f9c407c8 — subsequent edits must conform to BM-TICKET-04 — and 291a's reads the
+# same once runs/P35.1c.md or a BUILD_INDEX row exists at base.
+# Scope: findings attributed to f17eb537 and 08c1840b only; no other commit borrows the
+# exemption.
+seed-commit f17eb537
+seed-commit 08c1840b

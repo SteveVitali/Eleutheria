@@ -124,6 +124,7 @@ every `SIG-*` id referenced anywhere in this document is either defined or liste
 | `MEM` | Current build memory and reliable closeout (§55; extended by §56) |
 | `REL` | Release identity, promotion, rollback, withdrawal and versioning (§56) |
 | `CONF` | Confidence basis, graph-quality checks and their public disclosure (§56) |
+| `TRANSP` | Public transparency surfaces: source index and pages, captures and runs, downloads and distribution, status lane, citations and release diffs (§56.10, appended by PLAN-11B) |
 
 ## 0.4 The execution model
 
