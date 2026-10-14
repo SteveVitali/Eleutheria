@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "id": "ocd-bill/az-56th-2nd-regular-HB2574",
+      "identifier": "HB 2574",
+      "title": "appropriation; statewide connected behavioral threat assessment and management platform",
+      "session": "56th-2nd-regular",
+      "jurisdiction": {
+        "id": "ocd-jurisdiction/country:us/state:az/government",
+        "name": "Arizona",
+        "classification": "state"
+      },
+      "from_organization": {
+        "name": "House",
+        "classification": "lower"
+      },
+      "latest_action_description": "House Appropriations: MAPS DPA 12-3-0-0",
+      "latest_action_date": "2024-02-14",
+      "latest_passage_date": "",
+      "openstates_url": "https://openstates.org/az/bills/56th-2nd-regular/HB2574/",
+      "sources": [
+        {
+          "url": "https://azleg.gov/legtext/56leg/2R/summary/H.HB2574_021424_APPROP.DOCX.htm",
+          "note": "official legislature page"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "per_page": 20,
+    "page": 1,
+    "max_page": 1,
+    "total_items": 1
+  }
+}

@@ -21,7 +21,17 @@
 #     reviewed 5/min budget (the api_allowlist row) through the shared
 #     politeness layer; 226 requests ≈ 45 min inside the 60m task bound.
 
-plan_version = "2026.09.18"
+# 2026.10.14 — P36.11 / R11-ACQ-15: two reviewed PINNED bill queries appended
+# (I9b-C068 AZ HB 2574; I9b-C069 NY S7037). The family phrase net and the
+# current-session window do not name them: HB 2574 sits in the completed
+# "56th-2nd-regular" session (outside the regular-window rule) and 'threat
+# assessment' is not a family phrase; S7037's act title is pinned verbatim so
+# the widen target stays bounded. A pinned row names jurisdiction + session
+# verbatim and OR's its own phrase set into ONE bounded `q` — the same
+# bill_search target shape, the same LOCAL verbatim-match attribution on the
+# returned titles, and it counts against `max_queries`. A bill record is a
+# proposed instrument — the pin never asserts enactment or deployment.
+plan_version = "2026.10.14"
 
 # The v3 jurisdictions index that seeds the sweep. The connector fetches these
 # bounded pages first (they are the live_targets seed rows — keep them in
@@ -120,3 +130,36 @@ phrases = [
   "acoustic gunshot",
   "gunshot detection",
 ]
+
+# --- the pinned bill queries (P36.11 / R11-ACQ-15) ------------------------------
+# Two reviewed named bills that the family×jurisdiction sweep does not reach:
+# the phrases and the session are pinned verbatim per row (the sweep's current-
+# session window rule does not apply — a pinned row names its own session), and
+# each lands as one bounded bill_search target carrying `pinned_bill` as
+# provenance. Same bounds, same local match attribution, same outcome row.
+[[pinned_bill_queries]]
+id = "az_hb2574_2024"
+jurisdiction_id = "ocd-jurisdiction/country:us/state:az/government"
+jurisdiction = "Arizona"
+jurisdiction_abbr = "az"
+session = "56th-2nd-regular"
+bill_identifier = "HB 2574"
+phrases = [
+  "threat assessment",
+  "behavioral threat assessment",
+  "school safety software",
+]
+review_note = "I9b-C068 — AZ HB 2574 (56th Legislature, 2nd Regular Session, 2024): the statewide connected behavioral threat assessment and management platform appropriation. 'Threat assessment' is not a family phrase and the completed 56th-2nd-regular session is outside the current-window rule — the pin names the session verbatim. A bill record is a proposed instrument: enactment and any platform deployment are never asserted from it (S5 guard)."
+
+[[pinned_bill_queries]]
+id = "ny_s7037_2025_2026"
+jurisdiction_id = "ocd-jurisdiction/country:us/state:ny/government"
+jurisdiction = "New York"
+jurisdiction_abbr = "ny"
+session = "2025-2026"
+bill_identifier = "S 7037"
+phrases = [
+  "social media monitoring safety act",
+  "social media monitoring",
+]
+review_note = "I9b-C069 — NY S7037 (2025–2026 regular session): the 'social media monitoring safety act' education-law amendment + appropriation, in committee at capture (I9b-F094). The pin names the act title verbatim; 'social media monitoring' is also a family phrase, so the row stays an honest bounded query — a proposed bill is never asserted as enacted law."

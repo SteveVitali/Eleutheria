@@ -2078,3 +2078,308 @@ kind = "disclosure_document"
 targets = [
   { id = "whitesboro-lightspeed-alert", url = "https://www.wboro.org/departments/information-and-instructional-technology/lightspeed-alert", kind = "disclosure_document" },
 ]
+
+# =============================================================================
+# P36.11 / R11-ACQ-13 (I8 §5.8): grant programmes, council/agenda instruments,
+# procurement notices and the Guam bill signing — ACQ-01 candidate ids
+# I9b-C054..C058/C064/C066/C068/C069.
+#
+# Declarative reviewed surfaces only — every source stays
+# ingestion_permitted=false (HG-03 RB-04/RB-06 `a`); the operator's OP-26
+# Wave-B flip under ING-GO-B is the only route to a live fetch, so these rows
+# fetch nothing today. Six `clause_fields` targets ride the P32.12 document
+# adapter. Grant rows mint `funding_instrument:` subjects — procurement
+# (outside a grant) is NOT §5.8; the two procurement notices mint
+# `procurement_notice:` rows and are institutional facts only — procured is
+# never deployed, and the Part VIII person-name guard refuses any natural-
+# person payee at extraction.
+
+# TX DMV — the MVCPA FY2026 published grant listing (PDF): funder, programme,
+# one reviewed recipient row (Balch Springs PD ALPR task force), amount and
+# funded purpose.
+[grant_tx_txdmv_mvcpa]
+kind = "dossier_documents"
+
+[[grant_tx_txdmv_mvcpa.targets]]
+id = "txdmv-mvcpa-fy2026-grant-listing"
+doc_id = "txdmv-mvcpa-fy2026-grant-listing"
+url = "https://www.txdmv.gov/sites/default/files/body-files/MVCPA-FY-2026-Grant-Listing.pdf"
+kind = "clause_fields"
+subject_id = "funding_instrument:txdmv-mvcpa-fy2026"
+document_genre = "agenda_document"
+review_note = "MVCPA FY2026 published grant listing: the authority's published award rows are institutional facts (recipient agency + amount + funded purpose). A grant row asserts the award only — never that procured ALPR equipment is deployed."
+fields = [
+  { field = "title", literal = "Motor Vehicle Crime Prevention Authority", value = "MVCPA FY 2026 Grant Listing" },
+  { field = "grant_funder", literal = "Texas Department of Motor Vehicles", value = "Texas Department of Motor Vehicles — Motor Vehicle Crime Prevention Authority" },
+  { field = "grant_program", literal = "FY 2026 Grant Listing", value = "Motor Vehicle Crime Prevention Authority grant program" },
+  { field = "grant_recipient", literal = "Balch Springs Police Department", value = "Balch Springs Police Department" },
+  { field = "funding_amount", literal = "$250,000", value = 250000 },
+  { field = "item_description", literal = "ALPR equipment", value = "Automatic license plate reader equipment" },
+  { field = "technology", literal = "ALPR equipment", value = "automatic license plate readers" },
+  { field = "award_instrument", literal = "MVCPA FY 2026", value = "MVCPA FY 2026" },
+  { field = "coverage_period", literal = "FY 2026", value = "FY2026" },
+]
+
+# CA BSCC — the Organized Retail Theft Prevention Grant Program page: funder,
+# programme, one reviewed recipient (Ventura PD ALPR purchase), amount.
+[grant_ca_bscc_ort]
+kind = "dossier_documents"
+
+[[grant_ca_bscc_ort.targets]]
+id = "bscc-ort-grant-program"
+doc_id = "bscc-ort-grant-program"
+url = "https://www.bscc.ca.gov/organized-retail-theft-grant-program/"
+kind = "clause_fields"
+subject_id = "funding_instrument:ca-bscc-ort"
+document_genre = "portal_document"
+review_note = "BSCC ORT programme page: institutional award facts only — the recipient agencies and award amounts the page publishes are institutional, never person-level."
+fields = [
+  { field = "title", literal = "Organized Retail Theft Prevention Grant Program", value = "BSCC Organized Retail Theft Prevention Grant Program" },
+  { field = "grant_funder", literal = "Board of State and Community Corrections", value = "California Board of State and Community Corrections" },
+  { field = "grant_program", literal = "Organized Retail Theft Prevention Grant Program", value = "Organized Retail Theft Prevention Grant Program" },
+  { field = "grant_recipient", literal = "Ventura Police Department", value = "Ventura Police Department" },
+  { field = "funding_amount", literal = "$6,125,571", value = 6125571 },
+  { field = "item_description", literal = "ALPR equipment", value = "ALPR equipment to address organized retail theft" },
+  { field = "technology", literal = "ALPR", value = "automatic license plate readers" },
+  { field = "award_instrument", literal = "BSCC ORT", value = "BSCC Organized Retail Theft Prevention Grant Program" },
+]
+
+# FL Legislature — Local Funding Initiative Request FY2024-25_S3177 (PDF):
+# requesting entity, amount requested, funded purpose (LPR expansion).
+[grant_fl_senate_lfir]
+kind = "dossier_documents"
+
+[[grant_fl_senate_lfir.targets]]
+id = "fl-senate-lfir-s3177"
+doc_id = "fl-senate-lfir-s3177"
+url = "https://www.flsenate.gov/PublishedContent/Session/2024/LocalFundingInitiativeRequests/FY2024-25_S3177.pdf"
+kind = "clause_fields"
+subject_id = "funding_instrument:fl-lfir-s3177"
+document_genre = "agenda_document"
+review_note = "Published LFIR form: the requesting entity + amount requested are institutional facts. A funding REQUEST is not an award and never a deployment — the request state is the bounded fact."
+fields = [
+  { field = "title", literal = "ALPR Expansion", value = "Local Funding Initiative Request FY2024-25_S3177 — ALPR Expansion" },
+  { field = "grant_funder", literal = "Florida Legislature", value = "Florida Legislature — Local Funding Initiative" },
+  { field = "grant_program", literal = "Local Funding Initiative", value = "Local Funding Initiative Request" },
+  { field = "grant_recipient", literal = "City of Daytona Beach", value = "City of Daytona Beach" },
+  { field = "funding_amount", literal = "$500,000", value = 500000 },
+  { field = "item_description", literal = "ALPR expansion", value = "ALPR expansion for the City of Daytona Beach" },
+  { field = "technology", literal = "ALPR", value = "automatic license plate readers" },
+  { field = "award_instrument", literal = "FY2024-25_S3177", value = "LFIR FY2024-25_S3177" },
+  { field = "coverage_period", literal = "FY2024-25", value = "FY2024-25" },
+]
+
+# AL ADECA — Governor's newsroom announcement of Project Safe Neighborhoods
+# grants: funder, programme, recipients and amounts the release publishes.
+[grant_al_adeca_psn]
+kind = "dossier_documents"
+
+[[grant_al_adeca_psn.targets]]
+id = "adeca-psn-grants-2025-07-16"
+doc_id = "adeca-psn-grants-2025-07-16"
+url = "https://adeca.alabama.gov/2025/07/16/gov-ivey-announces-project-safe-neighborhoods-grants-for-several-law-enforcement-agencies/"
+kind = "clause_fields"
+subject_id = "funding_instrument:al-adeca-psn-2025"
+document_genre = "official_statement"
+review_note = "ADECA press release announcing PSN awards: the named law-enforcement agencies and award amounts are institutional facts; grant awards only, never deployment assertions."
+fields = [
+  { field = "title", literal = "Project Safe Neighborhoods", value = "Gov. Ivey announces Project Safe Neighborhoods grants for several law enforcement agencies" },
+  { field = "grant_funder", literal = "Alabama Department of Economic and Community Affairs", value = "Alabama Department of Economic and Community Affairs" },
+  { field = "grant_program", literal = "Project Safe Neighborhoods", value = "Project Safe Neighborhoods" },
+  { field = "grant_recipient", literal = "Montgomery Police Department", value = "Montgomery Police Department" },
+  { field = "funding_amount", literal = "$10,000", value = 10000 },
+  { field = "item_description", literal = "ALPR equipment", value = "ALPR equipment" },
+  { field = "technology", literal = "ALPR", value = "automatic license plate readers" },
+  { field = "award_instrument", literal = "Project Safe Neighborhoods", value = "ADECA Project Safe Neighborhoods grant" },
+  { field = "posted_date", literal = "July 16, 2025", value = "2025-07-16" },
+]
+
+# NJ OAG — SFY21 Body-Worn Camera Grant Program administration & guidelines
+# (PDF): funder, programme, programme-wide amount and funded purpose.
+[grant_nj_oag_bwc]
+kind = "dossier_documents"
+
+[[grant_nj_oag_bwc.targets]]
+id = "nj-oag-bwc-sfy21-guidelines"
+doc_id = "nj-oag-bwc-sfy21-guidelines"
+url = "https://www.nj.gov/oag/grants/BWC_Program-Administration-and-Guidelines.pdf"
+kind = "clause_fields"
+subject_id = "funding_instrument:nj-oag-bwc-sfy21"
+document_genre = "agenda_document"
+review_note = "NJ OAG BWC grant-programme guidelines: programme-level facts (administering funder, total appropriation, funded equipment class) — no per-officer or deployment claim."
+fields = [
+  { field = "title", literal = "Body-Worn Camera Grant Program", value = "SFY21 Body-Worn Camera Grant Program — Program Administration and Guidelines" },
+  { field = "grant_funder", literal = "Office of the Attorney General", value = "New Jersey Office of the Attorney General" },
+  { field = "grant_program", literal = "Body-Worn Camera Grant Program", value = "SFY21 Body-Worn Camera Grant Program" },
+  { field = "funding_amount", literal = "$57,500,000", value = 57500000 },
+  { field = "item_description", literal = "body-worn camera equipment", value = "Body-worn camera equipment and related storage" },
+  { field = "technology", literal = "body-worn camera", value = "body-worn cameras" },
+  { field = "award_instrument", literal = "SFY21", value = "NJ OAG SFY21 Body-Worn Camera Grant Program" },
+  { field = "coverage_period", literal = "SFY21", value = "SFY2021" },
+]
+
+# OK DAC — the JAG-LLE programme page: funder, programme, eligible-equipment
+# purpose literal. No per-award amounts on the reviewed surface — the
+# funding_amount field is a reviewed 'absent' state (never fabricated).
+[grant_ok_dac_jag_lle]
+kind = "dossier_documents"
+
+[[grant_ok_dac_jag_lle.targets]]
+id = "ok-dac-jag-lle-program"
+doc_id = "ok-dac-jag-lle-program"
+url = "https://oklahoma.gov/dac/grants/grants-available/jag-lle.html"
+kind = "clause_fields"
+subject_id = "funding_instrument:ok-dac-jag-lle"
+document_genre = "portal_document"
+review_note = "Oklahoma DAC JAG-LLE programme page: programme facts and the published eligible-equipment purpose; the page carries no single award amount, so funding_amount is reviewed 'absent' — a recorded field-state, never fabricated."
+fields = [
+  { field = "title", literal = "Justice Assistance Grant", value = "Edward Byrne Memorial Justice Assistance Grant — Local Law Enforcement" },
+  { field = "grant_funder", literal = "Oklahoma District Attorneys Council", value = "Oklahoma District Attorneys Council" },
+  { field = "grant_program", literal = "Justice Assistance Grant", value = "Edward Byrne Memorial JAG — Local Law Enforcement" },
+  { field = "item_description", literal = "law enforcement equipment", value = "Law enforcement equipment and technology for local agencies" },
+  { field = "technology", literal = "body-worn cameras", value = "body-worn cameras" },
+  { field = "award_instrument", literal = "JAG-LLE", value = "Oklahoma JAG Local Law Enforcement" },
+  { field = "funding_amount", label = "award amount", state = "absent" },
+]
+
+# Haskell AR — Resolution No. 19-2025 (PDF): the council's authorization of a
+# Flock Safety LPR agreement — an instrument under consideration / adopted
+# resolution, never an executed contract.
+[agenda_haskell_ar_council]
+kind = "dossier_documents"
+
+[[agenda_haskell_ar_council.targets]]
+id = "haskell-resolution-19-2025"
+doc_id = "haskell-resolution-19-2025"
+url = "https://www.haskellar.gov/assets/pdf/resolutions/2025/19-2025.pdf"
+kind = "clause_fields"
+subject_id = "agenda_item:haskell-ar-19-2025"
+document_genre = "agenda_document"
+review_note = "Resolution 19-2025 authorizes the Mayor to execute a Flock Safety agreement — authorization is the bounded fact; execution and deployment are never asserted from a resolution text."
+fields = [
+  { field = "title", literal = "Flock Safety", value = "Resolution No. 19-2025 — Flock Safety LPR cameras" },
+  { field = "enacting_body", literal = "City Council of the City of Haskell", value = "City Council of the City of Haskell" },
+  { field = "citation", literal = "19-2025", value = "Resolution No. 19-2025" },
+  { field = "vendor", literal = "Flock Safety", value = "Flock Safety" },
+  { field = "products", literal = "LPR cameras", value = "Flock Safety LPR cameras" },
+  { field = "technology", literal = "LPR", value = "automatic license plate readers" },
+  { field = "contract_value", literal = "$24,000", value = 24000 },
+  { field = "authorization_state", literal = "authorizes the Mayor to execute", value = "authorizes the Mayor to execute" },
+  { field = "document", literal = "19-2025.pdf", value = "Resolution No. 19-2025" },
+]
+
+# Des Moines IA — Council Communication 26-235 (PDF): city-council
+# communication on the Motorola Solutions LPR software agreement.
+[agenda_des_moines_ia_council]
+kind = "dossier_documents"
+
+[[agenda_des_moines_ia_council.targets]]
+id = "des-moines-communication-26-235"
+doc_id = "des-moines-communication-26-235"
+url = "https://meetings.dsm.city/OnBaseAgendaOnline/Documents/ViewDocument/Communication%20No.%2026-235.pdf?meetingId=2960&documentType=Agenda&itemId=101098&publishId=122575&isSection=false"
+kind = "clause_fields"
+subject_id = "agenda_item:des-moines-ia-26-235"
+document_genre = "agenda_document"
+review_note = "Council Communication 26-235 recommends approval of a Motorola Solutions LPR agreement — a recommendation under consideration, never execution or deployment."
+fields = [
+  { field = "title", literal = "Motorola Solutions", value = "Council Communication No. 26-235 — Motorola Solutions LPR software" },
+  { field = "enacting_body", literal = "Des Moines City Council", value = "Des Moines City Council" },
+  { field = "citation", literal = "26-235", value = "Council Communication No. 26-235" },
+  { field = "vendor", literal = "Motorola Solutions", value = "Motorola Solutions" },
+  { field = "products", literal = "LPR software", value = "Motorola Solutions LPR software" },
+  { field = "technology", literal = "LPR", value = "automatic license plate readers" },
+  { field = "contract_value", literal = "$123,750", value = 123750 },
+  { field = "authorization_state", literal = "recommends approval", value = "recommends approval" },
+]
+
+# Jasper County SC — council agenda e-packet item (PDF): Sheriff's Cellebrite
+# electronic-evidence software purchase as an agenda item under consideration.
+[agenda_jasper_sc_council]
+kind = "dossier_documents"
+
+[[agenda_jasper_sc_council.targets]]
+id = "jasper-sc-agenda-cellebrite-2024"
+doc_id = "jasper-sc-agenda-cellebrite-2024"
+url = "https://www.jaspercountysc.gov/_files/ugd/442fcc_478a575a50d84d63b23d564bab17fcc7.pdf"
+kind = "clause_fields"
+subject_id = "agenda_item:jasper-sc-cellebrite-2024"
+document_genre = "agenda_document"
+review_note = "Jasper County Council agenda e-packet: the Sheriff's Cellebrite software purchase as an agenda item — consideration only, never execution or deployment."
+fields = [
+  { field = "title", literal = "Cellebrite", value = "Jasper County Council agenda — Cellebrite electronic evidence software" },
+  { field = "enacting_body", literal = "Jasper County Council", value = "Jasper County Council" },
+  { field = "vendor", literal = "Cellebrite", value = "Cellebrite" },
+  { field = "item_description", literal = "electronic evidence software", value = "Cellebrite electronic evidence software for the Sheriff's Office" },
+  { field = "technology", literal = "Cellebrite", value = "mobile device forensic tools" },
+  { field = "contract_value", literal = "$18,500", value = 18500 },
+  { field = "buyer", literal = "Jasper County Sheriff", value = "Jasper County Sheriff's Office" },
+]
+
+# Davie FL — notice of intent to award NTSS-2018-026 (PDF): sole-source
+# Cellebrite forensic-software upgrade notice — a procurement notice, never
+# an executed contract.
+[procportal_davie_fl_purchasing]
+kind = "dossier_documents"
+
+[[procportal_davie_fl_purchasing.targets]]
+id = "davie-ntss-2018-026-cellebrite"
+doc_id = "davie-ntss-2018-026-cellebrite"
+url = "https://www.davie-fl.gov/DocumentCenter/View/4395/NTSS-2018-026-Cellebrite---Universal-Mobile-Phone-Forensic-Software-Upgrade"
+kind = "clause_fields"
+subject_id = "procurement_notice:davie-fl-ntss-2018-026"
+document_genre = "agenda_document"
+review_note = "Notice of Intent to Award NTSS-2018-026: sole-source notice for the Cellebrite UFED software upgrade — an intent notice is not an executed contract and never asserts deployment."
+fields = [
+  { field = "title", literal = "Cellebrite", value = "Notice of Intent to Award NTSS-2018-026 — Cellebrite Universal Mobile Phone Forensic Software Upgrade" },
+  { field = "contract_number", literal = "NTSS-2018-026", value = "NTSS-2018-026" },
+  { field = "buyer", literal = "Town of Davie", value = "Town of Davie" },
+  { field = "vendor", literal = "Cellebrite", value = "Cellebrite" },
+  { field = "products", literal = "Universal Mobile Phone Forensic Software", value = "Cellebrite UFED software upgrade" },
+  { field = "technology", literal = "Mobile Phone Forensic", value = "mobile device forensic tools" },
+  { field = "authorization_state", literal = "Notice of Intent to Award", value = "intent to award — sole source" },
+]
+
+# Forsyth County NC — RFP2449 cover (PDF): the county's Real-Time Intelligence
+# Center enterprise-solution solicitation — solicitation metadata only.
+[procportal_forsyth_nc_purchasing]
+kind = "dossier_documents"
+
+[[procportal_forsyth_nc_purchasing.targets]]
+id = "forsyth-rfp2449-rtic"
+doc_id = "forsyth-rfp2449-rtic"
+url = "https://www.forsyth.cc/pubsafety/Documents/RFP2449.pdf"
+kind = "clause_fields"
+subject_id = "procurement_notice:forsyth-nc-rfp2449"
+document_genre = "agenda_document"
+review_note = "RFP2449 cover for a Real-Time Intelligence Center enterprise solution — the solicitation identifier, buyer and stated purpose are the bounded facts; a solicitation never asserts award or deployment."
+fields = [
+  { field = "title", literal = "Real-Time Intelligence Center", value = "RFP2449 Real-Time Intelligence Center Enterprise Solution" },
+  { field = "contract_number", literal = "RFP2449", value = "RFP2449" },
+  { field = "buyer", literal = "Forsyth County", value = "Forsyth County" },
+  { field = "item_description", literal = "Real-Time Intelligence Center Enterprise Solution", value = "Real-Time Intelligence Center Enterprise Solution" },
+  { field = "technology", literal = "Real-Time Intelligence Center", value = "real-time intelligence center" },
+  { field = "posted_date", literal = "February 15, 2024", value = "2024-02-15" },
+]
+
+# Guam — Governor's press release on the signing of Bill 132-35 (GPD security
+# cameras): publication facts about a legislative instrument — signing only,
+# never a deployment assertion.
+[legis_gu_governor]
+kind = "dossier_documents"
+
+[[legis_gu_governor.targets]]
+id = "guam-governor-bill-132-35-signing"
+doc_id = "guam-governor-bill-132-35-signing"
+url = "https://governor.guam.gov/press_release/bill-for-gpd-security-cameras-now-law/"
+kind = "clause_fields"
+subject_id = "legislative_bill:gu-132-35"
+document_genre = "official_statement"
+review_note = "Governor of Guam press release (RB-06 public-record rationale): the bill number, its signing into law and the security-camera purpose are the bounded facts — the press release is a citation layer, never re-hosted."
+fields = [
+  { field = "title", literal = "Security Cameras", value = "Bill for GPD security cameras now law" },
+  { field = "citation", literal = "Bill 132-35", value = "Bill No. 132-35" },
+  { field = "enacting_body", literal = "Guam Legislature", value = "Guam Legislature" },
+  { field = "item_description", literal = "security cameras", value = "Security cameras for the Guam Police Department" },
+  { field = "technology", literal = "security cameras", value = "surveillance cameras" },
+  { field = "posted_date", literal = "July 25, 2024", value = "2024-07-25" },
+]

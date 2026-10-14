@@ -134,3 +134,123 @@ predicate_allowlist = [
   "title", "document", "technology", "enacting_body", "posted_date",
   "disclosure_field_state",
 ]
+
+# --- P36.11 / R11-ACQ-15: the r11-documents-01 document family -----------------
+# Twelve gated rows over the shared clause_fields/index_listing handlers:
+# six grant records (grant_award family — recipient/funder/programme/amount/
+# purpose/instrument/date, never a deployment assertion), three council/agenda
+# documents, two procurement-portal notices (contract/buyer family — procured
+# ≠ deployed), one Guam legislation page. Recipients/buyers are organisations;
+# a natural-person payee is dropped at extract (§43.4 — no person predicate
+# exists in any allowlist). `disclosure_field_state` rides every block — the
+# mechanical mandated-!=-populated record.
+
+[adapters.grant_tx_txdmv_mvcpa]
+source_id = "grant_tx_txdmv_mvcpa"
+jurisdiction = "us.state_abbr:TX"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "award_date", "funding_instrument", "description",
+  "technology", "period", "posted_date", "disclosure_field_state",
+]
+
+[adapters.grant_ca_bscc_ort]
+source_id = "grant_ca_bscc_ort"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "award_date", "funding_instrument", "description",
+  "technology", "period", "posted_date", "disclosure_field_state",
+]
+
+[adapters.grant_fl_senate_lfir]
+source_id = "grant_fl_senate_lfir"
+jurisdiction = "us.state_abbr:FL"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "funding_instrument", "description",
+  "technology", "period", "disclosure_field_state",
+]
+
+[adapters.grant_al_adeca_psn]
+source_id = "grant_al_adeca_psn"
+jurisdiction = "us.state_abbr:AL"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "award_date", "funding_instrument", "description",
+  "technology", "posted_date", "disclosure_field_state",
+]
+
+[adapters.grant_nj_oag_bwc]
+source_id = "grant_nj_oag_bwc"
+jurisdiction = "us.state_abbr:NJ"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "funding_instrument", "description",
+  "technology", "period", "use_restriction", "disclosure_field_state",
+]
+
+[adapters.grant_ok_dac_jag_lle]
+source_id = "grant_ok_dac_jag_lle"
+jurisdiction = "us.state_abbr:OK"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "funding_instrument", "description",
+  "technology", "period", "use_restriction", "disclosure_field_state",
+]
+
+[adapters.agenda_haskell_ar_council]
+source_id = "agenda_haskell_ar_council"
+jurisdiction = "us.state_abbr:AR"
+predicate_allowlist = [
+  "title", "document", "enacting_body", "buyer", "vendor",
+  "contract_number", "contract_value", "funding_amount", "products",
+  "technology", "citation", "authorization_state", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.agenda_des_moines_ia_council]
+source_id = "agenda_des_moines_ia_council"
+jurisdiction = "us.state_abbr:IA"
+predicate_allowlist = [
+  "title", "document", "enacting_body", "buyer", "vendor",
+  "contract_number", "contract_value", "products",
+  "technology", "citation", "authorization_state", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.agenda_jasper_sc_council]
+source_id = "agenda_jasper_sc_council"
+jurisdiction = "us.state_abbr:SC"
+predicate_allowlist = [
+  "title", "document", "enacting_body", "buyer", "vendor",
+  "contract_number", "contract_value", "funding_amount", "products",
+  "technology", "citation", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.procportal_davie_fl_purchasing]
+source_id = "procportal_davie_fl_purchasing"
+jurisdiction = "us.state_abbr:FL"
+predicate_allowlist = [
+  "title", "document", "buyer", "seller", "vendor",
+  "contract_number", "contract_value", "products", "description",
+  "technology", "authorization_state", "posted_date", "disclosure_field_state",
+]
+
+[adapters.procportal_forsyth_nc_purchasing]
+source_id = "procportal_forsyth_nc_purchasing"
+jurisdiction = "us.state_abbr:NC"
+predicate_allowlist = [
+  "title", "document", "buyer", "vendor",
+  "contract_number", "contract_value", "products", "description",
+  "technology", "posted_date", "disclosure_field_state",
+]
+
+[adapters.legis_gu_governor]
+source_id = "legis_gu_governor"
+jurisdiction = "us.state_abbr:GU"
+predicate_allowlist = [
+  "title", "document", "enacting_body", "citation", "description",
+  "technology", "funding_amount", "posted_date", "disclosure_field_state",
+]

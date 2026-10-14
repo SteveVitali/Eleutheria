@@ -385,6 +385,77 @@ applicability = "the field's disclosure state on the reviewed document — answe
 required = false
 status = "mapped"
 
+# --- grants / funding instruments (P36.11 / ACQ-15) -----------------------------
+# Grant-award facts: the recipient agency, the funder, the named programme,
+# the award amount/identifier/date and the stated purpose — all EXISTING
+# predicates (no amendment). A grant award is a recorded award, never a
+# deployment assertion (procured ≠ deployed — the ADR-080 posture).
+
+[fields.grant_recipient]
+slug = "funding.award"
+predicate = "recipient"
+object_role = "recipient"
+dossier_field = "q1"
+valid_time = "coverage"
+applicability = "the recipient/grantee organisation the award record names, for its covered period — organisations only; a natural-person payee is dropped at extract, never emitted (§43.4)"
+required = false
+status = "mapped"
+
+[fields.grant_funder]
+slug = "funding.award"
+predicate = "funder"
+object_role = "funder"
+dossier_field = "q1"
+valid_time = "coverage"
+applicability = "the funding organisation the award record names, for its covered period"
+required = false
+status = "mapped"
+
+[fields.grant_program]
+slug = "funding.award"
+predicate = "funding_program_name"
+dossier_field = "q5"
+valid_time = "coverage"
+applicability = "the named funding programme the award record belongs to, verbatim"
+required = false
+status = "mapped"
+
+[fields.award_instrument]
+slug = "funding.award"
+predicate = "funding_instrument"
+dossier_field = "q5"
+valid_time = "none"
+applicability = "the award/request identifier the record carries, verbatim (a grant request or award number — never a deployed-asset id)"
+required = false
+status = "mapped"
+
+[fields.award_date]
+slug = "funding.award"
+predicate = "award_date"
+dossier_field = "q9"
+valid_time = "effective"
+applicability = "the award date the record states — the instrument's own declared date, never the retrieval date"
+required = false
+status = "mapped"
+
+[fields.item_description]
+slug = "contract.procurement"
+predicate = "description"
+dossier_field = "q5"
+valid_time = "none"
+applicability = "the purpose/line-item description the record states, verbatim — a grant purpose or a procurement item description; never an assertion beyond the literal"
+required = false
+status = "mapped"
+
+[fields.contract_number]
+slug = "contract.procurement"
+predicate = "contract_number"
+dossier_field = "q5"
+valid_time = "none"
+applicability = "the contract/solicitation/notice number the document states, verbatim (an RFP, sole-source notice or award reference)"
+required = false
+status = "mapped"
+
 # --- the routed scoped amendment ----------------------------------------------
 # `execution_state` (was the instrument's execution verified — parties signed,
 # dates present, blanks?) has NO existing predicate: the §11.17/§11.11 surface

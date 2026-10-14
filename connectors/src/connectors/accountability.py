@@ -1658,6 +1658,9 @@ class AccountabilityConnector(Connector):
         for extra in ("congress", "page_offset"):
             if target.get(extra) is not None:
                 row[extra] = target[extra]
+        # P36.11 — a pinned bill query names its bill on the outcome row.
+        if target.get("pinned_bill") is not None:
+            row["pinned_bill"] = target["pinned_bill"]
         if row.get("congress") is None:
             derived = _congress_number(row["url"])
             if derived is not None:
@@ -1925,6 +1928,45 @@ def _bill_query_targets(
             )
             if len(out) >= int(cfg["max_queries"]):
                 return out
+    # P36.11 / R11-ACQ-15: the reviewed PINNED bill queries. A pinned row names
+    # its jurisdiction + session verbatim (the current-session window rule
+    # does not apply — the pin reaches a completed session the family sweep
+    # misses) and OR's its own phrase set into ONE bounded `q`; the same
+    # bill_search target shape plus `pinned_bill` provenance, counted against
+    # the same `max_queries` bound — exceeding it truncates loud, never crawls.
+    for pinned in plan.get("pinned_bill_queries", []):
+        abbr = _opt_str(pinned.get("jurisdiction_abbr")) or _jurisdiction_abbr(
+            pinned.get("jurisdiction_id")
+        )
+        session = _opt_str(pinned.get("session"))
+        params = {
+            "jurisdiction": abbr,
+            "q": " OR ".join(str(p) for p in pinned["phrases"]),
+            "per_page": per_page,
+            "sort": str(cfg["sort"]),
+        }
+        if session:
+            params["session"] = session
+        url = f"{base}{cfg['endpoint']}?{urlencode(params)}"
+        out.append(
+            {
+                "id": f"openstates-bills-{abbr}-{pinned['id']}",
+                "url": url,
+                "kind": "bill_search",
+                "jurisdiction_id": _opt_str(pinned.get("jurisdiction_id")),
+                "jurisdiction": _opt_str(pinned.get("jurisdiction")),
+                "jurisdiction_abbr": abbr,
+                "session": session,
+                "query_family": str(pinned["id"]),
+                "query_phrases": [str(p) for p in pinned["phrases"]],
+                "per_page": per_page,
+                "sort": str(cfg["sort"]),
+                "plan_version": str(plan["plan_version"]),
+                "pinned_bill": _opt_str(pinned.get("bill_identifier")),
+            }
+        )
+        if len(out) >= int(cfg["max_queries"]):
+            return out
     return out
 
 

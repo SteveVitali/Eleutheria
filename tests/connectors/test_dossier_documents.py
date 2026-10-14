@@ -90,6 +90,24 @@ FIXTURE_FOR_DOC: dict[str, tuple[str, str]] = {
         "tolc_lgds_ast_hearing_notice.pdf",
         "application/pdf",
     ),
+    # P36.11 / R11-ACQ-15: the r11-documents-01 document family — six grant
+    # records, three council/agenda documents, two procurement notices, one
+    # Guam legislation page. All stand-ins (never fetched captures).
+    "txdmv-mvcpa-fy2026-grant-listing": (
+        "txdmv_mvcpa_grant_listing.pdf",
+        "application/pdf",
+    ),
+    "bscc-ort-grant-program": ("bscc_ort_program.html", "text/html"),
+    "fl-senate-lfir-s3177": ("fl_senate_lfir_s3177.pdf", "application/pdf"),
+    "adeca-psn-grants-2025-07-16": ("adeca_psn_grants.html", "text/html"),
+    "nj-oag-bwc-sfy21-guidelines": ("nj_oag_bwc_guidelines.pdf", "application/pdf"),
+    "ok-dac-jag-lle-program": ("ok_dac_jag_lle.html", "text/html"),
+    "haskell-resolution-19-2025": ("haskell_resolution_19_2025.pdf", "application/pdf"),
+    "des-moines-communication-26-235": ("des_moines_26_235.pdf", "application/pdf"),
+    "jasper-sc-agenda-cellebrite-2024": ("jasper_sc_agenda_cellebrite.pdf", "application/pdf"),
+    "davie-ntss-2018-026-cellebrite": ("davie_ntss_2018_026.pdf", "application/pdf"),
+    "forsyth-rfp2449-rtic": ("forsyth_rfp2449.pdf", "application/pdf"),
+    "guam-governor-bill-132-35-signing": ("guam_governor_bill_132_35.html", "text/html"),
 }
 
 
@@ -877,3 +895,220 @@ def test_golden_field_to_locator_outputs() -> None:
 def test_golden_file_covers_every_configured_target() -> None:
     golden = json.loads((_FIX / "golden_locators.json").read_text())
     assert sorted(golden) == sorted(FIXTURE_FOR_DOC)
+
+
+# --- P36.11 / R11-ACQ-15: grants, council/agenda documents, procurement -------
+# The r11-documents-01 family rides the same shared adapter: grant rows emit
+# recipient/funder/programme/amount/purpose facts (an award is never a
+# deployment), procurement notices emit contract/buyer facts (procured ≠
+# deployed), and every row stays gated in the registry.
+
+P3611_SOURCES = (
+    "grant_tx_txdmv_mvcpa",
+    "grant_ca_bscc_ort",
+    "grant_fl_senate_lfir",
+    "grant_al_adeca_psn",
+    "grant_nj_oag_bwc",
+    "grant_ok_dac_jag_lle",
+    "agenda_haskell_ar_council",
+    "agenda_des_moines_ia_council",
+    "agenda_jasper_sc_council",
+    "procportal_davie_fl_purchasing",
+    "procportal_forsyth_nc_purchasing",
+    "legis_gu_governor",
+)
+
+
+def test_p3611_sources_registered_routed_and_gated() -> None:
+    """All twelve rows are in the family, routed to the shared adapter, and
+    refuse the loader gate (HG-03 stays unflipped)."""
+    for source_id in P3611_SOURCES:
+        assert source_id in DOSSIER_SOURCES, source_id
+        assert CONNECTOR_FOR_SOURCE[source_id] == CONNECTOR
+        record = get(source_id)
+        assert record.ingestion_permitted is False
+        assert record.rights.spdx.strip().upper() == "UNDETERMINED"
+        assert record.rights.redistributable is False
+        assert adapter_config(source_id)["source_id"] == source_id
+        assert list(live_targets(source_id)), f"{source_id} names no reviewed target"
+        assert live_gate_reasons(source_id), "new rows must carry live-gate reasons"
+
+
+def test_txdmv_grant_award_facts() -> None:
+    """The MVCPA listing emits recipient/funder/programme/amount/purpose —
+    an award fact set, never a deployment."""
+    report, _ = _run_doc("grant_tx_txdmv_mvcpa", "txdmv-mvcpa-fy2026-grant-listing")
+    recipients = _claims_for(report, "recipient")
+    (recipient,) = [c for c in recipients if not c.get("object_ref")]
+    assert recipient["value"] == "Balch Springs Police Department"
+    (recipient_twin,) = [c for c in recipients if c.get("object_ref")]
+    assert recipient_twin["object_ref"]["role"] == "recipient"
+    assert recipient_twin["object_ref"]["jurisdiction"] == "us.state_abbr:TX"
+    assert recipient_twin["object_ref"]["candidate"] is True
+    funders = _claims_for(report, "funder")
+    (funder,) = [c for c in funders if not c.get("object_ref")]
+    assert "Texas Department of Motor Vehicles" in funder["value"]
+    (programme,) = _claims_for(report, "funding_program_name")
+    assert "Motor Vehicle Crime Prevention Authority" in programme["value"]
+    (amount,) = _claims_for(report, "funding_amount")
+    assert amount["value"] == 250000
+    (instrument,) = _claims_for(report, "funding_instrument")
+    assert instrument["value"] == "MVCPA FY 2026"
+    (purpose,) = _claims_for(report, "description")
+    assert "license plate reader" in purpose["value"].lower() or "alpr" in purpose["value"].lower()
+    # An award record asserts procurement of a technology class — never a
+    # deployment, never a person.
+    assert not _claims_for(report, "deployment_exists")
+    for claim in _claims(report):
+        assert claim.get("object_type") != "person"
+
+
+def test_bscc_grant_and_nj_programme_page() -> None:
+    report, _ = _run_doc("grant_ca_bscc_ort", "bscc-ort-grant-program")
+    (recipient,) = [c for c in _claims_for(report, "recipient") if not c.get("object_ref")]
+    assert recipient["value"] == "Ventura Police Department"
+    (amount,) = _claims_for(report, "funding_amount")
+    assert amount["value"] == 6125571
+    report, _ = _run_doc("grant_nj_oag_bwc", "nj-oag-bwc-sfy21-guidelines")
+    (amount,) = _claims_for(report, "funding_amount")
+    assert amount["value"] == 57500000
+    (tech,) = _claims_for(report, "technology")
+    assert "body-worn" in tech["value"]
+    (period,) = _claims_for(report, "period")
+    assert period["value"] == "SFY2021"
+
+
+def test_lfir_request_and_adeca_announcement() -> None:
+    report, _ = _run_doc("grant_fl_senate_lfir", "fl-senate-lfir-s3177")
+    (recipient,) = [c for c in _claims_for(report, "recipient") if not c.get("object_ref")]
+    assert recipient["value"] == "City of Daytona Beach"
+    (instrument,) = _claims_for(report, "funding_instrument")
+    assert instrument["value"] == "LFIR FY2024-25_S3177"
+    report, _ = _run_doc("grant_al_adeca_psn", "adeca-psn-grants-2025-07-16")
+    (posted,) = _claims_for(report, "posted_date")
+    assert posted["value"] == "2025-07-16"
+    (programme,) = _claims_for(report, "funding_program_name")
+    assert programme["value"] == "Project Safe Neighborhoods"
+
+
+def test_jag_lle_absent_amount_is_a_recorded_state() -> None:
+    """The reviewed-absent funding_amount emits a disclosure_field_state row —
+    the mandated-!=-populated record, never a fabricated figure."""
+    report, _ = _run_doc("grant_ok_dac_jag_lle", "ok-dac-jag-lle-program")
+    assert not _claims_for(report, "funding_amount")
+    (state,) = [
+        c for c in _claims_for(report, "disclosure_field_state") if c["value"] == "funding_amount"
+    ]
+    assert state["field_state"] == "absent"
+
+
+def test_haskell_resolution_authorizes_never_executes() -> None:
+    """The resolution authorizes execution — authorization is the bounded
+    fact; no signed_date/deployment is asserted from an agenda document."""
+    report, _ = _run_doc("agenda_haskell_ar_council", "haskell-resolution-19-2025")
+    (auth,) = _claims_for(report, "authorization_state")
+    assert "authorizes" in auth["value"]
+    vendors = _claims_for(report, "vendor")
+    (vendor,) = [c for c in vendors if not c.get("object_ref")]
+    assert vendor["value"] == "Flock Safety"
+    (vendor_twin,) = [c for c in vendors if c.get("object_ref")]
+    assert vendor_twin["object_ref"]["role"] == "vendor"
+    (body,) = _claims_for(report, "enacting_body")
+    assert "Haskell" in body["value"]
+    (citation,) = _claims_for(report, "citation")
+    assert "19-2025" in citation["value"]
+    assert not _claims_for(report, "signed_date")
+    assert not _claims_for(report, "deployment_exists")
+
+
+def test_des_moines_communication_recommends_only() -> None:
+    report, _ = _run_doc("agenda_des_moines_ia_council", "des-moines-communication-26-235")
+    (auth,) = _claims_for(report, "authorization_state")
+    assert "recommends approval" in auth["value"]
+    (vendor,) = [c for c in _claims_for(report, "vendor") if not c.get("object_ref")]
+    assert vendor["value"] == "Motorola Solutions"
+    (value,) = _claims_for(report, "contract_value")
+    assert value["value"] == 123750
+
+
+def test_jasper_agenda_item_is_consideration_only() -> None:
+    report, _ = _run_doc("agenda_jasper_sc_council", "jasper-sc-agenda-cellebrite-2024")
+    buyers = _claims_for(report, "buyer")
+    (buyer,) = [c for c in buyers if not c.get("object_ref")]
+    assert "Sheriff" in buyer["value"]
+    (buyer_twin,) = [c for c in buyers if c.get("object_ref")]
+    assert buyer_twin["object_ref"]["role"] == "buyer"
+    (vendor,) = [c for c in _claims_for(report, "vendor") if not c.get("object_ref")]
+    assert vendor["value"] == "Cellebrite"
+
+
+def test_procurement_notices_carry_contract_never_deployment() -> None:
+    """The two procurement-portal notices mint procurement_notice subjects
+    with contract-number/buyer facts — procured is never deployed."""
+    report, _ = _run_doc("procportal_davie_fl_purchasing", "davie-ntss-2018-026-cellebrite")
+    (number,) = _claims_for(report, "contract_number")
+    assert number["value"] == "NTSS-2018-026"
+    (buyer,) = [c for c in _claims_for(report, "buyer") if not c.get("object_ref")]
+    assert buyer["value"] == "Town of Davie"
+    (auth,) = _claims_for(report, "authorization_state")
+    assert "intent to award" in auth["value"]
+    report, _ = _run_doc("procportal_forsyth_nc_purchasing", "forsyth-rfp2449-rtic")
+    (number,) = _claims_for(report, "contract_number")
+    assert number["value"] == "RFP2449"
+    (buyer,) = [c for c in _claims_for(report, "buyer") if not c.get("object_ref")]
+    assert buyer["value"] == "Forsyth County"
+    # Neither notice emits a deployment predicate — the Part VIII / procured-
+    # is-not-deployed rule holds over the whole family.
+    for source_id in P3611_SOURCES:
+        src_report, _ = _run_source(source_id)
+        for claim in _claims(src_report):
+            assert claim["predicate_id"] not in {
+                "deployment_exists",
+                "asset_exists_at_location",
+                "installed_device_count",
+            }
+
+
+def test_guam_press_release_is_publication_facts_only() -> None:
+    """RB-06 row: the press release is a citation layer — the bill number and
+    stated purpose are facts; enactment claims beyond the record's own words
+    and any deployment assertion stay out."""
+    report, _ = _run_doc("legis_gu_governor", "guam-governor-bill-132-35-signing")
+    (citation,) = _claims_for(report, "citation")
+    assert citation["value"] == "Bill No. 132-35"
+    (body,) = _claims_for(report, "enacting_body")
+    assert body["value"] == "Guam Legislature"
+    (posted,) = _claims_for(report, "posted_date")
+    assert posted["value"] == "2024-07-25"
+    assert not _claims_for(report, "deployment_exists")
+
+
+def test_p3611_recipients_and_buyers_mint_organisations_never_persons() -> None:
+    """§43.4: every partner field mints an organization entity-ref (a scoped
+    candidate), never a person — and a person-shaped value would be refused."""
+    for source_id in P3611_SOURCES:
+        report, _ = _run_source(source_id)
+        for claim in _claims(report):
+            if claim.get("object_ref"):
+                assert claim["object_ref"]["entity_type"] == "organization"
+            assert claim.get("object_type") != "person"
+
+
+def test_p3611_natural_person_payee_never_mints_an_entity() -> None:
+    """§43.4 made mechanical: swap the reviewed recipient literal for a
+    person-shaped payee — the name still cannot mint an entity-ref (the
+    never-a-person rule fires even inside a configured field)."""
+    target = _target("grant_tx_txdmv_mvcpa", "txdmv-mvcpa-fy2026-grant-listing")
+    for field in target["fields"]:
+        if field["field"] == "grant_recipient":
+            field["literal"] = "Balch Springs Police Department"
+            field["value"] = "Jane Q. Public dba JQP Consulting"
+    report = run(
+        _connector(),
+        _ctx("grant_tx_txdmv_mvcpa", [target]),
+    )
+    recipients = _claims_for(report, "recipient")
+    assert recipients, "the recipient field-state claim still records"
+    assert not any(c.get("object_ref") for c in recipients), (
+        "a person-shaped payee must never mint an entity-ref"
+    )
