@@ -1,0 +1,143 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "d91ead9f-099b-4f61-b2da-bfa8864cbddb"
+    },
+    "creationTimestamp": "2026-09-18T11:46:19.164510Z",
+    "generation": 4,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-25T08:19:39.483190Z"
+    },
+    "name": "sig-ingest-camreg-puertogaitan-co",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZcowCgkww",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/sig-ingest-camreg-puertogaitan-co",
+    "uid": "9a791b96-e680-44b6-872a-4f9090df369f"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/cloudsql-instances": "zeta-medley-508121-u7:us-central1:sig-pg",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "lov_por_biv"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-c",
+                  "exec sig-ops scheduled-ingest --source camreg_puertogaitan_co --sink pg"
+                ],
+                "command": [
+                  "sh"
+                ],
+                "env": [
+                  {
+                    "name": "SIG_GCP_PROJECT",
+                    "value": "zeta-medley-508121-u7"
+                  },
+                  {
+                    "name": "SIG_OPS_GCS_BUCKET",
+                    "value": "zeta-medley-508121-u7-sig-restricted"
+                  },
+                  {
+                    "name": "SIG_OPS_CADENCE",
+                    "value": "/app/ops/cadence.toml"
+                  },
+                  {
+                    "name": "SIG_PG_USER",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_PG_DB",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_CLOUDSQL_CONNECTION",
+                    "value": "zeta-medley-508121-u7:us-central1:sig-pg"
+                  },
+                  {
+                    "name": "SIG_PG_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "latest",
+                        "name": "sig-pg-password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "SIG_CAPTURE_DIR",
+                    "value": "/mnt/captures/evidence/captures"
+                  },
+                  {
+                    "name": "SIG_CODE_COMMIT",
+                    "value": "sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5"
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5",
+                "resources": {
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "mountPath": "/mnt/captures",
+                    "name": "captures"
+                  }
+                ]
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "3600",
+            "volumes": [
+              {
+                "csi": {
+                  "driver": "gcsfuse.run.googleapis.com",
+                  "volumeAttributes": {
+                    "bucketName": "zeta-medley-508121-u7-sig-restricted"
+                  }
+                },
+                "name": "captures"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 3,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-09-29T18:03:32.417870Z",
+      "creationTimestamp": "2026-09-29T18:00:01.437169Z",
+      "name": "sig-ingest-camreg-puertogaitan-co-xncbh"
+    },
+    "observedGeneration": 4
+  }
+}

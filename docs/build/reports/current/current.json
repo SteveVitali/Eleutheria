@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "213909bdf2392c225f47f77a5daf894819c33aa2",
+  "input_commit": "eba586feedc7dfdf5e9769ec6242292b58da26f1",
   "manifest_inputs": 1033,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-14T17:28:47Z"
   },
   "counts": {
-    "obligations": 164,
-    "owed": 92,
-    "open": 89,
+    "obligations": 165,
+    "owed": 93,
+    "open": 90,
     "partial": 3,
     "terminal": 72,
-    "events": 652,
+    "events": 653,
     "transitions": 34,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
@@ -8344,6 +8344,61 @@
           "recorded_at": "2026-10-14"
         }
       ]
+    },
+    {
+      "id": "D-P34.42b-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.42b-2:e0",
+      "kind": "P",
+      "owner": "the operator",
+      "landing": "RETURN PASS — P34.42b",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-084",
+      "item": "The map-coverage decision the P34.42b jobs-IAM leg's 2026-10-14 OM-18 stop routes here — the committed declaration (`ops/iam_identities.toml`: `expected_job_count = 100`, a 100-entry `job_map` resolved from `ops/cadence.toml`) expects the twelve post-queue jobs (the ten `sig-ingest-r11-*` wave batches + the two `sig-ingest-*-tribal-*` screened-lane jobs) to exist live before this leg's re-count — its own comment records they were to be \"created PAUSED by `scheduled-ops.sh --paused` before this leg's re-count\", i.e. by the P35.1a retry. The operator's recorded ordering (D-P35.1a-1 resolution, GATE DECISIONS 2026-10-14T17:09Z) runs this leg FIRST and `P35.1a-live-2 --paused` SECOND, so production holds 88 jobs (two independent reads: `logs/live-job-names.txt` + the script's own `pre/run-jobs.json` under `docs/build/reports/p34.42b-iam-live1/`), every one covered by the declared map (zero unmapped). The leg's fail-closed guards refused by design: `--apply prestate` exit 1 on the first declared-but-absent describe (`Cannot find job [sig-ingest-camreg-tribal-all-leaders-directory]`), `_assert_map_covers` would refuse `88 != 100` + the 12 absent (exit 4), and `assert_no_executions` fails closed on absent jobs (exit 42). The stop also exposes the two-way dependency the ordering created: `P35.1a-live-2 --apply --paused` deploys jobs onto this leg's class SAs (`sig-probe-rt`, `sig-ingest-rt`) that do not exist until this leg's `identities` step — `--paused` changes only trigger state, not job deploys. The call: (a) a scoped create of the twelve declared jobs PAUSED ahead of this leg (a mutation not on this leg's authorised list — its own go); (b) a declaration amendment so the jobs leg's map/count follows the live fleet it is authorised to move (a `sig.iam-identities/1` change — a contract-level call); (c) another split/ordering the operator names",
+      "unblocked_by": "owner: the operator · trigger: the operator's call on (a)/(b)/(c) — resolve the declared-vs-live count so `iam-job-identities.sh --apply all` can run inside a fresh AR-3/AR-2 window, and re-confirm the P35.1a-live-2 ordering against the two-way SA/job dependency · due: before the P35.1a-live-2 retry and before the Wave-A window opens 2026-10-19",
+      "verify": "a `P34.42b-live-2` run whose prestate re-count matches the (possibly amended) declaration — every declared job present live or the declaration scoped to the live fleet — so `_assert_map_covers` + `assert_no_executions` pass and the scripted apply completes with `sig-ops iam diff --leg jobs` clean",
+      "proxy": "the leg machinery itself is proven and honest: `--check all` rendered the full ordered plan (exit 0), the guards refused exactly as designed (no mutation ran, no partial apply possible), and the whole contradiction is captured under `docs/build/reports/p34.42b-iam-live1/`",
+      "line": 1294,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.42b-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.42b-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.42b",
+          "owner": "the operator",
+          "landing": "the operator's call on D-P34.42b-2 — resolve the declared-vs-live count (the declaration expects 100 jobs incl. the twelve post-queue wave/screened jobs the P35.1a retry was to create PAUSED first; production holds 88 under the recorded P34.42b-first ordering) so `iam-job-identities.sh --apply all` can run inside a fresh AR-3/AR-2 window, and re-confirm the P35.1a-live-2 ordering against the two-way SA/job dependency; due before the P35.1a-live-2 retry and before Wave-A opens 2026-10-19",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md",
+            "docs/build/runs/P34.42b.md",
+            "docs/build/reports/p34.42b-iam-live1/README.md",
+            "docs/build/reports/p34.42b-iam-live1/logs/absent-declared-jobs.txt",
+            "docs/build/reports/p34.42b-iam-live1/logs/live-job-names.txt",
+            "docs/build/reports/p34.42b-iam-live1/pre/run-jobs.json",
+            "ops/iam_identities.toml",
+            "ops/gcp/iam-job-identities.sh",
+            "ops/cadence.toml",
+            "docs/build/tools/record_policy/return_pass.toml"
+          ],
+          "observed_at": "2026-10-14",
+          "source_commit": "eba586fe",
+          "reason": "migration anchor appended by the P34.42b live leg (row 252, branch r11/P34.42b-live-1) for the deferral row it added — the OM-19 leg reached its AR-3 window (Wed 2026-10-14, 17:33-17:37Z reads, operator ADC armed) under the fresh one-leg GATE DECISIONS confirmation row (2026-10-14T17:09Z, 'Full P34.42b leg'), but the prestate surfaced a production read contradicting a record: ops/iam_identities.toml declares expected_job_count=100 and maps 100 jobs including the twelve post-queue sig-ingest-r11-*/tribal jobs that scheduled-ops.sh --paused was to create first, while two independent live reads (logs/live-job-names.txt + the script's own pre/run-jobs.json) show 88 — the twelve do not exist yet under the recorded ordering (this leg first, P35.1a-live-2 --paused second). iam-job-identities.sh --apply prestate exited 1 on the first declared-but-absent describe; _assert_map_covers would refuse 88!=100 (exit 4); assert_no_executions fails closed on the absent jobs (exit 42). Stopped per OM-18 before any mutation; the leg stays queued; the two-way dependency (the P35.1a retry deploys onto this leg's not-yet-created class SAs) is recorded for the operator's reconciliation call. appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger:/due: cell",
+          "anchor": {
+            "row_line": 1294,
+            "row_sha256": "a4b87eae81ba05a1603f19eb4c3a53cb7f34258ad375b0f0a3eda0c5495314eb",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-14"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -8579,11 +8634,13 @@
       },
       {
         "key": "P34.42b",
-        "obligations_cell": "the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; engineered halves landed)",
-        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42; fresh one-leg authorization recorded 2026-10-14 after the S5-3 listing expired at GATE-G4 (operator selection: \"Full P34.42b leg\")",
-        "operator_cell": "\"Full P34.42b leg\" (fresh one-leg authorization recorded 2026-10-14; voided by a red probe, failed restore point or contradicting production read); otherwise nothing until the window + ADC hold — dry-run default, window/execution-gated; rollback replays the recorded prestate",
-        "rerun_cell": "`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed row 252 (PR #253 — the leg queued exit 42)",
-        "obligations": []
+        "obligations_cell": "the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; engineered halves landed). `D-P34.42b-2` OPEN: the 2026-10-14 live-1 dispatch (inside its AR-3 slot, ADC armed, fresh authorization live) STOPPED before the mutation — the declaration expects 100 live jobs but production holds 88: the twelve post-queue jobs (`sig-ingest-r11-*` ×10 + the two tribal screened-lane jobs) the map declares do not exist yet — they were to be created PAUSED by the P35.1a retry, which the operator ordered AFTER this leg; the script's guards refused by design (prestate exit 1 on the first absent describe; coverage would refuse 88 != 100; the execution guard fails closed)",
+        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42; preferred a weekday 14:00-20:00Z slot with the operator present; fresh one-leg authorization recorded 2026-10-14 after the S5-3 listing expired at GATE-G4 (operator selection: \"Full P34.42b leg\"); the 2026-10-14 dispatch (r11/P34.42b-live-1) ran the read-only plan + `prestate` capture then stopped per OM-18 — a production read (88 live jobs) contradicting the declaration (100 mapped) fired the authorization's voided-by clause; the re-run needs D-P34.42b-2's operator call recorded first",
+        "operator_cell": "operator: D-P34.42b-2's resolution — the 2026-10-14 \"Full P34.42b leg\" authorization's voided-by fired on the 88-vs-100 read; the operator's call re-confirms or supersedes it — reconcile the declared-vs-live count (scoped create of the twelve declared jobs PAUSED, a declaration amendment to the live fleet, or another ordering) and re-confirm the P35.1a-live-2 ordering against the two-way SA/job dependency (its `--apply --paused` deploys onto this leg's not-yet-created class SAs); then nothing until the window + ADC hold — dry-run default, window/execution-gated; rollback replays the recorded prestate",
+        "rerun_cell": "`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed row 252 (PR #253 — the leg queued exit 42; live-1 stopped OM-18, evidence `docs/build/reports/p34.42b-iam-live1/`) · next attempt on `r11/P34.42b-live-2` after `D-P34.42b-2`",
+        "obligations": [
+          "D-P34.42b-2"
+        ]
       },
       {
         "key": "P34.43",
@@ -18748,7 +18805,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "b6c872b7776eba91e7553b5af0dc83237e2c260a3b2f279f5ba8181278f6bf98",
+  "manifest_sha256": "df2a6bf955069367d7007b6f7b5596ec45c338735b3721126ff23628af020a1d",
   "current_md": {
     "lines": 63,
     "bytes": 15603,
