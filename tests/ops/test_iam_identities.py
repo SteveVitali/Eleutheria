@@ -95,50 +95,86 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
         "sig-api-rt",
         "sig-web-rt",
         "sig-alerts-rt",
+        "sig-ingest-rt",
+        "sig-probe-rt",
+        "sig-export-rt",
+        "sig-materialize-rt",
+        "sig-quality-probe-rt",
+        "sig-release-rt",
+        "sig-status-rt",
+        "sig-scheduler",
     ]
+    assert [sa.id for sa in decl.service_accounts if sa.reserved] == [
+        "sig-quality-probe-rt",
+        "sig-release-rt",
+        "sig-status-rt",
+        "sig-scheduler",
+    ]
+    # The services-leg project/bucket grants are exactly the P34.42a set.
     assert [(r.service_account, r.role) for r in decl.project_roles] == [
-        ("sig-api-rt", "roles/cloudsql.client")
+        ("sig-api-rt", "roles/cloudsql.client"),
+        ("sig-ingest-rt", "roles/cloudsql.client"),
+        ("sig-probe-rt", "roles/cloudsql.client"),
+        ("sig-export-rt", "roles/cloudsql.client"),
+        ("sig-materialize-rt", "roles/cloudsql.client"),
     ]
-    assert [(r.service_account, r.bucket, r.role) for r in decl.bucket_roles] == [
-        ("sig-web-rt", "sig-web", "roles/storage.objectViewer")
+    assert ("sig-web-rt", "sig-web", "roles/storage.objectViewer") in [
+        (r.service_account, r.bucket, r.role) for r in decl.bucket_roles
     ]
     assert [(s.name, s.service_account) for s in decl.services] == [
         ("sig-api", "sig-api-rt"),
         ("sig-web", "sig-web-rt"),
         ("sig-alerts", "sig-alerts-rt"),
     ]
-    # sig-alerts: the caller grants, allUsers revokes (G1-11).
-    assert len(decl.invokers) == 1
-    inv = decl.invokers[0]
-    assert inv.service == "sig-alerts"
-    assert inv.grant == ("default-compute",)
-    assert inv.revoke == ("allUsers",)
-    # The 11-secret consumer matrix is complete and only ONE new accessor is
-    # declared (sig-api-rt on sig-pg-password) — every other consumer is
-    # default-compute/operator until P34.42b.
+    # sig-alerts: two leg-scoped invoker rules — the services-leg interim
+    # (grant the recorded caller, revoke allUsers; G1-11) and the jobs-leg
+    # end-state (grant sig-probe-rt, revoke allUsers + default-compute).
+    assert len(decl.invokers) == 2
+    services_rule = decl.invoker_rule("sig-alerts", "services")
+    assert services_rule is not None
+    assert services_rule.grant == ("default-compute",)
+    assert services_rule.revoke == ("allUsers",)
+    jobs_rule = decl.invoker_rule("sig-alerts", "jobs")
+    assert jobs_rule is not None
+    assert jobs_rule.grant == ("sig-probe-rt",)
+    assert jobs_rule.revoke == ("allUsers", "default-compute")
+    # The 11-secret consumer matrix is complete; the services-leg accessor
+    # grant set is unchanged (sig-api-rt on sig-pg-password), the jobs-leg
+    # grants are the job-class consumers, and the five job-only secrets carry
+    # a jobs_revoke on default-compute.
     assert len(decl.secrets) == 11
-    grants = [
-        (s.name, c)
-        for s in decl.secrets
-        for c in s.consumers
-        if c in {sa.id for sa in decl.service_accounts}
-    ]
-    assert grants == [("sig-pg-password", "sig-api-rt")]
     api_env = next(s for s in decl.secrets if s.name == "sig-api-env")
     assert api_env.consumers == ()  # recorded, 0 versions, never deleted
+    revoked = {s.name for s in decl.secrets if "default-compute" in s.jobs_revoke}
+    assert revoked == {
+        "sig-alert-webhook-token",
+        "sig-data-gov-key",
+        "sig-muckrock-refresh",
+        "sig-openstates-key",
+        "sig-sam-gov-key",
+    }
+    # default-compute stays a consumer of sig-pg-password only (the GCE host).
+    pg = next(s for s in decl.secrets if s.name == "sig-pg-password")
+    assert "default-compute" in pg.consumers
 
 
 def test_declaration_declares_no_basic_role_no_public_grant(decl) -> None:
-    # No role= assignment in the file is ever a basic role (prose mentions
-    # the P34.42b roles/editor removal — only assignments count).
-    text = DECLARATION.read_text(encoding="utf-8")
-    for assigned in re.findall(r'role\s*=\s*"([^"]+)"', text):
-        assert assigned not in BASIC_ROLES
-        assert assigned.startswith("roles/")
-    # allUsers may appear ONLY inside the [[invoker]] revoke list — never in
+    # No role= assignment outside [[remove_role]] is ever a basic role
+    # (remove_role names roles/editor — removal is the point, so the check
+    # looks at grant positions only).
+    for r in decl.project_roles:
+        assert r.role not in BASIC_ROLES
+    for b in decl.bucket_roles:
+        assert b.role not in BASIC_ROLES
+    # The only remove_role is the default-compute editor removal (G1-01).
+    assert [(r.member, r.role) for r in decl.remove_roles] == [("default-compute", "roles/editor")]
+    # allUsers may appear ONLY inside an [[invoker]] revoke list — never in
     # a grant or consumers position.
-    for grant in decl.invokers[0].grant:
-        assert not grant.startswith("all")
+    for v in decl.invokers:
+        for grant in v.grant:
+            assert not grant.startswith("all")
+        for revoked in v.revoke:
+            assert revoked in {"allUsers", "allAuthenticatedUsers", "default-compute"}
     for s in decl.secrets:
         assert "allUsers" not in s.consumers
 
@@ -192,7 +228,7 @@ def test_declaration_rejects_an_unbound_sa(tmp_path: Path) -> None:
 
 
 def test_plan_steps_cover_the_contract_mutation_list(decl) -> None:
-    steps = plan_steps(decl, PROJECT, "us-central1")
+    steps = plan_steps(decl, PROJECT, "us-central1", leg="services")
     flat = "\n".join(" ".join(s.command) for s in steps)
     # (1) create the three SAs
     for sa in ("sig-api-rt", "sig-web-rt", "sig-alerts-rt"):
@@ -242,7 +278,7 @@ def test_plan_steps_cover_the_contract_mutation_list(decl) -> None:
 
 
 def test_plan_steps_carry_rollback_for_every_step(decl) -> None:
-    steps = plan_steps(decl, PROJECT, "us-central1")
+    steps = plan_steps(decl, PROJECT, "us-central1", leg="services")
     # Every mutating phase has a rollback command (the invoker revoke's
     # rollback is the recorded set-iam-policy on the grant step).
     for s in steps:
@@ -259,7 +295,7 @@ def test_plan_steps_carry_rollback_for_every_step(decl) -> None:
 
 
 def test_diff_reports_every_missing_piece_on_the_pre_leg_snapshot(decl, pre) -> None:
-    diffs = diff_snapshot(decl, pre, PROJECT)
+    diffs = diff_snapshot(decl, pre, PROJECT, leg="services")
     joined = "\n".join(diffs)
     for sa in ("sig-api-rt", "sig-web-rt", "sig-alerts-rt"):
         assert f"missing service account {sa}@sig-test-project.iam.gserviceaccount.com" in joined
@@ -284,7 +320,7 @@ def test_diff_reports_every_missing_piece_on_the_pre_leg_snapshot(decl, pre) -> 
 
 
 def test_diff_is_clean_on_the_post_leg_snapshot(decl, post) -> None:
-    assert diff_snapshot(decl, post, PROJECT) == []
+    assert diff_snapshot(decl, post, PROJECT, leg="services") == []
 
 
 def test_diff_flags_a_basic_role_on_a_runtime_sa(decl, post) -> None:
@@ -297,7 +333,7 @@ def test_diff_flags_a_basic_role_on_a_runtime_sa(decl, post) -> None:
         }
     ]
     drifted = dataclasses.replace(snap, project_policy=policy)
-    diffs = diff_snapshot(decl, drifted, PROJECT)
+    diffs = diff_snapshot(decl, drifted, PROJECT, leg="services")
     assert any("basic role on a runtime SA" in d for d in diffs)
     assert any("undeclared project role on a runtime SA" in d for d in diffs)
 
@@ -314,7 +350,7 @@ def test_diff_flags_a_runtime_sa_reading_a_foreign_secret(decl, post) -> None:
     secrets = dict(snap.secret_policies)
     secrets["sig-pg-password"] = policy
     drifted = dataclasses.replace(snap, secret_policies=secrets)
-    diffs = diff_snapshot(decl, drifted, PROJECT)
+    diffs = diff_snapshot(decl, drifted, PROJECT, leg="services")
     assert any("undeclared secret accessor" in d and "sig-alerts-rt" in d for d in diffs)
 
 
@@ -333,7 +369,7 @@ def test_diff_flags_an_undeclared_secret_accessor(decl, post) -> None:
         ]
     }
     drifted = dataclasses.replace(snap, secret_policies=secrets)
-    diffs = diff_snapshot(decl, drifted, PROJECT)
+    diffs = diff_snapshot(decl, drifted, PROJECT, leg="services")
     assert any("undeclared secret accessor" in d and "sig-api-env" in d for d in diffs)
     # And a public member on any secret is always drift.
     secrets["sig-api-env"] = {
@@ -344,7 +380,9 @@ def test_diff_flags_an_undeclared_secret_accessor(decl, post) -> None:
             }
         ]
     }
-    diffs = diff_snapshot(decl, dataclasses.replace(snap, secret_policies=secrets), PROJECT)
+    diffs = diff_snapshot(
+        decl, dataclasses.replace(snap, secret_policies=secrets), PROJECT, leg="services"
+    )
     assert any("public member on a secret" in d and "sig-api-env" in d for d in diffs)
 
 
@@ -362,7 +400,7 @@ def test_diff_flags_a_declared_sa_holding_an_undeclared_bucket_role(decl, post) 
     buckets = dict(snap.bucket_policies)
     buckets["sig-web"] = policy
     drifted = dataclasses.replace(snap, bucket_policies=buckets)
-    diffs = diff_snapshot(decl, drifted, PROJECT)
+    diffs = diff_snapshot(decl, drifted, PROJECT, leg="services")
     assert any("undeclared bucket role on a runtime SA" in d and "objectAdmin" in d for d in diffs)
 
 
@@ -371,14 +409,14 @@ def test_diff_flags_a_lingering_allusers(decl, post) -> None:
     policies = dict(snap.service_policies)
     policies["sig-alerts"] = {"bindings": [{"role": "roles/run.invoker", "members": ["allUsers"]}]}
     drifted = dataclasses.replace(snap, service_policies=policies)
-    diffs = diff_snapshot(decl, drifted, PROJECT)
+    diffs = diff_snapshot(decl, drifted, PROJECT, leg="services")
     assert any("sig-alerts still invokable by allUsers" in d for d in diffs)
 
 
 def test_diff_output_names_only_iam_facts(decl, pre) -> None:
     # Every DRIFT line is an IAM-shape fact (a member, a role, a service, a
     # secret NAME) — the diff never invents or leaks anything else.
-    diffs = diff_snapshot(decl, pre, PROJECT)
+    diffs = diff_snapshot(decl, pre, PROJECT, leg="services")
     assert diffs
     for d in diffs:
         assert re.match(r"^(missing|undeclared|basic|service|sig-alerts|public|UNREADABLE)", d), d
@@ -432,6 +470,8 @@ def test_iam_cli_plan_diff_and_check_revisions() -> None:
             str(FIXTURES / "pre"),
             "--project",
             PROJECT,
+            "--leg",
+            "services",
         ],
         capture_output=True,
         text=True,
@@ -453,6 +493,8 @@ def test_iam_cli_plan_diff_and_check_revisions() -> None:
             str(FIXTURES / "post"),
             "--project",
             PROJECT,
+            "--leg",
+            "services",
         ],
         capture_output=True,
         text=True,

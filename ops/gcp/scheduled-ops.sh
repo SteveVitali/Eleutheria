@@ -59,6 +59,12 @@ require_adc
 banner "scheduled live operations (P26.1 / OPS.2)"
 
 SIG_SCHEDULER_SA_EMAIL="${SIG_SCHEDULER_SA}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+# The job-class runtime identities (P34.42b / G1-01): every upserted job runs
+# as its class SA — sig-probe + the ingest fleet + the replay job. The jobs
+# leg (iam-job-identities.sh) creates them and holds the IAM; passing the SA
+# explicitly keeps a re-apply from falling back to the default compute SA.
+SIG_PROBE_SA_EMAIL="${SIG_SA_PROBE}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+SIG_INGEST_SA_EMAIL="${SIG_SA_INGEST}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
 : "${SIG_JOB_IMAGE:=}"
 
 # The pinned digest every job deploys (ADR-111; `pin_image_digest`, lib.sh). Check
@@ -204,6 +210,7 @@ WEB_URL="$(svc_url "${SIG_WEB_SERVICE}")"
 ALERTS_URL="$(svc_url "${SIG_ALERTS_SERVICE}")"
 run gcloud run jobs deploy "${SIG_RUN_JOB_PROBE}" \
   --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+  --service-account "${SIG_PROBE_SA_EMAIL}" \
   --command sh \
   --args "-c,exec sig-ops probe-hosted --alert" \
   --tasks 1 --task-timeout 10m --max-retries 0 \
@@ -233,6 +240,7 @@ while IFS='|' read -r src cad cron job sched existing extra; do
   # ran past the 30m ceiling; 60m is the reviewed ingest task bound.
   run gcloud run jobs deploy "${job}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --service-account "${SIG_INGEST_SA_EMAIL}" \
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --source ${src} --sink pg" \
     --tasks 1 --task-timeout 60m --max-retries 0 \
@@ -277,6 +285,7 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount; do
   _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}) -> ${bjob}"
   run gcloud run jobs deploy "${bjob}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --service-account "${SIG_INGEST_SA_EMAIL}" \
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --batch ${bid} --sink pg" \
     --tasks 1 --task-timeout 36h --max-retries 0 \
@@ -306,6 +315,7 @@ done < <(read_batch_rows)
 _log "-- sig-replay-ingest (asserting replay over persisted captures, operator-run) --"
 run gcloud run jobs deploy "${SIG_RUN_JOB_REPLAY}" \
   --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+  --service-account "${SIG_INGEST_SA_EMAIL}" \
   --command sh \
   --args "-c,echo 'replay-ingest needs --source (operator-run; see ADR-113)' && exit 64" \
   --tasks 1 --task-timeout 60m --max-retries 0 \

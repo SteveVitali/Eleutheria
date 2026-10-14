@@ -155,6 +155,29 @@ export SIG_IAM_TOML="ops/iam_identities.toml"
 export SIG_IAM_EARLIEST="2026-10-13T12:00:00Z"  # future-ok: scheduled: contract window
 export SIG_IAM_STATE_DIR="${SIG_IAM_STATE_DIR:-${TMPDIR:-/tmp}/p34.42a-iam}"
 
+# --- least-privilege JOB identities (P34.42b / G1-01, F-272) -------------------
+# One service account per job CLASS — ingest / probe / export / materialize —
+# plus the reserved identities the jobs leg creates with no grants (the
+# scheduler invoker + P34.44b/P35.53/P36.43's future runtime SAs). The job→class
+# map + bindings live in ops/iam_identities.toml (read via `sig-ops iam plan
+# --leg jobs`); ops/gcp/iam-job-identities.sh owns the (windowed) mutations:
+# prestate → identities → bindings → jobs (88 same-image updates) → invokers
+# (the scheduler move + the sig-alerts jobs-posture rule) → editor (the
+# roles/editor removal — LAST, only after no workload still runs as it).
+export SIG_SA_INGEST="sig-ingest-rt"
+export SIG_SA_PROBE="sig-probe-rt"
+export SIG_SA_EXPORT="sig-export-rt"
+export SIG_SA_MATERIALIZE="sig-materialize-rt"
+export SIG_SA_QUALITY_PROBE="sig-quality-probe-rt"  # reserved: P34.44b
+export SIG_SA_RELEASE="sig-release-rt"              # reserved: P35.53
+export SIG_SA_STATUS="sig-status-rt"                # reserved: P36.43
+export SIG_SA_SCHEDULER="sig-scheduler"             # invoker only, never a runtime
+# Same contract window as the services leg (OM-19, row 252): applies ≥
+# SIG_IAM_EARLIEST and never 03:00–06:30Z; SIG_IAM_JOBS_NOW overrides the
+# clock for the offline guard test only.
+export SIG_IAM_JOBS_EARLIEST="${SIG_IAM_EARLIEST}"
+export SIG_IAM_JOBS_STATE_DIR="${SIG_IAM_JOBS_STATE_DIR:-${TMPDIR:-/tmp}/p34.42b-iam}"
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented

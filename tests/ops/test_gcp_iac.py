@@ -42,6 +42,7 @@ SHELL_SCRIPTS = [
     "logical-export.sh",
     "public-gate.sh",
     "iam-service-accounts.sh",
+    "iam-job-identities.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -60,6 +61,7 @@ EXECUTABLE_SCRIPTS = [
     "logical-export.sh",
     "public-gate.sh",
     "iam-service-accounts.sh",
+    "iam-job-identities.sh",
 ]
 
 

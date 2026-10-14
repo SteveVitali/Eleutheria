@@ -198,6 +198,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-198](ADR-198-adr-index-truth-status-line-grammar-and-trigger-register-checker.md) | ADR-index truth, the status-line declaration grammar, and the trigger-register checker (P34.32) | P34.32 (Round 11 / P34, row 237 — owns SIG-ENG-043; satisfies SIG-ENG-039; B4 G8, COV-14) | accepted |
 | [ADR-199](ADR-199-round-close-record-checks-capstone-two-sum-and-tail-probe-sweep.md) | Round-close record checks, the capstone two-sum, and the tail probe-sweep contract (P34.33) | P34.33 (Round 11 / P34, row 238 — the amended SIG-ENG-031 checks; extends SIG-ENG-041, | accepted |
 | [ADR-200](ADR-200-search-without-a-dedicated-engine.md) | Search without a dedicated engine: pg_trgm on the read API plus per-compartment FTS5 on releases (P34.48) | P34.48 (Round 11 / P34, row 240 — the MET-DIFFERENTLY re-verdict; owns the SIG-UI-040 | accepted |
+| [ADR-201](ADR-201-ingest-capture-rewrite-condition.md) | The ingest identity's prefix-scoped capture-rewrite grant (P34.42b) | P34.42b (Round 11 / P34, row 252 — G1-01 / F-272, SIG-SEC-007; the | accepted |
 
 ## Notes
 

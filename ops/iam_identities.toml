@@ -1,16 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
-# THE committed least-privilege identity declaration for the three Cloud Run
-# services (P34.42a / G1-01, F-272, SIG-SEC-007, AR-8). This file is DATA, not
-# code — it is the record `sig-ops iam plan/diff` renders and
-# `ops/gcp/iam-service-accounts.sh --apply` applies inside its window.
+# THE committed least-privilege identity declaration for the project's runtime
+# workloads (P34.42a services leg + P34.42b jobs leg; G1-01, F-272,
+# SIG-SEC-007, AR-8). This file is DATA, not code — it is the record
+# `sig-ops iam plan/diff` renders and `ops/gcp/iam-service-accounts.sh`
+# (services leg) + `ops/gcp/iam-job-identities.sh` (jobs leg) apply inside
+# their windows.
 #
-# Scope (the contract's own half): the three services each run as their own
-# service account with only the roles they need; each secret is readable only
-# by its consumers; the public-facing services hold no delete permission on
-# the spine or evidence stores; `sig-alerts` is no longer invokable by
-# allUsers. The 88 jobs, the remaining job SAs and the `roles/editor` removal
-# are P34.42b — the default compute SA keeps every grant it holds today until
-# that leg moves it.
+# Scope after P34.42b lands: every workload — the three Cloud Run services AND
+# every Cloud Run job — runs as its own service account with only the roles it
+# needs (writers hold no unconditional object-delete: the ingest class's
+# conditioned `objectUser` grant is scoped to the `evidence/captures/` prefix
+# that OCFL re-versioning must rewrite — ADR-201); each secret is readable
+# only by its consumers; the `sig-alerts` receiver authenticates its caller
+# (sig-probe-rt) by IAM; and the default compute service account carries no
+# basic role — `roles/editor` is removed by the jobs leg (`[[remove_role]]`).
 #
 # Symbolic members (never a project id or project number literal — both are
 # resolved at apply time): `default-compute` = the project default compute
@@ -19,7 +22,12 @@
 # an [[invoker]] `revoke` list — never a grant.
 schema = "sig.iam-identities/1"
 
-# --- the three runtime identities (create-if-absent, idempotent) -------------
+# The live Cloud Run job count the jobs leg must observe (G1-C07's
+# 2026-09-30 read, re-counted at the leg) — a disagreement is a refusal,
+# never a silent skip.
+expected_job_count = 88
+
+# --- the three service runtime identities (P34.42a) ---------------------------
 [[service_account]]
 id = "sig-api-rt"
 display_name = "sig-api runtime"
@@ -35,18 +43,137 @@ id = "sig-alerts-rt"
 display_name = "sig-alerts runtime"
 purpose = "the alert receiver's own identity — no project roles, no secret access; it only needs to run"
 
-# --- project-level bindings (managed roles only — a basic role is refused) ---
+# --- the job-class runtime identities (P34.42b) --------------------------------
+# One SA per workload CLASS (G1-01); the job→class map is derived from
+# ops/cadence.toml plus the explicit `jobs` lists below — every one of the 88
+# live jobs resolves exactly one class (`expected_job_count` pins the G1 read;
+# a drift is a refusal, never a silent skip).
+[[service_account]]
+id = "sig-ingest-rt"
+display_name = "sig ingest jobs runtime"
+purpose = "every sig-ingest-* job + the replay/resume-test ingest jobs — Cloud SQL client, create+read on the restricted bucket, and a PREFIX-SCOPED rewrite grant under evidence/captures/ only (ADR-201 — the OCFL inventory head must be rewritable, never bucket-wide delete)"
+
+[[service_account]]
+id = "sig-probe-rt"
+display_name = "sig probe jobs runtime"
+purpose = "sig-probe + the four scheduled-for-deletion egress probes — Cloud SQL client (the cloudsql reachability target) + create/read on the restricted bucket for ops/probes sweep rows; no delete"
+
+[[service_account]]
+id = "sig-export-rt"
+display_name = "sig export job runtime"
+purpose = "sig-export — Cloud SQL client + create on the restricted bucket (writes a fresh exports/national/<as-of>/ prefix each run; appends only, never overwrites, no delete, no read)"
+
+[[service_account]]
+id = "sig-materialize-rt"
+display_name = "sig materialize job runtime"
+purpose = "sig-materialize — Cloud SQL client + read on the restricted bucket (the ops/runs rows the run-completions backfill folds); nothing else"
+
+# --- reserved identities: created by the jobs leg with NO grants, so the ------
+# declaration never claims a grant that is not in force. Their owning rows
+# attach workloads + grants: sig-quality-probe-rt → P34.44b (its sig_audit
+# secret accessor is granted by P34.43), sig-release-rt → P35.53,
+# sig-status-rt → P36.43. `sig-scheduler` is the Cloud Scheduler invoker
+# identity — never a workload runtime SA (P25.7; it already exists live).
+[[service_account]]
+id = "sig-quality-probe-rt"
+display_name = "sig quality probe runtime (reserved)"
+purpose = "reserved for P34.44b — created with no grants until that row lands"
+reserved = true
+
+[[service_account]]
+id = "sig-release-rt"
+display_name = "sig release runtime (reserved)"
+purpose = "reserved for P35.53 — created with no grants until that row lands"
+reserved = true
+
+[[service_account]]
+id = "sig-status-rt"
+display_name = "sig status runtime (reserved)"
+purpose = "reserved for P36.43 — created with no grants until that row lands"
+reserved = true
+
+[[service_account]]
+id = "sig-scheduler"
+display_name = "SIG Cloud Scheduler invoker (ingestion jobs)"
+purpose = "the OIDC invoker identity every cadence trigger signs as — roles/run.invoker on the scheduled jobs only; never a workload identity"
+reserved = true
+
+# --- project-level bindings (managed roles only — a basic role is refused) ----
 [[project_role]]
 service_account = "sig-api-rt"
 role = "roles/cloudsql.client"
 
-# --- bucket-level bindings (bucket names are the -suffixed derived names) ----
+[[project_role]]
+service_account = "sig-ingest-rt"
+role = "roles/cloudsql.client"
+
+[[project_role]]
+service_account = "sig-probe-rt"
+role = "roles/cloudsql.client"
+
+[[project_role]]
+service_account = "sig-export-rt"
+role = "roles/cloudsql.client"
+
+[[project_role]]
+service_account = "sig-materialize-rt"
+role = "roles/cloudsql.client"
+
+# --- bucket-level bindings (bucket names are the -suffixed derived names) -----
 [[bucket_role]]
 service_account = "sig-web-rt"
 bucket = "sig-web"               # gs://${SIG_GCP_PROJECT}-sig-web
 role = "roles/storage.objectViewer"
 
-# --- the service → identity map (one same-image revision each, AR-8) --------
+# Ingest: create + read on the restricted bucket — NEVER bucket-wide delete
+# (SIG-STORE-048). The ONE conditioned grant below carries object-replace
+# (create+delete) only under `objects/evidence/captures/`: a re-captured
+# source rewrites the OCFL object's inventory head in place
+# (connectors/capture_ocfl.py → evidence.ocfl add_version), which GCS treats
+# as overwrite. Recorded by ADR-201; the standing review row is D-P34.42b-1
+# (owner P37.3).
+[[bucket_role]]
+service_account = "sig-ingest-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectCreator"
+
+[[bucket_role]]
+service_account = "sig-ingest-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectViewer"
+
+[[bucket_role]]
+service_account = "sig-ingest-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectUser"
+condition_title = "p34-42b-capture-rewrite"
+condition_prefix = "evidence/captures/"   # → resource.name.startsWith('projects/_/buckets/<project>-sig-restricted/objects/evidence/captures/')
+
+# Probe: append-only sweep rows under ops/probes/ + read-back for history
+# folding (no delete anywhere — every object name is timestamped).
+[[bucket_role]]
+service_account = "sig-probe-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectCreator"
+
+[[bucket_role]]
+service_account = "sig-probe-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectViewer"
+
+# Export: writes a new exports/national/<as-of>/ prefix per run — create only.
+[[bucket_role]]
+service_account = "sig-export-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectCreator"
+
+# Materialize: the run-completions backfill reads ops/runs rows — read only.
+[[bucket_role]]
+service_account = "sig-materialize-rt"
+bucket = "sig-restricted"
+role = "roles/storage.objectViewer"
+
+# --- the service → identity map (one same-image revision each, AR-8) -----------
 [[service]]
 name = "sig-api"
 service_account = "sig-api-rt"
@@ -59,57 +186,122 @@ service_account = "sig-web-rt"
 name = "sig-alerts"
 service_account = "sig-alerts-rt"
 
-# --- invoker policy changes (G1-11) ------------------------------------------
-# sig-api and sig-web stay public (a public read API and a public site —
-# deliverable wording: public responses do not change). sig-alerts needs no
-# public invoker: its caller is the sig-probe job, so it authenticates by IAM.
-# The grant names `default-compute` = sig-probe's CURRENT runtime identity;
-# P34.42b moves it to `sig-probe-rt` (the grant flips, the mechanism does not).
+# --- the job → class map (P34.42b) ---------------------------------------------
+# Membership is RESOLVED against ops/cadence.toml: `sources`/`batches`/`probes`
+# claim every job the cadence file generates; `jobs` names the live jobs that
+# cadence does not own (the three declared manual jobs + the six P35.1b cruft
+# jobs — assigned to the class whose grants they need until their deletion
+# leg runs). A job claimed twice, a cadence job claimed by no class, or a
+# live count that disagrees with expected_job_count is a refusal, not a skip.
+
+[[job_class]]
+name = "ingest"
+service_account = "sig-ingest-rt"
+sources = true            # every [[sources]] job in ops/cadence.toml (70)
+batches = true            # every [[batches]] job (8 camreg-batch-*)
+jobs = ["sig-replay-ingest", "sig-sink-bench", "sig-ingest-resume-test"]
+
+[[job_class]]
+name = "probe"
+service_account = "sig-probe-rt"
+probes = true             # [probes].job = sig-probe
+jobs = ["aspi-egress-probe", "ccops-sf-egress-probe", "muckrock-egress-probe", "okc-doc-egress-probe"]  # G1-17 cruft, deleted by P35.1b — probe-class grants meanwhile
+
+[[job_class]]
+name = "export"
+service_account = "sig-export-rt"
+jobs = ["sig-export"]
+
+[[job_class]]
+name = "materialize"
+service_account = "sig-materialize-rt"
+jobs = ["sig-materialize"]
+
+# --- scheduler + receiver invokers (P34.42b) -----------------------------------
+# Every cadence-scheduled job keeps its single invoker: the dedicated
+# `sig-scheduler` SA holds roles/run.invoker on the scheduled jobs only
+# (asserted + re-granted idempotently; each trigger's OAuth identity is
+# verified = sig-scheduler). Manual + cruft jobs carry no scheduler grant.
+[[job_invoker]]
+member = "sig-scheduler"
+targets = "scheduled"     # sources + batches + probes from ops/cadence.toml
+
+# --- invoker policy changes ----------------------------------------------------
+# sig-api and sig-web stay public (a public read API and a public site).
+# sig-alerts authenticates its caller by IAM — the caller is the sig-probe
+# job, whose identity is `default-compute` until the jobs leg moves it to
+# `sig-probe-rt`. Two rules record the two postures: `leg = "services"` is the
+# P34.42a leg's interim target (grant the recorded caller, revoke allUsers —
+# G1-11); `leg = "jobs"` is the P34.42b end-state (grant sig-probe-rt, revoke
+# allUsers AND default-compute). `iam diff --leg` judges each phase's posture;
+# `--leg all` judges the last-declared rule per service.
 [[invoker]]
 service = "sig-alerts"
+leg = "services"
 grant = ["default-compute"]
 revoke = ["allUsers"]
 
-# --- the per-secret consumer matrix (G1 §3.9 — 11 secrets) --------------------
-# `consumers` records every identity that reads the value at runtime. The leg
-# grants `roles/secretmanager.secretAccessor` to every declared-SA consumer —
-# for P34.42a that is exactly one new binding (sig-api-rt on sig-pg-password).
-# `default-compute` consumers keep their accessor until P34.42b moves the jobs.
+[[invoker]]
+service = "sig-alerts"
+leg = "jobs"
+grant = ["sig-probe-rt"]
+revoke = ["allUsers", "default-compute"]
+
+# --- project-role removal (P34.42b, LAST mutation) ------------------------------
+# Only after a read shows no workload still runs as the default compute SA:
+# it loses roles/editor (G1-01) and keeps no basic role.
+[[remove_role]]
+member = "default-compute"
+role = "roles/editor"
+
+# --- the per-secret consumer matrix (G1 §3.9 — 11 secrets) ----------------------
+# `consumers` records every identity that reads the value at runtime. The legs
+# grant `roles/secretmanager.secretAccessor` to every declared-SA consumer.
+# `jobs_revoke` names members the JOBS leg removes once no job still runs as
+# them — under `--leg services` such a member is still a desired consumer (the
+# jobs still run as it), under `--leg jobs`/`all` it is desired-absent.
+# `default-compute` stays a consumer of sig-pg-password only: the GCE host /
+# break-glass ops path.
 [[secret]]
 name = "sig-pg-password"
-consumers = ["sig-api-rt", "default-compute"]   # API revision now; jobs + GCE host until P34.42b
+consumers = ["sig-api-rt", "sig-ingest-rt", "sig-probe-rt", "sig-export-rt", "sig-materialize-rt", "default-compute"]   # services + every DB-touching job class + the GCE host
 
 [[secret]]
 name = "sig-alert-webhook-token"
-consumers = ["default-compute"]                 # sig-probe's job identity → sig-probe-rt in P34.42b
+consumers = ["sig-probe-rt"]                # sig-probe's job identity (was default-compute)
+jobs_revoke = ["default-compute"]
 
 [[secret]]
 name = "sig-api-env"
-consumers = []                                  # 0 versions — recorded per contract d2, never deleted here
+consumers = []                            # 0 versions — recorded per contract d2, never deleted here
 
 [[secret]]
 name = "sig-data-gov-key"
-consumers = ["default-compute"]                 # ingest job key until P34.42b
+consumers = ["sig-ingest-rt"]             # the data_gov source key (was default-compute)
+jobs_revoke = ["default-compute"]
 
 [[secret]]
 name = "sig-maproulette-api-key"
-consumers = []                                  # no accessor binding today (G1-C25); rotate before use (G1-12)
+consumers = []                            # no accessor binding today (G1-C25); rotate before use (G1-12)
 
 [[secret]]
 name = "sig-muckrock-refresh"
-consumers = ["default-compute"]
+consumers = ["sig-ingest-rt"]
+jobs_revoke = ["default-compute"]
 
 [[secret]]
 name = "sig-openstates-key"
-consumers = ["default-compute"]
+consumers = ["sig-ingest-rt"]
+jobs_revoke = ["default-compute"]
 
 [[secret]]
 name = "sig-sam-gov-key"
-consumers = ["default-compute"]
+consumers = ["sig-ingest-rt"]
+jobs_revoke = ["default-compute"]
 
 [[secret]]
 name = "sig-zenodo-client-id"
-consumers = ["operator"]                        # operator-run, no runtime SA
+consumers = ["operator"]                  # operator-run, no runtime SA
 
 [[secret]]
 name = "sig-zenodo-client-secret"
