@@ -43,7 +43,18 @@ def _no_adc_env() -> dict[str, str]:
 def _docker() -> bool:
     if shutil.which("docker") is None:
         return False
-    return subprocess.run(["docker", "info"], capture_output=True, check=False).returncode == 0
+    try:
+        # Bounded (P34.34b): a half-up daemon (socket accepts, API never
+        # answers) makes `docker info` hang forever — unreachable is False,
+        # not an infinite collection-time block.
+        return (
+            subprocess.run(
+                ["docker", "info"], capture_output=True, check=False, timeout=15
+            ).returncode
+            == 0
+        )
+    except subprocess.TimeoutExpired:
+        return False
 
 
 requires_docker = pytest.mark.skipif(not _docker(), reason="no Docker daemon")

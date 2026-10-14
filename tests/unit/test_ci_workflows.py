@@ -857,3 +857,178 @@ def test_ci_local_mirrors_the_new_gates() -> None:
     assert "npm_audit_gate.sh --out" in ci_local, (
         "the advisory gate runs through the same driver script as ci.yml"
     )
+
+
+# --- P34.34b (ACT-16b, C4 NEW-26, DR-C4-13): the CI export-mode leg ----------
+#
+# The `web` job must build the site in `SIG_DATA_SOURCE=export` over a REAL
+# from-spine fixture export (the producer runs `run_spine_export` over the
+# seeded tests/db spine), run the island budgets and Lighthouse over that
+# build — including the Round-10 routes `/releases/`, `/research-dossier/` and
+# one archive record — and prove the build fails loud on a broken export
+# input. Any of that removed, or the export input swapped for the web-fixture
+# serializer, turns a test below red (OM-15: invariants, never file lists).
+
+EXPORT_PRODUCER = REPO_ROOT / "scripts" / "ci" / "build_from_spine_fixture_export.py"
+EXPORT_LEG = REPO_ROOT / "scripts" / "ci" / "export_mode_leg.sh"
+EXPORT_RC = WEB / "lighthouserc.export.json"
+
+
+def _web_job() -> dict:
+    return _doc(CI_YML)["jobs"]["web"]
+
+
+def _leg_src() -> str:
+    assert EXPORT_LEG.is_file(), (
+        "scripts/ci/export_mode_leg.sh must exist — the web job's export-mode "
+        "steps dispatch its subcommands, and `make check-export-mode` (reachable "
+        "from ci-local) runs the same driver"
+    )
+    return EXPORT_LEG.read_text(encoding="utf-8")
+
+
+def _leg_subcommands() -> list[str]:
+    """The export-mode subcommand each web-job step invokes, in step order."""
+    import re
+
+    subs = []
+    for r in _runs(_web_job()):
+        m = re.fullmatch(r"bash scripts/ci/export_mode_leg\.sh ([\w-]+)", r.strip())
+        if m:
+            subs.append(m.group(1))
+        elif "export_mode_leg.sh" in r:
+            subs.append("__unrecognised__")
+    return subs
+
+
+def test_web_job_produces_a_from_spine_export_before_building_export_mode() -> None:
+    """The leg exists and orders correctly: a `produce` step (the leg's
+    `run_spine_export` producer) runs before the `SIG_DATA_SOURCE=export`
+    `build` step consumes its `--out` dir."""
+    subs = _leg_subcommands()
+    for required in ("produce", "build"):
+        assert required in subs, (
+            f"no `export_mode_leg.sh {required}` step in the web job — the "
+            "export-mode leg is gone (C4 NEW-26 recurrence)"
+        )
+    assert "__unrecognised__" not in subs, (
+        "a web-job step invokes export_mode_leg.sh with no recognisable "
+        "subcommand — the leg's contract drifted"
+    )
+    assert subs.index("produce") < subs.index("build"), (
+        "the export must be produced before the export-mode build"
+    )
+    src = _leg_src()
+    produce_body = src[src.index("produce()") : src.index("build()")]
+    assert "build_from_spine_fixture_export.py" in produce_body, (
+        "the leg's `produce` step must run the from-spine producer "
+        "(run_spine_export over the seeded spine), never a fixture serializer"
+    )
+    build_body = src[src.index("build()") : src.index("verify_fail_loud()")]
+    assert "SIG_DATA_SOURCE=export" in build_body and "npm run build" in build_body, (
+        "the leg's `build` step must build with SIG_DATA_SOURCE=export"
+    )
+
+
+def test_export_mode_build_consumes_the_producer_output_dir() -> None:
+    """`SIG_EXPORT_DIR` must bind to the directory the producer wrote — the
+    leg binds both to the same `EXPORT_DIR` so the wiring cannot silently
+    point the build at anything else."""
+    src = _leg_src()
+    assert '--out "$EXPORT_DIR"' in src, (
+        "the producer must write the export into the leg's EXPORT_DIR"
+    )
+    assert 'SIG_EXPORT_DIR="$EXPORT_DIR"' in src, (
+        "the export-mode build must read the leg's EXPORT_DIR"
+    )
+
+
+def test_the_web_job_never_feeds_serialized_web_fixtures_to_export_mode() -> None:
+    """C4 NEW-26: the serialized-fixture path (`export:fixtures` /
+    `build-fixture-export`) may appear in neither the web job nor the leg it
+    dispatches — export mode must be fed run_spine_export output, never
+    hand-authored web fixtures. (tests/e2e's composed overlay is a
+    different, fixture-labelled seam.)"""
+    offenders = [
+        r for r in _runs(_web_job()) if "export:fixtures" in r or "build-fixture-export" in r
+    ]
+    assert offenders == [], f"the web job must never invoke the web-fixture serializer: {offenders}"
+    for banned in ("export:fixtures", "build-fixture-export"):
+        assert banned not in _leg_src(), (
+            f"the export-mode leg must never invoke the web-fixture serializer (found {banned!r})"
+        )
+
+
+def test_export_mode_leg_measures_budgets_and_lighthouse_on_the_build() -> None:
+    """DR-C4-13 / SIG-FIND-005: island budgets AND Lighthouse run over the
+    export-mode dist — after the build, via the leg's dedicated steps."""
+    subs = _leg_subcommands()
+    for required in ("budgets", "lighthouse"):
+        assert required in subs, (
+            f"the web job must run `export_mode_leg.sh {required}` over the export-mode build"
+        )
+        assert subs.index("build") < subs.index(required), (
+            f"{required} must run after the export-mode build"
+        )
+    src = _leg_src()
+    assert "measure-island-budgets.mjs" in src, (
+        "the per-island budgets (ADR-134) must measure the export-mode build"
+    )
+    assert "lighthouserc.export.json" in src, (
+        "Lighthouse must run over the export-mode build with the export rc"
+    )
+
+
+def test_export_mode_leg_proves_fail_loud_on_a_broken_input() -> None:
+    """AC-1's negative half: the leg must build with SIG_DATA_SOURCE=export
+    over a deliberately empty export dir and require that build to fail —
+    a silent fixture fall-back can never again pass CI."""
+    subs = _leg_subcommands()
+    assert "verify-fail-loud" in subs, (
+        "the web job must contain the broken-input step: an export-mode build "
+        "over a missing export is expected to fail, and succeeding is red"
+    )
+    assert subs.index("verify-fail-loud") < subs.index("build"), (
+        "the broken-input build must run before the real export-mode build — "
+        "a build that dies mid-generation can leave dist half-written, and "
+        "budgets/Lighthouse must measure exactly the real build's output"
+    )
+    src = _leg_src()
+    body = src[src.index("verify_fail_loud()") : src.index("mount_record()")]
+    for token in ("SIG_DATA_SOURCE=export", "empty", "npm run build", "exit 1"):
+        assert token in body, (
+            f"the broken-input step lost {token!r} — the fail-loud contract is unproven"
+        )
+
+
+def test_export_lighthouserc_covers_the_round10_routes_and_one_record() -> None:
+    """DR-C4-13: the export rc collects /releases/, /research-dossier/ and one
+    archive record — and its assert matrix never drifts from the base gate's."""
+    import json
+
+    base = json.loads((WEB / "lighthouserc.json").read_text())
+    export = json.loads(EXPORT_RC.read_text())
+    urls = export["ci"]["collect"]["url"]
+    for required in ("/releases/index.html", "/research-dossier/index.html"):
+        assert required in urls, f"export lighthouserc must collect {required}"
+    records = [u for u in urls if u.startswith("/r/") and u.endswith("index.html")]
+    assert records, "the export lighthouserc must collect one archive record"
+    assert export["ci"]["assert"]["assertMatrix"] == base["ci"]["assert"]["assertMatrix"], (
+        "the export-mode assertMatrix must mirror lighthouserc.json's — a "
+        "budget relaxed only for the export build is a hidden regression"
+    )
+    assert export["ci"]["collect"]["numberOfRuns"] == base["ci"]["collect"]["numberOfRuns"]
+
+
+def test_export_producer_is_the_spine_export_path() -> None:
+    """The producer's provenance is structural: it runs `run_spine_export`
+    over the seeded tests/db spine and stages the release for the archive
+    record — it never invokes npm/web tooling."""
+    assert EXPORT_PRODUCER.is_file(), "the from-spine producer script must exist"
+    src = EXPORT_PRODUCER.read_text(encoding="utf-8")
+    assert "run_spine_export" in src, "the producer must run the real spine export"
+    assert "seed_export_spine" in src, "the producer must reuse the proven seed"
+    for banned in ("export:fixtures", "npm ", "node "):
+        assert banned not in src, (
+            f"the producer must never shell to the web-fixture serializer (found {banned!r})"
+        )

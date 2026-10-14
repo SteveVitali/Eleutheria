@@ -115,10 +115,15 @@ def _claim(
     )
 
 
-@pytest.fixture
-def seeded_export(conn) -> dict:
-    """An ODbL subject + a CC0 subject + an UNDETERMINED subject (excluded)."""
-    cur = conn.cursor()
+def seed_export_spine(cur) -> dict[str, str]:
+    """Seed the licence-safe fixture spine: an ODbL subject + a CC0 subject +
+    an UNDETERMINED subject (excluded from every publishable surface).
+
+    Module-level (not a fixture) so the CI producer —
+    ``scripts/ci/build_from_spine_fixture_export.py`` (P34.34b, ACT-16b) —
+    runs the EXACT seed this module's tests prove, never a re-authoring.
+    Returns the subject entity ids keyed ``osm``/``cc0``/``ud``.
+    """
     for pred in ("camera_latitude", "camera_longitude", "camera_jurisdiction", "camera_name"):
         _seed_predicate(cur, pred)
 
@@ -183,6 +188,12 @@ def seeded_export(conn) -> dict:
     geo(s_ud, "51.50", "-0.12", "LDN", cap=cap_ud, run=run_ud, rights=undet)
 
     return {"osm": str(s_osm), "cc0": str(s_cc0), "ud": str(s_ud)}
+
+
+@pytest.fixture
+def seeded_export(conn) -> dict[str, str]:
+    """The seed above, as a fixture (see `seed_export_spine` for the shape)."""
+    return seed_export_spine(conn.cursor())
 
 
 def test_spine_export_over_seeded_spine(conn, seeded_export) -> None:

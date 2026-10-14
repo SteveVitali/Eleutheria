@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local check-export-mode lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -106,6 +106,19 @@ ci-local: sync
 	npm --prefix web run check:licenses
 	npm --prefix web run test:e2e
 	npm --prefix web run check:perf
+	$(MAKE) check-export-mode
+
+## P34.34b (ACT-16b, C4 NEW-26): the web job's export-mode leg, locally — the
+## same `export_mode_leg.sh` subcommands ci.yml runs. The from-spine fixture
+## export stands up PG18+PostGIS via testcontainers (needs Docker); the
+## SIG_DATA_SOURCE=export build, budgets and Lighthouse run over its output.
+check-export-mode:
+	bash scripts/ci/export_mode_leg.sh produce
+	bash scripts/ci/export_mode_leg.sh verify-fail-loud
+	bash scripts/ci/export_mode_leg.sh build
+	bash scripts/ci/export_mode_leg.sh mount-record
+	bash scripts/ci/export_mode_leg.sh budgets
+	bash scripts/ci/export_mode_leg.sh lighthouse
 
 ## Refresh the uv lockfile.
 lock:
