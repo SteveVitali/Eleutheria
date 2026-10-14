@@ -110,6 +110,31 @@ export SIG_LB_REDIRECT_URLMAP="sig-web-http-redirect" # HTTP url map: :80 → HT
 export SIG_LB_HTTP_PROXY="sig-web-http-proxy"       # target HTTP proxy
 export SIG_LB_HTTP_FR="sig-web-fr-http"             # :80 global forwarding rule
 
+# P34.40 / ACT-17 (G3 §4.3 option 3a): the L2 `/v1/*` path rule — a serverless
+# NEG + backend service for `sig-api`, then a URL-map path rule on the apex
+# matcher. The `/intake/*` rule is DECLARED in ops/lb_routes.toml behind
+# `enabled = false` (no `sig-intake` service exists; P37.59 owns it) — these
+# names exist so the written-not-applied rule and its eventual service have
+# stable, parameterised names. The release-registry bucket is P35.53's; named
+# here so the (unrolled) registry-mount command is derived, never literal.
+export SIG_LB_API_NEG="sig-api-neg"                 # serverless NEG → sig-api (regional)
+export SIG_LB_API_BACKEND="sig-api-backend"         # global backend service
+export SIG_INTAKE_SERVICE="sig-intake"              # the (nonexistent) receiver service
+export SIG_LB_INTAKE_NEG="sig-intake-neg"           # serverless NEG → sig-intake
+export SIG_LB_INTAKE_BACKEND="sig-intake-backend"   # global backend service
+export SIG_BUCKET_RELEASE="${SIG_GCP_PROJECT}-sig-release"  # release registry (PRIVATE, P35.53)
+export SIG_RELEASE_MOUNT="/mnt/rel"                 # sig-api's registry mount root
+export SIG_RELEASE_REGISTRY_DIR="${SIG_RELEASE_MOUNT}/registry"  # --release-registry value
+
+# The P34.40 live window (OM-19): both legs ≥ the SIG_LB_EARLIEST bound below
+# and never 03:00–10:00Z (the contract's named window open, row 249).
+# lb-routes.sh + web-roll.sh enforce it in --apply; the override
+# exists for the offline guard test only.
+export SIG_LB_EARLIEST="2026-10-13T12:00:00Z"  # future-ok: scheduled: contract window
+# The legs' restore-point + byte-compare capture dir (each script defaults to
+# ${TMPDIR}/p34.40-l{1,2}); export to keep a run's prestate across invocations.
+export SIG_LB_STATE_DIR="${SIG_LB_STATE_DIR:-${TMPDIR:-/tmp}/p34.40}"
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented

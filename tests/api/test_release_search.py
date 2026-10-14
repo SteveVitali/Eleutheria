@@ -160,6 +160,30 @@ def test_no_js_html_representation(client: TestClient, released) -> None:
     assert "text/html" in r2.headers["content-type"]
 
 
+def test_html_links_are_root_absolute(client: TestClient, released) -> None:
+    """P34.40 — the release-search HTML must stay same-origin through the
+    canonical origin's `/v1/*` LB rule: every href/action the page emits is
+    root-absolute (`/…`) or fully absolute, never relative — a relative link
+    would break identically under any mounting prefix."""
+    import re
+
+    _reg, pub = released
+    r = client.get(
+        f"/v1/releases/{pub}/compartments/{COMP}/search",
+        params={"q": "Site"},
+        headers={"Accept": "text/html"},
+    )
+    assert r.status_code == 200
+    targets = re.findall(r'(?:href|action)="([^"]+)"', r.text)
+    assert targets, "expected the no-JS page to carry links/a form action"
+    for t in targets:
+        assert t.startswith("/") or t.startswith("https://") or t.startswith("http://"), (
+            f"non-absolute link {t!r} in the release-search HTML"
+        )
+    # The form posts back to its own root-absolute route.
+    assert f'action="/v1/releases/{pub}/compartments/{COMP}/search"' in r.text
+
+
 # --------------------------------------------------------------------------- #
 # Explicit error states                                                        #
 # --------------------------------------------------------------------------- #
