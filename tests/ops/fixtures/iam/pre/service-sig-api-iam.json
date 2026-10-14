@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "etag": "BwTESTapiIAM",
+  "bindings": [
+    {
+      "role": "roles/run.invoker",
+      "members": ["allUsers"]
+    }
+  ]
+}

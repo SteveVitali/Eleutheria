@@ -1,0 +1,120 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed least-privilege identity declaration for the three Cloud Run
+# services (P34.42a / G1-01, F-272, SIG-SEC-007, AR-8). This file is DATA, not
+# code — it is the record `sig-ops iam plan/diff` renders and
+# `ops/gcp/iam-service-accounts.sh --apply` applies inside its window.
+#
+# Scope (the contract's own half): the three services each run as their own
+# service account with only the roles they need; each secret is readable only
+# by its consumers; the public-facing services hold no delete permission on
+# the spine or evidence stores; `sig-alerts` is no longer invokable by
+# allUsers. The 88 jobs, the remaining job SAs and the `roles/editor` removal
+# are P34.42b — the default compute SA keeps every grant it holds today until
+# that leg moves it.
+#
+# Symbolic members (never a project id or project number literal — both are
+# resolved at apply time): `default-compute` = the project default compute
+# service account (`<projectNumber>-compute@developer.gserviceaccount.com`),
+# `operator` = the human's account (no SA). `allUsers` is only ever legal in
+# an [[invoker]] `revoke` list — never a grant.
+schema = "sig.iam-identities/1"
+
+# --- the three runtime identities (create-if-absent, idempotent) -------------
+[[service_account]]
+id = "sig-api-rt"
+display_name = "sig-api runtime"
+purpose = "the read API's own identity — Cloud SQL client + its own DB secret only; RLS + the read role do the rest"
+
+[[service_account]]
+id = "sig-web-rt"
+display_name = "sig-web runtime"
+purpose = "the static site's own identity — objectViewer on the web bucket (the gcsfuse mount) and nothing else"
+
+[[service_account]]
+id = "sig-alerts-rt"
+display_name = "sig-alerts runtime"
+purpose = "the alert receiver's own identity — no project roles, no secret access; it only needs to run"
+
+# --- project-level bindings (managed roles only — a basic role is refused) ---
+[[project_role]]
+service_account = "sig-api-rt"
+role = "roles/cloudsql.client"
+
+# --- bucket-level bindings (bucket names are the -suffixed derived names) ----
+[[bucket_role]]
+service_account = "sig-web-rt"
+bucket = "sig-web"               # gs://${SIG_GCP_PROJECT}-sig-web
+role = "roles/storage.objectViewer"
+
+# --- the service → identity map (one same-image revision each, AR-8) --------
+[[service]]
+name = "sig-api"
+service_account = "sig-api-rt"
+
+[[service]]
+name = "sig-web"
+service_account = "sig-web-rt"
+
+[[service]]
+name = "sig-alerts"
+service_account = "sig-alerts-rt"
+
+# --- invoker policy changes (G1-11) ------------------------------------------
+# sig-api and sig-web stay public (a public read API and a public site —
+# deliverable wording: public responses do not change). sig-alerts needs no
+# public invoker: its caller is the sig-probe job, so it authenticates by IAM.
+# The grant names `default-compute` = sig-probe's CURRENT runtime identity;
+# P34.42b moves it to `sig-probe-rt` (the grant flips, the mechanism does not).
+[[invoker]]
+service = "sig-alerts"
+grant = ["default-compute"]
+revoke = ["allUsers"]
+
+# --- the per-secret consumer matrix (G1 §3.9 — 11 secrets) --------------------
+# `consumers` records every identity that reads the value at runtime. The leg
+# grants `roles/secretmanager.secretAccessor` to every declared-SA consumer —
+# for P34.42a that is exactly one new binding (sig-api-rt on sig-pg-password).
+# `default-compute` consumers keep their accessor until P34.42b moves the jobs.
+[[secret]]
+name = "sig-pg-password"
+consumers = ["sig-api-rt", "default-compute"]   # API revision now; jobs + GCE host until P34.42b
+
+[[secret]]
+name = "sig-alert-webhook-token"
+consumers = ["default-compute"]                 # sig-probe's job identity → sig-probe-rt in P34.42b
+
+[[secret]]
+name = "sig-api-env"
+consumers = []                                  # 0 versions — recorded per contract d2, never deleted here
+
+[[secret]]
+name = "sig-data-gov-key"
+consumers = ["default-compute"]                 # ingest job key until P34.42b
+
+[[secret]]
+name = "sig-maproulette-api-key"
+consumers = []                                  # no accessor binding today (G1-C25); rotate before use (G1-12)
+
+[[secret]]
+name = "sig-muckrock-refresh"
+consumers = ["default-compute"]
+
+[[secret]]
+name = "sig-openstates-key"
+consumers = ["default-compute"]
+
+[[secret]]
+name = "sig-sam-gov-key"
+consumers = ["default-compute"]
+
+[[secret]]
+name = "sig-zenodo-client-id"
+consumers = ["operator"]                        # operator-run, no runtime SA
+
+[[secret]]
+name = "sig-zenodo-client-secret"
+consumers = ["operator"]
+
+[[secret]]
+name = "sig-zenodo-sandbox-token"
+consumers = ["operator"]

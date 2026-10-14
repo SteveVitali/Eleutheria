@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "etag": "BwTESTbucketIAM",
+  "bindings": [
+    {
+      "role": "roles/storage.objectViewer",
+      "members": ["allUsers"]
+    }
+  ]
+}

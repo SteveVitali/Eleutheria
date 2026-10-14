@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "etag": "BwTESTbucketIAMpost",
+  "bindings": [
+    {
+      "role": "roles/storage.objectViewer",
+      "members": [
+        "allUsers",
+        "serviceAccount:sig-web-rt@sig-test-project.iam.gserviceaccount.com"
+      ]
+    }
+  ]
+}

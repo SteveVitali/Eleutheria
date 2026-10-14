@@ -15,7 +15,7 @@ directory does not restate it. Established by **P19.1** (ADR-058); migrated to t
 memory here.
 
 - `LEDGER.md` — the machine-state file (`orchestrate-build` / `drive-build.sh` parse it).
-- `BUILD_INDEX.md` — one row per landed chain row (rows 1-250 as of P34.41, 2026-10-08).
+- `BUILD_INDEX.md` — one row per landed chain row (rows 1-251 as of P34.42a, 2026-10-08).
 - `runs/<ID>.md` — the `implement-spec` run ledger for each ticket; `pr/<ID>.md` — its PR body.
 - `readouts/GATE-G<k>.md` — gate readouts (append-only); `planning/` — re-planning rounds.
 - `tools/`, `fixtures/`, `reports/` — committed; `logs/` — the one gitignored subtree.

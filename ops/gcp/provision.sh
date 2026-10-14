@@ -26,6 +26,9 @@ _here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 parse_mode "${1:-}"
 require_project
+# config.sh derived SIG_API_SA_EMAIL before require_project filled the
+# check-mode placeholder — re-derive so PLANs name a real member.
+export SIG_API_SA_EMAIL="${SIG_SA_API}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
 require_adc
 
 banner "provision (DECISION: e2-micro + GCS + Cloud Run API)"
@@ -102,9 +105,12 @@ provision_compute_decision() {
   # would silently re-resolve a movable tag).
   local service_image
   service_image="$(pin_image_digest "${SIG_SERVICE_IMAGE:-${SIG_API_IMAGE}:<sha-tag>}")"
+  # P34.42a / AR-8: sig-api runs as its own identity (sig-api-rt — the IAM leg
+  # ops/gcp/iam-service-accounts.sh creates it; never the default compute SA).
   run gcloud run deploy "${SIG_RUN_SERVICE}" \
     --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
     --image "${service_image}" \
+    --service-account "${SIG_API_SA_EMAIL}" \
     --min-instances=0 --max-instances=2 --allow-unauthenticated \
     --set-secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
 }
@@ -114,7 +120,7 @@ provision_compute_decision() {
 provision_alternative() {
   _log "-- ALTERNATIVE (documented, ADR-075; not run by default) --"
   _plan "gcloud sql instances create ${SIG_SQL_INSTANCE} --tier=${SIG_SQL_TIER} --database-version=POSTGRES_16 --region=${SIG_GCP_REGION} (then enable the postgis extension)"
-  _plan "gcloud run deploy ${SIG_RUN_SERVICE} --add-cloudsql-instances ${SIG_GCP_PROJECT}:${SIG_GCP_REGION}:${SIG_SQL_INSTANCE} --min-instances=0"
+  _plan "gcloud run deploy ${SIG_RUN_SERVICE} --add-cloudsql-instances ${SIG_GCP_PROJECT}:${SIG_GCP_REGION}:${SIG_SQL_INSTANCE} --min-instances=0 --service-account ${SIG_API_SA_EMAIL}"
   _log "note: Cloud SQL has automated backups built in but is NOT free-tier (~\$9+/mo)."
 }
 

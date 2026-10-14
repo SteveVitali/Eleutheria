@@ -47,6 +47,10 @@ parse_mode "${1:-}"
 shift || true
 ACTION="${1:-all}"
 require_project
+# config.sh derived SIG_WEB_SA_EMAIL + SIG_BUCKET_WEB before require_project
+# filled the check-mode placeholder — re-derive so PLANs name real resources.
+export SIG_WEB_SA_EMAIL="${SIG_SA_WEB}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+export SIG_BUCKET_WEB="${SIG_GCP_PROJECT}-sig-web"
 require_adc
 
 banner "sig-web repo-owned image + deploy (P31.15 / SURFACE.2)"
@@ -125,8 +129,12 @@ for v in s["spec"]["template"]["spec"].get("volumes", []):
     _plan "remove every live volume-mount + volume by its live path/name (the describe above), then:"
   fi
   # `${rm_args[@]+...}` guards the empty array under bash 3.2 `set -u`.
+  # P34.42a / AR-8: sig-web runs as its own identity (sig-web-rt — created by
+  # the IAM leg ops/gcp/iam-service-accounts.sh, which must land before any
+  # roll that names it).
   run gcloud run deploy "${SIG_WEB_SERVICE}" \
     --image "${pinned}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --service-account "${SIG_WEB_SA_EMAIL}" \
     --port 8080 \
     --ingress all --allow-unauthenticated \
     ${rm_args[@]+"${rm_args[@]}"} \
