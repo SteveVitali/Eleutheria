@@ -1,14 +1,14 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "eef603d659463787025fd16a41a3ad08b0d0400f",
+  "input_commit": "213909bdf2392c225f47f77a5daf894819c33aa2",
   "manifest_inputs": 1033,
   "control": {
-    "projectStatus": "PAUSED",
+    "projectStatus": "IN_PROGRESS",
     "nextTicket": "P35.66",
     "lastCompleted": "P36.15",
-    "blockedOn": "D-P35.1a-1",
-    "pauseRequested": "true",
+    "blockedOn": "(nothing)",
+    "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
@@ -23,16 +23,16 @@
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-14T16:12:58Z"
+    "updatedAt": "2026-10-14T17:28:47Z"
   },
   "counts": {
     "obligations": 164,
-    "owed": 93,
-    "open": 90,
+    "owed": 92,
+    "open": 89,
     "partial": 3,
-    "terminal": 71,
-    "events": 651,
-    "transitions": 33,
+    "terminal": 72,
+    "events": 652,
+    "transitions": 34,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
@@ -8268,12 +8268,12 @@
     },
     {
       "id": "D-P35.1a-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P35.1a-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P35.1a-1:e1",
       "kind": "P",
       "owner": "the operator",
-      "landing": "RETURN PASS — P35.1a",
-      "landing_source": "return-pass-map/1",
+      "landing": "D-P35.1a-1 is resolved by the recorded operator selections: run the full P34.42b jobs-IAM leg first, then retry P35.1a with --apply --paused",
+      "landing_source": "event-head",
       "backlog_home": "BL-084",
       "item": "The ordering/scope decision the P35.1a `scheduled-ops` apply leg's 2026-10-14 OM-18 stop routes here — two contradictions between the authorised verbatim command (`ops/gcp/scheduled-ops.sh --apply`) and production/declaration truth: (1) the committed script deploys every job onto P34.42b's job-class runtime identities — `sig-probe`→`sig-probe-rt@…`, the ingest fleet + `sig-replay-ingest`→`sig-ingest-rt@…` — but the live SA inventory (`docs/build/reports/p35.1a-scheduled-ops/pre/service-accounts.json`) holds only the default compute SA, the `sig-scheduler` invoker and the three P34.42a service SAs; `sig-probe-rt`/`sig-ingest-rt`/`sig-export-rt`/`sig-materialize-rt` do not exist, all 88 live jobs still run as the compute SA (`pre/run-jobs.json`), and the apply's first `run jobs deploy` (`sig-probe`) would be refused for a nonexistent service account — the identities are created by `iam-job-identities.sh`, P34.42b's still-queued leg, whose S5-3 OM-20 pre-authorisation expired at GATE-G4; (2) the chain-tip `ops/cadence.toml` declares twelve triggers that post-date the 2026-10-10 queueing (the ten `sig-sched-r11-*` wave batches + the two `sig-sched-*-tribal-*` screened-lane rows — the 2026-10-10 live read recorded exactly two missing triggers; today it records fourteen), every one annotated \"created `--paused` (R6)\", so the verbatim plain `--apply` would create them ENABLED — contradicting the declared create-paused first-run protocol and encroaching on P35.11's wave legs (ING-GO-A, the OP-26 flip lists). The call: (a) run P34.42b's jobs-IAM leg first under a fresh authorisation, then re-run this leg's verbatim `--apply` — plus decide how the new wave/screened declarations reconcile under it (e.g. an `--apply --paused` variant, or the wave legs create their own triggers); or (b) re-split the leg so the scheduler-of-record half (the P35.1a triggers + the declared-bundle publish) deploys without the job-fleet redeploy — a script change, hence an operator call either way",
       "unblocked_by": "owner: the operator · trigger: the operator's call on (a)/(b) — re-authorise + order P34.42b's leg before this one and name the wave-row reconciliation mode · due: before P35.1b (this leg's `live_dependants`) and before the Wave-A window opens 2026-10-19",
@@ -8316,6 +8316,31 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           },
+          "recorded_at": "2026-10-14"
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.1a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P35.1a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P35.1a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P35.1a",
+          "owner": "the operator",
+          "landing": "D-P35.1a-1 is resolved by the recorded operator selections: run the full P34.42b jobs-IAM leg first, then retry P35.1a with --apply --paused",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/LEDGER.md",
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md",
+            "docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md",
+            "ops/gcp/scheduled-ops.sh"
+          ],
+          "observed_at": "2026-10-14",
+          "source_commit": "213909bdf2392c225f47f77a5daf894819c33aa2",
+          "reason": "operator decision recorded verbatim after the OM-18 stop: the operator asked 'can you create the service accounts if they don't exist live? I believe that's 1. in your choice list', then selected 'Full P34.42b leg' for the jobs-IAM scope and 'Use --paused' for the P35.1a retry mode. Labelled recorder's reading: this is a fresh one-leg authorization for P34.42b's contract scope after its S5-3 listing expired, and it changes the later P35.1a retry command from plain --apply to --apply --paused; it does not itself perform production mutation and does not authorize any P35.11 wave leg or HG-03 flip.",
           "recorded_at": "2026-10-14"
         }
       ]
@@ -8555,8 +8580,8 @@
       {
         "key": "P34.42b",
         "obligations_cell": "the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; engineered halves landed)",
-        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)",
-        "operator_cell": "nothing until the window + ADC hold — dry-run default, window/execution-gated; rollback replays the recorded prestate",
+        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42; fresh one-leg authorization recorded 2026-10-14 after the S5-3 listing expired at GATE-G4 (operator selection: \"Full P34.42b leg\")",
+        "operator_cell": "\"Full P34.42b leg\" (fresh one-leg authorization recorded 2026-10-14; voided by a red probe, failed restore point or contradicting production read); otherwise nothing until the window + ADC hold — dry-run default, window/execution-gated; rollback replays the recorded prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed row 252 (PR #253 — the leg queued exit 42)",
         "obligations": []
       },
@@ -8634,13 +8659,11 @@
       },
       {
         "key": "P35.1a",
-        "obligations_cell": "the queued in-ticket production-write leg: `scheduled-ops.sh --apply` reconciling Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED triggers + the declared-bundle publish), then the first in-band live-diff run (read-only — a 2026-10-10 live read recorded 28 findings). `D-P35.1a-1` OPEN: the 2026-10-14 live-1 dispatch (inside its AR-3 slot) STOPPED before the mutation — the AR-2 prestate found (1) the script binds every job deploy to P34.42b's job-class SAs (`sig-probe-rt`/`sig-ingest-rt`) which do not exist live (its leg is still queued; its S5-3 listing expired GATE-G4) and (2) cadence.toml now declares twelve post-queueing triggers annotated \"created --paused (R6)\" that a verbatim plain `--apply` would create ENABLED",
-        "gates_cell": "hosted, production write; OM-20 conditional — GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go; AR-3 + AR-2 — a weekday 14:00-20:00Z slot, operator present, prestate first (excl. weekends and outside-14:00-20:00Z); the 2026-10-10 dispatch sat outside — queued; the 2026-10-14 dispatch (r11/P35.1a-live-1) ran the prestate + read-only live-diff (exit 1, 52 findings) then stopped per OM-18 — a production read contradicting the authorisation voided it (missing job-class identities + the widened declared trigger set); the re-run needs D-P35.1a-1's operator call recorded first",
-        "operator_cell": "D-P35.1a-1's call: re-authorise + order P34.42b's jobs-IAM leg ahead of this one and name the wave-row reconciliation mode (e.g. `--apply --paused`, or the wave legs create their own triggers), or re-split the leg to deploy only the scheduler-of-record half; rollback = revert the cadence row + re-run scheduled-ops",
-        "rerun_cell": "`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266 — mutation leg queued on AR-3; live-1 stopped OM-18, evidence docs/build/reports/p35.1a-scheduled-ops/) · next attempt on `r11/P35.1a-live-2`",
-        "obligations": [
-          "D-P35.1a-1"
-        ]
+        "obligations_cell": "the queued in-ticket production-write leg: reconcile Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED triggers + the declared-bundle publish), then run the in-band live-diff read. The 2026-10-14 live-1 dispatch ran the prestate + read-only live-diff (exit 1, 52 findings) then stopped per OM-18; the operator's 2026-10-14 selections resolved the ordering/scope question: run the full P34.42b jobs-IAM leg first, then retry this leg with `--apply --paused`",
+        "gates_cell": "hosted, production write; OM-20 conditional — GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go; AR-3 + AR-2 — a weekday 14:00-20:00Z slot, operator present, prestate first (excl. weekends and outside-14:00-20:00Z); retry waits on the P34.42b jobs-IAM leg landing successfully and uses `--apply --paused` so every newly created trigger is paused per R6",
+        "operator_cell": "nothing further until P34.42b's fresh-authorized jobs-IAM leg has landed; then P35.1a-live-2 runs only inside a fresh AR-3/AR-2 window with `--apply --paused`; rollback = the leg's recorded prestate + script rollback path",
+        "rerun_cell": "`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266 — mutation leg queued on AR-3; live-1 stopped OM-18, evidence docs/build/reports/p35.1a-scheduled-ops/) · next attempt on `r11/P35.1a-live-2` after `live:P34.42b`",
+        "obligations": []
       },
       {
         "key": "P35.11",
@@ -18725,10 +18748,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "835e5f2b96bf3b71f9de0d8aafc792aee57e397486bbfa9f7b8a4bf19989dc0e",
+  "manifest_sha256": "b6c872b7776eba91e7553b5af0dc83237e2c260a3b2f279f5ba8181278f6bf98",
   "current_md": {
     "lines": 63,
-    "bytes": 15598,
+    "bytes": 15603,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

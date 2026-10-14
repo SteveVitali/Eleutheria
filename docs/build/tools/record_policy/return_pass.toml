@@ -460,8 +460,8 @@ key = "P34.42b"
 kind = "leg"
 obligations = []
 obligations_cell = '''the queued jobs IAM leg (the G1-01/F-272 jobs half + `roles/editor` removal; engineered halves landed)'''
-gates_cell = '''hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42; OM-20 pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
-operator_cell = '''nothing until the window + ADC hold — dry-run default, window/execution-gated; rollback replays the recorded prestate'''
+gates_cell = '''hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z daily, never mid-class-run — apply exits 42; fresh one-leg authorization recorded 2026-10-14 after the S5-3 listing expired at GATE-G4 (operator selection: "Full P34.42b leg")'''
+operator_cell = '''"Full P34.42b leg" (fresh one-leg authorization recorded 2026-10-14; voided by a red probe, failed restore point or contradicting production read); otherwise nothing until the window + ADC hold — dry-run default, window/execution-gated; rollback replays the recorded prestate'''
 rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (scope: the jobs IAM leg only) · landed row 252 (PR #253 — the leg queued exit 42)'''
 
   [[row.legs]]
@@ -469,7 +469,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-j
   obligations = []
   earliest = '''2026-10-13T12:00Z'''
   excluded = ["03:00-06:30Z daily"]
-  go = '''pre-authorised: S5-3 (OM-20 11A list; expires GATE-G4)'''
+  go = '''operator: "Full P34.42b leg" (fresh one-leg authorization recorded 2026-10-14; voided by a red probe, failed restore point or contradicting production read)'''
   rerun = '''implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true'''
   live_dependants = ["P34.43", "P34.49"]
 
@@ -684,18 +684,18 @@ rerun_cell = '''`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-p
 [[row]]
 key = "P35.1a"
 kind = "leg"
-obligations = ["D-P35.1a-1"]
-obligations_cell = '''the queued in-ticket production-write leg: `scheduled-ops.sh --apply` reconciling Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED triggers + the declared-bundle publish), then the first in-band live-diff run (read-only — a 2026-10-10 live read recorded 28 findings). `D-P35.1a-1` OPEN: the 2026-10-14 live-1 dispatch (inside its AR-3 slot) STOPPED before the mutation — the AR-2 prestate found (1) the script binds every job deploy to P34.42b's job-class SAs (`sig-probe-rt`/`sig-ingest-rt`) which do not exist live (its leg is still queued; its S5-3 listing expired GATE-G4) and (2) cadence.toml now declares twelve post-queueing triggers annotated "created --paused (R6)" that a verbatim plain `--apply` would create ENABLED'''
-gates_cell = '''hosted, production write; OM-20 conditional — GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go; AR-3 + AR-2 — a weekday 14:00-20:00Z slot, operator present, prestate first (excl. weekends and outside-14:00-20:00Z); the 2026-10-10 dispatch sat outside — queued; the 2026-10-14 dispatch (r11/P35.1a-live-1) ran the prestate + read-only live-diff (exit 1, 52 findings) then stopped per OM-18 — a production read contradicting the authorisation voided it (missing job-class identities + the widened declared trigger set); the re-run needs D-P35.1a-1's operator call recorded first'''
-operator_cell = '''D-P35.1a-1's call: re-authorise + order P34.42b's jobs-IAM leg ahead of this one and name the wave-row reconciliation mode (e.g. `--apply --paused`, or the wave legs create their own triggers), or re-split the leg to deploy only the scheduler-of-record half; rollback = revert the cadence row + re-run scheduled-ops'''
-rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266 — mutation leg queued on AR-3; live-1 stopped OM-18, evidence docs/build/reports/p35.1a-scheduled-ops/) · next attempt on `r11/P35.1a-live-2`'''
+obligations = []
+obligations_cell = '''the queued in-ticket production-write leg: reconcile Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED triggers + the declared-bundle publish), then run the in-band live-diff read. The 2026-10-14 live-1 dispatch ran the prestate + read-only live-diff (exit 1, 52 findings) then stopped per OM-18; the operator's 2026-10-14 selections resolved the ordering/scope question: run the full P34.42b jobs-IAM leg first, then retry this leg with `--apply --paused`'''
+gates_cell = '''hosted, production write; OM-20 conditional — GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go; AR-3 + AR-2 — a weekday 14:00-20:00Z slot, operator present, prestate first (excl. weekends and outside-14:00-20:00Z); retry waits on the P34.42b jobs-IAM leg landing successfully and uses `--apply --paused` so every newly created trigger is paused per R6'''
+operator_cell = '''nothing further until P34.42b's fresh-authorized jobs-IAM leg has landed; then P35.1a-live-2 runs only inside a fresh AR-3/AR-2 window with `--apply --paused`; rollback = the leg's recorded prestate + script rollback path'''
+rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266 — mutation leg queued on AR-3; live-1 stopped OM-18, evidence docs/build/reports/p35.1a-scheduled-ops/) · next attempt on `r11/P35.1a-live-2` after `live:P34.42b`'''
 
   [[row.legs]]
   id = "P35.1a-live-scheduled-ops"
-  obligations = ["D-P35.1a-1"]
-  earliest = '''the next weekday 14:00-20:00Z slot with the operator present (AR-3), after D-P35.1a-1's call lands (P34.42b's leg re-authorised + run first) and the AR-2 prestate is re-captured'''
+  obligations = []
+  earliest = '''the next weekday 14:00-20:00Z slot with the operator present (AR-3), after P34.42b's jobs-IAM leg lands and the AR-2 prestate is re-captured'''
   excluded = ["weekends and outside-14:00-20:00Z"]
-  go = '''pre-authorised: GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go'''
+  go = '''verbatim-go: the operator's "Use --paused" selection (2026-10-14) — `scheduled-ops.sh --apply --paused`; expires GATE-G5; the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go'''
   rerun = '''implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true'''
   live_dependants = ["P35.1b"]
 [[row]]
