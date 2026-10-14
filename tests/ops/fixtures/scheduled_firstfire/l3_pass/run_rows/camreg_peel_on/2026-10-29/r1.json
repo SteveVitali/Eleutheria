@@ -1,0 +1,4 @@
+{"kind": "scheduled-ingest", "source": "camreg_peel_on", "mode": "live",
+ "outcome": "ok", "exit_code": 0, "started_at": "2026-10-29T12:00:24Z",
+ "duration_seconds": 271.8, "claims_added": 47, "capture_digests": ["sha256:p1"],
+ "ingest_run_id": "aa000006-0000-4000-8000-0000000000e9"}

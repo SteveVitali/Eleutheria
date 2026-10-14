@@ -1,0 +1,18 @@
+{
+  "completions": [
+    {
+      "completion_id": "c-0006",
+      "run_id": "aa000006-0000-4000-8000-0000000000e9",
+      "source_id": "camreg_peel_on",
+      "status": "ok",
+      "finished_at": "2026-10-29T12:05:40Z",
+      "claims_inserted": 47
+    }
+  ],
+  "counters": {
+    "claim": {"n_tup_upd": 0, "n_tup_del": 0},
+    "claim_evidence": {"n_tup_upd": 0, "n_tup_del": 0},
+    "ingest_run": {"n_tup_upd": 0, "n_tup_del": 0},
+    "ingest_run_completion": {"n_tup_upd": 0, "n_tup_del": 0}
+  }
+}

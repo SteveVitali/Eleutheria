@@ -83,6 +83,14 @@ act-when connectors/src/connectors/data/sources.toml ^[[:space:]]*ingestion_perm
 allow docs/tickets/DEFERRALS.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
 allow docs/build/LEDGER.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
 
+# P34.39b: the first-fire wave closes 2026-10-21T06:09Z and the camreg_peel_on first
+# fire is scheduled 2026-10-29T12:00Z (the contract's recorded bounds, G1 §3.7 /
+# §7.1). A record line naming P34.39b may carry those scheduled dates until the
+# peel-on fire + 1 h; after that the record is written from the scheduler's
+# lastAttemptTime and the clock, never from this entry.
+allow docs/tickets/DEFERRALS.md 2026-10-29T13:00:00Z P34.39b
+allow docs/build/LEDGER.md 2026-10-29T13:00:00Z P34.39b
+
 # ── flake_log.csv (P34.2; H2 §4.4; B-15) ──────────────────────────────────────────────────────────────────
 # The flake re-run log is a living append-only record: ci_boundary.py appends one row per attempt
 # (the first failure's `failure` row and, when allowed, the `rerun-requested` row — at most one per
@@ -196,6 +204,15 @@ allow tests/acceptance/fixtures/okc_sources.json 2027-07-01T00:00:00Z 2027-06-30
 # the values it names (R5); after the fire lands the literals are past-dated on their own.
 allow tests/ops/fixtures/scheduled_readback/* 2026-10-11T00:00:00Z 2026-10-10
 
+# P34.39b (D-P31.4-1 wave; ticket 248): the scheduled_firstfire fixtures are recorded
+# JSON captures of the scheduled 2026-10 first-fire wave (through the 10-21T06:09Z
+# close) and the 2026-10-29T12:00Z / 2026-11-29T12:00Z peel-on fires — JSON cannot
+# carry an inline marker, so the scheduled clocks are allow-listed per path-glob,
+# each expiry just past the literals it names so the entries die with the values
+# they name (R5); after the fires land the literals are past-dated on their own.
+allow tests/ops/fixtures/scheduled_firstfire/* 2026-11-30T00:00:00Z 2026-10-
+allow tests/ops/fixtures/scheduled_firstfire/* 2026-11-30T00:00:00Z 2026-11-
+
 # ── PLAN-11B C13 executed-flag exemption (ticket 239; recorded 2026-10-06) ────────────────────
 # Commit f9c407c8 (the C13 Phase-4 split commit) named `P35.1b`/`P35.1c` in its subject, so
 # `executed()` (B2 §7) marked row 291's contract "executing" mid-range and the sanctioned
@@ -253,3 +270,23 @@ seed-commit 145b68a3
 # P34.34a's d778706b and P34.35's 145b68a3.
 # Scope: findings attributed to ef1fb3bf only; no other commit borrows the exemption.
 seed-commit ef1fb3bf
+
+# ── P34.39b kind-vocabulary + recorded-ci repair (recorded 2026-10-07) ─────────────────────
+# Commit 6fe93216 is the verifier-backed vocabulary repair: the post-closeout record commit
+# 69b4f857's PHASE LOG entry used kind `post-closeout record boundary`, not in
+# record_policy/phase_log_kinds.txt (V4) — caught head-bound by the docs job's
+# ledger-contract check (run 37695565302, verbatim: "[kind-vocabulary] PHASE LOG kind
+# 'post-closeout record boundary' is not in … phase_log_kinds.txt (V4)"). The follow-on repair
+# commit 5816717d then recorded the fix under kind `post-closeout repair`, which
+# verify-recorded-ci (G3b) flags: a `post-closeout …` kind owes a `ci:` field no red head can
+# truthfully carry (run 37696647822, verbatim: "FAIL added PHASE LOG entry with no ci:
+# field"). 6fe93216 corrects both kind tokens in place — `post-closeout record boundary` →
+# `post-closeout record + boundary` (the `+ <note>` annotation keeps the boundary record
+# verbatim; BM-LEDGER-06) and `post-closeout repair` → `correction` (the record-event kind,
+# NON_CI_KINDS — the entry carries its boundary record in the payload) — and reverts the
+# interim kinds.txt declaration (correction-in-place, not vocabulary growth). No payload
+# bytes change. The sanctioned in-place pattern of P34.38's ef1fb3bf, P34.34a's d778706b and
+# P34.35's 145b68a3. The branch rule forbids force-push, so the declaration lands as a later
+# commit rather than a reworded subject.
+# Scope: findings attributed to 6fe93216 only; no other commit borrows the exemption.
+seed-commit 6fe93216

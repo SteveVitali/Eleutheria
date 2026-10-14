@@ -1,0 +1,17 @@
+[
+  {
+    "metadata": {
+      "name": "sig-ingest-usaspending-b77c2",
+      "creationTimestamp": "2026-10-03T05:00:03Z"
+    },
+    "status": {
+      "startTime": "2026-10-03T05:00:22Z",
+      "completionTime": "2026-10-03T05:22:19Z",
+      "succeededCount": 0,
+      "failedCount": 1,
+      "cancelledCount": 0,
+      "observedGeneration": 1,
+      "conditions": [{"type": "Completed", "state": "CONDITION_FAILED"}]
+    }
+  }
+]

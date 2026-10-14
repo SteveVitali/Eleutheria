@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "5686684479f92b300dbcd6bc882ecce0ae91b1cf",
-  "manifest_inputs": 983,
+  "input_commit": "c5b478bcf8b7f58891a5cd77987a4156fb9d7dd0",
+  "manifest_inputs": 984,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.39b",
-    "lastCompleted": "P34.39a",
+    "nextTicket": "P34.40",
+    "lastCompleted": "P34.39b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.50",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.50",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.39a-osm-replay-read-back",
+    "chainTip": "r11/P34.39b-first-fire-read-backs",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-07T18:34Z"
+    "updatedAt": "2026-10-07T21:26Z"
   },
   "counts": {
     "obligations": 156,
@@ -31,13 +31,13 @@
     "open": 84,
     "partial": 3,
     "terminal": 69,
-    "events": 638,
-    "transitions": 28,
+    "events": 639,
+    "transitions": 29,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 21,
+    "return_pass_rows": 22,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -4109,7 +4109,7 @@
     {
       "id": "D-P31.4-1",
       "status": "OPEN",
-      "status_source": "event-head D-P31.4-1:e1",
+      "status_source": "event-head D-P31.4-1:e2",
       "kind": "V",
       "owner": "scheduled (cron)",
       "landing": "RETURN PASS — P31.4",
@@ -4174,6 +4174,33 @@
           "recorded_at": "2026-10-07",
           "source_commit": "60b60b5b",
           "reason": "progress note, not a close (P34.39a): the read-back command landed (`sig-ops scheduled-readback` — read-only, AR-4 clock-guarded, 23 focused tests + fixture replay) and the pre-run baseline was captured live (claim 2,640,429; claim-table n_tup_upd/del all 0; camreg_osm_surveillance 1,241,521 claims via the evidence chain — the pre-P31.2 reuse-by-key runs fold several sources into one ingest_run, so run-level attribution mis-attributes; the method rides in the baseline record). The live guard ran 2026-10-07 and refused with exit 42 — queued, not failed: the fire is in the future, the trigger has no lastAttemptTime, and no post-fire execution exists. The pinned image (sig-api@sha256:feff986c…) predates P31.7 re-sighting bookkeeping; the report discloses it. Still owed: the post-fire read-back verdict. Row stays OPEN."
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P31.4-1:e2",
+          "kind": "transition",
+          "obligation_id": "D-P31.4-1",
+          "seq": 2,
+          "expected_previous_event": "D-P31.4-1:e1",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.39b",
+          "owner": "scheduled (cron)",
+          "landing": "the scheduled first-fire wave through 2026-10-21T06:09Z and the camreg_peel_on first fire after 2026-10-29T12:00Z — the legs re-run `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (one leg per run: L1, then L2, then L3); the 10-10T03:35Z batch-05 replay verdict itself stays P34.39a's leg",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.39b.md",
+            "docs/build/reports/p34.39b-first-fire-read-backs/README.md",
+            "docs/build/reports/p34.39b-first-fire-read-backs/queued-l1-2026-10-07.json",
+            "docs/build/reports/p34.39b-first-fire-read-backs/queued-l2-2026-10-07.json",
+            "docs/build/reports/p34.39b-first-fire-read-backs/queued-l3-2026-10-07.json",
+            "ops/src/ops/scheduled_firstfire.py",
+            "docs/tickets/248_P34.39b__first-fire-read-backs.md"
+          ],
+          "observed_at": "2026-10-07",
+          "recorded_at": "2026-10-07",
+          "source_commit": "fcf6e107",
+          "reason": "progress note, not a close (P34.39b): the first-fire read-back machinery landed (`sig-ops scheduled-firstfire --leg l1|l2|l3` — read-only gathers only, per-fire AR-4 clock guard, 27 fixture tests + fixture replay) and the wave was enumerated live (one `scheduler jobs list` read — 79 triggers, exactly 33 in-scope first fires, matching G1 §7.1). All three live legs ran their guards 2026-10-07 and refused with exit 42 — queued, not failed: L1's wave is open until 2026-10-21T06:09Z (per-fire AR-4 inside the table); L2/L3's peel-on AR-4 needs the 2026-10-29T12:00Z fire plus lastAttemptTime plus a finished execution. The camreg-batch-05 fire inside the wave is the same 10-10 replay watch — this obligation stays homed here and the verdict leg stays P34.39a's. Still owed: the three leg read-backs. Row stays OPEN."
         }
       ]
     },
@@ -8006,6 +8033,14 @@
         "gates_cell": "hosted, date-bound (§(f3)); read-only, no gate — the window opens at the recorded Cloud Scheduler fire `2026-10-10T03:35:00Z` plus `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-batch-05` execution; until all three hold the guard exits 42 (queued), never a fabricated verdict",
         "operator_cell": "nothing for the leg itself — the recorded schedule is the go (read-only reads only)",
         "rerun_cell": "`implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` · landed as row 247 (PR #245; command + fixtures + baseline shipped — the live verdict leg queued, never executed)",
+        "obligations": []
+      },
+      {
+        "key": "P34.39b",
+        "obligations_cell": "the three queued monitoring legs for the scheduled-ingest first-fire wave and the `camreg_peel_on` first fire (the fleet table, the named reads, the routing rows; the obligations stay homed on the P31.4 row above, the federal rows' own homes, and the fleet-hygiene rows — this row carries the clock-guarded legs only)",
+        "gates_cell": "hosted, date-bound (§(f3)); read-only, no gate — L1's window opens when the wave closes `2026-10-21T06:09Z` (per-fire AR-4 then applies inside the table); L2's at the `camreg_peel_on` first fire `2026-10-29T12:00Z` plus `lastAttemptTime` and a finished post-fire `sig-ingest-camreg-peel-on` execution; L3 runs after L2 (the same peel-on AR-4); until each holds the guard exits 42 (queued), never a fabricated verdict",
+        "operator_cell": "nothing for the legs themselves — the recorded schedule is the go (read-only reads only); each routing row a leg emits becomes a DEFERRALS entry for its named owner (P35.1a/b fleet hygiene, the source's connector owner, or the operator for a credential)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (scope: one leg per run — L1, then L2, then L3) · landed as row 248 (PR #246; command + fixtures shipped — all three legs queued, never executed)",
         "obligations": []
       }
     ]
@@ -18006,10 +18041,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "7e5dc08581ab2d45b041bd9b2daabf3723b5c74292c83cc61c85ced2dbd2cd59",
+  "manifest_sha256": "7c7cb721e4cc0d27f1876c4ee39d3ea86ba04e7de6d99e0406f9b3679721d0c8",
   "current_md": {
-    "lines": 87,
-    "bytes": 19736,
+    "lines": 88,
+    "bytes": 20090,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

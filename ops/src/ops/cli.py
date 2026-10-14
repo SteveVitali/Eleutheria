@@ -928,6 +928,61 @@ def build_parser() -> argparse.ArgumentParser:
     )
     readback.add_argument("--out", default=None, help="also write the report JSON to this path")
 
+    firstfire = sub.add_parser(
+        "scheduled-firstfire",
+        help="P34.39b: READ-ONLY read-back of the scheduled-ingest first-fire "
+        "wave — every trigger whose first fire lands "
+        "2026-10-01 → 2026-10-21T06:09Z — "  # future-ok: scheduled: contract L1 window
+        "plus the camreg_peel_on first fire "
+        "on/after 2026-10-29T12:00Z — "  # future-ok: scheduled: contract L2 bound
+        "the fleet table plus named reads, verdicts and "
+        "routing rows for DEFERRALS. Three clock-guarded legs (l1 wave, l2 "
+        "peel-on, l3 final read): before a leg's window opens the command "
+        "queues (exit 42) with the verbatim re-run prompt. Never executes or "
+        "cancels a job, never writes to production, never blocks a GATE",
+    )
+    firstfire.add_argument(
+        "--leg",
+        choices=["l1", "l2", "l3"],
+        required=True,
+        help="the monitoring leg: l1 = the first-fire wave table, l2 = the "
+        "camreg_peel_on first fire, l3 = the final read after l2",
+    )
+    firstfire.add_argument(
+        "--now",
+        default=None,
+        help="ISO-8601 'now' override (tests / fixture replay; default: the clock)",
+    )
+    firstfire.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    firstfire.add_argument(
+        "--region",
+        default=None,
+        help="GCP region/location (default: SIG_GCP_REGION else us-central1)",
+    )
+    firstfire.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="restricted bucket holding ops/runs (default: SIG_OPS_GCS_BUCKET)",
+    )
+    firstfire.add_argument(
+        "--dsn",
+        default=None,
+        help="read-only PostgreSQL DSN for ingest_run_completion / claim-table "
+        "counters (else SIG_STAGING_DSN / SIG_PG_* parts); omitted = those "
+        "fields are recorded unread, loudly",
+    )
+    firstfire.add_argument(
+        "--fixtures-dir",
+        default=None,
+        help="replay a recorded fixture directory (schedulers.json, "
+        "executions/<job>.json, run_rows/<src>/<date>/, db.json) instead of "
+        "live reads — the identical report shape, offline",
+    )
+    firstfire.add_argument(
+        "--cadence", default=None, help="ops/cadence.toml path (default packaged)"
+    )
+    firstfire.add_argument("--out", default=None, help="also write the report JSON to this path")
+
     cadence_cmd = sub.add_parser(
         "cadence",
         help="print the resolved scheduled-ops table from ops/cadence.toml "
@@ -2753,6 +2808,71 @@ def _cmd_scheduled_readback(args: argparse.Namespace) -> int:
     return code
 
 
+def _cmd_scheduled_firstfire(args: argparse.Namespace) -> int:
+    """P34.39b: the read-only first-fire wave / peel-on monitoring legs.
+
+    Every gather is a read. Before the leg's window opens the leg is *queued*
+    — exit ``scheduled_firstfire.FIRSTFIRE_QUEUED`` (42) with the re-run
+    prompt, never a fabricated green. The legs never re-execute a job, never
+    cancel an execution, and never block a GATE.
+    """
+    from datetime import UTC, datetime
+
+    from .scheduled import load_cadence
+    from .scheduled_firstfire import LEGS, fleet_from_cadence, run_firstfire
+
+    cadence = load_cadence(args.cadence)
+    fleet = fleet_from_cadence(cadence)
+    if args.leg not in LEGS:
+        print(f"scheduled-firstfire: --leg must be one of {', '.join(LEGS)}", file=sys.stderr)
+        return 2
+    if args.now:
+        try:
+            now = datetime.fromisoformat(str(args.now).replace("Z", "+00:00"))
+        except ValueError:
+            print("scheduled-firstfire: --now must be ISO-8601", file=sys.stderr)
+            return 2
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=UTC)
+    else:
+        now = datetime.now(UTC)
+    project = args.project or os.environ.get("SIG_GCP_PROJECT", "").strip()
+    region = args.region or os.environ.get("SIG_GCP_REGION", "").strip() or "us-central1"
+    fixtures_dir = Path(args.fixtures_dir) if args.fixtures_dir else None
+    if not project and fixtures_dir is None:
+        print(
+            "scheduled-firstfire: needs --project / SIG_GCP_PROJECT "
+            "(or --fixtures-dir for a recorded replay)",
+            file=sys.stderr,
+        )
+        return 2
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    bucket_name = args.gcs_bucket or os.environ.get("SIG_OPS_GCS_BUCKET", "").strip() or None
+
+    try:
+        report, code = run_firstfire(
+            leg=args.leg,
+            fleet=fleet,
+            now=now,
+            project=project,
+            region=region,
+            bucket_name=bucket_name,
+            dsn=dsn,
+            fixtures_dir=fixtures_dir,
+            known_schedulers=[cadence.probe_scheduler],
+        )
+    except ValueError as bad:
+        print(f"scheduled-firstfire: {bad}", file=sys.stderr)
+        return 2
+    text = json.dumps(report, indent=2, sort_keys=True, default=str)
+    print(text)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(text + "\n", encoding="utf-8")
+    return code
+
+
 def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     from .alerts import utcnow
     from .scheduled import load_cadence, run_object_uri, scheduled_ingest, store_run_row
@@ -3746,6 +3866,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_backfill_run_completions(args)
     if args.command == "scheduled-readback":
         return _cmd_scheduled_readback(args)
+    if args.command == "scheduled-firstfire":
+        return _cmd_scheduled_firstfire(args)
     if args.command == "sink-bench":
         return _cmd_sink_bench(args)
     if args.command == "roll-jobs":

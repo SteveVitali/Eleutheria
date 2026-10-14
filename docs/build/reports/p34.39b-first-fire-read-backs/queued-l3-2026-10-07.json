@@ -1,0 +1,273 @@
+{
+  "generated_at": "2026-10-07T21:20:10.769157+00:00",
+  "guard": {
+    "failures": [
+      "scheduled fire 2026-10-29T12:00:00+00:00 is in the future (now 2026-10-07T21:20:10.769157+00:00)",
+      "scheduler trigger has not fired (no lastAttemptTime)",
+      "no Cloud Run execution exists at/after the fire"
+    ],
+    "holds": false,
+    "now": "2026-10-07T21:20:10.769157+00:00"
+  },
+  "kind": "sig.scheduled-firstfire/1",
+  "layer": "live",
+  "leg": "l3",
+  "leg_status": {
+    "rerun_prompt": "implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true",
+    "status": "queued"
+  },
+  "non_blocking": true,
+  "obligations": [
+    "D-P31.4-1",
+    "D-FEDERAL.1-1"
+  ],
+  "project": "zeta-medley-508121-u7",
+  "queued_fires": [
+    {
+      "first_fire": "2026-10-01T05:00:00+00:00",
+      "fleet_id": "fbi_cde_agency_registry",
+      "lastAttemptTime": "2026-10-01T05:00:00.847762Z",
+      "scheduler": "sig-sched-fbi-cde",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-01T06:00:00+00:00",
+      "fleet_id": "muckrock",
+      "lastAttemptTime": "2026-10-01T06:00:00.761215Z",
+      "scheduler": "sig-sched-muckrock",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-02T05:00:00+00:00",
+      "fleet_id": "eff_atlas_of_surveillance",
+      "lastAttemptTime": "2026-10-02T05:00:00.795848Z",
+      "scheduler": "sig-sched-eff-atlas",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-03T05:00:00+00:00",
+      "fleet_id": "usaspending",
+      "lastAttemptTime": "2026-10-03T05:00:00.967383Z",
+      "scheduler": "sig-sched-usaspending",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-04T05:00:00+00:00",
+      "fleet_id": "eff_data_driven",
+      "lastAttemptTime": "2026-10-04T05:00:01.415082Z",
+      "scheduler": "sig-sched-eff-data-driven",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-05T05:00:00+00:00",
+      "fleet_id": "osm_element_history",
+      "lastAttemptTime": "2026-10-05T05:00:00.896112Z",
+      "scheduler": "sig-sched-osm-element-history",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-05T06:00:00+00:00",
+      "fleet_id": "ted_eu",
+      "lastAttemptTime": "2026-10-05T06:00:00.928688Z",
+      "scheduler": "sig-sched-ted-eu",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-06T03:07:00+00:00",
+      "fleet_id": "camreg-batch-01",
+      "lastAttemptTime": "2026-10-06T03:07:00.869193Z",
+      "scheduler": "sig-sched-camreg-batch-01",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-07T03:14:00+00:00",
+      "fleet_id": "camreg-batch-02",
+      "lastAttemptTime": "2026-10-07T03:14:00.910486Z",
+      "scheduler": "sig-sched-camreg-batch-02",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-07T05:00:00+00:00",
+      "fleet_id": "madada",
+      "lastAttemptTime": "2026-10-07T05:00:00.843539Z",
+      "scheduler": "sig-sched-madada",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-08T03:21:00+00:00",
+      "fleet_id": "camreg-batch-03",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-batch-03",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-08T05:00:00+00:00",
+      "fleet_id": "ccops_seattle",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-ccops-seattle",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-09T03:28:00+00:00",
+      "fleet_id": "camreg-batch-04",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-batch-04",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-09T05:00:00+00:00",
+      "fleet_id": "ccops_nyc_post",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-ccops-nyc-post",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-10T03:35:00+00:00",
+      "fleet_id": "camreg-batch-05",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-batch-05",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-10T05:00:00+00:00",
+      "fleet_id": "ccops_sf",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-ccops-sf",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-11T03:42:00+00:00",
+      "fleet_id": "camreg-batch-06",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-batch-06",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-11T05:00:00+00:00",
+      "fleet_id": "pathways_rtcc_federation",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-pathways-rtcc",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-12T03:49:00+00:00",
+      "fleet_id": "camreg-batch-07",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-batch-07",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-12T05:00:00+00:00",
+      "fleet_id": "pathways_fr_css_forensics",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-pathways-fr-css",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-13T03:56:00+00:00",
+      "fleet_id": "camreg-batch-08",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-batch-08",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-13T05:00:00+00:00",
+      "fleet_id": "pathways_acoustic_drone_location",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-pathways-drones",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-14T05:00:00+00:00",
+      "fleet_id": "carnegie_ai_gsi",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-carnegie-ai-gsi",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-14T06:09:00+00:00",
+      "fleet_id": "gao_surveillance_reports",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-gao-surveillance-reports",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-15T05:00:00+00:00",
+      "fleet_id": "facial_recognition_world_map",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-frwm",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-15T06:09:00+00:00",
+      "fleet_id": "dhs_oig_reports",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-dhs-oig-reports",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-16T05:00:00+00:00",
+      "fleet_id": "aspi_mapping_chinas_tech_giants",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-aspi",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-16T06:09:00+00:00",
+      "fleet_id": "dhs_fusion_center_assessments",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-dhs-fusion-center-assessments",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-17T06:09:00+00:00",
+      "fleet_id": "uk_surveillance_camera_commissioner",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-uk-surveillance-camera-commissioner",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-18T06:09:00+00:00",
+      "fleet_id": "ccops_oakland",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-ccops-oakland",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-19T06:09:00+00:00",
+      "fleet_id": "ccops_cambridge",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-ccops-cambridge",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-20T06:09:00+00:00",
+      "fleet_id": "ccops_somerville",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-ccops-somerville",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-21T06:09:00+00:00",
+      "fleet_id": "fema_hsgp_allocations",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-fema-hsgp-allocations",
+      "state": "ENABLED"
+    },
+    {
+      "first_fire": "2026-10-29T12:00:00+00:00",
+      "fleet_id": "camreg_peel_on",
+      "lastAttemptTime": null,
+      "scheduler": "sig-sched-camreg-peel-on",
+      "state": "ENABLED"
+    }
+  ],
+  "read_only": true,
+  "region": "us-central1",
+  "ticket": "P34.39b",
+  "window": {
+    "l1_end": "2026-10-21T06:09Z",
+    "l1_start": "2026-10-01T00:00Z",
+    "peel_on_after": "2026-10-29T12:00Z"
+  }
+}

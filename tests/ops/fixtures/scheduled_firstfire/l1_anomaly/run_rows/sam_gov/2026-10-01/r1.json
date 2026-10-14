@@ -1,0 +1,5 @@
+{"kind": "scheduled-ingest", "source": "sam_gov", "mode": "live",
+ "outcome": "quota_reached", "exit_code": 0, "started_at": "2026-10-01T05:00:21Z",
+ "duration_seconds": 2851.0, "claims_added": 0,
+ "detail": "61/120 sweep request(s); quota_reached — 9 slice(s) deferred, not re-probed",
+ "ingest_run_id": "aa000004-0000-4000-8000-0000000000c0"}

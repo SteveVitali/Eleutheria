@@ -1,0 +1,51 @@
+# P34.39b fixture fleet — a reduced mirror of ops/cadence.toml covering the
+# shapes the legs must classify: three first-fire sources, one first-fire
+# batch, one repeat trigger with a named read (sam_gov), and camreg_peel_on.
+
+[probes]
+job = "sig-probe"
+scheduler = "sig-sched-api-probe"
+
+[[sources]]
+id = "fbi_cde_agency_registry"
+cadence = "monthly"
+cron = "0 5 1 * *"
+job = "sig-ingest-fbi-cde"
+scheduler = "sig-sched-fbi-cde"
+
+[[sources]]
+id = "muckrock"
+cadence = "monthly"
+cron = "0 6 1 * *"
+job = "sig-ingest-muckrock"
+scheduler = "sig-sched-muckrock"
+existing = true
+
+[[sources]]
+id = "usaspending"
+cadence = "monthly"
+cron = "0 5 3 * *"
+job = "sig-ingest-usaspending"
+scheduler = "sig-sched-usaspending"
+
+[[sources]]
+id = "sam_gov"
+cadence = "weekly"
+cron = "0 5 1 * 1"
+job = "sig-ingest-sam-gov"
+scheduler = "sig-sched-sam-gov"
+
+[[sources]]
+id = "camreg_peel_on"
+cadence = "monthly"
+cron = "0 12 29 * *"
+job = "sig-ingest-camreg-peel-on"
+scheduler = "sig-sched-camreg-peel-on"
+
+[[batches]]
+id = "camreg-batch-05"
+cadence = "monthly"
+cron = "35 3 10 * *"
+job = "sig-ingest-camreg-batch-05"
+scheduler = "sig-sched-camreg-batch-05"
+members = ["camreg_osm_surveillance", "camreg_nitro", "camreg_nola_safety_la"]
