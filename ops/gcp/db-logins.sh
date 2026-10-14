@@ -103,7 +103,9 @@ case "${ROLE}" in
   sig_audit)              ROLE_NAME="${SIG_DB_ROLE_AUDIT}";    SECRET="${SIG_SECRET_AUDIT_PASSWORD}";    PASSWORD_ENV="SIG_AUDIT_PASSWORD" ;;
   sig_recovery|sig_recovery_login)
                           ROLE_NAME="${SIG_DB_ROLE_RECOVERY}"; SECRET="${SIG_SECRET_RECOVERY_PASSWORD}"; PASSWORD_ENV="SIG_RECOVERY_PASSWORD" ;;
-  *) _log "usage: --role sig_audit|sig_recovery" >&2; exit 64 ;;
+  sig_materialize_login|sig_er_rerun)
+                          ROLE_NAME="${SIG_DB_ROLE_MATERIALIZE_LOGIN}"; SECRET="${SIG_SECRET_ER_RERUN_PASSWORD}"; PASSWORD_ENV="SIG_ER_RERUN_PASSWORD" ;;
+  *) _log "usage: --role sig_audit|sig_recovery|sig_materialize_login" >&2; exit 64 ;;
 esac
 
 _repo="$(cd "${_here}/../.." && pwd)"

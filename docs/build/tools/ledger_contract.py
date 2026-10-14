@@ -1161,16 +1161,34 @@ def check_orient_probe(rep: Report, src: Src, ctx: dict) -> None:
         return
     head_b = len(orient_text(ledger).encode())
     lines = ledger.splitlines()
-    # current RETURN PASS block (### heading preferred, else the ## section)
+    # current RETURN PASS block (### heading preferred, else the ## section).
+    # `### RETURN PASS — current` is a *sub* heading, so `section_text` (which
+    # only scans `## ` headings via H2_RE) can never start on it — slice it
+    # directly: the heading line through the line before the next `##`-level
+    # heading. The `## RETURN PASS` fallback keeps older trees measurable.
     rp_b = 0
-    for probe_re in (
-        re.compile(r"^###\s+RETURN PASS\s+—\s+current"),
-        re.compile(r"^##\s+RETURN PASS"),
-    ):
-        _ln, block = section_text(lines, probe_re)
+    rp_start = next(
+        (
+            i
+            for i, ln in enumerate(lines)
+            if re.match(r"^###\s+RETURN PASS\s+—\s+current", ln)
+        ),
+        None,
+    )
+    if rp_start is not None:
+        rp_end = next(
+            (
+                i
+                for i in range(rp_start + 1, len(lines))
+                if re.match(r"^#{2,}\s", lines[i])
+            ),
+            len(lines),
+        )
+        rp_b = len("\n".join(lines[rp_start:rp_end]).encode())
+    else:
+        _ln, block = section_text(lines, re.compile(r"^##\s+RETURN PASS"))
         if block:
             rp_b = len(block.encode())
-            break
     # last three PHASE LOG entries (entry = bullet + continuation lines)
     recs = phase_log_entries(ledger)
     last3_b = sum(r["size"] for r in recs[-3:])

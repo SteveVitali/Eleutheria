@@ -348,13 +348,19 @@ def test_training_pairs_never_score_a_tier() -> None:
     assert measure_tiers(gold, {("a", "b"): 3}) == {}
 
 
-ONE_PAIR = replace(RULES, min_holdout_pairs=1)  # fixture golds hold a single holdout pair
+# Fixture golds hold a single holdout pair, and candidate tiers mirror v2 ([1, 3])
+# so the certification gate is exercised too: an inferential tier must be BOTH a
+# candidate and certified to auto-write.
+ONE_PAIR = replace(RULES, min_holdout_pairs=1, candidate_auto_write=frozenset({1, 3}))
+# P34.45 (ADR-153): tier 3 is inferential — a fixture auto-writes it only when the
+# call stands in for an independent human (B5) certification the real corpus lacks.
+CERT3 = frozenset({3})
 
 
 def test_a_tier_auto_writes_only_when_its_measured_holdout_clears_the_floor() -> None:
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3), _rec("c", "s1", 500), _rec("d", "s2", 500.2)]
     good = _gold({("a", "b"): GoldLabel.MATCH})
-    r = resolve_camera_sites(recs, gold=good, threshold=0.98, rules=ONE_PAIR)
+    r = resolve_camera_sites(recs, gold=good, threshold=0.98, rules=ONE_PAIR, certified_tiers=CERT3)
     assert r.auto_write_tiers == {3}
     assert r.observation_count == 4 and r.cluster_count == 2
     assert r.dedup_ratio == pytest.approx(0.5)
@@ -394,7 +400,9 @@ def test_a_direction_change_moves_the_run_and_its_decision() -> None:
     # and it must be a NEW run (the old run's auto_write edge can never be unioned in).
     recs = [_rec("a", "s1", direction="N"), _rec("b", "s2", 0.3, direction="N")]
     gold = _gold({("a", "b"): GoldLabel.MATCH})
-    r1 = resolve_camera_sites(recs, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    r1 = resolve_camera_sites(
+        recs, gold=gold, threshold=0.98, rules=ONE_PAIR, certified_tiers=CERT3
+    )
     flipped = [recs[0], replace(recs[1], direction="S")]
     r2 = resolve_camera_sites(flipped, gold=gold, threshold=0.98, rules=ONE_PAIR)
     assert r1.decisions[0].disposition == "auto_write"
@@ -468,7 +476,13 @@ def test_the_run_summary_splits_corroborated_from_one_lineage_sites() -> None:
     mirror = [_rec(f"m{i:02d}", "camreg_md_mirror", i * 200.0 + 0.2) for i in range(25)]
     osm = [_rec("zz-osm", "camreg_osm_surveillance", 4000.0 + 0.3)]  # near u20 / m20
     gold = _gold({("m00", "u00"): GoldLabel.MATCH})
-    r = resolve_camera_sites(upstream + mirror + osm, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    r = resolve_camera_sites(
+        upstream + mirror + osm,
+        gold=gold,
+        threshold=0.98,
+        rules=ONE_PAIR,
+        certified_tiers=CERT3,
+    )
     summary = r.summary()
     assert summary["multi_record_sites_one_lineage_only"] >= 1  # mirror pairs: one observation
     assert r.lineages["dot_511_md"] == r.lineages["camreg_md_mirror"]
@@ -518,6 +532,11 @@ def test_the_committed_gold_set_is_double_adjudicated_and_coordinate_free() -> N
     gold = load_camera_gold()
     assert gold is not None
     assert gold.verifier.startswith("agent:") and gold.llm.startswith("llm:")
+    # P34.45 / ADR-152: the label basis is a first-class field, and it is agent —
+    # never human. An absent field can never be read back as human provenance.
+    assert gold.provenance == "agent"
+    assert gold.labeller_kind == "agent"
+    assert gold.labeller_runs_same_model is True
     assert gold.holdout(), "a frozen holdout must exist"
     for p in gold.pairs:
         assert {a.adjudicator for a in p.adjudications} == {gold.verifier, gold.llm}
@@ -540,7 +559,11 @@ def test_llm_labels_are_reported_as_sensitivity_but_never_gate() -> None:
     # verifier: match; the (untrusted) LLM: not_enough_information.
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
     r = resolve_camera_sites(
-        recs, gold=_gold({("a", "b"): GoldLabel.MATCH}), threshold=0.98, rules=ONE_PAIR
+        recs,
+        gold=_gold({("a", "b"): GoldLabel.MATCH}),
+        threshold=0.98,
+        rules=ONE_PAIR,
+        certified_tiers=CERT3,
     )
     assert r.auto_write_tiers == {3}
     assert r.tier_measurements_llm_labels[3].precision_strict == 0.0
@@ -624,7 +647,9 @@ def test_a_reject_beats_an_automatic_tier_that_would_have_auto_written() -> None
     # the human verdict outranks the automatic outcome on the same pair.
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
     gold = _gold({("a", "b"): GoldLabel.MATCH})
-    auto_only = resolve_camera_sites(recs, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    auto_only = resolve_camera_sites(
+        recs, gold=gold, threshold=0.98, rules=ONE_PAIR, certified_tiers=CERT3
+    )
     assert auto_only.decisions[0].disposition == "auto_write"
     iid = _proposal_id("a", "b")
     r = resolve_camera_sites(
@@ -632,6 +657,7 @@ def test_a_reject_beats_an_automatic_tier_that_would_have_auto_written() -> None
         gold=gold,
         threshold=0.98,
         rules=ONE_PAIR,
+        certified_tiers=CERT3,
         human_items=[_item(iid, "a", "b", tier=3)],
         human_votes=[_vote(iid, "reject")],
     )
@@ -883,6 +909,7 @@ def test_a_duplicate_group_counts_once_under_constraint_a() -> None:
         gold=_gold({("a", "c"): GoldLabel.MATCH}),
         threshold=0.98,
         rules=ONE_PAIR,
+        certified_tiers=CERT3,
     )
     assert r.cluster_count == 1
     assert r.clusters["a"] == r.clusters["b"] == r.clusters["c"]

@@ -121,3 +121,7 @@ absent, i.e. until `live:P34.46` has deployed `recovery_apply`.
 - `roles/storage.objectCreator`/`objectViewer` stop being sufficient for the
   probe prefix pattern (a needed verb lands outside them) — re-run the
   ADR-201-style managed-role comparison before widening further.
+
+## Status updates
+
+- **Status:** Extended by ADR-206 (2026-10-09)

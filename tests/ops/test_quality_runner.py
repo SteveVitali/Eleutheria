@@ -112,22 +112,45 @@ def test_report_carries_registry_digest() -> None:
 def test_gq24_counts_inferential_auto_writes() -> None:
     conn = FakeConn(
         {
-            "FROM camera_site_match": (
-                ["match_id", "match_tier", "tier_label"],
+            "FROM camera_site_execution": (["run_key"], [("rk1",)]),
+            "disposition = 'auto_write'": (
+                ["match_id", "match_tier", "tier_label", "run_key"],
                 [
                     # the namespace variant is a deterministic join — legal
-                    ("m1", 1, "1g:shared_upstream_ref"),
-                    ("m2", 3, "3g:coincident_point"),
-                    ("m3", 4, "4g:proximate_unique"),
-                    ("m4", 0, "0g:unknown"),
+                    ("m1", 1, "1g:shared_upstream_ref", "rk1"),
+                    ("m2", 3, "3g:coincident_point", "rk1"),
+                    ("m3", 4, "4g:proximate_unique", "rk1"),
+                    ("m4", 0, "0g:unknown", "rk1"),
                     # an unknown 1g label is not a namespace join — fail closed
-                    ("m5", 1, "1g:unlabelled_inference"),
+                    ("m5", 1, "1g:unlabelled_inference", "rk1"),
+                    # a superseded run's inferential auto-write: disclosed,
+                    # never re-judged — the append-only spine keeps it forever
+                    ("m6", 3, "3g:coincident_point", "rk0"),
                 ],
-            )
+            ),
+            "count(*) AS n FROM camera_site_match": (["n"], [(4,)]),
         }
     )
     m = eval_gq24(EvalContext(conn=conn))
-    assert m.offered == 5 and m.evaluated == 5 and m.measured == 3
+    assert m.offered == 4 and m.evaluated == 4 and m.measured == 3
+    assert m.detail["latest_run_key"] == "rk1"
+    assert m.detail["historical_inferential_auto_writes"] == 1
+
+
+def test_gq24_is_never_a_vacuous_pass() -> None:
+    """No completed execution, or a latest run with no inferential-tier
+    decisions, reports evaluated=0 — the ratchet's vacuous-pass guard fails it."""
+    empty = FakeConn({})
+    m = eval_gq24(EvalContext(conn=empty))
+    assert m.evaluated == 0 and m.measured is None
+    no_inferential = FakeConn(
+        {
+            "FROM camera_site_execution": (["run_key"], [("rk9",)]),
+            "count(*) AS n FROM camera_site_match": (["n"], [(0,)]),
+        }
+    )
+    m2 = eval_gq24(EvalContext(conn=no_inferential))
+    assert m2.evaluated == 0 and m2.measured is None
 
 
 def test_gq07_counts_publisher_strings_and_bad_literals() -> None:
@@ -286,11 +309,58 @@ def test_gq27_flags_claim_phrases_and_unbased_figures(tmp_path: Path) -> None:
 
 
 def test_gq27_passes_labelled_figures(tmp_path: Path) -> None:
+    # A figure naming its basis class inside a document carrying the report
+    # context (population, source-mix digest, ruleset, window) passes — the
+    # context is inherited from the enclosing object; n is the figure's own.
     (tmp_path / "ok.json").write_text(
-        json.dumps({"metrics": [{"name": "p", "value": 0.9, "basis_class": "B2"}]})
+        json.dumps(
+            {
+                "version": "sig.evaluation/1",
+                "population": "auto-write match decisions",
+                "source_mix_digest": "sha256:feed",
+                "ruleset": "camera_site_rules v3-interim",
+                "window": "2026-10-14T14:00Z run",  # future-ok: synthetic: fixture window label
+                "metrics": [{"name": "p", "value": 0.9, "n": 70, "basis_class": "B2"}],
+            }
+        )
     )
     m = eval_gq27(EvalContext(scan_dir=tmp_path))
     assert m.measured == 0 and m.evaluated == 1
+
+
+def test_gq27_figure_needs_its_full_context_and_one_basis(tmp_path: Path) -> None:
+    # A labelled figure still fails when the statement's context is absent —
+    # and two different basis labels is exactly the ambiguity GQ-27 bans.
+    (tmp_path / "bare.json").write_text(
+        json.dumps({"metrics": [{"name": "p", "value": 0.9, "basis_class": "B2"}]})
+    )
+    m = eval_gq27(EvalContext(scan_dir=tmp_path))
+    assert m.measured == 1
+    assert "missing context" in m.detail["violations"][0]
+    (tmp_path / "bare.json").write_text(
+        json.dumps(
+            {
+                "population": "x",
+                "source_mix_digest": "d",
+                "ruleset": "r",
+                "window": "w",
+                "metrics": [
+                    {"name": "p", "value": 0.9, "n": 5, "basis_class": "B2", "basis": "agent"}
+                ],
+            }
+        )
+    )
+    m = eval_gq27(EvalContext(scan_dir=tmp_path))
+    assert m.measured == 1 and "more than one basis" in m.detail["violations"][0]
+
+
+def test_gq27_verified_is_a_claim_phrase(tmp_path: Path) -> None:
+    (tmp_path / "doc.md").write_text("the corpus was verified end to end\n")
+    m = eval_gq27(EvalContext(scan_dir=tmp_path))
+    assert m.measured == 1
+    (tmp_path / "doc.md").write_text("unverified estimates are labelled agent\n")
+    m = eval_gq27(EvalContext(scan_dir=tmp_path))
+    assert m.measured == 0  # "unverified" is a disclosure, not a claim
 
 
 def test_gq27_text_claim_needs_b5(tmp_path: Path) -> None:

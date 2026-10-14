@@ -239,6 +239,21 @@ export SIG_BASELINE_RELEASE_PREFIX="${SIG_BASELINE_RELEASE_PREFIX:-}"
 # or digest — resolved to a pinned digest at apply, ADR-111).
 export SIG_QUALITY_IMAGE="${SIG_QUALITY_IMAGE:-}"
 
+# --- the v3-interim camera-site ER re-run (P34.45 / ADR-153+206, OM-20) ------
+# The ONE append-only ER re-run under `sig_materialize_login` on the P34.43
+# exec host (ops/gcp/er-rerun.sh). Same contract window as the IAM/quality
+# legs (OM-19): applies ≥ SIG_ER_RERUN_EARLIEST, never 03:00–06:30Z, never
+# inside the day-6→13 batch window; SIG_ER_RERUN_NOW overrides the clock for
+# the offline guard test only. SIG_ER_RERUN_AUTHOR is the recorded operator
+# id every mutating apply requires; SIG_ER_RERUN_IMAGE is the rolled
+# v3-interim sig-api image the run rides (== sig-api's deployed digest).
+export SIG_ER_RERUN_EARLIEST="${SIG_EXEC_EARLIEST}"   # same AR-3 window
+export SIG_ER_RERUN_STATE_DIR="${SIG_ER_RERUN_STATE_DIR:-${TMPDIR:-/tmp}/p34.45-er-rerun}"
+export SIG_DB_ROLE_MATERIALIZE_LOGIN="sig_materialize_login"
+export SIG_SECRET_ER_RERUN_PASSWORD="sig-er-rerun-password"
+export SIG_ER_RERUN_AUTHOR="${SIG_ER_RERUN_AUTHOR:-}"     # the recorded operator id
+export SIG_ER_RERUN_IMAGE="${SIG_ER_RERUN_IMAGE:-}"       # a ${SIG_API_IMAGE}:<tag> | @sha256
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented

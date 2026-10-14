@@ -84,9 +84,10 @@ def _source_capture(cur, source_id: str, rights_id, run_id) -> object:
 def camera_spine(conn) -> dict[str, str]:
     """Seven observation-level camera records over four sources.
 
-    a (DOT) ~ b (mirror) coincident — the same device; c (OSM) 300 m away; d, e: ONE
-    source listing two devices at one point; f (ALPR) coincident with g (DOT) —
-    incompatible device classes.
+    a (DOT) ~ b (mirror) coincident with a shared upstream ref — the same device
+    (the 1g namespace join, the only tier that may auto-write under v3-interim;
+    P34.45 / ADR-153); c (OSM) 300 m away; d, e: ONE source listing two devices at
+    one point; f (ALPR) coincident with g (DOT) — incompatible device classes.
     """
     cur = conn.cursor()
     _seed_predicates(cur)
@@ -136,7 +137,7 @@ def camera_spine(conn) -> dict[str, str]:
 
     dot = "Zed Department of Transportation"
     record("a", "dot_511_zz", "35.4676000", "-97.5164000", "101", dot)
-    record("b", "camreg_zz_mirror", "35.4676030", "-97.5164010", "9001", "community mirror")
+    record("b", "camreg_zz_mirror", "35.4676030", "-97.5164010", "101", "community mirror")
     record("c", "camreg_osm_zz", "35.4703000", "-97.5164000", "77", "OpenStreetMap")
     record("d", "dot_511_zz", "35.4800000", "-97.5200000", "102", dot)
     record("e", "dot_511_zz", "35.4800010", "-97.5200000", "103", dot)
@@ -174,7 +175,7 @@ def test_records_are_read_one_per_subject(conn, camera_spine) -> None:
 def test_materialize_as_the_least_privilege_role_and_rerun_plus_zero(conn, camera_spine) -> None:
     gold = _gold(camera_spine, GoldLabel.MATCH)
     first = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
-    assert first["auto_write_tiers"] == [3]
+    assert first["auto_write_tiers"] == [1]
     # M = 7 records; one same-device merge (a~b) -> N = 6.
     assert first["observation_count_M"] == 7 and first["resolved_site_count_N"] == 6
     assert first["auto_write_decisions"] == 1 and first["run_record_inserted"] is True
@@ -188,8 +189,8 @@ def test_materialize_as_the_least_privilege_role_and_rerun_plus_zero(conn, camer
     assert tuple(sorted((camera_spine["d"], camera_spine["e"]))) not in pairs
     assert tuple(sorted((camera_spine["f"], camera_spine["g"]))) not in pairs
     auto = [r for r in rows if r[2] == "auto_write"]
-    assert len(auto) == 1 and auto[0][3] == 3
-    assert auto[0][4]["rule"] == "3g:coincident_point" and auto[0][5] == 6  # cites its claims
+    assert len(auto) == 1 and auto[0][3] == 1
+    assert auto[0][4]["rule"] == "1g:shared_upstream_ref" and auto[0][5] == 6  # cites its claims
     assert first["incompatible_class_pairs_blocked"] == 1
 
     again = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)

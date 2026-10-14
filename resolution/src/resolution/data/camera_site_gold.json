@@ -1,8 +1,13 @@
 {
  "version": "camera-2",
- "rules_version": "2",
+ "rules_version": "3-interim",
  "verifier": "agent:claude-opus-5-5@sig-maintainer-seed",
  "llm": "llm:claude-opus-5-5@camera-rules-v1-blind",
+ "provenance": "agent",
+ "labeller_kind": "agent",
+ "labeller_model": "claude-opus-5-5",
+ "labeller_runs_same_model": true,
+ "provenance_note": "P34.45 (ADR-152, F-512): the labels in this set are AGENT labels, not human ones — the 'verifier' is an agent-maintainer seed and the 'llm' adjudicator is a fresh-context run of the same model family (both claude-opus-5-5). No independent human has evaluated any pair; under ruleset v3-interim the set is reported for reference but can never certify an inferential auto-write.",
  "method": {
   "population": "cross-source candidate pairs proposed by blocking rule camera_geo_grid over the hosted spine's 230,330 observation-level camera records with a coordinate pair (read-only pull 2026-09-24T06:3xZ), assessed by camera_site_rules.toml v1",
   "sampling": "stratified by (tier, stratum) with seed 30: 120 tier-1g, 120 tier-3g, 60 tier-4g, 60 tier-5g pairs, round-robin across strata cross_source_mirror / dense_urban (either record has >=3 other records within 50 m) / highway_corridor (highway road/name) / rural_singleton (both records have <=1 other record within 100 m) / other; small strata are oversampled (conservative for precision)",
@@ -25,6 +30,13 @@
     "3": 0.9286
    },
    "outcome": "both candidate tiers below the 0.98 floor -> nothing auto-writes under rules v1; the v1 holdout was then INSPECTED while diagnosing, so it was retired to training and rules v2 were measured on a fresh holdout (camera-2)"
+  },
+  {
+   "version": "camera-2 (P34.45 re-stamp)",
+   "rules_version": "3-interim",
+   "pairs": 180,
+   "holdout": 180,
+   "outcome": "NO new adjudication — the 180 pairs, their labels and the frozen holdout are byte-identical to camera-2; the set was re-stamped for ruleset v3-interim with explicit agent provenance (provenance: agent, both labellers claude-opus-5-5). Under ADR-153 it reports reference precision on the derivations but can never certify an inferential auto-write"
   }
  ],
  "pairs": [

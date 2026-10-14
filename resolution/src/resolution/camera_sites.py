@@ -24,10 +24,15 @@ The pipeline (every stage pure and deterministic; the PG seam is
    5g proximate candidate · else tier 6, discarded) with its ``match_evidence``
    (SIG-IDENT-025).
 3. **Measurement** — :func:`measure_tiers` / :func:`decide_auto_write_tiers`: the tiers
-   are scored against the committed camera gold set's frozen, agent-verified holdout;
+   are scored against the committed camera gold set's frozen, agent-labelled holdout;
    only a *candidate* auto-write tier whose measured (strict) holdout precision clears
    the published floor auto-writes — a tier with no holdout evidence never does
-   (SIG-IDENT-028, ADR-099).
+   (SIG-IDENT-028, ADR-099). Under ruleset v3-interim (P34.45 / ADR-153 "derivation,
+   not identity") an identity-*inference* tier additionally needs an independent
+   human (B5) evaluation certifying it — the agent/LLM-labelled gold set can never
+   provide one, so every inferential tier is review-only until then; the namespace
+   join ``1g:shared_upstream_ref`` is a derivation, not an inference, and stays
+   eligible.
 4. **Clustering** — :func:`cluster_decisions`: auto-write edges are applied
    strongest-first under hard constraints (no two records of one source in a cluster,
    bounded span, bounded size); a refused union and every sub-floor tier become
@@ -206,7 +211,12 @@ class CameraSiteRules:
     colocation_m: float = 5.0
     near_max_m: float = 25.0
     candidate_max_m: float = 50.0
-    candidate_auto_write: frozenset[int] = frozenset({1, 3})
+    candidate_auto_write: frozenset[int] = frozenset({1})
+    #: Identity-inference tiers (GQ-24's locked set; ADR-153): review-only until
+    #: an independent human (B5) evaluation certifies the tier — the agent/LLM
+    #: gold set can never certify one. A fail-closed default, never derived from
+    #: the auto-write list.
+    inferential_tiers: frozenset[int] = frozenset({3, 4, 5})
     tier_labels: Mapping[int, str] = field(
         default_factory=lambda: {
             1: "1g:shared_upstream_ref",
@@ -246,6 +256,7 @@ class CameraSiteRules:
             near_max_m=float(dist["near_max_m"]),
             candidate_max_m=float(dist["candidate_max_m"]),
             candidate_auto_write=frozenset(int(t) for t in d["tiers"]["candidate_auto_write"]),
+            inferential_tiers=frozenset(int(t) for t in d["tiers"].get("inferential", (3, 4, 5))),
             tier_labels={int(k): str(v) for k, v in d["tiers"]["labels"].items()},
             default_class=str(classes["default"]),
             class_rules=tuple(
@@ -1309,9 +1320,19 @@ def cluster_decisions(
             else:
                 initial[p.key] = ("proposed", refusal, "same_as", "auto", None, p)
         elif p.tier not in auto:
+            # P34.45 (ADR-153): an identity-inference tier without an independent
+            # human certification is review-only — name that on the decision, not
+            # just the generic "not auto-write". A candidate tier demoted on
+            # measured precision stays "tier_not_auto_write" (the demotion record
+            # in the run summary carries the measured reason).
+            reason = (
+                "review_only:inferential_tier_uncertified"
+                if p.tier in rs.inferential_tiers
+                else "tier_not_auto_write"
+            )
             initial[p.key] = (
                 "proposed",
-                "tier_not_auto_write",
+                reason,
                 "same_as",
                 "auto",
                 None,
@@ -1429,7 +1450,16 @@ class CameraGoldPair:
 
 @dataclass(frozen=True)
 class CameraGoldSet:
-    """The versioned camera gold set with its frozen, agent/maintainer-verified holdout."""
+    """The versioned camera gold set and its provenance.
+
+    ``provenance`` is the reference-label basis class in plain words —
+    ``"agent"`` for the committed set (P34.45 / F-512: both labelling runs were
+    the same model, an agent seed plus a fresh-context LLM adjudicator, never an
+    independent human). The field is fail-closed: a set that does not declare a
+    human label source is never read as one. ``labeller_kind``/``labeller_model``
+    /``labeller_runs_same_model`` are the additive disclosure fields the ticket
+    requires — the old ``verifier``/``llm`` names stay readable unchanged.
+    """
 
     version: str
     rules_version: str
@@ -1437,6 +1467,10 @@ class CameraGoldSet:
     llm: str
     pairs: tuple[CameraGoldPair, ...]
     digest: str = ""
+    provenance: str = "agent"
+    labeller_kind: str | None = None
+    labeller_model: str | None = None
+    labeller_runs_same_model: bool | None = None
 
     def holdout(self) -> tuple[CameraGoldPair, ...]:
         return tuple(p for p in self.pairs if p.frozen)
@@ -1456,7 +1490,7 @@ class CameraGoldSet:
             for p in self.pairs
         ]
         return hashlib.sha256(
-            json.dumps([self.version, self.verifier, self.llm, body]).encode()
+            json.dumps([self.version, self.verifier, self.llm, self.provenance, body]).encode()
         ).hexdigest()
 
     def kappa(self) -> float:
@@ -1480,7 +1514,9 @@ class CameraGoldSet:
 
     def holdout_label(self, pair: CameraGoldPair) -> GoldLabel | None:
         """The holdout's label is the VERIFIER's (design §2.3 guardrail 2): a disputed
-        holdout pair is never dropped from the precision it governs."""
+        holdout pair is never dropped from the precision it governs. The verifier
+        is an agent — its label is a reference opinion, never a human verdict
+        (P34.45 / ADR-152)."""
         return pair.label_by(self.verifier)
 
 
@@ -1537,6 +1573,15 @@ def gold_from_dict(raw: Mapping[str, Any]) -> CameraGoldSet:
         verifier=str(raw["verifier"]),
         llm=str(raw["llm"]),
         pairs=tuple(pairs),
+        # P34.45 / F-512: the declared label basis — absent means never human.
+        provenance=str(raw.get("provenance", "agent")),
+        labeller_kind=(str(raw["labeller_kind"]) if raw.get("labeller_kind") else None),
+        labeller_model=(str(raw["labeller_model"]) if raw.get("labeller_model") else None),
+        labeller_runs_same_model=(
+            bool(raw["labeller_runs_same_model"])
+            if raw.get("labeller_runs_same_model") is not None
+            else None
+        ),
     )
 
 
@@ -1584,7 +1629,7 @@ def measure_tiers(
 
     ``tier_by_pair`` is the run's tier assignment keyed by ``(left, right)`` subject ids
     (order-free). A holdout pair the run did not propose is a tier-6 discard and scores
-    no tier. The label is the verifier's (the agent/maintainer-verified holdout) unless
+    no tier. The label is the verifier's (the agent-labelled holdout) unless
     ``adjudicator`` names another — used only to REPORT the sensitivity of the measurement
     to the (untrusted) LLM's labels, never to gate auto-write.
     """
@@ -1616,13 +1661,25 @@ def decide_auto_write_tiers(
     threshold: float,
     strict: bool = True,
     min_pairs: int = 1,
+    inferential_tiers: Iterable[int] = (),
+    certified_tiers: Iterable[int] = (),
 ) -> tuple[frozenset[int], tuple[DemotionDecision, ...]]:
     """Which candidate tiers auto-write this run, and the demotion record.
 
     A candidate tier auto-writes only if it has at least ``min_pairs`` holdout pairs AND
     its measured precision (strict by default) is at least ``threshold``; a tier with no
     (or too little) holdout evidence is demoted — silence, or 1-of-1, never auto-writes.
+
+    P34.45 (ADR-153, GQ-24): a tier in ``inferential_tiers`` is an identity inference —
+    it auto-writes only when an independent human (B5) evaluation has certified it
+    (``certified_tiers``). The agent/LLM-labelled gold set can never certify one, so
+    under v3-interim every inferential tier demotes with reason
+    ``no_certifying_evaluation`` however clean its measured precision looks. The
+    namespace join (``1g:shared_upstream_ref``) is a derivation, not an inference —
+    it follows the measured path like before.
     """
+    inferential = frozenset(inferential_tiers)
+    certified = frozenset(certified_tiers)
     auto: set[int] = set()
     decisions: list[DemotionDecision] = []
     for tier in sorted(set(candidate_tiers)):
@@ -1631,10 +1688,25 @@ def decide_auto_write_tiers(
         if m is not None:
             precision = m.precision_strict if strict else m.precision_decided
         value = 0.0 if precision is None else precision
+        uncertified = tier in inferential and tier not in certified
         too_few = m is None or m.predicted < min_pairs
-        demoted = precision is None or too_few or precision < threshold
+        demoted = uncertified or precision is None or too_few or precision < threshold
+        if uncertified:
+            reason = "no_certifying_evaluation"
+        elif m is None or too_few or precision is None:
+            reason = "insufficient_holdout"
+        elif precision < threshold:
+            reason = "below_threshold"
+        else:
+            reason = ""
         decisions.append(
-            DemotionDecision(tier=tier, precision=value, threshold=threshold, demoted=demoted)
+            DemotionDecision(
+                tier=tier,
+                precision=value,
+                threshold=threshold,
+                demoted=demoted,
+                reason=reason,
+            )
         )
         if not demoted:
             auto.add(tier)
@@ -1662,17 +1734,22 @@ class CameraSiteResult:
     sources: dict[str, str]  # subject id -> source id
     auto_write_tiers: frozenset[int]
     demotions: tuple[DemotionDecision, ...]
-    tier_measurements: dict[int, TierMeasurement]
-    tier_measurements_llm_labels: dict[int, TierMeasurement]
-    blocking_size: int
-    unblockable: int
-    incompatible_blocked: int
-    discarded: int
-    gold_version: str | None
-    kappa: float | None
-    holdout_size: int
-    gold_size: int
-    disputed: int
+    #: The rules' identity-inference tiers (review-only under v3-interim) and the
+    #: subset an independent human (B5) evaluation certified this run — empty in
+    #: Round 11 (ADR-153; the agent/LLM gold set can never certify).
+    inferential_tiers: frozenset[int] = frozenset()
+    b5_certified_tiers: frozenset[int] = frozenset()
+    tier_measurements: dict[int, TierMeasurement] = field(default_factory=dict)
+    tier_measurements_llm_labels: dict[int, TierMeasurement] = field(default_factory=dict)
+    blocking_size: int = 0
+    unblockable: int = 0
+    incompatible_blocked: int = 0
+    discarded: int = 0
+    gold_version: str | None = None
+    kappa: float | None = None
+    holdout_size: int = 0
+    gold_size: int = 0
+    disputed: int = 0
     #: P31.11: subject -> duplicate-group root for every member of an evidenced
     #: same-row republished group (size >= 2); empty when no duplicate target exists.
     duplicate_groups: dict[str, str] = field(default_factory=dict)
@@ -1778,12 +1855,17 @@ class CameraSiteResult:
             "duplicate_target_groups": len(dup_groups),
             "duplicate_target_records": len(self.duplicate_groups),
             "auto_write_tiers": sorted(self.auto_write_tiers),
+            # ADR-153 posture: the identity-inference tiers this ruleset locks to
+            # review unless an independent human (B5) evaluation certifies them.
+            "inferential_tiers": sorted(self.inferential_tiers),
+            "b5_certified_tiers": sorted(self.b5_certified_tiers),
             "demotions": [
                 {
                     "tier": d.tier,
                     "precision": round(d.precision, 4),
                     "threshold": d.threshold,
                     "demoted": d.demoted,
+                    "reason": d.reason,
                 }
                 for d in self.demotions
             ],
@@ -1934,6 +2016,7 @@ def resolve_camera_sites(
     blocking_context: BlockingContext | None = None,
     human_items: Sequence[HumanItem] = (),
     human_votes: Sequence[HumanVote] = (),
+    certified_tiers: Iterable[int] = (),
 ) -> CameraSiteResult:
     """One camera-site ER run: block → assess → measure → decide → cluster (pure).
 
@@ -1941,6 +2024,11 @@ def resolve_camera_sites(
     (P31.11): items bind decided pairs, votes are ``review_decision`` rows.
     Passing none (or votes only, with no binding items) reproduces the
     pre-wiring run exactly — zero decisions is not a special case.
+
+    ``certified_tiers`` names the inferential tiers an independent human (B5)
+    evaluation has certified for auto-write — empty in Round 11 (P34.45,
+    ADR-153): every identity-inference tier is review-only no matter what the
+    agent/LLM-labelled holdout measures.
     """
     verdicts = fold_human_verdicts(human_items, human_votes)
     rs = rules or CameraSiteRules.from_data()
@@ -1968,6 +2056,8 @@ def resolve_camera_sites(
         threshold=threshold,
         strict=rs.strict_precision,
         min_pairs=rs.min_holdout_pairs,
+        inferential_tiers=rs.inferential_tiers,
+        certified_tiers=certified_tiers,
     )
     by_id = {r.subject_id for r in records}
     matched = [v for v in verdicts if v.left in by_id and v.right in by_id]
@@ -2002,6 +2092,8 @@ def resolve_camera_sites(
         human_verdicts_unmatched=len(verdicts) - len(matched),
         auto_write_tiers=auto,
         demotions=demotions,
+        inferential_tiers=rs.inferential_tiers,
+        b5_certified_tiers=frozenset(certified_tiers),
         tier_measurements=measured,
         tier_measurements_llm_labels=measured_llm,
         blocking_size=assessed.blocking_size,

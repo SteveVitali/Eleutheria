@@ -199,10 +199,11 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-199](ADR-199-round-close-record-checks-capstone-two-sum-and-tail-probe-sweep.md) | Round-close record checks, the capstone two-sum, and the tail probe-sweep contract (P34.33) | P34.33 (Round 11 / P34, row 238 — the amended SIG-ENG-031 checks; extends SIG-ENG-041, | accepted |
 | [ADR-200](ADR-200-search-without-a-dedicated-engine.md) | Search without a dedicated engine: pg_trgm on the read API plus per-compartment FTS5 on releases (P34.48) | P34.48 (Round 11 / P34, row 240 — the MET-DIFFERENTLY re-verdict; owns the SIG-UI-040 | accepted |
 | [ADR-201](ADR-201-ingest-capture-rewrite-condition.md) | The ingest identity's prefix-scoped capture-rewrite grant (P34.42b) | P34.42b (Round 11 / P34, row 252 — G1-01 / F-272, SIG-SEC-007; the | accepted |
-| [ADR-202](ADR-202-execution-host-and-db-login-credentials.md) | The execution host pattern and DB-login credentials (P34.43) | P34.43 (Round 11 / P34, row 253 — SIG-SEC-007's last leg, | accepted |
+| [ADR-202](ADR-202-execution-host-and-db-login-credentials.md) | The execution host pattern and DB-login credentials (P34.43) | P34.43 (Round 11 / P34, row 253 — SIG-SEC-007's last leg, | Extended by ADR-206 (2026-10-09) |
 | [ADR-203](ADR-203-protective-seal-two-carrier-deny-set-and-counts-only-at-rest-audit.md) | Protective seal: the two-carrier deny set and the counts-only at-rest audit (P34.49) | P34.49 (Round 11 / P34, row 254 — TS-07's at-rest half: F-406, the | accepted |
 | [ADR-204](ADR-204-quality-registry-schema-outcome-vocabulary-and-the-ruleset-diff.md) | The quality-check registry schema, the outcome vocabulary, and the ruleset diff (P34.44a) | P34.44a (Round 11 / P34, row 255 — ADR-154 decision 1's registry + | accepted |
 | [ADR-205](ADR-205-nightly-quality-probe-job-and-measured-baseline-application.md) | The nightly quality-probe job and measured-baseline application (P34.44b) | P34.44b (Round 11 / P34, row 256 — ADR-154 decision 3's "the suite | accepted |
+| [ADR-206](ADR-206-er-rerun-login-and-the-one-shot-v3-interim-leg.md) | The sig_materialize_login credential and the one-shot v3-interim ER re-run leg (P34.45) | P34.45 (Round 11 / P34, row 257 — the honest-evaluation posture; | accepted |
 
 ## Notes
 

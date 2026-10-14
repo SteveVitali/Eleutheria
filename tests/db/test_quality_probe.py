@@ -280,17 +280,32 @@ def _seed_spine(cur) -> dict[str, str]:
         (res_subj, c1, c2),
     )
 
-    # GQ-24: one inferential auto-write (tier 3g) — the lock's violation
+    # GQ-24: one inferential auto-write (tier 3g) in the LATEST completed run —
+    # the lock's violation. A second, older run's inferential auto-write stays
+    # on the append-only spine as detected history, never re-judged (P34.45).
     left, right = _entity(cur), _entity(cur)
     if right < left:
         left, right = right, left
-    cur.execute(
-        "INSERT INTO camera_site_match(run_key,left_entity,right_entity,match_tier,"
-        "tier_label,disposition,match_evidence,evidence_claims,ruleset_version,"
-        "resolver_version,input_digest) VALUES('rk',%s,%s,3,'3g:coincident_point',"
-        "'auto_write','{}',ARRAY[%s]::uuid[],'r1','v1','digest')",
-        (left, right, c1),
-    )
+    for rk, completed in (("rk0", "2026-09-01T00:00:00Z"), ("rk", "2026-10-01T00:00:00Z")):
+        cur.execute(
+            "INSERT INTO camera_site_run(run_key,ruleset_version,resolver_version,"
+            "auto_write_tiers,observation_count,cluster_count,summary,completed_at) "
+            "VALUES(%s,'v1','r1',ARRAY[3]::smallint[],2,1,'{}',%s)",
+            (rk, completed),
+        )
+        cur.execute(
+            "INSERT INTO camera_site_execution(execution_id,run_key,completed_at,"
+            "input_count,summary) VALUES(gen_random_uuid(),%s,%s,2,'{}')",
+            (rk, completed),
+        )
+    for rk in ("rk0", "rk"):
+        cur.execute(
+            "INSERT INTO camera_site_match(run_key,left_entity,right_entity,match_tier,"
+            "tier_label,disposition,match_evidence,evidence_claims,ruleset_version,"
+            "resolver_version,input_digest) VALUES(%s,%s,%s,3,'3g:coincident_point',"
+            "'auto_write','{}',ARRAY[%s]::uuid[],'r1','v1',%s)",
+            (rk, left, right, c1, f"digest-{rk}"),
+        )
     return {"cap_a": cap_a, "run1": run1}
 
 
@@ -316,6 +331,10 @@ def test_m_run_over_seeded_spine(conn) -> None:
     assert rows["GQ-18"]["measured"] == 1.0  # every claim is capture-bound
     assert rows["GQ-21"]["measured"] == 1.0  # the one deployment has an operator
     assert rows["GQ-24"]["measured"] == 1  # the seeded inferential auto-write
+    # P34.45: the superseded run's inferential auto-write is detected and
+    # disclosed, never deleted or re-judged
+    assert rows["GQ-24"]["detail"]["latest_run_key"] == "rk"
+    assert rows["GQ-24"]["detail"]["historical_inferential_auto_writes"] == 1
 
     # Enforce fails the run; ratchet improvements are recorded, not gated
     assert rows["GQ-24"]["outcome"] == "fail"

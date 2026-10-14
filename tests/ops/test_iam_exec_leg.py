@@ -70,16 +70,18 @@ def test_exec_plan_is_identity_plus_exactly_its_bindings(decl, cadence) -> None:
     assert "roles/storage.objectCreator" in text
     assert "roles/secretmanager.secretAccessor" in text
     assert "sig-audit-password" in text and "sig-recovery-password" in text
+    assert "sig-er-rerun-password" in text
     # The two conditioned grants carry the byte-exact prefix expressions.
     want_read = condition_expression(PROJECT, "sig-restricted", "evidence/captures/")
     want_write = condition_expression(PROJECT, "sig-restricted", "ops/probes/")
     assert want_read in text and want_write in text
     # No service/job/invoker/editor/cadence step — the leg is scoped.
     assert not any("run services update" in t or "run jobs update" in t for t in binding_cmds)
-    # identity + cloudsql + the two conditioned bucket grants + the three
-    # secret accessors (sig-audit-password, sig-recovery-password +
-    # P34.44b's sig-alert-webhook-token on the shared identity)
-    assert len(steps) == 1 + 6  # exactly the declared set
+    # identity + cloudsql + the two conditioned bucket grants + the four
+    # secret accessors (sig-audit-password, sig-recovery-password,
+    # P34.45's sig-er-rerun-password + P34.44b's sig-alert-webhook-token
+    # on the shared identity)
+    assert len(steps) == 1 + 7  # exactly the declared set
     assert all(EXEC_MEMBER in " ".join(s.command) for s in steps if s.phase == "bindings")
 
 

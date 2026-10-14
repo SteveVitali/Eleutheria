@@ -68,6 +68,9 @@ allow db/sqitch.plan 2026-10-19T21:00:00Z disposition_decided_at_authority [publ
 allow db/sqitch.plan 2026-10-19T21:00:00Z intake_storage [disposition_decided_at_authority access_control] 2026-10-18T00:00:00Z
 allow db/sqitch.plan 2026-10-19T21:00:00Z intake_application_bridge [intake_storage publication_dispositions entity_identity_key claim_evidence claim_assertion_bindings] 2026-10-19T00:00:00Z
 allow db/sqitch.plan 2026-10-19T21:00:00Z recovery_apply [intake_application_bridge] 2026-10-19T21:00:00Z
+# P34.45 (ticket 257): er_rerun_login's planned_at is its real `date -u` stamp — future of the
+# pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-10T06:00:00Z er_rerun_login [seal_register materialize_role camera_site_human_decisions shared_temporal_contract public_read_allowlist] 2026-10-09T05:40:44Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).
