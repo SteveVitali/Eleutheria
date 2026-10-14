@@ -133,7 +133,8 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     ]
     # sig-alerts: two leg-scoped invoker rules — the services-leg interim
     # (grant the recorded caller, revoke allUsers; G1-11) and the jobs-leg
-    # end-state (grant sig-probe-rt, revoke allUsers + default-compute).
+    # end-state (grant the probe callers — P34.44b adds the nightly quality
+    # probe's runtime identity — revoke allUsers + default-compute).
     assert len(decl.invokers) == 2
     services_rule = decl.invoker_rule("sig-alerts", "services")
     assert services_rule is not None
@@ -141,7 +142,7 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     assert services_rule.revoke == ("allUsers",)
     jobs_rule = decl.invoker_rule("sig-alerts", "jobs")
     assert jobs_rule is not None
-    assert jobs_rule.grant == ("sig-probe-rt",)
+    assert jobs_rule.grant == ("sig-probe-rt", "sig-quality-probe-rt")
     assert jobs_rule.revoke == ("allUsers", "default-compute")
     # The 13-secret consumer matrix is complete (P34.43 adds the two DB-login
     # credentials consumed by the exec identity alone); the services-leg

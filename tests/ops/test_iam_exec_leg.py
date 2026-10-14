@@ -8,7 +8,9 @@ The declaration gains a fourth leg for the ephemeral execution host:
 ``sig-quality-probe-rt``; ``plan --leg exec`` renders the identity +
 exactly its bindings (cloudsql client, the two prefix-conditioned storage
 grants — objectViewer on ``evidence/captures/``, objectCreator on
-``ops/probes/`` — and the two DB-login secret accessors) and nothing else;
+``ops/probes/`` — and the three secret accessors: the two DB-logins plus
+P34.44b's ``sig-alert-webhook-token`` on the shared identity) and nothing
+else;
 ``diff --leg exec`` judges only its own identities and flags a leaked
 ``sig-exec-*`` job at rest; a conditioned grant names its
 ``condition_description`` and stays confined to CONDITIONABLE_ROLES.
@@ -74,7 +76,10 @@ def test_exec_plan_is_identity_plus_exactly_its_bindings(decl, cadence) -> None:
     assert want_read in text and want_write in text
     # No service/job/invoker/editor/cadence step — the leg is scoped.
     assert not any("run services update" in t or "run jobs update" in t for t in binding_cmds)
-    assert len(steps) == 1 + 5  # identity + 4 bindings + ... exactly the declared set
+    # identity + cloudsql + the two conditioned bucket grants + the three
+    # secret accessors (sig-audit-password, sig-recovery-password +
+    # P34.44b's sig-alert-webhook-token on the shared identity)
+    assert len(steps) == 1 + 6  # exactly the declared set
     assert all(EXEC_MEMBER in " ".join(s.command) for s in steps if s.phase == "bindings")
 
 
@@ -86,7 +91,7 @@ def test_exec_plan_never_renders_an_unconditioned_storage_grant(decl, cadence) -
 
 
 def _exec_posture_snapshot(decl) -> Snapshot:
-    """The snapshot the exec leg produces: its identity + its four bindings."""
+    """The snapshot the exec leg produces: its identity + its declared bindings."""
     restricted = {"bindings": []}
     for b in decl.bucket_roles:
         if b.service_account != EXEC_SA:

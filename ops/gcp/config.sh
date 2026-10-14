@@ -212,6 +212,33 @@ export SIG_ATREST_DENY_OBJECT="ops/seal/deny-set.json"       # sig.seal-deny/1 �
 export SIG_ATREST_PUB002_OBJECT="ops/seal/pub002-listing.json"  # counts-only operator listing
 export SIG_ATREST_AUTHOR="${SIG_ATREST_AUTHOR:-}"            # the recorded operator id (L2)
 
+# --- the nightly graph-quality probe (P34.44b / SIG-CONF-006/007, ADR-205) ----
+# The permanent `sig-quality-probe` Cloud Run job — nightly spine-probe (M)
+# checks on the `sig_audit` login — plus its `sig-sched-quality-probe`
+# Cloud Scheduler trigger, declared in ops/quality_probe.toml
+# (sig.quality-probe/1, rendered by `sig-ops quality job`). The windowed leg
+# ops/gcp/quality-probe.sh owns the mutations; its live: edges are
+# P34.42b's reserved runtime SA + P34.43's sig_audit login (the `deps`
+# action names whichever is missing and exits 42). Same contract window as
+# the IAM/exec legs (OM-19, row 256): applies ≥ SIG_QUALITY_EARLIEST, never
+# 03:00–06:30Z, and never inside the monthly batch window (day 6 00:00Z →
+# day 13 12:00Z — the ingest batch owns those nights). SIG_QUALITY_NOW
+# overrides the clock for the offline guard test only.
+export SIG_QUALITY_JOB="sig-quality-probe"
+export SIG_QUALITY_SCHED="sig-sched-quality-probe"
+export SIG_QUALITY_TOML="ops/quality_probe.toml"
+export SIG_QUALITY_PREFIX="ops/probes/quality/"       # inside the conditioned ops/probes/ scope
+export SIG_BASELINE_PREFIX="ops/probes/quality-baseline/"
+export SIG_QUALITY_EARLIEST="${SIG_EXEC_EARLIEST}"   # same AR-3 window
+export SIG_QUALITY_STATE_DIR="${SIG_QUALITY_STATE_DIR:-${TMPDIR:-/tmp}/p34.44b-quality}"
+# The current public release's objects the baseline's R placement scans —
+# operator-supplied at leg time (gs://<bucket>/<prefix>/), fetched read-only
+# and bounded by `sig-ops quality baseline`.
+export SIG_BASELINE_RELEASE_PREFIX="${SIG_BASELINE_RELEASE_PREFIX:-}"
+# The workload image the job/baseline deploy from (a ${SIG_API_IMAGE}:<tag>
+# or digest — resolved to a pinned digest at apply, ADR-111).
+export SIG_QUALITY_IMAGE="${SIG_QUALITY_IMAGE:-}"
+
 # The canonical public origin + the run.app fallback the probe/uptime sweeps watch
 # (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented

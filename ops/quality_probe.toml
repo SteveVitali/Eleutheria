@@ -1,0 +1,98 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed declaration of the nightly graph-quality probe job (P34.44b;
+# SIG-CONF-006/007, ADR-154/205). This file is DATA, not code —
+# `sig-ops quality job render` renders the mutation set;
+# ops/gcp/quality-probe.sh owns the (windowed, pre-authorised S5-3/OM-20)
+# mutations themselves.
+#
+# Unlike the P34.43 `sig-exec` one-off family this job is PERMANENT: it exists
+# at rest so its Cloud Scheduler trigger can invoke it nightly. Every run of
+# it is read-only against the spine (the `sig_audit` login, a read-only
+# session, a bounded statement timeout) and writes its two records — a
+# `sig.quality-report/1` and the `sig.probe-run/1` envelope — as new
+# timestamped objects under the restricted bucket's conditioned
+# `ops/probes/` scope. A failed run or a ratchet regression fires an alert
+# through the recorded-alert channel (P34.4 / SIG-OPS-006).
+schema = "sig.quality-probe/1"
+
+# The job's exact name — rollback (pause trigger → delete trigger → delete
+# job) is name-checked against exactly these two names, never a pattern.
+job = "sig-quality-probe"
+
+# The runtime identity — P34.42b's reserved `sig-quality-probe-rt` (the same
+# identity the P34.43 exec host binds): cloudsql.client, conditioned
+# objectViewer on evidence/captures/, conditioned objectCreator on
+# ops/probes/ only, and the DB-login + webhook-token secrets it consumes —
+# all in ops/iam_identities.toml (the single consumer matrix).
+service_account = "sig-quality-probe-rt"
+
+# The workload image: the shared sig-api repository — resolved to a pinned
+# digest at apply time (ADR-111); an unpinned or `:latest` image is refused.
+image_repo = "sig-api"
+
+# Container shape: one task, no retries — a failed nightly run is recorded,
+# alerted on, and the next scheduled fire runs fresh (a retry inside the
+# quiet band or the batch window is worse than a missed night). The declared
+# `command` is the shell the image carries; `container_args` is the one
+# in-container command line — the nightly verb renders `--args` by joining
+# these on commas (an element may never carry a comma).
+command = "sh"
+container_args = ["-c", "exec sig-ops quality nightly"]
+tasks = 1
+max_retries = 0
+task_timeout = "1800s"          # 30 min: the spine evaluators run under a 60 s statement timeout
+cpu = "1"
+memory = "2Gi"
+
+# The Cloud SQL connector: the hosted spine socket `sig_audit` reaches.
+cloudsql_instance = "sig-pg"    # ${SIG_SQL_INSTANCE}
+db_name = "sig"                 # rendered as SIG_PG_DB
+
+# The bucket-relative prefix the two records land under — inside the IAM
+# `objectCreator` condition's `ops/probes/` scope exactly
+# (ops/iam_identities.toml), as
+# `<probe_prefix><yyyy-mm-dd>/<stamp>-quality-report.json` and
+# `-probe-run.json`. Probe records are new objects only — never rewritten.
+probe_prefix = "ops/probes/quality/"
+
+# The alert kind stamped on the recorded alert (ops/src/ops/alerts.py's
+# AlertLedger + the sig-alerts webhook channel).
+alert_kind = "quality-probe"
+
+# Every plain (non-secret) env var the job carries. The leg renders each
+# name's value at apply time — never a literal here (the project id is
+# env-derived, the alerts URL is resolved live).
+plain_env = [
+  "SIG_GCP_PROJECT",
+  "SIG_OPS_GCS_BUCKET",
+  "SIG_CLOUDSQL_CONNECTION",
+  "SIG_PG_DB",
+  "SIG_QUALITY_PROBE_PREFIX",
+  "SIG_ALERT_WEBHOOK_URL",
+]
+
+# The Cloud Scheduler trigger. The contract's window (OM-19): off-peak,
+# NEVER 03:00–06:30Z, and never inside the monthly batch window (day 6
+# 00:00Z → day 13 12:00Z — the ingest batch owns those nights).
+# `0 1 1-5,14-31 * *` fires 01:00Z on days 1–5 and 14–31: the earliest
+# batch-window fire is structurally impossible (the dom field excludes
+# 6–13), and 01:00Z is comfortably off-peak and outside the quiet band.
+# The job ITSELF re-checks both windows at run time and records a
+# `suppressed` sig.probe-run/1 instead of running — defence in depth for a
+# manually invoked or drifted trigger (sig-ops quality nightly).
+[scheduler]
+name = "sig-sched-quality-probe"
+schedule = "0 1 1-5,14-31 * *"
+time_zone = "Etc/UTC"
+invoker = "sig-scheduler"       # the OIDC invoker identity (P25.7's)
+
+# Every secret env binding the job mounts — values live in Secret Manager
+# only (HG-09); the env var carries the value inside the container, never a
+# file, never a command-line arg.
+[[secret_env]]
+env = "SIG_AUDIT_PASSWORD"
+secret = "sig-audit-password"         # the sig_audit login credential
+
+[[secret_env]]
+env = "SIG_ALERT_WEBHOOK_TOKEN"
+secret = "sig-alert-webhook-token"    # the sig-alerts caller credential

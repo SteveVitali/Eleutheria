@@ -46,6 +46,7 @@ SHELL_SCRIPTS = [
     "exec-host.sh",
     "db-logins.sh",
     "at-rest-audit.sh",
+    "quality-probe.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -66,6 +67,7 @@ EXECUTABLE_SCRIPTS = [
     "iam-service-accounts.sh",
     "iam-job-identities.sh",
     "at-rest-audit.sh",
+    "quality-probe.sh",
 ]
 
 

@@ -275,7 +275,7 @@ revoke = ["allUsers"]
 [[invoker]]
 service = "sig-alerts"
 leg = "jobs"
-grant = ["sig-probe-rt"]
+grant = ["sig-probe-rt", "sig-quality-probe-rt"]   # +P34.44b: the nightly quality probe alerts through the same channel
 revoke = ["allUsers", "default-compute"]
 
 # --- the one-off execution host (P34.43; SIG-CONF-013, ADR-202) ---------------
@@ -311,7 +311,7 @@ consumers = ["sig-api-rt", "sig-ingest-rt", "sig-probe-rt", "sig-export-rt", "si
 
 [[secret]]
 name = "sig-alert-webhook-token"
-consumers = ["sig-probe-rt"]                # sig-probe's job identity (was default-compute)
+consumers = ["sig-probe-rt", "sig-quality-probe-rt"]   # sig-probe + P34.44b's nightly quality-probe job identity (was default-compute)
 jobs_revoke = ["default-compute"]
 
 [[secret]]

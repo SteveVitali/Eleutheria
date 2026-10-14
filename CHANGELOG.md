@@ -127,6 +127,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   quality gate` is the standalone V15 hook (a `not_evaluable` enforce
   check fails closed). The hosted baseline run and the nightly job are
   P34.44b's.
+- **The quality suite measures production: the nightly probe job +
+  measured baselines** (P34.44b; cites SIG-CONF-006/007 (owner
+  P34.44a), SIG-CONF-009 (owner P35.34; the check here), SIG-CONF-013,
+  SIG-OPS-006; ADR-154/202/204 → ADR-205) — `ops/quality_probe.toml`
+  declares the permanent `sig-quality-probe` Cloud Run job
+  (`sig.quality-probe/1`: pinned digest, `sig-quality-probe-rt`,
+  `sig_audit`, one task, zero retries, the two declared secret envs) and
+  its `sig-sched-quality-probe` trigger firing `0 1 1-5,14-31 * *`
+  Etc/UTC — 01:00Z off-peak, days 6–13 structurally unschedulable — and
+  the in-container `sig-ops quality nightly` verb re-checks both
+  suppression windows before connecting, recording a `suppressed`
+  `sig.probe-run/1` instead of running. Every run writes
+  `sig.quality-report/1` + `sig.probe-run/1` as new timestamped objects
+  under the conditioned `ops/probes/` scope; a failed run records an
+  error probe-run and alerts through the ADR-077 ledger + `sig-alerts`
+  channel. `sig-ops quality baseline` is the read-only L2 baseline leg
+  (the M checks over the hosted spine + the R checks over the fetched
+  release files) emitting `sig.quality-baseline/1`; `sig-exports quality
+  apply-baselines` is the only writer of measured baselines — it
+  recomputes the proposal from the record, stamps the additive
+  `baseline_run`/`baseline_at` provenance pair (`date -u`), and re-diffs
+  the result so a loosening is never written. The hosted leg is queued
+  on the `live:P34.43` `sig_audit` login (exit 42, recorded).
 
 ### Security
 
