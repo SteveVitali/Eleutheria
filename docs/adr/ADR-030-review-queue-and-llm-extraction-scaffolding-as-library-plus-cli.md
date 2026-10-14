@@ -115,3 +115,10 @@ the CLI surface; or a real model client is wired and the `ModelClient` protocol 
 grow (batching, streaming, cost controls); or the gold-accuracy cadence (SIG-LLM-006) is
 formalised against a real gold set and the demotion policy needs per-type thresholds beyond
 the seeded defaults.
+
+## Status updates
+
+- **Status:** Amended by ADR-068 (2026-10-05) — the LLM-to-review boundary (labelled machine suggestions never auto-apply)
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-068's `Related / amends:` field declares "ADR-030
+  (LLM-to-review boundary — **amended**, see below)" and its Decision item 4 "(amends ADR-030)": machine suggestions
+  are labelled and never auto-apply. Recorded by P34.32's G8-2 backfill. The body above is unchanged (SIG-ENG-003).

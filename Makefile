@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -136,7 +136,7 @@ verify-gen: gen
 ## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
 ## history guard, the spec-source checker and the coverage-matrix checker — all
 ## stdlib python3, so the uv-less CI `docs` job runs them too.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -236,6 +236,19 @@ docs-check-planning:
 	  [ -e "$$p" ] || continue; found=1; \
 	  bash scripts/docs/check-build-memory.sh . --planning "$$p"; \
 	done; [ "$$found" = "1" ] || { echo "docs-check-planning: no planning ledgers under docs/build/planning/" >&2; exit 3; }
+
+## ADR index + revisit-trigger register checks (P34.32; B4 G8; SIG-ENG-039/043):
+## the generated index tells the truth — every row a title, an owning ticket/phase
+## and a status (`—` fails on an unexplained cell or ADR-146+; a genuinely-absent
+## legacy field warns), every superseded/amended/qualified/extended/revisited ADR
+## carries its appended `## Status updates` line (COV-14), and the register keeps
+## exactly one current row per `## Revisit trigger` (sha256 up to the first
+## `### Trigger evaluation`, state grammar, resolved refs, open homes by state).
+## `--round-tail` stays the closing-rows mode P34.33 and the P38 tail call.
+## Read-only; each reports items offered and evaluated (SIG-ENG-042).
+docs-check-adr:
+	python3 docs/build/tools/adr_index_check.py
+	python3 docs/build/tools/adr_triggers.py check
 
 ## OM-01 commit-trailer check (SEED-02b; plan §3.3, A-21): every commit of
 ## CHANGE_RANGE carries a recognised harness trailer or is an operator commit.

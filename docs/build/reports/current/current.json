@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d0eee26c6f35a7b94435c73536885d1e41cffa93",
-  "manifest_inputs": 968,
+  "input_commit": "3a6871cfc9b4057b9649baab901afc6a73daec28",
+  "manifest_inputs": 970,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.32",
-    "lastCompleted": "P34.31",
+    "nextTicket": "P34.33",
+    "lastCompleted": "P34.32",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.31-living-record-test-lint",
+    "chainTip": "r11/P34.32-adr-index-generator-and-trigger-register",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-05T06:20Z"
+    "updatedAt": "2026-10-05T08:08Z"
   },
   "counts": {
     "obligations": 156,
@@ -33,7 +33,7 @@
     "terminal": 69,
     "events": 636,
     "transitions": 26,
-    "coverage_assessments": 201,
+    "coverage_assessments": 202,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -12300,8 +12300,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-043": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "docs/build/tools/adr_triggers.py:1;docs/build/tools/adr_index_check.py:1;scripts/docs/adr-index.sh:1;docs/build/reports/adr_triggers/ADR_TRIGGERS.csv:1;docs/build/runs/P34.32.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12987,6 +12987,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.32); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-043:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-043",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/P34.32-adr-index-generator-and-trigger-register @ 6e7d7673f3e8508ae6885d2ace2b19dfd916465c",
+        "limitations": "engineered only (live_verification=false) — the register checker and the index check run in make docs-check / the CI docs job on every head (proven by this PR's own docs job run); --round-tail is proven by fixtures both directions plus a real-tree demo (2026-10-01 green / 2026-10-05 = 189 stale by design) — its first operational call is P34.33's own requirement, not an owed leg of 043. ADR-120's owner `—` is a declared warning (genuinely absent legacy field; ADR-198 decision 2). The probe_id hook validates the token shape only — G10's grammar is unpinned by design.",
+        "supersedes": "SIG-ENG-043:r11-1",
+        "assessment_id": "SIG-ENG-043:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-044",
@@ -14762,6 +14772,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-043",
+          "verdict": "MET",
+          "assessed_at": "2026-10-05"
+        },
+        {
           "requirement": "SIG-ENG-044",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -16056,10 +16071,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "5782c0295942a56d9653fe3bab9c45ac558735ddbe4b79f1a1a1f7892800132d",
+  "manifest_sha256": "76bc31115fb7c7fb10e410c005f8b61ec24a9c8c9994667b2267ecd7a4704104",
   "current_md": {
     "lines": 100,
-    "bytes": 17213,
+    "bytes": 17260,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

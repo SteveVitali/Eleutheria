@@ -19,13 +19,20 @@ operator waiver carry its line id (A-6; WV-01…WV-12). Columns — B4 G8-3's se
 * ``home`` — the BACKLOG row that owns the trigger (``check_backlog.py`` applies the open-home rule).
 * ``kind`` ∈ adr · waiver · accepted-risk; ``waiver`` names the operator's waiver line.
 
-``check`` (this unit's scope) verifies the register matches the ADR files: one row per ADR that has a
-``## Revisit trigger`` and no row for an ADR that does not, every hash current, the state grammar, refs that
-resolve to an ADR file or a manifest chain row, homes that are BACKLOG rows, ``last_evaluated`` a ``date -u``
-value, and every waiver line present once. The full G8-3 checker — open homes by state, the round-tail mode,
-probe hooks — is P34.32's (R11-MEM-09). Stdlib only; Python 3.9+::
+``check`` (SEED-15's base + P34.32's full G8-3) verifies the register matches the ADR files: one row
+per ADR that has a ``## Revisit trigger`` and no row for an ADR that does not, every hash current, the
+state grammar, refs that resolve to an ADR file or a manifest chain row, homes that are BACKLOG rows
+— and the **open-home rule**: a home sits on an *open* BACKLOG row, on an *accepted* monitor row
+(BL-002) unless the trigger is ``fired-unanswered``, or on a *closed* row only while the trigger is
+``quiet`` or ``superseded`` — the same rule ``check_backlog.py`` applies from the BACKLOG side
+(F3 NEW-3). ``last_evaluated`` is a ``date -u`` value, evidence is present, every waiver line is
+present once, and a ``probe_id`` is honoured when present (the G10 hook: validated as a token, not
+required). ``--round-tail <round-start>`` (the closing-rows mode P34.33 calls and the P38 tail uses)
+fails when any row's ``last_evaluated`` predates the round start, or a ``fired-unanswered`` row
+carries no ``S1… disposition:`` record in its evidence — the stage-1 sweep's routing of the
+unanswered trigger. Stdlib only; Python 3.9+::
 
-    python3 docs/build/tools/adr_triggers.py check
+    python3 docs/build/tools/adr_triggers.py check [--round-tail YYYY-MM-DD]
     python3 docs/build/tools/adr_triggers.py hash docs/adr/ADR-150-coverage-verdict-vocabulary.md
 """
 
@@ -60,6 +67,16 @@ STATE_RE = re.compile(
     r"|dormant\((?P<reason>[^()]+)\))$"
 )
 TS_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+ROUND_TAIL_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+PROBE_ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]*$")
+# A fired-unanswered row's round-tail evidence must record the stage-1 sweep's routing of the
+# unanswered trigger — written `S1 disposition: …` (or `S1b`/`S1d` for the naming-the-unit form).
+S1_DISPOSITION_RE = re.compile(r"\bS1[a-z]?\s+disposition\b", re.I)
+BACKLOG = "docs/build/BACKLOG.csv"
+# The open-home rule (F3 NEW-3; the same split check_backlog.py applies from the BACKLOG side).
+OPEN_HOME = frozenset({"open"})
+MONITOR_HOME = frozenset({"accepted"})
+CLOSED_HOME_STATES = frozenset({"quiet", "superseded"})
 _EVAL_RE = re.compile(r"^###\s+Trigger evaluation\b")
 _FILE_ID_RE = re.compile(r"(?:\d{2,3}[a-z]?_)?([A-Za-z][A-Za-z0-9.-]*)__[^`|\s]*\.md")
 
@@ -110,12 +127,30 @@ def chain_ids(root: pathlib.Path) -> set[str]:
     return ids
 
 
-def backlog_ids(root: pathlib.Path) -> set[str]:
-    path = root / "docs/build/BACKLOG.csv"
+def backlog_rows(root: pathlib.Path) -> list[dict[str, str]]:
+    path = root / BACKLOG
     if not path.is_file():
-        return set()
+        return []
     with path.open(newline="") as fh:
-        return {r["bl_id"] for r in csv.DictReader(fh)}
+        return list(csv.DictReader(fh))
+
+
+def backlog_ids(root: pathlib.Path) -> set[str]:
+    return {r["bl_id"] for r in backlog_rows(root)}
+
+
+def backlog_status(root: pathlib.Path) -> dict[str, str]:
+    return {r["bl_id"]: r.get("status", "") for r in backlog_rows(root)}
+
+
+def backlog_owner(root: pathlib.Path) -> dict[str, str]:
+    """``source-token → bl_id`` — the BACKLOG row whose ``sources`` cell names it (first wins; a
+    duplicate-owner source is check_backlog.py's finding, not this one's)."""
+    owner: dict[str, str] = {}
+    for r in backlog_rows(root):
+        for src in r.get("sources", "").split():
+            owner.setdefault(src, r["bl_id"])
+    return owner
 
 
 def load(root: pathlib.Path) -> tuple[list[str], list[dict[str, str]]]:
@@ -133,7 +168,9 @@ def _ref_ok(ref: str, adrs: dict[str, pathlib.Path], chain: set[str]) -> bool:
 
 
 def check(
-    root: pathlib.Path, waiver_lines: tuple[str, ...] = WAIVER_LINES
+    root: pathlib.Path,
+    waiver_lines: tuple[str, ...] = WAIVER_LINES,
+    round_tail: str | None = None,
 ) -> tuple[list[str], dict[str, int]]:
     errors: list[str] = []
     path = root / REGISTER
@@ -143,13 +180,17 @@ def check(
     adrs = adr_files(root)
     chain = chain_ids(root)
     backlog = backlog_ids(root)
+    bl_status = backlog_status(root)
+    bl_owner = backlog_owner(root)
     with_trigger = {a: p for a, p in adrs.items() if trigger_text(p.read_text()) is not None}
-    stats = {"rows": len(rows), "adr_triggers": len(with_trigger), "evaluated": 0}
+    stats = {"rows": len(rows), "adr_triggers": len(with_trigger), "evaluated": 0, "probes": 0}
     if header != COLUMNS:
         errors.append(f"header {header} != {COLUMNS}")
         return errors, stats
     if not rows:
         errors.append("the register has no rows — nothing evaluated (SIG-ENG-042)")
+    if round_tail is not None and not ROUND_TAIL_RE.match(round_tail):
+        errors.append(f"--round-tail {round_tail!r} is not a YYYY-MM-DD round-start date")
     seen: dict[str, int] = {}
     waivers: dict[str, int] = {}
     for n, r in enumerate(rows, start=2):
@@ -188,6 +229,7 @@ def check(
                     f"{where}: an ADR row keeps its trigger text in the ADR, not in trigger_text"
                 )
         m = STATE_RE.match(r["state"])
+        state_kind = r["state"].split("(", 1)[0].strip()
         if not m:
             errors.append(f"{where}: state {r['state']!r} is off the G8-3 grammar")
         else:
@@ -198,12 +240,57 @@ def check(
                     )
         if not re.fullmatch(r"BL-\d{3}", r["home"]) or r["home"] not in backlog:
             errors.append(f"{where}: home {r['home']!r} is not a BACKLOG row")
+        else:
+            # register home == the BACKLOG row whose sources name the ADR (check_backlog.py
+            # verifies the same edge from the BACKLOG side; the register checker judges it too)
+            owner_bl = bl_owner.get(key)
+            if key.startswith("ADR-") and owner_bl and r["home"] != owner_bl:
+                errors.append(
+                    f"{where}: home {r['home']!r} != BACKLOG owner {owner_bl} "
+                    "(the BL row whose sources name the ADR)"
+                )
+            home_status = bl_status.get(r["home"], "")
+            if home_status in OPEN_HOME:
+                pass
+            elif home_status in MONITOR_HOME:
+                if state_kind == "fired-unanswered":
+                    errors.append(
+                        f"{where}: home {r['home']} is an accepted monitor row while the trigger "
+                        "is fired-unanswered — an unanswered trigger needs an open home (F3 NEW-3)"
+                    )
+            elif home_status == "closed":
+                if state_kind not in CLOSED_HOME_STATES:
+                    errors.append(
+                        f"{where}: home {r['home']} is closed while the trigger is {r['state']!r} "
+                        "— a closed home only for quiet/superseded (F3 NEW-3)"
+                    )
+            elif home_status:
+                errors.append(
+                    f"{where}: home {r['home']} has BACKLOG status {home_status!r} "
+                    "(open/accepted/closed expected)"
+                )
+        if r["probe_id"]:
+            if not PROBE_ID_RE.fullmatch(r["probe_id"]):
+                errors.append(f"{where}: probe_id {r['probe_id']!r} is not a probe id token")
+            else:
+                stats["probes"] += 1
         if not TS_RE.match(r["last_evaluated"]):
             errors.append(
                 f"{where}: last_evaluated {r['last_evaluated']!r} is not a date -u timestamp"
             )
         if not r["evidence"].strip():
             errors.append(f"{where}: evidence is empty")
+        if round_tail is not None:
+            if TS_RE.match(r["last_evaluated"]) and r["last_evaluated"][:10] < round_tail:
+                errors.append(
+                    f"{where}: last_evaluated {r['last_evaluated']!r} predates the round start "
+                    f"{round_tail} (--round-tail: every row is re-evaluated inside the round)"
+                )
+            if state_kind == "fired-unanswered" and not S1_DISPOSITION_RE.search(r["evidence"]):
+                errors.append(
+                    f"{where}: fired-unanswered with no 'S1… disposition:' record in evidence "
+                    "(--round-tail: an unanswered trigger must show its stage-1 routing)"
+                )
     for key, count in sorted(seen.items()):
         if count > 1:
             errors.append(f"{key}: {count} register rows — one row per revisit trigger")
@@ -221,7 +308,14 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
     ap.add_argument("--root", default=str(ROOT))
     sub = ap.add_subparsers(dest="cmd")
-    sub.add_parser("check", help="verify the register matches the ADR files")
+    cp = sub.add_parser("check", help="verify the register matches the ADR files")
+    cp.add_argument(
+        "--round-tail",
+        metavar="YYYY-MM-DD",
+        default=None,
+        help="round-tail mode: every row's last_evaluated must fall inside the round and every "
+        "fired-unanswered row must carry an 'S1… disposition:' record in evidence",
+    )
     hp = sub.add_parser("hash", help="print an ADR's trigger_sha256")
     hp.add_argument("adr_file")
     args = ap.parse_args(argv)
@@ -234,19 +328,21 @@ def main(argv: list[str] | None = None) -> int:
         print(digest)
         return 0
     if args.cmd == "check":
-        errors, stats = check(root)
+        errors, stats = check(root, round_tail=args.round_tail)
         if stats:
             print(
                 f"offered: {stats['adr_triggers']} ADR revisit triggers, {stats['rows']} register rows · "
                 f"evaluated: {stats['evaluated']} rows"
+                + (f", {stats['probes']} carrying probe_id" if stats.get("probes") else "")
             )
         if errors:
             print(f"FAIL: {len(errors)} problem(s):")
             for e in errors:
                 print("  -", e)
             return 1
+        tail = f" · round-tail from {args.round_tail} OK" if args.round_tail else ""
         print(
-            f"{stats['rows']} rows OK — one per revisit trigger, hashes current, waivers {', '.join(WAIVER_LINES)} present"
+            f"{stats['rows']} rows OK — one per revisit trigger, hashes current, waivers {', '.join(WAIVER_LINES)} present{tail}"
         )
         return 0
     ap.print_help()

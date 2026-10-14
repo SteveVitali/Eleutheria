@@ -157,3 +157,10 @@ cameras (dense intersections); (c) a registry connector starts recording a per-r
 (`observed_at` no longer NULL — the capture-time fallback stops applying); (d) D-P30.2a-1 assesses the new
 genres for the non-camera predicates; (e) §28.3 volatility is recalibrated from observed change rates
 (SIG-RECON-009).
+
+## Status updates
+
+- **Status:** Revisited by ADR-114 (2026-10-05) — §4 (capture-time dating; the interim basis)
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-114's `Related:` field declares "ADR-104 §4
+  (capture-time dating — the interim basis this ADR revises)". Recorded by P34.32's G8-2 backfill. The body above
+  is unchanged (SIG-ENG-003).

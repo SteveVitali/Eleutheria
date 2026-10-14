@@ -134,3 +134,11 @@ Revisit when any of the following fires (SIG-STORE-007):
   cut-over with production credentials (beyond the P16.1 demo tier tokens).
 - **The tier-token model outgrows demo keys** — account provisioning beyond the P16.1
   tier tokens (deliberately out of scope here) is designed.
+
+## Status updates
+
+- **Status:** Extended by ADR-091 and ADR-097 (2026-10-05) — the `/curate/**` island + loopback-auth exception
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-091's and ADR-097's `Related:` fields each declare
+  "ADR-068 (the `/curate/**` island + loopback-auth exception this extends)". ADR-155 later leaves this ADR
+  unchanged (its own `Amends / qualifies / extends:` field). Recorded by P34.32's G8-2 backfill. The body above is
+  unchanged (SIG-ENG-003).

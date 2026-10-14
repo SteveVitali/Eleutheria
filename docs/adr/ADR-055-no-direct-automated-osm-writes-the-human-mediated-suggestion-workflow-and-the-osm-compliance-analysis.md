@@ -144,3 +144,8 @@ no-automated-write posture, or the contribution-path licence gate is a spec amen
   residuals, labelled "the operator's own determination (no counsel)" (ADR-167); or when counsel is obtained
   (LATER-05) or a first legal demand arrives (ADR-182's and ADR-166's triggers). The decision and the body above are
   unchanged (SIG-ENG-003).
+- **Status:** Amended by ADR-069 (2026-10-05) — the human-mediated suggestion workflow, the changeset hashtag and the Organised Editing activity page
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-069's `Related / amends:` field declares "ADR-055
+  (**amended** — no direct automated OSM writes; the human-mediated suggestion workflow, the changeset hashtag,
+  the Organised Editing activity page)". Recorded by P34.32's G8-2 backfill. The body above is unchanged
+  (SIG-ENG-003).

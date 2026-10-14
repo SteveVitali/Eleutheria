@@ -147,3 +147,10 @@ this trigger as needing only a recorded evaluation. The value objects here remai
 with persisted forms written by those tickets; no Round-11 row changes this decision. The live-over-hosted
 runs stay owed under their own deferrals (D-R7.2-DETECTORS), unchanged here. The decision above stays in force
 until that answer lands; this ADR's body is unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Extended by ADR-054 (2026-10-05) — the contributor system's revert rides its research-task engine
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-054's `Relates to:` field declares "ADR-039 (the
+  research-task engine this extends)". Recorded by P34.32's G8-2 backfill. The body above is unchanged
+  (SIG-ENG-003).

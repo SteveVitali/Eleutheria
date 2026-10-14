@@ -13,8 +13,11 @@
 #            (e172f52 "Release 0.5.0" + 4140fda + 8aeb6dc)
 #   upstream sha256 f73fd58562a3724d794d19159906036cc0694b8463eb2053ebac1f4af6151721
 #   replaces the P22.3 vendor (2026-09-09) of upstream 6e4a863.
-# No local patch: the body below the closing banner line is the upstream file byte-for-byte.
-# Verify the vendored body against the skill:
+# Local patch (P34.32, B4 G8-1; recorded for the upstream skill proposal B6, not sent):
+# the status override is `status_line()`, scoped to the `## Status updates` section and
+# covering all five appended kinds (Superseded / Amended / Qualified / Extended / Revisited
+# by ADR-MMM), not only `Superseded by`. Everything else is the upstream file byte-for-byte.
+# Verify the vendored body against the skill (the status_line block will differ by the patch):
 #   diff <(sed '2,/^# ---- end of SIG vendoring banner ----/d' scripts/docs/adr-index.sh) \
 #        ~/.claude/skills/build-memory/scripts/adr-index.sh      # → no output
 # ---- end of SIG vendoring banner ----
@@ -42,8 +45,9 @@
 # generator adapts, never the ADRs):
 #   - title  : the H1 `# ADR-NNN: <title>`, `# ADR-NNN — <title>` or `# ADR-NNN - <title>`
 #   - ticket : the first of the header fields `Ticket`, `Phase`, `Phase / ticket`
-#   - status : the header field `Status`; an appended `Superseded by ADR-MMM …` line (BM-ADR-01's
-#              only permitted post-landing append) replaces it
+#   - status : the header field `Status`; the latest appended `## Status updates` line
+#              (`Superseded` / `Amended` / `Qualified` / `Extended` / `Revisited by ADR-MMM …`,
+#              BM-ADR-01's only permitted post-landing append; COV-14) replaces it
 #   A header field is `- **Label:** value`, `- Label: value`, `**Label:** value` or `Label: value`
 #   (above the first `## ` heading). A `|` inside a value is escaped. Missing values render as `—`
 #   (the validator warns on every `—` cell). Files are ordered by their zero-stripped numeric NNN;
@@ -96,15 +100,19 @@ field() {
     }' "$1" 2>/dev/null
 }
 
-# superseded <file> — an appended `Superseded by ADR-MMM …` line below the header, if any.
-superseded() {
+# status_line <file> — the LAST appended `- **Status:** <Kind> by ADR-MMM …` line inside the
+# `## Status updates` section, if any. Kinds (COV-14): Superseded | Amended | Qualified |
+# Extended | Revisited. Scoped to the section so a trigger evaluation or decision prose that
+# mentions a kind can never rewrite the cell; the last matching line wins (appends are
+# chronological).
+status_line() {
   awk '
-    /^##[[:space:]]/ { body = 1 }
-    body {
+    /^##[[:space:]]/ { su = ($0 ~ /^##[[:space:]]+Status updates[[:space:]]*$/) }
+    su {
       line = $0
       sub(/^[[:space:]]*-[[:space:]]*/, "", line); gsub(/\*\*/, "", line)
       sub(/^Status:[[:space:]]*/, "", line)
-      if (line ~ /^Superseded by ADR-[0-9]+/) { sub(/[[:space:]]+$/, "", line); v = line }
+      if (line ~ /^(Superseded|Amended|Qualified|Extended|Revisited) by ADR-[0-9]+/) { sub(/[[:space:]]+$/, "", line); v = line }
     }
     END { if (v != "") print v }' "$1" 2>/dev/null
 }
@@ -150,7 +158,7 @@ row() {
   title="$(grep -m1 -E "$H1_RE" "$f" | sed -E 's/^#[[:space:]]+ADR-[0-9]+[[:space:]]*(:|—|-)[[:space:]]*//; s/[[:space:]]*$//')"
   [ -n "$title" ] || title='—'
   status="$(field "$f" 'Status')"
-  sup="$(superseded "$f")"; [ -n "$sup" ] && status="$sup"
+  sup="$(status_line "$f")"; [ -n "$sup" ] && status="$sup"
   [ -n "$status" ] || status='—'
   ticket="$(field "$f" 'Ticket')"
   [ -n "$ticket" ] || ticket="$(field "$f" 'Phase')"

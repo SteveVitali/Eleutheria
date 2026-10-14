@@ -40,6 +40,7 @@
 | SIG-ENG-042 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-042 | implementation | MET | 2026-10-02 | SIG-ENG-042:r11-1 |
 | SIG-ENG-043 | implementation | MISSING | 2026-10-01 | — |
+| SIG-ENG-043 | implementation | MET | 2026-10-05 | SIG-ENG-043:r11-1 |
 | SIG-ENG-044 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-045 | composed-db | MISSING | 2026-10-01 | — |
 | SIG-ENG-045 | composed-db | MET | 2026-10-04 | SIG-ENG-045:r11-1 |
@@ -121,6 +122,5 @@
 | SIG-ONTO-005 | implementation | MET | 2026-10-01 | — |
 | SIG-ONTO-028 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-035 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-ONTO-051 | implementation | PARTIAL | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

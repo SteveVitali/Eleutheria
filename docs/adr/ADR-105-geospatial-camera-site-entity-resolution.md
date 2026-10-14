@@ -169,3 +169,7 @@ body is unchanged (SIG-ENG-003).
   identity: ruleset v3 auto-collapses only C0–C2 census-verified copies; SIG-EVAL-004's lower bound waived for
   C0–C2 in the operator's adopted words, A-6) supersedes §5; the rest of this ADR stands. ADR-153 is written by
   SEED-11 in the same seed. The body above is unchanged (SIG-ENG-003).
+- **Status:** Amended by ADR-116 (2026-10-05) — constraint (a), one evidenced exception
+- **Status note (2026-10-05, Round-11 P34, ticket P34.32):** ADR-116's `Related:` field declares "ADR-105 (the
+  camera-site ER pipeline and its hard constraints — this ADR amends constraint (a) with ONE evidenced
+  exception)". Recorded by P34.32's G8-2 backfill. The body above is unchanged (SIG-ENG-003).
