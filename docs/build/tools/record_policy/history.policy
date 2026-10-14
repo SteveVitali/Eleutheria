@@ -209,3 +209,17 @@ allow tests/acceptance/fixtures/okc_sources.json 2027-07-01T00:00:00Z 2027-06-30
 # exemption.
 seed-commit f17eb537
 seed-commit 08c1840b
+
+# ── P34.34a closeout repair (ticket 241; recorded 2026-10-06) ───────────────────────────────
+# Commit d778706b is the verifier-backed budget repair: the closeout commit ea0352ab's PHASE
+# LOG entry ran 2,917 B — over the 2 KiB current-region cap (BM-LEDGER-06, check-build-memory
+# `ledger-budget`, the same violation P34.20's b3cfeb87 and P35.38a's repair committed) — and
+# the head State bullet named `web/leverage.json`, an export artifact, as a repo path
+# (BM-ORIENT-01 `ledger-stale`). d778706b trims the entry to 1,863 B in place (every recorded
+# field kept; the full text lives in docs/build/runs/P34.34a.md) — the sanctioned in-place
+# trim pattern — and rewords the head line with the committed bytes archived verbatim to
+# docs/build/reports/memory-repair/LEDGER_state_line_P34.34a_pre-stale-fix.txt under a sha256
+# pointer comment (BM-LEDGER-08). The branch rule forbids force-push, so the declaration lands
+# as a later commit rather than a reworded subject.
+# Scope: findings attributed to d778706b only; no other commit borrows the exemption.
+seed-commit d778706b

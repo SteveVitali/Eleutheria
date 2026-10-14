@@ -969,14 +969,19 @@ def precision_for_tier(tier: int) -> str:
 
 
 def _classify_access_kind(predicate_id: str) -> str:
-    p = predicate_id.lower()
-    if "configured" in p:
-        return "configured_access"
-    if "observed" in p or "use" in p or "seen" in p:
-        return "observed_use"
-    if "declared" in p or "policy" in p or "mou" in p or "agreement" in p:
-        return "declared_policy"
-    return "unclassified"
+    """Map a sharing-edge predicate to a §12.2 access kind, honestly.
+
+    Delegates to the reconciler's predicate-hint vocabulary
+    (``reconcile.materialize.classify_access_kind`` — the same classification
+    the §29.3 materializer writes onto materialized edges) so the export and
+    the reconciler can never disagree; a predicate the vocabulary cannot
+    classify reports ``unclassified`` rather than a guessed kind
+    (SIG-ONTO-042). P34.34a drops the old bare ``"use" in predicate`` rule,
+    which misclassified unrelated predicates like ``portal_stated_permitted_use``.
+    """
+    from reconcile.materialize import classify_access_kind
+
+    return classify_access_kind(predicate_id) or "unclassified"
 
 
 def _site_licence_conflict(records: Sequence[RightsRecord]) -> bool:

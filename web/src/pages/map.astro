@@ -43,8 +43,9 @@ import {
   readsAsDensity,
   renderBin,
 } from "../lib/map";
-import { mapAttributionLine } from "../lib/map-tiles";
+import { EMPTY_TILE_STATE_NOTE, mapAttributionLine } from "../lib/map-tiles";
 import {
+  dataSource,
   getDossiers,
   getMapSites,
   getMapDensityBins,
@@ -138,6 +139,10 @@ const cell = 64;
 // licence-mixed /map/points.json). A build with no archives (the fixtures) passes the
 // small inline fallback list instead.
 const TILE_SOURCES = getCompartmentTileSources();
+// P34.34a: an export carrying no tile archives is HONEST, not broken — the
+// map page says so explicitly rather than showing a blank canvas that could
+// read as "nothing exists". Fixtures mode is already labelled demo data.
+const EMPTY_TILE_STATE = dataSource() === "export" && TILE_SOURCES.length === 0;
 // P34.21a / E2-12: the attribution line names the upstream sources actually
 // drawn (each compartment's ATTRIBUTION.json), never the generic SIG line.
 const ATTRIBUTION_LINE = mapAttributionLine(TILE_SOURCES);
@@ -184,6 +189,11 @@ const mapCitationHref = beliefPinnedPermalink({
        tabular equivalent below is the full, usable surface (SIG-UI-037/050). -->
   <section class="sig-island sig-map-island" aria-labelledby="map-island-heading" data-testid="map-island-section">
     <h2 id="map-island-heading">Interactive map</h2>
+    {EMPTY_TILE_STATE && (
+      <p class="sig-island__note" data-testid="empty-tile-state">
+        {EMPTY_TILE_STATE_NOTE}
+      </p>
+    )}
     {ISLAND_POINT_COUNT > 0 ? (
       <MapIsland
         client:only="react"

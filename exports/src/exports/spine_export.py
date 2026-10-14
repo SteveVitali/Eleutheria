@@ -69,12 +69,15 @@ from policy.licensing import (
 from policy.rights import RightsRecord
 from policy.source_aliases import resolve_public_text
 from reconcile.materialize import (
+    classify_access_kind,
     read_materialized_contradictions,
     read_materialized_edges,
     read_materialized_resolutions,
 )
 from resolution.camera_sites_pg import read_resolved_site_runs
 from tasks.catalog import catalog as _task_catalog
+from tasks.contribution import LeverageLedger
+from tasks.osm_feed import ingest_changesets, leverage_metric_json, parse_changesets
 from tasks.vocabulary import Disposition
 
 from policy import disclosure as policy_disclosure
@@ -384,6 +387,11 @@ DECLARED_UNPRODUCED_READ_KEYS: dict[str, str] = {
     # watch surface reads it and honestly degrades to the "not connected yet"
     # empty state.
     "contract_watch": "no_producer",
+    # §7 leverage (P34.34a): the changeset feed is not a spine query — the
+    # recorded OSM replay XML is bound to the export by the operator/CLI
+    # (HG-08: never a live poll). Unbound → the zeroed ledger, the honest
+    # "measured nothing yet", not a missing artifact.
+    "osm_changeset_feeds": "operator_bound_replay",
 }
 
 
@@ -718,6 +726,28 @@ def _slice_sites(
     )
 
 
+def _claim_access_kind(predicate_id: str | None, materialized_kind: str | None) -> str | None:
+    """P34.34a (SIG-UI-024): the §12.2 access-edge type a published claim
+    carries, or ``None`` when the claim is not an access-typed claim at all.
+
+    A materialized ``sharing`` edge's recorded ``access_kind`` wins when the
+    §29.3 reconciler cited this claim as its ``evidence_claim`` — the
+    recorded classification is never re-derived. Otherwise the predicate
+    vocabulary gates emission (sharing/access/…``_edge`` predicates only) so
+    an ordinary observation claim is never labelled an edge; an
+    unclassifiable access predicate reports ``unclassified`` honestly —
+    never coerced, never silently dropped (SIG-ONTO-042).
+    """
+    if materialized_kind:
+        return str(materialized_kind)
+    if not predicate_id:
+        return None
+    p = predicate_id.lower()
+    if "sharing" in p or "access" in p or p.endswith("_edge"):
+        return classify_access_kind(p) or "unclassified"
+    return None
+
+
 def _record_claims(
     claims: Sequence[ShapingClaim],
     slices: _SiteSlices,
@@ -725,6 +755,7 @@ def _record_claims(
     *,
     retrieval: date,
     registry: Mapping[str, Any] | None,
+    materialized_edges: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, dict[str, Any]]:
     """P32.13 (SIG-FIND-002): the claim anchors + evidence bindings behind
     every published site row, sliced into per-compartment ``record_claims``
@@ -736,6 +767,11 @@ def _record_claims(
     observed date, source) and typed capture/artifact locators — never raw
     claim literals. A claim whose licence computes to a refused compartment
     contributes no anchor row (its site slice already dropped the row).
+
+    P34.34a: access-typed claims additionally carry ``access_kind``
+    (configured_access / observed_use / declared_policy / unclassified) —
+    the materialized edge's recorded kind when the claim backs one, else
+    the predicate-vocabulary classification.
     """
     wanted: set[str] = set()
     for rows in slices.rows_by_compartment.values():
@@ -747,6 +783,15 @@ def _record_claims(
         bindings_by_claim.setdefault(cid, []).append(
             {"capture_id": cap, "artifact_id": art, "role": role}
         )
+    # claim_id → the reconciler's recorded §12.2 kind (one row per edge's
+    # evidence_claim — the first recorded kind wins; an edge never renames
+    # its claim's kind).
+    kind_by_claim: dict[str, str] = {}
+    for e in materialized_edges or []:
+        edge_cid = e.get("evidence_claim")
+        edge_kind = e.get("access_kind")
+        if edge_cid is not None and edge_kind is not None:
+            kind_by_claim.setdefault(str(edge_cid), str(edge_kind))
     placement: dict[str, tuple[str | None, str | None]] = {}
     rows_by_comp: dict[str, list[dict[str, Any]]] = {}
     lic_by_comp: dict[str, str] = {}
@@ -775,19 +820,39 @@ def _record_claims(
         if comp is None:
             continue
         lic_by_comp[comp] = str(licence)
-        rows_by_comp.setdefault(comp, []).append(
-            {
-                "claim_id": c.claim_id,
-                "entity_id": c.subject_id,
-                "predicate_id": c.predicate_id,
-                "observed_at": c.observed_at.isoformat() if c.observed_at else None,
-                "source_id": c.source_id,
-                "evidence": bindings_by_claim.get(c.claim_id, []),
-            }
-        )
+        crow: dict[str, Any] = {
+            "claim_id": c.claim_id,
+            "entity_id": c.subject_id,
+            "predicate_id": c.predicate_id,
+            "observed_at": c.observed_at.isoformat() if c.observed_at else None,
+            "source_id": c.source_id,
+            "evidence": bindings_by_claim.get(c.claim_id, []),
+        }
+        # Sparse field: access-typed claims name their §12.2 kind; an ordinary
+        # claim emits no key at all (byte-identical for non-edge rows).
+        claim_kind = _claim_access_kind(c.predicate_id, kind_by_claim.get(c.claim_id))
+        if claim_kind is not None:
+            crow["access_kind"] = claim_kind
+        rows_by_comp.setdefault(comp, []).append(crow)
     return {
         comp: {"rows": rows, "license": lic_by_comp[comp]} for comp, rows in rows_by_comp.items()
     }
+
+
+def _leverage_metric(raw: Mapping[str, Any]) -> dict[str, Any]:
+    """The §7 contribution-back leverage record (P21.7, SIG-CONTRIB-016e).
+
+    Folds any recorded changeset feed bound to the export
+    (``raw["osm_changeset_feeds"]`` — XML documents captured for replay, the
+    HG-08 posture; nothing is fetched live) into a fresh
+    :class:`LeverageLedger`. An unbound export emits the zeroed ledger —
+    the honest ``0`` of a metric that has measured nothing yet, never a
+    fabricated count (§3.1) and never a missing file (P34.34a).
+    """
+    ledger = LeverageLedger()
+    for xml in raw.get("osm_changeset_feeds") or []:
+        ingest_changesets(ledger, parse_changesets(xml))
+    return leverage_metric_json(ledger)
 
 
 def surface_license(licences: set[str] | frozenset[str]) -> str:
@@ -2153,6 +2218,20 @@ def build_spine_export(
         )
     }
 
+    # P34.34a (G2 step-4, F5 PKG-03a): the §7 contribution-back leverage
+    # record — web/leverage.json is a first-class web artifact of EVERY
+    # spine export so `SIG_DATA_SOURCE=export` builds never hit a missing
+    # file. The metric is the *recorded* ledger: when a recorded changeset
+    # feed is bound to the export (raw["osm_changeset_feeds"] — the same
+    # fixture-replay XML the jurisdiction path reads; no live poll, HG-08)
+    # it is folded in; otherwise the zeroed ledger is the honest state — an
+    # export that never measured never fabricates a count (§3.1), and the
+    # record carries only hashtag + count + public changeset ids (no OSM
+    # user data, Part VIII §0.7).
+    leverage_path = f"{_WEB_DIR}/leverage.json"
+    web_artifacts[leverage_path] = _web_bytes(_leverage_metric(raw))
+    web_licenses[leverage_path] = _SIG_SPDX
+
     # --- the P31.14 analytics family (web/analytics/<name>.json) ---------------
     # The presentation analytics the surfaces render — density bins, centrality +
     # focus, the watch's decision point, per-surface provenance (W4..W0 tiers),
@@ -2183,6 +2262,7 @@ def build_spine_export(
             raw.get("evidence_bindings") or [],
             retrieval=retrieval,
             registry=registry,
+            materialized_edges=m_edges,
         ).items()
     ):
         path = f"{comp}/record_claims.jsonl"

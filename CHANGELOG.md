@@ -24,6 +24,18 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Release-archive chrome + same-origin link crawl** (P34.34a; cites
+  SIG-FIND-001/002, SIG-UI-033, SIG-UI-024, SIG-LIC-011, SIG-UI-049) — every
+  exports-rendered page now carries site navigation, a `/dispute/` link, and
+  the licence of the data shown; `validate_release` and `activate` crawl
+  every page's same-origin `href`/`action` and refuse unresolved links
+  (withdrawal 410 tombstones resolve); `record_claims` rows and claim
+  anchors carry the sparse `access_kind` field via the reconciler
+  vocabulary; dossiers state their provisional computed posture and link
+  from release landings; zero-record landings explain themselves as
+  verified-empty publications; `build_spine_export` always emits
+  `web/leverage.json` (the recorded changeset feed folded in, else the
+  honest zeroed ledger — never a live fetch).
 - **Versioning discipline + one version source** (P34.23, SIG-REL-014) —
   every package derives `__version__` via `importlib.metadata` (no `0.0.0`
   reported anywhere); `scripts/bump_version.py` bumps all 14 pyprojects and
@@ -42,6 +54,14 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **Archive link depth, zero-record validation, and the empty-tile build**
+  (P34.34a) — record/evidence links in nested release routes are
+  site-root-absolute (`/r/<pub>/…`), removing the depth-fragile `../../`
+  forms by construction; `validate_release` no longer misreads a legitimate
+  `indexed_records == 0` scope as missing (a zero-record release was
+  unvalidatable); a zero-archive tile manifest no longer fails the web
+  build — `/map/` states the absence honestly in export mode; and the
+  journey verifier's browse needle was updated to the new link shape.
 - **API honesty: scope, completeness, bytes, terms, basis, grants** (P34.25,
   S0 RI-02, SIG-SEC-011; extends SIG-REL-010) — `/v1/dossier/{scope}` and
   `/v1/coverage/{scope}` now answer a typed 404 `scope_not_available` for a
