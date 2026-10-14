@@ -191,6 +191,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          # P34.31 (G6, SIG-ENG-040): the living-backtest real-tree floor test
+          # replays tests across first-parent living-change transitions —
+          # a depth-1 checkout has none to replay.
+          fetch-depth: 0
 
       - name: Install uv (pinned; matches `[tool.uv] required-version`)
         uses: astral-sh/setup-uv@v10.2.0

@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01): the PHASE LOG ends with P34.30's entry (PR #232, `ci: pass` @c83a4c1); next → P34.31 (row 236).

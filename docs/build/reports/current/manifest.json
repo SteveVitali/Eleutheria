@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "2bdd28b067215d551c3ba52678480bb7712407f8",
+  "input_commit": "d0eee26c6f35a7b94435c73536885d1e41cffa93",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "5920818a0923b4bcbddf5324f52403cd3fc076aee8fb274460e737f9b3f36bc6"
+      "sha256": "04b7737748c67647ec452ba94096c7476bb93269dd9903cbcdd8afcea9662d22"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -765,24 +765,28 @@
       "sha256": "1203456633e4964adb109a0c40270eb2b1dd5386ef909207a90b09be86bf2851"
     },
     {
+      "path": "docs/adr/ADR-197-living-record-test-lint-and-advance-backtest.md",
+      "sha256": "86bc439aa3c35a694d30b37267e6b985ff4ae4f901f2f531ce8080efccbc16e0"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "4e9f90b4143b7735d32e9b822a9665334fdae9622d8a40d0ea1494b24fa3d579"
+      "sha256": "f3c3e77964cfab9fcf284ca3a5579711e1d9c05eb0ed446ec964eca5f7443c5e"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "f399fcc0d19a285830f12d5c2be6849ff01b1cbe0bf985139dbbea9f714bb56f"
+      "sha256": "c46b65fa8d9111789fbe28e96907215f2029e2b9d76d4dd487b02630b5b14924"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "bc977e16b59641bad600ef6e480cea892b629c7576b9fe2fff66ea7359cb0e2d"
+      "sha256": "6aea4b3b70dcc407b8b9ac7a411de0ccdfd09b192b8dd636916c6488c3e78f1a"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "1be2e770e00089f4d18f2cf5f29a280ea606e230dc5a45097cbcc39d347bbb35"
+      "sha256": "b655cb220bb7d80d3b733beb21e0a2faf2767dc2dda74536996076164a6c4899"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "7c00ceda839d5b7f48da35f8a5fd966fdf10b6d2b6f7e63f29fdae00e8b91332"
+      "sha256": "7cd2d625f4857dda9217aefe815cc449389909d07e9c3a6dd997430aaf62e75c"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -850,11 +854,11 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "b87c3df5c959449ecb8fb638ec742685e79b8cdae396f96cdba4de5f9f37d7b3"
+      "sha256": "13b0fd6edd60c9d82593750d3c582d79aa6a85c4ee0d41e41386a4a512af1d62"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "b2f61861836ddf61a2ebb26c875f5003a91d9d44fcd9e272e51fd77f24accfda"
+      "sha256": "510972d0ae0061f84e239351bed19213a7c02f8c6e0be90d6c60e613ec5a5697"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1707,6 +1711,10 @@
     {
       "path": "docs/build/runs/P34.30.md",
       "sha256": "274fe3bda71b01fa841efde3f5e3826c621598f27ba557ecb6b6ac7464bf24e0"
+    },
+    {
+      "path": "docs/build/runs/P34.31.md",
+      "sha256": "249b922c9cb990846b9a1ede568927945c331f49e4aa83425bd27be63cf72700"
     },
     {
       "path": "docs/build/runs/P34.4.md",
@@ -3254,7 +3262,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "86d231a63051d33bdd0869f750893b84894039aab7f08f0b07d71b0963707940"
+      "sha256": "174d8ff5efc3c41e3f1ef77336eb72f9869a0aadd3213d0c5b53f7077d4a616a"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

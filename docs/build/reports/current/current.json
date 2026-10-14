@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "2bdd28b067215d551c3ba52678480bb7712407f8",
-  "manifest_inputs": 966,
+  "input_commit": "d0eee26c6f35a7b94435c73536885d1e41cffa93",
+  "manifest_inputs": 968,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.31",
-    "lastCompleted": "P34.30",
+    "nextTicket": "P34.32",
+    "lastCompleted": "P34.31",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.50",
@@ -17,23 +17,23 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.30-memory-cutover-disposition-and-transition-rule",
+    "chainTip": "r11/P34.31-living-record-test-lint",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-05T02:06Z"
+    "updatedAt": "2026-10-05T06:20Z"
   },
   "counts": {
-    "obligations": 155,
-    "owed": 86,
-    "open": 83,
+    "obligations": 156,
+    "owed": 87,
+    "open": 84,
     "partial": 3,
     "terminal": 69,
-    "events": 635,
+    "events": 636,
     "transitions": 26,
-    "coverage_assessments": 200,
+    "coverage_assessments": 201,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -7685,6 +7685,56 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.31-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.31-1:e0",
+      "kind": "V",
+      "owner": "P34.31's successor (the next ticket's run ledger records the check)",
+      "landing": "the first `nightly` run on `main` after this PR lands — read its nightly-report.md, confirm the backtest stage ran, and that living-backtest.json reports schema living-backtest/1 with non-vacuous totals and the artifacts uploaded",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "First observed nightly run of the `living-backtest` stage: read the next `nightly` workflow run's `nightly-report.md`, confirm the backtest stage ran (not skipped/errored at collection), that `living-backtest.json` reports `schema: living-backtest/1` with `transitions_replayed > 0` and `tests_replayed > 0`, and that the artifact upload carried `living-backtest.txt` + `living-backtest.json`",
+      "unblocked_by": "owner: P34.31's successor (the next ticket's run ledger records the check) · trigger: the first `nightly` run on `main` after this PR lands",
+      "verify": "`gh run view` / artifact download of the first post-merge nightly: report shows `backtest=success`; `living-backtest.json` parses as `living-backtest/1` with non-vacuous totals (or, on a red path, the failure names a transition + test, proving the gate is live rather than silently green)",
+      "proxy": "the stage is regression-pinned before merge: `test_nightly_runs_the_living_record_backtest` (workflow wiring), `docs/build/tools/test_living_record_backtest.py` (fixture repo: pin caught at the transition, exit codes 1/3/0, report schema), and a local `--window 60` replay over real first-parent history (2 transitions, 76 tests, 0 pin-broken) — only the scheduled execution itself is outstanding",
+      "line": 1215,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.31-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.31-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.31",
+          "owner": "P34.31's successor (the next ticket's run ledger records the check)",
+          "landing": "the first `nightly` run on `main` after this PR lands — read its nightly-report.md, confirm the backtest stage ran, and that living-backtest.json reports schema living-backtest/1 with non-vacuous totals and the artifacts uploaded",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/236_P34.31__living-record-test-lint.md",
+            "docs/build/runs/P34.31.md",
+            "docs/build/tools/living_record_backtest.py",
+            "docs/build/tools/test_living_record_backtest.py",
+            ".github/workflows/nightly.yml"
+          ],
+          "observed_at": "2026-10-05",
+          "recorded_at": "2026-10-05",
+          "source_commit": "d95d7612c2f019ce6e6578c1836483bff30cdf61",
+          "reason": "migration anchor appended by P34.31 (row 236) for the verification row it added — observing the first scheduled living-backtest run on main; appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1215,
+            "row_sha256": "0893179d781de5738487854997daff6ef21a654f1e140fe7cbb29d5929ce2627",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12232,8 +12282,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-040": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.31-1)",
+          "evidence": "docs/build/tools/living_record_lint.py:1;docs/build/tools/living_record_backtest.py:1;docs/build/tools/record_policy/living_records.toml:1;docs/build/runs/P34.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12887,6 +12937,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.31); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-040:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-040",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-P34.31-1)",
+        "assessed_at": "2026-10-05",
+        "code_revision": "r11/P34.31-living-record-test-lint @ 0e028c2c8ca94d1d4abb893b8d3c2c186887702b",
+        "limitations": "engineered only (live_verification=false) — the AST lint gates make check (real tree: 412 files scanned, 38 tests evaluated, 5 registered exemptions, 0 violations, 2 snapshot reads) and the §8b living-pin? grep is superseded by a structural policy/lint/driver check; the nightly living-backtest stage is proven by its fixture-repo suite (pin-broken/converted-in-head/removed-in-head/broken-tree/infra) plus a local real-history replay (38 living-change transitions in window-60, last 2 replayed / 76 tests / 0 pin-broken) but has never run on a scheduled main — observing its first run is owed as D-P34.31-1 (kind V, home BL-084). Known fidelity caveat (ADR-197): the replay imports C-overlaid tests against the C′ tree at HEAD-import semantics, so a pin broken only by an import-side change can classify as infra rather than pin-broken.",
+        "supersedes": "SIG-ENG-040:r11-1",
+        "assessment_id": "SIG-ENG-040:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-041",
@@ -14677,6 +14737,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-040",
+          "verdict": "MET-ENGINEERED(D-P34.31-1)",
+          "assessed_at": "2026-10-05"
+        },
+        {
           "requirement": "SIG-ENG-041",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -15991,10 +16056,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "e30355416e9874789ae419087d75b17ad00edaf2f6b62308c443f62fd9fa15ea",
+  "manifest_sha256": "5782c0295942a56d9653fe3bab9c45ac558735ddbe4b79f1a1a1f7892800132d",
   "current_md": {
     "lines": 100,
-    "bytes": 17183,
+    "bytes": 17213,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

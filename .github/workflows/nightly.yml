@@ -150,6 +150,24 @@ jobs:
             --oracle tests/unit/fixtures/memory_guard/replay_expected.csv \
             --json memory-replay.json 2>&1 | tee memory-replay.txt
 
+      # P34.31 (B4 G6, SIG-ENG-040): the living-record advance backtest. The AST
+      # lint protects today's tree; this replays the living-reading tests of
+      # each first-parent commit C against the tree at the next commit C′ that
+      # legitimately changed a declared living record — a pin fails exactly at
+      # such a transition. Read-only (git archive into a temp tree; fetch-depth
+      # 0 above supplies the full first-parent history); a pin-broken finding,
+      # a vacuous run, or an infra collapse is red via the report below.
+      - name: Living-record advance backtest (living-backtest/1)
+        id: backtest
+        continue-on-error: true
+        # `uv run` so the replayed tests run under the workspace interpreter —
+        # the tool invokes `sys.executable -m pytest` and the system python3
+        # has no pytest.
+        run: |
+          uv run python docs/build/tools/living_record_backtest.py \
+            --window 400 --max-transitions 25 \
+            --json living-backtest.json 2>&1 | tee living-backtest.txt
+
       # The report is ALSO the gate: it writes nightly-report.md, then exits
       # non-zero if any stage outcome was not success — the upload below still
       # runs (if: always()), so the red nightly carries its own evidence.
@@ -160,11 +178,11 @@ jobs:
           e2e=${{ steps.e2e.outcome }} secrets=${{ steps.secrets.outcome }}
           licenses=${{ steps.licenses.outcome }} depaudit=${{ steps.depaudit.outcome }}
           npm=${{ steps.npm.outcome }} recordedci=${{ steps.recordedci.outcome }}
-          replay=${{ steps.replay.outcome }}
+          replay=${{ steps.replay.outcome }} backtest=${{ steps.backtest.outcome }}
           --log e2e=nightly-e2e.txt --log secrets=secret-scan.txt
           --log licenses=license-scan.txt --log depaudit=dep-audit.txt
           --log npm=npm-audit.txt --log recordedci=recorded-ci.txt
-          --log replay=memory-replay.txt
+          --log replay=memory-replay.txt --log backtest=living-backtest.txt
 
       - name: Upload the nightly report + stage logs
         if: always()
@@ -184,4 +202,6 @@ jobs:
             recorded-ci.txt
             memory-replay.txt
             memory-replay.json
+            living-backtest.txt
+            living-backtest.json
           if-no-files-found: warn
