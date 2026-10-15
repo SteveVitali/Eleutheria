@@ -15,6 +15,14 @@ non-obvious invariants live here rather than in prose:
 * ``ai_training_permitted`` is a first-class grant distinct from the licence
   (SIG-LIC-004b), and defaults to ``False`` — access permission is not training
   permission.
+* ``reservation`` is a first-class **refusal** state, distinct from
+  ``UNDETERMINED`` (SIG-INGEST-046c, §23.7). An affirmative machine-readable
+  rights reservation — a ``Content-Signal`` directive, a TDM reservation, an
+  EU DSM Article 4 reservation — is honoured as a refusal and recorded on the
+  rights record, never collapsed into ``UNDETERMINED``: an unresolved record
+  invites the Stage-0 conversation, a refused one closes it. The state is
+  additive — a recorded reservation sits beside the SPDX expression and never
+  edits a landed fact.
 """
 
 from __future__ import annotations
@@ -25,6 +33,51 @@ from datetime import date
 #: Sentinel SPDX value for a source whose rights are not yet resolved
 #: (SIG-LIC-004). Distinct from any real SPDX expression.
 UNDETERMINED = "UNDETERMINED"
+
+#: The vocabulary of affirmative machine-readable rights reservations a
+#: recorded ``RightsReservation.kind`` names (SIG-INGEST-046c). Detection is in
+#: :mod:`policy.crawler`; these are the *recorded* kinds.
+RESERVATION_KINDS: frozenset[str] = frozenset(
+    {
+        "content_signal",  # Content-Signal directive, e.g. ``ai-train=no``
+        "tdm_reservation",  # TDM-Reservation: 1 header / tdmrep signal
+        "x_robots_tag",  # X-Robots-Tag: noai / noimageai
+        "article_4",  # an EU DSM Article 4 reservation in another form
+        "express_terms",  # captured express terms carrying a reservation (A-8/S6 R-19)
+        "opt_out",  # a direct host-level opt-out (§26 rule 7)
+        "other",  # a reservation form not yet enumerated — detail carried verbatim
+    }
+)
+
+
+@dataclass(frozen=True)
+class RightsReservation:
+    """A recorded affirmative machine-readable rights reservation (SIG-INGEST-046c).
+
+    The record of a refusal, not a licence fact: ``kind`` names the reservation
+    form from :data:`RESERVATION_KINDS`, ``verbatim`` carries the
+    machine-readable signal as observed, ``observed_on`` the date it was
+    recorded, and ``evidence`` the pointer a reviewer can audit (a fetch/live
+    record, a capture). All four are required — a reservation is asserted only
+    on evidence (§3.1), never inferred.
+    """
+
+    kind: str
+    verbatim: str
+    observed_on: date
+    evidence: str
+
+    def __post_init__(self) -> None:
+        if self.kind not in RESERVATION_KINDS:
+            raise ValueError(
+                f"rights reservation kind {self.kind!r} not in "
+                f"{sorted(RESERVATION_KINDS)} — a new kind is an additive "
+                "vocabulary entry (SIG-INGEST-046c)"
+            )
+        if not self.verbatim:
+            raise ValueError("a rights reservation requires the verbatim signal")
+        if not self.evidence:
+            raise ValueError("a rights reservation requires an evidence pointer (§3.1)")
 
 
 @dataclass(frozen=True)
@@ -56,6 +109,12 @@ class RightsRecord:
     #: ``operator-accepted express terms (ADR-183)``). Empty when no express
     #: acceptance applies.
     publication_basis: str = ""
+    #: A recorded affirmative machine-readable rights reservation
+    #: (SIG-INGEST-046c, P36.1a). Optional and additive — ``None`` means no
+    #: refusal is recorded (the common case); a set value is the *refused*
+    #: state, stored distinctly from ``UNDETERMINED``: the source's SPDX
+    #: expression keeps its own meaning and the reservation sits beside it.
+    reservation: RightsReservation | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -67,3 +126,13 @@ class RightsRecord:
 def is_undetermined(record: RightsRecord) -> bool:
     """Whether a source's rights are unresolved (SIG-LIC-004)."""
     return record.spdx.strip().upper() == UNDETERMINED
+
+
+def is_refused(record: RightsRecord) -> bool:
+    """Whether the record carries an affirmative rights reservation (SIG-INGEST-046c).
+
+    *Refused* is a distinct state from *unresolved*: ``is_refused`` and
+    :func:`is_undetermined` are independent — a reservation is honoured as a
+    refusal, never collapsed into ``UNDETERMINED``.
+    """
+    return record.reservation is not None

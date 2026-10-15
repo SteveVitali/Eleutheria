@@ -42,7 +42,13 @@ from .disappearance import (
 )
 from .isolation import network_isolated
 from .loader import assert_loadable
-from .net import ChallengeEncountered, RobotsDisallowed, RobotsUnretrievable
+from .net import (
+    ChallengeEncountered,
+    HostOptOut,
+    ReservationRefused,
+    RobotsDisallowed,
+    RobotsUnretrievable,
+)
 from .stages import (
     CaptureLedger,
     CaptureRef,
@@ -66,13 +72,18 @@ class RunReport:
     claims: list[dict[str, Any]] = field(default_factory=list)
     captures: list[CaptureRef] = field(default_factory=list)
     disappearances: list[Disappearance] = field(default_factory=list)
-    #: Politeness refusals on discovery-continuation targets (P25.5): a resolved
-    #: child document whose host refuses the fetch (a robots refusal from a
-    #: non-standard fetcher — the shared ``PoliteFetcher`` never refuses post
-    #: GL-GATE-08 / ADR-088) is recorded here — a first-class per-document
-    #: disposition — while the run continues to the next resolved target. A
-    #: refusal on a *seed* target still propagates (a refused seed is a
-    #: refused run).
+    #: Politeness refusals on discovery-continuation targets (P25.5) and, since
+    #: P36.1a, **rights refusals on any target**: a resolved child document
+    #: whose host refuses the fetch (a robots refusal from a non-standard
+    #: fetcher — the shared ``PoliteFetcher`` never refuses post GL-GATE-08 /
+    #: ADR-088) is recorded here — a first-class per-document disposition —
+    #: while the run continues to the next resolved target. A host-level
+    #: opt-out (§26 rule 7, ``"HostOptOut"``) and an affirmative rights
+    #: reservation on the response (SIG-INGEST-046c, ``"ReservationRefused"``)
+    #: record the same way on *any* target — a rights refusal is recorded
+    #: data, never a swallowed or fatal exception, and one opted-out host
+    #: never aborts a multi-tenant sweep. A politeness refusal on a *seed*
+    #: target still propagates (a refused seed is a refused run).
     refusals: list[dict[str, Any]] = field(default_factory=list)
     #: Per-document content drift on discovery-continuation targets (P26.6): a
     #: resolved child document whose captured bytes no longer parse as the
@@ -555,11 +566,37 @@ def _fetch_or_disappear(
     agenda-platform target does (P26.3: each host's own robots verdict is a
     recorded per-host outcome) — it lands on ``report.refusals``, and the run
     continues.
+
+    The two rights refusals (P36.1a / ADR-168) land on ``report.refusals`` on
+    ANY target: :class:`HostOptOut` (the host is on the opt-out register —
+    zero egress, §26 rule 7) and :class:`ReservationRefused` (the response
+    carried an affirmative machine-readable rights reservation —
+    SIG-INGEST-046c). A rights refusal is recorded data, so it never becomes a
+    disappearance (the artifact is refused, not unreachable) and never a
+    swallowed exception.
     """
     subject_id = target.get("subject_id")
     report.fetches += 1
     try:
         fetched = connector.fetch(ctx, target)
+    except (HostOptOut, ReservationRefused) as exc:
+        # P36.1a (§26 rule 7 / SIG-INGEST-046c): the two rights refusals are
+        # recorded dispositions on ANY target — a host-level opt-out was
+        # refused with zero egress (before the robots probe); a response
+        # carrying an affirmative reservation was refused before capture.
+        # Neither is a politeness refusal: they record and the run continues
+        # to the next target (one opted-out host never aborts a sweep), and
+        # no claim ever derives from the refused bytes.
+        report.refusals.append(
+            {
+                "id": _target_id(target),
+                "url": str(target.get("url", "")),
+                "refusal": type(exc).__name__,
+                "detail": str(exc),
+                "observed_at": _now().isoformat(),
+            }
+        )
+        return None
     except (RobotsUnretrievable, RobotsDisallowed) as exc:
         # GL-GATE-08 / ADR-088: PoliteFetcher never raises these — a robots
         # verdict is recorded (robots_disregarded) and the fetch proceeds.

@@ -24,6 +24,26 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Host-level opt-out register + affirmative rights-reservation refusal**
+  (P36.1a; cites SIG-INGEST-046c, §26 rule 7 under SIG-INGEST-036) — the two
+  E2-06 controls, exercised on fixtures only: a committed, append-only
+  `connectors/data/opt_out_register.toml` (`sig.opt-out-register/1`)
+  consulted by the shared `PoliteFetcher` **before every fetch — before the
+  robots probe** — so a listed host receives zero egress, with
+  `$SIG_OPT_OUT_REGISTER` applying an entry on the next run without a
+  registry rebuild or redeploy; and `policy.crawler.detect_reservation`,
+  which detects affirmative machine-readable rights reservations
+  (`Content-Signal` directives such as `ai-train=no`, `TDM-Reservation`,
+  `X-Robots-Tag: noai`/`noimageai`, and the page-level TDMRep/robots-meta
+  EU DSM Article 4 forms) and refuses with the signals kept verbatim as
+  evidence. The refusal lands on `policy.rights.RightsRecord` as a new
+  additive `reservation` field — a *refused* state stored distinctly from
+  `UNDETERMINED` (SIG-INGEST-046c) — and on the run report's `refusals`
+  as a first-class disposition; `assert_loadable`, `live_gate_reasons`,
+  the flip-ready verdict and the flip-metadata rule all refuse a reserved
+  record. GL-GATE-08 is unchanged: a robots `Disallow` is not a
+  reservation and still proceeds stamped `robots_disregarded`. No
+  `ingestion_permitted` flip, no live fetch, no external contact.
 - **Scheduler of record: `ops/cadence.toml` + `sig-ops live-diff`** (P35.1a;
   cites SIG-OPS-006, SIG-OPS-011; ADR-174) — Cloud Scheduler + the committed
   `ops/cadence.toml` become the repository-owned scheduler of record, and a

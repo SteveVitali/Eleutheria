@@ -34,7 +34,7 @@ from enum import StrEnum
 from functools import cache
 from typing import Any
 
-from policy.rights import UNDETERMINED, RightsRecord
+from policy.rights import UNDETERMINED, RightsRecord, RightsReservation
 
 from ._data import load_table
 
@@ -268,6 +268,38 @@ def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
         captured_terms_verbatim=str(r.get("captured_terms_verbatim", "")),
         captured_terms_evidence=str(r.get("captured_terms_evidence", "")),
         publication_basis=str(r.get("publication_basis", "")),
+        # P36.1a (SIG-INGEST-046c): the recorded refusal state, additive — a
+        # ``[sources.<id>.rights.reservation]`` sub-table lands only when an
+        # affirmative machine-readable reservation was observed and recorded;
+        # it is never UNDETERMINED and never edits a landed fact.
+        reservation=_reservation_from_row(source_id, r.get("reservation")),
+    )
+
+
+def _reservation_from_row(source_id: str, row: Any) -> RightsReservation | None:
+    """Parse the optional ``rights.reservation`` sub-table (SIG-INGEST-046c).
+
+    Fail-closed: a present but malformed reservation — wrong shape, a missing
+    kind/verbatim/observed_on/evidence — raises rather than silently dropping
+    a refusal (the defining standard, §3.1).
+    """
+    if row is None:
+        return None
+    if not isinstance(row, dict):
+        raise ValueError(
+            f"source {source_id!r}: rights.reservation must be a table "
+            "{kind, verbatim, observed_on, evidence} (SIG-INGEST-046c)"
+        )
+    observed_on = row.get("observed_on")
+    if not isinstance(observed_on, date):
+        raise ValueError(
+            f"source {source_id!r}: rights.reservation.observed_on must be a TOML date"
+        )
+    return RightsReservation(
+        kind=str(row.get("kind", "")),
+        verbatim=str(row.get("verbatim", "")),
+        observed_on=observed_on,
+        evidence=str(row.get("evidence", "")),
     )
 
 

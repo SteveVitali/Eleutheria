@@ -1,0 +1,27 @@
+# Host-level opt-out register (§26 rule 7, SIG-INGEST-036; P36.1a / ADR-168).
+#
+# Checked before EVERY fetch — before even the robots probe — by the shared
+# politeness layer (connectors.net.PoliteFetcher) and consulted by the loader
+# gate (connectors.runner.live_gate_reasons). A listed host receives ZERO
+# egress: no robots probe, no request. The register is consulted, never
+# publicised here (the disclosure option is Stream J).
+#
+# "Immediately" (rule 7): an entry applies on the next run. For a no-redeploy
+# application the operator may point $SIG_OPT_OUT_REGISTER at a replacement
+# file (e.g. a mounted artifact on the ingest host); the operative file is
+# re-read each run, so swapping it needs no code change or image rebuild.
+#
+# Row shape (append-only; a malformed row fails the registry self-checks
+# closed):
+#
+#   [[opt_outs]]
+#   host = "example.org"        # bare host; covers itself + sub-domains
+#   recorded_on = 2026-01-01    # TOML date the opt-out was recorded (OM-04)
+#   evidence = "…"              # where the opt-out was received (§3.1)
+#   note = "…"                  # optional free-text context
+#
+# No opt-outs have been received or recorded yet — an empty register is the
+# honest state, not a placeholder. Fixtures exercising the mechanism live in
+# tests/connectors/fixtures/conduct/.
+
+register_version = "sig.opt-out-register/1"

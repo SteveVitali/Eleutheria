@@ -172,6 +172,17 @@ def _validate() -> int:
         for msg in violations:
             print(f"VALIDATION FAILED: {msg}")
         return 1
+    # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
+    # under the fail-closed rules — a malformed row is a validation failure,
+    # never a silent "no opt-outs".
+    from .opt_out import OptOutRegisterError, load_register
+
+    try:
+        opt_out = load_register()
+    except OptOutRegisterError as exc:
+        print(f"VALIDATION FAILED: opt-out register malformed: {exc}")
+        return 1
+    print(f"  host-level opt-out register: {len(opt_out.entries)} entr(ies)")
     # P32.12 (SIG-ACQ-003): the frozen dossier field crosswalk must resolve
     # every configured field to an existing ontology predicate, or carry a
     # recorded scoped amendment — never an ad-hoc term.
@@ -255,7 +266,8 @@ def _review_status(source_id: str | None) -> int:
         print(f"source {source_id!r}:")
         print(
             f"  ingestion_permitted={bd.ingestion_permitted} compact={bd.compact_ok} "
-            f"custody={bd.custody_ok} rights={bd.rights_present} reviewed-by={bd.reviewed_by}"
+            f"custody={bd.custody_ok} rights={bd.rights_present} reviewed-by={bd.reviewed_by} "
+            f"reserved={bd.rights_reserved}"
         )
         print(f"  flip-ready: {is_flip_ready(record)}")
         print(f"  loadable now: {bd.loadable}")

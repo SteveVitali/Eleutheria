@@ -21,6 +21,8 @@ document), which remains permitted (SIG-LIC-004c).
 
 from __future__ import annotations
 
+import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ._data import load_table
@@ -111,6 +113,180 @@ def content_signal_permits_training(header: str | None) -> bool:
     if header is None:
         return False
     return parse_content_signal(header).get("ai-train") == "yes"
+
+
+# --- Rule 7 + SIG-INGEST-046c: affirmative rights reservations -----------------
+#
+# An *affirmative machine-readable rights reservation* is honoured as a refusal
+# (SIG-INGEST-046c, §23.7 — not waived, not amended under ADR-168/A-5): a
+# ``Content-Signal`` directive, a TDM reservation, or an EU DSM Article 4
+# reservation. A robots ``Disallow`` verdict is NOT such a reservation — under
+# GL-GATE-08 a disallow is recorded ``robots_disregarded`` and the fetch
+# proceeds; only the signals below refuse. The detector is a pure function of
+# the response envelope: the shared fetch layer calls it on every response and
+# the refusal lands on the rights record (recorded, never silent).
+
+#: ``Content-Signal`` directives whose ``no`` value is an affirmative
+#: reservation of automated-use rights (the IETF aipref automated-use keys:
+#: ``ai-train`` is the §23.7 example; ``ai-input`` and ``search`` reserve the
+#: sibling automated uses SIG performs — inference-input and search indexing).
+CONTENT_SIGNAL_RESERVATION_KEYS: frozenset[str] = frozenset({"ai-train", "ai-input", "search"})
+
+#: ``X-Robots-Tag`` directive tokens that are affirmative TDM/AI reservations
+#: (the deployed convention — e.g. ``X-Robots-Tag: noai`` or ``noimageai``).
+X_ROBOTS_TAG_RESERVATION_TOKENS: frozenset[str] = frozenset({"noai", "noimageai"})
+
+#: The TDM-Reservation Protocol's affirmative values (``TDM-Reservation: 1``).
+_TDM_TRUTHY: frozenset[str] = frozenset({"1", "true", "yes"})
+
+#: How much of an HTML body the meta-tag detector scans (the <head> prefix).
+_META_SCAN_BYTES = 65536
+
+
+@dataclass(frozen=True)
+class ReservationSignal:
+    """One affirmative rights-reservation signal observed on a response.
+
+    ``kind`` names the reservation form; ``detail`` carries the
+    machine-readable signal as observed (a header line or meta directive), so
+    the refusal record keeps the evidence verbatim (§3.1).
+    """
+
+    kind: str
+    detail: str
+
+
+@dataclass(frozen=True)
+class ReservationVerdict:
+    """The outcome of scanning one response for affirmative reservations."""
+
+    signals: tuple[ReservationSignal, ...] = ()
+
+    @property
+    def refuses(self) -> bool:
+        """Whether any affirmative reservation was observed (SIG-INGEST-046c)."""
+        return bool(self.signals)
+
+
+def _header(headers: Mapping[str, str], name: str) -> str | None:
+    """Case-insensitive header lookup (HTTP header names are case-insensitive)."""
+    lowered = name.lower()
+    for key, value in headers.items():
+        if key.lower() == lowered:
+            return value
+    return None
+
+
+def content_signal_reservations(header: str | None) -> tuple[ReservationSignal, ...]:
+    """The affirmative reservations a ``Content-Signal`` header declares.
+
+    A directive ``<key>=no`` on an automated-use key is an affirmative
+    reservation (§23.7's example is ``ai-train=no``); ``yes`` values and
+    unknown keys are not reservations.
+    """
+    if header is None:
+        return ()
+    out: list[ReservationSignal] = []
+    for key, value in parse_content_signal(header).items():
+        if key in CONTENT_SIGNAL_RESERVATION_KEYS and value == "no":
+            out.append(ReservationSignal("content_signal", f"{key}={value}"))
+    return tuple(out)
+
+
+def _tdm_reservation_signals(header: str | None) -> tuple[ReservationSignal, ...]:
+    """The TDM-Reservation Protocol header (EU DSM Article 4 machine-readable)."""
+    if header is None:
+        return ()
+    value = header.strip().lower()
+    if value in _TDM_TRUTHY:
+        return (ReservationSignal("tdm_reservation", f"TDM-Reservation: {header.strip()}"),)
+    return ()
+
+
+def _x_robots_tag_signals(header: str | None) -> tuple[ReservationSignal, ...]:
+    """``X-Robots-Tag`` tokens that are affirmative TDM/AI reservations."""
+    if header is None:
+        return ()
+    out: list[ReservationSignal] = []
+    for token in header.split(","):
+        token = token.strip().lower()
+        if token in X_ROBOTS_TAG_RESERVATION_TOKENS:
+            out.append(ReservationSignal("x_robots_tag", f"X-Robots-Tag: {token}"))
+    return tuple(out)
+
+
+_META_TAG_RE = re.compile(r"<meta\b[^>]*>", re.IGNORECASE)
+_META_NAME_RE = re.compile(r"""name\s*=\s*["']?([^"'>\s]+)["']?""", re.IGNORECASE)
+_META_CONTENT_RE = re.compile(r"""content\s*=\s*["']([^"']*)["']""", re.IGNORECASE)
+
+
+def _meta_reservation_signals(body: bytes | None, media_type: str) -> tuple[ReservationSignal, ...]:
+    """Page-level reservations: ``<meta name="robots" content="…noai…">`` and
+    ``<meta name="tdm-reservation" content="1">`` (the EU DSM Article 4 /
+    TDMRep page-level forms). Only an HTML body is scanned, and only its head
+    prefix — a bounded, deterministic check, never a content read.
+    """
+    if body is None or "html" not in media_type.lower():
+        return ()
+    text = body[:_META_SCAN_BYTES].decode("utf-8", errors="replace")
+    out: list[ReservationSignal] = []
+    for match in _META_TAG_RE.finditer(text):
+        tag = match.group(0)
+        name = _META_NAME_RE.search(tag)
+        content = _META_CONTENT_RE.search(tag)
+        if name is None or content is None:
+            continue
+        meta_name = name.group(1).strip().lower()
+        meta_content = content.group(1).strip().lower()
+        if meta_name == "robots":
+            for token in meta_content.split(","):
+                token = token.strip()
+                if token in X_ROBOTS_TAG_RESERVATION_TOKENS:
+                    # Same directive family as X-Robots-Tag, page-level form —
+                    # the kind stays in the reservation vocabulary so it can
+                    # land verbatim on a RightsRecord.
+                    out.append(ReservationSignal("x_robots_tag", f'<meta name="robots"> {token}'))
+        elif meta_name == "tdm-reservation" and meta_content in _TDM_TRUTHY:
+            # The TDMRep page-level form of the same Article 4 reservation.
+            out.append(
+                ReservationSignal(
+                    "tdm_reservation",
+                    f'<meta name="tdm-reservation" content="{meta_content}">',
+                )
+            )
+    return tuple(out)
+
+
+def detect_reservation(
+    headers: Mapping[str, str],
+    *,
+    body: bytes | None = None,
+    media_type: str = "",
+) -> ReservationVerdict:
+    """Scan one response's envelope (and HTML head) for reservations.
+
+    Returns every affirmative signal observed — a ``Content-Signal``
+    directive, a ``TDM-Reservation`` header, an ``X-Robots-Tag`` AI
+    reservation, or a page-level meta reservation (EU DSM Article 4). An empty
+    verdict means no reservation; absent signals are never treated as grants
+    of anything — they simply are not refusals.
+    """
+    signals: list[ReservationSignal] = []
+    signals += content_signal_reservations(_header(headers, "Content-Signal"))
+    signals += _tdm_reservation_signals(_header(headers, "TDM-Reservation"))
+    signals += _x_robots_tag_signals(_header(headers, "X-Robots-Tag"))
+    signals += _meta_reservation_signals(body, media_type)
+    return ReservationVerdict(tuple(signals))
+
+
+def reservation_refuses(
+    headers: Mapping[str, str],
+    *,
+    body: bytes | None = None,
+    media_type: str = "",
+) -> bool:
+    """Whether the response carries an affirmative reservation (SIG-INGEST-046c)."""
+    return detect_reservation(headers, body=body, media_type=media_type).refuses
 
 
 # --- Rule 4: no circumvention (a legal posture, SIG-INGEST-037) ---------------
