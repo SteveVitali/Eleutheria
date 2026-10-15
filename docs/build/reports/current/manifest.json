@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "57c626b81e6b3654125ae5697d43ffddddc51b6b",
+  "input_commit": "6df21fce4d89b95ee4ef2026e71819a830274f4d",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -838,7 +838,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "454e5f04c491877fd352748206473ce7e4c6064b4f14f5d63558027a2156fb2c"
+      "sha256": "c5fb65b91ee19b230339bc1c5687d54a335728879a86b99842d57817e61eb963"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1969,6 +1969,10 @@
       "sha256": "5292c1a9723f6cf0be1dc0e2ed35b5411a827e9a6feb5b2287e45cf59242e2f3"
     },
     {
+      "path": "docs/build/runs/P36.12.md",
+      "sha256": "e448d23f6c2a9a93026eded83e867039505377bcc37945361b01efdb7cd5fa7a"
+    },
+    {
       "path": "docs/build/runs/P36.15.md",
       "sha256": "33bde500e854913f730cf5ce5110d65f8e55e08879beffecc9805ec2e26cc9c4"
     },
@@ -2650,7 +2654,7 @@
     },
     {
       "path": "docs/tickets/290_P36.12__wave-b-activation.md",
-      "sha256": "c3d6c86d6a13edb7b9d366a1db85c496655f7c827cd63ef8282f366b389cd03e"
+      "sha256": "68fc57949cc095cfef4677b4b12163311f61d3f6d390d6973d37c6aee23b4e2a"
     },
     {
       "path": "docs/tickets/291_P35.1b__fleet-hygiene.md",

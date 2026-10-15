@@ -792,6 +792,38 @@ def build_parser() -> argparse.ArgumentParser:
     )
     wap.add_argument("--json", action="store_true", help="emit the JSON record")
 
+    wbg = sub.add_parser(
+        "wave-b-gate",
+        help="P36.12 (I8 §7.2–7.8; OM-19/OM-20): the Wave-B leg go/no-go — "
+        "judges a recorded inputs JSON (action admit|close, the verbatim "
+        "ING-GO-B, the window instant, the L0…L10 order + family-day "
+        "pacing, the declared run set + per-family OP-26 flips, the "
+        "exclusions, serialisation, L0 prestate/backup and the leg-close "
+        "evidence — +0 re-runs, probe record, vocab_* registration, "
+        "materialize/next-fires) and emits sig.wave-b-gate/1; exit 0 = "
+        "go, exit 42 = no-go (the leg refuses and queues), exit 2 = usage",
+    )
+    wbg.add_argument(
+        "--inputs",
+        required=True,
+        help="the recorded inputs JSON (see ops/src/ops/wave_b.py for the shape)",
+    )
+    wbg.add_argument(
+        "--out",
+        dest="out",
+        default=None,
+        help="also write the verdict JSON here",
+    )
+
+    wbp = sub.add_parser(
+        "wave-b-plan",
+        help="P36.12 (I8 §7.2–7.8): the deterministic Wave-B step plan "
+        "(L0 opening → L1–L8 family days → L9 Flock probe → L10 "
+        "materialize/coverage/resume) → sig.wave-b-plan/1; plan-only "
+        "output, never a mutation",
+    )
+    wbp.add_argument("--json", action="store_true", help="emit the JSON record")
+
     acsw = sub.add_parser(
         "acceptance-sweep",
         help="P34.47 (plan §5.1/§13.1): the 11A live-read acceptance sweep "
@@ -4764,6 +4796,16 @@ def main(argv: list[str] | None = None) -> int:
         from . import wave_a
 
         return wave_a.plan_main(["--json"] if args.json else [])
+    if args.command == "wave-b-gate":
+        from . import wave_b
+
+        return wave_b.gate_main(
+            ["--inputs", args.inputs] + (["--out", args.out] if args.out else [])
+        )
+    if args.command == "wave-b-plan":
+        from . import wave_b
+
+        return wave_b.plan_main(["--json"] if args.json else [])
     if args.command == "acceptance-sweep":
         from . import acceptance
 
