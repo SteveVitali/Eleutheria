@@ -673,3 +673,29 @@ rerun_cell = '''`implement-spec spec=docs/tickets/262_P35.5__zero-egress-distrib
   go = '''pre-authorised: GATE-G4 OM-20 11B list (P35.5 named, expires GATE-G5)'''
   rerun = '''implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true'''
   live_dependants = ["P35.67"]
+[[row]]
+key = "P35.67"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`; docs/build/reports/POST_CUTOVER_PROBE_CHECKLIST.md) after OP-09 + the L2 cert-renewal read ≈ 2026-11-22; read-only, OM-14 zero-mutation; probe verb + checklist + capture/replay landed; no deferral of its own opens'''
+gates_cell = '''hosted, read-only reads only (the argv contract is pinned in tests); L1 needs live:OP-09 (`dig +noall +answer surveillancegraph.org NS` answering the Cloudflare pair); L2 is calendar-bounded (≈ 2026-11-22)'''
+operator_cell = '''execute OP-09 (docs/build/reports/DNS_CUTOVER_RUNBOOK.md), then run each leg and land probe-run.json + capture in this row's ledger'''
+rerun_cell = '''`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` · landed row 263 (PR #265 — legs queued on OP-09)'''
+
+  [[row.legs]]
+  id = "P35.67-l1-cutover-probe"
+  obligations = []
+  earliest = '''bounded by the operator's OP-09 nameserver switch — dig +noall +answer surveillancegraph.org NS must answer the Cloudflare pair'''
+  excluded = []
+  go = '''none — read-only DNS/TLS/route reads (the recorded post-cutover state is the go); a stale Squarespace answer means OP-09 has not landed and the leg stays queued'''
+  rerun = '''implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true'''
+  live_dependants = ["P35.5"]
+
+  [[row.legs]]
+  id = "P35.67-l2-cert-renewal"
+  obligations = []
+  earliest = '''2026-11-22 — 30 days before the sig-web-cert expiry 2026-12-22; the P34.4 TLS-expiry alert (~21 days, ~2026-12-01) is the tripwire if renewal slips'''
+  excluded = []
+  go = '''none — read-only cert/NS reads'''
+  rerun = '''implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true'''
+  live_dependants = []

@@ -24,6 +24,21 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Post-DNS cut-over probe: `sig-ops post-cutover-probe`** (P35.67;
+  cites SIG-OPS-006, SIG-OPS-011) — the read-only verification the
+  operator's OP-09 nameserver switch must satisfy: a `sig.probe-run/1`
+  record covering the Cloudflare NS pair, the grey-cloud apex/www A
+  records, DNSSEC (`ad` + RRSIG + parent DS rollover), TLS SAN + dates,
+  the `sig-web-cert` managed `ACTIVE` status, both redirects, the public
+  route sweep (sitemap locs with the `ops/public_routes.toml` allowlist
+  fallback), the two-state mail posture, and registrar-lock drift.
+  `--capture`/`--from-capture` preserve and replay raw outputs; every
+  emitted command is a read-only dig/curl/openssl/gcloud/whois call —
+  no mutating argv is reachable (pinned in tests). Both live legs queue
+  in RETURN PASS: L1 waits on OP-09 (dig still answers Squarespace at
+  dispatch), L2 is the cert-renewal read ≈ 2026-11-22. The committed
+  checklist maps each check to the `DNS_CUTOVER_RUNBOOK.md` step it
+  discharges (`docs/build/reports/POST_CUTOVER_PROBE_CHECKLIST.md`).
 - **Zero-egress distribution host: the R2 public mirror leg** (P35.5;
   cites SIG-TRANSP-019, D-J3-4/A-3) — release downloads gain a
   zero-egress Cloudflare R2 mirror so egress cost cannot scale with
