@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!-- Fixture: a served page for slug "hellmouth-ca-pd" whose embedded payload
+     carries a per-search audit row with a PLATE field — the in-memory Part
+     VIII screen must refuse this page WHOLE (ScreenedRefusal) before any
+     bytes persist. The plate value is synthetic; the test asserts the page is
+     refused and the value never reaches the capture store. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Hellmouth PD — Transparency Portal</title></head>
+<body>
+  <h1>Hellmouth Police Department</h1>
+  <script id="__PORTAL_DATA__" type="application/json">
+  {
+    "portal": {
+      "slug": "hellmouth-ca-pd",
+      "portal_url": "https://transparency.flocksafety.com/hellmouth-ca-pd",
+      "state": "CA",
+      "total_cameras": 3,
+      "data_last_updated": "2026-10-09",
+      "organizations_shared_with": ["sunnydale-ca-pd"],
+      "search_audit": [
+        {"timestamp": "2026-10-01T00:00:00Z", "plate": "8KSOMA1", "reason": "welfare check"}
+      ],
+      "hotlist_entries": [
+        {"plate": "666HELL", "added_on": "2026-09-30"}
+      ]
+    }
+  }
+  </script>
+  <div id="terms">Hellmouth terms of use, verbatim.</div>
+</body>
+</html>

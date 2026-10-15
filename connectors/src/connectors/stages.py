@@ -136,6 +136,51 @@ class ContentDrift(ValueError):
         super().__init__(f"{msg} ({details})" if details else msg)
 
 
+class SchemaRefusal(Exception):
+    """A served payload failed the connector's declared mirror schema.
+
+    Raised by a connector's ``fetch()`` when the bytes the politeness layer
+    returned cannot be read under the committed field map — e.g. a portal page
+    whose embedded payload carries none of the allowlisted fields, or whose
+    portal identity contradicts the probed target (P36.74). The bytes are never
+    returned for capture. ``refused_fields`` carries the out-of-schema field
+    NAMES the payload surfaced — schema vocabulary, never values — so the
+    refusal is itself measured data.
+    """
+
+    def __init__(self, url: str, *, reason: str, refused_fields: Sequence[str] = ()) -> None:
+        self.url = url
+        self.reason = reason
+        self.refused_fields = tuple(sorted({str(f) for f in refused_fields}))
+        super().__init__(f"{url!r} refused by the mirror schema: {reason}")
+
+
+class ScreenedRefusal(Exception):
+    """A connector's in-memory Part VIII screen refused the fetched bytes.
+
+    Raised by a connector's ``fetch()`` **after** the politeness layer returned
+    bytes but **before** they are returned for capture (ADR-185's persistence
+    rule — screened bytes are never written). Carries only counts/class ids —
+    never a field name or value (the screen is counts-only by contract).
+    The driver records it on ``report.refusals`` exactly like the P36.1a
+    rights refusals: a refusal is data, and one screened page never aborts a
+    multi-target sweep.
+    """
+
+    def __init__(self, url: str, *, classes: Sequence[str], hits: Mapping[str, int]) -> None:
+        self.url = url
+        #: The screen classes that fired (ids only).
+        self.classes = tuple(classes)
+        #: ``{class_id: field_hit_count}`` — counts only, never values.
+        self.hits = dict(hits)
+        kinds = ", ".join(self.classes) or "unknown"
+        super().__init__(
+            f"{url!r} refused by the in-memory Part VIII screen "
+            f"({kinds}; {sum(hits.values())} field hits, counts only) — the "
+            "bytes were never persisted (ADR-185)."
+        )
+
+
 @dataclass(frozen=True)
 class StageArtifact:
     """A content-addressed artifact persisted by one stage (SIG-INGEST-001)."""
@@ -592,6 +637,8 @@ __all__ = [
     "POST_CAPTURE_STAGES",
     "RunContext",
     "STAGE_ORDER",
+    "SchemaRefusal",
+    "ScreenedRefusal",
     "Stage",
     "StageArtifact",
     "content_digest",

@@ -24,6 +24,30 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Flock transparency-portal probe connector** (P36.74 / row 289;
+  WV-10 under ADR-188; D3-Q3 = b under ADR-184; cites SIG-INGEST-013,
+  SIG-INGEST-035's surviving aggregator/compartment clauses,
+  SIG-PUB-002/003a, ADR-185, SIG-ENG-042, SIG-OPS-011) —
+  `connectors/flock_portal_probe.py` lands the probe-only leg the waiver
+  opened: one gentle GET per known portal per run through the shared
+  politeness layer, stopping on any challenge/403/interstitial, with the
+  served page parsed against the mirror's own aggregate-only vocabulary,
+  Part VIII-screened **in memory before persistence**, terms captured
+  verbatim, and output stamped CC BY-SA 4.0 `portal` compartment
+  (`ai_training_permitted=false`). The persisted artifact is the screened
+  `sig.flock-portal-page/1` extraction — the vendor's raw page bytes are
+  never stored. The probe set is committed data: 917 known portals
+  derived from the Eyes on Flock inventory snapshot (recorded date +
+  sha256 + selection rule; no discovery). Every run emits exactly one
+  `sig.probe-run/1` record of per-portal served/refused outcomes;
+  expected yield ≈ 0 is a PASS. The `flock_transparency_portals` row
+  moved custody `LINK`→`DERIVE` with the WV-10/D3-Q3 basis recorded
+  verbatim and stays `ingestion_permitted=false` — activation is the
+  operator's P36.12 Wave-B execution under ING-GO-B, never a code change.
+  `evidence.screen` gains the shared TOML→`ScreenDeclaration` parser
+  (`ops.at_rest_audit` now delegates to it) and the framework gains the
+  `SchemaRefusal`/`ScreenedRefusal` recorded-disposal classes.
+
 - **Residential-parcel demotion wired end to end** (P35.66 / row 288;
   **SIG-PUB-004 / SIG-PUB-005 / SIG-PUB-013** owners; cites SIG-PUB-011,
   SIG-PUB-012, SIG-PUB-006, §23.10) — the residential-parcel screen that

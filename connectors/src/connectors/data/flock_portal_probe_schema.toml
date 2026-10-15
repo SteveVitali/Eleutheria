@@ -1,0 +1,101 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The probe connector's MIRROR SCHEMA (P36.74 / WV-10, ADR-188). A served Flock
+# transparency-portal page embeds its data payload as JSON (the page is a JS
+# app — the data block rides a `<script>` JSON island). This file declares, as
+# committed reviewed DATA (SIG-ENG-001), what the probe may keep from that
+# payload:
+#
+#   * EXTRACT  — a key present anywhere in the embedded payload whose name is
+#     allowlisted BY THE MIRROR'S OWN VOCABULARY (flock_portal_vocab.toml):
+#     the aggregate-only portal facts (counts, windowed usage counters, config
+#     booleans, sharing org lists, declared freshness, portal identity/context).
+#     The probe shares that map verbatim; it does not re-key it.
+#   * REFUSE   — a key matching a `denied_fields` glob is a per-search /
+#     per-plate / per-person field (§18.1, SIG-PUB-002/003a S3 lane). It is
+#     dropped, never extracted, and its NAME (never its value) is recorded on
+#     the probe outcome as refused_fields. Allowlist membership is checked
+#     first — the windowed aggregate counters (`total_searches`,
+#     `hotlist_hits`, `hotlist_hit_rate`) are the portal's own published
+#     aggregates and stay admissible.
+#   * IGNORE   — anything else (the JS app's wiring, styling, i18n payloads)
+#     is not extracted and not recorded.
+#
+# A served page whose embedded payload is absent/unparseable, whose declared
+# portal slug contradicts the probed target, or whose allowlisted values carry
+# row-level shape (a dict / list-of-dicts where a scalar or scalar list belongs)
+# is refused whole as a schema refusal — fail-closed, never a partial guess.
+#
+# The vendor's raw page bytes are NEVER persisted regardless: only the screened
+# canonical extraction (sig.flock-portal-page/1) reaches the capture store —
+# the bytes the in-memory Part VIII screen (ops/at_rest_audit.toml via
+# evidence.screen) demonstrably passed.
+
+schema = "sig.flock-portal-probe-schema/1"
+schema_version = "2026-10-15"
+
+#: Embedded-JSON keys that mark per-search / per-plate / per-person / free-text
+#: data — refused by name wherever they appear in the payload (glob match,
+#: case-insensitive; allowlisted aggregates win first). DATA — reviewed on
+#: change like every vocabulary row.
+denied_fields = [
+  # plates / vehicle identifiers (SIG-PUB-002 PLATES)
+  "plate", "plates", "plate_*", "*_plate", "license_plate*", "vrm", "*vrm*",
+  "tag_number", "tag_*", "vin", "vin_*", "vehicle_id*", "vehicle_plate*",
+  # per-search rows / reasons / audit detail (S3 lane: aggregates only)
+  "searches", "search_log*", "search_audit*", "search_detail*",
+  "search_history*", "search_reason*", "top_search_reasons", "audit_log*",
+  "access_log*",
+  # case / operator / user identifiers (SIG-PUB-002 PERSONAL-IDS)
+  "case_number*", "case_id*", "*case_number*", "incident*",
+  "officer*", "investigator*", "detective*", "badge*", "sergeant*",
+  "user_id*", "user_name*", "username*", "operator*", "created_by",
+  "updated_by", "modified_by", "edited_by",
+  # person names / households (SIG-PUB-002 PERSON-NAMES, I7-S1)
+  "person*", "first_name", "last_name", "full_name", "owner_name",
+  "registrant*", "resident*", "subscriber*", "customer*", "applicant*",
+  "contact_name", "household*", "caller*", "witness*",
+  # addresses / ids (SIG-PUB-002 HOME-ADDRESSES / PERSONAL-IDS)
+  "home_address*", "street_address*", "address*", "residence*",
+  "ssn*", "social_security*", "driver*_license*", "license_number*",
+  "id_number*", "person_id*", "national_id*",
+  # movements / sightings (SIG-PUB-002 TRAVEL-HISTORIES)
+  "travel*", "trip*", "sighting*", "itinerary*", "movement*", "visited*",
+  "route_history*",
+  # free text (F-406 lesson: reason/note/narrative fields carry PII)
+  "reason", "reason_*", "*_reason", "notes", "comment*", "narrative*",
+  "description", "free_text*", "remark*",
+  # alert / hotlist row-level detail (the aggregate counters stay allowed)
+  "hotlist_entry*", "hotlist_entries*", "hotlist_detail*", "alert*",
+  "visitor*", "guest*",
+]
+
+#: Embedded-JSON keys carrying the portal's own terms/licence text — captured
+#: VERBATIM (never normalized) into the probe-run record and the screened
+#: capture. First hit wins, in document order.
+terms_fields = [
+  "terms_text", "terms", "terms_of_service", "terms_of_use",
+  "license", "licence", "license_text", "licence_text", "data_terms",
+  "usage_terms", "portal_terms",
+]
+
+#: HTML element ids / link rel values whose text is the terms block when the
+#: embedded payload carries none (e.g. a footer licence notice).
+terms_element_ids = [
+  "terms", "terms-of-service", "terms_of_service", "tos", "license",
+  "licence", "portal-terms", "data-terms", "usage-terms",
+]
+
+#: Byte markers of a served-but-challenged interstitial (a 2xx page whose body
+#: is a bot-management stub rather than the portal). WV-10: an interstitial
+#: ends the attempt exactly like a 403 — recorded as kind "interstitial".
+interstitial_markers = [
+  "just a moment", "checking your browser", "attention required",
+  "cf-chl", "cf_chl", "__cf_chl", "challenge-platform",
+  "cf-mitigated", "x-cd-mitigation", "akamai", "_abck",
+  "px-captcha", "perimeterx", "datadome", "incapsula",
+  "verify you are human", "are you a robot", "bot detected",
+  "enable javascript to continue",
+]
