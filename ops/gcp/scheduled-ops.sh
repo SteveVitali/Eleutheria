@@ -42,6 +42,21 @@
 #     not recreated; the run job is still upserted to the `scheduled-ingest`
 #     wrapper so every scheduled execution appends an ops/runs row.
 #
+# P35.1a (SIG-OPS-005 / SIG-SEC-008, ADR-174) adds the scheduler-of-record legs:
+#   * `[[maintenance]]` triggers — deployed and held PAUSED; the reconcile
+#     never enables one (a paused row's own verbatim-go machinery owns its
+#     enablement — e.g. D-P34.6-2's monthly export).
+#   * The `[live_diff]` trigger — a daily Cloud Scheduler job that invokes the
+#     probe job with an args OVERRIDE (`sig-ops live-diff --live --alert`), so
+#     the read-only reconciler rides the probe identity + alert seam.
+#   * The declaration bundle — `sig-ops live-diff --emit-declared` piped to
+#     gs://…-sig-restricted/ops/declared/live-diff.json; the in-image diff reads
+#     THAT object (SIG_OPS_DECLARED_GCS), so a cadence change takes effect at
+#     the next reconcile without an image roll (SIG-OPS-005).
+#   * The undeclared-trigger report — apply lists live Cloud Scheduler jobs
+#     that are not declared (reported, never deleted here: deletion is the
+#     P35.1b fleet-hygiene leg's call).
+#
 # The per-source table comes from ops/cadence.toml via tomllib — that file is
 # the single source of truth, and `sig-ops cadence --check` fails on drift.
 set -euo pipefail
@@ -88,7 +103,13 @@ esac
 _log "job image (pinned digest): ${IMAGE}"
 CONN="${SIG_GCP_PROJECT}:${SIG_GCP_REGION}:${SIG_SQL_INSTANCE}"
 CAPTURE_MOUNT="/mnt/captures"
-JOB_ENV="SIG_GCP_PROJECT=${SIG_GCP_PROJECT},SIG_OPS_GCS_BUCKET=${SIG_BUCKET_RESTRICTED},SIG_OPS_CADENCE=/app/ops/cadence.toml,SIG_PG_USER=sig,SIG_PG_DB=${SIG_PG_DB_NAME:-sig},SIG_CLOUDSQL_CONNECTION=${CONN}"
+# P35.1a: the cadence content hash rides every job's env (a run row records
+# which declaration the fleet was deployed against) and the declaration bundle
+# URI tells the in-image live-diff where the published declared side lives —
+# config changes take effect at the reconcile, not the image roll (SIG-OPS-005).
+CADENCE_SHA256="$(shasum -a 256 "${_here}/../cadence.toml" | awk '{print $1}')"
+DECLARED_GCS_URI="gs://${SIG_BUCKET_RESTRICTED}/ops/declared/live-diff.json"
+JOB_ENV="SIG_GCP_PROJECT=${SIG_GCP_PROJECT},SIG_OPS_GCS_BUCKET=${SIG_BUCKET_RESTRICTED},SIG_OPS_CADENCE=/app/ops/cadence.toml,SIG_OPS_CADENCE_SHA256=${CADENCE_SHA256},SIG_OPS_DECLARED_GCS=${DECLARED_GCS_URI},SIG_PG_USER=sig,SIG_PG_DB=${SIG_PG_DB_NAME:-sig},SIG_CLOUDSQL_CONNECTION=${CONN}"
 # The ingest jobs' capture store (P31.4 / ADR-111): the restricted bucket, mounted.
 # SIG_CODE_COMMIT = the deployed digest: runs record it as code_commit, and a restart
 # resumes only the marks of runs on the same code (ADR-111).
@@ -105,12 +126,19 @@ svc_url() {
   fi
 }
 
-# Upsert a Cloud Scheduler HTTP trigger (create-or-update keeps --apply idempotent).
+# Upsert a Cloud Scheduler HTTP trigger (create-or-update keeps --apply
+# idempotent). `$4` is an optional JSON args array — embedded as the POST
+# body's RunJobRequest `overrides.containerOverrides[].args`, which replaces
+# the target job's baked args for this trigger's invocations only.
 sched_upsert() {
-  local name="$1" schedule="$2" job="$3"
+  local name="$1" schedule="$2" job="$3" args_json="${4:-}"
   local uri="https://${SIG_GCP_REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${SIG_GCP_PROJECT}/jobs/${job}:run"
+  local body_args=()
+  if [ -n "${args_json}" ]; then
+    body_args=(--message-body "{\"overrides\":{\"containerOverrides\":[{\"args\":${args_json}}]}}")
+  fi
   if [ "${SIG_GCP_MODE}" = "check" ]; then
-    _plan "gcloud scheduler jobs create http ${name} --schedule '${schedule}' --time-zone=Etc/UTC --uri ${uri} --http-method=POST --oauth-service-account-email=${SIG_SCHEDULER_SA_EMAIL}   # (update if already present)"
+    _plan "gcloud scheduler jobs create http ${name} --schedule '${schedule}' --time-zone=Etc/UTC --uri ${uri} --http-method=POST --oauth-service-account-email=${SIG_SCHEDULER_SA_EMAIL} ${body_args[*]:-}   # (update if already present)"
     return 0
   fi
   if gcloud scheduler jobs describe "${name}" \
@@ -118,13 +146,30 @@ sched_upsert() {
     run gcloud scheduler jobs update http "${name}" \
       --location "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
       --schedule "${schedule}" --time-zone=Etc/UTC --uri "${uri}" \
-      --http-method=POST --oauth-service-account-email="${SIG_SCHEDULER_SA_EMAIL}"
+      --http-method=POST --oauth-service-account-email="${SIG_SCHEDULER_SA_EMAIL}" \
+      ${body_args[@]+"${body_args[@]}"}
   else
     run gcloud scheduler jobs create http "${name}" \
       --location "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
       --schedule "${schedule}" --time-zone=Etc/UTC --uri "${uri}" \
-      --http-method=POST --oauth-service-account-email="${SIG_SCHEDULER_SA_EMAIL}"
+      --http-method=POST --oauth-service-account-email="${SIG_SCHEDULER_SA_EMAIL}" \
+      ${body_args[@]+"${body_args[@]}"}
   fi
+}
+
+# Hold a trigger at its declared state — a declared-paused (maintenance) row
+# is created then immediately paused, and a re-apply re-pauses it: the
+# reconcile NEVER enables a maintenance row (its own verbatim-go leg does).
+sched_set_state() {
+  local name="$1" state="$2"
+  local verb
+  case "${state}" in
+    paused)  verb=pause ;;
+    enabled) verb=resume ;;
+    *) _log "ERROR: unknown declared scheduler state '${state}' for ${name}" >&2; return 2 ;;
+  esac
+  run gcloud scheduler jobs "${verb}" "${name}" \
+    --location "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}"
 }
 
 # Read the per-source cadence table
@@ -180,6 +225,74 @@ for b in doc.get("batches", []):
             ]
         )
     )
+PY
+  )
+}
+
+# Read the maintenance table (id|cron|scheduler|state|target-job) — P35.1a:
+# each row's trigger is deployed and held at its declared `state` (today's
+# only row is PAUSED — the D-P34.6-2 monthly export stays inert until its
+# verbatim in-ticket go; the reconcile never enables a maintenance row).
+read_maintenance_rows() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+for m in doc.get("maintenance", []):
+    if not m.get("scheduler"):
+        continue  # a queued stub declares no trigger — nothing to reconcile
+    print(
+        "|".join(
+            [
+                m["id"],
+                m["cron"],
+                m["scheduler"],
+                m.get("state", "paused"),
+                m.get("target_job") or f"sig-{m['id']}",
+            ]
+        )
+    )
+PY
+  )
+}
+
+# Read the [live_diff] trigger declaration (scheduler|cron|job|args-json) —
+# the daily repo-vs-live reconciler that rides the probe job with an args
+# override (P35.1a / SIG-OPS-005).
+read_live_diff_row() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+ld = doc.get("live_diff")
+if ld:
+    print("|".join([ld["scheduler"], ld["cron"], ld["job"], ld["args"]]))
+PY
+  )
+}
+
+# Read every declared trigger name (probe + sources + batches + maintenance +
+# live-diff) — the allow-list the undeclared-trigger report diffs live against.
+read_declared_triggers() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+names = [doc.get("probes", {}).get("scheduler")]
+names += [s.get("scheduler") for s in doc.get("sources", [])]
+names += [b.get("scheduler") for b in doc.get("batches", [])]
+names += [m.get("scheduler") for m in doc.get("maintenance", [])]
+ld = doc.get("live_diff") or {}
+names.append(ld.get("scheduler"))
+for n in names:
+    if n:
+        print(n)
 PY
   )
 }
@@ -326,6 +439,54 @@ run gcloud run jobs deploy "${SIG_RUN_JOB_REPLAY}" \
   --set-cloudsql-instances "${CONN}" \
   --set-env-vars "${INGEST_ENV}" \
   --set-secrets "SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
+
+# 6. Maintenance triggers ([[maintenance]] — P35.1a). Each declared row gets a
+#    trigger held at its declared state; a `paused` row is created then
+#    immediately paused (and re-paused on re-apply). The reconcile NEVER
+#    enables a maintenance trigger — the row's own verbatim-go leg does
+#    (D-P34.6-2's monthly export enables only inside `logical-export.sh
+#    --apply export --go "<verbatim in-ticket go>"`).
+_log "-- maintenance triggers (declared state; paused rows stay inert) --"
+while IFS='|' read -r mid mcron msched mstate mjob; do
+  [ -z "${mid}" ] && continue
+  _log "  maintenance ${mid} (${mcron}) -> ${msched} state=${mstate} target=${mjob}"
+  sched_upsert "${msched}" "${mcron}" "${mjob}"
+  sched_set_state "${msched}" "${mstate}"
+done < <(read_maintenance_rows)
+
+# 7. The live-diff trigger ([live_diff] — P35.1a / SIG-OPS-005): a daily Cloud
+#    Scheduler job invoking the probe job with an args override, so the
+#    read-only reconciler rides the probe identity + alert seam without a new
+#    job. The `--message-body` carries the RunJobRequest overrides payload.
+_log "-- live-diff trigger (daily repo-vs-live reconcile) --"
+while IFS='|' read -r ldsched ldcron ldjob ldargs; do
+  [ -z "${ldsched}" ] && continue
+  _log "  ${ldsched} (${ldcron}) -> ${ldjob} args ${ldargs}"
+  sched_upsert "${ldsched}" "${ldcron}" "${ldjob}" "${ldargs}"
+done < <(read_live_diff_row)
+
+# 8. Publish the declaration bundle (SIG-OPS-005: config without an image
+#    roll) + report undeclared live triggers (listed, never deleted — the
+#    P35.1b fleet-hygiene leg owns deletions).
+_log "-- declaration bundle + undeclared-trigger report --"
+if [ "${SIG_GCP_MODE}" = "check" ]; then
+  _plan "sig-ops live-diff --emit-declared | gcloud storage cp - ${DECLARED_GCS_URI}  # cadence.toml + fleet images, content-hashed"
+  _plan "gcloud scheduler jobs list --location ${SIG_GCP_REGION}  # diffed against the declared trigger set; extras reported, not deleted"
+else
+  (cd "${_here}/../.." && uv run sig-ops live-diff --emit-declared) \
+    | gcloud storage cp - "${DECLARED_GCS_URI}" --content-type=application/json
+  _log "  declaration bundle published: ${DECLARED_GCS_URI} (cadence sha256 ${CADENCE_SHA256})"
+  declared="$(read_declared_triggers | sort -u)"
+  live="$(gcloud scheduler jobs list --location "${SIG_GCP_REGION}" \
+      --project "${SIG_GCP_PROJECT}" --format='value(name)' | sort -u)"
+  undeclared="$(comm -23 <(printf '%s\n' "${live}") <(printf '%s\n' "${declared}"))"
+  if [ -n "${undeclared}" ]; then
+    _log "  UNDECLARED live scheduler triggers (reported, not deleted — P35.1b owns the disposition):"
+    printf '%s\n' "${undeclared}" | sed 's/^/    /'
+  else
+    _log "  live trigger set matches cadence.toml — no undeclared triggers"
+  fi
+fi
 
 _log ""
 if [ "${SIG_GCP_MODE}" = "check" ]; then

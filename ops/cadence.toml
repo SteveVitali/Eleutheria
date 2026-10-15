@@ -460,6 +460,9 @@ note = "P26.5: pub-{tenant}.escribemeetings.com GetCalendarMeetings JSON webmeth
 id = "eyes_on_flock"
 cadence = "weekly"
 cron = "0 5 23 * 0"
+cron_or_semantics_ok = "P35.1b"     # RECORDED exception, not desired (F-280): dom+dow
+                                # restricted → cron OR-fires day 23 AND Sundays.
+                                # Correction to a clean weekly is P35.1b's sweep.
 job = "sig-ingest-eyes-on-flock"
 scheduler = "sig-sched-eyes-on-flock"
 note = "Weekly — the portal freshness stamp is days-stale (2026-09-15) so daily adds little. Cloudflare currently 403s programmatic egress — a recorded disappearance (SIG-INGEST-013), never defeated."
@@ -485,6 +488,10 @@ note = "Bounded opportunity search over the documented public API; key rides the
 id = "openstates"
 cadence = "weekly"
 cron = "0 5 2 * 2"
+cron_or_semantics_ok = "P35.1b"     # RECORDED exception, not desired (F-280): dom+dow
+                                # restricted → cron OR-fires day 2 AND Tuesdays —
+                                # the doubled fires spend a keyed API's quota.
+                                # Correction to a clean weekly is P35.1b's sweep.
 job = "sig-ingest-openstates"
 scheduler = "sig-sched-openstates"
 secrets = { SIG_OPENSTATES_KEY = "sig-openstates-key" }  # keyed live since P26.4 (2026-09-17)
@@ -496,6 +503,10 @@ note = "Bounded state-scoped bill queries over v3; key rides the X-API-KEY heade
 id = "congress_gov"
 cadence = "monthly"              # bill text/status churns mid-session; monthly refreshes latestAction
 cron = "0 5 3 * 2"               # day 3, 05:00 UTC — offset from the fbi_cde day-3 slot
+cron_or_semantics_ok = "P35.1b"      # RECORDED exception, not desired (F-280): dom+dow
+                                 # restricted → cron OR-fires day 3 AND every
+                                 # Tuesday — a weekly spend wearing a monthly
+                                 # label on a keyed API. Correction is P35.1b's.
 job = "sig-ingest-congress-gov"
 scheduler = "sig-sched-congress-gov"
 secrets = { SIG_DATA_GOV_KEY = "sig-data-gov-key" }  # the existing api.data.gov key (P26.4), HG-09
@@ -940,5 +951,149 @@ cron = "0 12 1 * *"              # day 1, 12:00 UTC — outside the 03:00-10:00Z
                                  # enter (G1's Sunday-09:00 sketch predates the
                                  # band rule); a fixed day beats GCP cron's
                                  # dom+dow OR semantics for "first Sunday".
+scheduler = "sig-sched-pg-logical-export"  # P35.1a: the Cloud Scheduler trigger
+                                 # deployed by scheduled-ops.sh — created and
+                                 # kept PAUSED (state below); a maintenance
+                                 # trigger is never enabled by the reconcile.
+state = "paused"                 # INERT: stays PAUSED until D-P34.6-2's
+                                 # verbatim in-ticket go — the trigger's target
+                                 # job is created by the go's leg, not here.
 procedure = "ops/gcp/logical-export.sh --apply export --go <verbatim in-ticket go>"
 note = "Monthly `gcloud sql export sql` of the sig database to gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/ — the logical export that lives OUTSIDE the Cloud SQL instance lifecycle (ADR-175). Queued under D-P34.6-2 until the first in-ticket go; P35.1a is the scheduler of record for the recurring trigger."
+
+# --- P35.1a (SIG-OPS-005 / SIG-SEC-008): the scheduler-of-record declarations --
+#
+# cadence.toml is the single source of scheduling truth (ADR-174): every row
+# above maps to a Cloud Scheduler trigger reconciled by scheduled-ops.sh, and
+# `sig-ops live-diff` reads this file as the declared side of the daily
+# repo-vs-live comparison. The sections below are the declaration halves that
+# comparison needs — all additive; existing readers ignore them.
+#
+# Cron semantics rule (enforced by `sig-ops cadence --check` and the live-diff
+# lint): a row restricting BOTH day-of-month and day-of-week is REJECTED —
+# cron OR-fires on both fields — unless the row sets `cron_or_semantics_ok`
+# with a note naming the owner of the recorded exception. The three rows above
+# carrying that flag are recorded P35.1b-queued corrections, not endorsements.
+
+# The Cloud Run job fleet image contract (SIG-SEC-008): every scheduled/manual
+# job and every service references the fleet repo BY DIGEST. `roll_record`
+# names the newest committed `roll-jobs --record` artifact — a job not held by
+# a [[pins]] row is expected on that record's per-job after_digest.
+[fleet]
+image_repo = "{ar_host}/{project}/sig/sig-api"   # {ar_host}={region}-docker.pkg.dev
+roll_record = "docs/build/reports/p31.7-hosted/roll_record.json"
+
+# Deliberate holds off the fleet digest — each with a reason and an expiry, so
+# a pin can never silently live forever. An expired pin is reported drift until
+# re-declared or swept. Digests are live-read values (2026-10-10).
+[[pins]]
+job = "sig-ingest-camreg-batch-05"
+image = "{ar_host}/{project}/sig/sig-api@sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2"
+reason = "D-P31.4-1: held on the per-capture-flush image for the recorded 2026-10-10 OSM replay observation — the sweep must not roll it before the read-back lands"
+expiry = "2026-11-15"  # future-ok: real-world: pin re-review deadline (a declared, bounded exception)
+
+# The declared-manual jobs ride their own deploy scripts (export.sh /
+# materialize.sh / the replay job's operator execute), not the fleet roll —
+# pinned at their live digests read 2026-10-10; re-declare at each roll.
+[[pins]]
+job = "sig-export"
+image = "{ar_host}/{project}/sig/sig-api@sha256:1cccde1acb63c12f3275c2c730b0e9896e31e5cb21313a1c669856c56ec835bf"
+reason = "manual job — deployed by ops/gcp/export.sh on its own cadence, not the fleet roll"
+expiry = "2027-01-15"  # future-ok: real-world: pin re-review deadline (a declared, bounded exception)
+
+[[pins]]
+job = "sig-materialize"
+image = "{ar_host}/{project}/sig/sig-api@sha256:e0674d95d56560e065857cbde45ad270c4177fa7b5fca5fbd3a2fb592170e268"
+reason = "manual job — deployed by ops/gcp/materialize.sh on the release cadence, not the fleet roll"
+expiry = "2027-01-15"  # future-ok: real-world: pin re-review deadline (a declared, bounded exception)
+
+[[pins]]
+job = "sig-replay-ingest"
+image = "{ar_host}/{project}/sig/sig-api@sha256:ad06e964a4119fc7c1135826114e2314bb1bbb8813d8d45b3d522a24823e6f99"
+reason = "manual job — the asserting replay host redeploys on its own legs (ADR-113), not the fleet roll"
+expiry = "2027-01-15"  # future-ok: real-world: pin re-review deadline (a declared, bounded exception)
+
+# The two services roll on their own legs (deploy.sh / publish-web), ahead of
+# the jobs fleet — their expected refs are declared here and re-declared at
+# each service roll. Digests are live-read values (2026-10-10).
+[[pins]]
+service = "sig-api"
+image = "{ar_host}/{project}/sig/sig-api@sha256:40a47da8c2cf8f68e84aede7e7e3f9f43a03ed823c83a9924d6535970354b722"
+reason = "the read API rolls on its own service leg (deploy.sh), ahead of the job fleet's roll record"
+expiry = "2027-01-15"  # future-ok: real-world: pin re-review deadline (a declared, bounded exception)
+
+[[pins]]
+service = "sig-web"
+image = "{ar_host}/{project}/sig/sig-web@sha256:d8244804eb4fa7db5b0ebe25f0177f4270409e3a6d5f484418efcd03b086ee2b"
+reason = "the static site runs its own pinned sig-web image (P32.13/P34.40 — nginx built into the AR repo), not the sig-api fleet repo"
+expiry = "2027-01-15"  # future-ok: real-world: pin re-review deadline (a declared, bounded exception)
+
+# Declared-manual jobs (G1-NEW-4): run by operator command, never by a
+# scheduler trigger. Every other live job must be cadence-owned or it is
+# reported as unlisted drift. `sa_class` names the iam_identities.toml class.
+[[manual_jobs]]
+job = "sig-export"
+sa_class = "export"
+secrets = { SIG_PG_PASSWORD = "sig-pg-password" }
+note = "the manual logical export host — `export.sh run` supplies its args (its baked args stay a refused exit-64 guard); no trigger by design"
+
+[[manual_jobs]]
+job = "sig-materialize"
+sa_class = "materialize"
+secrets = { SIG_PG_PASSWORD = "sig-pg-password" }
+note = "the read-model refresh job — run by materialize.sh on the release cadence; no trigger by design"
+
+[[manual_jobs]]
+job = "sig-replay-ingest"
+sa_class = "ingest"
+secrets = { SIG_PG_PASSWORD = "sig-pg-password" }
+note = "the asserting replay host (ADR-113) — operator-run via `gcloud run jobs execute --args`; a bare run exits 64 by design"
+
+# The daily drift check itself (SIG-OPS-005): one Cloud Scheduler trigger
+# invokes the sig-probe job with its args overridden to `live-diff --alert` —
+# the check rides the probe job's identity and alert path without a new job.
+# (The trigger fires on the deployed image; until a fleet roll carries the
+# live-diff verb its executions record honest failures — never masked.)
+[live_diff]
+scheduler = "sig-sched-live-diff"
+cron = "30 11 * * *"             # daily 11:30 UTC — outside the 03:00-10:00Z batch band
+job = "sig-probe"
+# The trigger's POST body carries a RunJobRequest overrides payload whose
+# containerOverrides[].args REPLACE the job's baked args — this exact JSON
+# array is what scheduled-ops.sh embeds and what live-diff compares.
+args = '["-c","exec sig-ops live-diff --live --alert"]'
+note = "runs `sig-ops live-diff` (repo declaration vs live) daily; drift fires the recorded-alert seam (P34.4/ADR-077)"
+
+# Declared bucket posture (the live-diff bucket leg): the four well-known
+# buckets keyed by suffix on {project}. `public` asserts the allUsers
+# objectViewer posture the compartment rules name (Part VIII: only the
+# published bytes are world-readable — sig-web's public posture flips off
+# under D-P34.3-1; sig-public stays public by design). `versioning` +
+# `noncurrent_days` assert the P34.3 retention contract; absent fields are not
+# compared (a row declares only what it means).
+[[buckets]]
+suffix = "sig-web"
+public = false                   # allUsers removed by D-P34.3-1's queued leg
+ubla = true                      # uniform bucket-level access — no ACL leakage
+versioning = true
+noncurrent_days = 30
+
+[[buckets]]
+suffix = "sig-public"
+public = true                    # the published compartment — world-readable bytes by design
+ubla = true
+versioning = true
+noncurrent_days = 30
+
+[[buckets]]
+suffix = "sig-restricted"
+public = false                   # PRIVATE — non-published compartments + ops rows
+ubla = true
+versioning = true
+noncurrent_days = 90
+
+[[buckets]]
+suffix = "sig-backups"
+public = false                   # PRIVATE — pg dumps + OCFL backup sync
+ubla = true
+# versioning/lifecycle on sig-backups is the queued D-P34.6-3 leg — not declared here.

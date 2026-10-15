@@ -699,3 +699,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-p
   go = '''none — read-only cert/NS reads'''
   rerun = '''implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P35.1a"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued in-ticket production-write leg: `scheduled-ops.sh --apply` reconciling Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED pg-logical-export + sig-sched-live-diff triggers and the declared-bundle publish), then the first in-band live-diff run; the diff is read-only — a 2026-10-10 live read recorded 28 findings honestly; no deferral opens'''
+gates_cell = '''hosted, production write; OM-20 conditional — GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go; AR-3 + AR-2 — the next weekday 14:00-20:00Z slot with the operator present, prestate first (excluded hours: weekends and outside-14:00-20:00Z); the 2026-10-10 Saturday dispatch sat outside — queued, never fabricated'''
+operator_cell = '''none beyond the window — agent-runnable inside AR-3 with AR-2 prestate; rollback = revert the cadence row + re-run scheduled-ops'''
+rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266; mutation leg queued on AR-3)'''
+
+  [[row.legs]]
+  id = "P35.1a-live-scheduled-ops"
+  obligations = []
+  earliest = '''the next weekday 14:00-20:00Z slot with the operator present (AR-3), after the AR-2 prestate capture'''
+  excluded = ["weekends and outside-14:00-20:00Z"]
+  go = '''pre-authorised: GATE-G4 OM-20 11B list (P35.1a named — deploy scheduled-ops + the first live-diff run; expires GATE-G5); the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go'''
+  rerun = '''implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true'''
+  live_dependants = ["P35.1b"]

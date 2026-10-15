@@ -24,6 +24,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Scheduler of record: `ops/cadence.toml` + `sig-ops live-diff`** (P35.1a;
+  cites SIG-OPS-006, SIG-OPS-011; ADR-174) — Cloud Scheduler + the committed
+  `ops/cadence.toml` become the repository-owned scheduler of record, and a
+  new read-only `sig-ops live-diff` reconciles declaration against live
+  production: Cloud Scheduler triggers (schedule/state/body), Cloud Run
+  jobs and services (image digest, service account, env/secret wiring),
+  undeclared live jobs (`[[manual_jobs]]` is the only legitimate
+  trigger-less job), and bucket posture (UBLA, versioning, lifecycle,
+  public access). `cadence --check` now lints cron syntax **and semantics**
+  — simultaneous day-of-month/day-of-week restrictions (cron ORs them)
+  refuse unless the row names its exception owner via
+  `cron_or_semantics_ok`; `[[pins]]` enforce digest-pinned images with a
+  required `reason` + `expiry` per exception (tags and expired pins are
+  drift). `scheduled-ops.sh` reconciles triggers from cadence (paused
+  maintenance rows stay declared-but-paused), stamps
+  `SIG_OPS_CADENCE_SHA256`, publishes the declaration bundle to restricted
+  GCS, and **reports** undeclared triggers rather than deleting them
+  (P35.1b owns the deletion pass). The daily `sig-sched-live-diff` trigger
+  and the paused `sig-sched-pg-logical-export` are declared; the GitHub
+  Actions `reingest.yml` schedule is retired (manual `workflow_dispatch`
+  stays inert). The scheduler apply leg queues in RETURN PASS (operator
+  ADC + AR-3 window); the read-only live run already landed real evidence —
+  28 findings, exit 1, never claimed as clean.
 - **Post-DNS cut-over probe: `sig-ops post-cutover-probe`** (P35.67;
   cites SIG-OPS-006, SIG-OPS-011) — the read-only verification the
   operator's OP-09 nameserver switch must satisfy: a `sig.probe-run/1`

@@ -136,3 +136,13 @@ triggers) plus 88 Cloud Run jobs, and the GitHub `reingest.yml` workflow failed 
 ADR-016's scheduler clause; P35.1a appends that status line here in its own PR (plan §7, S6R-24). P34.4
 disables the GitHub `reingest` schedule (QA-8) and P35.1b consolidates the scheduler (B-13). The decision
 above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Qualified by ADR-174 (2026-10-10, P35.1a) — the scheduling path
+- **Status note (2026-10-10, Round-11 P35.1a):** the SEED-11 trigger evaluation above fired on the free
+  GitHub Actions scheduler this ADR chose. ADR-174 moves the carrier to Cloud Scheduler declared by
+  `ops/cadence.toml` (the `reingest.yml` `schedule:` block was already removed under P34.4; the remaining
+  `workflow_dispatch` is inert — it has no Cloud SQL path and gets no DSN). The cadence-vs-etiquette design
+  itself stands: `sig-orchestration due`/`record` remain the cadence engine, the PoliteFetcher etiquette
+  rules unchanged; only the scheduler that invokes them moved. The body above is unchanged (SIG-ENG-003).

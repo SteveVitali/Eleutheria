@@ -282,7 +282,9 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
     # The services' identities are NOT this leg's.
     assert "service-accounts create sig-api-rt" not in flat
     # (2) least-privilege bindings per class; the conditioned grant present.
-    assert flat.count("projects add-iam-policy-binding") == 4
+    # P35.1a adds the probe runtime's two live-diff viewers (run.viewer +
+    # cloudscheduler.viewer — SIG-OPS-005, ADR-174): 4 -> 6.
+    assert flat.count("projects add-iam-policy-binding") == 6
     assert "--condition-title=p34-42b-capture-rewrite" in flat
     assert "objects/evidence/captures/" in flat
     # Five job-only secrets drop the default-compute accessor.
@@ -369,7 +371,23 @@ def _post_jobs_snapshot(decl, cadence, job_map) -> Snapshot:
             "role": "roles/storage.objectViewer",
             "members": [f"serviceAccount:{emails['sig-web-rt']}", "allUsers"],
         }
+    ] + [
+        # P35.1a: declared sig-web bucket roles beyond the web-rt reader grant
+        # (the probe runtime's live-diff legacyBucketReader).
+        {"role": b.role, "members": [f"serviceAccount:{emails[b.service_account]}"]}
+        for b in decl.bucket_roles
+        if b.bucket == "sig-web"
     ]
+    other_bucket_policies: dict[str, dict] = {}
+    for b in decl.bucket_roles:
+        if b.bucket in ("sig-restricted", "sig-web"):
+            continue
+        other_bucket_policies.setdefault(b.bucket, {"bindings": []})["bindings"].append(
+            {
+                "role": b.role,
+                "members": [f"serviceAccount:{emails[b.service_account]}"],
+            }
+        )
     secret_policies = {}
     for s in decl.secrets:
         members = [
@@ -412,6 +430,7 @@ def _post_jobs_snapshot(decl, cadence, job_map) -> Snapshot:
         bucket_policies={
             "sig-restricted": {"bindings": restricted_bindings},
             "sig-web": {"bindings": web_bindings},
+            **other_bucket_policies,
         },
         secret_policies=secret_policies,
         service_describes={},
@@ -803,21 +822,41 @@ def test_jobs_leg_offline_verify_from_state(tmp_path: Path, decl, cadence, job_m
             }
         restricted.append(binding)
     (state / "bucket-sig-restricted-iam.json").write_text(json.dumps({"bindings": restricted}))
-    (state / "bucket-sig-web-iam.json").write_text(
-        json.dumps(
-            {
-                "bindings": [
-                    {
-                        "role": "roles/storage.objectViewer",
-                        "members": [
-                            f"serviceAccount:{emails['sig-web-rt']}",
-                            "allUsers",
-                        ],
-                    }
-                ]
-            }
+    web_iam = [
+        {
+            "role": "roles/storage.objectViewer",
+            "members": [
+                f"serviceAccount:{emails['sig-web-rt']}",
+                "allUsers",
+            ],
+        }
+    ] + [
+        # P35.1a: the probe runtime's live-diff legacyBucketReader on sig-web.
+        {"role": b.role, "members": [f"serviceAccount:{emails[b.service_account]}"]}
+        for b in decl.bucket_roles
+        if b.bucket == "sig-web"
+    ]
+    (state / "bucket-sig-web-iam.json").write_text(json.dumps({"bindings": web_iam}))
+    # P35.1a: the remaining declared buckets carry the probe reader grant.
+    seen_other: set[str] = set()
+    for b in decl.bucket_roles:
+        if b.bucket in ("sig-restricted", "sig-web") or b.bucket in seen_other:
+            continue
+        seen_other.add(b.bucket)
+        (state / f"bucket-{b.bucket}-iam.json").write_text(
+            json.dumps(
+                {
+                    "bindings": [
+                        {
+                            "role": x.role,
+                            "members": [f"serviceAccount:{emails[x.service_account]}"],
+                        }
+                        for x in decl.bucket_roles
+                        if x.bucket == b.bucket
+                    ]
+                }
+            )
         )
-    )
     for s in decl.secrets:
         members = [
             f"serviceAccount:{emails[c]}"

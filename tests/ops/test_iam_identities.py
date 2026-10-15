@@ -114,11 +114,15 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     # the P34.44b scheduled probe may still land on the same identity).
     assert [o.service_account for o in decl.oneoffs] == ["sig-quality-probe-rt"]
     # The project grants are the P34.42a services set plus the exec leg's
-    # Cloud SQL client binding on sig-quality-probe-rt (P34.43).
+    # Cloud SQL client binding on sig-quality-probe-rt (P34.43); P35.1a adds
+    # the two read-only viewers the live-diff leg needs on the probe runtime
+    # (roles/run.viewer + roles/cloudscheduler.viewer — SIG-OPS-005, ADR-174).
     assert [(r.service_account, r.role) for r in decl.project_roles] == [
         ("sig-api-rt", "roles/cloudsql.client"),
         ("sig-ingest-rt", "roles/cloudsql.client"),
         ("sig-probe-rt", "roles/cloudsql.client"),
+        ("sig-probe-rt", "roles/run.viewer"),
+        ("sig-probe-rt", "roles/cloudscheduler.viewer"),
         ("sig-export-rt", "roles/cloudsql.client"),
         ("sig-materialize-rt", "roles/cloudsql.client"),
         ("sig-quality-probe-rt", "roles/cloudsql.client"),

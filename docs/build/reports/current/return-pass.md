@@ -38,5 +38,6 @@
 | P35.57 | the queued API-roll leg (the ticket's only live requirement — the in-ticket pause): mount the current promoted release's registry on `sig-api` (`SIG_RELEASE_REG… | `implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (scope: the mount + roll + verification) · landed as row 261 (PR #26… |
 | P35.5 | the queued R2-mirror leg (the ticket's only live stage): enable the committed-disabled ops/mirrors.toml r2-public row, configure the R2 bucket + CDN custom doma… | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (scope: the queued R2 push + origin-enable leg) · landed a… |
 | P35.67 | the queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`; docs/build/reports/POST_CUTOVER_PROBE_CHECKLIST.md) after OP-09 + the L2 cert-renew… | `implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` · landed row 263 (PR #265 — legs queued on OP-09) |
+| P35.1a | the queued in-ticket production-write leg: `scheduled-ops.sh --apply` reconciling Cloud Scheduler from ops/cadence.toml (incl. the inert PAUSED pg-logical-expor… | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed row 264 (PR #266; mutation leg queued … |
 
 ← back: CURRENT.md
