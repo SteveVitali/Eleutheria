@@ -818,3 +818,110 @@ rerun_cell = '''`implement-spec spec=docs/tickets/275_P35.15b__technology-backfi
   go = '''pre-authorised: GATE-G4 OM-20 approve-all-19 names this row verbatim (INSERT-only claim backfill; expires at GATE-G5, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P36.12"
+kind = "leg"
+obligations = []
+obligations_cell = '''Wave-B sequence L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported'''
+gates_cell = '''hosted production write, never pre-authorised; in-window only: excluded outside-14:00-20:00Z, outside 2026-10-26 → 2026-11-05, AR-3 freeze/cut day, sig-materialize or G2 slot active, the 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` green per leg'''
+operator_cell = '''record OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0|…|L10 --inputs <json>` (no-go → 42); flips are HG-03'''
+rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.12-l0-wave-open"
+  obligations = []
+  earliest = '''2026-10-26 — the Wave-B window opens; the first admissible slot is a window day inside the band with the verbatim ING-GO-B recorded, AR-2 `SUCCESSFUL`, the OM-14 pre-state captured and `cadence --check` green'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: ING-GO-B (the GATE DECISIONS 2026-10-15T15:26Z recording, byte-exact — a re-entry re-collects it verbatim) + `sig-ops wave-b-gate --inputs <json>` admit go (exit 0) on fresh recorded inputs'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l1-acq08-layers-family-day"
+  obligations = []
+  earliest = '''after L0 green inside the same window — the ACQ-08 (P36.4) family day: the eight `r11-layers-01` gated members + the Denver HALO / Seattle CCTV widen executions on their existing seats, serial, verified between'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0 recorded green, the family's OP-26 flips recorded executed (`flips.L1`), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l2-acq09-flock-layers-family-day"
+  obligations = []
+  earliest = '''the next window day after L1 — the ACQ-09 (P36.5) family day: the fifteen `r11-layers-02` gated members (FDOT inventory + removal-status same-run), serial, verified between'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L1 green or held-reported, `flips.L2` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l3-acq10-ate-family-day"
+  obligations = []
+  earliest = '''the next window day after L2 — the ACQ-10 (P36.6) family day: the nine `r11-ate-01` gated members + the two Chicago aggregate widen executions on `camreg_chicago_il`'s seat; `enforcement_count` registered+verified in hosted `vocab_*` first'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L2 green or held-reported, `flips.L3` recorded executed, the hosted `vocab_enforcement_count` registration recorded (the L3 vocab gate), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l4-acq11-procurement-family-day"
+  obligations = []
+  earliest = '''the next window day after L3 — the ACQ-11 (P36.7) family day: the three `r11-procurement-01` gated registers; may share a day with ACQ-15 only; on 2026-10-29 the peel-on first fire is recorded cleared first'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active", "the 2026-10-29 peel-on first fire uncleared"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L3 green or held-reported, `flips.L4` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l5-acq12-disclosures-01-family-day"
+  obligations = []
+  earliest = '''the next window day after L4 — the ACQ-12 (P36.8) family day: the ten `r11-disclosures-01` `statrep_*` ALPR-regime members, serial, verified between'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L4 green or held-reported, `flips.L5` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l6-acq13-disclosures-02-family-day"
+  obligations = []
+  earliest = '''the next window day after L5 — the ACQ-13a+13b (P36.9a+P36.9b) family day: the sixteen `r11-disclosures-02` members, serial, verified between'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L5 green or held-reported, `flips.L6` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l7-acq14-documents-family-day"
+  obligations = []
+  earliest = '''the next window day after L6 — the ACQ-14 (P36.10) family day: the sixteen gated `r11-documents-01` members + the six already-registered `ccops_*` rows (flips on this leg's list, single-source on the documents job)'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L6 green or held-reported, `flips.L7` recorded executed (gated + the six hosted rows), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l8-acq15-documents-family-day"
+  obligations = []
+  earliest = '''the next window day after L7 — the ACQ-15 (P36.11) family day: the twelve `r11-documents-01` members + the two OpenStates bill widen executions on `sig-ingest-openstates`; may share a day with ACQ-11 only'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L7 green or held-reported, `flips.L8` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l9-flock-portal-probe"
+  obligations = []
+  earliest = '''after L1–L8 green or held-reported inside the window — the P36.74 probe leg (WV-10/ADR-188): one polite request per committed portal (917), stop-and-record on any challenge; every outcome lands in the `sig.probe-run/1` record'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L8 green or held-reported, `flips.L9` recorded executed (`flock_transparency_portals`' single flag), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
+
+  [[row.legs]]
+  id = "P36.12-l10-close-materialize-resume"
+  obligations = []
+  earliest = '''after L9 inside the window — `sig-materialize` manually (outside ingest runs) → the coverage-delta read against the pre-wave snapshot → resume the seven paused `sig-sched-r11-*` triggers; each batch's next fire computed + recorded at resume (the four dom-16…19 fires land 11-16…19 inside Wave C's pause and carry FEA-15 dispositions)'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-10-26 → 2026-11-05", "AR-3 freeze/cut day", "sig-materialize or G2 slot active"]
+  go = '''verbatim-go: the ordered-prefix gate — L0–L9 green or held-reported, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
+  live_dependants = ["P36.72b"]
