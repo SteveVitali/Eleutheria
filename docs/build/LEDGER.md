@@ -1,6 +1,6 @@
 # SIG — build ledger (orchestrate-build machine state; committed build memory v2, ADR-073)
 <!-- Archived head lines byte-for-byte (the comments7/9/8/10/12 fold pointers + the pre-P36.10 State-line pointer, comments13 fold) → docs/build/reports/memory-repair/LEDGER_head_comments13_pre-P36.10.txt (sha256 2b182107cc19975d…) — P36.10 post-closeout record (orient >48 KiB, BM-LEDGER-08). -->
-<!-- Archived head lines byte-for-byte (the comments3/4/5 State-line pointers + the pre-record State line, comments14 fold) → docs/build/reports/memory-repair/LEDGER_head_comments14_pre-P35.66.txt (sha256 7a5f7ef7127e1eb3…) — P35.66 post-closeout record (BM-LEDGER-08). -->
+<!-- Archived head lines byte-for-byte (comments3/4/5 pointers + pre-record State line + its pointer, comments14 fold) → docs/build/reports/memory-repair/LEDGER_head_comments14_pre-P35.66.txt (sha256 3bc4b4e6e068ee58…; BM-LEDGER-08). -->
 
 > **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; the clause text is archived byte-for-byte (comment above) and binds unchanged; per-ticket subset: manifest `## Operating rules`. Prior modes archived (comments5/6/7 folds).
 >
