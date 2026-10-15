@@ -392,3 +392,143 @@ def test_committed_packet_is_untouched_by_the_run(proof: dict) -> None:
         import hashlib
 
         assert hashlib.sha256(p.read_bytes()).hexdigest() == art["sha256"], art["path"]
+
+
+# ---------------------------------------------------------------------------
+# V7 — API parity (P35.57, G3 §6.4, SIG-REL-010)
+# ---------------------------------------------------------------------------
+
+_PUB_T = "p-" + "c" * 64
+
+
+def _mini_release(
+    root: Path, pub: str, *, docs: dict[str, dict] | None = None, dossier_pages: int = 0
+) -> tuple[Path, list[dict]]:
+    """A minimal on-disk release tree + manifest artifacts for the V7 check —
+    the check reads paths from the artifact list and bytes from the tree."""
+    import hashlib
+
+    release_dir = root / "release"
+    artifacts: list[dict] = []
+
+    def emit(rel: str, obj) -> None:
+        data = json.dumps(obj, sort_keys=True).encode()
+        p = release_dir / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+        artifacts.append(
+            {
+                "path": rel,
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "byte_size": len(data),
+                "compartment": "sig_graph",
+                "license": "CC-BY-4.0",
+            }
+        )
+
+    emit(
+        f"releases/{pub}/descriptor.json",
+        {"schema": "sig.publication-descriptor/1", "publication_id": pub},
+    )
+    for i in range(dossier_pages):
+        emit(f"r/{pub}/dossier/d{i}/index.html", f"<html>d{i}</html>")
+    for doc_rel, body in (docs or {}).items():
+        emit(doc_rel, body)
+    return release_dir, artifacts
+
+
+def _slice_index(pub: str, paths: list[str], routes: list[str] | None = None) -> dict:
+    routes = routes or ["/v1/export"] * len(paths)
+    return {
+        "schema": "sig.api-slice/1",
+        "publication_id": pub,
+        "documents": [{"route": r, "path": p} for r, p in zip(routes, paths, strict=True)],
+    }
+
+
+def test_api_parity_deferred_on_a_pre_slice_release(proof: dict) -> None:
+    """The committed candidate carries no api slice and no dossier pages —
+    the check records the gap honestly (owner+landing), never a refusal of a
+    release that predates the contract and binds no parity surfaces."""
+    chk = _check(proof, "PF.api_parity")
+    assert chk["status"] == "deferred"
+    assert chk["owner"] and chk["landing"]
+
+
+def test_api_parity_passes_on_a_complete_slice(tmp_path: Path) -> None:
+    api = f"r/{_PUB_T}/api"
+    docs = {
+        f"{api}/index.json": _slice_index(
+            _PUB_T, [f"{api}/export.json", f"{api}/dossier/jurisdiction/okc.json"]
+        ),
+        f"{api}/export.json": {"exports": []},
+        f"{api}/dossier/jurisdiction/okc.json": {
+            "scope": "jurisdiction:okc",
+            "release": {"publication_id": _PUB_T},
+        },
+    }
+    release_dir, artifacts = _mini_release(tmp_path, _PUB_T, docs=docs)
+    chk = rpv.api_parity_check(release_dir, _PUB_T, artifacts)
+    assert chk["status"] == "pass"
+    assert len(chk["evidence"]["documents"]) == 2
+
+
+def test_api_parity_refuses_dossier_pages_with_no_slice(tmp_path: Path) -> None:
+    release_dir, artifacts = _mini_release(tmp_path, _PUB_T, dossier_pages=2)
+    with pytest.raises(rpv.PublishVerificationError, match="api-slice"):
+        rpv.api_parity_check(release_dir, _PUB_T, artifacts)
+
+
+def test_api_parity_refuses_slice_files_with_no_index(tmp_path: Path) -> None:
+    release_dir, artifacts = _mini_release(
+        tmp_path, _PUB_T, docs={f"r/{_PUB_T}/api/export.json": {"exports": []}}
+    )
+    with pytest.raises(rpv.PublishVerificationError, match="no .*index"):
+        rpv.api_parity_check(release_dir, _PUB_T, artifacts)
+
+
+def test_api_parity_refuses_an_unpinned_document(tmp_path: Path) -> None:
+    api = f"r/{_PUB_T}/api"
+    docs = {
+        f"{api}/index.json": _slice_index(_PUB_T, [f"{api}/phantom.json"]),
+        f"{api}/phantom.json": {"x": 1},
+    }
+    release_dir, artifacts = _mini_release(tmp_path, _PUB_T, docs=docs)
+    # Drop the doc's manifest pin — the file exists but is not pinned.
+    artifacts = [a for a in artifacts if a["path"] != f"{api}/phantom.json"]
+    with pytest.raises(rpv.PublishVerificationError, match="not pinned"):
+        rpv.api_parity_check(release_dir, _PUB_T, artifacts)
+
+
+def test_api_parity_refuses_a_wrong_publication_index(tmp_path: Path) -> None:
+    api = f"r/{_PUB_T}/api"
+    docs = {
+        f"{api}/index.json": _slice_index("p-" + "9" * 64, []),
+    }
+    release_dir, artifacts = _mini_release(tmp_path, _PUB_T, docs=docs)
+    with pytest.raises(rpv.PublishVerificationError, match="names publication"):
+        rpv.api_parity_check(release_dir, _PUB_T, artifacts)
+
+
+def test_api_parity_refuses_dossier_pages_the_slice_does_not_cover(
+    tmp_path: Path,
+) -> None:
+    api = f"r/{_PUB_T}/api"
+    docs = {
+        f"{api}/index.json": _slice_index(_PUB_T, [f"{api}/export.json"]),
+        f"{api}/export.json": {"exports": []},
+    }
+    release_dir, artifacts = _mini_release(tmp_path, _PUB_T, docs=docs, dossier_pages=1)
+    with pytest.raises(rpv.PublishVerificationError, match="no api/dossier"):
+        rpv.api_parity_check(release_dir, _PUB_T, artifacts)
+
+
+def test_api_parity_refuses_a_foreign_release_stamp(tmp_path: Path) -> None:
+    api = f"r/{_PUB_T}/api"
+    docs = {
+        f"{api}/index.json": _slice_index(_PUB_T, [f"{api}/export.json"]),
+        f"{api}/export.json": {"exports": [], "release": {"publication_id": "p-" + "9" * 64}},
+    }
+    release_dir, artifacts = _mini_release(tmp_path, _PUB_T, docs=docs)
+    with pytest.raises(rpv.PublishVerificationError, match="embeds release"):
+        rpv.api_parity_check(release_dir, _PUB_T, artifacts)

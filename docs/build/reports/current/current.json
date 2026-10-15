@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "dc734cd7e5fd42e0062f8f8dbf8c52969d87e3cc",
-  "manifest_inputs": 1002,
+  "input_commit": "2e60c8c91e4fdf35cc445f4a1d37632782b06828",
+  "manifest_inputs": 1003,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.57",
-    "lastCompleted": "GATE-G4",
+    "nextTicket": "P35.5",
+    "lastCompleted": "P35.57",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.17, P34.18, P34.21a, P34.21b, P34.38, P34.39a, P34.39b, P34.40, P34.42a, P34.42b, P34.43, P34.44b, P34.45, P34.46, P34.47, P34.49, P34.50",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.57",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.47-sub-round-11a-acceptance",
+    "chainTip": "r11/P35.57-api-release-parity",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-09T15:18Z"
+    "updatedAt": "2026-10-10T00:14Z"
   },
   "counts": {
-    "obligations": 160,
-    "owed": 89,
-    "open": 86,
+    "obligations": 161,
+    "owed": 90,
+    "open": 87,
     "partial": 3,
     "terminal": 71,
-    "events": 646,
+    "events": 647,
     "transitions": 32,
     "coverage_assessments": 309,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 31,
+    "return_pass_rows": 32,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8093,6 +8093,56 @@
           "recorded_at": "2026-10-08"
         }
       ]
+    },
+    {
+      "id": "D-P35.57-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.57-1:e0",
+      "kind": "F",
+      "owner": "the release-file toolchain rows (the REL-09/REL-07 family — the api-slice emission belongs beside the release layout/dossier emitters; orchestrator routes the home)",
+      "landing": "the first release candidate cut that stages site-visible dossier pages (any release whose r/<pub>/dossier/*/index.html artifacts exist must also carry the covering sig.api-slice/1 slice, else V7 refuses it)",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "Emit the `sig.api-slice/1` document set into every release — the machine-readable JSON twins of the site-visible answers under `r/<pub>/api/` (`export`, `changes`, `sources`, `dossier/<scope path>`, `coverage/<scope path>`) plus the `index.json` declaration V7 verifies",
+      "unblocked_by": "owner: the release-file toolchain rows (the REL-09/REL-07 family — the api-slice emission belongs beside the release layout/dossier emitters; orchestrator routes the home) · trigger: the first release candidate cut that stages site-visible dossier pages (any release whose `r/<pub>/dossier/*/index.html` artifacts exist must also carry the covering slice, else V7 refuses it)",
+      "verify": "a staged candidate whose `r/<pub>/api/index.json` declares `sig.api-slice/1` passes `release_publish_verify.preflight` with `PF.api_parity` status `pass`, and an API mounted on that registry answers `GET /v1/export` + a dossier scope from release bytes with `X-SIG-Basis: release`",
+      "proxy": "V7 already fails closed on an unservable promotion (dossier pages with no slice → refused; slice files with no index → refused; unpinned/foreign-stamped documents → refused), and the committed fixture registry `tests/api/fixtures/release_registry/` exercises the whole serving contract (`tests/api/test_api_release_parity.py`); no release can silently ship unservable site answers",
+      "line": 1251,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.57-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.57-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.57",
+          "owner": "the release-file toolchain rows (the REL-09/REL-07 family — the api-slice emission belongs beside the release layout/dossier emitters; orchestrator routes the home)",
+          "landing": "the first release candidate cut that stages site-visible dossier pages (any release whose r/<pub>/dossier/*/index.html artifacts exist must also carry the covering sig.api-slice/1 slice, else V7 refuses it)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/261_P35.57__api-release-parity.md",
+            "api/src/api/release_serving.py",
+            "ops/src/ops/release_publish_verify.py",
+            "tests/api/test_api_release_parity.py",
+            "tests/api/fixtures/release_registry/"
+          ],
+          "observed_at": "2026-10-09",
+          "source_commit": "41892218acce439778469368f580109451f0ff00",
+          "reason": "migration anchor appended by P35.57 (row 261) for the deferral row it added — the sig.api-slice/1 emission gap: the release-backed serving path and the V7 PF.api_parity preflight landed this row, but no release emitter writes r/<pub>/api/ documents yet, so PF.api_parity records deferred on pre-slice releases and the release-backed routes answer honest absences until a candidate under the contract is cut; appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1251,
+            "row_sha256": "5a955f86763d1f7bf398c991bd7ad19a86a02359d08b6360c83974d0f020b12b",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-09"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -8388,6 +8438,14 @@
         "gates_cell": "hosted, read-only — `sig-ops acceptance-sweep --check` refuses (exit 42) until P34.46's L2 deploy leg has landed live, which itself needs the operator's verbatim in-ticket go recorded in GATE DECISIONS, `live:P34.39a` verdict pass, a weekday 14:00-20:00Z slot no earlier than 2026-10-14T14:00Z and `sig-ops roll-gate` green on fresh inputs; exit item 5 additionally waits on P34.46's L3 soak read (48 h after L2); a missing handle list means RI-01 reports not checked, never passed; GATE-G4 is not presented while any leg is due (OM-19)",
         "operator_cell": "nothing until P34.46's L2 has landed — the sweep itself needs no go (read-only); the packet is presented by the orchestrator at row 260 (GATE-G4) only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (scope: the sweep and the packet) · landed as row 259 (sweep leg queued exit 42 — the gate's refusals are the recorded evidence)",
+        "obligations": []
+      },
+      {
+        "key": "P35.57",
+        "obligations_cell": "the queued API-roll leg (the ticket's only live requirement — the in-ticket pause): mount the current promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY=/mnt/rel/registry`, GCSFuse `r/` slice) and roll the image to a new Cloud Run revision, then verify the new revision serves traffic and `/v1/health` names the promoted release; the engineered halves landed (ReleaseServingStore verified api-slice reads + basis disclosure + V7 api-parity preflight, PR #263 five-check green); no deferral of its own opens — the api-slice-emission deferral this run records has its own home in the toolchain rows",
+        "gates_cell": "hosted production write, never pre-authorised (IN-TICKET PAUSE — it changes public API response bytes): the verbatim in-ticket go is already recorded (GATE-G4 §2, \"Grant the go now\", 2026-10-09T17:32Z) but the leg still needs its real preconditions — `sig-api` deployed and serving (live:P34.46 L2 landed; its L3 soak is the standing read), the release-registry mount actually configured on the service (`SIG_RELEASE_REGISTRY` + the `r/` slice present — absent at run time), a promoted release in the registry bucket, an AR-2 backup SUCCESSFUL, `sig-ops roll-gate` green on fresh inputs, and an AR-3 weekday slot (the excluded hours: weekends and outside-14:00-20:00Z)",
+        "operator_cell": "the GATE-G4 §2 go is on record; the operator runs (or re-authorises) the roll in the slot — mount config, image roll, revision-serving + `/v1/health` verification — and be present; a failed health read rolls back, never leaves a half-mounted revision serving",
+        "rerun_cell": "`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (scope: the mount + roll + verification) · landed as row 261 (PR #263 — engineering green; the live leg queued on absent deployment prerequisites)",
         "obligations": []
       }
     ]
@@ -12940,8 +12998,8 @@
           "label": "historical/csv"
         },
         "SIG-REL-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "api/src/api/release_serving.py;api/src/api/routes.py;api/src/api/basis_middleware.py;api/src/api/app.py;ops/src/ops/release_publish_verify.py;docs/build/runs/P35.57.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18388,10 +18446,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "8ea751e496909a7cb29285350fd4f61830daa7efb843647cd933b66377ea17e1",
+  "manifest_sha256": "a16743be8b7055e457902fb73c10125596bd91ae55a5edc72f68b7193525ec06",
   "current_md": {
     "lines": 63,
-    "bytes": 15433,
+    "bytes": 15425,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

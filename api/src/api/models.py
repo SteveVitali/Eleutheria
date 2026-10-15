@@ -330,6 +330,12 @@ class HealthResponse(_Model):
     backend: str  # "postgresql" | "in-memory"
     detail: str = ""
     pool: dict[str, int] | None = None
+    # P35.57 / SIG-REL-010 (G3 §6.3): the service names the promoted release it
+    # serves, the code commit and the image digest — None means not pinned,
+    # never a fabricated value.
+    release: dict[str, str] | None = None
+    code_commit: str | None = None
+    image: str | None = None
 
 
 class CrosswalkRow(_Model):

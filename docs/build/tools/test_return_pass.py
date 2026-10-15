@@ -246,7 +246,7 @@ def make_tree(
     if region is None:
         region = render_fixture_region(map_text)
     if rp_value is None:
-        rp_value = "P9.9, P9.10"
+        rp_value = "P9.9,P9.10"
     files = {
         "docs/build/LEDGER.md": LEDGER_TEMPLATE.format(rp=rp_value, region=region),
         MAP_REL: map_text.lstrip("\n"),

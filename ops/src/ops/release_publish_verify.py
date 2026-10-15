@@ -70,6 +70,7 @@ from typing import Any
 
 from api.intake import create_intake_app, intake_operational
 from api.release_search import ReleaseSearchStore
+from api.release_serving import API_SLICE_SCHEMA
 from exports.release import (
     ReleaseError,
     ReleaseRegistry,
@@ -317,6 +318,161 @@ def _integrity_manifest(release_dir: Path) -> dict[str, Any]:
     return _read_json(manifests[0])
 
 
+def api_parity_check(
+    release_dir: Path,
+    publication_id: str,
+    artifacts: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """The V7 API-parity check (G3 §6.4 / REL-05, landed by P35.57): a
+    promotion that moves the site to a release the API cannot serve is
+    refused.
+
+    The API serves the release's ``sig.api-slice/1`` document set — the
+    machine-readable twins of the site-visible answers — from
+    ``r/<pub>/api/``. The check refuses the promotion when:
+
+    * the slice index ``r/<pub>/api/index.json`` names a schema other than
+      ``sig.api-slice/1`` or a ``publication_id`` other than this release's;
+    * a declared document ``path`` lies outside ``r/<pub>/api/``, is not a
+      manifest-pinned artifact, is missing on disk, is not a JSON object, or
+      embeds a ``release.publication_id`` that is not this release's;
+    * the release stages dossier pages (``r/<pub>/dossier/*/index.html`` —
+      answers the site shows) but the slice declares no ``api/dossier/``
+      documents to serve them;
+    * ``api/`` artifacts exist without the index that declares them.
+
+    A release carrying no api-slice at all (and no parity-bound dossier
+    pages) is recorded ``deferred``, never silently: the api-slice emission
+    lands with the release-file toolchain rows, and until it does the
+    release-backed routes answer honest absences (404 unknown scope /
+    503 release_artifact_absent), never placeholders.
+    """
+    api_root = f"r/{publication_id}/api"
+    index_rel = f"{api_root}/index.json"
+    artifact_paths = {str(a.get("path")) for a in artifacts}
+    dossier_pages = sorted(
+        p
+        for p in artifact_paths
+        if p.startswith(f"r/{publication_id}/dossier/") and p.endswith("/index.html")
+    )
+    slice_files = sorted(p for p in artifact_paths if p.startswith(f"{api_root}/"))
+    if index_rel not in artifact_paths:
+        if slice_files:
+            raise PublishVerificationError(
+                f"release {publication_id} stages {len(slice_files)} api-slice "
+                f"file(s) under {api_root}/ but no {index_rel} declaring them — "
+                "an undeclared slice is unservable (V7, G3 §6.4)"
+            )
+        if dossier_pages:
+            raise PublishVerificationError(
+                f"release {publication_id} stages {len(dossier_pages)} dossier "
+                "page(s) the site shows but carries no sig.api-slice/1 index — "
+                "the API cannot serve those answers; promotion refused "
+                "(V7, G3 §6.4)"
+            )
+        return _check(
+            "PF.api_parity",
+            "deferred",
+            "the release carries no sig.api-slice/1 index and no parity-bound "
+            "dossier pages — the release-backed routes would answer honest "
+            "absences for it; the api-slice emission lands with the "
+            "release-file toolchain",
+            owner="the release-file toolchain (exports/web api-slice emission — D-P35.57-1)",
+            landing="the first release candidate cut under the sig.api-slice/1 contract",
+        )
+    # The index is a manifest artifact, but read the on-disk bytes so a
+    # malformed declaration refuses with its own name.
+    index_path = release_dir / index_rel
+    if not index_path.is_file():
+        raise PublishVerificationError(f"{index_rel} is manifest-pinned but absent on disk")
+    try:
+        index = _read_json(index_path)
+    except ValueError as exc:
+        raise PublishVerificationError(
+            f"{index_rel} is not parseable JSON — the API cannot serve it"
+        ) from exc
+    if not isinstance(index, dict) or index.get("schema") != API_SLICE_SCHEMA:
+        raise PublishVerificationError(f"{index_rel} does not declare schema {API_SLICE_SCHEMA!r}")
+    if index.get("publication_id") != publication_id:
+        raise PublishVerificationError(
+            f"{index_rel} names publication {index.get('publication_id')}, "
+            f"not the candidate {publication_id}"
+        )
+    documents = index.get("documents")
+    if not isinstance(documents, list):
+        raise PublishVerificationError(f"{index_rel} declares no documents list")
+    declared_dossier_docs = 0
+    checked: list[str] = []
+    for doc in documents:
+        if not isinstance(doc, dict):
+            raise PublishVerificationError(
+                f"{index_rel} document entries must be objects — got {doc!r}"
+            )
+        route = str(doc.get("route") or "")
+        path = str(doc.get("path") or "")
+        if not route.startswith("/v1/"):
+            raise PublishVerificationError(
+                f"{index_rel} document {path!r} declares route {route!r} — "
+                "api-slice routes live under /v1/"
+            )
+        if not path.startswith(f"{api_root}/") or not path.endswith(".json"):
+            raise PublishVerificationError(
+                f"{index_rel} document path {path!r} lies outside {api_root}/ "
+                "— only pinned api-slice files are servable"
+            )
+        if path not in artifact_paths:
+            raise PublishVerificationError(
+                f"{index_rel} declares {path} — not pinned by the release "
+                "integrity manifest; the API refuses unpinned bytes"
+            )
+        if not (release_dir / path).is_file():
+            raise PublishVerificationError(
+                f"{index_rel} declares {path} — the file is absent on disk"
+            )
+        if path.startswith(f"{api_root}/dossier/"):
+            declared_dossier_docs += 1
+        try:
+            body = _read_json(release_dir / path)
+        except ValueError as exc:
+            raise PublishVerificationError(
+                f"{path} is not parseable JSON — the API cannot serve it"
+            ) from exc
+        if not isinstance(body, dict):
+            raise PublishVerificationError(f"{path} is not a JSON object — the API cannot serve it")
+        embedded = body.get("release")
+        if (
+            isinstance(embedded, dict)
+            and embedded.get("publication_id") is not None
+            and str(embedded.get("publication_id")) != publication_id
+        ):
+            raise PublishVerificationError(
+                f"{path} embeds release.publication_id "
+                f"{embedded.get('publication_id')} — not {publication_id}"
+            )
+        checked.append(path)
+    if dossier_pages and not declared_dossier_docs:
+        raise PublishVerificationError(
+            f"release {publication_id} stages {len(dossier_pages)} dossier "
+            f"page(s) the site shows but {index_rel} declares no api/dossier "
+            "documents — the API cannot serve those answers; promotion "
+            "refused (V7, G3 §6.4)"
+        )
+    return _check(
+        "PF.api_parity",
+        "pass",
+        f"the sig.api-slice/1 index declares {len(checked)} servable "
+        "document(s), every one manifest-pinned, on disk, parseable and "
+        "identity-consistent — the release-backed routes can serve this "
+        "release",
+        evidence={
+            "index": index_rel,
+            "documents": checked,
+            "dossier_pages_staged": len(dossier_pages),
+            "dossier_documents": declared_dossier_docs,
+        },
+    )
+
+
 def preflight(
     candidate_dir: Path,
     gate_readout: Path | str,
@@ -445,6 +601,12 @@ def preflight(
             evidence={"artifacts_checked": report.artifacts_checked, "digests": digests},
         )
     )
+
+    # -- V7 API parity (G3 §6.4 / REL-05, P35.57): a promotion that moves the
+    # site to a release the API cannot serve is refused — the api-slice index
+    # must declare only manifest-pinned, on-disk, identity-consistent
+    # documents, and staged dossier pages must have declared api documents.
+    checks.append(api_parity_check(release_dir, pins.publication_id, artifacts))
 
     # -- disclosure posture: deferred eval + suppressed slices, honestly ----- #
     disc = _read_json(candidate_dir / "DISCLOSURE.json")

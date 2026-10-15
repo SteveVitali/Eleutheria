@@ -1,0 +1,1 @@
+{"events":[{"artifact_id":"art:1","change_type":"modified","field":"status","new_date":"2026-09-15","new_value":"removed","old_date":"2026-09-01","old_value":"active"},{"artifact_id":"art:2","change_type":"added","field":"label","new_date":"2026-10-01","new_value":"pole cam","old_date":null,"old_value":null}],"since":null}

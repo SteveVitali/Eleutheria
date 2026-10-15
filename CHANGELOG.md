@@ -24,6 +24,27 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **API release parity: release-backed routes serve the promoted
+  release's verified files** (P35.57; cites SIG-REL-010) — the routes
+  whose answers the site shows (`/v1/dossier/**`, `/v1/coverage/**`,
+  `/v1/export`, `/v1/changes`, `/v1/sources`, `/v1/releases/**`)
+  answer byte-for-byte from the current promoted release's
+  `sig.api-slice/1` document set, digest-pinned to the release integrity
+  manifest, with `?release=<publication_id>` selecting any promoted
+  release. Responses carry `X-SIG-Basis: release`,
+  `X-SIG-Release: <label> <publication_id>` and a body-level `basis` /
+  `release` identity block; routes still answered from the claim spine
+  now disclose `X-SIG-Basis: live-spine` plus `basis.spine_watermark` and
+  `basis.latest_release`. Release failures are fail-closed typed errors
+  (`unknown_publication`, `scope_not_available`, `withdrawn`,
+  `release_artifact_absent`, `release_artifact_unpinned`,
+  `release_verification_failed`, `release_metadata_mismatch`,
+  `no_current_release`, `release_serving_unconfigured`), never silent
+  fallbacks. `/` and `/v1/health` name the current release, code commit
+  and image digest; `--release-registry` also reads
+  `SIG_RELEASE_REGISTRY`. Release promotion gains the V7 api-parity
+  preflight — a release the API cannot serve is refused; pre-slice
+  releases are recorded `deferred` (obligation `D-P35.57-1`).
 - **Withdrawal-barrier bytes: real tombstones on every alias** (P34.41;
   cites SIG-REL-013 (owner P35.55), SIG-FIND-001/002, SIG-GOV-007;
   ADR-132) — the generated deny map now denies **every alias** of a
