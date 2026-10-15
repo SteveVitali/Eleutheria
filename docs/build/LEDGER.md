@@ -24,13 +24,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator's main checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.66-residential-demotion   # PR #297 open
+chainTip:        r11/P35.66-residential-demotion-v2   # PR #298 open (supersedes #297, closed unmerged)
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-15T03:31:35Z
+updatedAt:       2026-10-15T05:52:14Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -986,6 +986,7 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-15 — P35.66 post-closeout record — record head `9ee1829b` docs-red (run 38678926050): orient-probe V11 53,133 B > 48 KiB (entry ran 3,444 B) — repaired: entry trimmed to ~1.1 KiB (no record dropped — `runs/P35.66.md` + BUILD_INDEX carry it; P36.1a precedent), RETURN PASS cells compacted (leg-verbatim strings kept; `return_pass.py` green), comments14 head fold, State line compressed · ci: pass #297@29367d6 (green head of record, run 38677026807; this head's own read follows) · PR #296 seed leg QUEUED — production untouched · next → P36.74 (289) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-15 — P35.66 post-closeout record 2 — declaration head `7077c62e` docs-red (run 38681132044): verify-recorded-ci (G3b) — the record entry's kind owed a parseable `ci:` field — repaired in place by `e6b8200e` (`ci: pass #297@29367d6`, the e03c196a fragment-fix class; `seed-commit e6b8200e` declared by `ea89254c`) · record head `ea89254c` 5/5 green head-bound (run 38681592402 — python 16m2s / docs 1m31s / composed 3m3s / security 31s / web 14m51s) · every pushed head verbatim in `runs/P35.66.md` · PR #296 seed leg QUEUED — production untouched · ci: pass #297@ea89254 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-15 — P35.66 post-closeout record 3 — v1 record head `9645a997` docs-red (run 38683894991): trailer-check OM-01 — no recognised harness trailer; `r11/**` non-fast-forward makes it unremovable — identical tree re-landed trailered on `-v2` (the P34.2/P34.11 precedent): `8293be71` 5/5 green head-bound (run 38685355307) · #297 superseded by #298 · PR #296 seed leg QUEUED — production untouched · ci: pass #298@8293be7 · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-15 — P35.66 boundary-confirm + repair — close: chainTip + BUILD_INDEX pointer (devin-desktop/swe-2-high/subagent; the worker closed on the v1 branch before the trailer-driven re-land, so `chainTip` still named `#297`'s branch and index row 288 its PR). Repair: `chainTip` → `r11/P35.66-residential-demotion-v2` (#298 open) and IR-BI-14 appended recording the row-288 branch/PR supersession (row stands per BM-INDEX-01; every pushed head verbatim in `runs/P35.66.md`) · final head `1f45443b` 5/5 green head-bound (`ci: pass #298@1f45443` — python/docs/composed/security/web, run 38686905649; stack #296…#275 pass; main `4d6796d` descends:no merges:12 open-other:0; `logs/ci-P35.66-boundary2.json`) · PR #296 seed leg QUEUED — production untouched · next → P36.74 (289) · harness: devin-desktop/swe-2-high/subagent
 
 ## PHASE LOG — Round 11 corrections (append-only, newest last)
 
