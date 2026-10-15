@@ -21,8 +21,15 @@ def summary() -> dict:
 
 
 def test_technology_counts_are_14_36_104(summary: dict) -> None:
-    # SIG-ONTO-052.
-    assert summary["technology"]["counts"] == {"domains": 14, "families": 36, "technologies": 104}
+    # SIG-ONTO-052. P35.14a retires the 40 non-family-prefixed slugs under
+    # superseded_by metadata (SIG-ONTO-055): the active set stays 104, the
+    # retired records stay resolvable and countable.
+    assert summary["technology"]["counts"] == {
+        "domains": 14,
+        "families": 36,
+        "technologies": 104,
+        "retired_technologies": 40,
+    }
 
 
 def test_every_family_has_an_unspecified_leaf(summary: dict) -> None:

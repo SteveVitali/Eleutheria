@@ -46,6 +46,24 @@ def seeded(pg_dsn: str) -> dict[str, Any]:
 
     with psycopg.connect(pg_dsn, autocommit=True) as conn:
         conn.execute("TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE")
+        # P35.14a closed vocabulary: claim.predicate_id is an FK into
+        # vocab_predicate and the sink quarantines unknown ids, so the two
+        # fixture ids must exist as registry rows. "Unregistered" here still
+        # means resolver-unregistered (RESOLVE has no entry) — the read-side
+        # contract under test is unchanged.
+        conn.execute(
+            "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+            "VALUES('authoritative_source_wins','fixture') ON CONFLICT DO NOTHING"
+        )
+        for pred in (_UNREGISTERED, _RESTRICTED):
+            conn.execute(
+                "INSERT INTO vocab_predicate"
+                "(predicate_id,vocab_version,value_datatype,object_type,"
+                " definition,volatility_class,half_life_days,resolution_strategy) "
+                "VALUES(%s,'1.0.0','string','literal','fixture','MODERATE',365,"
+                "'authoritative_source_wins') ON CONFLICT DO NOTHING",
+                (pred,),
+            )
 
     body = b"mixed-registry-body"
     cap = CaptureRef(
@@ -68,7 +86,7 @@ def seeded(pg_dsn: str) -> dict[str, Any]:
                 "value": 12,
                 "source_id": "p32_2_src",
                 "license": "CC0-1.0",
-                "evidence_genre": "registry_export",
+                "evidence_genre": "camera_registry",
                 "locator": {"kind": "byte_range", "start": 0, "end": 12},
             },
             {

@@ -34,6 +34,7 @@ URI: [sig:enum/OrganizationType](https://ontology.sig-project.org/schema/enum/Or
 | us.gov.county | None |  | Is-A: NONE<br>|
 | us.gov.special_district | None |  | Is-A: NONE<br>|
 | us.fusion_center | None |  | Is-A: NONE<br>|
+| us.le.rtcc | None | Real-time crime center — an ORGANIZATION sub-type (SIG-ONTO-057), distinct fr... | Is-A: NONE<br>|
 | private.company | None |  ||
 | private.hoa | None |  ||
 | private.security_firm | None |  ||
@@ -147,6 +148,12 @@ permissible_values:
   us.fusion_center:
     text: us.fusion_center
     is_a: government
+  us.le.rtcc:
+    text: us.le.rtcc
+    description: Real-time crime center — an ORGANIZATION sub-type (SIG-ONTO-057),
+      distinct from the `rtcc-platform` technology (the software); the two are never
+      conflated.
+    is_a: law_enforcement
   private.company:
     text: private.company
   private.hoa:

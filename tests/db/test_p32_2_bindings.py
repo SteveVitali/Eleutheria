@@ -84,7 +84,7 @@ def _claim(subject: str, predicate: str, value: Any, **kw: Any) -> dict[str, Any
         "value": value,
         "source_id": "p32_2_src",
         "license": "CC0-1.0",
-        "evidence_genre": "registry_export",
+        "evidence_genre": "camera_registry",
     }
     rec.update(kw)
     return rec
@@ -100,10 +100,33 @@ def _sink(dsn: str, **kw: Any):
 
 @pytest.fixture
 def clean_dsn(sig_database: dict[str, object]) -> Iterator[str]:
+    from conftest import register_vocab_predicate
+
     dsn = _dsn(sig_database)
     truncate = "TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE"
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)
+        # P35.14a closed vocabulary: the fixture predicates that must LAND are
+        # registered up front; `bad`/`qq` stay unregistered so the adapter's
+        # record-level rejections keep exercising the quarantine path.
+        for pred in (
+            "sig.p32_2.a",
+            "sig.p32_2.b",
+            "sig.p32_2.count",
+            "sig.p32_2.d1",
+            "sig.p32_2.d2",
+            "sig.p32_2.good",
+            "sig.p32_2.i",
+            "sig.p32_2.l",
+            "sig.p32_2.q",
+            "sig.p32_2.q1",
+            "sig.p32_2.q2",
+            "sig.p32_2.r1",
+            "sig.p32_2.r2",
+            "sig.p32_2.vm",
+            "sig.p32_2.vm2",
+        ):
+            register_vocab_predicate(conn, pred)
     yield dsn
     with psycopg.connect(dsn, autocommit=True) as conn:
         conn.execute(truncate)

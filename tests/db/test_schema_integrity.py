@@ -72,6 +72,14 @@ PREDICATE_NAMED_COLUMN_ALLOWLIST = {
     ("legal_instrument", "citation"),
     ("physical_asset", "first_observed"),
     ("records_request", "response_status"),
+    # P35.14a (SIG-STORE-046): the `observed_via`/`platform` predicates registered
+    # in the 280-row vocabulary are the CLAIM surface; the columns are the
+    # entities' own typed slots — `configuration_state.observed_via` is the
+    # §11.15 ObservedVia provenance slot and `records_request.platform` is the
+    # §11.19 RecordsPlatform typing column — neither is a writable claim-bearing
+    # attribute.
+    ("configuration_state", "observed_via"),
+    ("records_request", "platform"),
 }
 
 

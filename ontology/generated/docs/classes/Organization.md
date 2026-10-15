@@ -89,28 +89,6 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
         
       Organization : publication_review
         
-      Organization : succession
-        
-          
-    
-        
-        
-        Organization --> "*" Organization : succession
-        click Organization href "../../classes/Organization/"
-    
-
-        
-      Organization : succession_kind
-        
-          
-    
-        
-        
-        Organization --> "*" SuccessionKind : succession_kind
-        click SuccessionKind href "../../enums/SuccessionKind/"
-    
-
-        
       Organization : transliteration_scheme
         
       Organization : valid_from
@@ -147,8 +125,6 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
 | [address](../slots/address.md) | * <br/> [String](../types/String.md) |  | direct |
 | [valid_from](../slots/valid_from.md) | 0..1 <br/> [Edtf](../types/Edtf.md) |  | direct |
 | [valid_to](../slots/valid_to.md) | 0..1 <br/> [Edtf](../types/Edtf.md) |  | direct |
-| [succession](../slots/succession.md) | * <br/> [Organization](../classes/Organization.md) |  | direct |
-| [succession_kind](../slots/succession_kind.md) | * <br/> [SuccessionKind](../enums/SuccessionKind.md) |  | direct |
 | [publication_review](../slots/publication_review.md) | 0..1 <br/> [Boolean](../types/Boolean.md) | Routes surrogate-only orgs through §43 | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The entity's stable minted identity (L2 identity only, §8 | [Entity](../classes/Entity.md) |
 
@@ -161,7 +137,6 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
 | used by | used in | type | used |
 | ---  | --- | --- | --- |
 | [Organization](../classes/Organization.md) | [parent_organization](../slots/parent_organization.md) | range | [Organization](../classes/Organization.md) |
-| [Organization](../classes/Organization.md) | [succession](../slots/succession.md) | range | [Organization](../classes/Organization.md) |
 | [Product](../classes/Product.md) | [vendor](../slots/vendor.md) | range | [Organization](../classes/Organization.md) |
 | [Deployment](../classes/Deployment.md) | [deploying_organization](../slots/deploying_organization.md) | range | [Organization](../classes/Organization.md) |
 | [Deployment](../classes/Deployment.md) | [vendor](../slots/vendor.md) | range | [Organization](../classes/Organization.md) |
@@ -354,22 +329,6 @@ attributes:
     - ClaimQualifier
     - Edge
     range: edtf
-  succession:
-    name: succession
-    from_schema: https://ontology.sig-project.org/schema/entities
-    rank: 1000
-    domain_of:
-    - Organization
-    range: Organization
-    multivalued: true
-  succession_kind:
-    name: succession_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
-    rank: 1000
-    domain_of:
-    - Organization
-    range: SuccessionKind
-    multivalued: true
   publication_review:
     name: publication_review
     description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).
@@ -526,24 +485,6 @@ attributes:
     - ClaimQualifier
     - Edge
     range: edtf
-  succession:
-    name: succession
-    from_schema: https://ontology.sig-project.org/schema/entities
-    rank: 1000
-    owner: Organization
-    domain_of:
-    - Organization
-    range: Organization
-    multivalued: true
-  succession_kind:
-    name: succession_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
-    rank: 1000
-    owner: Organization
-    domain_of:
-    - Organization
-    range: SuccessionKind
-    multivalued: true
   publication_review:
     name: publication_review
     description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).

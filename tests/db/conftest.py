@@ -242,6 +242,32 @@ def _id_of(row: object, name: str) -> object:
     return row[0]  # type: ignore[index]
 
 
+def register_vocab_predicate(
+    conn: object, predicate_id: str, *, datatype: str = "string", object_type: str = "literal"
+) -> None:
+    """Register a fixture predicate in ``vocab_predicate`` (P35.14a closed vocabulary).
+
+    The sink no longer auto-registers unknown predicates — a fixture claim's
+    predicate id must exist as a ``vocab_predicate`` row first, exactly like the
+    ontology-seeded rows the ``closed_vocabulary`` change installs. Test ids keep
+    the ``sig.test.*`` / ``sig.p*`` shapes so they can never collide with the
+    registry's real predicates.
+    """
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+        "VALUES('authoritative_source_wins','fixture') ON CONFLICT DO NOTHING"
+    )
+    cur.execute(
+        "INSERT INTO vocab_predicate"
+        "(predicate_id,vocab_version,value_datatype,object_type,definition,"
+        " volatility_class,half_life_days,resolution_strategy) "
+        "VALUES(%s,'1.0.0',%s,%s,'fixture','MODERATE',365,"
+        "'authoritative_source_wins') ON CONFLICT DO NOTHING",
+        (predicate_id, datatype, object_type),
+    )
+
+
 def seed_claim_prerequisites(conn: object) -> dict[str, object]:
     """Insert the minimum FK targets a claim needs; return the ids used.
 

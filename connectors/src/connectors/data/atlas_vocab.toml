@@ -18,7 +18,10 @@
 # 2026.09.15: added `columns.category_column_candidates` — the live Atlas export
 # renamed the category column `Type` -> `Technology` (observed 2026-09-15, P25.3);
 # the connector resolves the first candidate present in the header.
-vocab_version = "2026.09.15"
+# 2026.10.13: P35.14a — every method genre gained `artifact_genre`, the closed
+# registry genre the claim is stamped with (L1 NEW-2: the nine method labels are
+# not registry genres; the upstream label is preserved as `atlas_method`).
+vocab_version = "2026.10.13"
 
 # The Atlas vocabulary version SIG observed the upstream taxonomy at. Recorded on
 # EVERY row (SIG-ONTO-059): an external vocabulary changes, and its changes carry
@@ -54,15 +57,19 @@ evidence_genre_columns = ["Method", "Methodology", "Component", "Evidence Genre"
 # connector records the granularity loss rather than assign a tier by guess.
 # `aliases` map the upstream's free-text component labels onto the canonical genre.
 [evidence_genres]
-osint                = { aliases = ["osint", "open source", "open-source intelligence"] }
-news_reporting       = { aliases = ["news", "news reporting", "media", "press coverage"] }
-government_documents = { aliases = ["gov docs", "government documents", "government document", "public records"] }
-meeting_minutes      = { aliases = ["minutes", "meeting minutes", "council minutes", "agenda"] }
-press_releases       = { aliases = ["press release", "press releases", "pr"] }
-procurement_leads    = { aliases = ["procurement", "procurement lead", "procurement leads", "procurement aggregator"] }
-crowdsourcing        = { aliases = ["crowdsourcing", "crowdsourced", "crowd sourced", "tip"] }
-staff_review         = { aliases = ["staff review", "staff and intern review", "intern review", "staff"] }
-imported_datasets    = { aliases = ["imported dataset", "imported datasets", "specialist dataset", "dataset import"] }
+# `artifact_genre` maps each method onto the CLOSED registry genre the claim is
+# stamped with (P35.14a — the upstream method labels `osint`, `news_reporting`, …
+# are not registry genres; the method label is preserved on the claim as
+# `atlas_method`, the registered genre travels as `evidence_genre`).
+osint                = { aliases = ["osint", "open source", "open-source intelligence"],              artifact_genre = "portal_document" }
+news_reporting       = { aliases = ["news", "news reporting", "media", "press coverage"],             artifact_genre = "news_article" }
+government_documents = { aliases = ["gov docs", "government documents", "government document", "public records"], artifact_genre = "portal_document" }
+meeting_minutes      = { aliases = ["minutes", "meeting minutes", "council minutes", "agenda"],       artifact_genre = "council_minutes" }
+press_releases       = { aliases = ["press release", "press releases", "pr"],                          artifact_genre = "official_statement" }
+procurement_leads    = { aliases = ["procurement", "procurement lead", "procurement leads", "procurement aggregator"], artifact_genre = "portal_document" }
+crowdsourcing        = { aliases = ["crowdsourcing", "crowdsourced", "crowd sourced", "tip"],          artifact_genre = "community_map" }
+staff_review         = { aliases = ["staff review", "staff and intern review", "intern review", "staff"], artifact_genre = "audit_log" }
+imported_datasets    = { aliases = ["imported dataset", "imported datasets", "specialist dataset", "dataset import"], artifact_genre = "camera_registry" }
 
 # The CSV columns the connector reads (§23.3). `agency_column` is the Atlas agency
 # identifier the connector keys on (SIG-INGEST-034); `category_column` carries the
@@ -89,10 +96,10 @@ context_columns = ["City", "County", "State", "Vendor"]
 # A query traversing a lossy crosswalk MUST propagate the flag (SIG-ONTO-058).
 [categories]
 "Automated License Plate Readers"     = { family = "alpr",             sig_concept = "alpr-unspecified",       relation = "broadMatch",   lossy = true }
-"Face Recognition"                    = { family = "face-recognition", sig_concept = "face-identification-1ton", relation = "closeMatch",   lossy = true }
+"Face Recognition"                    = { family = "face-recognition", sig_concept = "face-recognition-identification-1ton", relation = "closeMatch",   lossy = true }
 "Gunshot Detection"                   = { family = "gunshot-detection", sig_concept = "gunshot-detection-fixed", relation = "closeMatch",   lossy = false }
 "Drones/UAVs"                         = { family = "uas",              sig_concept = "uas-general",            relation = "closeMatch",   lossy = true }
-"Third-Party Investigative Platforms" = { family = "federation-hub",   sig_concept = "camera-federation-hub",  relation = "relatedMatch", lossy = true }
+"Third-Party Investigative Platforms" = { family = "federation-hub",   sig_concept = "federation-hub-camera",  relation = "relatedMatch", lossy = true }
 
 # Retired Atlas categories (SIG-ONTO-059). A row tagged with one of these is
 # recorded as a CATEGORY RETIREMENT, never a deployment and never a world change:

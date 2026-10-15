@@ -608,13 +608,10 @@ enums:
       local_usage: {}
       legal_name: {}
       dba: {}
-  SuccessionKind:
-    description: Temporal identity succession qualifier (§14.5).
-    permissible_values:
-      merged_into: {}
-      split_from: {}
-      renamed_from: {}
-      absorbed_by: {}
+  # P35.14a (BL-047 / RISK-P3-04): SuccessionKind is retired — the reified,
+  # bitemporal OrganizationRelation model (SIG-IDENT-016/017/019) is the
+  # surviving temporal-identity path; the legacy enum and the two
+  # Organization slots below it duplicated are removed, never renamed in place.
   OrganizationRelationType:
     description: >-
       The seven-value vocabulary of the reified, bitemporal OrganizationRelation
@@ -732,6 +729,12 @@ enums:
       us.gov.county: {is_a: government}
       us.gov.special_district: {is_a: government}
       us.fusion_center: {is_a: government}
+      us.le.rtcc:
+        is_a: law_enforcement
+        description: >-
+          Real-time crime center — an ORGANIZATION sub-type (SIG-ONTO-057),
+          distinct from the `rtcc-platform` technology (the software); the two
+          are never conflated.
       private.company: {}
       private.hoa: {}
       private.security_firm: {}

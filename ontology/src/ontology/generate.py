@@ -277,6 +277,7 @@ def build_technology_skos() -> str:
         g.add((ref, _sig("hierarchyLevel"), Literal(level)))
         return ref
 
+    broader_edges: set[tuple[str, str]] = set()
     for dom in data["domains"]:
         dref = concept(dom["slug"], dom["label"], "domain")
         g.add((dref, SKOS.topConceptOf, scheme))
@@ -284,14 +285,62 @@ def build_technology_skos() -> str:
         for fam in dom["families"]:
             fref = concept(fam["slug"], fam["label"], "family")
             g.add((fref, SKOS.broader, dref))
+            broader_edges.add((str(fref), str(dref)))
             for tech in fam["technologies"]:
+                if tech.get("status") == "retired":
+                    # SIG-ONTO-053/055 (P35.14a): a retired slug is never deleted
+                    # or reused — its concept is deprecated under a distinct
+                    # `retired/` IRI (the slug alone may collide with another
+                    # concept's, e.g. the family slug it shadowed) and points at
+                    # its family-prefixed successor. The slug stays resolvable
+                    # through the registry's superseded_by links.
+                    tref = URIRef(f"{TECH_SCHEME}/retired/{tech['slug']}")
+                    g.add((tref, RDF.type, SKOS.Concept))
+                    g.add((tref, SKOS.inScheme, scheme))
+                    g.add((tref, SKOS.prefLabel, Literal(tech["label"], lang="en")))
+                    g.add((tref, SKOS.notation, Literal(tech["slug"])))
+                    g.add((tref, _sig("hierarchyLevel"), Literal("retired-technology")))
+                    g.add((tref, OWL.deprecated, Literal(True)))
+                    g.add((tref, SKOS.broader, fref))
+                    broader_edges.add((str(tref), str(fref)))
+                    successor = tech.get("superseded_by")
+                    if successor:
+                        g.add(
+                            (
+                                tref,
+                                DCTERMS.isReplacedBy,
+                                URIRef(f"{TECH_SCHEME}/{successor}"),
+                            )
+                        )
+                    continue
                 tref = concept(tech["slug"], tech["label"], "technology")
                 g.add((tref, SKOS.broader, fref))
+                broader_edges.add((str(tref), str(fref)))
                 g.add((tref, SKOS.definition, Literal(tech["distinguishing_criterion"])))
                 g.add((tref, _sig("salience"), Literal(tech["salience"])))
                 for sig_str in tech["evidence_signature"]:
                     g.add((tref, _sig("evidenceSignature"), Literal(sig_str)))
+    # SIG-ONTO-055 (P35.14a): the broader graph must be acyclic and reflexive-
+    # free — a concept that is its own ancestor is a vocabulary defect, never a
+    # generated edge.
+    reflexive = sorted(a for a, b in broader_edges if a == b)
+    if reflexive:
+        raise ValueError(f"reflexive skos:broader edge(s): {reflexive}")
+    _assert_acyclic(broader_edges, "technology skos:broader")
     return _canonical_nt(g)
+
+
+def _assert_acyclic(edges: set[tuple[str, str]], label: str) -> None:
+    """Fail generation when the (child, parent) graph contains a cycle."""
+    # Kahn peel: remove edges whose child is no other edge's parent until
+    # nothing remains; a cycle leaves a closed core with no leaf.
+    live = set(edges)
+    while live:
+        parents_live = {b for _, b in live}
+        leaves = {a for a, _ in live} - parents_live
+        if not leaves:
+            raise ValueError(f"cyclic {label} graph — no leaf remains across {len(live)} edges")
+        live = {(a, b) for a, b in live if a not in leaves}
 
 
 def build_capability_skos() -> str:
@@ -396,6 +445,7 @@ def build_structural_skos() -> str:
             scheme = _add_scheme(
                 g, RDF, SKOS, DCTERMS, OWL, scheme_iri, f"SIG {enum_name} ({group})"
             )
+            broader_edges: set[tuple[str, str]] = set()
             for pv_name, pv in enum.permissible_values.items():
                 ref = URIRef(f"{scheme_iri}/{pv_name}")
                 g.add((ref, RDF.type, SKOS.Concept))
@@ -408,10 +458,16 @@ def build_structural_skos() -> str:
                 # via LinkML `is_a` (§13.7, SIG-ONTO-068); publish it as
                 # skos:broader. Only parentless terms are top concepts.
                 if pv.is_a:
-                    g.add((ref, SKOS.broader, URIRef(f"{scheme_iri}/{pv.is_a}")))
+                    parent = f"{scheme_iri}/{pv.is_a}"
+                    g.add((ref, SKOS.broader, URIRef(parent)))
+                    broader_edges.add((str(ref), parent))
                 else:
                     g.add((ref, SKOS.topConceptOf, scheme))
                     g.add((scheme, SKOS.hasTopConcept, ref))
+            reflexive = sorted(a for a, b in broader_edges if a == b)
+            if reflexive:
+                raise ValueError(f"reflexive skos:broader edge(s) in {enum_name}: {reflexive}")
+            _assert_acyclic(broader_edges, f"{enum_name} skos:broader")
     return _canonical_nt(g)
 
 
@@ -451,6 +507,9 @@ def _vocab_summary_dict() -> dict[str, Any]:
     pred = _load_vocab("predicates")
     families = [f for d in tech["domains"] for f in d["families"]]
     technologies = [t for f in families for t in f["technologies"]]
+    # SIG-ONTO-053/055 (P35.14a): retired entries stay resolvable but do not
+    # count toward the active vocabulary; both numbers are falsifiable.
+    active = [t for t in technologies if t.get("status") != "retired"]
     return {
         "version": VOCAB_VERSION,
         "technology": {
@@ -458,17 +517,23 @@ def _vocab_summary_dict() -> dict[str, Any]:
             "counts": {
                 "domains": len(tech["domains"]),
                 "families": len(families),
-                "technologies": len(technologies),
+                "technologies": len(active),
+                "retired_technologies": len(technologies) - len(active),
             },
             "families_without_unspecified_leaf": sorted(
                 f["slug"]
                 for f in families
-                if not any(t["slug"].endswith("-unspecified") for t in f["technologies"])
+                if not any(
+                    t["slug"].endswith("-unspecified") and t.get("status") != "retired"
+                    for t in f["technologies"]
+                )
             ),
             "technologies": sorted(
                 (
                     {
                         "slug": t["slug"],
+                        "status": t.get("status", "active"),
+                        "superseded_by": t.get("superseded_by"),
                         "salience": t["salience"],
                         "has_distinguishing_criterion": bool(t.get("distinguishing_criterion")),
                         "has_evidence_signature": bool(t.get("evidence_signature")),

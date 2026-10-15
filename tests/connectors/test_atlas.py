@@ -300,10 +300,14 @@ def test_genre_is_carried_when_the_feed_records_the_component() -> None:
     _, claims = _run_over("adoption_feed_with_method.csv")
     deployments = _deployments(claims)
     reno = next(c for c in deployments if c["raw_agency"] == "Reno Police Department")
-    assert reno["evidence_genre"] == "news_reporting"
+    # P35.14a: `evidence_genre` is the closed registry genre the method maps
+    # onto; the upstream method label survives as `atlas_method` provenance.
+    assert reno["evidence_genre"] == "news_article"
+    assert reno["atlas_method"] == "news_reporting"
     assert reno["evidence_genre_granularity_loss"] is False
     miami = next(c for c in deployments if c["raw_agency"] == "Miami Police Department")
-    assert miami["evidence_genre"] == "procurement_leads"
+    assert miami["evidence_genre"] == "portal_document"
+    assert miami["atlas_method"] == "procurement_leads"
     # Blank component -> loss; unrecognised component -> loss (never guessed).
     boise = next(c for c in deployments if c["raw_agency"] == "Boise Police Department")
     assert boise["evidence_genre"] is None and boise["evidence_genre_granularity_loss"] is True

@@ -76,7 +76,26 @@ def test_p31_5_object_kind_and_maps_to_are_well_formed(registry: dict) -> None:
     by_id = {p["predicate_id"]: p for p in registry["predicates"]}
     kinds = {pid: p["object_kind"] for pid, p in by_id.items() if "object_kind" in p}
     assert set(kinds.values()) <= {"entity_ref", "literal"}
-    assert {pid for pid, kind in kinds.items() if kind == "entity_ref"} == set(PARTNER_PREDICATES)
+    # P35.14a: entity_ref is wider than the ADR-112 partner set — the org→org
+    # integration/lifecycle edges (requests_data_from, distributes_list_to,
+    # authorizes, replaced_by, succeeds, third_party_integration,
+    # live_stream_permitted_to) are entity-refs too, but they resolve through
+    # record_object_ref, never partner_identity's organisation mint. The
+    # invariant that survives is directional: every partner predicate is an
+    # entity_ref, and every NON-partner entity_ref is a deliberately registered
+    # org/deployment edge.
+    entity_refs = {pid for pid, kind in kinds.items() if kind == "entity_ref"}
+    assert set(PARTNER_PREDICATES) <= entity_refs
+    non_partner_entity_refs = entity_refs - set(PARTNER_PREDICATES)
+    assert non_partner_entity_refs == {
+        "authorizes",
+        "distributes_list_to",
+        "live_stream_permitted_to",
+        "replaced_by",
+        "requests_data_from",
+        "succeeds",
+        "third_party_integration",
+    }, non_partner_entity_refs
     for pid, p in by_id.items():
         if "maps_to" in p:
             target = by_id[p["maps_to"]]

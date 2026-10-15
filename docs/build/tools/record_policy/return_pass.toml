@@ -751,3 +751,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.
   go = '''none beyond the ordered-prefix gate — L1 + L2 recorded green in the same window (the gate refuses unless `completed` is exactly ["L1", "L2"]) and ING-GO-A still in force'''
   rerun = '''implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.md live_verification=true'''
   live_dependants = ["P36.12"]
+[[row]]
+key = "P35.14a"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — genres + strategies + 280 predicates + 5,600 directness rows + the widened CHECK), verify + read-back; no deferral opens'''
+gates_cell = '''hosted, production write; OM-20 conditional — GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires at the next GATE, OM-10); AR-3: first weekday 14:00-20:00Z slot at/after the freeze end, operator present, AR-2 prestate first (excluded hours: weekends and outside-14:00-20:00Z and before 2026-10-13T12:00Z (the AR-3 freeze)); live AC human-completed'''
+operator_cell = '''AR-2 prestate, `sqitch deploy closed_vocabulary`, verify + read-back (six measured predicates + 20 genres; unknown_genre admitted); rollback = `sqitch revert`'''
+rerun_cell = '''`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` · landed row 272 (PR #274 — write queued under AR-3)'''
+
+  [[row.legs]]
+  id = "P35.14a-live-vocab-seed"
+  obligations = []
+  earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), operator present, AR-2 prestate first'''
+  excluded = ["weekends and outside-14:00-20:00Z", "before 2026-10-13T12:00Z (the AR-3 freeze)"]
+  go = '''pre-authorised: GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires at the next GATE, OM-10)'''
+  rerun = '''implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true'''
+  live_dependants = ["P35.14b"]

@@ -3962,7 +3962,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T1-044"
 notes = "ACQ-01 generated target (plan AP-T1-044, cand I5-C107). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Lincoln"
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "tpva_red_light_camera_locations_2015_suffolk_county_ny_traffic_and_parking_violations_agency"
@@ -3994,7 +3994,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T1-056"
 notes = "ACQ-01 generated target (plan AP-T1-056, cand I5-C106). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Omaha"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "red_light_speed_camera_city_of_medford_or_arcgis_organisation"
@@ -4026,7 +4026,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T1-070"
 notes = "ACQ-01 generated target (plan AP-T1-070, cand I3-C082). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Hyattsville"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "approximate_speed_safety_camera_locations_public"
@@ -4057,7 +4057,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T1-086"
 notes = "ACQ-01 generated target (plan AP-T1-086, cand I3-C079). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Denver"
-technology = "camera-ptz"
+technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "seattle_police_department_cctv_pilot_areas"
@@ -4073,7 +4073,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T1-087"
 notes = "ACQ-01 generated target (plan AP-T1-087, cand I3-C081). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Seattle"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "flock_city_of_jeffersonville_in"
@@ -4121,7 +4121,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T2-019"
 notes = "ACQ-01 generated target (plan AP-T2-019, cand I5-C040). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Santa Fe"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "project_green_light_locations"
@@ -4280,7 +4280,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T2-052"
 notes = "ACQ-01 generated target (plan AP-T2-052, cand I5-C104). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 jurisdiction_place = "Las Vegas;US-NV:Clark County"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "agency_published_flock_lpr_location_layers_on_arcgis_online_family"
@@ -4341,7 +4341,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T2-112"
 notes = "ACQ-01 generated target (plan AP-T2-112, cand I5-C328). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-OperatorAccepted-DBRight (GL-GATE-07 non-US)."
 jurisdiction_place = "Hobart"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "security_cameras"
@@ -4357,7 +4357,7 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T2-113"
 notes = "ACQ-01 generated target (plan AP-T2-113, cand I5-C330). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead CC-BY-4.0."
 jurisdiction_place = "Perth"
-technology = "camera-fixed-cctv"
+technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "police_drone_flights"

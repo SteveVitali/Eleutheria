@@ -58,6 +58,7 @@ class QuarantineReason(StrEnum):
 
     BAD_DIGEST = "bad_digest"
     UNKNOWN_PREDICATE = "unknown_predicate"
+    UNKNOWN_GENRE = "unknown_genre"
     UNKNOWN_OBJECT_TYPE = "unknown_object_type"
     UNKNOWN_VALUE_KIND = "unknown_value_kind"
     MISSING_CAPTURE_BINDING = "missing_capture_binding"

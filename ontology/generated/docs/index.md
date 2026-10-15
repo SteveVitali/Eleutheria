@@ -188,6 +188,7 @@ Name: sig
 | [manufacturer](slots/manufacturer.md) |  |
 | [mechanism](slots/mechanism.md) |  |
 | [media_type](slots/media_type.md) |  |
+| [mfa_required](slots/mfa_required.md) | Whether the deployment's access configuration requires multi-factor authentic... |
 | [mobility](slots/mobility.md) |  |
 | [model](slots/model.md) |  |
 | [name](slots/name.md) |  |
@@ -292,8 +293,6 @@ Name: sig
 | [subject](slots/subject.md) |  |
 | [subject_ref](slots/subject_ref.md) |  |
 | [subscribed_hotlist_topic](slots/subscribed_hotlist_topic.md) |  |
-| [succession](slots/succession.md) |  |
-| [succession_kind](slots/succession_kind.md) |  |
 | [successor_product](slots/successor_product.md) |  |
 | [sunset_date](slots/sunset_date.md) |  |
 | [supersedes](slots/supersedes.md) |  |
@@ -381,7 +380,6 @@ Name: sig
 | [SkosMappingRelation](enums/SkosMappingRelation.md) | SKOS mapping relations for crosswalks (§20 |
 | [SourceClass](enums/SourceClass.md) | The six evidence source classes of OL-2E-AL-03 (§11 |
 | [SourceReliability](enums/SourceReliability.md) | Reliability R of the publisher, not the claim (§10 |
-| [SuccessionKind](enums/SuccessionKind.md) | Temporal identity succession qualifier (§14 |
 | [SystemScope](enums/SystemScope.md) | DataSystem scope (§11 |
 | [TemporalBoundKind](enums/TemporalBoundKind.md) | How a temporal bound is known (§9 |
 | [ValueKind](enums/ValueKind.md) | RDF-style value kind — known value, unknown value, or no value (§9 |

@@ -13,7 +13,7 @@ Each `BL-` id appears in exactly one theme (validated by `check_backlog.py`). Th
 
 ## T3 — Rights, compact & legal
 - **retired mostly by:** P21.1 (+ human gates)
-- **bl_ids:** BL-032, BL-033, BL-034, BL-035, BL-036, BL-059, BL-060, BL-061, BL-062, BL-063, BL-064, BL-065, BL-066, BL-067, BL-068, BL-069, BL-070, BL-071, BL-072, BL-073, BL-074, BL-080, BL-081, BL-092
+- **bl_ids:** BL-032, BL-033, BL-034, BL-035, BL-036, BL-059, BL-060, BL-061, BL-062, BL-063, BL-064, BL-065, BL-066, BL-067, BL-068, BL-069, BL-070, BL-071, BL-072, BL-073, BL-074, BL-080, BL-081, BL-092, BL-093
 
 ## T4 — Publication surfaces
 - **retired mostly by:** P21.4

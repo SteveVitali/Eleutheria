@@ -825,16 +825,6 @@ class AliasType(str, Enum):
     dba = "dba"
 
 
-class SuccessionKind(str, Enum):
-    """
-    Temporal identity succession qualifier (§14.5).
-    """
-    merged_into = "merged_into"
-    split_from = "split_from"
-    renamed_from = "renamed_from"
-    absorbed_by = "absorbed_by"
-
-
 class OrganizationRelationType(str, Enum):
     """
     The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§14.5, SIG-IDENT-016). Organizational change is modelled as first-class relation records carrying valid + transaction time, never as a mutable column. A pure rename is deliberately NOT here: renaming produces a new version and a dated alias, never a succession relation (SIG-IDENT-017).
@@ -986,6 +976,10 @@ class OrganizationType(str, Enum):
     usFULL_STOPgovFULL_STOPcounty = "us.gov.county"
     usFULL_STOPgovFULL_STOPspecial_district = "us.gov.special_district"
     usFULL_STOPfusion_center = "us.fusion_center"
+    usFULL_STOPleFULL_STOPrtcc = "us.le.rtcc"
+    """
+    Real-time crime center — an ORGANIZATION sub-type (SIG-ONTO-057), distinct from the `rtcc-platform` technology (the software); the two are never conflated.
+    """
     privateFULL_STOPcompany = "private.company"
     privateFULL_STOPhoa = "private.hoa"
     privateFULL_STOPsecurity_firm = "private.security_firm"
@@ -1351,8 +1345,6 @@ class Organization(Entity):
     address: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
     valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
-    succession: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
-    succession_kind: Optional[list[SuccessionKind]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     publication_review: Optional[bool] = Field(default=None, description="""Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
@@ -1589,6 +1581,7 @@ class ConfigurationState(Entity):
     live_stream_permitted_to: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
     third_party_integration: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
     audit_case_code_required: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    mfa_required: Optional[bool] = Field(default=None, description="""Whether the deployment's access configuration requires multi-factor authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted from evidence, never assumed.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
     observed_via: Optional[ObservedVia] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
     id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 

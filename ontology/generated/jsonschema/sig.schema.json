@@ -924,6 +924,13 @@
                         "null"
                     ]
                 },
+                "mfa_required": {
+                    "description": "Whether the deployment's access configuration requires multi-factor authentication (SIG-ONTO-035): an observed ConfigurationState fact \u2014 asserted from evidence, never assumed.",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
                 "national_lookup_enabled": {
                     "type": [
                         "boolean",
@@ -2436,24 +2443,6 @@
                         "null"
                     ]
                 },
-                "succession": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
-                "succession_kind": {
-                    "items": {
-                        "$ref": "#/$defs/SuccessionKind"
-                    },
-                    "type": [
-                        "array",
-                        "null"
-                    ]
-                },
                 "transliteration_scheme": {
                     "description": "Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069).",
                     "items": {
@@ -2514,6 +2503,7 @@
                 "us.gov.county",
                 "us.gov.special_district",
                 "us.fusion_center",
+                "us.le.rtcc",
                 "private.company",
                 "private.hoa",
                 "private.security_firm",
@@ -3432,17 +3422,6 @@
             ],
             "title": "StructuralEdge",
             "type": "object"
-        },
-        "SuccessionKind": {
-            "description": "Temporal identity succession qualifier (\u00a714.5).",
-            "enum": [
-                "merged_into",
-                "split_from",
-                "renamed_from",
-                "absorbed_by"
-            ],
-            "title": "SuccessionKind",
-            "type": "string"
         },
         "SystemScope": {
             "description": "DataSystem scope (\u00a711.10).",

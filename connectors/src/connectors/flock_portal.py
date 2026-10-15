@@ -953,6 +953,10 @@ def _stamp(row: dict[str, Any], *, attribution: str = "") -> dict[str, Any]:
     row["license"] = CC_BY_SA_LICENSE
     row["compartment"] = PORTAL_COMPARTMENT
     row["ai_training_permitted"] = False
+    if row.get("record_kind") == "claim":
+        # P35.14a: Eyes on Flock claims stamp the closed registry genre
+        # `portal_snapshot` (D1), never the connector_run (D3) fallback.
+        row.setdefault("evidence_genre", "portal_snapshot")
     return row
 
 

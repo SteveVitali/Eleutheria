@@ -20,7 +20,7 @@ adopt the spec's policy, they do not redefine it.
 
 ## The policies
 
-Eleven documents. **Status** is taken from each document itself: *adopted* (a first-class policy
+Twelve documents. **Status** is taken from each document itself: *adopted* (a first-class policy
 in force), *protocol adopted; not yet run* (the procedure is fixed but its human step is gated),
 *published* (a live, machine-checked page), *template* (a recorded template/instrument a
 per-instance run fills in), *prepared; not ratified* (an operator packet for a built-but-gated
@@ -40,3 +40,4 @@ advice).
 | [Intake receiver operating packet](intake-receiver-operating-packet.md) | the operator packet for the durable anonymous correction receiver: the gate statement (`operational=false` until every row is green), privilege matrix, honest-statement rules — the receiver is **built, not operating** | prepared; not ratified (D-P32.16-1) | §55.5 | SIG-FIND-006 |
 | [Publication opinion drafts](publication-opinion-drafts.md) | the four scoped HG-02 publication-law questions answered as drafted analyses the operator adopted in place of counsel — each row publish-permitting or conditioned, supersedeable by real counsel | operator-adopted analyses (D-LEGAL.1-1) | §42–§46 | (HG-02; no requirement id) |
 | [Identifier re-key correction note](identifier-rekey-note.md) | the dated correction note for the P34.18 personal-handle identifier re-key: what changed, what the spine and git history retain, neutral old-citation handling | adopted (P34.18 / ADR-178) | §0.7 (Part VIII) | SIG-PUB-002, SIG-STORE-011 |
+| [Capability-scope amendment proposal](capability-scope-amendment-proposal.md) | the P35.14a (SEED-12b) record of the realised `capability.yaml` scope set diverging from SIG-ONTO-060's declared list: the evidence, the out-of-list enumeration, and the drafted amendment text — a proposal for the operator, never a silent relaxation of the closed list | proposed; not applied (G.7.5) | §13.4 | SIG-ONTO-060 |
