@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "96f368f6296d08a3edbd35ad87d02cc0832a1c99",
+  "input_commit": "87e3772bc2c7acbb9d7e0bf4a59e4654c00cfccf",
   "manifest_inputs": 1038,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.12",
-    "lastCompleted": "P36.74",
+    "nextTicket": "P35.1b",
+    "lastCompleted": "P36.12",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.74-flock-portal-connector-probe-only",
+    "chainTip": "r11/P36.12-wave-b-activation",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-15T08:55:14Z"
+    "updatedAt": "2026-10-15T18:03:10Z"
   },
   "counts": {
     "obligations": 165,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 40,
+    "return_pass_rows": 41,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8798,6 +8798,14 @@
         "gates_cell": "hosted, production write; pre-authorised: GATE-G4 OM-20 approve-all-19 names this row verbatim (INSERT-only claim backfill; expires at GATE-G5, OM-10); AR-3 — first weekday 14:00-20:00Z slot post-freeze, operator present, AR-2 SUCCESSFUL + pre-state (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z (AR-3 freeze), before `live:` P35.15a's hosted `technology` vocabulary registrations land — unregistered predicate quarantines); F-523 recorded; live AC human-completed",
         "operator_cell": "AR-2 + pre-state (claim counts, spine_watermark, subjects-lacking-technology, `date -u`) → verify `vocab_*` `technology` + slugs → `technology-backfill` dry-run → `--apply` (chunked INSERT-only) → read-back → re-run `claims_added=0`; `n_tup_upd`/`n_tup_del` stay 0; rollback forward-only",
         "rerun_cell": "`implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` · landed row 275 (PR #277)",
+        "obligations": []
+      },
+      {
+        "key": "P36.12",
+        "obligations_cell": "Wave-B sequence L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported",
+        "gates_cell": "hosted production write, never pre-authorised; in-window only: excluded outside-14:00-20:00Z, outside 2026-10-26 → 2026-11-05, AR-3 freeze/cut day, sig-materialize or G2 slot active, the 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` green per leg",
+        "operator_cell": "record OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0",
+        "rerun_cell": "…",
         "obligations": []
       }
     ]
@@ -18843,10 +18851,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "f077976ffdfd9eb38d89102b696c5f9dad529236c43ebf2f436253b2b4234277",
+  "manifest_sha256": "65e6f351bcce259f05600326c6b036b8381e138e77422bf28242e9480a707b26",
   "current_md": {
     "lines": 63,
-    "bytes": 15618,
+    "bytes": 15602,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
