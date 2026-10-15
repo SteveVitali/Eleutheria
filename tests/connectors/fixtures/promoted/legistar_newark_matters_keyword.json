@@ -1,0 +1,31 @@
+{
+  "odata.metadata": "https://webapi.legistar.com/v1/newark/$metadata#Matters",
+  "value": [
+    {
+      "MatterId": 44001,
+      "MatterGuid": "D9E6A4C3-4400-4AAD-BBBE-000000044001",
+      "MatterFile": "25-1187",
+      "MatterTitle": "RF Electronic Monitoring Services Contract — Attenti",
+      "MatterTypeName": "Contract",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-03-17T00:00:00",
+      "MatterPassedDate": "2025-04-28T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "Municipal Council",
+      "MatterLastModifiedUtc": "2025-04-29T00:00:00"
+    },
+    {
+      "MatterId": 44002,
+      "MatterGuid": "D9E6A4C3-4400-4AAD-BBBE-000000044002",
+      "MatterFile": "WC-24-1187",
+      "MatterTitle": "Workers' Compensation Claim — Saxon Medical Center Monitoring Services",
+      "MatterTypeName": "Claim",
+      "MatterStatusName": "Pending",
+      "MatterIntroDate": "2025-02-24T00:00:00",
+      "MatterPassedDate": null,
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "Municipal Council",
+      "MatterLastModifiedUtc": "2025-03-01T00:00:00"
+    }
+  ]
+}

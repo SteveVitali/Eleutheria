@@ -1,0 +1,44 @@
+{
+  "odata.metadata": "https://webapi.legistar.com/v1/cabq/$metadata#Matters",
+  "value": [
+    {
+      "MatterId": 25101,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025101",
+      "MatterFile": "C-25-088",
+      "MatterTitle": "FLOCK SAFETY AUTOMATED LICENSE PLATE READER (ALPR) MAINTENANCE AGREEMENT",
+      "MatterTypeName": "Contract",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-03-03T00:00:00",
+      "MatterPassedDate": "2025-04-14T00:00:00",
+      "MatterEnactmentNumber": "R-2025-071",
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-04-15T00:00:00"
+    },
+    {
+      "MatterId": 25103,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025103",
+      "MatterFile": "R-25-118",
+      "MatterTitle": "Real-Time Crime Center Technology Expansion Agreement",
+      "MatterTypeName": "Agreement",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-02-10T00:00:00",
+      "MatterPassedDate": "2025-03-10T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-03-11T00:00:00"
+    },
+    {
+      "MatterId": 25102,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025102",
+      "MatterFile": "R-25-096",
+      "MatterTitle": "Flock Management Policy — Urban Pigeon Roosting",
+      "MatterTypeName": "Resolution",
+      "MatterStatusName": "Adopted",
+      "MatterIntroDate": "2025-04-21T00:00:00",
+      "MatterPassedDate": "2025-05-05T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-05-06T00:00:00"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "odata.metadata": "https://webapi.legistar.com/v1/cabq/$metadata#Matters",
+  "value": [
+    {
+      "MatterId": 25101,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025101",
+      "MatterFile": "C-25-088",
+      "MatterTitle": "FLOCK SAFETY AUTOMATED LICENSE PLATE READER (ALPR) MAINTENANCE AGREEMENT",
+      "MatterTypeName": "Contract",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-03-03T00:00:00",
+      "MatterPassedDate": "2025-04-14T00:00:00",
+      "MatterEnactmentNumber": "R-2025-071",
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-04-15T00:00:00"
+    },
+    {
+      "MatterId": 25104,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025104",
+      "MatterFile": "O-25-041",
+      "MatterTitle": "Annual Operating Budget Appropriation FY27",
+      "MatterTypeName": "Ordinance",
+      "MatterStatusName": "Adopted",
+      "MatterIntroDate": "2025-05-05T00:00:00",
+      "MatterPassedDate": "2025-06-16T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-06-17T00:00:00"
+    }
+  ]
+}

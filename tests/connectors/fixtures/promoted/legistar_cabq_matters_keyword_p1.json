@@ -1,0 +1,31 @@
+{
+  "odata.metadata": "https://webapi.legistar.com/v1/cabq/$metadata#Matters",
+  "value": [
+    {
+      "MatterId": 25106,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025106",
+      "MatterFile": "C-25-102",
+      "MatterTitle": "Vigilant Solutions LPR Data Hosting Agreement",
+      "MatterTypeName": "Agreement",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-06-02T00:00:00",
+      "MatterPassedDate": "2025-07-07T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-07-08T00:00:00"
+    },
+    {
+      "MatterId": 25105,
+      "MatterGuid": "B7C4E2A1-2510-4AAB-BBBC-000000025105",
+      "MatterFile": "R-25-131",
+      "MatterTitle": "Gunshot Victim Services Funding Resolution",
+      "MatterTypeName": "Resolution",
+      "MatterStatusName": "Adopted",
+      "MatterIntroDate": "2025-05-19T00:00:00",
+      "MatterPassedDate": "2025-06-02T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-06-03T00:00:00"
+    }
+  ]
+}

@@ -344,6 +344,41 @@ subaward = true
 # the pull, $orderby keeps the freshest records first). The bare api_base 404s.
 index_path  = "/matters"
 index_query = "$top=100&$orderby=MatterLastModifiedUtc%20desc"
+# P35.8 (ACQ-04, I8 §4.1): the keyword-filtered, paged matter pass — a second
+# index slice BESIDE the unchanged recency query above. `keyword_index_query` is
+# the reviewed OData template: `{or_group}` fills with an OR-group of
+# `substringof('<term>',MatterTitle)` clauses (the substrings are deliberately
+# BROAD on the server side — the client-side word-boundary precision pass over
+# agenda_content_vocab.toml drops the noise: `Axon` inside `Saxon`, `UAS` inside
+# `persuasive`, workers-comp titles — I4 NEW-6 / I4-C218) and `{skip}` with the
+# page offset. The pass pages until a short page (fewer than
+# keyword_index_page_size rows) or the reviewed keyword_index_max_pages bound —
+# a recorded truncation, never a silent stop. The term set is I8 §4.1 verbatim,
+# split into four OR-groups so every generated URL stays under ~1,500
+# characters. `substringof` case behaviour (I4 Q5): the InSite back end is
+# case-insensitive by collation — an INFERENCE this row cannot live-verify
+# (live_verification=false), pinned by the fixture test that an all-caps title
+# keeps matching; the precision scan is itself case-insensitive.
+keyword_index_query = "$filter=({or_group})&$top=1000&$skip={skip}"
+keyword_index_page_size = 1000
+keyword_index_max_pages = 25
+keyword_index_groups = [
+  # ALPR/vendors, RTCC, gunshot
+  ["license plate", "LPR", "Flock", "Vigilant", "Fusus",
+   "real time crime", "real-time crime", "ShotSpotter", "SoundThinking",
+   "gunshot"],
+  # drones, face recognition, forensics/SMM
+  ["drone", "unmanned aer", "facial recognition", "Clearview",
+   "Cellebrite", "GrayKey", "Grayshift", "Magnet Forensics",
+   "Dataminr", "Babel Street"],
+  # school surveillance, ATE
+  ["Gaggle", "GoGuardian", "Securly", "Lightspeed",
+   "Verra", "red light camera", "speed camera", "speed safety",
+   "automated enforcement", "automated traffic"],
+  # monitoring/BWC, other vendors, catch-all
+  ["electronic monitoring", "body-worn", "body worn",
+   "Axon", "BriefCam", "Genetec", "Rekor", "surveillance"],
+]
 # The human-readable legislation detail page for a matter (link, not bytes).
 matter_link_template = "https://{tenant}.legistar.com/LegislationDetail.aspx?ID={matter_id}&GUID={matter_guid}"
 # A matter becomes a Contract claim ONLY when its MatterTypeName matches one of

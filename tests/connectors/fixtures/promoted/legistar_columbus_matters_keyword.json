@@ -1,0 +1,31 @@
+{
+  "odata.metadata": "https://webapi.legistar.com/v1/columbus/$metadata#Matters",
+  "value": [
+    {
+      "MatterId": 33001,
+      "MatterGuid": "C8D5F3B2-3300-4AAC-BBBD-000000033001",
+      "MatterFile": "Ord 1330-2025",
+      "MatterTitle": "License Plate Reader Data Retention Ordinance",
+      "MatterTypeName": "Ordinance",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-04-07T00:00:00",
+      "MatterPassedDate": "2025-05-19T00:00:00",
+      "MatterEnactmentNumber": "Ord 1144-2025",
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-05-20T00:00:00"
+    },
+    {
+      "MatterId": 33003,
+      "MatterGuid": "C8D5F3B2-3300-4AAC-BBBD-000000033003",
+      "MatterFile": "Ord 1440-2025",
+      "MatterTitle": "Speed Safety Camera Program Ordinance",
+      "MatterTypeName": "Ordinance",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2025-05-12T00:00:00",
+      "MatterPassedDate": "2025-06-23T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council",
+      "MatterLastModifiedUtc": "2025-06-24T00:00:00"
+    }
+  ]
+}

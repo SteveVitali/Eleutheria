@@ -46,7 +46,9 @@ def test_six_tenant_rows_resolve_to_the_corrected_jurisdictions() -> None:
 def test_corrected_labels_reach_the_connector_target_resolution() -> None:
     # The label the connector emits rides through tenant_targets()
     # (SIG-INGEST-034 candidate identifier) — resolve it the same way.
-    targets = {t["tenant_id"]: t for t in tenant_targets("legistar")}
+    # P35.8: a tenant emits more than one index target (recency + keyword
+    # slices); the recency row is the one whose id IS the tenant key.
+    targets = {t["tenant_id"]: t for t in tenant_targets("legistar") if t["id"] == t["tenant_id"]}
     for key, expected in CORRECTED_JURISDICTIONS.items():
         assert targets[key]["jurisdiction"] == expected
 
@@ -74,7 +76,8 @@ def test_tenant_key_is_the_claim_identity_component() -> None:
     # enters the claim identity, so keys stay unchanged across the M1–M5
     # label corrections (a rename would mint new subjects for the same
     # upstream matters).
-    targets = {t["tenant_id"]: t for t in tenant_targets("legistar")}
+    # P35.8: select the recency slice — the keyword slices carry :kwN ids.
+    targets = {t["tenant_id"]: t for t in tenant_targets("legistar") if t["id"] == t["tenant_id"]}
     for key in CORRECTED_JURISDICTIONS:
         target = targets[key]
         assert target["id"] == key

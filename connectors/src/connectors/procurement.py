@@ -1275,6 +1275,38 @@ def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
         if patterns:
             target["contract_matter_patterns"] = list(patterns)
         out.append(target)
+        # P35.8 (ACQ-04, I8 §4.1): a platform whose endpoint carries a reviewed
+        # ``keyword_index_query`` template gets the SECOND index slice — one
+        # paged target per reviewed OR-group, BESIDE the unchanged recency
+        # target above (two index passes feed the same ``agenda_index`` rows; a
+        # matter seen by both is one claim through ``content_digest``). The
+        # group's filled query template rides the row as data so fetch() pages
+        # it (``{skip}``), never constructing a query itself.
+        keyword_query = str(endpoint.get("keyword_index_query") or "").strip()
+        keyword_groups = endpoint.get("keyword_index_groups") or ()
+        if keyword_query and keyword_groups:
+            page_size = int(endpoint.get("keyword_index_page_size") or 1000)
+            max_pages = int(endpoint.get("keyword_index_max_pages") or 1)
+            for group_index, terms in enumerate(keyword_groups):
+                or_group = "%20or%20".join(
+                    f"substringof('{str(term).replace(' ', '%20')}',MatterTitle)" for term in terms
+                )
+                template = keyword_query.replace("{or_group}", or_group)
+                keyword_target: dict[str, Any] = {
+                    **target,
+                    "id": f"{tenant_id}:kw{group_index}",
+                    "url": f"{api_base}{index_path}?" + template.replace("{skip}", "0"),
+                    "kind": "agenda_index",
+                    "index_slice": "keyword",
+                    "keyword_group": group_index,
+                    "keyword_terms": [str(t) for t in terms],
+                    "index_path": index_path,
+                    "query_template": template,
+                    "paged": True,
+                    "page_size": page_size,
+                    "max_pages": max_pages,
+                }
+                out.append(keyword_target)
     return out
 
 
@@ -1686,15 +1718,19 @@ class ProcurementConnector(Connector):
         targets: list[Mapping[str, Any]] = list(ctx.parameters.get("targets", []))
         if ctx.source.id in agenda_platform_sources():
             # The live path passes the registry-derived targets in already
-            # (live_targets kind=agenda_tenants); dedupe on tenant_id so a tenant
-            # is never fetched twice in one run.
-            seen = {str(t.get("tenant_id")) for t in targets if t.get("tenant_id")}
+            # (live_targets kind=agenda_tenants); dedupe on id + URL so the same
+            # index slice is never fetched twice in one run. P35.8: a tenant now
+            # carries ONE recency target PLUS its keyword-group targets — the
+            # old tenant_id dedupe would have suppressed the whole widened set
+            # whenever a caller supplied only the recency target.
+            seen_ids = {str(t.get("id")) for t in targets if t.get("id")}
+            seen_urls = {str(t.get("url")) for t in targets if t.get("url")}
             targets = [
                 *targets,
                 *(
                     t
                     for t in tenant_targets(platform=ctx.source.id)
-                    if str(t.get("tenant_id")) not in seen
+                    if str(t.get("id")) not in seen_ids and str(t.get("url")) not in seen_urls
                 ),
             ]
         if ctx.source.id in procurement_portal_sources():
@@ -1803,6 +1839,12 @@ class ProcurementConnector(Connector):
                 headers=headers,
                 body=json.dumps(post_body, sort_keys=True).encode("utf-8"),
             )
+        if target.get("paged"):
+            # P35.8 (ACQ-04): a paged index target (the Legistar keyword
+            # OR-group slices) loops its reviewed page bound through the SAME
+            # shared fetcher — every page is politeness-checked like any other
+            # request, and the merged capture records every page URL + count.
+            return _fetch_paged_index(ctx, target, headers or None)
         return ctx.fetcher.fetch(url, headers=headers or None)
 
     def discover_more(
@@ -1831,22 +1873,40 @@ class ProcurementConnector(Connector):
         cfg = platform_endpoints().get(ctx.source.id, {})
         if not cfg.get("doc_url_template") and not cfg.get("doc_link_keys"):
             return []
-        resolved: list[Mapping[str, Any]] = []
-        run_cap: int | None = None
+        # P35.8 (ACQ-04): a tenant now carries MORE than one index capture —
+        # the unchanged recency capture plus its keyword-slice captures. The
+        # reviewed window is per TENANT, so the index captures group by
+        # tenant_id and each tenant's item set dedupes by item id (first
+        # capture that surfaced it wins the recorded index_url) BEFORE the
+        # bounded selection — never a per-capture window, or the second index
+        # pass would double the per-tenant document fan-out.
+        tenant_groups: dict[str, dict[str, Any]] = {}
         for capture in captures:
             index_target = _agenda_index_target_for(ctx, capture.source_uri)
             if index_target is None:
-                continue
-            if run_cap is None:
-                run_cap = _opt_int(index_target.get("doc_run_cap") or cfg.get("doc_run_cap"))
-            per_tenant = _opt_int(index_target.get("doc_per_tenant") or cfg.get("doc_per_tenant"))
-            if not per_tenant:
                 continue
             try:
                 payload = json.loads(ctx.captures.get(capture.digest))
             except Exception:
                 continue  # a non-JSON index capture resolves no documents
-            items = _agenda_index_items(payload, ctx.source.id)
+            items = _agenda_precise_items(_agenda_index_items(payload, ctx.source.id), index_target)
+            group = tenant_groups.setdefault(
+                str(index_target.get("tenant_id") or capture.source_uri),
+                {"target": index_target, "items": {}},
+            )
+            for item in items:
+                group["items"].setdefault(_agenda_item_id(item), (item, str(capture.source_uri)))
+        resolved: list[Mapping[str, Any]] = []
+        run_cap: int | None = None
+        for group in tenant_groups.values():
+            index_target = group["target"]
+            if run_cap is None:
+                run_cap = _opt_int(index_target.get("doc_run_cap") or cfg.get("doc_run_cap"))
+            per_tenant = _opt_int(index_target.get("doc_per_tenant") or cfg.get("doc_per_tenant"))
+            if not per_tenant:
+                continue
+            indexed = group["items"]
+            items = [entry[0] for entry in indexed.values()]
             for item, tier in _select_document_items(items, index_target, cfg, per_tenant):
                 url = _document_url(item, index_target, cfg)
                 if not url or url in ctx.resolved_targets:
@@ -1859,7 +1919,7 @@ class ProcurementConnector(Connector):
                     "tenant_id": index_target.get("tenant_id"),
                     "tenant": index_target.get("tenant"),
                     "jurisdiction": index_target.get("jurisdiction"),
-                    "index_url": str(capture.source_uri),
+                    "index_url": indexed[_agenda_item_id(item)][1],
                     "item": dict(item),
                     "item_id": _agenda_item_id(item),
                     "selection_tier": tier,
@@ -2433,15 +2493,39 @@ class ProcurementConnector(Connector):
                         "tenant": dict(tenant) if tenant else None,
                     }
                 ]
+            index_target = _agenda_index_target_for(ctx, str(parsed["capture"].source_uri))
             objects = _agenda_index_items(payload, ctx.source.id)
-            return [
+            precise = _agenda_precise_items(objects, index_target)
+            agenda_records: list[Mapping[str, Any]] = [
                 {
                     "record_kind": "agenda_item",
                     "raw": dict(o),
                     "tenant": dict(tenant) if tenant else None,
                 }
-                for o in objects
+                for o in precise
             ]
+            if isinstance(payload, Mapping) and payload.get("sig_paged") is not None:
+                # P35.8: the paged keyword slice's outcome row — every fetched
+                # page (URL + row count), the reviewed bounds it paged under,
+                # and the precision-pass drop count ride the run record, so a
+                # truncated slice or a noisy group is first-class data, never
+                # a silent empty window.
+                agenda_records.append(
+                    {
+                        "record_kind": "agenda_index_slice",
+                        "source_uri": str(parsed["capture"].source_uri),
+                        "capture_digest": parsed["capture"].digest,
+                        "tenant": dict(tenant) if tenant else None,
+                        "index_slice": str((index_target or {}).get("index_slice") or "keyword"),
+                        "keyword_group": (index_target or {}).get("keyword_group"),
+                        "keyword_terms": list((index_target or {}).get("keyword_terms") or ()),
+                        "paged": dict(payload["sig_paged"]),
+                        "items_count": len(objects),
+                        "precise_count": len(precise),
+                        "dropped_count": len(objects) - len(precise),
+                    }
+                )
+            return agenda_records
         if ctx.source.id in _usaspending_family_sources():
             # P26.14: the bounded award-search payload — `results` is the award
             # list. Each row emits a `procurement_notice` raw record carrying
@@ -2551,6 +2635,10 @@ class ProcurementConnector(Connector):
                 out.append(_stamp(dict(raw), source_id=ctx.source.id))
             elif kind == "ted_eu_slice":
                 # P26.15 per-slice outcome row — run-record data, not a claim.
+                out.append(_stamp(dict(raw), source_id=ctx.source.id))
+            elif kind == "agenda_index_slice":
+                # P35.8 per-slice outcome row — paged provenance + the
+                # precision-pass drop count; run-record data, not a claim.
                 out.append(_stamp(dict(raw), source_id=ctx.source.id))
             elif kind == "agenda_document":
                 out.extend(self._normalize_agenda_document(ctx, raw))
@@ -4204,6 +4292,112 @@ def _opt_int(value: Any) -> int | None:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _agenda_precise_items(
+    items: list[Mapping[str, Any]], index_target: Mapping[str, Any] | None
+) -> list[Mapping[str, Any]]:
+    """The client-side word-boundary precision pass for a keyword slice (P35.8).
+
+    The reviewed ``substringof`` terms are deliberately BROAD on the server side
+    (``Axon`` inside ``Saxon``, ``UAS`` inside ``persuasive``, the Cook County
+    workers-comp titles of I4-C218), so a keyword-slice index capture keeps an
+    item only when its TITLE matches the reviewed agenda-content vocabulary —
+    the same word-boundary regexes the document scan runs. The recency slice is
+    unchanged: it carries no ``index_slice`` marker and keeps every item.
+    """
+    if str((index_target or {}).get("index_slice") or "") != "keyword":
+        return items
+    precise: list[Mapping[str, Any]] = []
+    for item in items:
+        title = _first_nonempty(
+            item,
+            ("MatterTitle", "MatterName", "meetingTitle", "name", "title", "MeetingName"),
+        )
+        if title and scan_agenda_content(str(title)):
+            precise.append(item)
+    return precise
+
+
+def _fetch_paged_index(
+    ctx: RunContext, target: Mapping[str, Any], headers: Mapping[str, str] | None
+) -> FetchResult:
+    """Page a reviewed index query to exhaustion through the shared fetcher (P35.8).
+
+    The keyword OR-group slice pages until a page returns FEWER than the
+    reviewed ``page_size`` rows — or the reviewed ``max_pages`` bound, which is
+    then recorded as ``truncated`` on the merged capture's ``sig_paged``
+    provenance, never a silent stop. Every page request goes through
+    ``ctx.fetcher`` (the politeness/reservation seam, SIG-INGEST-011). A
+    first-page non-200, a first-page API error envelope, or a non-JSON first
+    page flows through unchanged — the run records the slice's honest outcome
+    (disappearance / tenant_api_error / drift). A mid-slice failure keeps the
+    pages already fetched and marks the slice truncated. The merged payload is
+    the OData ``value`` envelope plus ``sig_paged`` (page URLs + counts) — the
+    capture's recorded provenance for the multi-request fetch.
+    """
+    api_base = str(target.get("api_base") or "").rstrip("/")
+    index_path = str(target.get("index_path") or "")
+    template = str(target.get("query_template") or "")
+    page_size = int(target.get("page_size") or 1000)
+    max_pages = int(target.get("max_pages") or 1)
+    platform = str(target.get("platform") or ctx.source.id)
+    items: list[Mapping[str, Any]] = []
+    pages: list[dict[str, Any]] = []
+    truncated = False
+    first: FetchResult | None = None
+    exhausted = False
+    for page in range(max_pages):
+        skip = page * page_size
+        page_url = f"{api_base}{index_path}?{template.replace('{skip}', str(skip))}"
+        assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
+        fetched = ctx.fetcher.fetch(page_url, headers=headers)
+        if fetched.status != 200:
+            if first is None:
+                return fetched
+            truncated = True
+            break
+        try:
+            payload = json.loads(fetched.body)
+        except (ValueError, UnicodeDecodeError):
+            if first is None:
+                return fetched
+            truncated = True
+            break
+        if _is_tenant_error_envelope(payload):
+            # An unprovisioned tenant's error envelope IS the slice's outcome —
+            # return it unmerged so extract() emits the tenant_api_error row.
+            if first is None:
+                return fetched
+            truncated = True
+            break
+        page_items = _agenda_index_items(payload, platform)
+        items.extend(page_items)
+        pages.append({"page": page, "skip": skip, "url": page_url, "count": len(page_items)})
+        if first is None:
+            first = fetched
+        if len(page_items) < page_size:
+            exhausted = True
+            break
+    assert first is not None  # a failing first page returns above, unmerged
+    merged = json.dumps(
+        {
+            "value": items,
+            "sig_paged": {
+                "page_size": page_size,
+                "pages": pages,
+                "truncated": truncated or not exhausted,
+            },
+        },
+        sort_keys=True,
+    ).encode("utf-8")
+    return FetchResult(
+        url=str(first.url),
+        status=first.status,
+        body=merged,
+        media_type=first.media_type,
+        retrieved_at=first.retrieved_at,
+    )
 
 
 def _agenda_index_items(payload: Any, platform: str) -> list[Mapping[str, Any]]:
