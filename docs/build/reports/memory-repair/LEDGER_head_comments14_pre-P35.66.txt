@@ -1,0 +1,4 @@
+<!-- Archived head line byte-for-byte (head State line pre-P36.11) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.11.txt, sha256 866dea9360fa9659… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P35.1a1) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.1a1.txt, sha256 47555ccf19b8b113… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P35.66) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.66.txt, sha256 5eb337780e41aa8a… (BM-LEDGER-08). -->
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.66 closeout (row 288 — the residential demotion wired end to end: declared parcel signal, emit stamps, automatic C3 demotion, publish-path refusal; committed wiring only — production untouched; the P35.1a1 seed leg stays QUEUED in RETURN PASS); next → P36.74 (row 289).
