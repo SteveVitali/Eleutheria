@@ -112,3 +112,25 @@ predicate_allowlist = [
   "written_policy_value", "effective_from", "authorization_state",
   "document", "title", "posted_date", "as_of", "disclosure_field_state",
 ]
+
+# --- P35.11 / R11-ACQ-07: the ADR-185 S8 tribal screened lane ------------------
+# Facts + citations only (B-37 "TR facts+cite"). The allowlists carry ONLY the
+# screened fact/citation predicates the reviewed field maps use plus the
+# mechanical disclosure_field_state — no person-name, registrant, row-level or
+# device predicate is admitted by construction. `jurisdiction` anchors any
+# name-only partner mint to the US-TRIBAL key space (none is configured).
+
+[adapters.camreg_tribal_all_leaders_directory]
+source_id = "camreg_tribal_all_leaders_directory"
+jurisdiction = "US-TRIBAL:ALL"
+predicate_allowlist = [
+  "title", "document", "use_restriction", "disclosure_field_state",
+]
+
+[adapters.legis_tribal_tohono_oodham_notice]
+source_id = "legis_tribal_tohono_oodham_notice"
+jurisdiction = "US-TRIBAL:Tohono O'odham Nation of Arizona"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date",
+  "disclosure_field_state",
+]

@@ -5229,3 +5229,13 @@ agency = "York Region"
 status = "covered_by_registered"
 verified = 2026-09-18
 notes = "GL-GATE-07 disposition: covered — this endpoint is already a registered target (camreg_york_on:york_on_traffic_cameras); no duplicate wiring."
+
+[[enumerated]]
+id = "r11_bia_tribal_leaders_directory"
+platform = "arcgis"
+url = "https://services1.arcgis.com/UxqqIfhng71wUT9x/arcgis/rest/services/TribalLeadership_Directory/FeatureServer/0"
+agency = "Bureau of Indian Affairs, Branch of Geospatial Support (item 3c6ae1b6fa9f414cbd36758905b196c3)"
+state = "US"
+status = "screened_lane"
+verified = 2026-09-30
+notes = "R11-ACQ-07 disposition (plan AP-T2-201, cand I5-C225, IND-TRIBAL): a US-TRIBAL geography reference spine, not a camera registry — the endpoint is verified-positive but the row-level arcgis_query is deliberately NOT a fetch target under the ADR-185 S8 screened lane (B-37 'TR facts+cite'; leader name/phone/email fields never read). The bounded citation lands through source `camreg_tribal_all_leaders_directory` (dossier_documents clause_fields over this layer's own metadata page); row-level ingestion stays gated behind CG-LATER-tribal-data-governance-rule-i7-new-6 (OPEN)."

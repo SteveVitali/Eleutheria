@@ -159,6 +159,15 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # existing api.data.gov key ($SIG_DATA_GOV_KEY) rides the X-Api-Key
     # header, never the URL.
     "congress_gov": "accountability",
+    # P35.11 (R11-ACQ-07): the ADR-185 S8 tribal screened lane — the two
+    # IND-TRIBAL members route through `dossier_documents` clause_fields so
+    # the lane emits facts + citations only (B-37 "TR facts+cite"). TR1's
+    # 601-row arcgis_query is deliberately NOT the lane (a row-level tribal
+    # read stays gated behind CG-LATER-tribal-data-governance-rule-i7-new-6);
+    # its layer-metadata page is the bounded citation document. Both stay
+    # `ingestion_permitted=false` pending the wave-open HG-03 flip list.
+    "camreg_tribal_all_leaders_directory": "dossier_documents",
+    "legis_tribal_tohono_oodham_notice": "dossier_documents",
     # P31.12 (BREADTH.1): the four P29.3 GL-GATE-07 rights flips route through
     # the accountability connector's targeted `oversight_report` lookup — one
     # reviewed live-targets row per published report (landing page or report

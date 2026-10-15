@@ -1,0 +1,17 @@
+{
+  "leg": "L1",
+  "completed": [],
+  "now": "2026-10-19T15:00:00Z",
+  "go": {
+    "verbatim": "Window + flips at open — Wave A legs 2026-10-19 → 10-23, 14:00–20:00Z approved; the HG-03 flip list lands at wave open (GATE-G4 §3)",
+    "recorded_at": "2026-10-09T17:32:00Z"
+  },
+  "flip_list": ["camreg_tribal_all_leaders_directory", "legis_tribal_tohono_oodham_notice"],
+  "run_set": ["legistar", "usaspending", "procportal_nyc_ny"],
+  "screened_disclosure": false,
+  "legistar_trigger": {"paused": true},
+  "materialize_active": false,
+  "active_manual_run": null,
+  "backup": {"status": "SUCCESSFUL", "id": "1793000000000", "type": "ON_DEMAND"},
+  "prestate": {"captured": true, "cadence_check_ok": true, "path": "pre/wave-a-2026-10-19/"}
+}

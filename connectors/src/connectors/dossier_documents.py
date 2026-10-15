@@ -128,10 +128,20 @@ __all__ = [
 
 DOSSIER_DOCUMENTS = "dossier_documents"
 
-#: The three pilot source-family registry rows this connector serves. All stay
-#: ``ingestion_permitted=false`` — the fixture runs are an engineering check,
-#: never a rights decision or a live-access proof (SIG-ACQ-003).
-DOSSIER_SOURCES = ("dossier_okc", "dossier_tulsa", "dossier_san_diego")
+#: The three pilot source-family registry rows this connector serves — plus
+#: the two ADR-185 S8 tribal screened-lane sources (P35.11 / R11-ACQ-07): the
+#: screened lane emits facts + citations only (B-37 "TR facts+cite") through
+#: the same frozen crosswalk, so the pilot's reviewed machinery is reused
+#: unchanged. All stay ``ingestion_permitted=false`` — the fixture runs are
+#: an engineering check, never a rights decision or a live-access proof
+#: (SIG-ACQ-003).
+DOSSIER_SOURCES = (
+    "dossier_okc",
+    "dossier_tulsa",
+    "dossier_san_diego",
+    "camreg_tribal_all_leaders_directory",
+    "legis_tribal_tohono_oodham_notice",
+)
 
 
 # --- the versioned vocabulary + frozen crosswalk (data, not code) --------------

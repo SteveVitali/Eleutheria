@@ -15,7 +15,9 @@ Checks (each reports candidates/evaluated and a declared parse floor):
   orient-budget      V1  orient region (line 1 → before ``## OPEN FINDINGS``)
                          ≤ 12,288 B, warn > 8,192 B
   current-state      V2  19 keys in order (+ optional ``harness`` in its slot),
-                         declared vocabularies, lines ≤ 256 B, no ``| PRIOR``,
+                         declared vocabularies, lines ≤ 256 B (the generated
+                         ``returnPass:`` id list ≤ 512 B — the B3 V2 hard bound;
+                         the id set grows with the queued-leg set), no ``| PRIOR``,
                          updatedAt ≤ the clock/commit, nextTicket = the lowest
                          not-landed chain row or DONE, returnPass is an id list,
                          no key-named line outside the section
@@ -98,6 +100,11 @@ STALE_REL = f"{POLICY_REL}/stale_tokens.txt"
 
 ORIENT_WARN, ORIENT_MAX = 8192, 12288
 CS_MAX, LINE_MAX, ENTRY_MAX, PROBE_MAX = 3072, 256, 2048, 49152
+# B3 V2 states each CURRENT STATE line ≤ 256 B with failure above 512 B; the
+# generated `returnPass:` id list is monotone-growing with the queued-leg set
+# (one ticket id per RETURN PASS table key, comma-joined, no redundancy), so it
+# keeps the design's 512 B hard bound while every other key keeps 256 B.
+RP_LINE_MAX = 512
 
 EXPECTED_KEYS = audit_current_state.EXPECTED_KEYS
 EXPECTED_KEYS_WITH_HARNESS = audit_current_state.EXPECTED_KEYS_WITH_HARNESS
@@ -701,9 +708,11 @@ def check_current_state(rep: Report, src: Src, ctx: dict) -> None:
               f"CURRENT STATE section is {len(cs.encode())} B, over the 3 KiB "
               "budget (values only, V2)")
     for lineno, ln in kl:
-        if len(ln.encode()) > LINE_MAX:
+        key = ln.split(":", 1)[0].strip()
+        cap = RP_LINE_MAX if key == "returnPass" else LINE_MAX
+        if len(ln.encode()) > cap:
             rep.v(name, "line-budget", LEDGER_REL, lineno,
-                  f"CURRENT STATE line is {len(ln.encode())} B (> 256 B; values "
+                  f"CURRENT STATE line is {len(ln.encode())} B (> {cap} B; values "
                   "only, V2)")
         if re.search(r"\|\s*\**PRIOR", ln):
             rep.v(name, "prior-history", LEDGER_REL, lineno,

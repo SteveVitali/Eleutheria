@@ -313,6 +313,19 @@ allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "record": "readb
 allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "recorded_at"
 allow tests/ops/fixtures/roll_gate/go.json 2026-10-15T00:00:00Z "now"
 
+# ── P35.11 wave-a-gate recorded-inputs fixtures (R5; the contract's real window) ─────────────────────────
+# The fixtures replay the contract's actual Wave-A window instants (OM-19 — the 2026-10-19→23
+# 14:00–20:00Z band, the recorded ING-GO-A wording, the prestate path name). Scheduled values, never
+# fabricated record dates; JSON cannot carry an inline marker, so the scheduled clocks are
+# allow-listed per field with the expiry just past the literals they name — after the window
+# closes every instant is past-dated on its own.
+allow tests/ops/fixtures/wave_a/go.json 2026-10-24T00:00:00Z "now"
+allow tests/ops/fixtures/wave_a/go.json 2026-10-24T00:00:00Z "verbatim"
+allow tests/ops/fixtures/wave_a/go.json 2026-10-24T00:00:00Z "path"
+allow tests/ops/fixtures/wave_a/go-screened.json 2026-10-24T00:00:00Z "now"
+allow tests/ops/fixtures/wave_a/go-screened.json 2026-10-24T00:00:00Z "verbatim"
+allow tests/ops/fixtures/wave_a/go-screened.json 2026-10-24T00:00:00Z "path"
+
 # ── GATE-G4 blocked-entry `ci:` fragment fix ─────────────────────────────────
 # d2534d02's PHASE LOG entry carried `ci: fail #262@bcb8f25`, which the G3b
 # recorded-CI verifier cannot parse (its grammar knows pass/pass-after-rerun).

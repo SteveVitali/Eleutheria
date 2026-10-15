@@ -24,6 +24,7 @@ from __future__ import annotations
 import copy
 import dataclasses
 import json
+import re
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
@@ -83,6 +84,12 @@ FIXTURE_FOR_DOC: dict[str, tuple[str, str]] = {
     "sd-ubicquia-agreement-2023": ("sd_ubicquia_agreement_2023.pdf", "application/pdf"),
     "sd-technology-index": ("sd_technology_index.html", "text/html"),
     "sd-pab-index": ("sd_pab_index.html", "text/html"),
+    # P35.11 / ADR-185 S8 tribal screened lane (facts + citations only).
+    "bia-tld-layer-metadata": ("bia_tribal_leadership_layer.html", "text/html"),
+    "tolc-lgds-ast-hearing-notice-2025-11-19": (
+        "tolc_lgds_ast_hearing_notice.pdf",
+        "application/pdf",
+    ),
 }
 
 
@@ -213,12 +220,21 @@ def test_connector_registered_and_routed() -> None:
 
 
 def test_new_source_rows_stay_blocked() -> None:
-    """The three NEW rows are fail-closed: not permitted, rights UNDETERMINED,
-    no fabricated review metadata — the loader gate refuses before any fetch."""
+    """The NEW rows are fail-closed: not permitted, rights UNDETERMINED,
+    no fabricated review metadata — the loader gate refuses before any fetch.
+    The recorded compact posture is a *non-granting* state (a granted compact
+    on a gated row is a contradictory record); the tribal screened-lane rows
+    carry `public_terms_only`/`not_contacted` (P35.11)."""
+    non_granting = {
+        CompactStatus.NOT_CONTACTED,
+        CompactStatus.NO_RESPONSE,
+        CompactStatus.PUBLIC_TERMS_ONLY,
+        CompactStatus.CONTACTED_AWAITING_RESPONSE,
+    }
     for source_id in DOSSIER_SOURCES:
         record = get(source_id)
         assert record.ingestion_permitted is False
-        assert record.compact_status is CompactStatus.NOT_CONTACTED
+        assert record.compact_status in non_granting, source_id
         assert record.rights.spdx.strip().upper() == "UNDETERMINED"
         assert record.rights.redistributable is False
         assert not record.rights_reviewed_by
@@ -238,7 +254,10 @@ def test_bounded_protocols_and_adapters() -> None:
     ontology = _ontology_predicate_ids()
     for source_id in DOSSIER_SOURCES:
         config = adapter_config(source_id)
-        assert config["jurisdiction"].startswith("us.state_abbr:")
+        # Jurisdiction anchors are scoped keys: `us.state_abbr:` for the pilot
+        # families, `US-TRIBAL:` for the P35.11 screened-lane sources (the
+        # geography frame's tribal key space).
+        assert re.match(r"^(us\.state_abbr|US-TRIBAL):", str(config["jurisdiction"])), source_id
         allowlist = predicate_allowlist(source_id)
         assert allowlist
         unknown = allowlist - ontology
