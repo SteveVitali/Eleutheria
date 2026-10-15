@@ -107,7 +107,7 @@ def _served(url: str, fixture: str, **kw: Any) -> FetchResult:
         status=200,
         body=_fixture_bytes(fixture),
         media_type="text/html",
-        retrieved_at=datetime(2027, 1, 1, tzinfo=UTC),
+        retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
         **kw,
     )
 
@@ -414,13 +414,13 @@ def test_run_produces_one_probe_run_record() -> None:
                 status=403,
                 body=b"Forbidden",
                 media_type="text/html",
-                retrieved_at=datetime(2027, 1, 1, tzinfo=UTC),
+                retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
             ),
         },
         t0,
         t1,
     )
-    rec = probe_run_record(conn, report, run_id="r1", generated_at="2027-01-01T00:00:00Z")
+    rec = probe_run_record(conn, report, run_id="r1", generated_at="2026-01-01T00:00:00Z")
     assert rec["version"] == "sig.probe-run/1"
     assert rec["probe"] == "flock-portal-probe"
     assert rec["source_id"] == PROBE_SOURCE_ID
@@ -430,7 +430,7 @@ def test_run_produces_one_probe_run_record() -> None:
     assert results["adrian-mi-pd"]["result"] == "refused"
     assert results["adrian-mi-pd"]["refusal_kind"] == "challenge"
     # Deterministic serialization — same inputs, same digest.
-    rec2 = probe_run_record(conn, report, run_id="r1", generated_at="2027-01-01T00:00:00Z")
+    rec2 = probe_run_record(conn, report, run_id="r1", generated_at="2026-01-01T00:00:00Z")
     assert json.dumps(rec, sort_keys=True) == json.dumps(rec2, sort_keys=True)
     assert rec["output_digest"] == rec2["output_digest"]
     # The verbatim terms land on the record, deduplicated by digest.
@@ -451,7 +451,7 @@ def test_challenge_403_stops_and_records() -> None:
                 status=403,
                 body=b"Forbidden",
                 media_type="text/html",
-                retrieved_at=datetime(2027, 1, 1, tzinfo=UTC),
+                retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
             )
         },
         t0,
@@ -484,7 +484,7 @@ def test_404_is_a_recorded_gone() -> None:
                 status=404,
                 body=b"nope",
                 media_type="text/html",
-                retrieved_at=datetime(2027, 1, 1, tzinfo=UTC),
+                retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
             )
         },
         t0,
@@ -547,7 +547,7 @@ def test_rights_reservation_refusal() -> None:
                 status=200,
                 body=_fixture_bytes("served_sunnydale.html"),
                 media_type="text/html",
-                retrieved_at=datetime(2027, 1, 1, tzinfo=UTC),
+                retrieved_at=datetime(2026, 1, 1, tzinfo=UTC),
                 headers={"Content-Signal": "ai-train=no"},
             )
         },
