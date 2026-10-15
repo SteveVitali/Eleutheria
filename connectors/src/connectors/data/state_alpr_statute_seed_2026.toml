@@ -1,0 +1,603 @@
+# SPDX-License-Identifier: Apache-2.0
+# The 2026 state-ALPR-statute seed refresh (I8 §4.4 / ACQ-06, F-374,
+# I7-C9 [B-39] answer `a` — "refresh the statute seed from origins").
+# A NEW committed asset beside the frozen 2022 seed, which stays as it is
+# (append-only, P7): `supersedes_asset` names the asset it refreshes; both
+# stay registered and loadable through `sig-connectors load-seed`.
+#
+# Provenance discipline (C9 default a; I7 NEW-7): every [[statutes]] entry
+# is verified at its own legislature/governor origin in the committed I7
+# packets (docs/build/planning/2026-09-30-next-phase/data/
+# candidates_consolidated.csv rows I7-U137, I7-U138, I7-U142…I7-U147,
+# fetched live-read 2026-09-30). NCSL, LAPPA, GHSA and MultiState served
+# as ENUMERATION AIDS ONLY — no entry and no claim cites them; an
+# enumeration-aid host in `origin_url` is ContentDrift by contract.
+# The 16 states the 2022 seed recorded keep that committed asset as their
+# provenance (`statute_posture = "recorded"` below); they were not
+# re-verified at origin in the I7 packet, so they are NOT re-asserted as
+# 2026 seed entries — the coverage table records where each record lives.
+#
+# [[duty_rows]] is the 50-state per-state duty/coverage table the
+# statute-check connector consumes (SIG-INGEST-050): `origin_verified`
+# rows carry this seed's entries, `recorded` rows carry the superseded
+# asset's, and `none_recorded` is ABSENCE OF EVIDENCE — never a "no
+# statute exists" claim (the defining standard, §3.1).
+#
+# DATA, not code (SIG-ENG-001). Spine ingestion stays operator-gated:
+# this committed asset is the seed; loading it into the claim spine
+# happens on the Wave-A roll (P35.11) through `load-seed`.
+
+schema = "statute_seed/2"
+as_of = "2026-09-30"
+as_of_label = "I7/I9a origin reads, 2026-09-30"   # the packet verification day — not an upstream page label
+retrieved = "2026-10-10"                          # the date this committed asset was captured
+frozen = true
+never_a_feed = true
+supersedes_asset = "state_alpr_statute_seed.toml"
+inventory = "per-state origin corpus (8 entries; enumeration via LAPPA-2025/GHSA/MultiState aids — never cited)"
+inventory_url = "urn:sig:seed:state-alpr-statute-2026"   # a compiled multi-origin asset has no single upstream URL
+state_count = 8
+duty_row_count = 50
+note = "supersedes the frozen 2022 NCSL-derived asset's coverage going forward; the 2022 asset stays committed and loadable"
+
+# ---- entries verified at origin by the I7/I9a packets (F-374) ---------
+
+[[statutes]]
+state = "Washington"
+instrument_type = "statute"
+years_enacted = [2026]
+citations = ["ESSB 6002 (2026) — Chapter 239, 2026 Laws"]
+origin_url = "https://app.leg.wa.gov/billsummary?BillNumber=6002&Year=2026&Initiative=false"
+effective_date = "2026-03-30"
+date_basis = "effective"   # governor signed 2026-03-30; effective 2026-03-30 (I9a-F026)
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U142", "I9a-C015", "I9a-F026"]
+notes = "'Concerning driver privacy protections' — ALPR use limits; limits placement near health-care, court and immigration facilities (journalism leads, unfetched)."
+
+[[statutes]]
+state = "New Mexico"
+instrument_type = "statute"
+years_enacted = [2026]
+citations = ["SB 40 (2026) — Driver Privacy and Safety Act, Laws 2026, ch. 20"]
+origin_url = "https://www.nmlegis.gov/Legislation/Legislation?chamber=S&legType=B&legNo=40&year=26"
+effective_date = "2026-07-01"
+date_basis = "reported"    # signed 2026-03-04 (Laws 2026, ch. 20, I9a-F028); the 2026-07-01 effective date is a Source NM journalism lead recorded in I9a-C016, not origin-read
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U137", "I9a-C016", "I9a-F028"]
+notes = "Signed by Governor 2026-03-04, Chapter 20 (F028). Bars use for protected health care, political activity and immigration-status investigations (journalism leads, unfetched). Agency-report duty: future_statutory_disclosure_nm."
+
+[[statutes]]
+state = "Oregon"
+instrument_type = "statute"
+years_enacted = [2026]
+citations = ["SB 1516 (2026 Regular Session) — public-safety omnibus, ALPR provisions"]
+origin_url = "https://olis.oregonlegislature.gov/liz/2026R1/Measures/Overview/SB1516"
+effective_date = "2026-03-31"
+date_basis = "effective"   # signed 2026-03-31 with emergency clause (I9a-F029)
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U143", "I9a-C017", "I9a-F029"]
+notes = "ALPR authorized uses; ≤30-day retention unless tied to an investigation or court proceeding; agencies must adopt vendor-contract and use policies; sharing limits with non-Oregon agencies (F029)."
+
+[[statutes]]
+state = "Kentucky"
+instrument_type = "statute"
+years_enacted = [2026]
+citations = ["HB 58 (2026 RS) — Acts Ch. 71, new KRS Chapter 189 section"]
+origin_url = "https://apps.legislature.ky.gov/record/26rs/hb58.html"
+effective_date = "2026-04-10"
+date_basis = "signed"      # signed by Governor 2026-04-10 (Acts Ch. 71, I9a-F041); the codified effective date was not read at origin
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U144", "I9a-C024", "I9a-F041"]
+notes = "'AN ACT relating to privacy protection' — restricts ALPR use; limits use and sale of captured data; 90-day retention cap; expressly regulates commercial/private ALPR collectors alongside police use (F041)."
+
+[[statutes]]
+state = "Connecticut"
+instrument_type = "statute"
+years_enacted = [2026]
+citations = ["Public Act 26-14 — substitute SB 397 (2026)"]
+origin_url = "https://www.cga.ct.gov/asp/cgabillstatus/cgabillstatus.asp?selBillType=Bill&which_year=2026&bill_num=397"
+effective_date = "2026-05-04"
+date_basis = "signed"      # Senate passed 2026-04-14, House 2026-05-01, signed 2026-05-04 (I9a-F042 bill-status read); the PA text's effective section was not read (host TLS failure recorded, F027)
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U145", "I9a-C025", "I9a-C018", "I9a-F042"]
+notes = "'An Act Concerning Democracy and Government Accountability and the Use and Retention of Data Derived from Automated License Plate Reader Systems'. Supersedes the snippet-grade HB 5449 attribution (I9a-C018)."
+
+[[statutes]]
+state = "Missouri"
+instrument_type = "executive_order"
+years_enacted = [2026]
+citations = ["Executive Order 26-18 (2026-09-16)"]
+origin_url = "https://governor.mo.gov/actions/executive-orders?page=0"
+effective_date = "2026-09-16"
+date_basis = "issued"      # the governor's-office listing dates the order 2026-09-16 (I9a-F043); the order text at sos.mo.gov returned 403 (F046 — recorded, not bypassed)
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U146", "I9a-C026", "I9a-F043"]
+notes = "Governor Mike Kehoe orders entities receiving state funding to implement minimum standards governing ALPR technology (F043 listing). An executive instrument, not a statute — typed executive_order (I8 note)."
+
+[[statutes]]
+state = "Idaho"
+instrument_type = "statute"
+years_enacted = [2025]
+citations = ["S1180 (2025) — Idaho Code § 49-1432, Session Law ch. 316"]
+origin_url = "https://legislature.idaho.gov/sessioninfo/2025/legislation/S1180/"
+effective_date = "2025-07-01"
+date_basis = "effective"   # signed by Governor 2025-04-04; Session Law ch. 316; effective 2025-07-01 (I9a-F051)
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U147", "I9a-C031", "I9a-F051"]
+notes = "Applies to all governmental entities; audit and log duties, semiannual audits of ALPR access logs (LAPPA L002 + bill-page snippet leads). Absent from the frozen 2022 seed."
+
+[[statutes]]
+state = "Virginia"
+instrument_type = "statute"
+years_enacted = [2025]
+citations = ["Va. Code § 2.2-5517 — Use of automatic license plate recognition systems by law-enforcement agencies"]
+origin_url = "https://law.lis.virginia.gov/vacode/title2.2/chapter55.6/section2.2-5517/"
+effective_date = "2025-07-01"
+date_basis = "effective"   # the LIS section page reads effective 2025-07-01 (I3-C041 live-read)
+verified_on = "2026-09-30"
+confidence = "high"
+evidence = ["I7-U138", "I3-C041"]
+notes = "Subsections D–L: use limits, 21-day retention, no out-of-state/federal/private sharing (F), annual agency reports (I), VSP aggregate (J), public posting (K). Duties registered: future_statutory_disclosure_va. ABSENT from the frozen 2022 seed — the known-stale gap the refresh fixes."
+
+# ---- the 50-state per-state duty/coverage table (SIG-INGEST-050) ------
+# One row per US state. `statute_posture`:
+#   origin_verified — an instrument entry in THIS asset (origin-cited).
+#   recorded        — instrument(s) recorded in the superseded
+#                     `state_alpr_statute_seed.toml` (NCSL-derived, frozen
+#                     2022-02-03); the record's provenance is that asset.
+#   none_recorded   — no ALPR instrument recorded in either seed:
+#                     ABSENCE OF EVIDENCE, never a "no statute" claim.
+# `duties` names registered `future_statutory_disclosure_*` registry rows
+# (sources.toml; ingestion_permitted=false, commencement recorded).
+
+[[duty_rows]]
+state = "Alabama"
+statute_posture = "none_recorded"
+instruments = []
+duties = ["future_statutory_disclosure_al"]
+duty_notes = "Alabama JIC rules ch. 265-X-6 (eff. 2022-03-17): capturing agencies submit LPR data to the State LPR Registry within 48 h once established (.05); ALEA audits every agency ≥ every 3 years (.07); annual report to the Commission (.10)."
+evidence = ["I7-U530", "I9a-C020"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Alaska"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Arizona"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Arkansas"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2013 (NCSL 2022 inventory record)"]
+duties = ["future_statutory_disclosure_ar"]
+duty_notes = "12 CAR 150-103(f): the Arkansas Highway Police compiles LPR statistics per Ark. Code 12-12-1805 for general-public review; data retained 18 months (F048)."
+evidence = ["state_alpr_statute_seed.toml", "I7-U556", "I9a-C032"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "California"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["Veh. Code § 2413 (2011)", "Civ. Code §§ 1798.29, 1798.90.5 — SB 34 (2015)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Colorado"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2014 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Connecticut"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://www.cga.ct.gov/asp/cgabillstatus/cgabillstatus.asp?selBillType=Bill&which_year=2026&bill_num=397"
+instruments = ["Public Act 26-14 — substitute SB 397 (2026)"]
+duties = []
+evidence = ["I7-U145", "I9a-C025", "I9a-C018"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Delaware"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Florida"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2014 (NCSL 2022 inventory record)"]
+duties = []
+duty_notes = "FDOT memorandum EOM26-01 (2026-08-31) orders ALPR removal from the state-highway right-of-way — an executive instrument lead routed to the dossier lane, not a seed entry (image-only PDF, I9a-C027)."
+evidence = ["state_alpr_statute_seed.toml", "I7-U359", "I9a-C027"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Georgia"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2018 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Hawaii"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Idaho"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://legislature.idaho.gov/sessioninfo/2025/legislation/S1180/"
+instruments = ["S1180 (2025) — Idaho Code § 49-1432, Session Law ch. 316"]
+duties = []
+duty_notes = "Audit and log duties incl. semiannual audits of ALPR access logs (LAPPA L002 + bill-page snippet); a reporting publication is not yet located."
+evidence = ["I7-U147", "I9a-C031"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Illinois"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Indiana"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+duty_notes = "MultiState (I9a-C030, enumeration aid) lists IN among states expected to take up ALPR next session — a lead, not an instrument."
+evidence = ["I7-U149", "I7-U150", "I9a-C030"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Iowa"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Kansas"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Kentucky"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://apps.legislature.ky.gov/record/26rs/hb58.html"
+instruments = ["HB 58 (2026 RS) — Acts Ch. 71, new KRS Chapter 189 section"]
+duties = []
+evidence = ["I7-U144", "I9a-C024"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Louisiana"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Maine"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2009 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Maryland"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2014 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Massachusetts"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Michigan"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Minnesota"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2015 (NCSL 2022 inventory record)"]
+duties = ["future_statutory_disclosure_mn"]
+duty_notes = "HF 3198 (2025-26) would fund the Northwest Metro Regional RTCC and require a report — enactment UNVERIFIED (a bill is not an appropriation, S5 guard); registered as a contingent lead only."
+evidence = ["state_alpr_statute_seed.toml", "I7-U532", "I9a-C051"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Mississippi"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Missouri"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://governor.mo.gov/actions/executive-orders?page=0"
+instruments = ["Executive Order 26-18 (2026-09-16)"]
+duties = []
+evidence = ["I7-U146", "I9a-C026"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Montana"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2017 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Nebraska"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2018 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Nevada"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+duty_notes = "MultiState (I9a-C030, enumeration aid) lists NV among states expected to take up ALPR next session — a lead, not an instrument."
+evidence = ["I7-U149", "I7-U150", "I9a-C030"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "New Hampshire"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2007 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "New Jersey"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "New Mexico"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://www.nmlegis.gov/Legislation/Legislation?chamber=S&legType=B&legNo=40&year=26"
+instruments = ["SB 40 (2026) — Driver Privacy and Safety Act, Laws 2026, ch. 20"]
+duties = ["future_statutory_disclosure_nm"]
+duty_notes = "SB 40 §A: every ALPR-using law-enforcement agency reports to the Department of Public Safety by April 1 each year (cameras by mobile/stationary, databases compared, query counts); first reports on or after 2027-04-01 (inferred: effective 2026-07-01 + April-1 cycle, I9a-C037)."  # future-ok: real-world: statutory first-reports deadline
+evidence = ["I7-U137", "I9a-C016", "I9a-C037"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "New York"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "North Carolina"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2015 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "North Dakota"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Ohio"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+duty_notes = "MultiState (I9a-C030, enumeration aid) lists OH among states expected to take up ALPR next session — a lead, not an instrument."
+evidence = ["I7-U149", "I7-U150", "I9a-C030"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Oklahoma"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2016, 2017 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Oregon"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://olis.oregonlegislature.gov/liz/2026R1/Measures/Overview/SB1516"
+instruments = ["SB 1516 (2026 Regular Session) — public-safety omnibus, ALPR provisions"]
+duties = []
+duty_notes = "Sharing agencies must log requester and camera counts accessed (F029) — a future aggregate lane if the logs are published."
+evidence = ["I7-U143", "I9a-C017"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Pennsylvania"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Rhode Island"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "South Carolina"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "South Dakota"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Tennessee"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2014, 2021 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Texas"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+duty_notes = "MultiState (I9a-C030, enumeration aid) records a TX executive action in its 2026 roundup — a lead, not a verified instrument."
+evidence = ["I7-U149", "I7-U150", "I9a-C030"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Utah"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2013, 2014, 2020 (NCSL 2022 inventory record)"]
+duties = ["future_statutory_disclosure_ut"]
+duty_notes = "Utah Code 77-23e-106(3)(a) (SB 34, 2021): every government entity using facial recognition reports to the Government Operations Interim Committee on/after Aug 1, before Oct 15 — a T11 FR duty, registered beside the ALPR rows."
+evidence = ["state_alpr_statute_seed.toml", "I7-U517", "I9a-C050"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Vermont"
+statute_posture = "recorded"
+statute_ref = "state_alpr_statute_seed.toml"
+instruments = ["enacted 2013 (NCSL 2022 inventory record)"]
+duties = []
+evidence = ["state_alpr_statute_seed.toml"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Virginia"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://law.lis.virginia.gov/vacode/title2.2/chapter55.6/section2.2-5517/"
+instruments = ["Va. Code § 2.2-5517 (eff. 2025-07-01)"]
+duties = ["future_statutory_disclosure_va"]
+duty_notes = "§ 2.2-5517: I — each agency reports to Virginia State Police by April 1; J — VSP aggregate to the Governor/GA/VSCC by July 1; K — each agency publicly posts its ALPR policy and report. First reports due 2026-04-01 / 2026-07-01 (cycle after the 2025-07-01 effective date)."
+evidence = ["I7-U138", "I3-C041"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Washington"
+statute_posture = "origin_verified"
+statute_ref = "state_alpr_statute_seed_2026.toml"
+origin_url = "https://app.leg.wa.gov/billsummary?BillNumber=6002&Year=2026&Initiative=false"
+instruments = ["ESSB 6002 (2026) — Chapter 239, 2026 Laws"]
+duties = []
+evidence = ["I7-U142", "I9a-C015"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "West Virginia"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Wisconsin"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"
+
+[[duty_rows]]
+state = "Wyoming"
+statute_posture = "none_recorded"
+instruments = []
+duties = []
+evidence = ["I7-U149", "I7-U150"]
+verified_on = "2026-09-30"

@@ -180,6 +180,24 @@ disposition = "link_only"
 [sources.future_statutory_disclosure_2027]
 disposition = "mirror"
 
+[sources.future_statutory_disclosure_va]
+disposition = "mirror"
+
+[sources.future_statutory_disclosure_nm]
+disposition = "mirror"
+
+[sources.future_statutory_disclosure_al]
+disposition = "mirror"
+
+[sources.future_statutory_disclosure_ar]
+disposition = "mirror"
+
+[sources.future_statutory_disclosure_ut]
+disposition = "mirror"
+
+[sources.future_statutory_disclosure_mn]
+disposition = "mirror"
+
 [sources.granicus]
 disposition = "link_only"
 
