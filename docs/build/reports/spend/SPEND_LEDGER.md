@@ -74,6 +74,7 @@ report is not owed until data exists.
 | item | state |
 |---|---|
 | ceiling | USD 300/month infrastructure (U-008, A-2a) |
+| R2 mirror ceiling | USD 50/month hard cap (P35.5 / SIG-TRANSP-019, D-J3-4/A-3) — `ops/config.toml` `[egress] hard_ceiling_usd`; warns at 80%, alarms at 100% via `sig-ops egress-report --usage-usd --alert`; the kill switch is the operator's documented step ([R2_MIRROR_RUNBOOK.md](../R2_MIRROR_RUNBOOK.md)) |
 | alert thresholds | 50 / 90 / 100 % of CURRENT_SPEND → billing IAM recipients + operator e-mail channel |
 | budget | live 2026-10-02 — see `ops/gcp/cost-guard.sh --verify` output |
 | test threshold | `D-P34.5-1` (fires → operator confirms → `testbudget-delete --fired-confirmed …`) |

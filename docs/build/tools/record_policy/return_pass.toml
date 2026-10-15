@@ -656,3 +656,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/261_P35.57__api-release-parity
   go = '''verbatim-go: the GATE-G4 §2 go recorded in GATE DECISIONS ("Grant the go now" 2026-10-09T17:32Z) + AR-2 backup SUCCESSFUL + roll-gate green on fresh inputs + the registry mount present'''
   rerun = '''implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true'''
   live_dependants = ["P35.58", "P35.59", "P35.60", "P35.61", "P35.63", "P36.38", "P37.20"]
+[[row]]
+key = "P35.5"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued R2-mirror leg (the ticket's only live stage): enable the committed-disabled ops/mirrors.toml r2-public row, configure the R2 bucket + CDN custom domain (files.surveillancegraph.org, non-listable), run the release push under content-hash keys, and verify the mirror serves with immutable Cache-Control and $0 egress beyond the free tier; the engineering landed — exports.push PushLimits + the non-listable probe, ops.mirror_push + the publish-web --mirror seam running assert_low_egress, the $50/month hard_ceiling_usd + recorded alerts, and the kill-switch runbook; no deferral of its own opens — OP-09 is the P34.50 row's obligation'''
+gates_cell = '''hosted mirror, production write; OM-20 conditional — the leg runs only after the operator's OP-09 nameserver switch (dig +noall +answer surveillancegraph.org NS must answer the Cloudflare pair; it answered Squarespace at dispatch 2026-10-10) and only while the GATE-G4 OM-20 11B list (P35.5 named, expires GATE-G5) stands; AR-3 + AR-2 — a weekday 14:00-20:00Z slot (the excluded hours: weekends and outside-14:00-20:00Z); R2 credentials env-only (HG-09)'''
+operator_cell = '''execute OP-09 first (docs/build/reports/DNS_CUTOVER_RUNBOOK.md), then provide R2 credentials in the run shell (env only, never written to a file); the kill switch is the operator's step — disable the CDN route / R2 public access (docs/build/reports/R2_MIRROR_RUNBOOK.md); rollback = the mirror row back to enabled = false, pushed objects deleted, thresholds reverted'''
+rerun_cell = '''`implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (scope: the queued R2 push + origin-enable leg) · landed as row 262 (PR pending — engineering green; the live leg queued: OP-09 not landed at dispatch)'''
+
+  [[row.legs]]
+  id = "P35.5-r2-mirror"
+  obligations = []
+  earliest = '''bounded by the operator's OP-09 nameserver switch — dig must answer the Cloudflare pair — then the next weekday 14:00-20:00Z slot'''
+  excluded = ["weekends and outside-14:00-20:00Z"]
+  go = '''pre-authorised: GATE-G4 OM-20 11B list (P35.5 named, expires GATE-G5)'''
+  rerun = '''implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true'''
+  live_dependants = ["P35.67"]

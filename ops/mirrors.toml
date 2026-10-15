@@ -21,6 +21,32 @@ url = "cloudflare-r2:sig-bulk"             # ADR-067; ADR-015 S3/CloudFront is t
 status = "gate-pending: HG-07"
 carries = ["all bulk-export artifacts under <release_id>/<path>.<hash>"]
 
+# P35.5 / SIG-TRANSP-019 (D-J3-4/A-3): the public download mirror. Committed
+# DISABLED — the live leg enables it only after the operator's OP-09 nameserver
+# switch (D-P34.50-1 / docs/build/reports/DNS_CUTOVER_RUNBOOK.md) lands the
+# Cloudflare pair and the GATE-G4 OM-20 list authorises this row's leg.
+# The origin MUST stay non-listable (objects are reachable only by their
+# content-hash keys); the push path refuses an origin that answers an anonymous
+# listing. Egress is governed by the $50/month hard ceiling in
+# ops/config.toml [egress] hard_ceiling_usd — the kill switch (disable the CDN
+# route / R2 public access) is the operator's documented step, not an agent
+# action: docs/build/reports/R2_MIRROR_RUNBOOK.md. GCS stays the origin of
+# record — this mirror is a public copy, never the source of truth.
+[[mirror]]
+name = "r2-public"
+kind = "object-store"
+enabled = false
+provider = "cloudflare-r2"
+bucket = "sig-bulk"
+role = "zero-egress public mirror — release downloads served from the R2 custom domain"
+url = "https://files.surveillancegraph.org" # R2 custom domain, bound after OP-09
+status = "committed-disabled — enabled by the P35.5 live leg after OP-09 + the OM-20 list"
+carries = [
+    "release files under content-hash keys <release_id>/<path>.<sha12>",
+    "SHA256SUMS",
+    "manifest.json",
+]
+
 [[mirror]]
 name = "bittorrent"
 kind = "peer"

@@ -434,7 +434,9 @@ def test_billing_account_env_override(tmp_path: Path) -> None:
 # --- spend ledger --------------------------------------------------------------
 
 
-LABELS = {"measured", "operator-reported", "estimate", "pending"}
+# P35.5 adds "ceiling": a documented hard cap row (the R2 $50/month
+# SIG-TRANSP-019 ceiling) — an amount that bounds spend, never a measurement.
+LABELS = {"measured", "operator-reported", "estimate", "pending", "ceiling"}
 
 
 def _ledger_rows() -> list[dict]:

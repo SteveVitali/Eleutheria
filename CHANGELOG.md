@@ -24,6 +24,27 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Zero-egress distribution host: the R2 public mirror leg** (P35.5;
+  cites SIG-TRANSP-019, D-J3-4/A-3) — release downloads gain a
+  zero-egress Cloudflare R2 mirror so egress cost cannot scale with
+  traffic; GCS stays the origin of record. `ops/mirrors.toml` carries the
+  committed-**disabled** `r2-public` row (enabled by the live leg after
+  the operator's OP-09 nameserver switch + the GATE-G4 OM-20 listing —
+  queued in RETURN PASS with the ticket's re-run prompt).
+  `exports.push` gains fail-closed `PushLimits` (per-file 512 MiB,
+  per-run object/byte caps, a request-rate guard that refuses an
+  over-rate run, optional pacing) and `assert_non_listable_origin` — a
+  push run never truncates, and an origin that answers an anonymous
+  listing refuses. The publish path takes the leg: `sig-ops publish-web
+  --mirror <row>` runs `assert_low_egress` inside the preflight (a
+  disabled row, a metered provider, a breached cap, or an egress ALARM
+  all refuse before any write), and `sig-ops mirror-push` is the
+  standalone verb. The $50/month hard ceiling lands in
+  `ops/config.toml` `[egress] hard_ceiling_usd` — `sig-ops egress-report
+  --usage-usd` warns at 80% ($40) and alarms at 100% ($50) through the
+  P34.4 recorded-alert seam; the documented kill switch (disable the CDN
+  route / R2 public access — an operator step, never an agent action)
+  lives in `docs/build/reports/R2_MIRROR_RUNBOOK.md`.
 - **API release parity: release-backed routes serve the promoted
   release's verified files** (P35.57; cites SIG-REL-010) — the routes
   whose answers the site shows (`/v1/dossier/**`, `/v1/coverage/**`,

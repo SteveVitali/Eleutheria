@@ -21,6 +21,11 @@ endpoint_url = ""                 # e.g. https://<accountid>.r2.cloudflarestorag
 # monthly egress at or above this threshold, `sig-ops egress-report` alarms non-zero.
 monthly_budget_gb = 100.0         # documented alarm threshold (untested against a real bill)
 alarm_ratio = 0.8                 # warn at 80% of budget, alarm at 100%
+# SIG-TRANSP-019 / D-J3-4 (A-3): the R2 mirror's hard monthly spend ceiling —
+# `sig-ops egress-report --usage-usd <spent>` warns at 80% ($40) and alarms at
+# 100% ($50); the alarm is the kill-switch trigger (the operator disables the
+# CDN route / R2 public access — docs/build/reports/R2_MIRROR_RUNBOOK.md).
+hard_ceiling_usd = 50.0
 
 [observability]
 # Uptime + error budgets and bounded log retention for the live stack
