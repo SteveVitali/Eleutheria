@@ -99,7 +99,9 @@ FILENAME_ID_RE = re.compile(r"^(\d{2,3}[a-z]?_)?(.+?)__[^_].*\.md$")
 # `unused`.
 SKIP_TOKEN_RE = re.compile(r"\b(?:superseded-by|deferred)\(|\bunused\b", re.I)
 # A BUILD_INDEX row's ticket cell: its first word (legacy rows read `P00.1 repo-skeleton`).
-INDEX_TICKET_RE = re.compile(r"^\|\s*\d+\s*\|\s*\**([A-Za-z][A-Za-z0-9.-]*)")
+# The seq cell accepts the manifest's inserted-row form too (`287a` — the
+# manifest's own chain table allows `\d+[a-z]?`; P35.1a1 is row 287a).
+INDEX_TICKET_RE = re.compile(r"^\|\s*\d+[a-z]?\s*\|\s*\**([A-Za-z][A-Za-z0-9.-]*)")
 ROUTING_SENTINELS = frozenset({"—", "accepted"})
 SCOPED_ROUTING_RE = re.compile(r"^P\d+\.\d+:.+$")
 PHASE_LOG_DONE_RE = re.compile(r"^-\s*\d{4}-\d{2}-\d{2}\s*—\s*(?:\*\*)?([A-Za-z][A-Za-z0-9.-]*)")
@@ -696,7 +698,11 @@ def _build_index_rows(root: pathlib.Path) -> list[dict]:
             hcells = [c.strip().lower() for c in line.strip().strip("|").split("|")]
             evidence_idx = hcells.index("evidence") if "evidence" in hcells else None
             continue
-        m = re.match(r"^\|\s*(\d+)\s*\|\s*([A-Za-z][A-Za-z0-9.-]*)\s*\|", line)
+        # An inserted row's seq carries the manifest's letter suffix (`287a`);
+        # its numeric part orders it at the inserted row's base number.
+        m = re.match(
+            r"^\|\s*(\d+)[a-z]?\s*\|\s*([A-Za-z][A-Za-z0-9.-]*)\s*\|", line
+        )
         if m:
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
             ev = (

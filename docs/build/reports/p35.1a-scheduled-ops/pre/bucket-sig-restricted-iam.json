@@ -1,0 +1,31 @@
+{
+  "bindings": [
+    {
+      "members": [
+        "projectEditor:zeta-medley-508121-u7",
+        "projectOwner:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyBucketOwner"
+    },
+    {
+      "members": [
+        "projectViewer:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyBucketReader"
+    },
+    {
+      "members": [
+        "projectEditor:zeta-medley-508121-u7",
+        "projectOwner:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyObjectOwner"
+    },
+    {
+      "members": [
+        "projectViewer:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyObjectReader"
+    }
+  ],
+  "etag": "CAE="
+}

@@ -47,6 +47,7 @@ SHELL_SCRIPTS = [
     "db-logins.sh",
     "at-rest-audit.sh",
     "quality-probe.sh",
+    "seed-declared-jobs.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -68,6 +69,7 @@ EXECUTABLE_SCRIPTS = [
     "iam-job-identities.sh",
     "at-rest-audit.sh",
     "quality-probe.sh",
+    "seed-declared-jobs.sh",
 ]
 
 
@@ -267,6 +269,7 @@ _DEPLOY_IMAGE = re.compile(r"gcloud run (?:jobs )?deploy \S+ .*?--image (\S+)")
         ("export.sh", ["--check", "job"]),
         ("web.sh", ["--check", "service"]),
         ("provision.sh", ["--check"]),
+        ("seed-declared-jobs.sh", ["--check"]),
     ],
 )
 def test_every_planned_deploy_uses_a_pinned_digest(script: str, args: list[str]) -> None:

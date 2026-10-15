@@ -1,0 +1,17 @@
+{
+  "creation_time": "2026-09-15T16:02:44+0000",
+  "default_storage_class": "STANDARD",
+  "generation": 1789488164285721749,
+  "location": "US-CENTRAL1",
+  "location_type": "region",
+  "metageneration": 2,
+  "name": "zeta-medley-508121-u7-sig-backups",
+  "public_access_prevention": "enforced",
+  "soft_delete_policy": {
+    "effectiveTime": "2026-09-15T16:02:44.661000+00:00",
+    "retentionDurationSeconds": "604800"
+  },
+  "storage_url": "gs://zeta-medley-508121-u7-sig-backups/",
+  "uniform_bucket_level_access": true,
+  "update_time": "2026-09-15T16:49:56+0000"
+}

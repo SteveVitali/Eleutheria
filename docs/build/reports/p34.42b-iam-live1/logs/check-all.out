@@ -1,0 +1,603 @@
+==============================================================
+SIG GCP IaC — P34.42b — least-privilege JOB identities + editor removal (G1-01, SIG-SEC-007) (mode=check)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+-- prestate (2026-10-14T17:34:24Z): the IAM restore point under /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre (read-only) --
+PLAN: gcloud projects get-iam-policy zeta-medley-508121-u7 > pre/project-iam.json
+PLAN: gcloud iam service-accounts list + projects describe > pre/service-accounts.json, project-number.txt, compute-sa.txt
+PLAN: gcloud run jobs list > pre/run-jobs.json  (the 100-job re-count — coverage refusal on drift)
+PLAN: gcloud run jobs describe <each of the 100 jobs> > pre/job-*.json  (prior SA + image digest)
+PLAN: gcloud run jobs get-iam-policy + scheduler jobs describe per scheduled job > pre/job-*-iam.json, pre/sched-*.json
+PLAN: gcloud run services get-iam-policy sig-alerts > pre/service-sig-alerts-iam.json
+PLAN: gcloud storage buckets get-iam-policy for: sig-backups sig-public sig-restricted sig-web > pre/bucket-*-iam.json
+PLAN: gcloud secrets get-iam-policy for: sig-pg-password sig-alert-webhook-token sig-api-env sig-data-gov-key sig-maproulette-api-key sig-muckrock-refresh sig-openstates-key sig-sam-gov-key sig-zenodo-client-id sig-zenodo-client-secret sig-zenodo-sandbox-token sig-audit-password sig-recovery-password sig-er-rerun-password > pre/secret-*-iam.json
+PLAN: sha256 sidecars over every capture > pre/sha256s.txt
+-- identities (2026-10-14T17:34:24Z): create the declared job-class + reserved SAs (idempotent) --
+PLAN: gcloud iam service-accounts create sig-ingest-rt --display-name sig-ingest-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-probe-rt --display-name sig-probe-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-export-rt --display-name sig-export-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-materialize-rt --display-name sig-materialize-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-quality-probe-rt --display-name sig-quality-probe-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-release-rt --display-name sig-release-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-release-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-status-rt --display-name sig-status-rt runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-status-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+PLAN: gcloud iam service-accounts create sig-scheduler --display-name sig-scheduler runtime --project zeta-medley-508121-u7
+   rollback: gcloud iam service-accounts delete sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --quiet
+-- bindings (2026-10-14T17:34:24Z): the declared least-privilege grants per class --
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.viewer
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.viewer
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudscheduler.viewer
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudscheduler.viewer
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+PLAN: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectUser --condition-title=p34-42b-capture-rewrite --condition-description=P34.42b/ADR-201: OCFL inventory-head rewrite under evidence/captures/ only (SIG-STORE-048) --condition-expression=resource.name.startsWith('projects/_/buckets/zeta-medley-508121-u7-sig-restricted/objects/evidence/captures/')
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectUser --all
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-web --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-web --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-public --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-public --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-backups --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-backups --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.legacyBucketReader
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer --condition-title=p34-43-captures-readonly --condition-description=P34.42b/ADR-201: OCFL inventory-head rewrite under evidence/captures/ only (SIG-STORE-048) --condition-expression=resource.name.startsWith('projects/_/buckets/zeta-medley-508121-u7-sig-restricted/objects/evidence/captures/')
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer --all
+PLAN: gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator --condition-title=p34-43-probe-records --condition-description=P34.42b/ADR-201: OCFL inventory-head rewrite under ops/probes/ only (SIG-STORE-048) --condition-expression=resource.name.startsWith('projects/_/buckets/zeta-medley-508121-u7-sig-restricted/objects/ops/probes/')
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-restricted --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectCreator --all
+PLAN: gcloud secrets add-iam-policy-binding sig-pg-password --project zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-pg-password --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-pg-password --project zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-pg-password --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-pg-password --project zeta-medley-508121-u7 --member serviceAccount:sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-pg-password --member serviceAccount:sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-pg-password --project zeta-medley-508121-u7 --member serviceAccount:sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-pg-password --member serviceAccount:sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-alert-webhook-token --project zeta-medley-508121-u7 --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-alert-webhook-token --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-alert-webhook-token --project zeta-medley-508121-u7 --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-alert-webhook-token --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-data-gov-key --project zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-data-gov-key --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-muckrock-refresh --project zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-muckrock-refresh --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-openstates-key --project zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-openstates-key --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-sam-gov-key --project zeta-medley-508121-u7 --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-sam-gov-key --member serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-audit-password --project zeta-medley-508121-u7 --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-audit-password --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-recovery-password --project zeta-medley-508121-u7 --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-recovery-password --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets add-iam-policy-binding sig-er-rerun-password --project zeta-medley-508121-u7 --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets remove-iam-policy-binding sig-er-rerun-password --member serviceAccount:sig-quality-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets remove-iam-policy-binding sig-alert-webhook-token --project zeta-medley-508121-u7 --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets add-iam-policy-binding sig-alert-webhook-token --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets remove-iam-policy-binding sig-data-gov-key --project zeta-medley-508121-u7 --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets add-iam-policy-binding sig-data-gov-key --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets remove-iam-policy-binding sig-muckrock-refresh --project zeta-medley-508121-u7 --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets add-iam-policy-binding sig-muckrock-refresh --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets remove-iam-policy-binding sig-openstates-key --project zeta-medley-508121-u7 --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets add-iam-policy-binding sig-openstates-key --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+PLAN: gcloud secrets remove-iam-policy-binding sig-sam-gov-key --project zeta-medley-508121-u7 --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+   rollback: gcloud secrets add-iam-policy-binding sig-sam-gov-key --member serviceAccount:<default-compute resolved at apply> --role roles/secretmanager.secretAccessor
+-- jobs (2026-10-14T17:34:24Z): 100 same-image identity updates (one per declared job) --
+PLAN: gcloud run jobs update aspi-egress-probe --service-account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update aspi-egress-probe --service-account <recorded prior SA: pre/job-aspi-egress-probe.json>
+PLAN: gcloud run jobs update ccops-sf-egress-probe --service-account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update ccops-sf-egress-probe --service-account <recorded prior SA: pre/job-ccops-sf-egress-probe.json>
+PLAN: gcloud run jobs update muckrock-egress-probe --service-account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update muckrock-egress-probe --service-account <recorded prior SA: pre/job-muckrock-egress-probe.json>
+PLAN: gcloud run jobs update okc-doc-egress-probe --service-account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update okc-doc-egress-probe --service-account <recorded prior SA: pre/job-okc-doc-egress-probe.json>
+PLAN: gcloud run jobs update sig-export --service-account sig-export-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-export --service-account <recorded prior SA: pre/job-sig-export.json>
+PLAN: gcloud run jobs update sig-ingest-aspi --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-aspi --service-account <recorded prior SA: pre/job-sig-ingest-aspi.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-act-au --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-act-au --service-account <recorded prior SA: pre/job-sig-ingest-camreg-act-au.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-austin-tx --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-austin-tx --service-account <recorded prior SA: pre/job-sig-ingest-camreg-austin-tx.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-baltimore-md --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-baltimore-md --service-account <recorded prior SA: pre/job-sig-ingest-camreg-baltimore-md.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-01 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-01.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-02 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-02 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-02.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-03 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-03 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-03.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-04 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-04 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-04.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-05 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-05 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-05.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-06 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-06 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-06.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-07 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-07 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-07.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batch-08 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batch-08 --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batch-08.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-batonrouge-la --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-batonrouge-la --service-account <recorded prior SA: pre/job-sig-ingest-camreg-batonrouge-la.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-glasgow-gb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-glasgow-gb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-glasgow-gb.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-goldcoast-au --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-goldcoast-au --service-account <recorded prior SA: pre/job-sig-ingest-camreg-goldcoast-au.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-lambeth-gb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-lambeth-gb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-lambeth-gb.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-nola-la --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-nola-la --service-account <recorded prior SA: pre/job-sig-ingest-camreg-nola-la.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-northayrshire-gb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-northayrshire-gb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-northayrshire-gb.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-nottingham-gb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-nottingham-gb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-nottingham-gb.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-ottawa-on --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-ottawa-on --service-account <recorded prior SA: pre/job-sig-ingest-camreg-ottawa-on.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-peel-on --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-peel-on --service-account <recorded prior SA: pre/job-sig-ingest-camreg-peel-on.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-puertogaitan-co --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-puertogaitan-co --service-account <recorded prior SA: pre/job-sig-ingest-camreg-puertogaitan-co.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-rochester-ny --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-rochester-ny --service-account <recorded prior SA: pre/job-sig-ingest-camreg-rochester-ny.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-sheffield-gb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-sheffield-gb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-sheffield-gb.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-siouxfalls-sd --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-siouxfalls-sd --service-account <recorded prior SA: pre/job-sig-ingest-camreg-siouxfalls-sd.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-tribal-all-leaders-directory --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-tribal-all-leaders-directory --service-account <recorded prior SA: pre/job-sig-ingest-camreg-tribal-all-leaders-directory.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-washington-dc --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-washington-dc --service-account <recorded prior SA: pre/job-sig-ingest-camreg-washington-dc.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-winnipeg-mb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-winnipeg-mb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-winnipeg-mb.json>
+PLAN: gcloud run jobs update sig-ingest-camreg-york-gb --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-camreg-york-gb --service-account <recorded prior SA: pre/job-sig-ingest-camreg-york-gb.json>
+PLAN: gcloud run jobs update sig-ingest-carnegie-ai-gsi --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-carnegie-ai-gsi --service-account <recorded prior SA: pre/job-sig-ingest-carnegie-ai-gsi.json>
+PLAN: gcloud run jobs update sig-ingest-ccops-cambridge --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ccops-cambridge --service-account <recorded prior SA: pre/job-sig-ingest-ccops-cambridge.json>
+PLAN: gcloud run jobs update sig-ingest-ccops-nyc-post --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ccops-nyc-post --service-account <recorded prior SA: pre/job-sig-ingest-ccops-nyc-post.json>
+PLAN: gcloud run jobs update sig-ingest-ccops-oakland --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ccops-oakland --service-account <recorded prior SA: pre/job-sig-ingest-ccops-oakland.json>
+PLAN: gcloud run jobs update sig-ingest-ccops-seattle --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ccops-seattle --service-account <recorded prior SA: pre/job-sig-ingest-ccops-seattle.json>
+PLAN: gcloud run jobs update sig-ingest-ccops-sf --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ccops-sf --service-account <recorded prior SA: pre/job-sig-ingest-ccops-sf.json>
+PLAN: gcloud run jobs update sig-ingest-ccops-somerville --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ccops-somerville --service-account <recorded prior SA: pre/job-sig-ingest-ccops-somerville.json>
+PLAN: gcloud run jobs update sig-ingest-civicclerk --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-civicclerk --service-account <recorded prior SA: pre/job-sig-ingest-civicclerk.json>
+PLAN: gcloud run jobs update sig-ingest-congress-gov --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-congress-gov --service-account <recorded prior SA: pre/job-sig-ingest-congress-gov.json>
+PLAN: gcloud run jobs update sig-ingest-decp-fr --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-decp-fr --service-account <recorded prior SA: pre/job-sig-ingest-decp-fr.json>
+PLAN: gcloud run jobs update sig-ingest-dhs-fusion-center-assessments --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dhs-fusion-center-assessments --service-account <recorded prior SA: pre/job-sig-ingest-dhs-fusion-center-assessments.json>
+PLAN: gcloud run jobs update sig-ingest-dhs-oig-reports --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dhs-oig-reports --service-account <recorded prior SA: pre/job-sig-ingest-dhs-oig-reports.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-dc --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-dc --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-dc.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-ia --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-ia --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-ia.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-il --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-il --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-il.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-ky --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-ky --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-ky.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-mo --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-mo --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-mo.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-or --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-or --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-or.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-ut --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-ut --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-ut.json>
+PLAN: gcloud run jobs update sig-ingest-dot-511-wa --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-dot-511-wa --service-account <recorded prior SA: pre/job-sig-ingest-dot-511-wa.json>
+PLAN: gcloud run jobs update sig-ingest-eff-atlas --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-eff-atlas --service-account <recorded prior SA: pre/job-sig-ingest-eff-atlas.json>
+PLAN: gcloud run jobs update sig-ingest-eff-data-driven --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-eff-data-driven --service-account <recorded prior SA: pre/job-sig-ingest-eff-data-driven.json>
+PLAN: gcloud run jobs update sig-ingest-escribe --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-escribe --service-account <recorded prior SA: pre/job-sig-ingest-escribe.json>
+PLAN: gcloud run jobs update sig-ingest-eyes-on-flock --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-eyes-on-flock --service-account <recorded prior SA: pre/job-sig-ingest-eyes-on-flock.json>
+PLAN: gcloud run jobs update sig-ingest-fbi-cde --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-fbi-cde --service-account <recorded prior SA: pre/job-sig-ingest-fbi-cde.json>
+PLAN: gcloud run jobs update sig-ingest-fema-hsgp-allocations --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-fema-hsgp-allocations --service-account <recorded prior SA: pre/job-sig-ingest-fema-hsgp-allocations.json>
+PLAN: gcloud run jobs update sig-ingest-frwm --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-frwm --service-account <recorded prior SA: pre/job-sig-ingest-frwm.json>
+PLAN: gcloud run jobs update sig-ingest-gao-surveillance-reports --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-gao-surveillance-reports --service-account <recorded prior SA: pre/job-sig-ingest-gao-surveillance-reports.json>
+PLAN: gcloud run jobs update sig-ingest-legis-tribal-tohono-oodham-notice --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-legis-tribal-tohono-oodham-notice --service-account <recorded prior SA: pre/job-sig-ingest-legis-tribal-tohono-oodham-notice.json>
+PLAN: gcloud run jobs update sig-ingest-legistar --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-legistar --service-account <recorded prior SA: pre/job-sig-ingest-legistar.json>
+PLAN: gcloud run jobs update sig-ingest-madada --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-madada --service-account <recorded prior SA: pre/job-sig-ingest-madada.json>
+PLAN: gcloud run jobs update sig-ingest-muckrock --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-muckrock --service-account <recorded prior SA: pre/job-sig-ingest-muckrock.json>
+PLAN: gcloud run jobs update sig-ingest-ok-statute --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ok-statute --service-account <recorded prior SA: pre/job-sig-ingest-ok-statute.json>
+PLAN: gcloud run jobs update sig-ingest-okc-procurement --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-okc-procurement --service-account <recorded prior SA: pre/job-sig-ingest-okc-procurement.json>
+PLAN: gcloud run jobs update sig-ingest-okcpd-policy --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-okcpd-policy --service-account <recorded prior SA: pre/job-sig-ingest-okcpd-policy.json>
+PLAN: gcloud run jobs update sig-ingest-openstates --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-openstates --service-account <recorded prior SA: pre/job-sig-ingest-openstates.json>
+PLAN: gcloud run jobs update sig-ingest-osm-element-history --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-osm-element-history --service-account <recorded prior SA: pre/job-sig-ingest-osm-element-history.json>
+PLAN: gcloud run jobs update sig-ingest-osm-overpass --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-osm-overpass --service-account <recorded prior SA: pre/job-sig-ingest-osm-overpass.json>
+PLAN: gcloud run jobs update sig-ingest-pathways-drones --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-pathways-drones --service-account <recorded prior SA: pre/job-sig-ingest-pathways-drones.json>
+PLAN: gcloud run jobs update sig-ingest-pathways-fr-css --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-pathways-fr-css --service-account <recorded prior SA: pre/job-sig-ingest-pathways-fr-css.json>
+PLAN: gcloud run jobs update sig-ingest-pathways-rtcc --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-pathways-rtcc --service-account <recorded prior SA: pre/job-sig-ingest-pathways-rtcc.json>
+PLAN: gcloud run jobs update sig-ingest-primegov --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-primegov --service-account <recorded prior SA: pre/job-sig-ingest-primegov.json>
+PLAN: gcloud run jobs update sig-ingest-procportal-austin-tx --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-procportal-austin-tx --service-account <recorded prior SA: pre/job-sig-ingest-procportal-austin-tx.json>
+PLAN: gcloud run jobs update sig-ingest-procportal-kcmo-mo --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-procportal-kcmo-mo --service-account <recorded prior SA: pre/job-sig-ingest-procportal-kcmo-mo.json>
+PLAN: gcloud run jobs update sig-ingest-procportal-nyc-ny --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-procportal-nyc-ny --service-account <recorded prior SA: pre/job-sig-ingest-procportal-nyc-ny.json>
+PLAN: gcloud run jobs update sig-ingest-procportal-sf-ca --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-procportal-sf-ca --service-account <recorded prior SA: pre/job-sig-ingest-procportal-sf-ca.json>
+PLAN: gcloud run jobs update sig-ingest-r11-ate-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-ate-01 --service-account <recorded prior SA: pre/job-sig-ingest-r11-ate-01.json>
+PLAN: gcloud run jobs update sig-ingest-r11-disclosures-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-disclosures-01 --service-account <recorded prior SA: pre/job-sig-ingest-r11-disclosures-01.json>
+PLAN: gcloud run jobs update sig-ingest-r11-disclosures-02 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-disclosures-02 --service-account <recorded prior SA: pre/job-sig-ingest-r11-disclosures-02.json>
+PLAN: gcloud run jobs update sig-ingest-r11-documents-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-documents-01 --service-account <recorded prior SA: pre/job-sig-ingest-r11-documents-01.json>
+PLAN: gcloud run jobs update sig-ingest-r11-layers-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-layers-01 --service-account <recorded prior SA: pre/job-sig-ingest-r11-layers-01.json>
+PLAN: gcloud run jobs update sig-ingest-r11-layers-02 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-layers-02 --service-account <recorded prior SA: pre/job-sig-ingest-r11-layers-02.json>
+PLAN: gcloud run jobs update sig-ingest-r11-procurement-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-procurement-01 --service-account <recorded prior SA: pre/job-sig-ingest-r11-procurement-01.json>
+PLAN: gcloud run jobs update sig-ingest-r11-tier2-01 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-tier2-01 --service-account <recorded prior SA: pre/job-sig-ingest-r11-tier2-01.json>
+PLAN: gcloud run jobs update sig-ingest-r11-tier2-02 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-tier2-02 --service-account <recorded prior SA: pre/job-sig-ingest-r11-tier2-02.json>
+PLAN: gcloud run jobs update sig-ingest-r11-tier2-03 --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-r11-tier2-03 --service-account <recorded prior SA: pre/job-sig-ingest-r11-tier2-03.json>
+PLAN: gcloud run jobs update sig-ingest-raa-prefectures --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-raa-prefectures --service-account <recorded prior SA: pre/job-sig-ingest-raa-prefectures.json>
+PLAN: gcloud run jobs update sig-ingest-resume-test --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-resume-test --service-account <recorded prior SA: pre/job-sig-ingest-resume-test.json>
+PLAN: gcloud run jobs update sig-ingest-sam-gov --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-sam-gov --service-account <recorded prior SA: pre/job-sig-ingest-sam-gov.json>
+PLAN: gcloud run jobs update sig-ingest-ted-eu --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-ted-eu --service-account <recorded prior SA: pre/job-sig-ingest-ted-eu.json>
+PLAN: gcloud run jobs update sig-ingest-uk-surveillance-camera-commissioner --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-uk-surveillance-camera-commissioner --service-account <recorded prior SA: pre/job-sig-ingest-uk-surveillance-camera-commissioner.json>
+PLAN: gcloud run jobs update sig-ingest-usaspending --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-ingest-usaspending --service-account <recorded prior SA: pre/job-sig-ingest-usaspending.json>
+PLAN: gcloud run jobs update sig-materialize --service-account sig-materialize-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-materialize --service-account <recorded prior SA: pre/job-sig-materialize.json>
+PLAN: gcloud run jobs update sig-probe --service-account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-probe --service-account <recorded prior SA: pre/job-sig-probe.json>
+PLAN: gcloud run jobs update sig-replay-ingest --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-replay-ingest --service-account <recorded prior SA: pre/job-sig-replay-ingest.json>
+PLAN: gcloud run jobs update sig-sink-bench --service-account sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs update sig-sink-bench --service-account <recorded prior SA: pre/job-sig-sink-bench.json>
+-- invokers (2026-10-14T17:34:24Z): scheduler move + the sig-alerts jobs-posture rule --
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-aspi --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-aspi /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-aspi-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-aspi --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-act-au --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-act-au /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-act-au-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-act-au --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-austin-tx --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-austin-tx /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-austin-tx-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-austin-tx --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-baltimore-md --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-baltimore-md /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-baltimore-md-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-baltimore-md --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-02 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-02 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-02-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-02 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-03 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-03 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-03-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-03 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-04 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-04 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-04-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-04 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-05 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-05 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-05-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-05 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-06 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-06 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-06-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-06 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-07 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-07 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-07-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-07 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batch-08 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batch-08 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batch-08-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batch-08 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-batonrouge-la --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-batonrouge-la /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-batonrouge-la-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-batonrouge-la --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-glasgow-gb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-glasgow-gb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-glasgow-gb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-glasgow-gb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-goldcoast-au --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-goldcoast-au /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-goldcoast-au-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-goldcoast-au --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-lambeth-gb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-lambeth-gb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-lambeth-gb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-lambeth-gb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-nola-la --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-nola-la /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-nola-la-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-nola-la --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-northayrshire-gb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-northayrshire-gb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-northayrshire-gb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-northayrshire-gb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-nottingham-gb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-nottingham-gb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-nottingham-gb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-nottingham-gb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-ottawa-on --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-ottawa-on /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-ottawa-on-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-ottawa-on --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-peel-on --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-peel-on /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-peel-on-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-peel-on --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-puertogaitan-co --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-puertogaitan-co /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-puertogaitan-co-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-puertogaitan-co --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-rochester-ny --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-rochester-ny /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-rochester-ny-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-rochester-ny --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-sheffield-gb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-sheffield-gb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-sheffield-gb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-sheffield-gb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-siouxfalls-sd --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-siouxfalls-sd /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-siouxfalls-sd-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-siouxfalls-sd --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-tribal-all-leaders-directory --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-tribal-all-leaders-directory /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-tribal-all-leaders-directory-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-tribal-all-leaders-directory --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-washington-dc --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-washington-dc /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-washington-dc-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-washington-dc --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-winnipeg-mb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-winnipeg-mb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-winnipeg-mb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-winnipeg-mb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-camreg-york-gb --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-camreg-york-gb /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-camreg-york-gb-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-camreg-york-gb --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-carnegie-ai-gsi --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-carnegie-ai-gsi /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-carnegie-ai-gsi-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-carnegie-ai-gsi --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ccops-cambridge --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ccops-cambridge /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ccops-cambridge-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ccops-cambridge --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ccops-nyc-post --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ccops-nyc-post /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ccops-nyc-post-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ccops-nyc-post --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ccops-oakland --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ccops-oakland /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ccops-oakland-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ccops-oakland --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ccops-seattle --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ccops-seattle /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ccops-seattle-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ccops-seattle --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ccops-sf --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ccops-sf /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ccops-sf-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ccops-sf --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ccops-somerville --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ccops-somerville /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ccops-somerville-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ccops-somerville --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-civicclerk --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-civicclerk /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-civicclerk-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-civicclerk --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-congress-gov --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-congress-gov /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-congress-gov-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-congress-gov --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-decp-fr --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-decp-fr /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-decp-fr-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-decp-fr --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dhs-fusion-center-assessments --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dhs-fusion-center-assessments /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dhs-fusion-center-assessments-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dhs-fusion-center-assessments --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dhs-oig-reports --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dhs-oig-reports /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dhs-oig-reports-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dhs-oig-reports --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-dc --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-dc /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-dc-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-dc --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-ia --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-ia /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-ia-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-ia --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-il --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-il /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-il-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-il --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-ky --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-ky /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-ky-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-ky --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-mo --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-mo /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-mo-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-mo --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-or --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-or /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-or-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-or --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-ut --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-ut /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-ut-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-ut --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-dot-511-wa --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-dot-511-wa /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-dot-511-wa-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-dot-511-wa --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-eff-atlas --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-eff-atlas /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-eff-atlas-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-eff-atlas --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-eff-data-driven --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-eff-data-driven /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-eff-data-driven-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-eff-data-driven --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-escribe --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-escribe /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-escribe-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-escribe --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-eyes-on-flock --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-eyes-on-flock /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-eyes-on-flock-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-eyes-on-flock --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-fbi-cde --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-fbi-cde /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-fbi-cde-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-fbi-cde --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-fema-hsgp-allocations --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-fema-hsgp-allocations /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-fema-hsgp-allocations-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-fema-hsgp-allocations --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-frwm --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-frwm /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-frwm-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-frwm --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-gao-surveillance-reports --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-gao-surveillance-reports /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-gao-surveillance-reports-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-gao-surveillance-reports --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-legis-tribal-tohono-oodham-notice --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-legis-tribal-tohono-oodham-notice /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-legis-tribal-tohono-oodham-notice-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-legis-tribal-tohono-oodham-notice --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-legistar --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-legistar /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-legistar-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-legistar --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-madada --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-madada /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-madada-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-madada --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-muckrock --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-muckrock /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-muckrock-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-muckrock --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ok-statute --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ok-statute /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ok-statute-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ok-statute --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-okc-procurement --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-okc-procurement /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-okc-procurement-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-okc-procurement --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-okcpd-policy --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-okcpd-policy /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-okcpd-policy-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-okcpd-policy --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-openstates --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-openstates /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-openstates-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-openstates --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-osm-element-history --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-osm-element-history /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-osm-element-history-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-osm-element-history --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-osm-overpass --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-osm-overpass /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-osm-overpass-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-osm-overpass --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-pathways-drones --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-pathways-drones /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-pathways-drones-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-pathways-drones --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-pathways-fr-css --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-pathways-fr-css /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-pathways-fr-css-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-pathways-fr-css --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-pathways-rtcc --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-pathways-rtcc /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-pathways-rtcc-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-pathways-rtcc --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-primegov --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-primegov /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-primegov-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-primegov --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-procportal-austin-tx --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-procportal-austin-tx /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-procportal-austin-tx-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-procportal-austin-tx --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-procportal-kcmo-mo --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-procportal-kcmo-mo /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-procportal-kcmo-mo-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-procportal-kcmo-mo --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-procportal-nyc-ny --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-procportal-nyc-ny /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-procportal-nyc-ny-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-procportal-nyc-ny --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-procportal-sf-ca --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-procportal-sf-ca /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-procportal-sf-ca-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-procportal-sf-ca --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-ate-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-ate-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-ate-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-ate-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-disclosures-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-disclosures-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-disclosures-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-disclosures-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-disclosures-02 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-disclosures-02 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-disclosures-02-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-disclosures-02 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-documents-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-documents-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-documents-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-documents-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-layers-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-layers-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-layers-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-layers-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-layers-02 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-layers-02 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-layers-02-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-layers-02 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-procurement-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-procurement-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-procurement-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-procurement-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-tier2-01 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-tier2-01 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-tier2-01-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-tier2-01 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-tier2-02 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-tier2-02 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-tier2-02-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-tier2-02 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-r11-tier2-03 --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-r11-tier2-03 /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-r11-tier2-03-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-r11-tier2-03 --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-raa-prefectures --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-raa-prefectures /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-raa-prefectures-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-raa-prefectures --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-sam-gov --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-sam-gov /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-sam-gov-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-sam-gov --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-ted-eu --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-ted-eu /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-ted-eu-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-ted-eu --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-uk-surveillance-camera-commissioner --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-uk-surveillance-camera-commissioner /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-uk-surveillance-camera-commissioner-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-uk-surveillance-camera-commissioner --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-ingest-usaspending --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-ingest-usaspending /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-ingest-usaspending-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-usaspending --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run jobs add-iam-policy-binding sig-probe --member serviceAccount:sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+   rollback: gcloud run jobs set-iam-policy sig-probe /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/job-sig-probe-iam.json --region us-central1
+PLAN: gcloud scheduler jobs update http sig-sched-probe --oauth-service-account-email=sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com  (if it does not already sign as it)
+PLAN: gcloud run services add-iam-policy-binding sig-alerts --member serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+PLAN: gcloud run services remove-iam-policy-binding sig-alerts --member allUsers --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+PLAN: gcloud run services remove-iam-policy-binding sig-alerts --member serviceAccount:<default-compute resolved at apply> --role roles/run.invoker
+   rollback: gcloud run services set-iam-policy sig-alerts /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre/service-sig-alerts-iam.json --region us-central1
+-- editor (2026-10-14T17:34:24Z): the default compute SA loses roles/editor — the last mutation --
+PLAN: assert no job/service describe still names the default compute SA
+PLAN: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:<projectNumber>-compute@developer.gserviceaccount.com --role roles/editor
+PLAN: rollback: gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:<compute> --role roles/editor
+-- verify: poststate capture → iam diff --leg jobs + same-image gate --
+PLAN: re-capture every prestate read under /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/post (same file names)
+PLAN: sig-ops iam diff --state-dir /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/post --project zeta-medley-508121-u7 --leg jobs   (clean = the jobs posture holds)
+PLAN: sig-ops iam check-revisions --pre /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/pre --post /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/post  (every job's image byte-identical)
+-- analysis: policy-troubleshooter over every runtime SA (read-only) --
+PLAN: per declared runtime SA: gcloud policy-intelligence troubleshoot-iam-policy \
+PLAN:   //cloudresourcemanager.googleapis.com/projects/zeta-medley-508121-u7 \
+PLAN:   --principal-email <sa-email> --permission cloudsql.instances.delete  → NOT_GRANTED (the spine)
+PLAN:   + storage.objects.delete on each declared bucket AND on a non-captures object path → NOT_GRANTED (the conditioned grant never widens)
+PLAN:   + secretmanager.versions.access on every non-consumer secret → NOT_GRANTED (no foreign secret reads)
+PLAN:   answers recorded under /Users/stevenvitali/Eleutheria/docs/build/reports/p34.42b-iam-live1/post/analysis-*.json; any GRANTED is a hard fail
+iam-job-identities all: check OK (mode=check)

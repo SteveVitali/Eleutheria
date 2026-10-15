@@ -1,0 +1,85 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "2bdf7c7e-a75e-4194-bfdd-035ba9de3d7c"
+    },
+    "creationTimestamp": "2026-09-15T22:42:25.783730Z",
+    "generation": 1,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-15T22:42:25.783730Z"
+    },
+    "name": "muckrock-egress-probe",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZbnese58A",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/muckrock-egress-probe",
+    "uid": "e49fe071-18f5-4e9a-8c36-470222ae0bc2"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "zul_voc_dov"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-sS",
+                  "-o",
+                  "/dev/null",
+                  "-w",
+                  "%{http_code} %{content_type} %{url_effective}",
+                  "--max-time",
+                  "30",
+                  "https://www.muckrock.com/api_v2/"
+                ],
+                "image": "curlimages/curl:8.10.1",
+                "resources": {
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 3,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "600"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 2,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-09-16T18:34:28.859850Z",
+      "creationTimestamp": "2026-09-16T18:27:24.691625Z",
+      "name": "muckrock-egress-probe-twq24"
+    },
+    "observedGeneration": 1
+  }
+}

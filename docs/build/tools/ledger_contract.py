@@ -111,7 +111,9 @@ EXPECTED_KEYS_WITH_HARNESS = audit_current_state.EXPECTED_KEYS_WITH_HARNESS
 ALL_KEY_NAMES = frozenset(EXPECTED_KEYS_WITH_HARNESS)
 
 # Ticket-id grammar (the vendored script's ID_RE, Python-flavoured).
-ID_RE = r"(?:(?:HUMAN-H|GATE-G)[0-9]+|GATE-ACCEPT|[A-Z]+[0-9]*[a-z]?(?:\.[0-9]+[a-z]?)?)"
+# Ticket ids accept the inserted-row suffix form (`P35.1a1` — manifest row
+# 287a): letters then digits after the number.
+ID_RE = r"(?:(?:HUMAN-H|GATE-G)[0-9]+|GATE-ACCEPT|[A-Z]+[0-9]*[a-z]*\d*(?:\.[0-9]+[a-z]*\d*)?)"
 ID_FULL = re.compile(rf"^{ID_RE}$")
 PSEUDO_IDS = ("SETUP", "CAPSTONE", "DONE", "OPERATOR")  # + ROUND* prefix
 ENTRY_RE = re.compile(r"^-\s*")
@@ -559,7 +561,8 @@ def index_sections(bi: str) -> list[dict]:
 def index_ticket_ids(bi: str) -> set[str]:
     ids: set[str] = set()
     for ln in bi.splitlines():
-        m = re.match(r"^\|\s*\d+\s*\|\s*\**([A-Za-z][A-Za-z0-9.-]*)", ln)
+        # inserted manifest rows carry a lettered seq (`287a` — P35.1a1).
+        m = re.match(r"^\|\s*\d+[a-z]?\s*\|\s*\**([A-Za-z][A-Za-z0-9.-]*)", ln)
         if m:
             ids.add(m.group(1).rstrip("."))
     return ids

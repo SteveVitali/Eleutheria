@@ -1,0 +1,35 @@
+P34.42b live leg 1 — map-coverage contradiction (recorded 2026-10-14, date -u)
+
+Declared (sig-ops iam plan --json --leg jobs): expected_job_count=100, job_map=100 entries
+Live    (gcloud run jobs list --region us-central1 --project zeta-medley-508121-u7): 88 jobs
+        (independently captured by the script itself: pre/run-jobs.json = 88 entries)
+
+Declared-but-absent-live (12 — the post-queue wave/screened jobs ops/cadence.toml
+declares and ops/iam_identities.toml maps into the ingest class; the TOML comment
+records they were to be "created PAUSED by scheduled-ops.sh --paused before this
+leg's re-count" — i.e., by the P35.1a retry, which the operator ordered AFTER this leg):
+  sig-ingest-camreg-tribal-all-leaders-directory  -> ingest
+  sig-ingest-legis-tribal-tohono-oodham-notice  -> ingest
+  sig-ingest-r11-ate-01  -> ingest
+  sig-ingest-r11-disclosures-01  -> ingest
+  sig-ingest-r11-disclosures-02  -> ingest
+  sig-ingest-r11-documents-01  -> ingest
+  sig-ingest-r11-layers-01  -> ingest
+  sig-ingest-r11-layers-02  -> ingest
+  sig-ingest-r11-procurement-01  -> ingest
+  sig-ingest-r11-tier2-01  -> ingest
+  sig-ingest-r11-tier2-02  -> ingest
+  sig-ingest-r11-tier2-03  -> ingest
+
+Live-but-unmapped: 0 (every live job is covered by the declared map)
+
+Consequence: the script's fail-closed guards refuse the leg —
+  - _capture dies on the first declared-but-absent describe
+    (ERROR: Cannot find job [sig-ingest-camreg-tribal-all-leaders-directory],
+    iam-job-identities.sh --apply prestate exit 1, logs/prestate.out);
+  - _assert_map_covers would refuse: "live job count 88 != declared 100"
+    + "declared job(s) absent live: <the 12 above>" (exit 4);
+  - assert_no_executions fails closed on the 12 absent jobs
+    (an unreadable executions list is treated as running -> exit 42).
+This is a production read contradicting a record -> the fresh one-leg
+authorization's voided-by clause fires -> OM-18 stop, no mutation.
