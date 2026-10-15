@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!-- Fixture: a served Flock transparency-portal page for slug "sunnydale-ca-pd".
+     The embedded JSON island is the mirror-schema surface; `description` is a
+     denied field (recorded by NAME, value dropped); the terms block is the
+     verbatim-terms capture. No per-search / per-plate / per-person keys. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sunnydale PD — Transparency Portal</title>
+</head>
+<body>
+  <h1>Sunnydale Police Department</h1>
+  <script id="__PORTAL_DATA__" type="application/json">
+  {
+    "app": {"version": "9.9", "theme": "dark"},
+    "portal": {
+      "slug": "sunnydale-ca-pd",
+      "portal_url": "https://transparency.flocksafety.com/sunnydale-ca-pd",
+      "type": "Law Enforcement",
+      "county": "Sunnydale County",
+      "state": "CA",
+      "population": 41000,
+      "total_cameras": 14,
+      "total_searches": 231,
+      "vehicles_captured": 90210,
+      "hotlist_hits": 3,
+      "hotlist_hit_rate": 0.0033,
+      "data_retention": "30 days",
+      "data_last_updated": "2026-10-09",
+      "federal_sharing_enabled": false,
+      "national_lookup_enabled": true,
+      "state_lookup_enabled": false,
+      "subscribed_hotlist_topics": ["NCIC", "State hotlist"],
+      "organizations_shared_with": ["hellmouth-ca-pd", "city-of-sunnydale-pd"],
+      "organizations_received_from": ["uc-sunnydale-pd"],
+      "permitted_uses": "Felony investigations only",
+      "prohibited_uses": "Immigration enforcement; protest monitoring",
+      "description": "This narrative blurb is a denied field — it must never be extracted."
+    }
+  }
+  </script>
+  <footer>
+    <div id="terms">Portals operate under the Flock Transparency Terms. The public
+    data on this page is shared CC BY-SA 4.0. Do not scrape beyond the public
+    interface.</div>
+    <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
+  </footer>
+</body>
+</html>
