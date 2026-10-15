@@ -5,8 +5,8 @@
 checker (ticket 290, I8 §7.2–7.8, OM-19/OM-20).
 
 Wave B is the Round-11 Tier-1 ingestion wave: **eleven legs in order**
-inside the contract window 2026-10-26 → 2026-11-05 14:00–20:00Z
-(future-ok: scheduled: contract window) under the recorded ING-GO-B
+inside the contract window 2026-10-26 → 2026-11-05 14:00–20:00Z (future-ok: scheduled: window)
+under the recorded ING-GO-B
 (GATE-G4 §3 — "Window + flips at open"; the verbatim go recorded
 2026-10-15T15:26Z in GATE DECISIONS):
 
@@ -56,14 +56,13 @@ Criteria (each one refuse-on-fail; never a soft warn):
   **byte-equal** to the verbatim in GATE DECISIONS (silence is never
   consent; ING-GO-B is a one-shot authorisation — a re-entry re-collects
   it verbatim).
-* ``window`` — the supplied ``now`` inside 2026-10-26 → 2026-11-05
-  14:00–20:00Z UTC (future-ok: scheduled: window) — evaluated on the
+* ``window`` — the supplied ``now`` inside 2026-10-26 → 2026-11-05 (future-ok: scheduled: span)
+  14:00–20:00Z UTC — evaluated on the
   *supplied* instant, never the wall clock. The Wave-B window carries no
   weekday restriction (unlike Wave A's Mon–Fri span).
 * ``exclusions`` — no ``sig-materialize`` or G2 step 1–3 slot active, no
-  release-cut day, and on 2026-10-29 the peel-on first fire
-  (10-29T12:00Z; future-ok: scheduled: fire) recorded cleared before the
-  leg.
+  release-cut day, and on 2026-10-29 the peel-on first fire (future-ok: scheduled: fire)
+  recorded cleared before the leg.
 * ``order`` — ``completed`` is a list of ``{leg, day}`` records: every
   earlier leg is green or held-reported (``held_reports``); completed
   days are window dates, non-decreasing in leg order; family legs hold
@@ -120,10 +119,10 @@ SCHEMA = "sig.wave-b-gate/1"
 PLAN_SCHEMA = "sig.wave-b-plan/1"
 WAVE = "B"
 
-#: Contract: window 2026-10-26 → 2026-11-05 (future-ok: scheduled:
-#: window), each day 14:00–20:00Z. No weekday restriction (the span is
-#: eleven days; the one-family-per-day rule, not a weekday filter,
-#: paces the wave).
+#: Contract: window 2026-10-26 → 2026-11-05 (future-ok: scheduled: the
+#: contract window), each day 14:00–20:00Z. No weekday restriction
+#: (the span is eleven days; the one-family-per-day rule, not a
+#: weekday filter, paces the wave).
 WINDOW_START = "2026-10-26T14:00:00Z"  # future-ok: scheduled: the contract's window (OM-19)
 WINDOW_END = "2026-11-05T20:00:00Z"  # future-ok: scheduled: exclusive end (OM-19)
 WINDOW_START_HH = 14
@@ -151,8 +150,8 @@ LEGS: tuple[str, ...] = (
 #: The recorded ING-GO-B verbatim (GATE DECISIONS, 2026-10-15T15:26Z —
 #: operator message; the gate requires byte-equality, never a paraphrase).
 GO_VERBATIM = (
-    "ING-GO-B: go — Wave B legs ACQ-08…ACQ-15 + the Flock probe may run "
-    "inside the 2026-10-26→11-05 window; I execute the flips per OP-26"
+    "ING-GO-B: go — Wave B legs ACQ-08…ACQ-15 + the Flock probe may run inside "
+    "the 2026-10-26→11-05 window; I execute the flips per OP-26"  # future-ok: scheduled: window
 )
 
 #: The seven new paused batch jobs (ops/cadence.toml; created by
@@ -217,7 +216,7 @@ EARLY_FIRE_BATCHES: tuple[str, ...] = (
 )
 
 #: The peel-on first fire (camreg_peel_on, ``sig-sched-camreg-peel-on``)
-#: lands once in-window at 2026-10-29T12:00Z (future-ok: scheduled:
+#: lands once in-window at 2026-10-29T12:00Z (future-ok: scheduled: the
 #: fire). A leg that day records the fire cleared before it runs — a
 #: scheduled fire never overlaps a manual first run.
 PEEL_DAY = _dt.date(2026, 10, 29)  # future-ok: scheduled: the peel-on fire day
@@ -584,7 +583,8 @@ def _gated(leg: str) -> set[str]:
 def _completed_entries(inputs: dict) -> tuple[list[tuple[str, _dt.date]], list[str]]:
     """Validate the ``completed`` record list — returns (entries, errors).
 
-    Each entry is ``{"leg": "L1", "day": "2026-10-27"}`` — the recorded
+    Each entry is a ``{"leg": "L1", "day": "..."}`` pair, e.g.
+    ``{"leg": "L1", "day": "2026-10-27"}`` (future-ok: scheduled: day) — the recorded
     green legs in run order. Malformed entries are usage-shape errors the
     gate reports as refusals (recorded inputs are judged, never trusted).
     """

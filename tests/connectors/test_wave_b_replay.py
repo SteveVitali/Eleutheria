@@ -3,8 +3,8 @@
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """P36.12 — the Wave-B activated path, exercised over committed fixtures.
 
-The wave's live legs run inside 2026-10-26 → 11-05 under the operator's
-OP-26 flips; the tests here assert the *committed* truth the wave relies
+The wave's live legs run inside 2026-10-26 → 11-05 (future-ok: scheduled: span),
+under the operator's OP-26 flips; the tests here assert the *committed* truth the wave relies
 on (never a live fetch, never a flip):
 
 * every source on the Wave-B flip list resolves in the registry and

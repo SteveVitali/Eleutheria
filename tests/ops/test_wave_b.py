@@ -5,7 +5,7 @@
 
 The contract's acceptance: the gate **refuses a leg when any criterion
 fails** — no recorded verbatim ING-GO-B (silence is never consent; a
-paraphrase is a refusal), outside the 2026-10-26→11-05 14:00–20:00Z
+paraphrase is a refusal), outside the 2026-10-26→11-05 14:00–20:00Z (future-ok: scheduled: w)
 window (future-ok: scheduled: the contract window), inside an AR-3
 freeze/cut day/the 03:00–06:30Z band, a skipped leg (``completed``
 doesn't cover every earlier leg — green *or held*), a non-exact
@@ -31,17 +31,17 @@ from ops import wave_b
 FIXTURES = Path(__file__).parent / "fixtures" / "wave_b"
 
 _DAYS = {
-    "L0": "2026-10-26",
-    "L1": "2026-10-26",
-    "L2": "2026-10-27",
-    "L3": "2026-10-28",
-    "L4": "2026-10-29",
-    "L5": "2026-10-30",
-    "L6": "2026-10-31",
-    "L7": "2026-11-01",
-    "L8": "2026-11-02",
-    "L9": "2026-11-03",
-    "L10": "2026-11-04",
+    "L0": "2026-10-26",  # future-ok: scheduled: window day
+    "L1": "2026-10-26",  # future-ok: scheduled: window day
+    "L2": "2026-10-27",  # future-ok: scheduled: window day
+    "L3": "2026-10-28",  # future-ok: scheduled: window day
+    "L4": "2026-10-29",  # future-ok: scheduled: window day
+    "L5": "2026-10-30",  # future-ok: scheduled: window day
+    "L6": "2026-10-31",  # future-ok: scheduled: window day
+    "L7": "2026-11-01",  # future-ok: scheduled: window day
+    "L8": "2026-11-02",  # future-ok: scheduled: window day
+    "L9": "2026-11-03",  # future-ok: scheduled: window day
+    "L10": "2026-11-04",  # future-ok: scheduled: window day
 }
 
 
@@ -98,7 +98,7 @@ def _admit(leg: str = "L0", **over) -> dict:
         inputs["prestate"] = {
             "captured": True,
             "cadence_check_ok": True,
-            "path": "pre/wave-b-2026-10-26/",
+            "path": "pre/wave-b-2026-10-26/",  # future-ok: scheduled: window day
         }
         inputs["backup"] = {
             "status": "SUCCESSFUL",
@@ -179,7 +179,10 @@ def _close_l9(**over) -> dict:
 
 def _close_l10(**over) -> dict:
     inputs = _admit("L10", action="close")
-    inputs["materialize"] = {"ran": True, "at": "2026-11-04T17:00:00Z"}
+    inputs["materialize"] = {
+        "ran": True,
+        "at": "2026-11-04T17:00:00Z",  # future-ok: scheduled: window day
+    }
     inputs["coverage_delta"] = {"recorded": True}
     inputs["triggers_resumed"] = {s: True for s in _schedulers()}
     inputs["next_fires"] = {b: spec["next_fire"] for b, spec in wave_b.BATCHES.items()}
@@ -315,7 +318,10 @@ def test_paraphrased_go_refuses() -> None:
 
 def test_go_for_other_window_refuses() -> None:
     inputs = _admit("L0")
-    inputs["go"]["verbatim"] = wave_b.GO_VERBATIM.replace("2026-10-26→11-05", "2026-10-27→11-05")
+    inputs["go"]["verbatim"] = wave_b.GO_VERBATIM.replace(
+        "2026-10-26→11-05",  # future-ok: scheduled: window
+        "2026-10-27→11-05",  # future-ok: scheduled: window
+    )
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
@@ -329,29 +335,31 @@ def test_missing_recorded_at_refuses() -> None:
 
 
 def test_before_window_refuses() -> None:
-    inputs = _admit("L0", now="2026-10-26T13:59:59Z")
+    inputs = _admit("L0", now="2026-10-26T13:59:59Z")  # future-ok: scheduled: edge
     v = wave_b.evaluate(inputs)
     assert v.decision == "no-go" and not _ids(v)["window"]
 
 
 def test_after_window_refuses() -> None:
-    inputs = _admit("L0", now="2026-11-05T20:00:00Z")
+    inputs = _admit("L0", now="2026-11-05T20:00:00Z")  # future-ok: scheduled: edge
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
 def test_overnight_band_refuses() -> None:
-    inputs = _admit("L0", now="2026-10-26T04:00:00Z")
+    inputs = _admit("L0", now="2026-10-26T04:00:00Z")  # future-ok: scheduled: edge
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
 def test_freeze_refuses() -> None:
-    inputs = _admit("L0", now="2026-11-06T15:00:00Z")
+    inputs = _admit("L0", now="2026-11-06T15:00:00Z")  # future-ok: scheduled: edge
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
 def test_window_edge_instants() -> None:
-    assert _ids(wave_b.evaluate(_admit("L0", now="2026-10-26T14:00:00Z")))["window"]
-    assert _ids(wave_b.evaluate(_admit("L0", now="2026-11-05T19:59:59Z")))["window"]
+    now = "2026-10-26T14:00:00Z"  # future-ok: scheduled: window open edge
+    assert _ids(wave_b.evaluate(_admit("L0", now=now)))["window"]
+    now = "2026-11-05T19:59:59Z"  # future-ok: scheduled: window close edge
+    assert _ids(wave_b.evaluate(_admit("L0", now=now)))["window"]
 
 
 def test_weekend_days_are_in_window() -> None:
@@ -380,8 +388,8 @@ def test_release_cut_refuses() -> None:
 
 
 def test_peel_day_without_clearance_refuses() -> None:
-    """2026-10-29T12:00Z is the peel-on first fire — a leg that day needs the
-    recorded clearance (L4's default day IS the peel day)."""
+    """2026-10-29T12:00Z (future-ok: scheduled: fire) is the peel-on first fire —
+    a leg that day needs the recorded clearance (L4's default day IS the peel day)."""
     inputs = _admit("L4", peel_fire_cleared=False)
     v = wave_b.evaluate(inputs)
     assert v.decision == "no-go" and not _ids(v)["exclusions"]
@@ -414,7 +422,10 @@ def test_malformed_completed_refuses() -> None:
 
 
 def test_duplicate_completed_refuses() -> None:
-    inputs = _admit("L1", completed=[{"leg": "L0", "day": "2026-10-26"}] * 2)
+    inputs = _admit(
+        "L1",
+        completed=[{"leg": "L0", "day": "2026-10-26"}] * 2,  # future-ok: scheduled: window day
+    )
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
@@ -432,18 +443,24 @@ def test_unknown_leg_refuses() -> None:
 
 
 def test_already_completed_leg_refuses() -> None:
-    inputs = _admit("L0", completed=[{"leg": "L0", "day": "2026-10-26"}])
+    inputs = _admit(
+        "L0",
+        completed=[{"leg": "L0", "day": "2026-10-26"}],  # future-ok: scheduled: window day
+    )
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
 def test_non_monotonic_day_refuses() -> None:
     inputs = _admit("L3")
-    inputs["completed"][0]["day"] = "2026-11-02"  # L0 recorded after L2's day
+    inputs["completed"][0]["day"] = "2026-11-02"  # after L2 — future-ok: scheduled: window day
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
 def test_completed_day_outside_window_refuses() -> None:
-    inputs = _admit("L1", completed=[{"leg": "L0", "day": "2026-10-20"}])
+    inputs = _admit(
+        "L1",
+        completed=[{"leg": "L0", "day": "2026-10-20"}],  # future-ok: scheduled: off-window day
+    )
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 
@@ -451,10 +468,10 @@ def test_completed_day_outside_window_refuses() -> None:
 
 
 def test_two_families_one_day_refuses() -> None:
-    inputs = _admit("L2", now="2026-10-27T15:00:00Z")
+    inputs = _admit("L2", now="2026-10-27T15:00:00Z")  # future-ok: scheduled: window day
     inputs["completed"] = [
-        {"leg": "L0", "day": "2026-10-26"},
-        {"leg": "L1", "day": "2026-10-27"},
+        {"leg": "L0", "day": "2026-10-26"},  # future-ok: scheduled: window day
+        {"leg": "L1", "day": "2026-10-27"},  # future-ok: scheduled: window day
     ]
     v = wave_b.evaluate(inputs)
     assert v.decision == "no-go" and not _ids(v)["pacing"]
@@ -463,16 +480,18 @@ def test_two_families_one_day_refuses() -> None:
 def test_l4_l8_may_share_a_day() -> None:
     """The contract's single exception: ACQ-11 + ACQ-15 may share. Model the
     honest path — L5/L6/L7 held, L4 green today, L8 admits the same day."""
-    inputs = _admit("L8", now="2026-10-30T15:00:00Z")
-    inputs["completed"] = _completed_upto("L4") + [{"leg": "L4", "day": "2026-10-30"}]
+    inputs = _admit("L8", now="2026-10-30T15:00:00Z")  # future-ok: scheduled: window day
+    inputs["completed"] = _completed_upto("L4") + [
+        {"leg": "L4", "day": "2026-10-30"}  # future-ok: scheduled: shared day
+    ]
     inputs["held_reports"] = {"L5": "held", "L6": "held", "L7": "held"}
     assert wave_b.evaluate(inputs).decision == "go"
 
 
 def test_other_family_pairs_may_not_share() -> None:
-    inputs = _admit("L5", now="2026-10-30T15:00:00Z")
+    inputs = _admit("L5", now="2026-10-30T15:00:00Z")  # future-ok: scheduled: window day
     inputs["completed"] = _completed_upto("L5")
-    inputs["completed"][4]["day"] = "2026-10-30"  # L4 on 10-30 too
+    inputs["completed"][4]["day"] = "2026-10-30"  # L4 same day — future-ok: scheduled: window day
     v = wave_b.evaluate(inputs)
     assert v.decision == "no-go" and not _ids(v)["pacing"]
 
@@ -759,7 +778,7 @@ def test_l10_requires_all_triggers_resumed() -> None:
 
 def test_l10_next_fires_must_match_computed() -> None:
     inputs = _close_l10()
-    inputs["next_fires"]["r11-layers-01"] = "2026-11-01T07:00:00Z"
+    inputs["next_fires"]["r11-layers-01"] = "2026-11-01T07:00:00Z"  # future-ok: scheduled: next
     assert wave_b.evaluate(inputs).decision == "no-go"
 
 

@@ -177,7 +177,7 @@ Gate inputs (recorded JSON — capture each field, never the wall clock):
   {
     "action": "admit",                     // or "close"
     "leg": "L1",
-    "completed": [{"leg": "L0", "day": "2026-10-26"}],
+    "completed": [{"leg": "L0", "day": "2026-10-26"}],      // example — future-ok: illustrative: sample day
     "held_reports": {},                    // {leg: report-ref} for queued legs
     "now": "<date -u>",
     "go": {"verbatim": "<ING-GO-B verbatim (GATE DECISIONS)>", "recorded_at": "<date -u>"},
@@ -186,7 +186,7 @@ Gate inputs (recorded JSON — capture each field, never the wall clock):
     "materialize_active": false,
     "g2_slot_active": false,
     "release_cut_active": false,
-    "peel_fire_cleared": true,             // required on 2026-10-29
+    "peel_fire_cleared": true,             // required on 2026-10-29 — future-ok: scheduled: the peel-on fire day
     "active_manual_run": null,
     "prestate": {"captured": true, "cadence_check_ok": true, "path": "<prestate dir>"},   // L0
     "backup": {"status": "SUCCESSFUL", "id": "<backup id>"},                               // L0
@@ -206,7 +206,7 @@ Gate inputs (recorded JSON — capture each field, never the wall clock):
     "materialize": {"ran": true, "at": "<date -u>"},                                        // L10 close
     "coverage_delta": {"recorded": true, "ref": "<ref>"},                                   // L10 close
     "triggers_resumed": {"sig-sched-r11-layers-01": true, "…": "…"},                        // L10 close
-    "next_fires": {"r11-layers-01": "2026-11-16T07:17:00Z", "…": "…"},                      // L10 close
+    "next_fires": {"r11-layers-01": "2026-11-16T07:17:00Z", "…": "…"},                      // L10 close — future-ok: illustrative: sample stamp
     "early_fire_dispositions": {"r11-layers-01": "<FEA-15 disposition>", "…": "…"}          // L10 close
   }
 
