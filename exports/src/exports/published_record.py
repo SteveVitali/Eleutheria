@@ -23,6 +23,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from typing import Any
 
+from policy.sensitivity import assert_public_layer_subject
+
 from .manifest import canonical_json, sha256_hex
 
 #: The projection schema/version stamped on every record and hashed into the
@@ -190,6 +192,15 @@ def record_from_site_row(
     """
     entity_id = str(row["entity_id"])
     entity_type = str(row.get("entity_type") or "deployment")
+    # P35.66 (SIG-PUB-011/013): the publish refusal at the record surface —
+    # a candidate asset or a residential-parcel-flagged subject reaching this
+    # projection is a build error, never a warning. The emit/shaping paths
+    # already exclude them; this is the enforced backstop on the row itself.
+    assert_public_layer_subject(
+        entity_type,
+        residential_parcel_flag=bool(row.get("residential_parcel_flag")),
+        surface="published_record",
+    )
     rights = dict(row.get("_rights") or {})
     geometry = row.get("geometry")
     coords = geometry.get("coordinates") if isinstance(geometry, dict) else None

@@ -1211,3 +1211,181 @@ def test_a_missing_slug_fails_the_run_not_the_record() -> None:
             raw,
             {**target, "technology": "camera-ptz"},  # retired slug
         )
+
+
+# --- P35.66: the residential-parcel screen at emit (SIG-PUB-004/005/013) -------
+#
+# The declared-signal machinery is exercised against the synthetic fixture
+# layer (tests/unit/fixtures/parcels/residential_parcels.toml — a stand-in,
+# never real geography): coverage square lat 35.4–35.6 / lon -97.7–-97.3,
+# one parcel at lat 35.45–35.47 / lon -97.55–-97.50.
+
+from policy.parcel_screen import ResidentialParcelSignal  # noqa: E402
+
+_PARCEL_FIXTURE = (
+    Path(__file__).resolve().parents[1]
+    / "unit"
+    / "fixtures"
+    / "parcels"
+    / "residential_parcels.toml"
+)
+_ON_PARCEL = (35.46, -97.52)  # (lat, lon) inside the fixture parcel
+_OFF_PARCEL = (35.50, -97.40)  # inside coverage, outside every parcel
+_OUTSIDE_COVERAGE = (36.00, -98.00)  # beyond the fixture coverage boundary
+
+
+def _fixture_signal() -> ResidentialParcelSignal:
+    return ResidentialParcelSignal.load(_PARCEL_FIXTURE)
+
+
+def _p35_target(**over: Any) -> dict[str, Any]:
+    target: dict[str, Any] = {
+        "id": "t_p35",
+        "kind": "arcgis_query",
+        "state": "OK",
+        "agency": "Test DOT",
+        "sensitivity_class": "C1",
+        "technology": "fixed-camera-ptz",
+        "geometry_kind": "point",
+    }
+    target.update(over)
+    return target
+
+
+def _p35_raw(lat: float, lon: float, ref: str = "CAM-1") -> dict[str, Any]:
+    return {
+        "record_kind": "camera_feature",
+        "feature_index": 0,
+        "fields": {"id": ref, "latitude": lat, "longitude": lon},
+        "excluded_fields": (),
+        "geometry": {"x": lon, "y": lat},
+        "source_uri": "https://example.invalid/p35",
+        "retrieved_at": _RETRIEVED.isoformat(),
+        "target": _p35_target(),
+    }
+
+
+def _p35_entry(lat: float, lon: float, **target_over: Any):
+    return dot_511._entry_from_raw(
+        "camreg_city_muni",
+        _p35_raw(lat, lon),
+        _p35_target(**target_over),
+        parcel_signal=_fixture_signal(),
+    )
+
+
+def test_parcel_point_demotes_to_c3_and_withholds_coordinates() -> None:
+    """SIG-PUB-005: a point intersecting a declared residential parcel is
+    demoted to C3 automatically — program-level facts only, no location."""
+    entry = _p35_entry(*_ON_PARCEL)
+    assert entry.residential_parcel_flag is True
+    assert entry.parcel_screen == "intersects"
+    assert entry.parcel_screen_signal == "sig.residential_parcels.fixture@fixture-v1"
+    assert entry.sensitivity_class == "C3"
+    assert entry.geo_tier == 3
+    assert entry.latitude is None and entry.longitude is None
+
+    rows = entry.claim_rows("https://example.invalid/p35", _RETRIEVED.isoformat(), 0)
+    # No coordinate claims are emitted — the precise point is withheld at emit.
+    predicates = {r["predicate_id"] for r in rows}
+    assert "camera_latitude" not in predicates
+    assert "camera_longitude" not in predicates
+    assert "camera_coordinate_source" not in predicates
+    # Program-level facts survive; every row carries the recorded verdict.
+    entity = [r for r in rows if r["predicate_id"] == "traffic_camera"][0]
+    assert entity["residential_parcel_flag"] is True
+    assert entity["parcel_screen"] == "intersects"
+    assert entity["sensitivity_class"] == "C3"
+    assert entity["latitude"] is None and entity["longitude"] is None
+    for row in rows:
+        assert row["parcel_screen"] == "intersects"
+        assert row["residential_parcel_flag"] is True
+        assert row["parcel_screen_signal"] == entry.parcel_screen_signal
+
+
+def test_off_parcel_point_keeps_declared_class_and_records_clear() -> None:
+    """Screened, no parcel intersection — ``clear`` is a real clearance."""
+    entry = _p35_entry(*_OFF_PARCEL)
+    assert entry.parcel_screen == "clear"
+    assert entry.residential_parcel_flag is False
+    assert entry.sensitivity_class == "C1"  # declared class stands
+    assert entry.latitude == _OFF_PARCEL[0] and entry.longitude == _OFF_PARCEL[1]
+    rows = entry.claim_rows("https://example.invalid/p35", _RETRIEVED.isoformat(), 0)
+    assert {r["predicate_id"] for r in rows} >= {"camera_latitude", "camera_longitude"}
+
+
+def test_point_outside_coverage_records_unscreened_never_clean() -> None:
+    """No declared coverage reaches the point — ``unscreened`` is the recorded
+    gap, distinguishable from ``clear`` (the defining standard's rule)."""
+    entry = _p35_entry(*_OUTSIDE_COVERAGE)
+    assert entry.parcel_screen == "unscreened"
+    assert entry.residential_parcel_flag is False
+    assert entry.sensitivity_class == "C1"
+    assert entry.latitude == _OUTSIDE_COVERAGE[0]
+
+
+def test_demotion_overrides_a_pinned_non_c3_class() -> None:
+    """The flag wins over any pinned declared class — no override path."""
+    entry = _p35_entry(*_ON_PARCEL, sensitivity_class="C2")
+    assert entry.sensitivity_class == "C3"
+    assert entry.residential_parcel_flag is True
+    assert entry.latitude is None
+
+
+def test_non_point_record_records_unscreened() -> None:
+    """A line/area record can never assert a point-in-parcel verdict — the
+    emit stamps ``unscreened`` (the check does not cover its shape)."""
+    target = _p35_target(geometry_kind="line")
+    raw = _p35_raw(*_ON_PARCEL)
+    raw["geometry"] = None  # a line record carrying geometry fails closed
+    entry = dot_511._entry_from_raw(
+        "camreg_city_muni", raw, target, parcel_signal=_fixture_signal()
+    )
+    assert entry.parcel_screen == "unscreened"
+    assert entry.residential_parcel_flag is False
+
+
+def test_flagged_entry_invariants_fail_closed() -> None:
+    """The entry's own contract: flag ⇔ intersects ⇔ C3, and a flagged point
+    publishes no coordinate — a hand-built violation raises, never emits."""
+    base = dict(
+        camera_ref="CAM-1",
+        source_id="camreg_city_muni",
+        target_id="t_p35",
+        state="OK",
+        agency="Test DOT",
+        latitude=None,
+        longitude=None,
+        coordinate_source="fields:latitude/longitude",
+        geo_tier=3,
+        sensitivity_class="C3",
+        license_spdx="CC0-1.0",
+        technology="fixed-camera-ptz",
+        record_kind="fixed-camera-ptz",
+        residential_parcel_flag=True,
+        parcel_screen="intersects",
+        parcel_screen_signal="sig.residential_parcels.fixture@fixture-v1",
+    )
+    # A flagged entry still claiming C2 is a defect.
+    with pytest.raises(ValueError, match="demoted to C3"):
+        dot_511.CameraRegistryEntry(**{**base, "sensitivity_class": "C2"})
+    # A flagged entry carrying a coordinate is a defect.
+    with pytest.raises(ValueError, match="no device"):
+        dot_511.CameraRegistryEntry(**{**base, "latitude": 35.46})
+    # A flag that disagrees with the recorded verdict is a defect.
+    with pytest.raises(ValueError, match="iff parcel_screen"):
+        dot_511.CameraRegistryEntry(**{**base, "parcel_screen": "clear"})
+    # A non-point record can never claim ``intersects``.
+    with pytest.raises(ValueError, match="unscreened"):
+        dot_511.CameraRegistryEntry(**{**base, "geometry_kind": "area"})
+
+
+def test_committed_empty_signal_marks_every_point_unscreened() -> None:
+    """Against the committed declared signal (empty coverage — no parcel
+    dataset held yet) every emitted point records ``unscreened``, and the
+    ``<id>@<version>`` stamp names the input."""
+    entry = dot_511._entry_from_raw("camreg_city_muni", _p35_raw(*_ON_PARCEL), _p35_target())
+    assert entry.parcel_screen == "unscreened"
+    assert entry.residential_parcel_flag is False
+    assert entry.parcel_screen_signal.startswith("sig.residential_parcels.declared@")
+    assert entry.sensitivity_class == "C1"

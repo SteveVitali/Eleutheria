@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The DECLARED residential-parcel signal (P35.66 — SIG-PUB-004/005/013).
+#
+# This is the named input the emit-path flag producer
+# (`policy.parcel_screen.screen_point`) screens device geography against. It
+# is declared data — signal id + version + provenance + the coverage boundary
+# + parcel polygons — never an implicit "no residential parcels exist".
+#
+# What is honestly held (P35.66, run ledger
+# docs/build/runs/P35.66.md): NO residential-parcel dataset is held on the
+# spine or in the repo today, and the real acquisition is the P35.6
+# registry/generator row the contract routes it to — not this row. The
+# committed signal therefore declares itself with EMPTY coverage: every
+# emitted record stamps `parcel_screen = "unscreened"` — a recorded coverage
+# gap, never a silent "clean". When the acquisition lands, `coverage` gains
+# the regions the layer covers and `parcels` gains its polygons; until then
+# `intersects`/`clear` are unreachable by construction.
+#
+# Rings are GeoJSON-order `[[lon, lat], …]` lists of ≥4 positions, closed
+# (first == last). `parcels[i].ring`'s centroid must sit inside some
+# `coverage` region — a parcel outside every declared coverage region is a
+# contradiction the validator refuses.
+
+signal_id = "sig.residential_parcels.declared"
+version = "v0-2026-10-15"
+provenance = "P35.66 declared signal — no residential-parcel dataset held yet; acquisition is the P35.6 registry row. Every emit stamps unscreened until it lands."
+
+#: The geographies the signal is declared to cover (empty = none held yet).
+coverage = []
+
+#: The declared residential parcels (empty = none held yet).
+# [[parcels]]  # id = "…" ; ring = [[lon, lat], …] closed
+parcels = []

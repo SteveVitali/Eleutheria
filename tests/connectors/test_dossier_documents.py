@@ -1112,3 +1112,75 @@ def test_p3611_natural_person_payee_never_mints_an_entity() -> None:
     assert not any(c.get("object_ref") for c in recipients), (
         "a person-shaped payee must never mint an entity-ref"
     )
+
+
+# --- P35.66: the residential demotion at the claim stamping site --------------
+#
+# A caller holding a parcel-screened location passes the verdict through; a
+# document claim with no device location records ``unscreened`` (the screen's
+# honest coverage boundary — never a silent "clean").
+
+from connectors.dossier_documents import DocumentContext, dossier_claim  # noqa: E402
+from parsing.genre import DocumentGenre  # noqa: E402
+
+
+def _p35_dctx() -> DocumentContext:
+    return DocumentContext(
+        source_id="dossier_okc",
+        source_url="https://example.test/policy",
+        retrieved_date="2026-10-15",
+        derived_genre=DocumentGenre.POLICY_DOCUMENT,
+        evidence_genre="official_statement",
+        subject_id="sig:deployment:okc-p35",
+        doc_id="p35-doc",
+        method="html_text",
+        access_mode="document",
+    )
+
+
+def test_dossier_claim_demotes_to_c3_on_parcel_intersection() -> None:
+    claim = dossier_claim(
+        _p35_dctx(),
+        field_id="retention_period",
+        row={"dossier_field": "retention_period"},
+        predicate="retention_period",
+        value="7 days",
+        raw_value="7 days",
+        locator={"kind": "byte_range", "start": 0, "end": 6},
+        intersects_residential=True,
+    )
+    assert claim["sensitivity_class"] == "C3"
+    assert claim["geo_tier"] == 3
+    assert claim["residential_parcel_flag"] is True
+    assert claim["parcel_screen"] == "intersects"
+    assert claim["parcel_screen_signal"].startswith("sig.residential_parcels.declared@")
+
+
+def test_dossier_claim_default_records_unscreened() -> None:
+    claim = dossier_claim(
+        _p35_dctx(),
+        field_id="retention_period",
+        row={"dossier_field": "retention_period"},
+        predicate="retention_period",
+        value="7 days",
+        raw_value="7 days",
+        locator={"kind": "byte_range", "start": 0, "end": 6},
+    )
+    assert claim["sensitivity_class"] == "C1"
+    assert claim["residential_parcel_flag"] is False
+    assert claim["parcel_screen"] == "unscreened"
+
+
+def test_dossier_claim_flag_and_verdict_must_agree() -> None:
+    with pytest.raises(ValueError, match="iff parcel_screen"):
+        dossier_claim(
+            _p35_dctx(),
+            field_id="retention_period",
+            row={"dossier_field": "retention_period"},
+            predicate="retention_period",
+            value="7 days",
+            raw_value="7 days",
+            locator={"kind": "byte_range", "start": 0, "end": 6},
+            parcel_screen="intersects",
+            intersects_residential=False,
+        )

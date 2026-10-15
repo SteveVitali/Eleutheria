@@ -324,6 +324,25 @@ def _validate() -> int:
         print(f"VALIDATION FAILED: opt-out register malformed: {exc}")
         return 1
     print(f"  host-level opt-out register: {len(opt_out.entries)} entr(ies)")
+    # P35.66 (SIG-PUB-005/013): the declared residential-parcel signal must
+    # parse under the fail-closed integrity rules — a malformed ring, an
+    # out-of-range position, or a parcel outside every declared coverage
+    # region is a config defect, never a "clean" screening outcome. The signal
+    # lives in `policy/data` (the package that owns the emit-path screen), so
+    # the load goes through its own loader; a malformed file raises
+    # ParcelSignalError — recorded as a validation failure, never a crash.
+    from policy.parcel_screen import ParcelSignalError, declared_parcel_signal
+
+    try:
+        parcel_signal = declared_parcel_signal()
+    except ParcelSignalError as exc:
+        print(f"VALIDATION FAILED: P35.66 parcel signal: {exc}")
+        return 1
+    print(
+        f"  declared residential-parcel signal: OK ({parcel_signal.stamp}; "
+        f"{len(parcel_signal.coverage)} coverage region(s), "
+        f"{len(parcel_signal.parcels)} parcel(s) — coverage boundary recorded)"
+    )
     # P32.12 (SIG-ACQ-003): the frozen dossier field crosswalk must resolve
     # every configured field to an existing ontology predicate, or carry a
     # recorded scoped amendment — never an ad-hoc term.

@@ -636,6 +636,27 @@ def validate_packet(packet: Mapping[str, Any]) -> list[str]:
     records = packet.get("records")
     if not isinstance(records, Sequence) or isinstance(records, (str, bytes)):
         problems.append("records must be the emitted dossier_documents record list")
+    # P35.66 (SIG-PUB-011/013): the publish refusal at the dossier surface —
+    # a candidate-asset subject, or any claim record the emit path stamped
+    # ``residential_parcel_flag`` on, is a refused composition input. A
+    # violation is the established refusal here: ``build_dossier`` raises and
+    # the portfolio CLI exits non-zero on it.
+    subject = packet.get("subject")
+    if isinstance(subject, Mapping) and (
+        str(subject.get("entity_type") or "") == "candidate_asset"
+        or bool(subject.get("residential_parcel_flag"))
+    ):
+        problems.append(
+            "subject is a candidate asset / carries residential_parcel_flag — "
+            "never published at any precision (SIG-PUB-011/013)"
+        )
+    if isinstance(records, Sequence) and not isinstance(records, (str, bytes)):
+        for i, rec in enumerate(records):
+            if isinstance(rec, Mapping) and rec.get("residential_parcel_flag"):
+                problems.append(
+                    f"records[{i}] carries residential_parcel_flag — a "
+                    "residential-parcel claim is never published (SIG-PUB-013)"
+                )
     for key in ("search_log", "follow_ups"):
         if key in packet and not isinstance(packet[key], Sequence):
             problems.append(f"{key} must be a list")

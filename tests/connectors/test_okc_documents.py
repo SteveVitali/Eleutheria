@@ -652,3 +652,79 @@ def test_live_pdf_toc_entry_is_not_the_section() -> None:
     )
     with pytest.raises(ContentDrift):
         run(registered_connectors()[name](), ctx)
+
+
+# --- P35.66: the residential demotion at the claim stamping site --------------
+#
+# A caller holding a parcel-screened location passes the verdict through; a
+# document claim with no device location records ``unscreened`` (the screen's
+# honest coverage boundary — never a silent "clean").
+
+
+def _p35_ctx() -> okc.DocumentContext:
+    return okc.DocumentContext(
+        connector="okcpd_policy",
+        source_id="okcpd_policy",
+        source_url="https://example.test/x",
+        retrieved_date="2026-10-15",
+        genre=DocumentGenre.POLICY_DOCUMENT,
+        subject_id="sig:deployment:okc-p35",
+    )
+
+
+def test_okc_claim_demotes_to_c3_on_parcel_intersection() -> None:
+    claim = okc.okc_claim(
+        _p35_ctx(),
+        predicate="use_restriction",
+        value="restricted",
+        raw_value="restricted",
+        extraction_method="pdf_text",
+        locator={"kind": "byte_range", "start": 0, "end": 4},
+        intersects_residential=True,
+    )
+    assert claim["sensitivity_class"] == "C3"
+    assert claim["geo_tier"] == 3
+    assert claim["residential_parcel_flag"] is True
+    assert claim["parcel_screen"] == "intersects"
+    assert claim["parcel_screen_signal"].startswith("sig.residential_parcels.declared@")
+
+
+def test_okc_claim_default_records_unscreened() -> None:
+    claim = okc.okc_claim(
+        _p35_ctx(),
+        predicate="use_restriction",
+        value="restricted",
+        raw_value="restricted",
+        extraction_method="pdf_text",
+        locator={"kind": "byte_range", "start": 0, "end": 4},
+    )
+    assert claim["sensitivity_class"] == okc.default_sensitivity_class().value
+    assert claim["residential_parcel_flag"] is False
+    assert claim["parcel_screen"] == "unscreened"
+    assert claim["parcel_screen_signal"]
+
+
+def test_okc_claim_flag_and_verdict_must_agree() -> None:
+    """The recorded verdict and the flag are one fact — a disagreement is a
+    defect, never an emitted record."""
+    with pytest.raises(ValueError, match="iff parcel_screen"):
+        okc.okc_claim(
+            _p35_ctx(),
+            predicate="use_restriction",
+            value="restricted",
+            raw_value="restricted",
+            extraction_method="pdf_text",
+            locator={"kind": "byte_range", "start": 0, "end": 4},
+            parcel_screen="clear",
+            intersects_residential=True,
+        )
+    with pytest.raises(ValueError, match="not a member"):
+        okc.okc_claim(
+            _p35_ctx(),
+            predicate="use_restriction",
+            value="restricted",
+            raw_value="restricted",
+            extraction_method="pdf_text",
+            locator={"kind": "byte_range", "start": 0, "end": 4},
+            parcel_screen="not-a-verdict",
+        )
