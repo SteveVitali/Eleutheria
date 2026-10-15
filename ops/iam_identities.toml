@@ -24,8 +24,10 @@ schema = "sig.iam-identities/1"
 
 # The live Cloud Run job count the jobs leg must observe (G1-C07's
 # 2026-09-30 read, re-counted at the leg) — a disagreement is a refusal,
-# never a silent skip.
-expected_job_count = 88
+# never a silent skip. P35.6/ACQ-01 +10: the ten `sig-ingest-r11-*` batch jobs
+# the generator declares in ops/cadence.toml (created PAUSED by
+# scheduled-ops.sh --paused before this leg's re-count) — 88 → 98.
+expected_job_count = 98
 
 # --- the three service runtime identities (P34.42a) ---------------------------
 [[service_account]]
@@ -45,7 +47,7 @@ purpose = "the alert receiver's own identity — no project roles, no secret acc
 
 # --- the job-class runtime identities (P34.42b) --------------------------------
 # One SA per workload CLASS (G1-01); the job→class map is derived from
-# ops/cadence.toml plus the explicit `jobs` lists below — every one of the 88
+# ops/cadence.toml plus the explicit `jobs` lists below — every one of the 98
 # live jobs resolves exactly one class (`expected_job_count` pins the G1 read;
 # a drift is a refusal, never a silent skip).
 [[service_account]]
@@ -267,7 +269,7 @@ service_account = "sig-alerts-rt"
 name = "ingest"
 service_account = "sig-ingest-rt"
 sources = true            # every [[sources]] job in ops/cadence.toml (70)
-batches = true            # every [[batches]] job (8 camreg-batch-*)
+batches = true            # every [[batches]] job (8 camreg-batch-* + 10 P35.6 r11-*)
 jobs = ["sig-replay-ingest", "sig-sink-bench", "sig-ingest-resume-test"]
 
 [[job_class]]

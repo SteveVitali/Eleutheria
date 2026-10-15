@@ -108,6 +108,11 @@ class SourceCadence:
     secrets: tuple[str, ...] = ()
     note: str = ""
     cron_or_semantics_ok: str = ""
+    #: Per-row Cloud Run task timeout (P35.6 / I8 §7.1): a duration string
+    #: like ``"3h"``; empty = the script's default (60m sources / 36h batches).
+    #: Legistar's keyword pass rises 60m → 3h (P35.8 widens it; ~25–30 min at
+    #: the reviewed 1 req/s is only safe with headroom).
+    task_timeout: str = ""
 
 
 @dataclass(frozen=True)
@@ -130,6 +135,9 @@ class BatchCadence:
     members: tuple[str, ...]
     note: str = ""
     cron_or_semantics_ok: str = ""
+    #: Per-row Cloud Run task timeout (P35.6 / I8 §7.1): ``"6h"`` for the
+    #: Round-11 documents/layers batches; empty = the script's 36h default.
+    task_timeout: str = ""
 
 
 @dataclass(frozen=True)
@@ -308,6 +316,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             secrets=tuple(f"{k}={v}" for k, v in dict(s.get("secrets", {})).items()),
             note=str(s.get("note", "")),
             cron_or_semantics_ok=_annotation(s.get("cron_or_semantics_ok")),
+            task_timeout=str(s.get("task_timeout", "")),
         )
         for s in doc.get("sources", [])
     )
@@ -321,6 +330,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             members=tuple(str(m) for m in b.get("members", [])),
             note=str(b.get("note", "")),
             cron_or_semantics_ok=_annotation(b.get("cron_or_semantics_ok")),
+            task_timeout=str(b.get("task_timeout", "")),
         )
         for b in doc.get("batches", [])
     )

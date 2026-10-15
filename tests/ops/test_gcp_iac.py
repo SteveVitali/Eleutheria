@@ -303,7 +303,11 @@ def test_scheduled_ops_mounts_the_capture_store_on_every_ingest_job() -> None:
         assert "--add-volume-mount volume=captures,mount-path=/mnt/captures" in line
         assert "SIG_CAPTURE_DIR=/mnt/captures/evidence/captures" in line
     batches = [line for line in ingest if "--batch" in line]
-    assert batches and all("--task-timeout 36h" in line for line in batches)  # ADR-107
+    # Every batch deploy carries an explicit bound — 36h is the ADR-107 ceiling
+    # substituted for rows with no declared task_timeout; the P35.6 R11 rows
+    # carry their reviewed 6h bound instead (never unbounded).
+    assert batches and all(re.search(r"--task-timeout \S+", line) for line in batches)
+    assert any("--task-timeout 36h" in line for line in batches)
 
 
 @pytest.mark.parametrize("ref", ["reg/p/sig/sig-api:latest", "reg/p/sig/sig-api"])

@@ -1249,6 +1249,77 @@ def build_parser() -> argparse.ArgumentParser:
         "(scheduled-ops.sh publishes it to gs://…/ops/declared/live-diff.json)",
     )
 
+    # P35.6 (I8 ACQ-01): the Round-11 acquisition plumbing — generator +
+    # verification CLIs. Each forwards its argv tail to the module's own
+    # argparse so flags live in one place (additive verbs only).
+    acqg = sub.add_parser(
+        "acq-generate",
+        help="P35.6 (ACQ-01): generate registry/target/cadence/disposition "
+        "rows from the Round-11 acquisition plan CSV — emits text for review; "
+        "every source row lands ingestion_permitted=false",
+    )
+    acqg.add_argument("--plan", default=None, help="acquisition_plan.csv path")
+    acqg.add_argument("--candidates", default=None, help="candidates_consolidated.csv path")
+    acqg.add_argument("--plan-rows", default=None, help="round11_plan.csv path (ACQ→ticket map)")
+    acqg.add_argument("--row", action="append", default=[], help="plan_id filter (repeatable)")
+    acqg.add_argument("--family", action="append", default=[], help="family substring filter")
+    acqg.add_argument("--emit-sources", default=None, metavar="PATH")
+    acqg.add_argument("--emit-targets", default=None, metavar="PATH")
+    acqg.add_argument("--emit-cadence", default=None, metavar="PATH")
+    acqg.add_argument("--emit-dispositions", default=None, metavar="PATH")
+    acqg.add_argument("--emit-manifest", default=None, metavar="PATH")
+    acqg.add_argument(
+        "--check", action="store_true", help="dry run — print the summary, exit 1 on errors"
+    )
+
+    cdelta = sub.add_parser(
+        "coverage-delta",
+        help="P35.6 (ACQ-01): I1's blind-spot coverage-delta as a committed, "
+        "read-only tool — per blind spot, tier-A/B state, GL1 city, "
+        "technology class, country (I8 §7.7)",
+    )
+    cdelta.add_argument("--baseline", default=None, help="pre-wave snapshot (JSON or CSV)")
+    cdelta.add_argument("--current", default=None, help="post-wave/generated snapshot")
+    cdelta.add_argument("--expected", default=None, help="JSON/CSV of expected cells→reason")
+    cdelta.add_argument("--plan", default=None, help="derive expected cells from the plan")
+    cdelta.add_argument("--candidates", default=None)
+    cdelta.add_argument(
+        "--from-source-coverage",
+        default=None,
+        help="convert an I1 source_coverage.csv to a snapshot JSON and exit",
+    )
+    cdelta.add_argument("--format", choices=("text", "json"), default="text")
+    cdelta.add_argument("--fail-on-unexplained", action="store_true")
+
+    wv = sub.add_parser(
+        "wave-verify",
+        help="P35.6 (ACQ-01): I8 §7.7 per-source/per-wave verification — "
+        "registry + cadence + plan + run evidence, reported at the layer it "
+        "reached (pending, never a false green)",
+    )
+    wv.add_argument("--source", action="append", default=[], help="scope to source ids")
+    wv.add_argument("--plan", default=None)
+    wv.add_argument("--candidates", default=None)
+    wv.add_argument("--cadence", default=None, help="ops/cadence.toml path")
+    wv.add_argument("--shadow", default=None, help="JSON of per-source shadow diffs")
+    wv.add_argument("--live-runs", default=None, help="JSON of per-source run records")
+    wv.add_argument("--er-summary", default=None)
+    wv.add_argument("--coverage", default=None, help="coverage-delta JSON output")
+    wv.add_argument("--release", default=None)
+    wv.add_argument(
+        "--expect-permitted",
+        action="append",
+        default=[],
+        help="source ids expected flipped (the wave's HG-03 list)",
+    )
+    wv.add_argument(
+        "--require",
+        choices=("machinery", "live"),
+        default="machinery",
+        help="'live' promotes pending live-layer evidence to failures",
+    )
+    wv.add_argument("--json", action="store_true")
+
     alerts = sub.add_parser(
         "alerts", help="list the recorded alerts (the append-only alert ledger)"
     )
@@ -4482,6 +4553,69 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_replay_ingest(args)
     if args.command == "cadence":
         return _cmd_cadence(args)
+    if args.command == "acq-generate":
+        from . import acq_gen
+
+        acq_tail: list[str] = []
+        for flag, value in (
+            ("--plan", args.plan),
+            ("--candidates", args.candidates),
+            ("--plan-rows", args.plan_rows),
+            ("--emit-sources", args.emit_sources),
+            ("--emit-targets", args.emit_targets),
+            ("--emit-cadence", args.emit_cadence),
+            ("--emit-dispositions", args.emit_dispositions),
+            ("--emit-manifest", args.emit_manifest),
+        ):
+            if value is not None:
+                acq_tail += [flag, str(value)]
+        for rid in args.row:
+            acq_tail += ["--row", rid]
+        for fam in args.family:
+            acq_tail += ["--family", fam]
+        if args.check:
+            acq_tail.append("--check")
+        return acq_gen.main(acq_tail)
+    if args.command == "coverage-delta":
+        from . import coverage_delta
+
+        cd_tail = ["--format", args.format]
+        for flag, value in (
+            ("--baseline", args.baseline),
+            ("--current", args.current),
+            ("--expected", args.expected),
+            ("--plan", args.plan),
+            ("--candidates", args.candidates),
+            ("--from-source-coverage", args.from_source_coverage),
+        ):
+            if value is not None:
+                cd_tail += [flag, str(value)]
+        if args.fail_on_unexplained:
+            cd_tail.append("--fail-on-unexplained")
+        return coverage_delta.main(cd_tail)
+    if args.command == "wave-verify":
+        from . import wave_verify
+
+        wv_tail = ["--require", args.require]
+        for flag, value in (
+            ("--plan", args.plan),
+            ("--candidates", args.candidates),
+            ("--cadence", args.cadence),
+            ("--shadow", args.shadow),
+            ("--live-runs", args.live_runs),
+            ("--er-summary", args.er_summary),
+            ("--coverage", args.coverage),
+            ("--release", args.release),
+        ):
+            if value is not None:
+                wv_tail += [flag, str(value)]
+        for sid in args.source:
+            wv_tail += ["--source", sid]
+        for sid in args.expect_permitted:
+            wv_tail += ["--expect-permitted", sid]
+        if args.json:
+            wv_tail.append("--json")
+        return wave_verify.main(wv_tail)
     if args.command == "live-diff":
         return _cmd_live_diff(args)
     if args.command == "backfill-run-completions":

@@ -12,6 +12,7 @@ unscoped (the defining standard applied to the registry itself, SIG-ENG-001).
 
 from __future__ import annotations
 
+import re
 import tomllib
 from pathlib import Path
 
@@ -21,7 +22,10 @@ _SOURCES = Path("connectors/src/connectors/data/sources.toml")
 _DISPOSITIONS = Path("connectors/src/connectors/data/live_dispositions.toml")
 
 VALID_DISPOSITIONS = frozenset({"link_only", "reference", "mirror", "promote"})
-VALID_TICKETS = frozenset({"P25.2", "P25.3", "P25.4", "P25.5", "P25.6", "P29.3"})
+# A class_ticket names a manifest ticket — any `P<phase>.<n>` id shape, not a
+# hand-kept list (P35.6/ACQ-01 generates `promote` rows that name the
+# Round-11 family tickets, e.g. P36.4, which a frozen set could never carry).
+TICKET_RE = re.compile(r"^P\d+\.\d+[a-z]?$")
 
 
 def _source_ids() -> set[str]:
@@ -62,6 +66,7 @@ def test_disposition_values_are_valid() -> None:
         if disp == "promote":
             # A promoted source must name the class ticket its connector would
             # land under (HG-03 flip is still the prerequisite).
-            assert row.get("class_ticket") in VALID_TICKETS, (
-                f"{source_id}: promote requires a class_ticket in {sorted(VALID_TICKETS)}"
+            assert TICKET_RE.match(row.get("class_ticket", "") or ""), (
+                f"{source_id}: promote requires a class_ticket naming a manifest "
+                f"ticket (P<n>.<n> shape); got {row.get('class_ticket')!r}"
             )

@@ -172,6 +172,23 @@ def _validate() -> int:
         for msg in violations:
             print(f"VALIDATION FAILED: {msg}")
         return 1
+    # F-330 (P35.6, S1): the Part VIII layer-field denylist is a registration
+    # refusal enforced over every committed ArcGIS/Socrata target row — a
+    # target whose `observed_fields`/`out_fields` name a denied field fails
+    # validation (it was registered before the denylist, or written around it).
+    from .dot_511 import target_table
+    from .field_denylist import target_field_violations
+
+    field_violations: list[str] = []
+    for row in target_table().get("targets", []):
+        for hit in target_field_violations(row):
+            field_violations.append(
+                f"target {row.get('id')!r} (source {row.get('source_id')!r}): {hit}"
+            )
+    if field_violations:
+        for msg in field_violations:
+            print(f"VALIDATION FAILED: F-330 field denylist: {msg}")
+        return 1
     # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
     # under the fail-closed rules — a malformed row is a validation failure,
     # never a silent "no opt-outs".

@@ -57,6 +57,18 @@
 #     that are not declared (reported, never deleted here: deletion is the
 #     P35.1b fleet-hygiene leg's call).
 #
+# P35.6 (I8 §7.1, R6 first-run protocol, NEW-4) adds:
+#   * `--paused` — every trigger this run CREATES is created then immediately
+#     paused (R6 step 1: no new source's first execution is an unobserved
+#     scheduler first-fire). A trigger that already exists is UPDATED normally
+#     and its state left untouched — `--paused` never pauses a live trigger.
+#     The wave's verbatim-go leg resumes them (R6 step 5), never this script.
+#   * per-row `task_timeout` on `[[sources]]`/`[[batches]]` rows — a cadence.toml
+#     duration string (e.g. `3h`, `6h`) overrides the 60m/36h defaults; the
+#     Round-11 documents/layers batches carry 6h (I8 §7.1). `--max-retries 0`
+#     is unchanged — a timed-out run is resumed by `logical_run`, never retried
+#     into silence.
+#
 # The per-source table comes from ops/cadence.toml via tomllib — that file is
 # the single source of truth, and `sig-ops cadence --check` fails on drift.
 set -euo pipefail
@@ -70,6 +82,17 @@ _here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 parse_mode "${1:-}"
 require_project
 require_adc
+
+# R6 (P35.6): `--paused` anywhere in the args marks every trigger this run
+# *creates* for an immediate pause — a newly-registered source's first
+# execution is the observed manual run, never an unobserved first-fire.
+SIG_CREATE_PAUSED=0
+for _arg in "$@"; do
+  case "${_arg}" in
+    --paused) SIG_CREATE_PAUSED=1 ;;
+  esac
+done
+[ "${SIG_CREATE_PAUSED}" = "1" ] && _log "R6 create-paused: every NEW trigger is paused on create" || true
 
 banner "scheduled live operations (P26.1 / OPS.2)"
 
@@ -138,7 +161,9 @@ sched_upsert() {
     body_args=(--message-body "{\"overrides\":{\"containerOverrides\":[{\"args\":${args_json}}]}}")
   fi
   if [ "${SIG_GCP_MODE}" = "check" ]; then
-    _plan "gcloud scheduler jobs create http ${name} --schedule '${schedule}' --time-zone=Etc/UTC --uri ${uri} --http-method=POST --oauth-service-account-email=${SIG_SCHEDULER_SA_EMAIL} ${body_args[*]:-}   # (update if already present)"
+    local paused_note=""
+    [ "${SIG_CREATE_PAUSED}" = "1" ] && paused_note="; NEW triggers paused on create (R6)"
+    _plan "gcloud scheduler jobs create http ${name} --schedule '${schedule}' --time-zone=Etc/UTC --uri ${uri} --http-method=POST --oauth-service-account-email=${SIG_SCHEDULER_SA_EMAIL} ${body_args[*]:-}   # (update if already present${paused_note})"
     return 0
   fi
   if gcloud scheduler jobs describe "${name}" \
@@ -154,6 +179,11 @@ sched_upsert() {
       --schedule "${schedule}" --time-zone=Etc/UTC --uri "${uri}" \
       --http-method=POST --oauth-service-account-email="${SIG_SCHEDULER_SA_EMAIL}" \
       ${body_args[@]+"${body_args[@]}"}
+    # R6 step 1 (P35.6): a trigger that did not exist before this run is paused
+    # immediately under --paused; an existing trigger's state is never touched.
+    if [ "${SIG_CREATE_PAUSED}" = "1" ]; then
+      sched_set_state "${name}" paused
+    fi
   fi
 }
 
@@ -173,7 +203,8 @@ sched_set_state() {
 }
 
 # Read the per-source cadence table
-# (id|cadence|cron|job|scheduler|existing|extra-secrets).
+# (id|cadence|cron|job|scheduler|existing|extra-secrets|task_timeout).
+# `task_timeout` (P35.6) is a per-row duration string; empty = 60m default.
 read_cadence_rows() {
   (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
 import sys
@@ -193,6 +224,7 @@ for s in doc.get("sources", []):
                 s["scheduler"],
                 "1" if s.get("existing") else "0",
                 extra,
+                s.get("task_timeout", ""),
             ]
         )
     )
@@ -200,11 +232,13 @@ PY
   )
 }
 
-# Read the grouped-batch table (id|cadence|cron|job|scheduler|member-count) —
+# Read the grouped-batch table
+# (id|cadence|cron|job|scheduler|member-count|task_timeout) —
 # P26.16 (SOURCES.15): the GL-GATE-07 rights batch groups its newly-green
 # camera-registry sources under ~10 sig-ingest-camreg-batch-* jobs; each batch
 # job runs `scheduled-ingest --batch <id>` which appends one ops/runs row PER
-# MEMBER source.
+# MEMBER source. `task_timeout` (P35.6) is a per-row duration string; empty =
+# the 36h default (ADR-107's batch-05 ceiling).
 read_batch_rows() {
   (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
 import sys
@@ -222,6 +256,7 @@ for b in doc.get("batches", []):
                 b["job"],
                 b["scheduler"],
                 str(len(b.get("members", []))),
+                b.get("task_timeout", ""),
             ]
         )
     )
@@ -342,7 +377,7 @@ sched_upsert "${SIG_SCHEDULER_JOB_PROBE}" "${SIG_SCHEDULER_CRON_PROBE}" "${SIG_R
 #    `sig-connectors run` directly before P26.1; the command change preserves
 #    the same gated runner path and its targeted-lookup posture, SIG-INGEST-036).
 _log "-- per-source reingestion (run rows → gs://…-sig-restricted/ops/runs/) --"
-while IFS='|' read -r src cad cron job sched existing extra; do
+while IFS='|' read -r src cad cron job sched existing extra ttimeout; do
   [ -z "${src}" ] && continue
   secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
   [ -n "${extra}" ] && secrets="${secrets},${extra}"
@@ -350,13 +385,15 @@ while IFS='|' read -r src cad cron job sched existing extra; do
   # P26.6: agenda-platform jobs now also fetch the bounded per-tenant document
   # window (≤ doc_per_tenant docs × tenants, ≤ doc_run_cap/run) on top of the
   # index sweep — the largest platform (CivicClerk, ~295 index + ≤350 docs)
-  # ran past the 30m ceiling; 60m is the reviewed ingest task bound.
+  # ran past the 30m ceiling; 60m is the reviewed ingest task bound. A
+  # per-row `task_timeout` (P35.6, e.g. legistar's widened keyword pass at 3h)
+  # overrides it.
   run gcloud run jobs deploy "${job}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_INGEST_SA_EMAIL}" \
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --source ${src} --sink pg" \
-    --tasks 1 --task-timeout 60m --max-retries 0 \
+    --tasks 1 --task-timeout "${ttimeout:-60m}" --max-retries 0 \
     --execution-environment gen2 \
     --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
     --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
@@ -393,15 +430,15 @@ done < <(read_cadence_rows)
 #    mirror, and the live batch jobs already run 36h (P31.4 aligned this script,
 #    which used to say 120m, with the deployed jobs so a re-apply cannot shrink it).
 _log "-- grouped batches (run rows per member → ops/runs/<source>/) --"
-while IFS='|' read -r bid bcad bcron bjob bsched bcount; do
+while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout; do
   [ -z "${bid}" ] && continue
-  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}) -> ${bjob}"
+  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}) -> ${bjob} (task-timeout ${btimeout:-36h})"
   run gcloud run jobs deploy "${bjob}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_INGEST_SA_EMAIL}" \
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --batch ${bid} --sink pg" \
-    --tasks 1 --task-timeout 36h --max-retries 0 \
+    --tasks 1 --task-timeout "${btimeout:-36h}" --max-retries 0 \
     --execution-environment gen2 \
     --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
     --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
