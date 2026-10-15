@@ -61,7 +61,7 @@ the thin executor that fetches those rows from a live connection.
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence, Set
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
@@ -86,7 +86,7 @@ from policy.licensing import (
     RightsRecord,
     compute_export_license,
 )
-from policy.sensitivity import apply_tier
+from policy.sensitivity import apply_tier, assert_public_layer_subject
 from policy.source_aliases import load_source_aliases
 from reconcile.weight import predicate_meta
 from resolution.partner_identity import PARTNER_PREDICATES
@@ -540,6 +540,10 @@ class ShapedDataset:
     claims_read: int
     claims_shaped: int
     claims_excluded_not_publishable: int
+    #: P35.66 (SIG-PUB-011/013): subjects refused outright — candidate assets
+    #: and residential-parcel-flagged subjects never reach a public device
+    #: layer, so they are counted here, not in ``subjects_total``.
+    candidate_subjects_excluded: int
     subjects_total: int  # subjects carrying ≥1 publishable shaping claim
     subjects_geolocated: int  # with a resolved point
     subjects_conflicted: int  # coordinate evidence disagrees
@@ -569,6 +573,7 @@ class ShapedDataset:
                 "claims_read": self.claims_read,
                 "claims_shaped": self.claims_shaped,
                 "claims_excluded_not_publishable": self.claims_excluded_not_publishable,
+                "candidate_subjects_excluded": self.candidate_subjects_excluded,
                 "subjects_total": self.subjects_total,
                 "subjects_geolocated": self.subjects_geolocated,
                 "subjects_conflicted": self.subjects_conflicted,
@@ -666,9 +671,15 @@ QUERIES: dict[str, str] = {
         "   AND upper_inf(c.sys_period)"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id"
     ),
-    # Subject entity types (for the site record).
+    # Subject entity types (for the site record) + the candidate's recorded
+    # residential-parcel flag (P35.66, SIG-PUB-011/013): a candidate_asset row
+    # stamps the emit-path parcel verdict on the spine; the publish path reads
+    # it and refuses the subject outright — never a device-layer row.
     "subject_entities": (
-        "SELECT e.entity_id::text, e.entity_type FROM entity e"
+        "SELECT e.entity_id::text, e.entity_type,"
+        "       COALESCE(ca.residential_parcel_flag, false)"
+        "  FROM entity e"
+        "  LEFT JOIN candidate_asset ca ON ca.entity_id = e.entity_id"
         " WHERE EXISTS (SELECT 1 FROM claim c WHERE c.subject_id = e.entity_id"
         "              AND c.predicate_id = ANY(%s) AND upper_inf(c.sys_period)"
         "              AND {PUB_GATE})"
@@ -1038,11 +1049,19 @@ def shape_sites(
     claims: Sequence[ShapingClaim],
     *,
     entity_types: Mapping[str, str],
+    refused_subjects: Set[str] = frozenset(),
 ) -> list[ShapedSite]:
-    """Assemble publishable claims into observation-level sites (deterministic)."""
+    """Assemble publishable claims into observation-level sites (deterministic).
+
+    P35.66 (SIG-PUB-011/013): ``refused_subjects`` — candidate assets and
+    residential-parcel-flagged subjects, resolved by
+    :func:`build_shaped_dataset` — never become sites; a candidate in a public
+    device layer is a build error, so the refusal is enforced here and
+    re-asserted post-shape.
+    """
     by_subject: dict[str, list[ShapingClaim]] = {}
     for claim in claims:
-        if claim.publishable:
+        if claim.publishable and claim.subject_id not in refused_subjects:
             by_subject.setdefault(claim.subject_id, []).append(claim)
 
     sites: list[ShapedSite] = []
@@ -1547,13 +1566,42 @@ def build_shaped_dataset(
     """
     claims = parse_shaping_claims(raw.get("shaping_claims") or [])
 
-    entity_types = {str(r[0]): str(r[1]) for r in (raw.get("subject_entities") or [])}
+    subject_rows = list(raw.get("subject_entities") or [])
+    entity_types = {str(r[0]): str(r[1]) for r in subject_rows}
+    subject_flags = {str(r[0]): bool(r[2]) for r in subject_rows if len(r) > 2}
+
+    # P35.66 (SIG-PUB-011/013): a `candidate_asset` subject — or any subject
+    # whose emit-stamped `residential_parcel_flag` is set — never shapes a
+    # site. Refusal here is by CONSTRUCTION (the subject is excluded before
+    # shaping), and the post-shape guard below re-asserts it as a build error
+    # in case a refused subject is ever smuggled past the filter.
+    refused_subjects = {
+        sid
+        for sid, etype in entity_types.items()
+        if etype == "candidate_asset" or subject_flags.get(sid, False)
+    }
 
     claims_read = len(claims)
     publishable_claims = [c for c in claims if c.publishable]
     claims_shaped = len(publishable_claims)
 
-    sites = shape_sites(claims, entity_types=entity_types)
+    sites = shape_sites(claims, entity_types=entity_types, refused_subjects=refused_subjects)
+
+    # The post-shape guard (P35.66): a refused subject that reached a site is
+    # a BUILD ERROR — raise, never warn. `assert_public_layer_subject` is the
+    # shared enforcement every publish surface runs.
+    for site in sites:
+        assert_public_layer_subject(
+            site.entity_type,
+            residential_parcel_flag=subject_flags.get(site.entity_id, False),
+            surface="exports/shaping",
+        )
+
+    # P35.66: the exclusion is counted honestly — a refused subject that
+    # carried publishable shaping claims is named in the totals, never
+    # silently dropped (§3.1).
+    publishable_subjects = {c.subject_id for c in publishable_claims}
+    candidate_subjects_excluded = len(refused_subjects & publishable_subjects)
 
     # Every publishable subject belongs to exactly one jurisdiction bucket —
     # the resolved value, or the honest unasserted/conflicted bucket.
@@ -1638,6 +1686,7 @@ def build_shaped_dataset(
         claims_read=claims_read,
         claims_shaped=claims_shaped,
         claims_excluded_not_publishable=claims_read - claims_shaped,
+        candidate_subjects_excluded=candidate_subjects_excluded,
         subjects_total=subjects_total,
         subjects_geolocated=geolocated,
         subjects_conflicted=conflicted,

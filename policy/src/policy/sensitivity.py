@@ -79,6 +79,47 @@ def requires_human_review(provenance_is_leak: bool) -> bool:
     return provenance_is_leak
 
 
+class CandidateAssetPublishRefused(Exception):
+    """A flagged/candidate subject reached a public publish surface.
+
+    This is a **build error** (P35.66, SIG-PUB-011/013): a ``CandidateAsset``
+    never appears in a public device layer (§43.4), and a subject carrying
+    ``residential_parcel_flag`` — a candidate whose recorded point intersects
+    a declared residential parcel — MUST NOT be published at any precision,
+    ever. The publish surfaces (sites/tiles/records/search/dossiers) refuse,
+    not warn.
+    """
+
+
+def assert_public_layer_subject(
+    entity_type: str,
+    *,
+    residential_parcel_flag: bool = False,
+    surface: str = "",
+) -> None:
+    """Enforce SIG-PUB-011/013 at a publish surface — raises, never warns.
+
+    ``entity_type`` is the subject's declared type (``candidate_asset`` or
+    other); ``residential_parcel_flag`` is the emit-stamped flag
+    (:mod:`policy.parcel_screen`). A flagged subject is refused outright
+    regardless of its type — the flag marks a device point on a residential
+    parcel, which never reaches a per-device public surface at any precision;
+    its program-level facts surface through the aggregate/coverage channels,
+    not as a device row. A ``candidate_asset`` is refused always (flagged or
+    not). ``surface`` names the surface in the error for the build log.
+    """
+    where = f" at {surface}" if surface else ""
+    if not candidate_publishable(bool(residential_parcel_flag)):
+        raise CandidateAssetPublishRefused(
+            f"a subject carrying residential_parcel_flag MUST NOT be published "
+            f"at any precision{where} (SIG-PUB-013)"
+        )
+    if entity_type == "candidate_asset":
+        raise CandidateAssetPublishRefused(
+            f"a CandidateAsset never appears in a public device layer{where} (SIG-PUB-011)"
+        )
+
+
 def deterministic_offset(asset_id: str, radius_m: float) -> tuple[float, float]:
     """A stable, per-asset obfuscation offset within ``radius_m`` (SIG-GEO-009).
 

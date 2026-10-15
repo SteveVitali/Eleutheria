@@ -39,6 +39,8 @@ import tempfile
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
+from policy.sensitivity import assert_public_layer_subject
+
 #: MVT tile extent (the coordinate grid inside a tile); 4096 is the de-facto default.
 TILE_EXTENT = 4096
 #: The ODbL attribution the OSM-derived layer must carry in every context (§42, SIG-GEO-013).
@@ -653,7 +655,13 @@ TILE_RENDER_PROPERTIES = (
 
 
 def slim_geojson_for_tiles(geojson_bytes: bytes) -> bytes:
-    """Keep only :data:`TILE_RENDER_PROPERTIES` on each feature (deterministic)."""
+    """Keep only :data:`TILE_RENDER_PROPERTIES` on each feature (deterministic).
+
+    P35.66 (SIG-PUB-011/013): the refusal is enforced on the FULL properties —
+    before slimming — so a candidate asset or a residential-parcel-flagged
+    subject reaching the tile surface is a build error, never a dropped or
+    slimmed-down feature.
+    """
     doc = json.loads(geojson_bytes)
     features = doc.get("features")
     if isinstance(features, list):
@@ -662,6 +670,11 @@ def slim_geojson_for_tiles(geojson_bytes: bytes) -> bytes:
                 continue
             props = feat.get("properties")
             if isinstance(props, dict):
+                assert_public_layer_subject(
+                    str(props.get("entity_type") or ""),
+                    residential_parcel_flag=bool(props.get("residential_parcel_flag")),
+                    surface="tiles",
+                )
                 feat["properties"] = {k: props[k] for k in TILE_RENDER_PROPERTIES if k in props}
     return json.dumps(doc, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
         "utf-8"

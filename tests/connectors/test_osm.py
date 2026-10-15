@@ -453,3 +453,94 @@ def _one(rows: list[dict[str, Any]], **match: Any) -> dict[str, Any]:
     found = [r for r in rows if all(r.get(k) == v for k, v in match.items())]
     assert len(found) == 1, f"expected exactly one row matching {match}, got {len(found)}"
     return found[0]
+
+
+# --- P35.66: the residential-parcel screen at emit (SIG-PUB-005/013) -----------
+#
+# The declared-signal machinery is exercised against the synthetic fixture
+# layer (tests/unit/fixtures/parcels/residential_parcels.toml — a stand-in,
+# never real geography): coverage lat 35.4–35.6 / lon -97.7–-97.3, one
+# parcel at lat 35.45–35.47 / lon -97.55–-97.50.
+
+from policy.parcel_screen import ResidentialParcelSignal  # noqa: E402
+
+_PARCEL_FIXTURE = (
+    Path(__file__).resolve().parents[1]
+    / "unit"
+    / "fixtures"
+    / "parcels"
+    / "residential_parcels.toml"
+)
+
+
+def _parcel_signal() -> ResidentialParcelSignal:
+    return ResidentialParcelSignal.load(_PARCEL_FIXTURE)
+
+
+def _raw_asset(geometry: dict[str, Any] | None) -> dict[str, Any]:
+    return {
+        "record_kind": "asset",
+        "osm_type": "node",
+        "osm_id": 9001,
+        "osm_version": 3,
+        "changeset": 424242,
+        "raw_tags": {"man_made": "surveillance", "surveillance:type": "camera"},
+        "geometry": geometry,
+    }
+
+
+def _asset_row(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    return _one(rows, record_kind="asset")
+
+
+def test_flagged_asset_demotes_and_physical_row_withholds_geometry() -> None:
+    """A node whose point sits on a declared residential parcel: the asset row
+    keeps the raw geometry (canonical evidence) but stamps C3 + flag, and the
+    ODbL publish projection withholds the geometry outright (SIG-PUB-013)."""
+    connector = OSMConnector(parcel_signal=_parcel_signal())
+    rows = connector._normalize_asset(_raw_asset({"kind": "point", "lat": 35.46, "lon": -97.52}))
+    asset = _asset_row(rows)
+    assert asset["residential_parcel_flag"] is True
+    assert asset["parcel_screen"] == "intersects"
+    assert asset["parcel_screen_signal"] == "sig.residential_parcels.fixture@fixture-v1"
+    assert asset["sensitivity_class"] == "C3"
+    assert asset["geo_tier"] == 3
+    assert asset["geometry"] == {"kind": "point", "lat": 35.46, "lon": -97.52}
+    # Program-level facts (technology, mobility) are retained in the
+    # projection — only the device point is withheld.
+    projected = _one(physical_asset_rows(rows), osm_element_type="node", osm_element_id=9001)
+    assert projected["geometry"] is None
+    assert projected["residential_parcel_flag"] is True
+    assert projected["parcel_screen"] == "intersects"
+    assert projected["sensitivity_class"] == "C3"
+    assert projected["asset_technology"] is not None
+
+
+def test_clear_asset_keeps_geometry_and_declared_class() -> None:
+    connector = OSMConnector(parcel_signal=_parcel_signal())
+    rows = connector._normalize_asset(_raw_asset({"kind": "point", "lat": 35.50, "lon": -97.40}))
+    asset = _asset_row(rows)
+    assert asset["parcel_screen"] == "clear"
+    assert asset["residential_parcel_flag"] is False
+    assert asset["sensitivity_class"] == "C1"  # SIG-PUB-006 default stands
+    projected = _one(physical_asset_rows(rows), osm_element_id=9001)
+    assert projected["geometry"] == {"kind": "point", "lat": 35.50, "lon": -97.40}
+    assert projected["residential_parcel_flag"] is False
+
+
+def test_geometry_free_and_bounds_assets_record_unscreened() -> None:
+    """A bounds descriptor or absent geometry can never assert a point-in-
+    parcel verdict — both record ``unscreened`` (never silent-clean)."""
+    connector = OSMConnector(parcel_signal=_parcel_signal())
+    for geometry in (
+        None,
+        {"kind": "bounds", "bounds": {"minlat": 35.45, "maxlat": 35.47}},
+    ):
+        rows = connector._normalize_asset(_raw_asset(geometry))
+        asset = _asset_row(rows)
+        assert asset["parcel_screen"] == "unscreened"
+        assert asset["residential_parcel_flag"] is False
+        assert asset["sensitivity_class"] == "C1"
+        projected = _one(physical_asset_rows(rows), osm_element_id=9001)
+        assert projected["geometry"] == geometry
+        assert projected["parcel_screen"] == "unscreened"

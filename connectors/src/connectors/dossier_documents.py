@@ -96,7 +96,12 @@ from parsing.document import (
 )
 from parsing.genre import DocumentGenre, classify_genre
 from parsing.locator import Locator
-from policy.sensitivity import SensitivityClass, geo_tier_for
+from policy.parcel_screen import PARCEL_SCREEN_VERDICTS, declared_parcel_signal
+from policy.sensitivity import (
+    SensitivityClass,
+    demote_for_residential_parcel,
+    geo_tier_for,
+)
 from resolution.partner_identity import PARTNER_PREDICATES, partner_ref_rows
 
 from ._data import load_table
@@ -421,6 +426,8 @@ def dossier_claim(
     unit: str | None = None,
     object_type: str | None = None,
     rationale: str | None = None,
+    intersects_residential: bool = False,
+    parcel_screen: str | None = None,
 ) -> dict[str, Any]:
     """Build one typed, evidenced, Part VIII-guarded dossier claim.
 
@@ -431,6 +438,12 @@ def dossier_claim(
     evidence genre, the derived document genre, the dossier/source-field
     provenance, the sensitivity tier, and the crosswalk's applicability note.
     A non-probative evidence genre stamps ``claim_directness = "D6"``.
+
+    P35.66 (SIG-PUB-005/013): the residential demotion runs at this stamping
+    site too — a caller holding a parcel-screened location passes
+    ``intersects_residential``/``parcel_screen``; the claim demotes to C3
+    automatically. Dossier claims with no device location record
+    ``unscreened`` — the screen's coverage boundary, never a silent "clean".
     """
     assert_genre_permits(
         ctx.source_id,
@@ -441,7 +454,17 @@ def dossier_claim(
     )
     assert_part_viii_safe(predicate, raw_value)
     assert_person_naming_permitted(predicate)
-    sensitivity = SensitivityClass(str(vocab()["default_sensitivity_class"]))
+    verdict = parcel_screen or ("intersects" if intersects_residential else "unscreened")
+    if verdict not in PARCEL_SCREEN_VERDICTS:
+        raise ValueError(
+            f"parcel_screen {verdict!r} is not a member {sorted(PARCEL_SCREEN_VERDICTS)}"
+        )
+    if intersects_residential != (verdict == "intersects"):
+        raise ValueError("intersects_residential is true iff parcel_screen == 'intersects'")
+    sensitivity = demote_for_residential_parcel(
+        SensitivityClass(str(vocab()["default_sensitivity_class"])),
+        intersects_residential,
+    )
     claim: dict[str, Any] = {
         "record_kind": "claim",
         "connector": DOSSIER_DOCUMENTS,
@@ -457,6 +480,11 @@ def dossier_claim(
         "dossier_field": str(row.get("dossier_field") or ""),
         "sensitivity_class": sensitivity.value,
         "geo_tier": geo_tier_for(sensitivity),
+        # P35.66: the parcel-screen verdict + flag + declaring signal stamp
+        # every claim — "unscreened" is the recorded boundary, never "clean".
+        "residential_parcel_flag": intersects_residential,
+        "parcel_screen": verdict,
+        "parcel_screen_signal": declared_parcel_signal().stamp,
         "assertion_rationale": rationale or str(row.get("applicability") or ""),
         "normalization_id": "dossier-field-crosswalk",
         "normalization_version": crosswalk_version(),

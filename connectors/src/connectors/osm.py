@@ -45,6 +45,14 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from policy.parcel_screen import (
+    ParcelScreenVerdict,
+    ResidentialParcelSignal,
+    declared_parcel_signal,
+    screen_geometry_descriptor,
+)
+from policy.sensitivity import SensitivityClass, demote_for_residential_parcel, geo_tier_for
+
 from ._data import load_table
 from .stages import CaptureRef, Connector, ContentDrift, FetchResult, RunContext, register
 
@@ -440,16 +448,26 @@ def physical_asset_rows(claims: Iterable[Mapping[str, Any]]) -> list[dict[str, A
         if claim.get("record_kind") != "asset":
             continue
         ref = ElementRef(str(claim["osm_type"]), int(claim["osm_id"]))
+        flagged = bool(claim.get("residential_parcel_flag"))
         by_ref[ref] = {
             "osm_element_type": ref.osm_type,
             "osm_element_id": ref.osm_id,
             "osm_version": int(claim["osm_version"]),
             "asset_technology": claim.get("asset_technology"),
             "mobility": claim.get("mobility", "unknown"),
-            "geometry": claim.get("geometry"),
+            # P35.66 (SIG-PUB-005/013): a parcel-intersecting asset is demoted
+            # to C3 — this ODbL projection is the publish surface, so the
+            # device point is withheld here (program-level facts only). The
+            # raw geometry stays on the asset record (canonical evidence);
+            # the verdict + flag ride the row so the demotion is recorded.
+            "geometry": None if flagged else claim.get("geometry"),
             "first_observed": claim.get("first_observed"),
             "last_observed": claim.get("last_observed"),
             "changeset": claim.get("changeset"),
+            "sensitivity_class": claim.get("sensitivity_class"),
+            "residential_parcel_flag": flagged,
+            "parcel_screen": claim.get("parcel_screen"),
+            "parcel_screen_signal": claim.get("parcel_screen_signal"),
             "source_id": OSM_SOURCE_ID,
             "license": ODBL_LICENSE,
             "compartment": ODBL_COMPARTMENT,
@@ -475,6 +493,13 @@ class OSMConnector(Connector):
 
     name = "osm"
     version = "1.0.0"
+
+    def __init__(self, *, parcel_signal: ResidentialParcelSignal | None = None) -> None:
+        # P35.66 (SIG-PUB-005/013): the declared residential-parcel signal the
+        # asset emit screen consults — ``None`` resolves the committed
+        # ``policy/data/residential_parcels.toml``; tests inject a fixture
+        # layer. The connector never fabricates a verdict.
+        self._parcel_signal = parcel_signal
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
@@ -626,6 +651,23 @@ class OSMConnector(Connector):
                 )
             )
 
+        # P35.66 (SIG-PUB-005/013): the residential-parcel screen runs on the
+        # asset's device point (``point``/``center`` descriptors); every other
+        # shape records ``unscreened`` — the declared check is point-in-parcel
+        # and a bounds polygon asserting "no intersection" would claim a screen
+        # that never ran. An ``intersects`` verdict demotes the record to C3
+        # and stamps the flag; the geometry itself stays on the asset row
+        # (canonical evidence) — the ODbL projection
+        # (:func:`physical_asset_rows`) withholds it, so the publish surface
+        # emits program-level facts only.
+        sig = self._parcel_signal or declared_parcel_signal()
+        verdict = screen_geometry_descriptor(raw.get("geometry"), signal=sig)
+        asset_flagged = verdict is ParcelScreenVerdict.INTERSECTS
+        asset_class = demote_for_residential_parcel(
+            SensitivityClass.C1,  # SIG-PUB-006: roadside hardware defaults C1
+            asset_flagged,
+        )
+
         # The asset row itself — the ODbL physical_asset projection input. Carries
         # the version (edit detection), geometry, inferred mobility, and a
         # first_observed placeholder (None => resolved later from history, NEVER the
@@ -644,6 +686,11 @@ class OSMConnector(Connector):
                     "geometry": raw.get("geometry"),
                     "first_observed": None,
                     "last_observed": None,
+                    "sensitivity_class": asset_class.value,
+                    "geo_tier": geo_tier_for(asset_class),
+                    "residential_parcel_flag": asset_flagged,
+                    "parcel_screen": verdict.value,
+                    "parcel_screen_signal": sig.stamp,
                 }
             )
         )

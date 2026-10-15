@@ -44,6 +44,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from policy.sensitivity import assert_public_layer_subject
+
 from .manifest import canonical_json
 
 #: The machine contract stamped on ``search_index.json`` and ``meta``.
@@ -214,6 +216,15 @@ def build_search_index(
     to ``search_index.json`` beside the sqlite file).
     """
     rows = sorted(records, key=lambda r: str(r["record_key"]))
+    # P35.66 (SIG-PUB-011/013): refuse BEFORE opening the index — a candidate
+    # asset or residential-parcel-flagged subject in the corpus is a build
+    # error, never a skipped row and never a partial artifact on disk.
+    for row in rows:
+        assert_public_layer_subject(
+            str(row.get("entity_type") or ""),
+            residential_parcel_flag=bool(row.get("residential_parcel_flag")),
+            surface="search_index",
+        )
     out.parent.mkdir(parents=True, exist_ok=True)
     if out.exists():
         out.unlink()
