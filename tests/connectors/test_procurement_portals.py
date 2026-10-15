@@ -208,14 +208,28 @@ def test_bidnet_targets_ride_the_reviewed_windows() -> None:
 
 def test_socrata_targets_are_bounded_soql_slices() -> None:
     targets = portal_targets(source_id="procportal_nyc_ny")
-    assert len(targets) == 1
-    url = targets[0]["url"]
+    rows = [t for t in targets if t["index_kind"] == "rows"]
+    assert len(rows) == 1
+    url = rows[0]["url"]
     assert url.startswith("https://data.cityofnewyork.us/resource/dg92-zbpx.json")
     assert "%24limit=500" in url or "$limit=500" in url
     assert "%24order=" in url or "$order=" in url
     # Field aliases ride the target (the reviewed dataset column names).
-    assert "request_id" in targets[0]["id_fields"]
-    assert "short_title" in targets[0]["title_fields"]
+    assert "request_id" in rows[0]["id_fields"]
+    assert "short_title" in rows[0]["title_fields"]
+    # P35.9 (ACQ-05): the reviewed `crol` portal_where definition adds the
+    # bounded where slices BESIDE the rows window — one target per reviewed
+    # term OR-group, each carrying the B00329-shaped `upper(f) like '%T%'`
+    # clause, its term group, and the reviewed term-set provenance.
+    where = [t for t in targets if t["index_kind"] == "where"]
+    assert where
+    for t in where:
+        assert "%24where=" in t["url"] or "$where=" in t["url"]
+        assert "upper%28vendor_name%29" in t["url"] or "upper(vendor_name)" in t["url"]
+        assert t["portal_where"] == "crol"
+        assert t["acq_keyword_terms"] == "crol"
+        assert t["where_terms"]
+        assert t["where_fields"]
 
 
 def test_gated_portals_expand_to_their_portal_surface_only() -> None:
@@ -427,19 +441,40 @@ def _nyc_target() -> Mapping[str, Any]:
     return portal_targets(source_id="procportal_nyc_ny")[0]
 
 
+def _nyc_surveillance_where_target() -> Mapping[str, Any]:
+    """The where slice owning every fixture row ('surveillance' ⇒ g5)."""
+    return next(
+        t
+        for t in portal_targets(source_id="procportal_nyc_ny")
+        if t.get("index_kind") == "where" and "surveillance" in t["where_terms"]
+    )
+
+
 def test_socrata_rows_emit_notices_documents_and_verbatim_terms() -> None:
-    """Each SoQL row is its own document: notice + doc outcome + row locators."""
+    """Each SoQL row is its own document: notice + doc outcome + row locators.
+
+    P35.9: every fixture row LIKE-matches the 'surveillance' term, so the g5
+    where slice owns their claim sets; the generic rows window records them
+    pruned and emits none.
+    """
     from connectors import pipeline
 
     rows_json = (FIXTURES / "socrata_nyc_crol.json").read_bytes()
     target = _nyc_target()
-    transport = _SequenceTransport({str(target["url"]): [(200, rows_json, "application/json")]})
-    ctx = _ctx("procportal_nyc_ny", transport=transport, targets=[target])
+    where_target = _nyc_surveillance_where_target()
+    transport = _SequenceTransport(
+        {
+            str(target["url"]): [(200, rows_json, "application/json")],
+            str(where_target["url"]): [(200, rows_json, "application/json")],
+        }
+    )
+    ctx = _ctx("procportal_nyc_ny", transport=transport, targets=[target, where_target])
     report = pipeline.run(ProcurementConnector(), ctx)
     assert report.asserted
 
     notices = [c for c in report.claims if c.get("record_kind") == "procurement_notice"]
     assert len(notices) == 5
+    assert {n["index_kind"] for n in notices} == {"where"}
     docs = [c for c in report.claims if c.get("record_kind") == "portal_document"]
     assert len(docs) == 5
     # Every row carries a row_index locator into the captured array.
@@ -468,13 +503,24 @@ def test_socrata_rows_emit_notices_documents_and_verbatim_terms() -> None:
 
 
 def test_socrata_notice_type_maps_only_reviewed_transitions() -> None:
-    """Award→awarded, Solicitation→rfp_issued; unlisted types assert nothing."""
+    """Award→awarded, Solicitation→rfp_issued; unlisted types assert nothing.
+
+    P35.9: the fixture rows are owned by the 'surveillance' where slice —
+    serve the same register rows there so their claims emit under the
+    tighter tier (the rows fallback prunes them).
+    """
     from connectors import pipeline
 
     rows_json = (FIXTURES / "socrata_nyc_crol.json").read_bytes()
     target = _nyc_target()
-    transport = _SequenceTransport({str(target["url"]): [(200, rows_json, "application/json")]})
-    ctx = _ctx("procportal_nyc_ny", transport=transport, targets=[target])
+    where_target = _nyc_surveillance_where_target()
+    transport = _SequenceTransport(
+        {
+            str(target["url"]): [(200, rows_json, "application/json")],
+            str(where_target["url"]): [(200, rows_json, "application/json")],
+        }
+    )
+    ctx = _ctx("procportal_nyc_ny", transport=transport, targets=[target, where_target])
     report = pipeline.run(ProcurementConnector(), ctx)
 
     lifecycles = {
@@ -589,12 +635,16 @@ def test_portal_index_predicate_is_allowlisted() -> None:
 
 def test_portal_rows_stamp_vocab_versions() -> None:
     conn = ProcurementConnector()
-    ctx = _ctx("procportal_nyc_ny", targets=[_nyc_target()])
+    where_target = _nyc_surveillance_where_target()
+    ctx = _ctx("procportal_nyc_ny", targets=[_nyc_target(), where_target])
     rows_json = (FIXTURES / "socrata_nyc_crol.json").read_bytes()
-    cap = _capture(ctx, str(_nyc_target()["url"]), rows_json, "application/json")
-    rows = conn.normalize(ctx, conn.extract(ctx, conn.parse(ctx, cap)))
-    index_row = next(r for r in rows if r.get("record_kind") == "portal_index")
-    assert index_row["content_vocab_version"] == content_vocab_version()
+    caps = [
+        _capture(ctx, str(t["url"]), rows_json, "application/json")
+        for t in (_nyc_target(), where_target)
+    ]
+    rows = [r for cap in caps for r in conn.normalize(ctx, conn.extract(ctx, conn.parse(ctx, cap)))]
+    for index_row in (r for r in rows if r.get("record_kind") == "portal_index"):
+        assert index_row["content_vocab_version"] == content_vocab_version()
     doc_row = next(r for r in rows if r.get("record_kind") == "portal_document")
     assert doc_row["content_vocab_version"] == content_vocab_version()
     assert vocab_version()
@@ -617,8 +667,12 @@ def test_live_targets_expand_the_portal_registry() -> None:
     assert len(targets) > 10
     assert all(t.get("kind") == "portal_index" for t in targets)
     nyc = live_targets("procportal_nyc_ny")
-    assert len(nyc) == 1
+    # P35.9: the rows window plus the reviewed where-slice term groups.
+    assert len(nyc) == 1 + len(
+        [t for t in portal_targets(source_id="procportal_nyc_ny") if t["index_kind"] == "where"]
+    )
     assert "resource/dg92-zbpx.json" in nyc[0]["url"]
+    assert all(t.get("kind") == "portal_index" for t in nyc)
 
 
 def test_api_allowlist_covers_the_socrata_hosts() -> None:
@@ -633,3 +687,223 @@ def test_api_allowlist_covers_the_socrata_hosts() -> None:
         "data.cityofnewyork.us",
     ):
         assert (host, "/resource/") in hosts
+
+
+# --- P35.9 (ACQ-05, I8 §4.2): portal_where, CROL post-filter, pruned fallback --
+# KP-* rows keep; FP-* rows are the I9b-Q008 false-positive classes (%BRINC%
+# recall — 'Parsons Brinckerhoff' never matches \bbrinc\b; %CLEARVIEW% —
+# 'Clearview Data Systems' is not the disambiguated Clearview AI literal).
+_CROL_WHERE_ROWS = [
+    {  # kept — the reviewed vendor literal matches verbatim (\bflock group\b)
+        "request_id": "KP-FLOCK",
+        "vendor_name": "FLOCK GROUP, INC.",
+        "short_title": "Maintenance for the license plate reader network",
+        "type_of_notice_description": "Award",
+        "agency_name": "New York City Police Department",
+        "start_date": "2026-01-05T00:00:00.000",
+    },
+    {  # kept — the reviewed literal lives in the description fan-out field
+        "request_id": "KP-DESC",
+        "vendor_name": "ACME CONSULTING LLC",
+        "short_title": "Consulting services",
+        "additional_description_1": "O&M of the city's gunshot detection network.",
+        "start_date": "2026-01-06T00:00:00.000",
+    },
+    {
+        "request_id": "FP-BRINC",
+        "vendor_name": "PARSONS BRINCKERHOFF INC",
+        "short_title": "Structural engineering services",
+        "start_date": "2026-01-07T00:00:00.000",
+    },
+    {
+        "request_id": "FP-CLEARVIEW",
+        "vendor_name": "CLEARVIEW DATA SYSTEMS",
+        "short_title": "Records management services",
+        "start_date": "2026-01-08T00:00:00.000",
+    },
+]
+
+
+def _where_targets() -> list[Mapping[str, Any]]:
+    return [
+        t for t in portal_targets(source_id="procportal_nyc_ny") if t.get("index_kind") == "where"
+    ]
+
+
+def test_socrata_where_targets_compose_soql_or_groups() -> None:
+    """`crol` composes bounded B00329-shaped slices: one target per reviewed
+    term group, `upper(<field>) like '%<TERM>%'` OR'ed across the fields."""
+    from urllib.parse import parse_qs, urlparse
+
+    from connectors.procurement import acq_keyword_term_set
+
+    where = _where_targets()
+    terms = acq_keyword_term_set("crol")
+    group_size = 6  # the reviewed [portal_where.crol] bound
+    assert len(where) == (len(terms) + group_size - 1) // group_size
+    # The groups partition the reviewed set — full coverage, in order, no dupes.
+    assert [t for w in where for t in w["where_terms"]] == terms
+    for w in where:
+        assert w["portal_where"] == "crol"
+        assert w["acq_keyword_terms"] == "crol"
+        assert w["where_fields"] == [
+            "vendor_name",
+            "short_title",
+            "additional_description_1",
+            "additional_description_2",
+            "additional_description_3",
+        ]
+        q = parse_qs(urlparse(str(w["url"])).query)
+        assert q["$limit"] == ["500"]
+        assert q["$order"] == ["start_date DESC"]
+        clause = q["$where"][0]
+        for field in w["where_fields"]:
+            assert f"upper({field}) like" in clause
+        for term in w["where_terms"]:
+            assert f"'%{term.upper()}%'" in clause
+
+
+def test_socrata_where_slice_postfilter_drops_known_false_positives() -> None:
+    """I9b-Q008: %TERM% LIKE is recall; the verbatim scan is precision —
+    'PARSONS BRINCKERHOFF' (%BRINC%) drops; rows owned by a LATER where
+    group record `pruned` and emit there. The Flock vendor row keeps."""
+    conn = ProcurementConnector()
+    target = next(t for t in _where_targets() if "brinc" in t["where_terms"])
+    ctx = _ctx("procportal_nyc_ny")
+    ctx.resolved_targets[str(target["url"])] = dict(target)
+    cap = _capture(
+        ctx,
+        str(target["url"]),
+        json.dumps(_CROL_WHERE_ROWS).encode(),
+        "application/json",
+    )
+    rows = conn.normalize(ctx, conn.extract(ctx, conn.parse(ctx, cap)))
+
+    index_rows = [r for r in rows if r.get("record_kind") == "portal_index"]
+    assert len(index_rows) == 1
+    index_row = index_rows[0]
+    assert index_row["items_count"] == 4
+    assert index_row["precise_count"] == 1
+    assert index_row["dropped_count"] == 1  # Parsons Brinckerhoff — recall noise
+    assert index_row["pruned_count"] == 2  # owned by the gunshot/clearview groups
+    assert index_row["portal_where"] == "crol"
+    assert index_row["acq_keyword_terms"] == "crol"
+    assert index_row["index_kind"] == "where"
+    assert index_row["outcome"] == "items"
+
+    notices = [r for r in rows if r.get("record_kind") == "procurement_notice"]
+    kept = {n["external_id"] for n in notices}
+    assert kept == {"KP-FLOCK"}
+    # The false-positive literals never reach any claim surface.
+    for c in rows:
+        literal = str(c.get("raw_value") or "") + str(c.get("value") or "")
+        assert "BRINCKERHOFF" not in literal
+        assert "CLEARVIEW DATA" not in literal
+
+
+def test_socrata_full_pass_emits_each_envelope_once() -> None:
+    """The whole CROL pass emits each record once, under its owning tier:
+    KP-FLOCK under 'flock' (g0), KP-DESC under 'gunshot' (g5) with its
+    verbatim `content_term` + description-fan-out claims located to the desc
+    field; the FP rows drop at their owning groups; the rows fallback prunes
+    all four (never a second claim set on an owned envelope)."""
+    conn = ProcurementConnector()
+    targets = portal_targets(source_id="procportal_nyc_ny")
+    ctx = _ctx("procportal_nyc_ny")
+    body = json.dumps(_CROL_WHERE_ROWS).encode()
+    raws = []
+    for target in targets:
+        ctx.resolved_targets[str(target["url"])] = dict(target)
+        cap = _capture(ctx, str(target["url"]), body, "application/json")
+        raws.extend(conn.extract(ctx, conn.parse(ctx, cap)))
+    rows = conn.normalize(ctx, raws)
+
+    notices = [r for r in rows if r.get("record_kind") == "procurement_notice"]
+    by_id = {n["external_id"]: n for n in notices}
+    assert sorted(by_id) == ["KP-DESC", "KP-FLOCK"]
+    assert {n["index_kind"] for n in by_id.values()} == {"where"}
+    docs = [r for r in rows if r.get("record_kind") == "portal_document"]
+    assert {d["external_id"] for d in docs} == {"KP-FLOCK", "KP-DESC"}
+    # The fan-out hit carries verbatim term + description claims located to
+    # the populated desc field by byte range.
+    terms = [
+        c
+        for c in rows
+        if c.get("record_kind") == "claim" and c.get("predicate_id") == "content_term"
+    ]
+    assert any(
+        t["evidence"]["field"] == "additional_description_1"
+        and t["raw_value"] == "gunshot detection"
+        for t in terms
+    )
+    desc = [
+        c
+        for c in rows
+        if c.get("record_kind") == "claim" and c.get("predicate_id") == "description"
+    ]
+    kp_desc = next(c for c in desc if "gunshot detection" in str(c["value"]))
+    assert kp_desc["evidence"]["field"] == "additional_description_1"
+    assert kp_desc["evidence"]["locator"]["kind"] == "byte_range"
+    assert kp_desc["raw_value"] == kp_desc["value"]
+    # Every slice records its honest outcome; the fallback pruned all four
+    # envelopes to the tighter tier and kept none.
+    index = {r["index_kind"]: r for r in rows if r.get("record_kind") == "portal_index"}
+    assert index["rows"]["pruned_count"] == 4
+    assert index["rows"]["precise_count"] == 0
+
+
+def test_pruned_fallback_is_deterministic_under_replay() -> None:
+    """Replay + shadow over a mixed rows/where capture set diffs to zero —
+    the envelope prune is pure and order-stable (SIG-INGEST-017/019)."""
+    from connectors.replay import diff_claim_sets, replay, shadow_replay
+
+    conn = ProcurementConnector()
+    targets = portal_targets(source_id="procportal_nyc_ny")
+    rows_target = next(t for t in targets if t["index_kind"] == "rows")
+    where_target = next(t for t in targets if t["index_kind"] == "where")
+    ctx = _ctx("procportal_nyc_ny")
+    ctx.resolved_targets[str(rows_target["url"])] = dict(rows_target)
+    ctx.resolved_targets[str(where_target["url"])] = dict(where_target)
+    body = json.dumps(_CROL_WHERE_ROWS).encode()
+    captures = [
+        _capture(ctx, str(t["url"]), body, "application/json") for t in (rows_target, where_target)
+    ]
+    # The "current" set runs the same per-capture path the driver runs —
+    # run_post_capture includes link-stage object_ref stamps a bare
+    # normalize() never produces.
+    from connectors.pipeline import run_post_capture
+
+    claims = [c for cap in captures for c in run_post_capture(conn, ctx, cap)]
+    diff = shadow_replay(conn, ctx, captures, claims)
+    assert diff.changed_count == 0
+    replayed = replay(conn, ctx, captures)
+    assert diff_claim_sets(claims, replayed).changed_count == 0
+
+
+def test_portal_where_defs_and_tenant_scope() -> None:
+    """AC: the dormant `cook_county` def composes B00329 clauses; only the CROL
+    tenant names a portal_where today (Cook County/WA DES rows are P36.7's)."""
+    from connectors.procurement import (
+        _socrata_where_clause,
+        acq_keyword_term_set,
+        portal_where_defs,
+    )
+
+    defs = portal_where_defs()
+    assert {"crol", "cook_county"} <= set(defs)
+    cc = defs["cook_county"]
+    clause = _socrata_where_clause(cc["fields"], acq_keyword_term_set(cc["terms"])[:2])
+    assert "upper(vendor_name) like '%FLOCK%'" in clause
+    assert "upper(description) like '%AXON%'" in clause
+    wired = [tid for tid, row in portal_tenants().items() if row.get("portal_where")]
+    assert wired == ["new_york_ny"]
+    # Every other socrata tenant emits only the plain rows window.
+    for source_id in (
+        "procportal_austin_tx",
+        "procportal_sf_ca",
+        "procportal_kcmo_mo",
+        "procportal_chicago_il",
+    ):
+        targets = portal_targets(source_id=source_id)
+        assert [t["index_kind"] for t in targets] == ["rows"], source_id
+        assert all("$where" not in t["url"] for t in targets)

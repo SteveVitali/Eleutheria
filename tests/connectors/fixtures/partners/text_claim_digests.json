@@ -1,5 +1,5 @@
 {
-  "_note": "P31.5 shadow-diff golden: the content digest (db.claim_sink.content_digest) of every record the connectors emit over the partner fixture set (tests/partner_fixtures.py), computed at the P31.5 base commit 34406ff, before the partner entity-ref claims existed. tests/connectors/test_partner_refs_shadow.py asserts the post-P31.5 records without an object_ref are exactly these. P32.3 (ADR-122): dot_511_wa re-goldened \u2014 the registry agency label now emits camera_registry_publisher (provenance) instead of camera_operator; WA has no authoritative operator field so no operator claims mint.",
+  "_note": "P31.5 shadow-diff golden: the content digest (db.claim_sink.content_digest) of every record the connectors emit over the partner fixture set (tests/partner_fixtures.py), computed at the P31.5 base commit 34406ff, before the partner entity-ref claims existed. tests/connectors/test_partner_refs_shadow.py asserts the post-P31.5 records without an object_ref are exactly these. P32.3 (ADR-122): dot_511_wa re-goldened — the registry agency label now emits camera_registry_publisher (provenance) instead of camera_operator; WA has no authoritative operator field so no operator claims mint. P35.9 (ACQ-05): usaspending_awards re-goldened — award claims now carry the sweep-slice provenance fields (slice/index_keyword/agency/recipient_search/program_number/acq_keyword_terms) in evidence, and the person-shaped fixture recipient (SIG-FIXTURE-A-002 'JOHN Q CITIZEN') emits no recipient claim at all — the P8-6 recipient drop, recorded as recipient_dropped=person_shaped on the notice row and recipient_dropped_count=1 on the slice outcome row.",
   "base_commit": "34406ff",
   "runs": {
     "atlas_issue_records": [
@@ -147,23 +147,22 @@
       "f868538b27704295a37f101cf2bd20f39dbdda695dce435f93a8ba83c9c28419"
     ],
     "usaspending_awards": [
-      "0a4a9180f88c35522b63c93e53be919e7f9985a5ebd8728a728a9246471ec81b",
-      "0d17c63607950920490c92ada4b77cdd41bd700a0de05588b0678916b708ce78",
-      "108a833c01ff5e5035249ccf28c5050040beb2901423db440c0e9a56b40d9a2f",
-      "1252365975c4f65a0b684c95a0a92113293061c0161d8aa26fa515ee8e5ed89a",
-      "173ee73a6d18bcd1748ecf5ab4ea0aa9ca23b0ac74dc1c039c8df2bba758fb19",
-      "3df6cb32612a99b8c00820dd82062fb3ab6fc9d78cd2ceeb7e4d14882613337b",
-      "4b7fe5168df5068ace20bd8594262130a7a7b3cf7c197a3a85ea7753694af738",
-      "4f3fe23a34e34ac6fd4534adbdbfd463606f50ebe8ba306a7d74faf7bcba38eb",
-      "4f7ba22872678c7cfbc1c68ca4d4838677ca02d9b7d2eb097d14bbfb345ac863",
-      "5181b0c8dbab5a00957237413fffdcf9987f1bd01cde4f96f29e45986a5c3635",
-      "7183ee6b0e5694a8ab202ac2f66bc1a373ff7055e72647188e2b25a5172edbd2",
-      "891f79e1073a3719f5a48f211bf89c148711bba548df017e980e947552faa7ee",
+      "008fbd80b4422c6029891dbe17cdf1b332ece933b5ebfbba5099019bc5a73226",
+      "0c17c6b6b61e56d94776293ed0504750ca77f185f27ecc5b92c072fafd000147",
+      "422c041eec68e8725d6dae3076821a9b5cdc327a16fdd12dff2f07f6c11395ff",
+      "667aa0a4dd43ebc2e00e9012673bc14da057440b5c097c2c601fa8f5c80f8f07",
+      "6ca363df20d15a8ccb54c78f5fde6a1afee8f232267543be8f2b081fc6e36a07",
+      "6e3bf6e74d9c3c1a2ad8db8b2efa9a892d383a3a9d0ffefeed4e919edd6f480c",
+      "7c85042dfe61595ebf16241a95ec6520a2f2dd5a50a9ea2583cc5a0e1498cbe1",
+      "91472824d1ce43725158cb4290161c8d94b865b58872f9855ed48bc2d0e387ff",
       "93f767cffee0560fb4b6cf5a8e8fb4a7a845757a5251e512a3e5f4a2866b0374",
-      "ba87867c5219c3359338c66a8908a54033dfb16c631f27d43ef8e7949684c412",
-      "bf42fcd1900c4e746fe26c88b42f8bf1398ecfc1c7f4be72ef64003ce2394392",
-      "c365f1f5986893f56fad3072d17ebf9647a99858fff0e9fcd814042a6799b233",
-      "d439257513800a6a915aa4dca9f00d01122dc5cec65ded1a87a6822d99d89846"
+      "9e32fc5c5a77dc2b7c34096a75e0b89f5289b565ee6b14899c4be4cce39f8aa1",
+      "a8c28c37cd11f156d6ecbb02995d9b76916f5a82015a34c9195be2b71585492b",
+      "bbc6442490fe48ab69e8ec169c24d39ebdea907e85ceb272fbbf50bd1d67187b",
+      "cff9631a796722290f3edcff4df3f107d9592fa34b1c0d1f11c5937302444247",
+      "d49fef5ca84d37ace745e05d3f5ff9588e75c29155df12f0e0cb39b95bbb1bbb",
+      "d5b8be8bcc0acaf6c4d6e25eca416ab5bedf102687406b4ec0727659721ce445",
+      "e76748a1f50bf708ca245faed99717e7f3b2ca115c0db0719f39d5435200001c"
     ]
   }
 }

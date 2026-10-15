@@ -61,7 +61,17 @@
 # the assistance award id) and the disambiguated `funder` predicate —
 # funding evidence only, never deployment (funded ≠ deployed, §3.1/§11.12,
 # SIG-INGEST-033/034).
-vocab_version = "2026.09.26-p31.13"
+# 2026.10.10 (P35.9 / ACQ-05, I8 §4.2): +[terms] acquisition-term classes
+# (the §4.2 ate/mobile-forensics/video-analytics/biometric/smm/electronic-
+# monitoring/school-surveillance + data-broker/counter-UAS dictionaries),
+# +[acq_keyword_terms] named term sets (usa_spending; crol/cook_county —
+# the register slices server-filter on them), +[portal_where] SoQL where
+# definitions (B00329-shaped `%TERM%` OR-groups — recall only; the verbatim
+# vocab scan is precision, I9b-Q008; the Cook County tenant row is P36.7's),
+# and the [usaspending_sweep] widening — §4.2 keyword literals,
+# prime_max_pages 1→5, +ALN program slices, +recipient-name slices, +the P8-6
+# natural-person/sole-proprietor payee exclusion. Additive only.
+vocab_version = "2026.10.10-p35.9"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -593,6 +603,12 @@ Presolicitation                     = { state = "proposed" }
 # sweep stays finite and each slice is one counted request (a refused
 # request is recorded and NEVER re-probed — SIG-INGEST-012/013).
 [usaspending_sweep]
+# P35.9 (ACQ-05, I8 §4.2): the keyword list is the reviewed acquisition term
+# set — the pre-existing literals plus the §4.2 additions (mobile-forensics,
+# SMM, ATE, data-broker, counter-UAS vendor/technology classes). Each is a
+# filters.keywords[] search term; the verbatim vocab scan at extract is the
+# match of record. `acq_keyword_terms` names the set for slice provenance.
+acq_keyword_terms = "usa_spending"
 keywords = [
   "license plate reader",
   "automated license plate",
@@ -613,6 +629,32 @@ keywords = [
   "real time crime center",
   "body camera",
   "video surveillance",
+  "cellebrite",
+  "graykey",
+  "grayshift",
+  "magnet forensics",
+  "axiom",
+  "oxygen forensic",
+  "belkasoft",
+  "msab",
+  "xry",
+  "dataminr",
+  "babel street",
+  "skopenow",
+  "shadowdragon",
+  "voyager labs",
+  "cobwebs",
+  "fivecast",
+  "lexisnexis",
+  "thomson reuters",
+  "transunion",
+  "fog data science",
+  "penlink",
+  "red light camera",
+  "speed camera",
+  "automated traffic enforcement",
+  "counter-uas",
+  "counter unmanned",
 ]
 # Awarding agencies whose pass-through grant programs buy local surveillance
 # (the high-signal funder set: Byrne JAG/UASI/HSGP live under DOJ + DHS; DoD
@@ -622,18 +664,318 @@ agencies = [
   { name = "Department of Homeland Security" },
   { name = "Department of Defense" },
 ]
+# P35.9 (ACQ-05, I8 §4.2): the reviewed Assistance Listing (ALN/CFDA) slice
+# set — BJA's Body-Worn Camera Policy and Implementation Program (I4-C250).
+# The FEMA counter-UAS ALN lands only when its number is verified at origin.
+# `program_number` is provenance; the FundingInstrument's award id is the
+# federal trace.
+program_numbers = [
+  "16.835",   # BJA Body-Worn Camera Policy and Implementation Program
+]
+# P35.9 (I8 §4.2): the reviewed recipient-name literals — vendor-name
+# recipient slices search recipients by text (sub + prime), a signal the
+# keyword index misses when the federal description is generic. Motorola
+# Solutions is deliberately excluded as a bare name (radio contracts would
+# drown it — I8 §4.2); it matches only beside a surveillance keyword.
+recipient_search_text = [
+  "flock safety",
+  "flock group",
+  "axon enterprise",
+  "soundthinking",
+  "shotspotter",
+  "skydio",
+  "brinc",
+  "clearview ai",
+  "verra mobility",
+  "rekor",
+  "genetec",
+  "briefcam",
+  "palantir",
+]
 [usaspending_sweep.bounds]
 page_size        = 100
 sub_max_pages    = 2      # sub-award keyword slices: the federal→local link
-prime_max_pages  = 1      # prime award keyword slices: bounded to the top window
+prime_max_pages  = 5      # P35.9: prime keyword/recipient slices page deeper (bounded)
 agency_max_pages = 1      # agency slices search the whole keyword set at once
+program_max_pages = 1     # P35.9: one bounded page per ALN slice
+recipient_sub_max_pages   = 2  # P35.9: sub-awardee recipient-name slices
+recipient_prime_max_pages = 5  # P35.9: prime recipient-name slices
 time_period = [ { start_date = "2018-01-01", end_date = "2026-12-31" } ]
 # Assistance award types (grants/coops/direct payments — the pass-through set).
 sub_award_type_codes   = [ "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" ]
 # All award types for prime slices (contracts A/B/C/D + assistance above).
 prime_award_type_codes = [ "A", "B", "C", "D", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" ]
+# ALN slices search prime ASSISTANCE rows only — a program number is the
+# assistance listing, never a contract code.
+program_award_type_codes = [ "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" ]
 sub_fields = [ "Sub-Award ID", "Sub-Awardee Name", "Sub-Award Date", "Sub-Award Amount", "Sub-Award Description", "Awarding Agency", "prime_award_generated_internal_id" ]
 prime_fields = [ "Award ID", "Recipient Name", "Award Amount", "Start Date", "End Date", "Awarding Agency", "Description" ]
+program_fields = [ "Award ID", "Recipient Name", "Award Amount", "Start Date", "End Date", "Awarding Agency", "Description", "Assistance Listings" ]
+# P35.9 / P8-6: the natural-person / sole-proprietor payee exclusion — a
+# record whose own recipient/business-type literal is a reviewed exclusion
+# emits no `recipient` claim and no FundingInstrument (the award row stays;
+# the drop counts on the slice row). The identity layer's affirmative
+# natural-person signal is the second drop test; mere ambiguity is not.
+recipient_type_fields = [ "Recipient Type", "recipient_type", "Business Types", "business_types" ]
+excluded_recipient_types = [ "individual", "sole proprietor", "sole proprietorship", "individual/small business", "natural person" ]
+
+# --- P35.9 (ACQ-05, I8 §4.2): procurement acquisition-term classes ----------
+# The §4.2 term dictionary. A class's `terms` are SEARCH literals (API
+# keywords / SoQL %TERM% fragments) — recall-side hints carrying NO
+# deployment or use assertion (the verbatim agenda_content_vocab scan stays
+# the match of record). `kind` mirrors the agenda_content_vocab term kinds.
+[terms.ate_keywords]
+kind = "technology"
+label = "automated traffic enforcement"
+terms = [
+  "red light camera",
+  "speed camera",
+  "automated traffic enforcement",
+  "automated enforcement",
+  "photo enforcement",
+  "photo radar",
+  "speed safety camera",
+]
+[terms.mobile_forensics_keywords]
+kind = "technology"
+label = "mobile-device forensics"
+terms = [
+  "cellebrite",
+  "graykey",
+  "grayshift",
+  "magnet forensics",
+  "axiom",
+  "oxygen forensic",
+  "belkasoft",
+  "msab",
+  "xry",
+  "mobile forensic",
+]
+[terms.video_analytics_keywords]
+kind = "technology"
+label = "video analytics"
+terms = [
+  "video analytics",
+  "video synopsis",
+  "video content analysis",
+  "briefcam",
+  "genetec",
+]
+[terms.biometric_keywords]
+kind = "technology"
+label = "biometric identification"
+terms = [
+  "facial recognition",
+  "biometric",
+  "iris recognition",
+  "voiceprint",
+  "voice recognition",
+  "gait recognition",
+]
+[terms.smm_keywords]
+kind = "technology"
+label = "social-media monitoring"
+terms = [
+  "social media monitoring",
+  "dataminr",
+  "babel street",
+  "skopenow",
+  "shadowdragon",
+  "voyager labs",
+  "cobwebs",
+  "fivecast",
+  "osint",
+]
+[terms.electronic_monitoring_keywords]
+kind = "technology"
+label = "electronic monitoring"
+terms = [
+  "electronic monitoring",
+  "ankle monitor",
+  "ankle bracelet",
+  "gps monitor",
+  "scram",
+  "attenti",
+  "track group",
+  "electronic home detention",
+  "house arrest",
+]
+[terms.school_surveillance_keywords]
+kind = "technology"
+label = "school surveillance"
+terms = [
+  "gaggle",
+  "goguardian",
+  "securly",
+  "lightspeed systems",
+  "linewize",
+  "student monitoring",
+  "school surveillance",
+]
+[terms.data_broker_keywords]
+kind = "vendor"
+label = "data brokers / investigative platforms"
+terms = [
+  "lexisnexis",
+  "lexisnexis risk",
+  "thomson reuters",
+  "transunion",
+  "fog data science",
+  "penlink",
+  "data broker",
+]
+[terms.counter_uas_keywords]
+kind = "technology"
+label = "counter-drone (counter-UAS)"
+terms = [
+  "counter-uas",
+  "counter uas",
+  "counter unmanned",
+  "anti-drone",
+  "counter drone",
+  "cuas",
+]
+
+# --- P35.9: named reviewed acquisition term sets ----------------------------
+# A named set is the reviewed literal list a portal/sweep term filter is
+# built from. `terms` carries the literal list; `terms_of` resolves the set
+# from another table's list (single-sourced — the usa_spending set IS the
+# usaspending_sweep keyword list). `classes` records which [terms] classes
+# the set draws on — provenance only.
+[acq_keyword_terms.usa_spending]
+label = "USAspending award-search keyword set"
+terms_of = "usaspending_sweep.keywords"
+classes = [
+  "ate_keywords",
+  "mobile_forensics_keywords",
+  "smm_keywords",
+  "data_broker_keywords",
+  "counter_uas_keywords",
+]
+# Socrata register sets — a contract/award register's vendor + title +
+# description text. The `%TERM%` substring LIKE is recall-side by design
+# (I9b-Q008): the verbatim agenda_content_vocab scan decides every emitted
+# claim, so broad register terms surface rows for the client-side pass to
+# judge; the \bbrinc\b-class word boundaries live there, not in the LIKE.
+[acq_keyword_terms.crol]
+label = "NYC CROL register term set"
+classes = [
+  "ate_keywords",
+  "mobile_forensics_keywords",
+  "smm_keywords",
+  "data_broker_keywords",
+  "counter_uas_keywords",
+]
+terms = [
+  "flock",
+  "axon",
+  "shotspotter",
+  "soundthinking",
+  "skydio",
+  "brinc",
+  "clearview",
+  "verra",
+  "rekor",
+  "genetec",
+  "briefcam",
+  "palantir",
+  "verkada",
+  "cellebrite",
+  "graykey",
+  "grayshift",
+  "magnet",
+  "dataminr",
+  "babel street",
+  "skopenow",
+  "shadowdragon",
+  "voyager",
+  "cobwebs",
+  "fivecast",
+  "lexisnexis",
+  "thomson reuters",
+  "transunion",
+  "penlink",
+  "fog data",
+  "surveillance",
+  "license plate",
+  "gunshot",
+  "drone",
+  "facial recognition",
+  "counter-uas",
+  "body-worn",
+]
+[acq_keyword_terms.cook_county]
+label = "Cook County contracts register term set"
+classes = [
+  "ate_keywords",
+  "mobile_forensics_keywords",
+  "smm_keywords",
+  "data_broker_keywords",
+  "counter_uas_keywords",
+]
+terms = [
+  "flock",
+  "axon",
+  "shotspotter",
+  "soundthinking",
+  "skydio",
+  "brinc",
+  "clearview",
+  "verra",
+  "rekor",
+  "genetec",
+  "briefcam",
+  "palantir",
+  "verkada",
+  "cellebrite",
+  "graykey",
+  "grayshift",
+  "magnet",
+  "dataminr",
+  "babel street",
+  "skopenow",
+  "shadowdragon",
+  "voyager",
+  "cobwebs",
+  "fivecast",
+  "lexisnexis",
+  "thomson reuters",
+  "transunion",
+  "penlink",
+  "fog data",
+  "surveillance",
+  "license plate",
+  "gunshot",
+  "drone",
+  "facial recognition",
+  "counter-uas",
+  "body-worn",
+]
+
+# --- P35.9: named SoQL where-clause definitions -----------------------------
+# A [portal_where] row names one reviewed SoQL filter composition built per
+# term group: `fields` are the register text fields the `%TERM%` LIKE spans,
+# `terms` names the [acq_keyword_terms] set, `group_size` bounds terms per
+# `$where` (kept well under Socrata's query-length limit), `limit` bounds
+# rows per slice. The composed clause is B00329-shaped:
+#   (upper(<f1>) like '%<TERM>%' or upper(<f2>) like '%<TERM>%' ...) or (...)
+# Server-side LIKE is recall only; the verbatim term scan is precision.
+[portal_where.crol]
+fields = [
+  "vendor_name",
+  "short_title",
+  "additional_description_1",
+  "additional_description_2",
+  "additional_description_3",
+]
+terms = "crol"
+group_size = 6
+limit = 500
+[portal_where.cook_county]
+fields = [ "vendor_name", "description" ]
+terms = "cook_county"
+group_size = 8
+limit = 500
 
 [sam_gov_sweep]
 # The same reviewed keyword space over the documented opportunities search —

@@ -63,7 +63,16 @@
 #     (and robots.txt itself, an HTML 200 SPA shell) behind a Cloudflare managed
 #     challenge (`cf-mitigated: challenge`, HTTP 403) → recorded disappearances
 #     while the posture holds (D-SOURCES.9-3).
-registry_version = "2026.09.18-p26.10"
+#
+# 2026.10.10 (P35.9 / ACQ-05, I8 §4.2): additive NYC CROL widening — the
+# tenant row gains `desc_fields` (the additional_description_* aliases move
+# to the reviewed description surface so the fan-out emits a `description`
+# claim per populated alias; the scan surface is unchanged) and
+# `portal_where = "crol"` (B00329-shaped %TERM% OR-group slices beside the
+# bounded rows window; the verbatim vocab scan is the precision pass —
+# I9b-Q008 'CLEARVIEW DATA SYSTEMS'/'Parsons Brinckerhoff' rows drop).
+# Cook County / WA DES portal rows are P36.7's per the ticket's out-of-scope.
+registry_version = "2026.10.10-p35.9"
 
 # --- tenants: jurisdiction -> portal platform + per-tenant surface ------------
 # Each row carries the jurisdiction (a candidate identifier — SIG-INGEST-034),
@@ -281,7 +290,8 @@ tenant = "nyc_crol"
 host = "data.cityofnewyork.us"
 dataset = "dg92-zbpx"
 id_fields = ["request_id"]
-title_fields = ["short_title", "additional_description_1", "additional_description_2", "additional_description_3"]
+title_fields = ["short_title"]
+desc_fields = ["additional_description_1", "additional_description_2", "additional_description_3"]
 date_field = "start_date"
 vendor_field = "vendor_name"
 buyer_name = "City of New York"
@@ -289,6 +299,9 @@ amount_field = "contract_amount"
 dept_field = "agency_name"
 notice_type_field = "type_of_notice_description"
 doc_field = "document_links"
+# P35.9 (ACQ-05): the `crol` where definition composes the %TERM% OR-group
+# slices beside this tenant's bounded recency window.
+portal_where = "crol"
 limit = 500
 verified = true
 last_verified = 2026-09-18

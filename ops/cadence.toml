@@ -300,6 +300,9 @@ cadence = "monthly"
 cron = "0 5 3 * *"
 job = "sig-ingest-usaspending"
 scheduler = "sig-sched-usaspending"
+# P35.9 (ACQ-05): the widened sweep is ~410 bounded POST slices — carry the
+# per-row timeout so a first run is not killed by the default 60m window.
+task_timeout = "2h"
 note = "Sub-award keyword search (POST-only endpoint, ADR-083)."
 
 [[sources]]
@@ -777,6 +780,9 @@ cadence = "monthly"
 cron = "0 12 30 * *"
 job = "sig-ingest-procportal-nyc-ny"
 scheduler = "sig-sched-procportal-nyc-ny"
+# P35.9 (ACQ-05): the CROL where slices ride beside the recency window —
+# carry the per-row timeout.
+task_timeout = "2h"
 note = "NYC Socrata dg92-zbpx 'City Record Online'; PUBLIC_DOMAIN metadata — GL-GATE-06 flip, rights packet verbatim."
 
 [[sources]]

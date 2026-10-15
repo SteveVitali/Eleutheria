@@ -12,10 +12,11 @@
 <!-- Archived head line byte-for-byte (the head State line before P35.6's closeout) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.6.txt, sha256 5674ae951c65e14a… (P35.6; BM-LEDGER-08). -->
 <!-- Archived head line byte-for-byte (the head State line before P35.7's closeout) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.7.txt, sha256 13d23c2c55b5f04c… (P35.7; BM-LEDGER-08). -->
 <!-- Archived head line byte-for-byte (the head State line before P35.8's closeout) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.8.txt, sha256 a71ff1d0c36feb3bbf3b… (P35.8; BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (the head State line before P35.9's closeout) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.9.txt, sha256 f3d94c05d8ecd74c… (P35.9; BM-LEDGER-08). -->
 
 > **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; the clause text is archived byte-for-byte (comment above) and binds unchanged; per-ticket subset: manifest `## Operating rules`. Prior modes archived (comments5/6/7 folds).
 >
-> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.8 closeout (row 268 — Legistar keyword-filtered paged matter pass + Round-11 agenda vocabulary bump, fixture-verified; committed code/config only, no flips); next → P35.9 (row 269).
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.9 closeout (row 269 — USAspending/CROL vocabulary and filters: §4.2 term set, generic portal where + pruned fallback, P8-6 recipient drop, description fan-out, fixture-verified; committed code/config only, no flips); next → P35.10 (row 270).
 > - **Clauses (digests; full text archived — comment above).** Dispatch — one `swe-2-high` orchestrator (`orchestrate-build`), a fresh sub-agent per ticket; `returnPass` keys never re-dispatched; isolation check at T6, P34.1, each sub-round GATE and every restart (§8.5) · Orient ≤ 48 KiB — O1 this head · O3 `### RETURN PASS — current` · O4 `current_projection.py verify` + `docs/build/reports/current/CURRENT.md` · O5 the last 3 lines · O6 next row's manifest line + contract header; never LEDGER/DEFERRALS/BUILD_INDEX whole; re-measure Loads ≤ ~150k else split · Clock (OM-04) — `date -u` or a named git/GitHub time; read-backs wait fire + `lastAttemptTime` · CI (OM-05; H2) — `ci-boundary.sh --ledger docs/build/LEDGER.md --ticket <lastCompleted> --stack` before dispatch; red/pending/unknown → `blockedOn`; `merge-base --is-ancestor origin/main <chainTip>` recorded · Records (OM-13) — append-only ends (`--staged` pre-closeout, `--range` boundaries); corrections appended (ADR-146); `sqitch.plan` L44–52 never re-stamped (C-10); `FLIPPED`/`DONE` transitions need evidence · Harness (OM-01, A-21) — `harness:`/`Harness:` = devin-desktop/swe-2-high/subagent; operator stays author; every agent commit trailered; another harness/model → stop and ask · Pauses (A-15, A-2b) — HG gates, one ING-GO/wave, spend >$300/mo, red CI, unlisted OM-20 mutation, gate markers, usage-limit event; OM-18 stop and ask; silence is never consent · Digest (A-2) — `digest.sh` per wave/pause/end/usage-limit · Pre-authorisation (OM-20) — only live `pre-authorization` rows: the 13 11A (expires GATE-G4) + B-9 Class-R standing go; the OM-20 class list is never pre-authorised · Gates — no GATE while an OM-19 leg is due; GATE-ANNOUNCE on REVIEW-R11's S0/S1; HG-03 flips in an operator-signed commit/row (OP-26) · Live legs (OM-19, AR-1…9) — outside window/go → queue in RETURN PASS; due legs at each boundary on `r11/<id>-live-<n>`; AR-2 first; AR-3 windows · Live API (A-20) — basis label + `/status/` notice + OM-20 listing or in-ticket go · Contact (P16, C-8, U-011) — alias first; no outside contact; no agent claims a human check · Numbers — next ADR ≥ 191; re-run `later_register.py` on planning-data change · Skills — no B6 §5.3 override in force.
 
 ## CURRENT STATE
@@ -23,8 +24,8 @@
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B, no history; the PHASE LOG and git carry the history of values. -->
 ```
 projectStatus:   IN_PROGRESS                             # Round 11 running (GATE-B, C10)
-nextTicket:      P35.9                               # row 269 (11B)
-lastCompleted:   P35.8                               # row 268 (legistar keyword pass + agenda vocabulary)
+nextTicket:      P35.10                              # row 270 (11B)
+lastCompleted:   P35.9                               # row 269 (usaspending/crol vocabulary + filters)
 blockedOn:       (nothing)                          # real blocks only
 pauseRequested:  false                               # set at C10 (GATE-B go)
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.57,P35.67
@@ -35,13 +36,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator's main checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.8-legistar-matter-pass-and-agenda-vocabulary   # PR #270 open
+chainTip:        r11/P35.9-usaspending-crol-vocabulary-and-filters   # PR #271 open
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-10T16:24Z
+updatedAt:       2026-10-10T21:32Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -912,3 +913,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-10 — P35.7 post-closeout record — closeout head `696ebfe0` 5/5 green head-bound (`ci: pass #269@696ebfe` — python/docs/composed/security/web, run 38062115213; `logs/ci-P35.7-2.json`) · PHASE LOG ticket entry held to 883 B for the 48 KiB orient-probe budget (ledger-contract V11; the run ledger + BUILD_INDEX carry the full text) · chainTip → r11/P35.7-… (open) · next → P35.8 (row 268) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-10 — P35.8 ticket — r11/P35.8-legistar-matter-pass-and-agenda-vocabulary · PR #270 (base r11/P35.7-…) · head `49288ce5` 5/5 green head-bound (`ci: pass #270@49288ce` — run 38067043678; `logs/ci-P35.8.json`) · **ACQ-04 widening (I8 §4.1; I4 NEW-6/Q5/C218):** legistar gains the paged `substringof` keyword slice BESIDE the unchanged recency query — 38 reviewed terms in 4 OR-groups (`$top=1000&$skip`), paged through the shared fetcher to a recorded `max_pages` bound (never a silent stop) · client-side word-boundary precision via `agenda_content_vocab` → 2026.10.10 (ATE/mobile-forensics/video-analytics/biometric/SMM/EM/school + vendor rows; word-boundary SMM — I4 NEW-6) drops substring noise (Saxon/workers-comp — I4-C218) · cross-slice dedupe via content_digest; doc caps unchanged (20/350, merged per-tenant) · OUSD/Washoe verified InSite tenants — stay · **Deferrals:** none · **Live legs:** none — code/config only · **Verify:** 15 focused + `make check` 7,479/501 sentinel-armed; validate 587/236 · chainTip → r11/P35.8-… · next → P35.9 (row 269) · layer: engineered + fixture-verified · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-10 — P35.8 post-closeout record — closeout head `47e1cd93` docs-fail: the 48 KiB orient probe reads 49,204 B on the 1,190 B ticket entry (python/composed/security/web pass, run 38068400558 — `logs/ci-P35.8-2.json`) · impl head `49288ce5` 5/5 green stands (`ci: pass #270@49288ce`, run 38067043678) · this record append restores the probe window — the append-only entry stays (BM-HIST-01) · chainTip → r11/P35.8-… (open) · next → P35.9 (row 269) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-10 — P35.9 ticket — r11/P35.9-usaspending-crol-vocabulary-and-filters · PR #271 (base r11/P35.8-…) · head `f88aeb37` 5/5 green (`ci: pass #271@f88aeb3`, run 38087949031) · ACQ-05/I8 §4.2 term set + portal_where + pruned fallback + P8-6 drop + desc fan-out; b8ef2a83 python-fail (Docker-gated literal pin) fixed · chainTip → r11/P35.9-… · next → P35.10 (270) · layer: engineered + fixture-verified · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-10 — P35.9 post-closeout record — closeout head `b4231e51` 5/5 green head-bound (`ci: pass #271@b4231e5` — python/docs/composed/security/web, run 38089152481; `logs/ci-P35.9-2.json`) · ticket entry held to 472 B for the 48 KiB orient probe (V11; the run ledger + BUILD_INDEX carry the full text) · chainTip → r11/P35.9-… (open) · next → P35.10 (row 270) · harness: devin-desktop/swe-2-high/subagent

@@ -629,9 +629,7 @@ def test_usaspending_post_body_target_posts_and_parses_display_labels() -> None:
             }
         ]
     }
-    transport = _SequenceTransport(
-        {url: [(200, json.dumps(payload).encode("utf-8"), "application/json")]}
-    )
+    transport = _SequenceTransport({url: [(200, json.dumps(payload).encode(), "application/json")]})
     post_body = {"subawards": True, "filters": {"keywords": ["license plate reader"]}}
     ctx = _ctx(
         "usaspending",
@@ -734,9 +732,7 @@ def test_usaspending_slice_emits_typed_notice_claims_end_to_end() -> None:
         ],
         "page_metadata": {"page": 1, "total": 1, "hasNext": False},
     }
-    transport = _SequenceTransport(
-        {url: [(200, json.dumps(payload).encode("utf-8"), "application/json")]}
-    )
+    transport = _SequenceTransport({url: [(200, json.dumps(payload).encode(), "application/json")]})
     post_body = {
         "subawards": True,
         "filters": {"keywords": ["drone"], "award_type_codes": ["02"]},
@@ -1095,3 +1091,181 @@ def test_fema_hsgp_shadow_replay_over_the_fixture_diffs_zero() -> None:
     )
     assert report.connector == "procurement"
     assert report.diff is not None and report.diff.changed_count == 0
+
+
+# --- P35.9 (ACQ-05, I8 §4.2): the widened USAspending sweep -------------------
+
+
+def test_usaspending_sweep_carries_recipient_program_and_term_provenance() -> None:
+    """I8 §4.2: recipient-text + ALN slices beside the keyword/agency slices."""
+    from connectors.procurement import acq_keyword_term_set, usaspending_award_targets
+
+    targets = usaspending_award_targets()
+    ids = [t["id"] for t in targets]
+    assert len(ids) == len(set(ids))  # stable slice ids, no collisions
+    # Every slice stamps the named reviewed term set as provenance.
+    assert all(t.get("acq_keyword_terms") == "usa_spending" for t in targets)
+    # The widened prime bound (I8 §4.2: 1 → 5) and the unchanged sub bound (2).
+    assert max(t["page"] for t in targets if t.get("slice") == "prime_keyword") == 5
+    assert max(t["page"] for t in targets if t.get("slice") == "subaward_keyword") <= 2
+    # ALN slices: prime assistance rows only, the reviewed listing, and the
+    # assistance award class stamped so normalize's funder→recipient leg reads.
+    programs = [t for t in targets if t.get("slice") == "assistance_listing"]
+    assert programs
+    assert {t["program_number"] for t in programs} == {"16.835"}
+    for t in programs:
+        assert t["award_kind"] == "prime"
+        assert t.get("award_class") == "assistance"
+        assert t["post_body"]["filters"]["program_numbers"] == ["16.835"]
+        assert "keywords" not in t["post_body"]["filters"]
+        assert_pulls_subawards(t)  # a declared prime slice is legal (SIG-ONTO-033)
+    # Vendor-name recipient slices on both legs — Motorola is never a bare
+    # recipient slice (I8 §4.2: radio contracts would drown it).
+    sub_rcpt = {t["recipient_search"] for t in targets if t.get("slice") == "subaward_recipient"}
+    prime_rcpt = {t["recipient_search"] for t in targets if t.get("slice") == "prime_recipient"}
+    assert sub_rcpt == prime_rcpt
+    assert {"flock safety", "brinc", "palantir", "clearview ai"} <= sub_rcpt
+    assert not any("motorola" in r for r in sub_rcpt | prime_rcpt)
+    for t in targets:
+        if t.get("recipient_search"):
+            assert t["post_body"]["filters"]["recipient_search_text"] == [t["recipient_search"]]
+    # The §4.2 keyword classes joined the sweep keywords.
+    sweep = set(acq_keyword_term_set("usa_spending"))
+    assert {"cellebrite", "dataminr", "red light camera", "counter-uas", "penlink"} <= sweep
+
+
+def test_usaspending_seed_live_target_aligns_to_the_reviewed_sweep() -> None:
+    """live_targets.toml [usaspending]: seed keywords == the reviewed term set."""
+    from connectors.live_targets import live_targets
+    from connectors.procurement import acq_keyword_term_set
+
+    seeds = live_targets("usaspending")
+    assert seeds
+    sweep = set(acq_keyword_term_set("usa_spending"))
+    for t in seeds:
+        assert t.get("acq_keyword_terms") == "usa_spending"
+        assert set(t["post_body"]["filters"]["keywords"]) == sweep
+        assert_pulls_subawards(t)
+
+
+def test_usaspending_natural_person_recipient_dropped_and_counted() -> None:
+    """P8-6/P35.9: a sole-proprietor / person-shaped payee emits no recipient
+    claim and no FundingInstrument; the slice row counts drops; an ambiguous
+    company name keeps its claim (ambiguity is not a person signal)."""
+    from connectors import pipeline
+
+    url = "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=program:16.835:p1"
+    payload = {
+        "results": [
+            {
+                "Award ID": "ASST_BWC_001",
+                "Recipient Name": "Jane Q. Public dba JQP Consulting",
+                "Award Amount": 41000.0,
+                "Start Date": "2024-03-01",
+                "Awarding Agency": "Department of Justice",
+                "Awarding Sub Agency": "Bureau of Justice Assistance",
+                "Award Type": "Cooperative Agreement",
+                "Description": "Body-worn camera program",
+            },
+            {
+                "Award ID": "ASST_BWC_002",
+                "Recipient Name": "City of Tulsa",
+                "Business Types": "sole proprietor",  # the record's own type literal
+                "Award Amount": 97500.0,
+                "Awarding Agency": "Department of Justice",
+                "Awarding Sub Agency": "Bureau of Justice Assistance",
+                "Award Type": "Cooperative Agreement",
+                "Description": "Body-worn camera policy implementation",
+            },
+            {
+                # Ambiguity is NOT a person signal — the two-word company
+                # keeps its recipient claim (only the entity mint is withheld).
+                "Award ID": "ASST_BWC_003",
+                "Recipient Name": "Magnet Forensics",
+                "Award Amount": 88000.0,
+                "Start Date": "2024-05-01",
+                "Awarding Agency": "Department of Justice",
+                "Awarding Sub Agency": "Bureau of Justice Assistance",
+                "Award Type": "Cooperative Agreement",
+                "Description": "Forensic tool licences",
+            },
+        ],
+        "page_metadata": {"page": 1, "total": 3, "hasNext": False},
+    }
+    transport = _SequenceTransport({url: [(200, json.dumps(payload).encode(), "application/json")]})
+    from connectors.procurement import usaspending_award_targets
+
+    target = next(t for t in usaspending_award_targets() if t.get("slice") == "assistance_listing")
+    assert target["url"] == url
+    ctx = _ctx(
+        "usaspending",
+        fetcher=_fetcher(transport),
+        parameters={"targets": [target], "sweep_expansion": False},
+    )
+    report = pipeline.run(ProcurementConnector(), ctx)
+    assert report.asserted
+
+    slice_row = next(c for c in report.claims if c.get("record_kind") == "usaspending_slice")
+    assert slice_row["items_count"] == 3
+    assert slice_row["recipient_dropped_count"] == 2
+    assert slice_row["provenance"]["program_number"] == "16.835"
+    assert slice_row["provenance"]["slice"] == "assistance_listing"
+    assert slice_row["provenance"]["acq_keyword_terms"] == "usa_spending"
+
+    notices = {
+        n["external_id"]: n for n in report.claims if n.get("record_kind") == "procurement_notice"
+    }
+    assert set(notices) == {"ASST_BWC_001", "ASST_BWC_002", "ASST_BWC_003"}
+    assert notices["ASST_BWC_001"]["recipient_dropped"] == "sole_proprietor"
+    assert notices["ASST_BWC_002"]["recipient_dropped"].startswith("excluded_type:")
+    assert "recipient_dropped" not in notices["ASST_BWC_003"]
+
+    notice_recipients = [
+        c
+        for c in report.claims
+        if c.get("record_kind") == "claim"
+        and c.get("predicate_id") == "recipient"
+        and str(c.get("subject_id") or "").startswith("procurement_notice:")
+    ]
+    # Only the company row carries a recipient claim; no person name ever lands.
+    assert [c["subject_id"] for c in notice_recipients] == [notices["ASST_BWC_003"]["subject_id"]]
+    assert notice_recipients[0]["value"] == "Magnet Forensics"
+    assert not any("Jane Q. Public" in str(c.get("raw_value") or "") for c in report.claims)
+    # No FundingInstrument asserts a dropped payee as grantee — only the
+    # kept row's instrument stands (funder → Magnet Forensics recipient).
+    instruments = [c for c in report.claims if c.get("record_kind") == "funding_instrument"]
+    assert {i["federal_award_id"] for i in instruments} == {"ASST_BWC_003"}
+
+
+def test_usaspending_description_fanout_emits_each_populated_alias() -> None:
+    """Every populated description alias emits a verbatim claim located to its
+    own field — each description surface is recorded (P35.9 fan-out)."""
+    ctx = _ctx("usaspending")
+    raw = {
+        "record_kind": "procurement_notice",
+        "notice_provenance": {
+            "source_uri": "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=prime_kw:drone:p1",
+            "award_kind": "prime",
+            "slice": "prime_keyword",
+            "index_keyword": "drone",
+        },
+        "row_index": 0,
+        "raw": {
+            "Award ID": "CONT_AWD_9",
+            "Recipient Name": "Axon Enterprise Inc",
+            "Award Amount": 250000.0,
+            "Awarding Agency": "Department of Justice",
+            "Description": "Body-worn camera contract",
+            "Award Description": "Axon body-worn cameras and evidence storage",
+        },
+    }
+    rows = ProcurementConnector().normalize(ctx, [raw])
+    desc = [r for r in rows if r.get("predicate_id") == "description"]
+    assert {r["evidence"]["field"] for r in desc} == {"Description", "Award Description"}
+    assert {r["value"] for r in desc} == {
+        "Body-worn camera contract",
+        "Axon body-worn cameras and evidence storage",
+    }
+    for r in desc:
+        assert r["evidence"]["locator"]
+        assert r["raw_value"] == r["value"]  # verbatim literal, never normalized
