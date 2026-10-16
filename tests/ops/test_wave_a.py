@@ -386,3 +386,55 @@ def test_check_mode_driver_needs_no_adc() -> None:
     assert proc.returncode == 0, proc.stderr
     assert "PLAN ONLY" in proc.stdout
     assert "implement-spec" in proc.stdout
+
+
+def test_driver_propagates_a_gate_no_go_code(tmp_path: Path) -> None:
+    """P35.1b repair: a `wave-a-gate` NO-GO must propagate its exit code (42)
+    out of wave-a.sh — the pre-fix `if ! _gate; then rc=$?` read the negated
+    status (always 0) and let the leg continue past a refusal. Drives the
+    script with a stub gcloud/uv so the gate verdict is controlled offline.
+    """
+    import os
+
+    bindir = tmp_path / "bin"
+    bindir.mkdir()
+    (bindir / "gcloud").write_text(
+        "#!/usr/bin/env bash\n"
+        'if [ "${1:-} ${2:-} ${3:-}" = "auth application-default print-access-token" ]; then\n'
+        "  echo stub-token; exit 0\n"
+        "fi\n"
+        "exit 0\n",
+        encoding="utf-8",
+    )
+    (bindir / "uv").write_text(
+        "#!/usr/bin/env bash\n"
+        'if [[ "$*" == *wave-a-gate* ]]; then\n'
+        '  echo "NO-GO: stubbed refusal" >&2; exit 42\n'
+        "fi\n"
+        "exit 0\n",
+        encoding="utf-8",
+    )
+    (bindir / "gcloud").chmod(0o755)
+    (bindir / "uv").chmod(0o755)
+    inputs = tmp_path / "inputs.json"
+    inputs.write_text("{}", encoding="utf-8")
+    env = dict(os.environ)
+    env["SIG_GCP_PROJECT"] = "sig-test-project"
+    env["PATH"] = f"{bindir}:{env['PATH']}"
+    proc = subprocess.run(
+        [
+            "bash",
+            "ops/gcp/wave-a.sh",
+            "--apply",
+            "--leg",
+            "L1",
+            "--inputs",
+            str(inputs),
+        ],
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+        env=env,
+    )
+    assert proc.returncode == 42, proc.stdout + proc.stderr
+    assert "NO-GO (exit 42)" in proc.stdout

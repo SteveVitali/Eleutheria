@@ -209,6 +209,7 @@ def test_real_cadence_lints_clean():
     cadence = load_cadence(CADENCE)
     assert L.lint_cadence_crons(cadence) == []
     assert L.pin_lint(cadence) == []
+    assert L.retired_lint(cadence) == []
 
 
 def test_real_cadence_new_sections_parse():
@@ -585,3 +586,87 @@ def test_roll_record_parses():
     assert fleet.fleet_ref.endswith("@sha256:" + fleet.fleet_ref.split("sha256:")[-1])
     assert "@sha256:" in fleet.fleet_ref
     assert fleet.jobs, "the committed record names per-job after_digests"
+
+
+# --- [[retired_jobs]] (P35.1b) --------------------------------------------------
+
+
+def test_retired_lint_rejects_collision_duplicate_and_reasonless() -> None:
+    cadence, _ = _cadence_from_text(
+        """
+        [[sources]]
+        id = "demo"
+        cadence = "weekly"
+        cron = "0 5 * * 2"
+        job = "sig-ingest-demo"
+        scheduler = "sig-sched-demo"
+
+        [[manual_jobs]]
+        job = "sig-export"
+
+        [[retired_jobs]]
+        job = "sig-ingest-demo"          # collides with a cadence-owned job
+        reason = "x"
+
+        [[retired_jobs]]
+        job = "sig-export"               # collides with a declared manual job
+        reason = "x"
+
+        [[retired_jobs]]
+        job = "sig-probe"                # collides with the probe job
+        reason = "x"
+
+        [[retired_jobs]]
+        job = "sig-cruft"
+        reason = "x"
+
+        [[retired_jobs]]
+        job = "sig-cruft"                # duplicate
+
+        [[retired_jobs]]
+        job = "sig-silent"               # no reason — a retirement is never silent
+        """
+    )
+    problems = L.retired_lint(cadence)
+    joined = "\n".join(problems)
+    assert "sig-ingest-demo" in joined and "sig-export" in joined and "sig-probe" in joined
+    assert any("duplicate" in p for p in problems)
+    assert any("missing reason" in p for p in problems)
+
+
+def test_real_cadence_retired_set_is_the_contract_six() -> None:
+    cadence = load_cadence(CADENCE)
+    assert L.retired_lint(cadence) == []
+    assert {r.job for r in cadence.retired_jobs} == {
+        "aspi-egress-probe",
+        "ccops-sf-egress-probe",
+        "muckrock-egress-probe",
+        "okc-doc-egress-probe",
+        "sig-ingest-resume-test",
+        "sig-sink-bench",
+    }
+
+
+def test_diff_splits_retired_from_unlisted_drift(tmp_path: Path) -> None:
+    import tomllib
+
+    from ops.scheduled import parse_cadence_doc
+
+    _, root = _cadence(tmp_path)
+
+    doc = tomllib.loads(
+        MINIMAL_CADENCE
+        + '\n[[retired_jobs]]\njob = "sig-cruft-old"\nreason = "recorded sweep target"\n'
+    )
+    cadence2 = parse_cadence_doc(doc)
+    fleet = L.read_roll_record(root / cadence2.fleet.roll_record)
+    declared = L.declared_fleet(cadence2, fleet, project=PROJECT, region=REGION)
+    assert "sig-cruft-old" in declared.retired_job_names
+    state = _healthy_state(declared)
+    state.jobs["sig-cruft-old"] = _v1_job(FLEET_REF)  # declared-retired, still live
+    state.jobs["sig-stray"] = _v1_job(FLEET_REF)  # unlisted — generic drift
+    report = L.diff(declared, state)
+    retired = [f for f in report.findings if f.name == "sig-cruft-old"]
+    stray = [f for f in report.findings if f.name == "sig-stray"]
+    assert retired and "declared retired" in retired[0].detail
+    assert stray and "unlisted drift" in stray[0].detail

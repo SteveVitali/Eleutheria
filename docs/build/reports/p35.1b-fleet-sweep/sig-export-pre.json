@@ -1,0 +1,123 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<operator-account>",
+      "run.googleapis.com/lastModifier": "<operator-account>",
+      "run.googleapis.com/operation-id": "a400b82c-6209-4389-8f59-b562d7398bf1"
+    },
+    "creationTimestamp": "2026-09-24T14:58:54.141840Z",
+    "generation": 5,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-26T15:46:29.649557Z"
+    },
+    "name": "sig-export",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZcbIRRnB0",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/sig-export",
+    "uid": "7675e47c-085d-453a-a311-ab5949831158"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/cloudsql-instances": "zeta-medley-508121-u7:us-central1:sig-pg",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "mub_vir_wuv"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-c",
+                  "exec python -m exports build --from-spine --dsn \"postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}\" --as-of \"2026-09-26T15:46:25Z\" --note \"P30.3 national launch export — settled materialized hosted spine\" --out \"/mnt/restricted/exports/national/2026-09-26T154625Z\""
+                ],
+                "command": [
+                  "sh"
+                ],
+                "env": [
+                  {
+                    "name": "SIG_PG_USER",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_PG_DB",
+                    "value": "sig"
+                  },
+                  {
+                    "name": "SIG_CLOUDSQL_CONNECTION",
+                    "value": "zeta-medley-508121-u7:us-central1:sig-pg"
+                  },
+                  {
+                    "name": "SIG_PG_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "latest",
+                        "name": "sig-pg-password"
+                      }
+                    }
+                  }
+                ],
+                "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:1cccde1acb63c12f3275c2c730b0e9896e31e5cb21313a1c669856c56ec835bf",
+                "resources": {
+                  "limits": {
+                    "cpu": "4",
+                    "memory": "16Gi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "mountPath": "/mnt/restricted",
+                    "name": "restricted"
+                  }
+                ]
+              }
+            ],
+            "maxRetries": 0,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "14400",
+            "volumes": [
+              {
+                "csi": {
+                  "driver": "gcsfuse.run.googleapis.com",
+                  "volumeAttributes": {
+                    "bucketName": "zeta-medley-508121-u7-sig-restricted"
+                  }
+                },
+                "name": "restricted"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 4,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-09-27T01:03:21.855278Z",
+      "creationTimestamp": "2026-09-27T00:51:55.217100Z",
+      "name": "sig-export-sv49f"
+    },
+    "observedGeneration": 5
+  }
+}

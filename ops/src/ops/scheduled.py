@@ -179,6 +179,22 @@ class ManualJob:
 
 
 @dataclass(frozen=True)
+class RetiredJob:
+    """One ``[[retired_jobs]]`` row (P35.1b, ticket 291): a live Cloud Run job
+    declared for deletion by the fleet-hygiene sweep — the recorded,
+    name-checked cruft set. A job named here is expected ABSENT: live-diff
+    reports "declared retired but still live" until the sweep leg deletes it,
+    and the sweep script refuses a job not named here. ``reason`` is required —
+    a retirement is never silent. No name here may also be a cadence-owned,
+    manual or otherwise-declared job (``live_diff.retired_lint``).
+    """
+
+    job: str
+    reason: str = ""
+    note: str = ""
+
+
+@dataclass(frozen=True)
 class ImagePin:
     """One ``[[pins]]`` row (SIG-SEC-008): a declared hold off the fleet digest.
 
@@ -250,6 +266,7 @@ class CadenceConfig:
     batches: tuple[BatchCadence, ...] = ()
     maintenance: tuple[MaintenanceCadence, ...] = ()
     manual_jobs: tuple[ManualJob, ...] = ()
+    retired_jobs: tuple[RetiredJob, ...] = ()
     pins: tuple[ImagePin, ...] = ()
     fleet: FleetDecl = FleetDecl()
     live_diff: LiveDiffSpec | None = None
@@ -357,6 +374,14 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
         )
         for j in doc.get("manual_jobs", [])
     )
+    retired_jobs = tuple(
+        RetiredJob(
+            job=str(r["job"]),
+            reason=str(r.get("reason", "")),
+            note=str(r.get("note", "")),
+        )
+        for r in doc.get("retired_jobs", [])
+    )
     pins = tuple(
         ImagePin(
             job=str(p.get("job", "")),
@@ -402,6 +427,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
         batches=batches,
         maintenance=maintenance,
         manual_jobs=manual_jobs,
+        retired_jobs=retired_jobs,
         pins=pins,
         fleet=FleetDecl(
             image_repo=str(fleet.get("image_repo", "")),
@@ -917,6 +943,7 @@ __all__ = [
     "LiveDiffSpec",
     "MaintenanceCadence",
     "ManualJob",
+    "RetiredJob",
     "RunRow",
     "SourceCadence",
     "TargetHistory",

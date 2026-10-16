@@ -1,0 +1,25 @@
+[
+  {
+    "name": "delete-older-than-30d",
+    "action": {"type": "Delete"},
+    "condition": {
+      "tagState": "any",
+      "olderThan": "30d"
+    }
+  },
+  {
+    "name": "keep-younger-than-30d",
+    "action": {"type": "Keep"},
+    "condition": {
+      "tagState": "any",
+      "newerThan": "30d"
+    }
+  },
+  {
+    "name": "keep-newest-10-per-package",
+    "action": {"type": "Keep"},
+    "mostRecentVersions": {
+      "keepCount": 10
+    }
+  }
+]

@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P36.12 (row 290 — Wave-B activation machinery committed; all eleven legs L0–L10 QUEUED in RETURN PASS, the window future; P35.1a1 seed leg QUEUED); next → P35.1b (291).
