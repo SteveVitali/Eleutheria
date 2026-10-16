@@ -45,6 +45,18 @@ banner "national export next to the spine (P30.3 / GO-LIVE.3)"
 : "${SIG_EXPORT_JOB:=sig-export}"
 : "${SIG_EXPORT_AS_OF:=$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 : "${SIG_EXPORT_NOTE:=P30.3 national launch export — settled materialized hosted spine}"
+# P35.12 / SIG-REL-001+003 (G3 §3.2/§3.3): the belief instant is now propagated
+# (snapshot.as_of_belief / belief_pinned ride the export manifest into the v2
+# descriptor); the declared environment defaults to production; SIG_EXPORT_REPLAY
+# declares a Class-S rebuild of a historical snapshot (required for an earlier-day
+# as-of); SIG_EXPORT_EMERGENCY lifts the AR-3 frozen-window refusal with a
+# recorded reason. The §3.3 clock guards (frozen window, host clock, future
+# as-of) bind inside `sig-exports build --from-spine` itself — a Cloud Run start
+# hours after this stamp is a same-day lag, never a replay claim.
+: "${SIG_EXPORT_BELIEF:=}"
+: "${SIG_EXPORT_ENVIRONMENT:=production}"
+: "${SIG_EXPORT_REPLAY:=}"
+: "${SIG_EXPORT_EMERGENCY:=}"
 _repo="$(cd "${_here}/../.." && pwd)"
 _sha="$(git -C "${_repo}" rev-parse --short=12 HEAD 2>/dev/null || echo unknown)"
 IMAGE="${SIG_API_IMAGE}:export-${_sha}"
@@ -58,8 +70,12 @@ JOB_ENV="SIG_PG_USER=sig,SIG_PG_DB=${SIG_PG_DB_NAME:-sig},SIG_CLOUDSQL_CONNECTIO
 # shellcheck disable=SC2016
 DSN='postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}'
 export_cmd() {
-  printf 'exec python -m exports build --from-spine --dsn "%s" --as-of "%s" --note "%s" --out "%s/%s"' \
-    "${DSN}" "${SIG_EXPORT_AS_OF}" "${SIG_EXPORT_NOTE}" "${MOUNT}" "${PREFIX}"
+  local extra=""
+  [ -n "${SIG_EXPORT_BELIEF}" ] && extra="${extra} --belief \"${SIG_EXPORT_BELIEF}\""
+  [ -n "${SIG_EXPORT_REPLAY}" ] && extra="${extra} --replay \"${SIG_EXPORT_REPLAY}\""
+  [ -n "${SIG_EXPORT_EMERGENCY}" ] && extra="${extra} --emergency \"${SIG_EXPORT_EMERGENCY}\""
+  printf 'exec python -m exports build --from-spine --dsn "%s" --as-of "%s" --environment "%s" --note "%s" --out "%s/%s"%s' \
+    "${DSN}" "${SIG_EXPORT_AS_OF}" "${SIG_EXPORT_ENVIRONMENT}" "${SIG_EXPORT_NOTE}" "${MOUNT}" "${PREFIX}" "${extra}"
 }
 
 # SIG_EXPORT_GUARD (config.sh) — P35.1b (G1-NEW-4 keep-list): the job's BAKED

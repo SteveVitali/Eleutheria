@@ -87,6 +87,59 @@ def test_run_writes_a_fresh_as_of_prefix() -> None:
     assert m1 and m2 and set(m1) != set(m2)
 
 
+def test_p35_12_belief_environment_replay_emergency_propagate() -> None:
+    """P35.12 / SIG-REL-001+003: the wrapper forwards the belief instant, the
+    declared environment and the clock-guard flags into the job's export
+    command — a plan run must show them verbatim (NEW-2's fix)."""
+    env = _env(
+        SIG_GCP_PROJECT="example-proj",
+        SIG_EXPORT_AS_OF="2026-10-05T12:34:56Z",  # future-ok: synthetic: leg fixture
+        SIG_EXPORT_BELIEF="2026-10-05T12:00:00Z",  # future-ok: synthetic: fixture
+        SIG_EXPORT_ENVIRONMENT="staging",
+        SIG_EXPORT_REPLAY="restore-drill replay",
+        SIG_EXPORT_EMERGENCY="takedown re-cut",
+    )
+    proc = subprocess.run(
+        ["bash", str(SCRIPT), "--check", "run"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+        cwd=str(REPO_ROOT),
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert '--as-of "2026-10-05T12:34:56Z"' in proc.stdout
+    assert '--environment "staging"' in proc.stdout
+    assert '--belief "2026-10-05T12:00:00Z"' in proc.stdout
+    assert '--replay "restore-drill replay"' in proc.stdout
+    assert '--emergency "takedown re-cut"' in proc.stdout
+
+
+def test_p35_12_optional_flags_absent_when_unset() -> None:
+    """Unset SIG_EXPORT_BELIEF/REPLAY/EMERGENCY add no flags — the command
+    stays exactly the live-cut shape."""
+    env = _env(
+        SIG_GCP_PROJECT="example-proj",
+        SIG_EXPORT_AS_OF="2026-10-05T12:34:56Z",  # future-ok: synthetic: leg fixture
+    )
+    env.pop("SIG_EXPORT_BELIEF", None)
+    env.pop("SIG_EXPORT_REPLAY", None)
+    env.pop("SIG_EXPORT_EMERGENCY", None)
+    proc = subprocess.run(
+        ["bash", str(SCRIPT), "--check", "run"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+        cwd=str(REPO_ROOT),
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert '--environment "production"' in proc.stdout  # the declared default
+    assert "--belief" not in proc.stdout
+    assert "--replay" not in proc.stdout
+    assert "--emergency" not in proc.stdout
+
+
 def test_fetch_syncs_bucket_to_local_without_delete() -> None:
     env = _env(
         SIG_GCP_PROJECT="example-proj",

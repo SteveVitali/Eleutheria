@@ -23,11 +23,17 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 
 pytestmark = pytest.mark.usefixtures("sig_database")
+
+# P35.12 T0 pin: the synthetic as_of below is a fixed fixture instant, so the
+# build clock is injected (at/after it) — the real wall clock never decides
+# whether this suite's export is "future" (SIG-REL-003).
+_T0 = datetime(2026, 10, 19, 12, 0, tzinfo=UTC)
 
 FIXTURE_DIR = (
     Path(__file__).resolve().parents[2] / "docs" / "build" / "reports" / "p32.6-legacy-evidence"
@@ -148,6 +154,7 @@ def test_candidate_builds_one_unpublished_release(conn, tmp_path):
         apply_report=stage["apply_report"],
         registry_dir=registry,
         as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+        generated_at=_T0,
         code_commit="test-commit",
     )
 
@@ -280,6 +287,7 @@ def test_candidate_pointer_bytes_unchanged_with_existing_pointer(conn, tmp_path)
         out_dir=tmp_path / "candidate",
         registry_dir=registry,
         as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+        generated_at=_T0,
     )
     assert (registry / "latest.json").read_bytes() == latest_bytes
     ptr = manifest["publication_pointer"]
@@ -299,6 +307,7 @@ def test_candidate_export_read_only_and_compartments(conn, tmp_path):
         snapshot=stage["snapshot"],
         out_dir=tmp_path / "candidate",
         as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+        generated_at=_T0,
     )
     # every emitted compartment artifact carries a licence + checksum; the
     # ODbL separation rule was exercised by the export gate itself
@@ -335,6 +344,7 @@ def test_candidate_refuses_a_missing_population_claim(conn, tmp_path):
             snapshot=snapshot,
             out_dir=tmp_path / "candidate",
             as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+            generated_at=_T0,
         )
     assert exc.value.code == "changed_input"
     # nothing was staged when the frame check failed
@@ -355,6 +365,7 @@ def test_candidate_refuses_drifted_eligibility_semantics(conn, tmp_path):
             snapshot=snapshot,
             out_dir=tmp_path / "candidate",
             as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+            generated_at=_T0,
         )
     assert exc.value.code == "changed_input"
 
@@ -393,6 +404,7 @@ def test_candidate_refuses_when_a_real_disposition_changes_eligibility(conn, tmp
             snapshot=stage["snapshot"],
             out_dir=tmp_path / "candidate",
             as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+            generated_at=_T0,
         )
     assert exc.value.code == "changed_input"
     assert "eligibility" in str(exc.value).lower()
@@ -413,5 +425,6 @@ def test_candidate_refuses_on_activated_shadow_policy(conn, tmp_path):
             out_dir=tmp_path / "candidate",
             shadow_report=shadow,
             as_of="2026-10-19",  # future-ok: synthetic: test-supplied as_of
+            generated_at=_T0,
         )
     assert exc.value.code == "activated_policy"

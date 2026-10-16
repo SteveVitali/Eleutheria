@@ -34,6 +34,15 @@ def build_spec_from_json(doc: dict[str, Any]) -> BuildSpec:
         ruleset_version=str(doc["ruleset_version"]),
         resolver_version=str(doc["resolver_version"]),
         dataset_slug=str(doc.get("dataset_slug", "sig")),
+        # P35.12 / SIG-REL-001: the extended identity inputs, all optional on
+        # a bundle JSON request (absent → a legacy date-only spec).
+        as_of_snapshot_instant=doc.get("as_of_snapshot_instant"),
+        as_of_belief_instant=doc.get("as_of_belief_instant"),
+        belief_pinned=bool(doc.get("belief_pinned", False)),
+        spine_watermark=doc.get("spine_watermark"),
+        code_commit=doc.get("code_commit"),
+        environment=doc.get("environment"),
+        replay=doc.get("replay"),
     )
 
 

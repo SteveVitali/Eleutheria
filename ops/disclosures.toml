@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.disclosures/1 — the required-disclosure set digested into every
+# sig.publication-descriptor/2 (P35.12 / SIG-REL-001, G3 §3.2 `disclosures`).
+# Each [[disclosures]] entry carries an `id` and its disclosure `text`; the
+# descriptor records {id, text_sha256} — the hash of the text, never the text.
+# Declared-empty until row 297's disclosure inventory lands; the descriptor's
+# `disclosures` field then records the empty list honestly.
+schema = "sig.disclosures/1"
