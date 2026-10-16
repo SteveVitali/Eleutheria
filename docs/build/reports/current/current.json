@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "af1e26a429f6b06205010c341acbb44bb49cdb86",
-  "manifest_inputs": 1015,
+  "input_commit": "9805c80d7602f9f650a9f0d30ca11c3fdcc4cc8e",
+  "manifest_inputs": 1016,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.14b",
-    "lastCompleted": "P35.14a",
+    "nextTicket": "P35.15a",
+    "lastCompleted": "P35.14b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.57,P35.67",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.57,P35.67",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.14a-vocabulary-conformance-closed-vocabulary",
+    "chainTip": "r11/P35.14b-entity-typing-and-hosted-check",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 37,
+    "return_pass_rows": 38,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8486,6 +8486,14 @@
         "gates_cell": "hosted, production write; OM-20 conditional — GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires at the next GATE, OM-10); AR-3: first weekday 14:00-20:00Z slot at/after the freeze end, operator present, AR-2 prestate first (excluded hours: weekends and outside-14:00-20:00Z and before 2026-10-13T12:00Z (the AR-3 freeze)); live AC human-completed",
         "operator_cell": "AR-2 prestate, `sqitch deploy closed_vocabulary`, verify + read-back (six measured predicates + 20 genres; unknown_genre admitted); rollback = `sqitch revert`",
         "rerun_cell": "`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` · landed row 272 (PR #274 — write queued under AR-3)",
+        "obligations": []
+      },
+      {
+        "key": "P35.14b",
+        "obligations_cell": "the queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) then the append-only typed-identity write (`--apply`, INSERT-only, +0 on rerun); verify + read-back; the VALIDATE follow-up is a later sqitch row; no deferral opens",
+        "gates_cell": "hosted, production write; never pre-authorised (§3.3 named class: hosted sqitch change altering an existing table / ACCESS EXCLUSIVE) — only the operator's explicit verbatim in-ticket go authorises, no GATE list entry can; AR-3 + AR-2: first weekday 14:00-20:00Z slot ≥ the freeze end, operator present, AR-2 restore point `SUCCESSFUL` first (excluded: weekends and outside-14:00-20:00Z, 03:00-06:30Z daily, before 2026-10-13T12:00Z (the AR-3 freeze)); live AC human-completed",
+        "operator_cell": "verbatim go quoted with `date -u`; AR-2 `SUCCESSFUL` + pre-state (`sqitch.plan` head, table counts, `spine_watermark`); `sqitch deploy --verify` with `lock_timeout`; typed-identity dry-run → `--apply`; read-back; rollback = `sqitch revert` (DDL rollback), corruption-only PITR-clone",
+        "rerun_cell": "`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` · landed row 273 (PR #275 — leg queued behind the verbatim go)",
         "obligations": []
       }
     ]
@@ -18486,10 +18494,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a408bcb56a10b8be5c5043da70e3d759fd6817aa821721263682c3cbeb952f65",
+  "manifest_sha256": "7a203a54750d157b197b59ee20182d931021cb1b2ac79b227147dc9fa01f9681",
   "current_md": {
     "lines": 63,
-    "bytes": 15451,
+    "bytes": 15441,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

@@ -164,7 +164,10 @@ def test_flock_edge_claims_land_as_entity_refs(clean_dsn: str) -> None:
         assert len(rows) == len(edges)
         for _subject_entity, object_entity, value_text, object_type, object_type_e in rows:
             assert object_type == "entity_ref" and object_entity
-            assert object_type_e == "deployment"  # the portal-subject placeholder type
+            # P35.14b: the portal-subject type the declared map assigns
+            # (``flock_portal:`` → ``data_system``, §11.10) — identical for the
+            # same identifier minted as a subject or as an object ref.
+            assert object_type_e == "data_system"
             assert value_text  # the partner slug is preserved verbatim (P2)
         # The partner ref keys the SAME entity the partner's own portal subject
         # claims key on: tulsa-pd is itself a subject of this snapshot, so the

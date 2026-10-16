@@ -75,6 +75,9 @@ allow db/sqitch.plan 2026-10-10T06:00:00Z er_rerun_login [seal_register material
 # P35.14a (ticket 272): closed_vocabulary's planned_at is its real `date -u` stamp — future of the
 # pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
 allow db/sqitch.plan 2026-10-12T00:00:00Z closed_vocabulary [claim_assertion_bindings seed_vocab] 2026-10-11T04:01:26Z
+# P35.14b (ticket 273): entity_typing_mobility_check's planned_at is its real `date -u` stamp — future
+# of the pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-12T12:00:00Z entity_typing_mobility_check [closed_vocabulary domain_entities entity_identity_key] 2026-10-11T08:12:38Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).
@@ -349,3 +352,12 @@ seed-commit 65f20cdf
 # markup-id. 0b36a887 rewrites it to the explicit list; append-only preserved here.
 # Scope: findings attributed to 0b36a887 only; no other commit borrows the exemption.
 seed-commit 0b36a887
+
+# ── P35.14b kind repair ──────────────────────────────────────────────────────
+# b40cb4c1's PHASE LOG entry kind `post-closeout repair` owes a `ci:` field it
+# cannot truthfully carry for a red head (verify-recorded-ci, run 38166601565);
+# the in-place kind repair `post-closeout repair` → `correction` (NON_CI_KINDS;
+# the P34.39b 5816717d precedent) edited the committed line — append-only is
+# preserved by this declaration (same pattern as c4b2aa21).
+# Scope: findings attributed to 64648080 only; no other commit borrows the exemption.
+seed-commit 64648080

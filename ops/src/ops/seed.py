@@ -373,7 +373,8 @@ def seed_jurisdiction(dsn: str, jurisdiction: str = "okc") -> dict[str, int]:
     """
     import psycopg
     from db.claim_sink import SUBJECT_SCHEME, PgClaimSink
-    from db.identity_guard import resolve_identities
+    from db.identity_guard import resolve_identity_batch
+    from db.subject_types import entity_type_for_subject
 
     slice_def = _SEED_SLICES[jurisdiction]  # KeyError on an unknown jurisdiction
     sink = PgClaimSink.from_dsn(
@@ -405,12 +406,17 @@ def seed_jurisdiction(dsn: str, jurisdiction: str = "okc") -> dict[str, int]:
     extra_scheme, extra_value = slice_def["extra_identifier"]
     rows = slice_def["agency_rows"]()
     with psycopg.connect(dsn, autocommit=True) as conn, conn.transaction():
-        resolved = resolve_identities(
-            conn, SUBJECT_SCHEME, [subject for subject, _, _ in rows], entity_type="organization"
+        # P35.14b: each subject's type comes from the declared map
+        # (subject_entity_types.toml — ``agency:`` → organization), never a
+        # hardcoded per-call type. The batch resolves the same guard path the
+        # claim sink's subject minting uses.
+        resolved = resolve_identity_batch(
+            conn,
+            [(SUBJECT_SCHEME, subject, entity_type_for_subject(subject)) for subject, _, _ in rows],
         )
         for subject, canonical, org_type in rows:
-            entity_id = resolved.entity_by_value[subject]
-            if subject in resolved.minted:
+            entity_id = resolved.entity_by_key[(SUBJECT_SCHEME, subject)]
+            if (SUBJECT_SCHEME, subject) in resolved.minted:
                 conn.execute(
                     "INSERT INTO entity_identifier(entity_id, scheme, value) VALUES (%s, %s, %s) "
                     "ON CONFLICT DO NOTHING",

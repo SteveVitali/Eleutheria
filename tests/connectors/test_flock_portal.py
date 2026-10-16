@@ -413,7 +413,9 @@ def test_sharing_edge_claims_carry_the_partners_portal_entity_ref() -> None:
         assert ref == {
             "scheme": "sig.connector.subject",
             "value": portal_id(e["to_org"]),
-            "entity_type": "deployment",
+            # P35.14b: the declared map's type for a flock_portal subject —
+            # the ref mints exactly what the same identifier mints as a subject.
+            "entity_type": "data_system",
             "label": e["to_org"],
             "basis": "portal_slug_identifier",
             "rules": "portal_partner_ref/1",

@@ -1,0 +1,134 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# P35.14b — the subject-scheme → entity-type map (L1 NEW-5 / FM-17, SIG-IDENT-025,
+# SIG-ONTO-027). Versioned, committed, fail-closed.
+#
+# Every connector claim subject is minted under the identity-bearing scheme
+# `sig.connector.subject` (ADR-110). This table declares which ontology entity
+# type a subject VALUE mints, keyed on the subject id's scheme prefix (the
+# leading `<family>:` segment(s)). The sink resolves a subject by longest-prefix
+# match; a value matching NO entry refuses to mint (assertion_quarantine,
+# reason `unknown_subject_scheme`) rather than defaulting to `deployment` — a
+# new subject family lands only by editing THIS file deliberately.
+#
+# `entity_type` values are members of `vocab_entity_type`
+# (db/deploy/seed_vocab.sql) — the §11 classes. A non-claim record kind
+# (`agenda_document`, `portal_document`, `registry_query_meta`, `*_artifact`,
+# `tenant_api_error`, …) never reaches the mint path, so subjects that exist
+# only on those kinds are deliberately NOT mapped: if a connector ever emits a
+# claim on one, the fail-closed refusal forces the typing decision to be made
+# here, not guessed by the sink.
+
+# The map version, recorded on every `entity_type_decision` row the
+# typed-identity write lands so a later revision can supersede honestly.
+version = "1.0.0"
+
+[prefixes."accountability:"]
+entity_type = "accountability_event"
+note = "§11.17 — accountability-connector event/incident/bill subjects (accountability.py)."
+
+[prefixes."agency:"]
+entity_type = "organization"
+note = "§11.2 — agency subjects (records connector coverage surfaces, ops.seed org rows)."
+
+[prefixes."agency_registry_entry:"]
+entity_type = "organization"
+note = "§11.2 — each registry entry IS an agency record (ORI-scoped, agency_registry.py)."
+
+[prefixes."agenda_item:"]
+entity_type = "legal_instrument"
+note = "§11.14 — a civic agenda matter is an instrument under consideration (ordinance, resolution, appointment); contract-pattern items mint under `contract:` separately."
+
+[prefixes."atlas:"]
+entity_type = "deployment"
+note = "§11.7 — Atlas of Surveillance agency×technology adoption records (atlas.py)."
+
+[prefixes."audit_deployment:"]
+entity_type = "deployment"
+note = "§11.7 — deployment subjects of audit-workbook lifecycle/count claims (audit_structural.py DEPLOYMENT_ID_PREFIX)."
+
+[prefixes."audit_org:"]
+entity_type = "organization"
+note = "§11.2 — searching/source organisations of audit claims (audit_structural.py ORG_ID_PREFIX)."
+
+[prefixes."ccops:"]
+entity_type = "policy"
+note = "§11.13 — the CCOPS ordinance-disclosure regime record; `ccops:<jurisdiction>` scopes the ordinance and `ccops:<jurisdiction>:<agency>` the agency's mandated-disclosure posture under it (government_mandated_disclosure.py)."
+
+[prefixes."contract:"]
+entity_type = "contract"
+note = "§11.11 — contract subjects (procurement.py Contract.claim_rows, live_targets, ops.seed)."
+
+[prefixes."data_driven:agency:"]
+entity_type = "organization"
+note = "§11.2 — per-agency aggregate subjects (data_driven.py). Bare `data_driven:` is deliberately unmapped."
+
+[prefixes."flock_portal:"]
+entity_type = "data_system"
+note = "§11.10 — an Eyes-on-Flock transparency portal is a reference system the ticket maps `portal:` → `data_system` (flock_portal.py); partner portal-slug object refs mint the same type (ADR-113)."
+
+[prefixes."funding_instrument:"]
+entity_type = "funding_instrument"
+note = "§11.12 — funding-instrument subjects (procurement.py)."
+
+[prefixes."jurisdiction:"]
+entity_type = "jurisdiction"
+note = "§11.1 — jurisdiction subjects incl. `jurisdiction:iso.3166-1:<cc>` and `jurisdiction:<scheme>:<code>` (coarse_international, accountability, records, ops.seed)."
+
+[prefixes."legal_instrument:"]
+entity_type = "legal_instrument"
+note = "§11.14 — legal-instrument subjects (france_belgium.py LegalInstrument, ops.seed arrêté)."
+
+[prefixes."legal_proceeding:"]
+entity_type = "legal_proceeding"
+note = "§11.18 — proceeding subjects (accountability.py)."
+
+[prefixes."legislative_bill:"]
+entity_type = "legal_instrument"
+note = "§11.14 — a bill is a proposed instrument tracked as legislative business (accountability.py bill index)."
+
+[prefixes."madada:"]
+entity_type = "records_request"
+note = "§11.19 — Ma Dada request-event subjects `madada:request_event/<id>` (france_belgium.py)."
+
+[prefixes."osm:"]
+entity_type = "physical_asset"
+note = "§11.8 — OSM elements `osm:node|way|relation/<id>` are field-observed devices; the physical_asset table owns the osm_element_*/mobility columns their claims land in (osm.py)."
+
+[prefixes."pathways:"]
+entity_type = "deployment"
+note = "§11.7 — conformance-pathway adoption subjects `pathways:<family>:<pathway>` (pathways.py); the same subject carries vendor_product/deployment claims — one minted type covers the pathway record."
+
+[prefixes."procurement_notice:"]
+entity_type = "contract"
+note = "§11.11 — a portal procurement notice/award is contract-lifecycle evidence; the subject is the procurement action the notice describes (procurement.py)."
+
+[prefixes."records:"]
+entity_type = "records_request"
+note = "§11.19 — records-request subjects `records:<platform>:<external_id>` (records.py)."
+
+[prefixes."seed:"]
+entity_type = "data_system"
+note = "§11.10 — the statute-seed inventory dataset the `as_of` claim describes (statute_seed.py)."
+
+[prefixes."sig:dataset:"]
+entity_type = "data_system"
+note = "§11.10 — dossier/live-target reference datasets (live_targets.toml, e.g. bia-tribal-leaders-directory)."
+
+[prefixes."sig:deployment:"]
+entity_type = "deployment"
+note = "§11.7 — dossier/live-target deployment subjects incl. the ops.seed slices (live_targets.toml, seed.py)."
+
+[prefixes."sig:document:"]
+entity_type = "legal_instrument"
+note = "§11.14 — dossier document subjects (hearing notices, policy instruments — enacting_body/document predicates)."
+
+[prefixes."traffic_camera:"]
+entity_type = "physical_asset"
+note = "§11.8 — a registry-listed camera is a field device: its claims are camera_latitude/longitude/operator + mobility (dot_511.py, camera registries)."
+
+[prefixes."usage_aggregate:"]
+entity_type = "usage_aggregate"
+note = "§11.16 — searching→source aggregate subjects; `audit_cell_redacted` claims mint them (audit_structural.py AGGREGATE_ID_PREFIX)."
