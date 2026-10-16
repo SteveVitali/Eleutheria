@@ -23,7 +23,7 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.3-production-truth-probes-and-sentinel-scan    # PR #304 open (base r11/P35.1c-dispatcher-consolidation; see runs/P35.3.md)
+chainTip:        r11/P35.3-production-truth-probes-and-sentinel-scan    # PR #304 open, no live leg (base r11/P35.1c-dispatcher-consolidation; see runs/P35.3.md)
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
