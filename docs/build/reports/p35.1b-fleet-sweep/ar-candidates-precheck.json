@@ -1,0 +1,524 @@
+{
+  "kind": "sig.ar-cleanup-candidates/1",
+  "now": "2026-10-16T01:23:07+00:00",
+  "totalVersions": 95,
+  "candidates": [
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:38da406890ee1edf9a392b5fb440f7c848648b99abcd730947873e3e8fc82782",
+      "tags": [],
+      "uploaded": "2026-09-15T15:22:58.708751Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:8135cb695e86692a05a1c95a9063bdfaa4b7f07885bbc139d0628ce551765b31",
+      "tags": [],
+      "uploaded": "2026-09-15T15:22:59.046543Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:7f0976222c58b6e5e366fbf814d9e25a3027533ed0f5238a2837dfc6b5c7ff04",
+      "tags": [],
+      "uploaded": "2026-09-15T15:22:59.352863Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:53c355b1fc28fb501c9c81e29c2b81a75457dfd6e7b405d2071904a4a8032975",
+      "tags": [],
+      "uploaded": "2026-09-15T16:18:08.422207Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:819a86887a2af285d150d1d5a9e453b254dd77a54192b36eb66b152e516f2e22",
+      "tags": [],
+      "uploaded": "2026-09-15T16:18:08.745423Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:750d98935604e9f3515706db996c49b608ef3095bb04954edd56fcacf777b8d0",
+      "tags": [],
+      "uploaded": "2026-09-15T22:46:49.329791Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:abe6531b5fc1f6cfb81d5683b3e006beda1bc298d5bdc834e8ca51fc33bb8ac5",
+      "tags": [],
+      "uploaded": "2026-09-15T22:46:49.685375Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:5dee3b0d80c4ef6d2e4d3e1133ed562dc9cf4a908d268506d26a3cd3887c6c96",
+      "tags": [],
+      "uploaded": "2026-09-15T22:46:49.955983Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:86949e1b05daea02c94f99e1cc9ede9dc339380e2ead86f73f654f9c403403ea",
+      "tags": [],
+      "uploaded": "2026-09-15T22:56:14.336319Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:9574cb6af419bff3ee2eed3b95a38edd69d8e9e0f4e3d6a16160dab653df1195",
+      "tags": [],
+      "uploaded": "2026-09-15T22:56:14.578015Z",
+      "matchedBy": [
+        "delete-older-than-30d"
+      ]
+    }
+  ],
+  "kept": [
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:00e3b76e56e6cfc5123f4376c1b234a194adfb248b5f9918d49b66892839ca55",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:0491538cf225716d9200713a7d354e4742cc85a38952f8aa2f6da1321a56db6a",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:07c7d7ec9bc1027f1b10d3738ba5239d1b4cebaf7a6a01f847832f3fc279d43e",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:08d333d621f5bb21ad015371cf3bc244c8abcb22cc6be9d759b1ed9c4c7facd7",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:091b87b1cf94dd7956aecd257db82cae1313002ba46f9233fcbe96670dd2a478",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:102389ea74e0893601cd1accfdd7321a7414a556015efff82e58de49914d4424",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:11a4a52c66515247ccda556478b12209449d20136b77b12c96a28a64350c0e03",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:1af581d1a8a96533a1e10abbe6a19b42774cd2ecb75762ef77781d1ee6fc31d8",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:1cccde1acb63c12f3275c2c730b0e9896e31e5cb21313a1c669856c56ec835bf",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:21bb952672a264714d4c31c7e2373cdb17b1572da4858e5004f2d29e03fbbfb4",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:2207c5b6ef6366cdb4457d82ec75052784bddb66c4b00b89c33519343047496c",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:221df385ddc837cfffb1a0d2d0f2fc872a4678672568d705f3be7c61ff7d0bc3",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:23807eb3ea772f50c721592d3dcf75261a0e6c691b689642cfb979f1bf39b3d3",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:23b025be2019bae52a5d3c2d4c9490c5538fdfc5499cd30d1ba9175151106407",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:2c9b53435e5e4b855d61ede199854842007aaf546b7dcca993e09ea62c91af67",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:305503c97117c6b1f80d5820e8e9f4407d0122122403892021e6a09dcb437947",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:31d0a670a3b3a8a9174bbe6defce4eb3925df1c5c352f4414e658e9a57ddfbdb",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:3206aa91e04473b75723002150ecea60dd9dc504b595b2629e35a36e261326dc",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:3efce8f4ff4fb1b0ba3c596f9f0b382fa0449080a053dd387e12479d8d155ab3",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:40a47da8c2cf8f68e84aede7e7e3f9f43a03ed823c83a9924d6535970354b722",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:4162e7ae85de22ce023396deb1eba711b1c3b1cf794cc52a817af91fa15c5595",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:418f7d4bd2df12e4f21d6425e448b3e072a517ee470d840826c725240770324b",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:4728901f2053ee1068d16a93b9d3ed4e505ed745158f64bafef75992352c3c4a",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:50b647c7ee9e5fd70e4f796a764791b3a7a4a596faec86fdf96dbe9daf3e131d",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:566f4cea0cb5feeb14f0534a64fdfa21e3409182183ef0c44f42f6445d15eb31",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:5dbc7b9a409f1f991ef157a9014f10f5793298395cb3192319ab4ae6f9ef5c6e",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:5e3a323c7616746e8416cdd30914889ccf219e2c5109b4a23f8c886d5abd84a4",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:62a81daf23d635810ce13ade4748b6ffa9787e94c8eb5a8b5014e4f1de738261",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:63b809b2ab41b36df4d1fca33f4aa1a22953cf114639f27f0766b9c1245115b6",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:6bb6c4633923382ccc3f342059351672b418de6d3a6c22bf2d12d053b293bf84",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:6f5f654496ddee745b20ec4bf42add1071ef23917820e0cd68f98111dad73253",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:7048e14360729cb2e1bde9a54930a20c8110975ff90094b65b1f12810ed853b1",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:7087ca4bfc04580dafc5706a502e14fd97faba5d74b46a7c1bfcee01850e4d11",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:7097f12daba68501c5c0c2b9a772a915b53f95f0760a512f17af2aad50f54828",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:752e3e191c9914bc0e196505522cab4e819c94c984c365bb9776dcb35d8e67b1",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:773df199eb78c6669147c5af4fed219d38782fa224b5e255e237fa6d87f6a79d",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:79adb63201f47bc51ae1bbdff58eefc692d5aa2cf51649a3a3f825834028b6a5",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:79ea36eca34eb6995ea9ed4574b3a7e5687f2c083c68b7f27d2bce582bce1f7d",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:80eb7725968e386d235807ec4069bb6874e63628fb9cb09835d37c05e77494e8",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:8ac00b96dd19cfc4199ed18de56597e68679f68271adbdcf43669fff22f3c3ad",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:8bafca6d1b7f58704cec79a4625a52e13050f136724ab4e9d3803d67c3fda749",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:8c762b14bbd52a90ab051752c7ab558e723eaf71407041a60a731112e1bfd976",
+      "by": "keep-live-referenced"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:959c40c6074b7d1e30ad15787d7569ce01f935356aba0010e47efee64687b2d5",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:9f8f19ae9869082aa4a90328aa9968b3b0bfc0cdab960ebbdb1524f3d8c461ac",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:a7e3543fe3a1d0d73b3b460221f7b87b28570612525e64449a8af8e2e67be24c",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:a8ba1a803fe977b475d08d9cf149c60b52343a62e0730465f8bcaa184806f570",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:a9ecaad6142d0c62c5498acfa3b8bbfcd80e764fdbb506a146406fd301d255d1",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ac235f936a35cd3f87b7c7a205dc8b3befde49fe60cc7ed54ddb07ca25a4992c",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ad06e964a4119fc7c1135826114e2314bb1bbb8813d8d45b3d522a24823e6f99",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ad8b4ab801ffe8224ff8405f06e65b8a096dffe43f08c08f1a6dd5feee4d030a",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ae11c1e5986cd96c401ca2382c1344dfd24a1865afd8dc150bc4f5b7e73fb442",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:b1ca44dcf20108aa1d0a610f55ac709f0bad133058565b425422b992d6fc620c",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:b220dd368147f5f34b7f07a02eebcecd4fd85cb9855549ff27e33b1feab4e3d9",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:b508a7c915fdc98fac908cb5d480205fba8ed11054b12eb464b486b598d96d1f",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:b571255d96e515e88cc522e2e87450cf73619c48fc7ce0d33a6b60bcc0f59dbb",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:b956ff26015deb4ca13bc7c91ee0e7bcebae63210ca494ee3b73bbcea637f5b1",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:bbf6a82d8cee532c5442cd20e301918bb6eac063b7305090c6c484c65116bab8",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:bdb70ed77bda671b491e0a0c17a3d8c6d2fed72202be7f2f5a27bc53c411b267",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:be35908521c5cb605e7c30d3af9afe4a0451a3608eb0247881c86272477bd46d",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:c0061c6d34c634ab56e8d3dc63fd8f3e988863d5ec04d37509eedb1146f3adae",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:c5c8647a56ae6e8fd11ec1369dfc351167fa1975301a60bcbc3d0f3c3895387c",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:cc6801119e82a72767f03f5955a36419e22f202166fed7b4d9259a25aec7fac8",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:cfd266549f752c66ffcd96bc01d18f3d19653bc6627b407ef0ec66fcb61b1272",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d0ea2deb2f12fe50b0cad072562a03d832b12f61405d37a780b7a4560ddf16dd",
+      "by": "keep-live-referenced"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d1f943610f668521f157c94d64f7284eb73025870303ee332f3f9450676e473a",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d545760563440a04226f40a8335106ee78a112614b58f173c7e58d2bd4601716",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d5d84b6de52f0f3bd493a3245578eb7c339eaf39a6cfdc54d6c7775f99ab1d88",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d5ea301becff6f6aea534fd177e1fea69d9ce8aa82e0c7624134418cb9245695",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d7183e6e12721604beb7f207e1e9957f235504c8d51fee78dd4294c5027ddabf",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:d8dd0b1b966a51ab011770c2911878ff9a1119c88618163d59c19dbfbec85475",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:de76f1e1ae5ef5689f52e48b256eaa240a6f181bdca97d7fdedacd993265390a",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:dee584550ce1532938b6d3108b0318fa212773b619fee3bc5e39d2455bff309b",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:e0674d95d56560e065857cbde45ad270c4177fa7b5fca5fbd3a2fb592170e268",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:e24922cf9d41d92e1854d366564a4171cd0afd9a116f36566ffa90ba71175ded",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:e2fd262fe7ee16d4b434fba53a345716289fd7102bce487cecaabdf13f30cd0f",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:e9322c0018ad60c7dad578a140ebf077bf8d347feb275abd3d828b9f27dabe8c",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ebb6dab99fe689838ab1eb9ccc5fdea64ea5048f2622f4f0f110fa0d6fce487a",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ed82f736c9fd370de5c86841b4fe9773821f0355669d6de5d2fa34c7a1235d24",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:ee7ff13dd3d3678297443506515fbc0fcaa22fbfbb71556422cd22f2b22194e6",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:f00c6daf58b1a12b8ba3f4213553524fa487025f1da3566dc65ef927c8fc42be",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:f354985772d2dc4eddd8edcea012878b74d908e206a9902b036bd457759c0311",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:f79577fcff83657e03e4ada6c88f773b9cba9a0c1c0bf407405ad82e0fa8a971",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api",
+      "version": "sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2",
+      "by": "(no delete policy matches)"
+    },
+    {
+      "package": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-web",
+      "version": "sha256:d8244804eb4fa7db5b0ebe25f0177f4270409e3a6d5f484418efcd03b086ee2b",
+      "by": "(no delete policy matches)"
+    }
+  ]
+}

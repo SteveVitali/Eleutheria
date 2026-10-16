@@ -1403,6 +1403,51 @@ def build_parser() -> argparse.ArgumentParser:
     alert_cmd.add_argument("--severity", default="critical", choices=["warn", "alarm", "critical"])
     alert_cmd.add_argument("--message", required=True, help="human-readable alert text")
 
+    alert_serve = sub.add_parser(
+        "alert-serve",
+        help="run the repo-owned sig-alerts receiver (P35.1b / G1-11): POST with "
+        "the SIG_ALERT_WEBHOOK_TOKEN bearer → a scrubbed SIG-ALERT-RECEIVED log "
+        "line → 204. The digest-pinned rebuild target for the inline base64 "
+        "service.",
+    )
+    alert_serve.add_argument(
+        "--port",
+        type=int,
+        default=0,
+        help="listen port (default: $PORT, else 8080 — the Cloud Run contract)",
+    )
+
+    arcleanup = sub.add_parser(
+        "ar-cleanup",
+        help="P35.1b: the Artifact Registry cleanup-policy evaluator — compute "
+        "the candidate delete set or the merged (static + live-referenced) "
+        "policy offline before fleet-sweep.sh applies it",
+    )
+    arsub = arcleanup.add_subparsers(dest="ar_cleanup_command")
+    ar_merge = arsub.add_parser(
+        "merged-policy",
+        help="print the committed policy + the generated keep-live-referenced "
+        "policy for the digests listed in --digests (one sha256:… per line)",
+    )
+    ar_merge.add_argument("--policy", required=True, help="the committed policy JSON")
+    ar_merge.add_argument("--digests", required=True, help="live-referenced digests file")
+    ar_cand = arsub.add_parser(
+        "candidates",
+        help="evaluate a policy against an image-version list → the recorded "
+        "candidate delete set (sig.ar-cleanup-candidates/1; exit 0)",
+    )
+    ar_cand.add_argument("--policy", required=True, help="policy JSON (the merged file)")
+    ar_cand.add_argument(
+        "--images",
+        required=True,
+        help="`gcloud artifacts docker images list --include-tags --format=json` output",
+    )
+    ar_cand.add_argument(
+        "--now",
+        default=None,
+        help="evaluation instant (ISO-8601; default: now — tests pin it)",
+    )
+
     mdefs = sub.add_parser(
         "monitoring-defs",
         help="P34.4 (QA-3/QA-4/QA-5): the committed Cloud Monitoring alert set in "
@@ -3920,7 +3965,7 @@ def _cmd_sink_bench(args: argparse.Namespace) -> int:
 
 
 def _cmd_cadence(args: argparse.Namespace) -> int:
-    from .live_diff import lint_cadence_crons, pin_lint
+    from .live_diff import lint_cadence_crons, pin_lint, retired_lint
     from .scheduled import load_cadence, unscheduled_live_sources
 
     cadence = load_cadence(args.cadence)
@@ -3950,6 +3995,10 @@ def _cmd_cadence(args: argparse.Namespace) -> int:
         print("declared-manual jobs (no trigger expected):")
         for mj in cadence.manual_jobs:
             print(f"  {mj.job}")
+    if cadence.retired_jobs:
+        print("retired jobs (P35.1b sweep — declared absent):")
+        for rj in cadence.retired_jobs:
+            print(f"  {rj.job}")
     if cadence.live_diff is not None:
         ld = cadence.live_diff
         print(f"live-diff trigger: {ld.scheduler} cron={ld.cron!r} → {ld.job} {ld.args!r}")
@@ -3962,7 +4011,7 @@ def _cmd_cadence(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         failed = True
-    lint = lint_cadence_crons(cadence) + pin_lint(cadence)
+    lint = lint_cadence_crons(cadence) + pin_lint(cadence) + retired_lint(cadence)
     if lint:
         print("cadence lint FAILED:", file=sys.stderr)
         for problem in lint:
@@ -4073,6 +4122,54 @@ def _cmd_alert(args: argparse.Namespace) -> int:
         f"(ledger {_alert_ledger_path()})"
     )
     return 0
+
+
+def _cmd_alert_serve(args: argparse.Namespace) -> int:
+    from .alerts import serve_alert_receiver
+
+    port = args.port or int(os.environ.get("PORT") or 8080)
+    serve_alert_receiver(port)
+    return 0
+
+
+def _cmd_ar_cleanup(args: argparse.Namespace) -> int:
+    from datetime import UTC, datetime
+
+    from .ar_cleanup import (
+        CleanupPolicyError,
+        evaluate,
+        load_policy,
+        merge_live_referenced,
+        normalize_docker_images,
+    )
+
+    try:
+        policies = load_policy(args.policy)
+        digests: list[str] = []
+        digests_path = getattr(args, "digests", None)
+        if digests_path:
+            digests = [
+                ln.strip()
+                for ln in Path(digests_path).read_text(encoding="utf-8").splitlines()
+                if ln.strip() and not ln.startswith("#")
+            ]
+        policies = merge_live_referenced(policies, digests)
+        if args.ar_cleanup_command == "merged-policy":
+            print(json.dumps(policies, indent=2))
+            return 0
+        if args.ar_cleanup_command == "candidates":
+            raw = json.loads(Path(args.images).read_text(encoding="utf-8"))
+            versions = normalize_docker_images(raw)
+            if args.now:
+                now = datetime.fromisoformat(args.now.replace("Z", "+00:00"))
+            else:
+                now = datetime.now(UTC)
+            print(json.dumps(evaluate(policies, versions, now=now), indent=2))
+            return 0
+        raise SystemExit("ar-cleanup needs a subcommand (merged-policy|candidates)")
+    except (CleanupPolicyError, OSError, json.JSONDecodeError) as exc:
+        print(f"ar-cleanup: {exc}", file=sys.stderr)
+        return 64
 
 
 def _cmd_dashboard(args: argparse.Namespace) -> int:
@@ -4694,6 +4791,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_alerts(args)
     if args.command == "alert":
         return _cmd_alert(args)
+    if args.command == "alert-serve":
+        return _cmd_alert_serve(args)
+    if args.command == "ar-cleanup":
+        return _cmd_ar_cleanup(args)
     if args.command == "monitoring-defs":
         return _cmd_monitoring_defs(args)
     if args.command == "dashboard":
