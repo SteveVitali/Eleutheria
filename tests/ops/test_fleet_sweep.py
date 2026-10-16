@@ -46,7 +46,7 @@ MANUAL = ["sig-export", "sig-materialize", "sig-replay-ingest"]
 # Clock values injected as SIG_SWEEP_NOW — they reproduce the contract window
 # offline; no apply ever runs against real infrastructure.
 IN_WINDOW = "2026-10-15T15:00:00Z"  # a Thursday inside 14:00–20:00Z
-WEEKEND = "2026-10-17T15:00:00Z"  # a Saturday — excluded
+WEEKEND = "2026-10-17T15:00:00Z"  # a Saturday — excluded  # future-ok: synthetic: fixed weekend instant for the window gate
 EARLY = "2026-10-15T09:00:00Z"  # a weekday before 14:00Z
 
 
