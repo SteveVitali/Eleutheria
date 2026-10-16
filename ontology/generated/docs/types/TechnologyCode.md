@@ -6,7 +6,7 @@ search:
 
 
 
-_A slug from the versioned SKOS Technology concept scheme (§13.1). Bound to the scheme by IRI; the authoritative term list is the generated SKOS artifact, never inlined here (so the 14/36/104 counts have one home)._
+_A slug from the versioned SKOS Technology concept scheme (§13.1). Bound to the scheme by IRI; the authoritative term list is the generated SKOS artifact, never inlined here (so the 14/37/110 counts have one home)._
 
 
 

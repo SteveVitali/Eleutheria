@@ -54,7 +54,7 @@ types:
     description: >-
       A slug from the versioned SKOS Technology concept scheme (§13.1). Bound to
       the scheme by IRI; the authoritative term list is the generated SKOS
-      artifact, never inlined here (so the 14/36/104 counts have one home).
+      artifact, never inlined here (so the 14/37/110 counts have one home).
   capability_code:
     typeof: string
     base: str
@@ -641,6 +641,20 @@ enums:
       place_centroid: {description: "The centroid of a containing place; coarse."}
       organization_centroid_or_unknown:
         description: "An agency-registry point of unknown precision; barred from point-in-polygon and address use (SIG-IDENT-004)."
+  GeometryKind:
+    description: >-
+      The geometry shape kind a record declares for its subject (§19,
+      SIG-GEO-003): the asset model MUST NOT assume a point. A record whose
+      publisher's geometry is a zone or programme area declares `area` —
+      automated-traffic-enforcement zones and published camera programme areas
+      are areas, never device points — and a route-shaped record declares
+      `line`. The `geometry_kind` predicate (ontology/vocab/predicates.yaml)
+      carries this vocabulary's member on the claim surface; an area-shaped
+      record MUST NOT be flattened to a device point.
+    permissible_values:
+      point: {description: "A point geometry — one coordinate site (a device point)."}
+      line: {description: "A linear geometry — an enforced route or corridor segment."}
+      area: {description: "An area geometry — a zone or programme area (e.g. an ATE zone or a published camera coverage polygon); never a device point (SIG-GEO-003)."}
 
   # --- Internationalized, country-namespaced enums (§13.7, SIG-ONTO-068) ------
   # A US-shaped enum is prohibited; each carries an abstract parent plus national

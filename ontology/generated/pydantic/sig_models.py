@@ -885,6 +885,24 @@ class GeometryPrecision(str, Enum):
     """
 
 
+class GeometryKind(str, Enum):
+    """
+    The geometry shape kind a record declares for its subject (§19, SIG-GEO-003): the asset model MUST NOT assume a point. A record whose publisher's geometry is a zone or programme area declares `area` — automated-traffic-enforcement zones and published camera programme areas are areas, never device points — and a route-shaped record declares `line`. The `geometry_kind` predicate (ontology/vocab/predicates.yaml) carries this vocabulary's member on the claim surface; an area-shaped record MUST NOT be flattened to a device point.
+    """
+    point = "point"
+    """
+    A point geometry — one coordinate site (a device point).
+    """
+    line = "line"
+    """
+    A linear geometry — an enforced route or corridor segment.
+    """
+    area = "area"
+    """
+    An area geometry — a zone or programme area (e.g. an ATE zone or a published camera coverage polygon); never a device point (SIG-GEO-003).
+    """
+
+
 class JurisdictionType(str, Enum):
     """
     Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract levels every country's hierarchy maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs its own level names in without widening a US-shaped enum.

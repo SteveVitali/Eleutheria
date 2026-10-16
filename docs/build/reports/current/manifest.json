@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "1dfa53fe6afca7737e8d1cff16f789a52ef13429",
+  "input_commit": "435dc3810a364eed54e55a5a1a0e63abfacb6321",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "a188f9aaea4986773047d9260d4b86a9c62902176882ed9e87576f16131865bd"
+      "sha256": "e844e6b8eb68b80050b6ddf5cd239de0e3a4ff1870ea94ab8af224c70ec10b0d"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -809,16 +809,20 @@
       "sha256": "2bd09f91239a222ecf7949991bcdc486079b925bd9ef30c49fa3444470d0b032"
     },
     {
+      "path": "docs/adr/ADR-207-ate-technology-family-and-the-declared-geometry-kind.md",
+      "sha256": "bc4f8fd56ea55f12bc35cebd451cac26e8a97f887263849cacc0bcbc62f00376"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "f479ecdd581f134de5a33d43ff19fc4dc1c3db5ef1126cf18af2273651c90e04"
+      "sha256": "e8f9577de89e346fe61840c2c4d6990a0201e7b87aad829598f2a8661480b9b6"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "2ce8566fba29c0f2747c6b7e376642a94d423785e02a5108144592bf9422100a"
+      "sha256": "41245f3ccb89e5e23d0b54cf01f67c50f77b891cb2d5f36e13b8c67214768a64"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "e445e10e400cb8787de1d9dcb0360b2cdb53744f6622188b861ceaa532ff721b"
+      "sha256": "8bdd102b06965c9e3dc1a4070803a1fcfa099f0e4616fda3576076eeaed1468c"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -826,7 +830,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "7c8bddce4a53781a762b3615015a5cbbae5d267cc22999fab18db4616da60fa2"
+      "sha256": "9680108ccac903b74b130d8f9f045f4b6abd437bfcf9dcb39c8bf1fbbfc3dcae"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1941,6 +1945,10 @@
       "sha256": "364140aa6dba9d85871d73460f4e054cbd0979ee148e6b899c90a6195d6963c6"
     },
     {
+      "path": "docs/build/runs/P36.3.md",
+      "sha256": "10e37c87d4673e8ebfc3f5121a85a98c2d3e26604c5d3755186e9ee12635e1bd"
+    },
+    {
       "path": "docs/build/runs/PLAN-11B.md",
       "sha256": "b7b5288eec03dc5a01384363494317f6a171f85579f93f6ad562436454f0d9eb"
     },
@@ -2046,11 +2054,11 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "012aa062385377b88d1e68cd990535f2df22b0b994e1245ad0d8dc19b38616f8"
+      "sha256": "fa8825fce3a0a687511c908735e88d9033c8367222e2dee34bf76bfc6629227c"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "35afac8eb87fd5d40a37fe8b182bcd84bd5f99137627c72ef80bf94b33aeceaa"
+      "sha256": "0d53bc46e5b23a23f01a5290254780d908dc36debcd607b40d481663ed5d0695"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",

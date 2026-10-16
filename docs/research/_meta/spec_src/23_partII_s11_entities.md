@@ -142,7 +142,7 @@ capability is not configured capability.)*
 **SIG-ONTO-019 (MUST).** `Technology` MUST be a **three-level** hierarchy —
 `domain` → `family` → `technology` — not a flat list. *(R7-F7.3; corrects OL-8.4-01.)*
 
-The canonical vocabulary is **104 technologies / 36 families / 14 domains** (§13.1). Rationale:
+The canonical vocabulary is **110 technologies / 37 families / 14 domains** (§13.1). Rationale:
 a flat list cannot serve both rollup queries ("how many agencies have any biometric
 identification?") and the discrimination the evidence supports (a covert trailer-mounted ALPR is
 a different procurement, legal posture, and detection signature from a pole-mounted fixed one).

@@ -24,6 +24,20 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Automated-traffic-enforcement technology concept and the declared
+  geometry kind** (P36.3 / ACQ-03, ADR-207; cites SIG-ONTO-019/020/022/
+  052/052a/056, SIG-GEO-003, SIG-ONTO-066/067) — the `ate` family under
+  `surveillance-vehicle` carries six active leaves
+  (`ate-red-light`, `ate-speed`, `ate-bus-lane`,
+  `ate-school-bus-stop-arm`, `ate-work-zone`, `ate-unspecified`), each
+  with the distinguishing-criterion / evidence-signature / salience
+  triple, moving the canonical vocabulary to 14 domains / 37 families /
+  110 active technologies; the `GeometryKind` enum
+  (`point` | `line` | `area`) and the `geometry_kind` predicate let a
+  record declare an area shape so an ATE zone or published programme
+  area is never flattened to a device point. The canonical spec's
+  §13.1 counts and §11.5 echo are amended through `spec_src`.
+
 - **Declared technology typing on camera-registry records** (P35.15a /
   PKG-07; cites F-329, F-523, NEW-7/FM-05, SIG-ONTO-052a–056,
   SIG-ONTO-027, SIG-RECON-013-family) — every camera-registry target now

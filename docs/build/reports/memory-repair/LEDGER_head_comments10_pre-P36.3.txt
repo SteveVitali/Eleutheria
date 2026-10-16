@@ -1,0 +1,4 @@
+<!-- Archived head line byte-for-byte (the head State line before P35.14b's closeout) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.14b.txt, sha256 37c05d0f3f156f95… (P35.14b; BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P35.15a) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.15a.txt, sha256 b97c37f503b059ab… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P35.15b) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P35.15b.txt, sha256 238249dce45fdf56… (BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.3) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.3.txt, sha256 b765fcafeb4dedee… (BM-LEDGER-08). -->

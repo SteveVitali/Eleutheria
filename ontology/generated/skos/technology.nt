@@ -137,6 +137,81 @@
 <https://ontology.sig-project.org/vocab/technology/1.0.0/analytics-inference> <http://www.w3.org/2004/02/skos/core#prefLabel> "Analytics and inference"@en .
 <https://ontology.sig-project.org/vocab/technology/1.0.0/analytics-inference> <http://www.w3.org/2004/02/skos/core#topConceptOf> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
 <https://ontology.sig-project.org/vocab/technology/1.0.0/analytics-inference> <https://ontology.sig-project.org/schema/hierarchyLevel> "domain" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/ate> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <http://www.w3.org/2004/02/skos/core#definition> "Automated citation for unauthorised use of a bus/transit-only lane, enforced per route or corridor." .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <http://www.w3.org/2004/02/skos/core#notation> "ate-bus-lane" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <http://www.w3.org/2004/02/skos/core#prefLabel> "Bus-lane enforcement camera"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <https://ontology.sig-project.org/schema/evidenceSignature> "automated bus lane enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <https://ontology.sig-project.org/schema/evidenceSignature> "bus lane camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <https://ontology.sig-project.org/schema/evidenceSignature> "bus lane enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <https://ontology.sig-project.org/schema/hierarchyLevel> "technology" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-bus-lane> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/ate> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <http://www.w3.org/2004/02/skos/core#definition> "Automated citation triggered by a vehicle entering or crossing an intersection against a red signal." .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <http://www.w3.org/2004/02/skos/core#notation> "ate-red-light" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <http://www.w3.org/2004/02/skos/core#prefLabel> "Red-light enforcement camera"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <https://ontology.sig-project.org/schema/evidenceSignature> "photo red light" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <https://ontology.sig-project.org/schema/evidenceSignature> "red light camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <https://ontology.sig-project.org/schema/evidenceSignature> "red light running" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <https://ontology.sig-project.org/schema/evidenceSignature> "red-light safety camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <https://ontology.sig-project.org/schema/hierarchyLevel> "technology" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-red-light> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/ate> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <http://www.w3.org/2004/02/skos/core#definition> "Automated citation for passing a school bus with its stop arm deployed." .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <http://www.w3.org/2004/02/skos/core#notation> "ate-school-bus-stop-arm" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <http://www.w3.org/2004/02/skos/core#prefLabel> "School-bus stop-arm enforcement camera"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <https://ontology.sig-project.org/schema/evidenceSignature> "school bus camera program" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <https://ontology.sig-project.org/schema/evidenceSignature> "school bus stop arm camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <https://ontology.sig-project.org/schema/evidenceSignature> "stop-arm violation" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <https://ontology.sig-project.org/schema/hierarchyLevel> "technology" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-school-bus-stop-arm> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/ate> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <http://www.w3.org/2004/02/skos/core#definition> "Automated citation triggered by a measured vehicle speed over the posted limit (fixed-site or average-speed)." .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <http://www.w3.org/2004/02/skos/core#notation> "ate-speed" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <http://www.w3.org/2004/02/skos/core#prefLabel> "Speed enforcement camera"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <https://ontology.sig-project.org/schema/evidenceSignature> "automated speed enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <https://ontology.sig-project.org/schema/evidenceSignature> "photo speed" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <https://ontology.sig-project.org/schema/evidenceSignature> "speed camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <https://ontology.sig-project.org/schema/evidenceSignature> "speed safety camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <https://ontology.sig-project.org/schema/hierarchyLevel> "technology" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-speed> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/ate> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <http://www.w3.org/2004/02/skos/core#definition> "The coarsest level: evidence names the family but not the discriminator separating its specific technologies." .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <http://www.w3.org/2004/02/skos/core#notation> "ate-unspecified" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <http://www.w3.org/2004/02/skos/core#prefLabel> "Automated traffic enforcement (unspecified)"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <https://ontology.sig-project.org/schema/evidenceSignature> "automated enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <https://ontology.sig-project.org/schema/evidenceSignature> "automated traffic enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <https://ontology.sig-project.org/schema/evidenceSignature> "photo enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <https://ontology.sig-project.org/schema/evidenceSignature> "traffic safety camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <https://ontology.sig-project.org/schema/hierarchyLevel> "technology" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-unspecified> <https://ontology.sig-project.org/schema/salience> "H" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/ate> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <http://www.w3.org/2004/02/skos/core#definition> "Automated speed enforcement deployed inside a highway work or construction zone." .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <http://www.w3.org/2004/02/skos/core#notation> "ate-work-zone" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <http://www.w3.org/2004/02/skos/core#prefLabel> "Work-zone enforcement camera"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <https://ontology.sig-project.org/schema/evidenceSignature> "automated work zone speed enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <https://ontology.sig-project.org/schema/evidenceSignature> "work zone automated enforcement" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <https://ontology.sig-project.org/schema/evidenceSignature> "work zone speed camera" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <https://ontology.sig-project.org/schema/hierarchyLevel> "technology" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate-work-zone> <https://ontology.sig-project.org/schema/salience> "M" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/technology/1.0.0/surveillance-vehicle> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate> <http://www.w3.org/2004/02/skos/core#notation> "ate" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate> <http://www.w3.org/2004/02/skos/core#prefLabel> "Automated traffic enforcement"@en .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/ate> <https://ontology.sig-project.org/schema/hierarchyLevel> "family" .
 <https://ontology.sig-project.org/vocab/technology/1.0.0/biometric-id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/technology/1.0.0/biometric-id> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/technology/1.0.0> .
 <https://ontology.sig-project.org/vocab/technology/1.0.0/biometric-id> <http://www.w3.org/2004/02/skos/core#notation> "biometric-id" .
