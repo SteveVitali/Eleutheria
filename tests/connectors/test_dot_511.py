@@ -206,7 +206,15 @@ def _claims(report) -> list[Mapping[str, Any]]:
 
 
 def _entities(report) -> list[Mapping[str, Any]]:
-    return [c for c in report.claims if c.get("record_kind") == "traffic_camera"]
+    # P35.15a: the entity row is the registry-record assertion — its record_kind
+    # is the declared subtype (a technology slug, or the literal
+    # ``traffic_camera`` only when the target says so); select on the predicate.
+    return [
+        c
+        for c in report.claims
+        if c.get("predicate_id") == "traffic_camera"
+        and c.get("record_kind") != "camera_record_rejected"
+    ]
 
 
 def _rejections(report) -> list[Mapping[str, Any]]:
@@ -1055,3 +1063,143 @@ def test_p26_13_replay_and_shadow_are_deterministic() -> None:
     assert replay_fingerprint(replay_a) == replay_fingerprint(replay_b)
     diff = shadow_replay(connector, ctx, fixture_report.captures, fixture_report.claims)
     assert diff.changed_count == 0, f"shadow diff must be empty: {diff.summary()}"
+
+
+# --- P35.15a / PKG-07: the declared technology slug (F-329, F-523) ------------------
+#
+# A camera-registry record's declared subtype is the TARGET's technology slug —
+# an active member of ontology/vocab/technology.yaml — never the blanket
+# traffic_camera typing every subject carried before this row, and never a
+# name-substring guess (the NEW-7/FM-05 defect the ER half now replaces).
+
+
+def _tech_target(slug: str, *, record_kind: str | None = None) -> dict[str, Any]:
+    row: dict[str, Any] = {
+        "id": "t_tech",
+        "kind": "arcgis_query",
+        "layer_url": "https://services1.arcgis.com/abc/arcgis/rest/services/L/FeatureServer/0",
+        "observed_count": 1,
+        "object_id_field": "OBJECTID",
+        "state": "OK",
+        "agency": "A",
+        "technology": slug,
+    }
+    if record_kind is not None:
+        row["record_kind"] = record_kind
+    return row
+
+
+def _tech_entry(source_id: str, target: Mapping[str, Any]) -> dot_511.CameraRegistryEntry:
+    raw: dict[str, Any] = {
+        "record_kind": "camera_feature",
+        "feature_index": 0,
+        "fields": {"camid": "cam-1", "name": "corner cam"},
+        "excluded_fields": (),
+        "geometry": {"x": -97.5, "y": 35.5},
+        "source_uri": "https://x.example/query?where=1%3D1",
+        "retrieved_at": _RETRIEVED.isoformat(),
+        "target": dict(target),
+    }
+    return dot_511._entry_from_raw(source_id, raw, target)
+
+
+def _entity_row(rows: list[Mapping[str, Any]]) -> Mapping[str, Any]:
+    (entity,) = [
+        r
+        for r in rows
+        if r.get("predicate_id") == "traffic_camera"
+        and r.get("record_kind") != "camera_record_rejected"
+    ]
+    return entity
+
+
+def test_every_declared_technology_class_emits_its_slug() -> None:
+    """A fixture entry per declared class: the ``technology`` claim carries the
+    slug verbatim and the entity row's record_kind IS the subtype — a
+    DeFlock-style ALPR row reads ``alpr-fixed``, never the traffic_camera
+    blanket (F-329)."""
+    for slug, source in (
+        ("alpr-fixed", "camreg_lpd_flock"),
+        ("alpr-mobile", "camreg_lpd_flock"),
+        ("fixed-camera-ptz", "dot_511_ok"),
+        ("fixed-camera-cctv", "camreg_city_muni"),
+        ("fixed-camera-unspecified", "camreg_city_muni"),
+        ("camera-trailer-unspecified", "camreg_city_muni"),
+        ("private-camera-integration-live-feeds", "camreg_city_muni"),
+        ("uas-general", "camreg_city_muni"),
+    ):
+        entry = _tech_entry(source, _tech_target(slug))
+        assert entry.subject_id.startswith("traffic_camera:")  # identity anchor unchanged
+        rows = entry.claim_rows("https://x.example/q", "2026-09-17", 0)
+        tech = [r for r in rows if r["predicate_id"] == "technology"]
+        assert [r["value"] for r in tech] == [slug]
+        entity = _entity_row(rows)
+        assert entity["record_kind"] == slug
+        assert entity["record_kind"] != "traffic_camera" or slug == "traffic_camera"
+        assert entity["technology"] == slug
+
+
+def test_a_target_declaring_traffic_camera_keeps_it_explicitly() -> None:
+    """The legacy ``traffic_camera`` subtype stays legal ONLY as a literal
+    target declaration on a fixed/PTZ-camera target — the explicit escape, not
+    the default."""
+    entry = _tech_entry(
+        "dot_511_ky", _tech_target("fixed-camera-ptz", record_kind="traffic_camera")
+    )
+    entity = _entity_row(entry.claim_rows("https://x.example/q", "2026-09-17", 0))
+    assert entity["record_kind"] == "traffic_camera"
+    # the technology claim is still the declared slug — subtype ≠ technology
+    tech = [
+        r
+        for r in entry.claim_rows("https://x.example/q", "2026-09-17", 0)
+        if r["predicate_id"] == "technology"
+    ]
+    assert [r["value"] for r in tech] == ["fixed-camera-ptz"]
+
+
+def test_technology_claim_and_subtype_reach_the_run_report() -> None:
+    """End-to-end over a committed fixture: the declared slug lands as the
+    ``technology`` claim AND the entity row's record_kind."""
+    report = _run_fixture("dot_511_ky", "ky_kytc.json", target_id="ky_kytc_traffic_cameras")
+    tech = [c for c in _claims(report) if c.get("predicate_id") == "technology"]
+    assert tech, "a camera-registry run emits the technology claim"
+    assert {c["value"] for c in tech} == {"fixed-camera-ptz"}
+    assert {e["record_kind"] for e in _entities(report)} == {"fixed-camera-ptz"}
+    # the commit pins the claim inside the connector's allowlist
+    assert "technology" in predicate_allowlist()
+
+
+def test_committed_targets_all_declare_member_slugs() -> None:
+    """`sig-connectors validate` must stay clean: every camera-registry target
+    declares an active registry-member technology slug (PKG-07)."""
+    assert dot_511.target_technology_violations() == []
+
+
+def test_a_missing_slug_fails_the_run_not_the_record() -> None:
+    """TechnologyNotDeclared is deliberately NOT caught into a rejection row —
+    a target without a member slug is a registry defect and the run fails."""
+    target = {
+        "id": "t_tech",
+        "kind": "arcgis_query",
+        "state": "OK",
+        "agency": "A",
+        "sensitivity_class": "C1",
+    }
+    raw = {
+        "record_kind": "camera_feature",
+        "feature_index": 0,
+        "fields": {"camid": "cam-1"},
+        "excluded_fields": (),
+        "geometry": {"x": -97.5, "y": 35.5},
+        "source_uri": "https://x.example/q",
+        "retrieved_at": _RETRIEVED.isoformat(),
+        "target": target,
+    }
+    with pytest.raises(dot_511.TechnologyNotDeclared, match="no 'technology' slug"):
+        dot_511._entry_from_raw("camreg_city_muni", raw, target)
+    with pytest.raises(dot_511.TechnologyNotDeclared, match="not an active member"):
+        dot_511._entry_from_raw(
+            "camreg_city_muni",
+            raw,
+            {**target, "technology": "camera-ptz"},  # retired slug
+        )

@@ -36,7 +36,7 @@ REGISTRY = REPO / "exports/src/exports/data/quality_checks.toml"
 
 def test_v3_interim_ruleset_shape() -> None:
     rules = CameraSiteRules.from_data()
-    assert rules.version == "3-interim"
+    assert rules.version == "3.1-interim"
     assert rules.inferential_tiers == frozenset({3, 4, 5})
     # Tier 1 is the shared-upstream-ref DERIVATION — still a measured
     # auto-write candidate; no inferential tier is.

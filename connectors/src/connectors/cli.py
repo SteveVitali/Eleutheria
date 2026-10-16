@@ -189,6 +189,18 @@ def _validate() -> int:
         for msg in field_violations:
             print(f"VALIDATION FAILED: F-330 field denylist: {msg}")
         return 1
+    # PKG-07 (P35.15a, F-329/F-523): every camera-registry target row must
+    # declare a `technology` slug that is an ACTIVE member of
+    # ontology/vocab/technology.yaml — a missing or out-of-registry slug fails
+    # closed here and at target expansion/emit; the default is never silently
+    # `traffic_camera`.
+    from .dot_511 import target_technology_violations
+
+    tech_violations = target_technology_violations()
+    if tech_violations:
+        for msg in tech_violations:
+            print(f"VALIDATION FAILED: PKG-07 technology slug: {msg}")
+        return 1
     # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
     # under the fail-closed rules — a malformed row is a validation failure,
     # never a silent "no opt-outs".

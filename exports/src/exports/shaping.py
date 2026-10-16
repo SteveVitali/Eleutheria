@@ -94,7 +94,9 @@ from resolution.partner_identity import PARTNER_PREDICATES
 from .audit import _LATEST_DECISION_CTE, GEO_PREDICATES, JURISDICTION_PREDICATE
 
 #: The shaped-dataset output schema version — bumped when the emitted shape changes.
-SHAPING_SCHEMA_VERSION = "p27.3/1.0.0"
+#: p35.15a/1.1.0 — PKG-07: sites carry the declared SKOS `technology` slug
+#: (envelope + resolved value) for the map/dossier/search facets.
+SHAPING_SCHEMA_VERSION = "p35.15a/1.1.0"
 
 LAT_PREDICATE = GEO_PREDICATES[0]  # camera_latitude
 LON_PREDICATE = GEO_PREDICATES[1]  # camera_longitude
@@ -102,10 +104,21 @@ LON_PREDICATE = GEO_PREDICATES[1]  # camera_longitude
 #: The label predicate — a deployment's display name when a source provides one.
 LABEL_PREDICATE = "camera_name"
 
+#: P35.15a / PKG-07: the declared SKOS technology slug (a `technology` claim —
+#: multi-cardinality, so a subject CAN assert several; the envelope keeps that
+#: contradiction visible and the resolved value stays ``None`` when disputed).
+TECHNOLOGY_PREDICATE = "technology"
+
 #: The claim predicates the shaping layer reads to assemble sites. Anything else a
 #: subject carries (camera_operator, external refs, …) is evidence for P27.4
 #: dossiers but not needed to shape geometry/jurisdiction/coverage.
-SHAPING_PREDICATES = (LAT_PREDICATE, LON_PREDICATE, JURISDICTION_PREDICATE, LABEL_PREDICATE)
+SHAPING_PREDICATES = (
+    LAT_PREDICATE,
+    LON_PREDICATE,
+    JURISDICTION_PREDICATE,
+    LABEL_PREDICATE,
+    TECHNOLOGY_PREDICATE,
+)
 
 #: The literal value a source asserts when it cannot name a jurisdiction — an
 #: honest first-class bucket, never dropped (P27.3 deliverable 2).
@@ -311,6 +324,11 @@ class ShapedSite:
     entity_type: str
     observation_level: str  # always "observation" (ADR-092)
     label: str | None
+    #: P35.15a / PKG-07: the subject's declared SKOS technology slug when one
+    #: resolved (``None`` when unreported or conflicted — the envelope keeps the
+    #: disagreement visible); ``technology_status`` is the envelope status.
+    technology: str | None
+    technology_status: EnvelopeStatus
     jurisdiction: str
     jurisdiction_status: EnvelopeStatus
     latitude: float | None
@@ -341,6 +359,7 @@ class ShapedSite:
     lat_envelope: ObservationEnvelope
     lon_envelope: ObservationEnvelope
     jurisdiction_envelope: ObservationEnvelope
+    technology_envelope: ObservationEnvelope
 
     def geojson_feature(self) -> dict[str, Any]:
         """The GeoJSON Feature: Point when resolved, null geometry otherwise."""
@@ -358,6 +377,8 @@ class ShapedSite:
                 "entity_type": self.entity_type,
                 "observation_level": self.observation_level,
                 "label": self.label,
+                "technology": self.technology,
+                "technology_status": self.technology_status,
                 "jurisdiction": self.jurisdiction,
                 "jurisdiction_status": self.jurisdiction_status,
                 "point_status": self.point_status,
@@ -381,6 +402,8 @@ class ShapedSite:
             "entity_type": self.entity_type,
             "observation_level": self.observation_level,
             "label": self.label,
+            "technology": self.technology,
+            "technology_status": self.technology_status,
             "jurisdiction": self.jurisdiction,
             "jurisdiction_status": self.jurisdiction_status,
             "latitude": self.latitude,
@@ -402,6 +425,7 @@ class ShapedSite:
                 LAT_PREDICATE: self.lat_envelope.as_json(),
                 LON_PREDICATE: self.lon_envelope.as_json(),
                 JURISDICTION_PREDICATE: self.jurisdiction_envelope.as_json(),
+                TECHNOLOGY_PREDICATE: self.technology_envelope.as_json(),
             },
         }
 
@@ -1034,6 +1058,7 @@ def shape_sites(
             JURISDICTION_PREDICATE, by_pred.get(JURISDICTION_PREDICATE, ())
         )
         label_env = observation_envelope(LABEL_PREDICATE, by_pred.get(LABEL_PREDICATE, ()))
+        tech_env = observation_envelope(TECHNOLOGY_PREDICATE, by_pred.get(TECHNOLOGY_PREDICATE, ()))
 
         tier = max(c.sensitivity_tier for c in subject_claims)
         precision = precision_for_tier(tier)
@@ -1071,6 +1096,7 @@ def shape_sites(
                     (LON_PREDICATE, lon_env),
                     (JURISDICTION_PREDICATE, jur_env),
                     (LABEL_PREDICATE, label_env),
+                    (TECHNOLOGY_PREDICATE, tech_env),
                 )
                 if env.status == ENVELOPE_CONFLICTED
             )
@@ -1116,6 +1142,8 @@ def shape_sites(
                 entity_type=entity_types.get(subject_id, "(unknown)"),
                 observation_level="observation",
                 label=label_env.value if label_env.status == ENVELOPE_RESOLVED else None,
+                technology=(str(tech_env.value) if tech_env.status == ENVELOPE_RESOLVED else None),
+                technology_status=tech_env.status,
                 jurisdiction=jurisdiction,
                 jurisdiction_status=jur_env.status,
                 latitude=lat,
@@ -1138,6 +1166,7 @@ def shape_sites(
                 lat_envelope=lat_env,
                 lon_envelope=lon_env,
                 jurisdiction_envelope=jur_env,
+                technology_envelope=tech_env,
             )
         )
     return sites

@@ -41,7 +41,9 @@ from resolution.camera_sites import (
     cluster_decisions,
     cluster_summary,
     decide_auto_write_tiers,
+    declared_device_class,
     device_class,
+    device_class_findings,
     direction_bearing,
     fold_human_verdicts,
     infer_duplicate_targets,
@@ -173,6 +175,97 @@ def test_incompatible_device_classes_are_never_candidates() -> None:
     result = resolve_camera_sites([alpr, traffic], gold=None, threshold=0.98)
     assert result.incompatible_blocked == 1
     assert result.decisions == ()
+
+
+# --- P35.15a / PKG-07: declared technology owns the device class --------------------
+
+
+def test_declared_technology_owns_the_device_class() -> None:
+    """The subject's declared SKOS slug classifies it (NEW-7 / FM-05): a
+    ``dot_511``-source record declaring ``alpr-fixed`` is an ALPR — the
+    ``dot``/``511`` source substrings can no longer misclassify the largest
+    ALPR group. The substring rules remain ONLY the fallback for records
+    carrying no declaration (the pre-backfill spine)."""
+    alpr = _rec("a", "dot_511_ak", technology="alpr-fixed", declared_technologies=("alpr-fixed",))
+    assert declared_device_class(alpr, RULES) == "alpr"
+    assert device_class(alpr, RULES) == "alpr"  # the `dot_` prefix loses to the declaration
+    ptz = _rec(
+        "b",
+        "camreg_city_muni",
+        technology="fixed-camera-ptz",
+        declared_technologies=("fixed-camera-ptz",),
+    )
+    assert device_class(ptz, RULES) == "traffic"
+    cctv = _rec(
+        "c",
+        "camreg_osm_surveillance",
+        technology="fixed-camera-cctv",
+        declared_technologies=("fixed-camera-cctv",),
+    )
+    assert device_class(cctv, RULES) == "cctv"
+    # a declared slug matching no technology_rule is the default class — but the
+    # declaration still owns the classification (no substring fallback for it)
+    unspecified = _rec(
+        "u", "dot_511_ok", technology="uas-general", declared_technologies=("uas-general",)
+    )
+    assert device_class(unspecified, RULES) == "unspecified"
+    # no declaration -> the legacy substring rules still apply (pre-P35.15b rows)
+    legacy = _rec("l", "dot_511_ok")
+    assert declared_device_class(legacy, RULES) is None
+    assert device_class(legacy, RULES) == "traffic"
+
+
+def test_declared_incompatible_technologies_are_never_candidates() -> None:
+    """Declared classes honour the same incompatible matrix: an ALPR-declared
+    subject and a CCTV-declared subject at one point never become a candidate."""
+    alpr = _rec("a", "camreg_lpd", technology="alpr-fixed", declared_technologies=("alpr-fixed",))
+    cctv = _rec(
+        "b",
+        "camreg_city_muni",
+        0.2,
+        technology="fixed-camera-cctv",
+        declared_technologies=("fixed-camera-cctv",),
+    )
+    assert assess_pairs([alpr, cctv]) == ()
+    result = resolve_camera_sites([alpr, cctv], gold=None, threshold=0.98)
+    assert result.incompatible_blocked == 1
+
+
+def test_a_substring_disagreement_is_a_recorded_finding() -> None:
+    """A declared-vs-substring class mismatch is logged, never silently
+    overridden — the run carries the finding and the declared class wins."""
+    alpr = _rec("a", "dot_511_ak", technology="alpr-fixed", declared_technologies=("alpr-fixed",))
+    (finding,) = device_class_findings([alpr], RULES)
+    assert finding.kind == "declared_substring_mismatch"
+    assert finding.subject_id == "a"
+    assert finding.declared_class == "alpr" and finding.substring_class == "traffic"
+    assert finding.matched_by == "source_id"
+    result = resolve_camera_sites([alpr], gold=None, threshold=0.98)
+    assert [f["kind"] for f in result.summary()["device_class_findings"]] == [
+        "declared_substring_mismatch"
+    ]
+    # no disagreement when the substring rules agree or hold no opinion
+    traffic = _rec("t", "dot_511_ok", technology="fixed-camera-ptz")
+    quiet = _rec("q", "camreg_city_muni", technology="alpr-fixed")
+    assert device_class_findings([traffic, quiet], RULES) == ()
+
+
+def test_mixed_and_undeclared_technologies_are_reported_not_coerced() -> None:
+    mixed = _rec(
+        "a",
+        "s1",
+        technology="alpr-fixed",
+        declared_technologies=("alpr-fixed", "fixed-camera-cctv"),
+    )
+    legacy = _rec("b", "s2", 3.0)
+    result = resolve_camera_sites([mixed, legacy], gold=None, threshold=0.98)
+    assert result.mixed_technology_subjects == 1
+    assert result.records_without_declared_technology == 1
+    assert {f.kind for f in result.device_class_findings} == {"multiple_declared_technologies"}
+    summary = result.summary()
+    assert summary["mixed_technology_subjects"] == 1
+    assert summary["records_without_declared_technology"] == 1
+    assert summary["declared_technology_records"] == 1
 
 
 @pytest.mark.parametrize(

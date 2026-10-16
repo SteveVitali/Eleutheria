@@ -56,6 +56,8 @@ __all__ = [
 ]
 
 #: The camera-registry predicates a record is assembled from (ADR-104 registry rows).
+#: P35.15a / PKG-07 adds ``technology`` — the subject's declared SKOS technology
+#: slug, the claim the connector emits from its target's declared value.
 CAMERA_PREDICATES = (
     "camera_latitude",
     "camera_longitude",
@@ -66,6 +68,7 @@ CAMERA_PREDICATES = (
     "camera_operator",
     "camera_jurisdiction",
     "camera_type",
+    "technology",
 )
 
 _FIELD = {
@@ -76,6 +79,7 @@ _FIELD = {
     "camera_operator": "operator",
     "camera_jurisdiction": "jurisdiction",
     "camera_type": "camera_type",
+    "technology": "technology",
 }
 
 #: The claims a decision cites as its evidence (coordinates + the upstream reference).
@@ -132,6 +136,17 @@ _DIGESTS_SQL = (
     "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
     " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
     "   AND c.predicate_id = ANY(%s)"
+)
+
+# P35.15a / PKG-07: ``technology`` is a MULTI-cardinality predicate — the
+# record's ``technology`` field is the latest claim (the shared temporal
+# contract) but ``declared_technologies`` collects every DISTINCT current slug
+# so a subject asserting more than one is reported as mixed, never coerced.
+_TECH_VALUES_SQL = (
+    "SELECT DISTINCT c.subject_id::text, c.value_text "
+    "  FROM claim c "
+    " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
+    "   AND c.predicate_id = 'technology'"
 )
 
 # The append-only review surface the run consumes: camera-site items bind a pair
@@ -203,6 +218,10 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
         tgt = by_subject.get(subject)
         if tgt is not None:
             tgt.setdefault("digests", set()).add(digest)
+    for subject, slug in conn.execute(_TECH_VALUES_SQL).fetchall():
+        tgt = by_subject.get(subject)
+        if tgt is not None and slug:
+            tgt.setdefault("technologies", set()).add(str(slug))
 
     # The atomic pair: bind sets of the two selected coordinate claims.
     coord_claims = [
@@ -263,6 +282,7 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
                 capture_digests=tuple(sorted(rec.get("digests") or ())),
                 coordinate_capture_id=pair_capture,
                 coordinate_retrieved_at=pair_retrieved_at,
+                declared_technologies=tuple(sorted(rec.get("technologies") or ())),
                 **{field: rec.get(pred) for pred, field in _FIELD.items()},
             )
         )

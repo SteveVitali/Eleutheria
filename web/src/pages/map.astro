@@ -42,6 +42,7 @@ import {
   partitionByLocatability,
   readsAsDensity,
   renderBin,
+  technologyLabel,
 } from "../lib/map";
 import { EMPTY_TILE_STATE_NOTE, mapAttributionLine } from "../lib/map-tiles";
 import {
@@ -82,6 +83,10 @@ const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }
 // per-jurisdiction summary band so a reader sees the shape before the (capped) rows.
 const locatableRows = capRows(locatable);
 const assetsByJurisdiction = summariseBy(locatable, (a) => a.jurisdiction);
+// P35.15a / PKG-07: the declared-technology facet band — grouped by the
+// subject's declared SKOS slug; records with no declaration count honestly
+// under "unreported" (or "conflicted declarations"), never guessed.
+const assetsByTechnology = summariseBy(locatable, (a) => technologyLabel(a));
 
 // Which layer id each control governs, for the "bound control" display.
 const boundControl = LAYER_CONTROLS.find(
@@ -352,6 +357,14 @@ const mapCitationHref = beliefPinnedPermalink({
           </li>
         ))}
       </ul>
+      <!-- P35.15a / PKG-07: the same shape over the declared technology slug. -->
+      <ul class="sig-table-summary" data-testid="technology-summary">
+        {assetsByTechnology.map((b) => (
+          <li data-testid="technology-summary-item" data-technology={b.label}>
+            <span class="sig-table-summary__count">{b.count}</span> {b.label}
+          </li>
+        ))}
+      </ul>
       {locatableRows.truncated && (
         <p class="sig-table-note" data-testid="assets-truncation-note">
           <span data-copy="MP-09">Showing the first {locatableRows.shown} of {locatableRows.total} located records</span>
@@ -376,6 +389,7 @@ const mapCitationHref = beliefPinnedPermalink({
         <thead>
       <tr>
         <th scope="col" data-copy="MP-08">Record</th>
+        <th scope="col">Technology</th>
         <th scope="col">Jurisdiction</th>
         <th scope="col">Tier</th>
         <th scope="col">Latitude</th>
@@ -393,6 +407,7 @@ const mapCitationHref = beliefPinnedPermalink({
               a.label
             )}
           </th>
+          <td data-testid="map-asset-technology">{technologyLabel(a)}</td>
           <td>{a.jurisdiction}</td>
           <td>{a.tier}</td>
           <td>{a.lat}</td>

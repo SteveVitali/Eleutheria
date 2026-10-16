@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""The ``sig.published-record/1`` UI projection (P32.13 / ADR-132, SIG-FIND-002).
+"""The ``sig.published-record`` UI projection (P32.13 / ADR-132, SIG-FIND-002).
 
 One ``PublishedRecord`` is the citation unit of a released public record: a
 compartment-scoped view of one entity's published site slice — label, point,
@@ -27,7 +27,9 @@ from .manifest import canonical_json, sha256_hex
 
 #: The projection schema/version stamped on every record and hashed into the
 #: publication descriptor — a renderer/projection change is a NEW namespace.
-PROJECTION_VERSION = "sig.published-record/1"
+#: /1 → /2 (P35.15a / PKG-07): the record doc gains ``technology`` — the
+#: subject's declared SKOS slug (id + basis), the map/search facet source.
+PROJECTION_VERSION = "sig.published-record/2"
 
 
 def record_key(compartment: str, entity_type: str, entity_id: str) -> str:
@@ -94,7 +96,7 @@ class EvidenceRef:
 
 @dataclass(frozen=True)
 class PublishedRecord:
-    """The ``sig.published-record/1`` document — one released public record."""
+    """The ``sig.published-record/2`` document — one released public record."""
 
     record_key: str
     entity_id: str
@@ -102,6 +104,10 @@ class PublishedRecord:
     compartment: str
     license: str
     label: dict[str, Any]  # {"text": str|None, "basis": str}
+    #: P35.15a / PKG-07: the subject's declared SKOS technology slug —
+    #: {"id": str|None, "basis": "declared_technology_claim" | "conflicted" |
+    #: "unreported"} — never an inferred class.
+    technology: dict[str, Any]
     jurisdiction: dict[str, Any]  # {"id": str|None, "basis": str}
     location: dict[str, Any]  # {"kind", "lat"?, "lon"?, "precision"?}
     claim_anchors: tuple[ClaimAnchor, ...] = ()
@@ -129,6 +135,7 @@ class PublishedRecord:
             "compartment": self.compartment,
             "license": self.license,
             "label": self.label,
+            "technology": self.technology,
             "jurisdiction": self.jurisdiction,
             "location": self.location,
             "claim_anchors": [a.as_json() for a in self.claim_anchors],
@@ -210,6 +217,22 @@ def record_from_site_row(
         "basis": "camera_jurisdiction" if jurisdiction_id else "unreported",
     }
 
+    # P35.15a / PKG-07: the declared SKOS technology slug — basis stays honest:
+    # a row never presents an unreported or CONFLICTED declaration as a class.
+    technology_id = row.get("technology")
+    technology = {
+        "id": str(technology_id) if technology_id else None,
+        "basis": (
+            "declared_technology_claim"
+            if technology_id
+            else (
+                "conflicted"
+                if str(row.get("technology_status") or "") == "conflicted"
+                else "unreported"
+            )
+        ),
+    }
+
     claim_index = claim_index or {}
     anchors: list[ClaimAnchor] = []
     evidence: list[EvidenceRef] = []
@@ -272,6 +295,7 @@ def record_from_site_row(
         compartment=compartment,
         license=str(row.get("spdx") or license_id),
         label=label,
+        technology=technology,
         jurisdiction=jurisdiction,
         location=location,
         claim_anchors=tuple(anchors),

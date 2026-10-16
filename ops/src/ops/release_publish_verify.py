@@ -206,7 +206,12 @@ def _supersession_record(candidate_dir: Path, publication_id: str) -> str | None
 #: (0.1.0, importlib.metadata) instead of the pre-REL-10 "0.0.0" placeholder,
 #: which deterministically recomputes the publication id — p-81f1… was the
 #: placeholder-version build, p-fd7b… the same corpus under the truthful one.
-PRIOR_RELEASE_ID = "p-fd7ba6a2940cbf1aa9f24c7234de2ad92189eabbdacdc8ae8f683b2f1585f477"
+#: P35.15a (PKG-07) re-pinned the id again: the published-record projection
+#: bumped sig.published-record/1 → /2 (the record doc gains the declared
+#: ``technology`` field + dossier/map rows render it), so the same corpus
+#: rebuilds to a new deterministic id — p-fd7b… was the /1 projection build,
+#: p-ad9c… the same corpus under the /2 projection.
+PRIOR_RELEASE_ID = "p-ad9c56119b08cde9e91e8e1c638864edb17cd197548ca66cde03b0524186b384"
 PRIOR_RENDERER = "p32.24"
 PRIOR_ENTITY_WITHHOLD = "ent-acc-dep-41"  # corpus entity — deny target
 PRIOR_CLAIM_WITHHOLD = "cl-acc-denied-claim"  # corpus claim — denies its carriers
