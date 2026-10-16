@@ -54,7 +54,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
-PROBE_RUN_VERSION = "sig.probe-run/1"
+from .probe_run import PROBE_RUN_VERSION
+
 PROBE_NAME = "post-cutover"
 
 # --- the runbook's expected posture (D-P34.50-1 / A-3) ------------------------

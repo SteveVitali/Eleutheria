@@ -59,6 +59,7 @@ globs = [
     "docs/build/reports/current/*",        # the generated current-state projection
     "docs/build/reports/obligations/*",    # events/assessments/reconciliations ledgers
     "docs/build/reports/spend/*",          # spend + agent-usage ledgers
+    "docs/build/reports/probes/*",         # probe-run/1 records — regenerated on each probe run (P35.3)
 ]
 
 [frozen]

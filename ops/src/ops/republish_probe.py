@@ -35,16 +35,17 @@ import subprocess
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass, field
-from datetime import UTC
 from pathlib import Path
 from typing import Any
 
 from .observe import http_absent
+from .probe_run import PROBE_RUN_VERSION as PROBE_RUN_VERSION
+from .probe_run import CheckResult, build_record, utcnow
 from .publish import _iter_jsonl_rows
 from .scheduled import load_cadence, resolve_targets
 
-PROBE_RUN_VERSION = "sig.probe-run/1"
+# The shared sig.probe-run/1 seam (P35.3): the record format lives in
+# ops.probe_run — this module re-exports it, never forks it.
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 HANDLE_CRAWL_TOOL = REPO_ROOT / "docs" / "build" / "tools" / "handle_crawl_check.py"
@@ -54,9 +55,7 @@ DEFAULT_HANDLE_LIST = (
 
 
 def _utcnow() -> str:
-    from datetime import datetime
-
-    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return utcnow()
 
 
 def http_range_status(url: str, *, timeout: float = 15.0) -> int | None:
@@ -71,15 +70,8 @@ def http_range_status(url: str, *, timeout: float = 15.0) -> int | None:
         return None
 
 
-@dataclass(frozen=True)
-class CheckResult:
-    """One probe-run leg: a verdict plus structured, redaction-safe detail."""
-
-    verdict: str  # "pass" | "fail" | "skipped"
-    detail: dict[str, Any] = field(default_factory=dict)
-
-    def as_json(self) -> dict[str, Any]:
-        return {"verdict": self.verdict, **self.detail}
+# CheckResult is the shared leg type — re-exported here so existing
+# `from .republish_probe import CheckResult` callers keep working (additive).
 
 
 # --- absence ---------------------------------------------------------------------
@@ -316,20 +308,12 @@ def run_republish_probe(
         "tile_sample": tile_sample_check(tile_urls, probe=tile_probe),
         "attribution_sample": attribution_sample_check(public_dir),
     }
-    verdicts = [c.verdict for c in checks.values()]
-    if "fail" in verdicts:
-        overall = "fail"
-    elif "skipped" in verdicts:
-        overall = "partial"
-    else:
-        overall = "pass"
-    record: dict[str, Any] = {
-        "version": PROBE_RUN_VERSION,
-        "generated_at": now or _utcnow(),
-        "release": release or {},
-        "checks": {name: c.as_json() for name, c in checks.items()},
-        "overall": overall,
-    }
+    record = build_record(
+        "route-allowlist",
+        checks,
+        release=release,
+        now=now or _utcnow(),
+    )
     return record
 
 
