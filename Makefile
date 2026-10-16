@@ -16,7 +16,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local check-export-mode lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local check-export-mode lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -154,7 +154,7 @@ verify-gen: gen
 ## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
 ## history guard, the spec-source checker and the coverage-matrix checker — all
 ## stdlib python3, so the uv-less CI `docs` job runs them too.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -287,6 +287,16 @@ docs-check-round-close:
 ## claim a change adds. Exits 1 violations / 2 usage / 3 vacuous.
 docs-check-live-claims:
 	python3 docs/build/tools/check_live_claims.py corpus --json docs/build/logs/live-claims.json
+
+## Ops-runbook verifier (P35.4; G1 §3.10, SIG-OPS-010/SEC-009): the maintained
+## runbook keeps its promise — the nine required sections, every fenced command
+## verified against the tree (script paths, sig-ops verbs, make targets,
+## verbatim gcloud/script shapes from the ops corpus), every backticked repo
+## path resolving, and the value-less secret register kept in lockstep with
+## ops/iam_identities.toml. Stdlib python3 — the uv-less CI `docs` job runs it.
+## Exits 1 violations / 2 usage / 3 vacuous (SIG-ENG-042).
+docs-check-runbook:
+	python3 docs/build/tools/check_runbook.py
 
 ## OM-01 commit-trailer check (SEED-02b; plan §3.3, A-21): every commit of
 ## CHANGE_RANGE carries a recognised harness trailer or is an operator commit.
