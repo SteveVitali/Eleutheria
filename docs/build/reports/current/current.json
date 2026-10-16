@@ -1,13 +1,13 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "e2f5e2688de25c212df556ffaa7e09881b12901d",
-  "manifest_inputs": 1041,
+  "input_commit": "195de08e7392210bae4e4f71636a5b9509ca408b",
+  "manifest_inputs": 1042,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.4",
-    "lastCompleted": "P35.3",
-    "blockedOn": "(nothing)",
+    "nextTicket": "P35.12",
+    "lastCompleted": "P35.4",
+    "blockedOn": "CI pending on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.3-production-truth-probes-and-sentinel-scan",
+    "chainTip": "r11/P35.4-ops-runbook",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-16T08:19:24Z"
+    "updatedAt": "2026-10-16T20:46:00Z"
   },
   "counts": {
     "obligations": 168,
@@ -13407,8 +13407,8 @@
           "label": "historical/csv"
         },
         "SIG-OPS-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "docs/ops/RUNBOOK.md;docs/build/tools/check_runbook.py;docs/build/tools/test_check_runbook.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13443,8 +13443,8 @@
           "label": "historical/csv"
         },
         "SIG-SEC-009": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "docs/ops/RUNBOOK.md;docs/build/tools/check_runbook.py;docs/build/tools/test_check_runbook.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19008,10 +19008,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "3dc60475ff9938b9fb3012f1acaa960745a811e6a16058152322f9341f6b5396",
+  "manifest_sha256": "6cf8032b762674cc91a51e549dd4e60ae5f13810482e6dbc6686bac76061e922",
   "current_md": {
     "lines": 63,
-    "bytes": 15623,
+    "bytes": 15594,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

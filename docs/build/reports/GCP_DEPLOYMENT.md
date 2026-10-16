@@ -154,6 +154,14 @@ by COPY under `pg/seed-2026-09-15/` (originals preserved; see
 `pg/monthly/` and `pg/adhoc/` lifecycle rules never treat them as exports. The
 at-scale successor drill is `ops/gcp/restore-drill.sh`.
 
+**P35.4 caveat (appended 2026-10-16; agent-written, harness
+`devin-desktop/swe-2-high/subagent`):** the drill above was a same-instance,
+5-claim seed-scale check of the export/import path — it is not a
+production-scale SIG-OPS-001 restore drill and was never RTO/RPO-measured.
+The drill of record is `ops/gcp/restore-drill.sh` (PITR-clone and
+full-backup variants, each drill appending an RTO/RPO row); the operator
+procedure lives in `docs/ops/RUNBOOK.md` §2.
+
 ## Data + published artifacts (2026-09-15)
 
 - **Seeded** jurisdictions into the hosted spine: `okc` (5 claims / 3 entities) +
@@ -179,6 +187,13 @@ Everything below is realised by `ops/gcp/scheduled-ops.sh` (`--check` = plan-onl
 | Durable record | `gs://…-sig-restricted/ops/probes/<YYYY-MM-DD>/<ts>.jsonl` — one new object per sweep (WORM, never read-modify-write) |
 | Read path | `sig-ops probe-history` (`SIG_OPS_GCS_BUCKET=…-sig-restricted`) → per-target count / latest state / last-N p95 |
 | Failure path | any DOWN target fires a recorded alert through `sig-alerts` (`SIG-ALERT-RECEIVED` in Cloud Logging); job exits non-zero |
+
+*P35.4 correction (appended 2026-10-16; agent-written, harness
+`devin-desktop/swe-2-high/subagent`):* the "(WORM, never read-modify-write)"
+cell above predates SIG-STORE-048's vocabulary rule — the sweep records are
+append-only by convention (P34.3 scripts versioning + a 90-day noncurrent
+lifecycle); the "WORM" label is not in force until the locked
+retention-policy control lands (the evidence-bucket leg is P37.3's).
 
 ### Scheduled reingestion
 
