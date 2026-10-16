@@ -113,6 +113,12 @@ class SourceCadence:
     #: Legistar's keyword pass rises 60m → 3h (P35.8 widens it; ~25–30 min at
     #: the reviewed 1 req/s is only safe with headroom).
     task_timeout: str = ""
+    #: P35.1c: the row-level posture the retired per-row trigger's pause
+    #: carried — ``"paused"`` rows are due-set inputs the hourly dispatcher
+    #: SKIPS (recorded, never dispatched); a wave resume flips the declaration
+    #: to ``"enabled"``. Under the per-source trigger shape a paused row's
+    #: trigger is created/held PAUSED, mirroring its live posture.
+    state: str = "enabled"
 
 
 @dataclass(frozen=True)
@@ -138,6 +144,10 @@ class BatchCadence:
     #: Per-row Cloud Run task timeout (P35.6 / I8 §7.1): ``"6h"`` for the
     #: Round-11 documents/layers batches; empty = the script's 36h default.
     task_timeout: str = ""
+    #: P35.1c: the row-level posture (see ``SourceCadence.state``) — the R6
+    #: create-paused rows declare ``"paused"``; the dispatcher records them
+    #: skipped until their wave's resume flips the declaration.
+    state: str = "enabled"
 
 
 @dataclass(frozen=True)
@@ -192,6 +202,45 @@ class RetiredJob:
     job: str
     reason: str = ""
     note: str = ""
+
+
+@dataclass(frozen=True)
+class DispatcherSpec:
+    """The ``[dispatcher]`` table (P35.1c, ticket 291a; G1-TRIM B-13=a).
+
+    The single hourly trigger that replaces the per-source Cloud Scheduler
+    set: ``scheduler`` fires ``job`` on ``cron``, and the job evaluates every
+    ``[[sources]]``/``[[batches]]`` row's due set and enqueues the due jobs
+    (``ops.dispatcher``). ``sa_class`` names the ``iam_identities.toml`` class
+    the job runs as; ``task_timeout`` bounds the evaluate+enqueue sweep (the
+    dispatched runs live on their own jobs, not inside the dispatcher).
+    """
+
+    job: str
+    scheduler: str
+    cron: str
+    args: str = ""  # "" → the job's baked args; else a scheduler args override
+    sa_class: str = ""
+    task_timeout: str = ""
+    note: str = ""
+
+
+@dataclass(frozen=True)
+class RetiredTrigger:
+    """One ``[[retire_triggers]]`` row (P35.1c): trigger name → disposition.
+
+    The consolidation's name-checked set: every ``[[sources]]``/``[[batches]]``
+    scheduler name appears exactly once. ``retired`` = expected absent once
+    the consolidation leg's recorded delete lands; ``kept-declared-pin`` =
+    stays live (batch-05's deliberate D-P31.4-1 pin); ``kept-manual`` names a
+    ``[[manual_jobs]]`` member so the list is complete — a job name, never a
+    trigger, and never dispatcher-dispatched. ``reason`` is required — a
+    retirement is never silent (``live_diff.retire_trigger_lint``).
+    """
+
+    name: str
+    disposition: str  # "retired" | "kept-declared-pin" | "kept-manual"
+    reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -267,6 +316,8 @@ class CadenceConfig:
     maintenance: tuple[MaintenanceCadence, ...] = ()
     manual_jobs: tuple[ManualJob, ...] = ()
     retired_jobs: tuple[RetiredJob, ...] = ()
+    dispatcher: DispatcherSpec | None = None
+    retire_triggers: tuple[RetiredTrigger, ...] = ()
     pins: tuple[ImagePin, ...] = ()
     fleet: FleetDecl = FleetDecl()
     live_diff: LiveDiffSpec | None = None
@@ -334,6 +385,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             note=str(s.get("note", "")),
             cron_or_semantics_ok=_annotation(s.get("cron_or_semantics_ok")),
             task_timeout=str(s.get("task_timeout", "")),
+            state=str(s.get("state", "enabled")).lower(),
         )
         for s in doc.get("sources", [])
     )
@@ -348,6 +400,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             note=str(b.get("note", "")),
             cron_or_semantics_ok=_annotation(b.get("cron_or_semantics_ok")),
             task_timeout=str(b.get("task_timeout", "")),
+            state=str(b.get("state", "enabled")).lower(),
         )
         for b in doc.get("batches", [])
     )
@@ -381,6 +434,28 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             note=str(r.get("note", "")),
         )
         for r in doc.get("retired_jobs", [])
+    )
+    dispatcher_raw = doc.get("dispatcher")
+    dispatcher = (
+        DispatcherSpec(
+            job=str(dispatcher_raw["job"]),
+            scheduler=str(dispatcher_raw["scheduler"]),
+            cron=str(dispatcher_raw["cron"]),
+            args=str(dispatcher_raw.get("args", "")),
+            sa_class=str(dispatcher_raw.get("sa_class", "")),
+            task_timeout=str(dispatcher_raw.get("task_timeout", "")),
+            note=str(dispatcher_raw.get("note", "")),
+        )
+        if dispatcher_raw
+        else None
+    )
+    retire_triggers = tuple(
+        RetiredTrigger(
+            name=str(r["name"]),
+            disposition=str(r.get("disposition", "")).lower(),
+            reason=str(r.get("reason", "")),
+        )
+        for r in doc.get("retire_triggers", [])
     )
     pins = tuple(
         ImagePin(
@@ -428,6 +503,8 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
         maintenance=maintenance,
         manual_jobs=manual_jobs,
         retired_jobs=retired_jobs,
+        dispatcher=dispatcher,
+        retire_triggers=retire_triggers,
         pins=pins,
         fleet=FleetDecl(
             image_repo=str(fleet.get("image_repo", "")),
@@ -938,12 +1015,14 @@ __all__ = [
     "BatchCadence",
     "BucketPosture",
     "CadenceConfig",
+    "DispatcherSpec",
     "FleetDecl",
     "ImagePin",
     "LiveDiffSpec",
     "MaintenanceCadence",
     "ManualJob",
     "RetiredJob",
+    "RetiredTrigger",
     "RunRow",
     "SourceCadence",
     "TargetHistory",
