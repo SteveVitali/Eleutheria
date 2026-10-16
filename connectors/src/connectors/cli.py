@@ -235,6 +235,18 @@ def _validate() -> int:
         for msg in geometry_violations:
             print(f"VALIDATION FAILED: SIG-GEO-003 geometry kind: {msg}")
         return 1
+    # P36.5 / ACQ-09 (I9a NEW-2, P4): a target's declared status disposition
+    # must be a member of the closed set and a removal ledger must carry its
+    # declared removal-value vocabulary; the declared coordinate precision
+    # must be a member too — a broken declaration fails closed here and at
+    # expansion/emit, never a silently un-bounded or falsely bounded emit.
+    from .dot_511 import target_status_violations
+
+    status_violations = target_status_violations()
+    if status_violations:
+        for msg in status_violations:
+            print(f"VALIDATION FAILED: P36.5 status/coordinate semantics: {msg}")
+        return 1
     # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
     # under the fail-closed rules — a malformed row is a validation failure,
     # never a silent "no opt-outs".

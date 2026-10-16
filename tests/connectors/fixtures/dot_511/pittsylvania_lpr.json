@@ -1,0 +1,19 @@
+{
+  "displayFieldName": "Location",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Location", "type": "esriFieldTypeString", "alias": "Location"}
+  ],
+  "features": [
+    {
+      "attributes": {"OBJECTID": 91, "Location": "US-29 & SR-685"},
+      "geometry": {"x": -79.3947, "y": 36.8210}
+    },
+    {
+      "attributes": {"OBJECTID": 92, "Location": "US-58 & SR-863"},
+      "geometry": {"x": -79.5501, "y": 36.7002}
+    }
+  ]
+}

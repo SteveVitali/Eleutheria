@@ -58,7 +58,18 @@
 # `LOCATION_PARTICULARS` + `Loc_Name` (name), `City_Ward` (sub-state
 # jurisdiction detail), `Lon` (MiDrive's title-case longitude pair). Additive
 # only.
-vocab_version = "2026.10.12.1"
+# 2026.10.12.2 (P36.5 / R11-ACQ-09, I9a NEW-2): `removal_date_fields` is new —
+# the published removal/end-date column a removal-ledger target
+# (status_disposition="removal") reads ONLY when the row's published status
+# is a declared removal value; the value emits `valid_to` +
+# `valid_to_kind="exact"` verbatim, and its absence emits
+# `valid_to_kind="unknown"` — never a fabricated date (P4). Field aliases
+# added: `LAT`/`LONG`/`NAME` (Temecula all-caps schema), `Location_Name`
+# (Marble Falls), `StateRoad` (FDOT route label), `Town` +
+# `Permit_Jurisdiction`/`City` (Milford/Pittsylvania/Marble Falls sub-state
+# jurisdiction detail), `DirectionFacing` (Pueblo/Shelbyville direction).
+# Additive only.
+vocab_version = "2026.10.12.2"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -163,6 +174,9 @@ lat_fields = [
   # Puerto Gaitán schema. (Projected EASTING/NORTHING and POINT_X/POINT_Y are
   # deliberately absent — outSR=4326 geometry is their coordinate source.)
   "Lat", "latitud",
+  # P36.5 (ACQ-09): Thomasville's all-caps `LAT`/`LONG` attribute pair
+  # (coordinate_mode=fields — the published attribute pair is the source).
+  "LAT",
 ]
 lon_fields = [
   "longitude", "Longitude", "LONGITUDE", "attributes_longitude", "geometry_x", "x",
@@ -172,6 +186,8 @@ lon_fields = [
   # P36.4 (ACQ-08): MiDrive's title-case `Lon` pairs with its `Lat` column
   # (coordinate_mode=fields — the published attribute pair is the source).
   "Lon",
+  # P36.5 (ACQ-09): Thomasville's all-caps `LONG` pairs with its `LAT` column.
+  "LONG",
 ]
 
 # P26.9: Socrata point-object fields — the GeoJSON-ish dict-valued columns a
@@ -199,6 +215,8 @@ roadway_fields = [
   "roadwayname", "primary_st", "road", "street", "route_name",
   # P26.13: catalog-sweep registries — Peel red-light arms, title-case Street.
   "Street", "StrInt1", "StrInt2",
+  # P36.5 (ACQ-09): FDOT District 3's route label.
+  "StateRoad",
 ]
 
 # Authoritative camera-OPERATOR fields (P32.3 / SIG-TRUST-003): ONLY a feature
@@ -228,6 +246,10 @@ county_fields = [
   # P36.4 (ACQ-08): Hyattsville's council-ward label (sub-state jurisdiction
   # detail, as published).
   "City_Ward",
+  # P36.5 (ACQ-09): Milford's town label, Pittsylvania's permitting-
+  # jurisdiction column, and Marble Falls' City column — sub-state
+  # jurisdiction detail, as published.
+  "Town", "Permit_Jurisdiction", "City",
 ]
 
 # Human-readable camera name / description.
@@ -248,6 +270,9 @@ name_fields = [
   "ADDRESS", "Address", "ADDRESS_2", "CAMERA_LOCATION", "nombre",
   # P36.4 (ACQ-08): WVDOH's location label and Hyattsville's site-name field.
   "LOCATION_PARTICULARS", "Loc_Name",
+  # P36.5 (ACQ-09): Thomasville's all-caps site name and Marble Falls'
+  # `Location_Name` label.
+  "NAME", "Location_Name",
 ]
 
 # Reported camera/device status.
@@ -260,12 +285,28 @@ status_fields = [
   "STATUS",
 ]
 
+# P36.5 (ACQ-09 / I9a NEW-2): the published removal/end-date column on a
+# removal-ledger target (`status_disposition="removal"`). Read ONLY when the
+# row's published status is a declared `removal_status_values` member — the
+# value then emits `valid_to` with `valid_to_kind="exact"` verbatim; a
+# removal flag with no matching column emits `valid_to_kind="unknown"`
+# instead of a fabricated date (P4).
+removal_date_fields = [
+  "Last_Date",
+  "Location_updated_2_6_25",
+  "date_removed",
+  "removed_date",
+  "removal_date",
+]
+
 # Compass direction the camera faces / roadway direction.
 direction_fields = [
   "direction", "Direction", "CompassDirection", "DIRECTION",
   # P26.9: municipal/transit/international registries.
   "camera_facing", "travel_direction", "cam_direction", "facing", "bearing",
   "view_direction", "dir",
+  # P36.5 (ACQ-09): Pueblo's direction-facing label.
+  "DirectionFacing",
 ]
 
 # --- the media blocklist ------------------------------------------------------

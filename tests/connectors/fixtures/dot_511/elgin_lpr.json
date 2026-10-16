@@ -1,0 +1,28 @@
+{
+  "displayFieldName": "Location",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Location", "type": "esriFieldTypeString", "alias": "Location"},
+    {"name": "CameraCount", "type": "esriFieldTypeInteger", "alias": "Camera Count"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 31,
+        "Location": "Randall Rd & College Green Dr",
+        "CameraCount": 2
+      },
+      "geometry": {"x": -88.3405, "y": 42.0631}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 32,
+        "Location": "McLean Blvd & Rt-20",
+        "CameraCount": 1
+      },
+      "geometry": {"x": -88.3120, "y": 42.0407}
+    }
+  ]
+}

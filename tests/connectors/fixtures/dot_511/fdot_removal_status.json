@@ -1,0 +1,51 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Status", "type": "esriFieldTypeString", "alias": "Status"},
+    {"name": "County", "type": "esriFieldTypeString", "alias": "County"},
+    {"name": "StateRoad", "type": "esriFieldTypeString", "alias": "State Road"},
+    {"name": "Last_Date", "type": "esriFieldTypeString", "alias": "Last Date"},
+    {"name": "Is_Location_FDOT_Compliant", "type": "esriFieldTypeString", "alias": "Is Location FDOT Compliant"},
+    {"name": "Non_Compliance_Reason", "type": "esriFieldTypeString", "alias": "Non-Compliance Reason"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 501,
+        "Status": "Removed",
+        "County": "Leon",
+        "StateRoad": "I-10",
+        "Last_Date": "2026-03-14",
+        "Is_Location_FDOT_Compliant": "No",
+        "Non_Compliance_Reason": "FDOT removal order"
+      },
+      "geometry": {"x": -84.3107, "y": 30.3998}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 502,
+        "Status": "Removed",
+        "County": "Gadsden",
+        "StateRoad": "US-90",
+        "Is_Location_FDOT_Compliant": "No",
+        "Non_Compliance_Reason": "Permit lapse"
+      },
+      "geometry": {"x": -84.5799, "y": 30.5242}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 503,
+        "Status": "Non-Compliant",
+        "County": "Bay",
+        "StateRoad": "US-98",
+        "Last_Date": "2026-05-01",
+        "Is_Location_FDOT_Compliant": "No",
+        "Non_Compliance_Reason": "Spacing"
+      },
+      "geometry": {"x": -85.6602, "y": 30.1588}
+    }
+  ]
+}

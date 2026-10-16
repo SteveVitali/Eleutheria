@@ -3838,8 +3838,8 @@ notes = "ACQ-01 generated target (plan AP-T1-003, cand I5-C005). observed_count/
 technology = "fixed-camera-unspecified"
 
 [[targets]]
-id = "d3_flock_camera_data_fdot_district_3_safety_information"
-source_id = "camreg_fl_d3_flock_camera"
+id = "fdot_d3_flock_inventory"
+source_id = "camreg_fdot_flock"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/O1JpcwDW8sjYuddV/arcgis/rest/services/D3_Flock_Camera_Data/FeatureServer/0"
@@ -3847,24 +3847,38 @@ layer_url = "https://services1.arcgis.com/O1JpcwDW8sjYuddV/arcgis/rest/services/
 agency = "Florida Department of Transportation, District 3 (via ArcGIS Online)"
 state = "US-FL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 407
+observed_fields = "OBJECTID,Install_Type,FDOT_ROW,Is_Location_FDOT_Compliant,Non_Compliance_Reason"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Install_Type", "FDOT_ROW", "Is_Location_FDOT_Compliant", "Non_Compliance_Reason"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-012"
-notes = "ACQ-01 generated target (plan AP-T1-012, cand I3-C002). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-012, cand I3-C002). count=407 Flock cameras via returnCountOnly (live-read 2026-09-30, I3-F052). Evidenced fields Install_Type/FDOT_ROW/Is_Location_FDOT_Compliant/Non_Compliance_Reason (I3-F017) form the capture allowlist — the FDOT permit-compliance series is kept verbatim, none is a person/feed field. One of the two targets on the consolidated camreg_fdot_flock source — ingested in the same run as fdot_flock_removal_status so a removal fact is never asserted against a stale inventory (I8 §5.2). FDOT District 3 is a multi-county district — no single place/county GEOID applies."
 technology = "alpr-fixed"
 
 [[targets]]
-id = "flock_removal_status_layer_fdot"
-source_id = "camreg_fl_flock_removal_status"
+id = "fdot_flock_removal_status"
+source_id = "camreg_fdot_flock"
 kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services1.arcgis.com/O1JpcwDW8sjYuddV/arcgis/rest/services/FLOCK_removal_status_layer/FeatureServer/0"
 layer_url = "https://services1.arcgis.com/O1JpcwDW8sjYuddV/arcgis/rest/services/FLOCK_removal_status_layer/FeatureServer/0"
-agency = "Florida Department of Transportation (via ArcGIS Online)"
+agency = "Florida Department of Transportation, District 3 (via ArcGIS Online)"
 state = "US-FL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 523
+observed_fields = "OBJECTID,Status,County,StateRoad,Is_Location_FDOT_Compliant,Non_Compliance_Reason"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Status", "County", "StateRoad", "Is_Location_FDOT_Compliant", "Non_Compliance_Reason"]
+status_disposition = "removal"
+removal_status_values = ["removed", "decommissioned"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-013"
-notes = "ACQ-01 generated target (plan AP-T1-013, cand I3-C003). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-013, cand I3-C003). count=523 via returnCountOnly (live-read 2026-09-30, I3-F053). Evidenced fields Status/County/StateRoad/Is_Location_FDOT_Compliant/Non_Compliance_Reason (I3-F040). status_disposition='removal' + the declared removal_status_values vocabulary: a row whose published Status is a declared removal value bounds the device — a published end-date column (the removal_date_fields alias, when present) emits valid_to with valid_to_kind='exact'; a removal flag with no published date emits valid_to_kind='unknown' — never a fabricated date (P4) and never a deletion (I9a NEW-2). Non-removal status values are permit-compliance facts that ride camera_status verbatim (S5 guard) and mint no bound. Same-run consistency with fdot_d3_flock_inventory is enforced by the consolidated camreg_fdot_flock source."
 technology = "alpr-fixed"
 
 [[targets]]
@@ -3877,9 +3891,16 @@ layer_url = "https://services1.arcgis.com/IL17xsvNU5Bmw3RY/arcgis/rest/services/
 agency = "City of Pueblo, CO (via ArcGIS Online)"
 state = "US-CO"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 114
+observed_fields = "OBJECTID,Date_installed,Company,Serial,Pole,Lat,Long"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+out_fields = ["Date_installed", "Company", "Serial", "Pole", "Lat", "Long"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-014"
-notes = "ACQ-01 generated target (plan AP-T1-014, cand I3-C007). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-014, cand I3-C007). count=114 Flock cameras via returnCountOnly (live-read 2026-09-30, I3-F059). Evidenced fields Date_installed/Company/Serial/Pole/Lat/Long (I3-F002) form the capture allowlist — device-provenance columns only, none a person/feed field; the published Lat/Long attribute pair is the coordinate source (coordinate_mode=fields)."
+place_geoid = "0862000"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Pueblo, CO.
 jurisdiction_place = "Pueblo"
 technology = "alpr-fixed"
 
@@ -3893,9 +3914,16 @@ layer_url = "https://services.arcgis.com/4MdqIsNzxG7xyTvf/arcgis/rest/services/L
 agency = "City of Rocky Mount, NC (via ArcGIS Online)"
 state = "US-NC"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 74
+observed_fields = "OBJECTID,Flock_Sign,Product,Deployment"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Flock_Sign", "Product", "Deployment"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-015"
-notes = "ACQ-01 generated target (plan AP-T1-015, cand I3-C012). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-015, cand I3-C012). layer7 count=74 LPR cameras via returnCountOnly (live-read 2026-09-30, I3-F061). Flock site-survey template fields Flock_Sign/Product/Deployment (I3-F044) form the capture allowlist — deployment provenance only, no person/feed columns evidenced."
+place_geoid = "3757500"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Rocky Mount, NC.
 jurisdiction_place = "Rocky Mount"
 technology = "alpr-fixed"
 
@@ -3909,9 +3937,16 @@ layer_url = "https://services3.arcgis.com/0Uo0Kvp9YTHRegvR/arcgis/rest/services/
 agency = "City of Shelbyville, TN (via ArcGIS Online)"
 state = "US-TN"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,DirectionFacing,JanHits,FebHits,MarHits,AprHits,MayHits,JunHits,JulHits,AugHits,SepHits,OctHits,NovHits,DecHits"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["DirectionFacing"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-016"
-notes = "ACQ-01 generated target (plan AP-T1-016, cand I3-C014). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-016, cand I3-C014). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit (ContentDrift), never a silent truncation. Evidenced fields DirectionFacing + the monthly JanHits..DecHits per-camera read-aggregate series (I3-F006): the Hits columns are PLATE-READ aggregates — Part VIII — deliberately OUTSIDE the capture allowlist per the ticket's 'Hits excluded' row rule; their names stay on observed_fields as the exclusion record."
+place_geoid = "4767760"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Shelbyville, TN.
 jurisdiction_place = "Shelbyville"
 technology = "alpr-fixed"
 
@@ -3925,9 +3960,16 @@ layer_url = "https://services3.arcgis.com/IgR6ay8jzuIj7VSF/arcgis/rest/services/
 agency = "City of Temecula, CA (staff account, via ArcGIS Online)"
 state = "US-CA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,ID,NUM,NAME,LAT,LONG,ROTATION,ANGLE,URL"
+coordinate_mode = "fields"
+object_id_field = "ID"
+out_fields = ["ID", "NUM", "NAME", "LAT", "LONG", "ROTATION", "ANGLE"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-017"
-notes = "ACQ-01 generated target (plan AP-T1-017, cand I3-C015). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-017, cand I3-C015). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Evidenced fields ID/NUM/NAME/LAT/LONG/ROTATION/ANGLE/URL (I3-F005): the published LAT/LONG attribute pair is the coordinate source (coordinate_mode=fields); URL is a media-pattern field — deliberately outside the allowlist and name-excluded even if it leaks a capture."
+place_geoid = "0678120"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Temecula, CA.
 jurisdiction_place = "Temecula"
 technology = "alpr-fixed"
 
@@ -3941,9 +3983,16 @@ layer_url = "https://services8.arcgis.com/IeXFMFwivjBzu9iB/arcgis/rest/services/
 agency = "City of Marble Falls, TX (via ArcGIS Online)"
 state = "US-TX"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Location_Name,Street,City,Funding"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Location_Name", "Street", "City", "Funding"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-018"
-notes = "ACQ-01 generated target (plan AP-T1-018, cand I3-C017). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-018, cand I3-C017). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. layer2 'Flock Cameras' fields Location_Name/Street/City/Funding (I3-F042 — the service's layer 0 404'd; the fs_ fetch found layer 2) form the capture allowlist — none a person/feed field."
+place_geoid = "4846584"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Marble Falls, TX.
 jurisdiction_place = "Marble Falls"
 technology = "alpr-fixed"
 
@@ -3957,9 +4006,16 @@ layer_url = "https://services2.arcgis.com/0Q7l03Ls62VG0fy4/arcgis/rest/services/
 agency = "Prince William County, VA (via ArcGIS Online)"
 state = "US-VA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 29
+observed_fields = "OBJECTID,camera,status,cameratype,district"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["camera", "status", "cameratype", "district"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-019"
-notes = "ACQ-01 generated target (plan AP-T1-019, cand I3-C019). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-019, cand I3-C019). count=29 community-safety devices via returnCountOnly (live-read 2026-09-30, I3-F060). Evidenced fields camera/status(Active/Proposed/Alternative/Flex)/cameratype(Flex/Permanent)/district (I3-F023); the item's tags name FLOCK → alpr-fixed. Proposed sites emit status='Proposed' verbatim — the published programme status rides camera_status (S5 guard; the layer deliberately publishes proposed locations)."
+county_geoid = "51153"  # P36.5 (ACQ-09, I8 R4): Census county GEOID for Prince William County, VA.
 jurisdiction_place = "Prince William County"
 technology = "alpr-fixed"
 
@@ -3973,9 +4029,17 @@ layer_url = "https://services2.arcgis.com/JUU3wfkYLZ85bP4F/arcgis/rest/services/
 agency = "\"Milford\" org (extent Milford, CT; via ArcGIS Online)"
 state = "US-CT"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "Id,Status"
+coordinate_mode = "geometry"
+object_id_field = "Id"
+out_fields = ["Id", "Status"]
+coordinate_precision = "approximate"
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-020"
-notes = "ACQ-01 generated target (plan AP-T1-020, cand I3-C020). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-020, cand I3-C020). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Evidenced fields Id/Status (I3-F022); the layer description publishes 'approximate locations, not GPS data' → coordinate_precision='approximate' is declared so the publisher's own caveat stamps the entity and the coordinate claims (P4 — an approximate coordinate can never be re-asserted downstream as exact)."
+place_geoid = "0947515"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Milford, CT.
 jurisdiction_place = "Milford"
 technology = "alpr-fixed"
 
@@ -3989,9 +4053,16 @@ layer_url = "https://services5.arcgis.com/tsDpkyNqjjzAB8LP/arcgis/rest/services/
 agency = "City of Elgin, IL (via ArcGIS Online)"
 state = "US-IL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Location,CameraCount"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Location", "CameraCount"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-021"
-notes = "ACQ-01 generated target (plan AP-T1-021, cand I3-C023). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-021, cand I3-C023). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Evidenced fields Location/CameraCount (I3-F028) form the capture allowlist — CameraCount is a co-located-device tally (registry detail), never a person/feed field."
+place_geoid = "1723074"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Elgin, IL.
 jurisdiction_place = "Elgin"
 technology = "alpr-fixed"
 
@@ -4005,9 +4076,16 @@ layer_url = "https://services3.arcgis.com/y2BJK2GUfoTwH7py/arcgis/rest/services/
 agency = "City of South Fulton, GA (via ArcGIS Online)"
 state = "US-GA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Name,Location,created_user,last_edited_user"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Name", "Location"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-022"
-notes = "ACQ-01 generated target (plan AP-T1-022, cand I3-C024). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-022, cand I3-C024). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Evidenced fields Name/Location + ArcGIS editor-tracking columns created_user/last_edited_user (I3-F037): the editor columns are person-flavoured — media-blocked by name AND deliberately outside the capture allowlist (P8-5); their names stay on observed_fields as the exclusion record."
+place_geoid = "1372136"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for South Fulton, GA.
 jurisdiction_place = "South Fulton"
 technology = "alpr-fixed"
 
@@ -4021,9 +4099,16 @@ layer_url = "https://services2.arcgis.com/mTpBDvIjv8OhMDVd/arcgis/rest/services/
 agency = "Pittsylvania County, VA (via ArcGIS Online)"
 state = "US-VA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Location"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Location"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-023"
-notes = "ACQ-01 generated target (plan AP-T1-023, cand I3-C025). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-023, cand I3-C025). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. layer74 'Stationary LPR' fields Location (I3-F045 — the service's layer 0 404'd; the fs_ fetch found layer 74) forms the minimal capture allowlist."
+county_geoid = "51143"  # P36.5 (ACQ-09, I8 R4): Census county GEOID for Pittsylvania County, VA.
 jurisdiction_place = "Pittsylvania County"
 technology = "alpr-fixed"
 
@@ -4037,9 +4122,16 @@ layer_url = "https://services5.arcgis.com/Z1v85DZS9DpIp2Y6/arcgis/rest/services/
 agency = "City of Alabaster, AL (city-staff account)"
 state = "US-AL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Type,Company,Agency,CameraNumber,SerialNumber,Status"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Type", "Company", "Agency", "CameraNumber", "Status"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-024"
-notes = "ACQ-01 generated target (plan AP-T1-024, cand I3-C026). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-024, cand I3-C026). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. layer1 fields Type/Company/Agency/CameraNumber/SerialNumber/Status (I3-F046): the device SerialNumber column is a media-blocklist member by name — deliberately outside the capture allowlist; its name stays on observed_fields as the exclusion record."
+place_geoid = "0100820"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Alabaster, AL.
 jurisdiction_place = "Alabaster"
 technology = "alpr-fixed"
 
@@ -4133,9 +4225,16 @@ layer_url = "https://services.arcgis.com/BrciE7dKF0KqDF0U/arcgis/rest/services/F
 agency = "City of Thomasville, GA (org name via ArcGIS portal self record)"
 state = "US-GA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Product,Pole,Flock_Sign"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Product", "Pole", "Flock_Sign"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-037"
-notes = "ACQ-01 generated target (plan AP-T1-037, cand I3-C010). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-037, cand I3-C010). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Flock site-survey template fields Product/Pole/Flock_Sign + the Permit_* permit columns (I3-F004); the Permit_* family is deliberately outside the capture allowlist (permit detail, not evidenced as needed). Portal self names 'City of Thomasville' (I3-F051)."
+place_geoid = "1376288"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Thomasville, GA.
 jurisdiction_place = "Thomasville"
 technology = "alpr-fixed"
 
@@ -4149,10 +4248,17 @@ layer_url = "https://services.arcgis.com/ptvDyBs1KkcwzQNJ/arcgis/rest/services/L
 agency = "Tallahassee-Leon County GIS for Leon County Sheriff's Office, FL (via ArcGIS Online)"
 state = "US-FL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 11
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-038"
-notes = "ACQ-01 generated target (plan AP-T1-038, cand I3-C013). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
-jurisdiction_place = "Leon County;US-FL:Tallahassee"
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-038, cand I3-C013). layer2 'VIGILANT Fixed LPRs' count=11 via returnCountOnly (live-read 2026-09-30, I3-F058) → alpr-fixed. The same FeatureServer service hosts RTCC/public-access-cam and I-10 live-cam layers (I3-F048) — those are DIFFERENT targets with separate declared technology typing when registered later (camera-fixed-cctv / rtcc-platform); this target is the Vigilant LPR layer only. The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface until the operator's Wave-B review widens it. Same-name caution: the already-permitted camreg_leon_fl traffic-camera source serves a different publisher org (cotinter.leoncountyfl.gov) — this ArcGIS-Online org (ptvDyBs1KkcwzQNJ) is a separate gated source, not a retype of it (I8 §5.2 same-org check resolved: different org)."
+county_geoid = "12073"  # P36.5 (ACQ-09, I8 R4): Census county GEOID for Leon County, FL.
+jurisdiction_place = "Leon County"
 technology = "alpr-fixed"
 
 [[targets]]
@@ -4165,9 +4271,16 @@ layer_url = "https://services3.arcgis.com/jEYjQXUX2JTVoctH/arcgis/rest/services/
 agency = "City of Peachtree Corners, GA (via ArcGIS Online)"
 state = "US-GA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Name,FolderPath,PopupInfo"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Name"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-039"
-notes = "ACQ-01 generated target (plan AP-T1-039, cand I3-C018). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.5 (ACQ-09) registration review of the ACQ-01 generated row (plan AP-T1-039, cand I3-C018). The count was NOT read in evidence — observed_count=50 is the ACQ-09 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. KML-derived fields Name/FolderPath/PopupInfo (I3-F013): FolderPath (KML folder path) and PopupInfo (popup display text) are display artifacts — deliberately outside the capture allowlist."
+place_geoid = "1359736"  # P36.5 (ACQ-09, I8 R4): Census place GEOID for Peachtree Corners, GA.
 jurisdiction_place = "Peachtree Corners"
 technology = "alpr-fixed"
 

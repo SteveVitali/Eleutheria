@@ -1,0 +1,31 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Flock_Sign", "type": "esriFieldTypeString", "alias": "Flock Sign"},
+    {"name": "Product", "type": "esriFieldTypeString", "alias": "Product"},
+    {"name": "Deployment", "type": "esriFieldTypeString", "alias": "Deployment"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 71,
+        "Flock_Sign": "Yes",
+        "Product": "Falcon",
+        "Deployment": "Permanent"
+      },
+      "geometry": {"x": -77.8015, "y": 35.9382}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 72,
+        "Flock_Sign": "No",
+        "Product": "Falcon",
+        "Deployment": "Permanent"
+      },
+      "geometry": {"x": -77.7904, "y": 35.9571}
+    }
+  ]
+}

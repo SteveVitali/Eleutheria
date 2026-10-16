@@ -298,6 +298,123 @@ def target_geometry_violations() -> list[str]:
     return violations
 
 
+# --- the declared status disposition (P36.5 / ACQ-09) -------------------------
+
+
+#: The closed vocabulary for a target's ``status_disposition`` — how the
+#: layer's published status column is allowed to affect lifecycle claims.
+#: ``"removal"`` is the only member: the target is a removal ledger whose
+#: rows bound the device's presence (removal → ``valid_to``, never a
+#: deletion — I8 §5.2, I9a NEW-2).
+_STATUS_DISPOSITIONS = frozenset({"removal"})
+
+
+class StatusDispositionNotDeclared(Exception):
+    """A registry defect: an unknown status disposition or a missing removal
+    vocabulary.
+
+    Deliberately NOT a per-record rejection: a target that mis-declares how
+    its published status column maps to lifecycle claims is a broken registry
+    row — the run must fail loudly rather than mint (or silently drop)
+    ``valid_to`` bounds on unverified status semantics (P36.5; the S5 guard —
+    a published status value is a permit-compliance fact, verbatim, until
+    verified).
+    """
+
+
+def assert_target_status_disposition(target: Mapping[str, Any]) -> str | None:
+    """The target's declared ``status_disposition`` (``None`` when undeclared).
+
+    ``"removal"`` marks a removal-ledger target; with it the row MUST also
+    carry a non-empty ``removal_status_values`` — the declared vocabulary of
+    published status values that record a removal. A removal row's
+    ``valid_to`` is stamped only on a member value: a status the registry
+    does not declare never mints an end bound, and the verbatim published
+    value still rides ``camera_status`` either way (S5 guard).
+    """
+    disposition = str(target.get("status_disposition") or "").strip()
+    if not disposition:
+        return None
+    if disposition not in _STATUS_DISPOSITIONS:
+        raise StatusDispositionNotDeclared(
+            f"registry target {target.get('id')!r} declares "
+            f"status_disposition={disposition!r}, which is not a member "
+            f"({sorted(_STATUS_DISPOSITIONS)}) — register the member in "
+            "dot_511.py or re-point the row."
+        )
+    if not _row_removal_status_values(target):
+        raise StatusDispositionNotDeclared(
+            f"registry target {target.get('id')!r} declares "
+            "status_disposition='removal' but carries no "
+            "'removal_status_values' — the declared removal-value vocabulary "
+            "is required so a valid_to bound is never minted on an "
+            "unverifiable status match."
+        )
+    return disposition
+
+
+def _row_removal_status_values(target: Mapping[str, Any]) -> frozenset[str]:
+    """The target's declared removal-value vocabulary, lower-cased for matching."""
+    value = target.get("removal_status_values")
+    if isinstance(value, str):
+        return frozenset(v.strip().lower() for v in value.split(",") if v.strip())
+    if isinstance(value, (list, tuple)):
+        return frozenset(str(v).strip().lower() for v in value if str(v).strip())
+    return frozenset()
+
+
+# --- the declared coordinate precision (P36.5 / ACQ-09) -----------------------
+
+
+#: The closed vocabulary for a target's ``coordinate_precision`` — the
+#: publisher's own declared precision caveat. ``"approximate"`` is the only
+#: member (Milford's layer description: "approximate locations, not GPS
+#: data" — the caveat must travel with the record, §19.1/P4).
+_COORD_PRECISIONS = frozenset({"approximate"})
+
+
+class CoordinatePrecisionNotDeclared(Exception):
+    """A registry defect: a ``coordinate_precision`` outside the closed set.
+
+    Deliberately NOT a per-record rejection: an unknown precision label is a
+    broken registry row — precision caveats must be declared vocabulary, never
+    invented per record (P4 — uncertainty before false precision).
+    """
+
+
+def assert_target_coordinate_precision(target: Mapping[str, Any]) -> str | None:
+    """The target's declared ``coordinate_precision`` (``None`` when undeclared)."""
+    precision = str(target.get("coordinate_precision") or "").strip()
+    if not precision:
+        return None
+    if precision not in _COORD_PRECISIONS:
+        raise CoordinatePrecisionNotDeclared(
+            f"registry target {target.get('id')!r} declares "
+            f"coordinate_precision={precision!r}, which is not a member "
+            f"({sorted(_COORD_PRECISIONS)}) — register the member in "
+            "dot_511.py or re-point the row."
+        )
+    return precision
+
+
+def target_status_violations() -> list[str]:
+    """``sig-connectors validate`` rules for the declared status/coordinate
+    semantics (P36.5): status dispositions, removal vocabularies, and the
+    declared coordinate precision are validated fail-closed."""
+    violations: list[str] = []
+    for row in target_table().get("targets", []):
+        label = f"target {row.get('id')!r} (source {row.get('source_id')!r})"
+        try:
+            assert_target_status_disposition(row)
+        except StatusDispositionNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+        try:
+            assert_target_coordinate_precision(row)
+        except CoordinatePrecisionNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+    return violations
+
+
 class PredicateNotAllowed(Exception):
     """A schema error: the connector tried to write outside its predicate allowlist."""
 
@@ -513,6 +630,13 @@ def expand_registry_rows(
         # at expansion — a row naming a shape the ontology does not know is a
         # broken registry row, never a silently point-flattened emit.
         geometry_kind = assert_target_geometry_kind(row)
+        # P36.5 (ACQ-09): the declared status disposition + coordinate
+        # precision are validated at expansion — a removal target without its
+        # declared removal-value vocabulary or a non-member precision is a
+        # broken registry row, never a silently un-bounded (or falsely
+        # bounded) emit.
+        status_disposition = assert_target_status_disposition(row)
+        coordinate_precision = assert_target_coordinate_precision(row)
         where = str(row.get("where") or "").strip()
         for page in expand(row):
             target = {
@@ -534,6 +658,11 @@ def expand_registry_rows(
                 "record_kind": declared_record_kind(row),
                 "geometry_kind": geometry_kind,
             }
+            if status_disposition:
+                target["status_disposition"] = status_disposition
+                target["removal_status_values"] = sorted(_row_removal_status_values(row))
+            if coordinate_precision:
+                target["coordinate_precision"] = coordinate_precision
             if where:
                 target["where"] = where
             if rpm is not None:
@@ -981,6 +1110,21 @@ class CameraRegistryEntry:
     #: The number of rings the published polygon carried (transparency for
     #: multi-ring / hole handling).
     ring_count: int = 0
+    #: P36.5 (ACQ-09, P4): the target's declared coordinate-precision caveat —
+    #: ``None`` or a ``_COORD_PRECISIONS`` member (``"approximate"`` for
+    #: Milford's published "approximate locations, not GPS data" rows).
+    #: Stamped on the entity + the coordinate claims so the publisher's own
+    #: caveat travels with the record.
+    coordinate_precision: str | None = None
+    #: P36.5 (ACQ-09, I9a NEW-2): a removal-ledger row's end bound — the
+    #: published removal date under ``valid_to_kind="exact"``, or
+    #: ``(None, "unknown")`` when the publisher flags the device removed
+    #: without a date. Stamped on the entity + every claim row a removal row
+    #: emits; left ``None`` on every other record (absence is the spine's
+    #: "not asserted" — the device is never silently bounded, and the append
+    #: never deletes the paired inventory rows).
+    valid_to: str | None = None
+    valid_to_kind: str | None = None
 
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
@@ -1011,6 +1155,25 @@ class CameraRegistryEntry:
             raise ValueError(
                 "a non-point CameraRegistryEntry requires geometry_wkt + a derived centroid"
             )
+        # P36.5: the declared coordinate-precision caveat is a member of the
+        # closed set — a hand-built entry cannot smuggle an invented label.
+        if self.coordinate_precision is not None:
+            assert_target_coordinate_precision(
+                {"id": self.target_id, "coordinate_precision": self.coordinate_precision}
+            )
+        # P36.5 (I9a NEW-2): a removal bound asserts a kind only the emit path
+        # mints — ``"exact"`` (a published date) or ``"unknown"`` (a removal
+        # flag with no date). Any other temporal vocabulary is a registry
+        # defect, never a silently re-labeled bound; an ``exact`` bound without
+        # its date is a contradiction the row must not assert.
+        if self.valid_to_kind is not None:
+            if self.valid_to_kind not in ("exact", "unknown"):
+                raise ValueError(
+                    f"valid_to_kind={self.valid_to_kind!r} is not an emitted member "
+                    "('exact'/'unknown')"
+                )
+            if self.valid_to_kind == "exact" and not self.valid_to:
+                raise ValueError("an 'exact' valid_to bound requires the published date")
 
     @property
     def subject_id(self) -> str:
@@ -1119,6 +1282,10 @@ class CameraRegistryEntry:
             entity["centroid_latitude"] = self.centroid_latitude
             entity["centroid_longitude"] = self.centroid_longitude
             entity["ring_count"] = self.ring_count
+        if self.coordinate_precision:
+            # P36.5 (P4): the publisher's declared precision caveat rides the
+            # entity row so it travels with the record.
+            entity["coordinate_precision"] = self.coordinate_precision
         rows: list[dict[str, Any]] = [
             _stamp(
                 entity,
@@ -1200,6 +1367,26 @@ class CameraRegistryEntry:
         ):
             if value is not None:
                 rows.append(self._claim(predicate, value, str(value), ev))
+        if self.coordinate_precision:
+            # P36.5 (P4): the publisher's declared precision caveat rides the
+            # coordinate claims too — an "approximate" coordinate can never be
+            # re-asserted downstream as an exact device point.
+            for row in rows:
+                if row.get("predicate_id") in (
+                    "camera_latitude",
+                    "camera_longitude",
+                    "camera_coordinate_source",
+                ):
+                    row["coordinate_precision"] = self.coordinate_precision
+        if self.valid_to_kind is not None:
+            # P36.5 (I9a NEW-2): a removal-ledger row bounds EVERY claim it
+            # emits — the entity record and the coordinate/status/name claims
+            # share one ``valid_to`` bound so the device is never half-removed.
+            # The append never deletes: the paired inventory layer's rows stay
+            # open until (and if) they publish their own bound.
+            for row in rows:
+                row["valid_to"] = self.valid_to
+                row["valid_to_kind"] = self.valid_to_kind
         return rows
 
 
@@ -1571,6 +1758,28 @@ def _entry_from_raw(
         return text or None
 
     operator = str(target.get("operator") or "").strip() or _s("operator_fields")
+    status = _s("status_fields")
+
+    # P36.5 (ACQ-09): the target's declared status disposition decides how the
+    # published status column reads. A "removal" target is a removal ledger —
+    # a row whose published status is a declared removal value bounds the
+    # device: the layer's published date emits ``valid_to`` with
+    # ``valid_to_kind="exact"``; a removal flag with no published date emits
+    # ``valid_to_kind="unknown"`` (an ended-when-unknown bound, never a
+    # fabricated date — P4). A non-removal status value emits no bound at
+    # all, and the verbatim published status still rides ``camera_status``
+    # either way (the S5 guard — published values stay published).
+    valid_to: str | None = None
+    valid_to_kind: str | None = None
+    if assert_target_status_disposition(target) == "removal":
+        if status is not None and status.strip().lower() in _row_removal_status_values(target):
+            removal_date = _first_field(fields, vocab()["removal_date_fields"])
+            if removal_date is not None:
+                valid_to = str(removal_date[1]).strip()
+                valid_to_kind = "exact"
+            else:
+                valid_to = None
+                valid_to_kind = "unknown"
 
     return CameraRegistryEntry(
         camera_ref=str(ref_pair[1]),
@@ -1590,8 +1799,11 @@ def _entry_from_raw(
         name=_s("name_fields"),
         roadway=_s("roadway_fields"),
         county=_s("county_fields"),
-        status=_s("status_fields"),
+        status=status,
         direction=_s("direction_fields"),
+        coordinate_precision=assert_target_coordinate_precision(target),
+        valid_to=valid_to,
+        valid_to_kind=valid_to_kind,
         excluded_fields=tuple(raw.get("excluded_fields") or ()),
         jurisdiction_scheme=str(target.get("jurisdiction_scheme") or "us.state_abbr"),
         extraction_method=_EXTRACTION_METHODS.get(
@@ -1710,14 +1922,18 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
 
 __all__ = [
     "CameraRegistryEntry",
+    "CoordinatePrecisionNotDeclared",
     "CoordinateRejected",
     "Dot511Connector",
     "GeometryKindNotDeclared",
     "PredicateNotAllowed",
+    "StatusDispositionNotDeclared",
     "TechnologyNotDeclared",
     "area_geometry",
     "assert_predicate_allowed",
+    "assert_target_coordinate_precision",
     "assert_target_geometry_kind",
+    "assert_target_status_disposition",
     "assert_target_technology",
     "canary_findings",
     "declared_record_kind",
@@ -1732,6 +1948,7 @@ __all__ = [
     "publishable_coordinate",
     "registry_targets",
     "target_geometry_violations",
+    "target_status_violations",
     "target_technology_violations",
     "technology_slugs",
     "vocab",

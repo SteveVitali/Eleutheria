@@ -561,6 +561,57 @@ kind = "dot_511_targets"
 [camreg_hyattsville_md_cctv_camera_2024]
 kind = "dot_511_targets"
 
+# --- P36.5 (ACQ-09): R11 agency ALPR/Flock layers ----------------------------
+# Fifteen gated sources — camreg_fdot_flock carries TWO targets (the D3 Flock
+# inventory + the removal-status ledger) which ingest in the same run (I8
+# §5.2). The rows record the endpoints the operator's OP-26 Wave-B flip will
+# drive; the live gate refuses before any target is read.
+
+[camreg_fdot_flock]
+kind = "dot_511_targets"
+
+[camreg_pueblo_co_flock]
+kind = "dot_511_targets"
+
+[camreg_rocky_mount_nc_lpr_cameras]
+kind = "dot_511_targets"
+
+[camreg_shelbyville_tn_flock_cameras]
+kind = "dot_511_targets"
+
+[camreg_temecula_ca_flock_wfl1]
+kind = "dot_511_targets"
+
+[camreg_marble_falls_tx_flock_locations]
+kind = "dot_511_targets"
+
+[camreg_va_prince_william_county]
+kind = "dot_511_targets"
+
+[camreg_milford_ct_flocklprcam]
+kind = "dot_511_targets"
+
+[camreg_elgin_il_lpr_cameras]
+kind = "dot_511_targets"
+
+[camreg_south_fulton_ga_lpr_cameras]
+kind = "dot_511_targets"
+
+[camreg_va_pittsylvania_county_stationary]
+kind = "dot_511_targets"
+
+[camreg_alabaster_al_lpr_cameras]
+kind = "dot_511_targets"
+
+[camreg_thomasville_ga_flock_location]
+kind = "dot_511_targets"
+
+[camreg_leon_county_fl_overwatch_viewer]
+kind = "dot_511_targets"
+
+[camreg_ga_peachtree_corners_flock_camera]
+kind = "dot_511_targets"
+
 [camreg_act_au]
 kind = "dot_511_targets"
 

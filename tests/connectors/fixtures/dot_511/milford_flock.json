@@ -1,0 +1,19 @@
+{
+  "displayFieldName": "Id",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "Id", "type": "esriFieldTypeInteger", "alias": "Id"},
+    {"name": "Status", "type": "esriFieldTypeString", "alias": "Status"}
+  ],
+  "features": [
+    {
+      "attributes": {"Id": 7, "Status": "Active"},
+      "geometry": {"x": -73.0564, "y": 41.2223}
+    },
+    {
+      "attributes": {"Id": 8, "Status": "Active"},
+      "geometry": {"x": -73.0701, "y": 41.2289}
+    }
+  ]
+}

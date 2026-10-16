@@ -1,0 +1,34 @@
+{
+  "displayFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Install_Type", "type": "esriFieldTypeString", "alias": "Install Type"},
+    {"name": "FDOT_ROW", "type": "esriFieldTypeString", "alias": "FDOT ROW"},
+    {"name": "Is_Location_FDOT_Compliant", "type": "esriFieldTypeString", "alias": "Is Location FDOT Compliant"},
+    {"name": "Non_Compliance_Reason", "type": "esriFieldTypeString", "alias": "Non-Compliance Reason"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 401,
+        "Install_Type": "New",
+        "FDOT_ROW": "Yes",
+        "Is_Location_FDOT_Compliant": "Yes",
+        "Non_Compliance_Reason": null
+      },
+      "geometry": {"x": -84.2815, "y": 30.4383}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 402,
+        "Install_Type": "Replacement",
+        "FDOT_ROW": "No",
+        "Is_Location_FDOT_Compliant": "No",
+        "Non_Compliance_Reason": "Setback"
+      },
+      "geometry": {"x": -85.6602, "y": 30.1588}
+    }
+  ]
+}
