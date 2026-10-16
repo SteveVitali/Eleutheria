@@ -230,7 +230,7 @@ def test_typed_label_must_derive_from_the_snapshot_date(tmp_path: Path) -> None:
     # a label whose date is NOT the snapshot's UTC date is refused — the
     # label date is the data date, never typed (§3.3 rule 6).
     with pytest.raises(ReleaseError, match="does not derive"):
-        _v2_build(tmp_path, export, label="sig-2026-10-17.1")
+        _v2_build(tmp_path, export, label="sig-2026-10-17.1")  # future-ok: synthetic: vs T0
 
 
 def test_labelless_v2_build_is_refused(tmp_path: Path) -> None:
@@ -346,7 +346,7 @@ def test_host_clock_unreachable_refuses() -> None:
 
 def test_future_as_of_refuses() -> None:
     with pytest.raises(RI.ClockGuardError, match="future"):
-        RI.check_as_of_clock("2026-10-17T00:00:00Z", T0)
+        RI.check_as_of_clock("2026-10-17T00:00:00Z", T0)  # future-ok: synthetic: vs T0
 
 
 def test_as_of_later_than_built_at_refuses() -> None:
@@ -391,7 +391,7 @@ def test_descriptor_clock_ordering(tmp_path: Path) -> None:
     assert RI.descriptor_clock_failures(doc, now=T0) == []
     # belief later than built_at violates the chain
     doc2 = json.loads(json.dumps(doc))
-    doc2["snapshot"]["as_of_belief"] = "2026-10-17T00:00:00Z"
+    doc2["snapshot"]["as_of_belief"] = "2026-10-17T00:00:00Z"  # future-ok: synthetic: vs T0
     failures = RI.descriptor_clock_failures(doc2, now=T0)
     assert any("as_of_belief" in f for f in failures)
 
@@ -400,7 +400,7 @@ def test_emitted_date_scan() -> None:
     doc = {
         "label": "sig-2026-10-16.1",
         "built_at": "2026-10-16T12:00:00Z",
-        "notes": "generated 2026-10-20T09:00:00Z",
+        "notes": "generated 2026-10-20T09:00:00Z",  # future-ok: synthetic: vs T0
         "expiry_date": "2030-01-01T00:00:00Z",
     }
     failures = RI.emitted_date_failures(doc, T0)
@@ -418,7 +418,7 @@ def test_cli_from_spine_future_as_of_refuses(capsys: pytest.CaptureFixture[str])
             "--dsn",
             "postgresql://x",
             "--as-of",
-            "2999-01-01T00:00:00Z",
+            "2999-01-01T00:00:00Z",  # future-ok: synthetic: future refusal input
             "--out",
             "/tmp/x",
             "--skip-host-clock-check",
@@ -544,7 +544,7 @@ def test_v2_validator_is_fail_closed(tmp_path: Path) -> None:
     assert any("commit" in f for f in RI.validate_descriptor(bad, now=T0))
     # label not matching the snapshot date
     bad = json.loads(json.dumps(doc))
-    bad["label"] = "sig-2026-10-17.1"
+    bad["label"] = "sig-2026-10-17.1"  # future-ok: synthetic: fixture date vs fixed T0
     assert any("label" in f for f in RI.validate_descriptor(bad, now=T0))
 
 
@@ -638,7 +638,7 @@ def test_promotion_refuses_earlier_release_date(tmp_path: Path) -> None:
         doc,
         tree_clean=True,
         pushed=True,
-        previous_as_of_world="2026-10-20T00:00:00Z",
+        previous_as_of_world="2026-10-20T00:00:00Z",  # future-ok: synthetic: vs T0
     )
     assert any("earlier" in r for r in refusals)
     # a later or equal previous passes this check
@@ -706,7 +706,7 @@ def test_validate_release_runs_descriptor_validation(tmp_path: Path) -> None:
     # corrupt the descriptor's snapshot → validate_release reports it
     desc_path = build.out_dir / f"releases/{build.publication_id}/descriptor.json"
     doc = json.loads(desc_path.read_text())
-    doc["snapshot"]["as_of_belief"] = "2026-10-20T00:00:00Z"
+    doc["snapshot"]["as_of_belief"] = "2026-10-20T00:00:00Z"  # future-ok: synthetic: vs T0
     # re-fix the artifact sha so only the *field* check fires is impossible —
     # a tampered descriptor ALSO fails its integrity digest; both are named.
     desc_path.write_text(json.dumps(doc), encoding="utf-8")
