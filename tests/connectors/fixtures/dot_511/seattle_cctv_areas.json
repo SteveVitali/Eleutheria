@@ -1,0 +1,47 @@
+{
+  "displayFieldName": "Name",
+  "geometryType": "esriGeometryPolygon",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "Name", "type": "esriFieldTypeString", "alias": "Name"},
+    {"name": "PilotArea", "type": "esriFieldTypeString", "alias": "Pilot Area"}
+  ],
+  "features": [
+    {
+      "attributes": {"OBJECTID": 1, "Name": "Downtown Pilot Area A", "PilotArea": "A"},
+      "geometry": {
+        "rings": [
+          [
+            [-122.3500, 47.5900],
+            [-122.3500, 47.6100],
+            [-122.3100, 47.6100],
+            [-122.3100, 47.5900],
+            [-122.3500, 47.5900]
+          ]
+        ]
+      }
+    },
+    {
+      "attributes": {"OBJECTID": 2, "Name": "Capitol Hill Pilot Area B", "PilotArea": "B"},
+      "geometry": {
+        "rings": [
+          [
+            [-122.3300, 47.6150],
+            [-122.3300, 47.6250],
+            [-122.3050, 47.6250],
+            [-122.3050, 47.6150],
+            [-122.3300, 47.6150]
+          ],
+          [
+            [-122.3240, 47.6170],
+            [-122.3110, 47.6170],
+            [-122.3110, 47.6230],
+            [-122.3240, 47.6230],
+            [-122.3240, 47.6170]
+          ]
+        ]
+      }
+    }
+  ]
+}

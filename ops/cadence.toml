@@ -924,7 +924,7 @@ job = "sig-ingest-r11-layers-01"
 scheduler = "sig-sched-r11-layers-01"
 task_timeout = "6h"
 members = ["dot_511_de", "dot_511_vt", "dot_511_wv", "dot_511_mi", "camreg_ne_lincoln_traffic_cameras", "camreg_omaha_ne_parks_cameras", "camreg_hyattsville_md_cctv_camera_2024", "dot_511_nc"]
-note = "Round-11 batch r11-layers-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6)."
+note = "Round-11 batch r11-layers-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.4 (ACQ-08) review: the batch is the eight GATED members of the ticket\u2019s ten-layer scope \u2014 camreg_denver_co and camreg_seattle_wa are already permitted (P26.16, GL-GATE-07) and ride their existing camreg-batch-0x rows; a source may hold only one batch seat, so the two new targets on those sources inherit their existing cadence. The eight rows stay gated until the operator\u2019s OP-26 Wave-B flip under ING-GO-B."
 
 [[batches]]
 id = "r11-layers-02"

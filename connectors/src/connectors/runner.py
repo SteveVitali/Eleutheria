@@ -194,6 +194,20 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "dot_511_mo": "dot_511",
     "dot_511_tx": "dot_511",
     "dot_511_md": "dot_511",
+    # P36.4 (ACQ-08): R11 official camera layers — five new gated `dot_511_*`
+    # sources (de/vt/wv/mi/nc) plus three gated municipal `camreg_*` sources
+    # (Lincoln/Omaha/Hyattsville); camreg_denver_co and camreg_seattle_wa were
+    # already mapped by P26.16. All route through `dot_511` over the merged
+    # target registry; the gated rows stay refused by the loader until the
+    # operator's OP-26 Wave-B flip under ING-GO-B.
+    "dot_511_de": "dot_511",
+    "dot_511_vt": "dot_511",
+    "dot_511_wv": "dot_511",
+    "dot_511_mi": "dot_511",
+    "dot_511_nc": "dot_511",
+    "camreg_ne_lincoln_traffic_cameras": "dot_511",
+    "camreg_omaha_ne_parks_cameras": "dot_511",
+    "camreg_hyattsville_md_cctv_camera_2024": "dot_511",
     # P26.9 (SOURCES.8): municipal / transit / non-US camera registries — one
     # source row per publisher; all route through the `dot_511` connector over
     # the merged target registry (data/camera_registry_targets.toml). Gated

@@ -4179,11 +4179,18 @@ platform = "arcgis"
 url = "https://services1.arcgis.com/wpJGOi6N4Rq5cqFv/arcgis/rest/services/Traffic_Cameras/FeatureServer/0"
 layer_url = "https://services1.arcgis.com/wpJGOi6N4Rq5cqFv/arcgis/rest/services/Traffic_Cameras/FeatureServer/0"
 agency = "City of Lincoln, NE Traffic Operations (via Lincoln-Lancaster County ArcGIS Online org wpJGOi6N4Rq5cqFv)"
+operator = "City of Lincoln Traffic Operations"
 state = "US-NE"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 55
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-044"
-notes = "ACQ-01 generated target (plan AP-T1-044, cand I5-C107). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item d59b7eb12d614bb1a0c3a8a0b205d531 checked (accessInformation 'City of Lincoln, NE'; licenseInfo NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP-T1-044, cand I5-C107). count=55 traffic monitoring cameras via returnCountOnly (live-read 2026-09-30). 'Traffic_Cameras / Traffic Operations - Public Monitoring Cameras (City of Lincoln)' — the city's Traffic Operations group is the layer's own operator. The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it."
+place_geoid = "3128000"  # P36.4 (ACQ-08, I8 R4): Census place GEOID for Lincoln, NE — recorded for the `us.census.geoid` candidate emit once PKG-06a/K4 fixes the sub-state key; the registry's `jurisdiction_place` label stays the human-readable name.
 jurisdiction_place = "Lincoln"
 technology = "fixed-camera-ptz"
 
@@ -4211,11 +4218,18 @@ platform = "arcgis"
 url = "https://services.arcgis.com/pDAi2YK0L0QxVJHj/arcgis/rest/services/Parks_Cameras/FeatureServer/0"
 layer_url = "https://services.arcgis.com/pDAi2YK0L0QxVJHj/arcgis/rest/services/Parks_Cameras/FeatureServer/0"
 agency = "Douglas-Omaha GIS (DOGIS) for City of Omaha Parks (via ArcGIS Online org pDAi2YK0L0QxVJHj)"
+operator = "City of Omaha"
 state = "US-NE"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 37
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-056"
-notes = "ACQ-01 generated target (plan AP-T1-056, cand I5-C106). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item eae5f49698654542a0390746bc2e76e1 licenseInfo empty (checked, NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP-T1-056, cand I5-C106). count=37 city-maintained cameras (parks / College World Series area) via returnCountOnly (live-read 2026-09-30, I5-F091). Item description verbatim: 'Camera's that the City of Omaha maintains. This layer is used for the College World Series.' — the City of Omaha is the maintainer/operator. Item created/modified 2021-06-16 (static basis). The published schema was not enumerated in the live-read evidence; out_fields pins the minimal registry surface (OBJECTID + geometry) until the operator's Wave-B review widens it."
+place_geoid = "3137000"  # P36.4 (ACQ-08, I8 R4): Census place GEOID for Omaha, NE.
 jurisdiction_place = "Omaha"
 technology = "fixed-camera-cctv"
 
@@ -4243,11 +4257,19 @@ platform = "arcgis"
 url = "https://services1.arcgis.com/C8MAhNIV9pLl1tVX/arcgis/rest/services/Hyattsville_CCTV_Camera_Program_2024/FeatureServer/0"
 layer_url = "https://services1.arcgis.com/C8MAhNIV9pLl1tVX/arcgis/rest/services/Hyattsville_CCTV_Camera_Program_2024/FeatureServer/0"
 agency = "City of Hyattsville, MD (cohgis)"
+operator = "City of Hyattsville"
 state = "US-MD"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,Loc_Name,City_Ward,Installed,Operating,Cam_Type,Status,Inst_Date"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Loc_Name", "City_Ward", "Installed", "Operating", "Cam_Type", "Status", "Inst_Date"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-070"
-notes = "ACQ-01 generated target (plan AP-T1-070, cand I3-C082). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+rights_note = "No licence text located — item licenseInfo/accessInformation checked via hub API (NONE-FOUND). Rights batch RB-01 `a` (GL-GATE-07 US agency GIS/open-data) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-B flip."
+notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP-T1-070, cand I3-C082). The count was NOT read in evidence — observed_count=50 is the ACQ-08 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit (ContentDrift), never a silent truncation. Evidenced schema fields Loc_Name/City_Ward/Installed/Operating/Cam_Type/Status/Inst_Date (I3-F099) form the capture allowlist — the programme-status series is kept verbatim, none is a person/feed field."
+place_geoid = "2441250"  # P36.4 (ACQ-08, I8 R4): Census place GEOID for Hyattsville, MD.
 jurisdiction_place = "Hyattsville"
 technology = "fixed-camera-cctv"
 
@@ -4274,11 +4296,20 @@ platform = "arcgis"
 url = "https://services1.arcgis.com/zdB7qR0BtYrg0Xpl/arcgis/rest/services/POLICE_HALO_P/FeatureServer/0"
 layer_url = "https://services1.arcgis.com/zdB7qR0BtYrg0Xpl/arcgis/rest/services/POLICE_HALO_P/FeatureServer/0"
 agency = "City and County of Denver (geospatialDENVER)"
+operator = "Denver Police Department"
 state = "US-CO"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 50
+observed_fields = "OBJECTID,PAN_RANGE,TILT_RANGE,BLIND_AREA"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["PAN_RANGE", "TILT_RANGE", "BLIND_AREA"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-086"
-notes = "ACQ-01 generated target (plan AP-T1-086, cand I3-C079). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+place_geoid = "0820000"  # P36.4 (ACQ-08, I8 R4): Census place GEOID for Denver, CO.
+rights_note = "Licence check (ACQ-08): the POLICE_HALO_P item is published by the same City and County of Denver org (geospatialDENVER, host services1.arcgis.com/zdB7qR0BtYrg0Xpl) as the flipped POLICE_ALPR_P layer — the same US municipal public-record basis applies, so the target rides camreg_denver_co's resolved LicenseRef-PublicRecord-FactualCompilation (P26.16, GL-GATE-07). No separate camreg_denver_co_halo source is needed; the ticket's 'if the licence matches' check matched."
+notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP-T1-086, cand I3-C079). The count was NOT read in evidence — observed_count=50 is the ACQ-08 plan estimate (≈50); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Item description verbatim: 'These data show the location of existing Denver Police Department (DPD)/ HALO (High Activity Location Observation) surveillance cameras.' → operator = Denver Police Department. PAN_RANGE/TILT_RANGE/BLIND_AREA evidence the PTZ class (fixed-camera-ptz). Dedupe note (I8 §5.1): HALO points dedupe against camreg_denver_co's existing ALPR points on next ingest."
 jurisdiction_place = "Denver"
 technology = "fixed-camera-ptz"
 
@@ -4289,12 +4320,27 @@ kind = "arcgis_query"
 platform = "arcgis"
 url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Seattle_Police_Department_CCTV_Pilot_Areas/FeatureServer/0"
 layer_url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Seattle_Police_Department_CCTV_Pilot_Areas/FeatureServer/0"
+# P36.4 (ACQ-08, SIG-GEO-003): the layer's features are published POLYGONS —
+# SPD CCTV pilot programme AREAS, never device points. The `area` geometry
+# kind (the P36.3 GeometryKind member) routes each feature's rings to a
+# `fixed_asset_location` WKT claim + a `geometry_kind="area"` claim; no
+# `camera_latitude`/`camera_longitude` device-point claims emit.
+geometry_kind = "area"
 agency = "City of Seattle (SPD GIS)"
+operator = "Seattle Police Department"
 state = "US-WA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 10
+observed_fields = "OBJECTID,Name,PopupInfo,PilotArea"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["Name", "PilotArea"]
+verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T1-087"
-notes = "ACQ-01 generated target (plan AP-T1-087, cand I3-C081). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+place_geoid = "5363000"  # P36.4 (ACQ-08, I8 R4): Census place GEOID for Seattle, WA.
+rights_note = "Licence check (ACQ-08): the SPD CCTV Pilot Areas item is on the same City of Seattle ArcGIS org (ZOyb2t4B0UYuYNYH) as the flipped SDOT layers — the same US municipal public-record basis applies, so the target rides camreg_seattle_wa's resolved LicenseRef-PublicRecord-FactualCompilation (P26.16, GL-GATE-07); rights batch RB-01 `a` covers the layer's registration."
+notes = "P36.4 (ACQ-08) registration review of the ACQ-01 generated row (plan AP-T1-087, cand I3-C081). The count was NOT read in evidence — observed_count=10 is the ACQ-08 plan estimate (≈10); a layer outgrowing its planned pages fails loud on exceededTransferLimit. Evidenced fields Name/PopupInfo/PilotArea (I3-F098); PopupInfo (popup display text) is deliberately outside the allowlist. The subject records are programme areas — complements the ccops_seattle SIR documents with locations."
 jurisdiction_place = "Seattle"
 technology = "fixed-camera-cctv"
 
