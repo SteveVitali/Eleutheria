@@ -33,7 +33,7 @@ REGION = "us-central1"
 # Clock values injected as SIG_CONSOL_NOW — they reproduce the contract
 # window offline; no apply ever runs against real infrastructure.
 IN_WINDOW = "2026-10-15T15:00:00Z"  # a Thursday inside 14:00–20:00Z
-SATURDAY = "2026-10-17T15:00:00Z"
+SATURDAY = "2026-10-10T15:00:00Z"
 EARLY = "2026-10-15T09:00:00Z"  # a weekday before 14:00Z
 
 

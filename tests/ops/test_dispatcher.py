@@ -145,38 +145,38 @@ def _due_ids(ds: D.DueSet) -> set[str]:
 
 
 def test_window_tiles_consecutive_dispatches() -> None:
-    open_, close = D.due_window("13 * * * *", _at("2026-10-16T05:13:30Z"))
-    assert (open_, close) == (_at("2026-10-16T04:13:00Z"), _at("2026-10-16T05:13:00Z"))
-    open2, close2 = D.due_window("13 * * * *", _at("2026-10-16T06:13:00Z"))
-    assert (open2, close2) == (close, _at("2026-10-16T06:13:00Z"))
+    open_, close = D.due_window("13 * * * *", _at("2026-10-15T05:13:30Z"))
+    assert (open_, close) == (_at("2026-10-15T04:13:00Z"), _at("2026-10-15T05:13:00Z"))
+    open2, close2 = D.due_window("13 * * * *", _at("2026-10-15T06:13:00Z"))
+    assert (open2, close2) == (close, _at("2026-10-15T06:13:00Z"))
 
 
 def test_window_late_start_still_covers_its_fire() -> None:
     # A dispatch starting at :45 still closes on its own :13 fire — the due
     # set is the window it stands in for, not the wall clock.
-    open_, close = D.due_window("13 * * * *", _at("2026-10-16T05:45:00Z"))
-    assert (open_, close) == (_at("2026-10-16T04:13:00Z"), _at("2026-10-16T05:13:00Z"))
+    open_, close = D.due_window("13 * * * *", _at("2026-10-15T05:45:00Z"))
+    assert (open_, close) == (_at("2026-10-15T04:13:00Z"), _at("2026-10-15T05:13:00Z"))
 
 
 def test_window_since_overrides_the_open_edge() -> None:
     open_, close = D.due_window(
-        "13 * * * *", _at("2026-10-16T05:13:00Z"), since=_at("2026-10-16T03:00:00Z")
+        "13 * * * *", _at("2026-10-15T05:13:00Z"), since=_at("2026-10-15T03:00:00Z")
     )
-    assert (open_, close) == (_at("2026-10-16T03:00:00Z"), _at("2026-10-16T05:13:00Z"))
+    assert (open_, close) == (_at("2026-10-15T03:00:00Z"), _at("2026-10-15T05:13:00Z"))
 
 
 def test_window_bad_dispatcher_cron_fails_closed() -> None:
     with pytest.raises(CronError):
-        D.due_window("not a cron", _at("2026-10-16T05:13:00Z"))
+        D.due_window("not a cron", _at("2026-10-15T05:13:00Z"))
 
 
 # --- evaluate_due --------------------------------------------------------------
 
 
 def test_due_set_at_the_dispatch_minute() -> None:
-    ds = D.evaluate_due(_config(), now=_at("2026-10-20T05:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-20T05:13:00Z"))
     # hourly_src fires 05:00 (in window); monthly_src fires day-20 05:00;
-    # weekly_src fires Tue 04:30 — 2026-10-20 is a Tuesday, still inside
+    # weekly_src fires Tue 04:30 — 2026-01-20 is a Tuesday, still inside
     # (04:13, 05:13]; edge_src fires 05:13 == close (inclusive edge).
     assert _due_ids(ds) == {"hourly_src", "monthly_src", "weekly_src", "edge_src"}
     assert {s.id for s in ds.skipped} == {"paused_src", "pinned_batch"}
@@ -188,42 +188,42 @@ def test_due_set_at_the_dispatch_minute() -> None:
 def test_due_set_next_dispatch_never_redispatches() -> None:
     # The same fires sit on the NEXT window's exclusive open edge — a row is
     # dispatched once per fire, never twice.
-    ds = D.evaluate_due(_config(), now=_at("2026-10-20T06:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-20T06:13:00Z"))
     assert _due_ids(ds) == {"hourly_src", "edge_src"}
 
 
 def test_open_edge_is_exclusive() -> None:
     # A row whose fire lands exactly on the window's open edge was covered by
     # the PREVIOUS dispatch — never redispatched.
-    ds = D.evaluate_due(_config(), now=_at("2026-10-20T04:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-20T04:13:00Z"))
     # window (03:13, 04:13]: hourly fires 04:00; edge fires 04:13 (close).
     assert _due_ids(ds) == {"hourly_src", "edge_src"}
-    ds2 = D.evaluate_due(_config(), now=_at("2026-10-20T03:13:00Z"))
+    ds2 = D.evaluate_due(_config(), now=_at("2026-01-20T03:13:00Z"))
     # window (02:13, 03:13]: edge fires 03:13; the 04:13 fire is future.
     assert _due_ids(ds2) == {"hourly_src", "edge_src"}
 
 
 def test_monthly_row_dues_only_on_its_day() -> None:
-    ds = D.evaluate_due(_config(), now=_at("2026-10-19T05:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-19T05:13:00Z"))
     assert "monthly_src" not in _due_ids(ds)
-    ds = D.evaluate_due(_config(), now=_at("2026-10-20T05:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-20T05:13:00Z"))
     assert "monthly_src" in _due_ids(ds)
-    ds = D.evaluate_due(_config(), now=_at("2026-10-21T05:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-21T05:13:00Z"))
     assert "monthly_src" not in _due_ids(ds)
 
 
 def test_weekly_row_boundary() -> None:
-    # 2026-10-21 is a Wednesday — the Tuesday 04:30 fire is a day old.
-    ds = D.evaluate_due(_config(), now=_at("2026-10-21T05:13:00Z"))
+    # 2026-01-21 is a Wednesday — the Tuesday 04:30 fire is a day old.
+    ds = D.evaluate_due(_config(), now=_at("2026-01-21T05:13:00Z"))
     assert "weekly_src" not in _due_ids(ds)
 
 
 def test_dst_weeks_are_plain_utc() -> None:
     # Crons evaluate in UTC — a US DST transition changes nothing about the
-    # window or the fires (2026-11-01 is the fallback Sunday).
-    ds = D.evaluate_due(_config(), now=_at("2026-11-01T05:13:00Z"))
-    assert ds.window_open == "2026-11-01T04:13Z"
-    assert ds.window_close == "2026-11-01T05:13Z"
+    # window or the fires (2025-11-02 is the fallback Sunday).
+    ds = D.evaluate_due(_config(), now=_at("2025-11-02T05:13:00Z"))
+    assert ds.window_open == "2025-11-02T04:13Z"
+    assert ds.window_close == "2025-11-02T05:13Z"
     assert _due_ids(ds) == {"hourly_src", "edge_src"}
     # And the spring-forward week is equally unremarkable in UTC.
     ds = D.evaluate_due(_config(), now=_at("2026-03-08T05:13:00Z"))
@@ -232,7 +232,7 @@ def test_dst_weeks_are_plain_utc() -> None:
 
 def test_paused_row_is_never_due() -> None:
     # paused_src shares monthly_src's cron — on the 20th it still skips.
-    ds = D.evaluate_due(_config(), now=_at("2026-10-20T05:13:00Z"))
+    ds = D.evaluate_due(_config(), now=_at("2026-01-20T05:13:00Z"))
     skipped = {s.id: s.reason for s in ds.skipped}
     assert skipped["paused_src"] == "declared-paused"
     assert skipped["pinned_batch"] == "kept-declared-pin"
@@ -240,7 +240,7 @@ def test_paused_row_is_never_due() -> None:
 
 def test_since_catch_up_picks_up_missed_windows() -> None:
     ds = D.evaluate_due(
-        _config(), now=_at("2026-10-16T05:13:00Z"), since=_at("2026-10-16T02:00:00Z")
+        _config(), now=_at("2026-10-15T05:13:00Z"), since=_at("2026-10-15T02:00:00Z")
     )
     # Window (02:00, 05:13]: hourly fires 03:00, 04:00, 05:00 → last fire
     # stands for the row (one dispatch per row per evaluation).
@@ -252,14 +252,14 @@ def test_no_dispatcher_table_refuses() -> None:
     bare = tomllib.loads(SYNTHETIC)
     del bare["dispatcher"]
     with pytest.raises(D.DispatcherError, match=r"no \[dispatcher\]"):
-        D.evaluate_due(parse_cadence_doc(bare), now=_at("2026-10-16T05:13:00Z"))
+        D.evaluate_due(parse_cadence_doc(bare), now=_at("2026-10-15T05:13:00Z"))
 
 
 def test_real_cadence_evaluates_all_rows() -> None:
     # The committed file: every row evaluates (or skips) — none errors, and
     # the skipped set is exactly the paused + kept-pin rows.
     cadence = load_cadence(CADENCE)
-    ds = D.evaluate_due(cadence, now=_at("2026-10-16T05:13:00Z"))
+    ds = D.evaluate_due(cadence, now=_at("2026-10-15T05:13:00Z"))
     assert ds.evaluated == len(cadence.sources) + len(cadence.batches)
     paused = {s.source for s in cadence.sources if s.state == "paused"} | {
         b.id for b in cadence.batches if b.state == "paused"
@@ -291,7 +291,7 @@ def test_dispatch_records_would_execute_on_dry_run() -> None:
     calls: list[str] = []
     row, code = D.dispatch_due(
         _config(),
-        now=_at("2026-10-20T05:13:00Z"),
+        now=_at("2026-01-20T05:13:00Z"),
         execute=False,
         executor=_fake_executor(calls),
     )
@@ -315,7 +315,7 @@ def test_dispatch_executes_each_due_job() -> None:
     calls: list[str] = []
     row, code = D.dispatch_due(
         _config(),
-        now=_at("2026-10-20T05:13:00Z"),
+        now=_at("2026-01-20T05:13:00Z"),
         executor=_fake_executor(calls),
     )
     assert code == 0
@@ -334,7 +334,7 @@ def test_dispatch_enqueue_failure_exits_1_and_records() -> None:
     calls: list[str] = []
     row, code = D.dispatch_due(
         _config(),
-        now=_at("2026-10-20T05:13:00Z"),
+        now=_at("2026-01-20T05:13:00Z"),
         executor=_fake_executor(calls, fail={"sig-ingest-weekly-src"}),
     )
     assert code == 1 and row.outcome == "error"
@@ -349,7 +349,7 @@ def test_dispatch_empty_evaluation_fails_sig_eng_042() -> None:
     bare["sources"] = []
     bare["batches"] = []
     row, code = D.dispatch_due(
-        parse_cadence_doc(bare), now=_at("2026-10-20T05:13:00Z"), execute=False
+        parse_cadence_doc(bare), now=_at("2026-01-20T05:13:00Z"), execute=False
     )
     assert code == 2 and row.outcome == "error"
     assert "evaluated 0" in row.detail
@@ -358,14 +358,14 @@ def test_dispatch_empty_evaluation_fails_sig_eng_042() -> None:
 def test_dispatch_no_due_is_a_recorded_clean_pass() -> None:
     # Evaluated rows with nothing due → a run row, exit 0 — the evaluation IS
     # the record (SIG-ENG-042 only refuses an EMPTY evaluation).
-    row, code = D.dispatch_due(_config(), now=_at("2026-10-21T05:13:00Z"), execute=False)
+    row, code = D.dispatch_due(_config(), now=_at("2026-01-21T05:13:00Z"), execute=False)
     assert code == 0
     payload = row.as_json()["fetch_record"]
     assert {e["id"] for e in payload["enqueued"]} == {"hourly_src", "edge_src"}
     # Push past the hourly's fire too — an hour where nothing else fires.
     row, code = D.dispatch_due(
         _config(),
-        now=_at("2026-10-21T05:13:00Z"),
+        now=_at("2026-01-21T05:13:00Z"),
         executor=_fake_executor([]),
     )
     assert code == 0
