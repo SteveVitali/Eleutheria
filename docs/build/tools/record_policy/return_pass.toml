@@ -802,3 +802,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/274_P35.15a__technology-typing
   go = '''pre-authorised: GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires at the next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true'''
   live_dependants = ["P35.15b"]
+[[row]]
+key = "P35.15b"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued hosted write: leg L1 — the ~200k-subject INSERT-only `technology` backfill on `sig-pg` (`sig-connectors technology-backfill` dry-run counts → `--apply` → read-back + immediate `+0` re-run); every written claim links the subject's EXISTING captures; no UPDATE/DELETE, no entity re-typing, no flip, no fetch, no roll; no deferral opens'''
+gates_cell = '''hosted, production write; pre-authorised: GATE-G4 OM-20 approve-all-19 names this row verbatim (INSERT-only claim backfill; expires at GATE-G5, OM-10); AR-3: first weekday 14:00-20:00Z slot at/after the freeze end, operator present, AR-2 restore point `SUCCESSFUL` + pre-state first (excluded: weekends and outside-14:00-20:00Z; 03:00-06:30Z daily; before 2026-10-13T12:00Z (the AR-3 freeze)); before `live:` P35.15a's hosted `technology` vocabulary registrations land (the closed sink would quarantine an unregistered predicate); F-523 comparison recorded, not smoothed; live AC human-completed'''
+operator_cell = '''AR-2 restore point `SUCCESSFUL` + pre-state (per-table counts on `claim`/`claim_evidence`, `spine_watermark`, subjects-lacking-technology count, `date -u`) → verify hosted `vocab_*` carries `technology` + target slugs → `sig-connectors technology-backfill --dsn …` dry-run (counts recorded) → `--apply` (chunked, INSERT-only) → read-back verify → immediate `--apply` re-run reads `claims_added=0`; `n_tup_upd`/`n_tup_del` on `claim` stay 0; rollback = forward only (a wrong claim is superseded, never deleted)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` (scope: leg L1 only) · landed row 275 (PR #277 — write queued under AR-3 + the P35.15a prerequisite)'''
+
+  [[row.legs]]
+  id = "P35.15b-live-technology-backfill"
+  obligations = []
+  earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), operator present, AR-2 restore point first, after `live:` P35.15a's hosted `technology` registrations are landed'''
+  excluded = ["weekends and outside-14:00-20:00Z", "03:00-06:30Z daily", "before 2026-10-13T12:00Z (the AR-3 freeze)", "before `live:` P35.15a's hosted `technology` vocabulary registrations land"]
+  go = '''pre-authorised: GATE-G4 OM-20 approve-all-19 names this row verbatim (INSERT-only claim backfill; expires at GATE-G5, OM-10)'''
+  rerun = '''implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true'''
+  live_dependants = []

@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "8e87ce9aeb1b824e85e31d4d8b1f72c4a50cd292",
-  "manifest_inputs": 1017,
+  "input_commit": "1dfa53fe6afca7737e8d1cff16f789a52ef13429",
+  "manifest_inputs": 1018,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.15b",
-    "lastCompleted": "P35.15a",
+    "nextTicket": "P36.3",
+    "lastCompleted": "P35.15b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.57,P35.67",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39a,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.15a-technology-typing-slug-and-facets",
+    "chainTip": "r11/P35.15b-technology-backfill",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-11T21:00Z"
+    "updatedAt": "2026-10-11T22:18Z"
   },
   "counts": {
     "obligations": 161,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 39,
+    "return_pass_rows": 40,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8502,6 +8502,14 @@
         "gates_cell": "hosted, production write; pre-authorised: GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires at the next GATE, OM-10); AR-3: first weekday 14:00-20:00Z slot at/after the freeze end, operator present, AR-2 prestate first (excluded: weekends and outside-14:00-20:00Z; 03:00-06:30Z daily; before 2026-10-13T12:00Z (the AR-3 freeze)); after P35.14a's `closed_vocabulary` deploy; live AC human-completed",
         "operator_cell": "AR-2 prestate; verify `technology` in `vocab_predicate` + INSERT missing technology vocab rows (ON CONFLICT DO NOTHING); read-back; rollback = the seed change's revert",
         "rerun_cell": "`implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` · landed row 274 (PR #276 — write queued under AR-3)",
+        "obligations": []
+      },
+      {
+        "key": "P35.15b",
+        "obligations_cell": "the queued hosted write: leg L1 — the ~200k-subject INSERT-only `technology` backfill on `sig-pg` (`sig-connectors technology-backfill` dry-run counts → `--apply` → read-back + immediate `+0` re-run); every written claim links the subject's EXISTING captures; no UPDATE/DELETE, no entity re-typing, no flip, no fetch, no roll; no deferral opens",
+        "gates_cell": "hosted, production write; pre-authorised: GATE-G4 OM-20 approve-all-19 names this row verbatim (INSERT-only claim backfill; expires at GATE-G5, OM-10); AR-3: first weekday 14:00-20:00Z slot at/after the freeze end, operator present, AR-2 restore point `SUCCESSFUL` + pre-state first (excluded: weekends and outside-14:00-20:00Z; 03:00-06:30Z daily; before 2026-10-13T12:00Z (the AR-3 freeze)); before `live:` P35.15a's hosted `technology` vocabulary registrations land (the closed sink would quarantine an unregistered predicate); F-523 comparison recorded, not smoothed; live AC human-completed",
+        "operator_cell": "AR-2 restore point `SUCCESSFUL` + pre-state (per-table counts on `claim`/`claim_evidence`, `spine_watermark`, subjects-lacking-technology count, `date -u`) → verify hosted `vocab_*` carries `technology` + target slugs → `sig-connectors technology-backfill --dsn …` dry-run (counts recorded) → `--apply` (chunked, INSERT-only) → read-back verify → immediate `--apply` re-run reads `claims_added=0`; `n_tup_upd`/`n_tup_del` on `claim` stay 0; rollback = forward only (a wrong claim is superseded, never deleted)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` (scope: leg L1 only) · landed row 275 (PR #277 — write queued under AR-3 + the P35.15a prerequisite)",
         "obligations": []
       }
     ]
@@ -18502,10 +18510,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a903f0244630fe6e1cd7c205fbf794b5ea5f7b8bbd82c8c53f3f51e59ff22ade",
+  "manifest_sha256": "5166fbd871d787318cf5353cf3dc81e565195052027d38268b177dc67a3ed4cc",
   "current_md": {
     "lines": 63,
-    "bytes": 15444,
+    "bytes": 15428,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

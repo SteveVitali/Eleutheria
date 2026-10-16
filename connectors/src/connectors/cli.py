@@ -77,6 +77,29 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     acl.add_argument("--out", default=None, help="output path (default: print to stdout)")
+    tb = sub.add_parser(
+        "technology-backfill",
+        help=(
+            "P35.15b / PKG-07 (F-329/F-523): dry-run-by-default, INSERT-only "
+            "backfill of each target's declared `technology` claim onto the "
+            "pre-PKG-07 traffic_camera:* subjects, chunked commits + "
+            "claim_evidence links to existing captures; --apply writes"
+        ),
+    )
+    tb.add_argument("--dsn", required=True, help="PostgreSQL DSN for the claim spine")
+    tb.add_argument("--apply", action="store_true", help="write claims (default: dry-run)")
+    tb.add_argument(
+        "--commit-chunk-size",
+        type=int,
+        default=None,
+        help="claims committed per transaction (default: $SIG_COMMIT_CHUNK_SIZE "
+        "else the sink default) — P26.18",
+    )
+    tb.add_argument(
+        "--code-commit",
+        default="unknown",
+        help="code commit recorded on the ingest_run (default: 'unknown')",
+    )
     rev = sub.add_parser(
         "review-status",
         help="per-source rights-review gate breakdown + flip-ready count (P21.1)",
@@ -348,6 +371,53 @@ def _load_seed(args: argparse.Namespace) -> int:
     return 0
 
 
+def _technology_backfill(args: argparse.Namespace) -> int:
+    """Drive ``db.technology_backfill`` — the P35.15b append-only backfill.
+
+    The declared slug map is read from the SAME committed target registry the
+    emit path reads (``dot_511.target_table`` → ``declared_technologies``), so
+    the backfill and the emitter can never disagree; a registry that fails the
+    PKG-07 self-check refuses before any DSN is touched (fail closed —
+    ``sig-connectors validate`` carries the same rule).
+    """
+    import json as _json
+
+    from .dot_511 import declared_technologies, target_table, target_technology_violations
+    from .sinks import resolve_commit_chunk_size
+
+    violations = target_technology_violations()
+    if violations:
+        for msg in violations:
+            print(f"VALIDATION FAILED: PKG-07 technology slug: {msg}")
+        return 1
+    try:
+        commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
+    except ValueError as bad:
+        print(f"invalid commit chunk size: {bad}")
+        return 2
+    licenses = {
+        (str(row.get("source_id") or ""), str(row.get("id") or "")): str(
+            row.get("license_spdx") or ""
+        )
+        for row in target_table().get("targets", [])
+    }
+    from db.technology_backfill import run_backfill
+
+    from .sinks import _registry_rights
+
+    report = run_backfill(
+        args.dsn,
+        declared=declared_technologies(),
+        licenses=licenses,
+        apply=args.apply,
+        code_commit=args.code_commit,
+        commit_chunk_size=commit_chunk_size,
+        rights_resolver=_registry_rights,
+    )
+    print(_json.dumps(report, indent=2, sort_keys=True, default=str))
+    return 1 if report.get("refused") else 0
+
+
 def _run(args: argparse.Namespace) -> int:
     # Importing the package registers every source connector (SIG-INGEST-021).
     from pathlib import Path
@@ -464,5 +534,7 @@ def main(argv: list[str] | None = None) -> int:
             if val:
                 argv_tail += [f"--{opt.replace('_', '-')}", val]
         return personal_id_rekey.main(argv_tail)
+    if args.command == "technology-backfill":
+        return _technology_backfill(args)
     parser.print_help()
     return 0
