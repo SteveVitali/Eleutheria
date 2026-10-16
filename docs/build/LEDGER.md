@@ -13,7 +13,7 @@
 projectStatus:   IN_PROGRESS                           # P35.4 landed (293); ops runbook + value-less secret register + runbook checker committed — docs row, executions none
 nextTicket:      P35.12                              # row 294 — release identity v2 + clock guards (REL-01)
 lastCompleted:   P35.4                               # row 293 (ops runbook + secret register + stale ops-doc fixes; documentation row, executions none)
-blockedOn:       CI pending on #305@df1de65 (no pull_request run queued ~10 min — event delivery lost, second recorded instance)
+blockedOn:       CI pending on #305@aada86e9 (tip; df1de65 also unread — no pull_request run queued, event delivery lost, second recorded instance)
 pauseRequested:  false                               # bridge rows before P34.42b-live-2
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
