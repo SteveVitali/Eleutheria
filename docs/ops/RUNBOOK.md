@@ -94,8 +94,8 @@ is the operator channel with the address committed as a redacted literal per
 the monitoring README's convention):
 
 ```bash
-# verify committed definitions against live (read-only; operator ADC)
-uv run sig-ops monitoring-defs verify --live --project "$SIG_GCP_PROJECT"
+# verify committed definitions against the running surface (read-only; operator ADC)
+uv run sig-ops monitoring-defs verify --live --project "$SIG_GCP_PROJECT"  # operator leg, not exercised by checks
 # the fixture leg (engineered/local — no project needed)
 uv run sig-ops monitoring-defs verify --from-state <fixture-dir> --project "$SIG_GCP_PROJECT"
 # list what actually fired
@@ -490,7 +490,7 @@ decommissioning is a scheduling/ingestion decision, never a data deletion.
 ```bash
 # this file's commands/paths/register against the tree it names
 python3 docs/build/tools/check_runbook.py
-# prose live-claims in docs/ops/** against the corpus lint
+# prose claims in docs/ops/** swept by the corpus lint (SIG-MEM-011)
 python3 docs/build/tools/check_live_claims.py corpus
 # the docs gate (includes both lines above)
 make docs-check
