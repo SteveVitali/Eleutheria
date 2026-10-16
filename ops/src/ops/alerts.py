@@ -27,15 +27,18 @@ secret appears in any emitted surface.
 
 from __future__ import annotations
 
+import http.server
 import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Protocol, TextIO
+from typing import Any, Protocol, TextIO
 
 #: Env-var *name* suffixes whose values are secrets (HG-09) and must never be logged.
 SECRET_ENV_RE = re.compile(r"(_TOKEN|_SECRET|_PASSWORD|_KEY)$")
@@ -184,13 +187,33 @@ class WebhookNotifier:
     ``SIG_ALERT_WEBHOOK_TOKEN`` rides as a Bearer header. Delivery is best-effort:
     a failure returns False (the alert is still *recorded* in the ledger — the
     record never depends on the network).
+
+    P35.1b (the sig-alerts disposition): when ``SIG_ALERT_WEBHOOK_IAM=1`` — set
+    on the probe job once ``sig-alerts`` runs ``--no-allow-unauthenticated`` —
+    the request carries TWO credentials: a Google-signed OIDC id token (the
+    metadata-server `identity` endpoint, audience = the service origin) in
+    ``Authorization`` for the Cloud Run front door, and the app-level
+    ``SIG_ALERT_WEBHOOK_TOKEN`` in ``X-SIG-Alert-Token`` for the receiver's own
+    check. Off GCP (no metadata server) an IAM-mode send returns False — an
+    honest non-delivery, the ledger record still stands.
     """
 
     name = "webhook"
 
-    def __init__(self, url: str | None = None, token: str | None = None) -> None:
+    def __init__(
+        self,
+        url: str | None = None,
+        token: str | None = None,
+        *,
+        iam: bool | None = None,
+        id_token: Callable[[str], str | None] | None = None,
+    ) -> None:
         self._url = url if url is not None else os.environ.get("SIG_ALERT_WEBHOOK_URL")
         self._token = token if token is not None else os.environ.get("SIG_ALERT_WEBHOOK_TOKEN")
+        if iam is None:
+            iam = os.environ.get("SIG_ALERT_WEBHOOK_IAM", "").lower() in {"1", "true", "yes"}
+        self._iam = iam
+        self._id_token = id_token  # test seam — production resolves the metadata server
 
     @property
     def configured(self) -> bool:
@@ -206,7 +229,17 @@ class WebhookNotifier:
             }
         ).encode("utf-8")
         headers = {"Content-Type": "application/json"}
-        if self._token:
+        if self._iam:
+            origin = urllib.parse.urlsplit(self._url)
+            audience = f"{origin.scheme}://{origin.netloc}"
+            fetch = self._id_token or _metadata_id_token
+            tok = fetch(audience)
+            if not tok:
+                return False  # a private service without an id token is unreachable
+            headers["Authorization"] = f"Bearer {tok}"
+            if self._token:
+                headers["X-SIG-Alert-Token"] = self._token
+        elif self._token:
             headers["Authorization"] = f"Bearer {self._token}"
         req = urllib.request.Request(self._url, data=body, headers=headers, method="POST")
         try:
@@ -214,6 +247,26 @@ class WebhookNotifier:
                 return 200 <= resp.status < 300
         except Exception:  # noqa: BLE001 - best-effort delivery; the record stands
             return False
+
+
+#: The Cloud Run / GCE metadata-server identity endpoint (link-local,
+#: GCP-internal) — the OIDC id token a ``--no-allow-unauthenticated`` service's
+#: front door requires. Off GCP the name does not resolve: ``None``.
+_METADATA_IDENTITY_URL = (
+    "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity"
+)
+
+
+def _metadata_id_token(audience: str, timeout: float = 2.0) -> str | None:
+    """A Google-signed OIDC id token for the runtime service account, scoped to
+    ``audience`` (the target service's origin). Returns ``None`` off-GCP."""
+    url = f"{_METADATA_IDENTITY_URL}?audience={urllib.parse.quote(audience, safe='')}&format=full"
+    req = urllib.request.Request(url, headers={"Metadata-Flavor": "Google"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - metadata IP
+            return resp.read().decode("utf-8").strip()
+    except Exception:  # noqa: BLE001 - any failure means "not on GCP"
+        return None
 
 
 def notifiers_from_env(
@@ -254,6 +307,87 @@ def alert_exit_code(alert: Alert | None) -> int:
     return 0 if alert is None else 6
 
 
+# --- the repo-owned sig-alerts receiver (P35.1b / G1-11) -----------------------
+#
+# The hosted ``sig-alerts`` Cloud Run service historically ran an inline base64
+# ``python -c`` program on the movable ``sig-api:latest`` tag — unreproducible
+# from the repo and a silent-roll risk. The P35.1b sweep rebuilds it digest-
+# pinned on this receiver: the same request contract as the inline program,
+# plus the repo's scrub-secrets discipline (an alert body may carry a leaked
+# env-secret value — it is scrubbed before the log line, HG-09).
+
+#: Byte cap on a received alert body before the log line truncates it.
+RECEIVER_BODY_LIMIT = 4096
+
+
+def _receiver_handler(
+    token: str, emit: Callable[[str], None]
+) -> type[http.server.BaseHTTPRequestHandler]:
+    """Build the POST handler class for ``build_receiver_server``.
+
+    ``token`` is the expected app-level secret (``""`` = accept unauthenticated,
+    matching the pre-sweep service); it arrives as ``Authorization: Bearer`` on
+    a public service or ``X-SIG-Alert-Token`` when the front door already holds
+    the OIDC id token (``SIG_ALERT_WEBHOOK_IAM=1`` on the caller). ``emit``
+    receives the scrubbed ``SIG-ALERT-RECEIVED`` line (the service's only
+    output — Cloud Logging captures stdout).
+    """
+
+    class _Handler(http.server.BaseHTTPRequestHandler):
+        def do_POST(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
+            if token:
+                ok = (
+                    self.headers.get("Authorization", "") == f"Bearer {token}"
+                    or self.headers.get("X-SIG-Alert-Token", "") == token
+                )
+                if not ok:
+                    self.send_response(401)
+                    self.end_headers()
+                    return
+            length = int(self.headers.get("Content-Length") or 0)
+            body = self.rfile.read(length).decode("utf-8", "replace")[:RECEIVER_BODY_LIMIT]
+            emit(
+                scrub_secrets("SIG-ALERT-RECEIVED " + json.dumps({"path": self.path, "body": body}))
+            )
+            self.send_response(204)
+            self.end_headers()
+
+        def log_message(self, *_args: Any) -> None:  # silence the per-request access log
+            pass
+
+    return _Handler
+
+
+def build_receiver_server(
+    port: int, *, token: str | None = None, emit: Callable[[str], None] = print
+) -> http.server.HTTPServer:
+    """A ``http.server.HTTPServer`` bound to ``0.0.0.0:<port>`` serving the
+    sig-alerts POST contract. ``token`` defaults to ``SIG_ALERT_WEBHOOK_TOKEN``
+    (env-only, HG-09). The caller runs ``serve_forever()`` — a test binds port
+    0 and reads the real port back off ``server.server_port``.
+    """
+    resolved = token if token is not None else os.environ.get("SIG_ALERT_WEBHOOK_TOKEN", "")
+    return http.server.HTTPServer(("0.0.0.0", port), _receiver_handler(resolved, emit))
+
+
+def serve_alert_receiver(port: int | None = None, *, token: str | None = None) -> int:
+    """Run the sig-alerts receiver until killed (the Cloud Run service's loop).
+
+    The port resolves flag → ``PORT`` env → 8080; the token resolves flag →
+    ``SIG_ALERT_WEBHOOK_TOKEN`` env. Returns 0 on a clean shutdown
+    (KeyboardInterrupt); never returns on its own.
+    """
+    resolved_port = port or int(os.environ.get("PORT", "8080"))
+    server = build_receiver_server(resolved_port, token=token)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+    return 0
+
+
 __all__ = [
     "EXTRA_SECRET_ENV",
     "REDACTED",
@@ -264,10 +398,13 @@ __all__ = [
     "LogNotifier",
     "Notifier",
     "WebhookNotifier",
+    "RECEIVER_BODY_LIMIT",
     "alert_exit_code",
+    "build_receiver_server",
     "fire",
     "notifiers_from_env",
     "scrub_secrets",
     "secret_values",
+    "serve_alert_receiver",
     "utcnow",
 ]

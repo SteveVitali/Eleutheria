@@ -149,8 +149,12 @@ require_adc
 [ -n "${INPUTS}" ] || { _log "--apply needs --inputs <recorded gate inputs JSON>" >&2; exit 64; }
 
 _log "gate: sig-ops wave-a-gate --inputs ${INPUTS} (leg ${LEG})"
-if ! _gate "${INPUTS}"; then
-  rc=$?
+# P35.1b repair (recorded by P36.12): `if ! _gate …; then rc=$?` read the
+# negated pipeline's status — always 0 — so a NO-GO (42) propagated `exit 0`.
+# Capture the code directly, as wave-b.sh does.
+rc=0
+_gate "${INPUTS}" || rc=$?
+if [ "${rc}" -ne 0 ]; then
   _log "wave-a.sh: NO-GO (exit ${rc}) — the leg queues; a missed leg is reported, never silently skipped."
   exit "${rc}"
 fi

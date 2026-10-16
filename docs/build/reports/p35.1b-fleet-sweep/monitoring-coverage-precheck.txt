@@ -1,0 +1,6 @@
+alertPolicies=4 notificationChannels=1 (gcloud monitoring policies list / gcloud beta monitoring channels list, 2026-10-16T01Z)
+projects/zeta-medley-508121-u7/alertPolicies/10812940548821947108
+projects/zeta-medley-508121-u7/alertPolicies/10812940548821949519
+projects/zeta-medley-508121-u7/alertPolicies/1149999306662850342
+projects/zeta-medley-508121-u7/alertPolicies/7285515107319155929
+projects/zeta-medley-508121-u7/notificationChannels/10808426210098728267

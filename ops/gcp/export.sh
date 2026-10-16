@@ -62,6 +62,12 @@ export_cmd() {
     "${DSN}" "${SIG_EXPORT_AS_OF}" "${SIG_EXPORT_NOTE}" "${MOUNT}" "${PREFIX}"
 }
 
+# SIG_EXPORT_GUARD (config.sh) — P35.1b (G1-NEW-4 keep-list): the job's BAKED
+# args are a refusal, not an export — `export.sh run` always overrides args at
+# execute time, so a bare `gcloud run jobs execute sig-export` exits 64 instead
+# of running a stale --as-of baked at deploy time. fleet-sweep.sh's
+# export-guard leg rolls the same string to the live job.
+
 do_image() {
   _log "-- image: Cloud Build ${IMAGE} from git archive HEAD (never retags :latest)"
   if [ "${SIG_GCP_MODE}" = "check" ]; then
@@ -86,13 +92,19 @@ YAML
 do_job() {
   _log "-- job: upsert ${SIG_EXPORT_JOB} on ${IMAGE} (restricted bucket at ${MOUNT}, PRIVATE)"
   # P31.4 / ADR-111: the job runs the build's pinned digest, never a movable tag.
+  # P35.1b: the baked args are a REFUSED exit-64 guard, not a baked export —
+  # the deployed args previously pinned a stale --as-of at deploy time; the
+  # real args arrive from `export.sh run`'s `--args` override at execute time,
+  # so a bare/accidental execution is a recorded no-op (the sig-replay-ingest
+  # pattern, scheduled-ops.sh). EXPORT_GUARD_ARGS is the single source the
+  # sweep's guard-roll leg asserts.
   local pinned
   pinned="$(pin_image_digest "${IMAGE}")"
   _log "   pinned: ${pinned}"
   run gcloud run jobs deploy "${SIG_EXPORT_JOB}" \
     --image "${pinned}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_SA_EXPORT}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com" \
-    --command sh --args "-c,$(export_cmd)" \
+    --command sh --args "-c,${SIG_EXPORT_GUARD}" \
     --tasks 1 --task-timeout 4h --max-retries 0 --cpu 4 --memory 16Gi \
     --execution-environment gen2 \
     --add-volume "name=restricted,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \

@@ -120,6 +120,7 @@ class DeclaredFleet:
     jobs: tuple[DeclaredJob, ...]  # cadence-owned + declared-manual
     cadence_job_names: frozenset[str]  # jobs that must carry a trigger
     manual_job_names: frozenset[str]  # declared-untriggered allow-list
+    retired_job_names: frozenset[str] = frozenset()  # declared-for-deletion (P35.1b)
     services: tuple[str, ...] = ("sig-api", "sig-web")
     service_images: dict[str, str] = field(default_factory=dict)  # svc → expected ref
     buckets: tuple[Any, ...] = ()  # scheduled.BucketPosture
@@ -253,6 +254,7 @@ def declared_fleet(
             | {b.job for b in cadence.batches}
         ),
         manual_job_names=frozenset(m.job for m in cadence.manual_jobs),
+        retired_job_names=frozenset(r.job for r in cadence.retired_jobs),
         services=("sig-api", "sig-web"),
         service_images={svc: _expect(svc) for svc in ("sig-api", "sig-web")},
         buckets=cadence.buckets,
@@ -333,6 +335,41 @@ def pin_lint(cadence: CadenceConfig) -> list[str]:
                 date.fromisoformat(pin.expiry)
             except ValueError:
                 problems.append(f"pin {who}: expiry {pin.expiry!r} is not YYYY-MM-DD")
+    return problems
+
+
+def retired_lint(cadence: CadenceConfig) -> list[str]:
+    """Schema lint for ``[[retired_jobs]]`` (P35.1b): the deletion contract is
+    a closed, name-checked set — every row carries a reason (a retirement is
+    never silent), names are unique, and no retired name may collide with a
+    cadence-owned job, a ``[[manual_jobs]]`` member, the probe job or the
+    live-diff target job (a declared job can never be a deletion target).
+    """
+    problems: list[str] = []
+    declared_elsewhere = (
+        {cadence.probe_job}
+        | {s.job for s in cadence.sources}
+        | {b.job for b in cadence.batches}
+        | {m.job for m in cadence.manual_jobs}
+        | ({cadence.live_diff.job} if cadence.live_diff else set())
+    )
+    seen: set[str] = set()
+    for r in cadence.retired_jobs:
+        if not r.job:
+            problems.append("[[retired_jobs]] row names no job")
+            continue
+        if r.job in seen:
+            problems.append(f"[[retired_jobs]] {r.job}: duplicate name")
+        seen.add(r.job)
+        if not r.reason:
+            problems.append(
+                f"[[retired_jobs]] {r.job}: missing reason — a retirement is never silent"
+            )
+        if r.job in declared_elsewhere:
+            problems.append(
+                f"[[retired_jobs]] {r.job}: name also declared live — "
+                "a job cannot be both declared and retired"
+            )
     return problems
 
 
@@ -861,12 +898,21 @@ def diff(
         for sec in sorted(declared_secrets - live_secret_names(body)):
             report.add("secrets", j.name, f"declared secret binding {sec!r} absent live")
     for name in sorted(set(live.jobs) - declared_job_names):
-        report.add(
-            "job_config",
-            name,
-            "live job neither cadence-owned nor on [[manual_jobs]] — "
-            "unlisted drift (fleet hygiene owns the disposition)",
-        )
+        if name in declared.retired_job_names:
+            report.add(
+                "job_config",
+                name,
+                "live job is declared retired on [[retired_jobs]] — "
+                "expected absent; the P35.1b fleet sweep's deletion is "
+                "pending",
+            )
+        else:
+            report.add(
+                "job_config",
+                name,
+                "live job neither cadence-owned nor on [[manual_jobs]] — "
+                "unlisted drift (fleet hygiene owns the disposition)",
+            )
 
     for svc in declared.services:
         report.checked_services += 1
@@ -1103,7 +1149,7 @@ def execute(
         bucket_factory=bucket_factory,
     )
     cadence = declared.cadence
-    lint = lint_cadence_crons(cadence) + pin_lint(cadence)
+    lint = lint_cadence_crons(cadence) + pin_lint(cadence) + retired_lint(cadence)
     if lint:
         raise LiveDiffError("cadence lint failed:\n  " + "\n  ".join(lint))
     ar_host = f"{region}-docker.pkg.dev"
@@ -1203,6 +1249,7 @@ __all__ = [
     "load_declared",
     "load_state_source",
     "pin_lint",
+    "retired_lint",
     "read_roll_record",
     "rest_json_opener",
     "run_record",

@@ -1,0 +1,356 @@
+DRIFT:
+  schedule sig-sched-camreg-tribal-all-leaders-directory: missing live — declared trigger not deployed
+  schedule sig-sched-congress-gov: cron live='0 5 3 * 2' declared='0 5 3 * *'
+  schedule sig-sched-eyes-on-flock: cron live='0 5 23 * 0' declared='0 5 * * 0'
+  schedule sig-sched-legis-tribal-tohono-oodham-notice: missing live — declared trigger not deployed
+  schedule sig-sched-live-diff: missing live — declared trigger not deployed
+  schedule sig-sched-openstates: cron live='0 5 2 * 2' declared='0 5 * * 2'
+  schedule sig-sched-pg-logical-export: missing live — declared trigger not deployed
+  schedule sig-sched-r11-ate-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-disclosures-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-disclosures-02: missing live — declared trigger not deployed
+  schedule sig-sched-r11-documents-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-layers-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-layers-02: missing live — declared trigger not deployed
+  schedule sig-sched-r11-procurement-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-tier2-01: missing live — declared trigger not deployed
+  schedule sig-sched-r11-tier2-02: missing live — declared trigger not deployed
+  schedule sig-sched-r11-tier2-03: missing live — declared trigger not deployed
+  schedule sig-sched-sam-gov: cron live='0 5 1 * 1' declared='0 5 * * 1'
+  job_config aspi-egress-probe: live job is declared retired on [[retired_jobs]] — expected absent; the P35.1b fleet sweep's deletion is pending
+  job_config ccops-sf-egress-probe: live job is declared retired on [[retired_jobs]] — expected absent; the P35.1b fleet sweep's deletion is pending
+  job_config muckrock-egress-probe: live job is declared retired on [[retired_jobs]] — expected absent; the P35.1b fleet sweep's deletion is pending
+  job_config okc-doc-egress-probe: live job is declared retired on [[retired_jobs]] — expected absent; the P35.1b fleet sweep's deletion is pending
+  job_config sig-ingest-camreg-tribal-all-leaders-directory: missing live — declared job not deployed
+  job_config sig-ingest-legis-tribal-tohono-oodham-notice: missing live — declared job not deployed
+  job_config sig-ingest-r11-ate-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-disclosures-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-disclosures-02: missing live — declared job not deployed
+  job_config sig-ingest-r11-documents-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-layers-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-layers-02: missing live — declared job not deployed
+  job_config sig-ingest-r11-procurement-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-tier2-01: missing live — declared job not deployed
+  job_config sig-ingest-r11-tier2-02: missing live — declared job not deployed
+  job_config sig-ingest-r11-tier2-03: missing live — declared job not deployed
+  job_config sig-ingest-resume-test: live job is declared retired on [[retired_jobs]] — expected absent; the P35.1b fleet sweep's deletion is pending
+  job_config sig-sink-bench: live job is declared retired on [[retired_jobs]] — expected absent; the P35.1b fleet sweep's deletion is pending
+  image sig-ingest-ccops-cambridge: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-ccops-oakland: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-ccops-somerville: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-dhs-fusion-center-assessments: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  image sig-ingest-dhs-oig-reports: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  image sig-ingest-fema-hsgp-allocations: live sha256:63b809b2ab41… != declared sha256:6ad5477d4aac…
+  image sig-ingest-gao-surveillance-reports: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  image sig-ingest-uk-surveillance-camera-commissioner: live sha256:d1f943610f66… != declared sha256:6ad5477d4aac…
+  public_posture zeta-medley-508121-u7-sig-web: allUsers object access live=True declared=False
+  ubla zeta-medley-508121-u7-sig-backups: uniform bucket-level access live=False declared=True
+  ubla zeta-medley-508121-u7-sig-public: uniform bucket-level access live=False declared=True
+  ubla zeta-medley-508121-u7-sig-restricted: uniform bucket-level access live=False declared=True
+  ubla zeta-medley-508121-u7-sig-web: uniform bucket-level access live=False declared=True
+  versioning zeta-medley-508121-u7-sig-public: versioning live=False declared=True
+  versioning zeta-medley-508121-u7-sig-restricted: versioning live=False declared=True
+  versioning zeta-medley-508121-u7-sig-web: versioning live=False declared=True
+  lifecycle zeta-medley-508121-u7-sig-public: noncurrent-days live=None declared=30
+  lifecycle zeta-medley-508121-u7-sig-restricted: noncurrent-days live=None declared=90
+  lifecycle zeta-medley-508121-u7-sig-web: noncurrent-days live=None declared=30
+  ! no GCS bucket configured (--gcs-bucket / SIG_OPS_GCS_BUCKET) — run row not uploaded
+{
+  "buckets_checked": 4,
+  "cadence_sha256": "49bfd53e29502e1b9bc42dd9dc42f6942d22f8d2234b37bac06e44a27cd64cbb",
+  "declared_provenance": "repo",
+  "drift_classes": [
+    "image",
+    "job_config",
+    "lifecycle",
+    "public_posture",
+    "schedule",
+    "ubla",
+    "versioning"
+  ],
+  "errors": [],
+  "findings": [
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-camreg-tribal-all-leaders-directory"
+    },
+    {
+      "class": "schedule",
+      "detail": "cron live='0 5 3 * 2' declared='0 5 3 * *'",
+      "name": "sig-sched-congress-gov"
+    },
+    {
+      "class": "schedule",
+      "detail": "cron live='0 5 23 * 0' declared='0 5 * * 0'",
+      "name": "sig-sched-eyes-on-flock"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-legis-tribal-tohono-oodham-notice"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-live-diff"
+    },
+    {
+      "class": "schedule",
+      "detail": "cron live='0 5 2 * 2' declared='0 5 * * 2'",
+      "name": "sig-sched-openstates"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-pg-logical-export"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-ate-01"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-disclosures-01"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-disclosures-02"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-documents-01"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-layers-01"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-layers-02"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-procurement-01"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-tier2-01"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-tier2-02"
+    },
+    {
+      "class": "schedule",
+      "detail": "missing live \u2014 declared trigger not deployed",
+      "name": "sig-sched-r11-tier2-03"
+    },
+    {
+      "class": "schedule",
+      "detail": "cron live='0 5 1 * 1' declared='0 5 * * 1'",
+      "name": "sig-sched-sam-gov"
+    },
+    {
+      "class": "job_config",
+      "detail": "live job is declared retired on [[retired_jobs]] \u2014 expected absent; the P35.1b fleet sweep's deletion is pending",
+      "name": "aspi-egress-probe"
+    },
+    {
+      "class": "job_config",
+      "detail": "live job is declared retired on [[retired_jobs]] \u2014 expected absent; the P35.1b fleet sweep's deletion is pending",
+      "name": "ccops-sf-egress-probe"
+    },
+    {
+      "class": "job_config",
+      "detail": "live job is declared retired on [[retired_jobs]] \u2014 expected absent; the P35.1b fleet sweep's deletion is pending",
+      "name": "muckrock-egress-probe"
+    },
+    {
+      "class": "job_config",
+      "detail": "live job is declared retired on [[retired_jobs]] \u2014 expected absent; the P35.1b fleet sweep's deletion is pending",
+      "name": "okc-doc-egress-probe"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-camreg-tribal-all-leaders-directory"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-legis-tribal-tohono-oodham-notice"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-ate-01"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-disclosures-01"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-disclosures-02"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-documents-01"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-layers-01"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-layers-02"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-procurement-01"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-tier2-01"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-tier2-02"
+    },
+    {
+      "class": "job_config",
+      "detail": "missing live \u2014 declared job not deployed",
+      "name": "sig-ingest-r11-tier2-03"
+    },
+    {
+      "class": "job_config",
+      "detail": "live job is declared retired on [[retired_jobs]] \u2014 expected absent; the P35.1b fleet sweep's deletion is pending",
+      "name": "sig-ingest-resume-test"
+    },
+    {
+      "class": "job_config",
+      "detail": "live job is declared retired on [[retired_jobs]] \u2014 expected absent; the P35.1b fleet sweep's deletion is pending",
+      "name": "sig-sink-bench"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:63b809b2ab41\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-ccops-cambridge"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:63b809b2ab41\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-ccops-oakland"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:63b809b2ab41\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-ccops-somerville"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:d1f943610f66\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-dhs-fusion-center-assessments"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:d1f943610f66\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-dhs-oig-reports"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:63b809b2ab41\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-fema-hsgp-allocations"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:d1f943610f66\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-gao-surveillance-reports"
+    },
+    {
+      "class": "image",
+      "detail": "live sha256:d1f943610f66\u2026 != declared sha256:6ad5477d4aac\u2026",
+      "name": "sig-ingest-uk-surveillance-camera-commissioner"
+    },
+    {
+      "class": "public_posture",
+      "detail": "allUsers object access live=True declared=False",
+      "name": "zeta-medley-508121-u7-sig-web"
+    },
+    {
+      "class": "ubla",
+      "detail": "uniform bucket-level access live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-backups"
+    },
+    {
+      "class": "ubla",
+      "detail": "uniform bucket-level access live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-public"
+    },
+    {
+      "class": "ubla",
+      "detail": "uniform bucket-level access live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-restricted"
+    },
+    {
+      "class": "ubla",
+      "detail": "uniform bucket-level access live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-web"
+    },
+    {
+      "class": "versioning",
+      "detail": "versioning live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-public"
+    },
+    {
+      "class": "versioning",
+      "detail": "versioning live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-restricted"
+    },
+    {
+      "class": "versioning",
+      "detail": "versioning live=False declared=True",
+      "name": "zeta-medley-508121-u7-sig-web"
+    },
+    {
+      "class": "lifecycle",
+      "detail": "noncurrent-days live=None declared=30",
+      "name": "zeta-medley-508121-u7-sig-public"
+    },
+    {
+      "class": "lifecycle",
+      "detail": "noncurrent-days live=None declared=90",
+      "name": "zeta-medley-508121-u7-sig-restricted"
+    },
+    {
+      "class": "lifecycle",
+      "detail": "noncurrent-days live=None declared=30",
+      "name": "zeta-medley-508121-u7-sig-web"
+    }
+  ],
+  "jobs_checked": 94,
+  "mode": "live",
+  "project": "zeta-medley-508121-u7",
+  "region": "us-central1",
+  "schema": "sig.live-diff/1",
+  "services_checked": 2,
+  "triggers_checked": 93
+}
