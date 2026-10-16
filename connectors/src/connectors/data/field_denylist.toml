@@ -57,6 +57,13 @@ deny_tokens = [
   "firstname",
   "lastname",
   "contact",    # contact, contact_name/email/phone — person contact rows
+  # P36.6 (ACQ-10): the count lanes emit enforcement_count aggregates only —
+  # a per-violation citation/ticket field or a trip record is the row-level
+  # surface Part VIII prohibits; a published column carrying the token fails
+  # registration, never an allowlist entry.
+  "citation",   # citation_number, citation_id — per-violation citation rows
+  "ticket",     # ticket_number — the citation instrument itself
+  "trip",       # trip_id, trip_record — vehicle trip records (Part VIII)
 ]
 
 # Token sequences — a field containing this contiguous token run is denied.

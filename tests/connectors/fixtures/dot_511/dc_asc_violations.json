@@ -1,0 +1,35 @@
+{
+  "displayFieldName": "ENFORCEMENT_SPACE_CODE",
+  "fields": [
+    {"name": "ENFORCEMENT_SPACE_CODE", "type": "esriFieldTypeString", "alias": "Enforcement Space Code"},
+    {"name": "YEAR_MONTH", "type": "esriFieldTypeString", "alias": "Year Month"},
+    {"name": "ENFORCEMENT_TYPE", "type": "esriFieldTypeString", "alias": "Enforcement Type"},
+    {"name": "count", "type": "esriFieldTypeDouble", "alias": "Violation Count"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "ENFORCEMENT_SPACE_CODE": "ES-0101",
+        "YEAR_MONTH": "2024-01",
+        "ENFORCEMENT_TYPE": "Speed",
+        "count": 142
+      }
+    },
+    {
+      "attributes": {
+        "ENFORCEMENT_SPACE_CODE": "ES-0101",
+        "YEAR_MONTH": "2024-01",
+        "ENFORCEMENT_TYPE": "Red-Light",
+        "count": 38
+      }
+    },
+    {
+      "attributes": {
+        "ENFORCEMENT_SPACE_CODE": "ES-0207",
+        "YEAR_MONTH": "2024-02",
+        "ENFORCEMENT_TYPE": "Red-Light",
+        "count": 64
+      }
+    }
+  ]
+}

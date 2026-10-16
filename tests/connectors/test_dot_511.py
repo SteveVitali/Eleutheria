@@ -711,12 +711,20 @@ def test_replay_and_shadow_are_deterministic() -> None:
 def test_every_camreg_source_resolves_a_registry_target() -> None:
     """All 23 P26.9 + 11 P26.13 municipal/transit/non-US sources have ≥1
     verified target row — ArcGIS layers AND Socrata datasets, gated rows
-    included (the endpoint is real; the gate is what stops the fetch)."""
+    included (the endpoint is real; the gate is what stops the fetch).
+    P36.6 (ACQ-10): the two aggregate transports join the closed kind set —
+    camreg_chicago_il's socrata_aggregate violations targets ride its
+    existing registration."""
     for source_id in CAMREG_SOURCE_IDS + CAMREG_P26_13_SOURCE_IDS:
         targets = registry_targets(source_id)
         assert targets, f"{source_id} has no registry target"
         for t in targets:
-            assert t["kind"] in ("arcgis_query", "socrata_rows")
+            assert t["kind"] in (
+                "arcgis_query",
+                "socrata_rows",
+                "socrata_aggregate",
+                "arcgis_outstatistics",
+            )
             assert t["url"].startswith(t["layer_url"])
             assert t["state"] and t["agency"]
             assert t["jurisdiction_scheme"]

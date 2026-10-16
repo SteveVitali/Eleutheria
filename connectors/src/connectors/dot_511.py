@@ -415,6 +415,155 @@ def target_status_violations() -> list[str]:
     return violations
 
 
+# --- the declared aggregate transport (P36.6 / ACQ-10, I8 NEW-7) --------------
+
+#: The aggregate target kinds this connector expands (I8 NEW-7): the count
+#: lanes whose published rows are enforcement aggregates — a camera × month or
+#: site × quarter count of warnings/violations — never a per-violation, plate
+#: or citation row. ``socrata_aggregate`` issues a bounded SoQL
+#: ``$select … $group … $where`` query (or reads a dataset the publisher
+#: already aggregates, ``count_function="verbatim"``);
+#: ``arcgis_outstatistics`` issues a bounded ``outStatistics`` +
+#: ``groupByFieldsForStatistics`` query.
+_AGGREGATE_KINDS = frozenset({"socrata_aggregate", "arcgis_outstatistics"})
+
+#: The closed vocabulary for an aggregate target's ``aggregate_period_kind`` —
+#: how the published period column reads. ``"month"`` truncates a published
+#: datetime column server-side (``date_trunc_ym(<field>)``); ``"verbatim"``
+#: carries the publisher's own period label (``YEAR_MONTH``, ``quarter_name``).
+_PERIOD_KINDS = frozenset({"month", "verbatim"})
+
+#: The closed vocabulary for ``aggregate_count_function``. ``"sum"`` asks the
+#: platform to total the published per-row measure (``sum(<field>)`` /
+#: ``statisticType=sum``); ``"verbatim"`` reads a dataset already published as
+#: an aggregate — the published total IS the count, no server-side grouping.
+#: ArcGIS ``outStatistics`` requires a statistic function, so ``"verbatim"``
+#: is only legal on ``socrata_aggregate``.
+_COUNT_FUNCTIONS = frozenset({"sum", "verbatim"})
+
+#: Declared field names land verbatim inside the SoQL ``$select``/``$group``
+#: and ArcGIS ``outStatistics`` query text — a bare column identifier only,
+#: never an expression or quoted literal smuggled through the registry row.
+_FIELD_NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
+
+class AggregateSpecNotDeclared(Exception):
+    """A registry defect: a malformed aggregate-target declaration.
+
+    Deliberately NOT a per-record rejection: an aggregate target without a
+    complete, well-formed ``aggregate_*`` declaration is a broken registry
+    row — the run fails loudly rather than inventing a group/period/measure
+    surface the publisher never declared (P36.6).
+    """
+
+
+@dataclass(frozen=True)
+class AggregateSpec:
+    """The validated aggregate declaration carried by an aggregate target row.
+
+    ``subject_field`` names the published key the aggregate subject resolves
+    on (a camera/site/enforcement-space code); ``period_field`` +
+    ``period_kind`` name the published period column and how it reads;
+    ``count_field`` + ``count_function`` name the published measure column
+    and the platform function that totals it; ``measure`` is the claim's
+    declared unit (``"violations"``); ``discriminator_field`` names an
+    optional published column that disambiguates concurrent count series on
+    the same subject × period (DC's ``ENFORCEMENT_TYPE`` — its published
+    value rides the claim's ``series`` field so the red-light, speed and
+    other series on one space-month never collide).
+    """
+
+    subject_field: str
+    period_field: str
+    period_kind: str
+    count_field: str
+    count_function: str
+    measure: str
+    discriminator_field: str | None
+
+
+def _aggregate_field(row: Mapping[str, Any], key: str, target_id: Any) -> str:
+    """One validated bare-identifier field name from an aggregate declaration."""
+    value = str(row.get(key) or "").strip()
+    if not _FIELD_NAME_RE.fullmatch(value):
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares {key}={value!r} — an "
+            "aggregate declaration field must be a bare published column "
+            "identifier, never an expression (the query text is committed "
+            "registry data, fail closed)"
+        )
+    return value
+
+
+def assert_target_aggregate(row: Mapping[str, Any]) -> AggregateSpec | None:
+    """The target row's validated :class:`AggregateSpec`, or ``None``.
+
+    Non-aggregate kinds return ``None``. An aggregate kind without a complete
+    declaration — or whose period/count vocabulary is outside the closed
+    members — is a registry defect (fail closed), never a guessed grouping.
+    """
+    kind = str(row.get("kind") or "").strip()
+    if kind not in _AGGREGATE_KINDS:
+        return None
+    target_id = row.get("id")
+    period_kind = str(row.get("aggregate_period_kind") or "").strip()
+    if period_kind not in _PERIOD_KINDS:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares aggregate_period_kind="
+            f"{period_kind!r}, which is not a member ({sorted(_PERIOD_KINDS)})"
+        )
+    count_function = str(row.get("aggregate_count_function") or "").strip()
+    if count_function not in _COUNT_FUNCTIONS:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares aggregate_count_function="
+            f"{count_function!r}, which is not a member ({sorted(_COUNT_FUNCTIONS)})"
+        )
+    if kind == "arcgis_outstatistics" and count_function == "verbatim":
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: 'verbatim' has no ArcGIS "
+            "statisticType — a pre-aggregated ArcGIS table aggregates via "
+            "'sum' (or registers as an arcgis_query lane)"
+        )
+    if kind == "arcgis_outstatistics" and period_kind != "verbatim":
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: ArcGIS "
+            "groupByFieldsForStatistics groups verbatim columns only — the "
+            "period expression is the column itself"
+        )
+    measure = str(row.get("aggregate_measure") or "").strip()
+    if not measure:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares no 'aggregate_measure' — "
+            "the count's unit must be declared, never implied"
+        )
+    discriminator = str(row.get("aggregate_discriminator_field") or "").strip()
+    return AggregateSpec(
+        subject_field=_aggregate_field(row, "aggregate_subject_field", target_id),
+        period_field=_aggregate_field(row, "aggregate_period_field", target_id),
+        period_kind=period_kind,
+        count_field=_aggregate_field(row, "aggregate_count_field", target_id),
+        count_function=count_function,
+        measure=measure,
+        discriminator_field=(
+            _aggregate_field(row, "aggregate_discriminator_field", target_id)
+            if discriminator
+            else None
+        ),
+    )
+
+
+def target_aggregate_violations() -> list[str]:
+    """``sig-connectors validate`` rules for the aggregate declarations (P36.6)."""
+    violations: list[str] = []
+    for row in target_table().get("targets", []):
+        label = f"target {row.get('id')!r} (source {row.get('source_id')!r})"
+        try:
+            assert_target_aggregate(row)
+        except AggregateSpecNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+    return violations
+
+
 class PredicateNotAllowed(Exception):
     """A schema error: the connector tried to write outside its predicate allowlist."""
 
@@ -556,6 +705,128 @@ def _socrata_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+def _socrata_aggregate_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one ``socrata_aggregate`` row into deterministic grouped pages.
+
+    The reviewed SoQL shape (I8 NEW-7)::
+
+        $select=<subject> AS subject, <period expr> AS period,
+                <count expr> AS count[, <disc> AS discriminator]
+        &$group=<subject>,<period expr>[,<disc>]
+        &$where=<window>
+        &$order=<subject>,<period expr>[,<disc>]
+        &$limit=5000&$offset=<n>
+
+    ``period_kind="month"`` wraps the period column in ``date_trunc_ym(…)``;
+    ``"verbatim"`` selects the published period label itself.
+    ``count_function="verbatim"`` names a dataset the publisher already
+    aggregates (a site × quarter table): no ``$group`` is emitted — the
+    published row IS the group row — and its column selects verbatim as
+    ``count``. Output columns are aliased to the canonical
+    ``subject``/``period``/``count``/``discriminator`` names so the emit path
+    never guesses field names; the group/order clauses carry the underlying
+    expressions.
+    """
+    spec = assert_target_aggregate(row)
+    assert spec is not None  # aggregate kind ⇒ validated spec
+    resource_url = str(row["layer_url"]).rstrip("/")
+    observed = int(row.get("observed_count") or 0)
+    pages = max(1, -(-observed // _SOCRATA_PAGE_SIZE))
+    period_expr = (
+        f"date_trunc_ym({spec.period_field})" if spec.period_kind == "month" else spec.period_field
+    )
+    count_expr = (
+        f"{spec.count_function}({spec.count_field})"
+        if spec.count_function != "verbatim"
+        else spec.count_field
+    )
+    select_parts = [
+        f"{spec.subject_field} AS subject",
+        f"{period_expr} AS period",
+        f"{count_expr} AS count",
+    ]
+    order_parts = [spec.subject_field, period_expr]
+    if spec.discriminator_field is not None:
+        select_parts.append(f"{spec.discriminator_field} AS discriminator")
+        order_parts.append(spec.discriminator_field)
+    params: dict[str, Any] = {"$select": ",".join(select_parts)}
+    if spec.count_function != "verbatim":
+        params["$group"] = ",".join(order_parts)
+    where = str(row.get("where") or "").strip()
+    if where:
+        # The first-window bound (2023-10 onward, ≈ 36 months) is committed
+        # target data, reviewed like the arcgis `where` allowlist (P36.4).
+        params["$where"] = where
+    params["$order"] = ",".join(order_parts)
+    out: list[dict[str, Any]] = []
+    for page in range(pages):
+        page_params = {
+            **params,
+            "$limit": _SOCRATA_PAGE_SIZE,
+            "$offset": page * _SOCRATA_PAGE_SIZE,
+        }
+        out.append(
+            {
+                "url": f"{resource_url}?{urlencode(page_params)}",
+                "page": page,
+                "page_count": pages,
+            }
+        )
+    return out
+
+
+def _arcgis_outstatistics_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one ``arcgis_outstatistics`` row into deterministic grouped pages.
+
+    The reviewed query shape (I8 NEW-7): ``groupByFieldsForStatistics`` names
+    the subject + period (+ discriminator) columns verbatim,
+    ``outStatistics`` carries one ``sum`` statistic aliased ``count``, and the
+    response's ``features[].attributes`` are group rows — never geometry,
+    never a per-violation row. Pages are ``resultOffset`` /
+    ``resultRecordCount`` over the group columns so a >1,000-group table is
+    captured whole; ``exceededTransferLimit`` on the last planned page fails
+    loud in ``parse``, same as the feature layers.
+    """
+    spec = assert_target_aggregate(row)
+    assert spec is not None
+    layer_url = str(row["layer_url"]).rstrip("/")
+    observed = int(row.get("observed_count") or 0)
+    page_size = min(_ARCGIS_PAGE_SIZE, max(1, int(row.get("page_size") or _ARCGIS_PAGE_SIZE)))
+    pages = max(1, -(-observed // page_size))
+    group_fields = [spec.subject_field, spec.period_field]
+    if spec.discriminator_field is not None:
+        group_fields.append(spec.discriminator_field)
+    out_statistics = json.dumps(
+        [
+            {
+                "statisticType": spec.count_function,
+                "onStatisticField": spec.count_field,
+                "outStatisticFieldName": "count",
+            }
+        ],
+        separators=(",", ":"),
+    )
+    params_base = {
+        "where": str(row.get("where") or "1=1").strip() or "1=1",
+        "groupByFieldsForStatistics": ",".join(group_fields),
+        "outStatistics": out_statistics,
+        "returnGeometry": "false",
+        "orderByFields": ",".join(group_fields),
+        "f": "json",
+    }
+    out: list[dict[str, Any]] = []
+    for page in range(pages):
+        params = {
+            **params_base,
+            "resultRecordCount": page_size,
+            "resultOffset": page * page_size,
+        }
+        out.append(
+            {"url": f"{layer_url}/query?{urlencode(params)}", "page": page, "page_count": pages}
+        )
+    return out
+
+
 def registry_targets(source_id: str) -> list[dict[str, Any]]:
     """The live fetch targets for one camera-registry source (identifiers, not content).
 
@@ -592,7 +863,14 @@ def expand_registry_rows(
     budget can be exercised on arbitrary rows (the ACQ-01 generator and its
     tests) without touching the committed registry files.
     """
-    expanders = {"arcgis_query": _arcgis_pages, "socrata_rows": _socrata_pages}
+    expanders = {
+        "arcgis_query": _arcgis_pages,
+        "socrata_rows": _socrata_pages,
+        # P36.6 (ACQ-10, I8 NEW-7): the aggregate count lanes — grouped SoQL
+        # and ArcGIS outStatistics queries emitting enforcement_count rows.
+        "socrata_aggregate": _socrata_aggregate_pages,
+        "arcgis_outstatistics": _arcgis_outstatistics_pages,
+    }
     out: list[dict[str, Any]] = []
     for row in rows:
         if source_id and str(row.get("source_id")) != source_id:
@@ -618,7 +896,7 @@ def expand_registry_rows(
         if rpm is None:
             entry = api_allow_entry(str(row["layer_url"]))
             rpm = entry.rate_limit_per_min if entry is not None else None
-        if rpm is None and kind == "arcgis_query":
+        if rpm is None and kind in ("arcgis_query", "arcgis_outstatistics"):
             # An ArcGIS layer on a host the allowlist does not name still runs
             # at the reviewed 10/min ArcGIS budget (I8 NEW-3), never unbounded.
             rpm = _ARCGIS_REVIEWED_RPM
@@ -637,6 +915,16 @@ def expand_registry_rows(
         # bounded) emit.
         status_disposition = assert_target_status_disposition(row)
         coordinate_precision = assert_target_coordinate_precision(row)
+        # P36.6 (ACQ-10): the aggregate declaration + the declared field
+        # bindings (camera_ref_field / deployment_date_field) are validated
+        # at expansion — a broken declaration is a registry defect, never a
+        # guessed emit.
+        aggregate = assert_target_aggregate(row)
+        declared_fields = {
+            key: str(row.get(key)).strip()
+            for key in ("camera_ref_field", "deployment_date_field")
+            if str(row.get(key) or "").strip()
+        }
         where = str(row.get("where") or "").strip()
         for page in expand(row):
             target = {
@@ -663,6 +951,18 @@ def expand_registry_rows(
                 target["removal_status_values"] = sorted(_row_removal_status_values(row))
             if coordinate_precision:
                 target["coordinate_precision"] = coordinate_precision
+            if aggregate is not None:
+                target["aggregate"] = {
+                    "subject_field": aggregate.subject_field,
+                    "period_field": aggregate.period_field,
+                    "period_kind": aggregate.period_kind,
+                    "count_field": aggregate.count_field,
+                    "count_function": aggregate.count_function,
+                    "measure": aggregate.measure,
+                    "discriminator_field": aggregate.discriminator_field,
+                }
+            for key, value in declared_fields.items():
+                target[key] = value
             if where:
                 target["where"] = where
             if rpm is not None:
@@ -796,6 +1096,74 @@ def socrata_point_geometry(fields: Mapping[str, Any]) -> dict[str, Any] | None:
             return {"x": coords[0], "y": coords[1]}
         if value.get("latitude") is not None and value.get("longitude") is not None:
             return {"x": value["longitude"], "y": value["latitude"]}
+    return None
+
+
+def socrata_line_geometry_probe(fields: Mapping[str, Any]) -> dict[str, Any] | None:
+    """Surface ANY dict-valued geometry column on a ``line`` target (P36.6).
+
+    A ``geometry_kind="line"`` route/programme register (MTA's ABLE routes)
+    declares NO path geometry — the published surface is a tabular register.
+    ``socrata_point_geometry`` would silently drop a ``LineString``/``Polygon``
+    under a declared column (it only surfaces ``Point`` shapes), so a line
+    target probes for the raw dict itself: surfacing it as the record's
+    ``geometry`` makes :func:`_entry_from_raw` fail closed
+    (``unsupported_geometry``) instead of asserting "no geometry" against a
+    capture that DID carry a path. ``None`` means the capture is the expected
+    geometry-free register row.
+    """
+    for name in vocab()["point_fields"]:
+        value = fields.get(name)
+        if isinstance(value, Mapping):
+            return dict(value)
+    return None
+
+
+def socrata_area_geometry(fields: Mapping[str, Any]) -> dict[str, Any] | None:
+    """The ``{"rings": …}`` geometry from a Socrata polygon column (P36.6).
+
+    An area/zone Socrata dataset — Howard County's school-zone layer
+    (``the_geom``) — carries a GeoJSON ``Polygon``/``MultiPolygon`` column
+    instead of a point. This converts it to the ArcGIS ``rings`` convention
+    :func:`area_geometry` consumes: each polygon's exterior ring is wound so
+    its signed area is negative (ArcGIS's exterior convention) and each hole
+    positive, so the shared WKT/centroid path applies unchanged. Returns
+    ``None`` when no declared point-field column carries polygon coordinates —
+    the record then fails closed inside ``area_geometry`` as ``missing``.
+    """
+    for name in vocab()["point_fields"]:
+        value = fields.get(name)
+        if not isinstance(value, Mapping):
+            continue
+        geo_type = str(value.get("type") or "").lower()
+        coords = value.get("coordinates")
+        if not isinstance(coords, list):
+            continue
+        if geo_type == "polygon":
+            polygons = [coords]
+        elif geo_type == "multipolygon":
+            polygons = coords
+        else:
+            continue
+        rings: list[Any] = []
+        for polygon in polygons:
+            if not isinstance(polygon, list):
+                continue
+            for i, ring in enumerate(polygon):
+                checked = _checked_ring(ring, len(rings))
+                if i == 0:
+                    # Exterior ring — ArcGIS's convention winds it so the
+                    # signed area is negative (Y-up lon/lat).
+                    rings.append(
+                        checked if _ring_signed_area(checked) < 0 else list(reversed(checked))
+                    )
+                else:
+                    # Hole ring — positive signed area.
+                    rings.append(
+                        checked if _ring_signed_area(checked) > 0 else list(reversed(checked))
+                    )
+        if rings:
+            return {"rings": rings}
     return None
 
 
@@ -1125,6 +1493,11 @@ class CameraRegistryEntry:
     #: never deletes the paired inventory rows).
     valid_to: str | None = None
     valid_to_kind: str | None = None
+    #: P36.6 (ACQ-10): the published deployment-date column's value when the
+    #: target declares ``deployment_date_field`` (MTA's ``implementation_date``
+    #: — the route's enforced-since date). Emits verbatim under
+    #: ``installation_date``; ``None`` on every undeclared record.
+    installation_date: str | None = None
 
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
@@ -1147,14 +1520,31 @@ class CameraRegistryEntry:
             )
         if self.geometry_kind == "point" and (self.latitude is None or self.longitude is None):
             raise ValueError("a point CameraRegistryEntry requires published coordinates")
-        if self.geometry_kind != "point" and (
+        if self.geometry_kind == "area" and (
             self.geometry_wkt is None
             or self.centroid_latitude is None
             or self.centroid_longitude is None
         ):
             raise ValueError(
-                "a non-point CameraRegistryEntry requires geometry_wkt + a derived centroid"
+                "an area CameraRegistryEntry requires geometry_wkt + a derived centroid"
             )
+        # P36.6 (ACQ-10): a ``line`` record — a published route/programme
+        # register row — legitimately carries NO geometry (the publisher
+        # ships no path column): it asserts the shape kind only. The
+        # contract is symmetric: a line entry must be all-geometry-free
+        # (the emit path mints no WKT this ticket) or fully-formed — a
+        # WKT without its derived centroid is the half-formed surface this
+        # check exists to refuse.
+        if self.geometry_kind == "line" and (
+            (self.geometry_wkt is None)
+            != (self.centroid_latitude is None and self.centroid_longitude is None)
+        ):
+            raise ValueError(
+                "a line CameraRegistryEntry is geometry-free (route/programme "
+                "record) or carries wkt + a derived centroid — never half-formed"
+            )
+        if self.geometry_kind == "line" and self.ring_count != 0:
+            raise ValueError("a geometry-free line CameraRegistryEntry carries no ring count")
         # P36.5: the declared coordinate-precision caveat is a member of the
         # closed set — a hand-built entry cannot smuggle an invented label.
         if self.coordinate_precision is not None:
@@ -1348,13 +1738,29 @@ class CameraRegistryEntry:
             # shape — the published polygon is a ``fixed_asset_location``
             # geometry-wkt claim and the kind rides ``geometry_kind``. No
             # ``camera_latitude``/``camera_longitude`` device-point claims
-            # emit: a programme area is not a point.
+            # emit: a programme area is not a point. P36.6 (ACQ-10): a
+            # geometry-free ``line`` record (a route/programme register row
+            # that publishes no path) asserts its ``geometry_kind`` only —
+            # no ``fixed_asset_location`` claim mints a null geometry.
             rows.append(self._claim("geometry_kind", self.geometry_kind, self.geometry_kind, ev))
+            if self.geometry_wkt is not None:
+                rows.append(
+                    self._claim(
+                        "fixed_asset_location",
+                        self.geometry_wkt,
+                        str(self.geometry_wkt),
+                        ev,
+                    )
+                )
+        if self.installation_date is not None:
+            # P36.6 (ACQ-10): the declared deployment-date column emits
+            # verbatim under `installation_date` — the route/programme's
+            # enforced-since date (MTA `implementation_date`).
             rows.append(
                 self._claim(
-                    "fixed_asset_location",
-                    self.geometry_wkt,
-                    str(self.geometry_wkt),
+                    "installation_date",
+                    self.installation_date,
+                    str(self.installation_date),
                     ev,
                 )
             )
@@ -1433,7 +1839,10 @@ class Dot511Connector(Connector):
         data = ctx.captures.get(capture.digest)
         target = _resolve_target(ctx, capture.source_uri)
         kind = str(target.get("kind") or "arcgis_query")
-        if kind == "socrata_rows":
+        if kind in ("socrata_rows", "socrata_aggregate"):
+            # P36.6 (ACQ-10): a socrata_aggregate capture is the same /resource
+            # JSON row array — the rows just carry the grouped subject/period/
+            # count aliases the committed $select produces.
             return self._parse_socrata(ctx, capture, data, target)
         try:
             doc = json.loads(data)
@@ -1549,6 +1958,8 @@ class Dot511Connector(Connector):
         capture: CaptureRef = parsed["capture"]
         target = _resolve_target(ctx, capture.source_uri)
         retrieved = capture.retrieved_at or datetime.now(UTC)
+        target_kind = str(target.get("kind") or "")
+        is_aggregate = target_kind in _AGGREGATE_KINDS
         out: list[Mapping[str, Any]] = []
         if parsed.get("kind") == "socrata_rows":
             rows = doc["rows"]
@@ -1560,13 +1971,42 @@ class Dot511Connector(Connector):
                         details=f"rows[{index}] is {type(row).__name__}",
                     )
                 fields, excluded = partition_fields(row)
+                if is_aggregate:
+                    # P36.6 (ACQ-10): the row is a grouped subject × period
+                    # count record — never geometry, never a per-violation row.
+                    out.append(
+                        {
+                            "record_kind": "enforcement_aggregate",
+                            "feature_index": index,
+                            "fields": dict(fields),
+                            "excluded_fields": excluded,
+                            "geometry": None,
+                            "source_uri": capture.source_uri,
+                            "retrieved_at": retrieved.isoformat(),
+                            "target": dict(target),
+                        }
+                    )
+                    continue
                 out.append(
                     {
                         "record_kind": "camera_feature",
                         "feature_index": index,
                         "fields": dict(fields),
                         "excluded_fields": excluded,
-                        "geometry": socrata_point_geometry(fields),
+                        # P36.6 (ACQ-10): an area-declared Socrata target
+                        # resolves its polygon column (GeoJSON) into the
+                        # rings shape area_geometry consumes; a line-declared
+                        # target probes for ANY geometry-bearing column — a
+                        # capture carrying a path must reach _entry_from_raw
+                        # as non-None so the record fails closed rather than
+                        # silently asserting "no geometry".
+                        "geometry": (
+                            socrata_area_geometry(fields)
+                            if str(target.get("geometry_kind") or "").strip() == "area"
+                            else socrata_line_geometry_probe(fields)
+                            if str(target.get("geometry_kind") or "").strip() == "line"
+                            else socrata_point_geometry(fields)
+                        ),
                         "source_uri": capture.source_uri,
                         "retrieved_at": retrieved.isoformat(),
                         "target": dict(target),
@@ -1591,11 +2031,20 @@ class Dot511Connector(Connector):
             geometry = feature.get("geometry")
             out.append(
                 {
-                    "record_kind": "camera_feature",
+                    # P36.6 (ACQ-10): an outStatistics feature's attributes are
+                    # one group row (subject + period + count) — never a
+                    # geometry, never a per-violation row.
+                    "record_kind": ("enforcement_aggregate" if is_aggregate else "camera_feature"),
                     "feature_index": index,
                     "fields": dict(fields),
                     "excluded_fields": excluded,
-                    "geometry": dict(geometry) if isinstance(geometry, Mapping) else None,
+                    "geometry": (
+                        None
+                        if is_aggregate
+                        else dict(geometry)
+                        if isinstance(geometry, Mapping)
+                        else None
+                    ),
                     "source_uri": capture.source_uri,
                     "retrieved_at": retrieved.isoformat(),
                     "target": dict(target),
@@ -1618,9 +2067,25 @@ class Dot511Connector(Connector):
         emitted = 0
         rejected = 0
         for raw in raw_claims:
+            target: Mapping[str, Any] = raw.get("target") or {}
+            if raw.get("record_kind") == "enforcement_aggregate":
+                # P36.6 (ACQ-10): a site-period aggregate row emits its
+                # subject identity + the enforcement_count claim; a row
+                # missing its subject/period/count fails closed, recorded.
+                try:
+                    rows = _aggregate_claim_rows(ctx.source.id, raw, target)
+                except (CoordinateRejected, ValueError) as exc:
+                    rejected += 1
+                    reason = (
+                        exc.reason if isinstance(exc, CoordinateRejected) else "no_registry_key"
+                    )
+                    out.append(_rejection_row(ctx.source.id, raw, target, reason, str(exc)))
+                    continue
+                emitted += 1
+                out.extend(rows)
+                continue
             if raw.get("record_kind") != "camera_feature":
                 continue
-            target: Mapping[str, Any] = raw.get("target") or {}
             try:
                 entry = _entry_from_raw(ctx.source.id, raw, target)
             except (CoordinateRejected, ValueError) as exc:
@@ -1669,9 +2134,14 @@ class Dot511Connector(Connector):
 # --- module-private helpers ---------------------------------------------------
 
 #: The evidence extraction method each platform kind stamps on claims (P26.9).
+#: P36.6 (ACQ-10): the aggregate kinds share their row-kind's wire shape — a
+#: grouped SoQL response is still a Socrata JSON row array, an outStatistics
+#: response still ArcGIS feature attributes.
 _EXTRACTION_METHODS = {
     "arcgis_query": "arcgis_feature_json",
     "socrata_rows": "socrata_rows_json",
+    "socrata_aggregate": "socrata_rows_json",
+    "arcgis_outstatistics": "arcgis_feature_json",
 }
 
 
@@ -1717,7 +2187,20 @@ def _entry_from_raw(
     technology = assert_target_technology(target)
     record_kind = declared_record_kind(target)
     geometry_kind = assert_target_geometry_kind(target)
-    ref_pair = _first_field(fields, vocab()["id_fields"])
+    # P36.6 (ACQ-10): a target may pin the published subject key explicitly
+    # (``camera_ref_field`` — MTA's route key, DC's ENFORCEMENT_SPACE_CODE)
+    # when the dataset's meaningful key sits outside the generic alias walk.
+    # An absent declared column fails closed, never a silent alias fallback.
+    ref_field = str(target.get("camera_ref_field") or "").strip()
+    ref_pair: tuple[str, Any] | None
+    if ref_field:
+        if fields.get(ref_field) in (None, "") or isinstance(fields.get(ref_field), Mapping):
+            raise CoordinateRejected(
+                "missing", f"declared camera_ref_field {ref_field!r} is absent or empty"
+            )
+        ref_pair = (ref_field, fields[ref_field])
+    else:
+        ref_pair = _first_field(fields, vocab()["id_fields"])
     if ref_pair is None:
         raise CoordinateRejected(
             "missing", "no camera identity field matched the id_fields aliases"
@@ -1744,6 +2227,26 @@ def _entry_from_raw(
     elif geometry_kind == "point":
         lat, lon, coord_source = extract_coordinate(fields, raw.get("geometry"))
         lat, lon, tier = publishable_coordinate(lat, lon, sensitivity_class)
+    elif geometry_kind == "line":
+        # P36.6 (ACQ-10): a route/programme record declares shape ``line`` —
+        # an enforced corridor (MTA's bus-lane ATE routes), not a device
+        # point or a bounded zone. The published dataset is a tabular
+        # programme register (``program``/``route``/``implementation_date``)
+        # that carries NO path geometry, so the record asserts the shape
+        # only: ``geometry_wkt``/centroid stay ``None`` and no
+        # ``fixed_asset_location`` claim emits. A capture that DOES carry a
+        # path fails closed — the polyline→WKT emit path is not this
+        # ticket's, and silently dropping it would assert "no geometry"
+        # against published evidence.
+        if raw.get("geometry") is not None:
+            raise CoordinateRejected(
+                "unsupported_geometry",
+                "a line record carrying published path geometry has no emit "
+                "path this ticket — the polyline WKT serialiser does not "
+                "exist yet",
+            )
+        coord_source = "none"
+        tier = 0
     else:
         raise CoordinateRejected(
             "unsupported_geometry",
@@ -1781,6 +2284,17 @@ def _entry_from_raw(
                 valid_to = None
                 valid_to_kind = "unknown"
 
+    # P36.6 (ACQ-10): the declared deployment-date column (MTA's
+    # `implementation_date`) emits verbatim under `installation_date`; an
+    # absent or non-scalar declared column emits nothing (the fact is "not
+    # asserted", never fabricated).
+    dep_field = str(target.get("deployment_date_field") or "").strip()
+    installation_date: str | None = None
+    if dep_field:
+        dep_value = fields.get(dep_field)
+        if dep_value is not None and not isinstance(dep_value, (Mapping, list, tuple)):
+            installation_date = str(dep_value).strip() or None
+
     return CameraRegistryEntry(
         camera_ref=str(ref_pair[1]),
         source_id=source_id,
@@ -1802,6 +2316,7 @@ def _entry_from_raw(
         status=status,
         direction=_s("direction_fields"),
         coordinate_precision=assert_target_coordinate_precision(target),
+        installation_date=installation_date,
         valid_to=valid_to,
         valid_to_kind=valid_to_kind,
         excluded_fields=tuple(raw.get("excluded_fields") or ()),
@@ -1815,6 +2330,173 @@ def _entry_from_raw(
         centroid_longitude=centroid_lon,
         ring_count=ring_count,
     )
+
+
+def _aggregate_claim_rows(
+    source_id: str, raw: Mapping[str, Any], target: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """The entity + claim rows for one site-period aggregate record (P36.6).
+
+    The subject is the published site key (``aggregate_subject_field`` —
+    DC's ``ENFORCEMENT_SPACE_CODE``, Montgomery's ``site_number``, Chicago's
+    ``camera_id``) minted under the same ``traffic_camera:`` subject scheme
+    the site layers use, so the count series joins the location record at
+    ER. The ``enforcement_count`` claim carries ``{period, count, measure}``
+    — a ``series`` field when the target declares a discriminator column
+    (DC's ``ENFORCEMENT_TYPE`` splits one space-month into per-type series).
+    A row with no subject key, no period label, or a non-numeric count fails
+    closed — an aggregate record never invents the window or the total.
+    """
+    fields: Mapping[str, Any] = raw["fields"]
+    if not str(target.get("id") or "").strip():
+        raise CoordinateRejected(
+            "unmatched_target",
+            "the capture's source URI matches no configured registry target",
+        )
+    # The expanded target carries the spec already validated at expansion
+    # under its "aggregate" member — a record arriving from a target whose
+    # spec is absent or malformed is a defect, never a guessed grouping.
+    spec_map = target.get("aggregate")
+    if not isinstance(spec_map, Mapping):
+        raise CoordinateRejected(
+            "unsupported_geometry",
+            "an enforcement_aggregate record arrived from a non-aggregate target",
+        )
+    try:
+        spec = AggregateSpec(
+            subject_field=str(spec_map["subject_field"]),
+            period_field=str(spec_map["period_field"]),
+            period_kind=str(spec_map["period_kind"]),
+            count_field=str(spec_map["count_field"]),
+            count_function=str(spec_map["count_function"]),
+            measure=str(spec_map["measure"]),
+            discriminator_field=(
+                str(spec_map["discriminator_field"])
+                if spec_map.get("discriminator_field")
+                else None
+            ),
+        )
+    except KeyError as exc:
+        raise CoordinateRejected(
+            "unmatched_target",
+            f"the target's aggregate spec is missing a member: {exc}",
+        ) from exc
+    kind = str(target.get("kind") or "")
+    if kind == "arcgis_outstatistics":
+        # outStatistics attributes keep the PUBLISHED group-column names; the
+        # count lands under its declared outStatisticFieldName "count".
+        subject = fields.get(spec.subject_field)
+        period = fields.get(spec.period_field)
+        count = fields.get("count")
+        series = fields.get(spec.discriminator_field) if spec.discriminator_field else None
+    else:
+        # socrata_aggregate rows carry the canonical $select aliases.
+        subject = fields.get("subject")
+        period = fields.get("period")
+        count = fields.get("count")
+        series = fields.get("discriminator")
+    subject_text = str(subject or "").strip()
+    if not subject_text:
+        raise CoordinateRejected(
+            "missing", "aggregate row carries no subject key (group column empty)"
+        )
+    period_text = str(period or "").strip()
+    if not period_text:
+        raise CoordinateRejected(
+            "missing", "aggregate row carries no period label (group column empty)"
+        )
+    try:
+        count_int = int(float(str(count)))
+    except (TypeError, ValueError):
+        raise CoordinateRejected(
+            "malformed", f"aggregate count {count!r} is not a number"
+        ) from None
+    series_text = str(series).strip() if series is not None else ""
+    technology = assert_target_technology(target)
+    record_kind = declared_record_kind(target)
+    target_id = str(target.get("id") or "unknown_target")
+    state = str(target.get("state") or "")
+    agency = str(target.get("agency") or "")
+    license_spdx = str(target.get("license_spdx") or "")
+    subject_id = f"traffic_camera:{source_id}:{target_id}:{subject_text}"
+    evidence = {
+        "source_url": str(raw["source_uri"]),
+        "extraction_method": _EXTRACTION_METHODS.get(kind, "arcgis_feature_json"),
+        "locator": Locator.row(int(raw["feature_index"])).to_row(),
+    }
+
+    def _claim(
+        predicate: str,
+        value: Any,
+        raw_value: str,
+        candidate: Mapping[str, str] | None = None,
+    ) -> dict[str, Any]:
+        row: dict[str, Any] = {
+            "record_kind": "claim",
+            "subject_id": subject_id,
+            "predicate_id": assert_predicate_allowed(predicate),
+            "raw_value": raw_value,
+            "value": value,
+            "evidence_genre": "camera_registry",
+            "evidence": dict(evidence),
+        }
+        if candidate is not None:
+            row["candidate_identifier"] = dict(candidate)
+        return _stamp(row, source_id=source_id, license_spdx=license_spdx)
+
+    rows: list[dict[str, Any]] = [
+        _stamp(
+            {
+                "record_kind": record_kind,
+                "subject_id": subject_id,
+                "predicate_id": assert_predicate_allowed("traffic_camera"),
+                "external_id": subject_text,
+                "raw_value": subject_text,
+                "state": state,
+                "agency": agency,
+                "target_id": target_id,
+                "technology": technology,
+                "aggregate_measure": spec.measure,
+                "excluded_fields": list(raw.get("excluded_fields") or ()),
+                "evidence_genre": "camera_registry",
+                "evidence": evidence,
+            },
+            source_id=source_id,
+            license_spdx=license_spdx,
+        ),
+        _claim(
+            "camera_external_ref",
+            subject_text,
+            subject_text,
+            candidate={"scheme": "dot511.camera_ref", "value": subject_text},
+        ),
+        _claim("external_id", subject_text, subject_text),
+        _claim("technology", technology, technology),
+        _claim(
+            "camera_jurisdiction",
+            state,
+            state,
+            candidate={
+                "scheme": str(target.get("jurisdiction_scheme") or "us.state_abbr"),
+                "value": state,
+            },
+        ),
+        _claim("camera_registry_publisher", agency, agency),
+    ]
+    operator = str(target.get("operator") or "").strip()
+    if operator:
+        op = _claim("camera_operator", operator, operator)
+        jurisdiction_scheme = str(target.get("jurisdiction_scheme") or "us.state_abbr")
+        if state and jurisdiction_scheme != "sig.unresolved":
+            op["partner_jurisdiction"] = f"{jurisdiction_scheme}:{state}"
+        rows.append(op)
+    count_claim = _claim("enforcement_count", count_int, str(count_int))
+    count_claim["period"] = period_text
+    count_claim["measure"] = spec.measure
+    if series_text:
+        count_claim["series"] = series_text
+    rows.append(count_claim)
+    return rows
 
 
 def _rejection_row(
@@ -1921,6 +2603,8 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
 
 
 __all__ = [
+    "AggregateSpec",
+    "AggregateSpecNotDeclared",
     "CameraRegistryEntry",
     "CoordinatePrecisionNotDeclared",
     "CoordinateRejected",
@@ -1931,6 +2615,7 @@ __all__ = [
     "TechnologyNotDeclared",
     "area_geometry",
     "assert_predicate_allowed",
+    "assert_target_aggregate",
     "assert_target_coordinate_precision",
     "assert_target_geometry_kind",
     "assert_target_status_disposition",
@@ -1947,6 +2632,8 @@ __all__ = [
     "predicate_allowlist",
     "publishable_coordinate",
     "registry_targets",
+    "socrata_area_geometry",
+    "target_aggregate_violations",
     "target_geometry_violations",
     "target_status_violations",
     "target_technology_violations",

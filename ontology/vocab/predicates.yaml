@@ -2030,6 +2030,48 @@ predicates:
     template: D6
     subscription: D6
     recommendation: D6
+- predicate_id: enforcement_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: multi
+  definition: >-
+    The operator-published aggregate count of automated-enforcement outcomes
+    (warnings/violations) for a camera or programme subject over a declared
+    period — a claim carries its `period` and `measure` fields beside the
+    integer value, keyed camera × month or site × quarter as published.
+    Aggregate rows only: never a per-violation, plate, person, trip or
+    citation record (P36.6 / R11-ACQ-10, I8 NEW-7) — the aggregate admission
+    is distinct from the connector-forbidden `camera_count` device-count
+    genre, and Part VIII prohibits the row-level surfaces this predicate
+    deliberately replaces.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count
+  volatility_class: VOLATILE
+  half_life: 6mo
+  resolution_strategy: interval_union
+  # P36.6 assessment: camera_registry D2 (the operator-published aggregate);
+  # official_statement D3; portal_document D4; connector_run D3
+  directness:
+    executed_contract: D5
+    invoice: D5
+    portal_snapshot: D3
+    council_minutes: D4
+    agency_policy: D4
+    osm_node_set: D6
+    audit_log: D5
+    news_article: D4
+    vendor_default_page: D5
+    camera_registry: D2
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D5
+    official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
 - predicate_id: camera_operator
   vocab_version: 1.0.0
   value_datatype: string

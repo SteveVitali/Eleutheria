@@ -69,7 +69,18 @@
 # `Permit_Jurisdiction`/`City` (Milford/Pittsylvania/Marble Falls sub-state
 # jurisdiction detail), `DirectionFacing` (Pueblo/Shelbyville direction).
 # Additive only.
-vocab_version = "2026.10.12.2"
+# 2026.10.12.3 (P36.6 / R11-ACQ-10, I8 NEW-7): `enforcement_count` joins the
+# allowlist — the registered predicate the aggregate transports
+# (`socrata_aggregate`, `arcgis_outstatistics`) emit per camera/site × period;
+# `installation_date` joins for the published deployment-date column a
+# route/programme row carries (MTA `implementation_date`). The forbidden
+# genres gain `citation` and `trip` — the aggregate lanes emit counts only,
+# never the row-level surfaces Part VIII prohibits. Field aliases added:
+# `CAMERA_LATITUDE`/`CAMERA_LONGITUDE` (DC ASC's published attribute pair —
+# the declared `coordinate_mode="fields"` source), `LOCATION_DESCRIPTION`
+# (DC ASC's site-name label), `direction_of_travel` (Tacoma AE direction).
+# Additive only.
+vocab_version = "2026.10.12.3"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -105,6 +116,14 @@ predicate_allowlist = [
   # record can never be silently flattened.
   "geometry_kind",
   "fixed_asset_location",
+  # P36.6 (ACQ-10, I8 NEW-7): `enforcement_count` — the registered predicate
+  # the aggregate transports emit per camera/site × period (a {period, count,
+  # measure} claim on the subject; aggregate rows only, never a per-violation
+  # or citation record). `installation_date` — the registered predicate a
+  # route/programme row's published deployment-date column (declared
+  # `deployment_date_field`, e.g. MTA `implementation_date`) emits under.
+  "enforcement_count",
+  "installation_date",
 ]
 
 # Predicate GENRES this connector MUST NOT write (scope-creep guard): the
@@ -121,6 +140,11 @@ forbidden_predicate_genres = [
   "person",
   "deployment_exists",
   "camera_count",
+  # P36.6 (ACQ-10): the count lanes emit `enforcement_count` aggregates only —
+  # a per-violation citation row or a trip record is Part VIII-prohibited and
+  # stays forbidden by construction.
+  "citation",
+  "trip",
 ]
 
 # The sensitivity class applied to every emitted camera coordinate before the
@@ -177,6 +201,9 @@ lat_fields = [
   # P36.5 (ACQ-09): Thomasville's all-caps `LAT`/`LONG` attribute pair
   # (coordinate_mode=fields — the published attribute pair is the source).
   "LAT",
+  # P36.6 (ACQ-10): DC ASC's published attribute pair is the declared
+  # coordinate source (coordinate_mode=fields).
+  "CAMERA_LATITUDE",
 ]
 lon_fields = [
   "longitude", "Longitude", "LONGITUDE", "attributes_longitude", "geometry_x", "x",
@@ -188,6 +215,8 @@ lon_fields = [
   "Lon",
   # P36.5 (ACQ-09): Thomasville's all-caps `LONG` pairs with its `LAT` column.
   "LONG",
+  # P36.6 (ACQ-10): DC ASC's `CAMERA_LONGITUDE` pairs with `CAMERA_LATITUDE`.
+  "CAMERA_LONGITUDE",
 ]
 
 # P26.9: Socrata point-object fields — the GeoJSON-ish dict-valued columns a
@@ -273,6 +302,8 @@ name_fields = [
   # P36.5 (ACQ-09): Thomasville's all-caps site name and Marble Falls'
   # `Location_Name` label.
   "NAME", "Location_Name",
+  # P36.6 (ACQ-10): DC ASC's site-name label.
+  "LOCATION_DESCRIPTION",
 ]
 
 # Reported camera/device status.
@@ -307,6 +338,8 @@ direction_fields = [
   "view_direction", "dir",
   # P36.5 (ACQ-09): Pueblo's direction-facing label.
   "DirectionFacing",
+  # P36.6 (ACQ-10): Tacoma AE's travel-direction label.
+  "direction_of_travel",
 ]
 
 # --- the media blocklist ------------------------------------------------------

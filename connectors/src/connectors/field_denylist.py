@@ -106,12 +106,19 @@ def field_violations(fields: Iterable[str]) -> list[str]:
 
 #: The platforms the F-330 denylist gates — ArcGIS REST feature-layer queries
 #: and Socrata ``/resource`` rows, the two transports F-330's archetypes ride.
-DENYLIST_KINDS: frozenset[str] = frozenset({"arcgis_query", "socrata_rows"})
+#: P36.6 (ACQ-10): the aggregate transports query the same two platforms —
+#: their declared group/count columns and the rows behind them are gated
+#: identically (an aggregate declaration naming a plate/registrant column is
+#: the same refusal).
+DENYLIST_KINDS: frozenset[str] = frozenset(
+    {"arcgis_query", "socrata_rows", "socrata_aggregate", "arcgis_outstatistics"}
+)
 DENYLIST_PLATFORMS: frozenset[str] = frozenset({"arcgis", "socrata"})
 
 
 def _row_fields(row: Mapping[str, Any]) -> list[str]:
-    """Every field name a target row declares (published schema + allowlist)."""
+    """Every field name a target row declares (published schema + allowlist +
+    the committed query configuration, P36.6)."""
     fields: list[str] = []
     for key in ("observed_fields", "out_fields"):
         value = row.get(key)
@@ -119,6 +126,20 @@ def _row_fields(row: Mapping[str, Any]) -> list[str]:
             fields.extend(f.strip() for f in value.split(","))
         elif isinstance(value, (list, tuple)):
             fields.extend(str(f) for f in value)
+    # P36.6 (ACQ-10): the aggregate declaration and the declared field
+    # bindings name published columns verbatim — a denied name there is the
+    # same refusal as one on the allowlist.
+    for key in (
+        "aggregate_subject_field",
+        "aggregate_period_field",
+        "aggregate_count_field",
+        "aggregate_discriminator_field",
+        "camera_ref_field",
+        "deployment_date_field",
+    ):
+        value = str(row.get(key) or "").strip()
+        if value:
+            fields.append(value)
     return [f for f in fields if f]
 
 

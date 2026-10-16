@@ -481,10 +481,6 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.camreg_ct_approximate_speed_safety]
-disposition = "promote"
-class_ticket = "P36.6"
-
 [sources.camreg_dc_private_security_camera]
 disposition = "promote"
 class_ticket = "P36.7"
@@ -492,10 +488,6 @@ class_ticket = "P36.7"
 [sources.camreg_de_delaware_checkbook_expenditure]
 disposition = "promote"
 class_ticket = "P37.48"
-
-[sources.camreg_de_traffic_devices_red]
-disposition = "promote"
-class_ticket = "P36.6"
 
 [sources.camreg_detroit_mi_project_green_light]
 disposition = "promote"
@@ -581,10 +573,6 @@ class_ticket = "P37.69b"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_howard_county_md_schzonehighligh]
-disposition = "promote"
-class_ticket = "P36.6"
-
 [sources.camreg_ie_d_dublin_traffic_poles_with]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -609,29 +597,13 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.camreg_lakeland_fl_red_light_cameras]
-disposition = "promote"
-class_ticket = "P36.6"
-
 [sources.camreg_ma_massachusetts_capital]
 disposition = "promote"
 class_ticket = "P37.52"
 
-[sources.camreg_md_montgomery_county_automated]
-disposition = "promote"
-class_ticket = "P36.6"
-
-[sources.camreg_md_montgomery_county_speedcameras]
-disposition = "promote"
-class_ticket = "P36.6"
-
 [sources.camreg_medford_or_drone_deployments_fs]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.camreg_medford_or_red_light_speed]
-disposition = "promote"
-class_ticket = "P36.6"
 
 [sources.camreg_mi_detroit_dpd_shotspotter]
 disposition = "promote"
@@ -644,10 +616,6 @@ class_ticket = "P37.48"
 [sources.camreg_nv_las_vegas_us_clark_county]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.camreg_ny_new_york_city_mta_bus]
-disposition = "promote"
-class_ticket = "P36.6"
 
 [sources.camreg_oakland_ca_shotspotter_2013_2015]
 disposition = "promote"
@@ -668,10 +636,6 @@ class_ticket = "P37.47"
 [sources.camreg_si_048_ko_evje_videonadzor_na]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.camreg_suffolk_county_ny_tpva_red_light]
-disposition = "promote"
-class_ticket = "P36.6"
 
 [sources.camreg_ua_18_korosten]
 disposition = "promote"
@@ -704,10 +668,6 @@ class_ticket = "P37.49"
 [sources.camreg_us_socrata_hosted_vendor]
 disposition = "promote"
 class_ticket = "P37.48"
-
-[sources.camreg_wa_tacoma_automated_enforcement]
-disposition = "promote"
-class_ticket = "P36.6"
 
 [sources.camreg_wa_washington_state_open]
 disposition = "promote"

@@ -612,6 +612,43 @@ kind = "dot_511_targets"
 [camreg_ga_peachtree_corners_flock_camera]
 kind = "dot_511_targets"
 
+# --- P36.6 (ACQ-10): R11 automated traffic enforcement ----------------------
+# Nine gated sources — camreg_montgomery_md_ate carries THREE targets (the
+# two site × quarter violation aggregates + the MCPD 2024 site layer) which
+# ingest in the same run (I8 §5.3); camreg_dc_ddot_ate carries the DC ASC
+# sites layer + the outStatistics violations-by-month table. dot_511_de's
+# deldot_red_light target and camreg_chicago_il's two aggregate targets ride
+# their existing rows above. The rows record the endpoints the operator's
+# OP-26 Wave-B flip will drive; the live gate refuses before any target is
+# read.
+
+[camreg_dc_ddot_ate]
+kind = "dot_511_targets"
+
+[camreg_montgomery_md_ate]
+kind = "dot_511_targets"
+
+[camreg_nyc_mta_bus_lane_ate]
+kind = "dot_511_targets"
+
+[camreg_tacoma_wa_ate]
+kind = "dot_511_targets"
+
+[camreg_howard_md_school_zone_ate]
+kind = "dot_511_targets"
+
+[camreg_lakeland_fl_red_light]
+kind = "dot_511_targets"
+
+[camreg_suffolk_ny_red_light]
+kind = "dot_511_targets"
+
+[camreg_medford_or_ate]
+kind = "dot_511_targets"
+
+[camreg_ctdot_speed_safety]
+kind = "dot_511_targets"
+
 [camreg_act_au]
 kind = "dot_511_targets"
 

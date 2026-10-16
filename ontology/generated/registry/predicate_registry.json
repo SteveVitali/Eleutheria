@@ -2082,6 +2082,40 @@
       "volatility_class": "IMMUTABLE"
     },
     {
+      "cardinality": "multi",
+      "definition": "The operator-published aggregate count of automated-enforcement outcomes (warnings/violations) for a camera or programme subject over a declared period — a claim carries its `period` and `measure` fields beside the integer value, keyed camera × month or site × quarter as published. Aggregate rows only: never a per-violation, plate, person, trip or citation record (P36.6 / R11-ACQ-10, I8 NEW-7) — the aggregate admission is distinct from the connector-forbidden `camera_count` device-count genre, and Part VIII prohibits the row-level surfaces this predicate deliberately replaces.",
+      "directness": {
+        "agency_policy": "D4",
+        "agenda_document": "D6",
+        "audit_log": "D5",
+        "bill_index": "D6",
+        "camera_registry": "D2",
+        "community_map": "D6",
+        "connector_run": "D3",
+        "contract": "D5",
+        "council_minutes": "D4",
+        "executed_contract": "D5",
+        "invoice": "D5",
+        "news_article": "D4",
+        "official_statement": "D3",
+        "osm_node_set": "D6",
+        "portal_document": "D4",
+        "portal_snapshot": "D3",
+        "recommendation": "D6",
+        "subscription": "D6",
+        "template": "D6",
+        "vendor_default_page": "D5"
+      },
+      "half_life": "6mo",
+      "object_kind": "literal",
+      "predicate_id": "enforcement_count",
+      "resolution_strategy": "interval_union",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count",
+      "value_datatype": "integer",
+      "vocab_version": "1.0.0",
+      "volatility_class": "VOLATILE"
+    },
+    {
       "cardinality": "single",
       "definition": "Operator of a registry-listed camera as evidenced by an authoritative operator field (the target's operator key or a feature operator attribute). P32.3 / ADR-122: the registry's publisher label is NOT operator evidence — it lands on `camera_registry_publisher` instead (categorical).",
       "directness": {

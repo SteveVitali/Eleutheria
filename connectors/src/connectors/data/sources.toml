@@ -7894,33 +7894,11 @@ cadence = "daily"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-002, cand I5-C003, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_de'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch."
+notes = "R11-ACQ-01 generated row (plan AP-T1-002, cand I5-C003, family 'dot_511(arcgis_query)', ticket ACQ-08 -> live ACQ-16, class ticket P36.4). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-02 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'dot_511_de'. P36.4 (ACQ-08) registration review 2026-10-12: connector map + live-targets row wired (dot_511); the target row's count/out_fields allowlist/object-id are pinned and fixtures cover the emit. Rights batch RB-02 `a` is recorded as the approved basis (GL-GATE-07 re-confirmed batch-wide); the row still stays gated \u2014 the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. P36.6 (ACQ-10): the row now also hosts target `deldot_red_light` (DE_Boundary_and_Point layer 28, plan AP-T1-003, cand I5-C005) \u2014 the ACQ-01 generated source 'camreg_de_traffic_devices_red' consolidated here per plan R1 (same DelDOT/FirstMap service, same rights basis); the target's r11-ate-01 plan membership rides this source's r11-layers-01 seat."
 publisher = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap (state ArcGIS Enterprise)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DE"
 [sources.dot_511_de.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.camreg_de_traffic_devices_red]
-name = "Traffic Devices - Red Light Signals (DE_Boundary_and_Point layer 28)"
-source_kind = "government_portal"
-homepage_url = "https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Transportation/DE_Boundary_and_Point/MapServer/28"
-default_tier = "R1"
-custody_posture = "DERIVE"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "daily"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-003, cand I5-C005, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_de_traffic_devices_red'."
-publisher = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US-DE"
-[sources.camreg_de_traffic_devices_red.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8012,26 +7990,49 @@ jurisdiction = "US-WV"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_md_montgomery_county_automated]
-name = "Automated Speed Enforcement Violations"
+[sources.camreg_montgomery_md_ate]
+name = "Montgomery County (MD) automated enforcement — Socrata violation aggregates + MCPD SpeedCameras_2024 layer"
 source_kind = "government_portal"
-homepage_url = "https://data.montgomerycountymd.gov/d/uv5p-zm58"
+homepage_url = "https://data.montgomerycountymd.gov"
 default_tier = "R1"
-custody_posture = "MIRROR"
+custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "Socrata SODA/SoQL \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "Socrata SODA/SoQL + ArcGIS REST \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "quarterly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-009, cand I4-C055, family 'dot_511(socrata_aggregate: camera-month)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_montgomery_county_md_automated_speed'."
-publisher = "Montgomery County, MD, Department of Police (Socrata)"
+notes = "R11-ACQ-01 generated rows (plan AP-T1-009 + AP-T1-010 + AP-T1-030, cands I4-C055 + I4-C056 + I4-C062, ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 consolidated per I8 \u00a75.3 (R1) into ONE source 'camreg_montgomery_md_ate' carrying three targets: the two Socrata site \u00d7 quarter violation aggregates (uv5p-zm58 speed / 3cju-6hst red-light, licence field 'Public Domain' \u2192 CC0-1.0 per the P26.10 procportal_nyc_ny precedent) and the MCPD 'SpeedCameras_2024' ArcGIS site layer. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06/RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED on the consolidated row \u2014 the Socrata pair's CC0-1.0 licence (verbatim 'Public Domain' field) is per-target claim evidence (license_spdx), the ArcGIS layer's licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is recorded on its target; the consolidated rights block is never stronger than its weakest member."
+publisher = "Montgomery County, MD, Department of Police (data.montgomerycountymd.gov Socrata + county ArcGIS Online org)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
 jurisdiction_place = "Montgomery County"
-[sources.camreg_md_montgomery_county_automated.rights]
+[sources.camreg_montgomery_md_ate.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+
+[sources.camreg_dc_ddot_ate]
+name = "DC Automated Safety Cameras (ASC) — locations layer + violations-by-month table (DDOT via DC GIS)"
+source_kind = "government_portal"
+homepage_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "ArcGIS REST (FeatureServer/MapServer query + outStatistics) — registration wired by P36.6"
+auth_model = "none"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P36.6 (ACQ-10) registration row (plan AP-T1-025 + AP-T1-006, cands I4-C051 + I4-C052, family 'dot_511(arcgis_query / arcgis_outstatistics)', ticket ACQ-10 -> live ACQ-16). The plan's X3-like widen check against the already-flipped `dot_511_dc` FAILS the licence-match: the two hub items' licenseInfo declares 'CC-BY-4.0' verbatim (I7-U025/I7-U006 row-captured) while dot_511_dc's rights review resolved CC0-1.0 via the District-wide DC Data Policy (2017-115) — stamping CC-BY-4.0 claims CC0 would mis-license an attribution-required dataset, so the fallback the plan names applies: a NEW gated source carrying the ASC locations layer and the ASC violations-by-month table. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED on the source row — the verbatim CC-BY-4.0 declaration is per-target claim evidence (license_spdx + attribution)."
+publisher = "District of Columbia, District Department of Transportation (via DC GIS / OCTO)"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US-DC"
+jurisdiction_place = "Washington"
+[sources.camreg_dc_ddot_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8332,30 +8333,30 @@ jurisdiction_place = "Alabaster"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_ny_new_york_city_mta_bus]
-name = "MTA Bus Automated Camera Enforced Routes: Beginning October 2019"
+[sources.camreg_nyc_mta_bus_lane_ate]
+name = "MTA Bus Automated Camera Enforced Routes: Beginning October 2019 (route programme register)"
 source_kind = "government_portal"
 homepage_url = "https://data.ny.gov/d/ki2b-sg5y"
 default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "Socrata SODA/SoQL \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "Socrata SODA/SoQL \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-028, cand I4-C058, family 'dot_511(socrata_rows)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_new_york_city_ny_mta_bus_automated'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-028, cand I4-C058, family 'dot_511(socrata_rows)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_nyc_mta_bus_lane_ate' (I8 \u00a75.3). The target is a route/programme register (schema: program, route, implementation_date \u2014 no geometry column): rows emit as `geometry_kind='line'` records asserting the enforced-corridor shape with NO path geometry (no fixed_asset_location, no device point). The paired violations dataset kh8p-hcbm (I4-C059) stays Part VIII blocked \u2014 per-vehicle/per-violation rows (vehicle_id, violation_id) are never a target. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is the recorded basis (catalog licence field NOASSERTION)."
 publisher = "Metropolitan Transportation Authority (New York City Transit / MTA Bus) via data.ny.gov"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NY"
 jurisdiction_place = "New York City"
-[sources.camreg_ny_new_york_city_mta_bus.rights]
+[sources.camreg_nyc_mta_bus_lane_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_wa_tacoma_automated_enforcement]
+[sources.camreg_tacoma_wa_ate]
 name = "Automated Enforcement Locations (Tacoma)"
 source_kind = "government_portal"
 homepage_url = "https://services3.arcgis.com/SCwJH1pD8WSn5T5y/arcgis/rest/services/AutomatedEnforcementLocations_Tacoma/FeatureServer/0"
@@ -8363,64 +8364,41 @@ default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-029, cand I4-C061, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_tacoma_wa_automated_enforcement_locat'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-029, cand I4-C061, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_tacoma_wa_ate' (I8 \u00a75.3). The item description verbatim names 'speed cameras ... as part of the Automated Enforcement program for City of Tacoma' \u2014 typed ate-speed; the published `cameratype` column carries per-row type detail verbatim (WTSC cross-check lists Tacoma red-light/school-zone cameras too — the layer's own description is the typing evidence). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is the recorded basis."
 publisher = "City of Tacoma, Public Works (ArcGIS Online, owner IT.DataCurator)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
 jurisdiction_place = "Tacoma"
-[sources.camreg_wa_tacoma_automated_enforcement.rights]
+[sources.camreg_tacoma_wa_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_md_montgomery_county_speedcameras]
-name = "SpeedCameras_2024 (MCPD Speed camera Locations as of August 2024)"
-source_kind = "government_portal"
-homepage_url = "https://services2.arcgis.com/gEFt9c3jUfWMXCEP/arcgis/rest/services/SpeedCameras_2024/FeatureServer"
-default_tier = "R1"
-custody_posture = "DERIVE"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "once (static; no recurrence, SIG-INGEST-025b)"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-030, cand I4-C062, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_montgomery_county_md_speedcameras_202'."
-publisher = "Montgomery County (MD) Police Department (ArcGIS Online, owner <staff account id redacted>)"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US-MD"
-jurisdiction_place = "Montgomery County"
-[sources.camreg_md_montgomery_county_speedcameras.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.camreg_howard_county_md_schzonehighligh]
-name = "SchZoneHighligh (school zones where automated enforcement is applied)"
+[sources.camreg_howard_md_school_zone_ate]
+name = "SchZoneHighligh — Howard County school zones where automated enforcement is applied (zone polygons)"
 source_kind = "government_portal"
 homepage_url = "https://opendata.howardcountymd.gov/d/h9kb-3hx7"
 default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "Socrata SODA/SoQL \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "Socrata SODA/SoQL \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-031, cand I4-C064, family 'dot_511(socrata_rows)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_howard_county_md_schzonehighligh'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-031, cand I4-C064, family 'dot_511(socrata_rows)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_howard_md_school_zone_ate' (I8 \u00a75.3). The target emits ZONE polygons (`the_geom` GeoJSON column) as `geometry_kind='area'` records \u2014 enforcement areas, never device points (SIG-GEO-003). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is the recorded basis."
 publisher = "Howard County, MD (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
 jurisdiction_place = "Howard County"
-[sources.camreg_howard_county_md_schzonehighligh.rights]
+[sources.camreg_howard_md_school_zone_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8514,26 +8492,26 @@ jurisdiction = "US-HI"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_lakeland_fl_red_light_cameras]
-name = "Red Light Cameras and Direction (City of Lakeland, FL ArcGIS organisation)"
+[sources.camreg_lakeland_fl_red_light]
+name = "Red Light Cameras and Direction (City of Lakeland, FL)"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/mcbQY5xNGGGM1vBX/arcgis/rest/services/Red_Light_Cameras_and_Direction_WFL1/FeatureServer/0"
 default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-036, cand I9b-C084, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_lakeland_fl_red_light_cameras'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-036, cand I9b-C084, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_lakeland_fl_red_light' (I8 \u00a75.3). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is the recorded basis."
 publisher = "City of Lakeland, FL (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
 jurisdiction_place = "Lakeland"
-[sources.camreg_lakeland_fl_red_light_cameras.rights]
+[sources.camreg_lakeland_fl_red_light.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8784,26 +8762,26 @@ jurisdiction_place = "Haskell"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_suffolk_county_ny_tpva_red_light]
+[sources.camreg_suffolk_ny_red_light]
 name = "TPVA Red Light Camera Locations 2015 (Suffolk County, NY Traffic and Parking Violations Agency; SCOpenData)"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/JsDD4qdG5r2a7hR5/arcgis/rest/services/TPVA_Red_Light_Camera_Locations_2015/FeatureServer/0"
 default_tier = "R1"
-custody_posture = "MIRROR"
+custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration wired by P36.6"
 auth_model = "none"
-cadence = "once (static; no recurrence, SIG-INGEST-025b)"
+cadence = "once (static 2015 snapshot; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-048, cand I9b-C083, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC-BY-4.0' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_suffolk_county_ny_tpva_red_light'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-048, cand I9b-C083, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_suffolk_ny_red_light' (I8 \u00a75.3). The layer is a STATIC 2015 inventory snapshot (215 sites, live-read I9b-F109) \u2014 recorded as dated, never re-asserted as current. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED on the source row \u2014 the item's licence field declares 'CC-BY-4.0' verbatim (I7-U048 row-captured); the target stamps license_spdx='CC-BY-4.0' with the attribution noted."
 publisher = "Suffolk County, NY (SCOpenData via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NY"
 jurisdiction_place = "Suffolk County"
-[sources.camreg_suffolk_county_ny_tpva_red_light.rights]
+[sources.camreg_suffolk_ny_red_light.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9229,26 +9207,26 @@ jurisdiction = "US-MN"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_medford_or_red_light_speed]
-name = "Red Light_Speed Camera (City of Medford, OR ArcGIS organisation)"
+[sources.camreg_medford_or_ate]
+name = "Red Light_Speed Camera (City of Medford, OR)"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/ogdeCdziRfIzuoFs/arcgis/rest/services/Red_Light_Speed_Camera/FeatureServer/0"
 default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-068, cand I9b-C082, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_medford_or_red_light_speed'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-068, cand I9b-C082, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_medford_or_ate' (I8 \u00a75.3). The layer name covers BOTH red-light and speed enforcement \u2014 typed ate-unspecified (the evidence names the ATE family but not the per-layer subtype discriminator). count=5 via returnCountOnly (live-read 2026-09-30, I9b-F108). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is the recorded basis."
 publisher = "City of Medford, OR (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-OR"
 jurisdiction_place = "Medford"
-[sources.camreg_medford_or_red_light_speed.rights]
+[sources.camreg_medford_or_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9388,25 +9366,25 @@ jurisdiction = "US"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_ct_approximate_speed_safety]
-name = "Approximate Speed Safety Camera Locations Public"
+[sources.camreg_ctdot_speed_safety]
+name = "Approximate Speed Safety Camera Locations Public (CTDOT Work Zone Speed Control pilot)"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/FCaUeJ5SOVtImake/arcgis/rest/services/Approximate_Speed_Safety_Camera_Locations_Public/FeatureServer/0"
 default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration wired by P36.6"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-075, cand I5-C015, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_ct_approximate_speed_safety'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-075, cand I5-C015, family 'dot_511(arcgis_query)', ticket ACQ-10 -> live ACQ-16, class ticket P36.6) \u2014 reconciled id 'camreg_ctdot_speed_safety' (I8 \u00a75.3). The item description verbatim: 'approximate locations of Speed Safety enforcement cameras for the Work Zone Speed Control pilot authorized by CGS 13a-262' \u2014 typed ate-work-zone (the statutory programme names the discriminator) and the target pins coordinate_precision='approximate' on the publisher's own caveat (P4). count=89 via returnCountOnly (live-read 2026-09-30, I5-F030); extent (-73.61,41.03,-71.86,41.99) inside CT. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is the recorded basis."
 publisher = "Connecticut Department of Transportation (ArcGIS Online owner CTDOT_OpenData)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CT"
-[sources.camreg_ct_approximate_speed_safety.rights]
+[sources.camreg_ctdot_speed_safety.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
