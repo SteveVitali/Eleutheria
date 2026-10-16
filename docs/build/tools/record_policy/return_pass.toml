@@ -942,3 +942,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md l
   go = '''pre-authorised: the GATE-G4 OM-20 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires at the next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P35.1c"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy the `sig-sched-due` job + its ONE hourly trigger + the due-invoker bindings → verify (shape asserts + staged `--dry-run`) → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof (retired absent, kept pin + dispatcher live, closing live-diff + cost delta); read-only/offline evidence landed'''
+gates_cell = '''hosted, production write; OM-20 — the GATE-G4 §4 enumeration (2026-10-09T17:32Z) predates the C13 split and names 291, never 291a literally → NOT pre-authorised; waits on an operator amendment explicitly naming row 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` operator id required; fresh prestate before the first destructive leg; voided by failed AR-2/red probe/contradicting production read; after `--check` + PR #303 head-bound CI green'''
+operator_cell = '''explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until the amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only (no ADC/network); rollback deletes the dispatcher trigger+job and replays `scheduled-ops.sh --apply --shape per-source`; the fleet sweep is P35.1b's leg, never this one's'''
+rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — consolidation queued: GATE-G4's OM-20 list predates the split and never names 291a; production untouched)'''
+
+  [[row.legs]]
+  id = "P35.1c-dispatcher-consolidation-live"
+  obligations = []
+  earliest = '''a weekday 14:00-20:00Z slot (AR-3 + AR-2) AFTER the operator's GATE-G4 amendment explicitly names row 291a — operator ADC armed + `SIG_CONSOL_AUTHOR` set + PR #303 head-bound CI green; fresh prestate + verify legs run inside the same invocation before any destructive leg'''
+  excluded = ["weekends + outside-14:00-20:00Z"]
+  go = '''operator: explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading'''
+  rerun = '''implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true'''
+  live_dependants = []
