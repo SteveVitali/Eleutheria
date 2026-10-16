@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "e3897eb1a1645bfa82979a802492fe772dd822da",
+  "input_commit": "e2f5e2688de25c212df556ffaa7e09881b12901d",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -830,15 +830,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "6e07674c40df30503c51b89bd653399545b79c9a81f3ed3d7831ad38675aa17d"
+      "sha256": "788aca3bfeaefa70781969d909ce696d28295966721c78941891bceea663e930"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "b302f427280ed9a77a0a50fd2da0fb4d6f21991394850ab773eed088545a61e2"
+      "sha256": "901c46b848a3f72b8add180cd20c3ca9bda28e9a2a530f1863bf36dbf477cf94"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "378cba7ae73875efa545c685cb1370656744319cc980ae359968616dc013264f"
+      "sha256": "ead5627822aac39d0e827213e04755d74dac5ee119da24ff25a413724db5f566"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -914,7 +914,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "91e017355a0f781388f5acb12361434856dc47f12f134c3934ffa41e6fb5231d"
+      "sha256": "6f5781d0fecd31e4ce266306def42ba70429a9fad0f15d8bc71731788044bd98"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1931,6 +1931,10 @@
     {
       "path": "docs/build/runs/P35.28.md",
       "sha256": "2ff5dd2151e644c9d5dcb3ead15c6e479516d7f4b09c7707ac58629cc229d6b6"
+    },
+    {
+      "path": "docs/build/runs/P35.3.md",
+      "sha256": "6327db193dcb92657c0d11a3af7b2e8f32564ed0cb209d3eebe0cda5a91ee4c3"
     },
     {
       "path": "docs/build/runs/P35.38a.md",
@@ -3550,7 +3554,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "3b07569e40a441b4e57586844627a86c2305b8af3d30df1f7964d68f0a5545d1"
+      "sha256": "d7ebfa3a55adde3a8d3d560990e1cb43126e442280ad6625df35af6a3683c314"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

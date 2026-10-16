@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "e3897eb1a1645bfa82979a802492fe772dd822da",
-  "manifest_inputs": 1040,
+  "input_commit": "e2f5e2688de25c212df556ffaa7e09881b12901d",
+  "manifest_inputs": 1041,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.3",
-    "lastCompleted": "P35.1c",
+    "nextTicket": "P35.4",
+    "lastCompleted": "P35.3",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67,P36.12",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.1c-dispatcher-consolidation",
+    "chainTip": "r11/P35.3-production-truth-probes-and-sentinel-scan",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-16T05:16:12Z"
+    "updatedAt": "2026-10-16T08:19:24Z"
   },
   "counts": {
-    "obligations": 165,
-    "owed": 92,
-    "open": 89,
+    "obligations": 168,
+    "owed": 95,
+    "open": 92,
     "partial": 3,
     "terminal": 73,
-    "events": 654,
+    "events": 657,
     "transitions": 35,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
@@ -8431,6 +8431,147 @@
           "recorded_at": "2026-10-14"
         }
       ]
+    },
+    {
+      "id": "D-P35.3-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.3-1:e0",
+      "kind": "F",
+      "owner": "the failing surface's owning row",
+      "landing": "the owning row of the surface the compartment exempts — it either fixes the placeholder content and deletes the compartment, or records why the declared compartment is the honest terminal posture; due before the round-11 tail sweep",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "The watch-feed event UIDs stamp the placeholder domain `@sig.example` into the public `.ics`/`.xml` subscription artifacts (`web/src/lib/watch.ts` `watchEventUid` — the ia-landing e2e already encodes \"never sig.example\" for permalinks; the feed UIDs reuse the retired placeholder anyway)",
+      "unblocked_by": "owner: the watch feed's owning row · trigger: a re-domain of the UID (e.g. `surveillancegraph.org`) + `web/tests/unit/watch.test.ts` updated · due: before the round-11 tail sweep",
+      "verify": "`sig-ops sentinel-scan` over a fresh `web/dist` shows `watch-feed-uid` exempting 0 `sig-example-domain` hits; the compartment then deletes cleanly",
+      "proxy": "the `watch-feed-uid` compartment exempts exactly `sig-example-domain` on exactly `web/dist/watch/**` — the exposure is bounded and audited",
+      "line": 1307,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.3-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.3-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.3",
+          "owner": "the failing surface's owning row",
+          "landing": "the owning row of the surface the compartment exempts — it either fixes the placeholder content and deletes the compartment, or records why the declared compartment is the honest terminal posture; due before the round-11 tail sweep",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/292_P35.3__production-truth-probes-and-sentinel-scan.md",
+            "ops/sentinels.toml"
+          ],
+          "observed_at": "2026-10-16",
+          "recorded_at": "2026-10-16",
+          "source_commit": "008ebea92fce9b262f959b379ac7f4e30fb48ca6",
+          "reason": "migration anchor appended by P35.3 (row 292) for the deferral row it added — the fixture-sentinel scan's first run over the real web/dist found committed placeholder content; 'fixing what the scans find' is the failing surface's owner per the ticket's Out of scope, so the exposure is bound to a declared compartment and routed here; appended, never `migrate`; raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1307,
+            "row_sha256": "39fea8d3abb2da34913897cfc434a67160802363ff41fba85e69b30359ab42f3",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.3-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.3-2:e0",
+      "kind": "F",
+      "owner": "the failing surface's owning row",
+      "landing": "the owning row of the surface the compartment exempts — it either fixes the placeholder content and deletes the compartment, or records why the declared compartment is the honest terminal posture; due before the round-11 tail sweep",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "The public `/sources` index carries visibly-labelled demonstration entries (`demo-portal`/`demo-registry`, `https://example.invalid/…`) for the terms-licence display (`web/src/lib/sources.ts`, `terms-disclosure.ts`)",
+      "unblocked_by": "owner: the sources surface's owning row · trigger: a keep-or-remove call on the demonstration entries (a real disclosure page needs no example.invalid entries) · due: before the round-11 tail sweep",
+      "verify": "`sig-ops sentinel-scan` over a fresh `web/dist` shows `sources-demo-entries` exempting 0 `example-test-tld` hits; the compartment then deletes cleanly",
+      "proxy": "the `sources-demo-entries` compartment exempts exactly `example-test-tld` on exactly `web/dist/sources/**`; the entries are visibly labelled \"(demonstration entry)\" on the page",
+      "line": 1308,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.3-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.3-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.3",
+          "owner": "the failing surface's owning row",
+          "landing": "the owning row of the surface the compartment exempts — it either fixes the placeholder content and deletes the compartment, or records why the declared compartment is the honest terminal posture; due before the round-11 tail sweep",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/292_P35.3__production-truth-probes-and-sentinel-scan.md",
+            "ops/sentinels.toml"
+          ],
+          "observed_at": "2026-10-16",
+          "recorded_at": "2026-10-16",
+          "source_commit": "008ebea92fce9b262f959b379ac7f4e30fb48ca6",
+          "reason": "migration anchor appended by P35.3 (row 292) for the deferral row it added — the fixture-sentinel scan's first run over the real web/dist found committed placeholder content; 'fixing what the scans find' is the failing surface's owner per the ticket's Out of scope, so the exposure is bound to a declared compartment and routed here; appended, never `migrate`; raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1308,
+            "row_sha256": "ac9e4456bbdf659795da1e7e0bc41400d36d2bdaedbbeec7c1db4834ba208650",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.3-3",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.3-3:e0",
+      "kind": "F",
+      "owner": "the operator",
+      "landing": "the operator's recorded call on (a) extending the recorded-retention disclosure, (b) a superseding correction pass, or (c) a second re-key — the affected records are append-only build memory, so the remediation is an operator-level decision (Part VIII / DR-C6-01); due before the next personal-id rekey batch or the round-11 tail sweep",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "The operator decision on the four personal-like member ids quoted verbatim inside P34.39a's committed build-memory records — they are on the restricted `personal_like_ids` list, so on any machine holding the gitignored handle list `test_rekey_is_idempotent_and_clean` and `test_no_handle_in_any_tracked_file` report 32 hits entirely inside HEAD-committed files. The call: (a) extend the recorded-retention disclosure (`docs/governance/identifier-rekey-note.md`) to cover committed build memory quoting the to-be-rekeyed names; (b) a superseding correction pass under whatever mechanism the operator names for append-only memory; or (c) re-key those four members a second time to non-personal ids and let the crawl check + a recorded correction absorb it",
+      "unblocked_by": "owner: the operator · trigger: the operator's call on (a)/(b)/(c) · due: before the next personal-id rekey batch or the round-11 tail sweep, whichever lands first",
+      "verify": "on a machine holding the handle list, `uv run pytest tests/unit/test_p34_18_aliases.py` goes green under the recorded remediation, or the remediation's record (an ADR / governance-note amendment) explicitly bounds the retained quotes and the tests' contract is amended accordingly",
+      "proxy": "the failure is confined to machines holding the restricted map — CI skips with the recorded reason; every hit sits in already-committed files, and P35.3's own additions carry zero handle hits (verified: worktree counts equal HEAD counts file-for-file)",
+      "line": 1323,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.3-3:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.3-3",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.3",
+          "owner": "the operator",
+          "landing": "the operator's recorded call on (a) extending the recorded-retention disclosure, (b) a superseding correction pass, or (c) a second re-key — the affected records are append-only build memory, so the remediation is an operator-level decision (Part VIII / DR-C6-01); due before the next personal-id rekey batch or the round-11 tail sweep",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/governance/identifier-rekey-note.md",
+            "tests/unit/test_p34_18_aliases.py"
+          ],
+          "reason": "migration anchor appended by P35.3 (row 292) for the deferral row it added — the P34.18 restricted-handle invariants report four personal-like member ids (the names ADR-178 assigned the renamed members) inside HEAD-committed build-memory records on any machine holding the gitignored handle list; a pre-existing failure P35.3 surfaces but cannot fix (append-only memory, Part VIII/DR-C6-01 operator call); appended, never `migrate`; raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1323,
+            "row_sha256": "21d53e5275c42b9fc17d5391d3f74e1bfdb581f0c18b01ee3a8a80430127d379",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "observed_at": "2026-10-16",
+          "recorded_at": "2026-10-16",
+          "source_commit": "008ebea92fce9b262f959b379ac7f4e30fb48ca6"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -13158,8 +13299,8 @@
           "label": "historical/csv"
         },
         "SIG-MEM-011": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "docs/build/tools/check_live_claims.py;docs/build/tools/record_policy/live_claims.toml;.github/workflows/ci.yml;Makefile;docs/build/runs/P35.3.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13272,14 +13413,14 @@
           "label": "historical/csv"
         },
         "SIG-OPS-011": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "docs/build/tools/record_policy/tail_probe_sweep.toml;docs/build/tools/check_round_close.py;ops/src/ops/probe_run.py;ops/src/ops/probe_registry.py;docs/build/reports/probes/fixture-sentinel.json;docs/build/runs/P35.3.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-OPS-012": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "ops/sentinels.toml;ops/src/ops/truth_scan.py;docs/build/reports/probes/fixture-sentinel.json;docs/build/reports/probes/claim-markers.json;docs/build/runs/P35.3.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18867,10 +19008,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "463dddaf02f8e19f331e359c9026e77901d47a811190718ac12eaf0368f39bf3",
+  "manifest_sha256": "3dc60475ff9938b9fb3012f1acaa960745a811e6a16058152322f9341f6b5396",
   "current_md": {
     "lines": 63,
-    "bytes": 15608,
+    "bytes": 15623,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

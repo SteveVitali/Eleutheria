@@ -102,6 +102,21 @@ jobs:
       - name: Round-close record checks (check_round_close.py)
         run: python3 docs/build/tools/check_round_close.py check
 
+      # P35.3 (B4 G10, SIG-MEM-011): the live-claim binding — corpus mode runs
+      # inside `make docs-check` (docs-check-live-claims); named here for the
+      # same visibility reason as the ledger/round-close steps above.
+      - name: Live-claim citation lint (corpus)
+        run: python3 docs/build/tools/check_live_claims.py corpus --json docs/build/logs/live-claims.json
+
+      # P35.3 (B4 G10, SIG-MEM-011): the range leg — every production-state
+      # claim this change *adds* on a corpus surface must cite a
+      # sig.probe-run/1 record ≤ 24 h old at the head commit. PR-only, like
+      # the CHANGELOG gate: a landed head was already judged at PR time.
+      # Exits 1 (uncited claim) / 2 (usage) / 3 (vacuous) are all red.
+      - name: Live-claim citation lint (PR range)
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+        run: python3 docs/build/tools/check_live_claims.py range --range "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" --json docs/build/logs/live-claims-range.json
+
       # BM-HIST-01 (SEED-02): the lines this PR adds or removes in build-memory
       # records — record dates, append-only regions, record shape, gate records,
       # readouts. check-history.sh hands off to docs/build/tools/memory_guard.py.
@@ -508,6 +523,19 @@ jobs:
       - name: Mount the archive record (stable URL over the release tree's real bytes)
         working-directory: ${{ github.workspace }}
         run: bash scripts/ci/export_mode_leg.sh mount-record
+
+      # P35.3 (B4 G10, SIG-OPS-012 + DR-C3-03): the fixture-sentinel scan and
+      # the claim-marker check over the export-mode web build — the public
+      # surface built from real from-spine bytes, post mount-record. A
+      # sentinel hit outside a declared fixture compartment fails; a
+      # human-completion assertion without a recorded marker fails (an agent
+      # label never counts). Each emits a sig.probe-run/1 record to the step
+      # log — the committed records live under docs/build/reports/probes/.
+      - name: Fixture-sentinel + claim-marker scans over the export-mode build
+        working-directory: ${{ github.workspace }}
+        run: |
+          uv run sig-ops sentinel-scan --scan web/dist
+          uv run sig-ops claim-marker-scan --scan web/dist
 
       - name: Island budgets over the export-mode build (ADR-134 ceilings)
         working-directory: ${{ github.workspace }}
