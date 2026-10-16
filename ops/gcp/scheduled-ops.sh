@@ -69,6 +69,22 @@
 #     is unchanged — a timed-out run is resumed by `logical_run`, never retried
 #     into silence.
 #
+# P35.1c (G1-TRIM B-13=a, ticket 291a) adds the consolidated trigger shape:
+#   * `[dispatcher]` + `[[retire_triggers]]` in cadence.toml — when declared,
+#     ONE hourly Cloud Scheduler trigger (`sig-sched-due`) fires ONE Cloud Run
+#     job that evaluates the due set and enqueues each due job via jobs:run.
+#     Per-row triggers named `retired` on the list are never reconciled here
+#     (expected absent; the consolidation leg owns the deletes — the reconcile
+#     reports them distinctly, never deletes, never recreates); a row's
+#     `state = "paused"` rides the due-set, not a trigger pause. A per-row
+#     scheduler missing from the retire list under this shape is a refusal —
+#     the name-checked set covers every row (`retire_trigger_lint` enforces).
+#   * `--shape per-source` — the rollback map: reconciles EVERY per-row
+#     trigger from the same cadence rows (retire list ignored, paused rows
+#     created/held PAUSED) and skips the dispatcher deploy entirely. The
+#     dispatcher itself is never deleted here — the consolidation leg owns
+#     its teardown.
+#
 # The per-source table comes from ops/cadence.toml via tomllib — that file is
 # the single source of truth, and `sig-ops cadence --check` fails on drift.
 set -euo pipefail
@@ -87,12 +103,26 @@ require_adc
 # *creates* for an immediate pause — a newly-registered source's first
 # execution is the observed manual run, never an unobserved first-fire.
 SIG_CREATE_PAUSED=0
+# P35.1c: `--shape per-source` is the rollback map — every per-row trigger is
+# reconciled from its cadence row and the dispatcher legs are skipped. The
+# default `declared` shape follows cadence.toml's [dispatcher] table.
+SIG_SHAPE="declared"
+_prev=""
 for _arg in "$@"; do
+  case "${_prev}" in
+    --shape) SIG_SHAPE="${_arg}" ;;
+  esac
   case "${_arg}" in
     --paused) SIG_CREATE_PAUSED=1 ;;
   esac
+  _prev="${_arg}"
 done
+case "${SIG_SHAPE}" in
+  declared|per-source) ;;
+  *) _log "ERROR: unknown --shape '${SIG_SHAPE}' (declared | per-source)" >&2; exit 64 ;;
+esac
 [ "${SIG_CREATE_PAUSED}" = "1" ] && _log "R6 create-paused: every NEW trigger is paused on create" || true
+[ "${SIG_SHAPE}" = "per-source" ] && _log "shape: per-source (rollback — every per-row trigger reconciled)" || true
 
 banner "scheduled live operations (P26.1 / OPS.2)"
 
@@ -203,8 +233,10 @@ sched_set_state() {
 }
 
 # Read the per-source cadence table
-# (id|cadence|cron|job|scheduler|existing|extra-secrets|task_timeout).
+# (id|cadence|cron|job|scheduler|existing|extra-secrets|task_timeout|state).
 # `task_timeout` (P35.6) is a per-row duration string; empty = 60m default.
+# `state` (P35.1c) is the row-level posture the retired trigger's pause
+# carried — "paused" rows stay inert until their wave resume flips the row.
 read_cadence_rows() {
   (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
 import sys
@@ -225,6 +257,7 @@ for s in doc.get("sources", []):
                 "1" if s.get("existing") else "0",
                 extra,
                 s.get("task_timeout", ""),
+                s.get("state", "enabled"),
             ]
         )
     )
@@ -233,12 +266,13 @@ PY
 }
 
 # Read the grouped-batch table
-# (id|cadence|cron|job|scheduler|member-count|task_timeout) —
+# (id|cadence|cron|job|scheduler|member-count|task_timeout|state) —
 # P26.16 (SOURCES.15): the GL-GATE-07 rights batch groups its newly-green
 # camera-registry sources under ~10 sig-ingest-camreg-batch-* jobs; each batch
 # job runs `scheduled-ingest --batch <id>` which appends one ops/runs row PER
 # MEMBER source. `task_timeout` (P35.6) is a per-row duration string; empty =
-# the 36h default (ADR-107's batch-05 ceiling).
+# the 36h default (ADR-107's batch-05 ceiling). `state` (P35.1c) is the
+# row-level pause posture the due-set honours.
 read_batch_rows() {
   (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
 import sys
@@ -257,6 +291,7 @@ for b in doc.get("batches", []):
                 b["scheduler"],
                 str(len(b.get("members", []))),
                 b.get("task_timeout", ""),
+                b.get("state", "enabled"),
             ]
         )
     )
@@ -293,6 +328,72 @@ PY
   )
 }
 
+# Read the [dispatcher] declaration (job|scheduler|cron|sa_class|task_timeout) —
+# P35.1c: the single hourly trigger's job. Empty output when undeclared.
+read_dispatcher_row() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+d = doc.get("dispatcher")
+if d:
+    print(
+        "|".join(
+            [
+                d["job"],
+                d["scheduler"],
+                d["cron"],
+                d.get("sa_class", ""),
+                d.get("task_timeout", ""),
+            ]
+        )
+    )
+PY
+  )
+}
+
+# Read the [[retire_triggers]] map (name|disposition) — P35.1c's name-checked
+# set: retired = consolidated into the dispatcher (expected absent); kept-*
+# stays live/manual.
+read_retire_map() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+for r in doc.get("retire_triggers", []):
+    print("|".join([r["name"], r.get("disposition", "")]))
+PY
+  )
+}
+
+# Emit one job name per due-target row — the jobs the dispatcher invokes
+# via jobs:run (P35.1c). Paused rows, kept-declared-pin and kept-manual
+# names are never dispatched, so they are bound no dispatcher invoker.
+due_target_jobs() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+retire = {
+    r["name"]: r.get("disposition", "") for r in doc.get("retire_triggers", [])
+}
+for row in doc.get("sources", []) + doc.get("batches", []):
+    sched = row.get("scheduler", "")
+    if row.get("state", "enabled") == "paused":
+        continue
+    if retire.get(sched, "").startswith("kept"):
+        continue
+    print(row["job"])
+PY
+  )
+}
+
 # Read the [live_diff] trigger declaration (scheduler|cron|job|args-json) —
 # the daily repo-vs-live reconciler that rides the probe job with an args
 # override (P35.1a / SIG-OPS-005).
@@ -311,25 +412,80 @@ PY
 }
 
 # Read every declared trigger name (probe + sources + batches + maintenance +
-# live-diff) — the allow-list the undeclared-trigger report diffs live against.
+# live-diff + the dispatcher under the consolidated shape) — the allow-list
+# the undeclared-trigger report diffs live against. Under the dispatcher
+# shape, retired per-row names are not declared triggers — they're reported
+# through the retire map instead; kept-declared-pin names stay declared.
 read_declared_triggers() {
-  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+  (cd "${_here}/../.." && SIG_SHAPE="${SIG_SHAPE}" uv run python - "${_here}/../cadence.toml" <<'PY'
+import os
 import sys
 import tomllib
 
 with open(sys.argv[1], "rb") as fh:
     doc = tomllib.load(fh)
+disp = doc.get("dispatcher") or {}
+dispatched = bool(disp) and os.environ.get("SIG_SHAPE") != "per-source"
+retire = {
+    r["name"]: r.get("disposition", "") for r in doc.get("retire_triggers", [])
+}
 names = [doc.get("probes", {}).get("scheduler")]
 names += [s.get("scheduler") for s in doc.get("sources", [])]
 names += [b.get("scheduler") for b in doc.get("batches", [])]
 names += [m.get("scheduler") for m in doc.get("maintenance", [])]
 ld = doc.get("live_diff") or {}
 names.append(ld.get("scheduler"))
+if dispatched:
+    names.append(disp.get("scheduler"))
 for n in names:
-    if n:
-        print(n)
+    if not n:
+        continue
+    if dispatched and retire.get(n) == "retired":
+        continue  # consolidated — expected absent, reported via the retire map
+    print(n)
 PY
   )
+}
+
+# Resolve the consolidated trigger shape (P35.1c): the [dispatcher] row and
+# the [[retire_triggers]] name map. DISPATCHED=1 under the declared shape when
+# a [dispatcher] table exists; --shape per-source forces the rollback map.
+DUE_JOB="" DUE_SCHED="" DUE_CRON="" DUE_SA_CLASS="" DUE_TIMEOUT=""
+while IFS='|' read -r djob dsched dcron dsac dtimeout; do
+  [ -z "${djob}" ] && continue
+  DUE_JOB="${djob}"; DUE_SCHED="${dsched}"; DUE_CRON="${dcron}"
+  DUE_SA_CLASS="${dsac}"; DUE_TIMEOUT="${dtimeout}"
+done < <(read_dispatcher_row)
+# The retire map as `name|disposition` lines (bash 3.2 — no assoc arrays);
+# `retire_disp_of` is the single lookup the per-row loops use.
+RETIRE_MAP="$(read_retire_map)"
+retire_disp_of() {
+  printf '%s\n' "${RETIRE_MAP}" | awk -F'|' -v n="$1" '$1==n{print $2; exit}'
+}
+DISPATCHED=0
+if [ "${SIG_SHAPE}" != "per-source" ] && [ -n "${DUE_JOB}" ]; then
+  DISPATCHED=1
+fi
+# The dispatcher job's runtime identity — sa_class → the class SA email.
+DUE_SA_EMAIL=""
+if [ -n "${DUE_JOB}" ]; then
+  case "${DUE_SA_CLASS}" in
+    ingest) DUE_SA_EMAIL="${SIG_INGEST_SA_EMAIL}" ;;
+    probe)  DUE_SA_EMAIL="${SIG_PROBE_SA_EMAIL}" ;;
+    *) _log "ERROR: [dispatcher].sa_class '${DUE_SA_CLASS}' has no declared SA mapping" >&2; exit 2 ;;
+  esac
+fi
+# One helper for both per-row loops: is this scheduler retired under the
+# declared shape? `retired` → never reconciled; missing from the list → a
+# refusal (the name-checked set must cover every row); kept-* → reconciled.
+row_trigger_retired() {
+  local sched="$1" disp
+  disp="$(retire_disp_of "${sched}")"
+  if [ -z "${disp}" ]; then
+    _log "ERROR: ${sched} is not on [[retire_triggers]] under the dispatcher shape — the retire list must name every per-row scheduler (sig-ops cadence --check enforces)" >&2
+    exit 2
+  fi
+  [ "${disp}" = "retired" ]
 }
 
 # 1. The Scheduler API + the dedicated least-privilege invoker SA (OIDC only —
@@ -376,12 +532,17 @@ sched_upsert "${SIG_SCHEDULER_JOB_PROBE}" "${SIG_SCHEDULER_CRON_PROBE}" "${SIG_R
 #    EVERY scheduled execution appends an ops/runs row (the muckrock job ran
 #    `sig-connectors run` directly before P26.1; the command change preserves
 #    the same gated runner path and its targeted-lookup posture, SIG-INGEST-036).
+#    Under the P35.1c dispatcher shape the jobs still deploy — the dispatcher
+#    invokes them — but their per-row triggers are consolidated away; the row's
+#    `state` rides the due-set. Under per-source shape (rollback) every
+#    trigger is reconciled, and a declared-paused row's trigger is created
+#    then held PAUSED (its own wave resume enables it, never this script).
 _log "-- per-source reingestion (run rows → gs://…-sig-restricted/ops/runs/) --"
-while IFS='|' read -r src cad cron job sched existing extra ttimeout; do
+while IFS='|' read -r src cad cron job sched existing extra ttimeout sstate; do
   [ -z "${src}" ] && continue
   secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
   [ -n "${extra}" ] && secrets="${secrets},${extra}"
-  _log "  ${src} (${cad} ${cron}) -> ${job}"
+  _log "  ${src} (${cad} ${cron}${sstate:+ state=${sstate}}) -> ${job}"
   # P26.6: agenda-platform jobs now also fetch the bounded per-tenant document
   # window (≤ doc_per_tenant docs × tenants, ≤ doc_run_cap/run) on top of the
   # index sweep — the largest platform (CivicClerk, ~295 index + ≤350 docs)
@@ -405,15 +566,30 @@ while IFS='|' read -r src cad cron job sched existing extra ttimeout; do
     --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
     --member="serviceAccount:${SIG_SCHEDULER_SA_EMAIL}" \
     --role=roles/run.invoker
+  if [ "${DISPATCHED}" = "1" ] && row_trigger_retired "${sched}"; then
+    _log "    trigger ${sched} → consolidated into ${DUE_SCHED} (retired on [[retire_triggers]] — never reconciled here)"
+    continue
+  fi
   if [ "${existing}" = "1" ]; then
     # The scheduler trigger already exists (muckrock, P25.7 d5) — verify,
     # never duplicate. The JOB above is still upserted to the run-row wrapper.
+    # Under the per-source shape (P35.1c's rollback map) an ABSENT existing
+    # trigger is recreated from this cadence row — the consolidation deleted
+    # it and the declared map restores it; under the declared shape its
+    # absence stays a hard error (it was created out-of-band, P25.7).
     if [ "${SIG_GCP_MODE}" = "check" ]; then
-      _plan "verify ${sched} exists and invokes ${job} on '${cron}'  (existing trigger — not recreated)"
+      if [ "${SIG_SHAPE}" = "per-source" ]; then
+        _plan "verify ${sched} exists and invokes ${job} on '${cron}'  (existing trigger — recreate from the cadence row if absent, the rollback map)"
+      else
+        _plan "verify ${sched} exists and invokes ${job} on '${cron}'  (existing trigger — not recreated)"
+      fi
     else
       if gcloud scheduler jobs describe "${sched}" \
           --location "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" >/dev/null 2>&1; then
         _log "  verified existing ${sched} (${cron}) -> ${job}"
+      elif [ "${SIG_SHAPE}" = "per-source" ]; then
+        _log "  existing ${sched} is absent — recreating from the cadence row (the rollback map)"
+        sched_upsert "${sched}" "${cron}" "${job}"
       else
         _log "ERROR: ${sched} is marked existing in cadence.toml but is absent" >&2
         exit 1
@@ -422,6 +598,11 @@ while IFS='|' read -r src cad cron job sched existing extra ttimeout; do
     continue
   fi
   sched_upsert "${sched}" "${cron}" "${job}"
+  # A declared-paused row's trigger is held PAUSED — the row's own wave
+  # resume enables it, never this script (same rule as maintenance rows).
+  if [ "${sstate:-enabled}" = "paused" ]; then
+    sched_set_state "${sched}" paused
+  fi
 done < <(read_cadence_rows)
 
 # 4. Grouped batches ([[batches]] — P26.16 GL-GATE-07). One job per batch runs
@@ -430,9 +611,9 @@ done < <(read_cadence_rows)
 #    mirror, and the live batch jobs already run 36h (P31.4 aligned this script,
 #    which used to say 120m, with the deployed jobs so a re-apply cannot shrink it).
 _log "-- grouped batches (run rows per member → ops/runs/<source>/) --"
-while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout; do
+while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate; do
   [ -z "${bid}" ] && continue
-  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}) -> ${bjob} (task-timeout ${btimeout:-36h})"
+  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}${bstate:+ state=${bstate}}) -> ${bjob} (task-timeout ${btimeout:-36h})"
   run gcloud run jobs deploy "${bjob}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_INGEST_SA_EMAIL}" \
@@ -450,7 +631,14 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout; do
     --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
     --member="serviceAccount:${SIG_SCHEDULER_SA_EMAIL}" \
     --role=roles/run.invoker
+  if [ "${DISPATCHED}" = "1" ] && row_trigger_retired "${bsched}"; then
+    _log "    trigger ${bsched} → consolidated into ${DUE_SCHED} (retired on [[retire_triggers]] — never reconciled here)"
+    continue
+  fi
   sched_upsert "${bsched}" "${bcron}" "${bjob}"
+  if [ "${bstate:-enabled}" = "paused" ]; then
+    sched_set_state "${bsched}" paused
+  fi
 done < <(read_batch_rows)
 
 # 5. The asserting-replay job (P31.6 / ADR-113). `sig-ops replay-ingest` re-runs a
@@ -502,26 +690,80 @@ while IFS='|' read -r ldsched ldcron ldjob ldargs; do
   sched_upsert "${ldsched}" "${ldcron}" "${ldjob}" "${ldargs}"
 done < <(read_live_diff_row)
 
+# 7b. The due dispatcher ([dispatcher] — P35.1c / G1-TRIM B-13=a): ONE Cloud
+#    Run job evaluating the due set + ONE hourly trigger, replacing the
+#    per-row trigger set. The job runs `sig-ops dispatch-due` against the
+#    published declaration bundle (SIG_OPS_DECLARED_GCS rides JOB_ENV — config
+#    without an image roll), writes its run row to the restricted bucket, and
+#    enqueues each due job via jobs:run — so its runtime SA (sa_class) holds
+#    roles/run.invoker on every due-target job, bound name-checked below.
+#    `state = "paused"` rows and kept-declared-pin names are never due —
+#    they are bound no invoker (the dispatcher never calls them). Under
+#    `--shape per-source` this whole section is skipped: the dispatcher is
+#    the consolidation's shape, not the rollback's.
+if [ "${DISPATCHED}" = "1" ]; then
+  _log "-- due dispatcher (P35.1c — one hourly trigger → sig-ops dispatch-due) --"
+  # The dispatcher needs NO Cloud SQL and NO secrets — it evaluates the
+  # declaration and calls jobs:run; its only write is the run row to the
+  # restricted bucket (the class SA's bucket grants cover it). Same env the
+  # consolidation leg deploys.
+  DUE_ENV="SIG_GCP_PROJECT=${SIG_GCP_PROJECT},SIG_GCP_REGION=${SIG_GCP_REGION},SIG_OPS_GCS_BUCKET=${SIG_BUCKET_RESTRICTED},SIG_OPS_CADENCE=/app/ops/cadence.toml,SIG_OPS_CADENCE_SHA256=${CADENCE_SHA256},SIG_OPS_DECLARED_GCS=${DECLARED_GCS_URI}"
+  run gcloud run jobs deploy "${DUE_JOB}" \
+    --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --service-account "${DUE_SA_EMAIL}" \
+    --command sh \
+    --args "-c,exec sig-ops dispatch-due" \
+    --tasks 1 --task-timeout "${DUE_TIMEOUT:-30m}" --max-retries 0 \
+    --set-env-vars "${DUE_ENV}"
+  run gcloud run jobs add-iam-policy-binding "${DUE_JOB}" \
+    --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
+    --member="serviceAccount:${SIG_SCHEDULER_SA_EMAIL}" \
+    --role=roles/run.invoker
+  # The dispatcher's SA invokes each due job — the same jobs:run call the
+  # retired triggers signed as sig-scheduler. Bound name-checked on the
+  # due-target set (non-paused, non-kept rows); declared on
+  # [[job_invoker]] in iam_identities.toml for the jobs-iam leg's diff.
+  while IFS='|' read -r tjob _rest; do
+    [ -z "${tjob}" ] && continue
+    run gcloud run jobs add-iam-policy-binding "${tjob}" \
+      --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
+      --member="serviceAccount:${DUE_SA_EMAIL}" \
+      --role=roles/run.invoker
+  done < <(due_target_jobs)
+  sched_upsert "${DUE_SCHED}" "${DUE_CRON}" "${DUE_JOB}"
+fi
+
 # 8. Publish the declaration bundle (SIG-OPS-005: config without an image
 #    roll) + report undeclared live triggers (listed, never deleted — the
-#    P35.1b fleet-hygiene leg owns deletions).
+#    P35.1b fleet-hygiene leg owns deletions). Under the dispatcher shape a
+#    retired name still live is NOT undeclared drift — it is a declared
+#    retirement pending the consolidation leg's name-checked deletes, and is
+#    reported under its own heading.
 _log "-- declaration bundle + undeclared-trigger report --"
 if [ "${SIG_GCP_MODE}" = "check" ]; then
   _plan "sig-ops live-diff --emit-declared | gcloud storage cp - ${DECLARED_GCS_URI}  # cadence.toml + fleet images, content-hashed"
-  _plan "gcloud scheduler jobs list --location ${SIG_GCP_REGION}  # diffed against the declared trigger set; extras reported, not deleted"
+  _plan "gcloud scheduler jobs list --location ${SIG_GCP_REGION}  # diffed against the declared trigger set; retired-pending vs undeclared reported, nothing deleted"
 else
   (cd "${_here}/../.." && uv run sig-ops live-diff --emit-declared) \
     | gcloud storage cp - "${DECLARED_GCS_URI}" --content-type=application/json
   _log "  declaration bundle published: ${DECLARED_GCS_URI} (cadence sha256 ${CADENCE_SHA256})"
   declared="$(read_declared_triggers | sort -u)"
+  retired="$(read_retire_map | awk -F'|' '$2=="retired"{print $1}' | sort -u)"
   live="$(gcloud scheduler jobs list --location "${SIG_GCP_REGION}" \
       --project "${SIG_GCP_PROJECT}" --format='value(name)' | sort -u)"
-  undeclared="$(comm -23 <(printf '%s\n' "${live}") <(printf '%s\n' "${declared}"))"
+  extras="$(comm -23 <(printf '%s\n' "${live}") <(printf '%s\n' "${declared}"))"
+  pending="$(comm -12 <(printf '%s\n' "${extras}") <(printf '%s\n' "${retired}"))"
+  undeclared="$(comm -23 <(printf '%s\n' "${extras}") <(printf '%s\n' "${retired}"))"
+  if [ -n "${pending}" ]; then
+    _log "  DECLARED-RETIRED live triggers pending consolidation (name-checked; the dispatcher-consolidation leg deletes them, never this script):"
+    printf '%s\n' "${pending}" | sed 's/^/    /'
+  fi
   if [ -n "${undeclared}" ]; then
     _log "  UNDECLARED live scheduler triggers (reported, not deleted — P35.1b owns the disposition):"
     printf '%s\n' "${undeclared}" | sed 's/^/    /'
-  else
-    _log "  live trigger set matches cadence.toml — no undeclared triggers"
+  fi
+  if [ -z "${pending}" ] && [ -z "${undeclared}" ]; then
+    _log "  live trigger set matches cadence.toml — no undeclared or pending-retired triggers"
   fi
 fi
 

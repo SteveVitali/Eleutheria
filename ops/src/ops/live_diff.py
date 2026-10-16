@@ -121,6 +121,10 @@ class DeclaredFleet:
     cadence_job_names: frozenset[str]  # jobs that must carry a trigger
     manual_job_names: frozenset[str]  # declared-untriggered allow-list
     retired_job_names: frozenset[str] = frozenset()  # declared-for-deletion (P35.1b)
+    #: P35.1c: `[[retire_triggers]]` names with disposition retired —
+    #: expected ABSENT once the consolidation leg lands; a still-live one is
+    #: reported distinctly from generic undeclared drift.
+    retired_trigger_names: frozenset[str] = frozenset()
     services: tuple[str, ...] = ("sig-api", "sig-web")
     service_images: dict[str, str] = field(default_factory=dict)  # svc → expected ref
     buckets: tuple[Any, ...] = ()  # scheduled.BucketPosture
@@ -209,16 +213,37 @@ def declared_fleet(
     def _expect(name: str) -> str:
         return expected_image(name, cadence, fleet, project=project, ar_host=ar_host)
 
+    # P35.1c: when [dispatcher] is declared the trigger shape is consolidated —
+    # per-row schedulers on the retire list with disposition "retired" are
+    # expected ABSENT (they map to retired_trigger_names below); only
+    # "kept-declared-pin" names still carry their own live trigger, and the
+    # single hourly dispatcher trigger + job join the declared set. Under the
+    # per-source shape (no [dispatcher]) every row still declares its trigger.
+    retire_map = {r.name: r.disposition for r in cadence.retire_triggers}
+    dispatched = cadence.dispatcher is not None
+
+    def _per_row_trigger(name: str, cron: str, job: str, state: str) -> None:
+        if dispatched:
+            if retire_map.get(name) != "kept-declared-pin":
+                return  # retired — expected absent post-consolidation
+        triggers.append(DeclaredTrigger(name=name, cron=cron, job=job, paused=state == "paused"))
+
     for src in cadence.sources:
-        triggers.append(DeclaredTrigger(name=src.scheduler, cron=src.cron, job=src.job))
+        _per_row_trigger(src.scheduler, src.cron, src.job, src.state)
         jobs[src.job] = DeclaredJob(
             name=src.job,
             image=_expect(src.job),
             secrets=src.secrets,
         )
     for batch in cadence.batches:
-        triggers.append(DeclaredTrigger(name=batch.scheduler, cron=batch.cron, job=batch.job))
+        _per_row_trigger(batch.scheduler, batch.cron, batch.job, batch.state)
         jobs[batch.job] = DeclaredJob(name=batch.job, image=_expect(batch.job))
+    if cadence.dispatcher is not None:
+        disp = cadence.dispatcher
+        triggers.append(
+            DeclaredTrigger(name=disp.scheduler, cron=disp.cron, job=disp.job, args=disp.args)
+        )
+        jobs[disp.job] = DeclaredJob(name=disp.job, image=_expect(disp.job), sa_class=disp.sa_class)
     jobs[cadence.probe_job] = DeclaredJob(
         name=cadence.probe_job, image=_expect(cadence.probe_job), sa_class="sig-probe-rt"
     )
@@ -245,16 +270,24 @@ def declared_fleet(
     if cadence.live_diff is not None:
         ld = cadence.live_diff
         triggers.append(DeclaredTrigger(name=ld.scheduler, cron=ld.cron, job=ld.job, args=ld.args))
+    # Jobs that must carry their own Cloud Scheduler trigger: the probe and
+    # (when consolidated) the dispatcher, plus any per-row job whose trigger
+    # survives as kept-declared-pin. Under the per-source shape this is the
+    # whole cadence fleet, as before.
+    triggered_jobs = (
+        {cadence.probe_job}
+        | {s.job for s in cadence.sources if any(t.name == s.scheduler for t in triggers)}
+        | {b.job for b in cadence.batches if any(t.name == b.scheduler for t in triggers)}
+    )
+    if cadence.dispatcher is not None:
+        triggered_jobs.add(cadence.dispatcher.job)
     return DeclaredFleet(
         triggers=tuple(triggers),
         jobs=tuple(jobs[k] for k in sorted(jobs)),
-        cadence_job_names=frozenset(
-            {cadence.probe_job}
-            | {s.job for s in cadence.sources}
-            | {b.job for b in cadence.batches}
-        ),
+        cadence_job_names=frozenset(triggered_jobs),
         manual_job_names=frozenset(m.job for m in cadence.manual_jobs),
         retired_job_names=frozenset(r.job for r in cadence.retired_jobs),
+        retired_trigger_names=frozenset(n for n, d in retire_map.items() if d == "retired"),
         services=("sig-api", "sig-web"),
         service_images={svc: _expect(svc) for svc in ("sig-api", "sig-web")},
         buckets=cadence.buckets,
@@ -310,6 +343,8 @@ def lint_cadence_crons(cadence: CadenceConfig) -> list[str]:
     ]
     if cadence.live_diff is not None:
         rows.append(("[live_diff]", cadence.live_diff.cron, ""))
+    if cadence.dispatcher is not None:
+        rows.append(("[dispatcher]", cadence.dispatcher.cron, ""))
     problems: list[str] = []
     for owner, cron, annotated in rows:
         problems.extend(cron_lint(cron, annotated=annotated, owner=owner))
@@ -370,6 +405,120 @@ def retired_lint(cadence: CadenceConfig) -> list[str]:
                 f"[[retired_jobs]] {r.job}: name also declared live — "
                 "a job cannot be both declared and retired"
             )
+    return problems
+
+
+def retire_trigger_lint(cadence: CadenceConfig) -> list[str]:
+    """Schema lint for ``[[retire_triggers]]`` + ``[dispatcher]`` (P35.1c).
+
+    The consolidation's name-checked set is closed and complete: every
+    ``[[sources]]``/``[[batches]]`` scheduler name appears exactly once with
+    disposition ``retired`` or ``kept-declared-pin``, every ``[[manual_jobs]]``
+    member is named ``kept-manual``, every row carries a reason, and no name
+    may collide with the probe, maintenance, live-diff or dispatcher triggers
+    (a live trigger is never a deletion target). ``[dispatcher]`` requires a
+    job, scheduler and lintable cron that must not collide with any declared
+    trigger name; the dispatcher's job may not be a cadence-owned, manual or
+    retired job. A retire list without ``[dispatcher]`` (or vice-versa) is a
+    half-declaration — refused.
+    """
+    problems: list[str] = []
+    if cadence.dispatcher is None and not cadence.retire_triggers:
+        return problems
+    if cadence.dispatcher is None:
+        problems.append("[[retire_triggers]] declared but no [dispatcher] table")
+        return problems
+    if not cadence.retire_triggers:
+        problems.append("[dispatcher] declared but no [[retire_triggers]] list")
+
+    disp = cadence.dispatcher
+    if not disp.job:
+        problems.append("[dispatcher]: missing job")
+    if not disp.scheduler:
+        problems.append("[dispatcher]: missing scheduler")
+    problems.extend(cron_lint(disp.cron, annotated="", owner="[dispatcher]"))
+
+    per_row = {s.scheduler for s in cadence.sources} | {b.scheduler for b in cadence.batches}
+    protected = (
+        {cadence.probe_scheduler}
+        | {m.scheduler for m in cadence.maintenance if m.scheduler}
+        | ({cadence.live_diff.scheduler} if cadence.live_diff else set())
+        | ({disp.scheduler} if disp.scheduler else set())
+    )
+    declared_jobs = (
+        {cadence.probe_job}
+        | {s.job for s in cadence.sources}
+        | {b.job for b in cadence.batches}
+        | {m.job for m in cadence.manual_jobs}
+        | {r.job for r in cadence.retired_jobs}
+        | ({cadence.live_diff.job} if cadence.live_diff else set())
+    )
+    if disp.job and disp.job in declared_jobs:
+        problems.append(
+            f"[dispatcher].job {disp.job}: name also declared live — "
+            "the dispatcher job must be new, never an existing job"
+        )
+    if disp.scheduler and disp.scheduler in (
+        {cadence.probe_scheduler}
+        | {m.scheduler for m in cadence.maintenance if m.scheduler}
+        | ({cadence.live_diff.scheduler} if cadence.live_diff else set())
+        | per_row
+    ):
+        problems.append(
+            f"[dispatcher].scheduler {disp.scheduler}: collides with a declared trigger"
+        )
+
+    valid = {"retired", "kept-declared-pin", "kept-manual"}
+    seen: set[str] = set()
+    covered: set[str] = set()
+    kept_manual: set[str] = set()
+    for r in cadence.retire_triggers:
+        if not r.name:
+            problems.append("[[retire_triggers]] row names no trigger")
+            continue
+        if r.name in seen:
+            problems.append(f"[[retire_triggers]] {r.name}: duplicate name")
+        seen.add(r.name)
+        if r.disposition not in valid:
+            problems.append(
+                f"[[retire_triggers]] {r.name}: disposition {r.disposition!r} not in "
+                "retired | kept-declared-pin | kept-manual"
+            )
+            continue
+        if not r.reason:
+            problems.append(
+                f"[[retire_triggers]] {r.name}: missing reason — a retirement is never silent"
+            )
+        if r.name in protected:
+            problems.append(
+                f"[[retire_triggers]] {r.name}: collides with a protected declared "
+                "trigger (probe/maintenance/live-diff/dispatcher)"
+            )
+        if r.disposition == "kept-manual":
+            kept_manual.add(r.name)
+            continue
+        if r.name not in per_row:
+            problems.append(
+                f"[[retire_triggers]] {r.name}: not a [[sources]]/[[batches]] scheduler — "
+                "a trigger outside the cadence rows is never on the retire list"
+            )
+        else:
+            covered.add(r.name)
+    for missing in sorted(per_row - covered):
+        problems.append(
+            f"[[retire_triggers]]: cadence scheduler {missing} is not listed — "
+            "the retire set must name every per-source/batch trigger"
+        )
+    manual = {m.job for m in cadence.manual_jobs}
+    for extra in sorted(kept_manual - manual):
+        problems.append(
+            f"[[retire_triggers]] {extra}: kept-manual but not a [[manual_jobs]] member"
+        )
+    for missing in sorted(manual - kept_manual):
+        problems.append(
+            f"[[retire_triggers]]: manual job {missing} is not listed kept-manual — "
+            "the retire list names every manual job as kept"
+        )
     return problems
 
 
@@ -823,6 +972,17 @@ def _check_trigger(live: Mapping[str, str], declared: DeclaredTrigger, report: D
                 declared.name,
                 f"maintenance trigger state={live['state']!r} (declared paused)",
             )
+    elif declared.paused:
+        # P35.1c: a cadence row declared `state = "paused"` (the R6
+        # declared-inert rows) keeps its trigger PAUSED under the per-source
+        # shape — an enabled live trigger is drift, same as maintenance.
+        if live["state"] != "PAUSED":
+            report.add(
+                "schedule",
+                declared.name,
+                f"trigger state={live['state']!r} live but declared paused — "
+                "a paused cadence row is never enabled by the reconcile",
+            )
     elif live["state"] == "PAUSED":
         report.add(
             "schedule",
@@ -873,11 +1033,20 @@ def diff(
             continue
         _check_trigger(live_t, t, report)
     for name in sorted(set(live_trigs) - declared_names):
-        report.add(
-            "schedule",
-            name,
-            "live trigger not declared in cadence.toml — drift or cruft",
-        )
+        if name in declared.retired_trigger_names:
+            report.add(
+                "schedule",
+                name,
+                "live trigger is declared retired on [[retire_triggers]] — "
+                "expected absent; the P35.1c consolidation's retirement is "
+                "pending",
+            )
+        else:
+            report.add(
+                "schedule",
+                name,
+                "live trigger not declared in cadence.toml — drift or cruft",
+            )
 
     declared_job_names = {j.name for j in declared.jobs}
     for j in declared.jobs:
@@ -1149,7 +1318,12 @@ def execute(
         bucket_factory=bucket_factory,
     )
     cadence = declared.cadence
-    lint = lint_cadence_crons(cadence) + pin_lint(cadence) + retired_lint(cadence)
+    lint = (
+        lint_cadence_crons(cadence)
+        + pin_lint(cadence)
+        + retired_lint(cadence)
+        + retire_trigger_lint(cadence)
+    )
     if lint:
         raise LiveDiffError("cadence lint failed:\n  " + "\n  ".join(lint))
     ar_host = f"{region}-docker.pkg.dev"
@@ -1249,6 +1423,7 @@ __all__ = [
     "load_declared",
     "load_state_source",
     "pin_lint",
+    "retire_trigger_lint",
     "retired_lint",
     "read_roll_record",
     "rest_json_opener",

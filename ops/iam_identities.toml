@@ -35,6 +35,9 @@ schema = "sig.iam-identities/1"
 # sweep lands, this count becomes 94 and the six names drop out of the
 # [[job_class]] `jobs` lists below — the amendment rides the sweep's apply run,
 # so the pin stays correct for a jobs-leg re-count BEFORE the sweep.
+# P35.1c +1 (pending): the sig-sched-due dispatcher job rides the dispatcher-
+# consolidation leg's apply run — after both pending legs land the count is
+# 95 (94 + 1); the pin stays at 100 so a re-count before them still matches.
 expected_job_count = 100
 
 # --- the three service runtime identities (P34.42a) ---------------------------
@@ -278,6 +281,13 @@ name = "ingest"
 service_account = "sig-ingest-rt"
 sources = true            # every [[sources]] job in ops/cadence.toml (70)
 batches = true            # every [[batches]] job (8 camreg-batch-* + 10 P35.6 r11-*)
+# P35.1c (pending): [dispatcher].job = sig-sched-due rides the dispatcher-
+# consolidation leg's apply run — the deploy already binds it to this class's
+# SA ([dispatcher].sa_class = ingest), and its `dispatcher = true` claim on
+# this class lands with the same leg amendment that drops the six retired
+# names and moves expected_job_count to 95. Until then the map correctly
+# covers only live jobs (the live-side "claimed by no class" check enforces
+# the claim once sig-sched-due exists — a forgotten amendment cannot slip).
 jobs = ["sig-replay-ingest", "sig-sink-bench", "sig-ingest-resume-test"]
 
 [[job_class]]
@@ -301,9 +311,27 @@ jobs = ["sig-materialize"]
 # `sig-scheduler` SA holds roles/run.invoker on the scheduled jobs only
 # (asserted + re-granted idempotently; each trigger's OAuth identity is
 # verified = sig-scheduler). Manual + cruft jobs carry no scheduler grant.
+# P35.1c (G1-TRIM B-13=a): under the consolidated trigger shape `scheduled`
+# resolves to the jobs that still carry a trigger — the probe, the
+# sig-sched-due dispatcher job, and the kept-declared-pin batch-05 trigger —
+# while the retired rows' jobs move to the `due` invoker below. The
+# dispatcher invokes each due job via jobs:run AS its runtime identity, so
+# the due invoker is the dispatcher's own class SA — the recorded exception
+# to the "invoker SA is never a runtime identity" rule (the parser binds it
+# to targets="due" only, and the jobs leg refuses any member but the
+# [dispatcher].sa_class identity).
 [[job_invoker]]
 member = "sig-scheduler"
-targets = "scheduled"     # sources + batches + probes from ops/cadence.toml
+targets = "scheduled"     # trigger-carrying jobs: probes + dispatcher + kept-pin rows
+
+[[job_invoker]]
+member = "sig-ingest-rt"
+targets = "due"           # P35.1c: the non-paused retired rows' jobs — the
+                          # dispatcher (running as sig-ingest-rt) jobs:run's
+                          # them each hour. sig-scheduler's own binding on
+                          # these jobs is deliberately left in place: the
+                          # --shape per-source rollback recreates their
+                          # triggers without an IAM re-apply.
 
 # --- invoker policy changes ----------------------------------------------------
 # sig-api and sig-web stay public (a public read API and a public site).

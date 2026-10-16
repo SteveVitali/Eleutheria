@@ -102,6 +102,23 @@ export SIG_SECRET_ALERT_HOOK="sig-alert-webhook-token"
 export SIG_WEB_SERVICE="sig-web"
 export SIG_CADENCE_TOML="ops/cadence.toml"
 
+# --- the P35.1c dispatcher consolidation (ops/gcp/dispatcher-consolidation.sh,
+# ticket 291a; G1-TRIM B-13=a) ----------------------------------------------
+# One windowed leg-runner over the committed [[retire_triggers]] contract set:
+# prestate → deploy (the [dispatcher] job + its ONE hourly trigger on a pinned
+# digest, plus the due-invoker bindings the dispatcher's class SA needs) →
+# verify (shape assertions + a staged `--dry-run` execution — evaluation
+# end-to-end, nothing executed) → retire (describe-first, target-checked
+# deletes of exactly the disposition=retired names) → proof (every retired
+# name absent, the kept pin + dispatcher trigger live, a closing live-diff
+# carrying only recorded declared drift). Same weekday 14:00–20:00Z contract
+# window as the sweep (AR-3 + AR-2); SIG_CONSOL_NOW overrides the clock for
+# the offline guard test only; SIG_CONSOL_AUTHOR is the recorded operator id
+# every mutating apply needs (OM-20); SIG_CONSOL_CADENCE_TOML is the offline
+# test's fixture seam; SIG_CONSOL_STATE_DIR holds the sha256-sidecarred
+# evidence captures.
+export SIG_CONSOL_STATE_DIR="${SIG_CONSOL_STATE_DIR:-${TMPDIR:-/tmp}/p35.1c-consolidation}"
+
 # --- custom domain + HTTPS load balancer (P27.10 / LAUNCH.10, ADR-098) ----------
 # The canonical public origin. The domain + its DNS records are PUBLIC config, not
 # secrets (HG-09) — a public domain name is safe to write literally, unlike any

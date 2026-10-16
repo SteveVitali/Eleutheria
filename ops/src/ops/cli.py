@@ -1260,6 +1260,59 @@ def build_parser() -> argparse.ArgumentParser:
         "OR the cadence file fails the P35.1a lints (cron OR-semantics, pin schema)",
     )
 
+    due = sub.add_parser(
+        "dispatch-due",
+        help="P35.1c (G1-TRIM B-13=a): the hourly due dispatcher — evaluate "
+        "every [[sources]]/[[batches]] row in ops/cadence.toml against the "
+        "window since the previous dispatch, enqueue each due Cloud Run job "
+        "(jobs:run — the same call the retired triggers made), and append the "
+        "sig.dispatch-due/1 run row under ops/runs/_dispatcher/ "
+        "(exit 0 ok, 1 enqueue failure, 2 defect — an empty evaluation fails)",
+    )
+    due.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (default: the published declaration bundle "
+        "via SIG_OPS_DECLARED_GCS, else the packaged file / SIG_OPS_CADENCE)",
+    )
+    due.add_argument(
+        "--declared",
+        default=None,
+        metavar="PATH|gs://URI",
+        help="the declaration bundle to read cadence from (default: "
+        "$SIG_OPS_DECLARED_GCS, else the repo file)",
+    )
+    due.add_argument(
+        "--at",
+        default=None,
+        metavar="ISO-8601",
+        help="evaluation instant (default: now — the hourly trigger passes nothing)",
+    )
+    due.add_argument(
+        "--since",
+        default=None,
+        metavar="ISO-8601",
+        help="override the due window's open edge for a recorded catch-up run "
+        "(default: the dispatcher cron's previous fire)",
+    )
+    due.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="evaluate + record the run row WITHOUT executing any job "
+        "(due rows are recorded would-execute — the staging/verify path)",
+    )
+    due.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    due.add_argument(
+        "--region",
+        default=None,
+        help="GCP region (default: $SIG_GCP_REGION else us-central1)",
+    )
+    due.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket for the run row (default: SIG_OPS_GCS_BUCKET; unset = no upload)",
+    )
+
     ldiff = sub.add_parser(
         "live-diff",
         help="P35.1a (SIG-OPS-005): the read-only repo-vs-live reconciler — diff "
@@ -3965,7 +4018,7 @@ def _cmd_sink_bench(args: argparse.Namespace) -> int:
 
 
 def _cmd_cadence(args: argparse.Namespace) -> int:
-    from .live_diff import lint_cadence_crons, pin_lint, retired_lint
+    from .live_diff import lint_cadence_crons, pin_lint, retire_trigger_lint, retired_lint
     from .scheduled import load_cadence, unscheduled_live_sources
 
     cadence = load_cadence(args.cadence)
@@ -4002,6 +4055,18 @@ def _cmd_cadence(args: argparse.Namespace) -> int:
     if cadence.live_diff is not None:
         ld = cadence.live_diff
         print(f"live-diff trigger: {ld.scheduler} cron={ld.cron!r} → {ld.job} {ld.args!r}")
+    if cadence.dispatcher is not None:
+        disp = cadence.dispatcher
+        print(
+            f"dispatcher: {disp.scheduler} cron={disp.cron!r} → {disp.job} "
+            f"(sa_class={disp.sa_class})"
+        )
+    if cadence.retire_triggers:
+        counts: dict[str, int] = {}
+        for r in cadence.retire_triggers:
+            counts[r.disposition] = counts.get(r.disposition, 0) + 1
+        summary = ", ".join(f"{k}={v}" for k, v in sorted(counts.items()))
+        print(f"retire list (P35.1c): {len(cadence.retire_triggers)} names ({summary})")
     missing = unscheduled_live_sources(cadence)
     failed = False
     if missing:
@@ -4011,7 +4076,12 @@ def _cmd_cadence(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         failed = True
-    lint = lint_cadence_crons(cadence) + pin_lint(cadence) + retired_lint(cadence)
+    lint = (
+        lint_cadence_crons(cadence)
+        + pin_lint(cadence)
+        + retired_lint(cadence)
+        + retire_trigger_lint(cadence)
+    )
     if lint:
         print("cadence lint FAILED:", file=sys.stderr)
         for problem in lint:
@@ -4091,6 +4161,61 @@ def _cmd_live_diff(args: argparse.Namespace) -> int:
             detail={"findings": findings},
         )
         return alert_exit_code(fired)
+    return code
+
+
+def _cmd_dispatch_due(args: argparse.Namespace) -> int:
+    """P35.1c: the hourly due dispatcher — evaluate, enqueue, record."""
+    from .dispatcher import (
+        DispatcherError,
+        _parse_instant,
+        dispatch_due,
+        load_dispatcher_cadence,
+    )
+    from .scheduled import store_run_row
+
+    try:
+        cadence = load_dispatcher_cadence(declared_source=args.declared, cadence_file=args.cadence)
+        now = _parse_instant(args.at) if args.at else None
+        since = _parse_instant(args.since) if args.since else None
+    except DispatcherError as exc:
+        print(f"dispatch-due: {exc}", file=sys.stderr)
+        return 2
+
+    row, code = dispatch_due(
+        cadence,
+        now=now,
+        since=since,
+        execute=not args.dry_run,
+        project=args.project,
+        region=(args.region or os.environ.get("SIG_GCP_REGION", "").strip() or "us-central1"),
+    )
+    rec = row.as_json()
+    payload = rec["fetch_record"] if isinstance(rec["fetch_record"], dict) else {}
+    print(json.dumps(payload, indent=2, sort_keys=True))
+
+    local_dir = Path(os.environ.get("SIG_RUN_LOG", str(_STATE_DIR / "runs")))
+    gcs = _gcs_bucket(args.gcs_bucket)
+    try:
+        written = store_run_row(
+            row,
+            prefix=cadence.runs_gcs_prefix,
+            gcs=gcs,
+            local_dir=local_dir,
+        )
+        # stdout stays a clean JSON payload — storage notices ride stderr so
+        # `sig-ops dispatch-due | jq` never sees trailing prose.
+        for where, loc in written.items():
+            print(f"  run row stored ({where}): {loc}", file=sys.stderr)
+    except Exception as exc:  # noqa: BLE001 - surfaced, never hidden
+        print(f"  ! run-row store FAILED (row kept in stdout): {exc}", file=sys.stderr)
+        return code or 7
+    if gcs is None:
+        print(
+            "  ! no GCS bucket configured (--gcs-bucket / SIG_OPS_GCS_BUCKET) — "
+            "run row recorded locally only",
+            file=sys.stderr,
+        )
     return code
 
 
@@ -4777,6 +4902,8 @@ def main(argv: list[str] | None = None) -> int:
         return wave_verify.main(wv_tail)
     if args.command == "live-diff":
         return _cmd_live_diff(args)
+    if args.command == "dispatch-due":
+        return _cmd_dispatch_due(args)
     if args.command == "backfill-run-completions":
         return _cmd_backfill_run_completions(args)
     if args.command == "scheduled-readback":
