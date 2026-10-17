@@ -243,3 +243,29 @@ TB-01` ships the batch-02 sentence instead, but only while its row reads
 ```
 implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true
 ```
+
+> **Update 2026-10-16 (P35.4 — appended; the P24.1 DECISION block, the $0
+> table and the P33.7 note above are kept as their authoring records).**
+> Three corrections and one pointer:
+>
+> - **Superseded — the e2-micro DECISION and the `≈ $0/mo` table.** ADR-081's
+>   executed deployment chose Cloud SQL + Cloud Run; the P33.7 note's
+>   "~$9/mo" was itself the db-f1-micro-era figure — G1 §3.8's review of the
+>   running stack prices it at ≈ **$90–100/mo** list, an estimate the
+>   measured billing-export ledger supersedes when it lands (SIG-OPS-009:
+>   measured figures only, estimates labelled). The zero-cost framing above
+>   is the retired design record, not the running shape.
+> - **Superseded — "restore drill proven locally over Docker" as the restore
+>   story.** The drill of record for the hosted posture is
+>   `ops/gcp/restore-drill.sh` (PITR clone + full-backup variants, RTO/RPO
+>   recorded); `backup-drill`/`tests/db/test_restore_drill.py` remains the
+>   engineered fixture leg.
+> - **Stale — the two-secret framing** (`sig-pg-password`/`sig-api-env`).
+>   The consumer matrix is `ops/iam_identities.toml` (14 `[[secret]]` rows);
+>   `sig-api-env` is a zero-version dead secret — recorded, never deleted
+>   here.
+> - **Pointer — the maintained operations runbook is
+>   `docs/ops/RUNBOOK.md`** (P35.4, SIG-OPS-010): alert triage, restore,
+>   republish, scheduled-window watch, job failure, secret rotation, roll,
+>   cost review, decommission — every command verified against the tree by
+>   `python3 docs/build/tools/check_runbook.py` (`make docs-check` runs it).

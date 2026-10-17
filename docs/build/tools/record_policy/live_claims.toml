@@ -34,6 +34,10 @@ corpus = [
     "docs/build/LEDGER.md",
     "docs/build/reports/**/*.md",
     "docs/build/runs/**/*.md",
+    # P35.4: the maintained ops runbook is a corpus surface — its prose
+    # production-state statements are judged by the same assert/negate +
+    # probe-citation rule as build memory.
+    "docs/ops/**/*.md",
 ]
 
 [claims]

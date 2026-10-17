@@ -384,3 +384,7 @@ the trigger.
   stays `workflow_dispatch`-only) and queues the live `gh workflow disable reingest.yml` leg
   (`D-P34.4-1`). The row's other claims (`sig-orchestration due`, FreshnessLedger, disappearance
   sweep) are unchanged.
+- *P35.4 follow-on (appended 2026-10-16; harness `devin-desktop/swe-2-high/subagent`):* the
+  operator-facing procedures for the corrected posture — scheduled-window watch, first-fire
+  read-back, retired-trigger handling — now sit in `docs/ops/RUNBOOK.md` §4 and §9;
+  `D-P34.4-1` remains the queued `gh workflow disable reingest.yml` leg.

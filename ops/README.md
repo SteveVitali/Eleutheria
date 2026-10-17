@@ -12,8 +12,10 @@ laptop and on a single VM. The API and the static server run as **host processes
 Python/Node toolchain at HEAD without baking a platform-specific image; only the
 stateful DB is a container. The **hosted** home is separate: `ops/gcp/` carries the
 GCP infra-as-code (ADR-075) that was applied under operator ADC on 2026-09-15 as
-Cloud SQL + Cloud Run (ADR-081) — the executed runbook is
-[`docs/build/reports/GCP_DEPLOYMENT.md`](../docs/build/reports/GCP_DEPLOYMENT.md).
+Cloud SQL + Cloud Run (ADR-081) — the executed deployment record is
+[`docs/build/reports/GCP_DEPLOYMENT.md`](../docs/build/reports/GCP_DEPLOYMENT.md),
+and the maintained operator runbook for the hosted posture is
+[`docs/ops/RUNBOOK.md`](../docs/ops/RUNBOOK.md) (P35.4, SIG-OPS-010).
 Hosted spend is measured (BigQuery billing export) and alarmed at the $300/mo
 infrastructure ceiling by `ops/gcp/cost-guard.sh`; the monthly ledger —
 measured / operator-reported / estimate labels — is
