@@ -57,6 +57,14 @@ banner "national export next to the spine (P30.3 / GO-LIVE.3)"
 : "${SIG_EXPORT_ENVIRONMENT:=production}"
 : "${SIG_EXPORT_REPLAY:=}"
 : "${SIG_EXPORT_EMERGENCY:=}"
+# P35.19 / JUR-02b (placement@1, ADR-092): paths to a staged
+# sig.boundary-pack/1 directory + its bound sig.jurisdiction-registry/1 —
+# typically under the restricted mount. Both unset → the export runs with no
+# placement (byte-identical to the pre-placement posture); exactly one set →
+# the CLI refuses (a half-staged placement input is never silently placed).
+: "${SIG_EXPORT_BOUNDARY_PACK:=}"
+: "${SIG_EXPORT_JURISDICTION_REGISTRY:=}"
+: "${SIG_EXPORT_BOUNDARY_SPEC:=}"
 _repo="$(cd "${_here}/../.." && pwd)"
 _sha="$(git -C "${_repo}" rev-parse --short=12 HEAD 2>/dev/null || echo unknown)"
 IMAGE="${SIG_API_IMAGE}:export-${_sha}"
@@ -74,6 +82,9 @@ export_cmd() {
   [ -n "${SIG_EXPORT_BELIEF}" ] && extra="${extra} --belief \"${SIG_EXPORT_BELIEF}\""
   [ -n "${SIG_EXPORT_REPLAY}" ] && extra="${extra} --replay \"${SIG_EXPORT_REPLAY}\""
   [ -n "${SIG_EXPORT_EMERGENCY}" ] && extra="${extra} --emergency \"${SIG_EXPORT_EMERGENCY}\""
+  [ -n "${SIG_EXPORT_BOUNDARY_PACK}" ] && extra="${extra} --boundary-pack \"${SIG_EXPORT_BOUNDARY_PACK}\""
+  [ -n "${SIG_EXPORT_JURISDICTION_REGISTRY}" ] && extra="${extra} --jurisdiction-registry \"${SIG_EXPORT_JURISDICTION_REGISTRY}\""
+  [ -n "${SIG_EXPORT_BOUNDARY_SPEC}" ] && extra="${extra} --boundary-spec \"${SIG_EXPORT_BOUNDARY_SPEC}\""
   printf 'exec python -m exports build --from-spine --dsn "%s" --as-of "%s" --environment "%s" --note "%s" --out "%s/%s"%s' \
     "${DSN}" "${SIG_EXPORT_AS_OF}" "${SIG_EXPORT_ENVIRONMENT}" "${SIG_EXPORT_NOTE}" "${MOUNT}" "${PREFIX}" "${extra}"
 }

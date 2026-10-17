@@ -211,7 +211,12 @@ def _supersession_record(candidate_dir: Path, publication_id: str) -> str | None
 #: ``technology`` field + dossier/map rows render it), so the same corpus
 #: rebuilds to a new deterministic id — p-fd7b… was the /1 projection build,
 #: p-ad9c… the same corpus under the /2 projection.
-PRIOR_RELEASE_ID = "p-ad9c56119b08cde9e91e8e1c638864edb17cd197548ca66cde03b0524186b384"
+#: P35.19 (JUR-02b) re-pinned the id a third time: the projection bumped
+#: sig.published-record/2 → /3 (the record jurisdiction doc gains the
+#: placement block — jkey/chain/basis/check/declared/boundary_vintage), so
+#: the same corpus rebuilds to a new deterministic id — p-7b7f… is the
+#: same corpus under the /3 projection.
+PRIOR_RELEASE_ID = "p-7b7fd8b421ced20937af954b1c72ef65adcf63da98a5cb0ea5bb8bbc0e95697b"
 PRIOR_RENDERER = "p32.24"
 PRIOR_ENTITY_WITHHOLD = "ent-acc-dep-41"  # corpus entity — deny target
 PRIOR_CLAIM_WITHHOLD = "cl-acc-denied-claim"  # corpus claim — denies its carriers

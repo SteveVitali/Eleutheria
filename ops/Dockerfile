@@ -98,6 +98,12 @@ RUN pip install --no-cache-dir "uv==0.12.6" \
 RUN apt-get update \
  && apt-get install -y --no-install-recommends libstdc++6 libsqlite3-0 zlib1g \
  && rm -rf /var/lib/apt/lists/*
+
+# P35.19 / JUR-02b (K4 §4.4): the DuckDB `spatial` extension is BUNDLED at
+# image build — the placement engine's strict `LOAD spatial` never falls back
+# to a runtime INSTALL. The fetched extension matches the lock-pinned DuckDB
+# (uv.lock), so the provisioned version is the pinned version.
+RUN python -c "import duckdb; duckdb.connect().execute('INSTALL spatial')"
 COPY --from=tippecanoe-build /usr/local/bin/tippecanoe /usr/local/bin/tippecanoe
 
 # Cloud Run provides $PORT; bind the read API there. When SIG_CLOUDSQL_CONNECTION
