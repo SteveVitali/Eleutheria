@@ -959,3 +959,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consol
   go = '''operator: explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading'''
   rerun = '''implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P35.16"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued hosted correction-write leg: `sig-connectors geometry-corrections --dsn <hosted> --apply` — the `sig.geometry-corrections/1` artifact's append-only defect/correction INSERTs for the seven F-322 groups + read-back'''
+gates_cell = '''hosted, production write — QUEUED, never exercised this run; OM-20 — GATE-G4 §4 OM-20 list names P35.16 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only INSERTs only; AR-3 + AR-2 window outside the AR-3 freeze'''
+operator_cell = '''nothing until the live re-run — dry-run is the default; `--apply` only inside the window; rollback forward-only (the claims stand)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true` · landed row 296 (PR #309 — production not touched)'''
+
+  [[row.legs]]
+  id = "P35.16-geometry-corrections-live"
+  obligations = []
+  earliest = '''the OM-19 re-run invocation — the ticket's verbatim re-run prompt; the writes run in an authorised window outside the AR-3 freeze (AR-3 + AR-2 per the contract)'''
+  excluded = ["AR-3 freeze"]
+  go = '''pre-authorised: GATE-G4 §4 OM-20 list names P35.16 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10)'''
+  rerun = '''implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true'''
+  live_dependants = []
