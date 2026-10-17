@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Declared jurisdiction scheme end-to-end** (P35.18 / row 298;
+  JUR-02a, K4 §3.2; cites SIG-JUR-D02, SIG-IDENT-005/006,
+  SIG-ONTO-011, SIG-EVID) — the `(scheme, value)` pair a connector
+  already emits as `candidate_identifier` now persists into
+  `claim.value_json` (additive; the claim's text value and content
+  digest are unchanged; a malformed or conflicting pair fails closed
+  into `assertion_quarantine`). Shaped jurisdiction buckets key on the
+  declared pair resolved through the K4 §3.2 map — canonical keys like
+  `iso3166-2:US-OK`, never a bare code — and each observation carries
+  `scheme` + `scheme_basis` provenance: `candidate_identifier` for a
+  claim-carried pair, `declared_scheme_from_config@<sha256>` for a
+  legacy claim whose scheme derives from the committed connector
+  config (the file sha names exactly what declared it). A jurisdiction
+  bucket can never mix a scheme-keyed claim with an undeclared bare
+  value — the build fails closed. `SHAPING_SCHEMA_VERSION` →
+  `p35.18/1.2.0`. No backfill and no ingest run — the hosted effect
+  rides the next ingest under its own authority.
+
 - **Jurisdiction registry, GeoParquet boundary pack, and `lookup@1`**
   (P35.17 / row 297; K4 §3.1/§3.2/§4.2/§5.4; cites SIG-JUR-D01,
   SIG-IDENT-005/006, SIG-GEO-008, SIG-INGEST-028, ADR-160; revisits
