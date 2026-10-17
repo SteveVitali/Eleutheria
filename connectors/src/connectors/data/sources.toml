@@ -1423,8 +1423,53 @@ default_tier = "R1"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-verified = false
-notes = "GEOID + boundaries; identity substrate (§14.2). US Government work, public record."
+access_method = "direct download (https .zip/.txt; also the TigerWeb REST directory)"
+auth_model = "none"
+ingestion_permitted = false
+verified = true
+last_verified = 2026-10-17
+review_packet = "docs/build/reports/rights/census_gazetteer_tiger.md"
+notes = "GEOID + boundaries; identity substrate (§14.2). US Government work, public record. P35.17 (JUR-01, D-K4-1): also the K4 boundary source — TIGER/Line 2025 state/county/place + Gazetteer 2025 names/points + the cb_2025 500k cartographic files feed the boundary pack. Terms text captured verbatim 2026-10-17 into the rights packet (the 2025 technical documentation chapter 1: US Government work, no copyright under 17 U.S.C. §105, citation requested; boundary data is statistical, never a jurisdictional-authority determination). NOT FLIPPED — the ingestion_permitted flip is the operator's HG-03 act (OP-26); this row pauses for it."
+[sources.census_gazetteer_tiger.rights]
+spdx = "CC0-1.0"
+attribution = "U.S. Census Bureau — TIGER/Line and Gazetteer files"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www2.census.gov/geo/pdfs/maps-data/data/tiger/tgrshp2025/TGRSHP2025_TechDoc_Ch1.pdf"
+retrieval_date = 2026-10-17
+# P35.17 (D-K4-1, A-18): the terms text captured verbatim + its evidence
+# pointer; publication_basis records the *statutory* basis (17 U.S.C. §105),
+# pending the operator's HG-03 review — the flip is never this row's edit.
+captured_terms_verbatim = '''No warranty, expressed or implied, is made with regard to the accuracy of the data in the TIGER/Line Shapefiles, and no liability is assumed by the United States Government in general, or the Census Bureau specifically, as to the positional or attribute accuracy of the data. The boundary information in the TIGER/Line Shapefiles is for statistical data collection and tabulation purposes only. Their depiction and designation for statistical purposes does not constitute a determination of jurisdictional authority or rights of ownership or entitlement and are not legal land descriptions. — TIGER/Line is a registered trademark of the Census Bureau. — Copyright protection is not available for any work of the United States Government (Title 17 U.S.C., Section 105). Thus, you are free to reproduce census materials as you see fit. We would ask, however, that you cite the Census Bureau as the source.'''
+captured_terms_evidence = "docs/build/reports/rights/census_gazetteer_tiger.md (terms read 2026-10-17; the technical-documentation chapter is quoted verbatim there, sha256 ce40bee768cdb00f9dadc154ca0b1dc6ca91180c1b9362e5d2b70cbea2d75003 of the downloaded bytes)"
+publication_basis = "US Government work — no copyright (17 U.S.C. §105); citation requested, trademark/naming constraint honoured (ADR-160); HG-03 review pending"
+
+[sources.natural_earth_10m]
+name = "Natural Earth 10m (admin-0/admin-1 boundaries)"
+source_kind = "upstream_project"
+homepage_url = "https://www.naturalearthdata.com/"
+default_tier = "R2"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "direct download (https .zip shapefiles)"
+auth_model = "none"
+ingestion_permitted = false
+cadence = "versioned releases (v5.x; snapshot per vintage)"
+verified = true
+last_verified = 2026-10-17
+review_packet = "docs/build/reports/rights/natural_earth_10m.md"
+notes = "P35.17 (JUR-01, D-K4-1): the K4 non-US boundary source — ne_10m_admin_0_countries + ne_10m_admin_1_states_provinces (admin-1 for GB rolls up by `geonunit` per K4 §3.1). Terms text captured verbatim 2026-10-17 into the rights packet (express public-domain dedication: 'All versions of Natural Earth raster + vector map data found on this website are in the public domain'). NOT FLIPPED — the ingestion_permitted flip is the operator's HG-03 act (OP-26); this row pauses for it."
+[sources.natural_earth_10m.rights]
+spdx = "CC0-1.0"
+attribution = "Natural Earth (Made with Natural Earth)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.naturalearthdata.com/about/terms-of-use/"
+retrieval_date = 2026-10-17
+captured_terms_verbatim = '''All versions of Natural Earth raster + vector map data found on this website are in the public domain. You may use the maps in any manner, including modifying the content and design, electronic dissemination, and offset printing. … No permission is needed to use Natural Earth. Crediting the authors is unnecessary. — Short citation: "Made with Natural Earth." — Long citation: "Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com."'''
+captured_terms_evidence = "docs/build/reports/rights/natural_earth_10m.md (terms read 2026-10-17; quoted verbatim there)"
+publication_basis = "express public-domain dedication on the publisher's terms-of-use page (ADR-160); HG-03 review pending"
 
 [sources.census_geocoder]
 name = "Census Geocoder"

@@ -50,3 +50,9 @@ decision. **The trigger likely fired:** the count-scope jurisdiction is an unsco
 geometry (F3 §5.1). **Answer:** row P35.17 (jurisdiction registry, boundary pack, `lookup@1`) writes ADR-160
 and appends its own `Revisited by ADR-160` line here (plan §7, S6R-24). The decision above stays in force
 until that answer lands; this ADR's body is unchanged (SIG-ENG-003).
+
+- **Status:** Revisited by ADR-160 (2026-10-17, P35.17) — the count-scope
+  jurisdiction token's answer landed: `sig.jurisdiction-registry/1` provides the
+  structured geometry + canonical keys this ADR's trigger anticipated; a count
+  scope can now name `iso3166-2:*`/`us.census.geoid.*` keys rather than an
+  unscoped token. Role semantics and the conservative posture stand unchanged.

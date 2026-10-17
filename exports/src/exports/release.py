@@ -345,6 +345,33 @@ def _content_root(payload: Any) -> str:
 # --------------------------------------------------------------------------- #
 
 
+def _boundaries_root(export_dir: Path, given: str | None) -> str | None:
+    """The v2 ``boundaries_root`` (P35.17 / K4 §4.2 / REL-01, ADR-160).
+
+    The declared seam is the staged pack at ``<export>/inputs/boundary-pack/``:
+    when it exists the pack is verified file-by-file and the *recomputed*
+    content root is bound; an explicit ``boundaries_root`` argument must equal
+    it (a disagreement fails closed — the field never silently contradicts the
+    staged bytes). No staged pack → the explicit argument, else ``None``
+    (declared-empty, the P35.12 semantics).
+    """
+    from .boundary_pack import BoundaryPackError, derive_boundaries_root
+
+    try:
+        derived = derive_boundaries_root(export_dir)
+    except BoundaryPackError as exc:
+        raise ReleaseError(str(exc)) from exc
+    if derived is None:
+        return given
+    if given is not None and given != derived:
+        raise ReleaseError(
+            "an explicit --boundaries-root disagrees with the staged "
+            "boundary pack's recomputed root — refusing to sign the "
+            "contradiction (fail closed, K4 §4.2)"
+        )
+    return derived
+
+
 def _transparency_root(export_dir: Path, manifest: Mapping[str, Any]) -> str | None:
     """The J3 TX-13b transparency-surfaces root: a content root over the
     ``{path: sha256}`` map of the export's disclosure/exclusion artifacts
@@ -605,7 +632,7 @@ def _v2_descriptor(
         evidence_root=evidence_root,
         dossier_root=dossier_root,
         transparency_root=_transparency_root(export_dir, manifest),
-        boundaries_root=boundaries_root,
+        boundaries_root=_boundaries_root(export_dir, boundaries_root),
         built_at=built_at_s,
         replay_reason=str(replay_reason) if replay_reason else None,
     )
