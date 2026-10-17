@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "03816fa29f9ccf571767f71b57477cb0d7cd46b2",
+  "input_commit": "1726939ac95cfa88ea57ebdf8263cf30a4ac075f",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -2714,7 +2714,7 @@
     },
     {
       "path": "docs/tickets/296_P35.16__geometry-defects-at-ingest.md",
-      "sha256": "de64dd545855b51a0b85b71b9d8703bacbd448a050ce7e57191216834797dcd2"
+      "sha256": "51e51a73a84d5c3ab1ac6350b00a4dff333136498a45fa1b2457fc9e386319c8"
     },
     {
       "path": "docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md",
