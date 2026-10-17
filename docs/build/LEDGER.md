@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.18 landed (298); boundary-source capture stays queued (HG-03 + OM-19)
-nextTicket:      P35.19                              # row 299 — placement engine placement@1
-lastCompleted:   P35.18                              # row 298 (declared jurisdiction scheme; {scheme,value} into claim.value_json)
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red — baseline; #313 head 66a97b8b 5/5 green (run 39031708568)
+projectStatus:   IN_PROGRESS                           # P35.19 landed (299); boundary-source capture stays queued (HG-03 + OM-19)
+nextTicket:      P35.20a                             # row 300 — per-dossier provenance + unclamped coverage
+lastCompleted:   P35.19                              # row 299 (placement engine placement@1; export-time jurisdiction placement)
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red — baseline; #314 head 983ff2d4 5/5 green (run 39067226130)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.18-declared-jurisdiction-scheme # PR #313 (base r11/P35.17-…-v3)
+chainTip:        r11/P35.19-placement-engine # PR #314 (base r11/P35.18-…)
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-17T12:34:40Z
+updatedAt:       2026-10-17T20:53:00Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1041,3 +1041,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-17 — P35.18 post-closeout record — closeout head `66a97b8b` 5/5 green head-bound (`ci: pass #313@66a97b8` — run 39031708568: python 17m21s, web 14m04s, composed 3m23s, docs 1m24s, security 27s) · `reports/ci/p35_18_pr313.json` records this head; stack verbatim `blockedOn: CI fail on #299@19ed46d (docs)` — waived ancestor red, baseline · run-ledger head line + CURRENT STATE comment updated; projection regenerated + verified
 - 2026-10-17 — P35.18 dispatch boundary-confirm — `ci: pass #313@b566040` — record head 5/5 green head-bound (run 39033123736); the prior boundary head `97e1d25b` on #312 also read 5/5 green · pre-dispatch stack re-read 2026-10-17T12:56Z verbatim: `blockedOn: CI fail on #299@19ed46d (docs)` — the operator-waived ancestor red, baseline · every pushed head verbatim in `runs/P35.18.md` (`58fa5558` → `e4837e5f` → `66a97b8b` → `b5660409`) · the hosted effect stays QUEUED to the next ingest — no production mutation · P35.18 CLOSED → next → P35.19 (299) dispatch · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-17 — orchestrator interruption + resume (interrupted P35.19) — the devin-desktop orchestrator session crashed (Devin renderer crash ~14:23Z) mid-P35.19; its dispatched worker died in-flight leaving uncommitted WIP and a released drive-lock · last ledger-verified act: the P35.18 boundary-confirm `2b6e190f` (~12:56Z) · operator resumed with a verified-state handoff (~19:2xZ); orient re-verified CURRENT STATE verbatim + interrupted-ticket shape — branch `r11/P35.19-placement-engine` at `2b6e190f` 0 commits vs base, never pushed, WIP intact (untracked `exports/placement.py` 1,055 lines + `runs/P35.19.md`; 6 modified files +329/−24) · `ci-boundary --ticket P35.18 --stack` re-read 19:29:13Z: #313 pass, open `r11/` ancestors pass, only the waived `#299@19ed46d` baseline red (`logs/ci-P35.18-pre-dispatch.json`) · projection `verify` STALE on the untracked run-ledger input only — expected; the resume closeout's regen repairs it (P36.9a precedent) · resume: fresh sub-agent dispatch as RESUME with the restart isolation probe — PASS (`docs/build/reports/isolation/dispatch-P35.19.md`), chain lock held · no reset/stash/checkout of the WIP · **Deferrals:** none · **Deviations:** sub-agent context names no model (recorded, not smoothed) · chainTip → r11/P35.18-declared-jurisdiction-scheme · next → P35.19 (299) dispatch · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-17 — P35.19 ticket — r11/P35.19-placement-engine · PR #314 (base r11/P35.18-…) · row 299 — placement engine `placement@1` (JUR-02b, K4 §3.3/§5.3, ADR-092): `exports/placement.py` — verified pack + bound registry (boundaries_root/vintage/spec-layer drift refuse), strict `LOAD spatial` (Dockerfile bakes it), one batched DuckDB join + R1–R8 — located wins (`outside_declared`/`_country`), swap/flip/null-island/centroid → declared + withheld (SIG-IDENT-004), lowest-GEOID → `on_boundary`, partial → `not_evaluated`, defect flags consumed · seven additive columns (`jurisdiction` unchanged); withheld points never draw; `web/placement.json` `sig.placement-report/1` (conservation + two-sided disclosures); `sig.published-record/3` + `point_withheld`; CLI all-or-nothing inputs; no inputs ⇒ byte-identical; no spine writes · heads verbatim: `4134d088` (isolation record) → `77f60855` impl → docs-red ×2 → `983ff2d4` repair → **`ci: pass #314@983ff2d` 5/5 head-bound** (run 39067226130 — python 17m8s, web 14m54s, composed 3m18s, docs 1m58s, security 34s; `reports/ci/p35_19_pr314.json`) · `runs/P35.19.md` · `pr/P35.19.md` · BUILD_INDEX row 299 · verify: ruff/format/mypy clean; pytest 9,217 passed / 2 skipped / 4 env-or-pre-existing (OP-07 unarmed; `D-P35.3-3` pair base-identical); `check_live_claims` 0 · DEFERRALS none (`D-P35.3-3`/`D-R11-LATER-04` OPEN verbatim) · blockedOn verbatim `CI fail on #299@19ed46d (docs)` waived ancestor red · disclosed: OM-16 over (~3.6k vs 3,000 — fixture matrix) · no spine write, no live fetch, no production mutation — output via the next export/release row · harness: devin-desktop/swe-2-high/subagent
