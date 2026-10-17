@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.17 landed (297); boundary-source capture queued (HG-03 + OM-19)
-nextTicket:      P35.18                              # row 298 — declared jurisdiction scheme
-lastCompleted:   P35.17                              # row 297 (jurisdiction registry, boundary pack, lookup@1; capture queued)
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red — baseline; #310 head 5a2f09d4 5/5 green (run 39017552685)
+projectStatus:   IN_PROGRESS                           # P35.18 landed (298); boundary-source capture stays queued (HG-03 + OM-19)
+nextTicket:      P35.19                              # row 299 — placement engine placement@1
+lastCompleted:   P35.18                              # row 298 (declared jurisdiction scheme; {scheme,value} into claim.value_json)
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red — baseline; #313 head e4837e5f 5/5 green (run 39029678754)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.17-jurisdiction-registry-and-boundary-pack-v3 # PR #312 (v3; #310/#311 closed unmerged — poisoned ranges; base r11/P35.16-…; see runs/P35.17.md)
+chainTip:        r11/P35.18-declared-jurisdiction-scheme # PR #313 (base r11/P35.17-…-v3)
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-17T08:31:00Z
+updatedAt:       2026-10-17T12:03:14Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1037,3 +1037,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-17 — P35.17 post-closeout record — heads verbatim in `runs/P35.17.md` Correction: `5a2f09d4` impl 5/5 green (run 39017552685) → `0b578f27` closeout (run 39018796910 cancelled-by-supersede) → `6e6ca033` projection re-sync 5/5 green head-bound (`ci: pass #310@6e6ca03` — run 39018817776) · stack verbatim: `blockedOn: CI fail on #299@19ed46d (docs)` — the waived ancestor red, baseline · both sources remain `ingestion_permitted=false` — the HG-03 flips are the operator's act, never performed; the hosted OCFL capture QUEUED as leg `P35.17-boundary-source-capture` in RETURN PASS with the verbatim re-run prompt · fixture packs record `gate.mode = "fixture-bypass"` · disclosed: OM-16 size over (~3,086 vs 3,000, itemized) · no production mutation · next → P35.18 (298) dispatch · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-17 — P35.17 orchestrator repair (-v3 re-land) — `ci: pass #312@cfb2f55` — v3 squash 5/5 green head-bound (run 39021159723) · two stacked poisoned ranges recovered: v1 `eb3038e7`'s uncited claim-word segment (closed ledger, uneditable) → v2 `895d5986`'s PHASE LOG entry with no `ci:` field (verify-recorded-ci, permanent in-range) — the lesson recorded: an orchestrator-repair PHASE LOG entry must carry a parseable `ci:` field; when the head it would name is pending, the entry waits for the read instead of shipping without the field · #310/#311 closed unmerged, heads verbatim in `runs/P35.17.md` · chainTip → `r11/P35.17-…-v3` · stack: the waived `#299@19ed46d` ancestor red only · no production mutation — the boundary capture stays QUEUED (`P35.17-boundary-source-capture`) · next → P35.18 (298) dispatch · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-17 — P35.17 dispatch boundary-confirm — `ci: pass #312@0c48f15` — record head 5/5 green head-bound (run 39022520878) · pre-dispatch stack re-read 2026-10-17T10:09Z verbatim: `blockedOn: CI fail on #299@19ed46d (docs)` — the operator-waived ancestor red, baseline · every pushed head verbatim in `runs/P35.17.md` (v1 `5a2f09d4`→`0b578f27`→`6e6ca033`→`eb3038e7` · v2 `73aa030c`→`895d5986` · v3 `cfb2f55d`→`0c48f151`) · the hosted boundary capture stays QUEUED (`P35.17-boundary-source-capture`) — no production mutation · P35.17 CLOSED → next → P35.18 (298) dispatch · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-17 — P35.18 ticket — r11/P35.18-declared-jurisdiction-scheme · PR #313 (base r11/P35.17-jurisdiction-registry-and-boundary-pack-v3) · row 298 — declared jurisdiction scheme: `assertion_from_record` persists `candidate_identifier` `{scheme,value}` into `claim.value_json` additively (text value + content_digest unchanged; malformed/conflicting pairs fail closed to `assertion_quarantine`); shaping keys `camera_jurisdiction` buckets on the declared pair via the K4 §3.2 map, `ValueObservation` carries `scheme`+`scheme_basis` (`candidate_identifier` claim-carried / `declared_scheme_from_config@<sha256>` config-derived), `jurisdiction_scheme_mix_violations` fails the build on a keyed+bare mix; the bare-value slug helper is deleted from `spine_export.py` (grep guard pins it); `dot_511_targets.toml` declares `us.state_abbr` on the 14 rows; `SHAPING_SCHEMA_VERSION` → `p35.18/1.2.0` · heads verbatim: `58fa5558` impl → docs-red (`changelog_gate`, run 39029404454) → `e4837e5f` repair → **`ci: pass #313@e4837e5`** 5/5 head-bound (run 39029678754; `reports/ci/p35_18_pr313.json`) → closeout head this commit · `runs/P35.18.md` · `pr/P35.18.md` · BUILD_INDEX row 298 · verify: 9,157 passed / 2 skipped / 3 failed (`SIG_GCP_PROJECT` placeholder-armed; `D-P35.3-3` pair base-identical; live-claims 0 violations) + `SIG_REQUIRE_DB_TESTS=1` tests/db 633 green + ruff/format/mypy + verify-gen byte-stable + docs-check + memory_guard --staged 0 · DEFERRALS none opened/closed (`D-P35.3-3` / `D-R11-LATER-04` stay OPEN, verbatim) · blockedOn verbatim `CI fail on #299@19ed46d (docs)` waived ancestor red · no live fetch, no ingest run, no backfill, no production mutation — the hosted effect rides the next ingest under its own authority
