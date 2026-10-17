@@ -440,3 +440,17 @@ seed-commit 6c05e605
 # Scope: findings attributed to e6b8200e only; no other commit borrows the
 # exemption.
 seed-commit e6b8200e
+
+# ── P35.19 kind-vocabulary repair (orchestrator record commit; recorded 2026-10-17) ──────
+# cf85517e's PHASE LOG entry kind `orchestrator repair 2` was undeclared in
+# record_policy/phase_log_kinds.txt (V4 — the ordinal form needs `#`); caught
+# head-bound by the docs job's ledger-contract check (run 39074559770, verbatim:
+# "[kind-vocabulary] PHASE LOG kind 'orchestrator repair 2' is not in
+# record_policy/phase_log_kinds.txt (V4)"). 56d0b7f9 corrects the kind token in
+# place to `orchestrator repair #2` — the minimal repair; no payload bytes change
+# (the sanctioned in-place pattern of ef1fb3bf/d778706b/145b68a3/6fe93216/
+# 64648080/21a392ca/49607976/917dd2a5/4ce44ed9). The branch rule forbids
+# force-push, so the declaration lands as a later commit rather than a reworded
+# subject.
+# Scope: findings attributed to 56d0b7f9 only; no other commit borrows the exemption.
+seed-commit 56d0b7f9

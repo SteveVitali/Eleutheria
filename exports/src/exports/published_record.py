@@ -31,7 +31,7 @@ from .manifest import canonical_json, sha256_hex
 #: publication descriptor — a renderer/projection change is a NEW namespace.
 #: /1 → /2 (P35.15a / PKG-07): the record doc gains ``technology`` — the
 #: subject's declared SKOS slug (id + basis), the map/search facet source.
-PROJECTION_VERSION = "sig.published-record/2"
+PROJECTION_VERSION = "sig.published-record/3"
 
 
 def record_key(compartment: str, entity_type: str, entity_id: str) -> str:
@@ -110,7 +110,13 @@ class PublishedRecord:
     #: {"id": str|None, "basis": "declared_technology_claim" | "conflicted" |
     #: "unreported"} — never an inferred class.
     technology: dict[str, Any]
-    jurisdiction: dict[str, Any]  # {"id": str|None, "basis": str}
+    #: P35.19 / JUR-02b (K4 §3.4): ``{id, jkey, chain[], basis, check,
+    #: declared:{scheme,value}|null, boundary_vintage}`` — ``id`` stays the
+    #: legacy declared bucket; the placement fields are ``None``/``[]`` when
+    #: the release's export ran no placement (declared-empty, never invented).
+    jurisdiction: dict[
+        str, Any
+    ]  # {"id", "jkey", "chain", "basis", "check", "declared", "boundary_vintage"}
     location: dict[str, Any]  # {"kind", "lat"?, "lon"?, "precision"?}
     claim_anchors: tuple[ClaimAnchor, ...] = ()
     evidence_refs: tuple[EvidenceRef, ...] = ()
@@ -234,6 +240,7 @@ def record_from_site_row(
     geometry = row.get("geometry")
     coords = geometry.get("coordinates") if isinstance(geometry, dict) else None
     point_status = str(row.get("point_status") or "")
+    placed = "placement_check" in row
     if coords and point_status == "resolved":
         location: dict[str, Any] = {
             "kind": "point",
@@ -241,6 +248,12 @@ def record_from_site_row(
             "lon": coords[0],
             "precision": str(row.get("precision") or "unreported"),
         }
+    elif placed and point_status == "resolved":
+        # P35.19: the envelope resolved a point but ``placement@1`` withheld
+        # it (suspected swap/flip, rejected null-island/invalid, or a guarded
+        # agency centroid) — the record names the verdict, never re-publishes
+        # the pair.
+        location = {"kind": "point_withheld", "reason": row.get("placement_check")}
     elif coords:
         location = {"kind": "unresolved_point", "precision": point_status or "unreported"}
     else:
@@ -252,10 +265,33 @@ def record_from_site_row(
         "basis": "source_label" if label_text else "unlabelled",
     }
     jurisdiction_id = row.get("jurisdiction")
-    jurisdiction = {
+    jurisdiction: dict[str, Any] = {
         "id": str(jurisdiction_id) if jurisdiction_id else None,
         "basis": "camera_jurisdiction" if jurisdiction_id else "unreported",
     }
+    # P35.19 / K4 §3.4: the placement block rides the same jurisdiction
+    # object — ``jkey`` is the located-or-declared canonical key; ``declared``
+    # is the scheme/value pair the claim carried (``null`` when undeclared).
+    # The block shape is exactly §3.4's: ``basis`` names the placement basis
+    # (point_in_polygon|declared|name_lookup); the legacy ``id`` provenance
+    # ("camera_jurisdiction"/"unreported") is preserved under ``id_basis``.
+    if placed:
+        declared = (
+            {"scheme": str(row["declared_scheme"]), "value": str(row["declared_value"])}
+            if row.get("declared_scheme")
+            else None
+        )
+        jurisdiction.update(
+            {
+                "id_basis": jurisdiction["basis"],
+                "jkey": row.get("jurisdiction_key"),
+                "chain": list(row.get("jurisdiction_chain") or []),
+                "basis": row.get("placement_basis"),
+                "check": row.get("placement_check"),
+                "declared": declared,
+                "boundary_vintage": row.get("boundary_vintage"),
+            }
+        )
 
     # P35.15a / PKG-07: the declared SKOS technology slug — basis stays honest:
     # a row never presents an unreported or CONFLICTED declaration as a class.
