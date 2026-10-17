@@ -1,0 +1,105 @@
+# sig.geometry-corrections/1 — P35.16 / R11-DATA-01 (F-322)
+#
+# The committed declaration of the F-322 geometry-defect groups: the seven
+# groups whose stored camera point claims contradict their declared bounds.
+# This file is the AUTHORIZATION for `sig-connectors geometry-corrections
+# --apply` — a subject is corrected only under a row declared here (an
+# out-of-scope flag is counted and reported, never written). The declared
+# `expected_class` is the finding's headline class; the per-point detector
+# still classifies each stored pair against the resolved declared bound,
+# and the recorded class is whatever the detector derives.
+#
+#   extent       — optional target-level bound [min_lon, min_lat, max_lon,
+#                  max_lat]; when absent the scope resolves the target's
+#                  declared (jurisdiction_scheme, state) bound from
+#                  jurisdiction_extents.toml.
+#   rows_reported — the F-322 finding's reported count, for review
+#                   reconciliation only (the live count is what the plan
+#                   reads back, honestly).
+
+schema = "sig.geometry-corrections/1"
+finding = "F-322"
+ticket = "P35.16"
+manifest_row = "R11-DATA-01"
+
+# --- group 1: Nottingham — the feed serves lat in the x slot (562 rows) ----
+[[groups]]
+group = "nottingham_axis_swap"
+source_id = "camreg_nottingham_gb"
+target_id = "nottingham_gb_cctv_cameras"
+expected_class = "axis_swap"
+extent = [-1.4, 52.8, -0.9, 53.1]
+rows_reported = 562
+note = "stored claims read x as lon on a lat-first feed; the transposed pair is the provable correction (the target now declares axis_order = 'lat-lon')"
+
+# --- group 2: mark43 — the same transposed-serve class (561 rows) ----------
+[[groups]]
+group = "mark43_axis_swap"
+source_id = "camreg_mark43"
+target_id = "mark43_cctv"
+expected_class = "axis_swap"
+extent = [-180.0, 17.0, -60.0, 72.0]
+rows_reported = 561
+note = "US operator registry serving lat-first pairs; stored claims place cameras across Eurasia (the target now declares axis_order = 'lat-lon')"
+
+# --- group 3: trafficops D5 — Florida points labeled California ------------
+[[groups]]
+group = "trafficops_d5_wrong_jurisdiction"
+source_id = "camreg_trafficops_ca"
+target_id = "trafficops_ca_d5_cctv"
+expected_class = "wrong_jurisdiction"
+rows_reported = 828
+note = "F-322: ~828 of ~1,430 D5 Central Florida cameras assert CA (the declared iso.3166_2 US-CA bound); the points sit inside the US-FL bound — marked, never relabeled (the true jurisdiction is the finding's observation, not a fabricated replacement)"
+
+# --- group 4: gmh_emc — Mongolia points labeled Georgia (US) ---------------
+[[groups]]
+group = "gmh_emc_wrong_jurisdiction"
+source_id = "camreg_gmh_emc_ga"
+target_id = "gmh_emc_ga_cctv"
+expected_class = "wrong_jurisdiction"
+note = "rows labeled GA (us.state_abbr) whose published points sit in Mongolia"
+
+# --- group 5: bangla — Singapore points labeled Bangladesh -----------------
+[[groups]]
+group = "bangla_wrong_jurisdiction"
+source_id = "camreg_bangla_bd"
+target_id = "bangla_bd_camera"
+expected_class = "wrong_jurisdiction"
+note = "rows labeled BD (iso.3166_1_alpha2) whose published points sit in Singapore"
+
+# --- group 6: oosgis — Belgium points labeled Netherlands ------------------
+[[groups]]
+group = "oosgis_wrong_jurisdiction"
+source_id = "camreg_oosgis_nl"
+target_id = "oosgis_nl_camera"
+expected_class = "wrong_jurisdiction"
+note = "rows labeled NL (iso.3166_1_alpha2) whose published points sit in Belgium"
+
+# --- group 7: null-island placeholders (dot_511_ga + camreg_fl511_fl) ------
+# Rows asserting (0,0) / near-(0,0) — oceanic placeholder geometry, not a
+# camera location. null_island evaluates without a bound; the resolved
+# jurisdiction extent still rides the scope for the recorded evidence.
+[[groups]]
+group = "ga_fl511_null_island"
+source_id = "dot_511_ga"
+target_id = "ga_gdot_511_cameras"
+expected_class = "null_island"
+note = "GDOT 511 feed rows publishing (0,0) placeholder points"
+[[groups]]
+group = "ga_fl511_null_island"
+source_id = "camreg_fl511_fl"
+target_id = "fl511_fl_akeddell_cameras"
+expected_class = "null_island"
+note = "FL 511 registry rows publishing (0,0) placeholder points"
+[[groups]]
+group = "ga_fl511_null_island"
+source_id = "camreg_fl511_fl"
+target_id = "fl511_fl_rydl_cameras"
+expected_class = "null_island"
+note = "FL 511 registry rows publishing (0,0) placeholder points"
+[[groups]]
+group = "ga_fl511_null_island"
+source_id = "camreg_fl511_fl"
+target_id = "fl511_fl_fdot_cameras"
+expected_class = "null_island"
+note = "FL 511 registry rows publishing (0,0) placeholder points"

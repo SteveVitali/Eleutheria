@@ -1,0 +1,543 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The declared jurisdiction extents the P35.16 (R11-DATA-01 / F-322) geometry
+# detectors evaluate a camera-registry point against — one
+# `[[extents]]` row per `(scheme, code)` pair the merged target registry uses.
+#
+# These rows are SIG-DECLARED DETECTOR BOUNDS, not evidence: they answer "does
+# the published point contradict the jurisdiction the registry row claims?" —
+# the question F-322 recorded wrong for seven target groups. A point outside
+# its declared extent is FLAGGED (`geometry_defect` claim / recorded finding),
+# never silently corrected and never silently dropped. A target may override
+# with its own `extent` field where the generic jurisdiction bound is not
+# trustworthy (the ticket's explicit escape — city-tier and unresolved-
+# jurisdiction targets).
+#
+# Shape: `extent = [min_lon, min_lat, max_lon, max_lat]` — lon-lat corner order,
+# WGS84, matching the declared `axis_order = "lon-lat"` default. Bounds carry a
+# small practical margin over the strict administrative border so a camera
+# sited just across a boundary line is not flagged on a rounding artefact; the
+# detector's job is catching continent/ocean-scale defects, not surveying the
+# border.
+#
+# `sig.unresolved` targets carry no row by design — an unresolved jurisdiction
+# has no declared bound to check against (the target's own `extent` or a later
+# jurisdiction resolution supplies one; absence is a recorded skip, never a
+# silent pass).
+
+[[extents]]
+# --- us.state_abbr ----------------------------------------------------------
+code = "AL"
+scheme = "us.state_abbr"
+extent = [-88.6, 30.1, -84.8, 35.1]
+note = "Alabama administrative bound (declared detector extent)"
+
+[[extents]]
+code = "AZ"
+scheme = "us.state_abbr"
+extent = [-114.9, 31.3, -109.0, 37.1]
+note = "Arizona administrative bound (declared detector extent)"
+
+[[extents]]
+code = "CA"
+scheme = "us.state_abbr"
+extent = [-124.5, 32.4, -114.1, 42.1]
+note = "California administrative bound (declared detector extent)"
+
+[[extents]]
+code = "CO"
+scheme = "us.state_abbr"
+extent = [-109.1, 36.9, -102.0, 41.1]
+note = "Colorado administrative bound (declared detector extent)"
+
+[[extents]]
+code = "DC"
+scheme = "us.state_abbr"
+extent = [-77.2, 38.7, -76.8, 39.1]
+note = "District of Columbia administrative bound, margined for the metro border (declared detector extent)"
+
+[[extents]]
+code = "FL"
+scheme = "us.state_abbr"
+extent = [-87.7, 24.4, -79.9, 31.1]
+note = "Florida administrative bound (declared detector extent)"
+
+[[extents]]
+code = "GA"
+scheme = "us.state_abbr"
+extent = [-85.7, 30.3, -80.7, 35.1]
+note = "Georgia administrative bound (declared detector extent)"
+
+[[extents]]
+code = "HI"
+scheme = "us.state_abbr"
+extent = [-160.4, 18.7, -154.7, 22.4]
+note = "Hawaiʻi administrative bound (declared detector extent)"
+
+[[extents]]
+code = "IA"
+scheme = "us.state_abbr"
+extent = [-96.8, 40.3, -90.0, 43.6]
+note = "Iowa administrative bound (declared detector extent)"
+
+[[extents]]
+code = "ID"
+scheme = "us.state_abbr"
+extent = [-117.4, 41.9, -110.9, 49.1]
+note = "Idaho administrative bound (declared detector extent)"
+
+[[extents]]
+code = "IL"
+scheme = "us.state_abbr"
+extent = [-91.6, 36.9, -87.4, 42.6]
+note = "Illinois administrative bound (declared detector extent)"
+
+[[extents]]
+code = "KS"
+scheme = "us.state_abbr"
+extent = [-102.2, 36.9, -94.5, 40.1]
+note = "Kansas administrative bound (declared detector extent)"
+
+[[extents]]
+code = "KY"
+scheme = "us.state_abbr"
+extent = [-89.7, 36.4, -81.9, 39.3]
+note = "Kentucky administrative bound (declared detector extent)"
+
+[[extents]]
+code = "LA"
+scheme = "us.state_abbr"
+extent = [-94.1, 28.8, -88.7, 33.1]
+note = "Louisiana administrative bound (declared detector extent)"
+
+[[extents]]
+code = "MA"
+scheme = "us.state_abbr"
+extent = [-73.6, 41.1, -69.8, 43.0]
+note = "Massachusetts administrative bound (declared detector extent)"
+
+[[extents]]
+code = "MD"
+scheme = "us.state_abbr"
+extent = [-79.6, 37.8, -74.9, 39.8]
+note = "Maryland administrative bound (declared detector extent)"
+
+[[extents]]
+code = "MN"
+scheme = "us.state_abbr"
+extent = [-97.4, 43.4, -89.3, 49.5]
+note = "Minnesota administrative bound (declared detector extent)"
+
+[[extents]]
+code = "MO"
+scheme = "us.state_abbr"
+extent = [-95.9, 35.9, -89.0, 40.7]
+note = "Missouri administrative bound (declared detector extent)"
+
+[[extents]]
+code = "NC"
+scheme = "us.state_abbr"
+extent = [-84.4, 33.7, -75.3, 36.7]
+note = "North Carolina administrative bound (declared detector extent)"
+
+[[extents]]
+code = "NY"
+scheme = "us.state_abbr"
+extent = [-79.9, 40.4, -71.7, 45.1]
+note = "New York administrative bound (declared detector extent)"
+
+[[extents]]
+code = "OR"
+scheme = "us.state_abbr"
+extent = [-124.7, 41.9, -116.4, 46.4]
+note = "Oregon administrative bound (declared detector extent)"
+
+[[extents]]
+code = "PA"
+scheme = "us.state_abbr"
+extent = [-80.7, 39.6, -74.6, 42.6]
+note = "Pennsylvania administrative bound (declared detector extent)"
+
+[[extents]]
+code = "SD"
+scheme = "us.state_abbr"
+extent = [-104.2, 42.4, -96.3, 46.1]
+note = "South Dakota administrative bound (declared detector extent)"
+
+[[extents]]
+code = "TN"
+scheme = "us.state_abbr"
+extent = [-90.4, 34.9, -81.5, 36.8]
+note = "Tennessee administrative bound (declared detector extent)"
+
+[[extents]]
+code = "TX"
+scheme = "us.state_abbr"
+extent = [-106.7, 25.7, -93.4, 36.6]
+note = "Texas administrative bound (declared detector extent)"
+
+[[extents]]
+code = "UT"
+scheme = "us.state_abbr"
+extent = [-114.2, 36.9, -108.9, 42.1]
+note = "Utah administrative bound (declared detector extent)"
+
+[[extents]]
+code = "VA"
+scheme = "us.state_abbr"
+extent = [-83.8, 36.4, -75.1, 39.6]
+note = "Virginia administrative bound (declared detector extent)"
+
+[[extents]]
+code = "WA"
+scheme = "us.state_abbr"
+extent = [-124.9, 45.4, -116.8, 49.1]
+note = "Washington administrative bound (declared detector extent)"
+
+# --- iso.3166_2 subdivisions -------------------------------------------------
+
+[[extents]]
+code = "AU-ACT"
+scheme = "iso.3166_2"
+extent = [148.6, -36.0, 149.6, -35.0]
+note = "Australian Capital Territory bound (declared detector extent)"
+
+[[extents]]
+code = "AU-QLD"
+scheme = "iso.3166_2"
+extent = [137.8, -29.3, 154.0, -9.0]
+note = "Queensland bound incl. the Torres Strait islands (declared detector extent)"
+
+[[extents]]
+code = "AU-TAS"
+scheme = "iso.3166_2"
+extent = [143.6, -43.8, 148.7, -39.3]
+note = "Tasmania bound incl. the Bass Strait islands (declared detector extent)"
+
+[[extents]]
+code = "AU-VIC"
+scheme = "iso.3166_2"
+extent = [140.8, -39.3, 150.1, -33.8]
+note = "Victoria bound (declared detector extent)"
+
+[[extents]]
+code = "AU-WA"
+scheme = "iso.3166_2"
+extent = [112.7, -35.3, 129.2, -13.5]
+note = "Western Australia bound (declared detector extent)"
+
+[[extents]]
+code = "CA-AB"
+scheme = "iso.3166_2"
+extent = [-120.1, 48.9, -109.9, 60.1]
+note = "Alberta bound (declared detector extent)"
+
+[[extents]]
+code = "CA-BC"
+scheme = "iso.3166_2"
+extent = [-139.2, 48.1, -113.9, 60.1]
+note = "British Columbia bound (declared detector extent)"
+
+[[extents]]
+code = "CA-MB"
+scheme = "iso.3166_2"
+extent = [-102.1, 48.8, -88.8, 60.1]
+note = "Manitoba bound (declared detector extent)"
+
+[[extents]]
+code = "CA-ON"
+scheme = "iso.3166_2"
+extent = [-95.3, 41.8, -74.2, 57.0]
+note = "Ontario bound (declared detector extent)"
+
+[[extents]]
+code = "CO-MET"
+scheme = "iso.3166_2"
+extent = [-74.9, 1.8, -66.7, 5.0]
+note = "Meta department bound (declared detector extent)"
+
+[[extents]]
+code = "GB-ENG"
+scheme = "iso.3166_2"
+extent = [-6.5, 49.7, 2.0, 55.9]
+note = "England bound incl. the Isle of Wight and Scilly approaches (declared detector extent)"
+
+[[extents]]
+code = "GB-NIR"
+scheme = "iso.3166_2"
+extent = [-8.3, 53.9, -5.3, 55.5]
+note = "Northern Ireland bound (declared detector extent)"
+
+[[extents]]
+code = "GB-SCT"
+scheme = "iso.3166_2"
+extent = [-8.8, 54.5, -0.5, 61.0]
+note = "Scotland bound incl. Orkney and Shetland (declared detector extent)"
+
+[[extents]]
+code = "IE-DL"
+scheme = "iso.3166_2"
+extent = [-9.0, 54.3, -6.7, 55.5]
+note = "Donegal bound (declared detector extent)"
+
+[[extents]]
+code = "US"
+scheme = "iso.3166_2"
+extent = [-180.0, 17.0, -63.0, 72.0]
+note = "United States national bound incl. Alaska, Hawaiʻi and the island territories (declared detector extent)"
+
+[[extents]]
+code = "US-AL"
+scheme = "iso.3166_2"
+extent = [-88.6, 30.1, -84.8, 35.1]
+note = "Alabama administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-CA"
+scheme = "iso.3166_2"
+extent = [-124.5, 32.4, -114.1, 42.1]
+note = "California administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-CO"
+scheme = "iso.3166_2"
+extent = [-109.1, 36.9, -102.0, 41.1]
+note = "Colorado administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-CT"
+scheme = "iso.3166_2"
+extent = [-73.9, 40.8, -71.6, 42.2]
+note = "Connecticut administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-DC"
+scheme = "iso.3166_2"
+extent = [-77.2, 38.7, -76.8, 39.1]
+note = "District of Columbia administrative bound, margined for the metro border (declared detector extent)"
+
+[[extents]]
+code = "US-DE"
+scheme = "iso.3166_2"
+extent = [-75.9, 38.3, -74.9, 40.0]
+note = "Delaware administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-FL"
+scheme = "iso.3166_2"
+extent = [-87.7, 24.4, -79.9, 31.1]
+note = "Florida administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-GA"
+scheme = "iso.3166_2"
+extent = [-85.7, 30.3, -80.7, 35.1]
+note = "Georgia administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-ID"
+scheme = "iso.3166_2"
+extent = [-117.4, 41.9, -110.9, 49.1]
+note = "Idaho administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-IL"
+scheme = "iso.3166_2"
+extent = [-91.6, 36.9, -87.4, 42.6]
+note = "Illinois administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-IN"
+scheme = "iso.3166_2"
+extent = [-88.2, 37.6, -84.7, 41.9]
+note = "Indiana administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-LA"
+scheme = "iso.3166_2"
+extent = [-94.1, 28.8, -88.7, 33.1]
+note = "Louisiana administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-MD"
+scheme = "iso.3166_2"
+extent = [-79.6, 37.8, -74.9, 39.8]
+note = "Maryland administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-MI"
+scheme = "iso.3166_2"
+extent = [-90.6, 41.5, -82.2, 48.4]
+note = "Michigan administrative bound incl. both peninsulas (declared detector extent)"
+
+[[extents]]
+code = "US-NC"
+scheme = "iso.3166_2"
+extent = [-84.4, 33.7, -75.3, 36.7]
+note = "North Carolina administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-NE"
+scheme = "iso.3166_2"
+extent = [-104.2, 39.9, -95.2, 43.1]
+note = "Nebraska administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-NM"
+scheme = "iso.3166_2"
+extent = [-109.2, 31.2, -102.9, 37.1]
+note = "New Mexico administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-NV"
+scheme = "iso.3166_2"
+extent = [-120.1, 34.9, -113.9, 42.1]
+note = "Nevada administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-NY"
+scheme = "iso.3166_2"
+extent = [-79.9, 40.4, -71.7, 45.1]
+note = "New York administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-OR"
+scheme = "iso.3166_2"
+extent = [-124.7, 41.9, -116.4, 46.4]
+note = "Oregon administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-TN"
+scheme = "iso.3166_2"
+extent = [-90.4, 34.9, -81.5, 36.8]
+note = "Tennessee administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-TX"
+scheme = "iso.3166_2"
+extent = [-106.7, 25.7, -93.4, 36.6]
+note = "Texas administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-VA"
+scheme = "iso.3166_2"
+extent = [-83.8, 36.4, -75.1, 39.6]
+note = "Virginia administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-VT"
+scheme = "iso.3166_2"
+extent = [-73.6, 42.6, -71.3, 45.2]
+note = "Vermont administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-WA"
+scheme = "iso.3166_2"
+extent = [-124.9, 45.4, -116.8, 49.1]
+note = "Washington administrative bound (declared detector extent)"
+
+[[extents]]
+code = "US-WV"
+scheme = "iso.3166_2"
+extent = [-82.8, 37.0, -77.5, 40.8]
+note = "West Virginia administrative bound (declared detector extent)"
+
+# --- iso.3166_1_alpha2 countries ---------------------------------------------
+
+[[extents]]
+code = "BD"
+scheme = "iso.3166_1_alpha2"
+extent = [87.9, 20.5, 92.8, 26.8]
+note = "Bangladesh national bound (declared detector extent)"
+
+[[extents]]
+code = "BE"
+scheme = "iso.3166_1_alpha2"
+extent = [2.4, 49.4, 6.5, 51.6]
+note = "Belgium national bound (declared detector extent)"
+
+[[extents]]
+code = "DE"
+scheme = "iso.3166_1_alpha2"
+extent = [5.7, 47.2, 15.2, 55.2]
+note = "Germany national bound (declared detector extent)"
+
+[[extents]]
+code = "GB"
+scheme = "iso.3166_1_alpha2"
+extent = [-8.8, 49.7, 2.0, 61.0]
+note = "United Kingdom national bound incl. Northern Ireland, Orkney and Shetland (declared detector extent)"
+
+[[extents]]
+code = "HK"
+scheme = "iso.3166_1_alpha2"
+extent = [113.7, 22.0, 114.6, 22.7]
+note = "Hong Kong SAR bound (declared detector extent)"
+
+[[extents]]
+code = "ID"
+scheme = "iso.3166_1_alpha2"
+extent = [94.9, -11.2, 141.1, 6.2]
+note = "Indonesia national bound (declared detector extent)"
+
+[[extents]]
+code = "JP"
+scheme = "iso.3166_1_alpha2"
+extent = [129.1, 30.9, 146.1, 45.8]
+note = "Japan national bound (declared detector extent)"
+
+[[extents]]
+code = "MN"
+scheme = "iso.3166_1_alpha2"
+extent = [87.5, 41.4, 120.1, 52.3]
+note = "Mongolia national bound (declared detector extent)"
+
+[[extents]]
+code = "MY"
+scheme = "iso.3166_1_alpha2"
+extent = [99.4, 0.7, 119.5, 7.6]
+note = "Malaysia national bound incl. Sarawak/Sabah (declared detector extent)"
+
+[[extents]]
+code = "NL"
+scheme = "iso.3166_1_alpha2"
+extent = [3.2, 50.6, 7.3, 53.7]
+note = "Netherlands national bound (European territory; declared detector extent)"
+
+[[extents]]
+code = "NZ"
+scheme = "iso.3166_1_alpha2"
+extent = [166.3, -47.5, 179.0, -34.2]
+note = "New Zealand national bound incl. Chatham approaches (declared detector extent)"
+
+[[extents]]
+code = "PS"
+scheme = "iso.3166_1_alpha2"
+extent = [34.0, 31.0, 35.8, 32.7]
+note = "Palestinian territories bound (declared detector extent)"
+
+[[extents]]
+code = "PT"
+scheme = "iso.3166_1_alpha2"
+extent = [-31.4, 29.7, -6.1, 42.3]
+note = "Portugal national bound incl. the Azores and Madeira (declared detector extent)"
+
+[[extents]]
+code = "SA"
+scheme = "iso.3166_1_alpha2"
+extent = [34.3, 16.2, 55.9, 32.3]
+note = "Saudi Arabia national bound (declared detector extent)"
+
+[[extents]]
+code = "TH"
+scheme = "iso.3166_1_alpha2"
+extent = [97.1, 5.4, 105.9, 20.6]
+note = "Thailand national bound (declared detector extent)"
+
+[[extents]]
+code = "US"
+scheme = "iso.3166_1_alpha2"
+extent = [-180.0, 17.0, -63.0, 72.0]
+note = "United States national bound incl. Alaska, Hawaiʻi and the island territories (declared detector extent)"

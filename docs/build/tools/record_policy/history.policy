@@ -78,6 +78,9 @@ allow db/sqitch.plan 2026-10-12T00:00:00Z closed_vocabulary [claim_assertion_bin
 # P35.14b (ticket 273): entity_typing_mobility_check's planned_at is its real `date -u` stamp — future
 # of the pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
 allow db/sqitch.plan 2026-10-12T12:00:00Z entity_typing_mobility_check [closed_vocabulary domain_entities entity_identity_key] 2026-10-11T08:12:38Z
+# P35.16 (ticket 296): vocab_geometry_defect's planned_at is its real `date -u` stamp — future of the
+# pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-19T00:00:00Z vocab_geometry_defect [vocab_enforcement_count] 2026-10-17T04:36:24Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).

@@ -29,6 +29,7 @@
 
 [[targets]]
 id = "austin_tx_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_austin_tx"
 kind = "socrata_rows"
@@ -44,6 +45,7 @@ notes = "Socrata 'Traffic Cameras' dataset b4k4-adkb; Public Domain licence on d
 
 [[targets]]
 id = "nola_la_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_nola_la"
 kind = "socrata_rows"
@@ -59,6 +61,7 @@ notes = "Socrata 'Traffic Camera' dataset te2d-4txp; CC0-1.0 licence on dataset 
 
 [[targets]]
 id = "brla_la_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_batonrouge_la"
 kind = "socrata_rows"
@@ -74,6 +77,7 @@ notes = "Socrata 'Traffic Camera' dataset 6z6u-ts44; Public Domain licence on da
 
 [[targets]]
 id = "winnipeg_mb_signal_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_winnipeg_mb"
 kind = "socrata_rows"
@@ -89,6 +93,7 @@ notes = "Socrata 'Traffic Signal Inventory - Cameras Detail' dataset 42pk-2u2c; 
 
 [[targets]]
 id = "act_au_speed_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_act_au"
 kind = "socrata_rows"
@@ -104,6 +109,7 @@ notes = "Socrata 'Traffic speed camera locations' dataset 426s-vdu4; CC-BY-4.0 o
 
 [[targets]]
 id = "act_au_mobile_cameras"
+axis_order = "lon-lat"
 technology = "camera-trailer-unspecified"
 source_id = "camreg_act_au"
 kind = "socrata_rows"
@@ -119,6 +125,7 @@ notes = "Socrata 'Mobile Distraction camera locations' dataset 5ezj-yjxz; CC-BY-
 
 [[targets]]
 id = "siouxfalls_sd_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_siouxfalls_sd"
 kind = "arcgis_query"
@@ -135,6 +142,7 @@ notes = "Item 71ee3a06d0aa476d8c8545761dde916e (owner cityofsiouxfallsgis) decla
 
 [[targets]]
 id = "baltimore_md_citiwatch_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_baltimore_md"
 kind = "arcgis_query"
@@ -151,6 +159,7 @@ notes = "Item b676679350764f56a990c25a8ce2bda0 declares 'This work is licensed u
 
 [[targets]]
 id = "ottawa_on_redlight_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_ottawa_on"
 kind = "arcgis_query"
@@ -167,6 +176,7 @@ notes = "ArcGIS item adf1e7bd0338404196dc0d552aa6c79b (owner City of Ottawa) lic
 
 [[targets]]
 id = "ottawa_on_ase_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_ottawa_on"
 kind = "arcgis_query"
@@ -183,6 +193,7 @@ notes = "ArcGIS item d709c922c64b4c389afac3fb21d481fb 'Automated Speed Enforceme
 
 [[targets]]
 id = "sheffield_gb_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_sheffield_gb"
 kind = "arcgis_query"
@@ -209,6 +220,7 @@ notes = "ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras'
 
 [[targets]]
 id = "dc_cctv_street_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_washington_dc"
 kind = "arcgis_query"
@@ -226,6 +238,8 @@ notes = "ArcGIS Hub item 2bb8375e31a94067a17911ea70f917ef 'Closed Circuit TV Str
 
 [[targets]]
 id = "nottingham_gb_cctv_cameras"
+axis_order = "lat-lon"
+extent = [-1.40, 52.80, -0.90, 53.10]  # P35.16: SIG-declared Nottingham-city detector bound (F-322 axis-swap evidence)
 technology = "fixed-camera-cctv"
 source_id = "camreg_nottingham_gb"
 kind = "arcgis_query"
@@ -243,6 +257,7 @@ notes = "ArcGIS Hub item df2bf0314b184b449ff595df02e320cf 'CCTV Cameras' (owner 
 
 [[targets]]
 id = "york_gb_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_york_gb"
 kind = "arcgis_query"
@@ -260,6 +275,7 @@ notes = "ArcGIS Hub item 25888f6f64e64cc6a938115a8f12f333 'CCTV' (owner gis_CYC)
 
 [[targets]]
 id = "glasgow_gb_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_glasgow_gb"
 kind = "arcgis_query"
@@ -277,6 +293,7 @@ notes = "ArcGIS Hub item 669df23dcc5d48bb98ad1b5d180927c6 'CCTV' (owner GlasgowG
 
 [[targets]]
 id = "north_ayrshire_gb_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_northayrshire_gb"
 kind = "arcgis_query"
@@ -294,6 +311,7 @@ notes = "ArcGIS Hub item 082112796ccd448bb1abba9e9603e9f0 'CCTV Locations' (owne
 
 [[targets]]
 id = "lambeth_gb_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_lambeth_gb"
 kind = "arcgis_query"
@@ -311,6 +329,7 @@ notes = "ArcGIS Hub item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras'
 
 [[targets]]
 id = "peel_on_redlight_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_peel_on"
 kind = "arcgis_query"
@@ -328,6 +347,7 @@ notes = "ArcGIS Hub item 36dbfcb33aa2453c8de55e0a34ccfc6a 'Red Light Cameras' (o
 
 [[targets]]
 id = "rochester_ny_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_rochester_ny"
 kind = "arcgis_query"
@@ -345,6 +365,7 @@ notes = "ArcGIS Hub item 4df36db389e240efa672346101ede541 'Rochester Cameras' (o
 
 [[targets]]
 id = "goldcoast_au_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_goldcoast_au"
 kind = "arcgis_query"
@@ -362,6 +383,7 @@ notes = "ArcGIS Hub item c0e1f02aebe349f0bbe21aadf287a631 'Camera_Open' (owner C
 
 [[targets]]
 id = "puertogaitan_co_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_puertogaitan_co"
 kind = "socrata_rows"
@@ -385,6 +407,7 @@ notes = "Socrata dataset fvdt-ftkz 'MAPA DE CAMARAS (CCTV) DEL MUNICIPIO' on Col
 
 [[targets]]
 id = "stalbert_ab_photo_enforcement"
+axis_order = "lon-lat"
 technology = "camera-trailer-unspecified"
 source_id = "camreg_stalbert_ab"
 kind = "arcgis_query"
@@ -402,6 +425,7 @@ notes = "ArcGIS Hub item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mob
 
 [[targets]]
 id = "chicago_il_speed_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_chicago_il"
 kind = "socrata_rows"
@@ -418,6 +442,7 @@ notes = "Socrata 'Speed Camera Locations' dataset 4i42-qv3h; dataset licence is 
 
 [[targets]]
 id = "chicago_il_redlight_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_chicago_il"
 kind = "socrata_rows"
@@ -442,6 +467,7 @@ notes = "Socrata 'Red Light Camera Locations' dataset thvf-6diy; same gated Chic
 
 [[targets]]
 id = "chicago_speed_violations_monthly"
+axis_order = "lon-lat"
 source_id = "camreg_chicago_il"
 kind = "socrata_aggregate"
 platform = "socrata"
@@ -478,6 +504,7 @@ technology = "ate-speed"
 
 [[targets]]
 id = "chicago_redlight_violations_monthly"
+axis_order = "lon-lat"
 source_id = "camreg_chicago_il"
 kind = "socrata_aggregate"
 platform = "socrata"
@@ -507,6 +534,7 @@ technology = "ate-red-light"
 
 [[targets]]
 id = "calgary_ab_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_calgary_ab"
 kind = "socrata_rows"
@@ -523,6 +551,7 @@ notes = "Socrata 'Traffic Cameras' dataset k7p9-kppz; dataset carries a Terms-of
 
 [[targets]]
 id = "calgary_ab_intersection_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_calgary_ab"
 kind = "socrata_rows"
@@ -539,6 +568,7 @@ notes = "Socrata 'Intersection Safety Cameras' dataset dv2f-necx; same gated ter
 
 [[targets]]
 id = "edmonton_ab_isd_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_edmonton_ab"
 kind = "socrata_rows"
@@ -554,6 +584,7 @@ notes = "Socrata 'Intersection Safety Device Locations' dataset 7fnd-72gr; NO li
 
 [[targets]]
 id = "honolulu_hi_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_honolulu_hi"
 kind = "socrata_rows"
@@ -570,6 +601,7 @@ notes = "Socrata 'Traffic Camera Locations' dataset cat5-2v98; NO licence metada
 
 [[targets]]
 id = "md_opendata_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_md_opendata"
 kind = "socrata_rows"
@@ -586,6 +618,7 @@ notes = "Socrata 'Traffic Cameras' dataset hua3-qc8n (statewide open-data mirror
 
 [[targets]]
 id = "york_on_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_york_on"
 kind = "arcgis_query"
@@ -603,6 +636,7 @@ notes = "Item a30c307c24524130845a7c6095e58997 names the 'York Region Open Data 
 
 [[targets]]
 id = "york_on_redlight_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_york_on"
 kind = "arcgis_query"
@@ -620,6 +654,7 @@ notes = "Item a94a1fdce44f4bc391ec4dfb693e1a95 'Red Light Camera'; same named-bu
 
 [[targets]]
 id = "arlington_va_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_arlington_va"
 kind = "arcgis_query"
@@ -637,6 +672,7 @@ notes = "Item 10415997f18b4aa09a9b5076a801f93d names the 'Arlington County data 
 
 [[targets]]
 id = "arlington_va_photo_red"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_arlington_va"
 kind = "arcgis_query"
@@ -654,6 +690,7 @@ notes = "DES photo-red enforcement layer; same gated Arlington disclaimer basis.
 
 [[targets]]
 id = "arlington_va_photo_speed"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_arlington_va"
 kind = "arcgis_query"
@@ -671,6 +708,7 @@ notes = "DES photo-speed enforcement layer; same gated Arlington disclaimer basi
 
 [[targets]]
 id = "seattle_wa_cdl_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_seattle_wa"
 kind = "arcgis_query"
@@ -688,6 +726,7 @@ notes = "SDOT-hosted 'Traffic Cameras CDL' layer; item licenseInfo carries ONLY 
 
 [[targets]]
 id = "seattle_wa_atsc_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_seattle_wa"
 kind = "arcgis_query"
@@ -705,6 +744,7 @@ notes = "SDOT 'Automatic Traffic Safety Cameras (ATSC) view' layer; Cam_Lat/Cam_
 
 [[targets]]
 id = "bellevue_wa_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_bellevue_wa"
 kind = "arcgis_query"
@@ -721,6 +761,7 @@ notes = "Item d47e172d8d184a208121c69ac7f6d088 licenseInfo carries a no-warranty
 
 [[targets]]
 id = "lexington_ky_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_lexington_ky"
 kind = "arcgis_query"
@@ -738,6 +779,7 @@ notes = "Item d220ce31999448659626afe990ca1328 embeds the full LFUCG Terms of Us
 
 [[targets]]
 id = "nzta_nz_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_nzta_nz"
 kind = "arcgis_query"
@@ -755,6 +797,7 @@ notes = "Item 893d8a697d7f418f87392fb1222f5b95 licenseInfo: 'For access to the T
 
 [[targets]]
 id = "qldc_au_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_qldc_au"
 kind = "arcgis_query"
@@ -771,6 +814,7 @@ notes = "Item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)'; l
 
 [[targets]]
 id = "donegal_ie_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_donegal_ie"
 kind = "arcgis_query"
@@ -788,6 +832,7 @@ notes = "Item 15e57299bcd740c0b107be610d99a9ab 'Traffic Cameras' (layer 'Weather
 
 [[targets]]
 id = "hk_hk_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_hk_hk"
 kind = "arcgis_query"
@@ -808,6 +853,7 @@ notes = "Item 0b05a33ce41d4cb7b75436dabe592c5e 'CCTV Camera Locations in Hong Ko
 
 [[targets]]
 id = "pgcounty_md_redlight_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_pgcounty_md"
 kind = "socrata_rows"
@@ -824,6 +870,7 @@ notes = "Socrata item 3a3p-zwvz 'Red Light Cameras' (owner data.princegeorgescou
 
 [[targets]]
 id = "pgcounty_md_speed_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_pgcounty_md"
 kind = "socrata_rows"
@@ -840,6 +887,7 @@ notes = "Socrata item mnkf-cu5c 'Speed Cameras' (owner data.princegeorgescountym
 
 [[targets]]
 id = "md_opendata_traffic_cameras_4z3c"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_md_opendata"
 kind = "socrata_rows"
@@ -856,6 +904,7 @@ notes = "Socrata item 4z3c-43ce 'Traffic Cameras' (owner opendata.maryland.gov, 
 
 [[targets]]
 id = "leon_fl_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_leon_fl"
 kind = "arcgis_query"
@@ -873,6 +922,7 @@ notes = "Arcgis item 1562517848d94a4ba6f10bf3e2a64665 'Traffic Camera Locations'
 
 [[targets]]
 id = "gedling_gb_cctv_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_gedling_gb"
 kind = "arcgis_query"
@@ -890,6 +940,7 @@ notes = "Arcgis item 9fa192edd1bb4040a842f4ac908c3f00 'CCTV_Locations' (owner [a
 
 [[targets]]
 id = "achd_id_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_achd_id"
 kind = "arcgis_query"
@@ -907,6 +958,7 @@ notes = "Arcgis item 7b3c9de533e544a397882b3ac62dcb9f 'Traffic Cameras' (owner A
 
 [[targets]]
 id = "carver_mn_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_carver_mn"
 kind = "arcgis_query"
@@ -924,6 +976,7 @@ notes = "Arcgis item 9667d52f9c014ba29e576a519af6b409 'Transportation | Traffic 
 
 [[targets]]
 id = "massdot_ma_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_massdot_ma"
 kind = "arcgis_query"
@@ -941,6 +994,7 @@ notes = "Arcgis item 4ffcd943366f46649cbd58e476afb3d3 'CCTV' (owner massDOT_GIS,
 
 [[targets]]
 id = "lojic_ky_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_lojic_ky"
 kind = "arcgis_query"
@@ -958,6 +1012,7 @@ notes = "Arcgis item c2201ec5ea4a4b9c8ae02f6b681f91e5 'Jefferson County KY Traff
 
 [[targets]]
 id = "bedford_gb_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_bedford_gb"
 kind = "arcgis_query"
@@ -975,6 +1030,7 @@ notes = "Arcgis item b55c7017a4ae4a3e96d204f90f93fce2 'External: CCTV' (owner [a
 
 [[targets]]
 id = "ebrgis_la_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_ebrgis_la"
 kind = "arcgis_query"
@@ -994,6 +1050,7 @@ notes = "Arcgis item c686a8a6b41342b7bc4011d16e75f61c 'Traffic Camera' (owner EB
 
 [[targets]]
 id = "ky_kytc_ext_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ky"
 kind = "arcgis_query"
@@ -1011,6 +1068,7 @@ notes = "Arcgis item f222cfc603e7484295b8daa67b77a850 'Traffic Cameras' (owner k
 
 [[targets]]
 id = "trpa_us_smart_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_trpa_us"
 kind = "arcgis_query"
@@ -1028,6 +1086,7 @@ notes = "Arcgis item 4a1feaa5dd214d0287aee6467c2da3c7 'SMART Traffic Camera Loca
 
 [[targets]]
 id = "osm_surveillance_thailand"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_osm_surveillance"
 kind = "arcgis_query"
@@ -1045,6 +1104,7 @@ notes = "Arcgis item 27f49b788f074fc5a34086c7d7191959 'CCTV' (owner nattaphol.nx
 
 [[targets]]
 id = "riyadh_sa_camera_control"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_riyadh_sa"
 kind = "arcgis_query"
@@ -1062,6 +1122,7 @@ notes = "Arcgis item 6f7185fd39d34ccb95a9545f778ed43c 'CAMERA CONTROL' (owner re
 
 [[targets]]
 id = "thailand_th_traffic_enforcement"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_thailand_th"
 kind = "arcgis_query"
@@ -1079,6 +1140,7 @@ notes = "Arcgis item 825d7725a7a040f6ae6e15978bdf4bb9 '14_TRAFFIC_ENFORCEMENT_CA
 
 [[targets]]
 id = "mbrc_au_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_mbrc_au"
 kind = "arcgis_query"
@@ -1096,6 +1158,7 @@ notes = "Arcgis item d7cbf7e7cf724a9581b15058ee6f1453 'MBRC CCTV Cameras' (owner
 
 [[targets]]
 id = "thailand_th_sikhio_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_thailand_th"
 kind = "arcgis_query"
@@ -1113,6 +1176,7 @@ notes = "Arcgis item e0c87d29871a47588b37428608bcee6b 'SIKHIO_CCTV' (owner sikhi
 
 [[targets]]
 id = "essex_gb_safety_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_essex_gb"
 kind = "arcgis_query"
@@ -1130,6 +1194,7 @@ notes = "Arcgis item d23db5da905b43798391379c0bd2f4a2 'Essex Safety Cameras Publ
 
 [[targets]]
 id = "plymouth_gb_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_plymouth_gb"
 kind = "arcgis_query"
@@ -1147,6 +1212,7 @@ notes = "Arcgis item d55477395f4c41ad8288d45df8c3f00e 'Traffic Cameras' (owner P
 
 [[targets]]
 id = "camreg_und_024_cctv_replacement"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_024"
 kind = "arcgis_query"
@@ -1164,6 +1230,7 @@ notes = "Arcgis item de3248c897b645c6a825c6c56b42b6c5 'Replacement CCTV System C
 
 [[targets]]
 id = "apram_pt_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_apram_pt"
 kind = "arcgis_query"
@@ -1181,6 +1248,7 @@ notes = "Arcgis item e4ebd2812c4b472c8f4ef60eef4f84b9 'CCTV_v17Jul' (owner [acco
 
 [[targets]]
 id = "dover_gb_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_dover_gb"
 kind = "arcgis_query"
@@ -1198,6 +1266,7 @@ notes = "Arcgis item eb7a4722e25f4fefaf49e0e2e42a40c8 'CCTV_view' (owner [accoun
 
 [[targets]]
 id = "yorku_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_yorku"
 kind = "arcgis_query"
@@ -1215,6 +1284,7 @@ notes = "Arcgis item 10e0013f57d045cebc794610150a6dc4 'Camera' (owner amirnbr_yo
 
 [[targets]]
 id = "uchicago_security_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_uchicago"
 kind = "arcgis_query"
@@ -1232,6 +1302,7 @@ notes = "Arcgis item 2938f76af301480f8f153958a2aadf2f 'Security_Camera' (owner l
 
 [[targets]]
 id = "fl511_fl_akeddell_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_fl511_fl"
 kind = "arcgis_query"
@@ -1249,6 +1320,7 @@ notes = "Arcgis item 307dfd0020554c28959706d40ea0ba90 'Florida Traffic Cameras' 
 
 [[targets]]
 id = "manhattan_ks_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_manhattan_ks"
 kind = "arcgis_query"
@@ -1266,6 +1338,7 @@ notes = "Arcgis item 409faf7a03d840aab1d13412ad42925b 'Traffic Cameras Public Vi
 
 [[targets]]
 id = "nitro_camera_feeds"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_nitro"
 kind = "arcgis_query"
@@ -1283,6 +1356,7 @@ notes = "Arcgis item 45f4d8efb35c442f9fdaa50273b177bf 'Camera_Feeds' (owner patr
 
 [[targets]]
 id = "thailand_th_highway_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_thailand_th"
 kind = "arcgis_query"
@@ -1300,6 +1374,7 @@ notes = "Arcgis item 55f462a67d464524afd16ff5e60db0f4 'highway_CCTV' (owner yani
 
 [[targets]]
 id = "esri_dash_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_esri_dash"
 kind = "arcgis_query"
@@ -1317,6 +1392,7 @@ notes = "Arcgis item 57d50a7d46b148f88bb721d8e06a3211 'Traffic Cameras' (owner e
 
 [[targets]]
 id = "caloes_ca_webcams"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_caloes_ca"
 kind = "arcgis_query"
@@ -1334,6 +1410,7 @@ notes = "Arcgis item 5b4040338d704693994d5682ab2747c5 'CalOES California Webcams
 
 [[targets]]
 id = "osm_surveillance_ucp_osm"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_osm_surveillance"
 kind = "arcgis_query"
@@ -1351,6 +1428,7 @@ notes = "Arcgis item 618fac79c077407890d52d2bf10ec538 'cameras_surveillance_osm'
 
 [[targets]]
 id = "osm_surveillance_ucp_amini"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_osm_surveillance"
 kind = "arcgis_query"
@@ -1368,6 +1446,7 @@ notes = "Arcgis item 62b42119ac304517b1583ee29c77f03e 'camera_surveillance' (own
 
 [[targets]]
 id = "penndot_pa_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_penndot_pa"
 kind = "arcgis_query"
@@ -1385,6 +1464,7 @@ notes = "Arcgis item 68589ded0afc49d494e7a209b50c0483 'PennDOT CCTV' (owner josc
 
 [[targets]]
 id = "camreg_und_021_cctv_s"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_021"
 kind = "arcgis_query"
@@ -1402,6 +1482,7 @@ notes = "Arcgis item 776c96fa7597423da691513f9fa05a66 'CCTV_S' (owner [account w
 
 [[targets]]
 id = "camreg_und_005_surveillance_sites"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_005"
 kind = "arcgis_query"
@@ -1419,6 +1500,7 @@ notes = "Arcgis item 81d052e49e5c4ac8972506a6740adb03 'Surveillance Sites' (owne
 
 [[targets]]
 id = "salisbury_nc_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_salisbury_nc"
 kind = "arcgis_query"
@@ -1436,6 +1518,7 @@ notes = "Arcgis item 9487d6220db7407fa37272a4e178298a 'Traffic Cameras' (owner l
 
 [[targets]]
 id = "osm_surveillance_cctv_london"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_osm_surveillance"
 kind = "arcgis_query"
@@ -1453,6 +1536,7 @@ notes = "Arcgis item 992729c4ef72407584a2cbb52bbf1dcf 'cctv_london' (owner [acco
 
 [[targets]]
 id = "ut_udot_cctv_layer"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ut"
 kind = "arcgis_query"
@@ -1470,6 +1554,7 @@ notes = "Arcgis item 9cdb054f4f334d9485991625973f437a 'CCTV' (owner [account wit
 
 [[targets]]
 id = "raleigh_nc_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_raleigh_nc"
 kind = "arcgis_query"
@@ -1487,6 +1572,7 @@ notes = "Arcgis item 9f4a2984d9044a8099411ebfd18cba81 'Camera' (owner [account w
 
 [[targets]]
 id = "jmh_us_mpd_flock"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_jmh_us"
 kind = "arcgis_query"
@@ -1504,6 +1590,7 @@ notes = "Arcgis item a1373bba67a444878af07c52c65a5e91 'MPD Flock Camera Location
 
 [[targets]]
 id = "stanford_us_alpr_checkpoints"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_stanford_us"
 kind = "arcgis_query"
@@ -1521,6 +1608,7 @@ notes = "Arcgis item a1b558f7ea3f4a459d24ee92654f5e6e 'ALPR_Checkpoints' (owner 
 
 [[targets]]
 id = "nzta_nz_cameras_layer"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_nzta_nz"
 kind = "arcgis_query"
@@ -1538,6 +1626,7 @@ notes = "Arcgis item a817a48983f144e0943cf1d3fee15c08 'NZTA Traffic Camera Featu
 
 [[targets]]
 id = "nola_safety_la_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_nola_safety_la"
 kind = "arcgis_query"
@@ -1555,6 +1644,7 @@ notes = "Arcgis item a86fc3d9aa4b4f579f826055af93d1dc 'Traffic Safety Cameras fo
 
 [[targets]]
 id = "mueller_de_camera_positionen"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_mueller_de"
 kind = "arcgis_query"
@@ -1572,6 +1662,7 @@ notes = "Arcgis item ada7ca58962b4ab48ccd6853a893fc31 'camera_positionen' (owner
 
 [[targets]]
 id = "oem_camera_gauge_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_oem_camera"
 kind = "arcgis_query"
@@ -1589,6 +1680,7 @@ notes = "Arcgis item bc2f36369f9e4137872afefcdc62735d 'Camera' (owner matthew.mc
 
 [[targets]]
 id = "nzta_nz_eaglegis_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_nzta_nz"
 kind = "arcgis_query"
@@ -1606,6 +1698,7 @@ notes = "Arcgis item bfd6920167a6491786a6a8729fa53e42 \"NZTA Traffic Camera's\" 
 
 [[targets]]
 id = "dc_dot_firefly_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_dc_dot_dc"
 kind = "arcgis_query"
@@ -1623,6 +1716,7 @@ notes = "Arcgis item cbe1f0e312994a21ae16ad8f841caf8d 'DDOT Traffic Cameras (Fir
 
 [[targets]]
 id = "trafficops_ca_d5_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_trafficops_ca"
 kind = "arcgis_query"
@@ -1640,6 +1734,7 @@ notes = "Arcgis item cbe977542c984003bbc99856219de1e5 'D5_CCTVLocations' (owner 
 
 [[targets]]
 id = "monmap_mn_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_monmap_mn"
 kind = "arcgis_query"
@@ -1657,6 +1752,7 @@ notes = "Arcgis item df45f0840d8640efbdfed569f0033e8c 'camera' (owner Tumenjarga
 
 [[targets]]
 id = "stanford_us_surveillance_towers"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_stanford_us"
 kind = "arcgis_query"
@@ -1674,6 +1770,7 @@ notes = "Arcgis item e3b39af538fd42ac88fd756cccbad853 'Surveillance_Towers' (own
 
 [[targets]]
 id = "osm_surveillance_alpr_nationwide"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_osm_surveillance"
 kind = "arcgis_query"
@@ -1691,6 +1788,7 @@ notes = "Arcgis item e7cc29c2f5dc495ab6e1f0daebef0ce4 'alpr_locations_nationwide
 
 [[targets]]
 id = "lawrence_ks_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_lawrence_ks"
 kind = "arcgis_query"
@@ -1708,6 +1806,7 @@ notes = "Arcgis item e8c0a78e50084eb782607ce02c38501e 'Traffic Cameras' (owner g
 
 [[targets]]
 id = "fl511_fl_rydl_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_fl511_fl"
 kind = "arcgis_query"
@@ -1725,6 +1824,7 @@ notes = "Arcgis item ef4667361e43428a808d4e12e55f7408 'FL511 Traffic Cameras' (o
 
 [[targets]]
 id = "camreg_und_006_flock_alprs"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_und_006"
 kind = "arcgis_query"
@@ -1742,6 +1842,7 @@ notes = "Arcgis item 1396d889c2734c57a93184470a11c7f4 'UA Flock ALPRs _ 7 Sep 20
 
 [[targets]]
 id = "nzta_nz_harleyp_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_nzta_nz"
 kind = "arcgis_query"
@@ -1759,6 +1860,7 @@ notes = "Arcgis item 1aabbfa5e68146248db058e2752641f8 'NZTA_TrafficCameraLocatio
 
 [[targets]]
 id = "dc_dot_adminmodelle_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_dc_dot_dc"
 kind = "arcgis_query"
@@ -1776,6 +1878,7 @@ notes = "Arcgis item 2244c0706b4a4ea68c02cd1711d2ddf3 'DC Traffic Cameras' (owne
 
 [[targets]]
 id = "camreg_und_017_safety_alpr_view"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_und_017"
 kind = "arcgis_query"
@@ -1793,6 +1896,7 @@ notes = "Arcgis item 22be1b5f269b441ba5f4963c4f4ac665 'PublicSafetyCamerasALPR_v
 
 [[targets]]
 id = "camreg_und_013_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_und_013"
 kind = "arcgis_query"
@@ -1810,6 +1914,7 @@ notes = "Arcgis item 234686a8453d406bab8f1a2ab5870ce5 'Traffic_Cameras' (owner [
 
 [[targets]]
 id = "uofmd_md_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_uofmd_md"
 kind = "arcgis_query"
@@ -1827,6 +1932,7 @@ notes = "Arcgis item 350fa8a11b8b4ba8adcf8b2b3f88ea62 'CCTV' (owner dwchen98_Uof
 
 [[targets]]
 id = "umbc_md_camera_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_umbc_md"
 kind = "arcgis_query"
@@ -1844,6 +1950,7 @@ notes = "Arcgis item 3c232823551e496a95d70a9a6f9cb87f 'Camera Locations' (owner 
 
 [[targets]]
 id = "camreg_und_023_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_023"
 kind = "arcgis_query"
@@ -1861,6 +1968,7 @@ notes = "Arcgis item 460290f9870d4d8692048a87221f2080 'Cameras' (owner [account 
 
 [[targets]]
 id = "kcmo_mo_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_kcmo_mo"
 kind = "arcgis_query"
@@ -1878,6 +1986,7 @@ notes = "Arcgis item 498f44acc19145b98f5f180d0451774c 'Kansas City Traffic Camer
 
 [[targets]]
 id = "camreg_und_028_cctv_phase1"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_028"
 kind = "arcgis_query"
@@ -1895,6 +2004,7 @@ notes = "Arcgis item 4d528bdf8dab4956885c527b41732ae4 'CCTV Phase 1' (owner [acc
 
 [[targets]]
 id = "guildford_gb_cctv2015"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_guildford_gb"
 kind = "arcgis_query"
@@ -1912,6 +2022,7 @@ notes = "Arcgis item 4e1c6cf7573948ef885ecd262d5d262b 'CCTV2015' (owner rgsguild
 
 [[targets]]
 id = "camreg_und_001_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_und_001"
 kind = "arcgis_query"
@@ -1929,6 +2040,7 @@ notes = "Arcgis item 509475945f494a37bcbeefee139a6ecc 'Traffic Cameras' (owner [
 
 [[targets]]
 id = "denver_co_alpr_cameras"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_denver_co"
 kind = "arcgis_query"
@@ -1946,6 +2058,7 @@ notes = "Arcgis item 541a1e1581e34e15ab63d057a869977b 'Denver Automated License 
 
 [[targets]]
 id = "wellington_nz_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_wellington_nz"
 kind = "arcgis_query"
@@ -1963,6 +2076,7 @@ notes = "Arcgis item 90e7ab7aed3c4cf6a61ed75cd4e5e286 'CCTV Wellington City Came
 
 [[targets]]
 id = "squan_stephen_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_squan"
 kind = "arcgis_query"
@@ -1980,6 +2094,7 @@ notes = "Arcgis item 959ee82bc06f4f79a387866e14762348 'Stephen Camera' (owner sq
 
 [[targets]]
 id = "ga_gdot_live_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ga"
 kind = "arcgis_query"
@@ -1997,6 +2112,7 @@ notes = "Arcgis item 98f20bb967e44216ba521a707236763e 'GDOT Live Traffic Cameras
 
 [[targets]]
 id = "camreg_und_015_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_015"
 kind = "arcgis_query"
@@ -2014,6 +2130,7 @@ notes = "Arcgis item 98fa8eeae92946dbadb62b821e756522 'Camera' (owner [account w
 
 [[targets]]
 id = "trafficops_ca_hs_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_trafficops_ca"
 kind = "arcgis_query"
@@ -2031,6 +2148,7 @@ notes = "Arcgis item a606368f7caa4ae2bc5de4599c27d416 '_HS_CCTV_' (owner Traffic
 
 [[targets]]
 id = "arc1975641302_cctv_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_arc_1975641302"
 kind = "arcgis_query"
@@ -2048,6 +2166,7 @@ notes = "Arcgis item a8471041aee14916bbe50401da5a9d40 'CCTV_LOCATIONS_20240820_1
 
 [[targets]]
 id = "ucsd_traffic_camera_wfl"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_ucsd"
 kind = "arcgis_query"
@@ -2065,6 +2184,7 @@ notes = "Arcgis item b01d7c8ddd614d9785435b458037bfc0 'Traffic_camera_web_WFL1' 
 
 [[targets]]
 id = "mctx_tx_live_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_mctx_tx"
 kind = "arcgis_query"
@@ -2082,6 +2202,7 @@ notes = "Arcgis item bb2aa42539864062b55011c67510cfe2 'MCTX Live Cameras' (owner
 
 [[targets]]
 id = "colgis_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_colgis"
 kind = "arcgis_query"
@@ -2099,6 +2220,7 @@ notes = "Arcgis item bbf9cb2ff4fb4cf6a2cdabdbe6e810e6 'Traffic Cameras view' (ow
 
 [[targets]]
 id = "dc_dot_dfiorent_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_dc_dot_dc"
 kind = "arcgis_query"
@@ -2116,6 +2238,7 @@ notes = "Arcgis item be2ba9cae16c4a01b6dfb0ebcfcd4199 'Traffic Camera Locations 
 
 [[targets]]
 id = "townofws_ase_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_townofws"
 kind = "arcgis_query"
@@ -2133,6 +2256,7 @@ notes = "Arcgis item c41e80757b5c49cbbf805492cd282166 'ASE Camera Locations' (ow
 
 [[targets]]
 id = "azdot_az_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_azdot_az"
 kind = "arcgis_query"
@@ -2150,6 +2274,7 @@ notes = "Arcgis item ec493f52acd64bc1b9e75b2dbc5fb696 'Existing CCTV' (owner [ac
 
 [[targets]]
 id = "ucsd_traffic_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_ucsd"
 kind = "arcgis_query"
@@ -2167,6 +2292,7 @@ notes = "Arcgis item f2f32627862a4238b680464819db587b 'Traffic_camera' (owner xi
 
 [[targets]]
 id = "camreg_und_022_bpd_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_022"
 kind = "arcgis_query"
@@ -2184,6 +2310,7 @@ notes = "Arcgis item fbb79a6d3cf94464a6b657a59e8cedf1 'BPD Surveillance Cameras'
 
 [[targets]]
 id = "indonesia_id_cctv_fix"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2201,6 +2328,7 @@ notes = "Arcgis item 0977f811c1ab494b9a1c31614fda7863 'cctv fix' (owner esri_id,
 
 [[targets]]
 id = "camreg_und_010_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_010"
 kind = "arcgis_query"
@@ -2218,6 +2346,7 @@ notes = "Arcgis item 0fa13d7ceac549e5869f30800d2b2a2c 'camera' (owner [account w
 
 [[targets]]
 id = "indonesia_id_tmc_bekasi"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2235,6 +2364,7 @@ notes = "Arcgis item 17ac8ac9282b477d8756970f920052b3 'CCTV TMC Bekasi' (owner e
 
 [[targets]]
 id = "yline_cctv_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_yline"
 kind = "arcgis_query"
@@ -2252,6 +2382,7 @@ notes = "Arcgis item 1aa6eddd4bab4e35b2f8b3f66d9f1977 'CCTV_CAMERA' (owner yline
 
 [[targets]]
 id = "lpd_flock_cameras"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_lpd_flock"
 kind = "arcgis_query"
@@ -2269,6 +2400,7 @@ notes = "Arcgis item 5d2bd8ccc5f74ea7b7574f126cacd1cc 'Active Flock Cameras' (ow
 
 [[targets]]
 id = "camreg_und_029_camera_3"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_029"
 kind = "arcgis_query"
@@ -2286,6 +2418,7 @@ notes = "Arcgis item 718e480ad69e466fbebf3b11c0684f9e 'CAMERA_3' (owner [account
 
 [[targets]]
 id = "kirkland_wa_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_kirkland_wa"
 kind = "arcgis_query"
@@ -2303,6 +2436,7 @@ notes = "Arcgis item 7fc8ba9051684d0aabc228038758c10b 'Traffic Cameras - Symbolo
 
 [[targets]]
 id = "camreg_und_020_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_020"
 kind = "arcgis_query"
@@ -2320,6 +2454,7 @@ notes = "Arcgis item 871da848d25940e890d811ee20280f79 'Cameras' (owner [account 
 
 [[targets]]
 id = "camreg_und_002_cctv_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_002"
 kind = "arcgis_query"
@@ -2337,6 +2472,7 @@ notes = "Arcgis item 8ebed01d37c9486fae407a8e6623e8f4 'CCTV Camera' (owner [acco
 
 [[targets]]
 id = "indonesia_id_cctv_gunungagung"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2354,6 +2490,7 @@ notes = "Arcgis item 99884d9a56194dc793fbe9ff2502cc9b 'cctv_gunungagung' (owner 
 
 [[targets]]
 id = "thailand_th_gispraksa_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_thailand_th"
 kind = "arcgis_query"
@@ -2371,6 +2508,7 @@ notes = "Arcgis item 9d11508207a347d7a3c6a3372278418c 'CCTV' (owner gispraksa_ad
 
 [[targets]]
 id = "indonesia_id_cctv_gudang"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2388,6 +2526,7 @@ notes = "Arcgis item 9f3167a3bc37417fb100169b60406ea4 'cctv_gudang' (owner fsofi
 
 [[targets]]
 id = "chattanooga_tn_safety_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_chattanooga_tn"
 kind = "arcgis_query"
@@ -2405,6 +2544,7 @@ notes = "Arcgis item bb665114837146769fe7103082d4fb98 'Public Safety Cameras and
 
 [[targets]]
 id = "indonesia_id_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2422,6 +2562,7 @@ notes = "Arcgis item bb857cf90a454a5b98c043dce0b99ba4 'cctv' (owner fsofi, 7 row
 
 [[targets]]
 id = "indonesia_id_cctv_pelabuhan"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2439,6 +2580,7 @@ notes = "Arcgis item c6d7a160f907418caaa84c6fd3eebd48 'cctv_pelabuhan' (owner fs
 
 [[targets]]
 id = "indonesia_id_cctv_2"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2456,6 +2598,7 @@ notes = "Arcgis item cc134f6b2d574205870e356ce985d78a 'cctv_2' (owner fsofi, 7 r
 
 [[targets]]
 id = "palmdesert_ca_lpr"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_palmdesert_ca"
 kind = "arcgis_query"
@@ -2473,6 +2616,7 @@ notes = "Arcgis item d2dad98935c9481f97141ec963d5b582 'License Plate Recognition
 
 [[targets]]
 id = "chattanooga_tn_safety_cameras_2"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_chattanooga_tn"
 kind = "arcgis_query"
@@ -2490,6 +2634,7 @@ notes = "Arcgis item d330e05d63504e6c9e03c1c3664e6051 'Public_Safety_Cameras' (o
 
 [[targets]]
 id = "nashville_tn_lpr_cameras"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_nashville_tn"
 kind = "arcgis_query"
@@ -2507,6 +2652,7 @@ notes = "Arcgis item da60121904964a28a01ca13dbd9cb226 'License Plate Reader Loca
 
 [[targets]]
 id = "gainesville_fl_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_gainesville_fl"
 kind = "arcgis_query"
@@ -2524,6 +2670,7 @@ notes = "Arcgis item dda63ffcc4bf44f8b3dd5845a54e2e86 'City of Gainesville Traff
 
 [[targets]]
 id = "wellington_nz_cctv_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_wellington_nz"
 kind = "arcgis_query"
@@ -2541,6 +2688,7 @@ notes = "Arcgis item f695ac83407147a7b3b0d345888c4b9d 'CCTV_Locations' (owner WC
 
 [[targets]]
 id = "amber_kh_trmc"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_amber_kh"
 kind = "arcgis_query"
@@ -2558,6 +2706,7 @@ notes = "Arcgis item f9efbc77cd404122899fc9f93c1f0741 'Traffic Monitoring Camera
 
 [[targets]]
 id = "baltimore_md_atves_speed_fixed"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_baltimore_atves_md"
 kind = "arcgis_query"
@@ -2575,6 +2724,7 @@ notes = "Arcgis item 02625f728f714c78a5b3ad6aa06695b3 'Baltimore ATVES Speed Cam
 
 [[targets]]
 id = "baltimore_md_atves_commercial"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_baltimore_atves_md"
 kind = "arcgis_query"
@@ -2592,6 +2742,7 @@ notes = "Arcgis item 34506a54ef124f2c9062e707a96bd74a 'Baltimore ATVES Commercia
 
 [[targets]]
 id = "camreg_und_011_camera_point"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_011"
 kind = "arcgis_query"
@@ -2609,6 +2760,7 @@ notes = "Arcgis item 38ad4086df4e4ba285792c207fc37da4 'Camera Point' (owner [acc
 
 [[targets]]
 id = "cwarcgis_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_cwarcgis"
 kind = "arcgis_query"
@@ -2626,6 +2778,7 @@ notes = "Arcgis item 46b1e00b2b2c494c805a0743c5e723a1 'Camera' (owner cwarcgis, 
 
 [[targets]]
 id = "indonesia_id_aryadigireg_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -2643,6 +2796,7 @@ notes = "Arcgis item 494ab2925bc84464ab3b32ea8b972e94 'CCTV' (owner aryadigireg,
 
 [[targets]]
 id = "cotgeo_traffic_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_cotgeo"
 kind = "arcgis_query"
@@ -2660,6 +2814,7 @@ notes = "Arcgis item 634b19920c7e45c092455134055b9335 'COT Geospatial Traffic Ca
 
 [[targets]]
 id = "firemedic_traffic_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_firemedic"
 kind = "arcgis_query"
@@ -2677,6 +2832,7 @@ notes = "Arcgis item 63a8783964ca4fafa891bd38cb10deac 'traffic_camera_JSONToFeat
 
 [[targets]]
 id = "baltimore_md_atves_redlight"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_baltimore_atves_md"
 kind = "arcgis_query"
@@ -2694,6 +2850,7 @@ notes = "Arcgis item 6c9b08a2bb6c40df94e4dec6f2e02cd8 'Baltimore ATVES Red Light
 
 [[targets]]
 id = "camreg_und_004_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_004"
 kind = "arcgis_query"
@@ -2711,6 +2868,7 @@ notes = "Arcgis item 7d7654bc257f40d0aa7aebf71ae971b8 'CCTV' (owner [account wit
 
 [[targets]]
 id = "keizer_or_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_keizer_or"
 kind = "arcgis_query"
@@ -2728,6 +2886,7 @@ notes = "Arcgis item 9338737e5f6b4deda9d90d120f16c32c 'Traffic and Graffiti Came
 
 [[targets]]
 id = "wim_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_wim_camera"
 kind = "arcgis_query"
@@ -2745,6 +2904,7 @@ notes = "Arcgis item a0a6e71d55804d249535831ec98b4db0 'WIM_Camera' (owner OTIC.R
 
 [[targets]]
 id = "ukm_my_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_ukm_my"
 kind = "arcgis_query"
@@ -2762,6 +2922,7 @@ notes = "Arcgis item a69da35b0c7f404890ba318f57d56349 'SISTEM_PENGURUSAN_CCTV' (
 
 [[targets]]
 id = "caledon_on_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_caledon_on"
 kind = "arcgis_query"
@@ -2779,6 +2940,7 @@ notes = "Arcgis item c56aedd0f83f4515ad641eac5e975b93 'CCTV Locations' (owner ke
 
 [[targets]]
 id = "camreg_und_007_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_007"
 kind = "arcgis_query"
@@ -2796,6 +2958,7 @@ notes = "Arcgis item d03b77e0286d4d82b76c76de32c36b27 'CCTV_' (owner [account wi
 
 [[targets]]
 id = "sarasota_fl_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_sarasota_fl"
 kind = "arcgis_query"
@@ -2813,6 +2976,7 @@ notes = "Arcgis item e153fe4453104b11b8a5a17599bd8478 'Cartegraph Traffic Camera
 
 [[targets]]
 id = "oosgis_nl_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_oosgis_nl"
 kind = "arcgis_query"
@@ -2830,6 +2994,7 @@ notes = "Arcgis item e61f3ed7f7ab4aef9d295395621292c2 'Camera' (owner oosgis, 54
 
 [[targets]]
 id = "baltimore_md_atves_speed_portable"
+axis_order = "lon-lat"
 technology = "camera-trailer-unspecified"
 source_id = "camreg_baltimore_atves_md"
 kind = "arcgis_query"
@@ -2847,6 +3012,7 @@ notes = "Arcgis item ebf52af4f690414e916190255850aaca 'Baltimore ATVES Speed Cam
 
 [[targets]]
 id = "vancouver_bc_webcameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_vancouver_bc"
 kind = "arcgis_query"
@@ -2864,6 +3030,7 @@ notes = "Arcgis item f4859c702ed54fd69b416ae91de3b1fd 'Web Cameras' (owner City_
 
 [[targets]]
 id = "camberwell_au_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_camberwell_au"
 kind = "arcgis_query"
@@ -2881,6 +3048,7 @@ notes = "Arcgis item 31aed70b2053498dbe4ec44dc0728801 'CCTV' (owner 27leggrw_cam
 
 [[targets]]
 id = "camberwell_au_cctv_eff"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_camberwell_au"
 kind = "arcgis_query"
@@ -2898,6 +3066,7 @@ notes = "Arcgis item 8614054b26e54f588f7a55094f2fe4f0 'CCTV Eff' (owner TimCross
 
 [[targets]]
 id = "osm_surveillance_deflock"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_osm_surveillance"
 kind = "arcgis_query"
@@ -2915,6 +3084,7 @@ notes = "Arcgis item d6267b54848f483bad8c529b529611ba 'Automated License Plate R
 
 [[targets]]
 id = "polyu_hk_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_polyu_hk"
 kind = "arcgis_query"
@@ -2932,6 +3102,7 @@ notes = "Arcgis item 188b6ca940a14029a0aceb1aad25e553 'PolyU_CCTV' (owner [accou
 
 [[targets]]
 id = "webappfme_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_webappfme"
 kind = "arcgis_query"
@@ -2949,6 +3120,7 @@ notes = "Arcgis item 20c6386650414867ad1fa29027164750 'TrafficCamerasTourPnts3' 
 
 [[targets]]
 id = "gistel_be_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_gistel_be"
 kind = "arcgis_query"
@@ -2966,6 +3138,7 @@ notes = "Arcgis item 2dfd6bae23ac4ae9b3e24112a82c2277 'Camera' (owner m.decraeme
 
 [[targets]]
 id = "camreg_und_018_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_018"
 kind = "arcgis_query"
@@ -2983,6 +3156,7 @@ notes = "Arcgis item 32b4a83b129646ad985081f5ba654696 'CCTV ' (owner [account wi
 
 [[targets]]
 id = "bettendorf_ia_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_bettendorf_ia"
 kind = "arcgis_query"
@@ -3000,6 +3174,7 @@ notes = "Arcgis item 5269969b5f784cd2a2a519ccdc10149b 'Traffic Control Cameras _
 
 [[targets]]
 id = "dubuque_ia_public_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_dubuque_ia"
 kind = "arcgis_query"
@@ -3017,6 +3192,7 @@ notes = "Arcgis item 55213f82bc5a47c2b5483c5627c4730f 'Public Camera Locations' 
 
 [[targets]]
 id = "infraestructura_cctv_proyectado"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_infraestructura"
 kind = "arcgis_query"
@@ -3034,6 +3210,7 @@ notes = "Arcgis item 5a0e181639a94a08bfaee91492450431 'CCTV_Proyectado' (owner I
 
 [[targets]]
 id = "indonesia_id_persebaran_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_indonesia_id"
 kind = "arcgis_query"
@@ -3051,6 +3228,7 @@ notes = "Arcgis item 878088e6668148f587038c616099692d 'PERSEBARAN_CCTV' (owner a
 
 [[targets]]
 id = "thailand_th_warroom_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_thailand_th"
 kind = "arcgis_query"
@@ -3068,6 +3246,7 @@ notes = "Arcgis item 92e8dadae27246e1b69b1f98e3906191 'ตำแหน่งก�
 
 [[targets]]
 id = "surrey_bc_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_surrey_bc"
 kind = "arcgis_query"
@@ -3085,6 +3264,7 @@ notes = "Arcgis item 94b17026e83d49d58b41fd75933166db 'Traffic Cameras' (owner S
 
 [[targets]]
 id = "camreg_und_018_cctv_pg"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_018"
 kind = "arcgis_query"
@@ -3102,6 +3282,7 @@ notes = "Arcgis item d930ff08f1364a979016fda955d51842 'CCTV_PG' (owner [account 
 
 [[targets]]
 id = "polyu_hk_police_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_polyu_hk"
 kind = "arcgis_query"
@@ -3119,6 +3300,7 @@ notes = "Arcgis item ec5a347fc84547e3aa52a9fd71f104d9 'Police_CCTV' (owner [acco
 
 [[targets]]
 id = "thailand_th_warroom_map_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_thailand_th"
 kind = "arcgis_query"
@@ -3136,6 +3318,7 @@ notes = "Arcgis item efbcd59267ac48ba9440905d7e9fe946 'ตำแหน่งก�
 
 [[targets]]
 id = "ramallah_ps_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_ramallah_ps"
 kind = "arcgis_query"
@@ -3153,6 +3336,7 @@ notes = "Arcgis item f4b3928a3f504467b3827b8658544c63 'Ramallah Surveillance Cam
 
 [[targets]]
 id = "forwardalliance_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_forwardalliance"
 kind = "arcgis_query"
@@ -3170,6 +3354,7 @@ notes = "Arcgis item fe8ee8d36eb34bc6bdd49c3e447f5ffb 'CCTV' (owner forwardallia
 
 [[targets]]
 id = "toronto_on_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_toronto_on"
 kind = "arcgis_query"
@@ -3187,6 +3372,7 @@ notes = "Arcgis item 077b66ab35dd48de97fedf0abbf4a03b 'Camera Toronto' (owner ar
 
 [[targets]]
 id = "pipeline_sec_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_pipeline_sec"
 kind = "arcgis_query"
@@ -3204,6 +3390,7 @@ notes = "Arcgis item 0ebee47dfb7b4f529a8b618c88997a27 'Traffic Cameras' (owner P
 
 [[targets]]
 id = "mndot_mn_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_mndot_mn"
 kind = "arcgis_query"
@@ -3221,6 +3408,7 @@ notes = "Arcgis item 0fca25174cba4605938cac79c3331640 'MNDOT Traffic Cameras' (o
 
 [[targets]]
 id = "camreg_und_019_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_019"
 kind = "arcgis_query"
@@ -3238,6 +3426,7 @@ notes = "Arcgis item 106e6ceef3c14fb6bceddeb07eb5d8a5 'CCTV' (owner [account wit
 
 [[targets]]
 id = "camreg_und_009_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_009"
 kind = "arcgis_query"
@@ -3255,6 +3444,7 @@ notes = "Arcgis item 119f3f9304f94b74af62f20798d3c52d 'CCTV_cameras' (owner [acc
 
 [[targets]]
 id = "smart_sky_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_smart_sky"
 kind = "arcgis_query"
@@ -3272,6 +3462,7 @@ notes = "Arcgis item 145823e4fd4846da98599e8bf5b5980c 'camera' (owner luiz.amade
 
 [[targets]]
 id = "eastdun_gb_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_eastdun_gb"
 kind = "arcgis_query"
@@ -3289,6 +3480,7 @@ notes = "Arcgis item 1cb8e713aaf346cd86a1d59a1ae78709 'CCTV' (owner [account wit
 
 [[targets]]
 id = "friendswood_tx_flock_alpr"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_friendswood_tx"
 kind = "arcgis_query"
@@ -3306,6 +3498,7 @@ notes = "Arcgis item 248d8ce7280c4d48b3d91d1c870fc1da 'City of Friendswood - Flo
 
 [[targets]]
 id = "camreg_und_014_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_014"
 kind = "arcgis_query"
@@ -3323,6 +3516,7 @@ notes = "Arcgis item 25a5a95fcbd645d0b5cfe08522209591 'CCTV' (owner [account wit
 
 [[targets]]
 id = "camreg_us_ny_002_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_us_ny_002"
 kind = "arcgis_query"
@@ -3340,6 +3534,7 @@ notes = "Arcgis item 9e90790daf7e4f0592da37a1bda10417 'Traffic Cameras NYC' (own
 
 [[targets]]
 id = "camreg_und_003_safety_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_003"
 kind = "arcgis_query"
@@ -3357,6 +3552,7 @@ notes = "Arcgis item aa12417a64b04fcbb07e67435c84086d 'Public Safety cameras vie
 
 [[targets]]
 id = "camreg_und_026_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_026"
 kind = "arcgis_query"
@@ -3374,6 +3570,7 @@ notes = "Arcgis item bce5d44e878d4d71b5895a89ecfac9c7 'CCTV' (owner [account wit
 
 [[targets]]
 id = "univmb_mb_visible_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_univmb_mb"
 kind = "arcgis_query"
@@ -3391,6 +3588,7 @@ notes = "Arcgis item e19e8d52e59240e4931c5ebb723533af 'Visible Surveillance Came
 
 [[targets]]
 id = "univmb_mb_surveillance_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_univmb_mb"
 kind = "arcgis_query"
@@ -3408,6 +3606,7 @@ notes = "Arcgis item f748506cb3ea4ddf829a75e5ba1335f1 'Surveillance Cameras' (ow
 
 [[targets]]
 id = "fl511_fl_fdot_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_fl511_fl"
 kind = "arcgis_query"
@@ -3425,6 +3624,7 @@ notes = "Arcgis item 0d71f303829e4639a08b8f1bc3f9b047 'FDOT Traffic Cameras' (ow
 
 [[targets]]
 id = "esriukpolice_gb_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_esriukpolice_gb"
 kind = "arcgis_query"
@@ -3442,6 +3642,7 @@ notes = "Arcgis item 1cdab839cdaa4e789ca155a8d6323cab 'CCTV_locations' (owner [a
 
 [[targets]]
 id = "camreg_und_016_security_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_und_016"
 kind = "arcgis_query"
@@ -3459,6 +3660,7 @@ notes = "Arcgis item 22d52fc22ec440a78813debcf2d1c21a 'UofR Security Cameras (Pu
 
 [[targets]]
 id = "txdot_rep_tx_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_txdot_rep_tx"
 kind = "arcgis_query"
@@ -3476,6 +3678,7 @@ notes = "Arcgis item 269df31cafd9463abfd46ecd24162ef6 'Texas Traffic Cameras' (o
 
 [[targets]]
 id = "brea_ca_lpr_cameras"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_brea_ca"
 kind = "arcgis_query"
@@ -3493,6 +3696,7 @@ notes = "Arcgis item 398a99c974704bebb1008c3e9daa20b9 'LPR_ Camera Locations' (o
 
 [[targets]]
 id = "redmond_wa_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_redmond_wa"
 kind = "arcgis_query"
@@ -3510,6 +3714,8 @@ notes = "Arcgis item 55f2d14f468c4d35b1870bf8469b2c96 'Traffic Camera' (owner [a
 
 [[targets]]
 id = "mark43_cctv"
+axis_order = "lat-lon"
+extent = [-180.0, 17.0, -60.0, 72.0]  # P35.16: SIG-declared US-coverage detector bound for the jurisdiction-unresolved community registry (F-322 axis-swap evidence)
 technology = "fixed-camera-cctv"
 source_id = "camreg_mark43"
 kind = "arcgis_query"
@@ -3527,6 +3733,7 @@ notes = "Arcgis item 7b5888a0ea584bd2a0a6e7aa33d70eb8 'CCTV' (owner elise.austin
 
 [[targets]]
 id = "brea_ca_lpr"
+axis_order = "lon-lat"
 technology = "alpr-fixed"
 source_id = "camreg_brea_ca"
 kind = "arcgis_query"
@@ -3544,6 +3751,7 @@ notes = "Arcgis item 801975c11c5a4958a8352556a7d117ec 'License Plate Reader' (ow
 
 [[targets]]
 id = "camilo_schools_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_camilo_schools"
 kind = "arcgis_query"
@@ -3561,6 +3769,7 @@ notes = "Arcgis item a426098dc7584c98b815c985ea76a632 'CCTV Locations' (owner Ca
 
 [[targets]]
 id = "camreg_und_027_camera_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_027"
 kind = "arcgis_query"
@@ -3578,6 +3787,7 @@ notes = "Arcgis item b28ca74f76ad4b7cb31d380f7679c49f 'Camera Locations' (owner 
 
 [[targets]]
 id = "brea_ca_camera_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_brea_ca"
 kind = "arcgis_query"
@@ -3595,6 +3805,7 @@ notes = "Arcgis item bbc1c81f2821455080177b684e9fa7fb 'Brea PD Camera Locations 
 
 [[targets]]
 id = "gmh_emc_ga_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_gmh_emc_ga"
 kind = "arcgis_query"
@@ -3612,6 +3823,7 @@ notes = "Arcgis item d5e2555c03574fbe93e300c404a38813 'CCTV' (owner GMH_GA_emc, 
 
 [[targets]]
 id = "camreg_und_008_its_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_und_008"
 kind = "arcgis_query"
@@ -3629,6 +3841,7 @@ notes = "Arcgis item d6d80e7f82884caaaeea1e0eed5d595b 'ITS_CCTV' (owner [account
 
 [[targets]]
 id = "brea_ca_camera_switch_inventory"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_brea_ca"
 kind = "arcgis_query"
@@ -3646,6 +3859,7 @@ notes = "Arcgis item f774c086e4c54a44ba2fe5b2c32fa6fd 'Brea PD Camera and Switch
 
 [[targets]]
 id = "infocemosa_cctv_point"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_infocemosa"
 kind = "arcgis_query"
@@ -3663,6 +3877,7 @@ notes = "Arcgis item fc73440e889f4e33b0a57d7c9158a70c 'CCTV_point' (owner Infoce
 
 [[targets]]
 id = "camreg_und_012_camera_rev3"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_012"
 kind = "arcgis_query"
@@ -3680,6 +3895,7 @@ notes = "Arcgis item 3a72754fa9004f9ca5774bb23c6f3504 'Camera_rev3' (owner [acco
 
 [[targets]]
 id = "avctransport_surveillance_2026"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_avctransport"
 kind = "arcgis_query"
@@ -3697,6 +3913,7 @@ notes = "Arcgis item 48a727929e6f4350b71be361d5002d4c 'Surveillance_2026' (owner
 
 [[targets]]
 id = "camreg_und_025_camera_intersections"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_und_025"
 kind = "arcgis_query"
@@ -3714,6 +3931,7 @@ notes = "Arcgis item 650c53bb6fb24aa1aecba07847f1e2fb 'Camera Intersections' (ow
 
 [[targets]]
 id = "sensenet_camera_view"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_sensenet"
 kind = "arcgis_query"
@@ -3731,6 +3949,7 @@ notes = "Arcgis item 99799a7e7e164f229cec271da18165ae 'Camera view' (owner Admin
 
 [[targets]]
 id = "lisburn_gb_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_lisburn_gb"
 kind = "arcgis_query"
@@ -3748,6 +3967,7 @@ notes = "Arcgis item afab7c664cf14139a8384e752c083143 'CCTV' (owner [account wit
 
 [[targets]]
 id = "tulane_la_cctv_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_tulane_la"
 kind = "arcgis_query"
@@ -3765,6 +3985,7 @@ notes = "Arcgis item cdf8cc99704d441fae13608702a6a74d 'CCTV cameras' (owner [acc
 
 [[targets]]
 id = "jcfd3_or_roxyann_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_jcfd3_or"
 kind = "arcgis_query"
@@ -3782,6 +4003,7 @@ notes = "Arcgis item 24da916fb36f44e9afd0bab4c527204d 'RoxyAnn Camera' (owner Sh
 
 [[targets]]
 id = "ira_cctv"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_ira"
 kind = "arcgis_query"
@@ -3799,6 +4021,7 @@ notes = "Arcgis item 4fc65d41686c4b5c84f7b466738c4ad5 'CCTV' (owner ira_dls, 3 r
 
 [[targets]]
 id = "bangla_bd_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-unspecified"
 source_id = "camreg_bangla_bd"
 kind = "arcgis_query"
@@ -3816,6 +4039,7 @@ notes = "Arcgis item 5590d73396564488b5d627079be0ee5a 'Bangla_Camera' (owner vSt
 
 [[targets]]
 id = "camreg_us_ny_001_nycdot_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_us_ny_001"
 kind = "arcgis_query"
@@ -3833,6 +4057,7 @@ notes = "Arcgis item 900bea850d98407ead83b9b0ec392a2a 'NYCDOT Traffic Cameras' (
 
 [[targets]]
 id = "bouhan_jp_camera"
+axis_order = "lon-lat"
 technology = "fixed-camera-cctv"
 source_id = "camreg_bouhan_jp"
 kind = "arcgis_query"
@@ -3850,6 +4075,7 @@ notes = "Arcgis item 9740206173524c11a0800d2f4aa31196 'bouhan_camera' (owner kaz
 
 [[targets]]
 id = "durham_gb_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_durham_gb"
 kind = "arcgis_query"
@@ -3867,6 +4093,7 @@ notes = "Arcgis item 8599d93543124bafb012b007c403aaa7 'Traffic Web Cameras' (own
 
 [[targets]]
 id = "portland_or_its_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "camreg_portland_or"
 kind = "arcgis_query"
@@ -3902,6 +4129,7 @@ notes = "Arcgis item c83d85929ead4c01b1d684594391cf09 'Intelligent Transportatio
 
 [[targets]]
 id = "dc_asc_sites"
+axis_order = "lon-lat"
 source_id = "camreg_dc_ddot_ate"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -3928,6 +4156,7 @@ technology = "ate-unspecified"
 
 [[targets]]
 id = "dc_asc_violations_by_month"
+axis_order = "lon-lat"
 source_id = "camreg_dc_ddot_ate"
 kind = "arcgis_outstatistics"
 platform = "arcgis"
@@ -3967,6 +4196,7 @@ technology = "ate-unspecified"
 
 [[targets]]
 id = "dc_ovsjg_camera_rebate_by_month"
+axis_order = "lon-lat"
 source_id = "camreg_dc_ovsjg_camera_rebate"
 kind = "arcgis_outstatistics"
 platform = "arcgis"
@@ -4003,6 +4233,7 @@ technology = "private-camera-integration-unspecified"
 
 [[targets]]
 id = "fdot_d3_flock_inventory"
+axis_order = "lon-lat"
 source_id = "camreg_fdot_flock"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4024,6 +4255,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "fdot_flock_removal_status"
+axis_order = "lon-lat"
 source_id = "camreg_fdot_flock"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4047,6 +4279,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_city_of_pueblo_co"
+axis_order = "lon-lat"
 source_id = "camreg_pueblo_co_flock"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4070,6 +4303,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "lpr_cameras_city_of_rocky_mount_nc"
+axis_order = "lon-lat"
 source_id = "camreg_rocky_mount_nc_lpr_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4093,6 +4327,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_cameras_public_city_of_shelbyville_tn"
+axis_order = "lon-lat"
 source_id = "camreg_shelbyville_tn_flock_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4116,6 +4351,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_wfl1_city_of_temecula_ca"
+axis_order = "lon-lat"
 source_id = "camreg_temecula_ca_flock_wfl1"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4139,6 +4375,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_locations_city_of_marble_falls_tx"
+axis_order = "lon-lat"
 source_id = "camreg_marble_falls_tx_flock_locations"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4162,6 +4399,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "community_safety_cameras_prince_william_county_va"
+axis_order = "lon-lat"
 source_id = "camreg_va_prince_william_county"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4185,6 +4423,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flocklprcam_milford_ct"
+axis_order = "lon-lat"
 source_id = "camreg_milford_ct_flocklprcam"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4209,6 +4448,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "lpr_cameras_city_of_elgin_il"
+axis_order = "lon-lat"
 source_id = "camreg_elgin_il_lpr_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4232,6 +4472,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "lpr_cameras_city_of_south_fulton_ga"
+axis_order = "lon-lat"
 source_id = "camreg_south_fulton_ga_lpr_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4255,6 +4496,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "stationary_lpr_pittsylvania_county_va"
+axis_order = "lon-lat"
 source_id = "camreg_va_pittsylvania_county_stationary"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4278,6 +4520,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "lpr_cameras_city_of_alabaster_al_staff_account"
+axis_order = "lon-lat"
 source_id = "camreg_alabaster_al_lpr_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4301,6 +4544,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "mta_able_enforced_routes"
+axis_order = "lon-lat"
 source_id = "camreg_nyc_mta_bus_lane_ate"
 kind = "socrata_rows"
 platform = "socrata"
@@ -4333,6 +4577,7 @@ technology = "ate-bus-lane"
 
 [[targets]]
 id = "tacoma_automated_enforcement"
+axis_order = "lon-lat"
 source_id = "camreg_tacoma_wa_ate"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4367,6 +4612,7 @@ technology = "ate-speed"
 
 [[targets]]
 id = "montgomery_speed_violations_quarterly"
+axis_order = "lon-lat"
 source_id = "camreg_montgomery_md_ate"
 kind = "socrata_aggregate"
 platform = "socrata"
@@ -4402,6 +4648,7 @@ technology = "ate-speed"
 
 [[targets]]
 id = "montgomery_redlight_violations_quarterly"
+axis_order = "lon-lat"
 source_id = "camreg_montgomery_md_ate"
 kind = "socrata_aggregate"
 platform = "socrata"
@@ -4430,6 +4677,7 @@ technology = "ate-red-light"
 
 [[targets]]
 id = "montgomery_speed_cameras_2024"
+axis_order = "lon-lat"
 source_id = "camreg_montgomery_md_ate"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4453,6 +4701,7 @@ technology = "ate-speed"
 
 [[targets]]
 id = "howard_school_zone_areas"
+axis_order = "lon-lat"
 source_id = "camreg_howard_md_school_zone_ate"
 kind = "socrata_rows"
 platform = "socrata"
@@ -4481,6 +4730,7 @@ technology = "ate-speed"
 
 [[targets]]
 id = "lakeland_red_light_cameras"
+axis_order = "lon-lat"
 source_id = "camreg_lakeland_fl_red_light"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4504,6 +4754,7 @@ technology = "ate-red-light"
 
 [[targets]]
 id = "flock_location_city_of_thomasville_ga"
+axis_order = "lon-lat"
 source_id = "camreg_thomasville_ga_flock_location"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4527,6 +4778,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "leon_county_sheriff_s_office_overwatch_viewer_vigilant_fixed_lprs_public_access_cameras"
+axis_order = "lon-lat"
 source_id = "camreg_leon_county_fl_overwatch_viewer"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4550,6 +4802,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_camera_location_city_of_peachtree_corners_ga"
+axis_order = "lon-lat"
 source_id = "camreg_ga_peachtree_corners_flock_camera"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4573,6 +4826,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "traffic_cameras_traffic_operations_public_monitoring_cameras_city_of_lincoln"
+axis_order = "lon-lat"
 source_id = "camreg_ne_lincoln_traffic_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4596,6 +4850,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "suffolk_tpva_red_light_2015"
+axis_order = "lon-lat"
 source_id = "camreg_suffolk_ny_red_light"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4620,6 +4875,7 @@ technology = "ate-red-light"
 
 [[targets]]
 id = "parks_cameras_city_of_omaha_maintained_cameras_college_world_series"
+axis_order = "lon-lat"
 source_id = "camreg_omaha_ne_parks_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4643,6 +4899,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "medford_red_light_speed_cameras"
+axis_order = "lon-lat"
 source_id = "camreg_medford_or_ate"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4666,6 +4923,7 @@ technology = "ate-unspecified"
 
 [[targets]]
 id = "hyattsville_cctv_camera_program_2024"
+axis_order = "lon-lat"
 source_id = "camreg_hyattsville_md_cctv_camera_2024"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4690,6 +4948,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "ctdot_approximate_speed_safety"
+axis_order = "lon-lat"
 source_id = "camreg_ctdot_speed_safety"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4716,6 +4975,7 @@ technology = "ate-work-zone"
 
 [[targets]]
 id = "police_halo_cameras_denver_police_department"
+axis_order = "lon-lat"
 source_id = "camreg_denver_co"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4741,6 +5001,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "seattle_police_department_cctv_pilot_areas"
+axis_order = "lon-lat"
 source_id = "camreg_seattle_wa"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4772,6 +5033,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "flock_city_of_jeffersonville_in"
+axis_order = "lon-lat"
 source_id = "camreg_jeffersonville_in_flock"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4788,6 +5050,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_camera_locations_flock_camera_map_monterey_park_ca_staff_accounts"
+axis_order = "lon-lat"
 source_id = "camreg_ca_monterey_park_flock_camera"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4804,6 +5067,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "park_cameras_city_of_santa_fe_park_camera_locations"
+axis_order = "lon-lat"
 source_id = "camreg_santa_fe_nm_park_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4820,6 +5084,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "project_green_light_locations"
+axis_order = "lon-lat"
 source_id = "camreg_detroit_mi_project_green_light"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4836,6 +5101,7 @@ technology = "private-camera-integration-live-feeds"
 
 [[targets]]
 id = "d4_camera_survey_fdot_district_4_row_camera_inventory_form"
+axis_order = "lon-lat"
 source_id = "camreg_fl_broward_county_us_palm_beach"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4852,6 +5118,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_camera_locations2_savannah_police_department"
+axis_order = "lon-lat"
 source_id = "camreg_ga_savannah_flock_camera"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4868,6 +5135,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_location_data_view_east_baton_rouge_sheriff_s_office"
+axis_order = "lon-lat"
 source_id = "camreg_la_east_baton_rouge_parish_flock"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4884,6 +5152,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "flock_cameras_asof_20240318_ccso_west_georgia_org_unresolved"
+axis_order = "lon-lat"
 source_id = "camreg_ga_flock_cameras_asof"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4899,6 +5168,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "city_of_gastonia_nc_flock_layers_condor_cameras_lpr_flock_os_integration_layers"
+axis_order = "lon-lat"
 source_id = "camreg_gastonia_nc_flock_condor_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4915,6 +5185,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "speed_safety_cameras_bellevue"
+axis_order = "lon-lat"
 source_id = "camreg_bellevue_wa"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4931,6 +5202,7 @@ technology = "fixed-camera-unspecified"
 
 [[targets]]
 id = "flock_camera_locations_sep_2023_city_of_brookhaven_ga"
+axis_order = "lon-lat"
 source_id = "camreg_ga_brookhaven_flock_camera"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4947,6 +5219,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "automated_school_bus_camera_violations"
+axis_order = "lon-lat"
 source_id = "camreg_montgomery_md_ate"
 kind = "socrata_rows"
 platform = "socrata"
@@ -4963,6 +5236,7 @@ technology = "fixed-camera-unspecified"
 
 [[targets]]
 id = "shotspotter_and_metrocams_wfl1_layers_metrocams_shotspotter"
+axis_order = "lon-lat"
 source_id = "camreg_nv_las_vegas_us_clark_county"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4979,6 +5253,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "agency_published_flock_lpr_location_layers_on_arcgis_online_family"
+axis_order = "lon-lat"
 source_id = "camreg_us_agency_published_flock"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -4994,6 +5269,7 @@ technology = "alpr-fixed"
 
 [[targets]]
 id = "ate_camera_location_and_per_camera_aggregate_datasets_on_us_open_data_portals_socrata_discovery"
+axis_order = "lon-lat"
 source_id = "camreg_us_ate_camera_location_and_per"
 kind = "socrata_rows"
 platform = "socrata"
@@ -5009,6 +5285,7 @@ technology = "fixed-camera-unspecified"
 
 [[targets]]
 id = "agency_police_drone_flight_log_usage_feature_services_on_arcgis_online"
+axis_order = "lon-lat"
 source_id = "camreg_us_agency_drone_flight"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -5024,6 +5301,7 @@ technology = "uas-general"
 
 [[targets]]
 id = "security_camera"
+axis_order = "lon-lat"
 source_id = "camreg_au_tas_hobar_security_camera"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -5040,6 +5318,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "security_cameras"
+axis_order = "lon-lat"
 source_id = "camreg_au_wa_perth_security_cameras"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -5056,6 +5335,7 @@ technology = "fixed-camera-cctv"
 
 [[targets]]
 id = "police_drone_flights"
+axis_order = "lon-lat"
 source_id = "camreg_bloomington_il_drone_flights"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -5072,6 +5352,7 @@ technology = "uas-general"
 
 [[targets]]
 id = "peoria_police_department_drone_usage"
+axis_order = "lon-lat"
 source_id = "camreg_peoria_il_drone_usage"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -5088,6 +5369,7 @@ technology = "uas-general"
 
 [[targets]]
 id = "drone_deployments_fs"
+axis_order = "lon-lat"
 source_id = "camreg_medford_or_drone_deployments_fs"
 kind = "arcgis_query"
 platform = "arcgis"

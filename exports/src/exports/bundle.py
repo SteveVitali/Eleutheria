@@ -125,6 +125,14 @@ def _write_table_artifacts(
 ) -> list[tuple[Artifact, bytes]]:
     table = placed.table
     rows = C.enrich_rows(table, index, registry)
+    # P35.16 (R11-DATA-01, F-322): disclose rows vs distinct entities — the
+    # rows are observation-level records, and a licence-conflicted entity
+    # splits across compartment files, so `row_count` alone would read as a
+    # resolved census. `distinct_entities` counts unique `entity_id`s where
+    # the table is entity-bearing (None — not asserted — for tables that
+    # carry no entity column).
+    entity_ids = {str(row.data["entity_id"]) for row in table.rows if "entity_id" in row.data}
+    distinct_entities = len(entity_ids) if entity_ids else None
     out: list[tuple[Artifact, bytes]] = []
     for fmt_name in formats_for(table.kind):
         spec = FORMATS[fmt_name]
@@ -140,6 +148,7 @@ def _write_table_artifacts(
                     license=license_id,
                     data=data,
                     row_count=len(table.rows),
+                    distinct_entities=distinct_entities,
                 ),
                 data,
             )

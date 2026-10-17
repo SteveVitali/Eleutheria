@@ -103,6 +103,37 @@ def test_every_exported_row_carries_rights_provenance() -> None:
     assert row[RIGHTS_KEY]["share_alike"] is True
 
 
+def test_manifest_discloses_rows_versus_distinct_entities() -> None:
+    """P35.16 (R11-DATA-01, F-322): the artifact record carries
+    ``row_count`` AND ``distinct_entities`` — rows are observation-level
+    records (an entity may recur across rows or split across compartment
+    files), never a resolved census."""
+    sites = C.ExportTable(
+        "sites",
+        (
+            C.ExportRow("sig", {"entity_id": "e1", "observation_level": "observation"}),
+            C.ExportRow("sig", {"entity_id": "e1", "observation_level": "observation"}),
+            C.ExportRow("sig", {"entity_id": "e2", "observation_level": "observation"}),
+        ),
+    )
+    bundle = B.build_bundle(_SPEC, [sites], RIGHTS)
+    arts = [a for a in bundle.manifest.artifacts if a.path.endswith("sites.jsonl")]
+    assert arts, "the sites table must ship a jsonl artifact"
+    assert arts[0].row_count == 3
+    assert arts[0].distinct_entities == 2
+    assert arts[0].as_json()["distinct_entities"] == 2
+
+
+def test_distinct_entities_is_absent_on_non_entity_tables() -> None:
+    """A table with no ``entity_id`` column asserts no entity count — the
+    disclosure is honest about what the table does not carry."""
+    bundle = _build()
+    claims = [a for a in bundle.manifest.artifacts if a.path.endswith("claims.jsonl")]
+    assert claims
+    assert claims[0].distinct_entities is None
+    assert claims[0].as_json()["distinct_entities"] is None
+
+
 # --- AC3 ----------------------------------------------------------------------
 
 

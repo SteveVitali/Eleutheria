@@ -109,6 +109,30 @@ def build_parser() -> argparse.ArgumentParser:
         default="unknown",
         help="code commit recorded on the ingest_run (default: 'unknown')",
     )
+    gc = sub.add_parser(
+        "geometry-corrections",
+        help=(
+            "P35.16 / R11-DATA-01 (F-322): dry-run-by-default, INSERT-only "
+            "correction pass over the declared sig.geometry-corrections/1 "
+            "groups — marks each flagged subject with a `geometry_defect` "
+            "claim and revises provable axis-swapped coordinate claims; "
+            "--apply writes"
+        ),
+    )
+    gc.add_argument("--dsn", required=True, help="PostgreSQL DSN for the claim spine")
+    gc.add_argument("--apply", action="store_true", help="write claims (default: dry-run)")
+    gc.add_argument(
+        "--commit-chunk-size",
+        type=int,
+        default=None,
+        help="claims committed per transaction (default: $SIG_COMMIT_CHUNK_SIZE "
+        "else the sink default) — P26.18",
+    )
+    gc.add_argument(
+        "--code-commit",
+        default="unknown",
+        help="code commit recorded on the ingest_run (default: 'unknown')",
+    )
     rp = sub.add_parser(
         "redact-propose",
         help=(
@@ -539,6 +563,52 @@ def _technology_backfill(args: argparse.Namespace) -> int:
     return 1 if report.get("refused") else 0
 
 
+def _geometry_corrections(args: argparse.Namespace) -> int:
+    """Drive ``db.geometry_corrections`` — the P35.16 append-only pass.
+
+    The declared scopes resolve from the SAME committed
+    ``sig.geometry-corrections/1`` artifact + registry/extent tables the
+    emit detectors read (``dot_511.geometry_correction_scopes`` /
+    ``scan_extents``), so the correction pass and the ingest detectors can
+    never disagree on a bound; a registry that fails the P35.16 self-check
+    refuses before any DSN is touched (fail closed).
+    """
+    import json as _json
+
+    from .dot_511 import (
+        geometry_correction_scopes,
+        scan_extents,
+        target_geometry_violations,
+    )
+    from .sinks import resolve_commit_chunk_size
+
+    violations = target_geometry_violations()
+    if violations:
+        for msg in violations:
+            print(f"VALIDATION FAILED: P35.16 geometry declarations: {msg}")
+        return 1
+    try:
+        commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
+    except ValueError as bad:
+        print(f"invalid commit chunk size: {bad}")
+        return 2
+    from db.geometry_corrections import run_corrections
+
+    from .sinks import _registry_rights
+
+    report = run_corrections(
+        args.dsn,
+        scopes=geometry_correction_scopes(),
+        scan_extents=scan_extents(),
+        apply=args.apply,
+        code_commit=args.code_commit,
+        commit_chunk_size=commit_chunk_size,
+        rights_resolver=_registry_rights,
+    )
+    print(_json.dumps(report, indent=2, sort_keys=True, default=str))
+    return 1 if report.get("refused") else 0
+
+
 def _redact_queue(
     args: argparse.Namespace,
 ) -> tuple[ReviewQueue | PgReviewQueue | None, Path | None]:
@@ -779,6 +849,8 @@ def main(argv: list[str] | None = None) -> int:
         return personal_id_rekey.main(argv_tail)
     if args.command == "technology-backfill":
         return _technology_backfill(args)
+    if args.command == "geometry-corrections":
+        return _geometry_corrections(args)
     if args.command == "redact-propose":
         return _redact_propose(args)
     if args.command == "redact-apply":

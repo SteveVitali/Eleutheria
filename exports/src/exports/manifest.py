@@ -235,6 +235,15 @@ class Artifact:
     sha256: str
     byte_size: int
     row_count: int | None = None
+    #: P35.16 (R11-DATA-01, F-322): the distinct ``entity_id`` count across the
+    #: artifact's rows, when the table is entity-bearing (``None`` otherwise).
+    #: Export rows are OBSERVATION-level records — "N observations across M
+    #: sources", never a resolved census (ADR-092 / SIG-RECON-058) — and a
+    #: licence-conflicted site splits one entity across compartment files
+    #: (P27.4), so ``row_count`` alone can read as an entity count. The pair
+    #: ``(row_count, distinct_entities)`` is the honest disclosure: rows are
+    #: physical output rows; entities are the distinct subjects observed.
+    distinct_entities: int | None = None
 
     @classmethod
     def of(
@@ -247,6 +256,7 @@ class Artifact:
         license: str,
         data: bytes,
         row_count: int | None = None,
+        distinct_entities: int | None = None,
     ) -> Artifact:
         """Build an artifact record from its bytes, computing size + checksum."""
         return cls(
@@ -258,6 +268,7 @@ class Artifact:
             sha256=sha256_hex(data),
             byte_size=len(data),
             row_count=row_count,
+            distinct_entities=distinct_entities,
         )
 
     def as_json(self) -> dict[str, object]:
@@ -270,6 +281,7 @@ class Artifact:
             "sha256": self.sha256,
             "byte_size": self.byte_size,
             "row_count": self.row_count,
+            "distinct_entities": self.distinct_entities,
         }
 
 
