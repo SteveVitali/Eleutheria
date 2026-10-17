@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "117efa79e96c6a67ed3d84ccd7130c76079ce464",
+  "input_commit": "03816fa29f9ccf571767f71b57477cb0d7cd46b2",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "9ff69e830b65e3eb701bb9c9689ca3d118e5b2e8b14593ff418e7c5143016d40"
+      "sha256": "f9adfbe68bc13aaf821352714d57a677ff2316396d05bcac232f2a79f691d978"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -825,12 +825,16 @@
       "sha256": "ddbfe4570ec3215a6d75d2c20e4de87edad0d3e2b45469671831dcafe51637a0"
     },
     {
+      "path": "docs/adr/ADR-210-axis-order-declarations-and-geometry-defect-classes.md",
+      "sha256": "40f3f8c6491906dc7a52044b84cbf015ba25917f4d01360e6768ba2d692e940e"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "6a4cc89fdfd48db0b4334a301c8e48a7cfad3d51685b93f5845de15ddced6c94"
+      "sha256": "8d3ef2a170249ab36a061e5a7ad67af2ea9e82e3df21427461487c82f643fa1d"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "8cfcae27210823571cc4d0acdc0370785e59d5b78a055254bf92f705183cc79a"
+      "sha256": "0e5b40e9344c19184e0bbfca41bc8b708749f440c113f75b863d27ae285575c6"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -842,7 +846,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "2202b9f0d57bf23a44d689fa9900030de8a1fb175c5e1a14fd5155cfc131ba8e"
+      "sha256": "cf73dcd15e77f4328d2622e74bab41dad586ce3842de65a651ff8bf0163599a0"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2710,7 +2714,7 @@
     },
     {
       "path": "docs/tickets/296_P35.16__geometry-defects-at-ingest.md",
-      "sha256": "1f8e74c882a6ff79da0423b563cbd8d6ca9d286e7037d1cac49999f0e3367e9a"
+      "sha256": "de64dd545855b51a0b85b71b9d8703bacbd448a050ce7e57191216834797dcd2"
     },
     {
       "path": "docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md",
