@@ -65,6 +65,7 @@ from collections.abc import Mapping, Sequence, Set
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
+from functools import lru_cache
 from typing import Any, Literal, Protocol
 
 from db.dispositions import claim_eligible_sql, entity_eligible_sql
@@ -92,11 +93,18 @@ from reconcile.weight import predicate_meta
 from resolution.partner_identity import PARTNER_PREDICATES
 
 from .audit import _LATEST_DECISION_CTE, GEO_PREDICATES, JURISDICTION_PREDICATE
+from .jurisdictions import (
+    DECLARED_SCHEME_FROM_CLAIM,
+    JurisdictionSchemeConfig,
+    jurisdiction_key,
+    load_jurisdiction_scheme_config,
+)
 
 #: The shaped-dataset output schema version — bumped when the emitted shape changes.
-#: p35.15a/1.1.0 — PKG-07: sites carry the declared SKOS `technology` slug
-#: (envelope + resolved value) for the map/dossier/search facets.
-SHAPING_SCHEMA_VERSION = "p35.15a/1.1.0"
+#: p35.18/1.2.0 — JUR-02a: jurisdiction buckets key on the declared
+#: ``(scheme, value)`` (canonical key, never a bare code); envelope
+#: observations carry ``scheme``/``scheme_basis`` provenance.
+SHAPING_SCHEMA_VERSION = "p35.18/1.2.0"
 
 LAT_PREDICATE = GEO_PREDICATES[0]  # camera_latitude
 LON_PREDICATE = GEO_PREDICATES[1]  # camera_longitude
@@ -218,6 +226,11 @@ class ShapingClaim:
     #: marker. ``None`` when the recorded rights stand (no decision).
     effective_decision_decided_at: datetime | None = None
     effective_decision_basis: str | None = None
+    #: P35.18 / JUR-02a (K4 §3.2): the claim's stored ``value_json`` blob —
+    # ``jsonb::text`` verbatim. New claims carry the declared
+    # ``candidate_identifier`` ``{scheme, value}`` pair here; pre-P35.18
+    # claims carry none and shape through the config-declared scheme instead.
+    value_json: str | None = None
 
     @property
     def publishable(self) -> bool:
@@ -257,6 +270,14 @@ class ValueObservation:
     #: The occurrence reference of the claim's latest eligible establishing
     #: capture (evidence ref preserved in output), when one exists.
     capture_id: str | None = None
+    #: P35.18 (JUR-02a): the identifier scheme the observation's display value
+    #: was keyed under, when one was declared — ``None`` = the claim kept its
+    #: bare asserted value (undeclared, honest).
+    scheme: str | None = None
+    #: P35.18 (JUR-02a): where ``scheme`` came from — ``candidate_identifier``
+    #: (the claim's own persisted pair) or ``declared_scheme_from_config@<sha256>``
+    #: (the labelled config derivation for a legacy claim).
+    scheme_basis: str | None = None
 
 
 @dataclass(frozen=True)
@@ -302,6 +323,11 @@ class ObservationEnvelope:
                     "observed_at": o.observed_at,
                     "observed_basis": o.observed_basis,
                     "capture_id": o.capture_id,
+                    # P35.18 (JUR-02a): the declared identifier scheme behind a
+                    # keyed value, and the provenance label naming where the
+                    # scheme came from (the claim's pair or the config sha).
+                    "scheme": o.scheme,
+                    "scheme_basis": o.scheme_basis,
                 }
                 for o in self.observations
             ],
@@ -660,7 +686,9 @@ QUERIES: dict[str, str] = {
         # P34.21b (E2-12): the effective decision's stamp + basis (trailing
         # columns, NULL when the recorded rights stand) — the export names the
         # ADR-194 attribution corrections it carries from these.
-        "       ld.decided_at, ld.basis"
+        # P35.18 (JUR-02a): ``c.value_json::text`` trails the decision pair —
+        # the persisted {scheme, value} identifier a new claim declares.
+        "       ld.decided_at, ld.basis, c.value_json::text"
         "  FROM claim c"
         "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
         "  LEFT JOIN latest_decision ld"
@@ -886,7 +914,89 @@ def _display_value(claim: ShapingClaim) -> ParsedValue:
     return ParsedValue.typed(claim.raw_value, text.strip(), value_kind="text")
 
 
-def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> ObservationEnvelope:
+@lru_cache(maxsize=1)
+def _default_jurisdiction_config() -> JurisdictionSchemeConfig:
+    """The committed declared-scheme config, read once per process."""
+    return load_jurisdiction_scheme_config()
+
+
+def _declared_jurisdiction_pair(claim: ShapingClaim) -> tuple[str, str] | None:
+    """The ``{scheme, value}`` identifier pair persisted on the claim (P35.18).
+
+    ``value_json`` carries the connector's declared ``candidate_identifier``
+    verbatim (K4 §3.2 — stored there so the text value and digest stay
+    unchanged). A missing or malformed blob is *not* an error — pre-P35.18
+    claims carry none and still shape through the config basis; a blob without
+    a usable pair is likewise undeclared, never guessed.
+    """
+    blob = claim.value_json
+    if not blob:
+        return None
+    doc: Any = blob
+    if isinstance(doc, str):
+        try:
+            doc = json.loads(doc)
+        except ValueError:
+            return None
+    if not isinstance(doc, Mapping):
+        return None
+    scheme = doc.get("scheme")
+    value = doc.get("value")
+    if isinstance(scheme, str) and scheme.strip() and isinstance(value, str) and value.strip():
+        return scheme.strip(), value.strip()
+    return None
+
+
+def _jurisdiction_display(
+    claim: ShapingClaim, config: JurisdictionSchemeConfig | None
+) -> tuple[ParsedValue, str | None, str | None]:
+    """The scheme-keyed display value + its provenance (P35.18 / JUR-02a).
+
+    A ``camera_jurisdiction`` claim's bucket is its *declared* ``(scheme,
+    value)`` resolved through :func:`exports.jurisdictions.jurisdiction_key`
+    (canonical keys like ``iso3166-2:US-OK``) — never the bare asserted code:
+
+    * a new claim's persisted ``{scheme, value}`` pair keys it directly, with
+      basis ``candidate_identifier`` (the claim itself declared it);
+    * a legacy claim's scheme comes from the source's declared config, with
+      basis ``declared_scheme_from_config@<sha256>`` — derived and labelled,
+      never laundered into a re-adjudication (§3.1);
+    * a claim with neither keeps its bare display value (undeclared — honest);
+    * ``sig.unresolved`` (and a pair whose value is empty) keeps the honest
+      ``unresolved`` bucket — no fabricated key is minted for it.
+
+    Returns ``(parsed, scheme, scheme_basis)``; both provenance fields are
+    ``None`` when the claim is not a jurisdiction claim or stays undeclared.
+    """
+    parsed = _display_value(claim)
+    if claim.predicate_id != JURISDICTION_PREDICATE or not parsed.parse_ok:
+        return parsed, None, None
+    pair = _declared_jurisdiction_pair(claim)
+    if pair is not None:
+        scheme, value = pair
+        basis = DECLARED_SCHEME_FROM_CLAIM
+    else:
+        cfg = config if config is not None else _default_jurisdiction_config()
+        declared = cfg.for_claim(claim.source_id, str(parsed.parsed))
+        if declared is None:
+            return parsed, None, None
+        scheme, value = declared.scheme, str(parsed.parsed)
+        basis = declared.basis
+    key = jurisdiction_key(scheme, value)
+    bucket = key if key is not None else UNRESOLVED_JURISDICTION
+    return (
+        ParsedValue.typed(claim.raw_value, bucket, value_kind="jurisdiction_key"),
+        scheme,
+        basis,
+    )
+
+
+def observation_envelope(
+    predicate_id: str,
+    claims: Sequence[ShapingClaim],
+    *,
+    jurisdiction_config: JurisdictionSchemeConfig | None = None,
+) -> ObservationEnvelope:
     """Compute the observation-level envelope for one (subject, predicate).
 
     Deterministic: claims are sorted by ``(claim_id)``; the modal value is the
@@ -913,6 +1023,13 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
             distinct_values=(),
             observations=(),
         )
+    # P35.18 (JUR-02a): for the jurisdiction predicate the display value is the
+    # declared-(scheme, value) canonical key — never the bare code — and each
+    # observation carries the scheme + where it came from. The committed config
+    # is consulted lazily, only for claims the predicate actually requires.
+    parsed_by_id: dict[str, tuple[ParsedValue, str | None, str | None]] = {
+        c.claim_id: _jurisdiction_display(c, jurisdiction_config) for c in claims
+    }
     observations: list[ValueObservation] = []
     parseable_values: set[str] = set()
     # P32.4 / ADR-123: the envelope's CANDIDATES are the latest eligible claim
@@ -923,7 +1040,7 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
     candidates = lineage_candidates(list(claims))
     by_value: dict[str, list[str]] = {}
     for claim in sorted(claims, key=lambda c: c.claim_id):
-        parsed = _display_value(claim)
+        parsed, scheme, scheme_basis = parsed_by_id[claim.claim_id]
         display = parsed.parsed if parsed.parse_ok else f"(unparseable: {parsed.raw_value})"
         display_str = str(display)
         observations.append(
@@ -935,10 +1052,12 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
                 observed_at=claim.observed_at.isoformat() if claim.observed_at else None,
                 observed_basis=claim.observed_basis,
                 capture_id=claim.occurrence_capture_id,
+                scheme=scheme,
+                scheme_basis=scheme_basis,
             )
         )
     for claim in sorted(candidates, key=lambda c: c.claim_id):
-        parsed = _display_value(claim)
+        parsed, _scheme, _scheme_basis = parsed_by_id[claim.claim_id]
         display = parsed.parsed if parsed.parse_ok else f"(unparseable: {parsed.raw_value})"
         display_str = str(display)
         if parsed.parse_ok:
@@ -1050,6 +1169,7 @@ def shape_sites(
     *,
     entity_types: Mapping[str, str],
     refused_subjects: Set[str] = frozenset(),
+    jurisdiction_config: JurisdictionSchemeConfig | None = None,
 ) -> list[ShapedSite]:
     """Assemble publishable claims into observation-level sites (deterministic).
 
@@ -1074,7 +1194,9 @@ def shape_sites(
         lat_env = observation_envelope(LAT_PREDICATE, by_pred.get(LAT_PREDICATE, ()))
         lon_env = observation_envelope(LON_PREDICATE, by_pred.get(LON_PREDICATE, ()))
         jur_env = observation_envelope(
-            JURISDICTION_PREDICATE, by_pred.get(JURISDICTION_PREDICATE, ())
+            JURISDICTION_PREDICATE,
+            by_pred.get(JURISDICTION_PREDICATE, ()),
+            jurisdiction_config=jurisdiction_config,
         )
         label_env = observation_envelope(LABEL_PREDICATE, by_pred.get(LABEL_PREDICATE, ()))
         tech_env = observation_envelope(TECHNOLOGY_PREDICATE, by_pred.get(TECHNOLOGY_PREDICATE, ()))
@@ -1246,6 +1368,42 @@ def group_jurisdictions(
     # Deterministic: unresolved first? No — name asc is the canonical order; the
     # unresolved bucket is flagged, not reordered.
     return groups
+
+
+def jurisdiction_scheme_mix_violations(
+    claims: Sequence[ShapingClaim],
+    *,
+    jurisdiction_config: JurisdictionSchemeConfig | None = None,
+) -> list[str]:
+    """The JUR-02a regression: no jurisdiction bucket may mix schemes.
+
+    Every ``camera_jurisdiction`` claim derives its bucket from its declared
+    ``(scheme, value)`` — its own persisted pair, or the labelled config basis
+    — or honestly stays bare. A bucket is *mixed* when a scheme-keyed claim
+    shares it with a claim that declared nothing: that is a bare value
+    colliding with a derived key, the exact bug this row removes. Two declared
+    schemes mapping onto one canonical key (``us.state_abbr:OK`` and
+    ``iso.3166_2:US-OK``) are not a mix — the K4 §3.2 map merges them by
+    design. Returns one message per violation; empty = clean.
+    """
+    buckets: dict[str, list[tuple[str | None, str]]] = {}
+    for claim in claims:
+        if claim.predicate_id != JURISDICTION_PREDICATE:
+            continue
+        parsed, scheme, _basis = _jurisdiction_display(claim, jurisdiction_config)
+        display = parsed.parsed if parsed.parse_ok else f"(unparseable: {parsed.raw_value})"
+        buckets.setdefault(str(display), []).append((scheme, claim.claim_id))
+    violations: list[str] = []
+    for bucket, members in sorted(buckets.items()):
+        keyed = sorted(cid for s, cid in members if s is not None)
+        bare = sorted(cid for s, cid in members if s is None)
+        if keyed and bare:
+            violations.append(
+                f"jurisdiction bucket {bucket!r} mixes scheme-keyed claims "
+                f"({', '.join(keyed)}) with undeclared claims ({', '.join(bare)})"
+                " — a bare value must never land in a scheme-keyed bucket"
+            )
+    return violations
 
 
 def coverage_aggregates(
@@ -1486,6 +1644,10 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
         # absent on a pre-P27.2 row set (they default to "no decision").
         decision_decided_at = r[21] if len(r) > 21 else None
         decision_basis = r[22] if len(r) > 22 else None
+        # P35.18 (JUR-02a): the claim's stored ``value_json`` blob is the 24th
+        # column — absent on a pre-P35.18 row set (declared-scheme derivation
+        # then falls to the config basis, exactly the legacy path).
+        value_json = r[23] if len(r) > 23 else None
         observed_date = (
             observed_at.date()
             if isinstance(observed_at, datetime)
@@ -1546,6 +1708,15 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
                     decision_decided_at if isinstance(decision_decided_at, datetime) else None
                 ),
                 effective_decision_basis=(None if decision_basis is None else str(decision_basis)),
+                value_json=(
+                    None
+                    if value_json is None
+                    else (
+                        json.dumps(value_json, sort_keys=True, default=str)
+                        if isinstance(value_json, Mapping)
+                        else str(value_json)
+                    )
+                ),
             )
         )
     return claims
@@ -1558,11 +1729,15 @@ def build_shaped_dataset(
     generated_at: str,
     spine_label: str,
     note: str = "",
+    jurisdiction_config: JurisdictionSchemeConfig | None = None,
 ) -> ShapedDataset:
     """Assemble the :class:`ShapedDataset` from fetched rows (pure — no database).
 
     ``raw`` maps each :data:`QUERIES` key to its fetched result rows. This is the
     unit-testable core; every decision is a pure function of ``raw``.
+
+    ``jurisdiction_config`` overrides the committed declared-scheme config
+    (P35.18/JUR-02a) — a test injection; ``None`` reads the committed TOMLs.
     """
     claims = parse_shaping_claims(raw.get("shaping_claims") or [])
 
@@ -1585,7 +1760,21 @@ def build_shaped_dataset(
     publishable_claims = [c for c in claims if c.publishable]
     claims_shaped = len(publishable_claims)
 
-    sites = shape_sites(claims, entity_types=entity_types, refused_subjects=refused_subjects)
+    sites = shape_sites(
+        claims,
+        entity_types=entity_types,
+        refused_subjects=refused_subjects,
+        jurisdiction_config=jurisdiction_config,
+    )
+
+    # P35.18 (JUR-02a): the no-mix regression guard — a scheme-keyed claim may
+    # never share a bucket with an undeclared bare value. A violation is a
+    # build error (fail closed), never a warning.
+    mix_violations = jurisdiction_scheme_mix_violations(
+        publishable_claims, jurisdiction_config=jurisdiction_config
+    )
+    if mix_violations:
+        raise ValueError("jurisdiction buckets mix schemes (JUR-02a): " + "; ".join(mix_violations))
 
     # The post-shape guard (P35.66): a refused subject that reached a site is
     # a BUILD ERROR — raise, never warn. `assert_public_layer_subject` is the

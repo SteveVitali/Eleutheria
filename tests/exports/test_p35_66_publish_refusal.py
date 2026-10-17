@@ -167,8 +167,8 @@ def test_post_shape_guard_raises_on_a_smuggled_candidate_site(
     monkeypatch.setattr(
         shaping,
         "shape_sites",
-        lambda claims, *, entity_types, refused_subjects=frozenset(): real(
-            claims, entity_types=entity_types
+        lambda claims, *, entity_types, refused_subjects=frozenset(), **kw: real(
+            claims, entity_types=entity_types, **kw
         ),
     )
     raw = _raw(_geo("cand"), [("cand", "candidate_asset", False)])

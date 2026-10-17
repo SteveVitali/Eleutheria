@@ -37,6 +37,7 @@ Natural Earth public domain, "Made with Natural Earth").
 from __future__ import annotations
 
 import re
+import tomllib
 import unicodedata
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -159,6 +160,178 @@ DECLARED_SCHEMES: tuple[str, ...] = (
     "iso.3166_2",
     "sig.unresolved",
 )
+
+
+def jurisdiction_key(scheme: str, value: str) -> str | None:
+    """The canonical bucket key for a declared ``(scheme, value)`` pair (P35.18).
+
+    The K4 §3.2 map applies first (``us.state_abbr:OK`` → ``iso3166-2:US-OK``,
+    ``iso.3166_1_alpha2``/``iso.3166_2`` likewise); a declared scheme outside
+    that map keys under the K4 §3.1 national form ``<scheme>:<code>`` — still
+    scheme-named, never bare. A pair already in a reserved key family passes
+    through verbatim. ``sig.unresolved`` (and an empty value) maps to
+    ``None`` — no key is ever minted for an unresolved jurisdiction.
+    """
+    v = value.strip()
+    if not v:
+        return None
+    try:
+        return key_for_declared(scheme, v)
+    except ValueError:
+        if scheme in _RESERVED_SCHEMES:
+            return f"{scheme}:{v}"
+        return national_jkey(scheme, v)
+
+
+def jurisdiction_slug(key: str) -> str:
+    """The dossier/identity slug of a jurisdiction *key* — never a bare value.
+
+    The input is the scheme-aware bucket key (``iso3166-2:US-OK``) or an
+    honest bucket sentinel (``unresolved``/``(unasserted)``/``(conflicted)``);
+    the slug is its deterministic URL-safe form (``iso3166-2-us-ok``). The
+    JUR-02a rule the ticket guards is structural: the jurisdiction path slugs
+    the declared key through this function, so a bare ``_slugify(<value>)``
+    can never reappear there.
+    """
+    keep = [c.lower() if c.isalnum() else "-" for c in key]
+    slug = "".join(keep)
+    while "--" in slug:
+        slug = slug.replace("--", "-")
+    return slug.strip("-") or "unresolved"
+
+
+# --------------------------------------------------------------------------- #
+# The declared-scheme config basis for legacy claims (K4 §3.2, P35.18)        #
+# --------------------------------------------------------------------------- #
+
+#: The committed connector config a legacy claim's scheme is derived from.
+#: ``connectors`` is not an exports dependency — the TOMLs are data, read with
+#: stdlib ``tomllib`` (the same posture ``boundary_pack.py`` already takes).
+CONNECTOR_DATA_DIR = Path(__file__).resolve().parents[3] / "connectors/src/connectors/data"
+
+#: The config files a source's declared ``jurisdiction_scheme`` is read from,
+#: in precedence order: the source registry's per-source row field first, then
+#: the target registries' per-target ``(jurisdiction_scheme, state)`` pairs
+#: (K4-G4 — the declared scheme is the target config's, 1:1 per source).
+SCHEME_CONFIG_FILES: tuple[str, ...] = (
+    "sources.toml",
+    "camera_registry_targets.toml",
+    "dot_511_targets.toml",
+)
+
+#: The basis label a config-derived scheme carries — the file's sha256 names
+#: exactly which config declared it (SIG-EVID, SIG-ONTO-011's versioned basis).
+DECLARED_SCHEME_FROM_CONFIG = "declared_scheme_from_config"
+
+#: The basis label a claim-carried ``{scheme, value}`` pair carries — the claim
+#: itself declared it at emit time (SIG-INGEST-034's candidate-identifier seam).
+DECLARED_SCHEME_FROM_CLAIM = "candidate_identifier"
+
+
+@dataclass(frozen=True)
+class DeclaredJurisdictionScheme:
+    """The config-declared jurisdiction scheme for a legacy claim (K4 §3.2).
+
+    ``basis`` is the provenance label — ``declared_scheme_from_config@<sha256>``
+    with the sha256 of the exact config file the declaration was read from; a
+    legacy claim's scheme is therefore *derived and labelled*, never laundered
+    into a re-adjudication (§3.1).
+    """
+
+    scheme: str
+    basis: str
+
+
+@dataclass(frozen=True)
+class JurisdictionSchemeConfig:
+    """The per-source declared schemes the jurisdiction path consults (P35.18).
+
+    ``by_source_value`` keys on ``(source_id, claim value)`` — the target
+    registries' declared ``(jurisdiction_scheme, state)`` pairs — so a source
+    whose targets span more than one scheme still resolves each claim under
+    the scheme its value was emitted with. ``by_source`` is the single-scheme
+    fallback: only a source whose whole config footprint names exactly ONE
+    scheme qualifies (K4-G4's 1:1 posture — a multi-scheme source's claims
+    resolve per value, never under a guessed scheme). ``None`` means
+    "undeclared" — the claim keeps its bare value.
+    """
+
+    by_source_value: Mapping[tuple[str, str], DeclaredJurisdictionScheme]
+    by_source: Mapping[str, DeclaredJurisdictionScheme]
+
+    def for_claim(self, source_id: str | None, value: str) -> DeclaredJurisdictionScheme | None:
+        """The declared scheme for one legacy claim, or ``None`` (undeclared)."""
+        if not source_id:
+            return None
+        decl = self.by_source_value.get((source_id, value))
+        if decl is not None:
+            return decl
+        return self.by_source.get(source_id)
+
+
+def load_jurisdiction_scheme_config(
+    *, data_dir: Path | str | None = None
+) -> JurisdictionSchemeConfig:
+    """Read the declared jurisdiction schemes out of the committed config.
+
+    Each entry's basis records the sha256 of the *file* the declaration came
+    from (``declared_scheme_from_config@<sha256>``) so the provenance names the
+    config actually read, not a global digest. A ``(source, value)`` pair
+    declared under two schemes, or a source whose footprint spans two schemes,
+    contributes nothing — an ambiguous config never mints a scheme.
+    """
+    root = Path(data_dir) if data_dir is not None else CONNECTOR_DATA_DIR
+    by_value: dict[tuple[str, str], DeclaredJurisdictionScheme] = {}
+    ambiguous_values: set[tuple[str, str]] = set()
+    # source → {scheme: basis} — insertion-ordered so the registry row's basis
+    # (read first) wins when several files declare the same scheme.
+    source_schemes: dict[str, dict[str, str]] = {}
+    for name in SCHEME_CONFIG_FILES:
+        path = root / name
+        if not path.exists():
+            continue
+        raw = path.read_bytes()
+        basis = f"{DECLARED_SCHEME_FROM_CONFIG}@{sha256_hex(raw)}"
+        doc = tomllib.loads(raw.decode("utf-8"))
+        if name == "sources.toml":
+            rows = doc.get("sources") or {}
+            if not isinstance(rows, Mapping):
+                continue
+            for source_id, row in rows.items():
+                scheme = row.get("jurisdiction_scheme") if isinstance(row, Mapping) else None
+                if isinstance(scheme, str) and scheme.strip():
+                    source_schemes.setdefault(str(source_id), {}).setdefault(scheme.strip(), basis)
+            continue
+        for target in doc.get("targets") or ():
+            if not isinstance(target, Mapping):
+                continue
+            scheme = target.get("jurisdiction_scheme")
+            source_id = target.get("source_id")
+            if not (
+                isinstance(scheme, str)
+                and scheme.strip()
+                and isinstance(source_id, str)
+                and source_id
+            ):
+                continue
+            scheme = scheme.strip()
+            source_schemes.setdefault(source_id, {}).setdefault(scheme, basis)
+            value = target.get("state")
+            if not (isinstance(value, str) and value.strip()):
+                continue
+            key = (source_id, value.strip())
+            existing = by_value.get(key)
+            if existing is not None and existing.scheme != scheme:
+                del by_value[key]
+                ambiguous_values.add(key)
+            elif key not in ambiguous_values:
+                by_value[key] = DeclaredJurisdictionScheme(scheme=scheme, basis=basis)
+    by_source: dict[str, DeclaredJurisdictionScheme] = {}
+    for source_id, schemes in source_schemes.items():
+        if len(schemes) == 1:
+            scheme, basis = next(iter(schemes.items()))
+            by_source[source_id] = DeclaredJurisdictionScheme(scheme=scheme, basis=basis)
+    return JurisdictionSchemeConfig(by_source_value=by_value, by_source=by_source)
 
 
 # --------------------------------------------------------------------------- #
