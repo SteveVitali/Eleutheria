@@ -1536,7 +1536,17 @@ def _run_release(args: argparse.Namespace) -> int:
         return 0
     if verb == "apply-withdrawals":
         registry = rel.ReleaseRegistry(Path(args.registry))
-        out = rel.apply_withdrawals(Path(args.staged), registry.withdrawals())
+        staged = Path(args.staged)
+        latest_pub = (registry.latest() or {}).get("publication_id")
+        # P35.13: the tombstones this verb rewrites carry the CURRENT
+        # release's §6.1 stamp — a mutable page always names the release it
+        # answers for.
+        stamp = (
+            rel.load_mutable_stamp(staged / f"releases/{latest_pub}/release.json")
+            if latest_pub
+            else None
+        )
+        out = rel.apply_withdrawals(staged, registry.withdrawals(), stamp=stamp)
         print(json.dumps(out, indent=2))
         return 0
     if verb == "resolve":

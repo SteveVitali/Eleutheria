@@ -21,6 +21,7 @@ import "../styles/epistemic.css";
 import type { AsOfEcho } from "../lib/fixtures";
 import type { ProvenanceSummary } from "../lib/provenance";
 import { getSiteMetadata, getSiteProvenance } from "../lib/data";
+import { getReleaseStamp } from "../lib/release-stamp";
 import { defaultDescription } from "../lib/meta";
 
 interface Props {
@@ -80,6 +81,10 @@ const lang = Astro.props.lang ?? "en";
 // `{permalink}` precedent).
 const releaseId = siteMeta.releaseId;
 const asOfWorld = asOf.as_of_world;
+// P35.13 (SIG-REL-009, G3 §6.1): the release stamp's data comes from the
+// release's sig.site-release/1 — never a recomputed value. `null` (dev or a
+// pre-release export) keeps the P34.17 interim sentence honestly.
+const stamp = getReleaseStamp();
 
 // The canonical origin the belief-pinned permalink resolves against (P27.6; DNS
 // cut-over is P27.10). `Astro.site` is set in astro.config.mjs; the literal fallback
@@ -136,6 +141,12 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
          the ink square, served from /favicon.svg (a file the allow-list names). -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={new URL(path, Astro.site ?? CANONICAL_ORIGIN).href} />
+    {/* P35.13 (SIG-REL-009, G3 §6.1): the machine + link pair — every page
+        names its release (`<meta name="sig-release">` = `<label> <pub>`) and
+        links the release's own release.json (`describedby`). Both absent in
+        the no-release state, never a placeholder. */}
+    {stamp && <meta name="sig-release" content={stamp.metaContent} />}
+    {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>
@@ -178,7 +189,28 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
            ADR-167 — the recorded no-legal-review posture). Both ship as pending
            copy-batch rows; the sentences render on every chrome=full page. The
            stamp is omitted on chrome=minimal error/forwarder pages. -->
-      {chrome === "full" && (releaseId ? (
+      {chrome === "full" && (stamp ? (
+        <Fragment>
+          {/* P35.13 / SIG-REL-009 (G3 §6.1): the full provenance stamp —
+              label, data as-of, build instant, the linked code commit, the
+              publication id and the release.json link; then the latest-view
+              basis sentence pointing at the immutable namespace. The
+              /s/<pub>/ fixed-copy surface is the publish row's leg — the
+              immutable /r/<pub>/ namespace is the citable target today. */}
+          <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-04">
+            Release {stamp.label} · data as of {stamp.asOfWorld} · built{" "}
+            {stamp.builtAt} from code{" "}
+            <a href={stamp.commitHref}><code>{stamp.commit8}</code></a> ·{" "}
+            <code>{stamp.publicationShort}</code> ·{" "}
+            <a href={stamp.describedby}>release.json</a>
+          </p>
+          <p class="sig-footer__stamp-basis" data-testid="release-stamp-basis" data-copy="RS-05">
+            This is the latest view. Cite the fixed copy:{" "}
+            <a href={`/r/${stamp.publicationId}/`}><code>/r/{stamp.publicationId}/</code></a>.
+            The public API also serves newer, unreleased records, labelled "live".
+          </p>
+        </Fragment>
+      ) : releaseId ? (
         <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-01 RS-02">
           This site shows release {releaseId}, data as of {asOfWorld}.
           The public API is updated continuously and may show newer records.

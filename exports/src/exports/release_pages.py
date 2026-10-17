@@ -108,6 +108,10 @@ EXTERNAL_LINK_ROUTES: frozenset[str] = frozenset(
         "releases/index.html",
         "releases/catalog.json",
         "compat_index.json",
+        # The site-root release identity object (P35.13 / SIG-REL-009):
+        # emitted at the release-tree root, linked by every stamped page's
+        # <link rel="describedby">.
+        "release.json",
     }
     | {href.strip("/") for _, href in SITE_NAV}
     | {DISPUTE_HREF.strip("/")}
@@ -149,8 +153,93 @@ footer{border-top:1px solid #bbb;margin-top:1.5rem;padding-top:.5rem;font-size:.
 .site-nav{font-size:.85rem;margin-bottom:.6rem}.site-nav a{margin-right:.2rem}
 .dispute{margin-top:.9rem}
 .licence{font-size:.85rem}
+.stamp{margin:.35rem 0}
 nav a{margin-right:.8rem}.k{color:#555;display:inline-block;min-width:9rem}
 """
+
+
+def _stamp_instant(value: Any) -> str:
+    """Render an ISO instant for the stamp — ``2026-10-15 06:02 UTC`` (G3 §6.1
+    style); seconds stay when they are non-zero. A value that does not parse
+    renders verbatim — the stamp never invents a date."""
+    from .release_identity import parse_instant
+
+    instant = parse_instant(value)
+    if instant is None:
+        return str(value or "")
+    fmt = "%Y-%m-%d %H:%M:%S UTC" if instant.second else "%Y-%m-%d %H:%M UTC"
+    return instant.strftime(fmt)
+
+
+def release_stamp_view(
+    site_release: Mapping[str, Any] | None,
+    *,
+    describedby: str,
+    variant: str = "latest",
+) -> dict[str, str] | None:
+    """Project a ``sig.site-release/1`` document into the layout's stamp view.
+
+    The stamp's data source is the site-release object (a descriptor
+    rendering — SIG-MEM-011): label, publication id, the two instants and the
+    code commit all come straight from it. ``variant`` picks the §6.1 wording:
+    ``"latest"`` for a mutable page that names the current release (it must
+    cite the fixed copy — the immutable ``/r/<pub>/`` namespace), ``"fixed"``
+    for a page already inside a pinned namespace (``/r/<pub>/``,
+    ``/releases/<pub>/``, or a future ``/s/<pub>/``) — it IS the citation.
+    ``describedby`` is the release's own ``release.json`` href
+    (``/release.json`` on latest-view pages, ``/releases/<pub>/release.json``
+    inside the namespaces) — the ``<link rel="describedby">`` and the stamp's
+    release-record link share it. ``None`` in → ``None`` out: an
+    unstamped (v1) release stays honestly unstamped.
+    """
+    if not isinstance(site_release, Mapping):
+        return None
+    label = site_release.get("label")
+    pub = site_release.get("publication_id")
+    if not isinstance(label, str) or not isinstance(pub, str) or not pub:
+        return None
+    code = site_release.get("code") or {}
+    commit = str(code.get("commit") or "")
+    return {
+        "label": label,
+        "publication_id": pub,
+        "pub_short": f"{pub[:10]}…",
+        "as_of": _stamp_instant(site_release.get("as_of_world")),
+        "built": _stamp_instant(site_release.get("built_at")),
+        "commit8": commit[:8],
+        "commit_href": str(code.get("url") or ""),
+        "describedby": describedby,
+        "variant": variant,
+    }
+
+
+def _stamp_html(stamp: Mapping[str, str]) -> str:
+    """The §6.1 provenance line — label, data as-of, build instant, the linked
+    commit, the publication id, and the release-record link — plus the
+    latest-view/fixed-copy wording. Everything escaped except the two hrefs
+    (both built from validated descriptor fields upstream)."""
+    variant = stamp.get("variant")
+    if variant == "fixed":
+        basis = (
+            "This is the fixed copy of this release — cite this URL. "
+            'The public API also serves newer, unreleased records, labelled "live".'
+        )
+    else:
+        basis = (
+            f"This is the latest view. Cite the fixed copy: "
+            f'<a href="/r/{_e(stamp["publication_id"])}/"><code>'
+            f"/r/{_e(stamp['publication_id'])}/</code></a>. The public API also "
+            'serves newer, unreleased records, labelled "live".'
+        )
+    return (
+        '<p class="stamp">Release '
+        f"{_e(stamp['label'])} · data as of {_e(stamp['as_of'])} · "
+        f"built {_e(stamp['built'])} from code "
+        f'<a href="{_e(stamp["commit_href"])}"><code>{_e(stamp["commit8"])}</code></a> · '
+        f"<code>{_e(stamp['pub_short'])}</code> · "
+        f'<a href="{_e(stamp["describedby"])}"><code>release.json</code></a></p>'
+        f'<p class="stamp mut">{basis}</p>'
+    )
 
 
 def _layout(
@@ -162,6 +251,7 @@ def _layout(
     licence: str | None = None,
     report_href: str | None = None,
     description: str | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """The shared archive page skeleton (P34.34a): site nav, the title +
     immutable-release stamp, then a footer carrying the dispute/correction
@@ -172,7 +262,14 @@ def _layout(
     ``report_href`` is the record-level deep link (P34.37): emitted only on
     record pages, where the record context is known. ``description`` is the
     page's ``<meta name="description">`` (P34.41 — the namespace landing's
-    one-line answer to "what is this URL")."""
+    one-line answer to "what is this URL").
+
+    ``stamp`` is a :func:`release_stamp_view` view (P35.13 / SIG-REL-009):
+    when supplied the page carries ``<meta name="sig-release">``, a
+    ``<link rel="describedby" type="application/json">`` pointing at the
+    release's own ``release.json``, and the §6.1 footer line. ``None``
+    leaves the page unstamped — the honest state for a v1 release that has
+    no label to print."""
     pub = (
         f'<p class="mut">Immutable release <code>{_e(publication_id)}</code> — '
         "these bytes are version-pinned; cite this URL, not a &ldquo;latest&rdquo; alias.</p>"
@@ -186,15 +283,29 @@ def _layout(
     )
     report_link = f' <a href="{_e(report_href)}">Report this record</a>.' if report_href else ""
     desc = f'<meta name="description" content="{_e(description)}">' if description else ""
+    # P35.13 / SIG-REL-009 (G3 §6.1): the machine + human provenance pair —
+    # <meta name="sig-release"> and the describedby link live in <head>, the
+    # full stamp line in the footer. Both absent on an unstamped release.
+    stamp_head = ""
+    stamp_foot = ""
+    if stamp is not None:
+        stamp_head = (
+            f'<meta name="sig-release" content="{_e(stamp["label"])} '
+            f'{_e(stamp["publication_id"])}">'
+            f'<link rel="describedby" type="application/json" '
+            f'href="{_e(stamp["describedby"])}">'
+        )
+        stamp_foot = _stamp_html(stamp)
     html = (
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
         f"<title>{_e(title)} — SIG released record</title>"
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f"{desc}"
+        f"{stamp_head}"
         f"<style>{_STYLE}</style></head><body>"
         f"<header>{_site_nav()}<h1>{_e(title)}</h1>{pub}</header>"
         f"<main>{body}</main>"
-        f'<footer>{licence_line}<p class="dispute">Something wrong, or a privacy '
+        f'<footer>{stamp_foot}{licence_line}<p class="dispute">Something wrong, or a privacy '
         f'or safety concern? <a href="{_e(DISPUTE_HREF)}">Dispute or correct this '
         f"record</a> — reports arrive by e-mail.{report_link}</p>"
         f"<p>Surveillance Infrastructure Graph (SIG) — evidence-first public record. "
@@ -213,6 +324,7 @@ def record_page(
     *,
     latest_stub: str,
     evidence_compartment: Mapping[str, str] | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """The complete released record page — ``<uuid>/index.html``.
 
@@ -223,7 +335,11 @@ def record_page(
     name that compartment, not the record's. When the map is supplied, an
     artifact absent from it renders the honest "not published" cell instead
     of a dead link. ``None`` keeps the record's own compartment (direct
-    renderer callers outside the release build)."""
+    renderer callers outside the release build).
+
+    ``stamp`` is the §6.1 provenance view (P35.13 / SIG-REL-009) — the
+    release build supplies it for every page inside a v2 namespace; a
+    ``None`` (v1) release's pages stay honestly unstamped."""
     pub = record.publication_id or ""
     comp = record.compartment
     loc = record.location
@@ -360,6 +476,7 @@ Machine-readable: <a href="{_e(record.json_href)}"><code>{_e(record.json_href)}<
         # receiver is dark the link resolves to /dispute/ (see
         # _report_this_record_href).
         report_href=_report_this_record_href(record),
+        stamp=stamp,
     )
 
 
@@ -386,6 +503,7 @@ def browse_page(
     items: Sequence[Mapping[str, Any]],
     total: int,
     licence: str,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """One ``/r/<pub>/c/<comp>/browse/<kind>/<page>/`` index page."""
     lis = "".join(
@@ -406,6 +524,7 @@ def browse_page(
         body=body,
         publication_id=publication_id,
         licence=licence,
+        stamp=stamp,
     )
 
 
@@ -429,6 +548,7 @@ def jurisdiction_page(
     items: Sequence[Mapping[str, Any]],
     total: int,
     licence: str,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     lis = "".join(
         _record_li(i, publication_id=publication_id, compartment=compartment) for i in items
@@ -452,6 +572,7 @@ def jurisdiction_page(
         body=body,
         publication_id=publication_id,
         licence=licence,
+        stamp=stamp,
     )
 
 
@@ -463,6 +584,7 @@ def compartment_page(
     record_count: int,
     kinds: Mapping[str, int],
     jurisdictions: Mapping[str, int],
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """``/r/<pub>/c/<comp>/`` — the compartment overview."""
     kind_lis = "".join(
@@ -498,6 +620,7 @@ recomputes this index).</p>
         body=body,
         publication_id=publication_id,
         licence=licence,
+        stamp=stamp,
     )
 
 
@@ -512,6 +635,7 @@ def evidence_page(
     compartment: str,
     artifact: Mapping[str, Any],
     licence: str,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """``/r/<pub>/c/<comp>/evidence/<artifact_id>/`` — the released evidence
     anchor page (metadata only — capture bytes never travel, §17.5)."""
@@ -533,6 +657,7 @@ evidence object in the custody store.</p>
         body=body,
         publication_id=publication_id,
         licence=licence,
+        stamp=stamp,
     )
 
 
@@ -544,7 +669,13 @@ def dossier_slug(dossier: Mapping[str, Any]) -> str:
     return str(dossier.get("slug") or dossier.get("jurisdiction") or "unknown")
 
 
-def dossier_page(*, publication_id: str, dossier: Mapping[str, Any], licence: str) -> bytes:
+def dossier_page(
+    *,
+    publication_id: str,
+    dossier: Mapping[str, Any],
+    licence: str,
+    stamp: Mapping[str, Any] | None = None,
+) -> bytes:
     """``/r/<pub>/dossier/<slug>/`` — the released dossier overview: the
     published sections/rows verbatim plus links into the compartments.
 
@@ -597,6 +728,7 @@ Recorded gaps below are first-class absences, never omissions.</p>
         body=body,
         publication_id=publication_id,
         licence=licence,
+        stamp=stamp,
     )
 
 
@@ -606,7 +738,10 @@ Recorded gaps below are first-class absences, never omissions.</p>
 
 
 def release_landing(
-    entry: Mapping[str, Any], *, dossiers: Sequence[Mapping[str, Any]] = ()
+    entry: Mapping[str, Any],
+    *,
+    dossiers: Sequence[Mapping[str, Any]] = (),
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """``/releases/<pub>/index.html`` — the release landing: descriptor +
     integrity digest + compartment inventory + download pointers.
@@ -651,6 +786,9 @@ def release_landing(
         if dossier_lis
         else ""
     )
+    release_json_link = (
+        ' ·\n   <a href="release.json"><code>release.json</code></a>' if stamp is not None else ""
+    )
     body = f"""
 <p><span class="k">Publication</span> <code>{_e(pub)}</code></p>
 <p><span class="k">Data release</span> <code>{_e(entry.get("data_release_id"))}</code> ·
@@ -667,7 +805,7 @@ def release_landing(
 <h2>Machine-readable</h2>
 <p><a href="catalog_entry.json"><code>catalog_entry.json</code></a> ·
    <a href="integrity_manifest.json"><code>integrity_manifest.json</code></a> ·
-   <a href="descriptor.json"><code>descriptor.json</code></a></p>
+   <a href="descriptor.json"><code>descriptor.json</code></a>{release_json_link}</p>
 <p class="mut">Records live under <code>/r/{_e(pub)}/c/&lt;compartment&gt;/…</code>.
 Completeness: {_e(_display_label((entry.get("completeness") or {}).get("state")))}.</p>
 """
@@ -676,10 +814,11 @@ Completeness: {_e(_display_label((entry.get("completeness") or {}).get("state"))
         body=body,
         publication_id=pub,
         licence="per compartment — see the table",
+        stamp=stamp,
     )
 
 
-def namespace_landing(entry: Mapping[str, Any]) -> bytes:
+def namespace_landing(entry: Mapping[str, Any], *, stamp: Mapping[str, Any] | None = None) -> bytes:
     """``/r/<pub>/index.html`` — the immutable namespace root landing
     (P34.41 / C4 NEW-29): ``/r/<pub>/`` answers this page instead of a
     bare 403 from a directory with no index.
@@ -696,6 +835,11 @@ def namespace_landing(entry: Mapping[str, Any]) -> bytes:
         for c in entry.get("compartments") or []
     )
     repro = entry.get("reproducibility") or {}
+    release_json_link = (
+        f' ·\n   <a href="/releases/{_e(pub)}/release.json"><code>release.json</code></a>'
+        if stamp is not None
+        else ""
+    )
     body = f"""
 <p><span class="k">Publication</span> <code>{_e(pub)}</code></p>
 <p><span class="k">Data release</span> <code>{_e(entry.get("data_release_id"))}</code> ·
@@ -710,8 +854,10 @@ release's integrity manifest covers — cite these URLs directly.</p>
 <h2>Release record</h2>
 <p><a href="/releases/{_e(pub)}/">release landing</a> ·
    <a href="/releases/{_e(pub)}/catalog_entry.json"><code>catalog_entry.json</code></a> ·
-   <a href="/releases/{_e(pub)}/integrity_manifest.json"><code>integrity_manifest.json</code></a> ·
-   <a href="/releases/{_e(pub)}/descriptor.json"><code>descriptor.json</code></a></p>
+   <a href="/releases/{_e(pub)}/integrity_manifest.json"
+      ><code>integrity_manifest.json</code></a> ·
+   <a href="/releases/{_e(pub)}/descriptor.json"><code>descriptor.json</code></a>
+   {release_json_link}</p>
 """
     return _layout(
         title=f"Release namespace {pub[:15]}…",
@@ -723,10 +869,16 @@ release's integrity manifest covers — cite these URLs directly.</p>
             "routes, evidence anchors and compartment indexes of one "
             "activated release."
         ),
+        stamp=stamp,
     )
 
 
-def releases_index(entries: Iterable[Mapping[str, Any]], *, latest: str | None) -> bytes:
+def releases_index(
+    entries: Iterable[Mapping[str, Any]],
+    *,
+    latest: str | None,
+    stamp: Mapping[str, Any] | None = None,
+) -> bytes:
     """``/releases/index.html`` — the catalog of activated immutable releases."""
     lis = (
         "".join(
@@ -752,6 +904,7 @@ Each release is immutable: its bytes never change after activation
         footer_note="The (latest) marker is a convenience pointer, never a citation.",
         licence="CC-BY-4.0 — this catalog page is SIG metadata; record data "
         "carries its compartment licence",
+        stamp=stamp,
     )
 
 
@@ -761,6 +914,7 @@ def entity_stub(
     entity_id: str,
     latest_publication: str,
     record_href: str,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """The ``/entity/<type>/<uuid>/`` convenience landing — a mutable current
     view pointer. States plainly that it is NOT a citation."""
@@ -778,6 +932,7 @@ record instead:</p>
         publication_id=None,
         footer_note="Mutable overlay page — never an immutable citation.",
         licence="this page is a pointer only — the linked record carries its compartment licence",
+        stamp=stamp,
     )
 
 
@@ -799,6 +954,7 @@ def tombstone_page(
     disposition_ref: str | None = None,
     release_label: str | None = None,
     superseded_by: str | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """The deterministic 410 tombstone — content-free, public-safe fields
     only (reason CATEGORY + authority + decided DATE + policy version —
@@ -856,6 +1012,7 @@ including rolled-back ones. Corrections and disputes are handled through
         body=body,
         publication_id=None,
         footer_note="Honest unavailability — a tombstone, not silently stale bytes.",
+        stamp=stamp,
     )
 
 
@@ -869,6 +1026,7 @@ def entity_stub_tombstone(
     policy_version: str,
     disposition_ref: str | None = None,
     release_label: str | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """The ``/entity/<type>/<id>/`` convenience stub under a withdrawal
     (P34.41): the mutable alias answers the tombstone honestly instead of
@@ -907,6 +1065,7 @@ corrections and disputes are handled through
         body=body,
         publication_id=None,
         footer_note="Mutable overlay page — never an immutable citation.",
+        stamp=stamp,
     )
 
 

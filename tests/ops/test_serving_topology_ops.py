@@ -21,7 +21,11 @@ from pathlib import Path
 import pytest
 import yaml
 from ops.route_compare import capture, route_paths, verify
-from ops.web_conf import render_chrome_conf, render_terms_conf
+from ops.web_conf import (
+    render_chrome_conf,
+    render_release_conf,
+    render_terms_conf,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 NGINX_CONF = REPO_ROOT / "ops" / "web" / "nginx.conf"
@@ -74,6 +78,75 @@ def test_web_conf_cli_writes_chrome_and_guards_stale_terms(tmp_path: Path) -> No
     proc = run()
     assert proc.returncode == 0
     assert not (tmp_path / "terms_redirect.conf").exists()
+
+
+def test_release_fragment_is_the_provenance_pair() -> None:
+    """P35.13 (G3 §6.3): the generated fragment stamps X-SIG-Release
+    ``<label> <pub>`` + X-SIG-Conf-Gen ``<n>`` on every response — `always`,
+    so error and tombstone answers carry the same provenance — and refuses
+    values that could smuggle bytes into the config."""
+    pub = "p-" + "a" * 64
+    conf = render_release_conf("sig-2026-10-15.1", pub, "3")
+    assert f'add_header X-SIG-Release "sig-2026-10-15.1 {pub}" always;' in conf
+    assert "add_header X-SIG-Conf-Gen 3 always;" in conf
+    assert render_release_conf("sig-2026-10-15.1", pub, "3") == conf
+    for bad_label in ('x"; add_header Evil 1', "x\n", "x;"):
+        with pytest.raises(ValueError):
+            render_release_conf(bad_label, pub, "3")
+    with pytest.raises(ValueError, match="p-<64hex>"):
+        render_release_conf("sig-2026-10-15.1", "not-a-pub", "3")
+    with pytest.raises(ValueError, match="generation number"):
+        render_release_conf("sig-2026-10-15.1", pub, "3a")
+
+
+def test_web_conf_release_headers_all_or_nothing(tmp_path: Path) -> None:
+    """A half-labelled revision (release without gen, gen without release)
+    is refused — and clearing the stamp never leaves a stale fragment."""
+    import os
+
+    pub = "p-" + "b" * 64
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in {"SIG_LATEST_LABEL", "SIG_LATEST_PUB", "SIG_CONF_GEN"}
+    }
+
+    def run(*extra: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["uv", "run", "--quiet", "sig-ops", "web-conf", "--out-dir", str(tmp_path), *extra],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=str(REPO_ROOT),
+            env=env,
+        )
+
+    # Partial sets refuse.
+    proc = run("--release-label", "sig-2026-10-15.1")
+    assert proc.returncode == 4
+    assert "all-or-nothing" in proc.stderr
+    proc = run("--release-label", "sig-2026-10-15.1", "--release-pub", pub)
+    assert proc.returncode == 4
+    # Full set writes the fragment.
+    proc = run(
+        "--release-label",
+        "sig-2026-10-15.1",
+        "--release-pub",
+        pub,
+        "--conf-gen",
+        "11",
+    )
+    assert proc.returncode == 0, proc.stderr
+    conf = (tmp_path / "release_headers.conf").read_text()
+    assert f'add_header X-SIG-Release "sig-2026-10-15.1 {pub}" always;' in conf
+    assert "add_header X-SIG-Conf-Gen 11 always;" in conf
+    # A later run without the release env refuses to leave a stale stamp.
+    proc = run()
+    assert proc.returncode == 4
+    assert "stale" in proc.stderr
+    (tmp_path / "release_headers.conf").unlink()
+    proc = run()
+    assert proc.returncode == 0
 
 
 # --- route-compare: the byte-compare dark check --------------------------------
@@ -164,6 +237,9 @@ def test_nginx_conf_carries_the_dark_fragment_includes() -> None:
         "include /mnt/sig-web/conf/renamed_*.conf;",
         "include /mnt/sig-web/conf/chrome_*.conf;",
         "include /mnt/sig-web/conf/terms_*.conf;",
+        # P35.13 (G3 §6.3): the release provenance pair — dark until the
+        # publish pipeline generates release_headers.conf at activation.
+        "include /mnt/sig-web/conf/release_*.conf;",
         "location / {",
     ]
     pos = -1

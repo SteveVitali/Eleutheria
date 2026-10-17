@@ -1891,10 +1891,15 @@ def build_parser() -> argparse.ArgumentParser:
         "web-conf",
         help="D-P34.13-1 / P34.40: generate the dark conf/ fragments the "
         "sig-web nginx glob-includes — chrome_routes.conf (branded 403/410 + "
-        "/task/→404); terms_redirect.conf only with --api-base",
+        "/task/→404); terms_redirect.conf only with --api-base; "
+        "release_headers.conf (P35.13 §6.3) only with "
+        "--release-label+--release-pub+--conf-gen all three",
     )
     wconf.add_argument("--out-dir", required=True, help="the staged tree's conf/ dir")
     wconf.add_argument("--api-base", default=None, help="or $SIG_API_BASE_URL")
+    wconf.add_argument("--release-label", default=None, help="or $SIG_LATEST_LABEL")
+    wconf.add_argument("--release-pub", default=None, help="or $SIG_LATEST_PUB")
+    wconf.add_argument("--conf-gen", default=None, help="or $SIG_CONF_GEN")
 
     rcmp = sub.add_parser(
         "route-compare",
@@ -5237,6 +5242,12 @@ def main(argv: list[str] | None = None) -> int:
         argv_tail = ["--out-dir", args.out_dir]
         if args.api_base is not None:
             argv_tail += ["--api-base", args.api_base]
+        if args.release_label is not None:
+            argv_tail += ["--release-label", args.release_label]
+        if args.release_pub is not None:
+            argv_tail += ["--release-pub", args.release_pub]
+        if args.conf_gen is not None:
+            argv_tail += ["--conf-gen", args.conf_gen]
         return web_conf.main(argv_tail)
     if args.command == "route-compare":
         from . import route_compare
