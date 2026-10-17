@@ -24,6 +24,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Jurisdiction registry, GeoParquet boundary pack, and `lookup@1`**
+  (P35.17 / row 297; K4 §3.1/§3.2/§4.2/§5.4; cites SIG-JUR-D01,
+  SIG-IDENT-005/006, SIG-GEO-008, SIG-INGEST-028, ADR-160; revisits
+  ADR-079/ADR-122) — jurisdictions are keyed on canonical scheme-named
+  keys (`iso3166-1:*`, `iso3166-2:*`, `us.census.geoid.county|place:*`,
+  `national:<scheme>:*`), never bare labels: the `ID`/`MN`/`DE`
+  abbreviations collide with Indonesia/Mongolia/Germany and are
+  disambiguated by scheme and `within`/`level` filters. `sig-exports
+  boundaries` builds the declared `sig.boundary-pack/1` layer set
+  (TIGER/Line + Gazetteer + Natural Earth + the 500k display set) into
+  GeoParquet behind the fail-closed ingestion gate — the build refuses
+  while `census_gazetteer_tiger`/`natural_earth_10m` remain
+  un-flipped (HG-03 is the operator's act) and fixture builds record
+  `gate.mode = "fixture-bypass"` in the manifest. The derived
+  `sig.jurisdiction-registry/1` (CC-BY-4.0 SIG metadata, upstreams
+  attributed) carries parents, identifiers, vintages, bboxes, internal
+  points, the D-K4-2 disputed-territory posture (ISO as published; XK
+  `code_status = "user-assigned"`; one standing note) and the D-K4-4
+  territory-under-US keying (ISO 3166-1 codes as alias identifiers).
+  Descriptor v2's `boundaries_root` now derives from the staged
+  verified pack (`<export>/inputs/boundary-pack/`), failing closed on
+  tamper or contradiction. The hosted OCFL boundary-source capture is
+  queued behind the HG-03 flips — never exercised in this
+  `live_verification=false` run (re-run prompt in RETURN PASS).
+
 - **Geometry-defect detection at ingest and export row/entity
   disclosure** (P35.16 / row 296, catalog `R11-DATA-01`; owned finding
   **F-322 (S1)**; cites SIG-GEO-008, SIG-IDENT-004, SIG-ONTO-011,

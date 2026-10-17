@@ -99,6 +99,7 @@ note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Nashville 
 
 [sources.census_gazetteer_tiger]
 disposition = "mirror"
+note = "P35.17 (JUR-01, D-K4-1) — also the K4 US boundary source (TIGER/Line state/county/place + Gazetteer names/points + 500k display); OCFL capture queues behind the operator's HG-03 flip"
 
 [sources.census_geocoder]
 disposition = "reference"
@@ -254,6 +255,10 @@ disposition = "link_only"
 
 [sources.nces_ipeds_ntd_cms]
 disposition = "mirror"
+
+[sources.natural_earth_10m]
+disposition = "mirror"
+note = "P35.17 (JUR-01, D-K4-1) — the K4 non-US boundary source (ne_10m admin-0/admin-1); OCFL capture queues behind the operator's HG-03 flip"
 
 [sources.nextrequest]
 disposition = "reference"

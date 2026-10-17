@@ -210,3 +210,11 @@ jurisdiction filters remain and jurisdiction codes collide (F-44, I1 NEW-1; F3 �
 (jurisdiction registry, boundary pack, `lookup@1`) writes ADR-160 and appends its own `Revisited by ADR-160`
 line here (plan §7, S6R-24); P35.18 keeps the declared scheme. The decision above stays in force until that
 answer lands; this ADR's body is unchanged (SIG-ENG-003).
+
+- **Status:** Revisited by ADR-160 (2026-10-17, P35.17) — the jurisdiction-collision
+  trigger's answer landed: canonical scheme-named jurisdiction keys
+  (`iso3166-1:*`, `iso3166-2:*`, `us.census.geoid.*`, `national:*`) replace bare
+  labels, the GeoParquet boundary pack + `sig.jurisdiction-registry/1` carry the
+  spine, and `lookup@1` returns every ambiguous candidate rather than guessing.
+  The adapter dispatch seams above stay as decided; bare jurisdiction labels are
+  no longer admissible where a key is required.
