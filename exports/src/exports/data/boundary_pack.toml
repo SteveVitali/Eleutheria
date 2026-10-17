@@ -1,0 +1,199 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.boundary-pack/1 — the DECLARED boundary-pack layer set (K4 §4.2, P35.17,
+# ADR-160). Data, not code: a new upstream file or vintage is a row here, never
+# a code change. `file` names the upstream artifact as staged under the
+# captured-inputs dir (a .zip is extracted; a directory of the same stem
+# resolves too).
+#
+# The fail-closed chain: the OCFL capture of these bytes waits on the
+# operator's HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m`
+# (D-K4-1, OP-26 — never this file's edit); `sig-exports boundaries build`
+# refuses to convert unless every layer's source is ingestion_permitted, or
+# the build declares its inputs are fixtures (`gate.mode = "fixture-bypass"`
+# is recorded in the emitted manifest).
+
+[pack]
+schema = "sig.boundary-pack/1"
+pack_id = "boundaries-2025"
+
+# One boundary vintage per release (K4 §3.5, SIG-ONTO-011): TIGER/Gazetteer
+# 2025 = boundaries as of 2025-01-01; Natural Earth v5.1.
+[pack.vintages]
+tiger = "tiger-2025"
+gazetteer = "gazetteer-2025"
+natural_earth = "ne-5.1"
+
+[registry]
+# The sig.jurisdiction-registry/1 header (K4 §4.2: SIG metadata, CC-BY-4.0,
+# upstreams attributed; the upstream polygons stay restricted inputs).
+license = "CC-BY-4.0"
+attribution = [
+  "U.S. Census Bureau — TIGER/Line 2025 shapefiles and 2025 Gazetteer files (US Government work, no copyright under 17 U.S.C. §105; citation requested)",
+  "Natural Earth — public domain (Made with Natural Earth)",
+]
+# D-K4-2: ONE standing note, recorded verbatim.
+standing_note = "Disputed territories follow D-K4-2: ISO 3166-1 codes as published (TW, PS, HK, EH); XK for Kosovo, labelled a user-assigned code; neutral names. This is a recorded posture, not an adjudication."
+
+# ---------------------------------------------------------------------------
+# US containment layers — TIGER/Line (unclipped; never the display set, K4 §4)
+# ---------------------------------------------------------------------------
+
+[[layers]]
+id = "tiger_state"
+source = "census_gazetteer_tiger"
+file = "tl_2025_us_state.zip"
+format = "shapefile-zip"
+role = "us_containment"
+vintage = "tiger-2025"
+level = "state_province"
+key_scheme = "us.state_abbr"
+note = "US states + DC + territories (Census state-equivalents; D-K4-4 — territories keyed iso3166-2:US-* under iso3166-1:US, ISO 3166-1 codes carried as alias identifiers)."
+[layers.fields]
+code = "STUSPS"
+geoid = "GEOID"
+name = "NAME"
+namelsad = "NAMELSAD"
+
+[[layers]]
+id = "tiger_county"
+source = "census_gazetteer_tiger"
+file = "tl_2025_us_county.zip"
+format = "shapefile-zip"
+role = "us_containment"
+vintage = "tiger-2025"
+level = "county"
+key_scheme = "us.census.geoid.county"
+note = "Counties + parishes/boroughs/independent cities; key us.census.geoid.county:<SSCCC>, parent = the row's STATEFP → iso3166-2:US-*."
+[layers.fields]
+geoid = "GEOID"
+statefp = "STATEFP"
+name = "NAME"
+namelsad = "NAMELSAD"
+
+[[layers]]
+id = "tiger_place"
+source = "census_gazetteer_tiger"
+file = "tl_2025_us_place.zip"
+format = "shapefile-zip"
+role = "us_containment"
+vintage = "tiger-2025"
+level = "municipality"
+key_scheme = "us.census.geoid.place"
+note = "US incorporated places + CDPs; key us.census.geoid.place:<SSPPPPP>."
+[layers.fields]
+geoid = "GEOID"
+statefp = "STATEFP"
+name = "NAME"
+namelsad = "NAMELSAD"
+
+# ---------------------------------------------------------------------------
+# Gazetteer names/points — enrich US rows (names, GNIS ids, internal points)
+# ---------------------------------------------------------------------------
+
+[[layers]]
+id = "gazetteer_state"
+source = "census_gazetteer_tiger"
+file = "2025_Gaz_state_national.zip"
+format = "gazetteer-txt"
+role = "us_names"
+vintage = "gazetteer-2025"
+level = ""
+key_scheme = ""
+[layers.fields]
+geoid = "GEOID"
+ansicode = "ANSICODE"
+name = "NAME"
+intptlat = "INTPTLAT"
+intptlong = "INTPTLONG"
+
+[[layers]]
+id = "gazetteer_county"
+source = "census_gazetteer_tiger"
+file = "2025_Gaz_counties_national.zip"
+format = "gazetteer-txt"
+role = "us_names"
+vintage = "gazetteer-2025"
+level = ""
+key_scheme = ""
+[layers.fields]
+geoid = "GEOID"
+ansicode = "ANSICODE"
+name = "NAME"
+intptlat = "INTPTLAT"
+intptlong = "INTPTLONG"
+
+[[layers]]
+id = "gazetteer_place"
+source = "census_gazetteer_tiger"
+file = "2025_Gaz_place_national.zip"
+format = "gazetteer-txt"
+role = "us_names"
+vintage = "gazetteer-2025"
+level = ""
+key_scheme = ""
+[layers.fields]
+geoid = "GEOID"
+ansicode = "ANSICODE"
+name = "NAME"
+intptlat = "INTPTLAT"
+intptlong = "INTPTLONG"
+
+# ---------------------------------------------------------------------------
+# Display — cartographic 500k, for display only, never containment (K4 §4.1)
+# ---------------------------------------------------------------------------
+
+[[layers]]
+id = "cb_500k"
+source = "census_gazetteer_tiger"
+file = "cb_2025_us_state_500k.zip"
+format = "shapefile-zip"
+role = "us_display"
+vintage = "tiger-2025"
+level = ""
+key_scheme = ""
+note = "Generalised+clipped display geometry; placement never reads it."
+[layers.fields]
+name = "NAME"
+
+# ---------------------------------------------------------------------------
+# Non-US — Natural Earth 10m (public domain; the only permitted non-US source)
+# ---------------------------------------------------------------------------
+
+[[layers]]
+id = "ne_admin0"
+source = "natural_earth_10m"
+file = "ne_10m_admin_0_countries.zip"
+format = "shapefile-zip"
+role = "non_us"
+vintage = "ne-5.1"
+level = "country"
+key_scheme = "iso3166-1"
+note = "Keyed on ISO_A2_EH (K4 §1.2: ISO_A2 is -99 for France/Norway/Kosovo etc.); XK is carried with code_status=user-assigned (D-K4-2); rows with no ISO code mint no key."
+[layers.fields]
+code = "ISO_A2_EH"
+iso3 = "ADM0_A3"
+name = "NAME_EN"
+alternates = ["NAME", "NAME_LONG", "NAME_SORT", "NAME_FR", "NAME_DE", "FORMAL_EN"]
+
+[[layers]]
+id = "ne_admin1"
+source = "natural_earth_10m"
+file = "ne_10m_admin_1_states_provinces.zip"
+format = "shapefile-zip"
+role = "non_us"
+vintage = "ne-5.1"
+level = "state_province"
+key_scheme = "iso3166-2"
+note = "Keyed on iso_3166_2; US rows are skipped (Census is the US admin-1 source of truth); GB rolls up by geonunit per K4 §3.1."
+[layers.fields]
+code = "iso_3166_2"
+adm1_code = "adm1_code"
+name = "name"
+alternates = ["name_en", "name_alt", "name_local"]
+[layers.rollup]
+field = "geonunit"
+prefix = "GB"
+map = { "England" = "ENG", "Scotland" = "SCT", "Wales" = "WLS", "Northern Ireland" = "NIR" }

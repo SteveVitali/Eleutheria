@@ -153,8 +153,10 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # index; statrep_us_dhs_{component_privacy,obim_pia,cbp_border,cbp_pia}
     # → statrep_us_dhs_privacy_compliance's five targets): 592 → 587
     # registered; every row stays ingestion_permitted=false, so loadable is
-    # unchanged.
-    assert "registered sources: 587" in out
+    # unchanged. P35.17 (JUR-01) registered `natural_earth_10m` (587 → 588
+    # registered; ingestion_permitted=false pending the HG-03 flip — loadable
+    # unchanged; its captured-terms rights block joins flip-ready).
+    assert "registered sources: 588" in out
     assert "self-checks OK" in out
 
 
@@ -302,10 +304,17 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # statrep_us_dhs_privacy_compliance's five targets): 592 → 587
     # registered; every row stays ingestion_permitted=false — loadable 236
     # unchanged, flip-ready still the one standing exception.
+    # P35.17 (JUR-01) registered `natural_earth_10m` (587 → 588) and resolved
+    # the rights posture of `census_gazetteer_tiger` + `natural_earth_10m`
+    # (terms captured verbatim, redistributable) — both stay
+    # ingestion_permitted=false pending the operator's HG-03 flips, so they
+    # join flip-ready (1 → 3) while loadable stays 236.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 587" in out
-    assert "flip-ready: 1" in out
+    assert "registered sources: 588" in out
+    assert "flip-ready: 3" in out
+    assert "flip-ready: census_gazetteer_tiger" in out
+    assert "flip-ready: natural_earth_10m" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out
 
@@ -316,10 +325,17 @@ def test_review_status_loadable_equals_validate() -> None:
 
     loadable = [s for s in sources() if is_loadable(s)]
     assert len(loadable) == 236
-    # state_alpr_statute_inventory is the single flip-ready row: its rights
+    # state_alpr_statute_inventory was the single flip-ready row: its rights
     # resolved for the landed seed claims (P27.2/ADR-095) while the live gate
     # stays closed by design — one-time seed, never a feed (SIG-INGEST-049f).
-    assert {s.id for s in flip_ready()} == {"state_alpr_statute_inventory"}
+    # P35.17 (JUR-01) added the two rights-resolved-but-unflipped boundary
+    # sources — census_gazetteer_tiger + natural_earth_10m await the
+    # operator's HG-03 flips (flip-ready 1 → 3).
+    assert {s.id for s in flip_ready()} == {
+        "census_gazetteer_tiger",
+        "natural_earth_10m",
+        "state_alpr_statute_inventory",
+    }
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

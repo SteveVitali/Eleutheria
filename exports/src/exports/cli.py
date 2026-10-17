@@ -574,6 +574,83 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the new registry here instead of in place",
     )
 
+    boundaries = subparsers.add_parser(
+        "boundaries",
+        help="P35.17 (K4 §4.2/§3.1/§5.4, ADR-160): the GeoParquet boundary "
+        "pack, the sig.jurisdiction-registry/1 export surface, and lookup@1 — "
+        "fail-closed on the ingestion gate; a fixture build records "
+        "gate.mode=fixture-bypass in the pack manifest.",
+    )
+    bsub = boundaries.add_subparsers(dest="boundaries_command", required=True)
+    bbuild = bsub.add_parser(
+        "build",
+        help="Convert the captured boundary inputs into the GeoParquet pack + "
+        "sig.boundary-pack/1 manifest (refuses while any layer's source is "
+        "not ingestion_permitted — the HG-03 flips are the operator's act).",
+    )
+    bbuild.add_argument(
+        "--spec",
+        default=None,
+        help="the sig.boundary-pack/1 spec (default: the bundled data/boundary_pack.toml)",
+    )
+    bbuild.add_argument(
+        "--inputs",
+        required=True,
+        help="the captured boundary files dir (each declared layer's `file` resolves here)",
+    )
+    bbuild.add_argument("--out", required=True, help="the pack output dir")
+    bbuild.add_argument(
+        "--sources-toml",
+        default=None,
+        help="the source registry the gate check reads (default: the committed connectors one)",
+    )
+    bbuild.add_argument(
+        "--fixture",
+        action="store_true",
+        help="declare the inputs as stand-ins, not captured evidence — skips "
+        "the ingestion-gate check and records gate.mode=fixture-bypass in the manifest",
+    )
+    breg = bsub.add_parser(
+        "registry",
+        help="Derive the sig.jurisdiction-registry/1 document from a verified pack.",
+    )
+    breg.add_argument("--pack", required=True, help="the built pack dir (verified first)")
+    breg.add_argument(
+        "--spec",
+        default=None,
+        help="the sig.boundary-pack/1 spec (default: the bundled data/boundary_pack.toml)",
+    )
+    breg.add_argument("--out", required=True, help="the jurisdictions.json output path")
+    bver = bsub.add_parser(
+        "verify",
+        help="Re-verify a built pack: re-hash every layer file + recompute boundaries_root.",
+    )
+    bver.add_argument("--pack", required=True)
+    broot = bsub.add_parser(
+        "root", help="Print a verified pack's boundaries_root (the descriptor-v2 value)."
+    )
+    broot.add_argument("--pack", required=True)
+    bstage = bsub.add_parser(
+        "stage",
+        help="Stage a built pack into <export>/inputs/boundary-pack/ (the "
+        "restricted-export-input seam the descriptor's boundaries_root derives from).",
+    )
+    bstage.add_argument("--pack", required=True)
+    bstage.add_argument("--export-dir", required=True)
+    blook = bsub.add_parser("lookup", help="Run lookup@1 (K4 §5.4) against a built registry.")
+    blook.add_argument("--registry", required=True, help="the sig.jurisdiction-registry/1 file")
+    blook.add_argument("--name", required=True)
+    blook.add_argument(
+        "--level",
+        default=None,
+        choices=["country", "state_province", "county", "municipality"],
+    )
+    blook.add_argument("--within", default=None, help="restrict to this jkey's subtree")
+    bval = bsub.add_parser(
+        "validate", help="Validate a built registry's structural invariants (fail closed)."
+    )
+    bval.add_argument("--registry", required=True)
+
     return parser
 
 
@@ -1430,6 +1507,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_release(args)
     if args.command == "quality":
         return _run_quality(args)
+    if args.command == "boundaries":
+        return _run_boundaries(args)
     parser.print_help()
     return 0
 
@@ -1603,6 +1682,107 @@ def _manifest_rows(path: str | None) -> set[str]:
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
+
+
+def _run_boundaries(args: argparse.Namespace) -> int:
+    """The P35.17 boundary-pack / jurisdiction-registry verbs — all offline;
+    fail-closed exits carry the refusal reason on stdout."""
+    from . import boundary_pack as bp
+    from . import jurisdictions as jr
+
+    verb = args.boundaries_command
+    spec_path = getattr(args, "spec", None)
+    if verb == "build":
+        try:
+            spec = bp.load_spec(spec_path or bp.PACK_SPEC_RESOURCE_PATH)
+            manifest = bp.build_pack(
+                spec,
+                args.inputs,
+                args.out,
+                sources_toml=args.sources_toml,
+                fixture_inputs=args.fixture,
+            )
+        except bp.BoundaryPackError as e:
+            print(f"sig-exports boundaries build: refused — {e}")
+            return 4
+        print(
+            json.dumps(
+                {
+                    "pack_id": manifest["pack_id"],
+                    "boundaries_root": manifest["boundaries_root"],
+                    "layers": len(manifest["layers"]),
+                    "gate": manifest["gate"]["mode"],
+                },
+                indent=2,
+            )
+        )
+        return 0
+    if verb == "registry":
+        try:
+            spec = bp.load_spec(spec_path or bp.PACK_SPEC_RESOURCE_PATH)
+            doc = jr.build_registry(spec, args.pack)
+            jr.write_registry(doc, args.out)
+        except (bp.BoundaryPackError, ValueError) as e:
+            print(f"sig-exports boundaries registry: refused — {e}")
+            return 4
+        print(
+            json.dumps(
+                {
+                    "schema": doc["schema"],
+                    "rows": len(doc["rows"]),
+                    "boundaries_root": doc["boundary_pack"]["boundaries_root"],
+                },
+                indent=2,
+            )
+        )
+        return 0
+    if verb == "verify":
+        failures = bp.verify_pack(args.pack)
+        if failures:
+            print(json.dumps({"pack": args.pack, "failures": failures}, indent=2))
+            return 4
+        print(json.dumps({"pack": args.pack, "failures": []}, indent=2))
+        return 0
+    if verb == "root":
+        try:
+            manifest = bp.read_manifest(args.pack)
+            failures = bp.verify_pack(args.pack)
+            if failures:
+                raise bp.BoundaryPackError("\n  ".join(failures))
+        except bp.BoundaryPackError as e:
+            print(f"sig-exports boundaries root: refused — {e}")
+            return 4
+        print(manifest["boundaries_root"])
+        return 0
+    if verb == "stage":
+        try:
+            failures = bp.verify_pack(args.pack)
+            if failures:
+                raise bp.BoundaryPackError("\n  ".join(failures))
+            dest = bp.copy_pack(args.pack, args.export_dir)
+        except bp.BoundaryPackError as e:
+            print(f"sig-exports boundaries stage: refused — {e}")
+            return 4
+        print(json.dumps({"staged": str(dest)}, indent=2))
+        return 0
+    if verb == "lookup":
+        try:
+            doc = jr.read_registry(args.registry)
+            hits = jr.lookup(doc["rows"], args.name, level=args.level, within=args.within)
+        except (bp.BoundaryPackError, ValueError) as e:
+            print(f"sig-exports boundaries lookup: refused — {e}")
+            return 4
+        print(json.dumps({"rules": jr.LOOKUP_RULESET, "candidates": hits}, indent=2))
+        return 0
+    if verb == "validate":
+        try:
+            doc = jr.read_registry(args.registry)
+        except bp.BoundaryPackError as e:
+            print(f"sig-exports boundaries validate: refused — {e}")
+            return 4
+        print(json.dumps({"schema": doc["schema"], "rows": len(doc["rows"])}, indent=2))
+        return 0
+    return 2
 
 
 def _run_quality(args: argparse.Namespace) -> int:
