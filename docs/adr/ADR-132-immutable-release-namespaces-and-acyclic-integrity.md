@@ -138,3 +138,11 @@ P34.3 makes `sig-web` non-public, P34.21b removes anonymous read/list on the 09-
 downloads to the zero-egress R2 host, and P35.12 writes ADR-161 (release model v2) and appends its own
 `Extended by ADR-161` line here (plan §7, S6R-24). The decision above stays in force until that answer lands;
 this ADR's body is unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Extended by ADR-161 (2026-10-16) — release identity v2
+  (`sig.publication-descriptor/2`, the calendar labels, keyed export ids and
+  the §3.3 clock guards) lands the answer this ADR's fired trigger awaited
+  (S6R-24). The `p-<64 hex>` namespace, the external integrity manifest and
+  the mutable-overlay split stand; the body above is unchanged (SIG-ENG-003).

@@ -32,7 +32,9 @@ def test_build_spec_requires_versions() -> None:
 def test_release_id_is_a_deterministic_function_of_the_repro_inputs() -> None:
     # SIG-EXPORT-003: same (as_of pair + ruleset + resolver) => same release id.
     assert _spec().release_id() == _spec().release_id()
-    assert _spec().release_id().startswith("sig-2026-06-30-")
+    # P35.12 / NEW-1: the export id is sig-export-<YYYYMMDDTHHMMSSZ>-<key8>;
+    # a date-grain spec's <ts> is its as-of date's UTC midnight.
+    assert _spec().release_id().startswith("sig-export-20260630T000000Z-")
 
 
 def test_release_id_changes_when_any_repro_input_changes() -> None:

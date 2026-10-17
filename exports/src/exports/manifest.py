@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -56,6 +57,26 @@ def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def compact_utc_ts(instant: str) -> str:
+    """``2026-06-30T15:00:00Z`` → ``20260630T150000Z`` (the export-id <ts> part).
+
+    Any ``YYYY-MM-DDTHH:MM:SS[.f][Z|±HH:MM]`` instant is normalised to UTC
+    first; a bare ``YYYY-MM-DD`` date compacts to its UTC midnight.
+    """
+    from datetime import UTC, datetime
+
+    text = instant.strip()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        text += "T00:00:00+00:00"
+    try:
+        dt = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError(f"{instant!r} is not an ISO-8601 date or instant") from exc
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=UTC)
+    return dt.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
+
+
 @dataclass(frozen=True)
 class BuildSpec:
     """The reproducibility inputs of one bulk-export release (SIG-EXPORT-003).
@@ -77,6 +98,34 @@ class BuildSpec:
     resolver_version: str
     #: Stable dataset slug; the concept-level identity, constant across releases.
     dataset_slug: str = "sig"
+    #: P35.12 / SIG-REL-001: the full ISO instants behind the date-grain as-of
+    #: pair (``as_of`` arrives as a *time* in the spine export; the dates are
+    #: its UTC date). Populated by ``--from-spine``/``export.sh``; ``None`` on
+    #: a legacy date-only BuildSpec.
+    as_of_snapshot_instant: str | None = None
+    as_of_belief_instant: str | None = None
+    #: Whether the belief axis was typed/pinned (``--belief``) or followed the
+    #: snapshot instant (default False → follows).
+    belief_pinned: bool = False
+    #: The append-only spine watermark string (``db.occurrences.spine_watermark``)
+    #: this export read at — part of the export-id key (the NEW-1 fix).
+    spine_watermark: str | None = None
+    #: The git sha of the code that ran the export — part of the id key.
+    code_commit: str | None = None
+    #: The declared environment (production/staging/fixture/replay) — two
+    #: runs of the same inputs under different environments are different
+    #: exports.
+    environment: str | None = None
+    #: The ``--replay`` reason (Class S) when this spec replays a historical
+    #: snapshot; ``None`` on the live cut.
+    replay: str | None = None
+    #: The materialization run the export read (G3 §3.2 ``materialize_run``);
+    #: ``None`` until the hosted materialization names one.
+    materialize_run: str | None = None
+    #: The sqitch head the export ran against (schema state of the read).
+    sqitch_head: str | None = None
+    #: The operator-declared snapshot restore point (replays only).
+    restore_point: str | None = None
 
     def __post_init__(self) -> None:
         if not self.ruleset_version:
@@ -95,6 +144,50 @@ class BuildSpec:
             "resolver_version": self.resolver_version,
         }
 
+    def export_id_inputs(self) -> dict[str, object]:
+        """The NEW-1 export-id key inputs (G3 §3.1).
+
+        The §38.1 reproducibility tuple *plus* everything that makes two
+        same-day exports different datasets: the full snapshot/belief
+        instants, the spine watermark and the code commit — so a re-export
+        that read a different watermark or ran different code can never
+        collide with the earlier id.
+        """
+        inputs: dict[str, object] = dict(self.reproducibility_inputs())
+        inputs["as_of_snapshot_instant"] = (
+            self.as_of_snapshot_instant or f"{self.as_of_snapshot.isoformat()}T00:00:00Z"
+        )
+        inputs["as_of_belief_instant"] = (
+            self.as_of_belief_instant or f"{self.as_of_belief.isoformat()}T00:00:00Z"
+        )
+        inputs["belief_pinned"] = self.belief_pinned
+        inputs["spine_watermark"] = self.spine_watermark
+        inputs["code_commit"] = self.code_commit
+        inputs["environment"] = self.environment
+        inputs["replay"] = self.replay
+        inputs["materialize_run"] = self.materialize_run
+        inputs["sqitch_head"] = self.sqitch_head
+        inputs["restore_point"] = self.restore_point
+        return inputs
+
+    def snapshot_block(self) -> dict[str, object] | None:
+        """The descriptor ``snapshot`` block this spec records — ``None`` on a
+        legacy date-only spec (the release builder falls back to its
+        reproducibility fields then)."""
+        if self.as_of_snapshot_instant is None and self.spine_watermark is None:
+            return None
+        return {
+            "as_of_world": self.as_of_snapshot_instant
+            or f"{self.as_of_snapshot.isoformat()}T00:00:00Z",
+            "as_of_belief": self.as_of_belief_instant
+            or f"{self.as_of_belief.isoformat()}T00:00:00Z",
+            "belief_pinned": self.belief_pinned,
+            "spine_watermark": self.spine_watermark,
+            "materialize_run": self.materialize_run,
+            "sqitch_head": self.sqitch_head,
+            "restore_point": self.restore_point,
+        }
+
     def content_key(self) -> str:
         """The deterministic digest of the reproducibility inputs.
 
@@ -109,13 +202,20 @@ class BuildSpec:
         return self.dataset_slug
 
     def release_id(self) -> str:
-        """The versioned release identity (Zenodo version DOI).
+        """The internal export id ``sig-export-<YYYYMMDDTHHMMSSZ>-<key8>``.
 
-        Derived from the dataset slug, the observation-time snapshot (the release
-        period), and a short content fingerprint — so the id both reads meaningfully
-        (``sig-2026-06-30-1a2b3c4d``) and changes iff any reproducibility input changes.
+        P35.12 / NEW-1 (SIG-REL-001): the timestamp is the *snapshot instant*
+        (date-grain specs render their as-of date's UTC midnight) and ``key8``
+        is the leading sha256 of :meth:`export_id_inputs` — instants,
+        watermark and commit included — so two same-day exports with
+        different inputs can never share an id (the defect G3 names). Two
+        builds of *the same* spec still name the same export — the id is a
+        pure function of the inputs (SIG-EXPORT-003).
         """
-        return f"{self.dataset_slug}-{self.as_of_snapshot.isoformat()}-{self.content_key()[:8]}"
+        instant = self.as_of_snapshot_instant or f"{self.as_of_snapshot.isoformat()}T00:00:00Z"
+        ts = compact_utc_ts(instant)
+        key8 = sha256_hex(canonical_json(self.export_id_inputs()))[:8]
+        return f"sig-export-{ts}-{key8}"
 
 
 @dataclass(frozen=True)
@@ -185,7 +285,7 @@ class Manifest:
         return sorted(self.artifacts, key=lambda a: a.path)
 
     def as_json(self) -> dict[str, object]:
-        return {
+        doc: dict[str, object] = {
             "concept_id": self.build_spec.concept_id(),
             "release_id": self.build_spec.release_id(),
             "reproducibility_inputs": self.build_spec.reproducibility_inputs(),
@@ -195,6 +295,17 @@ class Manifest:
             "publication_basis": PUBLICATION_BASIS,
             "artifacts": [a.as_json() for a in self._sorted()],
         }
+        # P35.12 / SIG-REL-001: the release builder reads the snapshot block
+        # and the declared environment off the manifest for the v2
+        # descriptor; absent keys mean a legacy date-only spec.
+        snapshot = self.build_spec.snapshot_block()
+        if snapshot is not None:
+            doc["snapshot"] = snapshot
+        if self.build_spec.environment is not None:
+            doc["environment"] = self.build_spec.environment
+        if self.build_spec.replay is not None:
+            doc["replay"] = self.build_spec.replay
+        return doc
 
     def to_bytes(self) -> bytes:
         """The canonical, byte-stable manifest document (SIG-EXPORT-001)."""
@@ -219,5 +330,6 @@ __all__ = [
     "Artifact",
     "Manifest",
     "canonical_json",
+    "compact_utc_ts",
     "sha256_hex",
 ]

@@ -287,6 +287,35 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   CI job; `docs/build/reports/releases/` holds the operator tag procedure,
   `TAG_TEMPLATE.md`, and the prepared `TAG_v0.1.0.md` (not tagged —
   operator action, OP-08).
+- **Release identity v2 + clock guards** (P35.12, SIG-REL-001/002/003,
+  ADR-161 extending ADR-132) — `sig.publication-descriptor/2` lands in
+  `exports/release_identity.py` carrying the G3 §3.2 field layout (label,
+  environment, the spine-snapshot block with instants + watermark +
+  sqitch head, keyed export id, code block with the tree-read commit,
+  versions incl. ontology, the gates/evaluation/disclosures blocks,
+  `transparency_root`, and `boundaries_root` declared as the JUR-01 input).
+  The human label `sig-YYYY-MM-DD.N` is allocated under the release-label
+  registry lock (`labels.lock` + `sig.release-labels/1`) with the date
+  derived from `snapshot.as_of_world`, never typed; the export id is
+  `sig-export-<YYYYMMDDTHHMMSSZ>-<key8>` keyed over instants + watermark +
+  commit (the NEW-1 same-day collision fix — `manifest.json`'s
+  `release_id` changes form). The §3.3 clock guards bind on the
+  `build --from-spine` operator path: T0 read once, the AR-3 windows
+  refuse unless `--emergency`, a remote-Date host-clock sanity check,
+  a future `--as-of`/`--belief` refuses before any DB read, an earlier-day
+  cut requires `--replay <reason>` (Class S, `environment=replay`),
+  `as_of_world ≤ as_of_belief ≤ built_at ≤ now+5min` is enforced,
+  activation requires `activated_at ≥ built_at`, and no emitted date may
+  be later than `built_at`. `sig-exports release build` emits v2 by
+  default (`--schema-version 1` keeps the legacy writer); `release
+  promote` refuses v1 descriptors, dirty trees, unpushed commits,
+  `0.0.0` versions, non-sha commits and release dates earlier than the
+  previous release — which excludes the `p-17b713` fixture candidate by
+  rule. `ops/gcp/export.sh` now propagates `--belief`, `--environment`,
+  `--replay` and `--emergency`; `ops/disclosures.toml` (`sig.disclosures/1`)
+  is the declared-empty disclosure registry the descriptor digests.
+  v1 descriptors stay parseable; only promotion gates on v2. No hosted
+  mutation — the publish rows own the hosted descriptor write.
 
 ### Changed
 
