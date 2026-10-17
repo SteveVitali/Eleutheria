@@ -28,6 +28,7 @@
 
 [[targets]]
 id = "ky_kytc_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ky"
 state = "KY"
@@ -49,6 +50,7 @@ rights_note = "Item licenseInfo is a KYTC no-warranty DISCLAIMER asserting no us
 
 [[targets]]
 id = "il_idot_gateway_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_il"
 state = "IL"
@@ -66,6 +68,7 @@ rights_note = "Item licenseInfo declares 'Creative Commons Attribution-ShareAlik
 
 [[targets]]
 id = "ut_udot_live_view_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ut"
 state = "UT"
@@ -83,6 +86,7 @@ rights_note = "Item licenseInfo is an informational/no-warranty notice ('field v
 
 [[targets]]
 id = "or_tripcheck_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_or"
 state = "OR"
@@ -100,6 +104,7 @@ rights_note = "Item licenseInfo = 'Public' (Oregon_OEM/ODOT); state public recor
 
 [[targets]]
 id = "la_dotd_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_la"
 state = "LA"
@@ -117,6 +122,7 @@ rights_note = "GOHSEP-owned item; licenseInfo EMPTY — no published terms locat
 
 [[targets]]
 id = "ia_dot_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ia"
 state = "IA"
@@ -134,6 +140,7 @@ rights_note = "Item licenseInfo declares Creative Commons Attribution 4.0 verbat
 
 [[targets]]
 id = "wa_wsdot_travel_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_wa"
 state = "WA"
@@ -151,6 +158,7 @@ rights_note = "WSDOT-published feed 'intended for low volume use; may cancel or 
 
 [[targets]]
 id = "wa_kingcounty_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_wa"
 state = "WA"
@@ -168,6 +176,7 @@ rights_note = "King County GIS terms link (kingcounty.gov terms-conditions-copyr
 
 [[targets]]
 id = "dc_ddot_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_dc"
 state = "DC"
@@ -185,6 +194,7 @@ rights_note = "DC Data Policy (2017-115) + dc.gov Terms: District catalog data i
 
 [[targets]]
 id = "ga_gdot_511_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_ga"
 state = "GA"
@@ -202,6 +212,7 @@ rights_note = "GEMA-owned item; licenseInfo EMPTY — no published terms located
 
 [[targets]]
 id = "al_aldot_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_al"
 state = "AL"
@@ -219,6 +230,7 @@ rights_note = "Published under a county E-911 GIS org account (bce911gis), not a
 
 [[targets]]
 id = "mo_modot_traffic_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_mo"
 state = "MO"
@@ -236,6 +248,7 @@ rights_note = "MO Terms of Use: user agrees to conditions; warranty disclaimers 
 
 [[targets]]
 id = "tx_txdot_cctv_locations"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_tx"
 state = "TX"
@@ -253,6 +266,7 @@ rights_note = "Published under a personal ArcGIS account (dkarctur), not a TxDOT
 
 [[targets]]
 id = "md_chart_cameras"
+axis_order = "lon-lat"
 technology = "fixed-camera-ptz"
 source_id = "dot_511_md"
 state = "MD"
@@ -291,6 +305,7 @@ rights_note = "MD iMAP terms: 'Data can be freely distributed as long as the met
 
 [[targets]]
 id = "traffic_devices_camera_de_boundary_and_point_layer_26"
+axis_order = "lon-lat"
 source_id = "dot_511_de"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -313,6 +328,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "deldot_red_light"
+axis_order = "lon-lat"
 source_id = "dot_511_de"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -334,6 +350,7 @@ technology = "ate-red-light"
 
 [[targets]]
 id = "its_devicelist_devicelocdetail"
+axis_order = "lon-lat"
 source_id = "dot_511_vt"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -362,6 +379,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "cctv_wvdoh_wvdot_assets_mapserver_layer_22"
+axis_order = "lon-lat"
 source_id = "dot_511_wv"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -384,6 +402,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "midrive_cameras"
+axis_order = "lon-lat"
 source_id = "dot_511_mi"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -412,6 +431,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "ncdot_cameras"
+axis_order = "lon-lat"
 source_id = "dot_511_nc"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -433,6 +453,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "cctv_wvpa_wvdot_assets_mapserver_layer_23"
+axis_order = "lon-lat"
 source_id = "dot_511_wv"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -448,6 +469,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "statewide_cctv_view"
+axis_order = "lon-lat"
 source_id = "dot_511_nm"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -463,6 +485,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "its_atm_existing_devices_ndot_statewide_its_atm_masterplan_layer_3"
+axis_order = "lon-lat"
 source_id = "dot_511_nv"
 kind = "arcgis_query"
 platform = "arcgis"
@@ -478,6 +501,7 @@ technology = "fixed-camera-ptz"
 
 [[targets]]
 id = "closed_circuit_television_cctv_itd_intelligenttransportationsystems_layer_0"
+axis_order = "lon-lat"
 source_id = "dot_511_id"
 kind = "arcgis_query"
 platform = "arcgis"

@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 284,
+    "count": 285,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -212,6 +212,7 @@
       "funding_amount",
       "funding_instrument",
       "funding_program_name",
+      "geometry_defect",
       "geometry_kind",
       "hit_volume_observed",
       "holds_data_collected_by",
