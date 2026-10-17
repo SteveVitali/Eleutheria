@@ -1202,6 +1202,42 @@ def test_coverage_prefers_materialized_rows_when_present() -> None:
     jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
 
 
+def test_a_materialized_ratio_carries_its_exclusion_disclosure() -> None:
+    """P35.20a / ED-42 (F-134): a materialized reconciliation ratio's excluded
+    classes ride the emitted metric as data — ``exclusions`` + ``excluded_total``
+    beside the "N of M" value, so the surface can never read N-of-N while
+    subjects are excluded."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    materialized_coverage = [
+        {
+            "coverage_id": "cov1",
+            "subject_id": None,
+            "subject_class": "subject",
+            "jurisdiction_id": None,
+            "predicate_id": "camera_device_count",
+            "absence_kind": None,
+            "sources_searched": [],
+            "metric_method": "reconciliation_ratio",
+            "metric_label": "resolved subjects of claimed subjects",
+            "numerator": 38.0,
+            "denominator": 42.0,
+            "not_evaluable": 4.0,
+            "exclusions": {"conflicted": 3, "withheld": 1},
+            "named_denominator": "subjects with a camera_device_count claim",
+            "metric_value": 0.9,
+        },
+    ]
+    export = _build(claims, _materialized_raw(coverage=materialized_coverage))
+    coverage = _web(export, "coverage")
+    mat = next(m for m in coverage if m["id"].startswith("materialized_reconciliation_ratio"))
+    assert mat["value"] == "38 of 42"
+    assert mat["exclusions"] == {"conflicted": 3, "withheld": 1}
+    assert mat["excluded_total"] == 4
+    # N + excluded = M — the disclosure always reconciles, never an N-of-N.
+    assert 38 + mat["excluded_total"] == 42
+    jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
+
+
 # --------------------------------------------------------------------------- #
 # P35.19 (JUR-02b, K4 §3.3/§5.3): the placement@1 columns end-to-end — the     #
 # engine lands on ``_slice_sites`` rows, the map layer, ``web/placement.json`` #

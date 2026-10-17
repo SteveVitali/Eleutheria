@@ -283,7 +283,9 @@
         "value": { "type": "string" },
         "denominator": { "type": "string", "description": "REQUIRED named denominator; 'reality'/'all …' is forbidden (SIG-METRIC-009)." },
         "population_note": { "type": "string" },
-        "is_population_total": { "const": false, "description": "MUST be false — SIG never publishes a population total (SIG-METRIC-010)." }
+        "is_population_total": { "const": false, "description": "MUST be false — SIG never publishes a population total (SIG-METRIC-010)." },
+        "exclusions": { "type": "object", "additionalProperties": { "type": "integer" }, "description": "ED-42/F-134: optional per-class exclusion disclosure beside a reconciliation ratio — {conflicted, withheld, non_publishable, filtered}; numerator + excluded_total = denominator, never a clamped N-of-N." },
+        "excluded_total": { "type": "integer", "description": "The summed exclusion count disclosed beside the numerator (ED-42)." }
       }
     },
     "ContractWatchItem": {

@@ -15,6 +15,7 @@ import {
   getCoverage,
   getDecisionPoint,
   getDossierIndex,
+  getDossierProvenance,
   getEvidence,
   getFreshness,
   getJurisdictionClaims,
@@ -203,6 +204,17 @@ const SITE_PROVENANCE = {
   rules_applied: ["ruleset/1"],
   human_review_status: "unreviewed",
 };
+// P35.20a / ED-41: the per-dossier provenance row the export emits scoped to the
+// dossier's own evidence set — distinct from the site totals.
+const DOSSIER_PROVENANCE = {
+  artifact_count: 1,
+  tier_distribution: { W4: 3 },
+  source_independence_count: 1,
+  date_range: { earliest: "2026-05-01", latest: "2026-05-01" },
+  rules_applied: ["ruleset/1"],
+  human_review_status: "unreviewed",
+  denominator: "3 publishable tier-0 claims about the test dossier's subjects",
+};
 
 function analyticsEnvelope(schema: string, fields: Record<string, unknown>) {
   return {
@@ -243,6 +255,7 @@ beforeAll(() => {
         site: SITE_PROVENANCE,
         corrections: { artifact_count: 2 },
         research_queue: { artifact_count: 1 },
+        dossiers: { "test-dossier": DOSSIER_PROVENANCE },
       },
     }),
   );
@@ -269,6 +282,45 @@ describe("P31.14 web data layer — export mode reads web/analytics/*.json", () 
     expect(getResearchQueueProvenance()).toEqual({ artifact_count: 1 });
     expect(getJurisdictionClaims()).toEqual([{ jurisdiction_id: "j1" }]);
     expect(getQueueAsOf()).toBe("2026-09-22");
+  });
+});
+
+describe("P35.20a web data layer — per-dossier provenance + the honest fallback", () => {
+  it("an emitted dossier row is returned scoped to that dossier, never the site row", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = analyticsBundle;
+    expect(getDossierProvenance("test-dossier")).toEqual(DOSSIER_PROVENANCE);
+  });
+
+  it("a dossier with NO emitted row falls back — undefined, so the layout labels site-wide", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = analyticsBundle;
+    // A slug the export did not emit must NOT be handed the site totals under
+    // its name — the honest-fallback contract (ED-41: site numbers are never
+    // presented as dossier numbers).
+    expect(getDossierProvenance("some-other-dossier")).toBeUndefined();
+  });
+
+  it("a pre-change export (no surfaces.dossiers map at all) falls back cleanly", () => {
+    const old = mkdtempSync(join(tmpdir(), "sig-export-oldprov-"));
+    mkdirSync(join(old, "web", "analytics"), { recursive: true });
+    writeFileSync(
+      join(old, "web", "analytics", "provenance.json"),
+      JSON.stringify(
+        analyticsEnvelope("sig/analytics-provenance/1", {
+          surfaces: { site: SITE_PROVENANCE },
+        }),
+      ),
+    );
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = old;
+    expect(getDossierProvenance("test-dossier")).toBeUndefined();
+    rmSync(old, { recursive: true, force: true });
+  });
+
+  it("fixtures mode has no emitted dossier rows → always the site-wide fallback", () => {
+    process.env.SIG_DATA_SOURCE = "fixtures";
+    expect(getDossierProvenance("oklahoma-city")).toBeUndefined();
   });
 });
 

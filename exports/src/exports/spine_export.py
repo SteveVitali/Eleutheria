@@ -1075,6 +1075,13 @@ def coverage_metric_from_materialized(row: Mapping[str, Any]) -> dict[str, Any] 
     list, and return ``None``. Every emitted metric carries the row's NAMED denominator
     (the DB CHECK guarantees it is not a reality/total denominator) and ``is_population_total``
     is pinned ``false`` — never a total (SIG-METRIC-009/010).
+
+    P35.20a / ED-42 (F-134): a reconciliation ratio carries its excluded classes as
+    data — ``exclusions`` (``{conflicted, withheld, non_publishable, filtered}``)
+    plus ``excluded_total``. The numerator ⊆ denominator join and the
+    ``numerator + not_evaluable = denominator`` CHECK mean the emitted ``value``
+    can never read "N of N" while an exclusion exists — the excluded subjects are
+    disclosed, never clamped away.
     """
     method = row.get("metric_method")
     if not method:
@@ -1092,7 +1099,7 @@ def coverage_metric_from_materialized(row: Mapping[str, Any]) -> dict[str, Any] 
         value = _fmt_count(numerator)
     label = row.get("metric_label") or str(method)
     ident = row.get("predicate_id") or row.get("subject_class") or row.get("coverage_id")
-    return {
+    out: dict[str, Any] = {
         "id": f"materialized_{method}_{ident}",
         "kind": _COMPLETENESS_TO_KIND.get(str(method), "counted_quantity"),
         "label": str(label),
@@ -1101,6 +1108,16 @@ def coverage_metric_from_materialized(row: Mapping[str, Any]) -> dict[str, Any] 
         "population_note": _POPULATION_NOTE,
         "is_population_total": False,
     }
+    # The excluded-class disclosure (ED-42): persisted on the measured row,
+    # carried through as data — the presentation seam that renders it is
+    # DSRC-01's; the derivation emits it here.
+    exclusions = row.get("exclusions")
+    if isinstance(exclusions, Mapping):
+        out["exclusions"] = {str(k): int(v) for k, v in exclusions.items()}
+        out["excluded_total"] = sum(int(v) for v in exclusions.values())
+    elif row.get("not_evaluable") is not None:
+        out["excluded_total"] = int(float(row["not_evaluable"]))
+    return out
 
 
 def resolved_site_counts(

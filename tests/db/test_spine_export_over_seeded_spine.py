@@ -282,7 +282,19 @@ def test_spine_export_over_seeded_spine(conn, seeded_export) -> None:
     site = provenance["surfaces"]["site"]
     assert site["tier_distribution"].get("W4", 0) == 6
     assert "untiered" not in site["tier_distribution"]
-    assert set(provenance["surfaces"]) == {"site", "corrections", "research_queue"}
+    assert set(provenance["surfaces"]) == {
+        "site",
+        "corrections",
+        "research_queue",
+        "dossiers",
+    }
+    # P35.20a / ED-41: each dossier carries its own scoped provenance row — none
+    # may equal the site-wide summary when the scopes differ.
+    dossiers = provenance["surfaces"]["dossiers"]
+    assert dossiers, "every rendered dossier needs its own emitted provenance row"
+    for slug, summary in dossiers.items():
+        assert summary["human_review_status"] == "unreviewed", slug
+        assert "denominator" in summary, slug
 
     # Manifest carries provenance + per-artifact checksums/compartments.
     paths = {a.path for a in export.manifest.artifacts}

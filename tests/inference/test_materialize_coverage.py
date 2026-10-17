@@ -23,10 +23,12 @@ from inference.completeness import (
 from inference.coverage import CoverageRecord
 from inference.denominators import PublishedAggregate
 from inference.materialize import (
+    EXCLUSION_CLASSES,
     absence_row,
     assert_coverage_row_has_named_denominator,
     coverage_input_digest,
     metric_row,
+    read_predicate_reconciliation,
 )
 
 
@@ -138,3 +140,115 @@ def test_no_capture_recapture_or_multilist_estimate_is_reachable() -> None:
         CompletenessMethod.RECONCILIATION_RATIO,
         CompletenessMethod.MEASURED_SURVEY_RECALL,
     }
+
+
+# ---------------------------------------------------------------------------
+# P35.20a / ED-42 (F-134): the unclamped, exclusion-disclosed reconciliation ratio.
+# ---------------------------------------------------------------------------
+
+
+def test_exclusion_classes_vocabulary_is_the_disclosed_set() -> None:
+    """The four exclusion classes are the ticket's fixed disclosure vocabulary — a
+    renamed/conflated class silently loses an exclusion reason (ED-42)."""
+    assert EXCLUSION_CLASSES == ("conflicted", "withheld", "non_publishable", "filtered")
+
+
+def test_metric_row_carries_the_exclusion_disclosure_as_data() -> None:
+    """Exclusions ride the row (persisted, digested) — they can never be a sentence
+    that says "N of N" while subjects are excluded."""
+    agg = PublishedAggregate(
+        label="subjects with a resolved p value",
+        count=1,
+        denominator=5,
+        not_evaluable=4,
+    )
+    exclusions = {"conflicted": 1, "withheld": 1, "non_publishable": 1, "filtered": 1}
+    row = metric_row(
+        agg,
+        method=CompletenessMethod.RECONCILIATION_RATIO,
+        named_denominator="subjects with a p claim",
+        value=0.2,
+        subject_class="subject",
+        predicate_id="p",
+        exclusions=exclusions,
+    )
+    assert row["exclusions"] == exclusions
+    assert row["not_evaluable"] == 4
+    assert row["numerator"] + row["not_evaluable"] == row["denominator"]
+    # The disclosure is digestable content — a changed exclusion set is a NEW
+    # measurement (append-only supersession), never an in-place rewrite.
+    row2 = metric_row(
+        agg,
+        method=CompletenessMethod.RECONCILIATION_RATIO,
+        named_denominator="subjects with a p claim",
+        value=0.2,
+        subject_class="subject",
+        predicate_id="p",
+        exclusions={"conflicted": 4, "withheld": 0, "non_publishable": 0, "filtered": 0},
+    )
+    assert row["input_digest"] != row2["input_digest"]
+
+
+class _FakeResult:
+    def __init__(self, rows: list[tuple]):
+        self._rows = rows
+
+    def fetchall(self) -> list[tuple]:
+        return self._rows
+
+    def fetchone(self):
+        return self._rows[0] if self._rows else None
+
+
+class _ReconciliationConn:
+    """A canned spine for ``read_predicate_reconciliation``: five claimed subjects,
+    each landing in a different bucket — resolved publishable / withheld /
+    non-publishable / conflicted / filtered."""
+
+    def execute(self, sql: str, params: tuple = ()):  # noqa: D102 - test double
+        if "to_regclass" in sql:
+            return _FakeResult([(True,)])
+        if "FROM claim c" in sql:
+            # denominator: five subjects carry a tier-0 current "cameras" claim
+            return _FakeResult([("cameras", f"s{i}") for i in range(1, 6)])
+        if "FROM resolution r" in sql:
+            # current envelopes: s1 publishable winner, s2/s3 winners whose claim
+            # fails a gate, s4 an unresolved conflict, s5 no envelope at all
+            return _FakeResult(
+                [
+                    ("s1", "cameras", "win-1", "uncontested"),
+                    ("s2", "cameras", "win-2", "uncontested"),
+                    ("s3", "cameras", "win-3", "uncontested"),
+                    ("s4", "cameras", None, "unresolved_conflict"),
+                ]
+            )
+        if "FROM claim wc" in sql:
+            # publishability of the winning claims: win-2 withheld by disposition,
+            # win-3 a non-tier-0 / lapsed claim, win-1 publishable
+            return _FakeResult(
+                [
+                    ("win-1", True, True),
+                    ("win-2", True, False),
+                    ("win-3", False, True),
+                ]
+            )
+        raise AssertionError(f"unexpected query: {sql}")
+
+
+def test_reconciliation_discloses_every_exclusion_class_and_never_clamps() -> None:
+    """F-134's defect, inverted: the numerator counts ONLY resolved publishable
+    values; every other claimed subject is a NAMED exclusion, and the classes
+    reconcile exactly — ``resolved + Σexcluded = claimed`` (never a clamped
+    "5 of 5" while four subjects are excluded)."""
+    [rec] = read_predicate_reconciliation(_ReconciliationConn())
+    assert rec["predicate_id"] == "cameras"
+    assert rec["claimed_subjects"] == 5
+    assert rec["resolved_subjects"] == 1
+    assert rec["exclusions"] == {
+        "conflicted": 1,
+        "withheld": 1,
+        "non_publishable": 1,
+        "filtered": 1,
+    }
+    # The disclosure invariant the row's CHECK pins.
+    assert rec["resolved_subjects"] + sum(rec["exclusions"].values()) == rec["claimed_subjects"]

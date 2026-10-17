@@ -473,6 +473,30 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **Per-dossier provenance + unclamped, exclusion-disclosed coverage**
+  (P35.20a / row 300, PKG-10 a-half; owns F-134, closes ED-41/ED-42; cites
+  SIG-METRIC-009/003/006/008, SIG-UI-008/044, SIG-RECON-058) — two public
+  number defects corrected ahead of the next export. Every `/dossier/<slug>/`
+  page rendered the same site-wide "How we know this" totals ("218
+  independent sources") under the dossier's name: `web/analytics/
+  provenance.json` now emits `surfaces.dossiers` — a complete per-dossier
+  summary counted over the claims backing that dossier's sites — and the
+  page renders it under the dossier's own scope label, while a surface with
+  no emitted row renders the site-wide summary explicitly labelled
+  "Site-wide" (site totals can never carry a surface's name). And the
+  per-predicate reconciliation ratios that read "N of N" while thousands of
+  subjects were conflicted ("232,625 of 232,625 resolved" over 5,290
+  conflicted coordinates): the numerator now counts only subjects whose
+  current resolution envelope picked a tier-0, currently-valid,
+  publication-eligible winning claim — the `min(resolved, claimed)` clamp is
+  gone, the numerator is a subset of the denominator by join — and the new
+  `coverage_record.exclusions` column (sqitch `coverage_exclusion_disclosure`,
+  additive + back-compatible) carries the disclosed `{conflicted, withheld,
+  non_publishable, filtered}` classes as data beside each ratio, emitted on
+  the web `CoverageMetric` as `exclusions` + `excluded_total`. The DB CHECK
+  `coverage_ratio_exclusions_sum` pins `numerator + excluded = denominator`
+  on every disclosing ratio row — an N-of-N beside excluded subjects cannot
+  be written at all.
 - **Archive link depth, zero-record validation, and the empty-tile build**
   (P34.34a) — record/evidence links in nested release routes are
   site-root-absolute (`/r/<pub>/…`), removing the depth-fragile `../../`
