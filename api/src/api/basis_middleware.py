@@ -26,11 +26,21 @@ Every answer this service gives carries its basis class on the wire:
 The middleware is pure ASGI — like :class:`api.alias_middleware.IdentifierAliasMiddleware`
 it buffers the body, fixes ``content-length``, and never reorders or drops
 fields (the injected ``basis``/``release`` are additive).
+
+P35.13 / SIG-REL-009 (G3 §6.3) adds the two provenance headers every
+sig-api response carries: ``X-SIG-Code: <commit12>`` — the first twelve
+hex of ``SIG_CODE_COMMIT`` (set at deploy, absent means the code identity
+is not pinned, never a placeholder) — and ``X-SIG-Conf-Gen: <n>`` — the
+config generation the revision was rolled under (``SIG_CONF_GEN``, the
+same env the templated nginx stamps on sig-web). Both are env-read at
+request time like the health handler's ``SIG_CODE_COMMIT`` — an env the
+deploy sets before traffic, never per-request derived state.
 """
 
 from __future__ import annotations
 
 import json
+import os
 import re
 from collections.abc import Callable
 from typing import Any
@@ -46,11 +56,15 @@ _HEADER_BASIS = b"x-sig-basis"
 _HEADER_WATERMARK = b"x-sig-basis-watermark"
 _HEADER_RELEASE_ID = b"x-sig-basis-release"
 _HEADER_RELEASE = b"x-sig-release"
+_HEADER_CODE = b"x-sig-code"
+_HEADER_CONF_GEN = b"x-sig-conf-gen"
 _DROP_HEADERS = {
     _HEADER_BASIS,
     _HEADER_WATERMARK,
     _HEADER_RELEASE_ID,
     _HEADER_RELEASE,
+    _HEADER_CODE,
+    _HEADER_CONF_GEN,
     b"content-length",
 }
 _JSON_TYPES = (b"application/json", b"application/ld+json")
@@ -125,6 +139,10 @@ class BasisLabelMiddleware:
         store = getattr(state, "store", None)
         release_id = getattr(state, "basis_release_id", None)
         serving = getattr(state, "release_serving", None)
+        # P35.13 (G3 §6.3): the deploy-pinned identity headers — read per
+        # request like the health handler does; absent env = absent header.
+        code_commit = os.environ.get("SIG_CODE_COMMIT") or None
+        conf_gen = os.environ.get("SIG_CONF_GEN") or None
         current = None
         if serving is not None:
             try:
@@ -165,6 +183,8 @@ class BasisLabelMiddleware:
                     release_id=release_id if release_id else None,
                     current=current,
                     latest_release=latest_release,
+                    code_commit=code_commit,
+                    conf_gen=conf_gen,
                 )
                 return
             await send(message)
@@ -182,6 +202,8 @@ class BasisLabelMiddleware:
         release_id: str | None,
         current: dict[str, Any] | None,
         latest_release: dict[str, Any] | None,
+        code_commit: str | None,
+        conf_gen: str | None,
     ) -> None:
         # The handler's own classification wins: release-backed routes mark the
         # request state before serving so even their error bodies are labelled
@@ -212,6 +234,15 @@ class BasisLabelMiddleware:
                 headers.append((_HEADER_RELEASE_ID, basis_release_header.encode()))
             if release_header:
                 headers.append((_HEADER_RELEASE, release_header.encode()))
+            # P35.13 (G3 §6.3): X-SIG-Code is the commit12 of the code that
+            # answered — the stamp's linked commit in header form; absent
+            # env means the deploy pinned nothing, never a placeholder.
+            # X-SIG-Conf-Gen names the config generation the revision was
+            # rolled under — the value sig-web stamps from its template.
+            if code_commit:
+                headers.append((_HEADER_CODE, code_commit[:12].encode()))
+            if conf_gen:
+                headers.append((_HEADER_CONF_GEN, conf_gen.encode()))
             ctype = next(
                 (v for k, v in start.get("headers", []) if k.lower() == b"content-type"),
                 b"",

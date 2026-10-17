@@ -119,5 +119,15 @@ ENV SIG_API_HOST=0.0.0.0 \
     SIG_PG_USER=sig \
     SIG_PG_DB=sig \
     SIG_API_ROLE=sig_read_public
+
+# P35.13 / SIG-REL-009 (G3 §6.3): the image names the code it was built
+# from — the OCI `revision` label + `SIG_CODE_COMMIT` env the API stamps on
+# /health, / and X-SIG-Code. The materialize/deploy build passes
+# --build-arg from `git rev-parse HEAD`; an unset arg is the honest
+# unpinned default (empty env → the header/field stays absent, never a
+# placeholder), and a deploy-time env var still overrides it.
+ARG SIG_CODE_COMMIT=""
+LABEL org.opencontainers.image.revision="${SIG_CODE_COMMIT}"
+ENV SIG_CODE_COMMIT="${SIG_CODE_COMMIT}"
 EXPOSE 8080
 CMD ["sh", "-c", "REG=${SIG_RELEASE_REGISTRY:-/mnt/rel/registry}; if [ -d \"$REG\" ]; then REG_FLAG=\"--release-registry $REG\"; else REG_FLAG=; fi; if [ -n \"$SIG_CLOUDSQL_CONNECTION\" ]; then exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} --dsn \"postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}\" ${SIG_API_ROLE:+--role \"$SIG_API_ROLE\"} $REG_FLAG; else exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} $REG_FLAG; fi"]

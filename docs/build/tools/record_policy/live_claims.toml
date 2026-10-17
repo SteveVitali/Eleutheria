@@ -72,6 +72,10 @@ negate = [
     "\\bdon't\\b", "\\bdoesn't\\b", "\\bdidn't\\b", "\\bcannot\\b", "\\bcan't\\b", "\\bwon't\\b",
     "\\bhasn't\\b", "\\bhaven't\\b", "\\bhadn't\\b", "\\bhas not\\b", "\\bhave not\\b",
     '\bun-?deploy', '\bun-?publish', '\bunverified\b', '\bunreviewed\b',
+    # P35.13: `unreleased` is the same disclosure class — a segment naming
+    # "newer, unreleased records" (the §6.1 basis sentence) declares what is
+    # NOT released, never asserts production posture.
+    '\bunreleased\b',
     '\bpre-?live\b', '\bpre-?deploy', '\bpre-?public', '\bpre-?launch',
     '\bpending\b', '\bdeferred\b', '\bgate[ -]?pending\b', '\bgated\b', '\bqueued\b',
     '\bplanned\b', '\bowed\b', '\bowes\b', '\babsen', '\brefus',

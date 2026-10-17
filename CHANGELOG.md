@@ -24,6 +24,32 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Release provenance stamp, `release.json` and `X-SIG-*` headers**
+  (P35.13 / row 295; **SIG-REL-009** owner; cites SIG-REL-001/002/003,
+  SIG-MEM-011, SIG-SEC-008, SIG-REL-010; G3 §6) — every release surface
+  now names the release it answers for. `exports/site_release.py`
+  emits `sig.site-release/1` — the descriptor-rendered release identity
+  (`label`, `publication_id`, the as-of pair, `built_at`, `code`,
+  `versions`, `evaluation`, `disclosures`, `routes_sha256`, the
+  integrity-manifest pointer) — at `releases/<pub>/release.json` and the
+  site-root `/release.json` the stamped pages' `describedby` resolves
+  to; `validate_release` cross-checks it field-by-field and refuses a
+  `release.json` on a non-v2 release. HTML pages gain
+  `<meta name="sig-release">`, `<link rel="describedby">` and the §6.1
+  stamp — "fixed copy" wording inside `r/<pub>/`/`releases/<pub>/`,
+  "latest view, cite the fixed copy" on mutable overlay pages (releases
+  index, entity stubs, tombstones) — with zero client JS. Published
+  records and dossier JSON twins carry `release`/`licence` blocks;
+  `/` and `/health` name `release`/`code_commit`/`image`; every sig-api
+  response carries `X-SIG-Code <commit12>` + `X-SIG-Conf-Gen <n>` and
+  every sig-web response carries `X-SIG-Release "<label> <pub>"` +
+  `X-SIG-Conf-Gen` (generated `release_headers.conf`, `always` —
+  errors and tombstones included). The stamp never prints a posture the
+  descriptor does not evidence (interim-text rule, tested at three
+  layers). Committed machinery only — the stamp activates on the next
+  republish under that row's own authority; the `v/<pub>/`/`s/<pub>/`
+  copies ride the publish/J3 legs.
+
 - **Flock transparency-portal probe connector** (P36.74 / row 289;
   WV-10 under ADR-188; D3-Q3 = b under ADR-184; cites SIG-INGEST-013,
   SIG-INGEST-035's surviving aggregator/compartment clauses,

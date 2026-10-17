@@ -62,6 +62,7 @@ from policy.eligibility import (
 )
 
 from . import release_identity as RI
+from . import site_release as SR
 from .manifest import canonical_json, sha256_hex
 from .published_record import (
     PROJECTION_VERSION,
@@ -85,6 +86,7 @@ from .release_pages import (
     namespace_landing,
     record_page,
     release_landing,
+    release_stamp_view,
     releases_index,
     tombstone_page,
 )
@@ -753,6 +755,34 @@ def build_release(
     if labels_registry is not None and descriptor.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
         RI.record_label_publication(labels_registry, str(descriptor["label"]), pub)
 
+    # P35.13 / SIG-REL-009 (G3 §6.1): the §6.1 provenance stamp — one view the
+    # whole bound tree's pages share. Its fields are the v2 descriptor's own
+    # (label, as-of pair, build instant, code commit) projected through
+    # release_stamp_view — the stamp never recomputes a value. v1 releases
+    # carry no label → no stamp (the honest unstamped state).
+    release_stamp: dict[str, str] | None = None
+    release_label: str | None = None
+    release_as_of_world: str | None = None
+    if descriptor.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
+        release_label = str(descriptor.get("label") or "") or None
+        release_as_of_world = RI.descriptor_as_of_world(descriptor)
+        _code = descriptor.get("code") or {}
+        _commit = str(_code.get("commit") or "")
+        release_stamp = release_stamp_view(
+            {
+                "label": release_label,
+                "publication_id": pub,
+                "as_of_world": release_as_of_world,
+                "built_at": (descriptor.get("build") or {}).get("built_at"),
+                "code": {
+                    "commit": _commit,
+                    "url": f"{RI.CODE_REPOSITORY}/commit/{_commit}" if _commit else "",
+                },
+            },
+            describedby=f"/releases/{pub}/release.json",
+            variant="fixed",
+        )
+
     # --- pass 2: emit the bound tree ---------------------------------------- #
     artifacts: list[dict[str, Any]] = []
 
@@ -792,7 +822,11 @@ def build_release(
         for row in _iter_unique_site_rows(export_dir / comp / "sites.jsonl", {}):
             record = record_from_site_row(
                 row, compartment=comp, license_id=comps[comp], claim_index=claim_index
-            ).bind(pub)
+            ).bind(
+                pub,
+                release_label=release_label,
+                as_of_world=release_as_of_world,
+            )
             et, eid = record.entity_type, record.entity_id
             json_rel = f"{comp_dir}/entity/{et}/{eid}.json"
             emit(json_rel, record.json_bytes(), compartment=comp, licence=comps[comp])
@@ -802,6 +836,7 @@ def build_release(
                     record,
                     latest_stub=f"/entity/{et}/{eid}/",
                     evidence_compartment=evidence_compartment,
+                    stamp=release_stamp,
                 ),
                 compartment=comp,
                 licence=comps[comp],
@@ -888,6 +923,7 @@ def build_release(
                 record_count=len(cb.index_rows),
                 kinds=cb.kinds,
                 jurisdictions=cb.jurisdictions,
+                stamp=release_stamp,
             ),
             compartment=comp,
             licence=comps[comp],
@@ -918,6 +954,7 @@ def build_release(
                         items=chunk,
                         total=len(items),
                         licence=comps[comp],
+                        stamp=release_stamp,
                     ),
                     compartment=comp,
                     licence=comps[comp],
@@ -948,6 +985,7 @@ def build_release(
                         items=chunk,
                         total=len(items),
                         licence=comps[comp],
+                        stamp=release_stamp,
                     ),
                     compartment=comp,
                     licence=comps[comp],
@@ -981,6 +1019,7 @@ def build_release(
                 compartment=comp,
                 artifact=art,
                 licence=comps.get(comp, "CC-BY-4.0"),
+                stamp=release_stamp,
             ),
             compartment=comp,
             licence=comps.get(comp, "CC-BY-4.0"),
@@ -993,7 +1032,12 @@ def build_release(
         slug = dossier_slug(dossier)
         emit(
             f"r/{pub}/dossier/{slug}/index.html",
-            dossier_page(publication_id=pub, dossier=dossier, licence="CC-BY-4.0"),
+            dossier_page(
+                publication_id=pub,
+                dossier=dossier,
+                licence="CC-BY-4.0",
+                stamp=release_stamp,
+            ),
             compartment="web",
             licence="CC-BY-4.0",
         )
@@ -1055,7 +1099,7 @@ def build_release(
     landing_rel = f"releases/{pub}/index.html"
     emit(
         landing_rel,
-        release_landing(catalog_entry, dossiers=dossiers),
+        release_landing(catalog_entry, dossiers=dossiers, stamp=release_stamp),
         compartment="metadata",
         licence="CC-BY-4.0",
     )
@@ -1064,7 +1108,7 @@ def build_release(
     # like every other ``r/`` byte; covered by the manifest below.
     emit(
         f"r/{pub}/index.html",
-        namespace_landing(catalog_entry),
+        namespace_landing(catalog_entry, stamp=release_stamp),
         compartment="metadata",
         licence="CC-BY-4.0",
     )
@@ -1108,6 +1152,38 @@ def build_release(
     # cycle on (ADR-132: artifacts → manifest → digest → catalog entry).
     _write(out_dir / f"releases/{pub}/catalog_entry.json", canonical_json(catalog_entry))
 
+    # P35.13 / SIG-REL-009 (G3 §6.2): the ``sig.site-release/1`` object —
+    # the stamp's machine-readable twin. Emitted AFTER the manifest because
+    # its ``integrity_manifest.sha256`` names the manifest digest: like the
+    # catalog entry it is deliberately NOT covered by the manifest it would
+    # close the hash cycle on. The validator cross-checks it against the
+    # descriptor + manifest instead (the §6.2 fields all derive from the v2
+    # descriptor — no independently fabricated values). Two byte-identical
+    # copies: the immutable one inside the release namespace and the
+    # release-tree root object ``/release.json`` resolves to when this
+    # release is the active one (the activation seam stages it; the publish
+    # allow-list protects the name — PROTECTED_NAMES).
+    site_release_rel: str | None = None
+    if descriptor.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
+        routes_path = (repo_root or _REPO_ROOT) / "ops" / "public_routes.toml"
+        routes_sha = sha256_hex(routes_path.read_bytes()) if routes_path.is_file() else None
+        site_release = SR.site_release_document(
+            descriptor,
+            pub,
+            integrity_manifest_sha256=manifest_sha,
+            routes_sha256=routes_sha,
+        )
+        site_release_failures = SR.validate_site_release(site_release)
+        if site_release_failures:
+            raise ReleaseError(
+                "the assembled sig.site-release/1 fails validation — "
+                "refusing to emit an invalid release.json:\n  " + "\n  ".join(site_release_failures)
+            )
+        site_release_bytes = canonical_json(site_release)
+        site_release_rel = f"releases/{pub}/release.json"
+        _write(out_dir / site_release_rel, site_release_bytes)
+        _write(out_dir / "release.json", site_release_bytes)
+
     report = {
         "schema": "sig.release-build-report/1",
         "publication_id": pub,
@@ -1135,6 +1211,11 @@ def build_release(
                     out_dir / "release/build_report.json",
                     out_dir / f"releases/{pub}/index.html",
                     out_dir / f"r/{pub}/index.html",
+                    # P35.13: the stamp + its machine twin are date surfaces
+                    # too — release.json's instants derive from the
+                    # descriptor, never the wall clock.
+                    out_dir / f"releases/{pub}/release.json",
+                    out_dir / "release.json",
                 ],
                 built_dt,
             )
@@ -1312,6 +1393,9 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
     external = {
         f"releases/{pub}/integrity_manifest.json",
         f"releases/{pub}/catalog_entry.json",
+        # P35.13: the site-release object is emitted after the manifest like
+        # the catalog entry — external to the hash cycle by construction.
+        f"releases/{pub}/release.json",
     }
     for base in ("r", f"releases/{pub}"):
         root = release_dir / base
@@ -1399,6 +1483,7 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
                 )
     # P35.12 (SIG-REL-001): a v2 descriptor is also re-validated field-by-field —
     # an integrity-complete bundle whose descriptor fails §3.2 is incomplete.
+    descriptor: Any = None
     desc_path = release_dir / f"releases/{pub}/descriptor.json"
     if desc_path.exists():
         try:
@@ -1411,6 +1496,78 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
         ):
             for f in RI.validate_descriptor(descriptor):
                 failures.append(f"descriptor: {f}")
+    # P35.13 / SIG-REL-009 (G3 §6.2): the ``sig.site-release/1`` object — the
+    # stamp's machine twin — sits OUTSIDE the manifest cycle (its
+    # ``integrity_manifest.sha256`` names the manifest digest; hashing it in
+    # would close the cycle), so it is verified by cross-check instead:
+    # schema-valid, byte-identical across its two copies, and every
+    # descriptor-derived field equal to the descriptor's own value. A v1
+    # release carries none; a release.json on a v1 tree is a failure.
+    is_v2 = isinstance(descriptor, Mapping) and descriptor.get("schema") == (
+        RI.DESCRIPTOR_SCHEMA_V2
+    )
+    sr_rel = f"releases/{pub}/release.json"
+    sr_path = release_dir / sr_rel
+    root_path = release_dir / "release.json"
+    if is_v2:
+        if not sr_path.exists():
+            failures.append(f"missing site-release object: {sr_rel}")
+        else:
+            try:
+                site_doc = _read_json(sr_path)
+            except Exception:  # noqa: BLE001 - unparseable = failure
+                site_doc = None
+                failures.append(f"site-release object not parseable: {sr_rel}")
+            if isinstance(site_doc, Mapping):
+                for f in SR.validate_site_release(site_doc):
+                    failures.append(f"release.json: {f}")
+                if site_doc.get("publication_id") != pub:
+                    failures.append(
+                        f"release.json publication_id {site_doc.get('publication_id')!r} "
+                        f"!= the release's {pub!r}"
+                    )
+                if site_doc.get("descriptor_sha256") != descriptor_sha256(descriptor):
+                    failures.append("release.json descriptor_sha256 != descriptor digest")
+                snap = descriptor.get("snapshot") or {}
+                for field, want in (
+                    ("label", descriptor.get("label")),
+                    ("as_of_world", snap.get("as_of_world")),
+                    ("as_of_belief", snap.get("as_of_belief")),
+                    ("belief_pinned", bool(snap.get("belief_pinned"))),
+                    ("spine_watermark", snap.get("spine_watermark")),
+                    ("built_at", (descriptor.get("build") or {}).get("built_at")),
+                ):
+                    if site_doc.get(field) != want:
+                        failures.append(
+                            f"release.json {field} {site_doc.get(field)!r} != descriptor's {want!r}"
+                        )
+                code = descriptor.get("code") or {}
+                if (site_doc.get("code") or {}).get("commit") != code.get("commit"):
+                    failures.append("release.json code.commit != descriptor's code.commit")
+                integrity_ptr = site_doc.get("integrity_manifest") or {}
+                if integrity_ptr.get("path") != f"releases/{pub}/integrity_manifest.json":
+                    failures.append(
+                        f"release.json integrity_manifest.path "
+                        f"{integrity_ptr.get('path')!r} != "
+                        f"releases/{pub}/integrity_manifest.json"
+                    )
+                if integrity_ptr.get("sha256") != sha256_hex(manifest_paths[0].read_bytes()):
+                    failures.append("release.json integrity_manifest.sha256 != manifest digest")
+        if not root_path.exists():
+            failures.append(
+                "missing site-root release.json copy — every stamped page's "
+                "describedby must resolve"
+            )
+        elif sr_path.exists() and root_path.read_bytes() != sr_path.read_bytes():
+            failures.append(
+                "release.json copies drift — the site-root object and the "
+                "namespace copy must be byte-identical"
+            )
+    elif sr_path.exists() or root_path.exists():
+        failures.append(
+            "release.json present on a non-v2 release — the sig.site-release/1 "
+            "schema carries a sig-YYYY-MM-DD.N label v1 never has"
+        )
     # P34.34a (DR-C4-01): the same-origin link-resolution crawl — every
     # href/action on every emitted page must resolve to a corpus file or a
     # known site-shell/overlay route; a broken link is a release failure
@@ -1526,12 +1683,44 @@ def _stage_tree(release_dir: Path, staged: Path, pub: str) -> None:
                 _link_or_copy(path, staged / rel)
 
 
+def load_mutable_stamp(source: Path) -> dict[str, str] | None:
+    """The §6.1 "latest view" stamp for the mutable overlay pages
+    (P35.13 / SIG-REL-009): the releases index, the entity convenience
+    stubs and the withdrawal tombstones all answer for the CURRENT
+    release, so they carry its identity — projected from that release's
+    ``sig.site-release/1`` with the site-root ``/release.json`` as the
+    describedby target. A release that emits no site-release object (v1)
+    leaves the overlay honestly unstamped; an unparseable file fails open
+    the same way — the immutable copy's own validation is fail-closed."""
+    if not source.is_file():
+        return None
+    try:
+        doc = _read_json(source)
+    except (OSError, ValueError):
+        return None
+    return release_stamp_view(doc, describedby="/release.json", variant="latest")
+
+
+def _stage_root_release_json(staged: Path, source: Path | None) -> None:
+    """Re-point the site-root ``release.json`` at the ACTIVE release's
+    immutable copy — the target every mutable page's
+    ``<link rel="describedby" href="/release.json">`` resolves to.
+    Mutable like the latest pointer it names: removed when no release is
+    current, never edited (the bytes are always the release's own)."""
+    target = staged / "release.json"
+    if source is not None and source.is_file():
+        _link_or_copy(source, target)
+    elif target.exists():
+        target.unlink()
+
+
 def _entity_overlay(
     staged: Path,
     release_dir: Path,
     pub: str,
     catalog_entry: Mapping[str, Any],
     denied_stubs: Mapping[str, DispositionRecord] | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> int:
     """Emit ``/entity/<type>/<uuid>/`` convenience stubs for the ACTIVE
     release — mutable pointers, never citations.
@@ -1557,6 +1746,7 @@ def _entity_overlay(
                     str(row["entity_id"]),
                     denied[stub_route],
                     release_label=str(catalog_entry.get("data_release_id") or "") or None,
+                    stamp=stamp,
                 )
             else:
                 stub = entity_stub(
@@ -1564,6 +1754,7 @@ def _entity_overlay(
                     entity_id=str(row["entity_id"]),
                     latest_publication=pub,
                     record_href="/" + str(row["path"]),
+                    stamp=stamp,
                 )
             _write(
                 staged / f"{stub_route}/index.html",
@@ -1573,16 +1764,33 @@ def _entity_overlay(
     return count
 
 
-def _emit_overlay(registry: ReleaseRegistry) -> None:
+#: Sentinel for ``_emit_overlay``'s ``latest_pub`` — "read the pointer file"
+#: vs the explicit ``None`` ("no current release") a clear passes.
+_LATEST_FROM_REGISTRY: Any = object()
+
+
+def _emit_overlay(
+    registry: ReleaseRegistry,
+    *,
+    stamp: Mapping[str, Any] | None = None,
+    latest_pub: Any = _LATEST_FROM_REGISTRY,
+) -> None:
     """Regenerate the mutable overlay — releases index + compat index copy —
-    deterministically from the catalog."""
+    deterministically from the catalog. ``stamp`` is the §6.1 provenance
+    view of the release the overlay names (P35.13): the callers pass the
+    release they are pointing at — ``latest.json`` has not necessarily
+    flipped yet when the overlay is written. ``latest_pub`` carries the
+    target release for the same reason: the callers that flip the pointer
+    pass it explicitly, so the ``(latest)`` marker never lands on the
+    release being replaced."""
     staged = registry.root / "staged"
     cat = registry.catalog()
     latest = registry.latest() or {}
+    target = latest.get("publication_id") if latest_pub is _LATEST_FROM_REGISTRY else latest_pub
     entries = cat.get("publications") or []
     _write(
         staged / "releases/index.html",
-        releases_index(entries, latest=latest.get("publication_id")),
+        releases_index(entries, latest=target, stamp=stamp),
     )
     _atomic_write(staged / "releases" / "catalog.json", canonical_json(cat))
     compat = registry.compat()
@@ -1666,11 +1874,15 @@ def activate(
 
     staged = registry.root / "staged"
     _stage_tree(release_dir, staged, pub)
+    # P35.13 / SIG-REL-009: the mutable pages (releases index, entity stubs,
+    # tombstones) answer for THIS release once the pointer flips — project
+    # the §6.1 stamp from its sig.site-release/1 before the overlay writes.
+    mutable_stamp = load_mutable_stamp(release_dir / "release.json")
     # The withdrawal barrier applies to EVERY staged release, current AND
     # historical (a withhold in R2 denies under an R1 rollback). The stubs
     # this activation emits point at THIS release — the deny set scopes
     # them to pub.
-    applied = apply_withdrawals(staged, registry.withdrawals(), active_pub=pub)
+    applied = apply_withdrawals(staged, registry.withdrawals(), active_pub=pub, stamp=mutable_stamp)
     # P34.34a (DR-C4-01): the staged corpus gets the same link-resolution
     # crawl the release passed alone — now over the composed tree, where an
     # explicitly denied route (the withdrawal barrier's 410 tombstone)
@@ -1694,9 +1906,14 @@ def activate(
     _update_compat(registry, entry)
 
     stubs = _entity_overlay(
-        staged, release_dir, pub, entry, denied_stubs=applied.get("entity_stubs")
+        staged,
+        release_dir,
+        pub,
+        entry,
+        denied_stubs=applied.get("entity_stubs"),
+        stamp=mutable_stamp,
     )
-    _emit_overlay(registry)
+    _emit_overlay(registry, stamp=mutable_stamp, latest_pub=pub)
 
     now = now or datetime.now(UTC)
     ordinal = len(pubs)
@@ -1726,6 +1943,9 @@ def activate(
             }
         ),
     )
+    # P35.13: the site-root release.json follows the pointer — the active
+    # release's immutable copy, staged only after latest.json names it.
+    _stage_root_release_json(staged, release_dir / "release.json")
     return activation
 
 
@@ -1824,11 +2044,19 @@ def rollback(
             f"staged tree for {pub} is absent — cannot roll back to a "
             "release whose bytes were never staged"
         )
-    applied = apply_withdrawals(staged, registry.withdrawals(), active_pub=pub)
+    # P35.13: the rolled-to release's stamp names the mutable pages —
+    # read its sig.site-release/1 from the staged namespace copy.
+    mutable_stamp = load_mutable_stamp(staged / f"releases/{pub}/release.json")
+    applied = apply_withdrawals(staged, registry.withdrawals(), active_pub=pub, stamp=mutable_stamp)
     stubs = _entity_overlay(
-        staged, registry.root / "staged", pub, entry, denied_stubs=applied.get("entity_stubs")
+        staged,
+        registry.root / "staged",
+        pub,
+        entry,
+        denied_stubs=applied.get("entity_stubs"),
+        stamp=mutable_stamp,
     )
-    _emit_overlay(registry)
+    _emit_overlay(registry, stamp=mutable_stamp, latest_pub=pub)
     now = now or datetime.now(UTC)
     latest = {
         "schema": LATEST_SCHEMA,
@@ -1839,6 +2067,7 @@ def rollback(
         "rolled_back": True,
     }
     _atomic_write(registry._path("latest.json"), canonical_json(latest))
+    _stage_root_release_json(staged, staged / f"releases/{pub}/release.json")
     _write(
         registry._path(f"activations/rollback-{pub}-{_ts(now)}.json"),
         canonical_json(
@@ -1886,7 +2115,10 @@ def clear_latest_pointer(
     if entity_dir.exists():
         shutil.rmtree(entity_dir)
     latest_path.unlink()
-    _emit_overlay(registry)
+    _emit_overlay(registry, latest_pub=None)
+    # P35.13: with no current release the site-root release.json is absent —
+    # an honest no-release answer, never a stale one.
+    _stage_root_release_json(staged, None)
     now = now or datetime.now(UTC)
     _write(
         registry._path(f"activations/rollback-none-{_ts(now)}.json"),
@@ -2108,6 +2340,7 @@ def _stub_tombstone(
     eff: DispositionRecord,
     *,
     release_label: str | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     dec = access_decision(eff)
     return entity_stub_tombstone(
@@ -2121,6 +2354,7 @@ def _stub_tombstone(
         policy_version=dec.policy_version,
         disposition_ref=_disposition_ref(eff),
         release_label=release_label,
+        stamp=stamp,
     )
 
 
@@ -2155,6 +2389,7 @@ def apply_withdrawals(
     records: Sequence[DispositionRecord],
     *,
     active_pub: str | None = None,
+    stamp: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Apply the CURRENT withdrawal registry to the staged public tree.
 
@@ -2176,6 +2411,12 @@ def apply_withdrawals(
     its record route under ``active_pub`` is denied (claim, artifact or
     release deny). The map covers a denied stub predictively — even before
     the activation overlay emits its page.
+
+    ``stamp`` (P35.13 / SIG-REL-009) is the active release's §6.1
+    provenance view — the tombstone pages it rewrites still answer for a
+    release, so they carry its stamp like every other mutable page;
+    ``None`` (no current release, or a caller outside activation) leaves
+    them honestly unstamped.
     """
     records = list(records)
     by_target: dict[tuple[str, str], list[DispositionRecord]] = {}
@@ -2379,7 +2620,7 @@ def apply_withdrawals(
             # the /entity/<t>/<id>/ convenience stub — the stub-shaped
             # tombstone, generated from the deny set like the map line.
             etype, _, eid = route.partition("/")[2].partition("/")
-            page = _stub_tombstone(etype, eid, eff, release_label=_label_for(route))
+            page = _stub_tombstone(etype, eid, eff, release_label=_label_for(route), stamp=stamp)
         else:
             page = tombstone_page(
                 path="/" + route + "/",
@@ -2393,6 +2634,7 @@ def apply_withdrawals(
                 target_id=eff.target_id,
                 disposition_ref=_disposition_ref(eff),
                 release_label=_label_for(route),
+                stamp=stamp,
             )
         _write(path / "index.html", page)
 
