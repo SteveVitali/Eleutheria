@@ -71,6 +71,10 @@ class QuarantineReason(StrEnum):
     VERSION_MISMATCH = "version_mismatch"
     MISSING_REQUIRED_FIELD = "missing_required_field"
     UNKNOWN_QUALIFIER = "unknown_qualifier"
+    #: P35.25 (SIG-CONF-014): a record-declared ``id_namespace`` the committed
+    #: vocabulary (db/data/id_namespaces.toml) does not know — never silently
+    #: namespaced.
+    UNKNOWN_ID_NAMESPACE = "unknown_id_namespace"
 
 
 #: The ``claim_evidence.binding_status`` vocabulary (deploy CHECK).

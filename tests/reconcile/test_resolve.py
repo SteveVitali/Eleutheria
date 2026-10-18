@@ -344,6 +344,8 @@ def test_three_sources_copying_one_upstream_count_as_one_class() -> None:
 
 def test_two_independent_method_distinct_classes_confirm() -> None:
     # Two genuinely independent, method-distinct classes at W3+ -> CONFIRMED.
+    # P35.25: independence is DECLARED, never defaulted — each claim names its
+    # class explicitly.
     a = _claim(
         "a",
         "active_device_count",
@@ -353,6 +355,7 @@ def test_two_independent_method_distinct_classes_confirm() -> None:
         observed=date(2026, 8, 1),
         method="open_data",
         source_id="src:a",
+        indep="src:a",
     )
     b = _claim(
         "b",
@@ -363,11 +366,45 @@ def test_two_independent_method_distinct_classes_confirm() -> None:
         observed=date(2026, 8, 1),
         method="field_survey",
         source_id="src:b",
+        indep="src:b",
     )
     r = _resolve("active_device_count", [a, b])
     assert r.support == "CONFIRMED"
     assert r.agreement == "UNCONTESTED"
     assert r.contradiction_state == "uncontested"
+
+
+def test_undeclared_claims_never_count_as_independent_corroboration() -> None:
+    # P35.25 (SIG-CONF-014): two undeclared claims agreeing collapse into the
+    # shared `unclassified` class — ONE voice, never two independent voices.
+    # (The pre-P35.25 fallback gave each claim its own class.)
+    # R2 portal claims weigh W3 — CONFIRMED needs two W3+ CLASSES (or a W4
+    # best); the shared `unclassified` class makes that structurally impossible.
+    a = _claim(
+        "a",
+        "active_device_count",
+        38,
+        R="R2",
+        genre="portal_snapshot",
+        observed=date(2026, 8, 1),
+        method="open_data",
+        source_id="src:a",
+    )
+    b = _claim(
+        "b",
+        "active_device_count",
+        38,
+        R="R2",
+        genre="portal_snapshot",
+        observed=date(2026, 8, 1),
+        method="field_survey",
+        source_id="src:b",
+    )
+    r = _resolve("active_device_count", [a, b])
+    assert r.independence_class_ids == ("unclassified",)
+    assert set(r.unclassified_claim_ids) == {"a", "b"}
+    assert r.support == "STRONGLY_SUPPORTED"
+    assert {c.class_id for c in (a, b)} == {"unclassified"}
 
 
 # --- strategy silence / never_resolve (SIG-RECON-012/013) --------------------
@@ -581,7 +618,9 @@ def test_value_outside_the_predicate_domain_is_dropped() -> None:
 
 
 def test_u4_fires_when_numeric_spread_exceeds_tolerance() -> None:
-    # Two equal-weight portal snapshots far apart (38 vs 300), nothing dispositive.
+    # Two equal-weight DECLARED-independent portal snapshots far apart (38 vs
+    # 300), nothing dispositive. (P35.25: independence is declared — undeclared
+    # claims share `unclassified`, and a shared class is never a U2 standoff.)
     a = _claim(
         "a",
         "active_device_count",
@@ -591,6 +630,7 @@ def test_u4_fires_when_numeric_spread_exceeds_tolerance() -> None:
         observed=date(2026, 8, 1),
         method="m1",
         source_id="src:a",
+        indep="src:a",
     )
     b = _claim(
         "b",
@@ -601,6 +641,7 @@ def test_u4_fires_when_numeric_spread_exceeds_tolerance() -> None:
         observed=date(2026, 8, 1),
         method="m2",
         source_id="src:b",
+        indep="src:b",
     )
     r = _resolve("active_device_count", [a, b])
     assert r.resolution_status == "UNRESOLVED"

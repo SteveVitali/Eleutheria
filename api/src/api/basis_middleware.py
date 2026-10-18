@@ -35,6 +35,14 @@ config generation the revision was rolled under (``SIG_CONF_GEN``, the
 same env the templated nginx stamps on sig-web). Both are env-read at
 request time like the health handler's ``SIG_CODE_COMMIT`` — an env the
 deploy sets before traffic, never per-request derived state.
+
+P35.25 (SIG-CONF-014, CP-4) adds ``basis.notices`` — the deploy-declared
+material-basis disclosures. ``SIG_API_BASIS_NOTICES`` carries a JSON array
+(or ``;``-separated list) of notice strings the basis block echoes verbatim:
+the lineage/independence backfill changes what downstream answers are based
+on (corroboration counts, shared-ref resolution), and the deployed surface
+says so rather than silently answering under a changed basis. Absent env =
+absent key, never an empty list or a fabricated notice.
 """
 
 from __future__ import annotations
@@ -70,6 +78,23 @@ _DROP_HEADERS = {
 _JSON_TYPES = (b"application/json", b"application/ld+json")
 
 _PUBLICATION_RE = re.compile(r"^p-[0-9a-f]{64}$")
+
+
+def _basis_notices() -> list[str]:
+    """The deploy-declared basis notices (P35.25): ``SIG_API_BASIS_NOTICES`` as
+    a JSON array of strings, or a ``;``-separated list for envs where quoting
+    JSON is awkward. Read per request — a deploy sets it, never derived state.
+    Malformed JSON falls through to the separator parse; absent = []."""
+    raw = os.environ.get("SIG_API_BASIS_NOTICES") or ""
+    if not raw.strip():
+        return []
+    try:
+        parsed = json.loads(raw)
+    except (ValueError, TypeError):
+        parsed = None
+    if isinstance(parsed, list):
+        return [str(n).strip() for n in parsed if str(n).strip()]
+    return [n.strip() for n in raw.split(";") if n.strip()]
 
 
 def _release_header(block: dict[str, Any] | None) -> str | None:
@@ -222,6 +247,13 @@ class BasisLabelMiddleware:
             basis_header = BASIS_LIVE_SPINE.encode()
             release_header = _release_header(current) or (release_id or None)
             basis_release_header = release_id
+        # P35.25: deploy-declared material-basis notices ride the basis block
+        # on BOTH classes — a release byte-set pinned before the lineage
+        # backfill and a live-spine answer post-backfill are equally changed
+        # in what they are based on; the notice is never class-conditional.
+        notices = _basis_notices()
+        if notices:
+            basis = {**basis, "notices": notices}
 
         if start is not None:
             headers = [

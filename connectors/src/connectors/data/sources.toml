@@ -130,6 +130,17 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-10
 review_packet = "docs/build/reports/rights/osm_overpass.md"
 notes = "Element extraction. Not yet tested — read etiquette rules first (§22.2). FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): OSM data under ODbL-1.0, redistributable + derivative_permitted true per packet; kept in the separate ODbL compartment (§42.3). reviewer role only (Part VIII §0.7)."
+# P35.25 (SIG-CONF-014): the declared lineage. The Overpass API is SIG's read
+# point of the OpenStreetMap database — its records are that database's
+# elements, collected here and not copied from another tracked source.
+[sources.osm_overpass.lineage]
+kind = "primary"
+origin = "OpenStreetMap database"
+# The upstream refs this source's claims carry ARE OSM element ids — the
+# shared `osm.element` namespace, so a camreg/OSM republish carrying the same
+# element id IS the same upstream row (P35.25 NEW-1).
+id_namespace = "osm.element"
+evidence = "The connector reads api.openstreetmap.org/overpass for man_made=surveillance elements; the OSM database is not itself a registry source — osm_overpass is its lineage root in this graph."
 [sources.osm_overpass.rights]
 spdx = "ODbL-1.0"
 attribution = "© OpenStreetMap contributors"
@@ -255,6 +266,17 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-10
 review_packet = "docs/build/reports/rights/deflock_repo.md"
 notes = "The real DeFlock code. FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): MIT-licensed, redistributable + derivative_permitted true per packet; last_verified 2026-08-20 retained. reviewer role only (Part VIII §0.7)."
+# P35.25 (SIG-CONF-014): the declared lineage. The canonical FoggedLens/deflock
+# repo is the upstream dataset itself — community-reported ALPR locations
+# collected there, not republished from another tracked source. Its rows are
+# keyed by DeFlock's own location ids — the shared `deflock.node` namespace,
+# so a camreg layer republishing a deflock row carries the same upstream ref.
+[sources.deflock_repo.lineage]
+kind = "primary"
+origin = "DeFlock community-reported ALPR locations (FoggedLens/deflock)"
+id_namespace = "deflock.node"
+collection_method = "community_report"
+evidence = "Registry row: 'DeFlock — canonical repo (FoggedLens/deflock)', ingestion_permitted=true per docs/build/reports/rights/deflock_repo.md; the repo IS the dataset's home — deflock_repo is its lineage root in this graph."
 [sources.deflock_repo.rights]
 spdx = "MIT"
 attribution = "FoggedLens / DeFlock"
@@ -6850,6 +6872,23 @@ review_packet = "docs/build/reports/rights/annex/p2616/camreg_osm_surveillance.m
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): ODbL-1.0 — OSM-derived surveillance nodes — ODbL corpus (separate compartment, §42.3). Jurisdiction scheme sig.unresolved (unresolved)."
 volatility_class = "SLOW"
 volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+# P35.25 (SIG-CONF-014): the declared lineage. This source's ArcGIS layers
+# republish upstream datasets it does not originate — the rights attribution
+# and the source name name the upstreams verbatim. Because the layer set draws
+# on TWO upstreams and no per-target split has landed, the resolved
+# independence class is `unclassified`: its rows never corroborate either
+# upstream, and never corroborate each other's copy as "independent".
+# (The per-target split into its two republishes is the ticket's live leg.)
+[sources.camreg_osm_surveillance.lineage]
+kind = "derived"
+derived_from = ["osm_overpass", "deflock_repo"]
+# The external refs the layers carry are the ArcGIS layers' own row ids
+# (object_id_field: FID/OBJECTID per camera_registry_targets.toml) — a
+# source-private space; an equal FID elsewhere is a coincidence, never
+# shared-upstream evidence (P35.25 NEW-1).
+id_namespace = "src:camreg_osm_surveillance"
+evidence = "Source name + rights attribution: 'OSM-derived surveillance-camera layers (DeFlock/OSM exports)' / 'OpenStreetMap contributors (republished man_made=surveillance nodes)'; the osm_surveillance_deflock target layer is the DeFlock republish."
+collection_method = "republished_layer"
 [sources.camreg_osm_surveillance.rights]
 spdx = "ODbL-1.0"
 attribution = "OpenStreetMap contributors (republished man_made=surveillance nodes) camera registry"

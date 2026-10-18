@@ -86,6 +86,17 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     acl.add_argument("--out", default=None, help="output path (default: print to stdout)")
+    sll = sub.add_parser(
+        "source-lineage-list",
+        help=(
+            "P35.25 / SIG-CONF-014: emit the committed source-lineage "
+            "declarations artifact `sig-db lineage-rematerialize` consumes — "
+            "one row per registry source (kind, upstream refs, resolved "
+            "independence_class, id_namespace); --out writes the committed "
+            "file, else the document prints to stdout"
+        ),
+    )
+    sll.add_argument("--out", default=None, help="output path (default: print to stdout)")
     tb = sub.add_parser(
         "technology-backfill",
         help=(
@@ -835,6 +846,18 @@ def main(argv: list[str] | None = None) -> int:
             print(f"wrote {path}")
         else:
             print(_json.dumps(corrections_list(), indent=2, sort_keys=True))
+        return 0
+    if args.command == "source-lineage-list":
+        import json as _json
+        from pathlib import Path as _Path
+
+        from .lineage_declarations import declarations_list, write_declarations_list
+
+        if args.out:
+            path = write_declarations_list(_Path(args.out))
+            print(f"wrote {path}")
+        else:
+            print(_json.dumps(declarations_list(), indent=2, sort_keys=True))
         return 0
     if args.command == "rekey-personal-ids":
         from . import personal_id_rekey

@@ -43,7 +43,11 @@ from .weight import (
     weight_class,
 )
 
-RESOLVER_VERSION = "p08.1/1.0.0"
+#: P35.25 (SIG-CONF-014): undeclared claims collapse into the shared
+#: ``unclassified`` pseudo-class instead of each standing as its own class —
+#: corroboration counts change wherever lineage was never declared (the
+#: truthful direction), so the resolver version moves.
+RESOLVER_VERSION = "p08.1/1.1.0"
 
 #: Human currency labels for the four currency classes (§10.7).
 _CURRENCY_LABEL: dict[str, str] = {
@@ -87,6 +91,11 @@ class Claim:
     collection_method: str | None = None
     derived_from_source: str | None = None
     derived_from_claim_ids: tuple[str, ...] = ()
+    #: P35.25 (SIG-CONF-014): the claim's declared identifier namespace
+    #: (``claim_lineage.id_namespace``) — ``undeclared`` is explicit; readers
+    #: that join no lineage row leave this None and ``class_id`` treats the
+    #: claim as unclassified.
+    id_namespace: str | None = None
     source_id: str = ""
     #: Ascending registry rank for the universal tie-break (SIG-RECON-007). When
     #: unset it defaults to the numeric of the reliability code (R1 -> 1).
@@ -161,9 +170,17 @@ class Claim:
 
     @property
     def class_id(self) -> str:
-        """The independence class key (§10.8): declared class, else declared
-        upstream source, else the claim stands alone as its own class."""
-        return self.independence_class or self.derived_from_source or self.claim_id
+        """The independence class key (§10.8, P35.25 / SIG-CONF-014).
+
+        Declared class, else declared upstream source (a derivation copies its
+        upstream's voice), else ``unclassified`` — the ONE shared pseudo-class
+        every undeclared claim collapses into. Undeclared material is never
+        independent corroboration: two undeclared claims agreeing stay one
+        voice, and an undeclared claim can never corroborate a declared class
+        (previously a claim fell back to its own ``claim_id`` — every
+        undeclared claim silently counted as an independent voice).
+        """
+        return self.independence_class or self.derived_from_source or "unclassified"
 
     @property
     def method(self) -> str:
@@ -185,14 +202,19 @@ class Claim:
 
     def digest_token(self) -> str:
         if self.content_hash:
-            return f"{self.claim_id}:{self.content_hash}"
+            return f"{self.claim_id}:{self.content_hash}:{self.class_id}"
         # The ordering instant is part of the decision input (SIG-RECON-020): a
         # same-day re-sighting moves it, so it must move the digest too — that is
         # what mints the NEW resolution row and closes the prior one (P31.7).
+        # P35.25 (SIG-CONF-014): so is the resolved independence class — a lineage
+        # declaration or backfill that re-classes a claim changes the corroboration
+        # structure, and the resolution input digest MUST move so the decision is
+        # re-materialized append-only rather than silently standing on a stale class.
         instant = self.observed_instant.isoformat() if self.observed_instant else ""
         payload = (
             f"{self.predicate_id}|{self.value!r}|{self.raw_value}"
             f"|{self.observed_at.isoformat()}|{instant}|{self.source_id}"
+            f"|{self.class_id}"
         )
         return f"{self.claim_id}:{hashlib.sha256(payload.encode()).hexdigest()}"
 
@@ -261,6 +283,11 @@ class Resolution:
     as_of_belief: date
     computed_at: datetime
     unresolved_code: str | None = None
+    #: P35.25 (SIG-CONF-014): the considered claims whose lineage is undeclared
+    #: (``class_id == "unclassified"``) — the visible remainder that can never
+    #: count as independent corroboration. Derived, never identity-bearing —
+    #: deliberately outside ``decision_key``.
+    unclassified_claim_ids: tuple[str, ...] = ()
     last_known_value: object | None = None
     last_known_date: date | None = None
     contradictions: tuple[Contradiction, ...] = ()
@@ -1049,6 +1076,11 @@ def _finalize(
         else ()
     )
     class_ids = tuple(sorted({cid for cand in candidates for cid in cand.supporting_class_ids}))
+    # P35.25: the considered claims carrying no declared independence class —
+    # they sit in the shared ``unclassified`` pseudo-class and stay disclosed.
+    unclassified_ids = tuple(
+        sorted(c.claim_id for c in st.considered if c.class_id == "unclassified")
+    )
 
     cur_label: str | None = None
     last_known_value: object | None = None
@@ -1097,6 +1129,7 @@ def _finalize(
         dissenting_claim_ids=dissenting_ids,
         excluded=tuple(st.excluded),
         independence_class_ids=class_ids,
+        unclassified_claim_ids=unclassified_ids,
         rules_fired=tuple(st.rules),
         ruleset_version=rs.version,
         resolver_version=RESOLVER_VERSION,

@@ -24,6 +24,32 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Declared lineage, identifier namespaces, and independence classes**
+  (P35.25 / row 304; R11-L3-CP4, owner SIG-CONF-014; cites SIG-EPIS-009/029,
+  SIG-IDENT-005, CONF-04, S6 A-20, GQ-11; ADR-213) — `sources.toml` rows
+  declare `kind`/`origin`/`mirror_of`/`derived_from`/`independence_class`/
+  `id_namespace` (additive, fail-closed validation; `undeclared` never
+  reads as independent; `assert_loadable` unchanged). Sqitch
+  `declared_lineage` lands immutable `source_lineage` (versioned registry
+  mirror) + `claim_lineage` (one row per claim — `id_namespace`,
+  `lineage_kind`, `independence_class`, `basis`, persisted
+  `derived_from_claim_ids`; explicit `undeclared`/`unclassified` tokens)
+  + the `source_lineage_current` view; the committed namespace vocabulary
+  `sig.id-namespaces/1` bounds declared tokens and a non-vocabulary
+  override quarantines `unknown_id_namespace`. The sink writes each
+  claim's lineage in the claim transaction. Identifier equality becomes
+  `(id_namespace, value)` — the camera-site tier-1g shared-ref join fires
+  only inside a declared shared namespace; reconcile counts corroboration
+  across declared-independent classes only (a mirror is one disclosed
+  voice); export envelopes disclose `n_independence_classes` +
+  `n_unclassified_candidates`. `sig-db lineage-rematerialize` mirrors the
+  declarations and back-populates `claim_lineage` — dry-run default,
+  bounded/keyset/resumable/+0, INSERT-only, ancestry recovered only where
+  evidence supports it. The API basis middleware carries opt-in notices
+  (`SIG_API_BASIS_NOTICES` → `basis.notices`) and the `/status/` sentence
+  stages in copy batch 02 (`ST-11`, pending operator confirmation).
+  Hosted merge/rematerialize/notice/verification legs are QUEUED
+  OM-19/OM-20 — none ran (`live_verification=false`).
 - **Pinned subject keys + append-only re-key machinery** (P35.24 / row
   303; R11-L3-CP2, CONF-03b; owns F-506 + F-518, metric L2-M07, GQ-04;
   cites SIG-INGEST-003/004, SIG-IDENT-005/006; ADR-212) — the committed

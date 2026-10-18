@@ -80,6 +80,36 @@ def _registry_rights(source_id: str) -> Mapping[str, Any] | None:
     }
 
 
+def _registry_lineage(source_id: str) -> Any:
+    """The source's resolved claim-lineage record (P35.25 / SIG-CONF-014).
+
+    The registry's declared ``[lineage]`` block resolves to the claim's
+    ``id_namespace``/``lineage_kind``/``independence_class``; an unregistered
+    or undeclared source resolves to the honest defaults (undeclared kind,
+    unclassified class — never a guess). ``db.lineage.ClaimLineage`` is the
+    row shape; basis names where the values came from.
+    """
+    from db.lineage import UNCLASSIFIED, UNDECLARED, ClaimLineage, namespace_version
+
+    from .registry import get, registry, resolve_independence_class
+
+    try:
+        record = get(source_id)
+    except KeyError:
+        return ClaimLineage(source_id=source_id)
+    lin = record.lineage
+    basis = f"registry:sources.toml+{namespace_version()}"
+    return ClaimLineage(
+        source_id=source_id,
+        id_namespace=lin.id_namespace or UNDECLARED,
+        lineage_kind=lin.kind.value,
+        independence_class=resolve_independence_class(record, registry())
+        if lin.kind.value != "undeclared"
+        else UNCLASSIFIED,
+        basis=basis,
+    )
+
+
 def resolve_commit_chunk_size(
     explicit: int | None = None, env: Mapping[str, str] | None = None
 ) -> int | None:
@@ -139,6 +169,10 @@ def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: A
         # ``rights_resolver``; replay sinks are built directly in runner.py and
         # deliberately carry none — a replay re-records what was asserted.
         kwargs.setdefault("rights_resolver", _registry_rights)
+        # P35.25 / SIG-CONF-014: the live sink also resolves declared lineage
+        # per source (claim_lineage rows); undeclared stays undeclared — never
+        # a guessed class.
+        kwargs.setdefault("lineage_resolver", _registry_lineage)
         return PgClaimSink.from_dsn(dsn, **kwargs)
     raise ValueError(f"unknown claim-sink kind {kind!r}; expected one of {SINK_KINDS}")
 

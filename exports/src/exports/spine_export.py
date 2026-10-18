@@ -2942,7 +2942,15 @@ def run_spine_export(
         cur.execute("SELECT to_regclass('rights_decision') IS NOT NULL")
         has_row = cur.fetchone()
         has_decisions = bool(has_row and has_row[0])
-        shaping_raw = fetch_shaping_raw(cur, _queries_for(has_decisions), belief=belief)
+        # P35.25 (SIG-CONF-014): the claim_lineage record — absent on a
+        # pre-P35.25 spine, where independence_class projects NULL (undeclared).
+        cur.execute("SELECT to_regclass('claim_lineage') IS NOT NULL")
+        has_row = cur.fetchone()
+        shaping_raw = fetch_shaping_raw(
+            cur,
+            _queries_for(has_decisions, has_lineage=bool(has_row and has_row[0])),
+            belief=belief,
+        )
         export_raw = fetch_export_raw(cur, belief=belief)
         # The materialized graph (P28.1-P28.4, ADR-101), read inside the SAME snapshot so
         # every emitted artifact describes one spine state; empty/absent tables degrade to []

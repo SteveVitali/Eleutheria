@@ -33,6 +33,13 @@ const stamp = getReleaseStamp();
     The fix ships as part of a later release; the wrong answers stay live until
     then, marked here rather than hidden.
   </p>
+  {/* P35.25 (SIG-CONF-014, S6 A-20): the lineage-basis disclosure — copy-batch
+      row ST-11, staged pending for the ticket's L2 leg (the sentence describes
+      the post-rematerialize basis; it ships with the OM-20 legs, not before). */}
+  <p data-copy="ST-11">
+    Corroboration counts and identifier matching now require declared lineage;
+    records with no declared lineage are unclassified, never independent voices.
+  </p>
 
   <h2 id="currency-heading" data-copy="ST-08">How current this site is</h2>
   {stamp ? (

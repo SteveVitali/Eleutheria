@@ -87,6 +87,9 @@ allow db/sqitch.plan 2026-10-20T00:00:00Z claim_payload_version [coverage_exclus
 # P35.24 (ticket 303): subject_rekey's planned_at is its real `date -u` stamp — future of the
 # pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
 allow db/sqitch.plan 2026-10-21T00:00:00Z subject_rekey [claim_payload_version] 2026-10-18T07:43:00Z
+# P35.25 (ticket 304): declared_lineage's planned_at is its real `date -u` stamp — future of the
+# pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-22T00:00:00Z declared_lineage [subject_rekey] 2026-10-18T10:43:00Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).

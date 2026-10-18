@@ -19,6 +19,7 @@ claims = [
         genre="portal_snapshot",
         observed_at=date(2026, 7, 1),
         source_id="src:okc-portal",
+        independence_class="src:okc-portal",  # P35.25: declared independence
         count_basis="active",
         structured_exact=True,
     ),
@@ -32,6 +33,7 @@ claims = [
         genre="council_minutes",
         observed_at=date(2026, 6, 15),
         source_id="src:okc-council",
+        independence_class="src:okc-council",
         count_basis="active",
     ),
     Claim(
@@ -44,6 +46,7 @@ claims = [
         genre="news_article",
         observed_at=date(2026, 5, 1),
         source_id="src:local-news",
+        independence_class="src:local-news",
         count_basis="active",
     ),
 ]
@@ -73,6 +76,7 @@ def claim_dict(c: Claim) -> dict:
         "genre": c.genre,
         "observed_at": c.observed_at.isoformat(),
         "source_id": c.source_id,
+        "independence_class": c.independence_class,  # P35.25
         "count_basis": c.count_basis,
         "structured_exact": c.structured_exact,
     }
@@ -80,7 +84,12 @@ def claim_dict(c: Claim) -> dict:
 
 sample = {
     "_note": "L3 byte-identical rebuild sample (SIG-RECON-020). Regenerate with "
-    "make gen or the P08.3 generator when the ruleset/resolver version changes.",
+    "make gen or the P08.3 generator when the ruleset/resolver version changes. "
+    "P32.3: repinned at ruleset 2026.2 (+UNRESOLVED_SCOPE_MIXED). P32.4: repinned "
+    "— the digest token now carries the shared-contract ordering instant "
+    "(ADR-123), so a same-day re-sighting moves input_digest. P35.25: claims now "
+    "declare independence_class (SIG-CONF-014 — undeclared claims resolve "
+    "unclassified, never independent), resolver p08.1/1.1.0.",
     "subject_id": "dep:okc",
     "predicate_id": "active_device_count",
     "as_of_world": "2026-09-01",

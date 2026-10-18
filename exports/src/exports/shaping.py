@@ -294,6 +294,10 @@ class ShapingClaim:
     # ``candidate_identifier`` ``{scheme, value}`` pair here; pre-P35.18
     # claims carry none and shape through the config-declared scheme instead.
     value_json: str | None = None
+    #: P35.25 (SIG-CONF-014): the claim's resolved independence class from
+    #: ``claim_lineage`` — ``None`` when the spine predates the lineage record
+    #: or the claim has no row (both read as undeclared, never independent).
+    independence_class: str | None = None
 
     @property
     def publishable(self) -> bool:
@@ -359,11 +363,19 @@ class ObservationEnvelope:
     value_is_parseable: bool  # resolved value came from a real parse (not a gap)
     n_observations: int
     n_sources: int
-    considered_claim_ids: tuple[str, ...]
-    supporting_claim_ids: tuple[str, ...]
-    dissenting_claim_ids: tuple[str, ...]
-    distinct_values: tuple[str, ...]
-    observations: tuple[ValueObservation, ...]
+    #: P35.25 (SIG-CONF-014): the DISTINCT declared independence classes among
+    #: the candidate claims — the truthful corroboration count. ``n_sources``
+    #: counts sources (a mirror inflates it); this never counts an
+    #: ``unclassified`` claim as a class, and unclassified candidates are
+    #: disclosed by ``n_unclassified_candidates`` rather than read as
+    #: independent voices. 0/0 on a pre-P35.25 spine.
+    n_independence_classes: int = 0
+    n_unclassified_candidates: int = 0
+    considered_claim_ids: tuple[str, ...] = ()
+    supporting_claim_ids: tuple[str, ...] = ()
+    dissenting_claim_ids: tuple[str, ...] = ()
+    distinct_values: tuple[str, ...] = ()
+    observations: tuple[ValueObservation, ...] = ()
 
     def as_json(self) -> dict[str, Any]:
         return {
@@ -373,6 +385,10 @@ class ObservationEnvelope:
             "value_is_parseable": self.value_is_parseable,
             "n_observations": self.n_observations,
             "n_sources": self.n_sources,
+            # P35.25: declared-voice accounting — the corroboration truth
+            # ``n_sources`` never carries.
+            "n_independence_classes": self.n_independence_classes,
+            "n_unclassified_candidates": self.n_unclassified_candidates,
             "considered_claim_ids": list(self.considered_claim_ids),
             "supporting_claim_ids": list(self.supporting_claim_ids),
             "dissenting_claim_ids": list(self.dissenting_claim_ids),
@@ -768,13 +784,17 @@ QUERIES: dict[str, str] = {
         # ADR-194 attribution corrections it carries from these.
         # P35.18 (JUR-02a): ``c.value_json::text`` trails the decision pair —
         # the persisted {scheme, value} identifier a new claim declares.
-        "       ld.decided_at, ld.basis, c.value_json::text"
+        # P35.25 (SIG-CONF-014): the claim's declared independence_class trails
+        # value_json — ``{LINEAGE_JOIN}``/``{LINEAGE_COL}`` collapse to "" / NULL
+        # on a pre-P35.25 spine (no claim_lineage table).
+        "       ld.decided_at, ld.basis, c.value_json::text{LINEAGE_COL}"
         "  FROM claim c"
         "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
         "  LEFT JOIN latest_decision ld"
         "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
         "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
         "  LEFT JOIN ingest_run ir ON ir.run_id = c.ingest_run_id"
+        "{LINEAGE_JOIN}"
         " WHERE c.predicate_id = ANY(%s)"
         "   AND upper_inf(c.sys_period)"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id"
@@ -900,6 +920,13 @@ _FALLBACK_CLAIM_SOURCE_CTE = (
 )
 
 
+#: P35.25 (SIG-CONF-014): the additive claim-lineage projection. ``{LINEAGE_JOIN}``
+#: joins the append-only per-claim lineage record; ``{LINEAGE_COL}`` selects the
+#: resolved ``independence_class`` — ``NULL`` when the spine predates P35.25.
+_LINEAGE_JOIN = "  LEFT JOIN claim_lineage cl ON cl.claim_id = c.claim_id"
+_LINEAGE_COL = ", cl.independence_class"
+
+
 def expand_query(
     sql: str,
     *,
@@ -915,7 +942,9 @@ def expand_query(
     (one leading parameter is then required). ``{PUB_GATE}``/``{PUB_ENTITY_GATE}``
     (P32.5/ADR-124) default to the real shared fragments — the registry is part
     of the spine now; a pre-P32.5 dump goes through :func:`_queries_for`, which
-    substitutes ``true`` BEFORE this call.
+    substitutes ``true`` BEFORE this call. ``{LINEAGE_JOIN}``/``{LINEAGE_COL}``
+    (P35.25) default to the real join/projection; a pre-P35.25 dump substitutes
+    ``""``/``, NULL`` in :func:`_queries_for`.
     """
     return (
         sql.replace("{EFFECTIVE}", _LATEST_DECISION_CTE + claim_source_cte(bound))
@@ -927,10 +956,17 @@ def expand_query(
             "{PUB_ENTITY_GATE}",
             pub_entity_gate if pub_entity_gate is not None else entity_eligible_sql("e.entity_id"),
         )
+        .replace("{LINEAGE_JOIN}", _LINEAGE_JOIN)
+        .replace("{LINEAGE_COL}", _LINEAGE_COL)
     )
 
 
-def _queries_for(has_decisions: bool, *, has_dispositions: bool = True) -> dict[str, str]:
+def _queries_for(
+    has_decisions: bool,
+    *,
+    has_dispositions: bool = True,
+    has_lineage: bool = True,
+) -> dict[str, str]:
     """The query set for this spine — effective rights when decisions exist.
 
     ``{PUB_GATE}`` (P32.5/ADR-124) expands to the shared
@@ -938,10 +974,22 @@ def _queries_for(has_decisions: bool, *, has_dispositions: bool = True) -> dict[
     ``publication_disposition`` registry, and to ``true`` on a pre-P32.5 dump —
     the registry is absent there and no disposition can be recorded (the
     review-flag half is in the same fragment, so it is gated together).
+    ``has_lineage=False`` (a pre-P35.25 spine — no ``claim_lineage``) projects
+    ``independence_class`` as NULL: an absent lineage is the honest undeclared
+    state, never an independent voice.
     """
     gate = claim_eligible_sql("c") if has_dispositions else "true"
     entity_gate = entity_eligible_sql("e.entity_id") if has_dispositions else "true"
+    lineage_join = _LINEAGE_JOIN if has_lineage else ""
+    lineage_col = _LINEAGE_COL if has_lineage else ", NULL AS independence_class"
     if has_decisions:
+        return {
+            key: sql.replace("{PUB_GATE}", gate)
+            .replace("{PUB_ENTITY_GATE}", entity_gate)
+            .replace("{LINEAGE_JOIN}", lineage_join)
+            .replace("{LINEAGE_COL}", lineage_col)
+            for key, sql in QUERIES.items()
+        }
         return {
             key: sql.replace("{PUB_GATE}", gate).replace("{PUB_ENTITY_GATE}", entity_gate)
             for key, sql in QUERIES.items()
@@ -954,6 +1002,8 @@ def _queries_for(has_decisions: bool, *, has_dispositions: bool = True) -> dict[
             sql.replace("{EFFECTIVE}", _FALLBACK_CLAIM_SOURCE_CTE)
             .replace("{PUB_GATE}", gate)
             .replace("{PUB_ENTITY_GATE}", entity_gate)
+            .replace("{LINEAGE_JOIN}", lineage_join)
+            .replace("{LINEAGE_COL}", lineage_col)
             .replace("COALESCE(ld.rights_id, c.rights_id)", "c.rights_id")
             .replace(
                 "  LEFT JOIN latest_decision ld"
@@ -1172,6 +1222,18 @@ def observation_envelope(
     distinct = sorted(by_value)
     considered = tuple(c.claim_id for c in sorted(claims, key=lambda c: c.claim_id))
     n_sources = len({c.source_id or "(unattributed)" for c in candidates})
+    # P35.25 (SIG-CONF-014): corroboration truth. DISTINCT declared
+    # independence classes among the candidates — a ``unclassified`` claim (or
+    # one with no lineage row) never becomes an independence class; it is
+    # counted as one of the unclassified candidates instead.
+    declared_classes = {
+        c.independence_class
+        for c in candidates
+        if c.independence_class and c.independence_class != "unclassified"
+    }
+    n_unclassified = sum(
+        1 for c in candidates if not c.independence_class or c.independence_class == "unclassified"
+    )
     if len(distinct) == 1:
         return ObservationEnvelope(
             predicate_id=predicate_id,
@@ -1180,6 +1242,8 @@ def observation_envelope(
             value_is_parseable=distinct[0] in parseable_values,
             n_observations=len(observations),
             n_sources=n_sources,
+            n_independence_classes=len(declared_classes),
+            n_unclassified_candidates=n_unclassified,
             considered_claim_ids=considered,
             supporting_claim_ids=tuple(sorted(by_value[distinct[0]])),
             dissenting_claim_ids=(),
@@ -1198,6 +1262,8 @@ def observation_envelope(
         value_is_parseable=False,
         n_observations=len(observations),
         n_sources=n_sources,
+        n_independence_classes=len(declared_classes),
+        n_unclassified_candidates=n_unclassified,
         considered_claim_ids=considered,
         supporting_claim_ids=supporting,
         dissenting_claim_ids=dissenting,
@@ -1772,6 +1838,10 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
         # column — absent on a pre-P35.18 row set (declared-scheme derivation
         # then falls to the config basis, exactly the legacy path).
         value_json = r[23] if len(r) > 23 else None
+        # P35.25 (SIG-CONF-014): the resolved independence class is the 25th
+        # column — absent/NULL on a pre-P35.25 row set (the claim reads
+        # undeclared, never independent).
+        independence_class = r[24] if len(r) > 24 else None
         observed_date = (
             observed_at.date()
             if isinstance(observed_at, datetime)
@@ -1840,6 +1910,9 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
                         if isinstance(value_json, Mapping)
                         else str(value_json)
                     )
+                ),
+                independence_class=(
+                    None if independence_class is None else str(independence_class)
                 ),
             )
         )
@@ -2180,7 +2253,14 @@ def run_shaping(
         has_decisions = bool(has_row and has_row[0])
         cur.execute("SELECT to_regclass('publication_disposition') IS NOT NULL")
         has_row = cur.fetchone()
-        queries = _queries_for(has_decisions, has_dispositions=bool(has_row and has_row[0]))
+        has_dispositions = bool(has_row and has_row[0])
+        cur.execute("SELECT to_regclass('claim_lineage') IS NOT NULL")
+        has_row = cur.fetchone()
+        queries = _queries_for(
+            has_decisions,
+            has_dispositions=has_dispositions,
+            has_lineage=bool(has_row and has_row[0]),
+        )
 
         raw = fetch_shaping_raw(cur, queries, belief=belief)
     finally:

@@ -100,6 +100,7 @@ from .identity_guard import (
     SUBJECT_SCHEME,
     resolve_identity_batch,
 )
+from .lineage import ClaimLineage, valid_namespace_token
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
 from .subject_keys import validate_subject_value
 from .subject_types import UnmappedSubjectScheme, entity_type_for_subject
@@ -459,6 +460,11 @@ class _Staged:
     #: The raw claim record — kept so a closed-vocabulary rejection can carry
     #: the full payload into ``assertion_quarantine`` (P35.14a).
     record: Mapping[str, Any]
+    #: P35.25 (SIG-CONF-014): the claim's lineage record — source, declared
+    #: ``id_namespace``/``lineage_kind`` and the resolved ``independence_class``
+    #: (``unclassified`` when undeclared — never a guessed class). Written to
+    #: ``claim_lineage`` in the same transaction as the claim row.
+    lineage: ClaimLineage
 
 
 def _coerce_observed_at(value: Any) -> datetime | None:
@@ -615,6 +621,24 @@ _QUARANTINE = (
     " payload, payload_digest) "
     "VALUES (%s, %s, %s, %s, %s, %s, %s::jsonb, %s) "
     "ON CONFLICT (payload_digest) DO NOTHING RETURNING quarantine_id"
+)
+
+# P35.25 (SIG-CONF-014): one append-only lineage row per newly inserted claim,
+# inside the same chunk transaction. ``ON CONFLICT (claim_id) DO NOTHING`` —
+# the first recorded declaration stands; the rematerialize leg fills claims
+# missing a row, never rewrites one.
+_INSERT_CLAIM_LINEAGE = (
+    "INSERT INTO claim_lineage"
+    "(claim_id, source_id, id_namespace, lineage_kind, independence_class,"
+    " basis, derived_from_claim_ids) "
+    "SELECT l.claim_id::uuid, l.source_id, l.id_namespace, l.lineage_kind,"
+    " l.independence_class, l.basis,"
+    " CASE WHEN l.derived IS NULL THEN NULL ELSE ('{' || l.derived || '}')::uuid[] END "
+    "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[]) AS l("
+    " claim_id, source_id, id_namespace, lineage_kind, independence_class,"
+    " basis, derived) "
+    "ON CONFLICT (claim_id) DO NOTHING"
 )
 
 # P32.2: the actual-capture occurrence. The artifact is keyed by the source's
@@ -780,6 +804,7 @@ class PgClaimSink:
         extra_parameters: Mapping[str, str] | None = None,
         rights_resolver: RightsResolver | None = None,
         subject_typer: Callable[[str], str] | None = None,
+        lineage_resolver: Callable[[str], ClaimLineage] | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -823,6 +848,14 @@ class PgClaimSink:
         # match, fail-closed). Injectable so DB fixtures that mint arbitrary
         # subjects keep working; production never overrides it.
         self._subject_typer = subject_typer or entity_type_for_subject
+        # P35.25 / SIG-CONF-014: the per-source lineage lookup (wired by
+        # ``connectors.sinks.make_claim_sink`` from the registry's declared
+        # [lineage] blocks). Absent → every claim records the honest
+        # undeclared/unclassified defaults — never a guessed class (replays
+        # and schema-less spines stay writable).
+        self._lineage_resolver = lineage_resolver
+        self._lineage_by_source: dict[str, ClaimLineage] = {}
+        self._claim_lineage_ready: bool | None = None
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         # (source_id, spdx, attribution, terms_url) -> rights_id. P34.21a: the
@@ -1672,6 +1705,13 @@ class PgClaimSink:
             # a literal a connector explicitly DECLARED is never flipped.
             typed.object_type = "entity_ref"
             typed.defaulted["object_type"] = "object_resolver"
+        # P35.25: resolve the claim's lineage record — the record may declare
+        # its own ``id_namespace`` (closed vocabulary, fail closed), the
+        # resolver's source declaration supplies the rest; undeclared stays
+        # undeclared, never guessed.
+        lineage = self._lineage_for(source_id, claim)
+        if lineage is None:
+            return  # quarantined inside _lineage_for
         self._staged.append(
             _Staged(
                 digest=content_digest(
@@ -1687,7 +1727,52 @@ class PgClaimSink:
                 object_ref=object_ref,
                 typed=typed,
                 record=claim,
+                lineage=lineage,
             )
+        )
+
+    def _lineage_for(self, source_id: str, claim: Mapping[str, Any]) -> ClaimLineage | None:
+        """The claim's lineage record (P35.25 / SIG-CONF-014).
+
+        The wired ``lineage_resolver`` resolves the source's declared registry
+        lineage; absent → the honest undeclared/unclassified defaults. A record
+        may declare its own ``id_namespace`` (per-target upstream id spaces);
+        a token outside the committed vocabulary quarantines
+        (``unknown_id_namespace``) — never silently recorded.
+        """
+        base = self._lineage_by_source.get(source_id)
+        if base is None:
+            base = (
+                self._lineage_resolver(source_id)
+                if self._lineage_resolver is not None
+                else ClaimLineage(source_id=source_id)
+            )
+            self._lineage_by_source[source_id] = base
+        raw_ns = claim.get("id_namespace")
+        if raw_ns is None:
+            return base
+        ns = str(raw_ns).strip()
+        if not valid_namespace_token(ns):
+            self._quarantine(
+                claim,
+                Rejection(
+                    QuarantineReason.UNKNOWN_ID_NAMESPACE,
+                    f"id_namespace {ns!r} is not a declared namespace "
+                    "(db/data/id_namespaces.toml or src:<source-id>); never "
+                    "silently namespaced",
+                    quarantine_payload(
+                        claim, connector_name=self._connector_name, source_id=source_id
+                    ),
+                ),
+                source_id=source_id,
+            )
+            return None
+        return ClaimLineage(
+            source_id=base.source_id,
+            id_namespace=ns,
+            lineage_kind=base.lineage_kind,
+            independence_class=base.independence_class,
+            basis=base.basis,
         )
 
     def _quarantine(
@@ -1989,11 +2074,54 @@ class PgClaimSink:
             )
             inserted.update(new)
             self._insert_qualifiers(by_digest, new)
+            self._insert_claim_lineages(by_digest, new)
         self.report.inserted += len(inserted)
         self.report.duplicates += len(staged) - len(inserted)
 
         if self._on_duplicates is not None:
             self._report_duplicates(unique, inserted)
+
+    def _claim_lineage_present(self) -> bool:
+        """Whether this spine carries the P35.25 ``claim_lineage`` change.
+
+        Checked once per sink (the ``ingest_run_capture`` precedent): an image
+        deployed ahead of the migration keeps the claims writable and warns —
+        the rematerialize leg back-fills lineage for them; lineage absence is
+        never a silent skip on a migrated spine.
+        """
+        if self._claim_lineage_ready is None:
+            row = self._conn.execute("SELECT to_regclass('public.claim_lineage')").fetchone()
+            self._claim_lineage_ready = bool(row and row[0])
+            if not self._claim_lineage_ready:
+                _log.warning(
+                    "claim_lineage is absent; running without lineage "
+                    "persistence (P35.25 — rematerialize back-fills)"
+                )
+        return self._claim_lineage_ready
+
+    def _insert_claim_lineages(
+        self, by_digest: Mapping[str, _Staged], inserted: Mapping[str, str]
+    ) -> None:
+        """Write the chunk's ``claim_lineage`` rows (P35.25 / SIG-CONF-014).
+
+        One row per newly inserted claim — ``ON CONFLICT (claim_id) DO
+        NOTHING`` means the first recorded declaration stands; a claim whose
+        lineage row predates this change keeps it.
+        """
+        if not inserted or not self._claim_lineage_present():
+            return
+        self._conn.execute(
+            _INSERT_CLAIM_LINEAGE,
+            (
+                [inserted[d] for d in inserted],
+                [by_digest[d].lineage.source_id for d in inserted],
+                [by_digest[d].lineage.id_namespace for d in inserted],
+                [by_digest[d].lineage.lineage_kind for d in inserted],
+                [by_digest[d].lineage.independence_class for d in inserted],
+                [by_digest[d].lineage.basis for d in inserted],
+                [",".join(by_digest[d].typed.derived_from_claim_ids) or None for d in inserted],
+            ),
+        )
 
     def _insert_qualifiers(
         self, by_digest: Mapping[str, _Staged], inserted: Mapping[str, str]
