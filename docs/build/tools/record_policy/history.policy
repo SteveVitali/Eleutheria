@@ -520,3 +520,9 @@ seed-commit 8bb8d260
 # commit. Scope: findings attributed to 66ac4ac7 only; no other commit
 # borrows the exemption.
 seed-commit 66ac4ac7
+# P35.26 (row 305) — cf120045 trims the correction entry in place (437→320 B)
+# so the orient probe's last-3 window fits 48 KiB — the sanctioned
+# P36.9b/P35.25 (0a55c334/8bb8d260) in-place pattern; no record dropped
+# (git history carries the original byte). Declaration lands as a later
+# commit (no force-push). Scope: findings attributed to cf120045 only.
+seed-commit cf120045
