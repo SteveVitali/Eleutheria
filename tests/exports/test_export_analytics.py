@@ -154,12 +154,30 @@ def test_density_bins_are_h3_over_tier0_points_with_coverage() -> None:
     bins = payload["bins"]
     assert len(bins) >= 1
     for b in bins:
-        assert set(b) == {"h3", "jurisdiction", "deviceCount", "coverage"}
+        # P35.20b (ED-44): recordCount is canonical (SIG-RECON-058) with the
+        # deviceCount alias kept one release cycle; jurisdiction is the
+        # plurality key and jurisdiction_counts discloses the whole split so
+        # cell sums reconcile with the dossier per-key totals.
+        assert set(b) == {
+            "h3",
+            "jurisdiction",
+            "jurisdiction_counts",
+            "recordCount",
+            "deviceCount",
+            "coverage",
+        }
         assert b["coverage"] in {"none", "low", "partial", "high"}
-        assert b["deviceCount"] >= 1
-    # The whole family's deviceCount totals the tier-0 sites in scope.
-    assert sum(b["deviceCount"] for b in bins) == 1
+        assert b["recordCount"] >= 1
+        assert b["deviceCount"] == b["recordCount"]
+        # The disclosed per-key split sums to the cell's own record count and
+        # the plurality label is a member of it — plurality never misreads as
+        # unanimity and cell totals never disagree with dossier counts silently.
+        assert sum(b["jurisdiction_counts"].values()) == b["recordCount"]
+        assert b["jurisdiction"] in b["jurisdiction_counts"]
+    # The whole family's recordCount totals the tier-0 sites in scope.
+    assert sum(b["recordCount"] for b in bins) == 1
     assert "1 published observation-level site" in payload["denominator"]
+    assert "jurisdiction_rule" in payload  # the reconciliation rule is disclosed
 
 
 def test_density_bins_bin_two_nearby_points_into_one_cell() -> None:
@@ -169,7 +187,8 @@ def test_density_bins_bin_two_nearby_points_into_one_cell() -> None:
     )
     bins = _analytic(export, "density_bins")["bins"]
     assert len(bins) == 1
-    assert bins[0]["deviceCount"] == 2
+    assert bins[0]["recordCount"] == 2
+    assert bins[0]["deviceCount"] == 2  # the deprecated alias agrees
 
 
 def test_density_bins_exclude_tier1_points_and_say_so() -> None:
@@ -198,6 +217,54 @@ def test_density_bins_empty_state_is_honest_never_a_total() -> None:
     assert payload["bins"] == []
     assert payload["is_population_total"] is False
     assert payload["denominator"]
+
+
+def test_density_bins_key_jurisdiction_on_the_placement_result_when_bound() -> None:
+    """P35.20b (ED-44): a bound placement run's scheme-qualified
+    ``jurisdiction_key`` wins the cell's jurisdiction split; without one the
+    site's declared-scheme bucket stands — a bare code is never invented."""
+    from exports.placement import PlacementResult
+
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    dataset, raw, _rows_ = _build_dataset(claims)
+    placed = PlacementResult(
+        record_id="A",
+        source_id="src_a",
+        jurisdiction_key="iso3166-2:US-OK",
+        jurisdiction_chain=("iso3166-1:US", "iso3166-2:US-OK"),
+        placement_basis="point_in_polygon",
+        placement_check="consistent",
+        declared=None,
+        declared_jkey=None,
+        located_jkey="iso3166-2:US-OK",
+        boundary_vintage="tiger/2025",
+        point_withheld=False,
+        on_boundary=False,
+    )
+    artifacts = build_analytics(
+        dataset,
+        raw,
+        licences_by_subject={"A": {"ODbL-1.0"}},
+        refused_subjects=frozenset(),
+        placements={"A": placed},
+    )
+    payload = next(a.payload for a in artifacts if a.path.endswith("density_bins.json"))
+    (bin_,) = payload["bins"]
+    assert bin_["jurisdiction"] == "iso3166-2:US-OK"
+    assert bin_["jurisdiction_counts"] == {"iso3166-2:US-OK": 1}
+
+
+def test_density_bins_fall_back_to_the_declared_bucket_without_placement() -> None:
+    """No placement run → the site's jurisdiction bucket keys the cell —
+    qualified where P35.18 declared a scheme, the honest bare label otherwise
+    (undeclared data never gets an invented scheme)."""
+    export = _export(_site("A", "35.46", "-97.51", "Oklahoma"))
+    (bin_,) = _analytic(export, "density_bins")["bins"]
+    # "Oklahoma" is a bare asserted label on the fixture claim (no declared
+    # pair in value_json, no registry scheme for the test source) — it is
+    # disclosed as-is, never dressed as a qualified key.
+    assert bin_["jurisdiction"] == "Oklahoma"
+    assert bin_["jurisdiction_counts"] == {"Oklahoma": 1}
 
 
 def test_density_bins_name_their_source_compartments() -> None:

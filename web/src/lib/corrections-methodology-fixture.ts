@@ -203,14 +203,21 @@ export const CORRECTIONS: CorrectionEntry[] = [
 
 // --- Data-freshness (§32.4, SIG-UI-034) --------------------------------------
 
+/**
+ * P35.20b (ED-43, GQ-15): freshness rows carry `staleness_not_evaluable` and a
+ * DECLARED §28.3 volatility class — "not_evaluable" where no class is declared
+ * (a non-site evidence source still gets a row, never an absent one), never a
+ * fabricated "ok / stale 0".
+ */
 export const FRESHNESS_ROWS: FreshnessRow[] = [
   {
-    source: "Executed procurement contract (public records request)",
+    source: "Austin traffic cameras (camreg_austin_tx)",
     last_successful_run: "2026-08-18",
     last_content_change: "2026-08-18",
     status: "ok",
-    stale_entity_count: 0,
-    volatility_class: "SLOW (contract terms; multi-year half-life)",
+    stale_entity_count: 2,
+    staleness_not_evaluable: 0,
+    volatility_class: "SLOW",
   },
   {
     source: "Eyes on Flock portal aggregator",
@@ -218,23 +225,26 @@ export const FRESHNESS_ROWS: FreshnessRow[] = [
     last_content_change: "2026-07-15",
     status: "degraded",
     stale_entity_count: 3,
-    volatility_class: "FAST (active device counts; six-month half-life)",
+    staleness_not_evaluable: 1,
+    volatility_class: "FAST",
   },
   {
-    source: "OpenStreetMap community map",
-    last_successful_run: "2026-08-20",
-    last_content_change: "2026-08-20",
-    status: "ok",
-    stale_entity_count: 1,
-    volatility_class: "MEDIUM (physical installations)",
+    source: "Executed procurement contract (public records request)",
+    last_successful_run: "2026-08-18",
+    last_content_change: "2026-08-18",
+    status: "not_evaluable",
+    stale_entity_count: 0,
+    staleness_not_evaluable: 4,
+    volatility_class: "not_evaluable",
   },
   {
     source: "Oklahoma City Council minutes",
     last_successful_run: "2026-08-19",
     last_content_change: "2026-07-14",
-    status: "ok",
+    status: "not_evaluable",
     stale_entity_count: 0,
-    volatility_class: "SLOW (governance actions)",
+    staleness_not_evaluable: 6,
+    volatility_class: "not_evaluable",
   },
 ];
 

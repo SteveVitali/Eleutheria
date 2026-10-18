@@ -369,7 +369,16 @@ def seeded(conn) -> dict:
 
 
 def test_run_shaping_over_seeded_spine(conn, seeded) -> None:
-    ds = run_shaping(conn, as_of="2026-09-23", note="seeded", spine_label="seeded")
+    ds = run_shaping(
+        conn,
+        as_of="2026-09-23",
+        note="seeded",
+        spine_label="seeded",
+        # P35.20b (ED-43): the fabricated camreg sources declare their §28.3
+        # class via the seam (a real declaration lives in sources.toml);
+        # "muckrock" stays undeclared → its freshness row is not_evaluable.
+        volatility_classes={"camreg_a": "SLOW", "camreg_osm": "SLOW"},
+    )
     sites = {s.entity_id: s for s in ds.sites}
 
     # Publishable scope only: the UNDETERMINED subject is excluded and counted.
@@ -428,12 +437,20 @@ def test_run_shaping_over_seeded_spine(conn, seeded) -> None:
     assert s1.rights  # per-rights provenance for P27.4's compartment gate
 
     # Freshness rows exist per source. The camera-registry predicates carry registry
-    # rows since P30.2a (ADR-104), so their staleness is evaluated against the registry
-    # volatility rather than marked a registry gap.
+    # rows since P30.2a (ADR-104), and under P35.20b the declared-class gate binds:
+    # the seeded declarations make staleness evaluable; an undeclared source reads
+    # not_evaluable, never "ok" or a fabricated stale-0.
     sources = {s.freshness.source_id: s for s in ds.sources}
-    assert set(sources) == {"camreg_a", "camreg_osm"}
+    assert set(sources) == {"camreg_a", "camreg_osm", "muckrock"}
     assert sources["camreg_a"].staleness_not_evaluable == 0
-    assert sources["camreg_a"].volatility_class != "unknown"
+    assert sources["camreg_a"].volatility_class == "SLOW"  # the declared class
+    # "muckrock" is undeclared AND its claims sit on non-redistributable rights
+    # (no publishable dated observation) → the row exists and reads
+    # not_evaluable, never "ok" or a measured stale-0.
+    muck = sources["muckrock"].freshness_row()
+    assert muck["status"] == "not_evaluable"
+    assert muck["volatility_class"] == "not_evaluable"
+    assert muck["stale_entity_count"] == 0
 
     # Provenance completeness over shaped claims: every claim has a source.
     assert ds.provenance["is_complete"] is True

@@ -16,7 +16,7 @@
 // blank table (SIG-UI-007, §3.1).
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
-import { assertFreshnessRow, isNotRecorded } from "../../lib/metrics";
+import { assertFreshnessRow, evaluableLabel, isNotEvaluable, isNotRecorded } from "../../lib/metrics";
 import type { FreshnessRow } from "../../lib/metrics";
 import { getFreshness, capRows } from "../../lib/data";
 import { sortRows, sortHref, summariseBy } from "../../lib/tables";
@@ -89,6 +89,13 @@ const freshnessRows = capRows(sortedRows);
       publishes no observation dates. SIG shows the gap rather than guessing a date (§3.1).
     </p>
   )}
+  {ALL_ROWS.some((r) => isNotEvaluable(r.status)) && (
+    <p class="sig-table-note" data-testid="not-evaluable-note">
+      <strong>"Not evaluable"</strong> means staleness could not be evaluated for that
+      source — no declared volatility class, or no dated observation staleness can be
+      measured against (§32.4, SIG-METRIC-006). It is never reported as "ok".
+    </p>
+  )}
 
   {ALL_ROWS.length === 0 ? (
     <EmptyState surface="freshness" />
@@ -99,14 +106,14 @@ const freshnessRows = capRows(sortedRows);
       <ul class="sig-table-summary" data-testid="freshness-summary" aria-labelledby="summary-heading">
         {byStatus.map((b) => (
           <li data-testid="summary-status" data-status={b.label}>
-            <span class="sig-table-summary__count">{fmtInt(b.count)}</span> {b.label}
+            <span class="sig-table-summary__count">{fmtInt(b.count)}</span> {evaluableLabel(b.label)}
           </li>
         ))}
       </ul>
       <p class="sig-table-note">
         Volatility classes:{" "}
         {byVolatility.map((b, i) => (
-          <span>{i > 0 ? " · " : ""}<strong>{fmtInt(b.count)}</strong> {b.label}</span>
+          <span>{i > 0 ? " · " : ""}<strong>{fmtInt(b.count)}</strong> {evaluableLabel(b.label)}</span>
         ))}.
       </p>
 
@@ -146,6 +153,7 @@ const freshnessRows = capRows(sortedRows);
               <th scope="col">Last content change</th>
               <th scope="col">Status</th>
               <th scope="col">Stale entities (for their predicate class)</th>
+              <th scope="col">Staleness not evaluable</th>
               <th scope="col">Volatility class</th>
             </tr>
           </thead>
@@ -159,9 +167,12 @@ const freshnessRows = capRows(sortedRows);
                 <td>{isNotRecorded(row.last_content_change)
                   ? <span class="sig-not-recorded" data-testid="not-recorded">not recorded</span>
                   : <time datetime={row.last_content_change}>{row.last_content_change}</time>}</td>
-                <td data-testid="freshness-status">{row.status}</td>
-                <td data-testid="stale-count">{fmtInt(row.stale_entity_count)}</td>
-                <td>{row.volatility_class}</td>
+                <td data-testid="freshness-status">{evaluableLabel(row.status)}</td>
+                {/* A non-evaluable source never prints a stale figure — the number
+                    would read as measured (GQ-15, ED-43). */}
+                <td data-testid="stale-count">{isNotEvaluable(row.status) ? "not evaluable" : fmtInt(row.stale_entity_count)}</td>
+                <td data-testid="staleness-not-evaluable">{fmtInt(row.staleness_not_evaluable)}</td>
+                <td data-testid="volatility-class">{evaluableLabel(row.volatility_class)}</td>
               </tr>
             ))}
           </tbody>

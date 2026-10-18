@@ -96,6 +96,18 @@ class RobotsPolicy(StrEnum):
 #: source in the registry, never re-judged per claim (SIG-EPIS-014).
 RELIABILITY_TIERS: frozenset[str] = frozenset({"R1", "R2", "R3", "R4", "R5", "R6"})
 
+#: The §28.3 volatility classes a source row may declare (P35.20b / ED-43):
+#: the same closed vocabulary as the predicate registry's
+#: ``PredicateVolatility`` (ontology `sig_models`) — the source's class seeds
+#: whether its staleness is evaluable at all (SIG-METRIC-006). A test pins this
+#: tuple equal to the generated enum's members; the classes are never
+#: re-derived silently from a name. A source with NO declared class is
+#: ``not_evaluable`` on the freshness surface — the honest state, never a
+#: guessed default (§3.1).
+VOLATILITY_CLASSES: frozenset[str] = frozenset(
+    {"IMMUTABLE", "GLACIAL", "SLOW", "MODERATE", "FAST", "VOLATILE"}
+)
+
 
 @dataclass(frozen=True)
 class DateCorrection:
@@ -180,6 +192,15 @@ class SourceRecord:
     #: Additive date corrections (P34.22b / ADR-146): the recorded fields above
     #: are never rewritten; a reader showing one prefers ``effective_date``.
     date_corrections: tuple[DateCorrection, ...] = ()
+    #: P35.20b (ED-43, SIG-METRIC-006): the source's DECLARED §28.3 volatility
+    #: class — the class its emit surface's dominant predicate volatility seeds.
+    #: Empty when undeclared: staleness is then NOT evaluable for this source
+    #: (the freshness surface reads ``not_evaluable``), never a guessed class.
+    volatility_class: str = ""
+    #: The recorded basis for the declared class (e.g. ``ADR-104(e)``'s
+    #: recalibration from observed change rates). A declared class with no
+    #: basis fails validation — a class is a claim and carries its evidence.
+    volatility_basis: str = ""
 
     def correction_for(self, field: str) -> DateCorrection | None:
         """The declared correction for ``field``, or None."""
@@ -241,6 +262,26 @@ class SourceRecord:
                     "a correction names the recorded value it corrects "
                     "(ADR-146), never invents one"
                 )
+        # P35.20b: a declared volatility class must be in the closed §28.3
+        # vocabulary and carry its basis — never a guessed default (§3.1).
+        if self.volatility_class:
+            if self.volatility_class not in VOLATILITY_CLASSES:
+                raise ValueError(
+                    f"source {self.id!r} has volatility_class "
+                    f"{self.volatility_class!r}; must be one of "
+                    f"{sorted(VOLATILITY_CLASSES)} (§28.3, P35.20b)."
+                )
+            if not self.volatility_basis.strip():
+                raise ValueError(
+                    f"source {self.id!r} declares volatility_class "
+                    f"{self.volatility_class!r} with no volatility_basis — a "
+                    "class is a claim and names its evidence (P35.20b)."
+                )
+        elif self.volatility_basis.strip():
+            raise ValueError(
+                f"source {self.id!r} carries a volatility_basis but no "
+                "volatility_class — a basis without a class is dangling (P35.20b)."
+            )
 
 
 def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
@@ -364,6 +405,8 @@ def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
         ),
         review_packet=str(row.get("review_packet", "")),
         date_corrections=_date_corrections_from_row(source_id, row),
+        volatility_class=str(row.get("volatility_class", "")),
+        volatility_basis=str(row.get("volatility_basis", "")),
     )
 
 

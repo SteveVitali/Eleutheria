@@ -7,7 +7,10 @@ import {
   assertCoverageMetric,
   assertCoverageMetrics,
   assertFreshnessRow,
+  evaluableLabel,
+  isNotEvaluable,
   isNotRecorded,
+  NOT_EVALUABLE,
   NOT_RECORDED,
 } from "../../src/lib/metrics";
 import type { CoverageMetric, FreshnessRow } from "../../src/lib/metrics";
@@ -36,6 +39,34 @@ describe("data freshness (§32.4, SIG-METRIC-007)", () => {
 
   it("staleness is measured against a predicate volatility class, not absolute days", () => {
     for (const row of FRESHNESS_ROWS) expect(row.volatility_class.length).toBeGreaterThan(0);
+  });
+
+  it("P35.20b (ED-43/GQ-15): a non-evaluable row reads 'not evaluable', never 'ok' or 'stale 0'", () => {
+    const notEvaluable = FRESHNESS_ROWS.filter((r) => r.status === NOT_EVALUABLE);
+    // The fixture exercises the class — at least one undeclared source.
+    expect(notEvaluable.length).toBeGreaterThan(0);
+    for (const row of notEvaluable) {
+      expect(row.status).not.toBe("ok");
+      expect(row.volatility_class).toBe(NOT_EVALUABLE);
+      expect(row.staleness_not_evaluable).toBeGreaterThan(0);
+      // The rendered label is the honest phrase, not the token.
+      expect(evaluableLabel(row.status)).toBe("not evaluable");
+      expect(evaluableLabel(row.volatility_class)).toBe("not evaluable");
+    }
+    expect(() => assertFreshnessRow(notEvaluable[0]!)).not.toThrow();
+  });
+
+  it("rejects a freshness row that drops staleness_not_evaluable", () => {
+    const bad = { ...FRESHNESS_ROWS[0]! } as Partial<FreshnessRow>;
+    delete bad.staleness_not_evaluable;
+    expect(() => assertFreshnessRow(bad as FreshnessRow)).toThrow(/staleness_not_evaluable/);
+  });
+
+  it("evaluableLabel leaves evaluable values untouched", () => {
+    expect(evaluableLabel("ok")).toBe("ok");
+    expect(evaluableLabel("SLOW")).toBe("SLOW");
+    expect(isNotEvaluable("not_evaluable")).toBe(true);
+    expect(isNotEvaluable("ok")).toBe(false);
   });
 });
 

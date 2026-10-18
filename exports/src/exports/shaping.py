@@ -61,11 +61,13 @@ the thin executor that fetches those rows from a live connection.
 from __future__ import annotations
 
 import json
+import tomllib
 from collections.abc import Mapping, Sequence, Set
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from functools import lru_cache
+from pathlib import Path
 from typing import Any, Literal, Protocol
 
 from db.dispositions import claim_eligible_sql, entity_eligible_sql
@@ -94,6 +96,7 @@ from resolution.partner_identity import PARTNER_PREDICATES
 
 from .audit import _LATEST_DECISION_CTE, GEO_PREDICATES, JURISDICTION_PREDICATE
 from .jurisdictions import (
+    CONNECTOR_DATA_DIR,
     DECLARED_SCHEME_FROM_CLAIM,
     JurisdictionSchemeConfig,
     jurisdiction_key,
@@ -174,6 +177,66 @@ class _Connection(Protocol):
 #: value (web ``metrics.ts#NOT_RECORDED``; SIG-METRIC-007 still SHOWS the field, as "not
 #: recorded", rather than dropping it or guessing a date — §3.1).
 NOT_RECORDED = "not-recorded"
+
+#: The explicit honest-absence token a freshness row carries when staleness is
+#: NOT evaluable for the source (P35.20b / ED-43 / GQ-15): no declared §28.3
+#: volatility class, or no evaluable dated observation. The surface reads
+#: "not evaluable" — never "ok", never a fabricated stale-0 (§3.1).
+NOT_EVALUABLE = "not_evaluable"
+
+#: The closed §28.3 volatility vocabulary a source may declare (P35.20b) —
+#: mirrors ``connectors.registry.VOLATILITY_CLASSES`` / the ontology's
+#: ``PredicateVolatility``; ``connectors`` is not an exports dependency, so the
+#: tuple is duplicated here and a test pins the two equal.
+DECLARED_VOLATILITY_CLASSES: tuple[str, ...] = (
+    "IMMUTABLE",
+    "GLACIAL",
+    "SLOW",
+    "MODERATE",
+    "FAST",
+    "VOLATILE",
+)
+
+
+@lru_cache(maxsize=4)
+def _declared_volatility_classes_cached(data_dir: str) -> dict[str, str]:
+    """Read the declared per-source volatility classes out of ``sources.toml``.
+
+    Fail-closed: a row declaring a class outside the §28.3 vocabulary, or a
+    class with no recorded basis, raises — the same validation
+    ``connectors.registry.SourceRecord`` runs (P35.20b). A source with no
+    declaration is simply absent from the map: undeclared, not guessed.
+    """
+    path = Path(data_dir) / "sources.toml"
+    if not path.exists():
+        return {}
+    doc = tomllib.loads(path.read_bytes().decode("utf-8"))
+    out: dict[str, str] = {}
+    for source_id, row in (doc.get("sources") or {}).items():
+        if not isinstance(row, Mapping):
+            continue
+        declared = row.get("volatility_class")
+        if declared is None:
+            continue
+        cls = str(declared).strip()
+        if cls not in DECLARED_VOLATILITY_CLASSES:
+            raise ValueError(
+                f"source {source_id!r} declares volatility_class {cls!r} — not a "
+                f"§28.3 class ({', '.join(DECLARED_VOLATILITY_CLASSES)})"
+            )
+        if not str(row.get("volatility_basis", "")).strip():
+            raise ValueError(
+                f"source {source_id!r} declares volatility_class {cls!r} with no "
+                "volatility_basis — a class is a claim and names its evidence"
+            )
+        out[str(source_id)] = cls
+    return out
+
+
+def declared_volatility_classes(data_dir: Path | str | None = None) -> dict[str, str]:
+    """The committed ``sources.toml`` per-source declared volatility classes."""
+    root = Path(data_dir) if data_dir is not None else CONNECTOR_DATA_DIR
+    return dict(_declared_volatility_classes_cached(str(root)))
 
 
 @dataclass(frozen=True)
@@ -504,15 +567,31 @@ class SharingEdge:
 
 @dataclass(frozen=True)
 class ShapedSourceFreshness:
-    """``SourceFreshness`` plus the staleness a registry gap makes unevaluable."""
+    """``SourceFreshness`` plus the declared-class staleness gate (P35.20b).
+
+    ``volatility_class`` is the source's DECLARED §28.3 class from the registry
+    (``sources.toml``), or :data:`NOT_EVALUABLE` when undeclared — never a
+    class voted up from the claim mix (that was a guess, ED-43).
+    ``staleness_not_evaluable`` counts the dated observations staleness was
+    never evaluated for — every observation when no class is declared, else
+    the unregistered-predicate share.
+    """
 
     freshness: SourceFreshness
-    staleness_not_evaluable: int  # observations on unregistered predicates
-    volatility_class: str  # dominant predicate volatility, or "unknown"
+    staleness_not_evaluable: int  # dated observations never evaluated
+    volatility_class: str  # the declared class, or NOT_EVALUABLE
     claims: int
 
     def freshness_row(self) -> dict[str, Any]:
-        """The ``web/src/lib/metrics.ts`` ``FreshnessRow`` contract (SIG-METRIC-007)."""
+        """The ``web/src/lib/metrics.ts`` ``FreshnessRow`` contract (SIG-METRIC-007).
+
+        P35.20b (ED-43, GQ-15): when staleness cannot be evaluated — no
+        declared volatility class, or no evaluable dated observation — the
+        row's ``status`` and ``volatility_class`` read ``not_evaluable`` and
+        the not-evaluable observation count is emitted. A non-evaluable row
+        NEVER reads ``ok`` or ``stale 0``.
+        """
+        evaluable = self.freshness.staleness_evaluable
         return {
             "source": self.freshness.source_id,
             # A value the spine does not record is published as the explicit honest-absence
@@ -530,8 +609,9 @@ class ShapedSourceFreshness:
                 if self.freshness.last_content_change
                 else NOT_RECORDED
             ),
-            "status": self.freshness.status,
+            "status": self.freshness.status if evaluable else NOT_EVALUABLE,
             "stale_entity_count": self.freshness.stale_count,
+            "staleness_not_evaluable": self.staleness_not_evaluable,
             "volatility_class": self.volatility_class,
         }
 
@@ -716,7 +796,11 @@ QUERIES: dict[str, str] = {
         "   AND {PUB_ENTITY_GATE}"
         " ORDER BY e.entity_id"
     ),
-    # Sources present on the shaped claims, with run + observation stats.
+    # Sources present on ANY current publishable-eligible claim, with run +
+    # observation stats. P35.20b (ED-43): the predicate filter is gone — the
+    # freshness surface covers every source with publishable claims, including
+    # the non-site evidence sources (procurement/legislative/CCOPS/federal),
+    # not only the site-predicate emitters.
     # {PUB_GATE} (P32.5/ADR-124): withheld claims never pad a source's public
     # claim/observation counts — a count that included them would leak that
     # something was withheld.
@@ -726,12 +810,13 @@ QUERIES: dict[str, str] = {
         "       count(*) FILTER (WHERE c.observed_at IS NOT NULL) AS observed_claims"
         "  FROM claim c"
         "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
-        " WHERE c.predicate_id = ANY(%s) AND upper_inf(c.sys_period)"
+        " WHERE upper_inf(c.sys_period)"
         "   AND {PUB_GATE}"
         " GROUP BY cs.source_id ORDER BY cs.source_id"
     ),
     # Per-source run freshness inputs: the last SUCCESSFUL run's finish, plus the
     # latest run's status verbatim (a still-running land reads 'degraded').
+    # P35.20b: over every predicate, not only the shaping set (ED-43).
     "source_runs": (
         "{EFFECTIVE}" + "SELECT cs.source_id,"
         "       max(ir.finished_at) FILTER ("
@@ -742,9 +827,30 @@ QUERIES: dict[str, str] = {
         "  FROM claim c"
         "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
         "  JOIN ingest_run ir ON ir.run_id = c.ingest_run_id"
-        " WHERE c.predicate_id = ANY(%s) AND upper_inf(c.sys_period)"
+        " WHERE upper_inf(c.sys_period)"
         "   AND {PUB_GATE}"
         " GROUP BY cs.source_id ORDER BY cs.source_id"
+    ),
+    # P35.20b (ED-43, SIG-METRIC-006): the per-source staleness inputs over EVERY
+    # predicate — the latest dated observation per (source, subject, predicate),
+    # publishable-effective claims only (the same tier-0/redistributable/pub-gate
+    # semantics the freshness surface already claimed). The dedupe happens in
+    # SQL so the non-site sources' claims never travel as claim rows.
+    "freshness_observations": (
+        "{EFFECTIVE}" + "SELECT cs.source_id, c.subject_id::text, c.predicate_id,"
+        "       max(c.observed_at) AS latest_observed_at"
+        "  FROM claim c"
+        "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE upper_inf(c.sys_period)"
+        "   AND c.observed_at IS NOT NULL"
+        "   AND rr.redistributable = 'yes'"
+        "   AND c.sensitivity_tier = 0"
+        "   AND {PUB_GATE}"
+        " GROUP BY cs.source_id, c.subject_id, c.predicate_id"
+        " ORDER BY cs.source_id, c.subject_id, c.predicate_id"
     ),
     # Sharing-edge claims: entity_ref / sharing predicates at the public tier,
     # publishable-effective only (the public dataset never names a partner a
@@ -1506,66 +1612,84 @@ def coverage_metrics(
 
 
 def source_freshness_rows(
-    claims: Sequence[ShapingClaim],
+    observations: Sequence[Sequence[Any]],
     *,
     run_stats: Mapping[str, Mapping[str, Any]],
     as_of: date,
+    volatility_classes: Mapping[str, str] | None = None,
 ) -> list[ShapedSourceFreshness]:
     """Per-source freshness (SIG-METRIC-007), volatility-relative (SIG-METRIC-006).
 
-    Staleness uses :func:`inference.freshness.is_stale_for_predicate` — but only
-    for predicates the ontology registry knows; a connector predicate with no registry
-    row is counted ``staleness_not_evaluable`` rather than faked. The camera-registry
-    predicates carry registry rows since P30.2a (ADR-104), but only DATED claims are
-    observations here — an undated claim (no ``observed_at``) is still skipped.
+    ``observations`` rows are ``(source_id, subject_id, predicate_id,
+    latest_observed_at)`` — the ``freshness_observations`` read, already deduped
+    to the latest dated claim per (source, subject, predicate) and covering
+    EVERY predicate, so the non-site evidence sources (procurement,
+    legislative, CCOPS, federal — ED-43) carry rows alongside the site
+    emitters. The population is the union of the read's sources and the
+    run-stat sources (a source with a recorded run but no publishable dated
+    claim still gets a row — an honest ``not_evaluable``, never absent).
+
+    P35.20b (SIG-METRIC-006, GQ-15): staleness is evaluable ONLY against the
+    source's *declared* registry volatility class (``sources.toml``
+    ``volatility_class``, ADR-104(e)-grounded, never inferred). For a declared
+    source, registered-predicate observations are evaluated and the rest count
+    as ``staleness_not_evaluable``; an undeclared source's entire dated set is
+    ``not_evaluable`` — the row reads ``not_evaluable``, never ``ok`` or a
+    fabricated stale-0. ``volatility_classes=None`` loads the committed
+    declarations; an explicit mapping overrides them (test seam).
     """
-    by_source: dict[str, list[ShapingClaim]] = {}
-    for claim in claims:
-        if claim.source_id:
-            by_source.setdefault(claim.source_id, []).append(claim)
+    classes = declared_volatility_classes() if volatility_classes is None else volatility_classes
+
+    by_source: dict[str, list[tuple[str, str, date]]] = {}
+    for r in observations:
+        source_id, subject_id, predicate_id, observed_at = r[:4]
+        if source_id is None or observed_at is None:
+            continue
+        observed = (
+            observed_at.date()
+            if isinstance(observed_at, datetime)
+            else observed_at
+            if isinstance(observed_at, date)
+            else None
+        )
+        if observed is None:
+            continue
+        by_source.setdefault(str(source_id), []).append(
+            (str(subject_id), str(predicate_id), observed)
+        )
 
     rows: list[ShapedSourceFreshness] = []
-    for source_id in sorted(by_source):
-        source_claims = by_source[source_id]
-        # One freshness observation per (subject, predicate): the latest seen.
-        latest: dict[tuple[str, str], date] = {}
-        for c in source_claims:
-            if c.observed_at is None:
-                continue
-            key = (c.subject_id, c.predicate_id)
-            if key not in latest or c.observed_at > latest[key]:
-                latest[key] = c.observed_at
+    for source_id in sorted(set(by_source) | set(run_stats)):
+        declared = classes.get(source_id)
         evaluable: list[tuple[str, date]] = []
         not_evaluable = 0
-        vol_votes: dict[str, int] = {}
-        for (_subject_id, predicate_id), observed in sorted(latest.items()):
+        for _subject_id, predicate_id, observed in by_source.get(source_id, ()):
+            if declared is None:
+                not_evaluable += 1
+                continue
             try:
-                meta = predicate_meta(predicate_id)
+                predicate_meta(predicate_id)
             except KeyError:
                 not_evaluable += 1
                 continue
-            vol_votes[meta["volatility_class"]] = vol_votes.get(meta["volatility_class"], 0) + 1
             evaluable.append((predicate_id, observed))
         stats = run_stats.get(source_id, {})
         freshness = source_freshness(
             source_id,
-            status=str(stats.get("status", "unknown")),
+            status=_map_run_status(stats.get("status")),
             last_successful_run=stats.get("last_successful_run"),
             last_content_change=stats.get("last_content_change"),
             observations=evaluable,
             as_of=as_of,
-        )
-        volatility = (
-            "unknown"
-            if not vol_votes
-            else sorted(vol_votes.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+            declared_volatility_class=declared,
+            not_evaluable_count=not_evaluable,
         )
         rows.append(
             ShapedSourceFreshness(
                 freshness=freshness,
-                staleness_not_evaluable=not_evaluable,
-                volatility_class=volatility,
-                claims=len(source_claims),
+                staleness_not_evaluable=freshness.not_evaluable_count,
+                volatility_class=declared if declared is not None else NOT_EVALUABLE,
+                claims=int(stats.get("claims", len(by_source.get(source_id, ())))),
             )
         )
     return rows
@@ -1722,6 +1846,25 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
     return claims
 
 
+def _freshness_observations_from_claims(
+    claims: Sequence[ShapingClaim],
+) -> list[tuple[str, str, str, date]]:
+    """Legacy-raw fallback: dedupe publishable claims to the latest dated
+    observation per (source, subject, predicate) — the same shape the
+    ``freshness_observations`` read serves (P35.20b). Used only when ``raw``
+    carries no ``freshness_observations`` key (the pre-change fixture seam);
+    the production fetch always serves the all-predicate read.
+    """
+    latest: dict[tuple[str, str, str], date] = {}
+    for c in claims:
+        if c.source_id is None or c.observed_at is None:
+            continue
+        key = (c.source_id, c.subject_id, c.predicate_id)
+        if key not in latest or c.observed_at > latest[key]:
+            latest[key] = c.observed_at
+    return [(s, subj, pred, d) for (s, subj, pred), d in sorted(latest.items())]
+
+
 def build_shaped_dataset(
     raw: Mapping[str, Any],
     *,
@@ -1730,6 +1873,7 @@ def build_shaped_dataset(
     spine_label: str,
     note: str = "",
     jurisdiction_config: JurisdictionSchemeConfig | None = None,
+    volatility_classes: Mapping[str, str] | None = None,
 ) -> ShapedDataset:
     """Assemble the :class:`ShapedDataset` from fetched rows (pure — no database).
 
@@ -1836,7 +1980,19 @@ def build_shaped_dataset(
             stats["last_content_change"] = last_change
         stats["status"] = _map_run_status(last_status)
     as_of_date = date.fromisoformat(as_of[:10]) if as_of else date.today()
-    sources = source_freshness_rows(publishable_claims, run_stats=run_stats, as_of=as_of_date)
+    # P35.20b (ED-43): freshness reads the all-predicate ``freshness_observations``
+    # rows when served; a row set without the key (the pre-change fixture seam)
+    # falls back to the same shape derived from the publishable shaping claims —
+    # never a widened read the spine did not serve.
+    freshness_observations = raw.get("freshness_observations")
+    if freshness_observations is None:
+        freshness_observations = _freshness_observations_from_claims(publishable_claims)
+    sources = source_freshness_rows(
+        freshness_observations,
+        run_stats=run_stats,
+        as_of=as_of_date,
+        volatility_classes=volatility_classes,
+    )
 
     sharing_edges = shape_sharing_edges(raw.get("sharing_edges") or [])
 
@@ -1987,6 +2143,7 @@ def run_shaping(
     belief: datetime | None = None,
     note: str = "",
     spine_label: str = "(unlabelled spine)",
+    volatility_classes: Mapping[str, str] | None = None,
 ) -> ShapedDataset:
     """Execute the read-only query set against ``conn`` and assemble the dataset.
 
@@ -2036,4 +2193,8 @@ def run_shaping(
         generated_at=generated_at,
         spine_label=spine_label,
         note=note,
+        # P35.20b: ``None`` loads the committed ``sources.toml`` declarations;
+        # an explicit mapping is the test seam (a fabricated source declares
+        # its class here, never in the registry file).
+        volatility_classes=volatility_classes,
     )

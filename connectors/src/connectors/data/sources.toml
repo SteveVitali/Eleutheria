@@ -3049,6 +3049,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_ky.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo is a KYTC no-warranty disclaimer asserting no use restriction — state public record published openly → CC0-1.0. ArcGIS item 00715d24d2bf42e5abc1fab8a08d45eb (owner kytc.gis_KYTC); 254 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_ky.rights]
 spdx = "CC0-1.0"
 attribution = "Kentucky Transportation Cabinet (KYTC) traffic camera registry"
@@ -3075,6 +3077,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_il.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo declares Creative Commons Attribution-ShareAlike 2.0 Generic verbatim — an explicit share-alike licence; lands in the dot511_sharealike compartment, never merged into CC-BY. ArcGIS item 8a885da23dfb46caaa1827ad920fb5b1 (owner IDOTAdmin); 2,937 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_il.rights]
 spdx = "CC-BY-SA-2.0"
 attribution = "Illinois Department of Transportation — Illinois Gateway traffic cameras"
@@ -3101,6 +3105,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_ut.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo is an informational/no-warranty notice asserting no use restriction — state public record → CC0-1.0. ArcGIS item d3f7dae59eba45459bd9ba6a37f6ba56 (owner [account withheld]); 32 cameras observed. Geometry-only coordinates."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_ut.rights]
 spdx = "CC0-1.0"
 attribution = "Utah Department of Transportation Live View camera registry"
@@ -3127,6 +3133,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_or.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo = 'Public' (Oregon_OEM/ODOT org) — state public record published openly → CC0-1.0. ArcGIS item 1e3fb7169cd74127b9c1707258a6e6e9; 1,180 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_or.rights]
 spdx = "CC0-1.0"
 attribution = "Oregon Department of Transportation / Oregon OEM — TripCheck cameras"
@@ -3153,6 +3161,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/dot_511_la.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.7. GATED — ArcGIS item d54ae7413feb45de9c87cb73de38fc64 (GOHSEP-owned) carries EMPTY licenseInfo; no published terms located. Blocker: HG-03-class rights decision for Louisiana DOTD data."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_la.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3179,6 +3189,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_ia.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo declares Creative Commons Attribution 4.0 verbatim. ArcGIS item c4063f200a7b4da5826e2ac86c677cf5 (owner IowaDOT_OTO); 1,251 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_ia.rights]
 spdx = "CC-BY-4.0"
 attribution = "Iowa Department of Transportation traffic camera registry"
@@ -3205,6 +3217,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_wa.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): WSDOT-published feed 'intended for low volume use; WSDOT may cancel or restrict access' — a conditional public grant evaluated under public terms (no outreach; the low-volume condition is met by the monthly cadence row). State public record → CC0-1.0. Two layers: data.wsdot.wa.gov (1,705, geometry-only) + King County-hosted KC/WSDOT layer (125)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_wa.rights]
 spdx = "CC0-1.0"
 attribution = "Washington State Department of Transportation travel cameras"
@@ -3231,6 +3245,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_dc.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): DC Data Policy (Mayor's Order 2017-115) + dc.gov Terms of Use — District catalog data is Level 0 Open, 'public domain ... CC0 1.0 Universal dedication'; DC GIS ToS encourages API use, no attribution required → CC0-1.0. 235 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_dc.rights]
 spdx = "CC0-1.0"
 attribution = "District of Columbia (OCTO/DC GIS / DDOT) traffic camera registry"
@@ -3257,6 +3273,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/dot_511_ga.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.7. GATED — ArcGIS item 12c979ba84b54b83b834fdd2d861677d (GEMA-owned org) carries EMPTY licenseInfo; no published terms located. Blocker: HG-03-class rights decision for Georgia DOT data."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_ga.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3283,6 +3301,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/dot_511_al.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.7. GATED — ArcGIS item 76cca231f72f446f9735b6e912c04cd0 is published under a county E-911 GIS org account (bce911gis), not an ALDOT-owned org, AND licenseInfo is EMPTY. Blocker: publisher authority + HG-03-class rights decision."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_al.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3309,6 +3329,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-17
 review_packet = "docs/build/reports/rights/dot_511_mo.md"
 notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): Missouri Terms of Use — user agrees to stated conditions; warranty disclaimers + right to modify/discontinue feeds and require termination of use. A conditional public grant evaluated under public terms (no outreach; conditions honoured via recorded notes + monthly cadence). State public record → CC0-1.0. ArcGIS item 38774183927d423488f9e2e707a6eca5 (owner creaml_MOSEMA); 871 cameras observed. NOTE: camera layer is FeatureServer/1, not /0."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_mo.rights]
 spdx = "CC0-1.0"
 attribution = "Missouri Department of Transportation traffic camera registry"
@@ -3331,6 +3353,8 @@ cadence = "monthly"
 verified = true
 last_verified = 2026-09-17
 notes = "P26.7. GATED — ArcGIS item adb3663e850e4f76be44596dbe696a93 is published under a personal account (dkarctur), not a TxDOT-owned org, AND licenseInfo is EMPTY. Blocker: publisher authority + HG-03-class rights decision. drivetexas.org camera API also unreachable on probe (recorded)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_tx.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3354,6 +3378,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/dot_511_md.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.7. GATED — MD iMAP terms are attribution-CONDITIONED ('data can be freely distributed as long as the metadata entry is not modified or deleted; derived data must acknowledge the State of Maryland') with no registered SPDX expression in policy/data/licenses.toml. Blocker: licence-registry row + reviewer decision (HG-03 class). 552 cameras observed; mdgeodata.md.gov iMAP mirror also enumerated."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_md.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3380,6 +3406,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_austin_tx.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset b4k4-adkb 'Traffic Cameras' carries Public Domain licence metadata (City of Austin Transportation and Public Works). 1,005 cameras observed; GeoJSON point in `location`; supersedes the legacy ATD ArcGIS layer (enumerated)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_austin_tx.rights]
 spdx = "CC0-1.0"
 attribution = "City of Austin traffic camera registry (datahub.austintexas.gov)"
@@ -3406,6 +3434,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_nola_la.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset te2d-4txp 'Traffic Camera' carries CC0-1.0 licence metadata (City of New Orleans DPW). 103 cameras observed; GeoJSON point in `the_geom`."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nola_la.rights]
 spdx = "CC0-1.0"
 attribution = "City of New Orleans traffic camera registry (data.nola.gov)"
@@ -3432,6 +3462,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_batonrouge_la.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset 6z6u-ts44 'Traffic Camera' carries Public Domain licence metadata (City of Baton Rouge / EBR Parish). 118 cameras observed; GeoJSON point in `the_geom`."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_batonrouge_la.rights]
 spdx = "CC0-1.0"
 attribution = "City of Baton Rouge traffic camera registry (data.brla.gov)"
@@ -3458,6 +3490,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_winnipeg_mb.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset 42pk-2u2c 'Traffic Signal Inventory - Cameras Detail' declares the Open Government Licence - Canada 2.0 on dataset metadata. 161 camera detail rows observed; OGL-Canada-2.0 → ogc_canada2 compartment."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_winnipeg_mb.rights]
 spdx = "OGL-Canada-2.0"
 attribution = "Contains information licensed under the Open Government Licence - Canada (City of Winnipeg traffic signal camera inventory)"
@@ -3484,6 +3518,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_act_au.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ACT Government open-data datasets 426s-vdu4 (speed camera locations, 1,263 rows) + 5ezj-yjxz (mobile distraction camera locations, 118 rows) both declare CC-BY-4.0 on dataset metadata."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_act_au.rights]
 spdx = "CC-BY-4.0"
 attribution = "ACT Government traffic safety camera registries (data.act.gov.au)"
@@ -3510,6 +3546,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_siouxfalls_sd.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 71ee3a06d0aa476d8c8545761dde916e (owner cityofsiouxfallsgis) licenseInfo declares 'The City of Sioux Falls provides open data licensed under the Creative Commons Attribution 4.0 International License' verbatim. 234 cameras observed; `URL` media field blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_siouxfalls_sd.rights]
 spdx = "CC-BY-4.0"
 attribution = "City of Sioux Falls traffic surveillance camera registry"
@@ -3536,6 +3574,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_baltimore_md.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item b676679350764f56a990c25a8ce2bda0 declares 'This work is licensed under a Creative Commons Attribution 3.0 Unported License' verbatim. 861 CitiWatch cameras observed; CC-BY-3.0 → ccby3 compartment."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_baltimore_md.rights]
 spdx = "CC-BY-3.0"
 attribution = "Baltimore City CitiWatch camera registry"
@@ -3562,6 +3602,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_ottawa_on.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS items adf1e7bd0338404196dc0d552aa6c79b (Red Light Camera Locations, 88) + d709c922c64b4c389afac3fb21d481fb (Automated Speed Enforcement, 60) name the Open Government Licence - City of Ottawa v2.0; licence text verified via Wayback capture (ottawa.ca is JS-rendered). OGL-family permissive + attribution → LicenseRef-Ottawa-ODL-2.0, ottawa_odl2 compartment."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ottawa_on.rights]
 spdx = "LicenseRef-Ottawa-ODL-2.0"
 attribution = "Contains information licensed under the Open Government Licence – City of Ottawa"
@@ -3588,6 +3630,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_sheffield_gb.md"
 notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras' licenseInfo declares the Open Government Licence (OGL v3.0) verbatim. 212 cameras observed; OGL-UK-3.0 → ogl_uk3 compartment."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_sheffield_gb.rights]
 spdx = "OGL-UK-3.0"
 attribution = "Sheffield City Council CCTV and traffic camera registry (Open Government Licence v3.0)"
@@ -3616,6 +3660,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_chicago_il.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — datasets 4i42-qv3h (speed, 209) + thvf-6diy (red-light, 300) carry 'See Terms of Use' licence metadata but the City terms document could not be captured verbatim this run (chicago.gov ToU page 404; Socrata story JS-rendered). Blocker: verbatim terms capture + HG-03-class rights decision (D-SOURCES.8-1)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_chicago_il.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3642,6 +3688,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_calgary_ab.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.9. GATED — datasets k7p9-kppz (traffic cameras, 216) + dv2f-necx (intersection safety, 57) carry a Terms-of-Use licence link whose text could not be captured verbatim this run. Blocker: verbatim terms capture + HG-03-class rights decision (D-SOURCES.8-1). `camera_url` media field blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_calgary_ab.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3664,6 +3712,8 @@ cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
 notes = "P26.9. GATED — dataset 7fnd-72gr 'Intersection Safety Device Locations' (67 rows) carries NO licence metadata on the dataset or portal record. Blocker: no licence grant located (D-SOURCES.8-1)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_edmonton_ab.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3687,6 +3737,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_honolulu_hi.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — dataset cat5-2v98 'Traffic Camera Locations' (253 rows) carries NO licence metadata. Blocker: no licence grant located (D-SOURCES.8-1). url/image media fields blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_honolulu_hi.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3713,6 +3765,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_md_opendata.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — dataset hua3-qc8n 'Traffic Cameras' (451 rows, statewide open-data mirror of the CHART registry also enumerated as dot_511_md) carries NO licence metadata; the CHART layer stays gated under the same iMAP attribution-conditioned terms blocker. Blocker: MD terms/licence row + reviewer decision (D-SOURCES.8-1). url/iframe media fields blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_md_opendata.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3739,6 +3793,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_york_on.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.9. GATED — items a30c307c24524130845a7c6095e58997 (Traffic Camera, 394) + a94a1fdce44f4bc391ec4dfb693e1a95 (Red Light Camera, 55) name the 'York Region Open Data Licence' but the licence page was not retrievable this run (404 at probe paths). Blocker: verbatim licence text + HG-03-class decision (D-SOURCES.8-1). photo/photoreference/url media fields blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_york_on.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3765,6 +3821,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_arlington_va.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — item 10415997f18b4aa09a9b5076a801f93d (Traffic Cameras, 315) + DES photo-red (19) / photo-speed (49) layers name the 'Arlington County data disclaimer' but the disclaimer is behind a WAF/JS wall (arlingtonva.us 403; hub JS-rendered) and could not be captured. Blocker: verbatim terms capture + HG-03-class decision (D-SOURCES.8-1)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_arlington_va.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3791,6 +3849,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_seattle_wa.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — items b90315ad1deb4985aeb3071b8baa06a1 (Traffic Cameras CDL, 662) + f3879db110b84473b4e3d669157c6a39 (ATSC view, 114) carry ONLY a no-warranty disclaimer in licenseInfo — no licence grant located this run; Seattle open-data terms page not retrievable. Blocker: licence grant + HG-03-class decision (D-SOURCES.8-1). URL media field blocklisted. P36.4 (ACQ-08) licence check 2026-10-12: the SPD CCTV Pilot Areas item (same City of Seattle ArcGIS org ZOyb2t4B0UYuYNYH) passes this row's resolved GL-GATE-07 basis \u2014 the new target seattle_police_department_cctv_pilot_areas rides the existing LicenseRef-PublicRecord-FactualCompilation licence; its polygon rows emit as programme areas (geometry_kind=area), never device points. No rights-state change."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_seattle_wa.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3813,6 +3873,8 @@ cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
 notes = "P26.9. GATED — item d47e172d8d184a208121c69ac7f6d088 licenseInfo carries a no-warranty disclaimer PLUS 'Any commercial use or sale of this map or portions thereof, is prohibited without express written authorization by the City of Bellevue' — a non-commercial restriction, NOT a resolved-clear permissive grant. Blocker: NC-conditioned terms need an outreach/decision path, not a delegated flip (D-SOURCES.8-1). 234 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_bellevue_wa.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3836,6 +3898,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_lexington_ky.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-PublicRecord-FactualCompilation. Prior gate note: P26.9. GATED — item d220ce31999448659626afe990ca1328 embeds the full LFUCG Terms of Use: they permit download/use and derivative works BUT carry an indemnify-AND-defend clause (§VI.B, 'You specifically acknowledge and agree that You have an immediate and independent obligation to defend the LFUCG') — a counsel-class term, not a delegated flip. Blocker: HG-02-class counsel review of the indemnity clause (D-SOURCES.8-1). 108 cameras observed; still_url media field blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lexington_ky.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3862,6 +3926,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_nzta_nz.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.9. GATED — item 893d8a697d7f418f87392fb1222f5b95 licenseInfo: 'For access to the Traffic Cameras API and the associated documentation please send a request to Infoconnect@nzta.govt.nz' — access-by-request terms, not an open grant. Blocker: NZTA API-access request + terms (D-SOURCES.8-2). 224 cameras observed; viewurl/imageurl/thumburl media fields blocklisted."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nzta_nz.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3884,6 +3950,8 @@ cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
 notes = "P26.9. GATED — item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)' (240 rows) licenseInfo says only 'Currently available for external use' — not a licence grant. The authoritative QLDTraffic v1 API is token-gated (enumerated; CC-BY-3.0/4.0 on the CKAN dataset). Blocker: licence grant or QLDTraffic API-key registration + terms (D-SOURCES.8-1/-2)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_qldc_au.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3907,6 +3975,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_donegal_ie.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.9. GATED — item 15e57299bcd740c0b107be610d99a9ab 'Traffic Cameras' (layer 'Weather_stations', 123 rows) licenseInfo 'No Access Constraints' is not a licence grant. Blocker: no licence grant located (D-SOURCES.8-1)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_donegal_ie.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -3929,6 +3999,8 @@ cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
 notes = "P26.9. GATED — item 0b05a33ce41d4cb7b75436dabe592c5e (32 rows) licenseInfo defers to data.gov.hk 'Terms and Conditions of Use', not captured verbatim this run. Blocker: verbatim terms capture + HG-03-class decision (D-SOURCES.8-1)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_hk_hk.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3962,6 +4034,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_washington_dc.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2bb8375e31a94067a17911ea70f917ef 'Closed Circuit TV Street Cameras' (owner DCGISopendata) declares CC-BY-4.0 verbatim. 1,060 MPD CCTV street cameras; distinct from the already-wired dot_511_dc DDOT traffic layer."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_washington_dc.rights]
 spdx = "CC-BY-4.0"
 attribution = "District of Columbia CCTV street camera registry (DCGIS open data)"
@@ -3988,6 +4062,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_nottingham_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item df2bf0314b184b449ff595df02e320cf 'CCTV Cameras' (owner nccgisteam) declares the Open Government Licence v3.0 verbatim. 562 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nottingham_gb.rights]
 spdx = "OGL-UK-3.0"
 attribution = "Nottingham City Council. Contains OS data © Crown copyright [and database right] [year]."
@@ -4014,6 +4090,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_york_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 25888f6f64e64cc6a938115a8f12f333 'CCTV' (owner gis_CYC) cites the Open Government Licence v3.0 under the OS derived-data exemption verbatim. 222 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_york_gb.rights]
 spdx = "OGL-UK-3.0"
 attribution = "© Crown copyright and database rights 2017 Ordnance Survey 100020818 (City of York Council CCTV)"
@@ -4040,6 +4118,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_glasgow_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 669df23dcc5d48bb98ad1b5d180927c6 'CCTV' (owner GlasgowGIS) declares the Open Government Licence v3.0 verbatim (One Scotland Mapping Agreement / OS attribution noted). 441 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_glasgow_gb.rights]
 spdx = "OGL-UK-3.0"
 attribution = "Glasgow City Council — contains Ordnance Survey data © Crown copyright and database right 2022 (OGL v3.0)"
@@ -4066,6 +4146,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_northayrshire_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 082112796ccd448bb1abba9e9603e9f0 'CCTV Locations' (owner NAC_OpenData) declares the Open Government Licence v3.0 verbatim with the required attribution statement. 108 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_northayrshire_gb.rights]
 spdx = "OGL-UK-3.0"
 attribution = "Copyright North Ayrshire Council, contains Ordnance Survey data © Crown copyright and database right (2018)"
@@ -4092,6 +4174,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_lambeth_gb.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner [account withheld]) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. 35 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lambeth_gb.rights]
 spdx = "OGL-UK-3.0"
 attribution = "London Borough of Lambeth parking CCTV camera registry (OGL v3.0)"
@@ -4118,6 +4202,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_peel_on.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 36dbfcb33aa2453c8de55e0a34ccfc6a 'Red Light Cameras' (owner RegionofPeel) names the Open Data Licence for The Regional Municipality of Peel v1.0; permissive grant verified via the Wayback capture of data.peelregion.ca/pages/license. 37 cameras observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_peel_on.rights]
 spdx = "LicenseRef-Peel-ODL-1.0"
 attribution = "Contains information licensed under the Open Data Licence for The Regional Municipality of Peel (Version 1.0)"
@@ -4144,6 +4230,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_stalbert_ab.md"
 notes = "P26.16 (SOURCES.15): FLIPPED 2026-09-18 under GL-GATE-07 — operator blanket approval of the gated catalog-sweep remainder (LEDGER GATE DECISIONS). Basis: LicenseRef-OperatorAccepted-DBRight. Prior gate note: P26.13 catalog sweep. GATED — ArcGIS item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner [account withheld], 80 rows) names 'City of St. Albert Open Government License' (LicenseRef-StAlbert-ODL-1.0) but the licence grant text could not be captured verbatim: data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists. Blocker: verbatim licence-text capture + HG-03-class rights decision (D-SOURCES.12-1)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_stalbert_ab.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "camera registry — GL-GATE-07 basis"
@@ -4170,6 +4258,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_rochester_ny.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 4df36db389e240efa672346101ede541 'Rochester Cameras' (owner rpdny.pub) declares ODbL-1.0 + DbCL verbatim (the bundled text is the RPD accuracy disclaimer, not a rights restriction). 177 BlueLight-program intersection cameras; location data only. ODbL-1.0 → osm_physical compartment (never merged into the CC-BY sig_graph compartment)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_rochester_ny.rights]
 spdx = "ODbL-1.0"
 attribution = "City of Rochester NY Police Department camera registry (ODbL-1.0)"
@@ -4196,6 +4286,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_goldcoast_au.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item c0e1f02aebe349f0bbe21aadf287a631 'Camera_Open' (owner CoGC_Admin) declares CC-BY-4.0 verbatim. 624 Safety Camera Network locations observed."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_goldcoast_au.rights]
 spdx = "CC-BY-4.0"
 attribution = "City of Gold Coast Safety Camera Network registry (CC-BY-4.0)"
@@ -4222,6 +4314,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/camreg_puertogaitan_co.md"
 notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset fvdt-ftkz 'MAPA DE CAMARAS (CCTV) DEL MUNICIPIO' (Alcaldía de Puerto Gaitán, Meta) declares CC-BY-SA-4.0 on licence metadata. 50 cameras observed; Spanish schema (latitud/longitud + georeferencia GeoJSON point)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_puertogaitan_co.rights]
 spdx = "CC-BY-SA-4.0"
 attribution = "Alcaldía de Puerto Gaitán, Meta — mapa de cámaras CCTV del municipio (datos.gov.co)"
@@ -4253,6 +4347,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_achd_id.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (ID)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_achd_id.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Ada County Highway District, Idaho camera registry"
@@ -4279,6 +4375,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_001.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_001.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -4305,6 +4403,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_amber_kh.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_amber_kh.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -4331,6 +4431,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_apram_pt.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (PT)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_apram_pt.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "APRAM — Agência Regional para o Ambiente, Portugal camera registry"
@@ -4357,6 +4459,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_arc_1975641302.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_arc_1975641302.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -4383,6 +4487,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_avctransport.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_avctransport.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -4409,6 +4515,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_azdot_az.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (AZ)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_azdot_az.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Arizona Department of Transportation (ADOT publisher account) camera registry"
@@ -4435,6 +4543,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_baltimore_atves_md.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MD)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_baltimore_atves_md.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Baltimore (baltimore_city ArcGIS org) camera registry"
@@ -4461,6 +4571,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_bangla_bd.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (BD)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_bangla_bd.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Bangladesh community-published camera registry camera registry"
@@ -4487,6 +4599,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_002.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_002.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -4513,6 +4627,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_bedford_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_bedford_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Bedford Borough Council camera registry"
@@ -4539,6 +4655,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_bettendorf_ia.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (IA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_bettendorf_ia.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Bettendorf, Iowa camera registry"
@@ -4565,6 +4683,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_bouhan_jp.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (JP)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_bouhan_jp.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Japanese community-published camera registry camera registry"
@@ -4591,6 +4711,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_brea_ca.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_brea_ca.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Brea, California camera registry"
@@ -4617,6 +4739,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_caledon_on.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (CA-ON)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_caledon_on.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Town of Caledon, Ontario camera registry"
@@ -4643,6 +4767,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_caloes_ca.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_caloes_ca.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "California Governor's Office of Emergency Services camera registry"
@@ -4674,6 +4800,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_camberwell_au.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (AU-VIC)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_camberwell_au.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Camberwell Grammar School GIS org (community-published layer) camera registry"
@@ -4700,6 +4828,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_camilo_schools.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_camilo_schools.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -4726,6 +4856,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_carver_mn.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MN)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_carver_mn.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Carver County, Minnesota camera registry"
@@ -4752,6 +4884,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_003.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_003.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -4778,6 +4912,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_chattanooga_tn.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (TN)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_chattanooga_tn.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Chattanooga-area GIS publisher (CHATTGIS) camera registry"
@@ -4804,6 +4940,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_004.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_004.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -4830,6 +4968,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_colgis.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_colgis.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -4856,6 +4996,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_cotgeo.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_cotgeo.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -4887,6 +5029,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_005.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_005.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published surveillance-site registry camera registry"
@@ -4913,6 +5057,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_cwarcgis.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_cwarcgis.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -4939,6 +5085,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_dc_dot_dc.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (DC)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_dc_dot_dc.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "District of Columbia (DDOT camera registries, republished layers) camera registry"
@@ -4965,6 +5113,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_denver_co.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CO). P36.4 (ACQ-08) licence check 2026-10-12: the POLICE_HALO_P HALO-cameras item passes this row's resolved GL-GATE-07 public-record basis (same City and County of Denver ArcGIS org/publisher) \u2014 the new target police_halo_cameras_denver_police_department rides the existing LicenseRef-PublicRecord-FactualCompilation licence. No rights-state change."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_denver_co.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City and County of Denver camera registry"
@@ -4991,6 +5141,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_dover_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_dover_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Dover District Council camera registry"
@@ -5017,6 +5169,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_dubuque_ia.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (IA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_dubuque_ia.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Dubuque, Iowa camera registry"
@@ -5043,6 +5197,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_006.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_006.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published ALPR camera registry camera registry"
@@ -5069,6 +5225,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_durham_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_durham_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Durham County Council camera registry"
@@ -5095,6 +5253,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_eastdun_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-SCT)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_eastdun_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "East Dunbartonshire Council camera registry"
@@ -5121,6 +5281,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_ebrgis_la.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (LA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ebrgis_la.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Baton Rouge / East Baton Rouge Parish camera registry"
@@ -5147,6 +5309,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_esri_dash.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_esri_dash.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -5173,6 +5337,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_esriukpolice_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (GB)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_esriukpolice_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Esri UK police demonstration org (community-published layer) camera registry"
@@ -5199,6 +5365,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_essex_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_essex_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Essex County Council / Essex Safety Camera Partnership camera registry"
@@ -5225,6 +5393,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_007.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_007.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -5251,6 +5421,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_firemedic.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_firemedic.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -5277,6 +5449,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_fl511_fl.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (FL)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_fl511_fl.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Florida Department of Transportation (republished layers) camera registry"
@@ -5303,6 +5477,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_forwardalliance.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_forwardalliance.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -5329,6 +5505,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_008.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_008.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published ITS camera registry camera registry"
@@ -5355,6 +5533,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_friendswood_tx.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (TX)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_friendswood_tx.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Friendswood, Texas camera registry"
@@ -5381,6 +5561,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_gainesville_fl.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (FL)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gainesville_fl.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Gainesville, Florida camera registry"
@@ -5407,6 +5589,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_gedling_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gedling_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Gedling Borough Council camera registry"
@@ -5433,6 +5617,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_gistel_be.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (BE)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gistel_be.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Gistel municipal camera registry (m.decraemer publisher) camera registry"
@@ -5459,6 +5645,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_gmh_emc_ga.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (GA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gmh_emc_ga.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Georgia EMC (GMH_GA_emc publisher) camera registry"
@@ -5485,6 +5673,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_guildford_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_guildford_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Guildford (rgsguildford publisher) camera registry"
@@ -5511,6 +5701,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_009.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_009.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV asset registry camera registry"
@@ -5537,6 +5729,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_010.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_010.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -5563,6 +5757,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_indonesia_id.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (ID)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_indonesia_id.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Indonesian community/municipal camera registries camera registry"
@@ -5589,6 +5785,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_infocemosa.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_infocemosa.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -5615,6 +5813,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_infraestructura.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_infraestructura.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -5641,6 +5841,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_ira.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ira.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -5667,6 +5869,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_jcfd3_or.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (OR)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_jcfd3_or.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Jackson County Fire District 3, Oregon camera registry"
@@ -5693,6 +5897,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_011.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_011.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published camera registry camera registry"
@@ -5719,6 +5925,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_jmh_us.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme iso.3166_1_alpha2 (US)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_jmh_us.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "US municipal police department (jmh_com publisher) camera registry"
@@ -5745,6 +5953,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_kcmo_mo.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MO)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_kcmo_mo.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Kansas City, Missouri camera registry"
@@ -5771,6 +5981,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_keizer_or.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (OR)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_keizer_or.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Keizer, Oregon camera registry"
@@ -5824,6 +6036,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_012.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_012.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -5850,6 +6064,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_kirkland_wa.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (WA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_kirkland_wa.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Kirkland, Washington camera registry"
@@ -5876,6 +6092,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_013.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_013.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -5902,6 +6120,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_014.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_014.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -5928,6 +6148,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_015.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_015.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -5954,6 +6176,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_lawrence_ks.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (KS)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lawrence_ks.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Lawrence, Kansas camera registry"
@@ -5980,6 +6204,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_016.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_016.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published camera registry camera registry"
@@ -6006,6 +6232,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_leon_fl.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (FL)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_leon_fl.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Leon County / City of Tallahassee (cotinter.leoncountyfl.gov) camera registry"
@@ -6032,6 +6260,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_lisburn_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-NIR)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lisburn_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Lisburn and Castlereagh City Council camera registry"
@@ -6058,6 +6288,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_lojic_ky.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (KY)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lojic_ky.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "LOJIC — Louisville/Jefferson County Information Consortium camera registry"
@@ -6084,6 +6316,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_lpd_flock.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lpd_flock.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published ALPR camera registry camera registry"
@@ -6110,6 +6344,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_manhattan_ks.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (KS)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_manhattan_ks.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Manhattan, Kansas camera registry"
@@ -6136,6 +6372,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_mark43.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_mark43.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -6162,6 +6400,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_massdot_ma.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_massdot_ma.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Massachusetts Department of Transportation camera registry"
@@ -6188,6 +6428,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_mbrc_au.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (AU-QLD)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_mbrc_au.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Moreton Bay Regional Council, Queensland camera registry"
@@ -6214,6 +6456,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_mctx_tx.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (TX)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_mctx_tx.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Montgomery County, Texas camera registry"
@@ -6240,6 +6484,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_017.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_017.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -6266,6 +6512,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_mndot_mn.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MN)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_mndot_mn.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Minnesota Department of Transportation (republished layer) camera registry"
@@ -6292,6 +6540,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_monmap_mn.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (MN)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_monmap_mn.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Mongolian mapping community publisher camera registry"
@@ -6318,6 +6568,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_mueller_de.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (DE)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_mueller_de.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "German community-published camera registry camera registry"
@@ -6344,6 +6596,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_nashville_tn.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (TN)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nashville_tn.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Metropolitan Government of Nashville and Davidson County camera registry"
@@ -6370,6 +6624,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_nitro.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nitro.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -6396,6 +6652,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_nola_safety_la.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (LA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nola_safety_la.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of New Orleans camera registry"
@@ -6422,6 +6680,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_018.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_018.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -6448,6 +6708,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_us_ny_001.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (NY)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_ny_001.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "New York City Department of Transportation (republished layer) camera registry"
@@ -6474,6 +6736,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_us_ny_002.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (NY)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_ny_002.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "New York City (republished layer) camera registry"
@@ -6500,6 +6764,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_oem_camera.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_oem_camera.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -6526,6 +6792,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_019.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_019.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -6552,6 +6820,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_oosgis_nl.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (NL)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_oosgis_nl.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Dutch municipal camera registry (oosgis publisher) camera registry"
@@ -6578,6 +6848,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_osm_surveillance.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): ODbL-1.0 — OSM-derived surveillance nodes — ODbL corpus (separate compartment, §42.3). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_osm_surveillance.rights]
 spdx = "ODbL-1.0"
 attribution = "OpenStreetMap contributors (republished man_made=surveillance nodes) camera registry"
@@ -6604,6 +6876,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_palmdesert_ca.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_palmdesert_ca.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Palm Desert, California camera registry"
@@ -6630,6 +6904,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_penndot_pa.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (PA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_penndot_pa.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Pennsylvania Department of Transportation (publisher account) camera registry"
@@ -6656,6 +6932,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_pgcounty_md.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MD)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_pgcounty_md.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Prince George's County, Maryland (PGPD) camera registry"
@@ -6682,6 +6960,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_pipeline_sec.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_pipeline_sec.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -6708,6 +6988,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_plymouth_gb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (GB-ENG)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_plymouth_gb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Plymouth City Council camera registry"
@@ -6734,6 +7016,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_polyu_hk.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (HK)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_polyu_hk.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Hong Kong PolyU/police CCTV layers (community-published) camera registry"
@@ -6760,6 +7044,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_portland_or.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (OR)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_portland_or.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Portland, Oregon camera registry"
@@ -6786,6 +7072,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_raleigh_nc.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (NC)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_raleigh_nc.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Raleigh, North Carolina camera registry"
@@ -6812,6 +7100,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_ramallah_ps.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (PS)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ramallah_ps.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Ramallah municipal camera registry (community-published layer) camera registry"
@@ -6843,6 +7133,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_redmond_wa.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (WA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_redmond_wa.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Redmond, Washington camera registry"
@@ -6869,6 +7161,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_riyadh_sa.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (SA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_riyadh_sa.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Riyadh municipal camera registry (rematalriyadh publisher) camera registry"
@@ -6895,6 +7189,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_020.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_020.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -6921,6 +7217,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_021.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_021.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published CCTV registry camera registry"
@@ -6947,6 +7245,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_salisbury_nc.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (NC)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_salisbury_nc.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "City of Salisbury, North Carolina camera registry"
@@ -6973,6 +7273,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_sarasota_fl.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (FL)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_sarasota_fl.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Sarasota County, Florida camera registry"
@@ -6999,6 +7301,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_022.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_022.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7025,6 +7329,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_sensenet.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_sensenet.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7051,6 +7357,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_023.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_023.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7082,6 +7390,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_smart_sky.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_smart_sky.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7108,6 +7418,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_squan.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_squan.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7134,6 +7446,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_stanford_us.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme iso.3166_1_alpha2 (US)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_stanford_us.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Stanford University research-compiled camera locations camera registry"
@@ -7160,6 +7474,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_surrey_bc.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (CA-BC)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_surrey_bc.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "City of Surrey, British Columbia camera registry"
@@ -7186,6 +7502,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_024.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_024.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -7212,6 +7530,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_025.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_025.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7238,6 +7558,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_thailand_th.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (TH)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_thailand_th.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Thai municipal/community camera registries camera registry"
@@ -7264,6 +7586,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_toronto_on.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (CA-ON)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_toronto_on.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "City of Toronto (republished layer) camera registry"
@@ -7290,6 +7614,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_townofws.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_townofws.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published enforcement-camera registry camera registry"
@@ -7316,6 +7642,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_trafficops_ca.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (CA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_trafficops_ca.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "California traffic-operations publisher (Postmile schema) camera registry"
@@ -7342,6 +7670,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_trpa_us.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme iso.3166_1_alpha2 (US)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_trpa_us.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Tahoe Regional Planning Agency (bi-state compact) camera registry"
@@ -7373,6 +7703,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_tulane_la.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (LA)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_tulane_la.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Tulane University (republished municipal layer) camera registry"
@@ -7399,6 +7731,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_txdot_rep_tx.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (TX)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_txdot_rep_tx.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "Texas Department of Transportation (republished layer) camera registry"
@@ -7430,6 +7764,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_uchicago.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_uchicago.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published camera registry camera registry"
@@ -7456,6 +7792,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_ucsd.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ucsd.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University-community-published traffic-camera registry camera registry"
@@ -7482,6 +7820,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_ukm_my.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (MY)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ukm_my.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Universiti Kebangsaan Malaysia (community-published layer) camera registry"
@@ -7513,6 +7853,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_umbc_md.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MD)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_umbc_md.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "University of Maryland, Baltimore County (republished state layer) camera registry"
@@ -7539,6 +7881,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_univmb_mb.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (CA-MB)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_univmb_mb.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "University of Manitoba (republished municipal layers) camera registry"
@@ -7565,6 +7909,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_uofmd_md.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation — US state/municipal portal rows are public records; facts are not copyrightable (factual compilation). Jurisdiction scheme us.state_abbr (MD)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_uofmd_md.rights]
 spdx = "LicenseRef-PublicRecord-FactualCompilation"
 attribution = "University of Maryland (republished layer) camera registry"
@@ -7591,6 +7937,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_vancouver_bc.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_2 (CA-BC)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_vancouver_bc.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "City of Vancouver, British Columbia camera registry"
@@ -7617,6 +7965,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_026.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_026.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -7643,6 +7993,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_webappfme.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_webappfme.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published traffic-camera registry camera registry"
@@ -7669,6 +8021,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_wellington_nz.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme iso.3166_1_alpha2 (NZ)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_wellington_nz.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "Wellington City Council camera registry"
@@ -7695,6 +8049,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_027.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_027.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7721,6 +8077,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_wim_camera.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_wim_camera.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7747,6 +8105,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_028.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_028.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -7773,6 +8133,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_yline.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_yline.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published CCTV registry camera registry"
@@ -7799,6 +8161,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_yorku.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_yorku.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "York University community-published camera layer camera registry"
@@ -7825,6 +8189,8 @@ rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-18
 review_packet = "docs/build/reports/rights/annex/p2616/camreg_und_029.md"
 notes = "P26.16 (SOURCES.15) catalog-sweep rights batch. FLIPPED 2026-09-18 (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight — operator-accepted database-right risk on the non-US/unresolved-jurisdiction factual compilation (GL-GATE-07). Jurisdiction scheme sig.unresolved (unresolved)."
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_und_029.rights]
 spdx = "LicenseRef-OperatorAccepted-DBRight"
 attribution = "ArcGIS community-published camera registry camera registry"
@@ -7967,6 +8333,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T1-002, cand I5-C003, family 'dot_511
 publisher = "Delaware Department of Transportation (DelDOT) via Delaware FirstMap (state ArcGIS Enterprise)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DE"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_de.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8012,6 +8380,8 @@ publisher = "District of Columbia Office of Victim Services and Justice Grants (
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DC"
 jurisdiction_place = "Washington"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_dc_ovsjg_camera_rebate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8034,6 +8404,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T1-007, cand I5-C001, family 'dot_511
 publisher = "Vermont Agency of Transportation, Operations & Safety Bureau ITS group (via ArcGIS Online, owner OSB_VTrans)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VT"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_vt.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8056,6 +8428,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T1-008, cand I5-C009, family 'dot_511
 publisher = "West Virginia Department of Transportation, Division of Highways (WVDOT GIS server)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WV"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_wv.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8079,6 +8453,8 @@ publisher = "Montgomery County, MD, Department of Police (data.montgomerycountym
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
 jurisdiction_place = "Montgomery County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_montgomery_md_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8102,6 +8478,8 @@ publisher = "District of Columbia, District Department of Transportation (via DC
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DC"
 jurisdiction_place = "Washington"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_dc_ddot_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8124,6 +8502,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T1-011, cand I5-C002, family 'dot_511
 publisher = "Michigan Department of Transportation (via ArcGIS Online, owner MDOT_GIS)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MI"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_mi.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8146,6 +8526,8 @@ notes = "R11-ACQ-01 generated rows (plan AP-T1-012 + AP-T1-013, cands I3-C002 + 
 publisher = "Florida Department of Transportation, District 3 (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_fdot_flock.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8169,6 +8551,8 @@ publisher = "City of Pueblo, CO (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CO"
 jurisdiction_place = "Pueblo"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_pueblo_co_flock.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8192,6 +8576,8 @@ publisher = "City of Rocky Mount, NC (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"
 jurisdiction_place = "Rocky Mount"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_rocky_mount_nc_lpr_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8215,6 +8601,8 @@ publisher = "City of Shelbyville, TN (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TN"
 jurisdiction_place = "Shelbyville"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_shelbyville_tn_flock_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8238,6 +8626,8 @@ publisher = "City of Temecula, CA (staff account, via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
 jurisdiction_place = "Temecula"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_temecula_ca_flock_wfl1.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8261,6 +8651,8 @@ publisher = "City of Marble Falls, TX (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
 jurisdiction_place = "Marble Falls"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_marble_falls_tx_flock_locations.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8284,6 +8676,8 @@ publisher = "Prince William County, VA (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VA"
 jurisdiction_place = "Prince William County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_va_prince_william_county.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8307,6 +8701,8 @@ publisher = "\"Milford\" org (extent Milford, CT; via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CT"
 jurisdiction_place = "Milford"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_milford_ct_flocklprcam.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8330,6 +8726,8 @@ publisher = "City of Elgin, IL (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
 jurisdiction_place = "Elgin"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_elgin_il_lpr_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8353,6 +8751,8 @@ publisher = "City of South Fulton, GA (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
 jurisdiction_place = "South Fulton"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_south_fulton_ga_lpr_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8376,6 +8776,8 @@ publisher = "Pittsylvania County, VA (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VA"
 jurisdiction_place = "Pittsylvania County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_va_pittsylvania_county_stationary.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8399,6 +8801,8 @@ publisher = "City of Alabaster, AL (city-staff account)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AL"
 jurisdiction_place = "Alabaster"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_alabaster_al_lpr_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8422,6 +8826,8 @@ publisher = "Metropolitan Transportation Authority (New York City Transit / MTA 
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NY"
 jurisdiction_place = "New York City"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nyc_mta_bus_lane_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8445,6 +8851,8 @@ publisher = "City of Tacoma, Public Works (ArcGIS Online, owner IT.DataCurator)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
 jurisdiction_place = "Tacoma"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_tacoma_wa_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8468,6 +8876,8 @@ publisher = "Howard County, MD (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
 jurisdiction_place = "Howard County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_howard_md_school_zone_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8558,6 +8968,8 @@ publisher = "City of Lakeland, FL (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
 jurisdiction_place = "Lakeland"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_lakeland_fl_red_light.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8581,6 +8993,8 @@ publisher = "City of Thomasville, GA (org name via ArcGIS portal self record)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
 jurisdiction_place = "Thomasville"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_thomasville_ga_flock_location.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8604,6 +9018,8 @@ publisher = "Tallahassee-Leon County GIS for Leon County Sheriff's Office, FL (v
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
 jurisdiction_place = "Leon County;US-FL:Tallahassee"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_leon_county_fl_overwatch_viewer.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8627,6 +9043,8 @@ publisher = "City of Peachtree Corners, GA (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
 jurisdiction_place = "Peachtree Corners"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ga_peachtree_corners_flock_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8738,6 +9156,8 @@ publisher = "City of Lincoln, NE Traffic Operations (via Lincoln-Lancaster Count
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NE"
 jurisdiction_place = "Lincoln"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ne_lincoln_traffic_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8828,6 +9248,8 @@ publisher = "Suffolk County, NY (SCOpenData via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NY"
 jurisdiction_place = "Suffolk County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_suffolk_ny_red_light.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -8962,6 +9384,8 @@ publisher = "Douglas-Omaha GIS (DOGIS) for City of Omaha Parks (via ArcGIS Onlin
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NE"
 jurisdiction_place = "Omaha"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_omaha_ne_parks_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -9229,6 +9653,8 @@ publisher = "City of Medford, OR (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-OR"
 jurisdiction_place = "Medford"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_medford_or_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -9275,6 +9701,8 @@ publisher = "City of Hyattsville, MD (cohgis)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
 jurisdiction_place = "Hyattsville"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_hyattsville_md_cctv_camera_2024.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -9343,6 +9771,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T1-075, cand I5-C015, family 'dot_511
 publisher = "Connecticut Department of Transportation (ArcGIS Online owner CTDOT_OpenData)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CT"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ctdot_speed_safety.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -9589,6 +10019,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T1-090, cand I5-C017, family 'dot_511
 publisher = "North Carolina Department of Transportation (ArcGIS Online org NuWFvHYDMVmmxMeM, which hosts GISUnit.NCDOT.GOV items)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_nc.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -9953,6 +10385,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-001, cand I3-C076, family 'extend:
 publisher = "Multiple US cities/counties (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_municipal_contract_expenditure.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10042,6 +10476,8 @@ publisher = "City of Jeffersonville, IN (staff account, via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IN"
 jurisdiction_place = "Jeffersonville"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_jeffersonville_in_flock.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10065,6 +10501,8 @@ publisher = "City of Monterey Park, CA (two city-staff accounts; org name not se
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
 jurisdiction_place = "Monterey Park"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ca_monterey_park_flock_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10110,6 +10548,8 @@ publisher = "City of Mesa, AZ (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AZ"
 jurisdiction_place = "Mesa"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_az_mesa_city_of_expenditures.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10132,6 +10572,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-014, cand I4-C164, family 'extend:
 publisher = "multiple state and local governments (via Socrata/Tyler Data & Insights)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_socrata_hosted_vendor.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10154,6 +10596,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-015, cand I4-C171, family 'extend:
 publisher = "State of New Jersey, Treasury - Division of Purchase and Property (via Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NJ"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nj_new_jersey_yourmoney.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10198,6 +10642,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-018, cand I5-C006, family 'dot_511
 publisher = "NMDOT ITS CCTV inventory per item snippet (ArcGIS Online org short-name \"ITS511\", owner douglas.geusz_ITS511; org identi"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NM"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_nm.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10221,6 +10667,8 @@ publisher = "City of Santa Fe, NM Parks (layer published by WSP consultant accou
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NM"
 jurisdiction_place = "Santa Fe"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_santa_fe_nm_park_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10244,6 +10692,8 @@ publisher = "City of Detroit / Detroit Police Department (via ArcGIS Online org 
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MI"
 jurisdiction_place = "Detroit"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_detroit_mi_project_green_light.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10288,6 +10738,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-022, cand I6-C008,I4-C219,I4-C170,
 publisher = "State of Delaware, Department of Finance, Division of Accounting (via data.delaware.gov)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DE"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_de_delaware_checkbook_expenditure.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10311,6 +10763,8 @@ publisher = "Florida Department of Transportation, District 4 (via ArcGIS Online
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
 jurisdiction_place = "Broward County;US-FL:Palm Beach County;US-FL:Martin County;US-FL:St. Lucie County;US-FL:Indian River County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_fl_broward_county_us_palm_beach.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10334,6 +10788,8 @@ publisher = "Savannah Police Department, GA (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
 jurisdiction_place = "Savannah"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ga_savannah_flock_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10357,6 +10813,8 @@ publisher = "East Baton Rouge Parish Sheriff's Office, LA (staff account on the 
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-LA"
 jurisdiction_place = "East Baton Rouge Parish"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_la_east_baton_rouge_parish_flock.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10379,6 +10837,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-028, cand I3-C009, family 'dot_511
 publisher = "\"CCSO\" county sheriff's office (org name private; extent in west Georgia) (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ga_flock_cameras_asof.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10402,6 +10862,8 @@ publisher = "City of Gastonia, NC (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"
 jurisdiction_place = "Gastonia"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gastonia_nc_flock_condor_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10424,6 +10886,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-033, cand I4-C156, family 'new:sta
 publisher = "Washington State Legislature LEAP Committee + Office of Financial Management"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_wa_washington_state_open.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10446,6 +10910,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-034, cand I4-C211, family 'new:nce
 publisher = "National Center for Education Statistics (IES, US Dept of Education)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_nces_school_survey_on_crime.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10628,6 +11094,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-043, cand I9b-C070, family 'new:ma
 publisher = "Commonwealth of Massachusetts, Executive Office for Administration and Finance (Capital budget)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MA"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ma_massachusetts_capital.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10720,6 +11188,8 @@ publisher = "City of Brookhaven, GA (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
 jurisdiction_place = "Brookhaven"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ga_brookhaven_flock_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10743,6 +11213,8 @@ publisher = "City of Detroit / Detroit Police Department (via ArcGIS Online, dat
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MI"
 jurisdiction_place = "Detroit"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_mi_detroit_dpd_shotspotter.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -10766,6 +11238,8 @@ publisher = "Clark County (NV) GIS Management Office (via ArcGIS Online), mappin
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NV"
 jurisdiction_place = "Las Vegas;US-NV:Clark County"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_nv_las_vegas_us_clark_county.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11033,6 +11507,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-084, cand I3-C001, family 'dot_511
 publisher = "Multiple US agencies (via ArcGIS Online / Hub)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_agency_published_flock.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11078,6 +11554,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-088, cand I4-C050, family 'dot_511
 publisher = "multiple US cities/counties (via Socrata and ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_ate_camera_location_and_per.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11122,6 +11600,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-090, cand I4-C276, family 'extend:
 publisher = "U.S. DOJ Office of Justice Programs (Socrata domain priv-data.ojp.usdoj.gov)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_body_worn_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11166,6 +11646,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-100, cand I4-C016, family 'dot_511
 publisher = "Various municipal police departments (ArcGIS Online orgs)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_us_agency_drone_flight.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11188,6 +11670,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-103, cand I5-C014, family 'dot_511
 publisher = "Nevada Department of Transportation (ArcGIS Online owner OpenData_NDOT)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NV"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_nv.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11210,6 +11694,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-105, cand I5-C018, family 'dot_511
 publisher = "Idaho Transportation Department (ArcGIS Enterprise gisp.itd.idaho.gov; owner ITDGISdata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-ID"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_id.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11233,6 +11719,8 @@ publisher = "North Somerset Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "North Somerset"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_north_cctv_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11256,6 +11744,8 @@ publisher = "Townsville City Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-QLD"
 jurisdiction_place = "Townsville"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_qld_towns_cctv_camera_register.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11279,6 +11769,8 @@ publisher = "City of Hobart"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-TAS"
 jurisdiction_place = "Hobart"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_tas_hobar_security_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11302,6 +11794,8 @@ publisher = "City of Perth"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-WA"
 jurisdiction_place = "Perth"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_wa_perth_security_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11324,6 +11818,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-115, cand I5-C348, family 'new:dat
 publisher = "Publications Office of the EU (data.europa.eu; harvests national portals)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "EU/EEA"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_eu_eea_data_europa_search_api.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11391,6 +11887,8 @@ publisher = "City of Bloomington, IL (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
 jurisdiction_place = "Bloomington"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_bloomington_il_drone_flights.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11414,6 +11912,8 @@ publisher = "City of Peoria, IL (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
 jurisdiction_place = "Peoria"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_peoria_il_drone_usage.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11437,6 +11937,8 @@ publisher = "City of Medford, OR (via ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-OR"
 jurisdiction_place = "Medford"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_medford_or_drone_deployments_fs.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11728,6 +12230,8 @@ publisher = "City of Oakland (attribution: Oakland Police Department)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
 jurisdiction_place = "Oakland"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_oakland_ca_shotspotter_2013_2015.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11797,6 +12301,8 @@ publisher = "data.gov.uk (UK Government; per-dataset publishers)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "ISO"
 jurisdiction_place = "GB"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.dot_511_gb.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11820,6 +12326,8 @@ publisher = "Leicester City Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Leicester"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_leice_cctv_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11843,6 +12351,8 @@ publisher = "Mansfield District Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Mansfield"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_mansf_cctv_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11866,6 +12376,8 @@ publisher = "Trafford Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Trafford"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_traff_trafford_cctv.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11889,6 +12401,8 @@ publisher = "London Borough of Barnet"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Barnet"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_barnet_cctv_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11912,6 +12426,8 @@ publisher = "London Borough of Barnet"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Barnet"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_barnet_cctv_traffic.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11935,6 +12451,8 @@ publisher = "Bristol City Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Bristol"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_brist_cctv_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11958,6 +12476,8 @@ publisher = "City of Edinburgh Council (via SpatialData.gov.scot)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-SCT"
 jurisdiction_place = "Edinburgh"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_sct_edinburgh_public_cctv.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -11981,6 +12501,8 @@ publisher = "data.gov.au (Australian Government; per-dataset publishers)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "ISO"
 jurisdiction_place = "AU"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_ckan_package_search.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12004,6 +12526,8 @@ publisher = "City of Ballarat"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-VIC"
 jurisdiction_place = "Ballarat"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_vic_ballarat_cctv_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12027,6 +12551,8 @@ publisher = "City of Greater Geelong"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-VIC"
 jurisdiction_place = "Geelong"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_vic_geelong_closed_circuit.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12050,6 +12576,8 @@ publisher = "City of Sydney"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-NSW"
 jurisdiction_place = "Sydney"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_nsw_sydney_street_safety.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12072,6 +12600,8 @@ notes = "R11-ACQ-01 generated row (plan AP-T2-177, cand I5-C331, family 'new:cka
 publisher = "Tasmanian Government (theLIST)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "AU-TAS"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_au_tas_emergency_closed_circuit.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12095,6 +12625,8 @@ publisher = "Dublin City Council (via data.gov.ie / Smart Dublin)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "IE-D"
 jurisdiction_place = "Dublin"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ie_d_dublin_traffic_poles_with.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12141,6 +12673,8 @@ publisher = "Ayuntamiento de Madrid (Polic\u00eda Municipal)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "ES-MD"
 jurisdiction_place = "Madrid"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_es_md_madrid_c_maras_de.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12164,6 +12698,8 @@ publisher = "Comune di Messina"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "IT-ME"
 jurisdiction_place = "Messina"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_it_me_messina_videosorveglianza.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12187,6 +12723,8 @@ publisher = "Grand Paris Seine Ouest (\u00e9tablissement public territorial)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "FR-92"
 jurisdiction_place = "Grand Paris Seine Ouest"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_fr_92_grand_paris_seine_ouest_vid.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12210,6 +12748,8 @@ publisher = "Munic\u00edpio de Lisboa"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "PT-11"
 jurisdiction_place = "Lisboa"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_pt_11_lisboa_sistema_de.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12233,6 +12773,8 @@ publisher = "Korosten City Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "UA-18"
 jurisdiction_place = "Korosten"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_ua_18_korosten.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12301,6 +12843,8 @@ publisher = "Eye on Surveillance (New Orleans NGO); production map.eyeonsurveill
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-LA"
 jurisdiction_place = "New Orleans"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_la_new_orleans_eye_on.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12324,6 +12868,8 @@ publisher = "City of Chicago, Chicago Police Department (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
 jurisdiction_place = "Chicago"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_il_chicago_violence_reduction.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12482,6 +13028,8 @@ publisher = "Ob\u010dina Ko\u010devje (via podatki.gov.si)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "SI-048"
 jurisdiction_place = "Ko\u010devje"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_si_048_ko_evje_videonadzor_na.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12597,6 +13145,8 @@ publisher = "Runnymede Borough Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Runnymede"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_runny_cctv_cameras.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12620,6 +13170,8 @@ publisher = "South Kesteven District Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "South Kesteven"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_south_skdc_cctv.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12643,6 +13195,8 @@ publisher = "Clackmannanshire Council (via SpatialData.gov.scot)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-SCT"
 jurisdiction_place = "Clackmannanshire"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_sct_clackmannanshire_cctv.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -12666,6 +13220,8 @@ publisher = "Ipswich Borough Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "GB-ENG"
 jurisdiction_place = "Ipswich"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_gb_eng_ipswich_cctv_camera.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -13225,6 +13781,8 @@ publisher = "Bureau of Indian Affairs, Branch of Geospatial Support (via ArcGIS 
 jurisdiction_scheme = "iso.3166_1_alpha2"
 jurisdiction = "US"
 jurisdiction_place = "US-TRIBAL (all BIA-listed nations)"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_tribal_all_leaders_directory.rights]
 spdx = "UNDETERMINED"
 redistributable = false

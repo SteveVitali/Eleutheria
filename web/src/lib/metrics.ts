@@ -23,7 +23,16 @@
 
 // --- Freshness (§32.4, SIG-METRIC-006/007) -----------------------------------
 
-export const SOURCE_STATUSES = ["ok", "degraded", "failing", "retired"] as const;
+export const SOURCE_STATUSES = [
+  "ok",
+  "degraded",
+  "failing",
+  "retired",
+  // P35.20b (ED-43, GQ-15): staleness is NOT evaluable for this source — no
+  // declared §28.3 volatility class, or no evaluable dated observation. A real
+  // honest class, never "ok" and never a fabricated stale-0 (§3.1).
+  "not_evaluable",
+] as const;
 export type SourceStatus = (typeof SOURCE_STATUSES)[number];
 
 /**
@@ -33,12 +42,32 @@ export type SourceStatus = (typeof SOURCE_STATUSES)[number];
  */
 export const NOT_RECORDED = "not-recorded";
 
+/**
+ * The explicit not-evaluable token a freshness row's status/volatility carries
+ * when staleness cannot be evaluated (exports `shaping.NOT_EVALUABLE`, P35.20b).
+ */
+export const NOT_EVALUABLE = "not_evaluable";
+
 /** True when a freshness date is the explicit honest-absence token. */
 export function isNotRecorded(value: string): boolean {
   return value === NOT_RECORDED;
 }
 
-/** Per-source freshness row (SIG-METRIC-007). All four fields are required. */
+/** True when a freshness status/volatility is the explicit not-evaluable token. */
+export function isNotEvaluable(value: string): boolean {
+  return value === NOT_EVALUABLE;
+}
+
+/** The rendered label for a status/volatility token: `not_evaluable` prints
+ * "not evaluable" — GQ-15's clause ("freshness says 'not evaluable', not
+ * 'ok'") holds on the rendered surface, not only in the JSON. */
+export function evaluableLabel(value: string): string {
+  return isNotEvaluable(value) ? "not evaluable" : value;
+}
+
+/** Per-source freshness row (SIG-METRIC-007). All fields are required —
+ * including `staleness_not_evaluable`, the count of dated observations
+ * staleness was never evaluated for (P35.20b). */
 export interface FreshnessRow {
   source: string;
   last_successful_run: string;
@@ -46,7 +75,11 @@ export interface FreshnessRow {
   status: SourceStatus;
   /** Count of entities whose evidence is stale FOR THEIR PREDICATE CLASS (not absolute days). */
   stale_entity_count: number;
-  /** The predicate volatility class the staleness is measured against (SIG-METRIC-006). */
+  /** Dated observations staleness was never evaluated for (undeclared class →
+   * the whole set; declared → the unregistered-predicate share). P35.20b. */
+  staleness_not_evaluable: number;
+  /** The source's DECLARED §28.3 volatility class (SIG-METRIC-006), or
+   * `not_evaluable` when undeclared — never a guessed class. */
   volatility_class: string;
 }
 
@@ -58,6 +91,7 @@ export function assertFreshnessRow(row: FreshnessRow): void {
   if (!row.last_content_change) missing.push("last_content_change");
   if (!SOURCE_STATUSES.includes(row.status)) missing.push("status");
   if (!Number.isFinite(row.stale_entity_count)) missing.push("stale_entity_count");
+  if (!Number.isFinite(row.staleness_not_evaluable)) missing.push("staleness_not_evaluable");
   if (!row.volatility_class) missing.push("volatility_class");
   if (missing.length > 0) {
     throw new Error(`freshness row for "${row.source}" missing: ${missing.join(", ")} (SIG-METRIC-007)`);

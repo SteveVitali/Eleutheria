@@ -185,7 +185,13 @@ describe("P27.6 site metadata — belief-pinned defaults from the export manifes
 // shape the getters validate).
 let analyticsBundle: string;
 const ANALYTICS_BINS = [
-  { h3: "8326c2fffffffff", jurisdiction: "Oklahoma", deviceCount: 3, coverage: "low" },
+  {
+    h3: "8326c2fffffffff",
+    jurisdiction: "iso3166-2:US-OK",
+    jurisdictionCounts: { "iso3166-2:US-OK": 3 },
+    recordCount: 3,
+    coverage: "low",
+  },
 ];
 // P34.15 (SIG-IDENT-030 by abstention): the centrality artifact carries NO
 // statistics — the `focus` block is the only part the surfaces read.

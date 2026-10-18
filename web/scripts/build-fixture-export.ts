@@ -191,7 +191,7 @@ const analytic = (name: string, payload: unknown): void =>
 
 analytic(
   "density_bins",
-  envelope("sig/analytics-density-bins/1", `${DENSITY_BINS.reduce((s, b) => s + b.deviceCount, 0)} published site records with a releasable tier-0 point`, {
+  envelope("sig/analytics-density-bins/1", `${DENSITY_BINS.reduce((s, b) => s + b.recordCount, 0)} published site records with a releasable tier-0 point`, {
     grid: "h3",
     h3_resolution: 3,
     coverage_rule:

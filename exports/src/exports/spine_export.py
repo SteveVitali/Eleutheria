@@ -2499,6 +2499,10 @@ def build_spine_export(
         materialized_site_runs=m_site_runs,
         ruleset_version=build_spec.ruleset_version,
         registry=registry,
+        # P35.20b (ED-44): the density bins reconcile cell→jurisdiction against
+        # the same placement run's scheme-qualified keys (P35.19) the map layer
+        # already consumes; absent a run they key on the declared buckets.
+        placements=map_placements,
     ):
         web_artifacts[art.path] = _web_bytes(art.payload)
         web_licenses[art.path] = art.license

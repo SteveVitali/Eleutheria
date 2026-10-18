@@ -243,6 +243,9 @@ def _run_freshness(args: argparse.Namespace) -> int:
             ["contract_end_date", "2021-01-01"],
         ],
         "as_of": "2026-09-01",
+        # P35.20b (ED-43): the demo declares its §28.3 class — without one the
+        # surface honestly reports staleness_evaluable=false, never a faked 0.
+        "declared_volatility_class": "FAST",
     }
 
     def _dt(value: Any) -> datetime | None:
@@ -255,6 +258,8 @@ def _run_freshness(args: argparse.Namespace) -> int:
         last_content_change=_dt(payload.get("last_content_change")),
         observations=[(str(p), date.fromisoformat(str(d))) for p, d in payload["observations"]],
         as_of=date.fromisoformat(str(payload["as_of"])),
+        declared_volatility_class=payload.get("declared_volatility_class"),
+        not_evaluable_count=int(payload.get("not_evaluable_count", 0)),
     )
     print(
         json.dumps(
@@ -263,6 +268,8 @@ def _run_freshness(args: argparse.Namespace) -> int:
                 "status": freshness.status,
                 "stale_count": freshness.stale_count,
                 "tracked_count": freshness.tracked_count,
+                "staleness_evaluable": freshness.staleness_evaluable,
+                "not_evaluable_count": freshness.not_evaluable_count,
                 "last_successful_run": freshness.last_successful_run,
                 "last_content_change": freshness.last_content_change,
             },

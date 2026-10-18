@@ -78,6 +78,14 @@ class SourceFreshness:
     *for their predicate class* — computed via :func:`is_stale_for_predicate`, not a
     flat age. `status` is the source's own operational status (e.g. `ok`, `degraded`,
     `blocked`); it is carried verbatim, not inferred here.
+
+    P35.20b (ED-43, SIG-METRIC-006): ``staleness_evaluable`` records whether a
+    staleness evaluation ran at all — the source must carry a DECLARED §28.3
+    volatility class in the source registry *and* at least one dated
+    registered-predicate observation. ``not_evaluable_count`` counts the dated
+    observations staleness was NOT evaluated for (every observation when no
+    class is declared; otherwise the unregistered-predicate ones) — the honest
+    class, never "ok".
     """
 
     source_id: str
@@ -86,14 +94,24 @@ class SourceFreshness:
     status: str
     stale_count: int
     tracked_count: int
+    #: Whether staleness was evaluated for this source at all (P35.20b).
+    staleness_evaluable: bool = True
+    #: Dated observations never evaluated — unregistered predicate, or the
+    #: source's whole set when no volatility class is declared (P35.20b).
+    not_evaluable_count: int = 0
 
     def __post_init__(self) -> None:
-        if self.stale_count < 0 or self.tracked_count < 0:
+        if self.stale_count < 0 or self.tracked_count < 0 or self.not_evaluable_count < 0:
             raise ValueError(f"source {self.source_id!r} has a negative count")
         if self.stale_count > self.tracked_count:
             raise ValueError(
                 f"source {self.source_id!r}: {self.stale_count} stale exceeds "
                 f"{self.tracked_count} tracked"
+            )
+        if not self.staleness_evaluable and self.stale_count != 0:
+            raise ValueError(
+                f"source {self.source_id!r}: a non-evaluable staleness "
+                "carries a nonzero stale count — never faked (§3.1)"
             )
 
     def as_json(self) -> dict[str, object]:
@@ -108,6 +126,8 @@ class SourceFreshness:
             "status": self.status,
             "stale_count": self.stale_count,
             "tracked_count": self.tracked_count,
+            "staleness_evaluable": self.staleness_evaluable,
+            "not_evaluable_count": self.not_evaluable_count,
         }
 
 
@@ -119,6 +139,8 @@ def source_freshness(
     last_content_change: datetime | None,
     observations: Iterable[tuple[str, date]],
     as_of: date,
+    declared_volatility_class: str | None = None,
+    not_evaluable_count: int = 0,
 ) -> SourceFreshness:
     """Build the §32.4 freshness surface for one source (SIG-METRIC-007).
 
@@ -126,12 +148,24 @@ def source_freshness(
     stale count is those stale for their predicate class as of `as_of`. Freshness is
     per-predicate volatility throughout — a source of IMMUTABLE contract dates is
     never stale, however old (SIG-METRIC-006).
+
+    P35.20b (ED-43, SIG-METRIC-006, GQ-15): staleness is evaluated ONLY when the
+    caller supplies the source's *declared* registry volatility class (ADR-104(e)
+    recalibrated, never inferred) AND at least one evaluable observation exists.
+    With no declared class the whole dated set is not evaluable — pass it in
+    ``not_evaluable_count`` — and the surface carries the honest
+    ``staleness_evaluable=False`` rather than a fabricated "ok / stale 0".
     """
     obs = list(observations)
-    stale = sum(
-        1
-        for predicate_id, observed_at in obs
-        if is_stale_for_predicate(predicate_id, observed_at=observed_at, as_of=as_of)
+    evaluable = declared_volatility_class is not None and len(obs) > 0
+    stale = (
+        sum(
+            1
+            for predicate_id, observed_at in obs
+            if is_stale_for_predicate(predicate_id, observed_at=observed_at, as_of=as_of)
+        )
+        if evaluable
+        else 0
     )
     return SourceFreshness(
         source_id=source_id,
@@ -140,4 +174,6 @@ def source_freshness(
         status=status,
         stale_count=stale,
         tracked_count=len(obs),
+        staleness_evaluable=evaluable,
+        not_evaluable_count=not_evaluable_count,
     )

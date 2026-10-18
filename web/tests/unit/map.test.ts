@@ -101,7 +101,7 @@ describe("low coverage MUST NOT read as low density (SIG-UI-018)", () => {
     expect(readsAsDensity(LOW_COVERAGE_BIN)).toBe(false); // we don't know
     expect(readsAsDensity(LOW_DENSITY_BIN)).toBe(true); // little here, and we looked
 
-    const maxCount = Math.max(...DENSITY_BINS.map((b) => b.deviceCount));
+    const maxCount = Math.max(...DENSITY_BINS.map((b) => b.recordCount));
     const unknown = renderBin(LOW_COVERAGE_BIN, maxCount);
     const little = renderBin(LOW_DENSITY_BIN, maxCount);
     // The low-coverage cell is desaturated + hatched; the low-density one is not.
@@ -114,9 +114,9 @@ describe("low coverage MUST NOT read as low density (SIG-UI-018)", () => {
   });
 
   it("a low-coverage cell's count never renders as a confident density bucket", () => {
-    const maxCount = Math.max(...DENSITY_BINS.map((b) => b.deviceCount));
+    const maxCount = Math.max(...DENSITY_BINS.map((b) => b.recordCount));
     // Even if a low-coverage cell had a high count, its value is suppressed to 0.
-    const spike = renderBin({ ...LOW_COVERAGE_BIN, deviceCount: maxCount }, maxCount);
+    const spike = renderBin({ ...LOW_COVERAGE_BIN, recordCount: maxCount }, maxCount);
     expect(spike.densityBucket).toBe(0);
   });
 
@@ -281,12 +281,65 @@ describe("a value-suppressed bin never prints its count (P34.15, QW-12, SIG-UI-0
         expect(binCountLabel(bin)).toBe(SUPPRESSED_COUNT_LABEL);
         expect(binCountLabel(bin)).not.toMatch(/\d/);
       } else {
-        expect(binCountLabel(bin)).toBe(String(bin.deviceCount));
+        expect(binCountLabel(bin)).toBe(String(bin.recordCount));
       }
     }
     // Even a fabricated high count on a low-coverage cell stays suppressed.
-    const spike = { ...LOW_COVERAGE_BIN, deviceCount: 9999 };
+    const spike = { ...LOW_COVERAGE_BIN, recordCount: 9999 };
     expect(binCountLabel(spike)).toBe(SUPPRESSED_COUNT_LABEL);
+  });
+});
+
+// --- P35.20b (ED-44): one suppression decision drives figure, table, and
+// <title> — and jurisdiction keys are scheme-qualified and disclosed ---------
+
+describe("one suppression decision across figure, table, and titles (P35.20b, ED-44)", () => {
+  it("binAriaLabel and binCountLabel share coverageEncoding for every bin", async () => {
+    const { binAriaLabel, binCountLabel, SUPPRESSED_COUNT_LABEL } = await import(
+      "../../src/lib/map"
+    );
+    for (const bin of DENSITY_BINS) {
+      const title = binAriaLabel(bin);
+      if (coverageEncoding(bin.coverage).valueSuppressed) {
+        // Same "suppressed" token the accessible table prints — no digits leak.
+        expect(binCountLabel(bin)).toBe(SUPPRESSED_COUNT_LABEL);
+        expect(title).toContain(SUPPRESSED_COUNT_LABEL);
+        expect(title).not.toMatch(/\d+ records?/);
+      } else {
+        expect(binCountLabel(bin)).toBe(String(bin.recordCount));
+        expect(title).toMatch(new RegExp(`\\b${bin.recordCount} records?\\b`));
+      }
+    }
+  });
+
+  it("a suppressed bin's accessible text never carries its raw count", async () => {
+    const { binAriaLabel } = await import("../../src/lib/map");
+    const bin = DENSITY_BINS.find((b) => coverageEncoding(b.coverage).valueSuppressed)!;
+    expect(bin.recordCount).toBeGreaterThan(0); // fixture carries a real count
+    // The raw count never appears as a record figure (the "2" inside the
+    // "iso3166-2" scheme prefix is a code, not a count).
+    expect(binAriaLabel(bin)).not.toMatch(new RegExp(`\\b${bin.recordCount} records?\\b`));
+  });
+
+  it("jurisdiction assignments are scheme-qualified keys, disclosed in full when mixed", async () => {
+    const { binAriaLabel, binJurisdictionKeys } = await import("../../src/lib/map");
+    for (const bin of DENSITY_BINS) {
+      const keys = binJurisdictionKeys(bin);
+      expect(keys.length).toBeGreaterThan(0);
+      // Every key is either the declared unresolved token or a `scheme:code`
+      // pair — never a bare ambiguous code (ED-44).
+      for (const key of keys) {
+        expect(key === "unresolved" || key.includes(":")).toBe(true);
+      }
+      expect(binAriaLabel(bin)).toContain(keys.join(", "));
+    }
+    // The mixed fixture cell discloses both contributing keys.
+    const mixed = DENSITY_BINS.find(
+      (b) => Object.keys(b.jurisdictionCounts ?? {}).length > 1,
+    )!;
+    expect(binJurisdictionKeys(mixed).sort()).toEqual(
+      Object.keys(mixed.jurisdictionCounts!).sort(),
+    );
   });
 });
 

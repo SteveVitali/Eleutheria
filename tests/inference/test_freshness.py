@@ -60,9 +60,69 @@ def test_source_freshness_surface_counts_stale_by_predicate_class() -> None:
             (_FAST, date(2025, 12, 20)),  # recent FAST -> fresh
         ],
         as_of=_TWO_YEARS_LATER,
+        # P35.20b (ED-43): staleness evaluates only under a DECLARED class —
+        # the caller names the source's registered §28.3 class, never a guess.
+        declared_volatility_class="FAST",
     )
     assert surface.tracked_count == 3
     assert surface.stale_count == 1  # only the old FAST observation
     assert surface.status == "ok"
+    assert surface.staleness_evaluable is True
     assert surface.as_json()["stale_count"] == 1
     assert surface.as_json()["last_successful_run"] == "2026-01-01T00:00:00+00:00"
+
+
+def test_undeclared_source_is_not_evaluable_never_stale_zero() -> None:
+    """P35.20b (ED-43, GQ-15): no declared class → not evaluable, even with
+    observations that *would* measure stale — a fabricated stale-0 would claim
+    an evaluation that never ran."""
+    surface = source_freshness(
+        "source:council-minutes",
+        status="ok",
+        last_successful_run=datetime(2026, 1, 1, tzinfo=UTC),
+        last_content_change=None,
+        observations=[
+            (_FAST, date(2024, 1, 1)),  # old FAST — would be stale if evaluable
+            (_FAST, date(2025, 12, 20)),
+        ],
+        as_of=_TWO_YEARS_LATER,
+        declared_volatility_class=None,
+        not_evaluable_count=2,
+    )
+    assert surface.staleness_evaluable is False
+    assert surface.stale_count == 0  # never a fabricated figure — and the
+    assert surface.not_evaluable_count == 2  # row discloses what went unmeasured
+    assert surface.as_json()["staleness_evaluable"] is False
+
+
+def test_declared_class_with_no_evaluable_observations_is_not_evaluable() -> None:
+    """P35.20b: a declared class but zero dated observations → staleness was
+    never evaluated; the row cannot claim 'ok'."""
+    surface = source_freshness(
+        "source:empty-feed",
+        status="degraded",
+        last_successful_run=None,
+        last_content_change=None,
+        observations=[],
+        as_of=_TWO_YEARS_LATER,
+        declared_volatility_class="MODERATE",
+    )
+    assert surface.staleness_evaluable is False
+
+
+def test_non_evaluable_surface_refuses_a_nonzero_stale_count() -> None:
+    """A non-evaluable staleness carrying a stale figure is self-contradictory."""
+    import pytest
+
+    with pytest.raises(ValueError, match="never faked"):
+        from inference.freshness import SourceFreshness
+
+        SourceFreshness(
+            source_id="source:x",
+            last_successful_run=None,
+            last_content_change=None,
+            status="ok",
+            stale_count=1,
+            tracked_count=1,
+            staleness_evaluable=False,
+        )

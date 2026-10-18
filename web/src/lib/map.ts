@@ -150,7 +150,8 @@ export interface LayerControl {
 /** The single control that binds the point layer to its coverage underlay (SIG-UI-017). */
 export const POINT_COVERAGE_CONTROL: LayerControl = {
   id: "devices_and_coverage",
-  label: "Devices + where SIG has looked",
+  // P35.20b (SIG-RECON-058): records framing, never "devices".
+  label: "Records + where SIG has looked",
   governs: [POINT_LAYER_ID, COVERAGE_LAYER_ID],
 };
 
@@ -278,13 +279,44 @@ export function coverageEncoding(level: CoverageLevel): CoverageEncoding {
   return COVERAGE_ENCODINGS[level];
 }
 
-/** A national-zoom density bin: how many devices, and how well the cell is covered. */
+/**
+ * A national-zoom density bin: how many RECORDS, and how well the cell is
+ * covered (SIG-RECON-058 — records, never a deduplicated device census).
+ *
+ * P35.20b (ED-44): `jurisdiction` is the cell's plurality *scheme-qualified*
+ * jurisdiction key (the placement run's `jurisdiction_key` when bound, else
+ * the site's declared-scheme bucket — P35.19/P35.18); `jurisdictionCounts`
+ * discloses the full per-key split so a mixed cell never reads as wholly one
+ * jurisdiction and the per-key sums reconcile with the dossier denominators.
+ */
 export interface DensityBin {
   /** The H3 cell id (§19.5, SIG-GEO-011); opaque here. */
   h3: string;
+  /** The plurality scheme-qualified jurisdiction key (a label, not the whole cell). */
   jurisdiction: string;
-  deviceCount: number;
+  /** The full per-jurisdiction-key record split the plurality label summarises. */
+  jurisdictionCounts?: Record<string, number>;
+  /** Observation-level records in the cell (SIG-RECON-058). */
+  recordCount: number;
+  /** Deprecated wire alias for `recordCount` — one release cycle (P35.20b). */
+  deviceCount?: number;
   coverage: CoverageLevel;
+}
+
+/** The record count a bin carries — the data seam normalises the deprecated
+ * `deviceCount` wire alias into `recordCount` before bins reach the page
+ * (`getMapDensityBins`), so this never re-reads the old field (P35.20b). */
+export function binRecordCount(bin: DensityBin): number {
+  return bin.recordCount;
+}
+
+/** The jurisdiction keys a cell spans — every key the cell's records split
+ * over, so plurality is never read as unanimity (ED-44). */
+export function binJurisdictionKeys(bin: DensityBin): string[] {
+  if (bin.jurisdictionCounts && Object.keys(bin.jurisdictionCounts).length > 0) {
+    return Object.keys(bin.jurisdictionCounts).sort();
+  }
+  return [bin.jurisdiction];
 }
 
 /** The number of density buckets an honestly-covered cell is quantised into. */
@@ -297,7 +329,7 @@ export const DENSITY_BUCKETS = 4;
  */
 export interface BinRender {
   h3: string;
-  deviceCount: number;
+  recordCount: number;
   densityBucket: number;
   coverage: CoverageEncoding;
 }
@@ -318,8 +350,8 @@ export function renderBin(bin: DensityBin, maxCount: number): BinRender {
   const bucket =
     cov.valueSuppressed || maxCount <= 0
       ? 0
-      : Math.min(DENSITY_BUCKETS - 1, Math.floor((bin.deviceCount / maxCount) * DENSITY_BUCKETS));
-  return { h3: bin.h3, deviceCount: bin.deviceCount, densityBucket: bucket, coverage: cov };
+      : Math.min(DENSITY_BUCKETS - 1, Math.floor((binRecordCount(bin) / maxCount) * DENSITY_BUCKETS));
+  return { h3: bin.h3, recordCount: binRecordCount(bin), densityBucket: bucket, coverage: cov };
 }
 
 /** The word a value-suppressed bin prints where its count would stand (P34.15, QW-12). */
@@ -331,11 +363,33 @@ export const SUPPRESSED_COUNT_LABEL = "suppressed";
  * `SUPPRESSED_COUNT_LABEL` where it does not. A suppressed figure is NEVER
  * printed — a number on a cell SIG barely looked at reads as confidence the
  * record does not carry.
+ *
+ * P35.20b (ED-44): this is the ONE suppression decision — the accessible table,
+ * the figure text and the SVG titles ALL consume it (see `binAriaLabel`), so a
+ * suppressed value can never leak through one surface while hidden in another.
  */
 export function binCountLabel(bin: DensityBin): string {
   return coverageEncoding(bin.coverage).valueSuppressed
     ? SUPPRESSED_COUNT_LABEL
-    : String(bin.deviceCount);
+    : String(binRecordCount(bin));
+}
+
+/**
+ * The cell's accessible name — what the figure's SVG `<title>` (and any other
+ * textual stand-in) reads (P35.20b / ED-44). Built on `binCountLabel`, the same
+ * suppression decision the table uses: a value-suppressed cell announces
+ * "record count suppressed" here exactly as the table prints "suppressed".
+ */
+export function binAriaLabel(bin: DensityBin): string {
+  const label = binCountLabel(bin);
+  // Every scheme-qualified key the cell's records split over — a mixed cell's
+  // title names all contributing keys so plurality never reads as unanimity.
+  const keys = binJurisdictionKeys(bin).join(", ");
+  const count =
+    label === SUPPRESSED_COUNT_LABEL
+      ? "record count suppressed"
+      : `${label} ${label === "1" ? "record" : "records"}`;
+  return `${keys}: ${count}, coverage ${bin.coverage}`;
 }
 
 // --- National-zoom binning + per-tier point honesty (SIG-UI-019) -----------

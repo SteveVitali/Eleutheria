@@ -299,10 +299,15 @@ def test_worm_backfill_appends_proven_rows_reruns_plus_zero_and_feeds_freshness(
     assert t_row["last_successful_run"] == (later + timedelta(seconds=30)).isoformat()
     # The +0 re-run is the latest success but NOT the latest content change.
     assert t_row["last_content_change"] == (start + timedelta(seconds=span)).isoformat()
-    assert t_row["status"] == "ok"
+    # P35.20b: camreg_t is a fixture source with no registry volatility
+    # declaration — staleness is honestly not evaluable; the backfilled run
+    # dates still land on the row.
+    assert t_row["status"] == "not_evaluable"
     u_row = rows_by_source["camreg_u"]
     assert u_row["last_successful_run"] == NOT_RECORDED
-    assert u_row["status"] == "degraded"  # still only the open legacy run
+    # P35.20b: undeclared class → staleness not evaluable; the open legacy
+    # run is disclosed by the not-recorded dates, never an "ok" or stale 0.
+    assert u_row["status"] == "not_evaluable"
 
 
 def test_no_code_path_updates_or_deletes_ingest_run() -> None:

@@ -214,6 +214,7 @@ def _density_bins(
     licences_by_subject: Mapping[str, set[str]],
     refused_subjects: frozenset[str] | set[str],
     registry: Mapping[str, Any] | None,
+    placements: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, Any], str]:
     """Bin every published tier-0 site point into H3 cells (§19.5, SIG-UI-019).
 
@@ -222,6 +223,14 @@ def _density_bins(
     can never contain a refused byte). The bin itself is the only geometry that
     leaves the producer: cell ids, counts, and a coverage proxy — coordinates
     never travel at finer than cell resolution.
+
+    P35.20b (ED-44): each record's cell→jurisdiction assignment is the
+    scheme-qualified key — the placement run's ``jurisdiction_key`` (K4 §5.3)
+    when bound, else the site's declared-scheme bucket — and every cell
+    discloses its FULL ``jurisdiction_counts`` map, so the per-jurisdiction
+    sums reconcile with the dossier geolocated denominators exactly and a
+    mixed-jurisdiction cell's plurality label is never mistaken for the whole
+    cell (the CA-662-vs-6,139 defect class).
     """
     cells: dict[str, dict[str, Any]] = {}
     contributing_licences: set[str] = set()
@@ -238,7 +247,15 @@ def _density_bins(
         agg = cells.setdefault(cell, {"count": 0, "sources": set(), "jurisdictions": {}})
         agg["count"] += 1
         agg["sources"].update(site.source_ids)
-        j = site.jurisdiction or ""
+        res = placements.get(site.entity_id) if placements is not None else None
+        # The placement run's scheme-qualified key wins when it assigned one;
+        # the site's declared-scheme jurisdiction bucket is the fallback —
+        # both are P35.18/19 keys, never a bare code (ED-29).
+        j = (
+            res.jurisdiction_key
+            if res is not None and res.jurisdiction_key
+            else (site.jurisdiction or "")
+        )
         agg["jurisdictions"][j] = agg["jurisdictions"].get(j, 0) + 1
         contributing_licences.update(licences_by_subject.get(site.entity_id, ()))
         n_points += 1
@@ -246,7 +263,16 @@ def _density_bins(
     bins = [
         {
             "h3": cell,
+            # The plurality key is the cell's LABEL; ``jurisdiction_counts``
+            # discloses the full per-key split so a mixed cell is never read
+            # as wholly one jurisdiction.
             "jurisdiction": _dominant_jurisdiction(agg["jurisdictions"]),
+            "jurisdiction_counts": dict(sorted(agg["jurisdictions"].items())),
+            # SIG-RECON-058: the count is observation-level RECORDS, never a
+            # deduplicated device census. ``deviceCount`` stays emitted as a
+            # deprecated alias for one release cycle (back-compat) — readers
+            # take ``recordCount``.
+            "recordCount": agg["count"],
             "deviceCount": agg["count"],
             "coverage": _coverage_level(len(agg["sources"])),
         }
@@ -270,6 +296,15 @@ def _density_bins(
             "cell coverage = the number of distinct named sources contributing to the "
             "cell: >=3 'high', 2 'partial', 1 'low'; a cell exists only where at least "
             "one published point falls — never a searched-empty claim (SIG-UI-018)"
+        ),
+        jurisdiction_rule=(
+            "a record's cell jurisdiction is the scheme-qualified key of the "
+            "placement run's jurisdiction_key when a placement run is bound "
+            "(P35.19), else the site's declared-scheme jurisdiction bucket "
+            "(P35.18); a cell's 'jurisdiction' is the plurality key and "
+            "'jurisdiction_counts' discloses every key present — the "
+            "per-jurisdiction sums over all cells equal the dossier geolocated "
+            "counts for the same keys (ED-44)"
         ),
         bins=bins,
     )
@@ -713,6 +748,7 @@ def build_analytics(
     materialized_site_runs: Sequence[Mapping[str, Any]] = (),
     ruleset_version: str = "",
     registry: Mapping[str, Any] | None = None,
+    placements: Mapping[str, Any] | None = None,
 ) -> list[AnalyticsArtifact]:
     """Emit the ``web/analytics/`` family for one shaped snapshot (pure).
 
@@ -734,6 +770,9 @@ def build_analytics(
         licences_by_subject=licences_by_subject,
         refused_subjects=refused_subjects,
         registry=registry,
+        # P35.20b (ED-44): the same placement run's scheme-qualified keys the
+        # map layer stamps on assets key each cell's jurisdiction split.
+        placements=placements,
     )
     weight_rows = _claim_weight_rows(raw)
     artifacts = [

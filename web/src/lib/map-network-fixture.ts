@@ -114,11 +114,44 @@ export const MAP_ASSETS: MapAsset[] = [
  * cell ("there really is little here"). They must render distinctly.
  */
 export const DENSITY_BINS: DensityBin[] = [
-  { h3: "8a2a1072b59ffff", jurisdiction: "Oklahoma City", deviceCount: 41, coverage: "high" },
-  { h3: "8a2a1072b58ffff", jurisdiction: "Oklahoma City", deviceCount: 3, coverage: "high" },
-  { h3: "8a44a1a3f6bffff", jurisdiction: "Cimarron County", deviceCount: 2, coverage: "low" },
-  { h3: "8a44a1a3f6affff", jurisdiction: "Texas County", deviceCount: 0, coverage: "none" },
-  { h3: "8a2a1072a4bffff", jurisdiction: "Tulsa", deviceCount: 18, coverage: "partial" },
+  // P35.20b (ED-44): scheme-qualified jurisdiction keys (P35.18/P35.19) with
+  // the full per-key split disclosed; the Tulsa cell is deliberately mixed so
+  // the plurality-vs-cell reconciliation is exercised in tests.
+  {
+    h3: "8a2a1072b59ffff",
+    jurisdiction: "iso3166-2:US-OK",
+    jurisdictionCounts: { "iso3166-2:US-OK": 41 },
+    recordCount: 41,
+    coverage: "high",
+  },
+  {
+    h3: "8a2a1072b58ffff",
+    jurisdiction: "iso3166-2:US-OK",
+    jurisdictionCounts: { "iso3166-2:US-OK": 3 },
+    recordCount: 3,
+    coverage: "high",
+  },
+  {
+    h3: "8a44a1a3f6bffff",
+    jurisdiction: "iso3166-2:US-OK",
+    jurisdictionCounts: { "iso3166-2:US-OK": 2 },
+    recordCount: 2,
+    coverage: "low",
+  },
+  {
+    h3: "8a44a1a3f6affff",
+    jurisdiction: "unresolved",
+    jurisdictionCounts: { unresolved: 0 },
+    recordCount: 0,
+    coverage: "none",
+  },
+  {
+    h3: "8a2a1072a4bffff",
+    jurisdiction: "iso3166-2:US-OK",
+    jurisdictionCounts: { "iso3166-2:US-OK": 11, "iso3166-2:US-KS": 7 },
+    recordCount: 18,
+    coverage: "partial",
+  },
 ];
 
 /** The low-coverage cell the agentic AC3 checks against ("we don't know"). */
