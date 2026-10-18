@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "9959c4914415331b2d5a934042a0c593cfc11a1b",
-  "manifest_inputs": 1056,
+  "input_commit": "3d0fc396e82191588438960df8a42d6e051d704e",
+  "manifest_inputs": 1057,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.24",
-    "lastCompleted": "P35.22",
+    "nextTicket": "P35.25",
+    "lastCompleted": "P35.24",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.22-truthful-claim-identity",
+    "chainTip": "r11/P35.24-truthful-subject-keys-and-re-keying",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-18T03:05:00Z"
+    "updatedAt": "2026-10-18T09:02:00Z"
   },
   "counts": {
     "obligations": 168,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 45,
+    "return_pass_rows": 46,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8979,6 +8979,14 @@
         "gates_cell": "hosted, production write — QUEUED, never exercised this run (`live_verification=false`); the operator's HG-03 flips of both source rows are the precondition (OP-26 — both stay `ingestion_permitted=false` here); OM-20 — GATE-G4 §4 OM-20 list names P35.17 verbatim (\"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only OCFL objects only; AR-3 + AR-2 window outside the AR-3 freeze",
         "operator_cell": "the HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m` to `ingestion_permitted=true` in an operator-signed commit/row (OP-26), then the re-run inside the authorised window — nothing else until the flips land; the terms capture already landed (both rights packets committed)",
         "rerun_cell": "`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed row 297 (PR #310 — capture not run; no boundary-source bytes fetched, staged, or written)",
+        "obligations": []
+      },
+      {
+        "key": "P35.24",
+        "obligations_cell": "queued hosted legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact",
+        "gates_cell": "hosted write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.24 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERTs + sys_period close; AR-3/AR-2 outside the AR-3 freeze",
+        "operator_cell": "nothing until the live re-run — plan is the default; `--apply` in-window; rollback forward-only",
+        "rerun_cell": "`implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · row 303 landed (PR #318)",
         "obligations": []
       }
     ]
@@ -19024,10 +19032,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a5b9ffb1cbedfdcbe2817e8af2bf560d0f947315f9101b787a3a9d3fb622e928",
+  "manifest_sha256": "39e76004ef4414e8486fd937ff15bc8a45ef7ef5540b73084681857dab4728aa",
   "current_md": {
     "lines": 63,
-    "bytes": 15608,
+    "bytes": 15620,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

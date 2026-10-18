@@ -1,5 +1,5 @@
 # SIG — build ledger (orchestrate-build machine state; committed build memory v2, ADR-073)
-<!-- Archived head bytes (BM-LEDGER-08): prior pointer comment (comments13–17 chain) + stale `> - **State.**` line → docs/build/reports/memory-repair/LEDGER_head_comments18_pre-P35.16.txt (sha256 b655ddfc958e…) — P35.16 orient repair (V11). -->
+<!-- Archived head bytes (BM-LEDGER-08): the comments18 pointer folded byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_comments19_pre-P35.24.txt (sha256 bc8cb68779…) — P35.24 orient repair (V11). -->
 
 > **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; the clause text is archived byte-for-byte (comment above) and binds unchanged; per-ticket subset: manifest `## Operating rules`. Prior modes archived (comments5/6/7 folds).
 >
@@ -9,12 +9,12 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.22 landed (302); live legs L2/L3 queued (OM-20 + next scheduled runs)
-nextTicket:      P35.24                              # row 303 — truthful subject keys + re-keying
-lastCompleted:   P35.22                              # row 302 (truthful claim identity)
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red; #317 head 0c5be9d8 5/5 green (run 39103555541)
+projectStatus:   IN_PROGRESS                           # P35.24 landed (303); live legs queued
+nextTicket:      P35.25                              # row 304 — declared lineage
+lastCompleted:   P35.24                              # row 303 (subject keys + re-key)
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #318@3d0fc39 5/5 (39112003452)
 pauseRequested:  false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.57,P35.67,P36.12
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
 memoryRoot:      docs/build
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.22-truthful-claim-identity # PR #317 (base r11/P35.20b-…)
+chainTip:        r11/P35.24-truthful-subject-keys-and-re-keying # PR #318 (base r11/P35.22-…)
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-18T03:05:00Z
+updatedAt:       2026-10-18T09:02:00Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -428,6 +428,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P35.1c | the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy the `sig-sched-due` job + its ONE hourly trigger + the due-invoker bindings → verify (shape asserts + staged `--dry-run`) → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof (retired absent, kept pin + dispatcher live, closing live-diff + cost delta); read-only/offline evidence landed | hosted, production write; OM-20 — the GATE-G4 §4 enumeration (2026-10-09T17:32Z) predates the C13 split and names 291, never 291a literally → NOT pre-authorised; waits on an operator amendment explicitly naming row 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` operator id required; fresh prestate before the first destructive leg; voided by failed AR-2/red probe/contradicting production read; after `--check` + PR #303 head-bound CI green | explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until the amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only (no ADC/network); rollback deletes the dispatcher trigger+job and replays `scheduled-ops.sh --apply --shape per-source`; the fleet sweep is P35.1b's leg, never this one's | `implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — consolidation queued: GATE-G4's OM-20 list predates the split and never names 291a; production untouched) |
 | P35.16 | the queued hosted correction-write leg: `sig-connectors geometry-corrections --dsn <hosted> --apply` — the `sig.geometry-corrections/1` artifact's append-only defect/correction INSERTs for the seven F-322 groups + read-back | hosted, production write — QUEUED, never exercised this run; OM-20 — GATE-G4 §4 OM-20 list names P35.16 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only INSERTs only; AR-3 + AR-2 window outside the AR-3 freeze | nothing until the live re-run — dry-run is the default; `--apply` only inside the window; rollback forward-only (the claims stand) | `implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true` · landed row 296 (PR #309 — production not touched) |
 | P35.17 | the queued hosted boundary-source capture leg: the OCFL capture of `census_gazetteer_tiger` (TIGER/Line state/county/place + Gazetteer names/points + cartographic 500k) and `natural_earth_10m` (admin-0/admin-1) into the evidence store — append-only objects with digests — then the live pack build + registry assembly + the real `boundaries_root` | hosted, production write — QUEUED, never exercised this run (`live_verification=false`); the operator's HG-03 flips of both source rows are the precondition (OP-26 — both stay `ingestion_permitted=false` here); OM-20 — GATE-G4 §4 OM-20 list names P35.17 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only OCFL objects only; AR-3 + AR-2 window outside the AR-3 freeze | the HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m` to `ingestion_permitted=true` in an operator-signed commit/row (OP-26), then the re-run inside the authorised window — nothing else until the flips land; the terms capture already landed (both rights packets committed) | `implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed row 297 (PR #310 — capture not run; no boundary-source bytes fetched, staged, or written) |
+| P35.24 | queued hosted legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact | hosted write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.24 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERTs + sys_period close; AR-3/AR-2 outside the AR-3 freeze | nothing until the live re-run — plan is the default; `--apply` in-window; rollback forward-only | `implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · row 303 landed (PR #318) |
 
 Sources: OPERATIONAL_READINESS.md §(f3) (sha256 `581fcb5558ca…`, @ `45dcc789`) — blocking domains + packets; `UNIVERSE_DISPOSED.csv` (sha256 `7af12151e419…`) + plan §9.2/§8.6 — dispositions; `data/round11_plan.csv` — gates + order. Not RETURN PASS rows (one other home, §9.2): the 9 `ticket`-disposed rows (e.g. D-R10-MEMORY-1 → P34.30, D-P32.16-1 → P37.59), the 9 `later-phase` rows (LATER-01/02/03/04/06/17; LATER-10 became P37.70 at S6), the 7 `decision` rows (GATE-P), the 2 `already-done` (D-P21.3-2, D-SOURCES.12-1) — SEED-14 records the DEFERRALS re-homing. *Agent interpretation:* B3 keys by the `live-return-pass(<ticket>)` ticket — keys are landed R10 tickets (§8.6: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a); a key is never re-dispatched — the leg runs as the named R11 row (chain order or OM-19 leg).
 
@@ -1053,3 +1054,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-18 — P35.20b ticket — `ci: pass #316@3397c38` · `runs/P35.20b.md` · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-18 — P35.20b dispatch boundary-confirm — closeout head `2526dd46` 5/5 green head-bound (`ci: pass #316@2526dd4` — run 39092858725; `reports/ci/p35_20b_pr316.json` refreshed 03:28Z) · stack verbatim `blockedOn: CI fail on #299@19ed46d (docs)` waived baseline · P35.20b CLOSED → next → P35.22 (302) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-18 — P35.22 ticket — `ci: pass #317@6ff028e` · `runs/P35.22.md` · legs L2/L3 QUEUED to OM-20 conditional (next scheduled runs + `/status/` notice + dedup-parity report) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-18 — P35.24 ticket — `ci: pass #318@3d0fc39` · `runs/P35.24.md` · legs QUEUED to OM-20 (hosted re-key + `/status/` + collision artifact) · harness: devin-desktop/swe-2-high/subagent
