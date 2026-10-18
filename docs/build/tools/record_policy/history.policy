@@ -510,3 +510,13 @@ seed-commit 0a55c334
 # Scope: findings attributed to 8bb8d260 only; no other commit borrows the
 # exemption.
 seed-commit 8bb8d260
+# P35.26 (row 305) — 66ac4ac7 repairs the PHASE LOG entry's kind in place
+# (`ticket` → `correction — ticket record`) after the d73632aa docs leg
+# flagged the missing head-bound `ci:` field — the sanctioned P35.25
+# (8bb8d260) in-place kind repair: no record dropped (git history carries
+# the original byte), the verified `ci:` verdict lands in the following
+# post-closeout record entry, and the why is recorded in runs/P35.26.md.
+# The branch rule forbids force-push, so the declaration lands as a later
+# commit. Scope: findings attributed to 66ac4ac7 only; no other commit
+# borrows the exemption.
+seed-commit 66ac4ac7
