@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "e81536138e8b231e927c70c07b3d69800467e661",
+  "input_commit": "9959c4914415331b2d5a934042a0c593cfc11a1b",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "b07a11d8d32e8bd10080fb9977bd80ea259e8061a2bb86a9e53279d360b9ba06"
+      "sha256": "03b17aa9652b09575111d2c720ffb5784178f5cc9072e239845aa4bce63f547b"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -837,12 +837,16 @@
       "sha256": "ac33cac1f7a3f017495d3930bb017c981385e7323b14b7a6ef54c545dbb9b59e"
     },
     {
+      "path": "docs/adr/ADR-212-truthful-subject-keys-pinned-field-sets-and-append-only-re-keying.md",
+      "sha256": "40fd97f13528bccc923e211ae33c373e2d6d4ed2ce812b509f0bd4247b08d6f4"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "1fbf5ec7119b48d37ea76b89b1a56dfa03b315d6dce2babf3e93489692c18a64"
+      "sha256": "9dbba24d1871d2a694faa790a4694cad8fd685ca3ad057762b2945396c1926b2"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "c0551f5a75b4e9c309fc2fd1562783236f5b1b87d9eda00fcb4650cb85335cac"
+      "sha256": "2507aaba9ca4cf9124576224a13768ceeda8af55cc24a4a21f715951584e63b0"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",

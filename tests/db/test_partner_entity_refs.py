@@ -314,7 +314,7 @@ def test_the_materializers_run_over_the_emitted_claims(clean_dsn: str) -> None:
         synthetic = [
             # camera --operator--> bureau
             {
-                "subject_id": "traffic_camera:p32x_sync_1",
+                "subject_id": "traffic_camera:src_p32x:tgt_p32x:sync_1",
                 "predicate_id": "camera_operator",
                 "value": "Example Operations Bureau",
                 "source_id": "src_p32x",
@@ -322,7 +322,7 @@ def test_the_materializers_run_over_the_emitted_claims(clean_dsn: str) -> None:
             },
             # ...and a second camera — same operator
             {
-                "subject_id": "traffic_camera:p32x_sync_2",
+                "subject_id": "traffic_camera:src_p32x:tgt_p32x:sync_2",
                 "predicate_id": "camera_operator",
                 "value": "Example Operations Bureau",
                 "source_id": "src_p32x",
@@ -399,7 +399,7 @@ def test_the_materializers_run_over_the_emitted_claims(clean_dsn: str) -> None:
             str(r[0])
             for r in conn.execute(
                 "SELECT entity_id FROM entity_identifier WHERE scheme = 'sig.connector.subject'"
-                " AND value LIKE 'traffic_camera:p32x%%'"
+                " AND value LIKE 'traffic_camera:src_p32x%%'"
             ).fetchall()
         }
         assert len(cameras) == 4

@@ -55,6 +55,7 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from db.subject_keys import mint_subject_key
 from resolution.ori import is_valid_ori
 
 from ._data import load_table
@@ -542,7 +543,14 @@ class AtlasConnector(Connector):
         genre, loss = self._resolve_genre(raw)
         row: dict[str, Any] = {
             "record_kind": "claim",
-            "subject_id": f"atlas:{agency}:{mapping['family']}",
+            # P35.24 / ADR-212 (F-506): state-scoped pinned key — two states'
+            # coincidentally-equal agency strings never merge into one subject.
+            "subject_id": mint_subject_key(
+                "atlas_agency",
+                state=_opt_ctx(raw, "State"),
+                agency=agency,
+                family=str(mapping["family"]),
+            ),
             # SIG-INGEST-033: hard gate — the ONLY claim predicate the atlas
             # connector writes. Raises PredicateNotAllowed on anything else.
             "predicate_id": assert_predicate_allowed(DEPLOYMENT_EXISTS_PREDICATE),
@@ -574,7 +582,7 @@ class AtlasConnector(Connector):
     def _unmapped_row(self, raw: Mapping[str, Any], attribution: str) -> dict[str, Any]:
         agency = str(raw["agency"])
         category = str(raw["category"])
-        subject_id = f"atlas:{agency}"
+        subject_id = mint_subject_key("atlas_agency", state=_opt_ctx(raw, "State"), agency=agency)
         return _stamp(
             {
                 "record_kind": "unmapped_category",
@@ -617,6 +625,15 @@ class AtlasConnector(Connector):
         stamped into the CC-BY-4.0 SIG graph compartment in :meth:`normalize`.
         """
         return load_claims_for_l1(linked)
+
+
+def _opt_ctx(raw: Mapping[str, Any], key: str) -> str | None:
+    """A context column value for key pinning — absent columns mint `unscoped`."""
+    ctx = raw.get("context")
+    if not isinstance(ctx, Mapping):
+        return None
+    value = str(ctx.get(key) or "").strip()
+    return value or None
 
 
 # --- module-private helpers ---------------------------------------------------

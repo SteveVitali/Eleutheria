@@ -100,7 +100,7 @@ def _connector() -> Any:
         ) -> list[dict[str, Any]]:
             out: list[dict[str, Any]] = []
             for row in raw_claims:
-                subject = f"traffic_camera:p31_4:{row['FID']}"
+                subject = f"traffic_camera:p31_4:paged:{row['FID']}"
                 base = {"subject_id": subject, "source_id": "p31_4_paged", "spdx": "ODbL-1.0"}
                 out.append({**base, "predicate_id": "sig.test.name", "value": row["name"]})
                 out.append({**base, "predicate_id": "sig.test.fid", "value": row["FID"]})

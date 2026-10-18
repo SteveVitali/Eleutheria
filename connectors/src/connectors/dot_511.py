@@ -57,6 +57,7 @@ from typing import Any
 from urllib.parse import urlencode
 from uuid import uuid4
 
+from db.subject_keys import assert_unique_within, mint_subject_key
 from parsing.locator import Locator
 from policy.parcel_screen import (
     PARCEL_SCREEN_VERDICTS,
@@ -2159,7 +2160,15 @@ class CameraRegistryEntry:
         # makes the fork permanent). The declared-subtype correction rides the
         # ``technology`` claim + the entity row's ``record_kind``; P35.15b's
         # backfill writes technology claims onto these existing subjects.
-        return f"traffic_camera:{self.source_id}:{self.target_id}:{self.camera_ref}"
+        # P35.24 / ADR-212: the value mints through the declared pin grammar
+        # (subject_key_pins.toml — same byte shape, one derivation on both
+        # sides); a ref carrying ':' can never reach the spine.
+        return mint_subject_key(
+            "traffic_camera",
+            source_id=self.source_id,
+            target_id=self.target_id,
+            camera_ref=self.camera_ref,
+        )
 
     def evidence(self, source_url: str, retrieved_date: str, feature_index: int) -> dict[str, Any]:
         """The evidence dict every claim carries — capture URL + row locator.
@@ -2734,6 +2743,11 @@ class Dot511Connector(Connector):
         out: list[dict[str, Any]] = []
         emitted = 0
         rejected = 0
+        # P35.24 / ADR-212 (GQ-04): within one capture one subject key maps to
+        # exactly one upstream row. Two entries minting the same pinned key
+        # (a non-unique declared camera_ref upstream — the F-518 defect class)
+        # fails the TARGET RUN closed rather than silently merging records.
+        minted_keys: list[str] = []
         for raw in raw_claims:
             target: Mapping[str, Any] = raw.get("target") or {}
             if raw.get("record_kind") in ("enforcement_aggregate", "programme_aggregate"):
@@ -2767,11 +2781,15 @@ class Dot511Connector(Connector):
                 out.append(_rejection_row(ctx.source.id, raw, target, reason, str(exc)))
                 continue
             emitted += 1
+            minted_keys.append(entry.subject_id)
             out.extend(
                 entry.claim_rows(
                     str(raw["source_uri"]), str(raw["retrieved_at"]), int(raw["feature_index"])
                 )
             )
+        # GQ-04: per-capture key uniqueness — a collided mint aborts the run
+        # (SubjectKeyCollision propagates; never a silent merge of two rows).
+        assert_unique_within(minted_keys, context=f"capture for target {ctx.source.id}")
         if raw_claims and emitted == 0 and rejected > 0:
             raise ContentDrift(
                 ctx.source.id,
