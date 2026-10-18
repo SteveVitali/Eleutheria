@@ -493,3 +493,15 @@ seed-commit fabd79b2
 # Scope: findings attributed to 0a55c334 only; no other commit borrows the
 # exemption.
 seed-commit 0a55c334
+
+# ── P35.25 orient-budget entry compaction (recorded 2026-10-18) ───────────
+# 9c22c35c went red (run 39125675964): the pushed 703 B PHASE LOG
+# `correction` entry drove the orient probe to 49,465 B > 48 KiB
+# (BM-ORIENT-01). 8bb8d260 compacts the entry in place to 317 B — the
+# P36.9b oversized-entry precedent (no record dropped: the full text is in
+# git history at 0a55c334 and the why is recorded in runs/P35.25.md).
+# Same sanctioned in-place pattern as 56d0b7f9/0a55c334. The branch rule
+# forbids force-push, so the declaration lands as a later commit.
+# Scope: findings attributed to 8bb8d260 only; no other commit borrows the
+# exemption.
+seed-commit 8bb8d260
