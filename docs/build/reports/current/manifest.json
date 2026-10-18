@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "79f1f261f389fbb2d88efa264dc9545a4bd9e774",
+  "input_commit": "a9982a6b68c71c22328ff1ca323e34ad0ea0431b",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "b2363255cf017d4a9153c6cdab4bbe230b4a7613e5b76add3e72543aabc4ef80"
+      "sha256": "e97239622ec54404d5d3275bf10b2741440ec7e911dc0aeb3cc4c72dfe4690a6"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -845,16 +845,20 @@
       "sha256": "05e75cea11ec8619b250e14697097d7cd3c45a9cfac34c7d368ccb4dc55458c6"
     },
     {
+      "path": "docs/adr/ADR-214-role-edges-dated-time-and-recorded-supersession.md",
+      "sha256": "9b94e5bf2ccc6654bf546d679f250e291295a8f8f2f4141487253dc22a61dec0"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "9cc30a4bfbd2a7864d07d707aac1d5cccedaf21798c322c7e740b84446270e2d"
+      "sha256": "26e608019f2713c8c80388c5f593dadbd0e1dc082b80679934be55c801e7e28f"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "bf9ba2aa224cbb713eaa73d17620404981fa3f428732c703775fe49beb067369"
+      "sha256": "fca6798fd49df9539d462de2773565b142350361ca41aea60bcabf87e07fc551"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "cb57bbff1b18e7c3e1ae1fa5a12c8d723b845e68f840e154addac76dd04f42d3"
+      "sha256": "24eefd226a2e05cdd9f6eca475760d57342f4e88afa46dd3f99838ffe68a2cc6"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -862,7 +866,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "3b35c30c2cdc672255bff7901ac9875babcc66c6b909158c94830883ea25f7ae"
+      "sha256": "9a37c8053963b559a3245188e5b9f5e9756da29c73c985ec76f4aa9101b48051"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1997,6 +2001,10 @@
       "sha256": "b231fec4cc8e8541ad56600aaedc325bd28e5d3fc2cf59f5cf52d1fab0301cba"
     },
     {
+      "path": "docs/build/runs/P35.26.md",
+      "sha256": "2061afcb51d559ff049760efa4350c836851caaaf501f9e428efdf217bc2c5bb"
+    },
+    {
       "path": "docs/build/runs/P35.28.md",
       "sha256": "2ff5dd2151e644c9d5dcb3ead15c6e479516d7f4b09c7707ac58629cc229d6b6"
     },
@@ -2206,7 +2214,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "edfad1c4a8992f54fd76104eae456d69e97f86d5221181a0e6a88def26c500b3"
+      "sha256": "b57619bb6e48b4f803d8370730d189eb862abfce1e5e06109b66c2d7ccbe1507"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
