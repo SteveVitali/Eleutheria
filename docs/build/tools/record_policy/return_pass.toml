@@ -929,7 +929,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
 key = "P35.1b"
 kind = "leg"
 obligations = []
-obligations_cell = '''the queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + verified AR-2 backup → the four cron reconciles → sig-export exit-64 guard roll → the six `[[retired_jobs]]` deletes → AR policy apply → `sig-alerts` disposition → post-sweep proof; read-only prechecks landed'''
+obligations_cell = '''the queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + verified AR-2 backup → the four cron reconciles → exit-64 guard roll → the six `[[retired_jobs]]` deletes → AR policy apply → `sig-alerts` disposition → post-sweep proof'''
 gates_cell = '''hosted, production write — QUEUED, not run (`live_verification=false`); OM-20 conditional — the GATE-G4 OM-20 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires at the next GATE, OM-10); AR-3 + AR-2 weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_SWEEP_AUTHOR` required; AR-2 backup SUCCESSFUL + fresh prestate first; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #302 head-bound CI green'''
 operator_cell = '''nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only; rollback replays the recorded cron pre-states + per-job recreation recipes; dispatcher consolidation is P35.1c's leg'''
 rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — sweep queued on the closed 2026-10-16T01:25Z out-of-window attempt, exit 42; production never touched)'''
@@ -949,7 +949,7 @@ obligations = []
 obligations_cell = '''the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy `sig-sched-due` + its ONE hourly trigger + due-invoker bindings → verify → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof; read-only evidence landed'''
 gates_cell = '''hosted, production write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 enumeration (2026-10-09T17:32Z) predates the C13 split, names 291 not 291a → NOT pre-authorised — needs an operator amendment naming row 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` required; fresh prestate first; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #303 head-bound CI green'''
 operator_cell = '''explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job and replays `scheduled-ops.sh --apply --shape per-source`; the fleet sweep is P35.1b's leg'''
-rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — consolidation queued: GATE-G4's OM-20 list predates the split and never names 291a; production never touched)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — queued; the OM-20 list predates the C13 split; production never touched)'''
 
   [[row.legs]]
   id = "P35.1c-dispatcher-consolidation-live"
