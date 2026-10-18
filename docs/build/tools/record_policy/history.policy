@@ -478,3 +478,18 @@ seed-commit 56d0b7f9
 # Scope: findings attributed to fabd79b2 only; no other commit borrows the
 # exemption.
 seed-commit fabd79b2
+
+# ── P35.25 ci-field kind repair (recorded 2026-10-18) ─────────────────────
+# e9494c96's pushed PHASE LOG ticket entry carried `ci: pending head-bound
+# read` — unparseable to verify-recorded-ci (run 39123947703) and no verified
+# green #319 head exists to carry (impl ec36344c cancelled; e9494c96 red on
+# coverage-matrix routing + a copy-batch live-claim). 0a55c334 corrects the
+# kind token in place — `ticket` → `correction` (NON_CI_KINDS; the entry
+# carries the ticket record verbatim in the payload and the verified ci lands
+# at the next record entry) — the sanctioned in-place pattern of
+# ef1fb3bf/6fe93216/64648080/21a392ca/49607976/917dd2a5/4ce44ed9/56d0b7f9.
+# The branch rule forbids force-push, so the declaration lands as a later
+# commit rather than a reworded subject.
+# Scope: findings attributed to 0a55c334 only; no other commit borrows the
+# exemption.
+seed-commit 0a55c334
