@@ -1,11 +1,11 @@
 {
-  "_note": "L3 byte-identical rebuild sample (SIG-RECON-020). Regenerate with make gen or the P08.3 generator when the ruleset/resolver version changes. P32.3: repinned at ruleset 2026.2 (+UNRESOLVED_SCOPE_MIXED). P32.4: repinned \u2014 the digest token now carries the shared-contract ordering instant (ADR-123), so a same-day re-sighting moves input_digest. P35.25: claims now declare independence_class (SIG-CONF-014 \u2014 undeclared claims resolve unclassified, never independent), resolver p08.1/1.1.0.",
+  "_note": "L3 byte-identical rebuild sample (SIG-RECON-020). Regenerate with make gen or the P08.3 generator when the ruleset/resolver version changes. P32.3: repinned at ruleset 2026.2 (+UNRESOLVED_SCOPE_MIXED). P32.4: repinned \u2014 the digest token now carries the shared-contract ordering instant (ADR-123), so a same-day re-sighting moves input_digest. P35.25: claims now declare independence_class (SIG-CONF-014 \u2014 undeclared claims resolve unclassified, never independent), resolver p08.1/1.1.0. P35.27: the digest token now carries the valid-time bounds + declared directness (CP-9/F-519 \u2014 every decision input moves the input digest), resolver p08.1/1.2.0, ruleset 2026.3.",
   "subject_id": "dep:okc",
   "predicate_id": "active_device_count",
   "as_of_world": "2026-09-01",
   "as_of_belief": "2026-09-01",
-  "ruleset_version": "2026.2",
-  "resolver_version": "p08.1/1.1.0",
+  "ruleset_version": "2026.3",
+  "resolver_version": "p08.1/1.2.0",
   "claims": [
     {
       "claim_id": "claim:portal-2026-07",
@@ -19,7 +19,10 @@
       "source_id": "src:okc-portal",
       "independence_class": "src:okc-portal",
       "count_basis": "active",
-      "structured_exact": true
+      "structured_exact": true,
+      "valid_from": null,
+      "valid_to": null,
+      "declared_directness": null
     },
     {
       "claim_id": "claim:minutes-2026-06",
@@ -33,7 +36,10 @@
       "source_id": "src:okc-council",
       "independence_class": "src:okc-council",
       "count_basis": "active",
-      "structured_exact": false
+      "structured_exact": false,
+      "valid_from": null,
+      "valid_to": null,
+      "declared_directness": null
     },
     {
       "claim_id": "claim:news-2026-05",
@@ -47,10 +53,13 @@
       "source_id": "src:local-news",
       "independence_class": "src:local-news",
       "count_basis": "active",
-      "structured_exact": false
+      "structured_exact": false,
+      "valid_from": null,
+      "valid_to": null,
+      "declared_directness": null
     }
   ],
-  "expected_input_digest": "8db95922101df58150a9ca2d284c74b0564d7c89c47192244bcf42427fd248ac",
+  "expected_input_digest": "2283bdd35ea3716a25802e23886de798fad6121974ae05d0332623dddb0e81ce",
   "expected_decision_key": [
     "RESOLVED",
     "38",
@@ -82,6 +91,6 @@
       "SIG-RECON-007"
     ],
     null,
-    "8db95922101df58150a9ca2d284c74b0564d7c89c47192244bcf42427fd248ac"
+    "2283bdd35ea3716a25802e23886de798fad6121974ae05d0332623dddb0e81ce"
   ]
 }

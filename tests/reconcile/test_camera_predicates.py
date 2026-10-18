@@ -218,11 +218,19 @@ def test_values_within_tolerance_corroborate_one_observed_value() -> None:
     res = _resolve("camera_latitude", [a, b])
     assert res.resolution_status == "RESOLVED"
     assert set(res.supporting_claim_ids) == {"c-a", "c-b"}
-    assert res.dissenting_claim_ids == ()
+    # P35.27 (F-519): the within-tolerance literal disagreement is disclosed —
+    # the differing member is the ``contested`` dissent signal (recorded in
+    # dissenting ids + MINOR_DISAGREEMENT), never silently absorbed, and never
+    # a contradiction (the state stays ``uncontested``).
+    assert res.contradiction_state == "uncontested"
+    assert res.agreement == "MINOR_DISAGREEMENT"
+    assert res.contested_claim_ids == ("c-b",)
+    assert res.dissenting_claim_ids == ("c-b",)
     # the winning value is one of the observed values — never an average (§19.4).
     assert res.value in {35.46760, 35.46790}
     assert res.value != pytest.approx((35.46760 + 35.46790) / 2)
     assert "SIG-RECON-014:value_tolerance" in res.rules_fired
+    assert "SIG-RECON-053:contested" in res.rules_fired
 
 
 def test_values_beyond_tolerance_stay_unresolved_and_visible() -> None:
@@ -268,7 +276,9 @@ def test_two_pools_beyond_tolerance_fire_the_absolute_u4() -> None:
     assert res.resolution_status == "UNRESOLVED"
     assert res.unresolved_code == "U4"
     assert res.contradiction_state == "unresolved_conflict"
-    assert set(res.dissenting_claim_ids) == {"c-c"}
+    # P35.27: dissenting = the losing candidate's member (c-c) PLUS the winner
+    # pool's own within-tolerance contested member (c-b) — disclosed dissent.
+    assert set(res.dissenting_claim_ids) == {"c-b", "c-c"}
 
 
 def test_absolute_u4_only_applies_to_tolerance_predicates() -> None:
@@ -386,13 +396,16 @@ def _row(
     # (capture_id / bound_at); the four trailing columns are the P32.3
     # qualifier read-through (count_scope / detail / jurisdiction / origin);
     # then the P35.25 lineage columns (independence_class, id_namespace,
-    # lineage-derived ancestry, claim-stored derived_from_claim_ids).
+    # lineage-derived ancestry, claim-stored derived_from_claim_ids); then the
+    # P35.27 truthful-input columns (valid lower/upper, claim_directness,
+    # assertion_map_basis — NULL/None basis = undeclared on this stub spine).
     return (
         subject, pred, cid, "value", text, num, None, text, None,  # observed_at NULL
         "R3", "I1", "active", "dot_511_ok", "camera_registry", datetime(2026, 9, 18, 3),
         f"cap-{cid}", datetime(2026, 9, 18, 3),
         count_scope, count_scope_detail, count_scope_jurisdiction, evidence_origin,
         None, None, None, None,  # P35.25 lineage: undeclared on this stub spine
+        None, None, "D2", None,  # P35.27: no valid bounds, defaulted directness
     )  # fmt: skip
 
 

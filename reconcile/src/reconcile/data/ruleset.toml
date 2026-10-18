@@ -22,7 +22,7 @@
 # would create two sources of truth. The ordinal weight-composition table is the
 # §10.6 spec constant implemented and pinned to Appendix D.2 in reconcile.weight.
 
-ruleset_version = "2026.2"  # P32.3: +UNRESOLVED_SCOPE_MIXED (SIG-TRUST-004)
+ruleset_version = "2026.3"  # P35.27: +RESOLVED_CONTENDED_TOLERANCE (CP-9/F-519 — the within-tolerance dissent signal's rationale)
 
 # --- numeric tolerance (SIG-RECON-014 U4; §10.7 MINOR_DISAGREEMENT) -----------
 # The relative spread (max-min)/max above which two competing numeric values are
@@ -80,6 +80,7 @@ prohibited_adjectives = [
 [templates]
 RESOLVED_DIRECT = "{value}, as reported by {source} captured {observed_at}. {source} is the most direct available source for {predicate_label}."
 RESOLVED_OVER_DISSENT = "{value}, as reported by {source} captured {observed_at}, the most direct available evidence for {predicate_label}. A competing figure of {dissent_value} ({dissent_source}, {dissent_observed_at}) carries less weight and is retained with its evidence."
+RESOLVED_CONTENDED_TOLERANCE = "{value}, as reported by {source} captured {observed_at}. {n_contested} further claim(s) differ within the declared tolerance for {predicate_label}; the differing values stay recorded as dissent."
 RESOLVED_CONFIRMED_MULTI = "Confirmed. {n_classes} independent sources using different collection methods — {methods} — record {predicate_label} of {value}."
 RESOLVED_LOWER_BOUND = "{value} devices independently mapped by {source} ({observed_at}); a lower bound on the physical population, never an estimate of {predicate_label}."
 UNRESOLVED_NO_EVIDENCE = "Unresolved. No admissible source establishes {predicate_label}."

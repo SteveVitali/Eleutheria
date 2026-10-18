@@ -90,6 +90,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the edges (default is a dry-run — the queued hosted leg reviews first)",
     )
 
+    report = sub.add_parser(
+        "rematerialize-report",
+        help="READ-ONLY before/after diff of a rematerialize under the truthful "
+        "inputs (P35.27 / CP-9, F-519): recomputes every pair, names each delta "
+        "class, writes nothing — the queued OM-20 leg's dry-run artifact",
+    )
+    report.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    report.add_argument("--jurisdiction", default=None, help="jurisdiction token filter")
+    report.add_argument("--subject", default=None, help="restrict to one subject entity id")
+    report.add_argument("--predicate", default=None, help="restrict to one predicate id")
+    report.add_argument("--role", default=None, help="optional role to SET ROLE to")
+
     contradictions = sub.add_parser(
         "materialize-contradictions",
         help="run §29 reconciliation + the §28 resolver over the resolved spine and WRITE the "
@@ -158,6 +170,8 @@ def main(argv: list[str] | None = None) -> int:
         return _materialize_edges(args)
     if args.command == "materialize-role-edges":
         return _materialize_role_edges(args)
+    if args.command == "rematerialize-report":
+        return _rematerialize_report(args)
     if args.command == "materialize-contradictions":
         return _materialize_contradictions(args)
     parser.print_help()
@@ -228,6 +242,21 @@ def _materialize_role_edges(args: argparse.Namespace) -> int:
         dry_run=not args.apply,
     )
     print(json.dumps(summary.as_dict(), indent=2))
+    return 0
+
+
+def _rematerialize_report(args: argparse.Namespace) -> int:
+    """The read-only before/after rematerialize diff (P35.27) — writes nothing."""
+    from .materialize import rematerialize_report_from_dsn
+
+    report = rematerialize_report_from_dsn(
+        args.dsn,
+        jurisdiction=args.jurisdiction,
+        subject=args.subject,
+        predicate=args.predicate,
+        role=args.role,
+    )
+    print(json.dumps(report.as_dict(), default=str, indent=2))
     return 0
 
 

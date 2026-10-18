@@ -139,7 +139,22 @@ def render_rationale(
 ) -> tuple[str, str]:
     """Return ``(rationale_code, rationale_text)`` for a resolution (SIG-RECON-022)."""
     has_dissent = second is not None
-    rationale_code = _select_code(status, code, predicate_id, support, has_dissent)
+    # P35.27 (F-519): a winner whose only dissent is within-tolerance pooled
+    # jitter (no second candidate) gets the contested-dissent rationale — the
+    # disagreement is disclosed in the sentence, never silently absorbed. The
+    # RESOLVED_* template is only honest on a RESOLVED outcome — an UNRESOLVED
+    # resolution with contested members keeps its UNRESOLVED_* code.
+    contested_only = (
+        status == "RESOLVED"
+        and winner is not None
+        and not has_dissent
+        and bool(winner.contested_claim_ids)
+    )
+    rationale_code = (
+        "RESOLVED_CONTENDED_TOLERANCE"
+        if contested_only
+        else _select_code(status, code, predicate_id, support, has_dissent)
+    )
     template = ruleset.template(rationale_code)
 
     label = _label(predicate_id)
@@ -151,6 +166,7 @@ def render_rationale(
             source=_source_of(winner),
             observed_at=rep.observed_at.isoformat(),
             n_classes=len(winner.supporting_class_ids),
+            n_contested=len(winner.contested_claim_ids),
             methods=", ".join(dict.fromkeys(winner.class_methods)),
             last_known_date=rep.observed_at.isoformat(),
         )
@@ -246,6 +262,7 @@ REPRESENTATIVE_FILL: dict[str, object] = {
     "dissent_source": "the executed contract",
     "dissent_observed_at": "2025-04-03",
     "n_classes": 3,
+    "n_contested": 2,
     "methods": "an executed contract, council minutes, and a vendor press release",
     "age_human": "31 months",
     "half_life_human": "6 months",

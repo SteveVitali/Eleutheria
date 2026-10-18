@@ -79,6 +79,11 @@ def claim_dict(c: Claim) -> dict:
         "independence_class": c.independence_class,  # P35.25
         "count_basis": c.count_basis,
         "structured_exact": c.structured_exact,
+        # P35.27: the valid-time bounds + declared directness are decision
+        # inputs too — pinned on the sample so a regen shows them (null here).
+        "valid_from": c.valid_from.isoformat() if c.valid_from else None,
+        "valid_to": c.valid_to.isoformat() if c.valid_to else None,
+        "declared_directness": c.declared_directness,
     }
 
 
@@ -89,7 +94,10 @@ sample = {
     "— the digest token now carries the shared-contract ordering instant "
     "(ADR-123), so a same-day re-sighting moves input_digest. P35.25: claims now "
     "declare independence_class (SIG-CONF-014 — undeclared claims resolve "
-    "unclassified, never independent), resolver p08.1/1.1.0.",
+    "unclassified, never independent), resolver p08.1/1.1.0. P35.27: the digest "
+    "token now carries the valid-time bounds + declared directness (CP-9/F-519 — "
+    "every decision input moves the input digest), resolver p08.1/1.2.0, "
+    "ruleset 2026.3.",
     "subject_id": "dep:okc",
     "predicate_id": "active_device_count",
     "as_of_world": "2026-09-01",

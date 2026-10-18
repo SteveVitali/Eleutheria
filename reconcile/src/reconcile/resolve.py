@@ -47,7 +47,13 @@ from .weight import (
 #: ``unclassified`` pseudo-class instead of each standing as its own class —
 #: corroboration counts change wherever lineage was never declared (the
 #: truthful direction), so the resolver version moves.
-RESOLVER_VERSION = "p08.1/1.1.0"
+#: P35.27 (CP-9 / CONF-05, F-519): resolver *input truth* — the readers now
+#: supply ``valid_period`` bounds (Phase 1.2 was vacuous on the materialize
+#: path) and the connector-DECLARED ``claim_directness`` (weaker of declared
+#: vs the ruleset matrix), and within-tolerance pooled disagreement is
+#: recorded as the ``contested`` dissent signal instead of being silently
+#: absorbed — outcomes change, so the resolver version moves.
+RESOLVER_VERSION = "p08.1/1.2.0"
 
 #: Human currency labels for the four currency classes (§10.7).
 _CURRENCY_LABEL: dict[str, str] = {
@@ -58,6 +64,41 @@ _CURRENCY_LABEL: dict[str, str] = {
 }
 
 _RETRACTED = frozenset({"retracted", "withdrawn"})
+
+#: Probative rank of the §10.5 directness codes — higher is WEAKER
+#: (``D6`` is non-probative). The effective claim directness is the weaker of
+#: the connector's declaration and the ruleset matrix value.
+_D_RANK: dict[str, int] = {f"D{i}": i for i in range(1, 7)}
+
+
+def declared_directness(
+    claim_directness: str | None, assertion_map_basis: str | None
+) -> str | None:
+    """The connector-DECLARED directness on a stored claim (P35.27, CP-9).
+
+    ``claim.claim_directness`` is ``NOT NULL`` and the P32.2 sink writes the
+    schema default ``D2`` when a record declares none — a *defaulted* D2 is
+    the absence of a declaration, never a declared D2, or every claim would
+    silently override the (genre × predicate) matrix. The writer records that
+    default in ``claim.assertion_map_basis`` as
+    ``claim_directness=connector_default_D2``; rows written before that basis
+    column existed (NULL / ``legacy_synthetic``) never declared a directness
+    at all, so a stored ``D2`` there is likewise undeclared. A non-``D2``
+    stored value is always a real declaration. Returns ``None`` = undeclared,
+    the ruleset matrix governs alone.
+    """
+    if not claim_directness:
+        return None
+    basis = assertion_map_basis or ""
+    if "claim_directness=" in basis:
+        # A recorded default marker (e.g. ``connector_default_D2``): the
+        # connector declared nothing — the column value is the schema default.
+        return None
+    if claim_directness == "D2" and ("legacy_synthetic" in basis or not basis):
+        # Pre-P32.2 write: the record surface carried no directness field, so
+        # a stored D2 is the historical default, not a declaration.
+        return None
+    return claim_directness
 
 
 # --- inputs ------------------------------------------------------------------
@@ -84,8 +125,21 @@ class Claim:
     genre: str
     observed_at: date
     raw_value: str = ""
+    #: The claim's declared valid-time bounds (the ``valid_period`` lower/upper
+    #: dates, P35.27 / §28 Phase 1.2) — the as-of admissibility test honours
+    #: them: a claim whose valid period does not intersect ``as_of_world`` is
+    #: not evidence for the world at that instant, so a temporal non-overlap
+    #: reads as succession, never a conflict.
     valid_from: date | None = None
     valid_to: date | None = None
+    #: The connector-DECLARED per-claim directness (``claim.claim_directness``
+    #: where the connector actually declared it — the ``connector_default_D2``
+    #: sink default is *absence* of declaration, resolved to None by
+    #: :func:`declared_directness`). P35.27 / SIG-EPIS-017: the effective D is
+    #: the WEAKER of this declaration and the ruleset's (genre × predicate)
+    #: matrix value — a declaration may weaken (a D6 non-probative stamp is
+    #: honoured) but never strengthen (the matrix caps).
+    declared_directness: str | None = None
     review_status: str = "active"
     independence_class: str | None = None
     collection_method: str | None = None
@@ -202,7 +256,14 @@ class Claim:
 
     def digest_token(self) -> str:
         if self.content_hash:
-            return f"{self.claim_id}:{self.content_hash}:{self.class_id}"
+            # P35.27 (CP-9): the valid-time bounds and declared directness are
+            # decision inputs even when a content digest stands in for the
+            # value payload — they ride the token the same way (SIG-RECON-020).
+            return (
+                f"{self.claim_id}:{self.content_hash}:{self.class_id}"
+                f"|{self.valid_from or ''}|{self.valid_to or ''}"
+                f"|{self.declared_directness or ''}"
+            )
         # The ordering instant is part of the decision input (SIG-RECON-020): a
         # same-day re-sighting moves it, so it must move the digest too — that is
         # what mints the NEW resolution row and closes the prior one (P31.7).
@@ -210,11 +271,15 @@ class Claim:
         # declaration or backfill that re-classes a claim changes the corroboration
         # structure, and the resolution input digest MUST move so the decision is
         # re-materialized append-only rather than silently standing on a stale class.
+        # P35.27 (CP-9): and so are the valid-time bounds and the connector's
+        # declared directness — a re-perioded or re-graded claim is a different
+        # decision input, so the digest moves and the superseding resolution lands.
         instant = self.observed_instant.isoformat() if self.observed_instant else ""
         payload = (
             f"{self.predicate_id}|{self.value!r}|{self.raw_value}"
             f"|{self.observed_at.isoformat()}|{instant}|{self.source_id}"
             f"|{self.class_id}"
+            f"|{self.valid_from or ''}|{self.valid_to or ''}|{self.declared_directness or ''}"
         )
         return f"{self.claim_id}:{hashlib.sha256(payload.encode()).hexdigest()}"
 
@@ -247,6 +312,15 @@ class Candidate:
     #: ``value_tolerance`` and several agreeing values were pooled into this candidate
     #: (ADR-104); ``None`` for an exact-value candidate.
     value_span: tuple[float, float] | None = None
+    #: P35.27 / CP-9 (F-519): pool members whose literal value DIFFERS from the
+    #: representative's — the within-tolerance disagreement the resolver used to
+    #: silently absorb (0 dissent in the L2 sample). These claims support the
+    #: pooled candidate (their values agree within the declared tolerance) but
+    #: are recorded as the ``contested`` dissent signal: they join the
+    #: resolution's ``dissenting_claim_ids`` and lift agreement to
+    #: ``MINOR_DISAGREEMENT`` — flagged, disclosed, never a contradiction and
+    #: never stronger than ``contested`` on the dissent axis.
+    contested_claim_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -288,6 +362,14 @@ class Resolution:
     #: count as independent corroboration. Derived, never identity-bearing —
     #: deliberately outside ``decision_key``.
     unclassified_claim_ids: tuple[str, ...] = ()
+    #: P35.27 / CP-9 (F-519): the winner's pool members asserting a DIFFERENT
+    #: literal value within the predicate's declared ``value_tolerance`` — the
+    #: ``contested`` dissent signal. They remain in ``supporting_claim_ids``
+    #: (within-tolerance agreement IS support of the pooled candidate) AND are
+    #: folded into ``dissenting_claim_ids`` (they dissent on the literal value —
+    #: the F-519 visibility fix), so this field is derived and deliberately
+    #: outside ``decision_key`` like ``unclassified_claim_ids``.
+    contested_claim_ids: tuple[str, ...] = ()
     last_known_value: object | None = None
     last_known_date: date | None = None
     contradictions: tuple[Contradiction, ...] = ()
@@ -556,16 +638,28 @@ def _admissibility(st: _State, pair: list[Claim]) -> list[Claim]:
             st.drop(c, f"review_status={c.review_status}")
             continue
         if not _intersects_world(c, st.as_of_world):
+            # Phase 1.2 (SIG-RECON-006): a claim whose declared valid period does
+            # not intersect as_of_world is not evidence for the world at that
+            # instant. Temporal non-overlap reads as succession/newer-wins, never
+            # a conflict (P35.27 / CP-9) — two claims asserting different values
+            # for different times are both true. The exclusion is labelled so the
+            # record shows the temporal deconfliction.
+            st.fire("SIG-RECON-006:1.2")
             st.drop(c, "valid_period does not intersect as_of_world")
             continue
         try:
-            d = directness_for(c.predicate_id, c.genre)
+            d = _effective_directness(st, c)
         except KeyError:
             st.drop(c, f"no directness row for genre {c.genre!r}")
             continue
         if d == "D6":
             st.fire("D6-exclude")  # SIG-EPIS-018: admissibility filter, not a weight
-            st.drop(c, "D6 non-probative for this predicate")
+            st.drop(
+                c,
+                "connector-declared D6 non-probative for this predicate"
+                if c.declared_directness == "D6"
+                else "D6 non-probative for this predicate",
+            )
             continue
         if c.observed_at_basis != "claim":
             # The claim carried no observed_at; currency is derived from the capture's
@@ -608,6 +702,32 @@ def _intersects_world(c: Claim, as_of_world: date) -> bool:
     if c.valid_to is not None and as_of_world >= c.valid_to:
         return False
     return True
+
+
+def _effective_directness(st: _State, c: Claim) -> str:
+    """The claim's effective directness ``D`` (P35.27 / CP-9, SIG-EPIS-017/018).
+
+    The ruleset's published (genre × predicate) matrix row is the baseline —
+    ``KeyError`` propagates (an unmapped genre stays an admissibility drop).
+    A *declared* per-claim ``claim_directness`` then applies in the WEAKER
+    direction only: the connector knows how directly it observed the fact and
+    may declare its claim less probative than the matrix row (a ``D6`` stamp on
+    a nominally probative genre is honoured — the claim drops), but it can
+    never self-strengthen (a declaration stronger than the matrix is capped and
+    the cap is labelled on the record). "the connector's declared D unless the
+    ruleset overrides" (CP-9), read fail-closed.
+    """
+    matrix_d = directness_for(c.predicate_id, c.genre)
+    declared = c.declared_directness
+    if declared is None or declared == matrix_d:
+        return matrix_d
+    if _D_RANK.get(declared, 0) > _D_RANK[matrix_d]:
+        # Declared weaker than the matrix — the connector's declaration stands.
+        st.fire(f"SIG-EPIS-017:declared_directness={declared}")
+        return declared
+    # Declared stronger than the matrix — the ruleset caps; recorded.
+    st.fire(f"SIG-EPIS-017:matrix_caps_declared={declared}")
+    return matrix_d
 
 
 def _value_domain_ok(value: object, datatype: str) -> bool:
@@ -775,9 +895,19 @@ def _candidates(st: _State, admissible: list[Claim], as_of_world: date) -> list[
         methods = {cls_method[k] for k in cls_weight}
         representative = _representative(group, recency=recency)
         span: tuple[float, float] | None = None
+        contested: tuple[str, ...] = ()
         if pooled:
             nums = [float(cast(float, c.value)) for c, _ in group]
             span = (min(nums), max(nums))
+            # P35.27 (F-519): within-tolerance disagreement is a FLAGGED dissent,
+            # disclosed — never silently absorbed into the pool. The pool members
+            # asserting a literal value different from the winner's are recorded
+            # (they still support the candidate — within tolerance is agreement).
+            contested = tuple(
+                sorted(c.claim_id for c, _ in group if c.value != representative.value)
+            )
+            if contested:
+                st.fire("SIG-RECON-053:contested")
         candidates.append(
             Candidate(
                 # A pooled candidate carries its representative claim's OWN value — an
@@ -792,6 +922,7 @@ def _candidates(st: _State, admissible: list[Claim], as_of_world: date) -> list[
                 class_weights=tuple(cls_weight[k] for k in sorted(cls_weight)),
                 class_methods=tuple(cls_method[k] for k in sorted(cls_weight)),
                 value_span=span,
+                contested_claim_ids=contested,
             )
         )
     return candidates
@@ -837,7 +968,10 @@ def _weight(st: _State, c: Claim, as_of_world: date) -> int | None:
             observed_at=c.observed_at,
             as_of=as_of_world,
         )
-    d = directness_for(c.predicate_id, c.genre)
+    # The effective D Phase 1 computed (declared ∪ matrix, weaker wins) — the
+    # labels fire there once; re-deriving here keeps W consistent with the
+    # admissibility decision (``st.fire`` dedupes).
+    d = _effective_directness(st, c)
     try:
         return weight_class(
             reliability=c.reliability,
@@ -1029,7 +1163,17 @@ def _confidence(
     # agreement — from the dissent structure only (SIG-EPIS-023).
     dissent = ordered[1:]
     if not dissent:
-        agreement = "UNCONTESTED"
+        if winner.contested_claim_ids:
+            # P35.27 (F-519): within-tolerance dissent — the losing literal
+            # values were pooled away by the declared tolerance, so no
+            # dissenting *candidate* exists; the disagreement is disclosed at
+            # the MINOR_DISAGREEMENT level ("dissent within tolerance" per the
+            # §10.7 agreement vocabulary), the contested claims are recorded —
+            # contested-at-most, never IRRECONCILABLE from sub-tolerance
+            # jitter, and never a contradiction (state stays ``uncontested``).
+            agreement = "MINOR_DISAGREEMENT"
+        else:
+            agreement = "UNCONTESTED"
     else:
         dissent_classes_w3 = set()
         dissent_classes_w2 = set()
@@ -1070,8 +1214,17 @@ def _finalize(
         support, agreement = "UNSUPPORTED", "UNCONTESTED"
 
     supporting_ids: tuple[str, ...] = winner.supporting_claim_ids if winner else ()
+    # Dissent = claims asserting a literal value other than the winner's: the
+    # losing candidates' members PLUS the winner's own within-tolerance
+    # contested members (P35.27 — a sub-tolerance difference is still a
+    # recorded dissent, disclosed rather than absorbed).
     dissenting_ids = (
-        tuple(sorted(cid for cand in candidates[1:] for cid in cand.supporting_claim_ids))
+        tuple(
+            sorted(
+                {cid for cand in candidates[1:] for cid in cand.supporting_claim_ids}
+                | set(winner.contested_claim_ids)
+            )
+        )
         if winner
         else ()
     )
@@ -1092,7 +1245,11 @@ def _finalize(
             last_known_value = winner.value
             last_known_date = winner.representative.observed_at
 
-    contradiction_state = _contradiction_state(status, code, agreement)
+    # A genuine CONFLICT needs a dissenting candidate — a resolution whose only
+    # dissent is within-tolerance (pooled) jitter has no candidate conflict and
+    # is ``uncontested`` (P35.27: contested is a dissent signal, not a state —
+    # the four-state vocabulary is unchanged).
+    contradiction_state = _contradiction_state(status, code, agreement, dissent=any(candidates[1:]))
 
     rationale_code, rationale_text = render_rationale(
         ruleset=rs,
@@ -1130,6 +1287,7 @@ def _finalize(
         excluded=tuple(st.excluded),
         independence_class_ids=class_ids,
         unclassified_claim_ids=unclassified_ids,
+        contested_claim_ids=winner.contested_claim_ids if winner else (),
         rules_fired=tuple(st.rules),
         ruleset_version=rs.version,
         resolver_version=RESOLVER_VERSION,
@@ -1145,9 +1303,20 @@ def _finalize(
     )
 
 
-def _contradiction_state(status: str, code: str | None, agreement: str) -> str:
+def _contradiction_state(status: str, code: str | None, agreement: str, *, dissent: bool) -> str:
+    """The four-state ``contradiction_state`` (SIG-STORE-015 — P35.27 preserves
+    the vocabulary exactly: `contested` is a persisted dissent *signal*, never
+    a fifth state).
+
+    ``dissent`` = a real *candidate-level* disagreement exists (a second
+    candidate survived weighting). A resolution whose only disagreement is
+    within the predicate's declared tolerance (pooled — disclosed via
+    ``MINOR_DISAGREEMENT`` + ``contested_claim_ids``) is NOT a contradiction:
+    the values agree by the predicate's own declared semantics, so the state is
+    ``uncontested`` and no ``value_disagreement`` entity is minted.
+    """
     if status == "RESOLVED":
-        return "uncontested" if agreement == "UNCONTESTED" else "resolved_conflict"
+        return "resolved_conflict" if (agreement != "UNCONTESTED" and dissent) else "uncontested"
     if code in {"U0", "U1", "U5", "NO_STRATEGY", "NEVER_RESOLVE", "SCOPE_MIXED"}:
         # SCOPE_MIXED (P32.3): the pair holds admissible evidence but the claims
         # answer different scopes — "insufficient to produce ONE value" is the

@@ -116,7 +116,7 @@ from reconcile.materialize import (
     COUNT_QUALIFIER_JOIN,
     observation_time,
 )
-from reconcile.resolve import RESOLVE, Claim
+from reconcile.resolve import RESOLVE, Claim, declared_directness
 from reconcile.ruleset import Ruleset
 from reconcile.snapshot_diff import Capture
 
@@ -551,6 +551,9 @@ class PgReadStore:
             "SELECT c.claim_id, c.value_kind, c.value_text, c.value_num, c.value_bool, "
             "       c.raw_value, c.observed_at, c.source_reliability, c.artifact_integrity, "
             "       c.review_status, lower(c.valid_period), upper(c.valid_period), "
+            # P35.27 (F-519): the connector-DECLARED directness + its basis
+            # marker — the truthful input the resolver's effective-D reads.
+            "       c.claim_directness, c.assertion_map_basis, "
             "       occ.source_id, occ.artifact_type, occ.retrieved_at, occ.capture_id, "
             "       occ.bound_at, "
             "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
@@ -590,6 +593,8 @@ class PgReadStore:
                 review_status,
                 valid_from,
                 valid_to,
+                claim_directness,
+                assertion_map_basis,
                 source_id,
                 artifact_type,
                 retrieved_at,
@@ -621,6 +626,7 @@ class PgReadStore:
                     raw_value=raw_value or "",
                     valid_from=_as_date(valid_from) if valid_from else None,
                     valid_to=_as_date(valid_to) if valid_to else None,
+                    declared_directness=declared_directness(claim_directness, assertion_map_basis),
                     review_status=review_status or "active",
                     source_id=source_id or "",
                     count_scope=count_scope,
@@ -1206,6 +1212,9 @@ class PgReadStore:
             "       c.value_num, c.value_bool, c.raw_value, c.observed_at, "
             "       c.source_reliability, c.artifact_integrity, c.review_status, "
             "       lower(c.valid_period), upper(c.valid_period), "
+            # P35.27 (F-519): the connector-DECLARED directness + its basis
+            # marker — the same truthful input claims_for now reads.
+            "       c.claim_directness, c.assertion_map_basis, "
             "       occ.source_id, occ.artifact_type, occ.retrieved_at, occ.capture_id, "
             "       occ.bound_at, "
             "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
@@ -1242,6 +1251,8 @@ class PgReadStore:
                 review_status,
                 valid_from,
                 valid_to,
+                claim_directness,
+                assertion_map_basis,
                 source_id,
                 artifact_type,
                 retrieved_at,
@@ -1274,6 +1285,7 @@ class PgReadStore:
                     raw_value=raw_value or "",
                     valid_from=_as_date(valid_from) if valid_from else None,
                     valid_to=_as_date(valid_to) if valid_to else None,
+                    declared_directness=declared_directness(claim_directness, assertion_map_basis),
                     review_status=review_status or "active",
                     source_id=source_id or "",
                     count_scope=count_scope,

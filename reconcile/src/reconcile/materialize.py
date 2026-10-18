@@ -61,7 +61,7 @@ from db.organization_roles import (
 
 from .contradiction import materialize as materialize_contradiction_entity
 from .model import Contradiction
-from .resolve import RESOLVE, Claim, Resolution
+from .resolve import RESOLVE, Claim, Resolution, declared_directness
 from .ruleset import Ruleset, load_ruleset
 from .sharing import ACCESS_KINDS, ReconciledEdge, SharingObservation, reconcile_sharing
 
@@ -72,6 +72,12 @@ __all__ = [
     "resolution_row",
     "materialize_resolutions",
     "read_materialized_resolutions",
+    # P35.27 — the read-only rematerialize dry-run (CP-9, F-519)
+    "RematerializeReport",
+    "PairDelta",
+    "classify_pair_delta",
+    "rematerialize_report",
+    "rematerialize_report_from_dsn",
     # P28.2 — sharing/access relationship edges
     "EdgeMaterializeSummary",
     "ACCESS_KIND_PREDICATE_HINTS",
@@ -350,7 +356,13 @@ def read_claim_groups(
         "       occ.retrieved_at, occ.capture_id, occ.bound_at, "
         "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
         "       q.evidence_origin, "
-        f"       {lineage_cols}"
+        f"       {lineage_cols}, "
+        # P35.27 (F-519): the resolver's truthful inputs — the declared valid
+        # period (Phase 1.2's filter was vacuous here because these bounds were
+        # never read) and the connector-DECLARED per-claim directness + its
+        # basis marker (a defaulted ``D2`` is the absence of a declaration).
+        "       lower(c.valid_period), upper(c.valid_period), "
+        "       c.claim_directness, c.assertion_map_basis "
         "  FROM claim c "
         + occurrence_lateral(occ_belief)
         + COUNT_QUALIFIER_JOIN
@@ -395,6 +407,14 @@ def read_claim_groups(
             count_scope_detail=r[18],
             count_scope_jurisdiction=r[19],
             evidence_origin=r[20],
+            # P35.27 (F-519): the declared valid-time bounds — Phase 1.2's
+            # overlap test was vacuous on this read path because they were
+            # never read (the API compute-on-read path already read them).
+            valid_from=_as_date(r[25]) if r[25] is not None else None,
+            valid_to=_as_date(r[26]) if r[26] is not None else None,
+            # The CONNECTOR-declared directness only — a schema/sink default is
+            # the absence of a declaration, resolved via the basis marker.
+            declared_directness=declared_directness(r[27], r[28]),
             independence_class=(
                 stored_class if stored_class and stored_class != "unclassified" else None
             ),
@@ -442,6 +462,11 @@ def resolution_row(resolved: Resolution, *, ruleset: Ruleset) -> dict[str, Any] 
         "n_considered": len(resolved.considered_claim_ids),
         "n_supporting": len(resolved.supporting_claim_ids),
         "n_dissenting": len(resolved.dissenting_claim_ids),
+        # P35.27 (F-519): the within-tolerance ``contested`` dissent signal
+        # persists — the winner's pool members asserting a different literal
+        # value stay visible, never silently absorbed into the pool.
+        "n_contested": len(resolved.contested_claim_ids),
+        "contested_claim_ids": list(resolved.contested_claim_ids),
         "n_independence_classes": len(resolved.independence_class_ids),
         # P35.25 (SIG-CONF-014): how much of the considered evidence carries no
         # declared lineage — the ``unclassified`` pseudo-class never counts as
@@ -738,6 +763,294 @@ def read_materialized_resolutions(conn: Any, *, role: str | None = None) -> list
             }
         )
     return out
+
+
+# ============================================================================
+# P35.27 — the read-only rematerialize report (CP-9 / CONF-05, F-519).
+#
+# The queued OM-20 live leg recomputes resolved values + contradiction states
+# under the truthful inputs (valid time, declared directness, tolerance-aware
+# dissent). :func:`rematerialize_report` is its DRY-RUN artifact: it re-resolves
+# every pair under the new inputs, diffs each pair against its CURRENT live
+# materialized row, and explains every delta with a named class — the
+# state-distribution counts never just shift. The report WRITES NOTHING: it
+# shares ``read_claim_groups`` (the same truthful read the materializer makes)
+# and reads live ``resolution`` rows read-only, so the leg can review the exact
+# consequence before the append-only re-materialize runs under its authority.
+# ============================================================================
+
+#: Every delta class the report can assign to a changed pair — the vocabulary
+#: the queued leg's state-distribution report explains. A changed pair always
+#: carries at least one class; ``other-input-change`` is the honest residual
+#: for a digest that moved for reasons outside this row's three new paths.
+DELTA_CLASSES: tuple[str, ...] = (
+    "new-resolution",
+    "temporal-deconflicted",
+    "directness-reweighted",
+    "contested-disclosed",
+    "tolerance-de-escalated",
+    "escalated-conflict",
+    "conflict-reclassified",
+    "state-shift",
+    "value-revised",
+    "other-input-change",
+)
+
+
+@dataclass(frozen=True)
+class PairDelta:
+    """One pair whose recomputed decision differs from its live materialized row."""
+
+    subject_id: str
+    predicate_id: str
+    #: The live row's ``contradiction_state``; ``None`` when the pair has no
+    #: live materialized decision (the recompute would insert the first).
+    before_state: str | None
+    after_state: str
+    before_value: object | None
+    after_value: object | None
+    before_winning_claim: str | None
+    after_winning_claim: str | None
+    #: The named classes explaining the delta — never empty on a changed pair.
+    classes: tuple[str, ...]
+    contested_claim_ids: tuple[str, ...] = ()
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "subject_id": self.subject_id,
+            "predicate_id": self.predicate_id,
+            "before_state": self.before_state,
+            "after_state": self.after_state,
+            "before_value": self.before_value,
+            "after_value": self.after_value,
+            "before_winning_claim": self.before_winning_claim,
+            "after_winning_claim": self.after_winning_claim,
+            "classes": list(self.classes),
+            "contested_claim_ids": list(self.contested_claim_ids),
+        }
+
+
+@dataclass(frozen=True)
+class RematerializeReport:
+    """The read-only before/after diff a queued rematerialize leg would produce."""
+
+    as_of_world: str
+    considered_pairs: int
+    #: Pairs whose recomputed ``input_digest`` equals the live row's — the real
+    #: rematerialize skips them (+0, idempotent).
+    unchanged: int
+    #: Pairs the resolver does not cover or adjudicate (SIG-RECON-013 posture).
+    skipped_unresolvable: int
+    #: Four-state distributions — ``before`` counts the live rows (``none`` =
+    #: no live materialized row for the pair), ``after`` the recompute.
+    before: dict[str, int]
+    after: dict[str, int]
+    deltas: tuple[PairDelta, ...]
+    delta_class_counts: dict[str, int]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "as_of_world": self.as_of_world,
+            "considered_pairs": self.considered_pairs,
+            "unchanged": self.unchanged,
+            "skipped_unresolvable": self.skipped_unresolvable,
+            "changed": len(self.deltas),
+            "before": dict(sorted(self.before.items())),
+            "after": dict(sorted(self.after.items())),
+            "delta_class_counts": dict(sorted(self.delta_class_counts.items())),
+            "deltas": [d.as_dict() for d in self.deltas],
+        }
+
+
+def _live_resolution_rows(
+    conn: Any, *, subject: str | None = None, predicate: str | None = None
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """The CURRENT live materialized rows keyed by pair — read-only."""
+    where = ["input_digest IS NOT NULL", "upper_inf(sys_period)"]
+    params: list[Any] = []
+    if subject:
+        where.append("subject_id = %s::uuid")
+        params.append(subject)
+    if predicate:
+        where.append("predicate_id = %s")
+        params.append(predicate)
+    rows = conn.execute(
+        "SELECT subject_id::text, predicate_id, value_text, value_num, "
+        "       winning_claim::text, contradiction_state, input_digest "
+        "  FROM resolution WHERE " + " AND ".join(where) + " ORDER BY subject_id, predicate_id",
+        tuple(params),
+    ).fetchall()
+    out: dict[tuple[str, str], dict[str, Any]] = {}
+    for r in rows:
+        # ``value_num`` is a PG ``numeric`` → Decimal: widen to float so the
+        # delta comparison meets the resolver's float values on equal terms.
+        value: object | None = float(r[3]) if r[3] is not None else r[2]
+        out[(str(r[0]), str(r[1]))] = {
+            "value": value,
+            "winning_claim": r[4],
+            "contradiction_state": r[5],
+            "input_digest": r[6],
+        }
+    return out
+
+
+def classify_pair_delta(live: dict[str, Any] | None, resolved: Resolution) -> tuple[str, ...]:
+    """The named delta classes explaining one pair's before→after change.
+
+    Deterministic from the live row + the recomputed :class:`Resolution`:
+
+    * ``temporal-deconflicted`` — a claim is now excluded because its declared
+      valid period does not intersect ``as_of_world`` (``SIG-RECON-006:1.2``);
+    * ``directness-reweighted`` — a connector-declared directness applied
+      (``SIG-EPIS-017:*``) or a declared ``D6`` excluded the claim;
+    * ``contested-disclosed`` — the within-tolerance ``contested`` dissent
+      signal is populated (F-519: disagreement disclosed, not absorbed);
+    * ``tolerance-de-escalated`` — a genuine conflict state de-escalated while
+      the contested signal is present;
+    * ``escalated-conflict`` / ``conflict-reclassified`` / ``state-shift`` /
+      ``value-revised`` — the remaining honest transitions;
+    * ``other-input-change`` — the residual class: the decision input moved
+      for a reason outside this row's three new truth paths (never a silent
+      shift).
+    """
+    before = live["contradiction_state"] if live else None
+    after = resolved.contradiction_state
+    fired = set(resolved.rules_fired)
+    classes: list[str] = []
+    if live is None:
+        classes.append("new-resolution")
+    if "SIG-RECON-006:1.2" in fired:
+        classes.append("temporal-deconflicted")
+    if any(r.startswith("SIG-EPIS-017:") for r in fired) or any(
+        e.reason.startswith("connector-declared D6") for e in resolved.excluded
+    ):
+        classes.append("directness-reweighted")
+    contested = bool(resolved.contested_claim_ids)
+    if contested:
+        classes.append("contested-disclosed")
+    was_conflict = before in CONTRADICTION_CONFLICT_STATES
+    is_conflict = after in CONTRADICTION_CONFLICT_STATES
+    if was_conflict and not is_conflict:
+        if contested or "SIG-RECON-053:contested" in fired:
+            classes.append("tolerance-de-escalated")
+        else:
+            classes.append("state-shift")
+    elif not was_conflict and is_conflict:
+        classes.append("escalated-conflict")
+    elif was_conflict and before != after:
+        classes.append("conflict-reclassified")
+    elif live is not None and before != after:
+        classes.append("state-shift")
+    if live is not None and (
+        live["value"] != resolved.value or live["winning_claim"] != resolved.winning_claim_id
+    ):
+        classes.append("value-revised")
+    if not classes:
+        classes.append("other-input-change")
+    return tuple(classes)
+
+
+def rematerialize_report(
+    conn: Any,
+    *,
+    jurisdiction: str | None = None,
+    subject: str | None = None,
+    predicate: str | None = None,
+    as_of: date | None = None,
+    as_of_belief: datetime | None = None,
+    ruleset: Ruleset | None = None,
+    role: str | None = None,
+) -> RematerializeReport:
+    """The read-only before/after diff of a rematerialize over truthful inputs.
+
+    Re-resolves every ``(subject, predicate)`` group exactly as
+    :func:`materialize_resolutions` would — same reader, same ``RESOLVE`` call,
+    same ``as_of`` — then diffs each recomputed decision against its CURRENT
+    live materialized row: a matching ``input_digest`` is ``unchanged`` (+0 on
+    the real pass); anything else is a :class:`PairDelta` carrying every named
+    delta class that explains it. **Writes nothing** — the dry-run artifact the
+    queued OM-20 leg reviews before the append-only re-materialize runs.
+    """
+    rs = ruleset or load_ruleset()
+    if role:
+        conn.execute(f"SET ROLE {role}")
+    as_of_world = as_of or datetime.now(tz=UTC).date()
+
+    groups = read_claim_groups(
+        conn,
+        jurisdiction=jurisdiction,
+        subject=subject,
+        predicate=predicate,
+        as_of_belief=as_of_belief,
+    )
+    live = _live_resolution_rows(conn, subject=subject, predicate=predicate)
+
+    before: dict[str, int] = {}
+    after: dict[str, int] = {}
+    class_counts: dict[str, int] = {}
+    deltas: list[PairDelta] = []
+    unchanged = skipped_unresolvable = 0
+
+    for (subj, pred), claims in sorted(groups.items()):
+        live_row = live.get((subj, pred))
+        before[live_row["contradiction_state"] if live_row else "none"] = (
+            before.get(live_row["contradiction_state"] if live_row else "none", 0) + 1
+        )
+        try:
+            resolved = RESOLVE(
+                subj, pred, claims, as_of_world=as_of_world, as_of_belief=as_of_world, ruleset=rs
+            )
+        except KeyError:
+            skipped_unresolvable += 1
+            after["skipped_unresolvable"] = after.get("skipped_unresolvable", 0) + 1
+            continue
+        if resolved.strategy_id is None:
+            skipped_unresolvable += 1
+            after["skipped_unresolvable"] = after.get("skipped_unresolvable", 0) + 1
+            continue
+        after[resolved.contradiction_state] = after.get(resolved.contradiction_state, 0) + 1
+        if live_row is not None and live_row["input_digest"] == resolved.input_digest:
+            unchanged += 1
+            continue
+        classes = classify_pair_delta(live_row, resolved)
+        for cls in classes:
+            class_counts[cls] = class_counts.get(cls, 0) + 1
+        deltas.append(
+            PairDelta(
+                subject_id=subj,
+                predicate_id=pred,
+                before_state=live_row["contradiction_state"] if live_row else None,
+                after_state=resolved.contradiction_state,
+                before_value=live_row["value"] if live_row else None,
+                after_value=resolved.value,
+                before_winning_claim=live_row["winning_claim"] if live_row else None,
+                after_winning_claim=resolved.winning_claim_id,
+                classes=classes,
+                contested_claim_ids=resolved.contested_claim_ids,
+            )
+        )
+
+    return RematerializeReport(
+        as_of_world=as_of_world.isoformat(),
+        considered_pairs=len(groups),
+        unchanged=unchanged,
+        skipped_unresolvable=skipped_unresolvable,
+        before=before,
+        after=after,
+        deltas=tuple(deltas),
+        delta_class_counts=class_counts,
+    )
+
+
+def rematerialize_report_from_dsn(dsn: str, **kwargs: Any) -> RematerializeReport:
+    """Open an autocommit connection from ``dsn`` and diff (CLI convenience)."""
+    import psycopg  # available via the sig-db dependency (driver stays in `db`)
+
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        return rematerialize_report(conn, **kwargs)
+    finally:
+        conn.close()
 
 
 # ============================================================================
