@@ -55,10 +55,11 @@ notice allowance (`data-notice`), not as a batch row.
 | RD-02 | /research-dossier/[slug]/ | Research dossier — {reviewLabel} — an evidence-complete twelve-question portfolio, distinct from the inventory overview. As-of world {world}, belief {belief}. | cc46b1a3772a36c8947c4787aada2726ac85ad215a18262f032a50987d720994 | pending |
 | RD-03 | /research-dossier/[slug]/ | Licence {licence} · permalink {permalink} · as-of world {world}, belief {belief} | f8ecc1a7d3e3f8592aaf3b01aa0e19a22659d8cbd9b769c75c8cfa652f489994 | pending |
 | RD-04 | /research-dossier/ | A research dossier exists only when a packet was authored for it — absence here means none is published, not that the questions have no answers. | 59fd0815e8902fc6f96fe8e8e702df0c7032dab0ccc807ab7147d485b9d41830 | pending |
-<!-- P35.25 (R11-L3-CP4, SIG-CONF-014): ST-11 is the S6 A-20 lineage-basis
-     disclosure — the /status/ sentence that lands with the ticket's L2 live
-     leg (the OM-20 pre-authorised registry declarations + claim-lineage
-     rematerialize). It is drafted + pending like every batch row, and its
+<!-- P35.25 (R11-L3-CP4, SIG-CONF-014): ST-11 is the drafted S6 A-20
+     lineage-basis disclosure — the /status/ sentence staged for the
+     ticket's queued, not-yet-run L2 live leg (the OM-20 pre-authorised
+     registry declarations + claim-lineage rematerialize — also queued).
+     It is drafted + pending like every batch row, and its
      confirmation belongs to the same sitting that runs the legs — the notice
      describes the post-rematerialize basis, so it must not ship early. -->
 | ST-11 | /status/ | Corroboration counts and identifier matching now require declared lineage; records with no declared lineage are unclassified, never independent voices. | c751850d6b030f04c86b887026d5e42fc97e0d4341668d31b5c3afec02f17573 | pending |
