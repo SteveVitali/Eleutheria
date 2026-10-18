@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.27 landed (306); legs queued
-nextTicket:      P35.29                              # row 307
-lastCompleted:   P35.27                              # row 306
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #321@ed2e6754 5/5 (39164926890)
+projectStatus:   IN_PROGRESS                           # P35.29 landed (307); no live legs
+nextTicket:      P35.30                              # row 308
+lastCompleted:   P35.29                              # row 307
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #322@c0813a04 5/5 (39175437410)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.27-resolver-input-truth   # base r11/P35.26-…
+chainTip:        r11/P35.29-shared-labels-slugs-hashes   # base r11/P35.27-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-18T21:31Z
+updatedAt:       2026-10-18T23:37Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1070,3 +1070,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-18 — P35.27 post-closeout record — closeout head `ed2e6754` 5/5 green head-bound (`ci: pass #321@ed2e6754` — run 39164926890: python 16m13s, web 14m59s, composed 3m20s, docs 1m50s, security 27s; `reports/ci/p35_27_pr321.json` read 21:08:01Z — stack green except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · impl head `043cf695` docs-red (stale projection) repaired by the closeout regen, recorded not smoothed · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-18 — repair — close: CURRENT STATE `chainTip`/`updatedAt` (devin-desktop/swe-2-high/subagent worker, why: the P35.27 closeout commits advanced `lastCompleted`/`nextTicket`/`returnPass`/`blockedOn` but left `chainTip` on the P35.26 branch and `updatedAt` at 15:07Z — same defect class as the P35.1b post-closeout chainTip correction) · corrected post-closeout to `r11/P35.27-resolver-input-truth` + 21:31Z by the orchestrator · external state at the read (21:31Z): `origin/main` `188f2965` (merge #281 P36.6; #280 P36.5 + #279 P36.4 landed since the last recorded read), chain descends from origin/main: no (standing — the stack forks from `devin/p33-8-agent-docs-refresh` @ `b051732c` for the operator's post-chain integration) · post-closeout head `20d8a4e7` 5/5 green head-bound (run 39166591118: python 18m9s, web 13m26s, composed 3m9s, docs 1m44s, security 37s) · `check-build-memory`: 3 violations, all standing at `ae70500e` before this session's writes (adr `docs/adr/README.md` vs the generic skill regen — the repo's own `adr_index_check` is 209/209 OK; `returnPass` 352 B exceeds the generic 256 B bound, inside the project's B3 V2 512 B bound; the generated line's suffix-letter ids trip the generic list check) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-18 — P35.29 dispatch boundary-confirm — `ci: pass #321@8690f23` 5/5 green head-bound (run 39168773627: python 19m55s, web 14m52s, composed 3m32s, docs 1m23s, security 35s; ci_boundary read 21:59:49Z `logs/ci-P35.29-pre-dispatch.json`) · stack verbatim waived baseline `blockedOn: CI fail on #299@19ed46d (docs)` · external: `origin/main` `188f2965`, chain descends: no (standing), merges since last read #279/#280/#281 recorded in the repair entry · pushed heads `36fe1efd` (docs-red) → `af4c14d1` → `8690f23f` the chainTip-repair arc, verbatim in `runs/P35.27.md` · dispatching P35.29 (307 — shared labels/slugs/hashes; gate: GATE-P answer recorded, no pause; not an OM-20 row) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-18 — P35.29 ticket — `ci:` lands at the next record entry · PR #322 · row 307 shared labels/slugs/hashes (ADR-215; `policy.labels` the one derivation + `sig.entity-label/1` per compartment; A-10/ADR-159 org rule; Part VIII screen injected fail-closed) · no live legs, no production mutation · next → P35.30 (308) · harness: devin-desktop/swe-2-high/subagent
