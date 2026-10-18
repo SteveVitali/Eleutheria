@@ -2107,6 +2107,16 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "interval_union" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <http://www.w3.org/2004/02/skos/core#definition> "The publisher of the source dataset this subject's claims derive from — PUBLISHER provenance, never an operational role. P35.26 / SIG-TRUST-003: the publisher label is recorded as `published_by` (the generic sibling of `camera_registry_publisher` for non-registry sources — e.g. \"OpenStreetMap contributors\", \"EFF & MuckRock — Data Driven (2018)\"); it never evidences camera operation, ownership, vendor or access status, and — a provenance role — never mints an organisation entity-ref (ADR-112/ADR-122)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <http://www.w3.org/2004/02/skos/core#prefLabel> "published_by"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to> <http://www.w3.org/2004/02/skos/core#definition> "A party the subject pushes alerts to (pathway relationship)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .

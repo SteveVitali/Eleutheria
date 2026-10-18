@@ -8,7 +8,11 @@
 # interpretation, never a destructive overwrite (SIG-INGEST-017/043d).
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.15"
+# 2026.10.18: P35.26 / SIG-TRUST-003 + SIG-ONTO-030/032 — `published_by` added
+# to the allowlist (dataset-publisher provenance, never an operational role);
+# [eff_release] gains the release's covered valid-time window (2016–2017) +
+# `publisher_label`.
+vocab_version = "2026.10.18"
 
 # The registry source this connector runs against (§22.6 D). The release is a
 # MIRROR candidate whose rights stay UNDETERMINED until reviewed (SIG-INGEST-028).
@@ -25,8 +29,10 @@ source_id = "eff_data_driven"
 # * sharing_partner_degree     — sharing DEGREE only, never an edge (043c)
 # * pooled_lookup_participation— configured_access to a vendor-operated pooled service
 # * retention_window_observed  — per-column retention window w/ its unit (043d)
+# * published_by               — dataset-publisher provenance (P35.26)
 predicate_allowlist = [
   "deployment_exists",
+  "published_by",
   # P31.6 (ADR-113): the release's stated vendor as a claim (the partner twin
   # carries the deployment→vendor entity-ref) and the NVLS pooled-lookup edge —
   # the partner is the release's vendor constant, never an enumerated partner
@@ -98,6 +104,18 @@ member_suffix = "ALPR DATA.csv"   # the data member inside the zip (not Definiti
 release_id    = "eff-muckrock-alpr-2016-2017-update"
 version       = "2016-2017-update"
 observed_at   = "2020-01-28"      # the upstream release date — historical (SIG-INGEST-043)
+# P35.26 / SIG-ONTO-030/032: the window the DATA covers ("2016–2017 ALPR DATA")
+# — the honest valid period stamped on every claim the release grounds; the
+# release is explicitly historical, so the upper bound is evidenced, never
+# inferred. The window is half-open [2016-01-01, 2018-01-01).
+coverage_from = "2016-01-01"
+coverage_to   = "2018-01-01"
+coverage_edtf = "2016/2017"
+# P35.26 / SIG-TRUST-003: the dataset publisher — EFF & MuckRock, the records
+# requesters and release authors — a PUBLISHER role provenance label, never an
+# operational role (the publisher is not the vendor, the operator, or an
+# access partner).
+publisher_label = "EFF & MuckRock — Data Driven (2018)"
 # The release's stated scope is agencies contracting with Vigilant Solutions.
 vendor_label  = "Vigilant Solutions (LEARN)"
 

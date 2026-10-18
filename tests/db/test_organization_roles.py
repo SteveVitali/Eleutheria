@@ -74,7 +74,10 @@ def test_unmapped_predicates_mint_nothing() -> None:
 
 def test_predicates_for_role_is_the_exact_inverse() -> None:
     assert predicates_for_role(OrganizationRole.PUBLISHER) == frozenset(
-        {"camera_registry_publisher"}
+        # P35.26: the generic `published_by` provenance joins the registry
+        # variant (plus its `listed_by`/`published_by_source` spellings) —
+        # every one provenance, never an operational entity-ref.
+        {"camera_registry_publisher", "published_by", "listed_by", "published_by_source"}
     )
     rebuilt = frozenset(p for role in ORGANIZATION_ROLES for p in predicates_for_role(role))
     assert rebuilt == frozenset(ROLE_OF_PREDICATE)

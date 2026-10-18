@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 285,
+    "count": 286,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -306,6 +306,7 @@
       "program_name",
       "programme_area",
       "programme_count",
+      "published_by",
       "pushes_alerts_to",
       "quantities",
       "quantity",

@@ -90,6 +90,11 @@ allow db/sqitch.plan 2026-10-21T00:00:00Z subject_rekey [claim_payload_version] 
 # P35.25 (ticket 304): declared_lineage's planned_at is its real `date -u` stamp — future of the
 # pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
 allow db/sqitch.plan 2026-10-22T00:00:00Z declared_lineage [subject_rekey] 2026-10-18T10:43:00Z
+# P35.26 (ticket 305): role_edges' + vocab_published_by's planned_at is each its real `date -u`
+# stamp — future of the pre-commit HEAD only while the lines are in flight; past-dated the moment
+# their commit lands.
+allow db/sqitch.plan 2026-10-23T00:00:00Z role_edges [declared_lineage] 2026-10-18T13:50:00Z
+allow db/sqitch.plan 2026-10-23T00:00:00Z vocab_published_by [role_edges] 2026-10-18T13:50:00Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).

@@ -24,6 +24,42 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Role edges, honest time, and recorded supersession** (P35.26 / row
+  305; R11-L3-CP7 + CONF-06; owns F-521; cites SIG-TRUST-003,
+  SIG-ONTO-028, SIG-ONTO-029/030/032, SIG-EPIS-029, GQ-07/GQ-15;
+  ADR-214) — the who-does-what edge surface is now truthful in role and
+  time. Sqitch `role_edges` reshapes the never-written `entity_role`
+  sketch: surrogate `entity_role_id` PK (the `operator_unknown` marker's
+  NULL actor cannot live in a natural key), the claim/relationship
+  temporal columns (`valid_period` + closed kind vocabulary extended
+  with `undated`, `observed_at`, `asserted_by`, `sys_period`), the
+  succession chain (`supersedes` + `superseded_by_claim`), the closed
+  role CHECK (`db.organization_roles.EDGE_ROLE_VOCABULARY`), and
+  epoch-zero NOT VALID CHECKs — `1970-01-01` is rejected at write on
+  both edge tables. `relationship` gains `supersedes` + the same guards;
+  `close_superseded_entity_roles`/`close_superseded_relationships` are
+  the SECURITY DEFINER sanctioned temporal mutations (INSERT-only
+  posture kept). `reconcile.materialize.materialize_role_edges` builds
+  the per-(subject, slot) succession model — within-lineage state
+  changes close the prior episode's bound at the later claim's evidenced
+  date, explicit `revises_claim`/`retraction_of` corrections close the
+  revised state, cross-lineage disagreement stays concurrent, open
+  same-state episodes merge into one corroborated edge — all append-only
+  and +0 on re-run; `operator_state` distinguishes
+  `operator`/`operator_unknown`/`not_asserted`; the CLI verb
+  `materialize-role-edges` defaults to dry-run. The emitters separate
+  provenance from operation: OSM stamps element `timestamp` as
+  `observed_at`, emits `operator_absent` absence claims and a
+  `published_by` provenance claim per element; the EFF Data Driven
+  release stamps its covered valid window (2016–2017) on every claim and
+  emits `published_by` for the release publisher — a publisher can never
+  mint an operator edge. `vocab_published_by` registers the predicate
+  (GLACIAL 10y, max_support) + its directness row. The sharing-edge
+  materializer drops the 1970 fallback: undated edges are
+  `undated`/unbounded, and a changed evidence set supersedes the live
+  row through the same recorded-succession machinery. The hosted EFF/OSM
+  re-ingest and edge rematerialize are QUEUED OM-20 legs — none ran
+  (`live_verification=false`).
 - **Declared lineage, identifier namespaces, and independence classes**
   (P35.25 / row 304; R11-L3-CP4, owner SIG-CONF-014; cites SIG-EPIS-009/029,
   SIG-IDENT-005, CONF-04, S6 A-20, GQ-11; ADR-213) — `sources.toml` rows

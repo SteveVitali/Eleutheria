@@ -225,11 +225,24 @@ class _FakeConn:
         if "FROM claim" in sql:
             return _FakeCursor(self._claim_rows, None)
         if "INSERT INTO relationship" in sql:
-            digest = params[-1]
+            # (…, evidence_claim, input_digest, supersedes) — P35.26 adds the
+            # succession link as the last param.
+            digest = params[-2]
             if digest in self.stored:
                 return _FakeCursor(None, None)  # ON CONFLICT DO NOTHING
             self.stored[digest] = params
             return _FakeCursor(None, (f"rel-{len(self.stored)}",))
+        if "close_superseded_relationships" in sql:
+            return _FakeCursor([], None)  # nothing closed in the fake spine
+        if "SELECT relationship_id::text" in sql and "FROM relationship" in sql:
+            # _live_relationship_edges: all stored rows are live here.
+            return _FakeCursor(
+                [
+                    (f"rel-{i + 1}", p[0], p[1], p[2], p[-2], None)
+                    for i, p in enumerate(self.stored.values())
+                ],
+                None,
+            )
         if "FROM relationship" in sql:
             out = []
             for i, p in enumerate(self.stored.values()):

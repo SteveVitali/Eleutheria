@@ -207,7 +207,9 @@ def test_flock_edge_claims_materialize_relationship_rows(clean_dsn: str) -> None
             # Every edge is evidenced by spine claims (never unevidenced, §3.1).
             assert edge["evidence_claim"] in claim_ids
             assert edge["access_kind"] == edge["edge_type"] == "configured_access"
-            assert edge["valid_from_kind"] == "unknown"  # single snapshot (SIG-RECON-036)
+            # Single snapshot, no evidenced bound (SIG-RECON-036): P35.26 makes
+            # the honest kind `undated` — never the old 1970 placeholder.
+            assert edge["valid_from_kind"] == "undated"
         rerun = materialize_sharing_edges(conn)
         assert (rerun.inserted, rerun.skipped_existing) == (0, summary.inserted)
 
