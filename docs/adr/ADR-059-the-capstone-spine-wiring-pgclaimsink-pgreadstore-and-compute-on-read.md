@@ -98,3 +98,14 @@ replaced by a read of the persisted rows, and the RISK-P19-07 `--recompute` diag
 test must prove the persisted rows equal the computed ones. Also revisit if a claim's reproducible
 payload ever needs a field the current `content_digest` excludes (or must exclude one it includes), or
 if the per-request PG connection (RISK-P19-08) becomes a measured bottleneck and a pool is introduced.
+
+## Status updates
+
+- **Status:** Extended by ADR-211 (2026-10-18) — the `content_digest`
+  mechanism this ADR introduced is re-based onto the shared
+  `evidence.claim_identity` projection: volatile acquisition fields and the
+  `ref`-class temporal qualifier leave the digest base, `value_json` is
+  canonicalised, and `payload_version` seals the scheme. The unique-index
+  idempotency design here is unchanged — `claim_content_digest_key` is still
+  the dedup key; what feeds it is a declared projection, not the whole row.
+  The body above is unchanged (SIG-ENG-003).

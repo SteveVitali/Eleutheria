@@ -64,7 +64,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-056](ADR-056-the-jurisdiction-adapter-framework-namespaced-vocabularies-bcp47-labels-and-coarse-international-ingestion.md) | The jurisdiction adapter framework — country-namespaced vocabularies, BCP-47 labels, and coarse international ingestion | P18.1 | Accepted |
 | [ADR-057](ADR-057-the-france-belgium-technopolice-connectors-prefectural-orders-decp-and-the-osm-import-study.md) | The France/Belgium (Technopolice) connectors — prefectural orders → LegalInstrument, DECP → Contract, and the OSM import study | P18.2 | Accepted |
 | [ADR-058](ADR-058-tickets-and-build-memory-are-committed-and-scratch-is-unified.md) | Tickets and build memory are committed; agent scratch is unified | P19.1 | Superseded by ADR-073 (2026-10-01) — §3 only |
-| [ADR-059](ADR-059-the-capstone-spine-wiring-pgclaimsink-pgreadstore-and-compute-on-read.md) | Capstone spine wiring — PgClaimSink, PgReadStore, and the compute-on-read seam | P19.4 | Accepted |
+| [ADR-059](ADR-059-the-capstone-spine-wiring-pgclaimsink-pgreadstore-and-compute-on-read.md) | Capstone spine wiring — PgClaimSink, PgReadStore, and the compute-on-read seam | P19.4 | Extended by ADR-211 (2026-10-18) — the `content_digest` |
 | [ADR-060](ADR-060-the-resolver-p08-1-retro-fitted-record.md) | The resolver (P08.1) — retro-fitted record | P08.1 (retro-fitted by P19.5) | Accepted |
 | [ADR-061](ADR-061-capstone-gap-closure-export-gate-jurisdiction-render-er-over-pg.md) | Capstone gap closure — the derivative export gate, jurisdiction-conditional web render, and ER over PostgreSQL | P19.5 | Accepted |
 | [ADR-062](ADR-062-spec-reconciliation-after-the-46-ticket-build.md) | Spec reconciliation after the 46-ticket build | P20.2 | Accepted |
@@ -211,6 +211,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-208](ADR-208-programme-aggregate-predicates-and-the-psa-month-deviation.md) | Programme-aggregate predicates, the multi-measure slice, and the PSA × month deviation (P36.7) | P36.7 (Round 11 / P36, row 280 — ACQ-11; the Wave-B batch | accepted |
 | [ADR-209](ADR-209-officer-naming-persisted-concurrence-registry.md) | The persisted officer-naming concurrence registry and the default-deny publication gate (P35.28 — R11-SAFE-03; SIG-PUB-007 owner; cites SIG-PUB-008/009/010/017, ADR-163) | P35.28 (Round 11 / P35, sub-round 11B, manifest row 286 — | accepted |
 | [ADR-210](ADR-210-axis-order-declarations-and-geometry-defect-classes.md) | Per-target axis-order declarations and the closed geometry-defect classes (P35.16) | P35.16 (Round 11 / P35, manifest row R11-DATA-01 — F-322, severity S1) | accepted |
+| [ADR-211](ADR-211-truthful-claim-identity-volatile-fields-leave-the-digest.md) | Truthful claim identity: volatile fields leave the digest (P35.22) | P35.22 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP1` — | accepted |
 
 ## Notes
 

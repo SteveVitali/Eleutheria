@@ -38,6 +38,7 @@ from datetime import UTC, date, datetime
 from enum import StrEnum
 from typing import Any
 
+from evidence.claim_identity import canonical_json
 from evidence.digest import decode_multihash
 from parsing.locator import InvalidLocator, Locator, LocatorKind
 
@@ -765,7 +766,11 @@ def assertion_from_record(
         value_int=value_int,
         value_float=value_float,
         value_bool=value_bool,
-        value_json=json.dumps(value_json, sort_keys=True, default=str) if value_json else None,
+        # P35.22 (F-504): value_json stores the CANONICAL form — the same
+        # normalisation the claim digest consumes (sorted keys, compact
+        # separators, NFC strings, exact-range integral floats as ints), so the
+        # stored payload and the minted identity never diverge.
+        value_json=canonical_json(value_json) if value_json else None,
         unit=unit,
         raw_value=raw_value,
         raw_context=json.dumps(raw_context, sort_keys=True, default=str) if raw_context else None,

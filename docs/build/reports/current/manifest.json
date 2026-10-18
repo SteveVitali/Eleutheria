@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "2526dd46b6deb3dc28cdf8afc1e5af055bfbae4e",
+  "input_commit": "5e2c0c44d74acc72951ef2509405cb6dd98b57c3",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "84c727561ef320baddf18b68908ffbb8d59b1f2da6c3a31ebb1a3fd0e61f5119"
+      "sha256": "b07a11d8d32e8bd10080fb9977bd80ea259e8061a2bb86a9e53279d360b9ba06"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -246,7 +246,7 @@
     },
     {
       "path": "docs/adr/ADR-059-the-capstone-spine-wiring-pgclaimsink-pgreadstore-and-compute-on-read.md",
-      "sha256": "b797722ea4eca95c43f0afd1217fddb7f0bc6050bb03fe14009dedee793c0ff4"
+      "sha256": "13c5945af8a65464641d7138da2ce5fa60ecb19d48e1e748c26d3405d5b62dfd"
     },
     {
       "path": "docs/adr/ADR-060-the-resolver-p08-1-retro-fitted-record.md",
@@ -833,12 +833,16 @@
       "sha256": "40f3f8c6491906dc7a52044b84cbf015ba25917f4d01360e6768ba2d692e940e"
     },
     {
+      "path": "docs/adr/ADR-211-truthful-claim-identity-volatile-fields-leave-the-digest.md",
+      "sha256": "ac33cac1f7a3f017495d3930bb017c981385e7323b14b7a6ef54c545dbb9b59e"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "87fb0681b574ab8c83bfa8b83e57e3c40770177a7bd7b12a5a5f45b559062358"
+      "sha256": "1fbf5ec7119b48d37ea76b89b1a56dfa03b315d6dce2babf3e93489692c18a64"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "63a4a44c5abca01a6a13b9d8598281e83cfd9c7ce5223630498540001ce3cebb"
+      "sha256": "c0551f5a75b4e9c309fc2fd1562783236f5b1b87d9eda00fcb4650cb85335cac"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1971,6 +1975,10 @@
     {
       "path": "docs/build/runs/P35.20b.md",
       "sha256": "463f577fac4d211ee854cf8b926229763ba41fb47d8ae435d99866919681e509"
+    },
+    {
+      "path": "docs/build/runs/P35.22.md",
+      "sha256": "fcc28a18a96ebbd4e293e1e6431a99102fc728a03a3fdb53d1490723e594beb9"
     },
     {
       "path": "docs/build/runs/P35.28.md",

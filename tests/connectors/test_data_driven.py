@@ -178,27 +178,41 @@ def test_retention_window_preserved_per_column_never_normalized() -> None:
 # --- release versioning: new dated claims, never overwrite (SIG-INGEST-043d/017)
 
 
-def test_versioned_reingest_appends_new_dated_claims_and_overwrites_nothing() -> None:
+def test_versioned_reingest_rebinds_unchanged_and_mints_only_what_changed() -> None:
+    """SIG-INGEST-043d/017 + P35.22 (F-504): a versioned re-ingest appends the
+    genuinely changed claims and re-binds the rest — the release stamp
+    (``release_version``/``release_digest``/``retrieved_date``/the fetch-derived
+    ``observed_at``) is volatile acquisition metadata, never identity, so an
+    unchanged row in a new release is the SAME claim and lands as a sighting
+    (``claim_evidence``), not a duplicate row. Append-only still holds: nothing
+    in v1 is overwritten, the superseded values simply are not re-asserted.
+    """
     v1 = _claims(_run_over("release_v1.json"))
     v2 = _claims(_run_over("release_v2.json"))
     v1_keys = {canonical_claim_tuple(c) for c in v1}
     v2_keys = {canonical_claim_tuple(c) for c in v2}
-    # No v2 claim collides with a v1 claim => appending v2 overwrites nothing.
-    assert v1_keys.isdisjoint(v2_keys)
-    # v1 rows are retained: a store holding v1 ∪ v2 keeps every v1 claim.
+    # The unchanged rows collide — that IS the re-binding (F-504's fix): a new
+    # release of the same facts re-observes the same claims.
+    assert v1_keys & v2_keys
+    # Only genuinely changed values mint.
+    diff = diff_claim_sets(v1, v2)
+    assert len(diff.added) == len(v2_keys - v1_keys) > 0
+    assert len(diff.removed) == len(v1_keys - v2_keys) > 0
+    assert len(diff.unchanged) == len(v1_keys & v2_keys)
+    # Append-only: the store holding v1 ∪ v2 keeps every v1 claim byte row.
     combined = v1_keys | v2_keys
     assert v1_keys <= combined
-    assert len(combined) == len(v1_keys) + len(v2_keys)
-    # And a shadow diff (current=v1, new=v2) shows all-added, zero-removed-as-overwrite
-    diff = diff_claim_sets(v1, v2)
-    assert len(diff.added) == len(v2)
-    assert diff.unchanged == []
+    assert v2_keys <= combined
 
 
-def test_the_release_version_is_what_separates_the_two_dated_claim_sets() -> None:
-    # Strip the per-release provenance and the two releases' claims collide — proof
-    # the version+digest+date is exactly what makes a re-ingest a NEW dated claim.
-    def stripped(c: dict[str, Any]) -> tuple[Any, ...]:
+def test_unchanged_release_rows_are_one_claim_across_releases() -> None:
+    # P35.22 (F-504) inverts the old premise: the release stamp NO LONGER
+    # separates the claim sets — a value unchanged between releases is the same
+    # claim, sighted again. The changed rows differ on VALUE (sharing degree
+    # 851->863, the observed volumes), which is still real identity.
+    def core(c: dict[str, Any]) -> tuple[Any, ...]:
+        # The identity-bearing surface (what the digest projects): drop the
+        # volatile acquisition keys AND the generated fields.
         drop = {
             "release_version",
             "release_digest",
@@ -206,16 +220,22 @@ def test_the_release_version_is_what_separates_the_two_dated_claim_sets() -> Non
             "observed_at",
             "claim_id",
             "sys_period",
+            "record_kind",
         }
         return tuple(sorted((k, str(v)) for k, v in c.items() if k not in drop))
 
     v1 = _claims(_run_over("release_v1.json"))
     v2 = _claims(_run_over("release_v2.json"))
-    # sharing degree changed 851->863 so that row differs on value; but the two
-    # deployment_exists rows are identical once the release stamp is removed.
-    v1_dep = {stripped(c) for c in v1 if c["predicate_id"] == "deployment_exists"}
-    v2_dep = {stripped(c) for c in v2 if c["predicate_id"] == "deployment_exists"}
-    assert v1_dep == v2_dep  # identical modulo the release stamp => version separates them
+    # The deployment_exists rows carry no changed value — identical claims,
+    # sighted again under a new release (re-bind, never re-mint).
+    v1_dep = {core(c) for c in v1 if c["predicate_id"] == "deployment_exists"}
+    v2_dep = {core(c) for c in v2 if c["predicate_id"] == "deployment_exists"}
+    assert v1_dep == v2_dep
+    # And the digest agrees: the same deployment_exists claims digest
+    # identically across the two releases.
+    v1_d = {canonical_claim_tuple(c) for c in v1 if c["predicate_id"] == "deployment_exists"}
+    v2_d = {canonical_claim_tuple(c) for c in v2 if c["predicate_id"] == "deployment_exists"}
+    assert v1_d == v2_d
 
 
 # --- aggregate-only schema rejection (SIG-INGEST-043, RISK-P21-15) ------------

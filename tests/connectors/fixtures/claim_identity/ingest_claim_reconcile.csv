@@ -1,0 +1,6 @@
+side,row_key,source_id,predicate_id,subject_key,object_key,value_repr,content_digest,payload_version
+emitted,reg_a|cam:1|camera_operator|ACME|ACME|,reg_a,camera_operator,cam:1,,ACME,ec1fe11035b633b53485f0ae79c0372bbe4b2e9e5561e456387c69e776735ff6,sig.claim-payload/1
+emitted,reg_a|cam:2|camera_operator|Beta|Beta|,reg_a,camera_operator,cam:2,,Beta,14c4d41ba85d8dca318a0245d04a31404b709e69ed2a6395adbacd92a49144c8,sig.claim-payload/1
+emitted,reg_a|cam:3|camera_operator|Gamma|Gamma|,reg_a,camera_operator,cam:3,,Gamma,3eaef9b6a704c381fece2fe0fe7c369a32ff1695a447aec28376f0b849fd89d3,sig.claim-payload/1
+stored,reg_a|cam:1|camera_operator|ACME|ACME|,reg_a,camera_operator,cam:1,,ACME,ec1fe11035b633b53485f0ae79c0372bbe4b2e9e5561e456387c69e776735ff6,sig.claim-payload/1
+stored,reg_a|cam:2|camera_operator|Beta|Beta|,reg_a,camera_operator,cam:2,,Beta,14c4d41ba85d8dca318a0245d04a31404b709e69ed2a6395adbacd92a49144c8,sig.claim-payload/1

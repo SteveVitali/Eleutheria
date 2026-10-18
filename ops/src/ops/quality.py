@@ -716,7 +716,12 @@ def eval_gq27(ctx: EvalContext) -> Measurement:
 #: Checks whose seams do not exist yet — registered, honestly reported as
 #: not_evaluable with the seam's owner named (never silently skipped).
 SEAM_DEFERRALS: dict[str, str] = {
-    "GQ-02": "replay determinism needs the capture-replay seam (P35.22)",
+    "GQ-02": "the identity machinery landed with P35.22 (the shared "
+    "evidence.claim_identity digest — re-order/re-page/unchanged re-observations "
+    "re-bind, never re-mint — plus the claim-minting-diff harness over "
+    "ingest_claim_reconcile.csv); the check itself needs the rotating-source "
+    "capture-replay telemetry leg — the nightly probe runs replays and counts "
+    "inserts (queued live work, P34.44b job)",
     "GQ-06": "the subject/entity typing census lands with PKG-11/PKG-07 (P35.14/P35.15)",
     "GQ-08": "the R placement consumes the release-verify V9 point checks "
     "(REL-04b / P35.58, after PKG-06b)",

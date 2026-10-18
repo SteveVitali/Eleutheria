@@ -450,10 +450,16 @@ def test_changed_snapshot_yields_new_dated_claims_never_overwrites() -> None:
     claims1 = run_post_capture(connector, ctx, c1)
     claims2 = run_post_capture(connector, ctx, c2)
     diff = diff_claim_sets(claims1, claims2)
-    # A re-fetch of a changed snapshot adds the whole NEW dated claim set —
-    # every claim carries its retrieval date, so the new snapshot is `added`
-    # wholesale and nothing is overwritten in place (the old set stays).
-    assert len(diff.added) == len(claims2) == len(claims1)
+    # P35.22 (F-504): claim identity is what the claim IS — the retrieval date
+    # no longer sits in the digest, so a re-fetch of a changed snapshot no
+    # longer adds the whole set wholesale (that wholesale re-mint was the
+    # F-504 inflation). Only the one CHANGED row mints; every unchanged row
+    # re-binds (``unchanged``) and its new sighting lands on the evidence
+    # binding. The superseded value leaves the new claim set (``removed``) —
+    # never overwritten on the spine (append-only: the old claim row stays).
+    assert len(diff.added) == 1
+    assert len(diff.removed) == 1
+    assert len(diff.unchanged) == len(claims1) - 1 == len(claims2) - 1
     bahamas_new = next(c for c in diff.added if c["subject_id"] == "jurisdiction:iso.3166-1:BS")
     assert bahamas_new["value"] == "considering"
     assert bahamas_new["observed_at"] == "2026-10-01"  # new dated claim

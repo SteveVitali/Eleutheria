@@ -59,6 +59,7 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
 
+from evidence.claim_identity import PAYLOAD_VERSION
 from policy.eligibility import (
     Disposition,
     ReasonCategory,
@@ -68,7 +69,7 @@ from policy.eligibility import (
 
 from policy import intake as pint
 
-from .claim_sink import content_digest
+from .claim_sink import content_digest, predicate_temporal_class
 from .dispositions import record_disposition
 from .evidence_audit import row_to_dict
 from .identity_guard import CURATOR_HANDLE_SCHEME, resolve_identities
@@ -213,6 +214,7 @@ _CLAIM_CASTS: dict[str, str] = {
     "assertion_map_id": "%s",
     "assertion_map_basis": "%s",
     "content_digest": "%s",
+    "payload_version": "%s",
 }
 
 #: Columns of the new correction row — every scalar copied from the old claim
@@ -263,6 +265,7 @@ _CLAIM_INSERT_COLUMNS: tuple[str, ...] = (
     "assertion_map_id",
     "assertion_map_basis",
     "content_digest",
+    "payload_version",
 )
 
 
@@ -699,8 +702,13 @@ class PgRecoveryApplier:
         # Inherit value_kind verbatim (a repair never re-kinds) and keep
         # geometry/identity provenance as recorded.
         payload["value_kind"] = old["value_kind"]
+        # P35.22: the repair claim mints under the IDENTITY digest — volatile
+        # acquisition columns stay out, the predicate's registry class governs
+        # the temporal qualifier, payload_version records the normalisation.
+        payload["payload_version"] = PAYLOAD_VERSION
         payload["content_digest"] = content_digest(
-            {k: v for k, v in payload.items() if k != "content_digest"}
+            {k: v for k, v in payload.items() if k != "content_digest"},
+            temporal_class=predicate_temporal_class(self._conn, str(payload["predicate_id"])),
         )
         cols = list(_CLAIM_INSERT_COLUMNS)
         params: list[Any] = []

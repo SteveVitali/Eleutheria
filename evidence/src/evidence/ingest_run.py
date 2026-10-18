@@ -18,11 +18,15 @@ byte-stably, so a re-run's fingerprint is identical iff the derived facts are.
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass, field
+from typing import Any
 
-# Columns that legitimately differ between two runs of the same connector over the
-# same digests, and are therefore excluded from the reproducibility comparison.
-NON_DETERMINISTIC_COLUMNS: frozenset[str] = frozenset({"claim_id", "sys_period", "recorded_at"})
+from .claim_identity import PredicateClass, digest_base
+
+# P35.22: the excluded-columns frozenset that used to live here (``claim_id``,
+# ``sys_period``, ``recorded_at``) is subsumed by ``claim_identity``'s
+# NEVER_IDENTITY_KEYS — the same exclusions plus the volatile-acquisition set.
 
 # The environment ingestion MUST run under (SIG-EVID-018).
 REQUIRED_ENVIRONMENT: dict[str, str] = {"LC_ALL": "C", "TZ": "UTC"}
@@ -75,22 +79,45 @@ class IngestRun:
         }
 
 
-def canonical_claim_tuple(claim: dict[str, object]) -> bytes:
+def canonical_claim_tuple(
+    claim: dict[str, object], *, temporal_class: PredicateClass = "ref"
+) -> bytes:
     """Canonicalise a claim tuple for the reproducibility check (SIG-EVID-017).
 
-    Drops the non-deterministic columns (``claim_id``, ``sys_period``,
-    ``recorded_at``) and renders the rest with sorted keys, so two runs of a
-    pinned connector over pinned digests fingerprint identically.
+    P35.22 (F-504): the tuple runs the same identity projection the minted
+    ``content_digest`` does (:func:`evidence.claim_identity.digest_base`) — the
+    non-deterministic columns AND the volatile acquisition fields (row
+    position, page/capture URL, capture digest, fetch time, upstream version
+    counters) leave it, so two runs of a pinned connector over pinned digests
+    fingerprint identically even when the input's row order, pagination or
+    fetch times differ — the derived facts are what is compared. The predicate's
+    registry ``obs``/``ref`` class decides whether the temporal qualifier is
+    part of the comparison (``obs`` keeps it).
     """
-    stable = {k: v for k, v in claim.items() if k not in NON_DETERMINISTIC_COLUMNS}
-    return json.dumps(stable, sort_keys=True, ensure_ascii=False, default=str).encode("utf-8")
+    base = digest_base(claim, temporal_class=temporal_class)
+    return json.dumps(
+        base, sort_keys=True, ensure_ascii=False, separators=(",", ":"), default=str
+    ).encode("utf-8")
 
 
-def claim_set_fingerprint(claims: list[dict[str, object]]) -> str:
-    """A single fingerprint over a set of claim tuples (order-independent)."""
+def claim_set_fingerprint(
+    claims: list[dict[str, Any]],
+    *,
+    classes: Mapping[str, PredicateClass] | None = None,
+) -> str:
+    """A single fingerprint over a set of claim tuples (order-independent).
+
+    ``classes`` (P35.22) is the registry's predicate → ``obs``/``ref`` map; a
+    claim whose predicate is absent from it compares as ``ref``.
+    """
     import hashlib
 
-    parts = sorted(canonical_claim_tuple(c) for c in claims)
+    def cls(claim: Mapping[str, Any]) -> PredicateClass:
+        if classes is None:
+            return "ref"
+        return classes.get(str(claim.get("predicate_id") or ""), "ref")
+
+    parts = sorted(canonical_claim_tuple(c, temporal_class=cls(c)) for c in claims)
     digest = hashlib.sha256()
     for part in parts:
         digest.update(part)
