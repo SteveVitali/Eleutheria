@@ -932,7 +932,7 @@ obligations = []
 obligations_cell = '''the queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + AR-2 backup → the four cron reconciles → the six `[[retired_jobs]]` deletes → AR policy + `sig-alerts` disposition → post-sweep proof'''
 gates_cell = '''hosted write — QUEUED (`live_verification=false`); OM-20 — GATE-G4 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires next GATE); AR-3 + AR-2 weekday 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z — apply exits 42); `SIG_SWEEP_AUTHOR`; AR-2 backup + fresh prestate; voided by failed AR-2/red probe; after `--check` + PR #302 CI green'''
 operator_cell = '''nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only; rollback replays the recorded cron pre-states + per-job recreation recipes; dispatcher consolidation is P35.1c's leg'''
-rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — queued exit 42 out-of-window; production never touched)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — queued; production never touched)'''
 
   [[row.legs]]
   id = "P35.1b-fleet-sweep-live"
@@ -1044,3 +1044,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/305_P35.26__roles-and-time-bac
   go = '''pre-authorised: the GATE-G4 §4 list names P35.26 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true'''
   live_dependants = ["P35.27"]
+[[row]]
+key = "P35.27"
+kind = "leg"
+obligations = []
+obligations_cell = '''L1 merge · L2 rematerialize recomputes resolved values + states under the truthful inputs (append-only; `rematerialize-report` dry-run first) · L3 `/status/` API-basis notice (S6 A-20)'''
+gates_cell = '''QUEUED (`live_verification=false`); OM-20 — GATE-G4 §4 names P35.27 verbatim (expires next sub-round GATE); AR-3 + AR-2, excl. AR-3 freeze'''
+operator_cell = '''nothing until the re-run; restore is forward-only (a reversal is a new correcting materialization, never a delete)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true` · row 306 landed'''
+
+  [[row.legs]]
+  id = "P35.27-resolver-input-live"
+  obligations = []
+  earliest = '''the OM-19 re-run — AR-3 + AR-2 window'''
+  excluded = ["AR-3 freeze"]
+  go = '''pre-authorised: GATE-G4 §4 names P35.27 verbatim (expires next sub-round GATE)'''
+  rerun = '''implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true'''
+  live_dependants = []

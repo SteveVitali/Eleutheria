@@ -4,11 +4,11 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `0df7bbc91a9dde47a64edeb2e7faa1afa31c3aa1` · inputs hashed: 1061 · wall-clock receipt: `receipt.json`
+> input_commit: `043cf69598848fdcffc04225c2cbfaf1617f44e0` · inputs hashed: 1062 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.27` · lastCompleted `P35.26`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.29` · lastCompleted `P35.27`
 - chainTip `r11/P35.26-roles-and-time-backend` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43…` · updatedAt `2026-10-18T15:07Z`
 
 ## Obligations
@@ -20,7 +20,7 @@
 
 ## RETURN PASS — owed live legs (generated region)
 
-- `return-pass` → see [return-pass.md](return-pass.md) (complete — 52 rows)
+- `return-pass` → see [return-pass.md](return-pass.md) (complete — 53 rows)
 
 ## Known inconsistencies (preserved, never synthesized)
 
