@@ -1,0 +1,2 @@
+<!-- Archived head lines byte-for-byte (the six per-ticket State-line archive pointers P36.4…P36.9a, comments11 fold) → docs/build/reports/memory-repair/LEDGER_head_comments11_pre-P36.9a.txt (sha256 0573236577a09ada…) — P36.9a closeout (orient >48 KiB, BM-LEDGER-08). -->
+<!-- Archived head line byte-for-byte (head State line pre-P36.9b) → docs/build/reports/memory-repair/LEDGER_state_line_pre-P36.9b.txt, sha256 60165db3b6a123c3… (BM-LEDGER-08). -->

@@ -1759,3 +1759,134 @@ kind = "index_page"
 targets = [
   { id = "il-icjia-drone-sfy-reports", url = "https://icjia.illinois.gov/about/publications/sfy-25-drone-surveillance-report", kind = "index_page", max_documents = 8 },
 ]
+
+# =============================================================================
+# P36.9b / R11-ACQ-13b (I8 §5.6): the CSS / interception / ATE / Seattle-OIG
+# / federal-DHS half of the statutory disclosures-II family — Wave-B batch
+# `r11-disclosures-02` (`27 7 22 * *`).
+#
+# Same posture as the P36.8/P36.9a blocks above: declarative reviewed
+# surfaces only — every source stays ingestion_permitted=false (HG-03
+# RB-03 `a`; RB-05 `a` federal, RB-06 `a` WTSC) and the operator's OP-26
+# Wave-B flip under ING-GO-B is the only route to a live fetch, so these
+# rows fetch nothing today.
+
+# WA WTSC — the RCW 46.63.220(6) Automated Safety Enforcement index
+# (I4-C067 statewide report + the ~29 municipal RCW 46.63.220(6)(b)(i)
+# filings the page enumerates, I4-C068 — plan R1, one row per family):
+# the bounded .pdf fan-out covers the statewide filing plus the municipal
+# series with headroom; the adapter's scope screen admits the report
+# links only.
+[statrep_wa_wtsc_ate]
+kind = "index_page"
+targets = [
+  { id = "wa-wtsc-ase-reports", url = "https://wtsc.wa.gov/safe-driving/patient-driving/ase/", kind = "index_page", max_documents = 36 },
+]
+
+# HI Judiciary — the HRS § 803-47(b) annual interception report
+# communicated to the Legislature (I9b-C078): the reviewed CY2024 filing
+# (a statutory zero) is the declared surface; institution-level counts
+# only — appendix judge/prosecutor names are never extracted (§43.4).
+[statrep_hi_judiciary_interception]
+kind = "disclosure_document"
+targets = [
+  { id = "hi-judiciary-interception-2024", url = "https://data.capitol.hawaii.gov/sessions//session2025/bills/JC35_.pdf", kind = "disclosure_document" },
+]
+
+# MN State Court Administrator — the interception / pen register /
+# mobile-tracking warrant report to the Legislature (I9b-C077):
+# institution-level application and order counts only.
+[statrep_mn_court_interception]
+kind = "disclosure_document"
+targets = [
+  { id = "mn-court-interception-2024", url = "https://www.leg.mn.gov/docs/2024/Mandated/241537.pdf", kind = "disclosure_document" },
+]
+
+# MD State Police — the Chapters 222/223 (2020) cell-site simulator
+# annual report (I9b-C065): one reviewed filing; institution-level
+# deployment/exigent counts only.
+[statrep_md_msp_css]
+kind = "disclosure_document"
+targets = [
+  { id = "md-msp-css-report-2024", url = "https://mdsp.prod.maryland.gov/media/290/download", kind = "disclosure_document" },
+]
+
+# DE DIAC — the fusion center's published privacy SOP (I4-C274): one
+# reviewed filing; a policy_document — governance claims only, no use
+# claims; typed rtcc-unspecified pending the proposed `fusion-center`
+# concept (D-P36.9b-1, SIG-ONTO-021).
+[statrep_de_diac]
+kind = "disclosure_document"
+targets = [
+  { id = "de-diac-privacy-sop", url = "https://dediac.org/html/DIAC%20Privacy%20SOP.pdf", kind = "disclosure_document" },
+]
+
+# Seattle SDOT — the ATSC program annual report (I4-C069): the reviewed
+# 2024–2025 filing; the appendix site table emits the filing's own
+# published site literals verbatim (never geocoded deployments).
+[statrep_seattle_wa_sdot_ate]
+kind = "disclosure_document"
+targets = [
+  { id = "seattle-atsc-annual-report-2024-2025", url = "https://seattle.gov/documents/Departments/SDOT/VisionZero/ATSC/2024_2025_ATSC_Annual_Report.pdf", kind = "disclosure_document" },
+]
+
+# FL FLHSMV — the red-light camera program analysis index (I9b-C056):
+# the cabinet-reports page links the ~10 annual FY summary reports and
+# the jurisdictions' survey-response compilations under
+# /pdf/cabinetreports/; the scope screen admits red-light filings only.
+[statrep_fl_flhsmv_red_light]
+kind = "index_page"
+targets = [
+  { id = "fl-flhsmv-rlc-reports", url = "https://www.flhsmv.gov/resources/cabinet-and-legislature-reports/red-light-camera-program-analysis/", kind = "index_page", max_documents = 24 },
+]
+
+# PA WZSSC — the 75 Pa.C.S. § 3369(h)(4) work-zone speed safety camera
+# annual report (I9b-C057): the reviewed 2026 filing (the oversized ~11.9
+# MB original lands as a text extract per the §5.0 fixture rule).
+[statrep_pa_wzssc]
+kind = "disclosure_document"
+targets = [
+  { id = "pa-wzssc-annual-report-2026", url = "https://workzonecameras.penndot.gov/wp-content/uploads/2026/05/2026-WZSSC-Annual-Report_04.02.2026.pdf", kind = "disclosure_document" },
+]
+
+# Seattle OIG — the SMC 14.18 surveillance usage-review reports index
+# (SRC-012): the reviews examine the operating department's (SPD's)
+# surveillance use; the scope screen admits the usage-review filings
+# only.
+[statrep_seattle_wa_oig]
+kind = "index_page"
+targets = [
+  { id = "seattle-oig-usage-reviews", url = "https://seattle.gov/inspector-general/reports", kind = "index_page", max_documents = 12 },
+]
+
+# US DHS — one row, five reviewed targets (I4-C167 hub + I4-C259
+# component index + I4-C261 OBIM HART + I4-C269 CBP BSS + I4-C260 CBP
+# telemetry; plan R1 consolidation). E-Government Act § 208 mandated
+# disclosures: the two indexes fan out to /publication/ pages; the three
+# named-program publication pages fan out to their filing PDFs under
+# /sites/default/files/.
+[statrep_us_dhs_privacy_compliance]
+kind = "index_page"
+targets = [
+  { id = "dhs-pia-hub", url = "https://www.dhs.gov/privacy-impact-assessments", kind = "index_page", max_documents = 48, doc_url_contains = "/publication/" },
+  { id = "dhs-ice-component-index", url = "https://www.dhs.gov/privacy-documents-ice", kind = "index_page", max_documents = 48, doc_url_contains = "/publication/" },
+  { id = "dhs-obim-hart", url = "https://www.dhs.gov/publication/dhsobimpia-004-homeland-advanced-recognition-technology-system-hart-increment-1", kind = "index_page", max_documents = 8, doc_suffixes = [".pdf"] },
+  { id = "dhs-cbp-bss", url = "https://www.dhs.gov/publication/border-surveillance-systems-bss", kind = "index_page", max_documents = 8, doc_suffixes = [".pdf"] },
+  { id = "dhs-cbp-telemetry", url = "https://www.dhs.gov/publication/dhscbppia-080-cbp-commercial-telemetry-data-evaluation", kind = "index_page", max_documents = 8, doc_suffixes = [".pdf"] },
+]
+
+# US DHS SORNs — the I3-C072 plate-data SORN family as Federal Register
+# document pages (no API adapter — I8 §5.6): the seven reviewed notices
+# (ICE-009 2010 + 2020, ICE-008 2025, CBP-007 2015 + Jan/Dec 2016,
+# CBP-006 ATS 2012) of the ~8-document family.
+[legis_us_dhs_sorn_plate_data]
+kind = "disclosure_document"
+targets = [
+  { id = "sorn-ice-009-external-investigations-2010", url = "https://www.federalregister.gov/documents/2010/01/05/E9-31269/privacy-act-of-1974-department-of-homeland-security-us-immigration-and-customs-enforcement-009", kind = "disclosure_document" },
+  { id = "sorn-ice-009-external-investigations-2020", url = "https://www.federalregister.gov/documents/2020/11/20/2020-25619/privacy-act-of-1974-system-of-records", kind = "disclosure_document" },
+  { id = "sorn-ice-008-search-arrest-seizure-2025", url = "https://www.federalregister.gov/documents/2025/07/21/2025-13609/privacy-act-of-1974-system-of-records", kind = "disclosure_document" },
+  { id = "sorn-cbp-007-border-crossing-2015", url = "https://www.federalregister.gov/documents/2015/05/11/2015-11288/privacy-act-of-1974-department-of-homeland-securityus-customs-and-border-protection-007-border", kind = "disclosure_document" },
+  { id = "sorn-cbp-007-border-crossing-2016-01", url = "https://www.federalregister.gov/documents/2016/01/25/2016-01331/privacy-act-of-1974-department-of-homeland-security-us-customs-and-border-protection-007-border", kind = "disclosure_document" },
+  { id = "sorn-cbp-007-border-crossing-2016-12", url = "https://www.federalregister.gov/documents/2016/12/13/2016-29898/privacy-act-of-1974-department-of-homeland-securityus-customs-and-border-protection-007-border", kind = "disclosure_document" },
+  { id = "sorn-cbp-006-automated-targeting-2012", url = "https://www.federalregister.gov/documents/2012/05/22/2012-12396/privacy-act-of-1974-us-customs-and-border-protection-dhscbp-006-automated-targeting-system-system-of", kind = "disclosure_document" },
+]

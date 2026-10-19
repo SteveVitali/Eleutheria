@@ -8448,25 +8448,25 @@ jurisdiction = "US-ME"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_hi_hawai_judiciary_under]
-name = "Hawai'i Judiciary report under HRS 803-47(b) - applications for orders authorizing interception of wire, oral or electro"
+[sources.statrep_hi_judiciary_interception]
+name = "Hawai'i Judiciary annual interception report (HRS \u00a7 803-47(b))"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://data.capitol.hawaii.gov/sessions//session2025/bills/JC35_.pdf"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-035, cand I9b-C078, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_hi_hawai_judiciary_under'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-035, cand I9b-C078, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_hi_hawai_judiciary_under'. Reconciled id 'statrep_hi_judiciary_interception' (I8 \u00a75.6 ACQ-13b) \u2014 the generated id renamed to the design's id under P36.9b; the filing reports institution-level application counts only (judge/prosecutor names are never extracted, \u00a743.4)."
 publisher = "Hawai'i State Judiciary (communication to the Legislature)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-HI"
-[sources.statrep_hi_hawai_judiciary_under.rights]
+[sources.statrep_hi_judiciary_interception.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8628,25 +8628,25 @@ jurisdiction = "US-CO"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_de_delaware_information_analysis]
-name = "Delaware Information and Analysis Center (DIAC) Privacy SOP"
+[sources.statrep_de_diac]
+name = "Delaware Information and Analysis Center (DIAC) privacy SOP (28 C.F.R. Part 23)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://dediac.org/html/DIAC%20Privacy%20SOP.pdf"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-043, cand I4-C274, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_de_delaware_information_analysis'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-043, cand I4-C274, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_de_delaware_information_analysis'. Reconciled id 'statrep_de_diac' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; the proposed 'fusion-center' technology concept stays coarse (rtcc-unspecified) pending the ontology row (D-P36.9b-1, SIG-ONTO-021)."
 publisher = "Delaware Information and Analysis Center (Delaware State Police)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DE"
-[sources.statrep_de_delaware_information_analysis.rights]
+[sources.statrep_de_diac.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8807,47 +8807,25 @@ jurisdiction = "US-VA"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_wa_2026_automated_safety]
-name = "2026 Automated Safety Enforcement Report (Report to the Legislature, RCW 46.63.220(6))"
+[sources.statrep_wa_wtsc_ate]
+name = "Washington automated safety enforcement reports (RCW 46.63.220(6)) \u2014 WTSC statewide report + municipal annual reports"
 source_kind = "government_mandated_disclosure"
-homepage_url = "https://wtsc.wa.gov/wp-content/uploads/dlm_uploads/2026/06/2026-Automated-Safety-Enforcement-Report_WTSC.pdf"
+homepage_url = "https://wtsc.wa.gov/safe-driving/patient-driving/ase/"
 default_tier = "R4"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index + PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-051, cand I4-C067, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (+ verbatim copy/distribute permission)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_wa_2026_automated_safety'."
-publisher = "Washington Traffic Safety Commission (with University of Washington)"
+notes = "R11-ACQ-01 generated row (plan AP-T1-051, cand I4-C067, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (+ verbatim copy/distribute permission)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_wa_2026_automated_safety'. Reconciled id 'statrep_wa_wtsc_ate' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; the generated statrep_wa_automated_traffic_safety row (plan AP-T1-052, cand I4-C068) is absorbed: the WTSC ASE index enumerates the ~29 municipal RCW 46.63.220(6)(b)(i) reports as document targets (plan R1 consolidation)."
+publisher = "Washington Traffic Safety Commission (with University of Washington); municipal reports filed by the ~29 operating jurisdictions"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
-[sources.statrep_wa_2026_automated_safety.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.statrep_wa_automated_traffic_safety]
-name = "WA city/county annual automated traffic safety camera reports (RCW 46.63.220(6)(b)(i) duty)"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://wtsc.wa.gov/wp-content/uploads/dlm_uploads/2026/06/2026-Automated-Safety-Enforcement-Report_WTSC.pdf"
-default_tier = "R4"
-custody_posture = "MIRROR"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "annual"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-052, cand I4-C068, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (+ verbatim copy/distribute permission)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_wa_automated_traffic_safety'."
-publisher = "29 WA cities operating programs (per WTSC)"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US-WA"
-[sources.statrep_wa_automated_traffic_safety.rights]
+[sources.statrep_wa_wtsc_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8874,47 +8852,25 @@ jurisdiction_place = "Detroit"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_us_dhs_privacy_impact]
-name = "DHS Privacy Impact Assessments hub - operational social-media PIAs (CBP-058, ICE-064, OPS-004, FEMA-041, USSS-026)"
+[sources.statrep_us_dhs_privacy_compliance]
+name = "DHS privacy compliance documents \u2014 Privacy Impact Assessment hub, component indexes, and named-program PIAs (E-Government Act \u00a7 208)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.dhs.gov/privacy-impact-assessments"
 default_tier = "R4"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index + PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-054, cand I4-C167, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_us_dhs_privacy_impact'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-054, cand I4-C167, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_us_dhs_privacy_impact'. Reconciled id 'statrep_us_dhs_privacy_compliance' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; the four generated component rows (statrep_us_dhs_component_privacy AP-T1-055 / I4-C259, statrep_us_dhs_obim_pia AP-T1-073 / I4-C261, statrep_us_dhs_cbp_border AP-T1-074 / I4-C269, statrep_us_dhs_cbp_pia AP-T1-100 / I4-C260) are absorbed as this row's five index targets (plan R1): the PIA hub, the ICE component privacy index, and the OBIM HART / CBP BSS / CBP telemetry publication pages."
 publisher = "U.S. Department of Homeland Security, Privacy Office"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
-[sources.statrep_us_dhs_privacy_impact.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.statrep_us_dhs_component_privacy]
-name = "DHS component privacy compliance document indexes (Privacy Documents for ICE / CBP / OBIM)"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.dhs.gov/privacy-documents-ice"
-default_tier = "R4"
-custody_posture = "MIRROR"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "on-change (irregular upstream)"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-055, cand I4-C259, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_us_dhs_component_privacy'."
-publisher = "U.S. Department of Homeland Security, Privacy Office"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US"
-[sources.statrep_us_dhs_component_privacy.rights]
+[sources.statrep_us_dhs_privacy_compliance.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9097,91 +9053,91 @@ jurisdiction = "US-FL"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_fl_florida_highway_safety]
-name = "Florida Department of Highway Safety and Motor Vehicles - Red Light Camera Report (annual summary under s. 316.0083(4), "
+[sources.statrep_fl_flhsmv_red_light]
+name = "Florida red light camera program annual reports (s. 316.0083(4), F.S. \u2014 FLHSMV summary + jurisdiction survey responses)"
 source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.flhsmv.gov/pdf/cabinetreports/redlightcameraanalysis2024.pdf"
+homepage_url = "https://www.flhsmv.gov/resources/cabinet-and-legislature-reports/red-light-camera-program-analysis/"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index + PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-064, cand I9b-C056, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_fl_florida_highway_safety'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-064, cand I9b-C056, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_fl_florida_highway_safety'. Reconciled id 'statrep_fl_flhsmv_red_light' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; the cabinet-reports index enumerates the ~10 annual editions."
 publisher = "Florida Department of Highway Safety and Motor Vehicles (FLHSMV)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
-[sources.statrep_fl_florida_highway_safety.rights]
+[sources.statrep_fl_flhsmv_red_light.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_pa_pennsylvania_work_zone]
-name = "Pennsylvania Work Zone Speed Safety Camera (WZSSC) Program 2026 Annual Report (75 Pa.C.S. 3369(h)(4); PennDOT, PA Turnpi"
+[sources.statrep_pa_wzssc]
+name = "Pennsylvania Work Zone Speed Safety Camera (WZSSC) program annual report (75 Pa.C.S. \u00a7 3369(h)(4))"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://workzonecameras.penndot.gov/wp-content/uploads/2026/05/2026-WZSSC-Annual-Report_04.02.2026.pdf"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-065, cand I9b-C057, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_pa_pennsylvania_work_zone'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-065, cand I9b-C057, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_pa_pennsylvania_work_zone'. Reconciled id 'statrep_pa_wzssc' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b."
 publisher = "Pennsylvania Department of Transportation with the Pennsylvania Turnpike Commission and Pennsylvania State Police"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-PA"
-[sources.statrep_pa_pennsylvania_work_zone.rights]
+[sources.statrep_pa_wzssc.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_md_maryland_required_chapters]
-name = "Maryland Department of State Police - Report Required by Chapters 222 and 223 of the 2020 General Assembly (cell site si"
+[sources.statrep_md_msp_css]
+name = "Maryland State Police cell-site simulator annual report (2020 Md. Laws chs. 222/223)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://mdsp.prod.maryland.gov/media/290/download"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-066, cand I9b-C065, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_md_maryland_required_chapters'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-066, cand I9b-C065, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_md_maryland_required_chapters'. Reconciled id 'statrep_md_msp_css' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; institution-level deployment counts only."
 publisher = "Maryland Department of State Police"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
-[sources.statrep_md_maryland_required_chapters.rights]
+[sources.statrep_md_msp_css.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_mn_minnesota_court_administrator]
-name = "Minnesota State Court Administrator - Report to Legislature on interception, pen register, trap and trace, mobile tracki"
+[sources.statrep_mn_court_interception]
+name = "Minnesota State Court Administrator interception report (Minn. Stat. \u00a7 626A.391 / Rules of Crim. Proc.)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.leg.mn.gov/docs/2024/Mandated/241537.pdf"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-067, cand I9b-C077, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_mn_minnesota_court_administrator'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-067, cand I9b-C077, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_mn_minnesota_court_administrator'. Reconciled id 'statrep_mn_court_interception' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; institution-level warrant/application counts only, appendix judge/prosecutor names are never extracted (\u00a743.4)."
 publisher = "Minnesota Judicial Branch, State Court Administrator's Office (filed with the Legislative Reference Library)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MN"
-[sources.statrep_mn_minnesota_court_administrator.rights]
+[sources.statrep_mn_court_interception.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9300,50 +9256,6 @@ jurisdiction_place = "Pasadena"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_us_dhs_obim_pia]
-name = "DHS/OBIM/PIA-004 Homeland Advanced Recognition Technology System (HART) Increment 1 - compliance documents"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.dhs.gov/publication/dhsobimpia-004-homeland-advanced-recognition-technology-system-hart-increment-1"
-default_tier = "R4"
-custody_posture = "MIRROR"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "on-change (irregular upstream)"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-073, cand I4-C261, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_us_dhs_obim_pia'."
-publisher = "U.S. Department of Homeland Security, Office of Biometric Identity Management"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US"
-[sources.statrep_us_dhs_obim_pia.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.statrep_us_dhs_cbp_border]
-name = "DHS/CBP Border Surveillance Systems (BSS) - compliance documents"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.dhs.gov/publication/border-surveillance-systems-bss"
-default_tier = "R4"
-custody_posture = "MIRROR"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "on-change (irregular upstream)"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-074, cand I4-C269, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_us_dhs_cbp_border'."
-publisher = "U.S. Department of Homeland Security / U.S. Customs and Border Protection"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US"
-[sources.statrep_us_dhs_cbp_border.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
 [sources.camreg_ctdot_speed_safety]
 name = "Approximate Speed Safety Camera Locations Public (CTDOT Work Zone Speed Control pilot)"
 source_kind = "government_portal"
@@ -9432,48 +9344,48 @@ jurisdiction = "US-NJ"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.legis_us_dhs_system_records]
-name = "DHS System of Records Notices referencing license plate data (Federal Register API)"
+[sources.legis_us_dhs_sorn_plate_data]
+name = "DHS System of Records Notices referencing license-plate-reader data (Federal Register document pages)"
 source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.federalregister.gov/api/v1/documents.json?conditions[term]=%22license%20plate%20reader%22"
+homepage_url = "https://www.federalregister.gov/documents/search?conditions%5Bterm%5D=%22license%20plate%20reader%22"
 default_tier = "R4"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "documented API \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "Federal Register document page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b); no API adapter (I8 \u00a75.6)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-079, cand I3-C072, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'legis_us_dhs_system_records'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-079, cand I3-C072, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'legis_us_dhs_system_records'. Reconciled id 'legis_us_dhs_sorn_plate_data' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; the ~8 reviewed SORN document pages are the row's disclosure_document targets (ICE-009/ICE-008/CBP-007/CBP-006 family)."
 publisher = "U.S. Department of Homeland Security (ICE, CBP) via the Federal Register"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
-[sources.legis_us_dhs_system_records.rights]
+[sources.legis_us_dhs_sorn_plate_data.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_seattle_wa_2024_2025_automated]
-name = "2024-2025 Automated Traffic Safety Camera Program Annual Report"
+[sources.statrep_seattle_wa_sdot_ate]
+name = "Seattle automated traffic safety camera (ATSC) program annual reports (RCW 46.63.220)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://seattle.gov/documents/Departments/SDOT/VisionZero/ATSC/2024_2025_ATSC_Annual_Report.pdf"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-080, cand I4-C069, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_seattle_wa_2024_2025_automated'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-080, cand I4-C069, family 'government_mandated_disclosure(statutory)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_seattle_wa_2024_2025_automated'. Reconciled id 'statrep_seattle_wa_sdot_ate' (I8 \u00a75.6 ACQ-13b) \u2014 renamed under P36.9b; the appendix site table emits the filing's own location literals, never asserted deployments (I8 \u00a75.6)."
 publisher = "City of Seattle, Seattle Department of Transportation"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
 jurisdiction_place = "Seattle"
-[sources.statrep_seattle_wa_2024_2025_automated.rights]
+[sources.statrep_seattle_wa_sdot_ate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9658,17 +9570,17 @@ jurisdiction_place = "Austin"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_wa_seattle_oig_annual]
-name = "Seattle OIG annual surveillance usage reviews"
+[sources.statrep_seattle_wa_oig]
+name = "Seattle Office of Inspector General surveillance usage reviews (SMC 14.18)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://seattle.gov/inspector-general/reports"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index + PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.9b (ACQ-13b)"
 auth_model = "none"
-cadence = "unknown (declare on first capture)"
+cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
@@ -9677,7 +9589,7 @@ publisher = "Seattle Office of Inspector General (OIG)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
 jurisdiction_place = "Seattle"
-[sources.statrep_wa_seattle_oig_annual.rights]
+[sources.statrep_seattle_wa_oig.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9767,28 +9679,6 @@ publisher = "Oklahoma District Attorneys Council (JAG-LLE)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-OK"
 [sources.grant_ok_oklahoma_jag_lle.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-
-[sources.statrep_us_dhs_cbp_pia]
-name = "DHS/CBP/PIA-080 CBP Commercial Telemetry Data Evaluation"
-source_kind = "government_mandated_disclosure"
-homepage_url = "https://www.dhs.gov/publication/dhscbppia-080-cbp-commercial-telemetry-data-evaluation"
-default_tier = "R4"
-custody_posture = "MIRROR"
-compact_status = "public_terms_only"
-robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
-auth_model = "none"
-cadence = "once (static; no recurrence, SIG-INGEST-025b)"
-ingestion_permitted = false
-reliability_provisional = true
-verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-100, cand I4-C260, family 'government_mandated_disclosure(federal PIA/SORN)', ticket ACQ-13 -> live ACQ-16, class ticket P36.9b). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_us_dhs_cbp_pia'."
-publisher = "U.S. Department of Homeland Security / U.S. Customs and Border Protection"
-jurisdiction_scheme = "iso.3166_2"
-jurisdiction = "US"
-[sources.statrep_us_dhs_cbp_pia.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 

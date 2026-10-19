@@ -361,3 +361,19 @@ seed-commit 0b36a887
 # preserved by this declaration (same pattern as c4b2aa21).
 # Scope: findings attributed to 64648080 only; no other commit borrows the exemption.
 seed-commit 64648080
+# ── P36.9b kind-repair declaration ──────────────────────────────────────────
+# The orchestrator's 2dbd4633 PHASE LOG entry kind `boundary-3 confirm` was
+# undeclared in record_policy/phase_log_kinds.txt (V4); the worker's in-place
+# kind repair `boundary-3 confirm` → `post-closeout record + boundary-3 confirm`
+# (21a392ca; the ef1fb3bf/d778706b/145b68a3/6fe93216/64648080 sanctioned pattern)
+# edited the committed line — append-only is preserved by this declaration.
+# Scope: findings attributed to 21a392ca only; no other commit borrows the exemption.
+seed-commit 21a392ca
+# ── P36.9b blockedOn-clear kind repair ──────────────────────────────────────
+# The orchestrator's 54e3a111 PHASE LOG entry kind `blockedOn cleared` was
+# undeclared in record_policy/phase_log_kinds.txt (V4); the in-place kind
+# repair `blockedOn cleared` → `correction` at 49607976 (the
+# ef1fb3bf/d778706b/145b68a3/6fe93216/64648080/21a392ca sanctioned pattern)
+# edited the committed line — append-only is preserved by this declaration.
+# Scope: findings attributed to 49607976 only; no other commit borrows the exemption.
+seed-commit 49607976

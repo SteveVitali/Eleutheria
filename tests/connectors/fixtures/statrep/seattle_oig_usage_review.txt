@@ -1,0 +1,16 @@
+Office of Inspector General - City of Seattle
+Surveillance Usage Review - Seattle Police Department
+
+Date: June 30, 2025
+Technology: acoustic gunshot detection
+
+This annual usage review is submitted under SMC 14.18 (the Seattle
+surveillance ordinance enacted by the Seattle City Council). The OIG reviewed
+the Seattle Police Department's use of the reviewed technology during the
+review period.
+
+Uses in the review period: 37
+
+The review examines frequency and patterns of use, data sharing, security,
+and civil-liberties impacts at the program level. It publishes no officer
+names, no per-search records, and no individual case data.
