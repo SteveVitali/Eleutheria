@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "f6efe2e8c771b82fa2fbf7b23b67d7b71c999145",
+  "input_commit": "58145e5cadbb4c7fb58dedc26785c9167a24ab0b",
   "manifest_inputs": 1068,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -23,7 +23,7 @@
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-19T07:15Z"
+    "updatedAt": "2026-10-19T07:18Z"
   },
   "counts": {
     "obligations": 169,
@@ -9065,7 +9065,7 @@
       },
       {
         "key": "P35.32",
-        "obligations_cell": "QUEUED hosted legs: `sqitch deploy --verify` of `ingest_run_report` + one-shot `sig-ops backfill-run-reports` (WORM rows + unmatched executions + 90 repo records; insert-only; `+0` re-run proof + reconcile read-back)",
+        "obligations_cell": "QUEUED hosted legs: `sqitch deploy --verify` of `ingest_run_report` + one-shot `sig-ops backfill-run-reports` (WORM rows + unmatched executions + repo records — counts re-derived; insert-only; `+0` re-run proof + reconcile read-back)",
         "gates_cell": "QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.32 verbatim (2026-10-09T17:32Z; expires at the next GATE); window closed at run end — legs operator-run per OP-24; AR-3 + AR-2, excl. AR-3 freeze",
         "operator_cell": "nothing until the re-run — `sqitch deploy` is a no-op when landed; `backfilled_from` uniqueness makes a second backfill +0; rollback = `sqitch revert` + stopping the writer",
         "rerun_cell": "`implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true` · row 310 landed (PR #325)",
@@ -19114,7 +19114,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "995aeb9eb9b07f9bf3a57691a5edd7d3d4aa0877a5e652b3f756f42c22c4b721",
+  "manifest_sha256": "f18d56982348ef341e0bba5efb0b874929b63ef1f9ad2ad2d47fac3e1a3a22e9",
   "current_md": {
     "lines": 63,
     "bytes": 15599,
