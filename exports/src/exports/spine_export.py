@@ -42,6 +42,7 @@ database. :func:`run_spine_export` is the thin executor that opens the snapshot.
 from __future__ import annotations
 
 import json
+import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
@@ -110,9 +111,11 @@ from .shaping import (
     LAT_PREDICATE,
     LON_PREDICATE,
     SHAPING_SCHEMA_VERSION,
+    SHARING_DEGREE_PREDICATES,
     ShapedDataset,
     ShapedSite,
     ShapingClaim,
+    SharingEdge,
     parse_shaping_claims,
     shape_sites,
 )
@@ -374,6 +377,16 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND upper_inf(c.sys_period)"
         "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.subject_id, c.raw_value",
+    ),
+    # P35.30 (SIG-EXPORT-D21 draft / K2 §7 H-2): the declared independence
+    # class per claim (P35.25 / SIG-CONF-014) — the input the network edge's
+    # support level derives from (two+ declared-independent classes is a
+    # genuinely corroborated edge; everything else stays the single-source
+    # floor, never a constant). Guarded on ``claim_lineage`` — a pre-P35.25
+    # spine degrades to [] and every edge keeps the honest floor.
+    "claim_lineage": (
+        "claim_lineage",
+        "SELECT claim_id::text, independence_class FROM claim_lineage ORDER BY claim_id",
     ),
     # P35.29 (K2 §3 / A-10, R11-K13-GX-01): the shared ``sig.entity-label/1``
     # registry inputs. Three seams, each degrading independently:
@@ -1409,10 +1422,390 @@ def contradictions_visible_metric(
     }
 
 
+# --- P35.30 (R11-K13-GX-02, SIG-EXPORT-D21 draft): honest edge fields ---------
+#
+# Every emitted edge carries the relation in words, the observed date AND its
+# kind (the epoch-zero placeholder renders ``undated``, never a synthetic
+# 1970-01-01 — SIG-TIME-012 class honesty; the spine-side repair is L3
+# CONF-06's), the source display names, the currency class and the full set of
+# supporting claim ids — all from the claims, never constants (K2 §7 H-2).
+
+#: The three §12.2 access kinds — emitted separately, never merged
+#: (SIG-UI-024 / SIG-RECON-034).
+_NETWORK_ACCESS_KINDS: frozenset[str] = frozenset(
+    {"configured_access", "observed_use", "declared_policy"}
+)
+
+#: Alias for the shared degree-predicate vocabulary (SIG-INGEST-043c /
+#: K2 §7 H-4) — the degree is a node attribute, never an edge.
+_DEGREE_PREDICATES = SHARING_DEGREE_PREDICATES
+
+#: The epoch-zero placeholder a pre-P35.26 write stamped for "no recorded date"
+#: (the ``*_no_epoch_zero`` constraints now refuse it on the spine). Rendered
+#: ``undated`` — never a real-looking 1970 date.
+_EPOCH_DATE = "1970-01-01"
+
+#: ``reconcile.weight.currency`` C-codes → the web's currency words
+#: (``web/src/lib/epistemic.ts#CURRENCY_LEVELS``), plus K2 §5.3's ``UNDATED``
+#: class for an edge with no evidenced date (currency is uncomputable, not
+#: fabricated).
+_CURRENCY_WORDS = {"C1": "CURRENT", "C2": "AGING", "C3": "STALE", "C4": "HISTORICAL"}
+
+#: valid-to bound kinds meaning the edge's valid time has ENDED (the
+#: bound-kind vocabulary, ``db/deploy/role_edges.sql``: exact/before/after all
+#: bound the end; ``ongoing``/``never`` assert non-ending, ``unknown`` asserts
+#: nothing). The raw inputs for the H-3 historical marking.
+_ENDED_TO_KINDS: frozenset[str] = frozenset({"exact", "before", "after"})
+
+
+def _uuid_like(value: Any) -> bool:
+    """True iff ``value`` parses as a UUID (an entity id, never a literal)."""
+    try:
+        uuid.UUID(str(value))
+    except (ValueError, AttributeError, TypeError):
+        return False
+    return True
+
+
+@dataclass(frozen=True)
+class _NetworkEvidence:
+    """The claim-side evidence the network surface joins onto its edges.
+
+    ``claim_source``/``claim_predicate``/``claim_observed`` come from the
+    publishable ``claim_weights`` read (one row per claim × source — sources
+    accumulate, never overwrite); ``lineage`` carries each claim's declared
+    independence class (P35.25 ``claim_lineage`` — ``unclassified`` is never
+    corroboration); ``as_of`` pins currency to the build's snapshot date so the
+    emitted class is reproducible, never wall-clock.
+    """
+
+    claim_source: Mapping[str, frozenset[str]]
+    claim_predicate: Mapping[str, str]
+    claim_observed: Mapping[str, str]
+    lineage: Mapping[str, str]
+    as_of: date | None
+
+
+def _norm_iso_date(value: Any) -> str | None:
+    """An ISO ``YYYY-MM-DD`` date, or ``None`` for absence/epoch placeholder."""
+    if value is None:
+        return None
+    d = value.date() if isinstance(value, datetime) else value
+    if isinstance(d, date):
+        text = d.isoformat()
+    else:
+        text = str(value)[:10]
+    return None if text == _EPOCH_DATE else text
+
+
+def _network_evidence(raw: Mapping[str, Any], as_of: str | date | None) -> _NetworkEvidence:
+    """Index the publishable-claim reads the network edges cite (P35.30)."""
+    claim_source: dict[str, set[str]] = {}
+    claim_predicate: dict[str, str] = {}
+    claim_observed: dict[str, str] = {}
+    for row in raw.get("claim_weights") or []:
+        try:
+            cid = str(row[0])
+        except (TypeError, IndexError):
+            continue
+        if len(row) > 1 and row[1]:
+            claim_source.setdefault(cid, set()).add(str(row[1]))
+        if len(row) > 2 and row[2]:
+            claim_predicate[cid] = str(row[2])
+        if len(row) > 6:
+            obs = _norm_iso_date(row[6])
+            if obs:
+                claim_observed[cid] = obs
+    lineage: dict[str, str] = {}
+    for row in raw.get("claim_lineage") or []:
+        try:
+            lineage[str(row[0])] = str(row[1])
+        except (TypeError, IndexError):
+            continue
+    as_of_date: date | None = None
+    if isinstance(as_of, datetime):
+        as_of_date = as_of.date()
+    elif isinstance(as_of, date):
+        as_of_date = as_of
+    elif as_of:
+        try:
+            as_of_date = date.fromisoformat(str(as_of)[:10])
+        except ValueError:
+            as_of_date = None
+    return _NetworkEvidence(
+        claim_source={cid: frozenset(s) for cid, s in claim_source.items()},
+        claim_predicate=claim_predicate,
+        claim_observed=claim_observed,
+        lineage=lineage,
+        as_of=as_of_date,
+    )
+
+
+def _sharing_edge_groups(
+    sharing_edges: Sequence[SharingEdge],
+) -> tuple[
+    dict[tuple[str, str, str], list[SharingEdge]],
+    dict[tuple[str, str, str], list[SharingEdge]],
+    dict[str, list[SharingEdge]],
+]:
+    """Group the publishable sharing-edge claims for the network surface.
+
+    Returns ``(entity, literal, degree)``:
+
+    - ``entity`` — claims whose ``partner_ref`` is an entity id, keyed by
+      (subject, partner, access_kind): the claim set behind each materialized
+      edge, or a publishable entity edge awaiting materialization.
+    - ``literal`` — claims whose ``partner_ref`` is a source-stated literal
+      (the K2 §2 "literal twin" that never materializes), keyed the same.
+    - ``degree`` — ``subject → claims`` for the count predicates: a node
+      attribute, never an edge (SIG-INGEST-043c).
+    """
+    entity: dict[tuple[str, str, str], list[SharingEdge]] = {}
+    literal: dict[tuple[str, str, str], list[SharingEdge]] = {}
+    degree: dict[str, list[SharingEdge]] = {}
+    for e in sharing_edges:
+        if e.predicate_id in _DEGREE_PREDICATES:
+            degree.setdefault(e.subject_id, []).append(e)
+            continue
+        if e.access_kind not in _NETWORK_ACCESS_KINDS or not e.partner_ref:
+            continue
+        key = (e.subject_id, e.partner_ref, e.access_kind)
+        (entity if _uuid_like(e.partner_ref) else literal).setdefault(key, []).append(e)
+    return entity, literal, degree
+
+
+def _edge_support(claim_ids: Sequence[str], evidence: _NetworkEvidence) -> str:
+    """The edge's §10.7-style support floor — derived, never a constant.
+
+    Two or more DISTINCT *declared* independence classes among the backing
+    claims is genuine corroboration (``STRONGLY_SUPPORTED``); an edge on a
+    single source/class — or undeclared lineage — keeps the single-source
+    floor (``WEAKLY_SUPPORTED``). ``CONFIRMED`` is never emitted at this layer
+    (W4 needs artifact-weighted evidence the edge surface does not evaluate).
+    """
+    classes = {
+        evidence.lineage.get(cid, "")
+        for cid in claim_ids
+        if evidence.lineage.get(cid) not in (None, "", "unclassified")
+    }
+    if len(classes) >= 2:
+        return "STRONGLY_SUPPORTED"
+    if claim_ids:
+        return "WEAKLY_SUPPORTED"
+    return "UNSUPPORTED"
+
+
+def _edge_currency(
+    predicate_ids: Sequence[str],
+    observed: str | None,
+    evidence: _NetworkEvidence,
+) -> str | None:
+    """The edge's currency class (§28.3, derived at export time).
+
+    ``UNDATED`` when no evidenced date exists (K2 §5.3's fifth class); the
+    worst (most conservative) class across the edge's distinct registered
+    predicates; ``None`` when no predicate resolves in the registry — honest
+    absence, never a guessed class.
+    """
+    if observed is None:
+        return "UNDATED"
+    if evidence.as_of is None:
+        return None
+    from reconcile.weight import currency, predicate_meta
+
+    observed_d = date.fromisoformat(observed)
+    classes: list[str] = []
+    for pid in sorted(set(predicate_ids)):
+        try:
+            meta = predicate_meta(pid)
+        except KeyError:
+            continue
+        classes.append(
+            currency(
+                volatility_class=str(meta.get("volatility_class", "")),
+                half_life=str(meta.get("half_life", "")),
+                observed_at=observed_d,
+                as_of=evidence.as_of,
+            )
+        )
+    if not classes:
+        return None
+    return _CURRENCY_WORDS[max(classes)]
+
+
+def _predicate_words(predicate_ids: Sequence[str], fallback: str) -> str:
+    """The relation in words — the claim's predicate unslugged, never a raw
+    slot name (K2 H-2); ``fallback`` (the edge type / access kind, likewise
+    unslugged) when no claim resolves."""
+    words = sorted({p.replace("_", " ") for p in predicate_ids if p})
+    return "; ".join(words) if words else fallback.replace("_", " ")
+
+
+def _edge_withheld_entity(entity_id: str, labels: Mapping[str, EntityLabel]) -> bool:
+    """True when the registry withholds the entity — a withheld/person entity
+    is never a node and an edge that would name it is dropped whole (Part VIII,
+    A-10 c)."""
+    lbl = labels.get(entity_id)
+    return lbl is not None and lbl.label_state == "withheld"
+
+
+def _network_node(
+    nodes: dict[str, dict[str, Any]],
+    entity_id: str,
+    *,
+    node_type: str,
+    word: str,
+    labels: Mapping[str, EntityLabel],
+) -> None:
+    """Emit a node whose label is the registry's — never a raw id (L-2/D20)."""
+    if entity_id in nodes:
+        return
+    lbl = labels.get(entity_id)
+    node: dict[str, Any] = {"id": entity_id, "type": node_type}
+    if lbl is not None and lbl.label:
+        node["label"] = lbl.label
+        node["label_basis"] = lbl.label_basis or "derived"
+    elif lbl is not None and lbl.label_state == "not_yet_reviewed":
+        # A-10 b: the typed review state IS the node label — visible, never
+        # improvised.
+        node["label"] = lbl.descriptor or "Organisation · not yet reviewed"
+        node["label_basis"] = None
+        node["label_state"] = "not_yet_reviewed"
+    else:
+        # The registry is the ONLY label authority — a source id is never a
+        # label (K2 §2 fault 1, L-2/D20), so ``source_names`` is never consulted
+        # here; an unlabelled entity renders the typed hash fallback.
+        node["label"] = f"{word} #{hash4(entity_id)}"
+        node["label_basis"] = "fallback"
+    nodes[entity_id] = node
+
+
+def _literal_partner_label(text: str) -> str | None:
+    """The display label for a source-stated literal partner, or ``None``.
+
+    ``None`` withholds the whole edge — the literal is never a node id, so a
+    text we cannot honestly name never leaks. Two withhold cases (Part VIII,
+    K2 §3.4 R-8 — the screen runs over literal party values BEFORE any label,
+    node or slug is made from them):
+
+    - a person-shaped literal (the affirmative ``natural_person_signal``);
+    - a literal the shared derivation cannot turn into a display label (the
+      L-2 typed fallback would leave the raw text as the node id).
+    """
+    if natural_person_signal(text):
+        return None
+    lbl = derive_label(
+        LabelFacts(
+            entity_id=f"literal:{text}",
+            kind="org",
+            disposition="allow",
+            canonical_name=text,
+        ),
+        person_screen=lambda t: bool(natural_person_signal(t)),
+    )
+    if lbl.label is None or lbl.label_basis == "fallback":
+        return None
+    return lbl.label
+
+
+def _emit_network_edge(
+    out_edges: list[dict[str, Any]],
+    *,
+    src: str,
+    dst: str,
+    access_kind: str,
+    direction: str,
+    relation_fallback: str,
+    claims: Sequence[SharingEdge],
+    extra_claim_ids: Sequence[str],
+    evidence: _NetworkEvidence,
+    source_names: Mapping[str, str],
+    valid_from_kind: str | None,
+    valid_to_kind: str | None,
+    valid_to: Any,
+    extra_observed: Any = None,
+) -> None:
+    """Emit one honest evidence-carrying edge (P35.30, SIG-EXPORT-D21 draft)."""
+    claim_ids = sorted({c.claim_id for c in claims if c.claim_id} | set(extra_claim_ids))
+    predicate_ids = sorted(
+        {c.predicate_id for c in claims}
+        | {evidence.claim_predicate[cid] for cid in claim_ids if cid in evidence.claim_predicate}
+    )
+    source_ids = sorted(
+        {c.source_id for c in claims if c.source_id}
+        | {sid for cid in claim_ids for sid in evidence.claim_source.get(cid, ())}
+    )
+    observed_dates = sorted(
+        {
+            d
+            for d in (
+                *(_norm_iso_date(c.observed_at) for c in claims),
+                *(_norm_iso_date(evidence.claim_observed.get(cid)) for cid in claim_ids),
+                _norm_iso_date(extra_observed),
+            )
+            if d
+        }
+    )
+    observed = observed_dates[0] if observed_dates else None
+    date_kind = "observed" if observed else "undated"
+    currency = _edge_currency(predicate_ids, observed, evidence)
+    valid_to_s = _norm_iso_date(valid_to)
+    ended = valid_to_s is not None or (valid_to_kind or "") in _ENDED_TO_KINDS
+    historical = ended or currency == "HISTORICAL"
+    sources = sorted({source_names[sid] for sid in source_ids if sid in source_names})
+    out_edges.append(
+        {
+            "from": src,
+            "to": dst,
+            "access_kind": access_kind,
+            "relation": _predicate_words(predicate_ids, relation_fallback),
+            "predicate": _predicate_words(predicate_ids, relation_fallback),
+            "direction": direction,
+            "observed_at": observed,
+            "date_kind": date_kind,
+            "valid_from_kind": valid_from_kind or "unknown",
+            "valid_to_kind": valid_to_kind or "unknown",
+            "valid_to": valid_to_s,
+            "source": "; ".join(sources) if sources else None,
+            "sources": sources,
+            "currency": currency,
+            "historical": historical,
+            # Derived from the claim set's declared independence classes —
+            # never a constant (the pre-P35.30 ``WEAKLY_SUPPORTED``/
+            # ``evidence_count: 1`` placeholders are gone, D21).
+            "support": _edge_support(claim_ids, evidence),
+            "evidence_count": len(claim_ids),
+            # P32.15 (SIG-FIND-004) — the supporting claims travel with the
+            # edge; ``evidence`` stays as the P32.15 name, ``claim_ids`` is
+            # the D21 contract's name for the same set.
+            "evidence": claim_ids,
+            "claim_ids": claim_ids,
+        }
+    )
+
+
+def _degree_attribute(node: dict[str, Any], claims: Sequence[SharingEdge]) -> None:
+    """Attach the source-stated partner COUNT to the node — an attribute, never
+    an edge (SIG-INGEST-043c / H-4). Carries its own provenance (§3.1)."""
+    values = sorted(
+        {int(e.partner_ref) for e in claims if e.partner_ref and e.partner_ref.strip().isdigit()}
+    )
+    if not values:
+        return
+    node["degree"] = values[0] if len(values) == 1 else values
+    node["degree_claim_ids"] = sorted(e.claim_id for e in claims if e.claim_id)
+    observed = sorted({d for d in (_norm_iso_date(e.observed_at) for e in claims) if d})
+    if observed:
+        node["degree_observed_at"] = observed[0]
+
+
 def _network_from_materialized(
     edges: Sequence[Mapping[str, Any]],
     source_names: Mapping[str, str],
     labels: Mapping[str, EntityLabel] | None = None,
+    *,
+    sharing_edges: Sequence[SharingEdge] = (),
+    evidence: _NetworkEvidence | None = None,
 ) -> dict[str, Any]:
     """Build the §39.4 network surface from the materialized ``relationship`` edges (P28.2).
 
@@ -1420,49 +1813,127 @@ def _network_from_materialized(
     P08.2 §29.3 reconciler): the three §12.2 access kinds stay separate, every edge carries its
     backing ``evidence_claim`` (no unevidenced edge, §3.1). An edge whose access kind is not one
     of the three typed kinds is honestly absent from the typed network rather than coerced.
+
+    P35.30 (SIG-EXPORT-D21 draft / K2 §7 H-2…H-4): each edge rejoins the
+    publishable claim set that evidences it (the relationship row stores one
+    representative claim; ``sharing_edges`` carries the full publishable set)
+    and gains the real dates/kinds/sources/currency. The literal-twin claims a
+    materializer could not map to an entity (``skipped_unmapped``) join the
+    emitted edge set as person-screened literal partner nodes; a withheld or
+    person-shaped endpoint drops the edge whole (Part VIII).
     """
-    allowed = {"configured_access", "observed_use", "declared_policy"}
+    labels = labels or {}
+    evidence = evidence or _NetworkEvidence({}, {}, {}, {}, None)
+    entity_claims, literal_claims, degree_claims = _sharing_edge_groups(sharing_edges)
     nodes: dict[str, dict[str, Any]] = {}
     out_edges: list[dict[str, Any]] = []
+    covered: set[tuple[str, str, str]] = set()
     for e in edges:
         access_kind = str(e.get("access_kind"))
-        if access_kind not in allowed:
+        if access_kind not in _NETWORK_ACCESS_KINDS:
             continue
         src = str(e["from_entity"])
         dst = str(e["to_entity"])
-        # P35.29 (L-2): node labels come from the shared registry — a raw
-        # entity/source id is never a label (SIG-UI-D20).
-        nodes.setdefault(
-            src,
-            {
-                "id": src,
-                "label": _registry_label(labels or {}, src, "Record"),
-                "type": "agency",
-            },
+        if _edge_withheld_entity(src, labels) or _edge_withheld_entity(dst, labels):
+            continue
+        key = (src, dst, access_kind)
+        covered.add(key)
+        claims = entity_claims.get(key, [])
+        _network_node(nodes, src, node_type="agency", word="Record", labels=labels)
+        _network_node(nodes, dst, node_type="partner", word="Partner", labels=labels)
+        _emit_network_edge(
+            out_edges,
+            src=src,
+            dst=dst,
+            access_kind=access_kind,
+            direction=str(e.get("direction") or "a_to_b"),
+            relation_fallback=str(e.get("edge_type") or access_kind),
+            claims=claims,
+            extra_claim_ids=[str(e["evidence_claim"])] if e.get("evidence_claim") else [],
+            evidence=evidence,
+            source_names=source_names,
+            valid_from_kind=e.get("valid_from_kind"),
+            valid_to_kind=e.get("valid_to_kind"),
+            valid_to=e.get("valid_to"),
+            extra_observed=e.get("observed_at"),
         )
+    # Publishable entity-ref claims with no materialized edge (awaiting
+    # materialization) still emit — the claim is publishable; only the
+    # reconciled row is missing.
+    for (src, dst, kind), claims in sorted(entity_claims.items()):
+        if (src, dst, kind) in covered:
+            continue
+        if _edge_withheld_entity(src, labels) or _edge_withheld_entity(dst, labels):
+            continue
+        _network_node(nodes, src, node_type="agency", word="Record", labels=labels)
+        _network_node(nodes, dst, node_type="partner", word="Partner", labels=labels)
+        _emit_network_edge(
+            out_edges,
+            src=src,
+            dst=dst,
+            access_kind=kind,
+            direction="a_to_b",
+            relation_fallback=kind,
+            claims=claims,
+            extra_claim_ids=[],
+            evidence=evidence,
+            source_names=source_names,
+            valid_from_kind="unknown",
+            # No reconciled valid-to bound exists yet — ``unknown``, never the
+            # assertion ``ongoing`` (absence of an end bound is not evidence of
+            # continuation).
+            valid_to_kind="unknown",
+            valid_to=None,
+        )
+    # The literal-twin edges (K2 §2): a source-stated partner name that never
+    # resolved to an entity joins the edge set — person-screened first; a
+    # person-shaped literal withholds the edge whole (Part VIII, §3.4 R-8).
+    for (src, literal_text, kind), claims in sorted(literal_claims.items()):
+        label = _literal_partner_label(literal_text)
+        if label is None:
+            continue
+        if _edge_withheld_entity(src, labels):
+            continue
+        _network_node(nodes, src, node_type="agency", word="Record", labels=labels)
         nodes.setdefault(
-            dst,
+            literal_text,
             {
-                "id": dst,
-                "label": source_names.get(dst) or _registry_label(labels or {}, dst, "Partner"),
+                "id": literal_text,
+                "label": label,
                 "type": "partner",
+                "label_basis": "source_name",
             },
         )
-        out_edges.append(
-            {
-                "from": src,
-                "to": dst,
-                "access_kind": access_kind,
-                "relation": str(e.get("edge_type") or access_kind),
-                # The read seam surfaces one representative backing claim per edge, so the
-                # honest §10.7 support floor is the single-source level — never overclaimed.
-                "support": "WEAKLY_SUPPORTED",
-                "evidence_count": 1,
-                # P32.15 (SIG-FIND-004): the supporting claim travels with the
-                # edge so the public surface names it, not just counts it.
-                "evidence": [str(e["evidence_claim"])] if e.get("evidence_claim") else [],
-            }
+        _emit_network_edge(
+            out_edges,
+            src=src,
+            dst=literal_text,
+            access_kind=kind,
+            direction="a_to_b",
+            relation_fallback=kind,
+            claims=claims,
+            extra_claim_ids=[],
+            evidence=evidence,
+            source_names=source_names,
+            valid_from_kind="unknown",
+            valid_to_kind="unknown",
+            valid_to=None,
         )
+    # Degree is a node attribute, never an edge (SIG-INGEST-043c / H-4).
+    for subject, claims in sorted(degree_claims.items()):
+        node = nodes.get(subject)
+        if node is None:
+            if _edge_withheld_entity(subject, labels):
+                continue
+            _network_node(
+                nodes,
+                subject,
+                node_type="agency",
+                word="Record",
+                labels=labels,
+            )
+            node = nodes[subject]
+        _degree_attribute(node, claims)
     return {"nodes": [nodes[k] for k in sorted(nodes)], "edges": out_edges, "access_paths": []}
 
 
@@ -1570,52 +2041,26 @@ def _network(
     dataset: ShapedDataset,
     source_names: Mapping[str, str],
     labels: Mapping[str, EntityLabel] | None = None,
+    *,
+    evidence: _NetworkEvidence | None = None,
 ) -> dict[str, Any]:
     """Surface 4 — NetworkNode / NetworkEdge (§39.4). The three §12.2 access-edge
     types are never merged; an unclassifiable edge carries no typed relationship, so
-    it is honestly absent from the typed network rather than coerced into one."""
-    _ALLOWED = {"configured_access", "observed_use", "declared_policy"}
-    nodes: dict[str, dict[str, Any]] = {}
-    edges: list[dict[str, Any]] = []
-    for edge in dataset.sharing_edges:
-        if edge.access_kind not in _ALLOWED or edge.partner_ref is None:
-            continue
-        src = edge.subject_id
-        dst = edge.partner_ref
-        # P35.29 (L-2): the raw entity/source id is never a node label.
-        nodes.setdefault(
-            src,
-            {
-                "id": src,
-                "label": _registry_label(labels or {}, src, "Agency"),
-                "type": "agency",
-            },
-        )
-        nodes.setdefault(
-            dst,
-            {
-                "id": dst,
-                "label": source_names.get(dst) or _registry_label(labels or {}, dst, "Partner"),
-                "type": "partner",
-            },
-        )
-        edges.append(
-            {
-                "from": src,
-                "to": dst,
-                "access_kind": edge.access_kind,
-                "relation": edge.predicate_id,
-                "evidence_count": 1,
-                # P32.15 (SIG-FIND-004): the backing claim id is emitted so the
-                # public surface can name the support, never only count it.
-                "evidence": [edge.claim_id] if edge.claim_id else [],
-            }
-        )
-    return {
-        "nodes": [nodes[k] for k in sorted(nodes)],
-        "edges": edges,
-        "access_paths": [],
-    }
+    it is honestly absent from the typed network rather than coerced into one.
+
+    The compute-on-read fallback (ADR-092) — P35.30 routes it through the SAME
+    emitter as the materialized path so both paths produce the additive D21
+    fields (dates/kinds, sources, claim ids, currency); a claim-level edge that
+    has not been reconciled simply carries ``valid_from_kind="unknown"`` (the
+    single-snapshot rule — never an inferred start).
+    """
+    return _network_from_materialized(
+        [],
+        source_names,
+        labels,
+        sharing_edges=dataset.sharing_edges,
+        evidence=evidence,
+    )
 
 
 def _freshness(dataset: ShapedDataset) -> list[dict[str, Any]]:
@@ -2574,17 +3019,6 @@ def _label_artifacts(
     return by_comp
 
 
-def _registry_label(registry: Mapping[str, EntityLabel], entity_id: str, word: str) -> str:
-    """A node's display label from the registry — never the raw id (L-2/D20)."""
-    lbl = registry.get(entity_id)
-    if lbl is not None:
-        if lbl.label:
-            return lbl.label
-        if lbl.label_state == "not_yet_reviewed":
-            return f"{lbl.descriptor}" if lbl.descriptor else "Organisation · not yet reviewed"
-    return f"{word} #{hash4(entity_id)}"
-
-
 def build_spine_export(
     dataset: ShapedDataset,
     raw: Mapping[str, Any] | None = None,
@@ -2805,10 +3239,24 @@ def build_spine_export(
         ),
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
+        # P35.30: both paths emit the additive D21 fields — dates/kinds, source names,
+        # claim ids, currency — by joining the publishable claim reads and the
+        # declared-independence lineage over the same shaping rows.
         "network": (
-            _network_from_materialized(m_edges, source_names, label_registry)
+            _network_from_materialized(
+                m_edges,
+                source_names,
+                label_registry,
+                sharing_edges=dataset.sharing_edges,
+                evidence=_network_evidence(raw, dataset.as_of),
+            )
             if m_edges
-            else _network(dataset, source_names, label_registry)
+            else _network(
+                dataset,
+                source_names,
+                label_registry,
+                evidence=_network_evidence(raw, dataset.as_of),
+            )
         ),
         "freshness": _freshness(dataset),
         "coverage": coverage_metrics,

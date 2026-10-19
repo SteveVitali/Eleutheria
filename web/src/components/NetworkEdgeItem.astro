@@ -1,0 +1,62 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// One network edge list item — the edge list is the list equivalent and the
+// source of truth (SIG-UI-037), so every emitted fact renders here: the
+// relation in words, the observed date or the explicit "undated" state, the
+// source display names, the currency class, the temporal mark, the support
+// glyph, and the named supporting claims (P35.30, SIG-EXPORT-D21 draft).
+//
+// The relation is rendered as a neutral noun phrase between em-dashes — it
+// never asserts tense; an ended or undated edge carries its mark chip beside
+// it (K2 §7 H-2/H-3).
+import SupportGlyph from "./SupportGlyph.astro";
+import { edgeTemporal, edgeTemporalMark } from "../lib/network";
+import type { NetworkEdge } from "../lib/network";
+
+interface Props {
+  edge: NetworkEdge;
+  /** Resolves a node id to its emitted label. */
+  labelOf: (id: string) => string;
+}
+
+const { edge: e, labelOf } = Astro.props;
+const mark = edgeTemporalMark(e);
+---
+
+<li data-testid="access-edge" data-kind={e.access_kind} data-temporal={edgeTemporal(e)}>
+  <strong>{labelOf(e.from)}</strong> — {e.relation} — <strong>{labelOf(e.to)}</strong>
+  <span class="sig-edge-meta" data-testid="edge-meta">
+    {" "}
+    {e.observed_at ? `observed ${e.observed_at}` : "undated"}
+    {e.source ? ` · source: ${e.source}` : ""}
+    {e.currency ? ` · ${String(e.currency).toLowerCase()}` : ""}
+  </span>
+  {
+    mark && (
+      <span class="sig-edge-temporal" data-testid="edge-temporal-mark">
+        {" "}
+        {mark}
+      </span>
+    )
+  }
+  <div><SupportGlyph support={e.support} evidenceCount={e.evidence_count} /></div>
+  {
+    e.evidence && e.evidence.length > 0 && (
+      <details class="sig-edge-evidence" data-testid="access-edge-evidence">
+        <summary>
+          {e.evidence.length} supporting claim{e.evidence.length === 1 ? "" : "s"}
+        </summary>
+        <ul>
+          {e.evidence.map((claim) => (
+            <li>
+              <code>{claim}</code>
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+</li>

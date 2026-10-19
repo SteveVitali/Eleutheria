@@ -557,6 +557,14 @@ class JurisdictionGroup:
         }
 
 
+#: Sharing predicates whose claims record a partner COUNT, never a named
+#: partner (P35.30 / SIG-INGEST-043c / K2 §7 H-4): the degree is a node
+#: attribute — emitting it as an edge would draw a "relationship" to a number.
+#: Shared by spine_export (network surface) and analytics (the ego-focus degree
+#: counts exactly what network.json draws), so the two can never disagree.
+SHARING_DEGREE_PREDICATES: frozenset[str] = frozenset({"sharing_partner_degree"})
+
+
 @dataclass(frozen=True)
 class SharingEdge:
     """One observed sharing edge (§29.3) — subject → partner, access-kind tagged."""

@@ -314,6 +314,14 @@
 | XR-02 | exports/release_pages.py | This is the latest view. Cite the fixed copy: /r/{publication_id}/. The public API also serves newer, unreleased records, labelled "live". | 9a97e0ca830020a6256fdff904bb9bb615f7860a8f7f7173903c2e9dd9f60d16 | pending |
 | XR-03 | exports/release_pages.py | This is the fixed copy of this release — cite this URL. The public API also serves newer, unreleased records, labelled "live". | 8c167d306e9dd022baa24ff392a7251161f6d6de722c8b5419c877ee874bd16d | pending |
 
+| NW-04 | /network/ | Some sources state a partner count without naming the partners — "shared with N agencies". A count is a fact about the entity, not a relationship: it is listed here as a node attribute and is never drawn as an edge (SIG-INGEST-043c). | 206ea34ec9163c39a629847187914cbfa9c4b18a03be11172867a3a42cb09c09 | pending |
+
+<!-- P35.30 (K2 §7 H-4, SIG-INGEST-043c): the recorded-partner-counts
+     block's authored sentence — a degree is stated source-side as a count,
+     so it renders as a node attribute in its own list, never as a drawable
+     edge. The per-node list lines are data-derived (label, count, claim
+     ids) — unbound, as all data-derived lines are. pending — added
+     2026-10-19. -->
 ## Confirmation log
 
 <!-- The operator's verbatim confirmation lands here at the copy-batch sitting:

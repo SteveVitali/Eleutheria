@@ -120,10 +120,19 @@ def test_export_queue_shaper_has_no_placeholders_and_the_label_is_shared() -> No
     """`_research_queue` must not invent `contributor`/`unknown`/`[]` — and the
     'not yet classified' literal is one contract spelled identically in the
     export and the web surface."""
+    import inspect
+
+    from exports import spine_export
+
     py = _source("exports/src/exports/spine_export.py")
     ts = _source("web/src/lib/research-queue.ts")
+    # The placeholder scan is scoped to the queue shaper it names — the module
+    # legitimately carries ``"unknown"`` elsewhere: it is the published
+    # valid-period-kind vocabulary on network edges (P35.30, SIG-TIME-012
+    # enum), not a fabricated placeholder.
+    queue_src = inspect.getsource(spine_export._research_queue)
     for placeholder in ('"contributor"', '"unknown"'):
-        assert placeholder not in py, f"spine_export still fabricates {placeholder}"
+        assert placeholder not in queue_src, f"_research_queue still fabricates {placeholder}"
     assert 'NOT_YET_CLASSIFIED = "not yet classified"' in py
     assert 'NOT_YET_CLASSIFIED = "not yet classified"' in ts
     # The batch pins the literal twice — once per implementation file.

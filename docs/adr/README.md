@@ -216,6 +216,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-213](ADR-213-declared-lineage-namespaces-and-independence-classes.md) | Declared lineage, identifier namespaces, and declared independence classes (P35.25) | P35.25 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP4`, | accepted |
 | [ADR-214](ADR-214-role-edges-dated-time-and-recorded-supersession.md) | Role edges, honest time, and recorded supersession (P35.26) | P35.26 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP7`, | accepted |
 | [ADR-215](ADR-215-shared-entity-labels-slugs-hashes.md) | The shared entity label registry (P35.29) | P35.29 (Round 11 / P35 sub-round 11B, manifest row | accepted |
+| [ADR-216](ADR-216-network-edge-dates-evidence-and-literal-partners.md) | Honest network edges: dates, evidence, literal partners, degree (P35.30) | P35.30 (Round 11 / P35 sub-round 11B, manifest row | accepted |
 
 ## Notes
 
