@@ -87,6 +87,7 @@
 | SIG-PUB-003d | implementation | PARTIAL | 2026-10-06 | — |
 | SIG-PUB-006 | implementation | MET | 2026-10-06 | — |
 | SIG-PUB-007 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
+| SIG-PUB-007 | public | MET-ENGINEERED(D-R10-PUBLISH-1) | 2026-10-14 | SIG-PUB-007:r11-1 |
 | SIG-PUB-008 | public | WAIVED(ADR-163) | 2026-10-01 | — |
 | SIG-PUB-012 | composed-db | PARTIAL | 2026-10-01 | — |
 | SIG-PUB-014 | implementation | MET | 2026-10-01 | — |
@@ -121,6 +122,5 @@
 | SIG-SEC-008 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-009 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-010 | hosted | MISSING | 2026-10-01 | — |
-| SIG-SEC-011 | hosted | MISSING | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

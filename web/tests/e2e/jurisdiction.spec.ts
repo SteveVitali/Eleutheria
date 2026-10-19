@@ -5,9 +5,11 @@
 // Jurisdiction-conditional publication + localisation, JavaScript ENABLED (§43.8,
 // §44; SIG-PUB-017). The France (FR-GDPR) and Belgium (BE-GDPR) dossiers render in
 // their own BCP-47 language with localised section titles, and the public-employee
-// name is WITHHELD by the build-time publication gate — whereas the US OKC dossier
-// publishes the equivalent name. Because the gate runs at build time, the difference
-// is baked into the static HTML.
+// name is WITHHELD by the build-time publication gate. Since P35.28 the US dossier's
+// name row is withheld too: publication requires a persisted two-reviewer naming
+// concurrence (§43.4, SIG-PUB-007/008) on top of the jurisdiction rule, and none is
+// recorded (default deny — ADR-163). Because the gate runs at build time, the
+// withholding is baked into the static HTML.
 import { test, expect } from "@playwright/test";
 
 const FR_PAGE = "/dossier/paris-alpr/";
@@ -48,12 +50,14 @@ test("the Belgium dossier withholds the public-employee name under BE-GDPR", asy
   await expect(page.locator("body")).not.toContainText("Jean Dupont");
 });
 
-test("the US dossier publishes the equivalent public-employee name (US-DEFAULT)", async ({
+test("the US dossier withholds the name while no concurrence is recorded (SIG-PUB-007/008)", async ({
   page,
 }) => {
   await page.goto(US_PAGE);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  // Permitted under US-DEFAULT — shown, not withheld (existing behaviour unchanged).
-  await expect(page.locator("body")).toContainText("Chief Wade Gourley");
-  await expect(page.getByTestId("dossier-row-withheld")).toHaveCount(0);
+  // US-DEFAULT permits the jurisdiction leg (SIG-PUB-017), but the P35.28
+  // officer-naming gate is default deny: no persisted two-reviewer concurrence
+  // names this row, so it withholds — and the name never reaches the HTML.
+  await expect(page.getByTestId("dossier-row-withheld").first()).toHaveText("withheld");
+  await expect(page.locator("body")).not.toContainText("Chief Wade Gourley");
 });

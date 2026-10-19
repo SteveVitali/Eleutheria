@@ -24,6 +24,28 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Officer-naming gate on the publication path, default deny** (P35.28
+  / R11-SAFE-03; **SIG-PUB-007** owner; cites SIG-PUB-008/009/010/017,
+  ADR-163, ADR-209) — the §43.4 five-prong + two-reviewer test now binds
+  the publication path, not just OKC ingest. The persisted carrier is
+  the committed append-only `sig.officer-naming-decisions/1` registry
+  (`policy/src/policy/data/officer_naming_decisions.json` — the
+  `sig.publication-withdrawals/1` precedent, read verbatim by the Python
+  policy layer and the TypeScript web layer). A public-employee-name row
+  publishes only when a persisted record names its
+  `(subject_id, predicate_id)` AND the record's stored inputs replay to
+  a two-reviewer concur AND the SIG-PUB-017 jurisdiction rule permits;
+  a missing, non-concur, or inconsistent record — and any unknown or
+  restrictive jurisdiction — withholds. The gate binds at the export
+  builder (`build_web_dossiers`' `_gate_public_employee_names`) and at
+  the web data funnel (`getDossiers()` — the dossier page, print export,
+  and JSON endpoint all inherit it), renders withheld rows as withheld
+  with the refusal reason recorded (never silently dropped), and emits
+  the same serialized decision record at ingest via
+  `assert_person_naming_permitted`'s `record_sink`. The registry starts
+  empty — no two-reviewer naming concurrence has been recorded — so
+  every flagged name row withholds until the operator's recorded act.
+
 - **Automated-traffic-enforcement technology concept and the declared
   geometry kind** (P36.3 / ACQ-03, ADR-207; cites SIG-ONTO-019/020/022/
   052/052a/056, SIG-GEO-003, SIG-ONTO-066/067) — the `ate` family under

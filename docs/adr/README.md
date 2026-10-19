@@ -207,6 +207,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-206](ADR-206-er-rerun-login-and-the-one-shot-v3-interim-leg.md) | The sig_materialize_login credential and the one-shot v3-interim ER re-run leg (P34.45) | P34.45 (Round 11 / P34, row 257 — the honest-evaluation posture; | accepted |
 | [ADR-207](ADR-207-ate-technology-family-and-the-declared-geometry-kind.md) | The ATE technology family and the declared geometry kind (P36.3) | P36.3 (Round 11 / P36, row 276 — ACQ-03; the Round-11 wave-B | accepted |
 | [ADR-208](ADR-208-programme-aggregate-predicates-and-the-psa-month-deviation.md) | Programme-aggregate predicates, the multi-measure slice, and the PSA × month deviation (P36.7) | P36.7 (Round 11 / P36, row 280 — ACQ-11; the Wave-B batch | accepted |
+| [ADR-209](ADR-209-officer-naming-persisted-concurrence-registry.md) | The persisted officer-naming concurrence registry and the default-deny publication gate (P35.28 — R11-SAFE-03; SIG-PUB-007 owner; cites SIG-PUB-008/009/010/017, ADR-163) | P35.28 (Round 11 / P35, sub-round 11B, manifest row 286 — | accepted |
 
 ## Notes
 

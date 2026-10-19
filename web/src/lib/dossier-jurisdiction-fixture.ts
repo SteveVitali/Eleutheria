@@ -10,9 +10,12 @@
  *
  * The point of the fixtures is the publication gate: under FR-GDPR / BE-GDPR a
  * public-employee name is NOT publishable (`applyPublicationPolicy` withholds it),
- * whereas the US OKC dossier publishes the equivalent name. The build-time data path
- * (`pages/dossier/[slug].astro`) applies the gate, so the withholding is baked into
- * the static HTML — never a client-side decision.
+ * and P35.28's officer-naming gate withholds EVERY jurisdiction's name row while
+ * no persisted two-reviewer concurrence names it (SIG-PUB-007/008 — the US OKC
+ * dossier's row withholds too until a recorded concurrence exists). The
+ * build-time data path (`getDossiers` + `pages/dossier/[slug].astro`) applies the
+ * gate, so the withholding is baked into the static HTML — never a client-side
+ * decision.
  */
 
 import { AS_OF, RULESET_VERSION } from "./fixtures";
@@ -23,6 +26,7 @@ function baseSections(
   officerLabel: string,
   originJurisdiction: string,
   sharingSubjectId: string,
+  officerSubjectId: string,
 ): Section[] {
   return [
     {
@@ -60,7 +64,9 @@ function baseSections(
       rows: [{ label: "Legal basis", value: "National data-protection regime (GDPR)" }],
     },
     {
-      // The public-employee-name row the publication gate acts on (SIG-PUB-017).
+      // The public-employee-name row the publication gate acts on (SIG-PUB-017
+      // + the P35.28 record leg — its subject/predicate are the match keys a
+      // persisted concurrence would name).
       section_id: "accountability_events",
       rows: [
         {
@@ -68,6 +74,8 @@ function baseSections(
           value: "Cmdt. Jean Dupont",
           isPublicEmployeeName: true,
           originJurisdiction,
+          subject_id: officerSubjectId,
+          predicate_id: "signing_officer",
         },
       ],
     },
@@ -114,7 +122,12 @@ export const FR_DOSSIER: Dossier = {
       predicate_id: "sharing_partners",
     },
   ],
-  sections: baseSections("Agent signataire de l'arrêté", "FR", "org:prefpol-paris"),
+  sections: baseSections(
+    "Agent signataire de l'arrêté",
+    "FR",
+    "org:prefpol-paris",
+    "org:prefpol-paris",
+  ),
 };
 
 /** Belgium (BE-GDPR): the signing officer's name is withheld under BE-GDPR. */
@@ -148,7 +161,12 @@ export const BE_DOSSIER: Dossier = {
       predicate_id: "sharing_partners",
     },
   ],
-  sections: baseSections("Ondertekenende ambtenaar", "BE", "org:pz-brussel"),
+  sections: baseSections(
+    "Ondertekenende ambtenaar",
+    "BE",
+    "org:pz-brussel",
+    "org:pz-brussel",
+  ),
 };
 
 /** The jurisdiction-conditional dossiers the shell statically generates. */

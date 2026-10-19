@@ -230,14 +230,19 @@ export const OKC_DOSSIER: Dossier = {
       section_id: "accountability_events",
       rows: [
         { label: "Procurement approval", value: "Approved 2025-03-25 (see authorization block)" },
-        // A public-employee name: publishable under US-DEFAULT (SIG-PUB-017), so the
-        // publication gate leaves it shown — the jurisdiction-conditional contrast to
-        // the FR/BE dossiers, where the equivalent name is withheld.
+        // A public-employee name: US-DEFAULT permits the jurisdiction leg
+        // (SIG-PUB-017), but the row publishes ONLY when a persisted
+        // two-reviewer concurrence names (subject_id, predicate_id) — P35.28
+        // (§43.4, SIG-PUB-007/008). The registry is empty today, so the gate
+        // withholds it (default deny); the keys are in place so a recorded
+        // concurrence — a human act, never agent-drafted — shows it.
         {
           label: "Approving official",
           value: "Chief Wade Gourley",
           isPublicEmployeeName: true,
           originJurisdiction: "US",
+          subject_id: "agency:okcpd",
+          predicate_id: "approving_official",
         },
       ],
     },

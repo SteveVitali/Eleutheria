@@ -2,6 +2,7 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-SEC-011 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-011 | implementation | MET-ENGINEERED(D-P34.25-1) | 2026-10-04 | — |
 | SIG-STORE-004 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-STORE-005 | implementation | PARTIAL | 2026-10-01 | — |

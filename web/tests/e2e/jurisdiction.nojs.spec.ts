@@ -11,6 +11,19 @@ import { test, expect } from "@playwright/test";
 
 const FR_PAGE = "/dossier/paris-alpr/";
 const BE_PAGE = "/dossier/brussels-alpr/";
+const US_PAGE = "/dossier/oklahoma-city/";
+
+test("the US dossier withholds the name without JS while no concurrence is recorded", async ({
+  page,
+}) => {
+  // P35.28 (SIG-PUB-007/008): the officer-naming gate is default deny — the
+  // US-DEFAULT jurisdiction leg permitting is not enough; the name must never
+  // ship in the HTML while no persisted two-reviewer concurrence names the row.
+  await page.goto(US_PAGE);
+  await expect(page.getByTestId("dossier-row-withheld").first()).toHaveText("withheld");
+  await expect(page.locator("body")).not.toContainText("Chief Wade Gourley");
+  await expect(page.locator("script")).toHaveCount(0);
+});
 
 test("the France dossier is localised and withholds the name without JS (SIG-PUB-017)", async ({
   page,
