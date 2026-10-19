@@ -33,7 +33,16 @@
 # ten [adapters.<publisher>] rows carry the reviewed per-publisher specs
 # (entries, field_patterns, use_fields, reports_use, document_genre,
 # technology_mapped, default_technology, agency_anchor_pattern, scope_terms).
-vocab_version = "2026.10.12"
+# 2026.10.13 — r11/P36.9a (ACQ-13a): the UAV + FRT half of the statutory
+# disclosures-II family — five [sources] keys -> the I8 §5.6 design ids,
+# eight UAV/FRT literals join [technology_map], five reviewed
+# [adapters.<publisher>] rows land (Detroit's weekly index emits per-week
+# usage_count claims in disclosure_use only — never per-incident rows or
+# officer names, Part VIII/§43.4), and [adapters.mn_bca] gains the I4-C005
+# Minn. Stat. 626.19 UAV family (per-target link filters; the filing's own
+# 626.19 literal lands as legal_authority — the source-level 13.824 citation
+# stays LPR-family only via ordinance_literal_required).
+vocab_version = "2026.10.13"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -251,6 +260,18 @@ il_isp         = "statrep_il_isp_alpr"
 austin_auditor = "statrep_austin_tx_auditor"
 md_dls         = "statrep_md_dls_mandated_reports"
 va_rga         = "statrep_va_rga"
+# --- P36.9a / R11-ACQ-13a (I8 §5.6): the UAV + FRT half of the statutory
+# disclosures-II family (batch r11-disclosures-02). Five registry ids after
+# the plan's R1 consolidations — the I4-C005 UAV reports are a target under
+# statrep_mn_bca above (one row per publisher) and Arvada I4-C103 is the
+# consolidated first target of statrep_co_frt_accountability. Same gate
+# posture: all stay ingestion_permitted=false (HG-03 RB-03 `a`; Detroit
+# RB-04 `a`) pending the operator's OP-26 Wave-B flip under ING-GO-B.
+co_frt         = "statrep_co_frt_accountability"
+wa_watech      = "statrep_wa_watech_frt"
+detroit_frt    = "statrep_detroit_mi_frt_weekly"
+me_dps_uav     = "statrep_me_dps_uav"
+il_icjia       = "statrep_il_icjia_drone"
 
 # --- P36.8/ACQ-12: statutory technology-literal -> SKOS slug map ---------------
 # The reviewed literal -> ontology-slug table statutory filings' technology
@@ -301,6 +322,12 @@ va_rga         = "statrep_va_rga"
 "facial recognition"                  = "face-recognition-unspecified"
 "face recognition"                    = "face-recognition-unspecified"
 "frt"                                 = "face-recognition-unspecified"
+# P36.9a: the FR filings' own spellings (Detroit's "Facial Rec" weekly
+# report filenames; the CO pages' "facial recognition system/technology").
+"facial rec"                          = "face-recognition-unspecified"
+"frs"                                 = "face-recognition-unspecified"
+"facial recognition system"           = "face-recognition-unspecified"
+"facial recognition technology"       = "face-recognition-unspecified"
 "shotspotter"                         = "gunshot-detection-unspecified"
 "gunshot detection"                   = "gunshot-detection-unspecified"
 "acoustic gunshot detection"          = "gunshot-detection-unspecified"
@@ -315,9 +342,15 @@ va_rga         = "statrep_va_rga"
 "speed camera"                        = "ate-unspecified"
 "drone"                               = "uas-unspecified"
 "drones"                              = "uas-unspecified"
+"drone surveillance"                  = "uas-unspecified"
 "unmanned aerial system"              = "uas-unspecified"
+"unmanned aerial systems"             = "uas-unspecified"
 "unmanned aerial vehicle"             = "uas-unspecified"
+"unmanned aerial vehicles"            = "uas-unspecified"
+"unmanned aircraft system"            = "uas-unspecified"
+"unmanned aircraft systems"           = "uas-unspecified"
 "uav"                                 = "uas-unspecified"
+"uavs"                                = "uas-unspecified"
 "uas"                                 = "uas-unspecified"
 "cctv"                                = "fixed-camera-unspecified"
 "video surveillance"                  = "fixed-camera-unspecified"
@@ -570,7 +603,33 @@ reports_use = true
 entries = [
   { kind = "agency", pattern = '(?is)<h3[^>]*class="agency"[^>]*>\s*(?P<agency>[^<]+?)\s*</h3>', status = "reported_in_use", use_status = true, technology_literal = "LPR" },
   { kind = "location", pattern = '(?is)<li[^>]*class="fixed-location"[^>]*>\s*(?P<location>[^<]+?)\s*</li>', technology = "alpr-fixed" },
+  # P36.9a (I4-C005): the Minn. Stat. 626.19 annual report's per-agency use
+  # rows — "<agency> — N UAV uses" bullets inside the filing; keyed to the
+  # named agency, typed uas-unspecified (never the LPR default).
+  { kind = "agency", pattern = '(?im)^\s*•\s*(?P<agency>[A-Z][^\n•]{2,80}?)\s*—\s*[\d,]+\s+UAV\s+uses', status = "reported_uav_use", use_status = true, technology = "uas-unspecified" },
 ]
+# The filing's own technology names ride the resolved link's anchor ("2025 UAV
+# Annual Report" vs "LPR report form") — the anchor literal picks the family;
+# a filing carrying its own "Technology:" field literal is typed by it (the
+# 626.19 report's "unmanned aerial vehicle" must never take the LPR default).
+technology_field_pattern = '(?im)technology\s*:\s*(UAV|UAS|unmanned\s+aerial\s+(?:vehicle|system)s?|drones?|ALPR|license\s+plate\s+readers?|LPR)'
+technology_anchor_pattern = '(?i)(?P<tech>UAV|UAS|unmanned\s+aerial\s+(?:vehicle|system)s?|drones?|ALPR|license\s+plate\s+readers?|LPR)'
+legal_authority_pattern = 'Minn\.?\s*Stat\.?\s*§?\s*(?:13\.824|626\.19)|13\.824|626\.19'
+# The 626.19 statewide aggregate literal — the filing's own use count keyed to
+# the BCA's published total (per-agency counts ride the entry rows above).
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)reported\s+a\s+total\s+of\s+(?P<value>[\d,]+)\s+UAV\s+uses' },
+]
+# document_entries: the 626.19 filing's own per-agency table runs the entries
+# mechanism over the document bytes (P36.8's VT DPS shape). The resolved LPR
+# form is unaffected — it has no derivable reporting period, so it returns
+# before this point (P36.8 behaviour preserved, diff 0).
+document_entries = true
+# The source's instrument-level citation (Minn. Stat. § 13.824) is the LPR
+# family's mandate; the UAV family is mandated by § 626.19 and cites it as its
+# own legal_authority — the static citation must never stamp a filing that
+# does not name it (ordinance claims emit only where a literal is located).
+ordinance_literal_required = true
 mandated_sections = []
 
 [adapters.va_vsp]
@@ -767,4 +826,149 @@ scope_terms = ["alpr", "license plate", "licence plate", "surveillance", "facial
 technology_anchor_pattern = '(?i)(?P<tech>ALPR|license\s+plate\s+readers?|facial\s+recognition|shotspotter|gunshot\s+detection|cell[-\s]site\s+simulator|body[-\s]worn\s+cameras?|video\s+surveillance|cctv|automated\s+traffic\s+enforcement|drones?|uas|uav)'
 agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–|-)'
 legal_authority_pattern = 'Reports\s+to\s+the\s+General\s+Assembly|mandated'
+mandated_sections = []
+
+# --- P36.9a / R11-ACQ-13a (I8 §5.6): UAV + FRT statutory publishers -----------
+# Five reviewed adapters on the P36.8 generalized schema. Same posture: every
+# source stays ingestion_permitted=false; literals are reviewed surfaces from
+# the acquisition records (I4-C005/C006/C100/C102/C103/C108, I9b-C053); the
+# claims are institution-level aggregates only — no per-incident rows, no
+# officer names (Part VIII / §43.4).
+
+[adapters.co_frt]
+jurisdiction = "US-CO"
+# The statutory family row (C.R.S. 24-18-301..-309, SB22-113) — the filing
+# agency derives from each link's anchor (the Arvada page names its own
+# department); the publisher default stands for the page-level rows.
+agency = "Arvada Police Department"
+ordinance_citation = "C.R.S. § 24-18-301 to -309 (SB22-113 facial recognition accountability)"
+ordinance_literals = ["24-18-301", "C.R.S. 24-18", "CRS § 24-18"]
+enacting_body_literal = "Colorado General Assembly"
+enacting_body = "Colorado General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "face-recognition-unspecified"
+# The CivicPlus attachment path the reviewed page links its report through.
+doc_url_contains = "documentcenter"
+# The anchor names the filing agency then the report title —
+# "Arvada Police Department — Facial Recognition Accountability Report 2025".
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–|-)\s*(?:facial|FRS|FR\b)'
+technology_anchor_pattern = '(?i)(?P<tech>facial\s+recognition|face\s+recognition|facial\s+rec\b|frs)'
+# A filing carrying its own "Technology:" field literal is typed by it.
+technology_field_pattern = '(?im)technology\s*:\s*(facial\s+recognition(?:\s+(?:system|technology))?|face\s+recognition|facial\s+rec\b|frs)'
+legal_authority_pattern = '24-18-30\d|SB\s*22-113|C\.?R\.?S\.?\s*24-18'
+# The accountability page carries the city's own yearly use statistics — the
+# filing's own use statement gates the use claims (the audit's numbers, never
+# an inference).
+reports_use_pattern = '(?i)investigations?\s+(?:used|using)\s+facial\s+recognition|facial\s+recognition\s+(?:uses?|searches?)\s*[:\-]?\s*\d'
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)(?P<value>[\d,]+)\s+of\s+[\d,]+\s+investigations?\s+used\s+facial\s+recognition' },
+]
+field_patterns = [
+  { predicate = "vendor_name", pattern = '(?i)(?P<value>Lumen|LexisNexis|Clearview AI|Colorado Information Sharing Consortium)' },
+]
+mandated_sections = []
+
+[adapters.wa_watech]
+jurisdiction = "US-WA"
+agency = "Washington Technology Solutions (WaTech)"
+ordinance_citation = "RCW 43.386 (Facial recognition — state agency notice + accountability reports)"
+ordinance_literals = ["43.386", "RCW 43.386"]
+enacting_body_literal = "Washington State Legislature"
+enacting_body = "Washington State Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "face-recognition-unspecified"
+doc_suffixes = [".pdf"]
+# The TSB page posts other filings too — the scope screen admits the FR / NOI
+# / accountability links only (the admission screen, never labelling).
+scope_terms = ["facial recognition", "face recognition", "notice of intent", "accountability report", "biometric"]
+# The anchor names the filing agency then the instrument —
+# "WaTech — Notice of Intent: facial recognition (08-28-2023)".
+agency_anchor_pattern = '(?i)^(?P<agency>.+?)\s*(?:—|–|-)\s*(?:notice|accountability|facial|biometric)'
+technology_anchor_pattern = '(?i)(?P<tech>facial\s+recognition|face\s+recognition|biometric)'
+# A filing carrying its own "Technology:" field literal is typed by it.
+technology_field_pattern = '(?im)technology\s*:\s*(facial\s+recognition|face\s+recognition|biometric)'
+legal_authority_pattern = 'RCW\s+43\.386|43\.386'
+# A Notice of Intent is a pre-deployment declaration — NEVER a use report; an
+# accountability report states its own use where it carries the literal.
+reports_use_pattern = '(?i)accountability\s+report'
+mandated_sections = []
+
+[adapters.detroit_frt]
+jurisdiction = "US-MI"
+# The weekly report is DPD's own filing to the Board of Police Commissioners —
+# the agency is constant; per-incident rows are NEVER emitted (Part VIII).
+agency = "Detroit Police Department"
+ordinance_citation = "DPD Directive 307.5-5.1 (weekly facial recognition report to the BOPC)"
+ordinance_literals = ["307.5-5.1", "Directive 307.5"]
+enacting_body_literal = "Board of Police Commissioners"
+enacting_body = "Detroit Board of Police Commissioners"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "face-recognition-unspecified"
+doc_url_contains = "facial"
+doc_suffixes = [".pdf"]
+# The anchors name the week — "… BOPC Facial Rec Report — week ending
+# 12-29-2025"; the anchor literal types the filing and keys its week.
+technology_anchor_pattern = '(?i)(?P<tech>facial\s+recognition|facial\s+rec\b|face\s+recognition|frt)'
+technology_field_pattern = '(?im)technology\s*:\s*(facial\s+recognition|face\s+recognition|frt)'
+legal_authority_pattern = '307\.5-5\.1|Directive\s+307\.5|Board\s+of\s+Police\s+Commissioners'
+# DPD Directive 307.5-5.1 makes the weekly report BY DIRECTIVE a use report —
+# the per-week search/fulfilment counts are the filing's own literals. The
+# emitted surface is per-week aggregate counts in disclosure_use ONLY: no
+# per-incident fields, no case ids, no officer names (Part VIII / §43.4).
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)facial\s+recognition\s+searches?\s+this\s+week\s*[:\-]?\s*(?P<value>[\d,]+)' },
+  { predicate = "usage_count", pattern = '(?im)year-?to-?date\s+(?:facial\s+recognition\s+)?searches?\s*[:\-]?\s*(?P<value>[\d,]+)' },
+]
+mandated_sections = []
+
+[adapters.me_dps_uav]
+jurisdiction = "US-ME"
+agency = "Maine Department of Public Safety"
+ordinance_citation = "25 M.R.S. § 4501 (law-enforcement UAV use — annual report)"
+ordinance_literals = ["25 MRSA 4501", "25 M.R.S.", "MRSA 4501"]
+enacting_body_literal = "Maine Legislature"
+enacting_body = "Maine Legislature"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "uas-unspecified"
+technology_field_pattern = '(?im)technology\s*:\s*(UAV|UAS|unmanned\s+aerial\s+(?:vehicle|system)s?|drones?)'
+legal_authority_pattern = '25\s+M\.?R\.?S\.?A?\.?\s*(?:§\s*)?4501|MRSA\s+4501'
+# The § 4501 filing is BY STATUTE the annual use report — the statewide
+# aggregate counts ride the filing's own literals (the 2016 report's verbatim
+# "no law enforcement agencies ... have used" lands as its own literal).
+reports_use = true
+use_fields = [
+  { predicate = "usage_count", pattern = '(?im)uav\s+uses?\s+reported\s*(?:statewide)?\s*[:\-]?\s*(?P<value>[\d,]+)' },
+]
+mandated_sections = []
+
+[adapters.il_icjia]
+jurisdiction = "US-IL"
+agency = "Illinois Criminal Justice Information Authority"
+ordinance_citation = "725 ILCS 167 (Freedom From Drone Surveillance Act — annual report)"
+ordinance_literals = ["725 ILCS 167", "ILCS 167", "Freedom From Drone Surveillance"]
+enacting_body_literal = "Illinois General Assembly"
+enacting_body = "Illinois General Assembly"
+document_genre = "statutory_report"
+technology_mapped = true
+default_technology = "uas-unspecified"
+# The leading slash keeps the path filter a path filter — a bare "drone" would
+# match the synthetic fixture host (`statrep_il_icjia_drone/…`) and admit the
+# firearms filing; "/drone" admits only the drone-surveillance report paths.
+doc_url_contains = "/drone"
+doc_suffixes = [".pdf"]
+technology_field_pattern = '(?im)technology\s*:\s*(UAV|UAS|unmanned\s+aerial\s+(?:vehicle|system)s?|drones?)'
+legal_authority_pattern = '725\s+ILCS\s+167|Freedom\s+From\s+Drone\s+Surveillance'
+# The mandated report lists every agency that OWNS a drone — an inventory
+# assertion (ownership is not deployment; no use_status, no use claims). The
+# per-agency rows live inside the filing, so document_entries runs the
+# entries mechanism over the report's bytes.
+document_entries = true
+entries = [
+  { kind = "agency", pattern = '(?im)^\s*•\s*(?P<agency>[A-Z][^\n•—]{2,80}?)\s*—\s*[\d,]+\s+drones?', status = "reported_owned", technology = "uas-unspecified", technology_literal = "drone" },
+]
 mandated_sections = []

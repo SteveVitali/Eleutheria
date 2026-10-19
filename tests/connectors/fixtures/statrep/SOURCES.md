@@ -1,4 +1,4 @@
-# Fixture provenance — `tests/connectors/fixtures/statrep/` (P36.8 / R11-ACQ-12)
+# Fixture provenance — `tests/connectors/fixtures/statrep/` (P36.8 / R11-ACQ-12; P36.9a / R11-ACQ-13a)
 
 Every file in this directory is a **synthetic reconstruction** of the reviewed
 upstream surface it models — written from the acquisition research notes
@@ -24,6 +24,17 @@ stands in for the extraction layer only (§5.0).
 | `va_vscc_report.txt` | `statrep_va_vscc_alpr` filing | `https://vscc.virginia.gov/2026/VSCC%20ALPR%20Report%20January%202026%20FINAL%20REVISED%20Jan%2021%202026.pdf` — the VSCC update report (I3-C043) |
 | `vt_dps_report.txt` | `statrep_vt_dps_alpr` filing | `https://legislature.vermont.gov/assets/Legislative-Reports/2019-ALPR-Report.pdf` — the 23 V.S.A. § 1607 annual report (I9a-C012) |
 | `austin_auditor_report.txt` | `statrep_austin_tx_auditor` filing | `https://services.austintexas.gov/edims/document.cfm?id=452710` — the May 2025 APD LPR audit (I9a-C042) |
+| `co_frt_index.html` | `statrep_co_frt_accountability` index (`co_arvada_frt_accountability`) | `https://www.arvadaco.gov/917/Facial-Recognition-Technology` — the SB22-113 / C.R.S. 24-18-301..-309 accountability page (I4-C102 family; Arvada I4-C103 first target): the page carries the yearly use-statistics literal and links the filing under /DocumentCenter/ |
+| `co_frt_arvada_report.txt` | an Arvada FR accountability-report filing | the DocumentCenter filing shape the index links — the filing's own `Technology:`/`Date:` fields + the 97-of-13,396 use literal |
+| `wa_watech_index.html` | `statrep_wa_watech_frt` index | `https://watech.wa.gov/node/2066` — the RCW 43.386 TSB posting page (I4-C100): NOI + accountability-report links; the `biometric` NOI exercises the unmapped-literal path (SIG-ONTO-021) |
+| `wa_watech_fr_accountability.txt` | a WaTech RCW 43.386 accountability-report filing | the accountability filing shape the TSB page posts — `Technology:`/`Date:` fields + the RCW 43.386 authority literal |
+| `detroit_frt_index.html` | `statrep_detroit_mi_frt_weekly` index | `https://detroitmi.gov/boards/board-police-commissioners` — the DPD Directive 307.5-5.1 weekly-report posting surface (I4-C108); the agenda PDF exercises the `facial` document filter |
+| `detroit_frt_weekly.txt` | a DPD weekly facial-recognition filing | the `251229 BOPC Facial Rec Report.pdf` shape — per-week + year-to-date search counts only; no per-incident fields, no officer names (Part VIII / §43.4) |
+| `me_dps_uav_report.txt` | `statrep_me_dps_uav` filing | `https://lldc.mainelegislature.org/Open/Rpts/tl685_35_p23_2016.pdf` — the 25 M.R.S. § 4501 annual UAV-use report (I9b-C053); the statewide zero-use literal is the filing's own statement |
+| `il_icjia_index.html` | `statrep_il_icjia_drone` index | `https://icjia.illinois.gov/about/publications/sfy-25-drone-surveillance-report` — the 725 ILCS 167 publications index (I4-C006); the firearms filing exercises the `/drone` path filter, the legacy `icjia.state.il.us` mirror the same-host rule |
+| `il_icjia_report.txt` | an ICJIA SFY drone-surveillance filing | the SFY report shape — per-agency ownership rows are `inventory_entry` assertions (owning ≠ deploying; no use claim) |
+| `mn_bca_uav_index.html` | `statrep_mn_bca` second index (`uav_annual_reports`) | `https://dps.mn.gov/divisions/bca/data-and-reports/uav-uav-annual-reports` — the Minn. Stat. 626.19 UAV annual-report series (I4-C005); the `lrl.mn.gov` mirror exercises the same-host rule |
+| `mn_bca_uav_report.txt` | a BCA 626.19 UAV annual-report filing | the filing's own `Technology:` field types it `uas-unspecified` (never the source's LPR default); § 626.19 lands as `legal_authority`, the source-level § 13.824 citation does not stamp (`ordinance_literal_required`) |
 
 **Part VIII note:** every literal a fixture claims emits is institutional and
 aggregate — agency names, counts, statute citations, published fixed-location

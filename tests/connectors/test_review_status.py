@@ -141,7 +141,14 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # rows to their design ids, and added the CC-BY-4.0 licence-mismatch
     # fallback camreg_dc_ddot_ate (+1): 595 → 594 registered; every P36.6
     # row stays ingestion_permitted=false, so loadable is unchanged.
-    assert "registered sources: 594" in out
+    # P36.9a (ACQ-13a) renamed five generated statutory-disclosure rows to
+    # their I8 §5.6 design ids (net 0) and consolidated two generated rows
+    # into existing sources (statrep_co_arvada_facial_recognition → the
+    # statrep_co_frt_accountability first target; statrep_mn_unmanned_
+    # aerial_vehicle → the statrep_mn_bca second target): 594 → 592
+    # registered; every row stays ingestion_permitted=false, so loadable is
+    # unchanged.
+    assert "registered sources: 592" in out
     assert "self-checks OK" in out
 
 
@@ -278,9 +285,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # camreg_dc_ddot_ate (+1): 595 → 594 registered; every P36.6 row stays
     # ingestion_permitted=false — loadable 236 unchanged, flip-ready still
     # the one standing exception.
+    # P36.9a (ACQ-13a) renamed five generated statutory-disclosure rows to
+    # their I8 §5.6 design ids (net 0) and consolidated the Arvada + MN UAV
+    # generated rows into their publisher's source row as targets (−2):
+    # 594 → 592 registered; every row stays ingestion_permitted=false —
+    # loadable 236 unchanged, flip-ready still the one standing exception.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 594" in out
+    assert "registered sources: 592" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out
