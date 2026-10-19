@@ -216,7 +216,13 @@ def _supersession_record(candidate_dir: Path, publication_id: str) -> str | None
 #: placement block — jkey/chain/basis/check/declared/boundary_vintage), so
 #: the same corpus rebuilds to a new deterministic id — p-7b7f… is the
 #: same corpus under the /3 projection.
-PRIOR_RELEASE_ID = "p-7b7fd8b421ced20937af954b1c72ef65adcf63da98a5cb0ea5bb8bbc0e95697b"
+#: P35.36 (R11-K13-TX-08a) re-pinned the id a fourth time: the projection
+#: bumped sig.published-record/3 → /4 (records embed `claim_statements` and
+#: `source_refs[]` gains the S-6-gated upstream fields) AND the release
+#: tree gained per-compartment `statements.jsonl`, so the same corpus
+#: rebuilds to a new deterministic id — p-7c63… is the same corpus under
+#: the /4 projection with statements files.
+PRIOR_RELEASE_ID = "p-7c6318d9f40d2ed091b680e88e4cabaed61796fd5be98eba10216da675942481"
 PRIOR_RENDERER = "p32.24"
 PRIOR_ENTITY_WITHHOLD = "ent-acc-dep-41"  # corpus entity — deny target
 PRIOR_CLAIM_WITHHOLD = "cl-acc-denied-claim"  # corpus claim — denies its carriers

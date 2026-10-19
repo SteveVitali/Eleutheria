@@ -244,6 +244,11 @@ class Artifact:
     #: ``(row_count, distinct_entities)`` is the honest disclosure: rows are
     #: physical output rows; entities are the distinct subjects observed.
     distinct_entities: int | None = None
+    #: P35.36 (R11-K13-TX-08a): the emitted row-schema id for ``sig.*`` streams
+    #: (``sig.statement/1`` on the per-compartment statements files) — ``None``
+    #: on artifacts that carry no declared schema. Emitted only when set, so
+    #: pre-existing artifact entries stay byte-identical.
+    schema: str | None = None
 
     @classmethod
     def of(
@@ -257,6 +262,7 @@ class Artifact:
         data: bytes,
         row_count: int | None = None,
         distinct_entities: int | None = None,
+        schema: str | None = None,
     ) -> Artifact:
         """Build an artifact record from its bytes, computing size + checksum."""
         return cls(
@@ -269,10 +275,11 @@ class Artifact:
             byte_size=len(data),
             row_count=row_count,
             distinct_entities=distinct_entities,
+            schema=schema,
         )
 
     def as_json(self) -> dict[str, object]:
-        return {
+        doc: dict[str, object] = {
             "name": self.name,
             "path": self.path,
             "media_type": self.media_type,
@@ -283,6 +290,9 @@ class Artifact:
             "row_count": self.row_count,
             "distinct_entities": self.distinct_entities,
         }
+        if self.schema is not None:
+            doc["schema"] = self.schema
+        return doc
 
 
 @dataclass(frozen=True)

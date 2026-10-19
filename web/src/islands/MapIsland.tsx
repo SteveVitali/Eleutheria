@@ -74,6 +74,9 @@ import {
   WORKSPACE_VIEWS,
 } from "../lib/workspace-state";
 import { useWorkspaceState } from "./workspace";
+import { panelFromStatement } from "../lib/provenance-panel";
+import type { StatementRow } from "../lib/provenance-panel";
+import ProvenancePanel from "../components/ProvenancePanel";
 
 /** One switchable licence compartment (tile archive or release compartment). */
 export interface CompartmentOption {
@@ -170,11 +173,23 @@ interface FocusPane {
   detail: string;
   /** Released-record routes when `focus` is a record_key under a pinned release. */
   recordPageHref?: string;
+  /** The record's JSON twin (`…/<id>.json`) — the panel's "Equivalent requests". */
+  recordJsonHref?: string;
   evidenceHref?: string;
   compartmentHref?: string;
+  /**
+   * P35.36 (UXR-33): the record's embedded `sig.statement/1` rows (the
+   * `claim_statements` the P35.36 record JSON carries) — rendered through the
+   * shared panel contract, bounded to FOCUS_PANEL_LIMIT with the remainder
+   * linked on the record page. Absent on a pre-P35.36 record (empty).
+   */
+  claimStatements?: StatementRow[];
   /** Where the focus resolves in the current view ("not in this view" is honest). */
   located: boolean;
 }
+
+/** The selection pane bounds its panels; the record page carries them all. */
+const FOCUS_PANEL_LIMIT = 8;
 
 export default function MapIsland({
   tiles,
@@ -547,6 +562,12 @@ export default function MapIsland({
             ?.map((e) => e.artifact_id)
             .find((a): a is string => typeof a === "string");
           const parts = splitRecordKey(focus);
+          // P35.36 (UXR-33): the record JSON embeds its `sig.statement/1`
+          // claim rows — the selection pane renders them through the one
+          // panel contract (a pre-P35.36 record carries none — honest absence).
+          const claimStatements = (
+            Array.isArray(record?.claim_statements) ? record.claim_statements : []
+          ) as StatementRow[];
           setFocusPane({
             id: focus,
             label,
@@ -555,9 +576,11 @@ export default function MapIsland({
               (loc?.precision ? ` · ${loc.precision}` : "") +
               (lat === null ? " · no published point" : ""),
             recordPageHref: routes.pageHref,
+            recordJsonHref: routes.jsonHref,
             evidenceHref:
               artifact && parts ? evidenceAnchorHref(rel!, parts.compartment, artifact) : undefined,
             compartmentHref: routes.compartmentHref,
+            claimStatements,
             located: lat !== null && lon !== null,
           });
         })
@@ -707,6 +730,29 @@ export default function MapIsland({
               Clear selection
             </button>
           </p>
+          {/* P35.36 (UXR-33): one shared provenance panel per claim the record
+              publishes — the same contract the record page renders, bounded
+              here with the remainder on the record page. */}
+          {focusPane.claimStatements && focusPane.claimStatements.length > 0 && (
+            <div className="sig-island__focus-panels" data-testid="focus-claim-panels">
+              {focusPane.claimStatements.slice(0, FOCUS_PANEL_LIMIT).map((stmt) => (
+                <ProvenancePanel
+                  key={stmt.claim_id}
+                  panel={panelFromStatement(stmt, stmt.claim_id, {
+                    jsonHref: focusPane.recordJsonHref,
+                  })}
+                  anchor={false}
+                />
+              ))}
+              {focusPane.claimStatements.length > FOCUS_PANEL_LIMIT && focusPane.recordPageHref && (
+                <p className="sig-island__note">
+                  {focusPane.claimStatements.length - FOCUS_PANEL_LIMIT} more claim
+                  {focusPane.claimStatements.length - FOCUS_PANEL_LIMIT === 1 ? "" : "s"} on{" "}
+                  <a href={focusPane.recordPageHref}>the released record</a>.
+                </p>
+              )}
+            </div>
+          )}
         </section>
       )}
     </div>

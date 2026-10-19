@@ -77,6 +77,7 @@ from policy.licensing import (
 )
 from policy.rights import RightsRecord
 from policy.source_aliases import resolve_public_text
+from policy.transparency import TRANSPARENCY_SOURCE_VIEW_COLUMNS, LaneDecision
 from reconcile.materialize import (
     classify_access_kind,
     read_materialized_contradictions,
@@ -96,6 +97,7 @@ from policy import withdrawals as policy_withdrawals
 from . import analytics, provo
 from . import compartments as C
 from . import placement as _placement
+from . import statements as _stmt
 from .audit import _LATEST_DECISION_CTE
 from .bundle import Bundle, build_bundle
 from .jurisdictions import jurisdiction_slug
@@ -120,8 +122,17 @@ from .shaping import (
     shape_sites,
 )
 from .tiles import render_compartment_sites_pmtiles
+from .transparency import (
+    SOURCE_RIGHTS_COLUMNS,
+    _lane_map,
+    _registry_lane_decision,
+    emit_transparency_artifacts,
+    load_source_registry,
+)
 from .transparency import TRANSPARENCY_QUERIES as _TRANSPARENCY_QUERIES
-from .transparency import emit_transparency_artifacts
+from .transparency import (
+    _rows as _tuples_to_dicts,
+)
 
 #: The SIG-original derived record: coverage/jurisdiction/freshness/dossier framings
 #: are SIG's own analytical expression, published CC-BY-4.0 (SIG-LIC-005). The
@@ -364,6 +375,50 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {CAPTURE_SEAL_GATE}"
         " ORDER BY ce.claim_id, ce.capture_id",
     ),
+    # P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, SIG-TRANSP-011): the binding DETAIL
+    # the ``sig.statement/1`` statements rows and the provenance panel read —
+    # the same claim→capture→artifact eligibility join as ``evidence_bindings``
+    # (the shared artifact gate + the capture-seal gate) widened with the P32.2
+    # binding columns (``binding_status`` — the four-state source), the
+    # capture's scrubbed locators, the artifact's upstream URL (scrubbed
+    # downstream through S-6 — never emitted raw) and the extraction identity.
+    # Guarded on ``claim_evidence`` like its sibling: a pre-P32.2 spine degrades
+    # to [] and statements carry ``not_recorded`` binding state — honest
+    # absence, never a guessed ``legacy_synthetic``.
+    "claim_binding_detail": (
+        "claim_evidence",
+        "SELECT ce.claim_id::text, ce.capture_id::text, ec.artifact_id::text, ce.role,"
+        "       ce.binding_status, ce.bound_at::text, ce.extractor_version,"
+        "       ec.retrieved_at::text, ec.content_digest, ec.byte_size, ec.media_type,"
+        "       ec.storage_tier, ec.capture_classification, ec.retrieved_by_run_id::text,"
+        "       ea.url, ea.source_id, ea.acquisition_method,"
+        "       ex.method, ex.extractor_name, ex.extractor_version, ex.review_status"
+        "  FROM claim_evidence ce"
+        "  JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
+        "  JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
+        "  LEFT JOIN extraction ex ON ex.extraction_id = ce.extraction_id"
+        " WHERE ea.sensitivity_tier = 0"
+        "   AND {PUB_ARTIFACT_GATE}"
+        "   AND {CAPTURE_SEAL_GATE}"
+        " ORDER BY ce.claim_id, ce.capture_id",
+    ),
+    # P35.36 (R11-K13-TX-08a): the claim-level provenance fields the statements
+    # row + panel need beyond the shaping row — review/epistemic status, the
+    # recording run + belief instant, and the supersession pair. Same claim
+    # gate + tier filter as every other claim read; a pre-bitemporal spine
+    # degrades to [] and the fields emit ``not_recorded``.
+    "claim_provenance": (
+        "claim",
+        "SELECT c.claim_id::text, c.review_status::text, c.claim_directness,"
+        "       c.source_reliability, c.artifact_integrity,"
+        "       c.ingest_run_id::text, lower(c.sys_period)::text,"
+        "       c.revises_claim::text, c.retraction_of::text"
+        "  FROM claim c"
+        " WHERE c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND {PUB_CLAIM_GATE}"
+        " ORDER BY c.claim_id",
+    ),
     # P35.19 / JUR-02b (K4 §3.3 note): landed ``geometry_defect`` claims
     # (P35.16 / PKG-06b) are placement inputs — ``raw_value`` is the defect
     # class itself. Absent predicate/table degrades to [] and the engine
@@ -535,6 +590,11 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
         # row-shaped like every other ``raw`` value (single-column counts).
         raw["sealed_bindings_dropped"] = [(len(bindings) - len(kept),)]
         raw["evidence_bindings"] = kept
+        # P35.36: the statements detail read carries the same capture key in
+        # position 1 — a sealed capture loses its binding row here too (the
+        # same fail-closed assert, same rule).
+        detail = raw.get("claim_binding_detail") or []
+        raw["claim_binding_detail"] = [r for r in detail if str(r[1]) not in sealed_ids]
         raw["sealed_bindings_suppressed"] = [(0,)]
         if _table_present(cur, "claim_evidence"):
             try:
@@ -1081,10 +1141,7 @@ def _record_claims(
     the materialized edge's recorded kind when the claim backs one, else
     the predicate-vocabulary classification.
     """
-    wanted: set[str] = set()
-    for rows in slices.rows_by_compartment.values():
-        for row in rows:
-            wanted.update(str(cid) for cid in (row.data.get("claim_ids") or []))
+    slots = _claim_slots(claims, slices, retrieval=retrieval, registry=registry)
     bindings_by_claim: dict[str, list[dict[str, Any]]] = {}
     for r in bindings or []:
         cid, cap, art, role = str(r[0]), str(r[1]), str(r[2]), str(r[3])
@@ -1100,9 +1157,52 @@ def _record_claims(
         edge_kind = e.get("access_kind")
         if edge_cid is not None and edge_kind is not None:
             kind_by_claim.setdefault(str(edge_cid), str(edge_kind))
-    placement: dict[str, tuple[str | None, str | None]] = {}
     rows_by_comp: dict[str, list[dict[str, Any]]] = {}
     lic_by_comp: dict[str, str] = {}
+    for c in sorted(claims, key=lambda c: c.claim_id):
+        slot = slots.get(c.claim_id)
+        if slot is None:
+            continue
+        licence, comp = slot
+        lic_by_comp[comp] = str(licence)
+        crow: dict[str, Any] = {
+            "claim_id": c.claim_id,
+            "entity_id": c.subject_id,
+            "predicate_id": c.predicate_id,
+            "observed_at": c.observed_at.isoformat() if c.observed_at else None,
+            "source_id": c.source_id,
+            "evidence": bindings_by_claim.get(c.claim_id, []),
+        }
+        # Sparse field: access-typed claims name their §12.2 kind; an ordinary
+        # claim emits no key at all (byte-identical for non-edge rows).
+        claim_kind = _claim_access_kind(c.predicate_id, kind_by_claim.get(c.claim_id))
+        if claim_kind is not None:
+            crow["access_kind"] = claim_kind
+        rows_by_comp.setdefault(comp, []).append(crow)
+    return {
+        comp: {"rows": rows, "license": lic_by_comp[comp]} for comp, rows in rows_by_comp.items()
+    }
+
+
+def _claim_slots(
+    claims: Sequence[ShapingClaim],
+    slices: _SiteSlices,
+    *,
+    retrieval: date,
+    registry: Mapping[str, Any] | None,
+) -> dict[str, tuple[str, str]]:
+    """claim_id → (licence, compartment) for every claim backing a published
+    site row — the shared ``compute_export_license`` +
+    ``compartment_for_license`` placement ``record_claims`` and ``statements``
+    both file under (a claim lands under its OWN licence compartment; a claim
+    whose rights refuse contributes no row at all — never co-mingled, never
+    silently dropped, SIG-LIC-004a)."""
+    wanted: set[str] = set()
+    for rows in slices.rows_by_compartment.values():
+        for row in rows:
+            wanted.update(str(cid) for cid in (row.data.get("claim_ids") or []))
+    placement: dict[str, tuple[str | None, str | None]] = {}
+    slots: dict[str, tuple[str, str]] = {}
     for c in sorted(claims, key=lambda c: c.claim_id):
         if c.claim_id not in wanted or not c.source_id:
             continue
@@ -1127,21 +1227,143 @@ def _record_claims(
         licence, comp = slot
         if comp is None:
             continue
+        slots[c.claim_id] = (str(licence), str(comp))
+    return slots
+
+
+def _claim_lane_map(
+    raw: Mapping[str, Any],
+    source_registry: Mapping[str, Mapping[str, Any]] | None,
+) -> dict[str, dict[str, Any]]:
+    """source_id → {decision: LaneDecision, p8} for the statements upstream
+    gate (P35.36 / J4 S-6).
+
+    The recorded ``[redistribution]`` verdict wins — via the
+    ``v_transparency_source`` mirror row first (the DB record), then the
+    committed registry of record (``sources.toml``); absent both, the interim
+    rights-record derivation stands with its basis labelled — the same
+    precedence ``_lane_map`` + ``_registry_lane_decision`` encode on the
+    transparency surfaces. A source with no recorded posture at all falls to
+    the ``unknown`` lane — the fail-closed floor, never an assumed lane.
+    """
+    rights_rows = _tuples_to_dicts(
+        raw.get("transparency_source_rights") or [], SOURCE_RIGHTS_COLUMNS
+    )
+    source_view_rows = _tuples_to_dicts(
+        raw.get("transparency_sources") or [], TRANSPARENCY_SOURCE_VIEW_COLUMNS
+    )
+    lane_by_source = _lane_map(rights_rows, source_view_rows)
+    for sid, reg in (source_registry or {}).items():
+        red = reg.get("redistribution") or {}
+        recorded_lane = str(red.get("lane") or "").strip()
+        p8 = str(red.get("part_viii_class") or "").strip() or None
+        entry = lane_by_source.get(str(sid))
+        if entry is None:
+            lane_by_source[str(sid)] = {
+                "decision": _registry_lane_decision(reg),
+                "p8": p8,
+            }
+            continue
+        if p8 and not entry.get("p8"):
+            entry["p8"] = p8
+        if recorded_lane:
+            entry["decision"] = LaneDecision(recorded_lane, basis="registry:[redistribution]")
+    return lane_by_source
+
+
+def _statements(
+    claims: Sequence[ShapingClaim],
+    slices: _SiteSlices,
+    bindings: Sequence[Any],
+    detail_rows: Sequence[Any],
+    provenance_rows: Sequence[Any],
+    *,
+    retrieval: date,
+    registry: Mapping[str, Any] | None,
+    source_registry: Mapping[str, Mapping[str, Any]] | None,
+    lane_by_source: Mapping[str, Mapping[str, Any]],
+    materialized_edges: Sequence[Mapping[str, Any]] = (),
+    materialized_contradictions: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, dict[str, Any]]:
+    """P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, SIG-TRANSP-011): the
+    ``sig.statement/1`` per-compartment statements stream — one row per
+    published claim carrying the full provenance block the shared
+    ``<ProvenancePanel>`` contract reads (binding state, scrubbed capture
+    locators, S-6-gated upstream, extraction, epistemics, supersession,
+    contradictions, per-claim rights). Compartment placement is exactly
+    ``_record_claims``'s — the same licence gate, the same no-co-mingle rule.
+
+    Raw claim values are never emitted (``value`` is the closed token
+    ``not_published``); every upstream reference passes the P35.31 S-6 gate
+    (``statements.upstream_block``); a claim with no publishable binding row
+    carries ``not_recorded`` — honest absence, never a fabricated binding.
+    """
+    slots = _claim_slots(claims, slices, retrieval=retrieval, registry=registry)
+    detail_by_claim: dict[str, list[dict[str, Any]]] = {}
+    for d in _tuples_to_dicts(detail_rows or [], _stmt.BINDING_DETAIL_COLUMNS):
+        detail_by_claim.setdefault(str(d["claim_id"]), []).append(d)
+    plain_by_claim: dict[str, list[dict[str, Any]]] = {}
+    for r in bindings or []:
+        plain_by_claim.setdefault(str(r[0]), []).append(
+            {"capture_id": str(r[1]), "artifact_id": str(r[2]), "role": str(r[3])}
+        )
+    prov_by_claim: dict[str, dict[str, Any]] = {}
+    prior_recorded_at: dict[str, str | None] = {}
+    for p in _tuples_to_dicts(provenance_rows or [], _stmt.CLAIM_PROVENANCE_COLUMNS):
+        cid = str(p["claim_id"])
+        prov_by_claim[cid] = p
+        prior_recorded_at[cid] = str(p["recorded_at"]) if p.get("recorded_at") else None
+    kind_by_claim: dict[str, str] = {}
+    for e in materialized_edges or []:
+        edge_cid = e.get("evidence_claim")
+        edge_kind = e.get("access_kind")
+        if edge_cid is not None and edge_kind is not None:
+            kind_by_claim.setdefault(str(edge_cid), str(edge_kind))
+    by_subject: dict[str, list[Mapping[str, Any]]] = {}
+    for contra in materialized_contradictions or []:
+        for cid in (str(x) for x in (contra.get("claim_ids") or [])):
+            by_subject.setdefault(cid, []).append(contra)
+    rows_by_comp: dict[str, list[dict[str, Any]]] = {}
+    lic_by_comp: dict[str, str] = {}
+    for c in sorted(claims, key=lambda c: c.claim_id):
+        slot = slots.get(c.claim_id)
+        if slot is None:
+            continue
+        licence, comp = slot
         lic_by_comp[comp] = str(licence)
-        crow: dict[str, Any] = {
-            "claim_id": c.claim_id,
-            "entity_id": c.subject_id,
-            "predicate_id": c.predicate_id,
-            "observed_at": c.observed_at.isoformat() if c.observed_at else None,
-            "source_id": c.source_id,
-            "evidence": bindings_by_claim.get(c.claim_id, []),
-        }
-        # Sparse field: access-typed claims name their §12.2 kind; an ordinary
-        # claim emits no key at all (byte-identical for non-edge rows).
-        claim_kind = _claim_access_kind(c.predicate_id, kind_by_claim.get(c.claim_id))
-        if claim_kind is not None:
-            crow["access_kind"] = claim_kind
-        rows_by_comp.setdefault(comp, []).append(crow)
+        lane_entry = lane_by_source.get(str(c.source_id)) or {}
+        decision = lane_entry.get("decision")
+        lane = str(getattr(decision, "lane", "unknown") or "unknown")
+        lane_basis = getattr(decision, "basis", None)
+        p8 = lane_entry.get("p8")
+        homepage = (
+            str(
+                ((source_registry or {}).get(str(c.source_id)) or {}).get("homepage_url") or ""
+            ).strip()
+            or None
+        )
+        row = _stmt.statement_row(
+            claim_id=c.claim_id,
+            entity_id=c.subject_id,
+            predicate_id=c.predicate_id,
+            observed_at=c.observed_at.isoformat() if c.observed_at else None,
+            source_id=str(c.source_id),
+            licence=licence,
+            compartment=comp,
+            attribution=c.effective_attribution or None,
+            access_kind=_claim_access_kind(c.predicate_id, kind_by_claim.get(c.claim_id)),
+            provenance=prov_by_claim.get(c.claim_id),
+            details=detail_by_claim.get(c.claim_id, ()),
+            plain_bindings=plain_by_claim.get(c.claim_id, ()),
+            lane=lane,
+            lane_basis=lane_basis,
+            part_viii_class=p8,
+            gate_passed=True,  # the claim published — the gate's own verdict
+            source_homepage=homepage,
+            prior_recorded_at=prior_recorded_at,
+            contradictions=by_subject.get(c.claim_id, ()),
+        )
+        rows_by_comp.setdefault(comp, []).append(row)
     return {
         comp: {"rows": rows, "license": lic_by_comp[comp]} for comp, rows in rows_by_comp.items()
     }
@@ -3326,6 +3548,10 @@ def build_spine_export(
     # queue metadata — emitted with schema id / as_of / named denominator /
     # source compartments, licence-labelled like map.json (ADR-R9-ANALYTICS).
     web_compartments: dict[str, str] = {}
+    # P35.36 (R11-K13-TX-08a): per-artifact schema ids + row/entity counts the
+    # manifest carries for the ``sig.*`` row streams (``statements.jsonl``).
+    web_schemas: dict[str, str] = {}
+    web_counts: dict[str, tuple[int, int | None]] = {}
     for art in analytics.build_analytics(
         dataset,
         raw,
@@ -3373,6 +3599,38 @@ def build_spine_export(
         web_artifacts[path] = b"".join(canonical_json(r) for r in payload["rows"])
         web_licenses[path] = str(payload["license"])
         web_compartments[path] = comp
+
+    # --- P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, SIG-TRANSP-011): per-compartment
+    # `statements.jsonl` — the sig.statement/1 stream the release's claim index
+    # and every <ProvenancePanel> consumer reads. One file per licence
+    # compartment (the _record_claims placement — an ODbL claim never lands in
+    # a CC-BY statements file); the committed source registry is the
+    # homepage-fallback input for unbound claims' upstream reference.
+    stmt_source_registry = load_source_registry()
+    for comp, payload in sorted(
+        _statements(
+            claims,
+            slices,
+            raw.get("evidence_bindings") or [],
+            raw.get("claim_binding_detail") or [],
+            raw.get("claim_provenance") or [],
+            retrieval=retrieval,
+            registry=registry,
+            source_registry=stmt_source_registry,
+            lane_by_source=_claim_lane_map(raw, stmt_source_registry),
+            materialized_edges=m_edges,
+            materialized_contradictions=m_contradictions,
+        ).items()
+    ):
+        path = f"{comp}/statements.jsonl"
+        web_artifacts[path] = b"".join(canonical_json(r) for r in payload["rows"])
+        web_licenses[path] = str(payload["license"])
+        web_compartments[path] = comp
+        web_schemas[path] = _stmt.STATEMENT_SCHEMA
+        web_counts[path] = (
+            len(payload["rows"]),
+            len({r["entity_id"] for r in payload["rows"]}),
+        )
 
     # --- P34.19 (F-403, ADR-183): express-terms disclosure ----------------------
     # Each express-terms source the operator chose to keep public discloses its
@@ -3523,6 +3781,8 @@ def build_spine_export(
         tile_artifacts=tile_artifacts,
         web_licenses=web_licenses,
         web_compartments=web_compartments,
+        web_schemas=web_schemas,
+        web_counts=web_counts,
         provenance=provenance,
         exclusions=exclusions,
     )
@@ -3571,18 +3831,25 @@ def _extended_manifest(
     exclusions: Mapping[str, Any],
     web_licenses: Mapping[str, str] | None = None,
     web_compartments: Mapping[str, str] | None = None,
+    web_schemas: Mapping[str, str] | None = None,
+    web_counts: Mapping[str, tuple[int, int | None]] | None = None,
 ) -> Manifest:
     """Extend the bundle manifest with the web JSONs, tiles, provenance, exclusions.
 
     Every added artifact carries its checksum + compartment + computed licence, so a
     consumer can verify integrity and know the governing licence of each file
-    (SIG-EXPORT-001/006).
+    (SIG-EXPORT-001/006). P35.36: ``web_schemas`` records the emitted ``sig.*``
+    row-schema id (``sig.statement/1`` on the statements files) and
+    ``web_counts`` the ``(row_count, distinct_entities)`` pair where the
+    artifact is a row stream.
     """
     # Each tile is labelled with the compartment its sites were placed in (and that
     # compartment's licence) — a CC-BY-SA tile is never filed under `sig_graph` (ADR-106).
     tiles = {path: (comp, lic) for path, comp, lic, _ in tile_artifacts}
     labels = dict(web_licenses or {})
     compartments_for = dict(web_compartments or {})
+    schemas = dict(web_schemas or {})
+    counts = dict(web_counts or {})
     artifacts: list[Artifact] = list(bundle.manifest.artifacts)
     for path in sorted(web_artifacts):
         data = web_artifacts[path]
@@ -3599,6 +3866,7 @@ def _extended_manifest(
                 )
             )
         else:
+            row_count, distinct_entities = counts.get(path, (None, None))
             artifacts.append(
                 Artifact.of(
                     name=Path(path).name,
@@ -3609,6 +3877,9 @@ def _extended_manifest(
                     compartment=compartments_for.get(path, _WEB_COMPARTMENT),
                     license=labels.get(path, _SIG_SPDX),
                     data=data,
+                    row_count=row_count,
+                    distinct_entities=distinct_entities,
+                    schema=schemas.get(path),
                 )
             )
     artifacts.append(

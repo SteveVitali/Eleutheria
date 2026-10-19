@@ -326,12 +326,18 @@ def _iter_unique_site_rows(path: Path, dropped: dict[str, int]) -> Iterator[dict
 
 
 def _claim_index(export_dir: Path) -> dict[str, dict[str, Any]]:
-    """The merged ``record_claims`` index across compartments (each claim row
-    lives under its OWN licence compartment; lookup is release-wide — a claim
-    may sit in a compartment that has no sites of its own)."""
+    """The merged claim index across compartments — P35.36's
+    ``sig.statement/1`` ``statements.jsonl`` files first (the published
+    provenance stream), with ``record_claims.jsonl`` filling claims a
+    pre-P35.36 export still carries (each claim row lives under its OWN
+    licence compartment; lookup is release-wide — a claim may sit in a
+    compartment that has no sites of its own)."""
     out: dict[str, dict[str, Any]] = {}
-    for path in sorted(export_dir.glob("*/record_claims.jsonl")):
+    for path in sorted(export_dir.glob("*/statements.jsonl")):
         out.update(claim_index_from_jsonl(_iter_jsonl(path)))
+    for path in sorted(export_dir.glob("*/record_claims.jsonl")):
+        for cid, row in claim_index_from_jsonl(_iter_jsonl(path)).items():
+            out.setdefault(cid, row)
     return out
 
 
@@ -911,6 +917,19 @@ def build_release(
             compartment=comp,
             licence=comps[comp],
         )
+        # P35.36 (R11-K13-TX-08a / J3 §5.1, SIG-TRANSP-011): the compartment's
+        # ``sig.statement/1`` statements file ships in the immutable release
+        # tree — the claim index the panels and downstream consumers read,
+        # integrity-listed with its checksum. Absent on a pre-P35.36 export —
+        # the named absence, never a fabricated file.
+        statements_src = export_dir / comp / "statements.jsonl"
+        if statements_src.is_file():
+            emit(
+                f"{comp_dir}/statements.jsonl",
+                statements_src.read_bytes(),
+                compartment=comp,
+                licence=comps[comp],
+            )
         # P32.14 (SIG-FIND-003, ADR-133): the deterministic per-compartment
         # FTS5 search index — a licensed artifact of the same bound
         # projection, verified by hash before any ro open at serve time.

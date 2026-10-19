@@ -23,7 +23,9 @@ import {
   sealedMetadata,
 } from "../../lib/evidence-viewer";
 import type { ClaimView } from "../../lib/evidence-viewer";
-import { getEvidence, getCaptureDiff } from "../../lib/data";
+import { getEvidence, getCaptureDiff, getStatementIndex } from "../../lib/data";
+import { panelForClaim } from "../../lib/provenance-panel";
+import ProvenancePanel from "../../components/ProvenancePanel";
 
 // The evidence claim-views + capture diff flow through the single data seam (ADR-066):
 // fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
@@ -44,6 +46,13 @@ const contested = isClaimContested(view);
 // The field-by-field capture diff is shown for the claim about the portal artifact.
 const showDiff = DIFF_CAPTURES !== null && view.claim_id === "active-device-count";
 const diff = showDiff && DIFF_CAPTURES ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
+
+// P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, K13 §7 W1 / UXR-33, SIG-TRANSP-011):
+// the shared provenance-panel contract — the same `sig.provenance-panel/1`
+// every surface renders. This page is the claim's canonical anchor surface:
+// the panel carries `id="claim-<id>"` so `#claim-<id>` resolves here.
+const STATEMENTS = getStatementIndex();
+const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
 ---
 
 <BaseLayout title={`Evidence — ${view.claim_label}`} path={`/evidence/${view.claim_id}/`}>
@@ -91,6 +100,11 @@ const diff = showDiff && DIFF_CAPTURES ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAP
       <div><dt>Acquisition method</dt><dd data-testid="acquisition-method">{view.capture.acquisition_method}</dd></div>
       <div><dt>Storage tier</dt><dd data-testid="storage-tier">{view.capture.storage_tier}</dd></div>
     </dl>
+
+    <!-- The shared per-claim provenance panel (P35.36 / UXR-33): the same
+         contract + verbatim binding-state wording every surface renders, and
+         the `#claim-<id>` anchor's resolution target. -->
+    <ProvenancePanel panel={panel} anchor />
 
     <!-- Conflicting claims (SIG-UI-028/009) — the dispute stays visible. -->
     <h2>Conflicting claims</h2>
