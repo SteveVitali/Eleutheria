@@ -540,8 +540,7 @@ def test_recorded_raw_ok_clear_writes_and_serves_public(clean_dsn: str) -> None:
         )
         assert capture_id is not None
         artifact_id, tier = conn.execute(
-            "SELECT artifact_id, storage_tier FROM evidence_capture"
-            " WHERE capture_id = %s",
+            "SELECT artifact_id, storage_tier FROM evidence_capture WHERE capture_id = %s",
             (capture_id,),
         ).fetchone()
         # The recorded verdict reaches the stored row — `public` is now
@@ -549,8 +548,7 @@ def test_recorded_raw_ok_clear_writes_and_serves_public(clean_dsn: str) -> None:
         assert tier == "public"
         # The mirror row landed on the same write path.
         assert conn.execute(
-            "SELECT lane, part_viii_class FROM source_redistribution"
-            " WHERE source_id = 'e2e_src'"
+            "SELECT lane, part_viii_class FROM source_redistribution WHERE source_id = 'e2e_src'"
         ).fetchone() == ("raw-ok", "clear")
 
     store = PgReadStore(clean_dsn, pool_min=1, pool_max=2)
