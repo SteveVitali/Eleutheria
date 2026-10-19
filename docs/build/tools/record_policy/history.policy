@@ -543,3 +543,18 @@ seed-commit cf120045
 # Scope: findings attributed to e77c18d1 only; no other commit borrows
 # the exemption.
 seed-commit e77c18d1
+
+# ── P35.65 dispatch-line segment-negation repair (ticket 314; recorded 2026-10-19) ──
+# 2f6db784's dispatch boundary-confirm PHASE LOG entry stranded `live` in
+# "live-claim segment" on a segment that carries no negate — the
+# check_live_claims corpus leg flags the line (the base branch's own run
+# 39296022809 went docs+python red on it; the same segment-negation class as
+# P35.35's closeout-record docs-red). ab0f97ab rewords the token in place —
+# "live-claim segment" → "`check_live_claims` segment wrap" (a code span the
+# lint strips; it also names the flagging tool; no payload bytes' meaning
+# changed). The sanctioned in-place pattern of P34.39b's 6fe93216, P36.9b's
+# 21a392ca/49607976, P34.39a's 917dd2a5, P36.15's 4ce44ed9. The branch rule
+# forbids force-push, so the declaration lands as a later commit.
+# Scope: findings attributed to ab0f97ab only; no other commit borrows
+# the exemption.
+seed-commit ab0f97ab
