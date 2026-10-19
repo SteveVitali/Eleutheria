@@ -124,6 +124,13 @@ predicate_allowlist = [
   # `deployment_date_field`, e.g. MTA `implementation_date`) emits under.
   "enforcement_count",
   "installation_date",
+  # P36.7 (ACQ-11): `programme_area` — the programme-area aggregate subject
+  # assertion (a published PSA group row, never a camera); `programme_count` —
+  # the registered predicate the programme-aggregate transports emit per
+  # programme area × period × measure (aggregate rows only, never a
+  # per-registrant/location record). Both registered predicates.yaml members.
+  "programme_area",
+  "programme_count",
 ]
 
 # Predicate GENRES this connector MUST NOT write (scope-creep guard): the

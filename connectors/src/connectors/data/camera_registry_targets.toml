@@ -3966,6 +3966,42 @@ jurisdiction_place = "Washington"
 technology = "ate-unspecified"
 
 [[targets]]
+id = "dc_ovsjg_camera_rebate_by_month"
+source_id = "camreg_dc_ovsjg_camera_rebate"
+kind = "arcgis_outstatistics"
+platform = "arcgis"
+url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/33"
+layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/33"
+# P36.7 (ACQ-11): the published table IS the programme aggregate — one row
+# per Police Service Area × MONTH_YEAR carrying per-status count columns.
+# The outStatistics group consolidates to PSA × MONTH_YEAR and reads EVERY
+# published count column as its own measure series (multi-measure slice):
+# RECEIVED/UNDERREVIEW/APPROVED/DECLINED applications, REBATEFUND rebates
+# funded, CAMERAFOUNDED cameras funded. `aggregate_subject_kind =
+# "programme_area"` mints a programme-area subject, never a traffic_camera
+# — a PSA is the published area bucket, not a device (P8-4/S1).
+aggregate_subject_field = "PSA"
+aggregate_subject_kind = "programme_area"
+aggregate_period_field = "MONTH_YEAR"
+aggregate_period_kind = "verbatim"
+aggregate_count_fields = ["RECEIVED", "UNDERREVIEW", "APPROVED", "DECLINED", "REBATEFUND", "CAMERAFOUNDED"]
+aggregate_count_function = "sum"
+aggregate_measure = "programme_outcomes"
+agency = "District of Columbia, Office of Victim Services and Justice Grants (via DC GIS)"
+state = "US-DC"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 171
+observed_fields = "PSA,RECEIVED,UNDERREVIEW,APPROVED,DECLINED,REBATEFUND,CAMERAFOUNDED,MONTH_YEAR,GIS_ID,CREATED,EDITED,OBJECTID"
+verified = 2026-09-30
+enum_source = "r11-acq-01:AP-T1-005"
+license_spdx = "CC-BY-4.0"
+rights_note = "Hub item a024d0ab1e76436796563750a95f6254 licenseInfo declares 'This work is licensed under a Creative Commons Attribution 4.0 International License' verbatim (catalog_sweep_2026-09-18_reviewed.json row-captured) — per-target claim evidence; the source row stays gated — the operator's OP-26 Wave-B flip is the only route to a live fetch. Rights batch RB-01 `a` (GL-GATE-07 re-confirmed batch-wide) is the approved basis. CC-BY-4.0 attribution: 'District of Columbia, Office of Victim Services and Justice Grants (via DC GIS)'."
+notes = "P36.7 (ACQ-11) registration review (plan AP-T1-005, cand I3-C084, layer 33 'Private Security Camera Rebate Program'). DEVIATION from the I8 §5.4 design table ('ward x year counts'): the published schema carries NO WARD or YEAR columns — the committed catalog-sweep evidence enumerates PSA,RECEIVED,UNDERREVIEW,APPROVED,DECLINED,REBATEFUND,CAMERAFOUNDED,MONTH_YEAR,GIS_ID,CREATED,EDITED,OBJECTID only — so the group is PSA x MONTH_YEAR, the area x period surface the design intends; ward/year would be fabricated columns. PROGRAMME-LEVEL ONLY (P8-4/S1): no registrant location, name or address columns exist or are ever selected; returnGeometry=false; the transport emits programme_count aggregates on programme_area subjects only, never a per-registrant, per-device, camera, or geometry row. Layer 34 'Private Security Camera Voucher Program' is a SEPARATE item — deliberately not a target. observed_count=171 is the catalog-sweep's returnCountOnly reading; a group table outgrowing its planned pages fails loud on exceededTransferLimit. Technology: private-camera-integration-unspecified — the evidence names the private-camera family (a public subsidy register) but not the registry/integration discriminator (SIG-ONTO-021 coarsest-supported)."
+place_geoid = "1150000"
+jurisdiction_place = "Washington"
+technology = "private-camera-integration-unspecified"
+
+[[targets]]
 id = "fdot_d3_flock_inventory"
 source_id = "camreg_fdot_flock"
 kind = "arcgis_query"

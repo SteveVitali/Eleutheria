@@ -7857,26 +7857,26 @@ notes = "P34.38 gated placeholder (E4-B6 = a): California State Auditor ALPR aud
 # Every row lands ingestion_permitted=false / rights UNDETERMINED — the
 # operator's HG-03 lines flip them, never this generator (I8 §7.1).
 
-[sources.procportal_il_cook_county_procurement]
-name = "Cook County Procurement - Awarded Contracts & Amendments: Flock Safety LPR services (Sheriff)"
+[sources.procportal_cook_il_awards]
+name = "Cook County Procurement \u2014 Awarded Contracts & Amendments (Socrata qh8j-6k63)"
 source_kind = "government_portal"
-homepage_url = "https://datacatalog.cookcountyil.gov/resource/qh8j-6k63.json"
+homepage_url = "https://datacatalog.cookcountyil.gov/dataset/Cook-County-Procurement-Awarded-Contracts-Amendments/qh8j-6k63"
 default_tier = "R4"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "Socrata SODA/SoQL \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "Socrata SODA/SoQL \u2014 bounded $where slices only (connector map wired by P36.7)"
 auth_model = "none"
-cadence = "daily"
+cadence = "monthly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-001, cand I3-C077, family 'procurement(portal_tenants:socrata + $where)', ticket ACQ-11 -> live ACQ-16, class ticket P36.7). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_cook_county_il_procurement_awarde'."
+notes = "P36.7 (ACQ-11) registration row (plan AP-T1-001, cand I3-C077, family 'procurement(portal_tenants:socrata + $where)', ticket ACQ-11 -> live ACQ-16). Replaces the ACQ-01 generated row 'procportal_il_cook_county_procurement' (proposed id 'procportal_cook_county_il_procurement_awarde' superseded by the I8 design's procportal_cook_il_awards). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 the licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' remains seed evidence, not a resolved record. Reviewed surface: the cook_county $where slices on vendor_name+description \u2014 the live-read Flock rows (Insight Public Sector 'Flock Safety License Plate Reader Services' USD 900,000; Flock Safety 'LICENSE PLATE READERS' USD 74,750 \u2014 the reseller-attribution case the description scan exists for, I3-Q069) plus the Axon Taser/BWC/DEMS rows."
 publisher = "Cook County, IL Office of the Chief Procurement Officer (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
 jurisdiction_place = "Cook County"
-[sources.procportal_il_cook_county_procurement.rights]
+[sources.procportal_cook_il_awards.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -7902,47 +7902,48 @@ jurisdiction = "US-DE"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.procportal_wa_washington_des_statewide]
-name = "Washington DES Statewide Contract (Master Contract) Sales Data by Customer, Contract, Vendor"
+[sources.procportal_wa_des_contract_sales]
+name = "Washington DES Statewide Contract (Master Contract) Sales Data by Customer, Contract, Vendor (n8q6-4twj)"
 source_kind = "government_portal"
 homepage_url = "https://data.wa.gov/d/n8q6-4twj"
 default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "Socrata SODA/SoQL \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "Socrata SODA/SoQL \u2014 bounded $where slices, public-entity customers only (connector map wired by P36.7)"
 auth_model = "none"
 cadence = "quarterly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-004, cand I6-C010, family 'procurement(portal_tenants:socrata + $where)', ticket ACQ-11 -> live ACQ-16, class ticket P36.7). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_wa_washington_des_statewide'."
+notes = "P36.7 (ACQ-11) registration row (plan AP-T1-004, cand I6-C010, family 'procurement(portal_tenants:socrata + $where)', ticket ACQ-11 -> live ACQ-16). Replaces the ACQ-01 generated row 'procportal_wa_washington_des_statewide' (the generated id is superseded by the I8 design's procportal_wa_des_contract_sales). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED \u2014 licence field NULL on the dataset record (I6-F055); the 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' lead remains seed evidence, not a resolved record. Reviewed surface: the wa_des $where slices on vendor_name + exact contract_number (the seven reviewed contract ids \u2014 05720 NASPO ValuePoint PA for Axon, I6-F056) AND the customer_type public-entity allowlist \u2014 non-public or unlisted customer types fail closed, never silently included."
 publisher = "Washington State Department of Enterprise Services (via data.wa.gov)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
-[sources.procportal_wa_washington_des_statewide.rights]
+[sources.procportal_wa_des_contract_sales.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.camreg_dc_private_security_camera]
-name = "Private Security Camera Rebate Program and Voucher Program (DC Office of Victim Services and Justice Grants) - per-PSA a"
+[sources.camreg_dc_ovsjg_camera_rebate]
+name = "DC Private Security Camera Rebate Program \u2014 per-PSA \u00d7 month programme aggregates (OVSJG via DC GIS)"
 source_kind = "government_portal"
 homepage_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/33"
 default_tier = "R1"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "ArcGIS REST (FeatureServer/MapServer query) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "ArcGIS REST outStatistics (returnGeometry=false) \u2014 programme-level aggregates only (connector map wired by P36.7)"
 auth_model = "none"
 cadence = "monthly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-005, cand I3-C084, family 'dot_511(arcgis_outstatistics aggregate)', ticket ACQ-11 -> live ACQ-16, class ticket P36.7). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_dc_private_security_camera'."
+notes = "P36.7 (ACQ-11) registration row (plan AP-T1-005, cand I3-C084, family 'dot_511(arcgis_outstatistics aggregate)', ticket ACQ-11 -> live ACQ-16). Replaces the ACQ-01 generated row 'camreg_dc_private_security_camera' (the generated id is superseded by the I8 design's camreg_dc_ovsjg_camera_rebate). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 `a` recorded as the approved basis, GL-GATE-07 re-confirmed batch-wide); the operator's OP-26 Wave-B flip under ING-GO-B is the only route to a live fetch. Rights UNDETERMINED on the source row \u2014 the hub item's licenseInfo declares CC-BY-4.0 verbatim (a024d0ab1e76436796563750a95f6254, catalog-sweep row-captured) as per-target claim evidence. PROGRAMME-LEVEL ONLY (P8-4/S1): layer 33 'Private Security Camera Rebate Program' publishes PSA \u00d7 MONTH_YEAR aggregate counts (RECEIVED/UNDERREVIEW/APPROVED/DECLINED/REBATEFUND/CAMERAFOUNDED) \u2014 no registrant location, name or address columns exist or are ever selected; layer 34 'Private Security Camera Voucher Program' is a SEPARATE item, deliberately not a target of this source."
 publisher = "District of Columbia Office of Victim Services and Justice Grants (DC GIS)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DC"
-[sources.camreg_dc_private_security_camera.rights]
+jurisdiction_place = "Washington"
+[sources.camreg_dc_ovsjg_camera_rebate.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 

@@ -778,6 +778,22 @@ kind = "procurement_portal_tenants"
 [procportal_chicago_il]
 kind = "procurement_portal_tenants"
 
+# --- P36.7 (ACQ-11): Wave-B procurement + programme registers ---------------
+# Cook County awarded contracts + WA DES contract sales expand to their
+# tenants' reviewed `where` slices only (rows_window=false — the where
+# groups ARE the surface); the DC OVSJG camera-rebate register rides the
+# merged target registry as a layer-33 arcgis_outstatistics target. All
+# three stay gated — the live gate refuses before any target is read.
+
+[procportal_cook_il_awards]
+kind = "procurement_portal_tenants"
+
+[procportal_wa_des_contract_sales]
+kind = "procurement_portal_tenants"
+
+[camreg_dc_ovsjg_camera_rebate]
+kind = "dot_511_targets"
+
 # TED — Tenders Electronic Daily (P26.15, the EU procurement surface). API
 # mode: api.ted.europa.eu is ADR-083 allow-listed (keyless documented Search
 # API; POST-only /v3/notices/search — GET answers 400). This seed row is a

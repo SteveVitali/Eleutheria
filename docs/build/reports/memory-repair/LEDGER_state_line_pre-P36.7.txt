@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P36.6 closeout (row 279 — ACQ-10: fifteen ATE layers + two aggregate transports registered gated; `enforcement_count` predicate; `line`/`area` emits; no live leg); next → P36.7 (row 280).

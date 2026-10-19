@@ -1,0 +1,41 @@
+{
+  "features": [
+    {
+      "attributes": {
+        "PSA": "605",
+        "MONTH_YEAR": "05-2026",
+        "count_RECEIVED": 12,
+        "count_UNDERREVIEW": 3,
+        "count_APPROVED": 8,
+        "count_DECLINED": 1,
+        "count_REBATEFUND": 4,
+        "count_CAMERAFOUNDED": 9,
+        "REGISTRANT_PHOTO_URL": "https://example.invalid/photo.jpg"
+      }
+    },
+    {
+      "attributes": {
+        "PSA": "301",
+        "MONTH_YEAR": "05-2026",
+        "count_RECEIVED": 5,
+        "count_UNDERREVIEW": 1,
+        "count_APPROVED": 4,
+        "count_DECLINED": 0,
+        "count_REBATEFUND": 2,
+        "count_CAMERAFOUNDED": 3
+      }
+    },
+    {
+      "attributes": {
+        "PSA": "605",
+        "MONTH_YEAR": "06-2026",
+        "count_RECEIVED": 7,
+        "count_UNDERREVIEW": 2,
+        "count_APPROVED": 5,
+        "count_DECLINED": 1,
+        "count_REBATEFUND": 3,
+        "count_CAMERAFOUNDED": 6
+      }
+    }
+  ]
+}

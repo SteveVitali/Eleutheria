@@ -1643,6 +1643,20 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
                     f"tenant {tenant_id} names unknown portal_where {where_name!r} "
                     "(a where-slice must resolve to a reviewed [portal_where] row)"
                 )
+            # P36.7 (ACQ-11): the tenant's reviewed row-scope restriction —
+            # `required_field` must carry one of the verbatim
+            # `required_values` (WA DES's public-entity customer types). It
+            # folds server-side into every slice's $where AND gates again
+            # client-side at extract; a missing or unlisted value fails
+            # closed (never silently kept).
+            required_field = _opt_str(row.get("required_field"))
+            required_values = [str(v) for v in row.get("required_values", ())]
+            required_clause = ""
+            if required_field and required_values:
+                quoted = ",".join(
+                    f"'{str(v).replace(chr(39), chr(39) * 2).upper()}'" for v in required_values
+                )
+                required_clause = f"upper({required_field}) in ({quoted})"
             socrata_target: dict[str, Any] = {
                 **base,
                 "id": f"{tenant_id}:rows",
@@ -1651,6 +1665,7 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
                     {
                         "$limit": limit,
                         **({"$order": f"{date_field} DESC"} if date_field else {}),
+                        **({"$where": required_clause} if required_clause else {}),
                     }
                 ),
                 "index_kind": "rows",
@@ -1660,9 +1675,12 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
                 "limit": limit,
                 "portal_where": where_name,
                 "acq_keyword_terms": (str(where_def.get("terms") or "") if where_def else None),
+                "required_field": required_field,
+                "required_values": required_values,
                 # The reviewed per-dataset field aliases ride the target —
                 # the dataset's own column names, never hardcoded.
                 "id_fields": [str(f) for f in row.get("id_fields", ())],
+                "composite_id_fields": [str(f) for f in row.get("composite_id_fields", ())],
                 "title_fields": [str(f) for f in row.get("title_fields", ())],
                 "desc_fields": [str(f) for f in row.get("desc_fields", ())],
                 "date_field": date_field or None,
@@ -1673,15 +1691,24 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
                 "deadline_field": _opt_str(row.get("deadline_field")),
                 "doc_field": _opt_str(row.get("doc_field")),
             }
-            out.append(socrata_target)
+            # P36.7 (ACQ-11): ``rows_window = false`` — a tenant whose
+            # reviewed surface IS the where filter (Cook awards, WA DES
+            # contract sales) expands no generic recency window: an
+            # unfiltered rows slice would emit unscoped register rows the
+            # plan never reviewed. The where slices carry the surface.
+            if row.get("rows_window", True):
+                out.append(socrata_target)
             if where_def is not None:
                 where_fields = [str(f) for f in where_def.get("fields", ())]
+                where_exact_fields = [str(f) for f in where_def.get("exact_fields", ())]
                 where_terms = acq_keyword_term_set(str(where_def.get("terms") or ""))
                 group_size = max(1, int(where_def.get("group_size", 8)))
                 where_limit = _opt_int(where_def.get("limit")) or limit
                 for group_index in range(0, len(where_terms), group_size):
                     group = where_terms[group_index : group_index + group_size]
-                    clause = _socrata_where_clause(where_fields, group)
+                    clause = _socrata_where_clause(where_fields, group, where_exact_fields)
+                    if required_clause:
+                        clause = f"({clause}) and ({required_clause})"
                     where_query = urlencode(
                         {
                             "$limit": where_limit,
@@ -1699,6 +1726,7 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
                             "index_keyword": f"g{gid}",
                             "limit": where_limit,
                             "where_fields": where_fields,
+                            "where_exact_fields": where_exact_fields,
                             "where_terms": group,
                             "where_group": gid,
                         }
@@ -2541,11 +2569,25 @@ class ProcurementConnector(Connector):
             where_name = _opt_str(target.get("portal_where"))
             where_def = portal_where_defs().get(where_name) if where_name else None
             my_group = _opt_int(target.get("where_group"))
+            # P36.7 (ACQ-11): the tenant's reviewed row-scope restriction —
+            # WA DES keeps public-entity customers only. A row whose
+            # `required_field` value is missing or outside the reviewed
+            # allowlist fails CLOSED (counted `excluded` on the index row,
+            # never silently included): the client-side check is the
+            # authoritative pass; the server-side in-list is recall only.
+            required_field = _opt_str(target.get("required_field"))
+            required_values = {str(v).strip().upper() for v in target.get("required_values", ())}
             precise_items: list[Mapping[str, Any]] = []
             dropped_count = 0
             pruned_count = 0
+            excluded_count = 0
             seen_ids: set[str] = set()
             for item in items:
+                if required_field and required_values:
+                    required_value = str(item.get(required_field) or "").strip().upper()
+                    if required_value not in required_values:
+                        excluded_count += 1
+                        continue
                 ext_id = _portal_external_id(item, target)
                 owner = _socrata_like_owner(item, where_def)
                 if index_kind == "where":
@@ -2555,7 +2597,7 @@ class ProcurementConnector(Connector):
                         else:
                             pruned_count += 1  # an earlier where group owns it
                         continue
-                    if not _socrata_where_precise(item, target):
+                    if not _socrata_where_precise(item, target, where_def):
                         dropped_count += 1
                         continue
                 elif owner is not None:
@@ -2583,6 +2625,9 @@ class ProcurementConnector(Connector):
                 index_record["precise_count"] = len(precise_items)
                 index_record["dropped_count"] = dropped_count
                 index_record["pruned_count"] = pruned_count
+            if required_field:
+                index_record["required_field"] = required_field
+                index_record["excluded_count"] = excluded_count
             out: list[Mapping[str, Any]] = [index_record]
             out.extend(
                 {
@@ -3317,9 +3362,15 @@ class ProcurementConnector(Connector):
                 row[key] = str(target[key])
         if target.get("where_terms"):
             row["where_terms"] = [str(t) for t in target["where_terms"]]
-        for key in ("precise_count", "dropped_count", "pruned_count"):
+        for key in ("precise_count", "dropped_count", "pruned_count", "excluded_count"):
             if raw.get(key) is not None:
                 row[key] = raw[key]
+        # P36.7 (ACQ-11): the tenant's reviewed row-scope restriction rides
+        # the outcome row as provenance (WA DES: customer_type public-entity
+        # allowlist — the verbatim values ride the target itself).
+        if target.get("required_field"):
+            row["required_field"] = str(target["required_field"])
+            row["required_values"] = [str(v) for v in target.get("required_values", ())]
         if jurisdiction:
             row["jurisdiction_candidate"] = org_candidate(
                 jurisdiction, scheme="portal.jurisdiction_name"
@@ -3412,24 +3463,32 @@ class ProcurementConnector(Connector):
                 row["candidate_identifier"] = org_candidate(str(value))
             rows.append(_stamp(row, source_id=ctx.source.id))
         if vendor:
-            rows.append(
-                _stamp(
-                    {
-                        "record_kind": "claim",
-                        "subject_id": subject,
-                        "predicate_id": assert_predicate_allowed("seller"),
-                        "raw_value": vendor,
-                        "value": vendor,
-                        "platform": platform,
-                        "tenant_id": tenant_id or None,
-                        "jurisdiction": jurisdiction,
-                        "candidate_identifier": org_candidate(
-                            vendor, scheme="procurement.org_name"
-                        ),
-                    },
-                    source_id=ctx.source.id,
+            # P36.7 (ACQ-11): the P8-6 mechanical screen — a natural-person
+            # payee emits NO seller claim (the affirmative identity-layer
+            # signal only; the ambiguity refusals never drop). The drop is
+            # recorded on the notice row, never silently skipped.
+            vendor_person_signal = natural_person_signal(vendor)
+            if vendor_person_signal is None:
+                rows.append(
+                    _stamp(
+                        {
+                            "record_kind": "claim",
+                            "subject_id": subject,
+                            "predicate_id": assert_predicate_allowed("seller"),
+                            "raw_value": vendor,
+                            "value": vendor,
+                            "platform": platform,
+                            "tenant_id": tenant_id or None,
+                            "jurisdiction": jurisdiction,
+                            "candidate_identifier": org_candidate(
+                                vendor, scheme="procurement.org_name"
+                            ),
+                        },
+                        source_id=ctx.source.id,
+                    )
                 )
-            )
+            else:
+                rows[0]["seller_dropped"] = vendor_person_signal
         if amount:
             rows.append(
                 _stamp(
@@ -4905,19 +4964,29 @@ def _portal_index_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | N
     return None
 
 
-def _socrata_where_clause(fields: Sequence[str], terms: Sequence[str]) -> str:
+def _socrata_where_clause(
+    fields: Sequence[str], terms: Sequence[str], exact_fields: Sequence[str] = ()
+) -> str:
     """One reviewed SoQL OR-group of ``upper(<field>) like '%<TERM>%'`` (B00329).
 
     Per term: one parenthesised OR across ``fields``; the group ORs the
     terms. Quotes are doubled (the SoQL escape). Recall-side substring
     filter only — the verbatim vocabulary scan is the precision pass.
+
+    P36.7 (ACQ-11): ``exact_fields`` adds per-term equality clauses
+    (``upper(<field>) = '<TERM>'``) for identifier columns — WA DES's
+    ``contract_number`` is a reviewed term whose substring LIKE would
+    over-recall (a contract id inside a longer id) while a vendor literal
+    equality-match is harmless. Both field classes sit inside the SAME
+    per-term OR-group: a term owns a row when any reviewed column carries
+    it, so the composed shape stays one group per term.
     """
     parts: list[str] = []
     for term in terms:
         escaped = str(term).replace("'", "''").upper()
-        parts.append(
-            "(" + " or ".join(f"upper({field}) like '%{escaped}%'" for field in fields) + ")"
-        )
+        clauses = [f"upper({field}) like '%{escaped}%'" for field in fields]
+        clauses += [f"upper({field}) = '{escaped}'" for field in exact_fields]
+        parts.append("(" + " or ".join(clauses) + ")")
     return " or ".join(parts)
 
 
@@ -4942,7 +5011,11 @@ def _socrata_scan_fields(tenant: Mapping[str, Any]) -> list[str]:
     return out
 
 
-def _socrata_where_precise(item: Mapping[str, Any], tenant: Mapping[str, Any]) -> bool:
+def _socrata_where_precise(
+    item: Mapping[str, Any],
+    tenant: Mapping[str, Any],
+    where_def: Mapping[str, Any] | None = None,
+) -> bool:
     """The client-side precision pass for a ``where``-slice Socrata row (P35.9).
 
     The server-side ``%TERM%`` LIKE is deliberately broad recall (I9b-Q008);
@@ -4951,7 +5024,24 @@ def _socrata_where_precise(item: Mapping[str, Any], tenant: Mapping[str, Any]) -
     ('CLEARVIEW DATA SYSTEMS' ≠ Clearview AI; 'Parsons Brinckerhoff' never
     matches ``\\bbrinc\\b``). A row whose only match is Part VIII-suppressed
     also drops — a bare landing with no emittable evidence.
+
+    P36.7 (ACQ-11): a ``[portal_where]`` definition naming ``exact_fields``
+    keeps a row whose declared identifier column equals a reviewed term —
+    WA DES contract ``05720`` surfaces the Axon NASPO PA even where the
+    vendor name itself matches no vocabulary literal (a reseller row).
+    The exact match IS the reviewed term evidence, so it needs no scan.
     """
+    if isinstance(where_def, Mapping):
+        exact_fields = [str(f) for f in where_def.get("exact_fields", ()) if str(f or "")]
+        if exact_fields:
+            terms = {
+                str(t).strip().upper()
+                for t in acq_keyword_term_set(str(where_def.get("terms") or ""))
+            }
+            for field in exact_fields:
+                exact_value = str(item.get(field) or "").strip().upper()
+                if exact_value and exact_value in terms:
+                    return True
     for field_name in _socrata_scan_fields(tenant):
         value = _opt_str(item.get(field_name))
         if not value:
@@ -4978,16 +5068,19 @@ def _socrata_like_owner(item: Mapping[str, Any], where_def: Mapping[str, Any] | 
     if not isinstance(where_def, Mapping):
         return None
     fields = [str(f) for f in where_def.get("fields", ()) if str(f or "")]
+    exact_fields = [str(f) for f in where_def.get("exact_fields", ()) if str(f or "")]
     terms = acq_keyword_term_set(str(where_def.get("terms") or ""))
     group_size = max(1, int(where_def.get("group_size", 8)))
-    if not fields or not terms:
+    if not (fields or exact_fields) or not terms:
         return None
     earliest: int | None = None
     for pos, term in enumerate(terms):
-        needle = str(term).upper()
+        needle = str(term).strip().upper()
         if not needle:
             continue
-        if any(needle in str(item.get(f) or "").upper() for f in fields):
+        if any(needle in str(item.get(f) or "").upper() for f in fields) or any(
+            needle == str(item.get(f) or "").strip().upper() for f in exact_fields
+        ):
             if earliest is None or pos < earliest:
                 earliest = pos
     if earliest is None:
@@ -5044,7 +5137,19 @@ def _portal_item_id(item: Mapping[str, Any]) -> str:
 
 
 def _portal_external_id(item: Mapping[str, Any], tenant: Mapping[str, Any]) -> str:
-    """The notice's external id via the tenant's reviewed ``id_fields`` aliases."""
+    """The notice's external id via the tenant's reviewed ``id_fields`` aliases.
+
+    P36.7 (ACQ-11): ``composite_id_fields`` joins the reviewed key columns —
+    a WA DES row is one (contract, customer, vendor, year) sale record and a
+    bare ``contract_number`` id would collapse hundreds of distinct sales
+    onto one subject. Every declared field must be non-empty; a partial key
+    falls back to the item digest so a schema drift never mints a half-key.
+    """
+    composite = [str(k) for k in tenant.get("composite_id_fields", ())]
+    if composite:
+        parts = [v for v in (_opt_str(item.get(k)) for k in composite) if v]
+        if len(parts) == len(composite):
+            return "|".join(parts)
     for key in tenant.get("id_fields", ()):
         value = _opt_str(item.get(str(key)))
         if value:

@@ -328,6 +328,89 @@ last_verified = 2026-09-18
 enum_source = "api.us.socrata.com catalog q=contracts @data.cityofchicago.org (live probe 2026-09-18)"
 notes = "'Contracts' — awarded contracts/modifications since 1993. GATED: no licence metadata on the dataset or portal record (D-SOURCES.9-1) — verified vocab hits exist ('VIDEO/SURVEILLANCE CAMERA SERVICES', 'VIDEO SURVEILLANCE MANAGEMENT SYSTEM') but the gate refuses before any fetch."
 
+# --- P36.7 (ACQ-11): Wave-B procurement registers --------------------------
+# Two Socrata registers whose reviewed surface IS the `where` filter —
+# `rows_window = false` expands no generic recency slice (an unfiltered
+# window would emit unscoped register rows the plan never reviewed; the
+# where groups carry the whole surface). Both stay gated behind their
+# HG-03 lines (RB-06 `a` Cook, RB-04 `a` WA DES) — the operator's OP-26
+# Wave-B flip under ING-GO-B is the only route to a live fetch.
+
+[tenants.cook_county_il]
+jurisdiction = "Cook County, IL"
+platform = "socrata"
+source_id = "procportal_cook_il_awards"
+tenant = "cook_awards"
+host = "datacatalog.cookcountyil.gov"
+dataset = "qh8j-6k63"
+id_fields = ["contract_number"]
+title_fields = ["description"]
+vendor_field = "vendor_name"
+dept_field = "department"
+buyer_name = "Cook County, Illinois"
+amount_field = "amount"
+date_field = "start_date"
+# P36.7: the reviewed surface is the `cook_county` where definition —
+# vendor_name + description `%TERM%` slices (the reseller-attribution
+# case: 'Insight Public Sector' carries the Flock award in `description`).
+portal_where = "cook_county"
+rows_window = false
+limit = 500
+verified = true
+last_verified = 2026-09-30
+enum_source = "api.us.socrata.com catalog q=contracts vendor award @datacatalog.cookcountyil.gov (live probe 2026-09-30, I3-Q067)"
+notes = "'Cook County Procurement — Awarded Contracts & Amendments' (plan AP-T1-001, cand I3-C077, RB-06 `a`). Live-read 2026-09-30 (I3-Q069/Q079): Insight Public Sector 'Flock Safety License Plate Reader Services' USD 900,000 (Sheriff IT, start 2026-05-01) — the RESELLER case, Flock attribution lands via the `description` scan, never `vendor_name` alone — and Flock Safety 'LICENSE PLATE READERS' USD 74,750 (Office of the Sheriff, 2022-10-01); Axon Taser/BWC/DEMS rows (I4-T23) ride the same term set. Licence lead CC0-1.0 (P26.10 procportal_nyc_ny pattern) — rights review pending, stays gated."
+
+[tenants.washington_des]
+jurisdiction = "State of Washington (DES statewide master contracts)"
+platform = "socrata"
+source_id = "procportal_wa_des_contract_sales"
+tenant = "wa_des_contract_sales"
+host = "data.wa.gov"
+dataset = "n8q6-4twj"
+# P36.7 (ACQ-11): the published row key is customer × contract × vendor
+# ('the spend is reported by vendors and is reported by contract and
+# customer', I6-C010) — `composite_id_fields` joins the reviewed key
+# columns so a bare contract number never collapses distinct sales onto
+# one subject; a partial key falls to the row digest, never a half-key.
+composite_id_fields = ["contract_number", "customer_name", "vendor_name"]
+title_fields = ["contract_number"]
+vendor_field = "vendor_name"
+dept_field = "customer_name"
+# P36.7 (ACQ-11): PUBLIC-ENTITY CUSTOMERS ONLY. `customer_type` must carry
+# one of the observed public-entity values — a missing, empty or unlisted
+# value (the private 'Non-Profit'/'Private Schools'/'Association/Medical'
+# classes, the ambiguous 'Customers'/'Miscellaneous' buckets, the
+# 'USG Customers-Do Not Use' marker) fails CLOSED server-side in $where
+# AND client-side at extract; the exclusion count rides the index row.
+required_field = "customer_type"
+required_values = [
+  "Cities Including Towns",
+  "State Agency",
+  "School Districts",
+  "Districts, Other",
+  "County",
+  "Higher Ed (State Agency)",
+  "Port Districts",
+  "Other Govt",
+  "US States/Territories",
+  "Tribes",
+  "Libraries",
+  "Enterprise Services",
+  "Federal Government",
+  "Component Units",
+]
+# The `wa_des` where definition — vendor %TERM% slices on vendor_name PLUS
+# exact contract_number matches for the seven reviewed contract ids (the
+# reseller case: a sale whose vendor is a reseller still surfaces).
+portal_where = "wa_des"
+rows_window = false
+limit = 500
+verified = true
+last_verified = 2026-09-30
+enum_source = "api.us.socrata.com catalog q=statewide contracts vendor @data.wa.gov (live probe 2026-09-30, I6-Q036/F055/F056)"
+notes = "'Washington DES Statewide Contract (Master Contract) Sales Data by Customer, Contract, Vendor' (plan AP-T1-004, cand I6-C010, RB-04 `a`). I6-F056 grouped evidence: Motorola 06913/00318/02702 to cities/counties/districts/tribes/school districts; Axon 02315/06316/05720/04220 to cities, counties and state agencies — 05720 is the NASPO ValuePoint PA for Axon (I6-C004). The customer_type allowlist above is the reviewed public-entity enumeration of the published values (tribal rows keep the tribal-sovereignty publication note flagged in the I6 review — a publication-layer note, never an ingestion filter). Licence field NULL on the dataset record (I6-F055) — rights review pending, stays gated."
+
 # --- Bonfire portals (source_id = bonfire) -------------------------------------
 # *.bonfirehub.com per-tenant portals. Platform-wide robots `Disallow: /`
 # (verified 2026-09-18 on both rows): every fetch is a recorded robots refusal —
