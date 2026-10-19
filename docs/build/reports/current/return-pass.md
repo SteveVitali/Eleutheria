@@ -53,5 +53,6 @@
 | P35.25 | L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace` | nothing until the re-run; rollback forward-only |
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
 | P35.27 | L1 merge · L2 rematerialize recomputes resolved values + states under the truthful inputs (append-only; `rematerialize-report` dry-run first) · L3 `/status/` AP… | `implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true` · row 306 landed |
+| P35.32 | QUEUED hosted legs: `sqitch deploy --verify` of `ingest_run_report` + one-shot `sig-ops backfill-run-reports` (WORM rows + unmatched executions + 90 repo record… | `implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true` · row 310 landed (PR #325) |
 
 ← back: CURRENT.md

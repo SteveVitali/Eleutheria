@@ -1061,3 +1061,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/306_P35.27__resolver-input-tru
   go = '''pre-authorised: GATE-G4 §4 names P35.27 verbatim (expires next sub-round GATE)'''
   rerun = '''implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P35.32"
+kind = "leg"
+obligations = []
+obligations_cell = '''QUEUED hosted legs: `sqitch deploy --verify` of `ingest_run_report` + one-shot `sig-ops backfill-run-reports` (WORM rows + unmatched executions + 90 repo records; insert-only; `+0` re-run proof + reconcile read-back)'''
+gates_cell = '''QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.32 verbatim (2026-10-09T17:32Z; expires at the next GATE); window closed at run end — legs operator-run per OP-24; AR-3 + AR-2, excl. AR-3 freeze'''
+operator_cell = '''nothing until the re-run — `sqitch deploy` is a no-op when landed; `backfilled_from` uniqueness makes a second backfill +0; rollback = `sqitch revert` + stopping the writer'''
+rerun_cell = '''`implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true` · row 310 landed (PR #325)'''
+
+  [[row.legs]]
+  id = "P35.32-ingest-run-report-live"
+  obligations = []
+  earliest = '''the OM-19 re-run — AR-3 + AR-2 window'''
+  excluded = ["AR-3 freeze"]
+  go = '''pre-authorised: the GATE-G4 §4 list names P35.32 verbatim (2026-10-09T17:32Z; expires at the next GATE)'''
+  rerun = '''implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true'''
+  live_dependants = []

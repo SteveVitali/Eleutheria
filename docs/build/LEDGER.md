@@ -9,12 +9,12 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.31 landed (309); no live legs
-nextTicket:      P35.32                              # row 310
-lastCompleted:   P35.31                              # row 309
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #324@f3e87cbf 5/5 (39198848313)
+projectStatus:   IN_PROGRESS                           # P35.32 landed (310); live leg QUEUED
+nextTicket:      P35.33                              # row 311
+lastCompleted:   P35.32                              # row 310
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #325@f6efe2e8 5/5 (39211891538)
 pauseRequested:  false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.57,P35.67,P36.12
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.32,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
 memoryRoot:      docs/build
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.31-transparency-scrub-and-publish-secret-gate   # base r11/P35.30-…
+chainTip:        r11/P35.32-ingest-run-report        # base r11/P35.31-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-19T04:15Z
+updatedAt:       2026-10-19T07:15Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -432,6 +432,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P35.25 | L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace`|undeclared | QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.25 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERT-only; AR-3 + AR-2, excluded AR-3 freeze | nothing until the re-run; rollback forward-only | `implement-spec spec=docs/tickets/304_P35.25__declared-lineage-namespaces-independence.md live_verification=true` · row 304 |
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.26 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2, excl. AR-3 freeze | nothing until the re-run; rollback forward-only | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
 | P35.27 | L1 merge · L2 rematerialize recomputes resolved values + states under the truthful inputs (append-only; `rematerialize-report` dry-run first) · L3 `/status/` API-basis notice (S6 A-20) | QUEUED (`live_verification=false`); OM-20 — GATE-G4 §4 names P35.27 verbatim (expires next sub-round GATE); AR-3 + AR-2, excl. AR-3 freeze | nothing until the re-run; restore is forward-only (a reversal is a new correcting materialization, never a delete) | `implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true` · row 306 landed |
+| P35.32 | QUEUED hosted legs: `sqitch deploy --verify` of `ingest_run_report` + one-shot `sig-ops backfill-run-reports` (WORM rows + unmatched executions + 90 repo records; insert-only; `+0` re-run proof + reconcile read-back) | QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.32 verbatim (2026-10-09T17:32Z; expires at the next GATE); window closed at run end — legs operator-run per OP-24; AR-3 + AR-2, excl. AR-3 freeze | nothing until the re-run — `sqitch deploy` is a no-op when landed; `backfilled_from` uniqueness makes a second backfill +0; rollback = `sqitch revert` + stopping the writer | `implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true` · row 310 landed (PR #325) |
 
 Sources: OPERATIONAL_READINESS.md §(f3) (sha256 `581fcb5558ca…`, @ `45dcc789`) — blocking domains + packets; `UNIVERSE_DISPOSED.csv` (sha256 `7af12151e419…`) + plan §9.2/§8.6 — dispositions; `data/round11_plan.csv` — gates + order. Not RETURN PASS rows (one other home, §9.2): the 9 `ticket`-disposed rows (e.g. D-R10-MEMORY-1 → P34.30, D-P32.16-1 → P37.59), the 9 `later-phase` rows (LATER-01/02/03/04/06/17; LATER-10 became P37.70 at S6), the 7 `decision` rows (GATE-P), the 2 `already-done` (D-P21.3-2, D-SOURCES.12-1) — SEED-14 records the DEFERRALS re-homing. *Agent interpretation:* B3 keys by the `live-return-pass(<ticket>)` ticket — keys are landed R10 tickets (§8.6: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a); a key is never re-dispatched — the leg runs as the named R11 row (chain order or OM-19 leg).
 
@@ -1079,3 +1080,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-19 — P35.31 correction — ticket record (`ci:` lands at the next record entry — why: `runs/P35.31.md`) · PR #324 · row 309 transparency scrub + publish secret gate + capture-tier derivation (`policy.transparency` the one scrub; constant `'public'` → lane×P8; read-path tighten floor + public-only `source_uri`; `D-P35.31-1` OPEN) · heads verbatim `35644292`→`d7db8408` (docs-red)→`c2e15d74`→`384b40d9`→`a3fee568` 5/5 (39196728463) · no live legs · next → P35.32 (310) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.31 post-closeout record — `ci: pass #324@f3e87cbf` 5/5 green head-bound (run 39198848313: python 20m26s, web 14m55s, composed 3m18s, docs 2m0s, security 33s; `reports/ci/p35_31_pr324.json` read 04:42:15Z — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · heads verbatim `a3fee568` 5/5 → `b7263506` closeout → `452b1512` docs-red (coverage-matrix routing) → `f3e87cbf` repair 5/5 — full arc in `runs/P35.31.md` · PR #324 open · chainTip → r11/P35.31-… · next → P35.32 (310) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.32 dispatch boundary-confirm — `ci: pass #324@8a75eb19` 5/5 green head-bound (run 39205636162: python 19m32s, web 14m16s, composed 2m55s, docs 1m56s, security 29s; read 06:00:30Z `logs/ci-P35.32-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · docs-red arcs recorded verbatim in `runs/P35.31.md` (stale-projection, coverage-matrix routing, orient budget — each repaired forward) · `D-P35.31-1` stays OPEN · P35.32 is a GATE-G4 §4 named OM-20 row: engineering merges in-ticket, the deploy+backfill leg QUEUES under OM-19 (window closed now; legs operator-run per OP-24) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.32 ticket — `ci: pass #325@f6efe2e8` 5/5 green head-bound (run 39211891538: python 19m55s, web 15m7s, composed 2m45s, docs 1m23s, security 38s; boundary read 07:09:26Z `reports/ci/p35_32_pr325.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · `runs/P35.32.md` · row 310 ingest_run_report (append-only report table + scheduled writer + `sig-ops backfill-run-reports` + reconcile; link/clock basis honesty C-13/C-14; `sig_read_public` narrowed off; `per_fetch` column landed, writer row 312's) · live leg QUEUED `P35.32-ingest-run-report-live` (GATE-G4 §4 named; window closed at run end — OM-19; legs operator-run per OP-24) · no production mutation · chainTip → r11/P35.32-… · next → P35.33 (311) · harness: devin-desktop/swe-2-high/subagent
