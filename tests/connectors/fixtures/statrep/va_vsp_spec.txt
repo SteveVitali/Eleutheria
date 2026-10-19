@@ -1,0 +1,20 @@
+VIRGINIA STATE POLICE
+ALPR REPORTING REQUIREMENTS — VERSION 2
+
+CJIS Data Analysis & Reporting Team
+Date: March 3, 2026
+Technology: ALPR
+
+Under Code of Virginia § 2.2-5517(J), each agency operating an approved
+ALPR system reports the following metrics to the Virginia State Police.
+
+CAMERAS OWNED OR LEASED BY TYPE
+The reporting form enumerates fixed, mobile, and portable camera units by
+type and by system.
+
+QUERIES CONDUCTED
+The form records every query of the ALPR database by calendar month and by
+agency.
+
+STOPS INITIATED
+Stops initiated by notification reason are recorded in aggregate.

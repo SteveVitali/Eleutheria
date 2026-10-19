@@ -8585,7 +8585,7 @@ jurisdiction_place = "Peachtree Corners"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_mn_agencies_that_use]
+[sources.statrep_mn_bca]
 name = "Agencies that use License Plate Readers (LPR) - Minnesota BCA statutory public list"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://dps.mn.gov/agencies-use-lprs-lpr"
@@ -8593,17 +8593,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-040, cand I3-C039, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_mn_agencies_that_use'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-040, cand I3-C039, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_mn_bca' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Minnesota Department of Public Safety, Bureau of Criminal Apprehension"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MN"
-[sources.statrep_mn_agencies_that_use.rights]
+[sources.statrep_mn_bca.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8696,7 +8696,7 @@ jurisdiction_place = "Lincoln"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_va_virginia_general_assembly]
+[sources.statrep_va_rga]
 name = "Virginia Reports to the General Assembly (RGA) - published documents"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://rga.lis.virginia.gov/"
@@ -8704,21 +8704,21 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-045, cand I6-C040, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_va_virginia_general_assembly'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-045, cand I6-C040, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_va_rga' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Virginia Division of Legislative Automated Systems (LIS)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VA"
-[sources.statrep_va_virginia_general_assembly.rights]
+[sources.statrep_va_rga.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_wa_washington_attorney_general]
+[sources.statrep_wa_ago_alpr_registry]
 name = "Washington Attorney General's Office - Automated License Plate Reader (ALPR) System Registration: Registered ALPR System"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.atg.wa.gov/ALPR"
@@ -8726,17 +8726,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-046, cand I9a-C036, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_wa_washington_attorney_general'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-046, cand I9a-C036, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_wa_ago_alpr_registry' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Washington State Office of the Attorney General"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
-[sources.statrep_wa_washington_attorney_general.rights]
+[sources.statrep_wa_ago_alpr_registry.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8786,7 +8786,7 @@ jurisdiction_place = "Suffolk County"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_va_virginia_alpr_reporting]
+[sources.statrep_va_vsp_alpr]
 name = "Virginia State Police - ALPR Reporting Requirements (v2, 2026-03) and annual aggregate ALPR report (2.2-5517(J))"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://vsp.es.virginia.gov/wp-content/uploads/2026/03/ALPR-Reporting-Requirements-v2.pdf"
@@ -8794,21 +8794,21 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-049, cand I3-C042, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_va_virginia_alpr_reporting'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-049, cand I3-C042, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_va_vsp_alpr' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Virginia Department of State Police, CJIS Data Analysis & Reporting Team"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VA"
-[sources.statrep_va_virginia_alpr_reporting.rights]
+[sources.statrep_va_vsp_alpr.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_va_virginia_crime_commission]
+[sources.statrep_va_vscc_alpr]
 name = "Virginia State Crime Commission - Law Enforcement Use of ALPR Update (Jan 2026) and 2025 Annual Report chapter"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://vscc.virginia.gov/2026/VSCC%20ALPR%20Report%20January%202026%20FINAL%20REVISED%20Jan%2021%202026.pdf"
@@ -8816,17 +8816,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-050, cand I3-C043, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_va_virginia_crime_commission'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-050, cand I3-C043, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_va_vscc_alpr' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Virginia State Crime Commission"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VA"
-[sources.statrep_va_virginia_crime_commission.rights]
+[sources.statrep_va_vscc_alpr.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9054,7 +9054,7 @@ jurisdiction = "US-CA"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_ne_nebraska_crime_commission]
+[sources.statrep_ne_crime_commission_alpr]
 name = "Nebraska Crime Commission - Automatic License Plate Reader Resources (per-agency ALPR Privacy Act reports, Neb. Rev. Sta"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://ncc.nebraska.gov/automatic-license-plate-reader-resources"
@@ -9062,21 +9062,21 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-061, cand I9a-C011, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_ne_nebraska_crime_commission'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-061, cand I9a-C011, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_ne_crime_commission_alpr' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Nebraska Commission on Law Enforcement and Criminal Justice (Crime Commission)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NE"
-[sources.statrep_ne_nebraska_crime_commission.rights]
+[sources.statrep_ne_crime_commission_alpr.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_vt_vermont_safety_automated]
+[sources.statrep_vt_dps_alpr]
 name = "Vermont Department of Public Safety - annual report on Automated License Plate Recognition Systems (23 V.S.A. 1607) to t"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://legislature.vermont.gov/assets/Legislative-Reports/2019-ALPR-Report.pdf"
@@ -9084,17 +9084,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-062, cand I9a-C012, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_vt_vermont_safety_automated'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-062, cand I9a-C012, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_vt_dps_alpr' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Vermont Department of Public Safety (deposited with the Vermont General Assembly)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-VT"
-[sources.statrep_vt_vermont_safety_automated.rights]
+[sources.statrep_vt_dps_alpr.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9411,7 +9411,7 @@ jurisdiction = "US-AL"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_md_maryland_legislative_library]
+[sources.statrep_md_dls_mandated_reports]
 name = "Maryland Department of Legislative Services Library - Mandated Reports (State Government Article 2-1257 deposit and cata"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://dls.maryland.gov/library/mandated-reports"
@@ -9419,17 +9419,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-077, cand I9a-C047, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_md_maryland_legislative_library'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-077, cand I9a-C047, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_md_dls_mandated_reports' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Maryland General Assembly, Department of Legislative Services"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MD"
-[sources.statrep_md_maryland_legislative_library.rights]
+[sources.statrep_md_dls_mandated_reports.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9500,7 +9500,7 @@ jurisdiction_place = "Seattle"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_il_illinois_automated_license]
+[sources.statrep_il_isp_alpr]
 name = "Illinois State Police - Automated License Plate Reader Transparency Page and ALPR Annual Reports (Tamara Clayton Express"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://isp.illinois.gov/CriminalInvestigations/TransparencyPage"
@@ -9508,17 +9508,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-081, cand I9a-C019, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_il_illinois_automated_license'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-081, cand I9a-C019, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_il_isp_alpr' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "Illinois State Police, Division of Criminal Investigation"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"
-[sources.statrep_il_illinois_automated_license.rights]
+[sources.statrep_il_isp_alpr.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9680,7 +9680,7 @@ jurisdiction_place = "Forsyth County;US-NC:Winston-Salem"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.statrep_austin_tx_auditor_apd_license]
+[sources.statrep_austin_tx_auditor]
 name = "City of Austin Office of the City Auditor - 'APD License Plate Reader Audit Report' (May 2025)"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://services.austintexas.gov/edims/document.cfm?id=452710"
@@ -9688,18 +9688,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 generalized government_mandated_disclosure adapter wired by P36.8 (ACQ-12)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-092, cand I9a-C042, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'statrep_austin_tx_auditor_apd_license'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-092, cand I9a-C042, family 'government_mandated_disclosure(statutory)', ticket ACQ-12 -> live ACQ-16, class ticket P36.8). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-03 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Reconciled id 'statrep_austin_tx_auditor' (I8 §5.5 ACQ-12) — the generated R2 id renamed to the design's id under P36.8."
 publisher = "City of Austin, TX Office of the City Auditor"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
 jurisdiction_place = "Austin"
-[sources.statrep_austin_tx_auditor_apd_license.rights]
+[sources.statrep_austin_tx_auditor.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 

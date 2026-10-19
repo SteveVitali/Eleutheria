@@ -280,6 +280,19 @@ def _validate() -> int:
         for msg in crosswalk_violations:
             print(f"VALIDATION FAILED: {msg}")
         return 1
+    # P36.8 / ACQ-12 (SIG-ONTO-021): the mandated-disclosure vocab's
+    # [technology_map] values and every adapter-declared slug
+    # (default_technology / entries[].technology) must be ACTIVE members of
+    # ontology/vocab/technology.yaml; entry kinds and use_fields predicates
+    # must be members of their closed sets — a broken declaration fails
+    # closed here and at emit, never a guessed or silently un-typed slug.
+    from .government_mandated_disclosure import technology_map_violations
+
+    map_violations = technology_map_violations()
+    if map_violations:
+        for msg in map_violations:
+            print(f"VALIDATION FAILED: P36.8 technology map: {msg}")
+        return 1
     print("connectors registry self-checks OK")
     return 0
 

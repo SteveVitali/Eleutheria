@@ -1595,3 +1595,102 @@ fields = [
   { field = "technology", literal = "Automated Surveillance Towers", value = "Automated Surveillance Tower" },
   { field = "enacting_body", literal = "Domestic Affairs Committee", value = "Tohono O'odham Legislative Branch — Domestic Affairs Committee" },
 ]
+
+# =============================================================================
+# P36.8 / R11-ACQ-12 (I8 §5.5): the ten statutory ALPR-regime publishers.
+#
+# Declarative reviewed surfaces only — every source stays
+# ingestion_permitted=false (HG-03 RB-03 `a`); the operator's OP-26 Wave-B flip
+# under ING-GO-B is the only route to a live fetch, so these rows fetch
+# nothing today. `index_page` targets fan out through the per-publisher spec
+# in government_mandated_disclosure_vocab.toml [adapters.*] (link filters +
+# the entries/scope machinery), bounded by the row's max_documents; the
+# `disclosure_document` rows are single reviewed filings (the >1 MB upstream
+# documents land as committed text extracts — the fixture carries the
+# original's sha256 in its SOURCES.md, §5.0).
+
+# WA AGO — the RCW 10.130 ALPR registration list (76 agency registrations +
+# policy links): page-carried `entries` rows are the registration assertions
+# (inventory_entry — the AGO did not verify them, I9a-C036); the bounded link
+# fan-out covers the published policy/registration documents.
+[statrep_wa_ago_alpr_registry]
+kind = "index_page"
+targets = [
+  { id = "wa-ago-alpr-registry", url = "https://www.atg.wa.gov/ALPR", kind = "index_page", max_documents = 8 },
+]
+
+# MN BCA — the Minn. Stat. 13.824 subd. 8(b) public list ("agencies that use
+# License Plate Readers" + the published fixed-location literals): page-carried
+# `entries` rows; the target id `lpr_agency_list` is the design's (I8 §5.5 —
+# the source's second family, the I4-C005 UAV reports, is P36.9a's target).
+[statrep_mn_bca]
+kind = "index_page"
+targets = [
+  { id = "lpr_agency_list", url = "https://dps.mn.gov/agencies-use-lprs-lpr", kind = "index_page", max_documents = 4 },
+]
+
+# VA VSP — the § 2.2-5517(J) ALPR Reporting Requirements spec (v2, 2026-03):
+# one reviewed filing.
+[statrep_va_vsp_alpr]
+kind = "disclosure_document"
+targets = [
+  { id = "va-vsp-alpr-reporting-requirements-v2", url = "https://vsp.es.virginia.gov/wp-content/uploads/2026/03/ALPR-Reporting-Requirements-v2.pdf", kind = "disclosure_document" },
+]
+
+# VA VSCC — the January 2026 "Law Enforcement Use of ALPR" update report:
+# one reviewed filing.
+[statrep_va_vscc_alpr]
+kind = "disclosure_document"
+targets = [
+  { id = "va-vscc-alpr-report-2026-01", url = "https://vscc.virginia.gov/2026/VSCC%20ALPR%20Report%20January%202026%20FINAL%20REVISED%20Jan%2021%202026.pdf", kind = "disclosure_document" },
+]
+
+# NE Crime Commission — the ALPR Privacy Act resources index (~89 per-agency
+# annual reports under /alpr-reports/): the bound covers the reviewed filing
+# set with headroom; agency identity derives from each link's anchor.
+[statrep_ne_crime_commission_alpr]
+kind = "index_page"
+targets = [
+  { id = "ne-crime-alpr-resources", url = "https://ncc.nebraska.gov/automatic-license-plate-reader-resources", kind = "index_page", max_documents = 96 },
+]
+
+# VT DPS — the 23 V.S.A. § 1607 annual ALPR report family deposited with the
+# General Assembly: the reviewed 2019 filing is the declared surface.
+[statrep_vt_dps_alpr]
+kind = "disclosure_document"
+targets = [
+  { id = "vt-dps-alpr-report-2019", url = "https://legislature.vermont.gov/assets/Legislative-Reports/2019-ALPR-Report.pdf", kind = "disclosure_document" },
+]
+
+# IL ISP — the ALPR transparency page (Tamara Clayton Expressway Camera Act)
+# whose links fan out to the ≥4 annual report filings.
+[statrep_il_isp_alpr]
+kind = "index_page"
+targets = [
+  { id = "il-isp-alpr-transparency", url = "https://isp.illinois.gov/CriminalInvestigations/TransparencyPage", kind = "index_page", max_documents = 8 },
+]
+
+# Austin City Auditor — the May 2025 "APD License Plate Reader Audit": one
+# reviewed filing.
+[statrep_austin_tx_auditor]
+kind = "disclosure_document"
+targets = [
+  { id = "austin-auditor-apd-lpr-audit-2025-05", url = "https://services.austintexas.gov/edims/document.cfm?id=452710", kind = "disclosure_document" },
+]
+
+# MD DLS — the State Government Article § 2-1257 mandated-reports catalogue:
+# surveillance-relevant entries only (the adapter's scope_terms screen); an
+# index-wide ingest is scope creep.
+[statrep_md_dls_mandated_reports]
+kind = "index_page"
+targets = [
+  { id = "md-dls-mandated-reports-index", url = "https://dls.maryland.gov/library/mandated-reports", kind = "index_page", max_documents = 20 },
+]
+
+# VA RGA — the Reports to the General Assembly deposit catalogue: the same
+# broad-index shape, surveillance-relevant entries only.
+[statrep_va_rga]
+kind = "index_page"
+targets = [
+  { id = "va-rga-mandated-reports-index", url = "https://rga.lis.virginia.gov/", kind = "index_page", max_documents = 20 },
+]
