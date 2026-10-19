@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.35 landed (313); no live leg
-nextTicket:      P35.65                              # row 314
-lastCompleted:   P35.35                              # row 313
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #328@0cd698c5 5/5 (39289022896)
+projectStatus:   IN_PROGRESS                           # P35.65 landed (314); no live leg
+nextTicket:      P35.36                              # row 315
+lastCompleted:   P35.65                              # row 314
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #329@b712adce 5/5 (39301526784); #328@2f6db78 py-red = the dispatch-record line P35.65 repairs
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.32,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.35-registry-lanes-and-source-metadata-export # base r11/P35.34-…
+chainTip:        r11/P35.65-withbase-helper-and-containment-check # base r11/P35.35-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-19T12:30Z
+updatedAt:       2026-10-19T18:40Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1097,3 +1097,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-19 — P35.35 ticket — `runs/P35.35.md` · row 313 registry lanes + source metadata export — `sources.toml` carries a recorded `[redistribution]` block for all 588 sources (closed lane vocab; evidence + authority on positive lanes; matrix-absent → `unknown`; zero `ingestion_permitted` flips) · `_registry_lane` returns the recorded declaration (interim basis as fallback) · `PgClaimSink` derives `storage_tier` from lane×P8 (raw-ok+clear→public, derived/link→restricted, P8-1/2/4 + unknown→sealed — never a `public` default) + mirrors append-only `source_redistribution` (sqitch `transparency_source` + `_current` + `v_transparency_source` explicit-column, `sig_export`-only; public role joins the current view, never the base) · `capture` serves `served_storage_tier` tighten-only · `exports.transparency` emits `transparency/{sources,counts}.json` (C-6 columns, link-only path-hash URL posture, gated rows + anomalies, lifecycle partition, byte-stable) through the manifest/checksum/licence path · **D-P35.31-1 closed** — trigger verbatim held on real PG (`make test-db` 717/717) · **Verify:** 32 connector + 20 source-export + 28 transparency + 65/65 DB focused green; `sig-connectors validate` 588; armed `make check` green · PR #328 open · heads verbatim: `5eb89136` (docs-red changelog_gate + python-red format, run 39277223242) → `07eec503` (docs-red ×2 projection-stale + `check_live_claims` wrap — the closeout-record class; python-red runner-loss mid-`Test`, infra not verdict; composed+web+security green, run 39277607083) → this head's read at the next boundary · blockedOn: CI fail on #328@07eec503 (docs+python) verbatim — the boundary tool's own verdict at closeout; a green head-bound read lands in the next record entry · chainTip → r11/P35.35-… · next → P35.65 (314) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.35 post-closeout record — `ci: pass #328@0cd698c` 5/5 green head-bound (run 39289022896: python 20m55s, web 13m30s, composed 3m29s, docs 2m6s, security 29s; boundary read 2026-10-19T17:12:51Z `reports/ci/p35_35_pr328.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · every pushed head verbatim in `runs/P35.35.md` (`5eb89136` impl → `07eec503` changelog/format repair → `179e171c` closeout → `0cd698c5` projection regen → green; docs-reds on `5eb89136`/`07eec503`/`179e171c` — changelog_gate, projection + `check_live_claims` wrap, projection stale — each repaired forward; `07eec503` python-red a runner-loss mid-`Test`, infra not verdict) · PR #328 stays open on the stack for operator integration · chainTip → r11/P35.35-… · next → P35.65 (314) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.65 dispatch boundary-confirm — `ci: pass #328@10fe6d2e` 5/5 green head-bound (run 39292504689: python 22m1s, web 15m3s, composed 3m25s, docs 1m44s, security 38s; read 17:38:38Z `logs/ci-P35.65-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · docs-red arc in `runs/P35.35.md` verbatim (changelog/format, projection, `check_live_claims` segment wrap + runner-loss infra red — repaired forward) · D-P35.31-1 → DONE (row 313 owned it; e1 event + flip with evidence) · dispatching P35.65 (314 — withBase helper + containment check; gate: none; not OM-20; S-size) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.65 ticket — `ci: pass #329@b712adce` 5/5 green head-bound (run 39301526784: python 15m6s, web 13m27s, composed 3m4s, docs 1m50s, security 33s; boundary read 18:38:56Z `reports/ci/p35_65_pr329.json` — stack `#328@2f6db78` py-red verbatim = the dispatch-record line this branch repairs + the waived `#299@19ed46d` ancestor red) · `runs/P35.65.md` · row 314 `withBase()` + root-absolute containment — `web/src/lib/paths.ts` (`withBase`/`joinBase`/`BASE`; `import.meta.env.BASE_URL`, exactly-one-slash, externals untouched) · `check-root-absolute-paths.mjs` + `sig.path-containment-baseline/1` (168 raw / 160 counted / 53 files; capped allow-list) as `check:paths` in the web gate · no `base` in `astro.config.mjs`, zero client JS; 160-site sweep debt = P36.66a · heads verbatim `ab0f97ab` impl (docs-red — memory-guard append-only on the in-place line repair) → `b712adce` `seed-commit` sanction · production untouched — helper + check only · chainTip → r11/P35.65-… · next → P35.36 (315) · harness: devin-desktop/swe-2-high/subagent

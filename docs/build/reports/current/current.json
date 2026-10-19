@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ab0f97ab22b60de297aebb350955aaf0125c7295",
+  "input_commit": "b712adceb8d6347900e8bd899dbaa8e41e047ba1",
   "manifest_inputs": 1072,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.65",
-    "lastCompleted": "P35.35",
+    "nextTicket": "P35.36",
+    "lastCompleted": "P35.65",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.32,P35.57,P35.67,P36.12",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.35-registry-lanes-and-source-metadata-export",
+    "chainTip": "r11/P35.65-withbase-helper-and-containment-check",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-19T12:30Z"
+    "updatedAt": "2026-10-19T18:40Z"
   },
   "counts": {
     "obligations": 169,
@@ -19145,10 +19145,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "b70e756fe731f7a45196f57bceb86e668922ce73349fb0c3711e375a705062ea",
+  "manifest_sha256": "e2e272c1c31423ad3e424a904ae4869e429ba415eefe8782a62beb7f189f2f6d",
   "current_md": {
     "lines": 63,
-    "bytes": 15623,
+    "bytes": 15619,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
