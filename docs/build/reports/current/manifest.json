@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "fc3fabd935d0ccc2e6c21d9e2bbe5c9f9d95886a",
+  "input_commit": "844f34feb350fcd760b9a0637d070ee2dba99dcd",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -874,7 +874,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "ff243bdc25e99215c82c62d3d801cb68e7460e311052b47a27515b017506125e"
+      "sha256": "26651372a7a0caa5f247fba3992398775e747f6db6bc926eb489b7424c7f8b2e"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
