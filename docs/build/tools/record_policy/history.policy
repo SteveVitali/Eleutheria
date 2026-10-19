@@ -589,3 +589,16 @@ seed-commit ff518243
 # Scope: findings attributed to 5acac1d3 only; no other commit borrows
 # the exemption.
 seed-commit 5acac1d3
+
+# ── P35.65 ci-field kind repair (ticket 314; recorded 2026-10-19) ──
+# 739338d8 rewrites the `d12b489d` PHASE LOG entry's kind slot in place —
+# `post-closeout repair` → `correction`: verify-recorded-ci flagged the
+# entry (run 39336312057 job 118346567968, "added PHASE LOG entry with no
+# ci: field"); the ci:-owing kind cannot truthfully stamp a red head, and
+# `correction` is the record-event kind (NON_CI_KINDS). The sanctioned
+# in-place pattern of 6fe93216/64648080/21a392ca/5acac1d3 — payload bytes
+# untouched, no appended entry can fix the in-range line. The branch rule
+# forbids force-push, so the declaration lands as a later commit.
+# Scope: findings attributed to 739338d8 only; no other commit borrows
+# the exemption.
+seed-commit 739338d8
