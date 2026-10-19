@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.30 landed (308); no live legs
-nextTicket:      P35.31                              # row 309
-lastCompleted:   P35.30                              # row 308
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #323@c58353ee 5/5 (39186648733)
+projectStatus:   IN_PROGRESS                           # P35.31 landed (309); no live legs
+nextTicket:      P35.32                              # row 310
+lastCompleted:   P35.31                              # row 309
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #324@a3fee568 5/5 (39196728463)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.30-network-labels-dates-evidence   # base r11/P35.29-…
+chainTip:        r11/P35.31-transparency-scrub-and-publish-secret-gate   # base r11/P35.30-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-19T02:07Z
+updatedAt:       2026-10-19T04:15Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1076,3 +1076,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-19 — P35.30 correction — ticket record (`ci:` lands at the next record entry — why: `runs/P35.30.md`) · PR #323 · row 308 /network/ labels, dates and evidence export side (ADR-216; one emitter both paths — D21 fields, snapshot-pinned currency, declared-independence support, honest undated/historical; degree-as-attribute; person-screened literal twins; registry-only labels) · pushed heads verbatim `d49a5f25` (docs-red run 39186450733, stale projection) → `c58353ee` regen 5/5 (run 39186648733) · no live legs, no production mutation · next → P35.31 (309) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.30 post-closeout record — `ci: pass #323@7f3d94ec` 5/5 green head-bound (run 39189085141: python 20m13s, web 13m33s, composed 3m24s, docs 1m46s, security 32s; `reports/ci/p35_30_pr323.json` read 02:36:56Z — stack pass except the verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · every pushed head recorded verbatim (`d49a5f25` docs-red stale-projection → `c58353ee` regen 5/5 → `7f3d94ec` closeout records 5/5) · PR #323 stays open on the stack for operator integration · chainTip → r11/P35.30-… · next → P35.31 (309) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.31 dispatch boundary-confirm — `ci: pass #323@2deed3ea` 5/5 green head-bound (run 39191223549: python 18m50s, web 14m52s, composed 2m37s, docs 1m58s, security 33s; ci_boundary read 03:05:47Z `logs/ci-P35.31-pre-dispatch.json`) · stack verbatim waived baseline `blockedOn: CI fail on #299@19ed46d (docs)` · the ticket's docs-red arcs recorded verbatim in `runs/P35.30.md` (`d49a5f25` stale-projection docs-red run 39186450733 → `c58353ee` regen 5/5 → `7f3d94ec` closeout 5/5 → `7a70903f` LEDGER-input docs-red run 39190889455 → `2deed3ea` regen 5/5); `memory_guard --range` 0 violations / 3,528 items, verify-recorded-ci 4/4 · dispatching P35.31 (309 — transparency scrub + publish secret gate + capture-tier derivation; gate: none per the contract; not an OM-20 row, no live legs) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.31 correction — ticket record (`ci:` lands at the next record entry — why: `runs/P35.31.md`) · PR #324 · row 309 transparency scrub + publish secret gate + capture-tier derivation (no new ADR — F-400/NEW-2 repaired on the J3/J4 landed surfaces; `policy.transparency` the one scrub; `assert_publish_set_secret_free` before the record write on every publish-set file; constant `'public'` gone — lane×P8 derivation; `/v1/evidence` tighten-only floor + public-only `source_uri` + full-ISO `retrieved_at`; `D-P35.31-1` OPEN — `public` unreachable until row 313's fields) · pushed heads verbatim `35644292` impl → `d7db8408` anchor (docs-red run 39196585880, stale-projection) → `c2e15d74` regen → `384b40d9` ledger progress → `a3fee568` regen 5/5 (run 39196728463) · no live legs, no production mutation · next → P35.32 (310) · harness: devin-desktop/swe-2-high/subagent
