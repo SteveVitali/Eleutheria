@@ -29,6 +29,7 @@ from policy.transparency import (
     NEVER_EXPORTED_FIELDS,
     TRANSPARENCY_CAPTURE_VIEW_COLUMNS,
     TRANSPARENCY_RUN_VIEW_COLUMNS,
+    TRANSPARENCY_SOURCE_VIEW_COLUMNS,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -36,6 +37,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 _SPINE_TABLES = (
     "ingest_run_report",
     "ingest_run_completion",
+    "source_redistribution",
     "claim_evidence",
     "claim",
     "extraction",
@@ -331,3 +333,231 @@ def test_capture_view_sealed_tier_passes_to_sig_export(clean_dsn: str) -> None:
             " WHERE target_key = 'https://sealed.example.org/x'"
         ).fetchone()
         assert row == ("sealed", True, False, False, "seal_src")
+
+
+# ---------------------------------------------------------------------------
+# P35.35 — v_transparency_source + the source_redistribution mirror
+# ---------------------------------------------------------------------------
+
+
+def _seed_source(conn: psycopg.Connection, source_id: str) -> None:
+    from conftest import seed_claim_prerequisites
+
+    prereqs = seed_claim_prerequisites(conn)
+    conn.execute(
+        "INSERT INTO source_registry(source_id,name,source_kind,"
+        "default_reliability,reliability_justification,rights_id,"
+        "custody_posture,compact_status,robots_policy) "
+        "VALUES(%s,'Fixture','portal','R2','fixture',%s,"
+        "'MIRROR','no_response','obey')",
+        (source_id, prereqs["rights_id"]),
+    )
+
+
+def test_source_view_columns_match_the_allow_list(clean_dsn: str) -> None:
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        cols = [
+            r[0]
+            for r in conn.execute(
+                "SELECT column_name FROM information_schema.columns"
+                " WHERE table_name = 'v_transparency_source'"
+                " ORDER BY ordinal_position"
+            )
+        ]
+        assert cols == list(TRANSPARENCY_SOURCE_VIEW_COLUMNS)
+        assert not NEVER_EXPORTED_FIELDS.intersection(cols)
+        # A P8-1-classified licence string is never a column (Part VIII §0.7).
+        for forbidden in (
+            "license_terms",
+            "licence_verbatim",
+            "captured_terms_verbatim",
+            "reviewed_by",
+            "contact_channel",
+            "auth_model",
+            "access_method",
+        ):
+            assert forbidden not in cols
+
+
+def test_source_view_grant_is_sig_export_only(clean_dsn: str) -> None:
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        grantees = {
+            r[0]
+            for r in conn.execute(
+                "SELECT grantee FROM information_schema.role_table_grants"
+                " WHERE table_name = 'v_transparency_source'"
+                "   AND privilege_type = 'SELECT'"
+            )
+        }
+        assert "sig_export" in grantees
+        assert "sig_read_public" not in grantees
+
+
+def test_source_redistribution_mirror_is_append_only_and_current(clean_dsn: str) -> None:
+    """Two declarations for one source land as two rows; the current view
+    renders the latest recorded version — an UPDATE/DELETE is never a path."""
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        _seed_source(conn, "srd_src")
+        conn.execute(
+            "INSERT INTO source_redistribution(source_id,registry_version,lane,"
+            "part_viii_class,evidence,decision_authority) "
+            "VALUES('srd_src','v1','derived-only','none-known','first','D-J3-1 [B-19]'),"
+            "      ('srd_src','v2','link-only','P8-3','second','D-J3-1 [B-19]')"
+        )
+        row = conn.execute(
+            "SELECT lane, part_viii_class, registry_version"
+            "  FROM source_redistribution_current WHERE source_id = 'srd_src'"
+        ).fetchone()
+        assert row == ("link-only", "P8-3", "v2")
+
+        # The transparency view joins the recorded lane fields end-to-end.
+        view_row = conn.execute(
+            "SELECT lane, lane_evidence, lane_decision_authority, part_viii_class"
+            "  FROM v_transparency_source WHERE source_id = 'srd_src'"
+        ).fetchone()
+        assert view_row == ("link-only", "second", "D-J3-1 [B-19]", "P8-3")
+
+        # Append-only: UPDATE and DELETE both refuse.
+        with pytest.raises(psycopg.errors.RaiseException):
+            conn.execute(
+                "UPDATE source_redistribution SET lane = 'raw-ok' WHERE source_id = 'srd_src'"
+            )
+        with pytest.raises(psycopg.errors.RaiseException):
+            conn.execute("DELETE FROM source_redistribution WHERE source_id = 'srd_src'")
+        # The closed lane vocabulary holds at the table too.
+        with pytest.raises(psycopg.errors.CheckViolation):
+            conn.execute(
+                "INSERT INTO source_redistribution(source_id,registry_version,lane)"
+                " VALUES('srd_src','v3','wide-open')"
+            )
+
+
+def test_sink_mirrors_the_recorded_declaration(clean_dsn: str) -> None:
+    """PgClaimSink appends the resolver's recorded [redistribution] fields —
+    a second write of the same version is +0 (ON CONFLICT DO NOTHING)."""
+    from db.claim_sink import PgClaimSink
+
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        _seed_source(conn, "sink_src")
+        sink = PgClaimSink(conn, connector_name="sig.test")
+        fields = {
+            "lane": "raw-ok",
+            "part_viii_class": "clear",
+            "lane_evidence": "rights/sink_src.md",
+            "lane_evidence_uri": "docs/.../redistribution.csv#sink_src",
+            "lane_decision_authority": "D-J3-1 [B-19]",
+            "lane_review_needed": False,
+            "packet_limited": False,
+            "sig_labelled_cc0": False,
+            "redistribution_version": "sources.toml+aaaabbbb",
+        }
+        sink._lane_fields_by_source["sink_src"] = fields
+        sink._mirror_source_redistribution("sink_src")
+        sink._mirror_source_redistribution("sink_src")  # idempotent
+        rows = conn.execute(
+            "SELECT lane, part_viii_class, evidence, decision_authority,"
+            "       review_needed, registry_version"
+            "  FROM source_redistribution WHERE source_id = 'sink_src'"
+        ).fetchall()
+        assert rows == [
+            (
+                "raw-ok",
+                "clear",
+                "rights/sink_src.md",
+                "D-J3-1 [B-19]",
+                False,
+                "sources.toml+aaaabbbb",
+            )
+        ]
+
+
+def test_sink_without_recorded_lane_mirrors_nothing(clean_dsn: str) -> None:
+    """A source whose resolver carries no recorded lane (undeclared block —
+    the interim basis stays in charge) writes no mirror row: honest absence,
+    never a fabricated verdict."""
+    from db.claim_sink import PgClaimSink
+
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        _seed_source(conn, "interim_src")
+        sink = PgClaimSink(conn, connector_name="sig.test")
+        sink._lane_fields_by_source["interim_src"] = {"custody_posture": "MIRROR"}
+        sink._mirror_source_redistribution("interim_src")
+        assert (
+            conn.execute(
+                "SELECT count(*) FROM source_redistribution WHERE source_id = 'interim_src'"
+            ).fetchone()[0]
+            == 0
+        )
+
+
+def test_recorded_raw_ok_clear_writes_and_serves_public(clean_dsn: str) -> None:
+    """D-P35.31-1 closure evidence, end-to-end: a lane-evidenced ``raw-ok``
+    + Part VIII-``clear`` source writes ``storage_tier='public'`` on its
+    actual capture, the mirror row lands beside it, and the read path
+    serves ``tier='public'`` with ``tier_basis='recorded'`` — never a
+    default, always the recorded verdict."""
+    from datetime import UTC, datetime
+
+    from api.store_pg import PgReadStore
+    from db.assertion import CaptureBinding
+    from db.claim_sink import PgClaimSink
+    from evidence.digest import multihash
+
+    fields = {
+        "lane": "raw-ok",
+        "part_viii_class": "clear",
+        "custody_posture": "MIRROR",
+        "lane_evidence": "rights/e2e_src.md",
+        "lane_decision_authority": "D-J3-1 [B-19]",
+        "lane_review_needed": False,
+        "packet_limited": False,
+        "sig_labelled_cc0": False,
+        "redistribution_version": "sources.toml+e2ee2ee2",
+    }
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        _seed_source(conn, "e2e_src")
+        rights_id = conn.execute(
+            "SELECT rights_id FROM source_registry WHERE source_id = 'e2e_src'"
+        ).fetchone()[0]
+        sink = PgClaimSink(
+            conn,
+            connector_name="sig.test",
+            lane_resolver=lambda _sid: dict(fields),
+        )
+        capture_id = sink._ensure_actual_capture(
+            CaptureBinding(
+                digest=multihash(b"p35.35 e2e bytes"),
+                source_uri="https://example.test/e2e/page.html",
+                media_type="text/html",
+                byte_size=17,
+                retrieved_at=datetime(2026, 10, 19, tzinfo=UTC),
+                ocfl_object_id="sig:capture:e2e",
+                ocfl_version="v1",
+            ),
+            source_id="e2e_src",
+            rights_id=str(rights_id),
+            genre="connector_run",
+        )
+        assert capture_id is not None
+        artifact_id, tier = conn.execute(
+            "SELECT artifact_id, storage_tier FROM evidence_capture"
+            " WHERE capture_id = %s",
+            (capture_id,),
+        ).fetchone()
+        # The recorded verdict reaches the stored row — `public` is now
+        # reachable where lane + Part VIII evidence say so (D-P35.31-1).
+        assert tier == "public"
+        # The mirror row landed on the same write path.
+        assert conn.execute(
+            "SELECT lane, part_viii_class FROM source_redistribution"
+            " WHERE source_id = 'e2e_src'"
+        ).fetchone() == ("raw-ok", "clear")
+
+    store = PgReadStore(clean_dsn, pool_min=1, pool_max=2)
+    try:
+        meta = store.capture(str(artifact_id), capture_id)
+    finally:
+        store.close()
+    assert meta is not None
+    assert str(getattr(meta.tier, "value", meta.tier)) == "public"
+    assert meta.tier_basis == "recorded"

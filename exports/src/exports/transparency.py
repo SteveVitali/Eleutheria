@@ -34,6 +34,35 @@ and the release artifacts land under ``transparency/``:
   (C-6), and the volatility basis + ``staleness_not_evaluable`` counts
   (C-5 — never "unknown", never a fake "0 stale").
 
+P35.35 (row 313, J3 §3.3 item 3 + §4.3; K9 §3.2 C-1 + §5.4 C-6; J4 S-6/S-11)
+adds the source-metadata pair:
+
+* ``transparency/sources.json`` — ``sig.transparency-sources/1``: one
+  object per **registry** source (the committed ``sources.toml`` is the
+  registry of record — the lane + Part VIII fields land from its
+  ``[redistribution]`` blocks; ``v_transparency_source`` corroborates the
+  DB mirror and carries the latest rights decision + last-seen columns).
+  Lane ``raw-ok``/``derived-only``/``link-only`` rows render the full
+  record — identity, licence, the recorded lane + evidence + decision
+  authority, ground-truth URLs through S-6 (full URL only for
+  raw-ok/derived-only whose source published; host+path-hash otherwise;
+  ``no_upstream_url_recorded`` when none), cadence, the two change columns
+  under the same field names and interim basis labels ``freshness.jsonl``
+  uses (the C-6 "same field, not a new one" instruction), and the
+  published claims/sites counts. Gated, refused, withdrawn and
+  ``unknown``/``restricted``-lane sources render the S-11 registry-only
+  row — name, publisher, status, reason class, lane, homepage host — never
+  runs, captures, samples or probe details.
+* ``transparency/counts.json`` — ``sig.source-counts/1``: the K9 C-1
+  lifecycle partition (every registry row in exactly one of ``withdrawn``
+  · ``published`` · ``ingested_not_published`` · ``permitted_not_ingested``
+  · ``gated`` · ``refused``, each named by its predicate and carrying its
+  id list) plus the orthogonal named attributes (rights permitted,
+  scheduled, run records, site records, lane, open issues) and the
+  anomaly list — identifiers carrying data with no registry row, listed by
+  id and never counted as sources. A CI check recomputes every number
+  from ``sources.json``.
+
 The robots-disregard disclosure is host + count + the GL-GATE-08 decision
 reference — never per-request detail (D-J3-2 [B-19]).
 """
@@ -45,7 +74,7 @@ import tomllib
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from policy.freshness import (
     cadence_rule,
@@ -54,16 +83,23 @@ from policy.freshness import (
     valid_quarantine_reason,
 )
 from policy.transparency import (
+    NO_UPSTREAM_URL,
+    PART_VIII_SEALED_CLASSES,
     TIER_SEALED,
     TRANSPARENCY_CAPTURE_VIEW_COLUMNS,
     TRANSPARENCY_RUN_VIEW_COLUMNS,
+    TRANSPARENCY_SOURCE_VIEW_COLUMNS,
+    LaneDecision,
     error_counts,
     explicit_columns,
+    gated_source_row,
     interim_lane,
     iso_utc,
     opaque_id,
+    reviewer_role,
     robots_disclosure_rows,
     scrub_source_url,
+    scrub_text,
     served_storage_tier,
     upstream_host,
     valid_error_class,
@@ -74,12 +110,16 @@ RUN_RECORD_SCHEMA = "sig.run-record/1"
 CAPTURE_RECORD_SCHEMA = "sig.capture-record/1"
 ISSUE_RECORD_SCHEMA = "sig.source-issue/1"
 FRESHNESS_RECORD_SCHEMA = "sig.source-freshness/1"
+SOURCE_RECORD_SCHEMA = "sig.transparency-sources/1"
+COUNTS_SCHEMA = "sig.source-counts/1"
 
 #: Release artifact paths under ``transparency/`` (J3 §3.1–3.2).
 TRANSPARENCY_RUNS_PATH = "transparency/runs.jsonl"
 TRANSPARENCY_CAPTURES_PATH = "transparency/captures.jsonl"
 TRANSPARENCY_ISSUES_PATH = "transparency/issues.jsonl"
 TRANSPARENCY_FRESHNESS_PATH = "transparency/freshness.jsonl"
+TRANSPARENCY_SOURCES_PATH = "transparency/sources.json"
+TRANSPARENCY_COUNTS_PATH = "transparency/counts.json"
 
 # ---------------------------------------------------------------------------
 # The spine reads — EXPORT_QUERIES-style (guard table, explicit SELECT). Each
@@ -119,6 +159,12 @@ TRANSPARENCY_QUERIES: dict[str, tuple[str, str]] = {
         "sr.ingestion_permitted "
         "FROM source_registry sr JOIN rights_record rr USING (rights_id) "
         "ORDER BY sr.source_id",
+    ),
+    "transparency_sources": (
+        "v_transparency_source",
+        "SELECT "
+        + ", ".join(TRANSPARENCY_SOURCE_VIEW_COLUMNS)
+        + " FROM v_transparency_source ORDER BY source_id",
     ),
     "transparency_predicates": (
         "vocab_predicate",
@@ -218,6 +264,103 @@ FRESHNESS_RECORD_FIELDS: tuple[str, ...] = (
     "volatility",
     "staleness",
 )
+
+#: The full ``sig.transparency-sources/1`` row — a lane-evidenced source's
+#: record (J3 §4.3 + K9 §8's ``sig.source-row/1`` subset the committed
+#: registry + views can honestly populate). Deliberately absent:
+#: ``robots_policy``, ``notes``, ``contact``, ``auth_model``,
+#: ``access_method`` (K10 §4's never-shown registry fields), reviewer
+#: identity beyond ROLE, and the P8 material itself (the class token
+#: publishes; the payload never does).
+SOURCE_ROW_FIELDS: tuple[str, ...] = (
+    "schema",
+    "source_id",
+    "name",
+    "publisher",
+    "publisher_type",
+    "lifecycle_state",
+    "status_flags",
+    "lane",
+    "lane_basis",
+    "lane_evidence",
+    "lane_decision_authority",
+    "lane_review_needed",
+    "part_viii_class",
+    "licence",
+    "ground_truth",
+    "cadence",
+    "last_successful_run",
+    "last_upstream_change",
+    "last_sig_records_change",
+    "published_claims",
+    "published_sites",
+    "review",
+)
+
+#: The S-11 gated row — J3 §4.3's registry-only page twin (identity,
+#: status, reason class, homepage-host — never runs, captures, samples or
+#: probe details) plus the bookkeeping fields ``counts.json`` must be
+#: able to recompute from ``sources.json`` alone (SIG-TRANSP-D27):
+#: lifecycle state, lane, flags, declared cadence and site naming are all
+#: registry/ops metadata, not upstream detail.
+GATED_SOURCE_ROW_FIELDS: tuple[str, ...] = (
+    "schema",
+    "source_id",
+    "name",
+    "publisher",
+    "publisher_type",
+    "status",
+    "homepage_url",
+    "reason_class",
+    "lifecycle_state",
+    "lane",
+    "lane_basis",
+    "part_viii_class",
+    "status_flags",
+    "cadence",
+    "published_sites",
+)
+
+#: The K9 C-1 lifecycle states, in partition precedence order (first
+#: match wins). ``withdrawn`` has no recorded signal yet — a source-level
+#: withdrawal is a gate decision (D-J3-5) the registry does not carry;
+#: the partition still names the state so its count is defined, never
+#: absent (0 ids with its predicate named).
+LIFECYCLE_STATES: tuple[str, ...] = (
+    "withdrawn",
+    "published",
+    "ingested_not_published",
+    "permitted_not_ingested",
+    "gated",
+    "refused",
+)
+
+LIFECYCLE_DEFINITIONS: dict[str, str] = {
+    "withdrawn": (
+        "a source-level withdrawal from publication is recorded "
+        "(no withdrawal is recorded in this registry — the predicate "
+        "exists so the state is named, not implied)"
+    ),
+    "published": (
+        "≥1 claim from the source passes the publication gate in this "
+        "release (the claims this export carries)"
+    ),
+    "ingested_not_published": (
+        "≥1 completion recording claims_inserted > 0 or ≥1 capture mark, "
+        "but no claim passes the publication gate in this release"
+    ),
+    "permitted_not_ingested": (
+        "ingestion_permitted = true and no recorded ingestion evidence "
+        "(no claim, no claims_inserted > 0 completion, no capture mark)"
+    ),
+    "gated": (
+        "ingestion_permitted false/absent, not refused, no published "
+        "claims — the source waits on a rights review"
+    ),
+    "refused": (
+        "the registry records a do-not-ingest decision (compact_status = permission_declined)"
+    ),
+}
 
 #: ``per_fetch`` entries pass only these keys (PKG-12's recorded shape);
 #: anything else recorded is dropped fail-closed rather than emitted raw.
@@ -335,6 +478,546 @@ def load_cadence_sources(path: str | Path | None = None) -> dict[str, dict[str, 
                 "state": str(b.get("state", "enabled")).lower(),
             }
     return out
+
+
+# ---------------------------------------------------------------------------
+# The source registry (registry of record — P35.35)
+# ---------------------------------------------------------------------------
+
+_SOURCES_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "connectors"
+    / "src"
+    / "connectors"
+    / "data"
+    / "sources.toml"
+)
+
+
+def load_source_registry(path: str | Path | None = None) -> dict[str, dict[str, Any]] | None:
+    """The committed ``sources.toml`` registry of record, keyed by source id.
+
+    The export cannot import ``connectors`` (the package boundary is
+    one-way); the same data lands through ``tomllib`` — the
+    ``boundary_pack.py`` precedent. Returns ``None`` when the doc cannot be
+    read: ``sources.json`` then emits ``registry_source: not_recorded``
+    rather than fabricating a source list.
+    """
+    p = Path(path) if path is not None else _SOURCES_PATH
+    try:
+        doc = tomllib.loads(p.read_bytes().decode("utf-8"))
+    except (OSError, tomllib.TOMLDecodeError):
+        return None
+    out: dict[str, dict[str, Any]] = {}
+    for sid, row in doc.get("sources", {}).items():
+        if not isinstance(row, dict):
+            continue
+        rights = row.get("rights") or {}
+        red = row.get("redistribution") or {}
+        out[str(sid)] = {
+            "name": str(row.get("name", "")),
+            "source_kind": str(row.get("source_kind", "")),
+            "homepage_url": str(row.get("homepage_url", "")),
+            "custody_posture": str(row.get("custody_posture", "LINK")),
+            "compact_status": str(row.get("compact_status", "not_contacted")),
+            "ingestion_permitted": bool(row.get("ingestion_permitted", False)),
+            "cadence": str(row.get("cadence", "")),
+            "rights_reviewed_by": str(row.get("rights_reviewed_by", "")),
+            "rights_reviewed_on": row.get("rights_reviewed_on"),
+            "rights": {
+                "spdx": str(rights.get("spdx", "UNDETERMINED")),
+                "attribution": str(rights.get("attribution", "")),
+                "redistributable": bool(rights.get("redistributable", False)),
+                "derivative_permitted": bool(rights.get("derivative_permitted", False)),
+                "terms_url": str(rights.get("terms_url", "")),
+            },
+            "redistribution": {
+                "lane": str(red.get("lane", "")).strip(),
+                "evidence": str(red.get("evidence", "")),
+                "evidence_uri": str(red.get("evidence_uri", "")),
+                "decision_authority": str(red.get("decision_authority", "")),
+                "review_needed": bool(red.get("review_needed", False)),
+                "part_viii_class": str(red.get("part_viii_class", "")).strip(),
+                "packet_limited": bool(red.get("packet_limited", False)),
+                "sig_labelled_cc0": bool(red.get("sig_labelled_cc0", False)),
+            },
+        }
+    return out
+
+
+# ---------------------------------------------------------------------------
+# sig.transparency-sources/1 — the J3 §4.3 source-metadata record
+# ---------------------------------------------------------------------------
+
+
+def _source_redistributable(reg: Mapping[str, Any]) -> str:
+    """The honest redistributable vocabulary — the ``_registry_lane``
+    normalisation: ``redistributable=false`` on an unreviewed record is
+    ``UNDETERMINED``, never a recorded refusal."""
+    rights = reg.get("rights") or {}
+    reviewed = bool(reg.get("rights_reviewed_by") and reg.get("rights_reviewed_on"))
+    if str(rights.get("spdx", "")) == "UNDETERMINED":
+        return "UNDETERMINED"
+    if rights.get("redistributable"):
+        return "yes"
+    return "no" if reviewed else "UNDETERMINED"
+
+
+def _registry_lane_decision(reg: Mapping[str, Any]) -> LaneDecision:
+    """The source's lane as the registry of record declares it — the
+    recorded ``[redistribution]`` verdict where the block lands, else the
+    interim rights-record basis (the fallback's basis is labelled, never a
+    silent upgrade to a reviewed lane)."""
+    red = reg.get("redistribution") or {}
+    if red.get("lane"):
+        return LaneDecision(str(red["lane"]), basis="registry:[redistribution]")
+    rights = reg.get("rights") or {}
+    reviewed = bool(reg.get("rights_reviewed_by") and reg.get("rights_reviewed_on"))
+    spdx = str(rights.get("spdx", ""))
+    if spdx == "UNDETERMINED":
+        redist = "UNDETERMINED"
+    elif rights.get("redistributable"):
+        redist = "yes"
+    else:
+        redist = "no" if reviewed else "UNDETERMINED"
+    return interim_lane(
+        custody_posture=reg.get("custody_posture"),
+        spdx=spdx,
+        redistributable=redist,
+        reviewed=reviewed,
+        refused=str(reg.get("compact_status") or "") == "permission_declined",
+        packet_limited=bool(red.get("packet_limited")),
+        sig_labelled_cc0=bool(red.get("sig_labelled_cc0")),
+    )
+
+
+def _lifecycle_state(
+    reg: Mapping[str, Any],
+    *,
+    published: bool,
+    ingested: bool,
+) -> str:
+    """The K9 §3.2 partition — exactly one state per registry row, first
+    match wins. ``withdrawn`` has no recorded signal in this registry: a
+    source-level withdrawal is a gate decision (D-J3-5) nothing carries
+    yet, so the state exists in the partition definition and never fires —
+    honest absence, never a fabricated state."""
+    if published:
+        return "published"
+    if ingested:
+        return "ingested_not_published"
+    if reg.get("ingestion_permitted"):
+        return "permitted_not_ingested"
+    if str(reg.get("compact_status") or "") == "permission_declined":
+        return "refused"
+    return "gated"
+
+
+def _status_flags(
+    reg: Mapping[str, Any],
+    *,
+    data_bearing: bool,
+    has_run_records: bool,
+    one_time_load: bool,
+    open_issue: bool,
+) -> list[str]:
+    """The orthogonal flags the data can honestly carry (K9 §4.1 col 7),
+    present on every row — full and gated — so ``counts.json`` recomputes
+    from ``sources.json`` alone (SIG-TRANSP-D27):
+
+    * ``rights_not_reviewed`` — no completed rights review or not
+      permitted;
+    * ``run_records_present`` — ≥1 execution row exists;
+    * ``run_record_missing`` — data-bearing source with no execution row
+      (K9 C-7: records exist but no run record does);
+    * ``one_time_load`` — a one-time seed, never a schedule;
+    * ``open_issue`` — ≥1 open issue on this release's ``issues.jsonl``.
+    """
+    flags: list[str] = []
+    reviewed = bool(reg.get("rights_reviewed_by") and reg.get("rights_reviewed_on"))
+    if not (reg.get("ingestion_permitted") and reviewed):
+        flags.append("rights_not_reviewed")
+    if has_run_records:
+        flags.append("run_records_present")
+    elif data_bearing:
+        flags.append("run_record_missing")
+    if one_time_load:
+        flags.append("one_time_load")
+    if open_issue:
+        flags.append("open_issue")
+    return sorted(flags)
+
+
+def _gated_reason_class(reg: Mapping[str, Any], *, lane: str, part_viii_class: str) -> str:
+    """The S-11 reason class for a registry-only row — the closed J3 §4.3
+    vocabulary (``terms`` · ``part_viii`` · ``not_reviewed`` plus the
+    lifecycle classes ``refused`` / ``gated`` / ``unknown_lane``)."""
+    if str(reg.get("compact_status") or "") == "permission_declined":
+        return "refused"
+    if str(part_viii_class or "") in PART_VIII_SEALED_CLASSES:
+        return "part_viii"
+    if lane == "restricted":
+        return "terms"
+    if lane == "unknown":
+        reviewed = bool(reg.get("rights_reviewed_by") and reg.get("rights_reviewed_on"))
+        return "unknown_lane" if reviewed else "not_reviewed"
+    return "gated"
+
+
+def _scrubbed_ground_truth(url: str, *, lane: str, gate_passed: bool) -> dict[str, Any]:
+    """One ground-truth URL through S-1+S-6 — the full credential-stripped
+    URL only for raw-ok/derived-only lanes on a gate-passed source; host +
+    path-hash otherwise; ``no_upstream_url_recorded`` when absent."""
+    scrubbed = scrub_source_url(url or None, lane=lane, gate_passed=gate_passed)
+    if scrubbed is None:
+        return {"value": NO_UPSTREAM_URL, "host": None}
+    if scrubbed.url:
+        return {"value": scrubbed.url, "host": scrubbed.host}
+    return {
+        "value": f"{scrubbed.host}#path_sha256:{scrubbed.path_sha256}",
+        "host": scrubbed.host,
+    }
+
+
+def _last_successful_run(executions: Sequence[Mapping[str, Any]]) -> Any:
+    """The latest execution finishing ok/partial/quota_reached (K9 col 8);
+    honest absences — ``never_run`` with no executions, ``not_recorded``
+    when executions carry no recorded success."""
+    if not executions:
+        return "never_run"
+    best: datetime | None = None
+    for e in executions:
+        status = e.get("completion_status")
+        if status not in {"ok", "partial"} and not e.get("quota_reached"):
+            continue
+        finished = _dt(e.get("finished_at")) or _dt(e.get("started_at"))
+        if finished is not None and (best is None or finished > best):
+            best = finished
+    if best is None:
+        return "not_recorded (no successful execution recorded)"
+    return iso_utc(best)
+
+
+def source_record(
+    source_id: str,
+    *,
+    registry_row: Mapping[str, Any],
+    view_row: Mapping[str, Any] | None,
+    executions: Sequence[Mapping[str, Any]],
+    capture_rows: Sequence[Mapping[str, Any]],
+    published_claims: int,
+    published_sites: bool,
+    cadence_decl: Mapping[str, str] | None,
+    open_issue: bool,
+) -> dict[str, Any]:
+    """One ``sig.transparency-sources/1`` row — the J3 §4.3 record.
+
+    The registry of record supplies identity + rights + the recorded
+    ``[redistribution]`` fields; the view row corroborates the DB mirror
+    and carries the latest rights decision. A gated/refused/withdrawn or
+    unknown/restricted-lane source renders the S-11 registry-only row —
+    every field through the same scrub, every absence a named token. The
+    orthogonal bookkeeping fields ride on gated rows too so every
+    ``counts.json`` number recomputes from ``sources.json`` alone.
+    """
+    reg = registry_row
+    red = reg.get("redistribution") or {}
+    rights = reg.get("rights") or {}
+    decision = _registry_lane_decision(reg)
+    lane = decision.lane
+    p8 = str(red.get("part_viii_class") or (view_row or {}).get("part_viii_class") or "")
+
+    ingested = bool(capture_rows) or any((e.get("claims_inserted") or 0) > 0 for e in executions)
+    data_bearing = ingested or published_claims > 0
+    state = _lifecycle_state(reg, published=published_claims > 0, ingested=ingested)
+
+    declared_fields = dict(cadence_decl or {})
+    scheduled = bool(cadence_decl) and declared_fields.get("state", "enabled") == "enabled"
+    one_time = declared_fields.get("cadence", "").lower() in {
+        "one_time",
+        "one-time",
+        "one_time_load",
+    }
+    registry_cadence = str(reg.get("cadence") or "")
+    cadence_block: dict[str, Any]
+    if cadence_decl is None:
+        cadence_block = (
+            {
+                "rule": registry_cadence,
+                "basis": "registry, not scheduled",
+            }
+            if registry_cadence
+            else {"rule": "not_scheduled", "basis": "not_declared"}
+        )
+    else:
+        cadence_block = {
+            "rule": cadence_rule(
+                str(declared_fields.get("cron", "")),
+                str(declared_fields.get("cadence", "")),
+            )
+            if declared_fields.get("cron")
+            else "not_scheduled",
+            "basis": "ops/cadence.toml",
+            "state": declared_fields.get("state"),
+        }
+    cadence_block = cadence_block | {"scheduled": scheduled, "one_time_load": one_time}
+    flags = _status_flags(
+        reg,
+        data_bearing=data_bearing,
+        has_run_records=bool(executions),
+        one_time_load=one_time,
+        open_issue=open_issue,
+    )
+
+    # S-11: gated, refused, withdrawn and unknown/restricted-lane sources
+    # publish the registry-only row — never runs, captures, samples or
+    # probe details. The lifecycle/lane/flags/cadence fields are registry
+    # and ops metadata: they stay so every count remains recomputable.
+    if state in {"gated", "refused", "withdrawn"} or lane in {"unknown", "restricted"}:
+        homepage_raw = str(reg.get("homepage_url") or "")
+        # S-6 on a gated row: the host alone is the publishable form — the
+        # full URL never is (only raw-ok/derived-only gate-passed sources
+        # render it, and a gated row is never those).
+        host = upstream_host(homepage_raw)
+        row = gated_source_row(
+            {
+                "source_id": source_id,
+                "name": scrub_text(str(reg.get("name") or "")),
+                "publisher": "publisher_not_recorded",
+                "publisher_type": str(reg.get("source_kind") or "") or None,
+                "status": (
+                    state
+                    if state in {"gated", "refused", "withdrawn"}
+                    else "gated"  # lane-gated, whatever the lifecycle says
+                ),
+                "homepage_url": (
+                    host or (NO_UPSTREAM_URL if not homepage_raw.strip() else "not_publishable")
+                ),
+            },
+            reason_class=_gated_reason_class(reg, lane=lane, part_viii_class=p8),
+        )
+        row["schema"] = SOURCE_RECORD_SCHEMA
+        row["lifecycle_state"] = state
+        row["lane"] = lane
+        row["lane_basis"] = decision.basis
+        row["part_viii_class"] = p8 or None
+        row["status_flags"] = flags
+        row["cadence"] = cadence_block
+        row["published_sites"] = published_sites
+        return explicit_columns(row, GATED_SOURCE_ROW_FIELDS)
+
+    gate_passed = published_claims > 0
+    homepage = _scrubbed_ground_truth(
+        str(reg.get("homepage_url") or ""), lane=lane, gate_passed=gate_passed
+    )
+    terms = _scrubbed_ground_truth(
+        str(rights.get("terms_url") or ""), lane=lane, gate_passed=gate_passed
+    )
+    view = view_row or {}
+    review = {
+        "basis": str(view.get("rights_decision_basis") or "no_decision_recorded"),
+        "reviewer_role": reviewer_role(str(view.get("rights_decision_reviewer") or "")),
+        "decided_at": _iso(view.get("rights_decided_at")),
+        "terms_reviewed": bool(view.get("terms_reviewed"))
+        or bool(reg.get("rights_reviewed_by") and reg.get("rights_reviewed_on")),
+    }
+    record = {
+        "schema": SOURCE_RECORD_SCHEMA,
+        "source_id": source_id,
+        "name": scrub_text(str(reg.get("name") or "")),
+        "publisher": "publisher_not_recorded",
+        "publisher_type": str(reg.get("source_kind") or "") or None,
+        "lifecycle_state": state,
+        "status_flags": flags,
+        "lane": lane,
+        "lane_basis": decision.basis,
+        "lane_evidence": scrub_text(str(red.get("evidence") or "")) or None,
+        "lane_decision_authority": str(red.get("decision_authority") or "") or None,
+        "lane_review_needed": bool(red.get("review_needed")),
+        "part_viii_class": p8 or None,
+        "licence": {
+            "spdx": str(rights.get("spdx") or "UNDETERMINED"),
+            "redistributable": _source_redistributable(reg),
+            "derivative_permitted": (
+                "yes"
+                if rights.get("derivative_permitted")
+                else (
+                    "no"
+                    if reg.get("rights_reviewed_by") and reg.get("rights_reviewed_on")
+                    else "UNDETERMINED"
+                )
+            ),
+            "attribution": scrub_text(str(rights.get("attribution") or "")) or None,
+            "terms_reviewed": review["terms_reviewed"],
+            "sig_labelled_cc0": bool(red.get("sig_labelled_cc0")),
+        },
+        "ground_truth": {
+            "homepage": homepage["value"],
+            "homepage_host": homepage["host"],
+            "terms_url": terms["value"],
+        },
+        "cadence": cadence_block,
+        "last_successful_run": _last_successful_run(executions),
+        # The same field names + the same interim basis labels
+        # ``freshness.jsonl`` carries (K9 C-6 — "the same field, not a new
+        # one"): the upstream-declared value and the canonical records
+        # digest land with the connector roll; until then the basis says so.
+        "last_upstream_change": _last_upstream_change(capture_rows),
+        "last_sig_records_change": {
+            "value": "first_release" if published_claims > 0 else "not_published",
+            "basis": "no previous release carries per-source slices (UX9-4/P36.68)",
+        },
+        "published_claims": published_claims if published_claims > 0 else "not_published",
+        "published_sites": published_sites,
+        "review": review,
+    }
+    return explicit_columns(record, SOURCE_ROW_FIELDS)
+
+
+# ---------------------------------------------------------------------------
+# sig.source-counts/1 — the K9 C-1 lifecycle partition + named attributes
+# ---------------------------------------------------------------------------
+
+
+def recompute_counts(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Derive every ``counts.json`` number from ``sources.json`` rows alone
+    (SIG-TRANSP-D27): the release file is the checkable record, never a
+    second data source. The producer runs the same function on the rows it
+    is about to emit, so a drifted count cannot be written."""
+    partition: dict[str, list[str]] = {state: [] for state in LIFECYCLE_STATES}
+    permitted = scheduled = one_time = run_present = run_missing = 0
+    site_present = open_issues = 0
+    lanes: dict[str, int] = {
+        lane: 0 for lane in ("raw-ok", "derived-only", "link-only", "restricted", "unknown")
+    }
+    # Lifecycle ∈ {published, ingested_not_published, permitted_not_ingested}
+    # is exactly the set of states ingestion_permitted sources can reach
+    # (the gate requires permission; refused/withdrawn carry no permission).
+    _PERMITTED_STATES = {
+        "published",
+        "ingested_not_published",
+        "permitted_not_ingested",
+    }
+    for row in rows:
+        sid = str(row.get("source_id") or "")
+        state = str(row.get("lifecycle_state") or "")
+        if state in partition:
+            partition[state].append(sid)
+        if state in _PERMITTED_STATES:
+            permitted += 1
+        lane = str(row.get("lane") or "unknown")
+        lanes[lane if lane in lanes else "unknown"] += 1
+        cadence = row.get("cadence") or {}
+        if cadence.get("scheduled"):
+            scheduled += 1
+        if cadence.get("one_time_load"):
+            one_time += 1
+        flags = set(row.get("status_flags") or [])
+        if "run_records_present" in flags:
+            run_present += 1
+        if "run_record_missing" in flags:
+            run_missing += 1
+        if row.get("published_sites"):
+            site_present += 1
+        if "open_issue" in flags:
+            open_issues += 1
+    return {
+        "registered": len(rows),
+        "partition": partition,
+        "rights_permitted": permitted,
+        "scheduled": scheduled,
+        "one_time_load": one_time,
+        "run_records_present": run_present,
+        "run_records_missing": run_missing,
+        "site_records": site_present,
+        "open_issues": open_issues,
+        "lanes": lanes,
+    }
+
+
+def source_counts(
+    source_rows: Sequence[Mapping[str, Any]],
+    *,
+    anomalies: Sequence[str],
+    at: datetime,
+) -> dict[str, Any]:
+    """``counts.json`` — every count a named predicate over ``sources.json``
+    rows (SIG-TRANSP-D26/D27): the lifecycle partition (Σ = the registry
+    row count, id lists per state) plus the orthogonal attributes, and the
+    anomaly id list (identifiers carrying data with no registry row —
+    listed, never counted)."""
+    counts = recompute_counts(source_rows)
+    lifecycle = {
+        state: {
+            "definition": LIFECYCLE_DEFINITIONS[state],
+            "count": len(counts["partition"][state]),
+            "ids": sorted(counts["partition"][state]),
+        }
+        for state in LIFECYCLE_STATES
+    }
+    registered = counts["registered"]
+    scheduled = counts["scheduled"]
+    one_time = counts["one_time_load"]
+    site_present = counts["site_records"]
+    return {
+        "schema": COUNTS_SCHEMA,
+        "as_of": iso_utc(at),
+        "universe": {
+            "definition": "rows in the source registry (connectors/sources.toml)",
+            "count": registered,
+        },
+        "lifecycle": lifecycle,
+        "attributes": {
+            "rights_permitted": {
+                "definition": "ingestion_permitted = true",
+                "count": counts["rights_permitted"],
+            },
+            "rights_not_permitted": {
+                "definition": "ingestion_permitted false or absent",
+                "count": registered - counts["rights_permitted"],
+            },
+            "scheduled": {
+                "definition": "declared in ops/cadence.toml with state = enabled",
+                "count": scheduled,
+            },
+            "one_time_load": {
+                "definition": "a one-time seed load, never a schedule",
+                "count": one_time,
+            },
+            "not_scheduled": {
+                "definition": "no declared enabled schedule and not a one-time load",
+                "count": registered - scheduled - one_time,
+            },
+            "run_records_present": {
+                "definition": "≥1 execution row recorded",
+                "count": counts["run_records_present"],
+            },
+            "run_records_missing": {
+                "definition": "data-bearing source with no execution row (K9 C-7)",
+                "count": counts["run_records_missing"],
+            },
+            "site_records": {
+                "definition": "≥1 published site record names the source",
+                "count": site_present,
+            },
+            "no_site_records": {
+                "definition": "no published site record names the source",
+                "count": registered - site_present,
+            },
+            "lanes": dict(counts["lanes"]),
+            "open_issues": {
+                "definition": "≥1 open issue on this release's issues.jsonl",
+                "count": counts["open_issues"],
+            },
+        },
+        "anomalies": {
+            "definition": (
+                "identifiers carrying data (claims, captures, runs, sites) "
+                "with no registry row — listed by id, never counted as sources"
+            ),
+            "ids": sorted(set(anomalies)),
+        },
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -472,33 +1155,61 @@ def run_record(row: Mapping[str, Any]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def _lane_map(source_rights: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
-    """source_id → the interim lane decision (basis recorded per row)."""
+def _lane_map(
+    source_rights: Sequence[Mapping[str, Any]],
+    source_view: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, Any]:
+    """source_id → the lane decision used for capture-tier derivation.
+
+    The recorded ``[redistribution]`` verdict wins (via the
+    ``v_transparency_source`` mirror row); the interim rights-record
+    derivation stands where no mirror row exists, its basis labelled.
+    """
     out: dict[str, Any] = {}
     for r in source_rights:
-        out[str(r["source_id"])] = interim_lane(
-            custody_posture=r.get("custody_posture"),
-            spdx=r.get("spdx_expression"),
-            redistributable=r.get("redistributable"),
-            reviewed=r.get("reviewed"),
-        )
+        out[str(r["source_id"])] = {
+            "decision": interim_lane(
+                custody_posture=r.get("custody_posture"),
+                spdx=r.get("spdx_expression"),
+                redistributable=r.get("redistributable"),
+                reviewed=r.get("reviewed"),
+            ),
+            "p8": None,
+        }
+    for r in source_view:
+        sid = str(r.get("source_id") or "")
+        if not sid:
+            continue
+        recorded_lane = str(r.get("lane") or "").strip()
+        p8 = str(r.get("part_viii_class") or "").strip() or None
+        if recorded_lane:
+            out[sid] = {
+                "decision": LaneDecision(recorded_lane, basis="source_redistribution"),
+                "p8": p8,
+            }
+        elif sid in out:
+            out[sid]["p8"] = out[sid]["p8"] or p8
     return out
 
 
-def capture_record(row: Mapping[str, Any], *, lane: Any = None) -> dict[str, Any]:
+def capture_record(
+    row: Mapping[str, Any], *, lane: Any = None, part_viii_class: Any = None
+) -> dict[str, Any]:
     """Scrub one ``v_transparency_capture`` row into ``sig.capture-record/1``.
 
     The tier is ``served_storage_tier`` — the recorded tier tightened by the
-    lane derivation where the recorded row predates the writer's derivation
-    (never a silent ``public`` upgrade); a mark with no joined capture row
-    derives the lane floor and labels the basis. A sealed-tier capture emits
-    no URL/URI at all — even a path-hash would bind it to the host.
+    lane+Part VIII derivation where the recorded row predates the writer's
+    derivation (never a silent ``public`` upgrade); a mark with no joined
+    capture row derives the lane floor and labels the basis. A sealed-tier
+    capture emits no URL/URI at all — even a path-hash would bind it to the
+    host.
     """
     lane_name = getattr(lane, "lane", "unknown")
     lane_basis = getattr(lane, "basis", "not_recorded")
+    p8 = str(part_viii_class or "") or None
 
     classification = str(row.get("capture_classification") or "legacy")
-    derivation = served_storage_tier(row.get("storage_tier"), lane=lane_name)
+    derivation = served_storage_tier(row.get("storage_tier"), lane=lane_name, part_viii_class=p8)
     if row.get("storage_tier") is None:
         # No capture row recorded a tier — the lane floor stands, labelled.
         tier_basis = "derived (no capture row — lane floor)"
@@ -914,39 +1625,65 @@ def _jsonl(records: Sequence[Mapping[str, Any]]) -> bytes:
     )
 
 
+_UNSET = object()
+
+
 def emit_transparency_artifacts(
     raw: Mapping[str, Any],
     *,
     claims: Sequence[Any] = (),
-    cadence_sources: Mapping[str, Mapping[str, str]] | None = None,
+    cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
     cadence_path: str | Path | None = None,
     scheduler_drift: Mapping[str, bool] | None = None,
+    source_registry: Mapping[str, Mapping[str, Any]] | None | object = _UNSET,
+    sources_path: str | Path | None = None,
+    site_source_ids: Iterable[str] = (),
     at: datetime,
 ) -> dict[str, bytes]:
-    """The four ``transparency/`` release artifacts — every field through
-    the scrub, every honesty token typed. ``raw`` is the export's guarded
-    raw map (the ``TRANSPARENCY_QUERIES`` keys); a missing view degrades to
+    """The ``transparency/`` release artifacts — every field through the
+    scrub, every honesty token typed. ``raw`` is the export's guarded raw
+    map (the ``TRANSPARENCY_QUERIES`` keys); a missing view degrades to
     empty files — honest absence, never a fabricated row. ``at`` is the
     release evaluation instant (the export as-of — a release-bound value
     never reads the reader's clock, K9 C-4).
+
+    ``source_registry`` is the committed ``sources.toml`` map (the
+    registry of record — P35.35); left unset it loads from
+    ``sources_path`` (defaulting to the committed file), and an explicit
+    ``None`` suppresses ``sources.json``/``counts.json`` entirely for
+    callers that have no registry surface. ``site_source_ids`` carries the
+    source ids this release's published site records name.
     """
     run_rows = _rows(raw.get("transparency_runs") or [], TRANSPARENCY_RUN_VIEW_COLUMNS)
     capture_rows = _rows(raw.get("transparency_captures") or [], TRANSPARENCY_CAPTURE_VIEW_COLUMNS)
     rights_rows = _rows(raw.get("transparency_source_rights") or [], SOURCE_RIGHTS_COLUMNS)
+    source_view_rows = _rows(
+        raw.get("transparency_sources") or [], TRANSPARENCY_SOURCE_VIEW_COLUMNS
+    )
     predicate_classes = {
         str(r[0]): str(r[1]) for r in (raw.get("transparency_predicates") or []) if r and r[1]
     }
 
-    if cadence_sources is None:
-        cadence_sources = load_cadence_sources(cadence_path)
+    cadence_map = cast(
+        "Mapping[str, Mapping[str, str]] | None",
+        load_cadence_sources(cadence_path) if cadence_sources is _UNSET else cadence_sources,
+    )
+    registry_map = cast(
+        "Mapping[str, Mapping[str, Any]] | None",
+        load_source_registry(sources_path) if source_registry is _UNSET else source_registry,
+    )
 
-    lane_by_source = _lane_map(rights_rows)
+    lane_by_source = _lane_map(rights_rows, source_view_rows)
 
     run_recs = [run_record(r) for r in run_rows]
     run_recs.sort(key=lambda r: (str(r.get("source_id") or ""), _execution_instant(r) or ""))
 
     cap_recs = [
-        capture_record(r, lane=lane_by_source.get(str(r.get("source_id") or "")))
+        capture_record(
+            r,
+            lane=(lane_by_source.get(str(r.get("source_id") or "")) or {}).get("decision"),
+            part_viii_class=(lane_by_source.get(str(r.get("source_id") or "")) or {}).get("p8"),
+        )
         for r in capture_rows
     ]
     cap_recs = order_capture_records(cap_recs)
@@ -968,7 +1705,7 @@ def emit_transparency_artifacts(
         set(executions_by_source)
         | set(captures_by_source)
         | set(claim_counts)
-        | set(cadence_sources or {})
+        | set(cadence_map or {})
     )
 
     freshness = freshness_records(
@@ -977,7 +1714,7 @@ def emit_transparency_artifacts(
         capture_rows_by_source=captures_by_source,
         claim_counts=claim_counts,
         volatility_by_source=vol,
-        cadence_sources=cadence_sources,
+        cadence_sources=cadence_map,
         at=at,
     )
 
@@ -989,34 +1726,87 @@ def emit_transparency_artifacts(
         at=at,
     )
 
-    return {
+    artifacts = {
         TRANSPARENCY_RUNS_PATH: _jsonl(run_recs),
         TRANSPARENCY_CAPTURES_PATH: _jsonl(cap_recs),
         TRANSPARENCY_ISSUES_PATH: _jsonl(issues),
         TRANSPARENCY_FRESHNESS_PATH: _jsonl(freshness),
     }
 
+    if registry_map is not None:
+        # P35.35: the source-metadata pair. The registry of record is the
+        # universe; identifiers carrying data with no registry row land in
+        # ``anomalies`` — listed, never counted (K9 C-1).
+        open_issue_sources = {
+            str(i.get("source_id") or "") for i in issues if i.get("closed_at") is None
+        }
+        view_by_source = {str(r.get("source_id") or ""): r for r in source_view_rows}
+        site_sources = {str(s) for s in site_source_ids}
+        source_rows = [
+            source_record(
+                sid,
+                registry_row=registry_map[sid],
+                view_row=view_by_source.get(sid),
+                executions=executions_by_source.get(sid, ()),
+                capture_rows=captures_by_source.get(sid, ()),
+                published_claims=claim_counts.get(sid, 0),
+                published_sites=sid in site_sources,
+                cadence_decl=(cadence_map or {}).get(sid),
+                open_issue=sid in open_issue_sources,
+            )
+            for sid in sorted(registry_map)
+        ]
+        anomalies = (
+            set(executions_by_source) | set(captures_by_source) | set(claim_counts) | site_sources
+        ) - set(registry_map)
+        sources_doc = {
+            "schema": SOURCE_RECORD_SCHEMA,
+            "as_of": iso_utc(at),
+            "registry_source": "connectors/src/connectors/data/sources.toml",
+            "sources": source_rows,
+        }
+        counts_doc = source_counts(source_rows, anomalies=sorted(anomalies), at=at)
+        artifacts[TRANSPARENCY_SOURCES_PATH] = (
+            json.dumps(sources_doc, sort_keys=True, ensure_ascii=False, indent=2) + "\n"
+        ).encode("utf-8")
+        artifacts[TRANSPARENCY_COUNTS_PATH] = (
+            json.dumps(counts_doc, sort_keys=True, ensure_ascii=False, indent=2) + "\n"
+        ).encode("utf-8")
+
+    return artifacts
+
 
 __all__ = [
     "CAPTURE_RECORD_FIELDS",
     "CAPTURE_RECORD_SCHEMA",
+    "COUNTS_SCHEMA",
     "FRESHNESS_RECORD_FIELDS",
     "FRESHNESS_RECORD_SCHEMA",
+    "GATED_SOURCE_ROW_FIELDS",
     "ISSUE_RECORD_FIELDS",
     "ISSUE_RECORD_SCHEMA",
+    "LIFECYCLE_STATES",
     "RUN_RECORD_FIELDS",
     "RUN_RECORD_SCHEMA",
+    "SOURCE_RECORD_SCHEMA",
     "SOURCE_RIGHTS_COLUMNS",
+    "SOURCE_ROW_FIELDS",
     "TRANSPARENCY_CAPTURES_PATH",
+    "TRANSPARENCY_COUNTS_PATH",
     "TRANSPARENCY_FRESHNESS_PATH",
     "TRANSPARENCY_ISSUES_PATH",
     "TRANSPARENCY_QUERIES",
     "TRANSPARENCY_RUNS_PATH",
+    "TRANSPARENCY_SOURCES_PATH",
     "capture_record",
     "emit_transparency_artifacts",
     "freshness_records",
     "issue_records",
     "load_cadence_sources",
+    "load_source_registry",
     "order_capture_records",
+    "recompute_counts",
     "run_record",
+    "source_counts",
+    "source_record",
 ]

@@ -871,16 +871,34 @@ class PgReadStore:
             eff = effective_dispositions(self._conn, kind, [artifact_id]).get(artifact_id)
             if not access_decision(eff).permitted:
                 return None
+        # P35.35 (row 313): the recorded [redistribution] lane + Part VIII
+        # class join through the DB mirror — a pre-migration spine answers
+        # NULL columns (the interim basis applies, honest absence).
+        has_srd = self._conn.execute(
+            "SELECT to_regclass('source_redistribution_current') IS NOT NULL"
+        ).fetchone()
+        srd_cols = (
+            "       srd.lane, srd.part_viii_class "
+            if has_srd and has_srd[0]
+            else "       NULL, NULL "
+        )
+        srd_join = (
+            "  LEFT JOIN source_redistribution_current srd ON srd.source_id = ea.source_id "
+            if has_srd and has_srd[0]
+            else ""
+        )
         row = self._conn.execute(
             "SELECT ec.capture_id, ea.source_id, ec.source_uri, ec.retrieved_at, "
             "       ec.content_digest, ec.media_type, ec.storage_tier, "
             f"       {self._capture_classification_sql()}, "
             "       sr.custody_posture, sr.compact_status, "
-            "       rr.spdx_expression, rr.redistributable, rr.reviewed_at "
+            "       rr.spdx_expression, rr.redistributable, rr.reviewed_at, "
+            f"{srd_cols}"
             "  FROM evidence_capture ec "
             "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
             "  LEFT JOIN source_registry sr ON sr.source_id = ea.source_id "
             "  LEFT JOIN rights_record rr ON rr.rights_id = sr.rights_id "
+            f"{srd_join}"
             " WHERE ec.artifact_id = %s AND ec.capture_id = %s",
             (artifact_id, capture_id),
         ).fetchone()
@@ -901,21 +919,28 @@ class PgReadStore:
                 "SELECT claim_id FROM claim_evidence WHERE capture_id = %s", (capture_id,)
             ).fetchall()
         )
-        # P35.31 / NEW-2 (F-400, second half): the served tier reads the
-        # RECORDED tier floored by the lane the record evidences — rows written
-        # before the writer derivation carry the constant 'public', so the
-        # read path derives the lane from the source's rights record (the
-        # interim basis until row 313's [redistribution] fields land) and
-        # tightens, never relaxes. A tightened row is labelled
-        # ``derived_at_read`` with its stored value, never a silent upgrade.
-        lane = interim_lane(
-            custody_posture=row[8],
-            spdx=row[10],
-            redistributable=row[11],
-            reviewed=row[12] is not None,
-            refused=str(row[9] or "") == "permission_declined",
-        ).lane
-        deriv = served_storage_tier(str(row[6] or ""), lane=lane)
+        # P35.31 / NEW-2 (F-400, second half) + row 313: the served tier reads
+        # the RECORDED tier floored by the lane the record evidences — the
+        # recorded ``[redistribution]`` verdict where the DB mirror carries
+        # one (row 313's fields), else the interim rights-record basis (a
+        # recorded lane absent is honest absence, never a guess). The read
+        # path tightens, never relaxes: a row written before the writer
+        # derivation — or under a lane the record no longer supports — is
+        # labelled ``derived_at_read`` with its stored value, never a silent
+        # upgrade. A stored ``public`` only survives a recorded
+        # ``raw-ok`` + Part VIII-clear evidence pair.
+        recorded_lane = str(row[13] or "").strip()
+        lane = (
+            recorded_lane
+            or interim_lane(
+                custody_posture=row[8],
+                spdx=row[10],
+                redistributable=row[11],
+                reviewed=row[12] is not None,
+                refused=str(row[9] or "") == "permission_declined",
+            ).lane
+        )
+        deriv = served_storage_tier(str(row[6] or ""), lane=lane, part_viii_class=row[14] or None)
         served = "sealed" if sealed else deriv.tier
         recorded = str(row[6] or "")
         # P36.15 (SIG-PUB-015/016): the excerpt surface is derivative-sourced —

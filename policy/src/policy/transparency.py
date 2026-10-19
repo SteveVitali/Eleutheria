@@ -937,6 +937,48 @@ TRANSPARENCY_CAPTURE_VIEW_COLUMNS: tuple[str, ...] = (
     "shared_run",
 )
 
+#: The columns ``v_transparency_source`` may carry (P35.35 / J3 §3.3 item 3):
+#: the registry-of-record identity + posture fields, the rights record, the
+#: latest rights decision's basis/reviewer-ROLE/decided_at, the recorded
+#: ``[redistribution]`` lane fields the sink mirrors into
+#: ``source_redistribution``, and the last-seen freshness columns. The view is
+#: ``sig_export``-only — the artifact, not the view, is the publication
+#: boundary: classified upstream terms text, registry ``notes``,
+#: ``auth_model``/``access_method``/``contact`` and every never-exported field
+#: stay off the list (a P8-1 payload is never a column).
+TRANSPARENCY_SOURCE_VIEW_COLUMNS: tuple[str, ...] = (
+    "source_id",
+    "name",
+    "source_kind",
+    "homepage_url",
+    "custody_posture",
+    "compact_status",
+    "ingestion_permitted",
+    "robots_policy",
+    "last_verified_at",
+    "spdx_expression",
+    "attribution_text",
+    "redistributable",
+    "derivative_permitted",
+    "terms_url",
+    "terms_reviewed",
+    "terms_reviewed_at",
+    "retrieval_date",
+    "rights_decision_basis",
+    "rights_decision_reviewer",
+    "rights_decided_at",
+    "lane",
+    "lane_evidence",
+    "lane_evidence_uri",
+    "lane_decision_authority",
+    "lane_review_needed",
+    "part_viii_class",
+    "packet_limited",
+    "sig_labelled_cc0",
+    "last_execution_at",
+    "last_capture_at",
+)
+
 
 # ---------------------------------------------------------------------------
 # The bounded free-text scrub (S-2 + S-5 + S-7 in one pass)
