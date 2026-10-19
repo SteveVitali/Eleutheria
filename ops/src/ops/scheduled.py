@@ -1007,6 +1007,34 @@ def store_run_row(
     return written
 
 
+def store_run_report(row: RunRow, *, dsn: str | None = None, conn: Any = None) -> str | None:
+    """P35.32 / J3 §3.3 item 1: append this execution's ``ingest_run_report``
+    row — one typed report row per execution, alongside the WORM run row.
+
+    Runs after ``store_run_row`` so the run object exists first. INSERT-only
+    (``ON CONFLICT`` under the live ``run_id`` unique key makes a repeat a
+    +0 no-op). Returns the new report_id, or ``None`` when the row was
+    already present, no DSN/conn is available, or the table is not deployed
+    yet — in the last case the backfill mints the row from the WORM object
+    (the queued leg deploys the table before the writer runs). Report writes
+    are never fatal to an ingest; the caller logs-and-continues.
+    """
+    from db.run_report import report_present
+
+    from .run_report import write_report_for_row
+
+    if conn is not None:
+        return write_report_for_row(conn, row) if report_present(conn) else None
+    if not dsn:
+        return None
+    import psycopg
+
+    with psycopg.connect(dsn, autocommit=True) as c:
+        if not report_present(c):
+            return None
+        return write_report_for_row(c, row)
+
+
 __all__ = [
     "DEFAULT_CADENCE_PATH",
     "PROBE_PREFIX",
@@ -1038,6 +1066,7 @@ __all__ = [
     "run_object_name",
     "run_object_uri",
     "scheduled_ingest",
+    "store_run_report",
     "store_run_row",
     "sweep_object_name",
     "unscheduled_live_sources",
