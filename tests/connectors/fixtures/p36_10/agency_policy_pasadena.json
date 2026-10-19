@@ -1,0 +1,29 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat policy_pasadena_ca_pd. Faithfully transcribes the reviewed Policy 620 'Cellular Site Simulator Usage and Privacy' clauses (I4-C110, live-read I4-F104): changes are made in consultation with the Community Police Oversight Commission and the Independent Police Auditor, and the policy carries an ANNUAL REPORT to the Chief, the IPA, the Public Safety Committee and/or the City Council, and the CPOC. The §-headed clause text is synthetic but the literals are the reviewed verbatim strings. RB-07: facts and citations only. Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "pasadena-policy-620",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://ww2.cityofpasadena.net/2024%20Agendas/Jan_22_24/AR%208%20ATTACHMENT%20A.pdf",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:pasadena-ca-pd-css-620",
+      "text": "Pasadena Police Department — Policy 620.\n\n§ 620.1 Policy.\nThis policy is reviewed and any changes are made in consultation with the Community Police Oversight Commission and the Independent Police Auditor.\n\n§ 620.8 Reports.\nAn ANNUAL REPORT shall be provided to the Chief of Police, the Independent Police Auditor, the Public Safety Committee and/or the City Council, and the Community Police Oversight Commission, including the number of times the cellular site simulator technology was used.\n",
+      "clauses": [
+        {
+          "clause": "620.1",
+          "predicate": "policy_clause",
+          "value": "changes in consultation with the Community Police Oversight Commission and the Independent Police Auditor",
+          "value_kind": "text"
+        },
+        {
+          "clause": "620.8",
+          "predicate": "policy_clause",
+          "value": "annual report to the Chief, the Independent Police Auditor, the Public Safety Committee and/or the City Council, and the CPOC with the number of times the technology was used",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

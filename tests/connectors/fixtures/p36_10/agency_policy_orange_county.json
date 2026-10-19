@@ -1,0 +1,35 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat policy_orange_county_ca_sheriff. Faithfully transcribes the reviewed Policy 610 'Cellular Site Simulator Usage and Privacy' clauses (I4-C109, live-read I4-F095): the 610.1 purpose clause cites Government Code section 53166 and names the authorized uses; 610.7.2 carries the internal annual report to the Sheriff. The §-headed clause text is synthetic but the literals are the reviewed verbatim strings. RB-07: facts and citations only. Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "oc-sheriff-policy-610",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://ocsheriff.gov/sites/ocsd/files/2023-06/Policy%20610%20Cellular%20Site%20Simulator%20Usage%20and%20Privacy.pdf",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:orange-county-ca-sheriff-css-610",
+      "text": "Orange County Sheriff-Coroner Department — Policy 610.\n\n§ 610.1 Purpose and Scope.\nThis policy provides guidance for the authorized uses of the cellular site simulator technology by the Orange County Sheriff's Department, consistent with Government Code section 53166.\n\n§ 610.7 Reporting Requirements.\nThe program coordinator shall provide an internal annual report to the Sheriff covering use of the technology.\n",
+      "clauses": [
+        {
+          "clause": "610.1",
+          "predicate": "statutory_citation",
+          "value": "California Government Code § 53166",
+          "value_kind": "text"
+        },
+        {
+          "clause": "610.1",
+          "predicate": "policy_clause",
+          "value": "authorized uses of the cellular site simulator technology by the Orange County Sheriff's Department",
+          "value_kind": "text"
+        },
+        {
+          "clause": "610.7",
+          "predicate": "policy_clause",
+          "value": "internal annual report to the Sheriff",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

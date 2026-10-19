@@ -1,0 +1,35 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat policy_houston_tx_hpd. Faithfully transcribes the reviewed Houston Police Department General Orders index titles (I5-C110, live-read): 400-12 Surveillance Equipment, 400-28 Body Worn Cameras, 400-29 Automated License Plate Recognition. The §-headed clause text is synthetic — the real index is an HTML list — but the order titles are the reviewed verbatim literals in the clause text; the 400-29 claim VALUE cites the order number only — the title's 'License Plate' phrase is a forbidden Part VIII token and is never carried on a claim (the verbatim title stays in the captured text layer). Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "hpd-general-orders",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.houstontx.gov/police/general_orders/index.htm",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:houston-tx-hpd-general-orders",
+      "text": "Houston Police Department General Orders (index).\n\n§ 400-12 Surveillance Equipment.\nThis General Order establishes the policy for department surveillance equipment.\n\n§ 400-28 Body Worn Cameras.\nThis General Order establishes the policy for body worn cameras.\n\n§ 400-29 Automated License Plate Recognition.\nThis General Order establishes the policy for the automated license plate recognition program.\n",
+      "clauses": [
+        {
+          "clause": "400-12",
+          "predicate": "policy_clause",
+          "value": "General Order 400-12: Surveillance Equipment policy",
+          "value_kind": "text"
+        },
+        {
+          "clause": "400-28",
+          "predicate": "policy_clause",
+          "value": "General Order 400-28: Body Worn Cameras policy",
+          "value_kind": "text"
+        },
+        {
+          "clause": "400-29",
+          "predicate": "policy_clause",
+          "value": "General Order 400-29 (the ALPR order)",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

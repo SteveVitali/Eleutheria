@@ -1,0 +1,23 @@
+{
+  "_note": "P36.10 (R11-ACQ-14) synthetic fixture for the agency_policy connector seat policy_albuquerque_nm_apd. Faithfully transcribes the reviewed Albuquerque APD Standard Operating Procedures entry for SOP 1-22 'Automated License Plate Reader Program' (I5-C111, live-read): the SOP header reads verbatim 'Effective: 07/17/2023 Review: 07/17/2024 Replaces: 09/08/2021'. The §-headed clause text is synthetic but the literals are the reviewed verbatim strings; the claim VALUE cites the SOP's verbatim effective/review/replaces header — the program title's 'License Plate' phrase is a forbidden Part VIII token and is never carried on a claim (the verbatim title stays in the captured text layer). Live fetch deferred — Wave-B under ING-GO-B (P36.12).",
+  "connector": "agency_policy",
+  "documents": [
+    {
+      "id": "apd-sop-1-22",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.cabq.gov/police/standard-operating-procedures",
+      "retrieved_date": "2026-10-13",
+      "subject_id": "sig:policy:albuquerque-nm-apd-sop-1-22",
+      "text": "Albuquerque Police Department Standard Operating Procedures.\n\n§ 1-22 Automated License Plate Reader Program.\nEffective: 07/17/2023 Review: 07/17/2024 Replaces: 09/08/2021. This SOP establishes the department policy for the automated license plate reader program.\n",
+      "clauses": [
+        {
+          "clause": "1-22",
+          "predicate": "policy_clause",
+          "value": "SOP 1-22 — Effective: 07/17/2023 Review: 07/17/2024 Replaces: 09/08/2021",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}
