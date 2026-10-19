@@ -55,7 +55,13 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from db.run_report import append_report
-from policy.transparency import ROBOTS_OUTCOMES, upstream_host
+from policy.transparency import (
+    ROBOTS_OUTCOMES,
+    interim_lane,
+    scrub_source_url,
+    upstream_host,
+    valid_error_class,
+)
 from policy.transparency import error_class as s4_error_class
 
 from .run_completion import (
@@ -314,7 +320,323 @@ def error_class_for(
     return None
 
 
-def fetch_fields(fetch_record: Any) -> dict[str, Any]:
+# ---------------------------------------------------------------------------
+# P35.34 / PKG-12 — per-fetch telemetry (the per_fetch column's writer) and
+# the SIG-CONF-009 upstream-count pair the GQ-19 check reads.
+# ---------------------------------------------------------------------------
+
+
+#: The stored per-fetch entry shape: ``host`` always (S-6: publishable),
+#: ``url`` only where the S-6 lane rules allow it (else ``path_sha256`` so a
+#: row still correlates without exposing path detail), then the recorded
+#: transport facts. ``kind`` marks the egress class (``content`` /
+#: ``robots`` — the robots.txt probe is real egress too); the transparency
+#: export's allow-list drops ``url``/``path_sha256``/``fetched_at``/``kind``
+#: fields it does not publish, so the stored row keeps the honest scrubbed
+#: form and the public surface stays the PKG-12 shape.
+def _lane_for_source(source_id: Any) -> tuple[str, bool]:
+    """``(lane, gate_passed)`` for the S-6 URL scrub — the same interim
+    rights-record basis the capture writer's lane derivation consumes
+    (``connectors.sinks._registry_lane``). An unregistered or unreadable
+    record resolves ``("unknown", False)`` — the scrub then records host +
+    path-hash, never a full URL."""
+    if not source_id:
+        return "unknown", False
+    try:
+        from connectors.sinks import _registry_lane
+
+        basis = _registry_lane(str(source_id))
+    except Exception:  # noqa: BLE001 — no basis is a closed posture, never a guess
+        basis = None
+    if not basis:
+        return "unknown", False
+    decision = interim_lane(
+        custody_posture=basis.get("custody_posture"),
+        spdx=basis.get("spdx"),
+        redistributable=basis.get("redistributable"),
+        reviewed=basis.get("reviewed"),
+        refused=basis.get("refused"),
+    )
+    return decision.lane, True
+
+
+def scrub_per_fetch(source_id: Any, entries: Any) -> list[dict[str, Any]] | None:
+    """FetchRecord ``per_fetch`` rows → the report's S-6-scrubbed shape.
+
+    ``None`` in → ``None`` out (never recorded stays unwritten, NULL =
+    not_recorded); a recorded empty list stays ``[]`` (recorded, zero
+    egress). Each raw URL passes ``policy.transparency.scrub_source_url``:
+    credential-stripped host always, the full scrubbed URL only where the
+    lane + gate allow, else ``path_sha256``.
+    """
+    if entries is None:
+        return None
+    lane, gate = _lane_for_source(source_id)
+    out: list[dict[str, Any]] = []
+    for item in _as_list(entries):
+        if not isinstance(item, Mapping):
+            continue
+        row: dict[str, Any] = {}
+        url = item.get("url")
+        scrubbed = scrub_source_url(str(url) if url else None, lane=lane, gate_passed=gate)
+        if scrubbed is not None:
+            if scrubbed.host:
+                row["host"] = scrubbed.host
+            if scrubbed.url:
+                row["url"] = scrubbed.url
+            elif scrubbed.path_sha256:
+                row["path_sha256"] = scrubbed.path_sha256
+        kind = item.get("kind")
+        if kind:
+            row["kind"] = str(kind)
+        for key in ("status", "bytes", "duration_ms", "records_emitted"):
+            value = item.get(key)
+            if isinstance(value, int) and not isinstance(value, bool):
+                row[key] = value
+        fetched_at = item.get("fetched_at")
+        if fetched_at:
+            row["fetched_at"] = str(fetched_at)
+        outcome = item.get("outcome")
+        if outcome:
+            row["outcome"] = str(outcome)
+        err = item.get("error_class")
+        if err:
+            row["error_class"] = str(err) if valid_error_class(str(err)) else "unclassified_error"
+        out.append(row)
+    return out
+
+
+#: The SIG-CONF-009 upstream-reconciliation object schema (the
+#: ``upstream_reconciliation`` column's contract).
+UPSTREAM_RECON_SCHEMA = "sig.upstream-reconciliation/1"
+
+#: The closed explained-difference reason vocabulary (§56.7): the four named
+#: classes plus the ``other:<free-text-class>`` escape — a recorded value,
+#: never a guess; an unevidenced difference stays ``unexplained``.
+RECON_REASONS: tuple[str, ...] = (
+    "filtered",
+    "withheld_rows",
+    "pagination_cap",
+    "upstream_misreport",
+)
+
+#: The pair classifications — ``in_range`` (≤1 %), ``explained`` (recorded
+#: reason), ``unexplained`` (the GQ-19 fail class where it exceeds the
+#: threshold), ``not_evaluable`` (a side was never recorded).
+RECON_CLASSES: tuple[str, ...] = (
+    "in_range",
+    "explained",
+    "unexplained",
+    "not_evaluable",
+)
+
+#: The unexplained-difference threshold (§56.7: "above 1 %").
+RECON_THRESHOLD_PCT = 1.0
+
+#: The recorded honesty tokens — a side the upstream/connector never exposed
+#: is recorded as the token, never a guessed number.
+RECON_NOT_EXPOSED = "not_exposed"
+RECON_NOT_RECORDED = "not_recorded"
+
+#: Document-outcome fields that carry the upstream's OWN declared count at
+#: fetch time (page totals / declared row counts — precedence order;
+#: ``upstream_count`` is the canonical name the live runner stamps).
+_UPSTREAM_COUNT_FIELDS: tuple[str, ...] = (
+    "upstream_count",
+    "total_items",
+    "total_notice_count",
+    "row_count",
+    "entry_count",
+)
+
+#: Document-outcome fields that carry what the run HELD for that target
+#: (precedence order — an explicit ``subjects_held``/``records_emitted``
+#: beats the per-kind counters; ``items_count`` is TED's held side, never a
+#: declared total).
+_SUBJECTS_HELD_FIELDS: tuple[str, ...] = (
+    "subjects_held",
+    "records_emitted",
+    "bills_indexed",
+    "returned_count",
+    "items_count",
+)
+
+
+def valid_recon_reason(value: Any) -> bool:
+    """Is the value in the closed difference-reason vocabulary?"""
+    text = str(value or "").strip()
+    return text in RECON_REASONS or text.startswith("other:")
+
+
+def _first_int(row: Mapping[str, Any], fields: tuple[str, ...]) -> tuple[int | None, str | None]:
+    """The first recorded non-negative int among ``fields`` + its name."""
+    for name in fields:
+        value = row.get(name)
+        if isinstance(value, int) and not isinstance(value, bool):
+            return value, name
+    return None, None
+
+
+def _difference_reason(row: Mapping[str, Any], fetch_record: Any) -> str | None:
+    """The recorded explanation for a >1 % difference — only what the
+    outcome row or the run record explicitly evidences. An unevidenced
+    difference returns None and lands ``unexplained`` — never
+    explained-away."""
+    recorded = row.get("difference_reason") or row.get("explanation")
+    if isinstance(recorded, str) and valid_recon_reason(recorded):
+        return recorded.strip()
+    if row.get("truncated"):
+        return "pagination_cap"
+    if row.get("filtered"):
+        return "filtered"
+    withheld = row.get("withheld_rows")
+    if isinstance(withheld, int) and not isinstance(withheld, bool) and withheld > 0:
+        return "withheld_rows"
+    if row.get("timed_out"):
+        return "other:timed_out"
+    if _record_get(fetch_record, "quota_reached"):
+        return "other:quota_reached"
+    if _record_get(fetch_record, "budget_reached"):
+        return "other:budget_reached"
+    return None
+
+
+def _recon_pair(
+    *,
+    target: str,
+    upstream: int | str,
+    count_basis: str,
+    held: int | None,
+    held_basis: str,
+    row: Mapping[str, Any],
+    fetch_record: Any,
+) -> dict[str, Any]:
+    """One comparison pair: the upstream's own count vs the subjects held —
+    ``not_exposed``/``not_recorded`` tokens where a side was never recorded,
+    ``difference_pct`` + the classification the >1 % check reads."""
+    pair: dict[str, Any] = {
+        "target": target,  # S-6-scrubbed upstream of this call: host (+ gated url/path hash)
+        "upstream_count": upstream,
+        "count_basis": count_basis,
+        "subjects_held": held if held is not None else RECON_NOT_RECORDED,
+        "subjects_basis": held_basis if held is not None else RECON_NOT_RECORDED,
+        "difference_pct": None,
+        "classification": "not_evaluable",
+        "reason": None,
+    }
+    if not isinstance(upstream, int) or held is None:
+        return pair
+    diff = abs(upstream - held) / upstream * 100.0 if upstream else (0.0 if held == 0 else 100.0)
+    pair["difference_pct"] = round(diff, 4)
+    if diff <= RECON_THRESHOLD_PCT:
+        pair["classification"] = "in_range"
+        return pair
+    reason = _difference_reason(row, fetch_record)
+    if reason is None:
+        pair["classification"] = "unexplained"
+    else:
+        pair["classification"] = "explained"
+        pair["reason"] = reason
+    return pair
+
+
+def upstream_reconciliation(
+    fetch_record: Any,
+    *,
+    records_emitted: int | None = None,
+    source_id: Any = None,
+) -> dict[str, Any] | None:
+    """The ``sig.upstream-reconciliation/1`` object for one execution —
+    ``None`` where the record evidences no run (NULL = not_recorded).
+
+    Per-target pairs derive from the FetchRecord's ``document_outcomes``
+    rows that carry an upstream-declared count (``total_items`` /
+    ``total_notice_count`` / ``row_count`` / ``entry_count`` …); the
+    run-level pair (``target: "run"``) compares the summed declared counts —
+    or the honest ``not_exposed`` token — with the execution's recorded
+    ``records_emitted``. The >1 % unexplained fail rule binds where the
+    P34.44a/b check (GQ-19) reads this — this object is the recording
+    surface, not the enforcement.
+
+    Per-target identifiers pass the same S-6 scrub as ``per_fetch``: the
+    pair records the host always, the full URL only where the lane rules
+    allow, else ``path_sha256`` — the report row never holds raw path
+    detail outside the gate.
+    """
+    fr = fetch_record or {}
+    lane, gate = _lane_for_source(source_id)
+    outcomes = _as_list(_record_get(fr, "document_outcomes"))
+    held = records_emitted
+    if held is None:
+        value = _record_get(fr, "records_emitted")
+        if not isinstance(value, int):
+            value = _record_get(fr, "claim_count")
+        if isinstance(value, int) and not isinstance(value, bool):
+            held = int(value)
+    evidences_run = bool(
+        _as_list(_record_get(fr, "per_fetch"))
+        or _as_list(_record_get(fr, "urls"))
+        or outcomes
+        or isinstance(_record_get(fr, "fetches"), int)
+        or held is not None
+    )
+    if not evidences_run:
+        return None
+
+    pairs: list[dict[str, Any]] = []
+    declared_total = 0
+    declared_any = False
+    for item in outcomes:
+        if not isinstance(item, Mapping):
+            continue
+        upstream, basis = _first_int(item, _UPSTREAM_COUNT_FIELDS)
+        if upstream is None:
+            continue  # the outcome exposes no declared count — no pair for it
+        held_v, held_basis = _first_int(item, _SUBJECTS_HELD_FIELDS)
+        declared_any = True
+        declared_total += upstream
+        target_raw = item.get("url") or item.get("source_uri") or item.get("target")
+        scrubbed = (
+            scrub_source_url(str(target_raw), lane=lane, gate_passed=gate) if target_raw else None
+        )
+        pair = _recon_pair(
+            target=(scrubbed.host if scrubbed and scrubbed.host else RECON_NOT_RECORDED),
+            upstream=upstream,
+            count_basis=f"document_outcomes.{basis}",
+            held=held_v,
+            held_basis=(f"document_outcomes.{held_basis}" if held_basis else RECON_NOT_RECORDED),
+            row=item,
+            fetch_record=fr,
+        )
+        if scrubbed is not None:
+            if scrubbed.url:
+                pair["url"] = scrubbed.url
+            elif scrubbed.path_sha256:
+                pair["path_sha256"] = scrubbed.path_sha256
+        pairs.append(pair)
+
+    pairs.append(
+        _recon_pair(
+            target="run",
+            upstream=declared_total if declared_any else RECON_NOT_EXPOSED,
+            count_basis=(
+                "sum(document_outcomes upstream counts)" if declared_any else RECON_NOT_EXPOSED
+            ),
+            held=held,
+            held_basis="records_emitted",
+            row={},
+            fetch_record=fr,
+        )
+    )
+    return {"schema": UPSTREAM_RECON_SCHEMA, "pairs": pairs}
+
+
+def fetch_fields(
+    fetch_record: Any,
+    *,
+    source_id: Any = None,
+    records_emitted: int | None = None,
+) -> dict[str, Any]:
     """All fetch-evidence fields derived from a FetchRecord-shaped object
     (dict or dataclass). Every unevidenced value stays None."""
     fr = fetch_record or {}
@@ -350,9 +672,16 @@ def fetch_fields(fetch_record: Any) -> dict[str, Any]:
             if _record_get(fr, "budget_reached") is not None
             else None
         ),
-        # ``per_fetch`` deliberately unwritten: the column exists from this
-        # change but the PKG-12 telemetry writer is row 312's (P35.34) — J3's
-        # "when present" clause. NULL stays not_recorded.
+        # P35.34 / PKG-12: the recorded per-egress rows, S-6-scrubbed at
+        # write (host always; full URL only under the lane rules). Absent
+        # from the record → NULL (not_recorded); a recorded [] stays [].
+        "per_fetch": scrub_per_fetch(source_id, _record_get(fr, "per_fetch")),
+        # SIG-CONF-009: the upstream's own count at fetch vs the subjects
+        # held — the sig.upstream-reconciliation/1 object the GQ-19 check
+        # reads; NULL where the record evidences no run.
+        "upstream_reconciliation": upstream_reconciliation(
+            fr, records_emitted=records_emitted, source_id=source_id
+        ),
     }
 
 
@@ -367,18 +696,20 @@ def fields_for_scheduled_row(
     outcome = str(_record_get(row, "outcome", ""))
     detail = _record_get(row, "detail")
     refusal_reason = str(_record_get(row, "refusal_reason") or "")
-    fields = fetch_fields(fr)
+    source_id = _record_get(row, "source") or None
+    emitted = (
+        int(_record_get(row, "claims_added") or 0)
+        if _record_get(row, "claims_added") is not None
+        else None
+    )
+    fields = fetch_fields(fr, source_id=source_id, records_emitted=emitted)
     return {
         "run_id": run_id,
-        "source_id": _record_get(row, "source") or None,
+        "source_id": source_id,
         "link_basis": "live",
         "clock_basis": "db" if run_id else "run_row",
         "started_at": _parse_ts(_record_get(row, "started_at")),
-        "records_emitted": (
-            int(_record_get(row, "claims_added") or 0)
-            if _record_get(row, "claims_added") is not None
-            else None
-        ),
+        "records_emitted": emitted,
         "duration_seconds": _record_get(row, "duration_seconds"),
         "refusal_classes": refusal_class_map(
             fr, refusal_reason=refusal_reason, quarantine=quarantine
@@ -409,10 +740,11 @@ def fields_for_run_row(
     """
     doc = doc if isinstance(doc, Mapping) else {}
     fr = doc.get("fetch_record") if isinstance(doc.get("fetch_record"), Mapping) else {}
-    fields = fetch_fields(fr)
     outcome = str(doc.get("outcome") or "")
     refusal_reason = str(doc.get("refusal_reason") or "")
     emitted = doc.get("claims_added")
+    emitted_int = int(emitted) if isinstance(emitted, int) else None
+    fields = fetch_fields(fr, source_id=doc.get("source"), records_emitted=emitted_int)
     return {
         "run_id": run_id,
         "source_id": doc.get("source") or None,
@@ -423,7 +755,7 @@ def fields_for_run_row(
         # strength, the clock stays honest).
         "clock_basis": "run_row",
         "started_at": _parse_ts(doc.get("started_at")),
-        "records_emitted": int(emitted) if isinstance(emitted, int) else None,
+        "records_emitted": emitted_int,
         "duration_seconds": doc.get("duration_seconds"),
         "refusal_classes": refusal_class_map(
             fr,
@@ -450,7 +782,6 @@ def fields_for_repo_record(rec: Any) -> dict[str, Any]:
     if not isinstance(rec, Mapping):
         rec = {}
     fr = rec.get("fetch_record") if isinstance(rec.get("fetch_record"), Mapping) else rec
-    fields = fetch_fields(fr)
     outcome = str(rec.get("outcome") or "")
     source = rec.get("source") or rec.get("source_id") or fr.get("source_id")
     error = error_class_for(outcome, rec.get("detail"), fetch_record=fr)
@@ -463,6 +794,8 @@ def fields_for_repo_record(rec: Any) -> dict[str, Any]:
     emitted = rec.get("claims_added")
     if emitted is None:
         emitted = fr.get("claim_count") if isinstance(fr, Mapping) else None
+    emitted_int = int(emitted) if isinstance(emitted, int) else None
+    fields = fetch_fields(fr, source_id=source, records_emitted=emitted_int)
     return {
         "run_id": None,
         "source_id": source,
@@ -471,7 +804,7 @@ def fields_for_repo_record(rec: Any) -> dict[str, Any]:
         "started_at": _parse_ts(
             rec.get("started_at") or (fr.get("started_at") if isinstance(fr, Mapping) else None)
         ),
-        "records_emitted": int(emitted) if isinstance(emitted, int) else None,
+        "records_emitted": emitted_int,
         "duration_seconds": rec.get("duration_seconds")
         or (fr.get("duration_seconds") if isinstance(fr, Mapping) else None),
         "refusal_classes": refusal_class_map(fr),

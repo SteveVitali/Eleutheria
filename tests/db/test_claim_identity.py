@@ -198,7 +198,7 @@ def test_payload_version_stamped_and_digests_stable(clean_dsn: str) -> None:
         row = conn.execute("SELECT content_digest, payload_version FROM claim").fetchone()
     assert row is not None
     digest_before = row[0]
-    assert row[1] == "sig.claim-payload/1", "new claims record the normalisation version"
+    assert row[1] == "sig.claim-payload/2", "new claims record the normalisation version"
     # Re-assert the identical claim: nothing changes, digest untouched.
     sink2 = _sink(clean_dsn)
     sink2.assert_claims([_claim("sig.test.ref_fact", "versioned")])

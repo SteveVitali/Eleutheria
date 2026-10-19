@@ -403,9 +403,22 @@ def test_backfill_reports_each_execution_once_then_plus_zero(clean_dsn: str) -> 
     assert a[9] == 1 and a[10] == 1  # rate_limit_events, disappearances
     assert a[11] == {"matched": 1, "no_match": 1}
     assert a[12] is True and a[13] is False
-    # per_fetch stays NULL — the column + PKG-12 contract land in this
-    # change; the telemetry writer is row 312's (P35.34), J3 'when present'.
+    # per_fetch stays NULL — the writer (P35.34) records only what the
+    # fetch record carries; this fixture predates per-fetch telemetry.
     assert a[15] is None
+    # upstream_reconciliation (P35.34 / SIG-CONF-009): the row had fetch
+    # evidence (urls) and a recorded emitted count but no upstream-declared
+    # count — the run-level pair records 'not_exposed', never a guess.
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        recon = conn.execute(
+            "SELECT upstream_reconciliation FROM ingest_run_report"
+            " WHERE backfilled_from LIKE '%a.json'"
+        ).fetchone()[0]
+    pairs = {p["target"]: p for p in recon["pairs"]}
+    run_pair = pairs["run"]
+    assert run_pair["upstream_count"] == "not_exposed"
+    assert run_pair["subjects_held"] == 4
+    assert run_pair["classification"] == "not_evaluable"
 
     unmatched = [r for r in rows if r[0].startswith("unmatched:")]
     assert all(r[2] is None for r in unmatched), "unmatched → run_id NULL (C-14)"

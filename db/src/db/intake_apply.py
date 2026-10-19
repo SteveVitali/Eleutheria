@@ -68,7 +68,12 @@ from psycopg.types.range import Range
 
 from policy import intake as pint
 
-from .claim_sink import content_digest, legacy_row_digest, predicate_temporal_class
+from .claim_sink import (
+    bound_versions,
+    content_digest,
+    legacy_row_digest,
+    predicate_temporal_class,
+)
 from .dispositions import DISPOSITION_TABLE, record_disposition
 from .identity_guard import CURATOR_HANDLE_SCHEME, resolve_identities
 
@@ -697,9 +702,16 @@ class PgIntakeApplicationStore:
         # predicate's registry class governs the temporal qualifier, and
         # payload_version records the normalisation.
         payload["payload_version"] = PAYLOAD_VERSION
+        # SIG-INGEST-004 / P35.34: seal the versions the superseded claim's
+        # evidence binding recorded — the corrected claim stands on the same
+        # extraction, so its identity carries that extraction's versions. An
+        # old claim with no binding contributes none (asserted origin).
+        bound_extractor_v, bound_normalizer_v = bound_versions(self._conn, old["claim_id"])
         payload["content_digest"] = content_digest(
             payload,
             temporal_class=predicate_temporal_class(self._conn, predicate_id),
+            extractor_version=bound_extractor_v,
+            normalizer_version=bound_normalizer_v,
         )
         cols = list(payload)
         params = []

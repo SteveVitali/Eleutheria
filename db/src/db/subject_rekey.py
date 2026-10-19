@@ -294,7 +294,9 @@ def _insert_correction(conn: Any, claim_id: str, new_entity_id: str, run_id: str
     append the corrected row under the constituent subject. Returns the new
     claim id. Columns are inherited verbatim; the digest is recomputed over
     the stored payload so the correction stays identity-class."""
-    from .claim_sink import content_digest, predicate_temporal_class
+    from evidence.claim_identity import PAYLOAD_VERSION
+
+    from .claim_sink import bound_versions, content_digest, predicate_temporal_class
 
     old = conn.execute(
         "SELECT * FROM claim WHERE claim_id = %s::uuid AND upper_inf(sys_period)",
@@ -357,14 +359,19 @@ def _insert_correction(conn: Any, claim_id: str, new_entity_id: str, run_id: str
     payload["ingest_run_id"] = run_id
     payload["revises_claim"] = claim_id
     payload["correction_reason"] = CORRECTION_REASON
-    payload["payload_version"] = "sig.claim-payload/1"
+    payload["payload_version"] = PAYLOAD_VERSION
     # Identity-class digest over the corrected payload — volatile acquisition
     # columns (run id, rights, correction linkage) never enter it; the
     # constituent subject change alone re-digests the fact so a post-split
-    # re-ingest of the same record dedups onto this row.
+    # re-ingest of the same record dedups onto this row. SIG-INGEST-004 /
+    # P35.34: the seal carries the superseded claim's bound versions — the
+    # re-keyed claim stands on the same extraction.
+    bound_extractor_v, bound_normalizer_v = bound_versions(conn, claim_id)
     payload["content_digest"] = content_digest(
         payload,
         temporal_class=predicate_temporal_class(conn, str(old["predicate_id"])),
+        extractor_version=bound_extractor_v,
+        normalizer_version=bound_normalizer_v,
     )
     insert_cols = cols + ["payload_version", "content_digest"]
     from psycopg.types.json import Jsonb

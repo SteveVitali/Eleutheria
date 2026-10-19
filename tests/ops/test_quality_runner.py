@@ -232,6 +232,58 @@ def test_gq18_worst_source_share() -> None:
     assert m.offered == 16
 
 
+def test_gq19_measures_the_unexplained_share() -> None:
+    """P35.34 / SIG-CONF-009: the evaluator reads the recorded
+    sig.upstream-reconciliation/1 pairs and reports the unexplained share —
+    report mode; zero recorded pairs is evaluated=0, never a pass."""
+    from ops.quality import eval_gq19
+
+    conn = FakeConn(
+        {
+            "FROM ingest_run_report": (
+                ["report_id", "source_id", "upstream_reconciliation"],
+                [
+                    (
+                        "r1",
+                        "src-a",
+                        {
+                            "schema": "sig.upstream-reconciliation/1",
+                            "pairs": [
+                                {"target": "t1", "classification": "in_range"},
+                                {
+                                    "target": "t2",
+                                    "classification": "unexplained",
+                                    "difference_pct": 15.0,
+                                },
+                                {"target": "run", "classification": "explained"},
+                            ],
+                        },
+                    ),
+                    (
+                        "r2",
+                        "src-b",
+                        {
+                            "schema": "sig.upstream-reconciliation/1",
+                            "pairs": [
+                                {"target": "run", "classification": "not_evaluable"},
+                            ],
+                        },
+                    ),
+                ],
+            )
+        }
+    )
+    m = eval_gq19(EvalContext(conn=conn))
+    assert m.offered == 4 and m.evaluated == 3
+    assert m.measured == 1 / 3
+    assert m.detail["unexplained"] == 1
+    assert m.detail["unexplained_sample"][0]["difference_pct"] == 15.0
+
+    # No recorded pairs at all → evaluated 0 (the vacuous-pass guard fails it).
+    m2 = eval_gq19(EvalContext(conn=FakeConn({})))
+    assert m2.evaluated == 0 and m2.measured is None
+
+
 def test_gq05_not_evaluable_without_two_runs() -> None:
     conn = FakeConn(
         {

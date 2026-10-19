@@ -317,7 +317,7 @@ unit = "share"
 basis_class = "B1"
 fixing = ["P35.32", "P35.34"]
 from = "C11 (SIG-CONF-009)"
-note = "Surrey -13 %, ACT -4.2 % (L2 M40); not_evaluable until PKG-12/J3 TX-04 run telemetry lands — never a pass"
+note = "Surrey -13 %, ACT -4.2 % (L2 M40); the P35.34 telemetry writer records the sig.upstream-reconciliation/1 pairs and eval_gq19 measures the unexplained share — stays report mode (enforcement promotion is CONF-01's); zero recorded pairs is not_evaluable, never a pass"
 
 [[check]]
 id = "GQ-20"

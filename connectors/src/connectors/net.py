@@ -54,6 +54,7 @@ real sockets and a later ticket can plug a real HTTP transport in unchanged.
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -347,6 +348,18 @@ class PoliteFetcher:
         #: verbatim, so the refusal can be recorded on the rights record and
         #: routed to the operator (S6R-28; S6 R-19 for express-terms rows).
         self.reservations: list[dict[str, Any]] = []
+        #: Per-egress telemetry rows (P35.34 / PKG-12, the SIG-CONF-009 input
+        #: surface): one row per egress this run issued or attempted —
+        #: ``{"url", "kind", "status", "bytes", "fetched_at", "duration_ms",
+        #: "outcome"}`` — ``kind`` is ``"content"`` or ``"robots"`` (the
+        #: robots.txt probe is real egress too), ``status``/``bytes`` are
+        #: absent when the attempt refused before any response, ``fetched_at``
+        #: is the transport's own retrieval stamp, and ``outcome`` marks a
+        #: non-plain ending (``host_opt_out`` / ``rights_reservation`` /
+        #: ``challenge`` / ``transport_error``). The run's fetch record
+        #: carries them verbatim; the report writer scrubs each URL through
+        #: the S-6 lane rules into ``ingest_run_report.per_fetch``.
+        self.per_fetch: list[dict[str, Any]] = []
 
     @property
     def user_agent_string(self) -> str:
@@ -367,6 +380,19 @@ class PoliteFetcher:
             return self._robots[host]
         robots_url = _robots_url(sample_url)
         result = self._transport.robots(robots_url)
+        # P35.34: the robots.txt probe is real egress — recorded per fetch like
+        # content fetches (kind "robots" keeps it distinct in the run record);
+        # unevidenced fields stay absent, never zero-shaped.
+        robots_entry: dict[str, Any] = {
+            "url": robots_url,
+            "kind": "robots",
+            "fetched_at": now_utc().isoformat(),
+        }
+        if result.status is not None:
+            robots_entry["status"] = result.status
+        if result.text is not None:
+            robots_entry["bytes"] = len(result.text.encode("utf-8"))
+        self.per_fetch.append(robots_entry)
         retrieved = result.text is not None
         # RFC 9309 §2.3.1.4 access-result split (ADR-087 — the classification
         # layer is unchanged): a 4xx answer means no policy exists
@@ -469,6 +495,7 @@ class PoliteFetcher:
         opt_out_reason = self._opt_out.reason_for(host)
         if opt_out_reason is not None:
             self.opt_out_refusals.append({"url": url, "host": host, "reason": opt_out_reason})
+            self.per_fetch.append({"url": url, "kind": "content", "outcome": "host_opt_out"})
             raise HostOptOut(url, host, opt_out_reason)
         # ADR-083 carve-out: an allow-listed API endpoint is API mode (documented,
         # ToS-governed, rate-limited) — robots governs crawling, not this. A host
@@ -499,7 +526,34 @@ class PoliteFetcher:
             kwargs["headers"] = headers
         if body is not None:
             kwargs["body"] = body
-        result = self._transport.request(url, user_agent=self._ua, **kwargs)
+        t0 = time.monotonic()
+        try:
+            result = self._transport.request(url, user_agent=self._ua, **kwargs)
+        except Exception:
+            # P35.34: a transport-level failure is still an issued egress —
+            # recorded with its outcome, status/bytes honestly absent.
+            self.per_fetch.append(
+                {
+                    "url": url,
+                    "kind": "content",
+                    "outcome": "transport_error",
+                    "duration_ms": round((time.monotonic() - t0) * 1000),
+                }
+            )
+            raise
+        entry: dict[str, Any] = {
+            "url": url,
+            "kind": "content",
+            "status": result.status,
+            "bytes": len(result.body),
+            "fetched_at": (
+                result.retrieved_at.isoformat()
+                if result.retrieved_at is not None
+                else now_utc().isoformat()
+            ),
+            "duration_ms": round((time.monotonic() - t0) * 1000),
+        }
+        self.per_fetch.append(entry)
         # SIG-INGEST-046c: an affirmative machine-readable rights reservation on
         # the response (Content-Signal / TDM-Reservation / X-Robots-Tag headers,
         # or a page-level meta reservation on HTML bodies) is honoured as a
@@ -521,8 +575,10 @@ class PoliteFetcher:
                     "signals": [{"kind": s.kind, "detail": s.detail} for s in reservation.signals],
                 }
             )
+            entry["outcome"] = "rights_reservation"
             raise ReservationRefused(url, host, reservation)
         if _is_challenge(result):
+            entry["outcome"] = "challenge"
             raise ChallengeEncountered(
                 f"{url!r} returned a bot-management challenge (status {result.status}); "
                 "SIG does not defeat challenges (SIG-INGEST-013) — recorded, not retried.",

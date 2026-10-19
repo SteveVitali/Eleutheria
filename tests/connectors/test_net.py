@@ -13,8 +13,10 @@ import pytest
 from connectors.net import (
     DEFAULT_CONTACT_URL,
     ChallengeEncountered,
+    HostOptOut,
     PoliteFetcher,
     RateLimiter,
+    ReservationRefused,
     user_agent,
 )
 from policy.crawler import CircumventionError
@@ -262,3 +264,95 @@ def test_a_slower_robots_delay_still_demands_slower(transport_factory, json_resp
     fetcher.set_host_delay("api.example", 12.0)
     fetcher.fetch(url)
     assert limiter.delay_for("api.example") == pytest.approx(30.0)
+
+
+# --- P35.34 / PKG-12: the per-fetch telemetry rows ------------------------------
+#
+# ``PoliteFetcher.per_fetch`` is the run telemetry's egress ledger — one row
+# per egress issued or attempted (content fetches AND the robots.txt probe),
+# carrying status/bytes/fetched_at plus a recorded outcome for non-plain
+# endings. The FetchRecord carries it verbatim; the report writer scrubs it.
+
+
+def test_per_fetch_records_the_content_fetch_and_the_robots_probe(
+    transport_factory, json_response
+) -> None:  # type: ignore[no-untyped-def]
+    url = "https://portal.example/api"
+    transport = transport_factory(
+        {url: json_response(url, {"id": "p1", "cameras": 3})}, robots_status=200
+    )
+    fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
+    result = fetcher.fetch(url)
+    content = [e for e in fetcher.per_fetch if e["kind"] == "content"]
+    robots = [e for e in fetcher.per_fetch if e["kind"] == "robots"]
+    assert len(content) == 1 and len(robots) == 1
+    entry = content[0]
+    assert entry["url"] == url
+    assert entry["status"] == 200
+    assert entry["bytes"] == len(result.body)
+    assert entry["fetched_at"] == "2026-06-01T00:00:00+00:00"
+    assert "duration_ms" in entry
+    assert "outcome" not in entry  # a plain success records no outcome token
+    assert robots[0]["status"] == 200 and robots[0]["bytes"] > 0
+
+
+def test_per_fetch_records_a_challenge_as_an_outcome(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    url = "https://portal.example/api"
+    transport = transport_factory({url: json_response(url, {}, status=403)})
+    fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
+    with pytest.raises(ChallengeEncountered):
+        fetcher.fetch(url)
+    entry = [e for e in fetcher.per_fetch if e["kind"] == "content"][0]
+    assert entry["status"] == 403 and entry["outcome"] == "challenge"
+
+
+def test_per_fetch_records_a_rights_reservation_refusal(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    from connectors.stages import FetchResult
+
+    url = "https://portal.example/api"
+    result = FetchResult(
+        url=url,
+        status=200,
+        body=b"{}",
+        media_type="application/json",
+        headers={"TDM-Reservation": "1"},
+    )
+    transport = transport_factory({url: result})
+    fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
+    with pytest.raises(ReservationRefused):
+        fetcher.fetch(url)
+    entry = [e for e in fetcher.per_fetch if e["kind"] == "content"][0]
+    assert entry["status"] == 200 and entry["outcome"] == "rights_reservation"
+
+
+def test_per_fetch_records_a_transport_error(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    url = "https://portal.example/api"
+    transport = transport_factory({})  # no canned response — request raises
+    fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
+    with pytest.raises(KeyError):  # FakeTransport models transport failure as a miss
+        fetcher.fetch(url)
+    entry = [e for e in fetcher.per_fetch if e["kind"] == "content"][0]
+    assert entry["outcome"] == "transport_error"
+    assert "status" not in entry and "bytes" not in entry
+
+
+def test_per_fetch_records_an_opt_out_refusal_with_zero_egress(
+    transport_factory, json_response
+) -> None:  # type: ignore[no-untyped-def]
+    from connectors.opt_out import parse_register
+
+    url = "https://portal.example/api"
+    transport = transport_factory({url: json_response(url, {"id": "p1"})})
+    register = parse_register(
+        '[[opt_outs]]\nhost = "portal.example"\n'
+        'recorded_on = 2026-10-01\nevidence = "test fixture"\n'
+    )
+    fetcher = PoliteFetcher(
+        connector_name="toy",
+        connector_version="1",
+        transport=transport,
+        opt_out_register=register,
+    )
+    with pytest.raises(HostOptOut):
+        fetcher.fetch(url)
+    assert fetcher.per_fetch == [{"url": url, "kind": "content", "outcome": "host_opt_out"}]

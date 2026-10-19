@@ -98,6 +98,7 @@ def emitted_claim_digest(
     record: Mapping[str, Any],
     *,
     classes: Mapping[str, PredicateClass] | None = None,
+    connector_version: str | None = None,
 ) -> str:
     """The emitter-side claim digest — the same function the sink runs.
 
@@ -105,11 +106,31 @@ def emitted_claim_digest(
     registry fresh. A record whose predicate the registry does not declare mints
     under ``ref`` — identical to the sink, which quarantines unregistered
     predicates before they could mint anyway.
+
+    ``connector_version`` (P35.34 / SIG-INGEST-004) is the emitting connector's
+    version — the sink seals the identity with the versions its binding writes
+    (the record's declared ``extractor_version`` else the connector's, and the
+    connector's ``normalizer_version``). To reproduce the minted identity for a
+    record that does not itself declare the versions, pass the same connector
+    version the sink ran under; ``None`` mints unsealed (pre-P35.34 shape).
     """
     if classes is None:
         classes = predicate_temporal_classes()
     predicate = _first_key(record, "predicate_id", "predicate")
-    return claim_digest(record, temporal_class=classes.get(predicate, "ref"))
+    evidence_map = record.get("evidence")
+    if not isinstance(evidence_map, Mapping):
+        evidence_map = {}
+    extractor_version = (
+        record.get("extractor_version")
+        or evidence_map.get("extractor_version")
+        or connector_version
+    )
+    return claim_digest(
+        record,
+        temporal_class=classes.get(predicate, "ref"),
+        extractor_version=str(extractor_version) if extractor_version is not None else None,
+        normalizer_version=connector_version,
+    )
 
 
 def _first_key(record: Mapping[str, Any], *keys: str) -> str:
@@ -146,12 +167,15 @@ def reconcile_rows(
     source_id: str,
     classes: Mapping[str, PredicateClass] | None = None,
     side: str = "emitted",
+    connector_version: str | None = None,
 ) -> list[dict[str, str]]:
     """Project emitted claim records to ``ingest_claim_reconcile.csv`` rows.
 
     Only claim records enter the comparison — the sink's own claim filter, so a
     side-by-side entity/outcome record never reports as a phantom mint. The row
-    digest is the emitter-side mint (:func:`emitted_claim_digest`).
+    digest is the emitter-side mint (:func:`emitted_claim_digest`); pass the
+    emitting connector's version (P35.34 / SIG-INGEST-004) so the emitted
+    digest seals the same binding versions the sink's mint does.
     """
     if classes is None:
         classes = predicate_temporal_classes()
@@ -172,7 +196,9 @@ def reconcile_rows(
                 "subject_key": subject,
                 "object_key": obj,
                 "value_repr": value_repr,
-                "content_digest": emitted_claim_digest(record, classes=classes),
+                "content_digest": emitted_claim_digest(
+                    record, classes=classes, connector_version=connector_version
+                ),
                 "payload_version": PAYLOAD_VERSION,
             }
         )

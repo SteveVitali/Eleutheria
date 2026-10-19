@@ -370,6 +370,10 @@ def test_replay_ingest_tops_up_new_claims_and_reruns_plus_zero(
         live = PgClaimSink(
             conn,
             connector_name="flock_portal",
+            # P35.34 / SIG-INGEST-004: identity seals the binding versions —
+            # the original run must mint under the SAME connector version the
+            # replay stamps (a different version is legitimately a new claim).
+            connector_version="1.0.0",
             object_resolver=record_object_ref,
             logical_run="eyes_on_flock@2026-09-20",
         )
@@ -498,6 +502,10 @@ def test_replay_ingest_selects_the_sources_non_replay_runs(clean_dsn: str, tmp_p
         live = PgClaimSink(
             conn,
             connector_name="flock_portal",
+            # P35.34 / SIG-INGEST-004: identity seals the binding versions —
+            # the original run must mint under the SAME connector version the
+            # replay stamps (a different version is legitimately a new claim).
+            connector_version="1.0.0",
             object_resolver=record_object_ref,
             logical_run="eyes_on_flock@2026-09-20",
         )
