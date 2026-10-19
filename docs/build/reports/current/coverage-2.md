@@ -93,7 +93,9 @@
 | SIG-PUB-014 | implementation | MET | 2026-10-01 | — |
 | SIG-PUB-014b | implementation | MET | 2026-10-01 | — |
 | SIG-PUB-015 | public | PARTIAL | 2026-10-01 | — |
+| SIG-PUB-015 | public | MET-ENGINEERED(D-R10-PUBLISH-1) | 2026-10-14 | SIG-PUB-015:r11-1 |
 | SIG-PUB-016 | public | MISSING | 2026-10-01 | — |
+| SIG-PUB-016 | public | MET-ENGINEERED(D-R10-PUBLISH-1) | 2026-10-14 | SIG-PUB-016:r11-1 |
 | SIG-RECON-018 | hosted | AT-RISK-INTEGRATION | 2026-10-01 | — |
 | SIG-RECON-039 | public | PARTIAL | 2026-10-01 | — |
 | SIG-RECON-040 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
@@ -120,7 +122,5 @@
 | SIG-SEC-006 | hosted | PARTIAL | 2026-10-01 | — |
 | SIG-SEC-007 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-008 | hosted | MISSING | 2026-10-01 | — |
-| SIG-SEC-009 | hosted | MISSING | 2026-10-01 | — |
-| SIG-SEC-010 | hosted | MISSING | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

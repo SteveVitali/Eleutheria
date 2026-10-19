@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "481ec87603d8413641f0fed2e5ad5880a3832ec2",
-  "manifest_inputs": 1032,
+  "input_commit": "4ce44ed9e6aa8ef0e183bde2fdda2ac7a87dae63",
+  "manifest_inputs": 1033,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.15",
-    "lastCompleted": "P35.28",
+    "nextTicket": "P35.66",
+    "lastCompleted": "P36.15",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.28-officer-naming-gate-default-deny",
+    "chainTip": "r11/P36.15-redaction-pipeline",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-14T07:26:48Z"
+    "updatedAt": "2026-10-14T09:35:00Z"
   },
   "counts": {
     "obligations": 163,
@@ -33,7 +33,7 @@
     "terminal": 71,
     "events": 650,
     "transitions": 33,
-    "coverage_assessments": 310,
+    "coverage_assessments": 312,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -11442,14 +11442,14 @@
           "label": "historical/csv"
         },
         "SIG-PUB-015": {
-          "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:6242",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "docs/2_canonical_design_spec.md:6242;evidence/src/evidence/redaction.py;evidence/src/evidence/tiers.py;connectors/src/connectors/redaction_pipeline.py;connectors/src/connectors/capture_ocfl.py;connectors/src/connectors/cli.py;api/src/api/store_pg.py;exports/src/exports/dossier.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-PUB-016": {
-          "verdict": "MISSING",
-          "evidence": "docs/2_canonical_design_spec.md:6246",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "docs/2_canonical_design_spec.md:6246;evidence/src/evidence/redaction.py;evidence/src/evidence/tiers.py;connectors/src/connectors/redaction_pipeline.py;api/src/api/store_pg.py;exports/src/exports/dossier.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -15667,6 +15667,16 @@
         "assessment_id": "SIG-PUB-015:r11-1"
       },
       {
+        "requirement_id": "SIG-PUB-015",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-10-14",
+        "code_revision": "r11/P36.15-redaction-pipeline @ c54503ea36a04378693d4829c60bdab1349ce94b",
+        "limitations": "landing re-verdict at P36.15 (PR #291): the pipeline is wired end to end — propose_redaction enqueues a kind=redaction review_item on the curation review mechanism (scope digest-bound: the record carries removed_sha256, never removed text); run_redaction requires the item's latest recorded review_decision to be a human accept (append-only, reviewer role never a personal identifier, Part VIII §0.7; the pipeline never self-approves — it writes no decision); the derivative is a NEW content-addressed OCFL object with the sig.redaction-review/1 sidecar and the parent's bytes untouched; PgReadStore.capture joins the newest parent_capture_id row and DocumentRef.for_capture emits derivative_capture_digest, so the tier/API/dossier excerpt surfaces serve the derivative where one exists. Verified at the implementation domain (unit/connector/API/export legs + the Docker PG staging leg over the real sqitch spine); live_verification=false. Owed legs: the first real redaction rides the consumer rows (P36.74's in-memory screen; later capture corrections); the public-domain leg — a published surface carrying a derivative excerpt — rides the release-exposure row D-R10-PUBLISH-1 (OPEN).",
+        "supersedes": "SIG-PUB-015:r11-1",
+        "assessment_id": "SIG-PUB-015:r11-2"
+      },
+      {
         "requirement_id": "SIG-PUB-016",
         "domain": "public",
         "verdict": "MISSING",
@@ -15675,6 +15685,16 @@
         "limitations": "transcription of the ratified Round-11 re-verdict (plan §6.6) from the cited research; current-state verdict, routed to its owning row; no implementation claim; matrix row note carries the reasoning; previous matrix verdict MISSING",
         "supersedes": null,
         "assessment_id": "SIG-PUB-016:r11-1"
+      },
+      {
+        "requirement_id": "SIG-PUB-016",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-10-14",
+        "code_revision": "r11/P36.15-redaction-pipeline @ c54503ea36a04378693d4829c60bdab1349ce94b",
+        "limitations": "landing re-verdict at P36.15 (PR #291): the redacted spans are physically absent — apply_spans substitutes each reviewed span with [redacted] in the decoded bytes and apply_redaction self-checks the removed text is absent from the derivative's raw bytes AND its extracted text layer (extract_text is the proof surface; tests/evidence/test_redaction.py proves it over text, HTML, JSON and XML). No overlays on extractable text; a binary container (PDF/PNG/WACZ/zip) is refused — the recorded boundary (a format-aware redactor is a separate deliberate act). Verified at the implementation domain; live_verification=false. Owed legs: the first real redaction rides P36.74 + later capture corrections; the published surface rides D-R10-PUBLISH-1 (OPEN).",
+        "supersedes": "SIG-PUB-016:r11-1",
+        "assessment_id": "SIG-PUB-016:r11-2"
       },
       {
         "requirement_id": "SIG-RECON-018",
@@ -17966,9 +17986,19 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-PUB-015",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-10-14"
+        },
+        {
           "requirement": "SIG-PUB-016",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-PUB-016",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-10-14"
         },
         {
           "requirement": "SIG-RECON-039",
@@ -18639,10 +18669,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "201ee479ef2c86edbecf7e77c8a0b1c8179f2b638352b5c3c0f3e40801041c3a",
+  "manifest_sha256": "1ff6c5a2113aa172cbf7e8cb9fe54a416206a3ecf279c1d2c3defbfef95a3255",
   "current_md": {
     "lines": 63,
-    "bytes": 15501,
+    "bytes": 15603,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

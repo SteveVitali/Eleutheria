@@ -24,6 +24,26 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Redaction pipeline, wired end to end** (P36.15 / R11-SAFE-04;
+  **SIG-PUB-015 / SIG-PUB-016** owners; cites SIG-EVID-011, SIG-EPIS-006,
+  SIG-PUB-014a, SIG-GOV-007) — a redaction now has a real production path:
+  `sig-connectors redact-propose` records a digest-bound `redaction`
+  `review_item` on the curation-owned mechanism (scope = offsets + sha256 of
+  the removed text, never the text itself); a recorded human `accept`
+  (reviewer *role*, never a personal name, Part VIII §0.7) is **required**
+  before `redact-apply` writes the derivative as a NEW OCFL object carrying
+  the `sig.redaction-review/1` applied record — the parent's bytes are
+  write-once and never touched (SIG-EPIS-006). `evidence.redaction` gains the
+  span/substitution + extraction-proof layer (`apply_redaction` refuses a
+  missing or mismatched review and self-checks that removed text is absent
+  from the derivative's bytes and text layer); `evidence.tiers` gains
+  `publishable_excerpt` so `public_representation`, the API evidence
+  representation, and `exports.dossier.DocumentRef.for_capture` serve the
+  derivative's excerpt — never the parent's raw excerpt — wherever a
+  derivative row exists (`PgReadStore` resolves the newest
+  `parent_capture_id`-linked row). Binary containers (PDF/PNG/WACZ) are
+  refused — no fake overlay "redaction".
+
 - **Officer-naming gate on the publication path, default deny** (P35.28
   / R11-SAFE-03; **SIG-PUB-007** owner; cites SIG-PUB-008/009/010/017,
   ADR-163, ADR-209) — the §43.4 five-prong + two-reviewer test now binds

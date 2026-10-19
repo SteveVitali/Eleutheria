@@ -38,6 +38,10 @@ dependencies = [
     # there is no cycle even though api depends on sig-exports.
     "sig-inference",
     "sig-parsing",
+    # P36.15 (SIG-PUB-015/016): dossier excerpts are derivative-sourced through
+    # evidence.tiers.publishable_excerpt — sig-evidence is a leaf (blake3/boto3
+    # only), so there is no cycle even though api/connectors depend on exports.
+    "sig-evidence",
     "duckdb>=1.0.0",
     # P21.5: the Zenodo deposit REST transport (SIG-EXPORT-002) speaks HTTP over httpx —
     # already available in the workspace (the P14.1 API tests + P21.3 connectors use it);
@@ -58,6 +62,7 @@ sig-db = { workspace = true }
 sig-tasks = { workspace = true }
 sig-inference = { workspace = true }
 sig-parsing = { workspace = true }
+sig-evidence = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

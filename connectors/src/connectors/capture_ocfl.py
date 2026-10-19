@@ -48,6 +48,12 @@ CAPTURE_LOGICAL_PATH = "capture"
 METADATA_LOGICAL_PATH = "metadata.json"
 #: The logical path an optional WACZ web-archive is stored under (HTML pages).
 WACZ_LOGICAL_PATH = "page.wacz"
+#: The logical path the applied-redaction record is stored under inside a
+#: derivative object — the ``sig.redaction-review/1`` sidecar naming the
+#: parent, the reviewed scope digests, the method/version and the reviewer
+#: role (P36.15; SIG-PUB-015/016). The record carries digests of the removed
+#: spans — never the removed text itself.
+REDACTION_LOGICAL_PATH = "redaction.json"
 
 #: A WACZ builder turns (url, bytes) into a WACZ archive's bytes (P02.2 Playwright).
 WaczBuilder = Callable[[str, bytes], bytes]
@@ -137,6 +143,78 @@ class OcflCaptureStore:
             ocfl_version=version,
         )
 
+    def put_derivative(
+        self,
+        data: bytes,
+        *,
+        media_type: str,
+        parent_capture_id: str,
+        parent_digest: str,
+        redaction: Mapping[str, object],
+        source_uri: str = "",
+        retrieved_at: datetime | None = None,
+    ) -> CaptureRef:
+        """Archive a redaction derivative as a NEW OCFL object (SIG-EVID-011, P36.15).
+
+        The derivative is content-addressed like every capture (its own object,
+        its own digest — identical redacted bytes dedup to one object); the
+        **parent is never modified** (SIG-EPIS-006). ``redaction`` is the
+        ``sig.redaction-review/1`` applied-redaction record
+        (:func:`evidence.redaction.apply_redaction`'s outcome) — written as the
+        object's ``redaction.json`` sidecar and summarized on the metadata
+        sidecar so the capture's provenance names its parent, the method and
+        version, and the reviewing *role*.
+        """
+        digest = multihash(data)
+        object_id = capture_object_id(digest)
+        record = dict(redaction)
+        review = record.get("review")
+        review_map = dict(review) if isinstance(review, Mapping) else {}
+        spans = record.get("spans")
+        metadata = {
+            "digest": digest,
+            "source_uri": source_uri,
+            "media_type": media_type,
+            "retrieved_at": retrieved_at.isoformat() if retrieved_at is not None else None,
+            "byte_size": len(data),
+            "headers": {},
+            "parent_capture_id": parent_capture_id,
+            "parent_digest": parent_digest,
+            "redaction": {
+                "method": record.get("redaction_method"),
+                "version": record.get("redaction_version"),
+                "reviewer_role": review_map.get("reviewer_role"),
+                "span_count": len(spans) if isinstance(spans, list | tuple) else 0,
+            },
+        }
+        files: dict[str, bytes] = {
+            CAPTURE_LOGICAL_PATH: data,
+            METADATA_LOGICAL_PATH: json.dumps(metadata, sort_keys=True, ensure_ascii=False).encode(
+                "utf-8"
+            ),
+            REDACTION_LOGICAL_PATH: json.dumps(record, sort_keys=True, ensure_ascii=False).encode(
+                "utf-8"
+            ),
+        }
+        self._store.add_version(
+            object_id,
+            files,
+            message=(
+                f"redaction derivative of {parent_digest} "
+                f"({redaction.get('redaction_method')} {redaction.get('redaction_version')})"
+            ),
+        )
+        version = self._head_version(digest)
+        return CaptureRef(
+            digest=digest,
+            media_type=media_type,
+            source_uri=source_uri,
+            byte_size=len(data),
+            retrieved_at=retrieved_at,
+            ocfl_object_id=object_id,
+            ocfl_version=version,
+        )
+
     def get(self, digest: str, *, version: str | None = None) -> bytes:
         """Read the captured bytes back by content multihash (OCFL resolve).
 
@@ -178,6 +256,7 @@ __all__ = [
     "CAPTURE_LOGICAL_PATH",
     "METADATA_LOGICAL_PATH",
     "OcflCaptureStore",
+    "REDACTION_LOGICAL_PATH",
     "WACZ_LOGICAL_PATH",
     "WaczBuilder",
     "capture_object_id",

@@ -168,3 +168,67 @@ def test_unknown_values_are_rendered_not_omitted() -> None:
     assert row["value"] is None
     assert row["display_value"] == "unknown"
     assert "unknown" in render_print_html(_dossier())
+
+
+# --- P36.15: dossier excerpts are derivative-sourced (SIG-PUB-015/016) --------
+
+
+def _cap_meta(tier: str, *, derivative=None, excerpt="raw parent excerpt"):
+    from evidence.tiers import CaptureMetadata, StorageTier
+
+    return CaptureMetadata(
+        capture_id="cap-9",
+        source_id="src",
+        source_uri="urn:src:9",
+        retrieved_at="2026-10-01",
+        content_digest="bparent",
+        media_type="text/plain",
+        tier=StorageTier(tier),
+        excerpt=excerpt,
+        derivative=derivative,
+    )
+
+
+def test_document_ref_for_capture_uses_the_derivative_excerpt() -> None:
+    from evidence.redaction import RedactionDerivative
+
+    deriv = RedactionDerivative(
+        capture_id="cap-9-red",
+        content_digest="bderiv",
+        method="text-layer-substitution",
+        version="1",
+        excerpt="the redacted excerpt",
+    )
+    ref = DocumentRef.for_capture(
+        _cap_meta("public", derivative=deriv),
+        source_family="executed contract",
+        stable_locator="https://example/contract",
+        locator={"text_span": [0, 10]},
+    )
+    body = ref.as_json()
+    assert body["excerpt"] == "the redacted excerpt"
+    assert body["derivative_capture_digest"] == "bderiv"
+    # The parent's raw excerpt never appears in the dossier.
+    assert "raw parent excerpt" not in str(body)
+
+
+def test_document_ref_for_capture_without_derivative_keeps_its_excerpt() -> None:
+    ref = DocumentRef.for_capture(
+        _cap_meta("public"),
+        source_family="executed contract",
+        stable_locator="https://example/contract",
+        locator={},
+    )
+    body = ref.as_json()
+    assert body["excerpt"] == "raw parent excerpt"
+    assert "derivative_capture_digest" not in body
+
+
+def test_document_ref_for_capture_restricted_serves_the_literal() -> None:
+    ref = DocumentRef.for_capture(
+        _cap_meta("restricted"),
+        source_family="executed contract",
+        stable_locator="https://example/contract",
+        locator={},
+    )
+    assert ref.as_json()["excerpt"] == "[redacted]"
