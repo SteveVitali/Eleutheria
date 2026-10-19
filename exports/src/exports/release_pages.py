@@ -30,6 +30,7 @@ from urllib.parse import quote, urlencode
 
 from policy.labels import KIND_WORDS, hash4, kind_for
 
+from .provenance_panel import panel_from_statement, panel_html
 from .published_record import EvidenceRef, PublishedRecord
 
 
@@ -380,7 +381,10 @@ def record_page(
     show_access = any(a.access_kind for a in record.claim_anchors)
     claim_rows = "".join(
         "<tr>"
-        f'<td id="claim-{_e(a.claim_id)}"><code>{_e(a.claim_id)}</code></td>'
+        # P35.36: the #claim-<id> anchor moved onto the per-claim
+        # ProvenancePanel below — the data contract the anchor names. The
+        # claim table links it (fragment-only href, never crawled).
+        f'<td><a href="#claim-{_e(a.claim_id)}"><code>{_e(a.claim_id)}</code></a></td>'
         "<td>"
         + (
             _e(a.predicate_id)
@@ -437,6 +441,37 @@ def record_page(
         for s in record.source_refs
     )
 
+    # P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, K13 §7 W1 / UXR-33,
+    # SIG-TRANSP-011): one shared ProvenancePanel per claim anchor, rendered
+    # from the record's embedded ``sig.statement/1`` rows — the same contract
+    # the release's statements file and the web surfaces carry. The anchor
+    # lives on the panel; a claim with no published statement renders the
+    # named-absence panel, never a fabricated binding.
+    stmt_by_claim = {
+        str(s.get("claim_id")): s
+        for s in record.claim_statements
+        if isinstance(s, dict) and s.get("claim_id")
+    }
+    panels_html = "".join(
+        panel_html(
+            panel_from_statement(
+                stmt_by_claim.get(a.claim_id),
+                claim_id=a.claim_id,
+                source_href="/sources/",
+                dispute_href=_report_this_record_href(record),
+                json_href=record.json_href,
+            )
+        )
+        for a in record.claim_anchors
+    )
+    stmt_link = (
+        f" The compartment's statements file: "
+        f'<a href="/r/{_e(pub)}/c/{_e(comp)}/statements.jsonl">'
+        f"<code>statements.jsonl</code></a> (<code>sig.statement/1</code>)."
+        if stmt_by_claim
+        else ""
+    )
+
     cov = record.coverage
     label_txt = record.label.get("text") or _typed_fallback_label(
         record.entity_type, record.entity_id
@@ -458,9 +493,15 @@ def record_page(
 {loc_html}
 <h2>Claim anchors</h2>
 <p class="mut">Each anchor is a spine-issued claim id — the claim-level citation.
-Anchors without published detail state so explicitly.</p>
+Anchors without published detail state so explicitly. Each resolves to its
+provenance panel below (<code>#claim-&lt;id&gt;</code>).</p>
 <table><tr><th>Claim anchor</th><th>Predicate</th>{access_th}<th>Observed</th><th>Source</th></tr>
 {claim_rows}</table>
+<h2>Claim provenance</h2>
+<p class="mut">One provenance panel per claim — J3 §5.1's binding states,
+verbatim. A claim SIG cannot evidence shows the named absence, never an
+implied document.{stmt_link}</p>
+{panels_html}
 <h2>Evidence anchors</h2>
 <table><tr><th>Claim</th><th>Capture</th><th>Artifact</th><th>Role</th><th>Access</th></tr>
 {ev_rows}</table>

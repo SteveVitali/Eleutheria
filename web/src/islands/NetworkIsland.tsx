@@ -46,6 +46,9 @@ import {
   viewHref,
   WORKSPACE_VIEWS,
 } from "../lib/workspace-state";
+import { panelFromStatement } from "../lib/provenance-panel";
+import type { StatementRow } from "../lib/provenance-panel";
+import ProvenancePanel from "../components/ProvenancePanel";
 import { useWorkspaceState } from "./workspace";
 
 export interface NetworkIslandProps {
@@ -54,6 +57,13 @@ export interface NetworkIslandProps {
   focusEntityId: string;
   /** The latest activated publication id for this build, or null (none). */
   release: string | null;
+  /**
+   * P35.36 (UXR-33): `claim_id → sig.statement/1` — the statement rows for
+   * claims the page names (only claims that HAVE statements ship; absent
+   * claims normalise in-island through the same `panelFromStatement` to the
+   * `not_recorded` panel — never a skipped claim).
+   */
+  claimStatements?: Record<string, StatementRow>;
 }
 
 interface Placed {
@@ -77,6 +87,7 @@ export default function NetworkIsland({
   edges,
   focusEntityId,
   release,
+  claimStatements,
 }: NetworkIslandProps): ReactElement {
   const { state, issues, ignored, update } = useWorkspaceState("network", { release });
 
@@ -292,6 +303,15 @@ export default function NetworkIsland({
                           {e.evidence.map((claim) => (
                             <li key={claim}>
                               <code>{claim}</code>
+                              {/* P35.36 / UXR-33: the shared contract — the same
+                                  field set + binding-state wording the static
+                                  list, the claim viewer and the record page
+                                  render. anchor={false}: the claim's canonical
+                                  #claim-<id> anchor lives on its viewer page. */}
+                              <ProvenancePanel
+                                panel={panelFromStatement(claimStatements?.[claim], claim)}
+                                anchor={false}
+                              />
                             </li>
                           ))}
                         </ul>

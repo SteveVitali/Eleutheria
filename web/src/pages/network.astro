@@ -35,12 +35,16 @@ import {
   SPECULATIVE_HOP_THRESHOLD,
 } from "../lib/network";
 import NetworkEdgeItem from "../components/NetworkEdgeItem.astro";
+import ProvenancePanel from "../components/ProvenancePanel";
 import {
   getNetwork,
   getNetworkFocusEntityId,
   getLatestReleaseTarget,
+  getStatementIndex,
   capRows,
 } from "../lib/data";
+import { panelForClaim } from "../lib/provenance-panel";
+import type { ProvenancePanelData, StatementRow } from "../lib/provenance-panel";
 import NetworkIsland from "../islands/NetworkIsland";
 import "../styles/islands.css";
 
@@ -68,6 +72,33 @@ const ego = hasNetwork
 
 // The publication the workspace `release=` param defaults to (P32.15).
 const LATEST = getLatestReleaseTarget();
+
+// P35.36 (UXR-33): the `claim_id → sig.provenance-panel/1` map — one panel per
+// UNIQUE claim the page names (edge supporting claims, partner-count claims,
+// path-hop evidence), rendered once in the "Claim provenance" section below so
+// each `#claim-<id>` anchor resolves exactly once; the rows link it. The
+// island's edge detail renders the same normalised contract. A claim with no
+// statement normalises to the `not_recorded` panel — never a gap.
+const STATEMENTS = getStatementIndex();
+const PAGE_CLAIM_IDS = [
+  ...new Set([
+    ...NETWORK_EDGES.flatMap((e) => e.evidence ?? []),
+    ...NETWORK_NODES.flatMap((n) => n.degree_claim_ids ?? []),
+    ...ACCESS_PATHS.flatMap((p) => p.hops.flatMap((h) => h.evidence)),
+  ]),
+].sort();
+const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
+  PAGE_CLAIM_IDS.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]),
+);
+// The island ships only the claims that HAVE statements (the row bytes, not
+// the rendered panel) — absent claims normalise in-island to `not_recorded`
+// through the same `panelFromStatement`, so the serialized props stay lean.
+const ISLAND_STATEMENTS: Record<string, StatementRow> = Object.fromEntries(
+  PAGE_CLAIM_IDS.filter((cid) => STATEMENTS.has(cid)).map((cid) => [
+    cid,
+    STATEMENTS.get(cid)!,
+  ]),
+);
 
 // Lay the ego nodes out on a circle for the static diagram (center in the middle).
 const others = ego.nodes.filter((n) => n.id !== FOCUS_ENTITY_ID);
@@ -109,6 +140,7 @@ others.forEach((n, i) => {
       edges={NETWORK_EDGES}
       focusEntityId={FOCUS_ENTITY_ID}
       release={LATEST?.publicationId ?? null}
+      claimStatements={ISLAND_STATEMENTS}
     />
   </section>
   )}
@@ -330,4 +362,23 @@ others.forEach((n, i) => {
       </li>
     ))}
   </ol>
+
+  <!-- P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, UXR-33, SIG-TRANSP-011): one shared
+       provenance panel per claim the page names — the same contract the
+       record pages and the claim viewer render. Each `#claim-<id>` anchor
+       resolves to exactly one panel; a claim with no published statement
+       shows the `not_recorded` absence, never a fabricated binding. -->
+  {PAGE_CLAIM_IDS.length > 0 && (
+    <section data-testid="claim-provenance">
+      <h2 id="claim-provenance-heading">Claim provenance</h2>
+      <p class="mut">
+        One provenance panel per named claim — J3 §5.1's binding states,
+        verbatim. A claim SIG cannot evidence shows the named absence, never
+        an implied document.
+      </p>
+      {PAGE_CLAIM_IDS.map((cid) => (
+        <ProvenancePanel panel={CLAIM_PANELS[cid]!} anchor />
+      ))}
+    </section>
+  )}
 </BaseLayout>
