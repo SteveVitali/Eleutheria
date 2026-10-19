@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.29 landed (307); no live legs
-nextTicket:      P35.30                              # row 308
-lastCompleted:   P35.29                              # row 307
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #322@d0778cc9 5/5 (39177773737)
+projectStatus:   IN_PROGRESS                           # P35.30 landed (308); no live legs
+nextTicket:      P35.31                              # row 309
+lastCompleted:   P35.30                              # row 308
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #323@c58353ee 5/5 (39186648733)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.29-shared-labels-slugs-hashes   # base r11/P35.27-…
+chainTip:        r11/P35.30-network-labels-dates-evidence   # base r11/P35.29-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-18T23:37Z
+updatedAt:       2026-10-19T02:07Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1073,3 +1073,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-18 — P35.29 correction — ticket record (`ci:` lands at the next record entry — why: `runs/P35.29.md`) · PR #322 · row 307 shared labels/slugs/hashes (ADR-215; `policy.labels` the one derivation + `sig.entity-label/1` per compartment; A-10/ADR-159 org rule; Part VIII screen injected fail-closed) · no live legs, no production mutation · next → P35.30 (308) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.29 post-closeout record — `ci: pass #322@d0778cc9` 5/5 green head-bound (run 39177773737: python 18m26s, web 14m18s, composed 3m21s, docs 1m59s, security 39s; `reports/ci/p35_29_pr322.json` read 00:06:12Z — stack pass except the verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · pushed heads verbatim: `07f3dc79` impl → `d64f12a0` projection regen → `c0813a04` ledger-wording repair (docs-red on `d64f12a0` run 39175013447, SIG-MEM-011) → `5e388729` closeout records (docs-red run 39177395393, recorded-CI entry kind) → `d0778cc9` entry-kind repair (P35.25's in-place precedent) · `pre-closeout` head `c0813a04` was itself 5/5 green head-bound (run 39175437410) before closeout pushed · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.30 dispatch boundary-confirm — `ci: pass #322@56ec235` 5/5 green head-bound (run 39179354762: python 13m12s, web 15m4s, composed 3m19s, docs 2m0s, security 25s; ci_boundary read 00:25:05Z `logs/ci-P35.30-pre-dispatch.json`) · stack verbatim waived baseline `blockedOn: CI fail on #299@19ed46d (docs)` · the worker's own red-repair arc recorded verbatim in `runs/P35.29.md` (`d64f12a0`/`5e388729` docs-red → `c0813a04`/`d0778cc9` green; the `56ec2352` record head 5/5) · dispatching P35.30 (308 — /network/ labels/dates/evidence export side; gate: GATE-P answer recorded, no pause; not an OM-20 row) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.30 correction — ticket record (`ci:` lands at the next record entry — why: `runs/P35.30.md`) · PR #323 · row 308 /network/ labels, dates and evidence export side (ADR-216; one emitter both paths — D21 fields, snapshot-pinned currency, declared-independence support, honest undated/historical; degree-as-attribute; person-screened literal twins; registry-only labels) · pushed heads verbatim `d49a5f25` (docs-red run 39186450733, stale projection) → `c58353ee` regen 5/5 (run 39186648733) · no live legs, no production mutation · next → P35.31 (309) · harness: devin-desktop/swe-2-high/subagent
