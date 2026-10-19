@@ -193,6 +193,10 @@ safe = [
     'independent review\W*(not|never|unrun|without)',
     '\bnot independently reviewed\b',
     'independent review.{0,20}(not yet|not run|pending|required)',
+    # J3 §5.2's verbatim disclosure wording for an unreviewed claim
+    # (`review_status` not_run renders "Not yet independently reviewed" on
+    # P35.36's provenance panel) — a negation disclosure, never a review claim.
+    '[Nn]ot yet independently reviewed\b',
 ]
 
 # A recorded human-completion marker is a committed file under `record_glob`
