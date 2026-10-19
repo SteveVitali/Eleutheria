@@ -870,6 +870,75 @@ def served_storage_tier(
 
 
 # ---------------------------------------------------------------------------
+# The transparency view column allow-lists (P35.33 / J3 §3.3 items 1–2)
+# ---------------------------------------------------------------------------
+
+#: The columns ``v_transparency_run`` may carry — the scrub vocabulary's
+#: positive allow-list for the run surface. A view column this list does
+#: not name fails the closure test (the contract's "every field scrubbed
+#: through ``policy.transparency``"): run-level fields shared by more than
+#: one execution land NULL and the export renders ``not_recorded (shared
+#: run)`` (K10 §18 C-13); ``detail``, ``parameters``, ``environment``,
+#: ``backfilled_from`` and the gs:// WORM locators are never-exported
+#: (S-2/S-3/S-4) and never appear here.
+TRANSPARENCY_RUN_VIEW_COLUMNS: tuple[str, ...] = (
+    "report_id",
+    "run_id",
+    "source_id",
+    "link_basis",
+    "clock_basis",
+    "shared_run",
+    "started_at",
+    "finished_at",
+    "duration_seconds",
+    "completion_status",
+    "claims_considered",
+    "claims_inserted",
+    "claims_duplicate",
+    "fetches",
+    "records_emitted",
+    "robots_outcomes",
+    "refusal_classes",
+    "rate_limit_events",
+    "disappearances",
+    "document_outcomes",
+    "quota_reached",
+    "budget_reached",
+    "error_class",
+    "per_fetch",
+    "connector_name",
+    "connector_version",
+    "code_commit",
+    "recorded_at",
+)
+
+#: The columns ``v_transparency_capture`` may carry. ``target_key`` /
+#: ``source_uri`` pass through the S-6 URL scrub at emission (the view is
+#: ``sig_export``-only — the artifact, not the view, is the publication
+#: boundary); a sealed-tier capture's URL never leaves this surface.
+TRANSPARENCY_CAPTURE_VIEW_COLUMNS: tuple[str, ...] = (
+    "run_id",
+    "target_key",
+    "state",
+    "source_uri",
+    "records",
+    "mark_digest",
+    "capture_classification",
+    "storage_tier",
+    "byte_size",
+    "media_type",
+    "retrieved_at",
+    "mark_recorded_at",
+    "bytes_retained",
+    "redaction_applied",
+    "redacted_derivative",
+    "http_status",
+    "source_id",
+    "shared_run",
+)
+
+
+# ---------------------------------------------------------------------------
 # The bounded free-text scrub (S-2 + S-5 + S-7 in one pass)
 # ---------------------------------------------------------------------------
 
