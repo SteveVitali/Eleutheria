@@ -551,6 +551,27 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "dossier_okc": "dossier_documents",
     "dossier_tulsa": "dossier_documents",
     "dossier_san_diego": "dossier_documents",
+    # P36.11 (R11-ACQ-15): the r11-documents-01 document family — six grant
+    # records (grant_award facts: recipient/funder/programme/amount/purpose —
+    # an award is never a deployment), three council/agenda documents, two
+    # procurement-portal notices (contract/buyer — procured ≠ deployed) and one
+    # Guam legislation page, all on the shared `dossier_documents` adapter's
+    # clause_fields/index_listing handlers with reviewed targets in
+    # data/live_targets.toml. Every row stays `ingestion_permitted=false`
+    # (HG-03 RB-04/RB-06); the flips are the operator's OP-26 execution under
+    # ING-GO-B at P36.12 — this registration runs nothing live.
+    "grant_tx_txdmv_mvcpa": "dossier_documents",
+    "grant_ca_bscc_ort": "dossier_documents",
+    "grant_fl_senate_lfir": "dossier_documents",
+    "grant_al_adeca_psn": "dossier_documents",
+    "grant_nj_oag_bwc": "dossier_documents",
+    "grant_ok_dac_jag_lle": "dossier_documents",
+    "agenda_haskell_ar_council": "dossier_documents",
+    "agenda_des_moines_ia_council": "dossier_documents",
+    "agenda_jasper_sc_council": "dossier_documents",
+    "procportal_davie_fl_purchasing": "dossier_documents",
+    "procportal_forsyth_nc_purchasing": "dossier_documents",
+    "legis_gu_governor": "dossier_documents",
 }
 
 

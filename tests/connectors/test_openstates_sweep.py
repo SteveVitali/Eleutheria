@@ -164,9 +164,12 @@ def test_bill_query_targets_cover_every_jurisdiction() -> None:
     plan = openstates_plan()
     targets = _bill_query_targets(_jurisdictions(), plan)
     families = plan["query_families"]
+    pinned = plan.get("pinned_bill_queries", [])
     jurisdictions = _jurisdictions()
     assert len(jurisdictions) == 56  # 50 states + DC + 5 territories
-    assert len(targets) == len(jurisdictions) * len(families)
+    # P36.11: the generated set is the family sweep PLUS the reviewed pinned
+    # bill queries (each still one bounded bill_search target).
+    assert len(targets) == len(jurisdictions) * len(families) + len(pinned)
     # Every target is a bounded bill_search row carrying the query plan as data.
     for target in targets:
         assert target["kind"] == "bill_search"
@@ -200,7 +203,10 @@ def test_discover_more_expands_captured_index(tmp_path: Path) -> None:
         for p in (1, 2)
     ]
     targets = connector.discover_more(ctx, captures)
-    assert len(targets) == 56 * len(openstates_plan()["query_families"])
+    plan = openstates_plan()
+    assert len(targets) == 56 * len(plan["query_families"]) + len(
+        plan.get("pinned_bill_queries", [])
+    )
     # The resolved targets are recorded for the children's post-capture context.
     assert len(ctx.resolved_targets) == len(targets)
     ids = {t["id"] for t in targets}
@@ -434,3 +440,165 @@ def test_part_viii_guard_suppresses_a_forbidden_literal() -> None:
     matches, suppressed = _matched_legislation(bill)
     assert {m["term_id"] for m in matches} == {"drone"}
     assert suppressed == set()
+
+
+# --- P36.11 / R11-ACQ-15: the two pinned bill widen targets ---------------------
+# I9b-C068 (AZ HB 2574, 56th-2nd-regular) and I9b-C069 (NY S7037, 2025-2026)
+# join `openstates_plan.toml` as bounded pinned bill queries under the plan
+# bump — configuration under the existing `openstates` source, never a new
+# source row.
+
+
+def test_pinned_bill_queries_generate_bounded_targets() -> None:
+    """The pinned rows generate bill_search targets carrying the verbatim
+    session pin + the bill identifier as provenance — the same target shape
+    the family sweep emits, counted inside max_queries."""
+    plan = openstates_plan()
+    pinned = plan.get("pinned_bill_queries", [])
+    assert len(pinned) == 2
+    assert int(plan["bills_query"]["max_queries"]) >= 56 * len(plan["query_families"]) + len(pinned)
+    targets = _bill_query_targets(_jurisdictions(), plan)
+    by_id = {t["id"]: t for t in targets}
+    az = by_id["openstates-bills-az-az_hb2574_2024"]
+    assert az["kind"] == "bill_search"
+    assert az["session"] == "56th-2nd-regular"
+    assert az["jurisdiction"] == "Arizona"
+    assert az["jurisdiction_abbr"] == "az"
+    assert az["pinned_bill"] == "HB 2574"
+    assert az["plan_version"] == plan["plan_version"]
+    qs = parse_qs(urlsplit(str(az["url"])).query)
+    assert qs["session"] == ["56th-2nd-regular"]
+    assert qs["jurisdiction"] == ["az"]
+    assert "threat assessment" in qs["q"][0]
+    ny = by_id["openstates-bills-ny-ny_s7037_2025_2026"]
+    assert ny["session"] == "2025-2026"
+    assert ny["pinned_bill"] == "S 7037"
+    qn = parse_qs(urlsplit(str(ny["url"])).query)
+    assert qn["session"] == ["2025-2026"]
+    # The session resolution invariant holds on the captured index: AZ's
+    # current regular window is NOT the pinned session (HB 2574's 56th-2nd-
+    # regular is a completed session the window rule never reaches).
+    classes = plan["session_window"]["classes"]
+    az_j = next(j for j in _jurisdictions() if j["id"].endswith("state:az/government"))
+    assert _resolve_session(az_j["legislative_sessions"], classes) != "56th-2nd-regular"
+    assert any(s["identifier"] == "56th-2nd-regular" for s in az_j["legislative_sessions"])
+    ny_j = next(j for j in _jurisdictions() if j["id"].endswith("state:ny/government"))
+    assert _resolve_session(ny_j["legislative_sessions"], classes) == "2025-2026"
+
+
+def test_pinned_az_bill_emits_typed_claims_with_provenance() -> None:
+    """HB 2574's title matches the reviewed threat_assessment term → typed
+    bill-surface claims; the outcome row carries the pin + plan version."""
+    plan = openstates_plan()
+    pinned = next(p for p in plan["pinned_bill_queries"] if p["id"] == "az_hb2574_2024")
+    target = next(
+        t
+        for t in _bill_query_targets(_jurisdictions(), plan)
+        if t["id"] == "openstates-bills-az-az_hb2574_2024"
+    )
+    assert target["pinned_bill"] == pinned["bill_identifier"]
+    connector = AccountabilityConnector()
+    ctx = _ctx()
+    ctx.resolved_targets[str(target["url"])] = target
+    capture = _capture(
+        ctx,
+        (_FIX / "openstates_bills_az_hb2574.json").read_bytes(),
+        str(target["url"]),
+    )
+    parsed = connector.parse(ctx, capture)
+    rows = connector.normalize(ctx, connector.extract(ctx, parsed))
+    claims = [r for r in rows if r.get("record_kind") == "claim"]
+    assert claims
+    by_pred = {c["predicate_id"]: c for c in claims}
+    assert by_pred["bill_identifier"]["raw_value"] == "HB 2574"
+    assert by_pred["bill_session"]["value"] == "56th-2nd-regular"
+    assert by_pred["bill_jurisdiction"]["value"] == "Arizona"
+    kw = [c for c in claims if c["predicate_id"] == "bill_matched_keyword"]
+    assert {c["value"] for c in kw} == {"threat_assessment"}
+    # A pending bill is proposed law — never a LegalInstrument, never a
+    # deployment assertion.
+    assert not any(
+        c.get("predicate_id") in {"legal_instrument", "statute", "deployment_exists"} for c in rows
+    )
+    (outcome,) = [r for r in rows if r.get("record_kind") == "bill_query"]
+    assert outcome["outcome"] == "matched"
+    assert outcome["pinned_bill"] == "HB 2574"
+    assert outcome["session"] == "56th-2nd-regular"
+    assert outcome["jurisdiction"] == "Arizona"
+    assert outcome["plan_version"] == plan["plan_version"]
+    assert outcome["legislation_vocab_version"]
+    assert outcome["truncated"] is False
+
+
+def test_pinned_ny_bill_matches_social_media_monitoring() -> None:
+    """S7037's act title matches `social_media_monitoring` — typed claims on
+    the pinned query's own session, verbatim literal preserved."""
+    plan = openstates_plan()
+    target = next(
+        t
+        for t in _bill_query_targets(_jurisdictions(), plan)
+        if t["id"] == "openstates-bills-ny-ny_s7037_2025_2026"
+    )
+    connector = AccountabilityConnector()
+    ctx = _ctx()
+    ctx.resolved_targets[str(target["url"])] = target
+    capture = _capture(
+        ctx,
+        (_FIX / "openstates_bills_ny_s7037.json").read_bytes(),
+        str(target["url"]),
+    )
+    parsed = connector.parse(ctx, capture)
+    rows = connector.normalize(ctx, connector.extract(ctx, parsed))
+    claims = [r for r in rows if r.get("record_kind") == "claim"]
+    kw = [c for c in claims if c["predicate_id"] == "bill_matched_keyword"]
+    assert {c["value"] for c in kw} == {"social_media_monitoring"}
+    assert {c["raw_value"] for c in kw} == {"social media monitoring"}
+    (status,) = [c for c in claims if c["predicate_id"] == "bill_status"]
+    assert status["raw_value"] == "REFERRED TO FINANCE"
+    (outcome,) = [r for r in rows if r.get("record_kind") == "bill_query"]
+    assert outcome["pinned_bill"] == "S 7037"
+    assert outcome["session"] == "2025-2026"
+
+
+def test_pinned_query_bill_without_term_match_stays_index_only() -> None:
+    """The pin is a recall net, not a claim mint: a returned bill matching no
+    reviewed term keeps the P26.4 index_only evidence link."""
+    plan = openstates_plan()
+    target = next(
+        t
+        for t in _bill_query_targets(_jurisdictions(), plan)
+        if t["id"] == "openstates-bills-az-az_hb2574_2024"
+    )
+    connector = AccountabilityConnector()
+    ctx = _ctx()
+    ctx.resolved_targets[str(target["url"])] = target
+    capture = _capture(
+        ctx,
+        json.dumps(
+            {
+                "results": [
+                    _bill(
+                        bill_id="ocd-bill/az-56th-2nd-regular-HB2000",
+                        identifier="HB 2000",
+                        title="An Act relating to municipal bonds",
+                        session="56th-2nd-regular",
+                        jurisdiction={
+                            "id": "ocd-jurisdiction/country:us/state:az/government",
+                            "name": "Arizona",
+                            "classification": "state",
+                        },
+                    )
+                ],
+                "pagination": {"total_items": 1, "per_page": 20, "page": 1, "max_page": 1},
+            }
+        ).encode(),
+        str(target["url"]),
+    )
+    parsed = connector.parse(ctx, capture)
+    rows = connector.normalize(ctx, connector.extract(ctx, parsed))
+    links = [r for r in rows if r.get("record_kind") == "evidence_link"]
+    assert len(links) == 1 and links[0]["index_only"] is True
+    assert not any(r.get("record_kind") == "claim" for r in rows)
+    (outcome,) = [r for r in rows if r.get("record_kind") == "bill_query"]
+    assert outcome["outcome"] == "empty"
+    assert outcome["pinned_bill"] == "HB 2574"

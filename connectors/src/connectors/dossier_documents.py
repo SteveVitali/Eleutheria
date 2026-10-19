@@ -128,19 +128,35 @@ __all__ = [
 
 DOSSIER_DOCUMENTS = "dossier_documents"
 
-#: The three pilot source-family registry rows this connector serves — plus
-#: the two ADR-185 S8 tribal screened-lane sources (P35.11 / R11-ACQ-07): the
-#: screened lane emits facts + citations only (B-37 "TR facts+cite") through
-#: the same frozen crosswalk, so the pilot's reviewed machinery is reused
-#: unchanged. All stay ``ingestion_permitted=false`` — the fixture runs are
-#: an engineering check, never a rights decision or a live-access proof
-#: (SIG-ACQ-003).
+#: The pilot source-family registry rows this connector serves — plus the two
+#: ADR-185 S8 tribal screened-lane sources (P35.11 / R11-ACQ-07): the screened
+#: lane emits facts + citations only (B-37 "TR facts+cite") through the same
+#: frozen crosswalk, so the pilot's reviewed machinery is reused unchanged;
+#: plus the twelve P36.11 / R11-ACQ-15 document rows (grants, council/agenda
+#: documents, procurement-portal notices, Guam legislation — the
+#: r11-documents-01 family): grant awards land as recipient/funder/
+#: programme/amount/purpose facts and procurement as contract/buyer facts —
+#: procured never asserts deployed. All stay ``ingestion_permitted=false`` —
+#: the fixture runs are an engineering check, never a rights decision or a
+#: live-access proof (SIG-ACQ-003).
 DOSSIER_SOURCES = (
     "dossier_okc",
     "dossier_tulsa",
     "dossier_san_diego",
     "camreg_tribal_all_leaders_directory",
     "legis_tribal_tohono_oodham_notice",
+    "grant_tx_txdmv_mvcpa",
+    "grant_ca_bscc_ort",
+    "grant_fl_senate_lfir",
+    "grant_al_adeca_psn",
+    "grant_nj_oag_bwc",
+    "grant_ok_dac_jag_lle",
+    "agenda_haskell_ar_council",
+    "agenda_des_moines_ia_council",
+    "agenda_jasper_sc_council",
+    "procportal_davie_fl_purchasing",
+    "procportal_forsyth_nc_purchasing",
+    "legis_gu_governor",
 )
 
 

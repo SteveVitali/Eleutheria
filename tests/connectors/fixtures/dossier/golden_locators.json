@@ -1,4 +1,96 @@
 {
+  "adeca-psn-grants-2025-07-16": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 63,
+        "kind": "byte_range",
+        "start": 37
+      },
+      "predicate": "title",
+      "raw_value": "Project Safe Neighborhoods"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "end": 190,
+        "kind": "byte_range",
+        "start": 138
+      },
+      "predicate": "funder",
+      "raw_value": "Alabama Department of Economic and Community Affairs"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "end": 63,
+        "kind": "byte_range",
+        "start": 37
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "Project Safe Neighborhoods"
+    },
+    {
+      "field": "grant_recipient",
+      "locator": {
+        "end": 288,
+        "kind": "byte_range",
+        "start": 260
+      },
+      "predicate": "recipient",
+      "raw_value": "Montgomery Police Department"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "end": 300,
+        "kind": "byte_range",
+        "start": 293
+      },
+      "predicate": "funding_amount",
+      "raw_value": "$10,000"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "end": 319,
+        "kind": "byte_range",
+        "start": 305
+      },
+      "predicate": "description",
+      "raw_value": "ALPR equipment"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 309,
+        "kind": "byte_range",
+        "start": 305
+      },
+      "predicate": "technology",
+      "raw_value": "ALPR"
+    },
+    {
+      "field": "award_instrument",
+      "locator": {
+        "end": 63,
+        "kind": "byte_range",
+        "start": 37
+      },
+      "predicate": "funding_instrument",
+      "raw_value": "Project Safe Neighborhoods"
+    },
+    {
+      "field": "posted_date",
+      "locator": {
+        "end": 129,
+        "kind": "byte_range",
+        "start": 116
+      },
+      "predicate": "posted_date",
+      "raw_value": "July 16, 2025"
+    }
+  ],
   "bia-tld-layer-metadata": [
     {
       "field": "title",
@@ -29,6 +121,722 @@
       },
       "predicate": "use_restriction",
       "raw_value": "not intended for legal, survey, engineering or navigation purposes"
+    }
+  ],
+  "bscc-ort-grant-program": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 64,
+        "kind": "byte_range",
+        "start": 17
+      },
+      "predicate": "title",
+      "raw_value": "Organized Retail Theft Prevention Grant Program"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "end": 133,
+        "kind": "byte_range",
+        "start": 93
+      },
+      "predicate": "funder",
+      "raw_value": "Board of State and Community Corrections"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "end": 64,
+        "kind": "byte_range",
+        "start": 17
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "Organized Retail Theft Prevention Grant Program"
+    },
+    {
+      "field": "grant_recipient",
+      "locator": {
+        "end": 260,
+        "kind": "byte_range",
+        "start": 235
+      },
+      "predicate": "recipient",
+      "raw_value": "Ventura Police Department"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "end": 275,
+        "kind": "byte_range",
+        "start": 265
+      },
+      "predicate": "funding_amount",
+      "raw_value": "$6,125,571"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "end": 314,
+        "kind": "byte_range",
+        "start": 300
+      },
+      "predicate": "description",
+      "raw_value": "ALPR equipment"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 304,
+        "kind": "byte_range",
+        "start": 300
+      },
+      "predicate": "technology",
+      "raw_value": "ALPR"
+    },
+    {
+      "field": "award_instrument",
+      "locator": {
+        "end": 210,
+        "kind": "byte_range",
+        "start": 202
+      },
+      "predicate": "funding_instrument",
+      "raw_value": "BSCC ORT"
+    }
+  ],
+  "davie-ntss-2018-026-cellebrite": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Cellebrite"
+    },
+    {
+      "field": "contract_number",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contract_number",
+      "raw_value": "NTSS-2018-026"
+    },
+    {
+      "field": "buyer",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "buyer",
+      "raw_value": "Town of Davie"
+    },
+    {
+      "field": "vendor",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "vendor",
+      "raw_value": "Cellebrite"
+    },
+    {
+      "field": "products",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "products",
+      "raw_value": "Universal Mobile Phone Forensic Software"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Mobile Phone Forensic"
+    },
+    {
+      "field": "authorization_state",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "authorization_state",
+      "raw_value": "Notice of Intent to Award"
+    }
+  ],
+  "des-moines-communication-26-235": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Motorola Solutions"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Des Moines City Council"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "citation",
+      "raw_value": "26-235"
+    },
+    {
+      "field": "vendor",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "vendor",
+      "raw_value": "Motorola Solutions"
+    },
+    {
+      "field": "products",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "products",
+      "raw_value": "LPR software"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "LPR"
+    },
+    {
+      "field": "contract_value",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contract_value",
+      "raw_value": "$123,750"
+    },
+    {
+      "field": "authorization_state",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "authorization_state",
+      "raw_value": "recommends approval"
+    }
+  ],
+  "fl-senate-lfir-s3177": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "ALPR Expansion"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funder",
+      "raw_value": "Florida Legislature"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "Local Funding Initiative"
+    },
+    {
+      "field": "grant_recipient",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "recipient",
+      "raw_value": "City of Daytona Beach"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_amount",
+      "raw_value": "$500,000"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "description",
+      "raw_value": "ALPR expansion"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "ALPR"
+    },
+    {
+      "field": "award_instrument",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_instrument",
+      "raw_value": "FY2024-25_S3177"
+    },
+    {
+      "field": "coverage_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "period",
+      "raw_value": "FY2024-25"
+    }
+  ],
+  "forsyth-rfp2449-rtic": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Real-Time Intelligence Center"
+    },
+    {
+      "field": "contract_number",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contract_number",
+      "raw_value": "RFP2449"
+    },
+    {
+      "field": "buyer",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "buyer",
+      "raw_value": "Forsyth County"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "description",
+      "raw_value": "Real-Time Intelligence Center Enterprise Solution"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Real-Time Intelligence Center"
+    },
+    {
+      "field": "posted_date",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "posted_date",
+      "raw_value": "February 15, 2024"
+    }
+  ],
+  "guam-governor-bill-132-35-signing": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 46,
+        "kind": "byte_range",
+        "start": 30
+      },
+      "predicate": "title",
+      "raw_value": "Security Cameras"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "end": 107,
+        "kind": "byte_range",
+        "start": 96
+      },
+      "predicate": "citation",
+      "raw_value": "Bill 132-35"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 230,
+        "kind": "byte_range",
+        "start": 214
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Guam Legislature"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "end": 166,
+        "kind": "byte_range",
+        "start": 150
+      },
+      "predicate": "description",
+      "raw_value": "security cameras"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 166,
+        "kind": "byte_range",
+        "start": 150
+      },
+      "predicate": "technology",
+      "raw_value": "security cameras"
+    },
+    {
+      "field": "posted_date",
+      "locator": {
+        "end": 76,
+        "kind": "byte_range",
+        "start": 63
+      },
+      "predicate": "posted_date",
+      "raw_value": "July 25, 2024"
+    }
+  ],
+  "haskell-resolution-19-2025": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Flock Safety"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "enacting_body",
+      "raw_value": "City Council of the City of Haskell"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "citation",
+      "raw_value": "19-2025"
+    },
+    {
+      "field": "vendor",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "vendor",
+      "raw_value": "Flock Safety"
+    },
+    {
+      "field": "products",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "products",
+      "raw_value": "LPR cameras"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "LPR"
+    },
+    {
+      "field": "contract_value",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contract_value",
+      "raw_value": "$24,000"
+    },
+    {
+      "field": "authorization_state",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "authorization_state",
+      "raw_value": "authorizes the Mayor to execute"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "document",
+      "raw_value": "19-2025.pdf"
+    }
+  ],
+  "jasper-sc-agenda-cellebrite-2024": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Cellebrite"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Jasper County Council"
+    },
+    {
+      "field": "vendor",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "vendor",
+      "raw_value": "Cellebrite"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "description",
+      "raw_value": "electronic evidence software"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "Cellebrite"
+    },
+    {
+      "field": "contract_value",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "contract_value",
+      "raw_value": "$18,500"
+    },
+    {
+      "field": "buyer",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "buyer",
+      "raw_value": "Jasper County Sheriff"
+    }
+  ],
+  "nj-oag-bwc-sfy21-guidelines": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Body-Worn Camera Grant Program"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funder",
+      "raw_value": "Office of the Attorney General"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "Body-Worn Camera Grant Program"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_amount",
+      "raw_value": "$57,500,000"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "description",
+      "raw_value": "body-worn camera equipment"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "body-worn camera"
+    },
+    {
+      "field": "award_instrument",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_instrument",
+      "raw_value": "SFY21"
+    },
+    {
+      "field": "coverage_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "period",
+      "raw_value": "SFY21"
+    }
+  ],
+  "ok-dac-jag-lle-program": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 41,
+        "kind": "byte_range",
+        "start": 17
+      },
+      "predicate": "title",
+      "raw_value": "Justice Assistance Grant"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "end": 141,
+        "kind": "byte_range",
+        "start": 106
+      },
+      "predicate": "funder",
+      "raw_value": "Oklahoma District Attorneys Council"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "end": 41,
+        "kind": "byte_range",
+        "start": 17
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "Justice Assistance Grant"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "end": 202,
+        "kind": "byte_range",
+        "start": 177
+      },
+      "predicate": "description",
+      "raw_value": "law enforcement equipment"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 228,
+        "kind": "byte_range",
+        "start": 211
+      },
+      "predicate": "technology",
+      "raw_value": "body-worn cameras"
+    },
+    {
+      "field": "award_instrument",
+      "locator": {
+        "end": 76,
+        "kind": "byte_range",
+        "start": 69
+      },
+      "predicate": "funding_instrument",
+      "raw_value": "JAG-LLE"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "end": 267,
+        "kind": "byte_range",
+        "start": 0
+      },
+      "predicate": "disclosure_field_state",
+      "raw_value": "award amount"
     }
   ],
   "okc-council-memo-2026-08": [
@@ -625,6 +1433,89 @@
       },
       "predicate": "disclosure_field_state",
       "raw_value": "uniform numeric retention period"
+    }
+  ],
+  "txdmv-mvcpa-fy2026-grant-listing": [
+    {
+      "field": "title",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "title",
+      "raw_value": "Motor Vehicle Crime Prevention Authority"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funder",
+      "raw_value": "Texas Department of Motor Vehicles"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "FY 2026 Grant Listing"
+    },
+    {
+      "field": "grant_recipient",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "recipient",
+      "raw_value": "Balch Springs Police Department"
+    },
+    {
+      "field": "funding_amount",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_amount",
+      "raw_value": "$250,000"
+    },
+    {
+      "field": "item_description",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "description",
+      "raw_value": "ALPR equipment"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "technology",
+      "raw_value": "ALPR equipment"
+    },
+    {
+      "field": "award_instrument",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "funding_instrument",
+      "raw_value": "MVCPA FY 2026"
+    },
+    {
+      "field": "coverage_period",
+      "locator": {
+        "kind": "page",
+        "page": 1
+      },
+      "predicate": "period",
+      "raw_value": "FY 2026"
     }
   ]
 }

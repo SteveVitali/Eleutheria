@@ -401,10 +401,6 @@ class_ticket = "P37.50"
 disposition = "promote"
 class_ticket = "P37.50"
 
-[sources.agenda_haskell_ar_resolution_no_19]
-disposition = "promote"
-class_ticket = "P36.11"
-
 [sources.agenda_hialeah_fl_agenda_center]
 disposition = "promote"
 class_ticket = "P37.50"
@@ -689,10 +685,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.ccops_ia_des_moines_city_of_council]
-disposition = "promote"
-class_ticket = "P36.11"
-
 [sources.ccops_il_chicago_oig_shotspotter]
 disposition = "promote"
 class_ticket = "P37.47"
@@ -724,10 +716,6 @@ class_ticket = "P37.47"
 [sources.ccops_nc_elizabeth_city_police]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.ccops_nc_forsyth_county_us_winston_salem]
-disposition = "promote"
-class_ticket = "P36.11"
 
 [sources.ccops_ny_new_york_nyc_comptroller]
 disposition = "promote"
@@ -765,10 +753,6 @@ class_ticket = "P37.47"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.ccops_sc_jasper_county_council_special]
-disposition = "promote"
-class_ticket = "P36.11"
-
 [sources.ccops_si_085_novo_mesto_evidenca_o]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -789,18 +773,6 @@ class_ticket = "P37.47"
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.grant_al_alabama_adeca_newsroom]
-disposition = "promote"
-class_ticket = "P36.11"
-
-[sources.grant_ca_california_bscc_organized]
-disposition = "promote"
-class_ticket = "P36.11"
-
-[sources.grant_fl_florida_legislature_local]
-disposition = "promote"
-class_ticket = "P36.11"
-
 [sources.grant_il_illinois_gata_csfa]
 disposition = "promote"
 class_ticket = "P37.52"
@@ -809,33 +781,17 @@ class_ticket = "P37.52"
 disposition = "promote"
 class_ticket = "P37.52"
 
-[sources.grant_nj_new_jersey_oag]
-disposition = "promote"
-class_ticket = "P36.11"
-
 [sources.grant_oh_ohio_criminal_justice]
 disposition = "promote"
 class_ticket = "P37.52"
-
-[sources.grant_ok_oklahoma_jag_lle]
-disposition = "promote"
-class_ticket = "P36.11"
 
 [sources.grant_ok_safe_oklahoma_grant]
 disposition = "promote"
 class_ticket = "P37.47"
 
-[sources.grant_tx_texas_dmv_motor]
-disposition = "promote"
-class_ticket = "P36.11"
-
 [sources.grant_us_doj_cops_technology]
 disposition = "promote"
 class_ticket = "P37.47"
-
-[sources.legis_gu_governor_guam_press]
-disposition = "promote"
-class_ticket = "P36.11"
 
 [sources.legis_ie_rs_general_scheme]
 disposition = "promote"
@@ -909,10 +865,6 @@ class_ticket = "P37.53"
 [sources.policy_zionsville_in_camera_registry]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.procportal_davie_fl_notice_intent_award]
-disposition = "promote"
-class_ticket = "P36.11"
 
 [sources.procportal_fl_florida_buy_cooperative]
 disposition = "promote"

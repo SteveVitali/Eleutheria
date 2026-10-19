@@ -28,6 +28,29 @@ success is an engineering check, never a live-access proof or a rights decision
 | `tolc_lgds_ast_hearing_notice.pdf` | `legis_tribal_tohono_oodham_notice` → `tolc-lgds-ast-hearing-notice-2025-11-19` | **P35.11 / ADR-185 S8 screened lane:** the Tohono O'odham Legislative Branch public-hearing notice on the Border Patrol LGDS + Automated Surveillance Tower proposals — committee, technology names, hearing date; **the named chairperson is deliberately absent** (screened lane) |
 | `malformed_document.pdf` | — (negative control) | `%PDF-` magic with no valid objects — `pdf_text_pages` yields no pages → explicit `ContentDrift`, never a partial claim |
 
+P36.11 / R11-ACQ-15 fixtures (ticket 285 — the `r11-documents-01` document
+family). Same stand-in contract as the pilots: hand-authored review fixtures
+reproducing the *shape* of the published documents (programme/agency names,
+award amounts, instrument numbers as the upstream pages publish them) without
+re-hosting upstream bytes; no personal, plate-, trip- or per-person data. The
+sources stay `ingestion_permitted=false` — fixture success is an engineering
+check, never a rights decision or a live-access proof.
+
+| file | dossier target | models |
+|---|---|---|
+| `txdmv_mvcpa_grant_listing.pdf` | `grant_tx_txdmv_mvcpa` → `txdmv-mvcpa-fy2026-grant-listing` | MVCPA FY2026 published grant listing: funder, programme, one grantee row (agency + amount + ALPR purpose) — an **award**, never a deployment |
+| `bscc_ort_program.html` | `grant_ca_bscc_ort` → `bscc-ort-grant-program` | BSCC Organized Retail Theft programme page: funder, programme, one grantee award + purpose |
+| `fl_senate_lfir_s3177.pdf` | `grant_fl_senate_lfir` → `fl-senate-lfir-s3177` | A Local Funding Initiative Request form: requesting entity, amount requested, ALPR purpose — a **request**, not an award |
+| `adeca_psn_grants.html` | `grant_al_adeca_psn` → `adeca-psn-grants-2025-07-16` | ADECA governor's-office announcement of PSN awards: funder, programme, recipient, amount, posted date |
+| `nj_oag_bwc_guidelines.pdf` | `grant_nj_oag_bwc` → `nj-oag-bwc-sfy21-guidelines` | NJ OAG SFY21 Body-Worn Camera Grant Program guidelines: programme funder, total appropriation, funded equipment class |
+| `ok_dac_jag_lle.html` | `grant_ok_dac_jag_lle` → `ok-dac-jag-lle-program` | OK DAC JAG-LLE programme page: funder, programme, eligible-equipment purpose; **no award amount** (reviewed `absent` → field-state, never fabricated) |
+| `haskell_resolution_19_2025.pdf` | `agenda_haskell_ar_council` → `haskell-resolution-19-2025` | Resolution 19-2025 **authorizing** the Mayor to execute a Flock Safety LPR agreement — authorization, never execution |
+| `des_moines_26_235.pdf` | `agenda_des_moines_ia_council` → `des-moines-communication-26-235` | Council Communication 26-235 **recommending approval** of a Motorola Solutions LPR agreement — a recommendation under consideration |
+| `jasper_sc_agenda_cellebrite.pdf` | `agenda_jasper_sc_council` → `jasper-sc-agenda-cellebrite-2024` | Council agenda item for the Sheriff's Cellebrite software purchase — consideration only |
+| `davie_ntss_2018_026.pdf` | `procportal_davie_fl_purchasing` → `davie-ntss-2018-026-cellebrite` | Notice of Intent to Award NTSS-2018-026 (Cellebrite sole-source) — an intent notice, never an executed contract |
+| `forsyth_rfp2449.pdf` | `procportal_forsyth_nc_purchasing` → `forsyth-rfp2449-rtic` | RFP2449 cover for a Real-Time Intelligence Center enterprise solution — solicitation metadata only |
+| `guam_governor_bill_132_35.html` | `legis_gu_governor` → `guam-governor-bill-132-35-signing` | Governor of Guam press release: Bill 132-35 (GPD security cameras) signed — publication facts only (RB-06) |
+
 Oversized and encrypted documents are generated in-test (`tmp_path`), not
 committed: an oversized file is just bytes over `max_document_bytes`, and an
 encrypted PDF is produced with `pypdf.PdfWriter.encrypt`.

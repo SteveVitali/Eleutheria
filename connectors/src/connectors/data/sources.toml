@@ -8717,7 +8717,7 @@ jurisdiction = "US-WA"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.agenda_haskell_ar_resolution_no_19]
+[sources.agenda_haskell_ar_council]
 name = "City of Haskell AR Resolution No. 19-2025 - contract with Flock Safety for License Plate Reader cameras (4 LPR + 2 Flex "
 source_kind = "government_portal"
 homepage_url = "https://www.haskellar.gov/assets/pdf/resolutions/2025/19-2025.pdf"
@@ -8725,18 +8725,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-047, cand I9a-C052, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_haskell_ar_resolution_no_19'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-047, cand I9a-C052, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_haskell_ar_resolution_no_19'. Reconciled id 'agenda_haskell_ar_council' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "City of Haskell, AR City Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AR"
 jurisdiction_place = "Haskell"
-[sources.agenda_haskell_ar_resolution_no_19.rights]
+[sources.agenda_haskell_ar_council.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -8943,7 +8943,7 @@ jurisdiction_place = "Dayton"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.grant_tx_texas_dmv_motor]
+[sources.grant_tx_txdmv_mvcpa]
 name = "Texas DMV Motor Vehicle Crime Prevention Authority (MVCPA) grantees and FY2026 grant listing"
 source_kind = "government_portal"
 homepage_url = "https://www.txdmv.gov/sites/default/files/body-files/MVCPA-FY-2026-Grant-Listing.pdf"
@@ -8951,21 +8951,21 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-059, cand I6-C028, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_tx_texas_dmv_motor'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-059, cand I6-C028, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_tx_texas_dmv_motor'. Reconciled id 'grant_tx_txdmv_mvcpa' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Texas Department of Motor Vehicles, Motor Vehicle Crime Prevention Authority"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
-[sources.grant_tx_texas_dmv_motor.rights]
+[sources.grant_tx_txdmv_mvcpa.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.grant_ca_california_bscc_organized]
+[sources.grant_ca_bscc_ort]
 name = "California BSCC Organized Retail Theft (ORT) Prevention Grant Program: project summaries, grantee map, quarterly and ann"
 source_kind = "government_portal"
 homepage_url = "https://www.bscc.ca.gov/organized-retail-theft-grant-program/"
@@ -8973,17 +8973,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) + PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "quarterly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-060, cand I6-C029, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_ca_california_bscc_organized'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-060, cand I6-C029, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_ca_california_bscc_organized'. Reconciled id 'grant_ca_bscc_ort' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "California Board of State and Community Corrections"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
-[sources.grant_ca_california_bscc_organized.rights]
+[sources.grant_ca_bscc_ort.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9031,7 +9031,7 @@ jurisdiction = "US-VT"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.grant_fl_florida_legislature_local]
+[sources.grant_fl_senate_lfir]
 name = "Florida Legislature - Local Funding Initiative Requests (LFIR), per-project state-budget requests (e.g. FY2024-25 S3177 "
 source_kind = "government_portal"
 homepage_url = "https://www.flsenate.gov/PublishedContent/Session/FiscalYear/FY2024-25/LocalFundingInitiativeRequests/FY2024-25_S3177.pdf"
@@ -9039,17 +9039,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "annual"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-063, cand I9a-C043, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_fl_florida_legislature_local'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-063, cand I9a-C043, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_fl_florida_legislature_local'. Reconciled id 'grant_fl_senate_lfir' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "The Florida Senate (Local Funding Initiative Request forms, by fiscal year)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
-[sources.grant_fl_florida_legislature_local.rights]
+[sources.grant_fl_senate_lfir.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9278,7 +9278,7 @@ jurisdiction = "US-CT"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.grant_al_alabama_adeca_newsroom]
+[sources.grant_al_adeca_psn]
 name = "Alabama ADECA newsroom - Governor's Project Safe Neighborhoods grant announcements naming grantees for license plate rea"
 source_kind = "government_portal"
 homepage_url = "https://adeca.alabama.gov/2025/07/16/gov-ivey-announces-project-safe-neighborhoods-grants-for-several-law-enforcement-agencies/"
@@ -9286,17 +9286,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-076, cand I9a-C041, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_al_alabama_adeca_newsroom'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-076, cand I9a-C041, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_al_alabama_adeca_newsroom'. Reconciled id 'grant_al_adeca_psn' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Alabama Department of Economic and Community Affairs (ADECA)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AL"
-[sources.grant_al_alabama_adeca_newsroom.rights]
+[sources.grant_al_adeca_psn.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9322,7 +9322,7 @@ jurisdiction = "US-MD"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.grant_nj_new_jersey_oag]
+[sources.grant_nj_oag_bwc]
 name = "New Jersey OAG SFY21 Body-Worn Camera Grant Program - Program Administration and Guidelines ($57,500,000)"
 source_kind = "government_portal"
 homepage_url = "https://www.nj.gov/oag/grants/BWC_Program-Administration-and-Guidelines.pdf"
@@ -9330,17 +9330,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-078, cand I9b-C058, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_nj_new_jersey_oag'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-078, cand I9b-C058, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_nj_new_jersey_oag'. Reconciled id 'grant_nj_oag_bwc' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "State of New Jersey, Department of Law and Public Safety, Office of the Attorney General"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NJ"
-[sources.grant_nj_new_jersey_oag.rights]
+[sources.grant_nj_oag_bwc.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9411,7 +9411,7 @@ jurisdiction = "US-IL"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.ccops_ia_des_moines_city_of_council]
+[sources.agenda_des_moines_ia_council]
 name = "City of Des Moines IA council communication 26-235 (2026-06-29) - Motorola Solutions License Plate Recognition software "
 source_kind = "government_portal"
 homepage_url = "https://councildocs.dsm.city/communications/2026/26-235.pdf"
@@ -9419,22 +9419,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-082, cand I9a-C034, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_des_moines_ia_communication_26_235'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-082, cand I9a-C034, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_des_moines_ia_communication_26_235'. Reconciled id 'agenda_des_moines_ia_council' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "City of Des Moines, IA (City Council communications)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IA"
 jurisdiction_place = "Des Moines"
-[sources.ccops_ia_des_moines_city_of_council.rights]
+[sources.agenda_des_moines_ia_council.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.ccops_sc_jasper_county_council_special]
+[sources.agenda_jasper_sc_council]
 name = "Jasper County Council special called meeting agenda e-packet 2024-06-28 (Sheriff purchase of Cellebrite electronic evide"
 source_kind = "government_portal"
 homepage_url = "https://jaspercountysc.gov/media/1lqbd25k/06282024-agenda-e-packet-special-called-meeting.pdf"
@@ -9442,22 +9442,22 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-083, cand I9b-C003, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_jasper_county_sc_special_called_meeti'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-083, cand I9b-C003, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_jasper_county_sc_special_called_meeti'. Reconciled id 'agenda_jasper_sc_council' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Jasper County, SC (County Council)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-SC"
 jurisdiction_place = "Jasper County"
-[sources.ccops_sc_jasper_county_council_special.rights]
+[sources.agenda_jasper_sc_council.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.procportal_davie_fl_notice_intent_award]
+[sources.procportal_davie_fl_purchasing]
 name = "Town of Davie Notice of Intent to Award a Sole Source Procurement NTSS-2018-026: Cellebrite Universal Mobile Phone Foren"
 source_kind = "government_portal"
 homepage_url = "https://www.davie-fl.gov/DocumentCenter/View/4395/NTSS-2018-026-Cellebrite---Universal-Mobile-Phone-Forensic-Software-Upgrade"
@@ -9465,18 +9465,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-084, cand I9b-C004, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_davie_fl_notice_intent_award'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-084, cand I9b-C004, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_davie_fl_notice_intent_award'. Reconciled id 'procportal_davie_fl_purchasing' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Town of Davie, FL (Purchasing)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
 jurisdiction_place = "Davie"
-[sources.procportal_davie_fl_notice_intent_award.rights]
+[sources.procportal_davie_fl_purchasing.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9524,7 +9524,7 @@ jurisdiction = "US-NC"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.ccops_nc_forsyth_county_us_winston_salem]
+[sources.procportal_forsyth_nc_purchasing]
 name = "RFP2449 Real-Time Intelligence Center Enterprise Solution"
 source_kind = "government_portal"
 homepage_url = "https://www.cityofws.org/DocumentCenter/View/30154/WebDoc---Real-Time-Intelligence-Center-Enterprise-Solution---RFP2449?bidId="
@@ -9532,18 +9532,18 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "PDF document(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "PDF document(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-091, cand I5-C135, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_forsyth_county_nc_rfp2449_real_ti'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-091, cand I5-C135, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_forsyth_county_nc_rfp2449_real_ti'. Reconciled id 'procportal_forsyth_nc_purchasing' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Winston-Salem / Forsyth County Purchasing Division for Forsyth County Sheriff's Office"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"
 jurisdiction_place = "Forsyth County;US-NC:Winston-Salem"
-[sources.ccops_nc_forsyth_county_us_winston_salem.rights]
+[sources.procportal_forsyth_nc_purchasing.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
@@ -9638,7 +9638,7 @@ jurisdiction_place = "Austin"
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.legis_gu_governor_guam_press]
+[sources.legis_gu_governor]
 name = "Governor of Guam press release: 'Bill for GPD Security Cameras now Law' (Bill 132-35, the Governor's alternative to Bill"
 source_kind = "government_portal"
 homepage_url = "https://governor.guam.gov/press_release/bill-for-gpd-security-cameras-now-law/"
@@ -9646,21 +9646,21 @@ default_tier = "R4"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-098, cand I9b-C093, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'legis_gu_governor_guam_press'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-098, cand I9b-C093, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-06 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'legis_gu_governor_guam_press'. Reconciled id 'legis_gu_governor' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Office of the Governor of Guam"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GU"
-[sources.legis_gu_governor_guam_press.rights]
+[sources.legis_gu_governor.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
-[sources.grant_ok_oklahoma_jag_lle]
+[sources.grant_ok_dac_jag_lle]
 name = "Oklahoma JAG-LLE local equipment funding"
 source_kind = "government_portal"
 homepage_url = "https://oklahoma.gov/dac/grants/grants-available/jag-lle.html"
@@ -9668,17 +9668,17 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML page(s) \u2014 dossier_documents clause_fields adapter wired by P36.11 (ACQ-15)"
 auth_model = "none"
 cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T1-099, cand SRC-009, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_ok_oklahoma_jag_lle'."
+notes = "R11-ACQ-01 generated row (plan AP-T1-099, cand SRC-009, family 'dossier_documents(clause_fields)', ticket ACQ-15 -> live ACQ-16, class ticket P36.11). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 (PRECEDENT)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'grant_ok_oklahoma_jag_lle'. Reconciled id 'grant_ok_dac_jag_lle' (I8 \u00a75.8 ACQ-15) \u2014 the generated id renamed to the design's id under P36.11."
 publisher = "Oklahoma District Attorneys Council (JAG-LLE)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-OK"
-[sources.grant_ok_oklahoma_jag_lle.rights]
+[sources.grant_ok_dac_jag_lle.rights]
 spdx = "UNDETERMINED"
 redistributable = false
 
