@@ -111,6 +111,12 @@ from policy.eligibility import (
 )
 from policy.labels import LabelFacts, derive_label
 from policy.rights import RightsRecord
+from policy.transparency import (
+    STORAGE_TIERS,
+    interim_lane,
+    iso_utc,
+    served_storage_tier,
+)
 from psycopg import sql
 from psycopg_pool import ConnectionPool, PoolTimeout
 from reconcile.materialize import (
@@ -868,9 +874,13 @@ class PgReadStore:
         row = self._conn.execute(
             "SELECT ec.capture_id, ea.source_id, ec.source_uri, ec.retrieved_at, "
             "       ec.content_digest, ec.media_type, ec.storage_tier, "
-            f"       {self._capture_classification_sql()} "
+            f"       {self._capture_classification_sql()}, "
+            "       sr.custody_posture, sr.compact_status, "
+            "       rr.spdx_expression, rr.redistributable, rr.reviewed_at "
             "  FROM evidence_capture ec "
             "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
+            "  LEFT JOIN source_registry sr ON sr.source_id = ea.source_id "
+            "  LEFT JOIN rights_record rr ON rr.rights_id = sr.rights_id "
             " WHERE ec.artifact_id = %s AND ec.capture_id = %s",
             (artifact_id, capture_id),
         ).fetchone()
@@ -891,6 +901,23 @@ class PgReadStore:
                 "SELECT claim_id FROM claim_evidence WHERE capture_id = %s", (capture_id,)
             ).fetchall()
         )
+        # P35.31 / NEW-2 (F-400, second half): the served tier reads the
+        # RECORDED tier floored by the lane the record evidences — rows written
+        # before the writer derivation carry the constant 'public', so the
+        # read path derives the lane from the source's rights record (the
+        # interim basis until row 313's [redistribution] fields land) and
+        # tightens, never relaxes. A tightened row is labelled
+        # ``derived_at_read`` with its stored value, never a silent upgrade.
+        lane = interim_lane(
+            custody_posture=row[8],
+            spdx=row[10],
+            redistributable=row[11],
+            reviewed=row[12] is not None,
+            refused=str(row[9] or "") == "permission_declined",
+        ).lane
+        deriv = served_storage_tier(str(row[6] or ""), lane=lane)
+        served = "sealed" if sealed else deriv.tier
+        recorded = str(row[6] or "")
         # P36.15 (SIG-PUB-015/016): the excerpt surface is derivative-sourced —
         # where a redaction derivative row exists its own recorded excerpt is
         # served and the parent's raw excerpt never reaches the surface.
@@ -898,10 +925,12 @@ class PgReadStore:
             capture_id=str(row[0]),
             source_id=str(row[1]),
             source_uri=str(row[2] or ""),
-            retrieved_at=row[3].date().isoformat() if row[3] else "",
+            retrieved_at=iso_utc(row[3]) or "",
             content_digest=str(row[4]),
             media_type=str(row[5]),
-            tier=StorageTier.SEALED if sealed else StorageTier(row[6]),
+            tier=StorageTier(served),
+            tier_basis="seal_register" if sealed else deriv.basis,
+            recorded_tier=recorded if recorded != served and recorded in STORAGE_TIERS else None,
             claims_supported=claims_supported,
             excerpt=self._capture_excerpt(str(row[0])),
             capture_classification=None if row[7] is None else str(row[7]),

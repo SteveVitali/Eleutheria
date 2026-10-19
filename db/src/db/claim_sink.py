@@ -80,6 +80,7 @@ from evidence.claim_identity import (
 )
 from evidence.claim_identity import claim_digest as _claim_digest
 from evidence.claim_identity import temporal_class as _predicate_class_of
+from policy.transparency import derive_storage_tier, interim_lane
 
 from .assertion import (
     ASSERTION_MAP_ID,
@@ -434,6 +435,15 @@ ObjectResolver = Callable[[Mapping[str, Any]], "EntityRef | None"]
 #: asserted (assertion-time provenance). Replays and callers that never wire a
 #: resolver keep the assertion-only behaviour.
 RightsResolver = Callable[[str], "Mapping[str, Any] | None"]
+#: P35.31 / NEW-2 (F-400): an optional per-source lane lookup the sink consults
+#: when it records a capture's ``storage_tier``. The resolver returns a mapping
+#: with any of the interim-basis fields :func:`policy.transparency.interim_lane`
+#: consumes — ``custody_posture`` / ``spdx`` / ``redistributable`` / ``reviewed``
+#: / ``refused`` — plus the optional ``part_viii_class`` and the caller-injected
+#: ``packet_limited`` / ``sig_labelled_cc0`` signals, or ``None`` when the source
+#: is unknown. Absent a resolver the source's lane cannot be evidenced and every
+#: capture derives ``sealed`` (fail closed — never ``public`` by default).
+LaneResolver = Callable[[str], "Mapping[str, Any] | None"]
 #: Receives each chunk's already-present claims (see :class:`DuplicateBatch`).
 DuplicateHook = Callable[[DuplicateBatch], None]
 
@@ -672,7 +682,7 @@ _INSERT_OCCURRENCE = (
     " retrieved_by_run_id, ocfl_object_id, ocfl_version, storage_tier,"
     " capture_method, capture_tool_version, source_uri, blob_digest,"
     " capture_classification) "
-    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'public', %s, %s, %s, %s, %s) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
     "RETURNING capture_id"
 )
 _EXTRACTION_OF = (
@@ -805,6 +815,7 @@ class PgClaimSink:
         rights_resolver: RightsResolver | None = None,
         subject_typer: Callable[[str], str] | None = None,
         lineage_resolver: Callable[[str], ClaimLineage] | None = None,
+        lane_resolver: LaneResolver | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -856,6 +867,13 @@ class PgClaimSink:
         self._lineage_resolver = lineage_resolver
         self._lineage_by_source: dict[str, ClaimLineage] = {}
         self._claim_lineage_ready: bool | None = None
+        # P35.31 / NEW-2 (F-400): the per-source redistribution-lane lookup the
+        # capture writer consults for ``storage_tier`` (wired by
+        # ``connectors.sinks.make_claim_sink`` from the registry's rights record —
+        # the interim basis until row 313's ``[redistribution]`` fields land).
+        # Absent → every capture records ``sealed`` (fail closed).
+        self._lane_resolver = lane_resolver
+        self._lane_by_source: dict[str, tuple[str, str]] = {}
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         # (source_id, spdx, attribution, terms_url) -> rights_id. P34.21a: the
@@ -1384,13 +1402,50 @@ class PgClaimSink:
             ),
         )
 
-    def _ensure_source(self, source_id: str, rights_id: str) -> None:
+    def _lane_and_custody(self, source_id: str) -> tuple[str, str]:
+        """The capture's ``(storage_tier, custody_posture)`` for one source.
+
+        P35.31 / NEW-2 (F-400): the recorded ``storage_tier`` derives from the
+        source's redistribution lane + Part VIII class via
+        :func:`policy.transparency.derive_storage_tier` — never a constant. The
+        ``lane_resolver`` supplies the interim basis (the rights record the
+        registry already carries); an unresourced sink or an unknown source
+        derives ``sealed`` — fail closed, never ``public`` by default. The
+        custody posture the lane map evidences is returned beside the tier so a
+        source stub records the registry's real posture, not a ``REFERENCE``
+        placeholder the read path would then under-read.
+        """
+        cached = self._lane_by_source.get(source_id)
+        if cached is not None:
+            return cached
+        fields = self._lane_resolver(source_id) if self._lane_resolver else None
+        fields = dict(fields) if fields else {}
+        custody = str(fields.get("custody_posture") or "REFERENCE").strip().upper()
+        if custody not in {"MIRROR", "DERIVE", "REFERENCE", "LINK"}:
+            custody = "REFERENCE"
+        decision = interim_lane(
+            custody_posture=fields.get("custody_posture"),
+            spdx=fields.get("spdx"),
+            redistributable=fields.get("redistributable"),
+            reviewed=fields.get("reviewed"),
+            refused=fields.get("refused"),
+            packet_limited=fields.get("packet_limited"),
+            sig_labelled_cc0=fields.get("sig_labelled_cc0"),
+        )
+        tier = derive_storage_tier(decision.lane, fields.get("part_viii_class"))
+        out = (tier, custody)
+        self._lane_by_source[source_id] = out
+        return out
+
+    def _ensure_source(
+        self, source_id: str, rights_id: str, custody_posture: str = "REFERENCE"
+    ) -> None:
         self._conn.execute(
             "INSERT INTO source_registry"
             "(source_id, name, source_kind, default_reliability, reliability_provisional,"
             " reliability_justification, rights_id, custody_posture, compact_status,"
             " ingestion_permitted, robots_policy) "
-            "VALUES (%s, %s, 'connector', %s, false, %s, %s, 'REFERENCE', 'compact',"
+            "VALUES (%s, %s, 'connector', %s, false, %s, %s, %s, 'compact',"
             " true, 'obeyed') ON CONFLICT (source_id) DO NOTHING",
             (
                 source_id,
@@ -1398,6 +1453,7 @@ class PgClaimSink:
                 _DEFAULT_RELIABILITY,
                 "connector-registered source (P19.4 PgClaimSink)",
                 rights_id,
+                custody_posture,
             ),
         )
 
@@ -1413,7 +1469,11 @@ class PgClaimSink:
         cached = self._capture_by_source.get(cache_key)
         if cached is not None:
             return cached
-        self._ensure_source(source_id, rights_id)
+        # P35.31 / F-400: the tier derives from the source's lane + Part VIII
+        # class — the same one-vocabulary derivation the actual-capture writer
+        # uses, never the old 'public' constant.
+        tier, custody = self._lane_and_custody(source_id)
+        self._ensure_source(source_id, rights_id, custody)
         run_id = self._ensure_run()
         stable_locator = f"sig:connector:{self._connector_name}:{source_id}:{artifact_type}"
         # evidence_artifact — UNIQUE(source_id, stable_locator).
@@ -1461,12 +1521,13 @@ class PgClaimSink:
                 " capture_method, capture_tool_version, source_uri, blob_digest,"
                 " capture_classification) "
                 "VALUES (%s, %s, 0, 'application/octet-stream', clock_timestamp(), %s,"
-                " %s, 'v1', 'public', 'connector', %s, %s, %s, 'synthetic') RETURNING capture_id",
+                " %s, 'v1', %s, 'connector', %s, %s, %s, 'synthetic') RETURNING capture_id",
                 (
                     artifact_id,
                     cap_digest,
                     run_id,
                     ocfl_object_id,
+                    tier,
                     self._connector_version,
                     stable_locator,
                     cap_digest,
@@ -1816,10 +1877,16 @@ class PgClaimSink:
         binding's declared OCFL version (a version mismatch is quarantined by
         the caller, never silently rebound).
         """
+        # P35.31 / NEW-2 (F-400): the recorded storage_tier derives from the
+        # source's redistribution lane + Part VIII class — raw-ok + P8-clear →
+        # public, derived-only/link-only → restricted, restricted lane or a
+        # P8-1/P8-2/P8-4 class → sealed, unevidenced lane/class → sealed. The
+        # pre-fix 'public' constant is gone; unknown never defaults public.
+        tier, custody = self._lane_and_custody(source_id)
         cache_key = (source_id, binding.source_uri)
         artifact_id = self._artifact_by_uri.get(cache_key)
         if artifact_id is None:
-            self._ensure_source(source_id, rights_id)
+            self._ensure_source(source_id, rights_id, custody)
             acquisition = "replay" if binding.replayed else "http_get"
             art = self._conn.execute(
                 _ACTUAL_ARTIFACT,
@@ -1872,6 +1939,7 @@ class PgClaimSink:
                 binding.original_run_id or run_id,
                 binding.ocfl_object_id,
                 binding.ocfl_version or "v1",
+                tier,
                 method,
                 self._connector_version,
                 binding.source_uri,

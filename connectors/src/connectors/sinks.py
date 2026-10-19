@@ -80,6 +80,48 @@ def _registry_rights(source_id: str) -> Mapping[str, Any] | None:
     }
 
 
+def _registry_lane(source_id: str) -> Mapping[str, Any] | None:
+    """The source's interim redistribution-lane basis (P35.31 / NEW-2, F-400).
+
+    Row 313's ``[redistribution]`` lane fields are not landed yet, so the
+    capture writer's ``storage_tier`` derivation consumes the lane basis the
+    registry already carries: ``custody_posture`` + the rights record fields
+    ``policy.transparency.interim_lane`` reads. A declined compact is the
+    recorded refusal R-1 names; an unregistered source resolves ``None`` —
+    the writer then derives ``sealed``, never ``public`` by default.
+    """
+    from .registry import CompactStatus, get
+
+    try:
+        record = get(source_id)
+    except KeyError:
+        return None
+    rights = record.rights
+    # Same normalization as ``_registry_rights``: the registry's
+    # ``redistributable = false`` default conflates "reviewed, not
+    # publishable" with "not yet reviewed" — an unreviewed source keeps the
+    # honest undecided marker so the lane derives ``unknown``, never a
+    # recorded refusal.
+    reviewed = bool(record.rights_reviewed_by and record.rights_reviewed_on)
+    if rights.spdx == "UNDETERMINED":
+        redistributable = "UNDETERMINED"
+    elif rights.redistributable:
+        redistributable = "yes"
+    else:
+        redistributable = "no" if reviewed else "UNDETERMINED"
+    return {
+        "custody_posture": record.custody_posture.value,
+        "spdx": rights.spdx,
+        "redistributable": redistributable,
+        "derivative_permitted": rights.derivative_permitted,
+        "reviewed": reviewed,
+        "refused": record.compact_status == CompactStatus.PERMISSION_DECLINED,
+        # The record carries no Part VIII class or packet flag yet — the
+        # interim basis leaves them unevidenced (derive_storage_tier fails
+        # closed on them); row 313's fields will carry them.
+    }
+
+
 def _registry_lineage(source_id: str) -> Any:
     """The source's resolved claim-lineage record (P35.25 / SIG-CONF-014).
 
@@ -173,6 +215,11 @@ def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: A
         # per source (claim_lineage rows); undeclared stays undeclared — never
         # a guessed class.
         kwargs.setdefault("lineage_resolver", _registry_lineage)
+        # P35.31 / NEW-2 (F-400): the live sink derives each capture's
+        # ``storage_tier`` from the source's redistribution lane + Part VIII
+        # class (interim basis: the registry's rights record). An unknown
+        # source derives ``sealed`` — never the old 'public' constant.
+        kwargs.setdefault("lane_resolver", _registry_lane)
         return PgClaimSink.from_dsn(dsn, **kwargs)
     raise ValueError(f"unknown claim-sink kind {kind!r}; expected one of {SINK_KINDS}")
 

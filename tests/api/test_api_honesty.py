@@ -95,7 +95,7 @@ def _meta(tier: StorageTier, classification: str | None) -> CaptureMetadata:
         capture_id="cap:x",
         source_id="src:x",
         source_uri="https://example/x",
-        retrieved_at="2026-07-01",
+        retrieved_at="2026-07-01T12:30:05Z",
         content_digest="d" + "0" * 40,
         media_type="application/pdf",
         tier=tier,
@@ -126,6 +126,45 @@ def test_non_public_tiers_never_claim_bytes() -> None:
         body = _evidence_client(_meta(tier, "actual")).get("/v1/evidence/art:x/cap:x").json()
         assert body["bytes_available"] is False
         assert body["bytes_unavailable_reason"] == f"tier:{tier.value}"
+
+
+def test_source_uri_publishes_only_for_a_public_tier_capture() -> None:
+    """P35.31 (F-400 / SIG-TRANSP-020): the upstream URI is a public-tier fact —
+    a restricted or sealed capture's representation does not carry it at all."""
+    ok = _evidence_client(_meta(StorageTier.PUBLIC, "actual")).get("/v1/evidence/art:x/cap:x")
+    assert ok.json()["representation"]["source_uri"] == "https://example/x"
+    for tier in (StorageTier.RESTRICTED, StorageTier.SEALED):
+        body = _evidence_client(_meta(tier, "actual")).get("/v1/evidence/art:x/cap:x").json()
+        assert "source_uri" not in body["representation"], tier
+        assert "https://example" not in json.dumps(body)
+
+
+def test_retrieved_at_is_a_full_iso_timestamp_never_date_only() -> None:
+    """P35.31 (J4 S-10): the served retrieved_at carries the full timestamp."""
+    body = (
+        _evidence_client(_meta(StorageTier.PUBLIC, "actual")).get("/v1/evidence/art:x/cap:x").json()
+    )
+    assert body["representation"]["retrieved_at"] == "2026-07-01T12:30:05Z"
+
+
+def test_every_evidence_representation_names_its_tier_basis() -> None:
+    """P35.31 (F-400): a tightened/derived tier must label its basis — the API
+    carries ``tier_basis`` (and ``recorded_tier`` where they differ) so a
+    served value is never a silent upgrade."""
+    body = (
+        _evidence_client(_meta(StorageTier.RESTRICTED, "actual"))
+        .get("/v1/evidence/art:x/cap:x")
+        .json()
+    )
+    rep = body["representation"]
+    assert rep["tier"] == "restricted" and rep["tier_basis"] == "recorded"
+    tightened = dataclasses.replace(
+        _meta(StorageTier.SEALED, "actual"),
+        tier_basis="derived_at_read",
+        recorded_tier="public",
+    )
+    rep = _evidence_client(tightened).get("/v1/evidence/art:x/cap:x").json()["representation"]
+    assert rep["tier_basis"] == "derived_at_read" and rep["recorded_tier"] == "public"
 
 
 def test_evidence_endpoint_serves_the_derivative_excerpt() -> None:

@@ -51,11 +51,20 @@ class CaptureMetadata:
     capture_id: str
     source_id: str
     source_uri: str
-    retrieved_at: str  # ISO-8601 (the capture date)
+    retrieved_at: str  # full ISO-8601 UTC (S-10 — never a date-only string)
     content_digest: str  # multihash (SIG-EVID-002)
     media_type: str
     tier: StorageTier
     claims_supported: tuple[str, ...] = field(default_factory=tuple)
+    #: P35.31 (F-400): the basis the served ``tier`` was produced on —
+    #: ``recorded`` (the row's stored tier stands), ``derived_at_read`` (the
+    #: read path's lane+class floor tightened a pre-fix constant-tier row) or
+    #: ``seal_register`` (a protective-seal disposition forced the sealed
+    #: representation). The label is emitted so a tightened row names its basis.
+    tier_basis: str = "recorded"
+    #: The row's recorded tier, populated only when it differs from the served
+    #: ``tier`` — the honest record that the served value was tightened.
+    recorded_tier: str | None = None
     title: str | None = None
     excerpt: str | None = None
     byte_size: int | None = None
@@ -128,9 +137,21 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
     """What may be published for a capture, by tier (SIG-EVID-009/010).
 
     * ``public``    — full metadata + excerpt; bytes are at a public URL.
-    * ``restricted``— full metadata, **redacted excerpt**; bytes access-controlled.
+    * ``restricted``— full metadata, **redacted excerpt**, **no upstream URI**;
+      bytes access-controlled.
     * ``sealed``    — **metadata only**: existence, source, date, digest, claims;
-      no excerpt, no title body, and the bytes are never exposed.
+      no excerpt, no title body, no upstream URI, and the bytes are never
+      exposed.
+
+    ``source_uri`` is served only for the ``public`` tier (P35.31 / F-400,
+    SIG-TRANSP-020): the upstream URL of a restricted or sealed capture is not
+    itself a public fact — the field is absent from their representations,
+    not nulled.
+
+    ``tier_basis`` labels how the served tier was produced — ``recorded``,
+    ``derived_at_read`` (the read path's lane+class floor tightened a pre-fix
+    constant-tier row) or ``seal_register`` (a protective-seal disposition) —
+    and ``recorded_tier`` carries the stored value when it differs.
 
     The excerpt is :func:`publishable_excerpt` (SIG-PUB-015/016, P36.15): where a
     redaction derivative exists its own recorded excerpt is served and the
@@ -144,14 +165,18 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
     base: dict[str, object] = {
         "capture_id": meta.capture_id,
         "source_id": meta.source_id,
-        "source_uri": meta.source_uri,
         "retrieved_at": meta.retrieved_at,
         "content_digest": meta.content_digest,
         "media_type": meta.media_type,
         "tier": meta.tier.value,
+        "tier_basis": meta.tier_basis,
         "claims_supported": list(meta.claims_supported),
         "bytes_available": bytes_available(meta),
     }
+    if meta.recorded_tier is not None:
+        base["recorded_tier"] = meta.recorded_tier
+    if meta.tier is StorageTier.PUBLIC:
+        base["source_uri"] = meta.source_uri
     if meta.tier is StorageTier.SEALED:
         # Existence, source, date, digest, claims supported — and nothing else.
         base["exists"] = True
@@ -170,11 +195,12 @@ SEALED_PUBLIC_FIELDS: frozenset[str] = frozenset(
     {
         "capture_id",
         "source_id",
-        "source_uri",
         "retrieved_at",
         "content_digest",
         "media_type",
         "tier",
+        "tier_basis",
+        "recorded_tier",
         "claims_supported",
         "bytes_available",
         "exists",

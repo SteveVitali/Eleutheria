@@ -76,7 +76,7 @@ def store() -> InMemoryStore:
             capture_id="cap:restricted:1",
             source_id="src:records",
             source_uri="https://example/records/restricted.pdf",
-            retrieved_at="2026-07-01",
+            retrieved_at="2026-07-01T00:00:00Z",
             content_digest="c" + "0" * 40,
             media_type="application/pdf",
             tier=StorageTier.RESTRICTED,

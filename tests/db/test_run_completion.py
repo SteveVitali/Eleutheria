@@ -243,7 +243,22 @@ def test_worm_backfill_appends_proven_rows_reruns_plus_zero_and_feeds_freshness(
     # A pre-P31.2 history: two sources ingested through one dot_511 run, no completion.
     with psycopg.connect(clean_dsn, autocommit=True) as conn:
         t_start = conn.execute("SELECT clock_timestamp()").fetchone()[0]
-        legacy = PgClaimSink(conn, connector_name="dot_511", code_commit="unknown")
+        # P35.31 (F-400): the sink records the DERIVED storage tier, so the
+        # fixture evidences a raw-ok + P8-clear lane → 'public' captures a
+        # tier-0 role (sig_materialize) can see for the claims-in-window count.
+        lane = {
+            "custody_posture": "MIRROR",
+            "spdx": "CC0-1.0",
+            "redistributable": "yes",
+            "reviewed": True,
+            "part_viii_class": "clear",
+        }
+        legacy = PgClaimSink(
+            conn,
+            connector_name="dot_511",
+            code_commit="unknown",
+            lane_resolver=lambda _sid: lane,
+        )
         legacy.assert_claims(_geo_claims("camreg_t", 2, "t"))
         legacy.assert_claims(_geo_claims("camreg_u", 1, "u"))
         t_end = conn.execute("SELECT clock_timestamp()").fetchone()[0]

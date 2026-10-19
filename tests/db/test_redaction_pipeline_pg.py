@@ -199,19 +199,26 @@ def test_reviewed_redaction_round_trips_through_the_spine(conn: Any, tmp_path: A
     decisions = queue.decisions(item.item_id)
     assert len(decisions) == 1 and decisions[0].reviewer == "records officer"
 
-    # The public read surface serves the derivative's excerpt, never the
-    # parent's — the raw excerpt is nowhere in the served representation.
+    # The public read surface resolves the derivative metadata through the
+    # spine — and P35.31's served-tier floor (F-400) then labels the rep
+    # honestly: this fixture's rights record cannot evidence a lane, so the
+    # recorded 'public' row is TIGHTENED to sealed at read (derived_at_read,
+    # never a silent 'public' upgrade). The positive "the derivative's excerpt
+    # is served" contract is pinned on the public-representation unit and API
+    # honesty tests; here the raw excerpt is nowhere in the served rep.
     read = _read_store_over(conn)
     meta = read.capture(env["artifact_id"], env["capture_id"])
     assert meta is not None
     assert meta.derivative is not None
     assert meta.derivative.content_digest == deriv.digest
     assert meta.excerpt == "Signed by Officer Jane M. Doe."
+    assert meta.tier_basis == "derived_at_read" and meta.recorded_tier == "public"
     from evidence.tiers import public_representation
 
     rep = public_representation(meta)
-    assert rep["excerpt"] == "Signed by Officer [redacted]."
-    assert "Jane M. Doe" not in str(rep)
+    assert rep["tier"] == "sealed" and rep["tier_basis"] == "derived_at_read"
+    assert rep["recorded_tier"] == "public"
+    assert "excerpt" not in rep and "Jane M. Doe" not in str(rep)
 
     # The derivative's bytes physically omit the redacted span.
     deriv_bytes = env["store"].get(deriv.digest)

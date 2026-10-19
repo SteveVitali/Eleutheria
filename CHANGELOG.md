@@ -24,6 +24,40 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **One transparency scrub, a fail-closed publish secret gate, and honest
+  capture storage tiers** (P35.31 / row 309; owner SIG-TRANSP-022, also
+  SIG-TRANSP-020; owns F-400 / J3 §3.3 NEW-2; cites D-J3-1, J3 T-6,
+  SIG-EVID-009/010, SIG-API-012, P34.25, P32.2) — `policy.transparency`
+  is the single scrub module every transparency surface consumes (a
+  second scrub implementation is a defect): the J4 S-1…S-14 rules as
+  code (credential query-param/header stripping, internal-location
+  opaque ids, explicit-column emission with the J3 §3.5 never-exported
+  list refusing at the emit layer, the closed error-class vocabulary,
+  IP drop, the S-6 URL gate — host always, full URL only for
+  `raw-ok`/`derived-only` lanes past the gate, no personal data, no
+  record free text, withdrawal tombstones, full ISO-8601 UTC
+  timestamps, gated-source registry-only rows, per-host robots
+  disclosure with the decision reference, the five-name header
+  allowlist), the closed lane/tier/Part VIII vocabularies, and
+  `find_secrets` — the one shared secret-shaped detector
+  (`ops.publish.assert_publish_set_secret_free` runs it over EVERY
+  file in the publish set — site tree, staged release tree, public
+  export tree — before the release record or any remote sync; one hit
+  aborts in dry-run AND `--apply`, names file + pattern class never
+  the value, no override flag). The actual-capture writer's constant
+  `storage_tier='public'` is gone: `PgClaimSink` now derives the
+  recorded tier from the source's redistribution lane + Part VIII
+  class via `interim_lane`/`derive_storage_tier` — `raw-ok`+P8-clear →
+  `public`, `derived-only`/`link-only` → `restricted`, `restricted`
+  lane or P8-1/P8-2/P8-4 or any unknown → `sealed` — wired from the
+  registry's rights record (`connectors.sinks._registry_lane`, the
+  interim basis until row 313's `[redistribution]` fields land —
+  `D-P35.31-1`). `/v1/evidence` reads the recorded tier floored by the
+  lane at read time (`served_storage_tier` — tighten-only, a pre-fix
+  constant-`public` row is served tightened and labelled
+  `tier_basis='derived_at_read'` + `recorded_tier`, never a silent
+  upgrade); `source_uri` publishes only for the `public` tier, and
+  `retrieved_at` is a full ISO-8601 UTC timestamp, never date-only.
 - **Shared entity labels, slugs and hashes — the `sig.entity-label/1`
   registry** (P35.29 / row 307; R11-K13-GX-01; cites A-10 (the operator's
   recorded answer, `b + c`), ADR-159, SIG-PUB-008, K2 §3 L-1…L-7,

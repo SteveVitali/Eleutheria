@@ -104,6 +104,37 @@ class PublishError(RuntimeError):
     """The public cut-over cannot proceed — fails LOUD (never a fabricated green)."""
 
 
+def assert_publish_set_secret_free(*trees: Path) -> None:
+    """The publish secret gate (P35.31 / SIG-TRANSP-022, J4 S-1's block clause).
+
+    ``policy.transparency.find_secrets`` — the one shared detector — scans
+    EVERY file in the publish set: the site tree, the staged release tree and
+    the public export tree. ONE secret-shaped hit (``eyJ…``, ``AKIA…``, ≥32
+    hex after ``key=``, ``Bearer …``, a private-key block, a GCP API-key shape)
+    aborts the whole publish before any byte is written or synced. There is no
+    override flag and a warning is never a pass — the gate refuses, it does
+    not report.
+
+    The error names the file and the pattern CLASS, never the matched value —
+    a refusal message must not echo the secret it caught.
+    """
+    from policy.transparency import find_secrets
+
+    hits: list[str] = []
+    for tree in trees:
+        for path in _iter_files(tree):
+            rel = f"{tree.name}/{path.relative_to(tree).as_posix()}"
+            text = path.read_text(encoding="utf-8", errors="replace")
+            hits.extend(f"{rel}:{f.line}: {f.pattern_class}" for f in find_secrets(text))
+    if hits:
+        raise PublishError(
+            "publish refused — a secret-shaped value was found in the publish "
+            "set (SIG-TRANSP-022 / J4 S-1; fail closed — no override):\n  "
+            + "\n  ".join(hits[:50])
+            + (f"\n  … and {len(hits) - 50} more" if len(hits) > 50 else "")
+        )
+
+
 class CompartmentLeak(PublishError):
     """A restricted/ODbL/UNDETERMINED artifact reached the public compartment (§42)."""
 
@@ -1281,6 +1312,12 @@ def run_publish_web(
         assert_attribution_complete(export_tree)
     else:
         assert_attribution_complete(dist)
+
+    # P35.31 / SIG-TRANSP-022: the publish secret gate — EVERY file in the
+    # publish set (the site tree, the staged release tree, the public export
+    # tree) is scanned for a secret-shaped value before ANY write or sync; one
+    # hit aborts in dry-run AND --apply alike. No override flag exists.
+    assert_publish_set_secret_free(*(t for t in (dist, release_tree, export_tree) if t is not None))
 
     # P35.5 / SIG-TRANSP-019: the mirror leg's preflight runs BEFORE the release
     # record is written — a mirror that is disabled, metered-egress, over its
