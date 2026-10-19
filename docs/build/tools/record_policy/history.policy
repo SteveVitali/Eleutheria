@@ -377,3 +377,12 @@ seed-commit 21a392ca
 # edited the committed line — append-only is preserved by this declaration.
 # Scope: findings attributed to 49607976 only; no other commit borrows the exemption.
 seed-commit 49607976
+# ── P34.39a live-leg PHASE LOG kind repair ─────────────────────────────────
+# ac078dca's PHASE LOG entry kind `live leg 1` was undeclared in
+# record_policy/phase_log_kinds.txt (V4); the in-place kind repair
+# `P34.39a live leg 1` → `P34.39a post-closeout record — live leg 1 ran`
+# (917dd2a5; the ef1fb3bf/d778706b/145b68a3/6fe93216/64648080/21a392ca/
+# 49607976 sanctioned pattern) edited the committed line — append-only is
+# preserved by this declaration.
+# Scope: findings attributed to 917dd2a5 only; no other commit borrows the exemption.
+seed-commit 917dd2a5

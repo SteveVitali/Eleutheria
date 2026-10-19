@@ -21,8 +21,31 @@ by `sig-ops scheduled-readback` — read-only, clock-guarded (AR-4/AR-5 of
   refused (exit 42 — queued, not failed) because the fire is in the future,
   the trigger has no `lastAttemptTime`, and no post-fire execution exists.
   This file is the record that the guard holds live, not just in fixtures.
+- `readback-2026-10-10.json` — the post-fire read-back, captured
+  2026-10-14T05:55Z on live-leg branch `r11/P34.39a-live-1` (exit 0).
+  **Verdict `fail` → `deferral-row`** — eleven of thirteen criteria pass; the
+  two recorded fails are tooling artifacts, not production failures:
+  `member-run-rows` counts by configured id, and the four members P34.18/
+  ADR-178 renamed (`camreg_und_018` → `camreg_nurnazihah`,
+  `camreg_und_019` → `camreg_olsson`, `camreg_us_ny_001` →
+  `camreg_nyc_jgrayson_ny`, `camreg_us_ny_002` → `camreg_nyc_weltia_ny`) each
+  wrote exactly one `outcome: ok` run row under their deployed ids — all 17
+  members ran; `sql-no-restart` read the uptime series' DELTA points as a
+  gauge (every 60 s point reads 60 s — continuously up, no restart). The
+  substantive record: execution `sig-ingest-camreg-batch-05-nm64j` succeeded
+  in 766.3 s; OSM member `ok`, 158 fetches (no resumed), `claims_added`
+  1,369,210, 557.9 s; `ingest_run_completion` `01a123ec…` `ok`
+  (`claims_considered` 1,369,210 — a net +0 replay: `claims_duplicate`
+  1,214,682, `claims_inserted` 0, per-source claim counts unchanged from
+  baseline, disclosed: the pinned image predates P31.7 re-sightings); all 16
+  claim-table `n_tup_upd`/`n_tup_del` still 0; `/health` 200 with 0 not-ok
+  probes; memory peak 0.614 < 0.90; disk +24 MB < 1 GiB. The failure routed
+  to `D-P34.39a-1` naming the operator decision; `D-P31.4-1` stays OPEN on it.
 
 ## The queued leg (runs after 2026-10-10T03:35Z + execution completion)
+
+The leg ran once (2026-10-14, `r11/P34.39a-live-1`); the command below is the
+re-read a `D-P34.39a-1` follow-up would use:
 
 ```sh
 cloud-sql-proxy zeta-medley-508121-u7:us-central1:sig-pg --port 55433 &

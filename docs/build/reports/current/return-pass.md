@@ -5,7 +5,7 @@
 | ticket | obligations | re-run line |
 |---|---|---|
 | P21.5 | D-P21.5-1 (PARTIAL) | chain row 482 **P37.55** (11D, after P34.21b) · landed row 59 (PR #61 — prepare-only re-run row 76, PR #76) |
-| P31.4 | D-P31.4-1 | chain row 247 **P34.39a** (11A, clock-guarded; prerequisite of P34.46); verify = the D-P31.4-1 command in DEFERRALS; P34.39b (row 248) carries the first-fire + … |
+| P31.4 | D-P31.4-1 | chain row 247 **P34.39a** (11A — leg ran 2026-10-14, verdict `fail` → `deferral-row`; a `P34.39a-live-2` re-read rides the operator's call on D-P34.39a-1); veri… |
 | P32.18 | D-P32.18-1 | chain rows 438 **P37.16a** and 439 **P37.16b** (11D; the four captures split by family per PLAN-11D); packet `docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_… |
 | P32.19 | D-P32.19-1 | chain rows 438 **P37.16a** and 439 **P37.16b** (11D; the four captures split by family per PLAN-11D); packet `docs/build/reports/p32.19-tulsa-dossier/LIVE_RETUR… |
 | P32.20 | D-P32.20-1 | chain rows 438 **P37.16a** and 439 **P37.16b** (11D; the four captures split by family per PLAN-11D); packet `docs/build/reports/p32.20-san-diego-dossier/LIVE_R… |
@@ -24,7 +24,6 @@
 | P34.21a | D-P34.21a-1 | `implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (scope: leg L1 only — `sig-db attribution-co… |
 | P34.21b | D-P34.21b-1 · D-P34.21b-2 | `implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (scope: leg L1 on `r11/P34.21b-live-1` — `public… |
 | P34.38 | the queued BidNet terms-capture leg (it works the recorded E4-R6a answer; the rights decision keeps its manifest home at row 350) | `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (scope: the BidNet terms capture only) · landed ro… |
-| P34.39a | the queued live read-back verdict for the obligation homed on the P31.4 row above (this row carries the clock-guarded leg only); the pinned image predates P31.7… | `implement-spec spec=docs/tickets/247_P34.39a__osm-replay-read-back.md live_verification=true` · landed row 247 (PR #245 — leg queued) |
 | P34.39b | the three queued monitoring legs for the scheduled-ingest first-fire wave and the `camreg_peel_on` first fire (the obligations keep their homes — this row carri… | `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (scope: one leg per run — L1, then L2, then L3) · landed row 248… |
 | P34.40 | the two queued production legs of the dark serving-topology roll (L1 the `sig-web` nginx roll by pinned digest, L2 the `/v1/*` URL-map step onto `sig-api`); eng… | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (scope: one leg per run — L1, then L2) · landed row 249 (PR #250 … |
 | P34.42a | the queued IAM leg (G1-01/F-272 services half): create `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt`, the least-privilege bindings + `sig-pg-password` access, one s… | `implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true` (scope: the IAM leg only) · landed row 251 (PR #252… |
