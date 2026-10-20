@@ -47,6 +47,13 @@ interface Props {
    */
   provenanceName?: string;
   /**
+   * P35.37 (SIG-TRANSP-013): the JSON-pointer base inside
+   * `web/analytics/provenance.json` the "How we know this" module's figures
+   * resolve under — default `/surfaces/site`; a page-scoped module passes its
+   * own `surfaces/<name>` key (e.g. `/surfaces/dossiers/<slug>`).
+   */
+  provenancePointerBase?: string;
+  /**
    * `minimal` renders only the page slot — no "How we know this", dispute or
    * citation module (P34.13 / QW-11): the branded error pages and the /terms
    * forwarder are chrome-light by design.
@@ -182,7 +189,7 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
       <slot />
       {chrome === "full" && (
         <>
-          <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} />
+          <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} pointerBase={Astro.props.provenancePointerBase ?? "/surfaces/site"} />
           <DisputeLink />
           <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
         </>

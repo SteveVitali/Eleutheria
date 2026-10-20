@@ -91,6 +91,132 @@
       "token": "/$",
       "count": 2,
       "reason": "withBase()'s own template-literal joins — the single construction seam every other site routes through"
+    },
+    {
+      "file": "src/lib/figures.ts",
+      "token": "/",
+      "count": 3,
+      "reason": "P35.37: repoRoot() endsWith(\"/\") join guards + ROOT_POINTER — string-shape guards and a JSON pointer constant, not links"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/$",
+      "count": 1,
+      "reason": "P35.37: ptr()'s template-literal join — a JSON pointer, not a link"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/sections/$",
+      "count": 2,
+      "reason": "P35.37: JSON pointers into the dossier artifact (sections[].figures/rows), not links"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/termination/notice_window_days",
+      "count": 1,
+      "reason": "P35.37: JSON pointer into the dossier artifact, not a link"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/gaps/$",
+      "count": 1,
+      "reason": "P35.37: JSON pointer into the dossier artifact's gaps[], not a link"
+    },
+    {
+      "file": "src/components/HowWeKnowThis.astro",
+      "token": "/surfaces/site",
+      "count": 1,
+      "reason": "P35.37: provenance JSON-pointer BASE default (a key inside web/analytics/provenance.json), not a link"
+    },
+    {
+      "file": "src/layouts/BaseLayout.astro",
+      "token": "/surfaces/site",
+      "count": 1,
+      "reason": "P35.37: provenance pointerBase prop default — a key inside web/analytics/provenance.json, not a link"
+    },
+    {
+      "file": "src/pages/corrections.astro",
+      "token": "/surfaces/corrections",
+      "count": 1,
+      "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link"
+    },
+    {
+      "file": "src/pages/research-queue.astro",
+      "token": "/surfaces/research_queue",
+      "count": 1,
+      "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[slug].astro",
+      "token": "/surfaces/dossiers/$",
+      "count": 1,
+      "reason": "P35.37: provenance pointerBase template — a key inside web/analytics/provenance.json, not a link"
+    },
+    {
+      "file": "src/pages/coverage-metrics.astro",
+      "token": "/$",
+      "count": 1,
+      "reason": "P35.37: figure pointer \"/<i>/value\" — a JSON pointer into web/coverage.json, not a link"
+    },
+    {
+      "file": "src/pages/coverage-metrics.astro",
+      "token": "/bins/$",
+      "count": 1,
+      "reason": "P35.37: figure pointer \"/bins/<i>/recordCount\" — a JSON pointer into web/analytics/density_bins.json, not a link"
+    },
+    {
+      "file": "src/pages/data-freshness/[...sort].astro",
+      "token": "/",
+      "count": 4,
+      "reason": "P35.37: freshness figure root pointers (\"pointer: \\\"/\\\"\") — JSON pointers into web/freshness.json, not links"
+    },
+    {
+      "file": "src/pages/data-freshness/[...sort].astro",
+      "token": "/$",
+      "count": 2,
+      "reason": "P35.37: freshness figure pointers (\"/<i>/staleness_not_evaluable\", \"/<i>/stale_entity_count\") — JSON pointers into web/freshness.json, not links"
+    },
+    {
+      "file": "src/pages/index.astro",
+      "token": "/",
+      "count": 1,
+      "reason": "P35.37: a home figure root pointer (\"pointer: \\\"/\\\"\") — a JSON pointer into a headline artifact, not a link"
+    },
+    {
+      "file": "src/pages/index.astro",
+      "token": "/$",
+      "count": 1,
+      "reason": "P35.37: a home figure pointer (\"/<i>/value\") — a JSON pointer into a headline artifact, not a link"
+    },
+    {
+      "file": "src/pages/index.astro",
+      "token": "/",
+      "count": 1,
+      "reason": "P35.37: BaseLayout canonical path prop path=\"/\" — consumed by new URL(path, site) for the canonical URL, the same construction every page carries"
+    },
+    {
+      "file": "src/pages/methodology.astro",
+      "token": "/metrics/$",
+      "count": 1,
+      "reason": "P35.37: figure pointer \"/metrics/<i>/value\" — a JSON pointer into web/evaluation.json, not a link"
+    },
+    {
+      "file": "src/pages/sources.astro",
+      "token": "/rows/$",
+      "count": 1,
+      "reason": "P35.37: figure pointer \"/rows/<i>/rows\" — a JSON pointer into web/sources.json, not a link"
+    },
+    {
+      "file": "src/pages/sources.astro",
+      "token": "/basis/adopted_sentence",
+      "count": 1,
+      "reason": "P35.37: figure pointer — a JSON pointer into web/terms_disclosure.json, not a link"
+    },
+    {
+      "file": "src/pages/sources.astro",
+      "token": "/sources/$",
+      "count": 2,
+      "reason": "P35.37: figure pointers \"/sources/<i>/public_row_count\" + \"/sources/<i>/export_row_count\" — JSON pointers into web/sources.json, not links"
     }
   ]
 }

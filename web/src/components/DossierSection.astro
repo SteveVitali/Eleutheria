@@ -9,57 +9,75 @@
 // literal "unknown" rather than being omitted (SIG-UI-015). Shared by the
 // interactive dossier page and the print export so the two never drift.
 import DossierFigure from "./DossierFigure.astro";
+import Figure from "./Figure.astro";
 import AbsenceHatch from "./AbsenceHatch.astro";
 import { groupDigits } from "../lib/format";
 import { rowDisplayValue } from "../lib/dossier";
 import type { Section } from "../lib/dossier";
+// P35.37 (SIG-TRANSP-013): each figure's evidence pointer and every
+// numeral-bearing row come from the page's figure registry.
+import { dossierFigId, dossierRowId } from "../lib/dossier-figures";
+import type { FigureSpec } from "../lib/figures";
 
 interface Props {
   section: Section;
+  /** The page's figure registry (id → spec); absent → the pre-P35.37 render. */
+  specs?: ReadonlyMap<string, FigureSpec>;
 }
 
-const { section } = Astro.props;
+const { section, specs } = Astro.props;
 const figures = section.figures ?? [];
 const rows = section.rows ?? [];
 ---
 
-{figures.map((f) => <DossierFigure figure={f} />)}
+{figures.map((f) => <DossierFigure figure={f} spec={specs?.get(dossierFigId(f.key))} />)}
 
 {rows.length > 0 && (
   <ul class="sig-dossier-rows">
-    {rows.map((r) => (
+    {rows.map((r, ri) => (
       <li class="sig-dossier-row" data-testid="dossier-row">
-        <span class="sig-dossier-row__label">{r.label}:</span>{" "}
-        {r.absence ? (
-          <AbsenceHatch
-            kind={r.absence}
-            subject_id={r.subject_id ?? ""}
-            predicate_id={r.predicate_id ?? ""}
-            predicate_label={r.label}
-          />
-        ) : (
-          <>
-            <span
-              class={
-                r.withheld
-                  ? "sig-dossier-row__value sig-withheld"
-                  : r.value === null
-                    ? "sig-dossier-row__value sig-unknown"
-                    : "sig-dossier-row__value"
-              }
-              data-testid={r.withheld ? "dossier-row-withheld" : "dossier-row-value"}
-            >
-              {groupDigits(rowDisplayValue(r))}
-            </span>
-            {r.documentUrl && (
-              <>
-                {" "}
-                <a class="sig-dossier-row__src" href={r.documentUrl}>[source]</a>
-              </>
-            )}
-          </>
-        )}
-        {r.note && <span class="sig-dossier-row__note"> — {r.note}</span>}
+        {(() => {
+          // P35.37: when the row carries a material numeral — in its value OR
+          // its note — the WHOLE row cell sits inside the figure region so
+          // the pointer contract covers every digit (SIG-TRANSP-013).
+          const rowSpec = specs?.get(dossierRowId(section.section_id, ri));
+          const body = (
+            <>
+              <span class="sig-dossier-row__label">{r.label}:</span>{" "}
+              {r.absence ? (
+                <AbsenceHatch
+                  kind={r.absence}
+                  subject_id={r.subject_id ?? ""}
+                  predicate_id={r.predicate_id ?? ""}
+                  predicate_label={r.label}
+                />
+              ) : (
+                <>
+                  <span
+                    class={
+                      r.withheld
+                        ? "sig-dossier-row__value sig-withheld"
+                        : r.value === null
+                          ? "sig-dossier-row__value sig-unknown"
+                          : "sig-dossier-row__value"
+                    }
+                    data-testid={r.withheld ? "dossier-row-withheld" : "dossier-row-value"}
+                  >
+                    {groupDigits(rowDisplayValue(r))}
+                  </span>
+                  {r.documentUrl && (
+                    <>
+                      {" "}
+                      <a class="sig-dossier-row__src" href={r.documentUrl}>[source]</a>
+                    </>
+                  )}
+                </>
+              )}
+              {r.note && <span class="sig-dossier-row__note"> — {r.note}</span>}
+            </>
+          );
+          return rowSpec ? <Figure figure={rowSpec} order="inline">{body}</Figure> : body;
+        })()}
       </li>
     ))}
   </ul>

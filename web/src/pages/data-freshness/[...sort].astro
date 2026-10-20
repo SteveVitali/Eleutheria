@@ -16,12 +16,17 @@
 // blank table (SIG-UI-007, §3.1).
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
+import Figure from "../../components/Figure.astro";
 import { assertFreshnessRow, evaluableLabel, isNotEvaluable, isNotRecorded } from "../../lib/metrics";
 import type { FreshnessRow } from "../../lib/metrics";
 import { getFreshness, capRows } from "../../lib/data";
 import { sortRows, sortHref, summariseBy } from "../../lib/tables";
 import { fmtInt } from "../../lib/format";
 import type { SortColumn } from "../../lib/tables";
+// P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): every freshness/run number is a
+// <Figure> whose evidence is the freshness artifact + the run row (P36.46's
+// route — a named absence until published).
+import { artifactHref, defineFigures, freshnessTargets, type FigureSpec } from "../../lib/figures";
 
 const BASE_PATH = "/data-freshness/";
 const DEFAULT_SORT = "source";
@@ -71,6 +76,102 @@ const byVolatility = summariseBy(ALL_ROWS, (r) => r.volatility_class);
 // Sort (stable, tiebroken on source) then cap for the perf/a11y budget.
 const { rows: sortedRows, active } = sortRows(ALL_ROWS, COLUMNS, sortKey, (r) => r.source);
 const freshnessRows = capRows(sortedRows);
+
+// The ONE figures[] registry for this page (UXR-34). Every count the page
+// renders — the status/volatility summaries, the truncation note, each row's
+// stale and not-evaluable counts — is a freshness-class <Figure> pointing
+// into `web/freshness.json`.
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const FRESHNESS_ARTIFACT = "web/freshness.json";
+const FRESHNESS_HREF = artifactHref(FRESHNESS_ARTIFACT);
+const specs: FigureSpec[] = [
+  ...byStatus.map((b) => ({
+    id: `summary-status-${slug(b.label)}`,
+    class: "freshness" as const,
+    value: b.count,
+    artifact: FRESHNESS_ARTIFACT,
+    pointer: "/",
+    definition: "#summary-heading",
+    href: FRESHNESS_HREF,
+    breakdown: `#fig-summary-status-${slug(b.label)}`,
+    targets: freshnessTargets(b.label),
+  })),
+  ...byVolatility.map((b) => ({
+    id: `summary-vol-${slug(b.label)}`,
+    class: "freshness" as const,
+    value: b.count,
+    artifact: FRESHNESS_ARTIFACT,
+    pointer: "/",
+    definition: "#summary-heading",
+    href: FRESHNESS_HREF,
+    breakdown: `#fig-summary-vol-${slug(b.label)}`,
+    targets: freshnessTargets(b.label),
+  })),
+  ...(freshnessRows.truncated
+    ? [
+        {
+          id: "trunc-shown",
+          class: "freshness" as const,
+          value: freshnessRows.shown,
+          artifact: FRESHNESS_ARTIFACT,
+          pointer: "/",
+          definition: "#summary-heading",
+          href: FRESHNESS_HREF,
+          breakdown: "#fig-trunc-shown",
+          targets: freshnessTargets("the capped view"),
+        },
+        {
+          id: "trunc-total",
+          class: "freshness" as const,
+          value: freshnessRows.total,
+          artifact: FRESHNESS_ARTIFACT,
+          pointer: "/",
+          definition: "#summary-heading",
+          href: FRESHNESS_HREF,
+          breakdown: "#fig-trunc-total",
+          targets: freshnessTargets("the capped view"),
+        },
+      ]
+    : []),
+  ...freshnessRows.rows.flatMap((row) => {
+    const i = ALL_ROWS.indexOf(row);
+    const sid = slug(row.source);
+    const rowSpecs: FigureSpec[] = [
+      {
+        id: `not-eval-${sid}`,
+        class: "freshness",
+        value: row.staleness_not_evaluable,
+        artifact: FRESHNESS_ARTIFACT,
+        pointer: `/${i}/staleness_not_evaluable`,
+        definition: "#summary-heading",
+        href: FRESHNESS_HREF,
+        breakdown: `#fig-not-eval-${sid}`,
+        targets: freshnessTargets(row.source),
+      },
+    ];
+    if (!isNotEvaluable(row.status)) {
+      rowSpecs.push({
+        id: `stale-${sid}`,
+        class: "freshness",
+        value: row.stale_entity_count,
+        artifact: FRESHNESS_ARTIFACT,
+        pointer: `/${i}/stale_entity_count`,
+        definition: "#summary-heading",
+        href: FRESHNESS_HREF,
+        breakdown: `#fig-stale-${sid}`,
+        targets: freshnessTargets(row.source),
+      });
+    }
+    return rowSpecs;
+  }),
+];
+const FIGURES = defineFigures("data-freshness", specs);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`data-freshness figures[]: no figure registered as "${id}"`);
+  return f;
+};
 ---
 
 <BaseLayout
@@ -106,14 +207,16 @@ const freshnessRows = capRows(sortedRows);
       <ul class="sig-table-summary" data-testid="freshness-summary" aria-labelledby="summary-heading">
         {byStatus.map((b) => (
           <li data-testid="summary-status" data-status={b.label}>
-            <span class="sig-table-summary__count">{fmtInt(b.count)}</span> {evaluableLabel(b.label)}
+            <Figure figure={fig(`summary-status-${slug(b.label)}`)} order="inline" testid="summary-figure">
+              <span class="sig-table-summary__count">{fmtInt(b.count)}</span> {evaluableLabel(b.label)}
+            </Figure>
           </li>
         ))}
       </ul>
       <p class="sig-table-note">
         Volatility classes:{" "}
         {byVolatility.map((b, i) => (
-          <span>{i > 0 ? " · " : ""}<strong>{fmtInt(b.count)}</strong> {evaluableLabel(b.label)}</span>
+          <span>{i > 0 ? " · " : ""}<Figure figure={fig(`summary-vol-${slug(b.label)}`)} order="inline"><strong>{fmtInt(b.count)}</strong> {evaluableLabel(b.label)}</Figure></span>
         ))}.
       </p>
 
@@ -138,7 +241,8 @@ const freshnessRows = capRows(sortedRows);
 
       {freshnessRows.truncated && (
         <p class="sig-table-note" data-testid="freshness-truncation-note">
-          Showing the first {fmtInt(freshnessRows.shown)} of {fmtInt(freshnessRows.total)} sources (sorted by {active.label.toLowerCase()});
+          <Figure figure={fig("trunc-shown")} order="inline">Showing the first {fmtInt(freshnessRows.shown)}</Figure>{" "}
+          <Figure figure={fig("trunc-total")} order="inline">of {fmtInt(freshnessRows.total)} sources (sorted by {active.label.toLowerCase()})</Figure>;
           the full set is in the export bundle and the API (SIG-UI-037).
         </p>
       )}
@@ -170,8 +274,10 @@ const freshnessRows = capRows(sortedRows);
                 <td data-testid="freshness-status">{evaluableLabel(row.status)}</td>
                 {/* A non-evaluable source never prints a stale figure — the number
                     would read as measured (GQ-15, ED-43). */}
-                <td data-testid="stale-count">{isNotEvaluable(row.status) ? "not evaluable" : fmtInt(row.stale_entity_count)}</td>
-                <td data-testid="staleness-not-evaluable">{fmtInt(row.staleness_not_evaluable)}</td>
+                <td data-testid="stale-count">{isNotEvaluable(row.status)
+                  ? "not evaluable"
+                  : <Figure figure={fig(`stale-${slug(row.source)}`)} order="inline">{fmtInt(row.stale_entity_count)}</Figure>}</td>
+                <td data-testid="staleness-not-evaluable"><Figure figure={fig(`not-eval-${slug(row.source)}`)} order="inline">{fmtInt(row.staleness_not_evaluable)}</Figure></td>
                 <td data-testid="volatility-class">{evaluableLabel(row.volatility_class)}</td>
               </tr>
             ))}

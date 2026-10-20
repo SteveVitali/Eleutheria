@@ -94,7 +94,7 @@ from tasks.vocabulary import Disposition
 from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
-from . import analytics, provo
+from . import analytics, provo, source_licences
 from . import compartments as C
 from . import placement as _placement
 from . import statements as _stmt
@@ -3667,6 +3667,36 @@ def build_spine_export(
         web_artifacts[path] = _web_bytes(disclosure)
         web_licenses[path] = _SIG_SPDX
         web_compartments[path] = _WEB_COMPARTMENT
+
+    # --- P35.37 (R11-K13-TX-09, SIG-TRANSP-013, J3 §5.4): the figure-evidence
+    # artifacts the <Figure> pointer contract resolves into -----------------
+    # ``web/sources.json`` — the ``sig.source-licence-table/1`` artifact the
+    # /sources/ page's per-source row-count figures point at. It is the same
+    # aggregation the web data layer would re-derive from the compartment
+    # row streams — emitted once so the pointer lands on manifest-listed
+    # bytes and the page can never drift from the downloads.
+    sources_table = source_licences.source_licence_table(
+        slices.rows_by_compartment, slices.index, registry=registry
+    )
+    sources_path = f"{_WEB_DIR}/sources.json"
+    web_artifacts[sources_path] = _web_bytes(sources_table)
+    web_licenses[sources_path] = _SIG_SPDX
+    web_compartments[sources_path] = _WEB_COMPARTMENT
+    web_schemas[sources_path] = source_licences.SCHEMA
+    web_counts[sources_path] = (len(sources_table["rows"]), None)
+
+    # ``web/evaluation.json`` — the ``sig.resolution-eval/1`` record (DR-C3-03):
+    # the numbers that measure SIG's own resolver (§32.5, SIG-METRIC-008b) are a
+    # published release artifact — emitted verbatim from the committed record,
+    # never a hard-coded page constant.
+    eval_path = f"{_WEB_DIR}/evaluation.json"
+    web_artifacts[eval_path] = (
+        Path(__file__).resolve().parent / "data" / "resolution_eval.json"
+    ).read_bytes()
+    web_licenses[eval_path] = _SIG_SPDX
+    web_compartments[eval_path] = _WEB_COMPARTMENT
+    web_schemas[eval_path] = "sig.resolution-eval/1"
+
     for comp, rows in sorted(slices.rows_by_compartment.items()):
         comp_license = str(comp_licenses.get(comp, _SIG_SPDX))
         payload = _compartment_attribution(

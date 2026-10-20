@@ -1,0 +1,87 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// THE figure component (P35.37, SIG-TRANSP-013, J3 §5.4, UXR-34, K13 C-25): the
+// one renderer every material number on a public page goes through. It emits the
+// pointer contract — `data-artifact` (a manifest-listed path), `data-pointer`
+// (a JSON pointer), `data-figure-id` (the page-registry id), `data-breakdown`
+// (where the id resolves) — and the visible evidence line: a "definition" link,
+// the "source" link, and the per-class link targets where each absent route
+// renders a NAMED ABSENCE, never a dead link. The `sig-figure` comment pair
+// bounds the region the bare-numeral build check exempts; the component root
+// carries `id="fig-<id>"` so `breakdown: "#fig-<id>"` always resolves in-page.
+//
+// `order` controls where the formatted value sits relative to the slot:
+//   "value-first" (default) — the value, then slot content;
+//   "label-first"           — slot content, then the value;
+//   "inline"                — the slot embeds the value itself (a sentence or a
+//                             table cell); the component emits only the
+//                             contract + the evidence line. The check still
+//                             verifies the value's digits appear in the region.
+import { groupDigits } from "../lib/format";
+import { withBase } from "../lib/paths";
+import type { FigureSpec } from "../lib/figures";
+
+interface Props {
+  figure: FigureSpec;
+  /** The wrapping element (span default; pages pass "li"/"div"/"td"/"dd"…). */
+  tag?: string;
+  class?: string;
+  order?: "value-first" | "label-first" | "inline";
+  /** `data-testid` passthrough for existing specs. */
+  testid?: string;
+}
+
+const { figure, class: cls = "", order = "value-first", testid } = Astro.props;
+// The wrapping element — `any` so Astro accepts `id`/`data-*` on whichever tag
+// the page passes ("span"/"li"/"div"/"td"/"dd"…).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Tag = (Astro.props.tag ?? "span") as any;
+const unit = figure.unit ? ` ${figure.unit}` : "";
+
+// `#…` hrefs are in-page anchors — joined verbatim; every other internal route
+// goes through withBase() (P35.65 / SIG-REL-008).
+const link = (href: string): string => (href.startsWith("#") ? href : withBase(href));
+---
+
+<!-- sig-figure -->
+<Tag
+  id={`fig-${figure.id}`}
+  class={`sig-figure${cls ? ` ${cls}` : ""}`}
+  data-testid={testid}
+  data-figure-id={figure.id}
+  data-figure-class={figure.class}
+  data-artifact={figure.artifact}
+  data-pointer={figure.pointer}
+  data-breakdown={figure.breakdown}
+  data-figure-value={String(figure.value)}
+>
+  {order === "value-first" && (
+    <span class="sig-figure__value"><strong>{groupDigits(String(figure.value))}{unit}</strong></span>
+  )}
+  <slot />
+  {order === "label-first" && (
+    <span class="sig-figure__value"><strong>{groupDigits(String(figure.value))}{unit}</strong></span>
+  )}
+  {" — "}
+  <span class="sig-figure__evidence" data-testid={testid ? `${testid}-evidence` : "figure-evidence"}>
+    <a class="sig-figure__link" href={link(figure.definition)} data-figure-link="definition">definition</a>
+    {" · "}
+    <a class="sig-figure__link" href={link(figure.href)} data-figure-link="source">source</a>
+    {figure.targets.map((t) => (
+      <>
+        {" · "}
+        {t.href !== undefined ? (
+          <a class="sig-figure__link" href={link(t.href)} data-figure-link={t.kind}>{t.label}</a>
+        ) : (
+          <span class="sig-figure__absent" data-figure-link={t.kind} data-testid="figure-absent-target">
+            {t.label} — {t.absent}
+          </span>
+        )}
+      </>
+    ))}
+  </span>
+</Tag>
+<!-- /sig-figure -->

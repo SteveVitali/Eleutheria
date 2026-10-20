@@ -11,14 +11,21 @@
 // project whose standard is "no synthetic certainty", this is a headline, not
 // fine print — so it renders as a prominent, role="note" banner at the top of
 // the dossier and its print export.
+import Figure from "./Figure.astro";
 import { incompletenessBanner, dossierUnknowns } from "../lib/dossier";
 import type { Dossier } from "../lib/dossier";
+// P35.37 (SIG-TRANSP-013): the unknown-count numeral the banner text carries is
+// a dossier-class figure — the page passes its registry spec; without one the
+// banner renders its pre-P35.37 text-only form (test consumers).
+import type { FigureSpec } from "../lib/figures";
 
 interface Props {
   dossier: Dossier;
+  /** The page-registry spec for the banner's unknown-count figure. */
+  spec?: FigureSpec;
 }
 
-const { dossier } = Astro.props;
+const { dossier, spec } = Astro.props;
 const text = incompletenessBanner(dossier);
 const unknowns = dossierUnknowns(dossier);
 ---
@@ -31,5 +38,5 @@ const unknowns = dossierUnknowns(dossier);
   data-unknown={unknowns.total}
   data-empty-sections={unknowns.emptySections}
 >
-  {text}
+  {spec ? <Figure figure={spec} order="inline">{text}</Figure> : text}
 </div>

@@ -81,6 +81,10 @@ _DECLARED_EXTERNAL_PRODUCERS = {
     # since P34.34a `build_spine_export` also emits it directly (the recorded
     # feed folded in, else the honest zeroed ledger).
     "leverage": "sig-tasks osm-feed pull / build_spine_export",
+    # P35.37 (SIG-TRANSP-013, DR-C3-03): `build_spine_export` emits
+    # web/evaluation.json — the sig.resolution-eval/1 record (outside the ten
+    # `surfaces` keys, written beside them like terms_disclosure).
+    "evaluation": "build_spine_export (web/evaluation.json, sig.resolution-eval/1)",
 }
 
 

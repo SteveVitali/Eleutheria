@@ -1,0 +1,48 @@
+{
+  "$comment": "P35.37 (SIG-TRANSP-013, J3 §5.4): the REASONED exemptions for the bare-numeral check — incidental, non-material numerals in named page-class main content (a cited standard's number, never a count/figure). Each entry names the built file, the literal numeral token, how many occurrences it exempts, and why the number is not a material figure. An entry that matches nothing is reported stale; a material number must be wrapped in <Figure>, never exempted.",
+  "schema": "sig.figure-numeral-allowlist/1",
+  "entries": [
+    {
+      "file": "dossier/oklahoma-city/index.html",
+      "token": "47",
+      "count": 1,
+      "reason": "\"Okla. Stat. tit. 47\" — a statute-title citation inside the legal-regime text, not a counted quantity."
+    },
+    {
+      "file": "dossier/oklahoma-city/index.html",
+      "token": "30",
+      "count": 1,
+      "reason": "\"Municipal Code ch. 30\" — a code-chapter citation inside the legal-regime text, not a counted quantity."
+    },
+    {
+      "file": "dossier/oklahoma-city/print/index.html",
+      "token": "47",
+      "count": 1,
+      "reason": "\"Okla. Stat. tit. 47\" — a statute-title citation inside the legal-regime text, not a counted quantity."
+    },
+    {
+      "file": "dossier/oklahoma-city/print/index.html",
+      "token": "30",
+      "count": 1,
+      "reason": "\"Municipal Code ch. 30\" — a code-chapter citation inside the legal-regime text, not a counted quantity."
+    },
+    {
+      "file": "data-collection/index.html",
+      "token": "429",
+      "count": 1,
+      "reason": "'HTTP 429' — a status-code identifier in crawler-policy prose, not a counted quantity."
+    },
+    {
+      "file": "data-collection/index.html",
+      "token": "503",
+      "count": 1,
+      "reason": "'HTTP 503' — a status-code identifier in crawler-policy prose, not a counted quantity."
+    },
+    {
+      "file": "data-collection/index.html",
+      "token": "504",
+      "count": 1,
+      "reason": "'HTTP 504' — a status-code identifier in crawler-policy prose, not a counted quantity."
+    }
+  ]
+}

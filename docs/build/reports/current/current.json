@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "06516ac0e21cc5fbc5c902749af5407138591691",
-  "manifest_inputs": 1073,
+  "input_commit": "08fddfabe187c52c1cd1451eddcb3d9ce0aad503",
+  "manifest_inputs": 1074,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P35.37",
@@ -9296,7 +9296,7 @@
           "label": "historical/csv"
         },
         "SIG-CHART-019": {
-          "verdict": "PARTIAL",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
           "evidence": "docs/2_canonical_design_spec.md:487",
           "assessed": "",
           "label": "historical/csv"
@@ -13844,8 +13844,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-013": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/components/Figure.astro;web/src/lib/figures.ts;web/src/lib/dossier-figures.ts;web/scripts/check-figures.mjs;web/src/pages/artifact/[...path].json.ts;exports/src/exports/source_licences.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19145,7 +19145,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "02cbb083842cedbd0d4f5d3c1e2aa698aa380202caa1bc3a9ec8c666788a69f7",
+  "manifest_sha256": "16479eb0183427240d156a359b96f2e0628073ff9f69722f1ce72d75917aeee0",
   "current_md": {
     "lines": 63,
     "bytes": 15622,

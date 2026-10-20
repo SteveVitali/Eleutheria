@@ -18,9 +18,13 @@ import DossierSection from "../../../components/DossierSection.astro";
 import ActionBlocks from "../../../components/ActionBlocks.astro";
 import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
-import { getDossiers } from "../../../lib/data";
+import { getDossierArtifactRef, getDossiers, getJurisdictionCompartments } from "../../../lib/data";
 import { getReleaseStamp } from "../../../lib/release-stamp";
 import { displayJurisdiction, dossierDisplayTitle } from "../../../lib/jurisdictions";
+// P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the print document carries the SAME
+// figure-evidence registry as the interactive dossier (its own variant ids).
+import { artifactHref, defineFigures } from "../../../lib/figures";
+import { dossierFigureSpecs, figureSpecMap } from "../../../lib/dossier-figures";
 import { defaultDescription } from "../../../lib/meta";
 
 export function getStaticPaths() {
@@ -51,6 +55,31 @@ const pages: Section[][] = [];
 for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
   pages.push(dossier.sections.slice(i, i + SECTIONS_PER_PAGE));
 }
+
+// The print page's figures[] registry — the print variant ids; no "How we know
+// this" panel on this surface → the provenance target is a named absence.
+const ref = getDossierArtifactRef(dossier.slug);
+const compartment = getJurisdictionCompartments().get(dossier.jurisdiction) ?? null;
+const recordList =
+  stamp && compartment
+    ? `r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
+    : null;
+const FIGURES = defineFigures(
+  `dossier/${dossier.slug}/print`,
+  dossierFigureSpecs(dossier, "print", {
+    ref,
+    recordList,
+    provenanceHref: null,
+    artifactHref: ref ? artifactHref(ref.artifact) : "",
+  }),
+);
+if (FIGURES.length === 0) {
+  throw new Error(
+    `dossier "${dossier.slug}" (print): no figure registry — the dossier has no ` +
+      `record in a manifest-listed artifact (SIG-TRANSP-013)`,
+  );
+}
+const specMap = figureSpecMap(FIGURES);
 ---
 
 <!doctype html>
@@ -91,10 +120,10 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
             {!jurisdiction.known && (
               <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-07">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
             )}
-            <IncompletenessBanner dossier={dossier} />
+            <IncompletenessBanner dossier={dossier} spec={specMap.get("banner")} />
             <section aria-labelledby="print-summary-gaps">
               <h2 id="print-summary-gaps">What we don't know (summary)</h2>
-              <WhatWeDontKnow gaps={dossier.gaps} variant="print-summary" />
+              <WhatWeDontKnow gaps={dossier.gaps} variant="print-summary" specs={specMap} />
             </section>
           </header>
         )}
@@ -107,11 +136,11 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
             <section data-section-id={section.section_id}>
               <h2>{SECTION_TITLES[section.section_id]}</h2>
               {section.section_id === "what_we_dont_know" ? (
-                <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" />
+                <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" specs={specMap} />
               ) : (
-                <DossierSection section={section} />
+                <DossierSection section={section} specs={specMap} />
               )}
-              {action && <ActionBlocks dossier={dossier} which={action} />}
+              {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
               {noRecord && (
                 <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
               )}

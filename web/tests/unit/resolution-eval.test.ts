@@ -3,7 +3,11 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 import { describe, expect, it } from "vitest";
-import { RESOLUTION_EVAL } from "../../src/lib/resolution-eval";
+import { getResolutionEval } from "../../src/lib/data";
+
+// P35.37 (SIG-TRANSP-013, DR-C3-03): the eval is a release artifact read
+// through the data layer — never a hard-coded constant.
+const RESOLUTION_EVAL = getResolutionEval();
 
 describe("resolution eval — SIG measuring its own method (§32.5, P28.4)", () => {
   it("carries the honest development-evidence disclosure and cites its deferral", () => {

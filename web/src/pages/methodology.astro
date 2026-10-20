@@ -9,7 +9,26 @@
 // coverage-metrics (§32.5) pages. Linked from every dossier via the base layout's
 // "How we know this" module, satisfying "linked from every dossier".
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { RESOLUTION_EVAL } from "../lib/resolution-eval";
+import Figure from "../components/Figure.astro";
+import { getResolutionEval } from "../lib/data";
+// P35.37 (SIG-TRANSP-013, DR-C3-03): the eval is a published release artifact —
+// the data layer's single seam (canonical record in fixtures mode,
+// `web/evaluation.json` in export mode), never a hard-coded constant — and
+// each rendered metric is an evaluation-class <Figure> pointing into it.
+import { artifactHref, defineFigures, evaluationTargets } from "../lib/figures";
+
+const eval_ = getResolutionEval();
+const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
+  id: `eval-${i}`,
+  class: "evaluation" as const,
+  value: m.value,
+  artifact: "web/evaluation.json",
+  pointer: `/metrics/${i}/value`,
+  definition: "#resolution-eval",
+  href: artifactHref("web/evaluation.json"),
+  breakdown: `#fig-eval-${i}`,
+  targets: evaluationTargets(),
+})));
 ---
 
 <BaseLayout title="Methodology" path="/methodology/">
@@ -84,17 +103,19 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
     record's own values stands (for example its latest coordinate) is <em>not</em>{" "}
     deduplication and is never counted as a resolved site.
   </p>
-  {RESOLUTION_EVAL.provisional && (
+  {eval_.provisional && (
     <p class="sig-eval-provisional" data-testid="resolution-eval-provisional">
-      <strong>{RESOLUTION_EVAL.disclosure}</strong>
+      <strong>{eval_.disclosure}</strong>
     </p>
   )}
   <ul class="sig-eval" data-testid="resolution-eval">
-    {RESOLUTION_EVAL.metrics.map((m) => (
+    {eval_.metrics.map((m, i) => (
       <li class="sig-eval-metric" data-testid="resolution-eval-metric">
-        <span class="sig-eval-metric__label">{m.label}</span>{" "}
-        <span class="sig-eval-metric__value"><strong>{m.value}</strong></span>{" "}
-        <span class="sig-eval-metric__against">{m.against}</span>
+        <Figure figure={FIGURES[i]!} order="inline" testid="resolution-eval-figure">
+          <span class="sig-eval-metric__label">{m.label}</span>{" "}
+          <span class="sig-eval-metric__value"><strong>{m.value}</strong></span>{" "}
+          <span class="sig-eval-metric__against">{m.against}</span>
+        </Figure>
       </li>
     ))}
   </ul>
