@@ -863,6 +863,36 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Changed
 
+- **Freshness semantics v2 — one shared verdict, honest staleness, and
+  two separate change dates** (P35.41 / row 320; owner SIG-TRANSP-029 +
+  SIG-TRANSP-030 + SIG-TRANSP-031 + SIG-TRANSP-007, the release side of
+  SIG-TRANSP-034; cites SIG-METRIC-006, SIG-ENG-021, SIG-INGEST-030c,
+  GQ-15, K9 §5.1–5.5 + §10 C-4…C-7, J3 §3.2/§4.6 [design refs], F-137
+  [owned]) — every freshness value on the public surface is now produced
+  by the single pure `freshness_verdict(cadence, executions, at)`
+  (`policy/src/policy/freshness.py`), evaluated at the release's
+  as-of instant and stamped `evaluated_at`; status-time fields never
+  reach a release artifact. Volatility is measured across **all**
+  published claims from the ontology predicate registry — undated claims
+  counted, unregistered predicates named — replacing the dated-only
+  bias. Staleness is honest: the freshness page renders "stale n of m
+  evaluable" plus an explicit undated count, and a source whose
+  observations cannot be dated shows its evaluable/not-evaluable counts —
+  never "unknown", never a fabricated "0 stale" (the F-137 fix). Source
+  rows now carry two distinct dates: `last_upstream_change` (newest
+  publisher-declared instant — ArcGIS `lastEditDate`, Socrata
+  `rowsUpdatedAt`/`dataUpdatedAt`, CKAN `metadata_modified`, Eyes-on-Flock
+  `data_last_updated`, `Last-Modified`; `ETag` is a token, never a date;
+  byte-only formatting changes never move it — and `last_sig_records_change`
+  (the SIG record-set diff on the new per-run `records_digest`, with a
+  labelled interim basis until release-slice diffing lands). Cadence is
+  disclosed per source ("monthly, day 6", `registry, not scheduled`,
+  `not_recorded`) and `one_time_load` is a first-class verdict. The
+  connector capture spine gains four additive nullable columns
+  (`records_digest`, `upstream_modified_at`, `upstream_token`,
+  `upstream_modified_basis` — sqitch `capture_freshness_marks`, exposed
+  through `v_transparency_capture`); pre-change marks stay NULL, no
+  backfill invents a declared value.
 - **Identifier base moved to the owned domain, with the append-only alias
   map + compat note and truthful release provenance** (P35.38b / row 317;
   R11-SAFE-06; owner SIG-IDENT-031; cites F-184 + Q-E2-03 [B-6]
