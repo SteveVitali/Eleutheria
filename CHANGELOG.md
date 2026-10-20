@@ -24,6 +24,35 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Export-time jurisdiction placement — `placement@1`** (P35.19 / row
+  299; JUR-02b, K4 §3.3/§3.4/§5.3, ADR-092 compute-on-read; cites
+  SIG-JUR-D03/D04/D05, SIG-IDENT-004, SIG-GEO-008) — a new
+  `exports/placement.py` evaluates the versioned R1–R8 ruleset over the
+  verified boundary pack + bound jurisdiction registry staged as export
+  inputs (`sig-exports build --from-spine --boundary-pack <dir>
+  --jurisdiction-registry <file>`): the located point wins (R4), suspected
+  axis swaps / sign flips / rejected points fall back to the declared
+  level with the point withheld from maps and sub-counts (R3/R5), a
+  shared-boundary point resolves by lowest GEOID/code with check
+  `on_boundary`, and a record with no place is a reported quality state
+  under the closed `placement_check` vocabulary — never a jurisdiction.
+  Site rows gain the seven additive columns `jurisdiction_key`,
+  `jurisdiction_chain`, `placement_basis`, `placement_check`,
+  `declared_scheme`, `declared_value`, `boundary_vintage` (the existing
+  `jurisdiction` column is unchanged — the declared bucket, back-compat);
+  the published-record projection bumps to `sig.published-record/3` with
+  the record `jurisdiction` block `{id, jkey, chain[], basis, check,
+  declared, boundary_vintage}`; a `sig.placement-report/1` artifact lands
+  at `web/placement.json` carrying per-source reason counts (records ==
+  Σ reasons, conservation-checked) and the located-vs-declared
+  disclosure pairs. Nothing is written back to the spine — placement is
+  computed on read inside the export's read-only snapshot, DuckDB
+  `spatial` is bundled into the export image (strict `LOAD`, never a
+  runtime `INSTALL`), and an unverified pack or a registry whose
+  `boundaries_root`/vintages diverge from the pack refuses the export
+  outright. With no pack staged the export is byte-identical to the
+  pre-placement posture.
+
 - **Declared jurisdiction scheme end-to-end** (P35.18 / row 298;
   JUR-02a, K4 §3.2; cites SIG-JUR-D02, SIG-IDENT-005/006,
   SIG-ONTO-011, SIG-EVID) — the `(scheme, value)` pair a connector

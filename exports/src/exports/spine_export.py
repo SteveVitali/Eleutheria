@@ -85,6 +85,7 @@ from policy import withdrawals as policy_withdrawals
 
 from . import analytics, provo
 from . import compartments as C
+from . import placement as _placement
 from .audit import _LATEST_DECISION_CTE
 from .bundle import Bundle, build_bundle
 from .jurisdictions import jurisdiction_slug
@@ -276,6 +277,22 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {PUB_ARTIFACT_GATE}"
         "   AND {CAPTURE_SEAL_GATE}"
         " ORDER BY ce.claim_id, ce.capture_id",
+    ),
+    # P35.19 / JUR-02b (K4 §3.3 note): landed ``geometry_defect`` claims
+    # (P35.16 / PKG-06b) are placement inputs — ``raw_value`` is the defect
+    # class itself. Absent predicate/table degrades to [] and the engine
+    # applies its own R1/R3 checks ("consumes PKG-06b detectors if landed —
+    # else flags only"). Read-only: this is a SELECT inside the export's
+    # snapshot; nothing is written back (ADR-092).
+    "geometry_defects": (
+        "claim",
+        "SELECT c.subject_id::text, c.raw_value"
+        "  FROM claim c"
+        " WHERE c.predicate_id = 'geometry_defect'"
+        "   AND c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND {PUB_CLAIM_GATE}"
+        " ORDER BY c.subject_id, c.raw_value",
     ),
 }
 
@@ -660,12 +677,31 @@ def _sig_record(retrieval: date) -> RightsRecord:
     )
 
 
-def _site_row_data(site: ShapedSite, rights: Mapping[str, Any]) -> dict[str, Any]:
-    """The per-(site, source, rights) export row — geometry + provenance keys."""
+def _site_row_data(
+    site: ShapedSite,
+    rights: Mapping[str, Any],
+    *,
+    placement: _placement.PlacementResult | None = None,
+) -> dict[str, Any]:
+    """The per-(site, source, rights) export row — geometry + provenance keys.
+
+    P35.19 / JUR-02b (K4 §5.3): when a ``placement@1`` run is bound, the row
+    gains the seven additive placement columns and — when the run withheld
+    the point (suspect swap/flip, rejected null-island/invalid, or a guarded
+    agency-centroid precision) — emits ``geometry: null`` so no downstream
+    surface ever re-draws a point the ruleset refused to stand behind (the
+    raw observed pair stays on the claim rows — nothing is erased). The
+    legacy ``jurisdiction`` column is unchanged (the declared bucket,
+    back-compat). With no placement run the row is byte-identical to today.
+    """
     geometry: dict[str, Any] | None = None
-    if site.latitude is not None and site.longitude is not None:
+    if (
+        site.latitude is not None
+        and site.longitude is not None
+        and not (placement is not None and placement.point_withheld)
+    ):
         geometry = {"type": "Point", "coordinates": [site.longitude, site.latitude]}
-    return {
+    row = {
         "entity_id": site.entity_id,
         "entity_type": site.entity_type,
         "label": site.label,
@@ -685,6 +721,9 @@ def _site_row_data(site: ShapedSite, rights: Mapping[str, Any]) -> dict[str, Any
         "claim_ids": list(site.claim_ids),
         "geometry": geometry,
     }
+    if placement is not None:
+        row.update(placement.sites_columns())
+    return row
 
 
 @dataclass(frozen=True)
@@ -699,6 +738,9 @@ class _SiteSlices:
     exclusions: list[dict[str, Any]]
     licences_by_subject: dict[str, set[str]]
     refused_subjects: set[str]
+    #: P35.19: the ``placement@1`` results behind the emitted rows — the
+    #: quality report's input. Empty when no engine was bound.
+    placement_results: tuple[_placement.PlacementResult, ...] = ()
 
 
 def _slice_sites(
@@ -708,6 +750,8 @@ def _slice_sites(
     subject_flags: Mapping[str, bool] | None = None,
     retrieval: date,
     registry: Mapping[str, Any] | None,
+    placement: _placement.PlacementEngine | None = None,
+    defect_flags: Mapping[str, frozenset[str]] | None = None,
 ) -> _SiteSlices:
     """Licence-slice every site per (source, rights_id) into per-compartment rows.
 
@@ -747,13 +791,38 @@ def _slice_sites(
     licences_by_subject: dict[str, set[str]] = {}
     refused_subjects: set[str] = set()
 
+    # P35.19 / JUR-02b: shape every source's sites first, then run
+    # ``placement@1`` over ALL of them in one batch (a single DuckDB join —
+    # never a per-record round trip) and keep the results keyed by
+    # (source, subject) so each slice row stamps its own placement. With no
+    # engine bound, nothing here changes.
+    sites_by_source: dict[str, list[ShapedSite]] = {}
     for source_id in sorted(by_source):
-        sites = shape_sites(
+        sites_by_source[source_id] = shape_sites(
             by_source[source_id],
             entity_types=entity_types,
             refused_subjects=publish_refused,
         )
-        for site in sites:
+    placements: dict[tuple[str, str], _placement.PlacementResult] = {}
+    placement_results: list[_placement.PlacementResult] = []
+    if placement is not None:
+        inputs: list[_placement.PlacementInput] = []
+        for source_id in sorted(sites_by_source):
+            claims_by_id = {c.claim_id: c for c in by_source[source_id]}
+            for site in sites_by_source[source_id]:
+                inputs.append(
+                    _placement.site_input(
+                        site,
+                        claims_by_id=claims_by_id,
+                        defect_flags=(defect_flags or {}).get(site.entity_id, frozenset()),
+                        source_id=source_id,
+                    )
+                )
+        placement_results = placement.place_many(inputs)
+        placements = {(r.source_id or "", r.record_id): r for r in placement_results}
+
+    for source_id in sorted(by_source):
+        for site in sites_by_source[source_id]:
             for rights in site.rights:
                 record = _record_from_site_rights(rights, retrieval=retrieval)
                 reason = export_refusal_reason(record, registry)
@@ -782,7 +851,14 @@ def _slice_sites(
                     else record.source_id
                 )
                 rows_by_compartment.setdefault(compartment, []).append(
-                    C.ExportRow(source_id=slice_key, data=_site_row_data(site, rights))
+                    C.ExportRow(
+                        source_id=slice_key,
+                        data=_site_row_data(
+                            site,
+                            rights,
+                            placement=placements.get((source_id, site.entity_id)),
+                        ),
+                    )
                 )
                 index.setdefault(slice_key, replace(record, source_id=slice_key))
     exclusions = [refused[k] for k in sorted(refused)]
@@ -796,6 +872,7 @@ def _slice_sites(
         # same way. The exclusion count lives on
         # ``ShapedDataset.candidate_subjects_excluded``.
         refused_subjects=refused_subjects | publish_refused,
+        placement_results=tuple(placement_results),
     )
 
 
@@ -1221,6 +1298,7 @@ def _map_layer(
     *,
     resolved: Mapping[str, Any] | None = None,
     exclude: set[str] | frozenset[str] = frozenset(),
+    placements: Mapping[str, _placement.PlacementResult] | None = None,
 ) -> dict[str, Any]:
     """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3).
 
@@ -1236,6 +1314,22 @@ def _map_layer(
             # A subject with any licence-REFUSED slice never reaches a render surface (its
             # aggregate point could carry refused bytes) — it is in exclusions.json instead.
             continue
+        res = placements.get(site.entity_id) if placements is not None else None
+        # P35.19 / JUR-02b (K4 §3.3): under a placement run only a
+        # ``point_in_polygon``-placed point may draw — a declared-level
+        # fallback, a suspected swap/flip, a rejected point, and a guarded
+        # agency centroid never paint the map. The additive
+        # ``jurisdictionKey``/``placementCheck`` fields carry the honest
+        # verdict on every asset (the frozen MapAsset contract admits extra
+        # properties).
+        draw_point = (
+            site.latitude is not None
+            and site.longitude is not None
+            and (
+                placements is None
+                or (res is not None and res.placement_basis == "point_in_polygon")
+            )
+        )
         asset: dict[str, Any] = {
             "id": site.entity_id,
             "label": site.label or site.entity_id,
@@ -1246,17 +1340,25 @@ def _map_layer(
             "technology": site.technology,
             "technologyStatus": site.technology_status,
             "tier": site.sensitivity_tier,
-            "lat": site.latitude,
-            "lon": site.longitude,
+            "lat": site.latitude if draw_point else None,
+            "lon": site.longitude if draw_point else None,
             "precision": site.precision,
         }
-        if site.latitude is None or site.longitude is None:
+        if res is not None:
+            asset["jurisdictionKey"] = res.jurisdiction_key
+            asset["placementCheck"] = res.placement_check
+        if not draw_point:
             # An honest reason there is no point (a gap, not a guess, §3.1), in the web's
             # §9.5 absence vocabulary (`epistemic.ts#ABSENCE_KINDS`, P30.3): conflicting
             # coordinate evidence is UNRESOLVED; a record whose named source carries no
             # coordinate is NO_EVIDENCE_FOUND (the point was looked for in that record).
+            # P35.19: under a placement run a withheld/suspect point is also
+            # UNRESOLVED — the record HAS coordinates but the ruleset refused
+            # to publish them as a point (the placementCheck names why).
             asset["locationAbsence"] = (
-                "UNRESOLVED" if site.point_status == "conflicted" else "NO_EVIDENCE_FOUND"
+                "UNRESOLVED"
+                if site.point_status == "conflicted" or site.latitude is not None
+                else "NO_EVIDENCE_FOUND"
             )
         assets.append(asset)
     if resolved:
@@ -2136,6 +2238,7 @@ def build_spine_export(
     subject_flags: Mapping[str, bool] | None = None,
     registry: Mapping[str, Any] | None = None,
     dossier_packets: Sequence[Mapping[str, Any]] | None = None,
+    placement: _placement.PlacementEngine | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
 
@@ -2153,6 +2256,15 @@ def build_spine_export(
     the portfolio is composed through ``exports.research_dossier`` and emitted
     as ``web/research_dossiers.json``. Absent input emits no artifact (honest
     absence — the web getter reads a missing file as an empty portfolio).
+
+    ``placement`` (P35.19 / JUR-02b, ADR-092 compute-on-read) is a
+    :class:`exports.placement.PlacementEngine` built over the verified
+    boundary pack + bound registry. When supplied, every site row gains the
+    seven K4 §5.3 columns, withheld points lose their emitted geometry, the
+    map draws only ``point_in_polygon`` placements, and the
+    ``sig.placement-report/1`` quality report lands at
+    ``web/placement.json``. When absent the export is byte-identical to the
+    pre-placement posture — placement never silently defaults on.
     """
     raw = dict(raw or {})
     retrieval = date.fromisoformat(dataset.as_of[:10]) if dataset.as_of else date.today()
@@ -2208,6 +2320,15 @@ def build_spine_export(
     )
     resolved_counts = resolved_site_counts(m_site_runs, dataset)
 
+    # --- P35.19: landed geometry-defect claims are placement inputs ---------
+    # (P35.16 / PKG-06b; K4 §3.3 "consumes PKG-06b detectors if landed").
+    defect_flags: dict[str, frozenset[str]] = {}
+    if placement is not None:
+        by_subject: dict[str, set[str]] = {}
+        for row in raw.get("geometry_defects") or []:
+            by_subject.setdefault(str(row[0]), set()).add(str(row[1]))
+        defect_flags = {k: frozenset(v) for k, v in by_subject.items()}
+
     # --- the licence-critical path: sites sliced per (source, rights) -----------
     slices = _slice_sites(
         claims,
@@ -2215,6 +2336,8 @@ def build_spine_export(
         subject_flags=subject_flags,
         retrieval=retrieval,
         registry=registry,
+        placement=placement,
+        defect_flags=defect_flags,
     )
     site_rows, site_index, site_exclusions = (
         slices.rows_by_compartment,
@@ -2250,6 +2373,22 @@ def build_spine_export(
     rights = [*site_index.values(), sig]
     bundle = build_bundle(build_spec, tables, rights, registry=registry)
 
+    # P35.19: the aggregate (cross-source) sites the map draws are placed by
+    # the same engine + the same rule — a point the ruleset refused never
+    # paints the map even at the aggregate level.
+    map_placements: dict[str, _placement.PlacementResult] | None = None
+    if placement is not None:
+        all_claims_by_id = {c.claim_id: c for c in claims}
+        map_inputs = [
+            _placement.site_input(
+                site,
+                claims_by_id=all_claims_by_id,
+                defect_flags=defect_flags.get(site.entity_id, frozenset()),
+            )
+            for site in dataset.sites
+        ]
+        map_placements = {r.record_id: r for r in placement.place_many(map_inputs)}
+
     # --- the ten P27.1-contract web surfaces ------------------------------------
     dossiers = _dossiers(
         dataset,
@@ -2266,6 +2405,7 @@ def build_spine_export(
             dataset,
             resolved=resolved_counts,
             exclude=slices.refused_subjects | withdrawn_entities,
+            placements=map_placements,
         ),
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
@@ -2296,6 +2436,7 @@ def build_spine_export(
         web_artifacts[f"{_WEB_DIR}/research_dossiers.json"] = render_portfolio_json(
             build_portfolio(dossier_packets)
         )
+
     # The map surface carries every published subject's own point + label, so it draws on
     # every site compartment's licence (ODbL OSM points beside CC-BY/CC0/… points) — its
     # label says so (ADR-106). The other surfaces carry SIG's aggregate framing (counts,
@@ -2345,6 +2486,18 @@ def build_spine_export(
         web_artifacts[art.path] = _web_bytes(art.payload)
         web_licenses[art.path] = art.license
         web_compartments[art.path] = art.compartment
+
+    # P35.19 / JUR-02b (SIG-JUR-D05, K4 §3.4): the placement quality report —
+    # the "Not yet placed" data — emitted only when a placement run happened;
+    # absent input emits no artifact (the same honest-absence posture as
+    # research_dossiers). SIG's own analytical expression → CC-BY-4.0.
+    if placement is not None:
+        placement_path = f"{_WEB_DIR}/placement.json"
+        web_artifacts[placement_path] = _web_bytes(
+            _placement.build_report(slices.placement_results, manifest=placement.pack_manifest)
+        )
+        web_licenses[placement_path] = _SIG_SPDX
+        web_compartments[placement_path] = _WEB_COMPARTMENT
 
     # --- P32.13 (SIG-FIND-002): per-compartment `record_claims.jsonl` ---------
     # The claim/evidence anchors behind every published site — filed under the
@@ -2703,6 +2856,9 @@ def run_spine_export(
     replay: str | None = None,
     materialize_run: str | None = None,
     restore_point: str | None = None,
+    boundary_pack: str | Path | None = None,
+    jurisdiction_registry: str | Path | None = None,
+    boundary_spec: str | Path | None = None,
 ) -> SpineExport:
     """Execute the read-only reads and assemble the national export.
 
@@ -2719,6 +2875,15 @@ def run_spine_export(
     ``replay`` ride the :class:`BuildSpec` into the export manifest (the
     release builder reads them back for the v2 descriptor); ``replay``
     marks a Class-S rebuild of a historical snapshot.
+
+    P35.19 / JUR-02b (ADR-092 compute-on-read): ``boundary_pack`` +
+    ``jurisdiction_registry`` stage the verified placement inputs — a
+    ``sig.boundary-pack/1`` directory and the ``sig.jurisdiction-registry/1``
+    document derived from it. Both must be given together; the engine
+    verifies the pack and cross-binds ``boundaries_root`` + vintages before
+    any placement runs, and a failure refuses the export. Absent → no
+    placement columns and no ``web/placement.json`` — honest absence, never
+    a silently-half-configured placement.
     """
     from .release_identity import ClockGuardError, parse_instant
     from .shaping import (
@@ -2792,6 +2957,22 @@ def run_spine_export(
     # ``fetch_export_raw`` already read source_registry names into
     # ``export_raw['source_names']`` (compat-guarded); the surface builders consume it.
 
+    # P35.19: the placement engine is constructed HERE — before the bundle is
+    # assembled — so an unverified/inconsistent pack refuses the export
+    # outright rather than emitting half-placed surfaces. Constructing it
+    # touches nothing but its own in-memory DuckDB; the spine snapshot above
+    # is already closed.
+    engine: _placement.PlacementEngine | None = None
+    if boundary_pack is not None or jurisdiction_registry is not None:
+        if boundary_pack is None or jurisdiction_registry is None:
+            raise _placement.PlacementError(
+                "boundary_pack and jurisdiction_registry must be given "
+                "together — placement refuses a half-staged input set"
+            )
+        engine = _placement.PlacementEngine(
+            boundary_pack, jurisdiction_registry, spec_path=boundary_spec
+        )
+
     if build_spec is None:
         as_of_snapshot = date.fromisoformat(as_of[:10]) if as_of else date.today()
         as_of_belief = belief.date() if belief is not None else as_of_snapshot
@@ -2836,6 +3017,7 @@ def run_spine_export(
         entity_types=entity_types,
         subject_flags=subject_flags,
         dossier_packets=dossier_packets,
+        placement=engine,
     )
 
 

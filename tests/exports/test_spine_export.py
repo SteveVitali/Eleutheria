@@ -1200,3 +1200,518 @@ def test_coverage_prefers_materialized_rows_when_present() -> None:
     # The absence row did not become a metric.
     assert not any("sharing_partner" in m["id"] for m in coverage)
     jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
+
+
+# --------------------------------------------------------------------------- #
+# P35.19 (JUR-02b, K4 §3.3/§5.3): the placement@1 columns end-to-end — the     #
+# engine lands on ``_slice_sites`` rows, the map layer, ``web/placement.json`` #
+# and the published-record jurisdiction block; absent inputs keep the export   #
+# byte-identical to the pre-placement posture; the read path never writes the  #
+# spine. The engine matrix itself lives in ``test_placement.py``.              #
+# --------------------------------------------------------------------------- #
+
+import importlib.util as _ilu  # noqa: E402
+
+import pytest  # noqa: E402
+from placement_fixtures import build_placement_env  # noqa: E402
+
+_needs_duckdb = pytest.mark.skipif(
+    _ilu.find_spec("duckdb") is None,
+    reason="duckdb is required for the placement engine",
+)
+
+_PLACEMENT_COLUMNS = (
+    "jurisdiction_key",
+    "jurisdiction_chain",
+    "placement_basis",
+    "placement_check",
+    "declared_scheme",
+    "declared_value",
+    "boundary_vintage",
+)
+
+
+@pytest.fixture(scope="module")
+def placement_env(tmp_path_factory: pytest.TempPathFactory):
+    return build_placement_env(tmp_path_factory.mktemp("spine_placement"))
+
+
+@pytest.fixture(scope="module")
+def placement_engine(placement_env):
+    from exports.placement import PlacementEngine
+
+    return PlacementEngine(
+        placement_env.pack_dir,
+        placement_env.registry_path,
+        spec_path=placement_env.spec_path,
+    )
+
+
+def _claim24(
+    cid: str,
+    sid: str,
+    pred: str,
+    *,
+    value_text: str | None = None,
+    source_id: str = "src_a",
+    spdx: str = "CC-BY-4.0",
+    value_json: dict | None = None,
+) -> ShapingClaim:
+    """A shaping claim that carries the P35.18 ``value_json`` blob (the 24th
+    column) — the declared {scheme, value} pair + LocatedPoint precision
+    stamp placement reads."""
+    from dataclasses import replace
+
+    c = _claim(cid, sid, pred, value_text=value_text, source_id=source_id, spdx=spdx)
+    if value_json is not None:
+        return replace(c, value_json=json.dumps(value_json, sort_keys=True))
+    return c
+
+
+def _site24(
+    subject: str,
+    lat: str | None,
+    lon: str | None,
+    scheme: str,
+    value: str,
+    *,
+    source_id: str = "src_a",
+    lat_precision: str | None = None,
+) -> list[ShapingClaim]:
+    """A site with a declared (scheme, value) jurisdiction pair — the claim
+    text stays the bare code; the pair rides ``value_json`` (P35.18)."""
+    claims: list[ShapingClaim] = []
+    if lat is not None and lon is not None:
+        claims += [
+            _claim24(
+                f"{subject}-lat",
+                subject,
+                "camera_latitude",
+                value_text=lat,
+                source_id=source_id,
+                value_json=(
+                    {"geometry": lat, "precision": lat_precision}
+                    if lat_precision is not None
+                    else None
+                ),
+            ),
+            _claim24(
+                f"{subject}-lon",
+                subject,
+                "camera_longitude",
+                value_text=lon,
+                source_id=source_id,
+            ),
+        ]
+    claims.append(
+        _claim24(
+            f"{subject}-jur",
+            subject,
+            "camera_jurisdiction",
+            value_text=value,
+            source_id=source_id,
+            value_json={"scheme": scheme, "value": value},
+        )
+    )
+    return claims
+
+
+def _rows24(claims: list[ShapingClaim]) -> list[tuple]:
+    """``_rows`` plus the trailing columns parse_shaping_claims reads:
+    publication_permitted, decision decided_at/basis, ``value_json``."""
+    base = [list(t) for t in _rows(claims)]
+    for row, claim in zip(base, claims, strict=True):
+        row.extend([True, None, None, claim.value_json])
+    return [tuple(r) for r in base]
+
+
+def _build24(
+    claims: list[ShapingClaim],
+    raw_over: dict | None = None,
+    *,
+    placement=None,
+):
+    """``_build`` over the 24-column row set, optionally with an engine."""
+    rows = _rows24(claims)
+    subjects = sorted({c.subject_id for c in claims})
+    raw = {
+        "shaping_claims": rows,
+        "subject_entities": [(s, "deployment") for s in subjects],
+        "source_stats": [],
+        "source_runs": [],
+        "sharing_edges": [],
+        "spine_watermark": "claims=1",
+    }
+    dataset = build_shaped_dataset(
+        raw, as_of="2026-09-22", generated_at="2026-09-22T00:00:00Z", spine_label="unit"
+    )
+    bs = BuildSpec(
+        as_of_snapshot=date(2026, 9, 22),
+        as_of_belief=date(2026, 9, 22),
+        ruleset_version="ruleset/1",
+        resolver_version="resolver/1",
+    )
+    return build_spine_export(
+        dataset,
+        raw_over or {},
+        build_spec=bs,
+        generated_at="2026-09-22T00:00:00Z",
+        claims=parse_shaping_claims(rows),
+        entity_types={s: "deployment" for s in subjects},
+        placement=placement,
+    )
+
+
+def _site_rows(export) -> dict[str, dict]:
+    """entity_id → the emitted sites.jsonl row (first compartment hit)."""
+    out: dict[str, dict] = {}
+    for path, data in export.bundle.artifact_bytes.items():
+        if path.endswith("/sites.jsonl"):
+            for line in data.decode("utf-8").splitlines():
+                row = json.loads(line)
+                out.setdefault(str(row["entity_id"]), row)
+    return out
+
+
+def _fixture_claims() -> list[ShapingClaim]:
+    """The §7 fixture set staged through the shaping seam:
+
+    * ``A`` — declared CA, point inside the full CA chain → consistent;
+    * ``B`` — declared CA, point inside Florida → ``outside_declared``
+      (located wins; the disclosure pair rides the report);
+    * ``C`` — declared GB-ENG, point in no boundary but whose swap lands in
+      GB-ENG → ``axis_swap_suspected``, point withheld;
+    * ``D`` — declared GB-ENG, ``(0,0)`` → ``point_rejected:null_island``;
+    * ``E`` — declared CA, coordinate claim stamped
+      ``organization_centroid_or_unknown`` (SIG-IDENT-004) → declared
+      fallback, point withheld.
+    """
+    return (
+        _site24("A", "34.0", "-115.0", "us.state_abbr", "CA")
+        + _site24("B", "26.5", "-81.5", "us.state_abbr", "CA")
+        + _site24("C", "-1.15", "52.95", "iso.3166_2", "GB-ENG")
+        + _site24("D", "0.0", "0.0", "iso.3166_2", "GB-ENG")
+        + _site24(
+            "E",
+            "34.0",
+            "-115.0",
+            "us.state_abbr",
+            "CA",
+            lat_precision="organization_centroid_or_unknown",
+        )
+    )
+
+
+@_needs_duckdb
+def test_placement_columns_land_on_site_rows(placement_engine) -> None:
+    """The seven K4 §5.3 columns ride every site row when the engine is
+    bound; the legacy ``jurisdiction`` column stays the declared bucket."""
+    export = _build24(_fixture_claims(), placement=placement_engine)
+    rows = _site_rows(export)
+    assert set(rows) == {"A", "B", "C", "D", "E"}
+    for row in rows.values():
+        assert set(_PLACEMENT_COLUMNS) <= set(row)
+    a = rows["A"]
+    assert a["jurisdiction_key"] == "us.census.geoid.place:0644000"
+    assert a["jurisdiction_chain"] == [
+        "iso3166-1:US",
+        "iso3166-2:US-CA",
+        "us.census.geoid.county:06037",
+        "us.census.geoid.place:0644000",
+    ]
+    assert a["placement_basis"] == "point_in_polygon"
+    assert a["placement_check"] == "consistent"
+    assert a["declared_scheme"] == "us.state_abbr"
+    assert a["declared_value"] == "CA"
+    assert a["boundary_vintage"] == "tiger-2025"
+    # The legacy column is the declared bucket — unchanged, back-compat.
+    assert a["jurisdiction"] == "iso3166-2:US-CA"
+    assert a["geometry"]["type"] == "Point"
+
+
+@_needs_duckdb
+def test_located_wins_and_the_disagreement_is_disclosed(placement_engine) -> None:
+    """CA→FL on the row AND on the report: R4's pair is counted once and
+    readable from both dossier sides (K4 §3.4)."""
+    export = _build24(_fixture_claims(), placement=placement_engine)
+    b = _site_rows(export)["B"]
+    assert b["jurisdiction_key"] == "iso3166-2:US-FL"
+    assert b["placement_check"] == "outside_declared"
+    assert b["declared_scheme"] == "us.state_abbr" and b["declared_value"] == "CA"
+    report = json.loads(export.web_artifacts["web/placement.json"].decode("utf-8"))
+    assert report["schema"] == "sig.placement-report/1"
+    assert report["rules"] == "placement@1"
+    assert report["totals"]["records"] == 5
+    assert sum(report["by_check"].values()) == 5
+    assert report["by_check"]["outside_declared"] == 1
+    assert {"declared": "iso3166-2:US-CA", "located": "iso3166-2:US-FL", "records": 1} in (
+        report["disclosures"]
+    )
+    assert (
+        report["disclosures_by_jurisdiction"]["iso3166-2:US-CA"]["declared_here_located_elsewhere"]
+        == 1
+    )
+    assert (
+        report["disclosures_by_jurisdiction"]["iso3166-2:US-FL"]["located_here_declared_elsewhere"]
+        == 1
+    )
+
+
+@_needs_duckdb
+def test_withheld_points_never_re_emit_geometry_or_draw(placement_engine) -> None:
+    """R3/R1/SIG-IDENT-004: a suspected swap, a null island and a guarded
+    agency centroid all keep their record's declared placement but the point
+    never re-emits — sites row geometry is null and the map asset carries no
+    coordinates (``locationAbsence`` names the gap, ``placementCheck`` the
+    verdict)."""
+    export = _build24(_fixture_claims(), placement=placement_engine)
+    rows = _site_rows(export)
+    assert rows["C"]["placement_check"] == "axis_swap_suspected"
+    assert rows["C"]["jurisdiction_key"] == "iso3166-2:GB-ENG"
+    assert rows["C"]["geometry"] is None
+    assert rows["D"]["placement_check"] == "point_rejected:null_island"
+    assert rows["D"]["geometry"] is None
+    # The centroid guard: full-precision tier label, claim-stamped centroid —
+    # never point-placed, never drawn.
+    assert rows["E"]["placement_check"] == "no_point"
+    assert rows["E"]["jurisdiction_key"] == "iso3166-2:US-CA"
+    assert rows["E"]["geometry"] is None
+
+    assets = {a["id"]: a for a in _web(export, "map")["assets"]}
+    for sid in ("C", "D", "E"):
+        assert assets[sid]["lat"] is None and assets[sid]["lon"] is None
+        assert assets[sid]["locationAbsence"] == "UNRESOLVED"
+        assert "jurisdictionKey" in assets[sid]
+        assert "placementCheck" in assets[sid]
+    # The point_in_polygon-placed records still draw.
+    assert assets["A"]["lat"] == 34.0 and assets["A"]["lon"] == -115.0
+    assert assets["A"]["jurisdictionKey"] == "us.census.geoid.place:0644000"
+    assert assets["B"]["jurisdictionKey"] == "iso3166-2:US-FL"
+
+
+@_needs_duckdb
+def test_placement_report_absent_without_engine() -> None:
+    """Back-compat / additive posture: with no engine bound the sites rows
+    carry none of the placement columns, no placement.json exists, and the
+    map assets carry no placement fields — byte-identical to the
+    pre-placement posture."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    export = _build(claims)
+    assert "web/placement.json" not in export.web_artifacts
+    for row in _site_rows(export).values():
+        assert not set(_PLACEMENT_COLUMNS) & set(row)
+    for asset in _web(export, "map")["assets"]:
+        assert "jurisdictionKey" not in asset and "placementCheck" not in asset
+
+
+@_needs_duckdb
+def test_record_from_placed_site_row_carries_the_jurisdiction_block(
+    placement_engine,
+) -> None:
+    """K4 §3.4: the published record's jurisdiction block carries the placed
+    key + chain + basis + check + the declared pair + the boundary vintage."""
+    from exports.published_record import record_from_site_row
+
+    export = _build24(_fixture_claims(), placement=placement_engine)
+    b = _site_rows(export)["B"]
+    rec = record_from_site_row(b, compartment="sig_graph", license_id="CC-BY-4.0")
+    j = rec.jurisdiction
+    assert j["jkey"] == "iso3166-2:US-FL"
+    assert j["chain"] == ["iso3166-1:US", "iso3166-2:US-FL"]
+    assert j["basis"] == "point_in_polygon"
+    assert j["check"] == "outside_declared"
+    assert j["declared"] == {"scheme": "us.state_abbr", "value": "CA"}
+    assert j["boundary_vintage"] == "tiger-2025"
+    # The legacy id stays the declared bucket with its basis preserved.
+    assert j["id"] == "iso3166-2:US-CA"
+    assert j["id_basis"] == "camera_jurisdiction"
+    # A withheld point records the honest location state, never the pair.
+    c = _site_rows(export)["C"]
+    rec_c = record_from_site_row(c, compartment="sig_graph", license_id="CC-BY-4.0")
+    assert rec_c.location == {"kind": "point_withheld", "reason": "axis_swap_suspected"}
+    assert rec_c.jurisdiction["jkey"] == "iso3166-2:GB-ENG"
+
+
+@_needs_duckdb
+def test_run_spine_export_placement_never_writes_the_spine(placement_env, monkeypatch) -> None:
+    """The no-spine-write guard (ADR-092): the whole export — placement
+    included — issues only reads on the spine connection; the engine works
+    in its own in-memory DuckDB. Also proves the landed ``geometry_defect``
+    claims flow from the export read into the placement verdicts."""
+    import exports.shaping as shaping_mod
+    import exports.spine_export as se
+
+    claims = _fixture_claims()
+    rows = _rows24(claims)
+    subjects = sorted({c.subject_id for c in claims})
+    shaping_raw = {
+        "shaping_claims": rows,
+        "subject_entities": [(s, "deployment") for s in subjects],
+        "source_stats": [],
+        "source_runs": [],
+        "sharing_edges": [],
+        "spine_watermark": "claims=1",
+    }
+    # C's declared pair is GB-ENG; the landed ``axis_swap`` defect claim is
+    # what marks its point suspect — exercised end-to-end through the export
+    # read path here.
+    export_raw = {"geometry_defects": [("C", "axis_swap")]}
+
+    monkeypatch.setattr(
+        shaping_mod, "fetch_shaping_raw", lambda cur, queries, belief=None: shaping_raw
+    )
+    monkeypatch.setattr(se, "fetch_export_raw", lambda cur, belief=None: export_raw)
+    monkeypatch.setattr(se, "fetch_materialized_graph", lambda cur: {})
+
+    class _Cursor:
+        def __init__(self) -> None:
+            self.sql: list[str] = []
+            self._next: list = []
+
+        def execute(self, sql, params=None):
+            self.sql.append(str(sql).strip())
+            self._next = [(False,)]
+            return self
+
+        def fetchone(self):
+            return self._next[0] if self._next else None
+
+        def fetchall(self):
+            return list(self._next)
+
+    class _Conn:
+        info = None  # transaction_status None → the export opens its own snapshot
+
+        def __init__(self) -> None:
+            self.cur = _Cursor()
+
+        def cursor(self):
+            return self.cur
+
+        def close(self) -> None:
+            pass
+
+    conn = _Conn()
+    export = se.run_spine_export(
+        conn,
+        build_spec=BuildSpec(
+            as_of_snapshot=date(2026, 9, 22),
+            as_of_belief=date(2026, 9, 22),
+            ruleset_version="ruleset/1",
+            resolver_version="resolver/1",
+        ),
+        generated_at=datetime(2026, 9, 22, tzinfo=UTC),
+        spine_label="unit",
+        boundary_pack=placement_env.pack_dir,
+        jurisdiction_registry=placement_env.registry_path,
+        boundary_spec=placement_env.spec_path,
+    )
+    # Every statement on the spine connection is a read or a transaction verb —
+    # no INSERT/UPDATE/DELETE/DDL of any kind (the spine is append-only; the
+    # export is compute-on-read).
+    assert conn.cur.sql, "expected the snapshot read path to have run"
+    allowed_heads = {"SET", "BEGIN", "SELECT", "ROLLBACK", "COMMIT", "WITH", "EXPLAIN"}
+    for sql in conn.cur.sql:
+        assert sql.split(None, 1)[0].upper() in allowed_heads, f"spine write: {sql}"
+
+    assert "web/placement.json" in export.web_artifacts
+    rows = _site_rows(export)
+    # The landed defect claim drove the placement — C's point withheld.
+    assert rows["C"]["placement_check"] == "axis_swap_suspected"
+    assert rows["C"]["geometry"] is None
+
+
+@_needs_duckdb
+def test_run_spine_export_refuses_half_staged_placement_inputs(placement_env, monkeypatch) -> None:
+    """--boundary-pack without --jurisdiction-registry (or vice versa)
+    refuses — placement never runs on a half-staged input set."""
+    from exports.placement import PlacementError
+    from exports.spine_export import run_spine_export
+
+    class _Conn:
+        info = None
+
+        def cursor(self):
+            class _C:
+                def execute(self, sql, params=None):
+                    return self
+
+                def fetchone(self):
+                    return (False,)
+
+            return _C()
+
+    monkeypatch.setattr("exports.shaping.fetch_shaping_raw", lambda cur, queries, belief=None: {})
+    monkeypatch.setattr("exports.spine_export.fetch_export_raw", lambda cur, belief=None: {})
+    monkeypatch.setattr("exports.spine_export.fetch_materialized_graph", lambda cur: {})
+    with pytest.raises(PlacementError, match="together"):
+        run_spine_export(
+            _Conn(),
+            build_spec=BuildSpec(
+                as_of_snapshot=date(2026, 9, 22),
+                as_of_belief=date(2026, 9, 22),
+                ruleset_version="ruleset/1",
+                resolver_version="resolver/1",
+            ),
+            generated_at=datetime(2026, 9, 22, tzinfo=UTC),
+            boundary_pack=placement_env.pack_dir,
+        )
+
+
+def test_cli_placement_flags_require_from_spine(capsys) -> None:  # type: ignore[no-untyped-def]
+    from exports.cli import main
+
+    rc = main(
+        [
+            "build",
+            "req.json",
+            "--out",
+            "/tmp/x",
+            "--boundary-pack",
+            "p",
+            "--jurisdiction-registry",
+            "r",
+        ]
+    )
+    assert rc == 2
+    assert "only valid with --from-spine" in capsys.readouterr().out
+
+
+def test_cli_placement_flags_must_be_paired(capsys) -> None:  # type: ignore[no-untyped-def]
+    from exports.cli import main
+
+    rc = main(
+        [
+            "build",
+            "--from-spine",
+            "--dsn",
+            "postgresql://x",
+            "--out",
+            "/tmp/x",
+            "--boundary-pack",
+            "p",
+        ]
+    )
+    assert rc == 2
+    assert "together" in capsys.readouterr().out
+
+
+def test_cli_boundary_spec_requires_the_pack(capsys) -> None:  # type: ignore[no-untyped-def]
+    """--boundary-spec is the minting-rules override seam — meaningless (and
+    refused) without the pack + registry it keys."""
+    from exports.cli import main
+
+    rc = main(
+        [
+            "build",
+            "--from-spine",
+            "--dsn",
+            "postgresql://x",
+            "--out",
+            "/tmp/x",
+            "--boundary-spec",
+            "spec.toml",
+        ]
+    )
+    assert rc == 2
+    assert "--boundary-spec" in capsys.readouterr().out

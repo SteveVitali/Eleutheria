@@ -156,6 +156,26 @@ def build_parser() -> argparse.ArgumentParser:
         "the reviewed research-dossier portfolio is composed and emitted as "
         "web/research_dossiers.json (P32.17, SIG-DOS-001/002).",
     )
+    build.add_argument(
+        "--boundary-pack",
+        help="With --from-spine: a staged sig.boundary-pack/1 directory "
+        "(P35.17). Placement runs only when both --boundary-pack and "
+        "--jurisdiction-registry are given; the pack is re-verified and "
+        "cross-bound to the registry before any record is placed "
+        "(P35.19 / placement@1, K4 §4.4 — a failed check refuses the export).",
+    )
+    build.add_argument(
+        "--jurisdiction-registry",
+        help="With --from-spine: the sig.jurisdiction-registry/1 document "
+        "derived from the boundary pack (P35.17). Required with "
+        "--boundary-pack.",
+    )
+    build.add_argument(
+        "--boundary-spec",
+        help="With --from-spine: the sig.boundary-pack/1 spec TOML the "
+        "registry/placement layer vocabulary is read from (defaults to the "
+        "committed exports/data/boundary_pack.toml).",
+    )
 
     deposit = subparsers.add_parser(
         "deposit",
@@ -1007,6 +1027,9 @@ def _run_build_from_spine(
     environment: str | None = None,
     skip_host_clock_check: bool = False,
     host_clock_url: str | None = None,
+    boundary_pack: str | None = None,
+    jurisdiction_registry: str | None = None,
+    boundary_spec: str | None = None,
 ) -> int:
     """Build the real national export from the shaped spine (P27.4, read-only).
 
@@ -1026,6 +1049,7 @@ def _run_build_from_spine(
     import psycopg
 
     from .audit import redact_dsn
+    from .placement import PlacementError
     from .release_identity import (
         ClockGuardError,
         assert_not_frozen,
@@ -1065,17 +1089,26 @@ def _run_build_from_spine(
     spine_label = redact_dsn(dsn)
     conn = psycopg.connect(dsn, autocommit=True)
     try:
-        export = run_spine_export(
-            conn,
-            as_of=as_of,
-            belief=belief_instant,
-            note=note,
-            spine_label=spine_label,
-            dossier_packets=dossier_packets,
-            generated_at=t0,
-            environment=environment,
-            replay=replay,
-        )
+        try:
+            export = run_spine_export(
+                conn,
+                as_of=as_of,
+                belief=belief_instant,
+                note=note,
+                spine_label=spine_label,
+                dossier_packets=dossier_packets,
+                generated_at=t0,
+                environment=environment,
+                replay=replay,
+                boundary_pack=boundary_pack,
+                jurisdiction_registry=jurisdiction_registry,
+                boundary_spec=boundary_spec,
+            )
+        except PlacementError as e:
+            # P35.19: an unverified/inconsistent boundary input refuses the
+            # export — the same fail-closed posture as the clock guards.
+            print(f"sig-exports build: refused — {e}")
+            return 4
     finally:
         conn.close()
 
@@ -1452,6 +1485,19 @@ def main(argv: list[str] | None = None) -> int:
             if not args.dsn:
                 print("sig-exports build: --dsn is required with --from-spine")
                 return 2
+            if (args.boundary_pack is None) != (args.jurisdiction_registry is None):
+                print(
+                    "sig-exports build: --boundary-pack and "
+                    "--jurisdiction-registry must be given together "
+                    "(placement@1 never runs on a half-staged input set)"
+                )
+                return 2
+            if args.boundary_spec is not None and args.boundary_pack is None:
+                print(
+                    "sig-exports build: --boundary-spec is only meaningful "
+                    "with --boundary-pack + --jurisdiction-registry"
+                )
+                return 2
             packets = _load_packets(args.dossier_packets)
             return _run_build_from_spine(
                 args.dsn,
@@ -1465,12 +1511,25 @@ def main(argv: list[str] | None = None) -> int:
                 environment=args.environment,
                 skip_host_clock_check=args.skip_host_clock_check,
                 host_clock_url=args.host_clock_url,
+                boundary_pack=args.boundary_pack,
+                jurisdiction_registry=args.jurisdiction_registry,
+                boundary_spec=args.boundary_spec,
             )
         if args.dsn is not None:
             print("sig-exports build: --dsn is only valid with --from-spine")
             return 2
         if args.dossier_packets:
             print("sig-exports build: --dossier-packets is only valid with --from-spine")
+            return 2
+        if (
+            args.boundary_pack is not None
+            or args.jurisdiction_registry is not None
+            or args.boundary_spec is not None
+        ):
+            print(
+                "sig-exports build: --boundary-pack/--jurisdiction-registry/"
+                "--boundary-spec are only valid with --from-spine"
+            )
             return 2
         return _run_build(
             args.request_json,
