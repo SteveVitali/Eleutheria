@@ -24,6 +24,34 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Residential-parcel demotion wired end to end** (P35.66 / row 288;
+  **SIG-PUB-004 / SIG-PUB-005 / SIG-PUB-013** owners; cites SIG-PUB-011,
+  SIG-PUB-012, SIG-PUB-006, §23.10) — the residential-parcel screen that
+  existed as dead code now has all three bind points live. **Flag
+  producer:** `policy/parcel_screen.py` + the committed declared signal
+  `policy/data/residential_parcels.toml` stamp every emitted
+  candidate/asset row with a three-valued `parcel_screen` verdict
+  (`intersects` / `clear` / `unscreened`), `residential_parcel_flag`,
+  and the signal identity `<id>@<version>` — an unscreened geography is
+  a recorded coverage gap, never a silent "clean" (the committed signal
+  honestly declares zero coverage until the parcel acquisition lands).
+  **Demotion:** `demote_for_residential_parcel` now runs at every
+  `sensitivity_class` stamping site — `dot_511` (a parcel-intersecting
+  point demotes to C3 with coordinates withheld before any claim is
+  emitted), `osm` (the ODbL `physical_asset_rows` projection withholds
+  flagged geometry while program facts survive), `okc_claim` /
+  `dossier_claim` — automatic, no override path. **Publication
+  refusal:** `CandidateAssetPublishRefused` /
+  `assert_public_layer_subject` make a `candidate_asset` or
+  parcel-flagged subject reaching a public device layer a **build
+  error** at every surface — shaping (excluded by construction and
+  honestly counted, plus a post-shape guard), the spine-export slices,
+  published records, the release search index (refused before the
+  index file is opened), tiles (refused on the full feature before
+  slimming), and research dossier packets (fail closed). No
+  residential candidate reaches a public surface at any precision,
+  ever.
+
 - **Redaction pipeline, wired end to end** (P36.15 / R11-SAFE-04;
   **SIG-PUB-015 / SIG-PUB-016** owners; cites SIG-EVID-011, SIG-EPIS-006,
   SIG-PUB-014a, SIG-GOV-007) — a redaction now has a real production path:

@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# FIXTURE parcel signal for the P35.66 residential-demotion tests — SYNTHETIC
+# geography, not a real parcel layer (capture_kind: stand-in — it carries no
+# retrieval/observation dates). Same document shape as the committed declared
+# signal `policy/data/residential_parcels.toml`: signal id + version +
+# provenance + coverage regions + parcel polygons, all GeoJSON-order
+# `[[lon, lat], …]` closed rings.
+#
+# Synthetic geometry (a square around lat 35.4–35.6, lon -97.7–-97.3):
+#   - coverage region: the whole square
+#   - parcel-1:        a block inside it (lat 35.45–35.47, lon -97.55–-97.50)
+# Verdicts the tests pin:  (35.46, -97.52) → intersects
+#                          (35.50, -97.40) → clear
+#                          (36.00, -98.00) → unscreened (outside coverage)
+
+signal_id = "sig.residential_parcels.fixture"
+version = "fixture-v1"
+provenance = "P35.66 test fixture — synthetic parcel layer standing in for the un-acquired dataset; not real geography, no retrieval date."
+
+#: One coverage region — a closed square ring.
+coverage = [
+  [
+    [-97.7, 35.4],
+    [-97.3, 35.4],
+    [-97.3, 35.6],
+    [-97.7, 35.6],
+    [-97.7, 35.4],
+  ],
+]
+
+[[parcels]]
+id = "parcel-1"
+ring = [
+  [-97.55, 35.45],
+  [-97.50, 35.45],
+  [-97.50, 35.47],
+  [-97.55, 35.47],
+  [-97.55, 35.45],
+]

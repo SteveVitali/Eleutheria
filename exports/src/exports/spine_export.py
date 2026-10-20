@@ -704,6 +704,7 @@ def _slice_sites(
     claims: Sequence[ShapingClaim],
     entity_types: Mapping[str, str],
     *,
+    subject_flags: Mapping[str, bool] | None = None,
     retrieval: date,
     registry: Mapping[str, Any] | None,
 ) -> _SiteSlices:
@@ -714,7 +715,18 @@ def _slice_sites(
     merge, so a per-slice envelope reflects only what that source observed). A
     refused (source, rights) slice is dropped into the exclusions list, loudly; a
     surviving slice lands in the compartment its own computed licence declares.
+
+    P35.66 (SIG-PUB-011/013): ``subject_flags`` carries the emit-stamped
+    ``residential_parcel_flag`` per subject (from the ``subject_entities``
+    read). A ``candidate_asset`` subject — or any flagged subject — never
+    shapes a site at all (``shape_sites`` refuses it) and is folded into the
+    returned ``refused_subjects`` so EVERY downstream surface (map, analytics,
+    licence mix) excludes it identically; the refusal is counted on the
+    dataset's ``candidate_subjects_excluded`` total.
     """
+    publish_refused = {sid for sid, etype in entity_types.items() if etype == "candidate_asset"} | {
+        sid for sid, flag in (subject_flags or {}).items() if flag
+    }
     by_source: dict[str, list[ShapingClaim]] = {}
     rights_ids_by_source: dict[str, set[str]] = {}
     for claim in claims:
@@ -735,7 +747,11 @@ def _slice_sites(
     refused_subjects: set[str] = set()
 
     for source_id in sorted(by_source):
-        sites = shape_sites(by_source[source_id], entity_types=entity_types)
+        sites = shape_sites(
+            by_source[source_id],
+            entity_types=entity_types,
+            refused_subjects=publish_refused,
+        )
         for site in sites:
             for rights in site.rights:
                 record = _record_from_site_rights(rights, retrieval=retrieval)
@@ -774,7 +790,11 @@ def _slice_sites(
         index=index,
         exclusions=exclusions,
         licences_by_subject=licences_by_subject,
-        refused_subjects=refused_subjects,
+        # P35.66: publish-refused subjects (candidate / parcel-flagged) join
+        # the licence-refused set — every render surface excludes them the
+        # same way. The exclusion count lives on
+        # ``ShapedDataset.candidate_subjects_excluded``.
+        refused_subjects=refused_subjects | publish_refused,
     )
 
 
@@ -2110,6 +2130,7 @@ def build_spine_export(
     belief: datetime | None = None,
     claims: Sequence[ShapingClaim] | None = None,
     entity_types: Mapping[str, str] | None = None,
+    subject_flags: Mapping[str, bool] | None = None,
     registry: Mapping[str, Any] | None = None,
     dossier_packets: Sequence[Mapping[str, Any]] | None = None,
 ) -> SpineExport:
@@ -2137,6 +2158,13 @@ def build_spine_export(
         claims = parse_shaping_claims(raw["shaping_claims"])
     if entity_types is None:
         entity_types = {str(r[0]): str(r[1]) for r in (raw.get("subject_entities") or [])}
+    if subject_flags is None:
+        # P35.66: the emit-stamped residential-parcel flag per subject — read
+        # off the subject_entities rows when they carry it (a 2-column row set
+        # degrades to no flags — the candidate_asset type check still binds).
+        subject_flags = {
+            str(r[0]): bool(r[2]) for r in (raw.get("subject_entities") or []) if len(r) > 2
+        }
     if claims is None:
         claims = _claims_from_dataset(dataset)
 
@@ -2178,7 +2206,13 @@ def build_spine_export(
     resolved_counts = resolved_site_counts(m_site_runs, dataset)
 
     # --- the licence-critical path: sites sliced per (source, rights) -----------
-    slices = _slice_sites(claims, entity_types, retrieval=retrieval, registry=registry)
+    slices = _slice_sites(
+        claims,
+        entity_types,
+        subject_flags=subject_flags,
+        retrieval=retrieval,
+        registry=registry,
+    )
     site_rows, site_index, site_exclusions = (
         slices.rows_by_compartment,
         slices.index,
@@ -2710,7 +2744,10 @@ def run_spine_export(
         note=note,
     )
     claims = parse_shaping_claims(shaping_raw.get("shaping_claims") or [])
-    entity_types = {str(r[0]): str(r[1]) for r in (shaping_raw.get("subject_entities") or [])}
+    subject_rows = list(shaping_raw.get("subject_entities") or [])
+    entity_types = {str(r[0]): str(r[1]) for r in subject_rows}
+    # P35.66: the emit-stamped residential-parcel flag rides the subject rows.
+    subject_flags = {str(r[0]): bool(r[2]) for r in subject_rows if len(r) > 2}
     # ``fetch_export_raw`` already read source_registry names into
     # ``export_raw['source_names']`` (compat-guarded); the surface builders consume it.
 
@@ -2737,6 +2774,7 @@ def run_spine_export(
         belief=belief,
         claims=claims,
         entity_types=entity_types,
+        subject_flags=subject_flags,
         dossier_packets=dossier_packets,
     )
 

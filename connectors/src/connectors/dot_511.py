@@ -58,7 +58,19 @@ from urllib.parse import urlencode
 from uuid import uuid4
 
 from parsing.locator import Locator
-from policy.sensitivity import SensitivityClass, apply_tier, geo_tier_for
+from policy.parcel_screen import (
+    PARCEL_SCREEN_VERDICTS,
+    ParcelScreenVerdict,
+    ResidentialParcelSignal,
+    declared_parcel_signal,
+    screen_point,
+)
+from policy.sensitivity import (
+    SensitivityClass,
+    apply_tier,
+    demote_for_residential_parcel,
+    geo_tier_for,
+)
 from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
@@ -1579,6 +1591,18 @@ class CameraRegistryEntry:
     #: — the route's enforced-since date). Emits verbatim under
     #: ``installation_date``; ``None`` on every undeclared record.
     installation_date: str | None = None
+    #: P35.66 (SIG-PUB-005/013): the recorded residential-parcel screen verdict
+    #: — ``intersects`` | ``clear`` | ``unscreened`` (closed vocabulary,
+    #: ``policy.parcel_screen.PARCEL_SCREEN_VERDICTS``). ``unscreened`` is a
+    #: recorded coverage gap, never a silent "clean": the flag is true iff the
+    #: verdict is ``intersects``, and a flagged point record is demoted to C3
+    #: — program-level facts only, no coordinate claims (SIG-PUB-005). Non-point
+    #: records carry ``unscreened``: the declared check is point-in-parcel.
+    residential_parcel_flag: bool = False
+    parcel_screen: str = "unscreened"
+    #: The ``<signal_id>@<version>`` of the declared signal the verdict came
+    #: from — "what input" is always answerable off the emitted row.
+    parcel_screen_signal: str = ""
 
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
@@ -1600,7 +1624,42 @@ class CameraRegistryEntry:
                 f"entry for {self.target_id!r} declares geometry_kind={self.geometry_kind!r}"
             )
         if self.geometry_kind == "point" and (self.latitude is None or self.longitude is None):
-            raise ValueError("a point CameraRegistryEntry requires published coordinates")
+            # P35.66: a residential-parcel-flagged point is demoted to C3 —
+            # it publishes NO coordinate by design, so the requirement is
+            # waived for it alone (the flag carries its own invariants below).
+            if not self.residential_parcel_flag:
+                raise ValueError("a point CameraRegistryEntry requires published coordinates")
+        # P35.66 (SIG-PUB-005/013): the recorded screen verdict is closed
+        # vocabulary; the flag is true iff the verdict is ``intersects``; a
+        # flagged entry is demoted C3 with no published coordinate. A
+        # non-point record can only ever be ``unscreened`` — the declared
+        # check is point-in-parcel, and an ``intersects`` verdict on an area
+        # or line asserts a screen that never ran.
+        if self.parcel_screen not in PARCEL_SCREEN_VERDICTS:
+            raise ValueError(
+                f"parcel_screen {self.parcel_screen!r} is not a member "
+                f"({sorted(PARCEL_SCREEN_VERDICTS)})"
+            )
+        if self.residential_parcel_flag != (
+            self.parcel_screen == ParcelScreenVerdict.INTERSECTS.value
+        ):
+            raise ValueError("residential_parcel_flag is true iff parcel_screen == 'intersects'")
+        if self.geometry_kind != "point" and self.residential_parcel_flag:
+            raise ValueError(
+                "a non-point CameraRegistryEntry records parcel_screen 'unscreened' "
+                "— the point-in-parcel screen does not cover its shape"
+            )
+        if self.residential_parcel_flag:
+            if self.sensitivity_class != SensitivityClass.C3.value:
+                raise ValueError(
+                    "a residential-parcel-flagged entry is demoted to C3 "
+                    "(SIG-PUB-005) — the declared class never survives the flag"
+                )
+            if self.latitude is not None or self.longitude is not None:
+                raise ValueError(
+                    "a residential-parcel-flagged entry publishes no device "
+                    "coordinate — C3 is program-level facts only (SIG-PUB-013)"
+                )
         if self.geometry_kind == "area" and (
             self.geometry_wkt is None
             or self.centroid_latitude is None
@@ -1738,6 +1797,12 @@ class CameraRegistryEntry:
             "coordinate_source": self.coordinate_source,
             "geo_tier": self.geo_tier,
             "sensitivity_class": self.sensitivity_class,
+            # P35.66 (SIG-PUB-005/013): the recorded parcel-screen verdict, the
+            # flag, and the declaring signal ride the entity row — "what input,
+            # what outcome" is answerable off the record itself.
+            "residential_parcel_flag": self.residential_parcel_flag,
+            "parcel_screen": self.parcel_screen,
+            "parcel_screen_signal": self.parcel_screen_signal,
             "excluded_fields": list(self.excluded_fields),
             "evidence_genre": "camera_registry",
             "evidence": ev,
@@ -1803,7 +1868,13 @@ class CameraRegistryEntry:
                 # scoped-name identity (SIG-TRUST-004).
                 op["partner_jurisdiction"] = f"{self.jurisdiction_scheme}:{self.state}"
             rows.append(op)
-        if self.geometry_kind == "point":
+        if self.geometry_kind == "point" and self.residential_parcel_flag:
+            # SIG-PUB-005/013 (P35.66): a parcel-intersecting device point is
+            # demoted to C3 — program-level facts only, NO location claims.
+            # The entity row's parcel_screen/flag/signal stamp is the recorded
+            # reason; no claim is silently dropped.
+            pass
+        elif self.geometry_kind == "point":
             rows.append(self._claim("camera_latitude", self.latitude, str(self.latitude), ev))
             rows.append(self._claim("camera_longitude", self.longitude, str(self.longitude), ev))
             rows.append(
@@ -1874,6 +1945,15 @@ class CameraRegistryEntry:
             for row in rows:
                 row["valid_to"] = self.valid_to
                 row["valid_to_kind"] = self.valid_to_kind
+        # P35.66 (SIG-PUB-005/013): the screen verdict, flag, declaring signal
+        # and the demoted sensitivity class stamp EVERY emitted row — the
+        # demotion reads off any row of the record, never only the entity.
+        for row in rows:
+            row["residential_parcel_flag"] = self.residential_parcel_flag
+            row["parcel_screen"] = self.parcel_screen
+            row["parcel_screen_signal"] = self.parcel_screen_signal
+            row.setdefault("sensitivity_class", self.sensitivity_class)
+            row.setdefault("geo_tier", self.geo_tier)
         return rows
 
 
@@ -1897,6 +1977,13 @@ class Dot511Connector(Connector):
 
     name = "dot_511"
     version = "1.0.0"
+
+    def __init__(self, *, parcel_signal: ResidentialParcelSignal | None = None) -> None:
+        # P35.66 (SIG-PUB-005/013): the declared residential-parcel signal the
+        # emit screen consults — ``None`` resolves the committed
+        # ``policy/data/residential_parcels.toml``; tests inject a fixture
+        # layer. The connector never fabricates a verdict.
+        self._parcel_signal = parcel_signal
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
@@ -2192,7 +2279,9 @@ class Dot511Connector(Connector):
             if raw.get("record_kind") != "camera_feature":
                 continue
             try:
-                entry = _entry_from_raw(ctx.source.id, raw, target)
+                entry = _entry_from_raw(
+                    ctx.source.id, raw, target, parcel_signal=self._parcel_signal
+                )
             except (CoordinateRejected, ValueError) as exc:
                 rejected += 1
                 reason = exc.reason if isinstance(exc, CoordinateRejected) else "no_registry_key"
@@ -2276,9 +2365,24 @@ def _resolve_target(ctx: RunContext, source_uri: str) -> dict[str, Any]:
 
 
 def _entry_from_raw(
-    source_id: str, raw: Mapping[str, Any], target: Mapping[str, Any]
+    source_id: str,
+    raw: Mapping[str, Any],
+    target: Mapping[str, Any],
+    *,
+    parcel_signal: ResidentialParcelSignal | None = None,
 ) -> CameraRegistryEntry:
-    """Map one raw feature onto :class:`CameraRegistryEntry` via the field aliases."""
+    """Map one raw feature onto :class:`CameraRegistryEntry` via the field aliases.
+
+    P35.66 (SIG-PUB-005/013): a point record's coordinate is screened against
+    the declared residential-parcel signal BEFORE the tier transform — an
+    ``intersects`` verdict demotes the record to C3 (program-level facts only,
+    no published device coordinate) and stamps the flag; ``clear`` and
+    ``unscreened`` are distinct recorded states, never conflated. Non-point
+    records record ``unscreened`` — the declared check is point-in-parcel.
+    ``parcel_signal`` defaults to the committed declared signal
+    (:func:`policy.parcel_screen.declared_parcel_signal`); tests inject a
+    fixture layer through it.
+    """
     fields: Mapping[str, Any] = raw["fields"]
     if not str(target.get("id") or "").strip():
         raise CoordinateRejected(
@@ -2311,6 +2415,9 @@ def _entry_from_raw(
             "missing", "no camera identity field matched the id_fields aliases"
         )
     sensitivity_class = str(target.get("sensitivity_class") or vocab()["default_sensitivity_class"])
+    # P35.66 (SIG-PUB-005/013): the declared parcel signal the emit screen
+    # runs against — resolved once per record; the verdict stamps the entry.
+    sig = parcel_signal if parcel_signal is not None else declared_parcel_signal()
     # SIG-GEO-003 (P36.4): the record's declared shape picks the geometry path.
     # A point record resolves its operator-published coordinate as before; an
     # area record serialises the published polygon rings to WKT + a derived
@@ -2321,6 +2428,8 @@ def _entry_from_raw(
     centroid_lon: float | None = None
     geometry_wkt: str | None = None
     ring_count = 0
+    parcel_screen = ParcelScreenVerdict.UNSCREENED.value
+    residential_parcel_flag = False
     if geometry_kind == "area":
         geometry_wkt, centroid_raw_lat, centroid_raw_lon, ring_count = area_geometry(
             raw.get("geometry")
@@ -2331,7 +2440,28 @@ def _entry_from_raw(
         coord_source = "geometry:rings"
     elif geometry_kind == "point":
         lat, lon, coord_source = extract_coordinate(fields, raw.get("geometry"))
-        lat, lon, tier = publishable_coordinate(lat, lon, sensitivity_class)
+        verdict = screen_point(lat, lon, signal=sig)
+        parcel_screen = verdict.value
+        if verdict is ParcelScreenVerdict.INTERSECTS:
+            # SIG-PUB-005: automatic demotion — a device point on a declared
+            # residential parcel publishes program-level facts only (C3, geo
+            # tier 3 = no location). The screen ran on the publisher's
+            # coordinate BEFORE the tier transform; the precise point is
+            # withheld at emit, never published at any precision (SIG-PUB-013).
+            try:
+                cls = SensitivityClass(sensitivity_class)
+            except ValueError as exc:
+                raise CoordinateRejected(
+                    "invalid_sensitivity_class",
+                    f"target pins unknown sensitivity class {sensitivity_class!r}",
+                ) from exc
+            sensitivity_class = demote_for_residential_parcel(cls, True).value
+            tier = geo_tier_for(SensitivityClass(sensitivity_class))
+            lat = None
+            lon = None
+            residential_parcel_flag = True
+        else:
+            lat, lon, tier = publishable_coordinate(lat, lon, sensitivity_class)
     elif geometry_kind == "line":
         # P36.6 (ACQ-10): a route/programme record declares shape ``line`` —
         # an enforced corridor (MTA's bus-lane ATE routes), not a device
@@ -2434,6 +2564,9 @@ def _entry_from_raw(
         centroid_latitude=centroid_lat,
         centroid_longitude=centroid_lon,
         ring_count=ring_count,
+        residential_parcel_flag=residential_parcel_flag,
+        parcel_screen=parcel_screen,
+        parcel_screen_signal=sig.stamp,
     )
 
 
