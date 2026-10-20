@@ -1,0 +1,28 @@
+window OK: 2026-10-14T10:04:10Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+window OK: 2026-10-14T10:04:11Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+-- revisions: one same-image revision per service (identity only) --
++ gcloud run services update sig-api --service-account sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+Deploying...
+Creating Revision....................done
+Done.
+Service [sig-api] revision [sig-api-00011-wic] has been deployed and is serving 100 percent of traffic.
+Service URL: https://sig-api-873541617837.us-central1.run.app
+The revision can be reached directly at https://p318---sig-api-e5ctyx36jq-uc.a.run.app
+   rollback: gcloud run services update sig-api --service-account <recorded prior SA: pre/service-sig-api.json>
++ gcloud run services update sig-web --service-account sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+Deploying...
+Creating Revision....................................................done
+Routing traffic.....done
+Done.
+Service [sig-web] revision [sig-web-00003-4qd] has been deployed and is serving 100 percent of traffic.
+Service URL: https://sig-web-873541617837.us-central1.run.app
+   rollback: gcloud run services update sig-web --service-account <recorded prior SA: pre/service-sig-web.json>
++ gcloud run services update sig-alerts --service-account sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --region us-central1 --project zeta-medley-508121-u7
+Deploying...
+Creating Revision...............................................................................................................................................................................................failed
+Deployment failed
+ERROR: (gcloud.run.services.update) spec.template.spec.containers[0].env[0].value_from.secret_key_ref.name: Permission denied on secret: projects/873541617837/secrets/sig-alert-webhook-token/versions/latest for Revision service account sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com. The service account used must be granted the 'Secret Manager Secret Accessor' role (roles/secretmanager.secretAccessor) at the secret, project or higher level.
