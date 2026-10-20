@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "08fddfabe187c52c1cd1451eddcb3d9ce0aad503",
+  "input_commit": "49dc2a22064fc706f0d156a58cbef36e3c7629f2",
   "manifest_inputs": 1074,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.37",
-    "lastCompleted": "P35.36",
+    "nextTicket": "P35.38b",
+    "lastCompleted": "P35.37",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.32,P35.57,P35.67,P36.12",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.36-statements-files-and-provenance-panel-v2",
+    "chainTip": "r11/P35.37-figure-to-evidence-pointers",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-19T23:57Z"
+    "updatedAt": "2026-10-20T03:58Z"
   },
   "counts": {
     "obligations": 169,
@@ -19145,10 +19145,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "16479eb0183427240d156a359b96f2e0628073ff9f69722f1ce72d75917aeee0",
+  "manifest_sha256": "1b90b5ba6fd011a9f6923d51077504f7b38eb0584656b83e6eec5e90540882e8",
   "current_md": {
     "lines": 63,
-    "bytes": 15622,
+    "bytes": 15610,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
