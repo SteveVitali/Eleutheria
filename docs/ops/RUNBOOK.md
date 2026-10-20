@@ -353,7 +353,7 @@ is their creation, which is not a rotation; `unknown` is the honest cell.
 | name | owner | consumer | last_rotation | procedure |
 |---|---|---|---|---|
 | `sig-pg-password` | operator | `sig-api-rt` `sig-ingest-rt` `sig-probe-rt` `sig-export-rt` `sig-materialize-rt` `default-compute` | `unknown` | stdin version-add, then roll every DB-consuming job/service revision by digest (§7) — the `default-compute` accessor is the GCE host path |
-| `sig-alert-webhook-token` | operator | `sig-probe-rt` `sig-quality-probe-rt` | `unknown` | stdin version-add; next probe execution picks it up; `default-compute` revoke in-flight (`jobs_revoke`) |
+| `sig-alert-webhook-token` | operator | `sig-alerts-rt` `sig-probe-rt` `sig-quality-probe-rt` | `unknown` | stdin version-add; next probe execution picks it up; `sig-alerts` mounts it as env `SIG_ALERT_WEBHOOK_TOKEN` — a new `sig-alerts` revision picks it up; `default-compute` revoke in-flight (`jobs_revoke`) |
 | `sig-api-env` | operator | — | `unknown` | zero-version / dead secret (G1 §3.9): nothing consumes it, no version to rotate — do not delete it here; record, don't resurrect |
 | `sig-data-gov-key` | operator | `sig-ingest-rt` | `unknown` | upstream reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
 | `sig-maproulette-api-key` | operator | — | `unknown` | **exposed in a session transcript (G1-12, accepted risk)**: no accessor binding today; it must be rotated before the MapRoulette contribution-back lane activates — the register cannot claim that rotation happened |
