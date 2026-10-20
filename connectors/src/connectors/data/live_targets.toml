@@ -380,6 +380,15 @@ targets = [
   { id = "eyes-on-flock-data", url = "https://eyesonflock.com/api/v1/data", kind = "portal_json" },
 ]
 
+# Flock transparency portals — the P36.74 probe (WV-10 / ADR-188): the live
+# targets ARE the committed known-portal inventory in
+# data/flock_portal_probe_targets.toml (917 portals enumerated from the Eyes on
+# Flock aggregator's 2026-09-23T10:15:16.751Z snapshot — no new discovery). The
+# source row stays ingestion_permitted=false; activation is the operator's
+# P36.12 Wave-B execution under ING-GO-B.
+[flock_transparency_portals]
+kind = "flock_portal_probe_targets"
+
 # FBI CDE agency registry — the documented api.usa.gov endpoint; the data.gov
 # key resolves from $SIG_DATA_GOV_KEY at fetch time (HG-09, else the published
 # DEMO_KEY). byStateAbbr/OK is a bounded per-state slice (verified live

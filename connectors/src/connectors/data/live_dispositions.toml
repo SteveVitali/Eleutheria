@@ -159,9 +159,6 @@ disposition = "reference"
 [sources.flock_finder]
 disposition = "reference"
 
-[sources.flock_transparency_portals]
-disposition = "link_only"
-
 [sources.flock_you]
 disposition = "reference"
 

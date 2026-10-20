@@ -45,7 +45,7 @@ import json
 import re
 from collections.abc import Iterator
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, NoReturn
 
 # --- class ids ---------------------------------------------------------------
 
@@ -195,6 +195,55 @@ def validate_declaration(decl: ScreenDeclaration) -> None:
     missing = [c for c in ALL_CLASSES if c not in ids]
     if missing:
         raise ValueError(f"declaration does not screen every class: missing {missing}")
+
+
+def declaration_from_table(raw: Any, *, source: str = "inline") -> ScreenDeclaration:
+    """Build + validate a :class:`ScreenDeclaration` from a parsed TOML table.
+
+    The TOML→declaration mapping lives **here**, beside the engine, so every
+    consumer — the at-rest audit driver (``ops.at_rest_audit``) and any
+    connector that screens bytes in memory before persistence (ADR-185;
+    P36.74's probe connector) — parses the committed
+    ``sig.at-rest-audit-decl/1`` document through ONE parser. A malformed
+    document fails closed (raises), never a silently weakened screen.
+    """
+
+    def _fail(msg: str) -> NoReturn:
+        raise ValueError(msg)
+
+    if not isinstance(raw, dict):
+        _fail(f"{source}: declaration must be a TOML table")
+    if raw.get("schema") != SCHEMA_DECL:
+        _fail(f"{source}: schema must be {SCHEMA_DECL!r}")
+    classes: list[ClassRule] = []
+    for i, c in enumerate(raw.get("class") or []):
+        if not isinstance(c, dict):
+            _fail(f"{source}: class {i} must be a table")
+        cid = str(c.get("id") or _fail(f"{source}: class {i} missing id"))
+        members = tuple(str(m) for m in (c.get("members") or []))
+        rules: list[Rule] = []
+        for j, r in enumerate(c.get("rules") or []):
+            if not isinstance(r, dict):
+                _fail(f"{source}: class {i} rule {j} must be a table")
+            rules.append(
+                Rule(
+                    kind=str(r.get("kind") or _fail(f"{source}: class {i} rule {j} missing kind")),
+                    fields=tuple(str(f) for f in (r.get("fields") or [])),
+                    patterns=tuple(str(x) for x in (r.get("patterns") or [])),
+                    shapes=tuple(str(s) for s in (r.get("shapes") or [])),
+                    applies=tuple(str(a) for a in (r.get("applies") or [])),
+                )
+            )
+        classes.append(ClassRule(class_id=cid, rules=tuple(rules), members=members))
+    outputs = raw.get("outputs") or {}
+    decl = ScreenDeclaration(
+        classes=tuple(classes),
+        report_prefix=str(outputs.get("report_prefix") or "ops/probes/at-rest/"),
+        deny_set_object=str(outputs.get("deny_set_object") or "ops/seal/deny-set.json"),
+        pub002_object=str(outputs.get("pub002_object") or "ops/seal/pub002-listing.json"),
+    )
+    validate_declaration(decl)
+    return decl
 
 
 # --- payload parsing -----------------------------------------------------------
@@ -540,6 +589,7 @@ __all__ = [
     "ScanStats",
     "ScreenDeclaration",
     "classes_flagged",
+    "declaration_from_table",
     "is_f406",
     "is_i7",
     "is_pub002",

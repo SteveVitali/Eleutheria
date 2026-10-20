@@ -355,13 +355,37 @@ name = "Flock transparency portals"
 source_kind = "vendor_site"
 homepage_url = "https://transparency.flocksafety.com/"
 default_tier = "R2"
-custody_posture = "LINK"
+# WV-10 (ADR-188) changed the custody posture from LINK to DERIVE: the probe
+# persists ONLY the screened aggregate extraction (sig.flock-portal-page/1 —
+# allowlisted fields + verbatim terms), never the vendor's raw page bytes;
+# the raw page is fetched once, screened in memory, and dropped (§8.4 DERIVE).
+custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "none_lawful"
+# WV-10 (ADR-188, ratified 2026-10-01) waived INGEST-035's no-direct-capture
+# clause for these portals ONLY: "SIG may fetch Flock portal pages only when
+# served without a challenge, and stops on any challenge." D3-Q3 = b
+# (ADR-184): public unauthenticated pages only — no logins/API keys, robots
+# per GL-GATE-08, terms captured verbatim, Part VIII screen on every byte.
+# The probe connector (flock_portal_probe) exists; this row stays
+# ingestion_permitted=false — the flip is the operator's P36.12 Wave-B
+# ING-GO-B execution, never a code change.
+access_method = "probe_only (one GET per known portal per run; stops on any challenge — WV-10/ADR-188)"
 verified = true
 last_verified = 2026-08-20
-notes = "First-party config/usage. 403 on all paths — NO lawful automated access (F2.1). ToS forbids bulk extraction."
+notes = "First-party config/usage. 403 on all paths — historically NO lawful automated access (F2.1); ToS forbids bulk extraction. WV-10/ADR-188 opened a probe-only leg (served pages only, stop on challenge) — the committed probe set is data/flock_portal_probe_targets.toml (917 known portals, Eyes on Flock snapshot 2026-09-23T10:15:16.751Z; no new discovery). ingestion_permitted stays false pending HG-03/ING-GO-B at P36.12. Egress under the project UA (P35.38a); robots per GL-GATE-08 on every host; exposure disclosed."
+
+[sources.flock_transparency_portals.rights]
+# The rights record stays UNRESOLVED-safe pre-flip: UNDETERMINED +
+# redistributable=false fail the export gate closed. The waiver citation is
+# recorded verbatim as the row's review basis (the ticket's `rights_note`):
+# ADR-188/WV-10 + ADR-184 D3-Q3=b, operator-dated 2026-10-01. A served
+# portal's own terms text is captured verbatim at first yield and recorded
+# here then — nothing asserted pre-yield.
+spdx = "UNDETERMINED"
+redistributable = false
+derivative_permitted = false
+publication_basis = "WV-10 (ADR-188, 2026-10-01): 'I waive INGEST-035's no-direct-capture clause; SIG may fetch Flock portal pages only when served without a challenge, and stops on any challenge.' D3-Q3 = b (ADR-184): public unauthenticated pages only — no logins/API keys; robots per GL-GATE-08; terms captured verbatim; exposure disclosed; Part VIII screen on every byte; no circumvention."
 
 [sources.flock_api_terms]
 name = "Flock API & Integration Terms"

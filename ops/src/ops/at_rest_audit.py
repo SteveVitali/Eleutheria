@@ -93,42 +93,23 @@ def _decode_object_id(encid: str) -> str:
 
 
 def load_declaration(path: str | Path | None = None) -> screen.ScreenDeclaration:
-    """Parse ``sig.at-rest-audit-decl/1`` into a validated ScreenDeclaration."""
+    """Parse ``sig.at-rest-audit-decl/1`` into a validated ScreenDeclaration.
+
+    The TOML→declaration mapping itself lives beside the engine in
+    :func:`evidence.screen.declaration_from_table` (P36.74 — the in-memory
+    pre-persistence screen a connector runs parses the SAME committed document
+    through the SAME parser; no drifted second copy). This function owns only
+    the file read + source labelling.
+    """
     p = Path(path) if path else DEFAULT_DECLARATION
     try:
         raw = tomllib.loads(p.read_text(encoding="utf-8"))
     except OSError as e:
         _fail(f"at-rest declaration unreadable: {e}")
-    if raw.get("schema") != SCHEMA:
-        _fail(f"{p}: schema must be {SCHEMA!r}")
-
-    classes: list[screen.ClassRule] = []
-    for i, c in enumerate(raw.get("class") or []):
-        if not isinstance(c, dict):
-            _fail(f"{p}: class {i} must be a table")
-        cid = str(c.get("id") or _fail(f"{p}: class {i} missing id"))
-        members = tuple(str(m) for m in (c.get("members") or []))
-        rules: list[screen.Rule] = []
-        for j, r in enumerate(c.get("rules") or []):
-            rules.append(
-                screen.Rule(
-                    kind=str(r.get("kind") or _fail(f"{p}: class {i} rule {j} missing kind")),
-                    fields=tuple(str(f) for f in (r.get("fields") or [])),
-                    patterns=tuple(str(x) for x in (r.get("patterns") or [])),
-                    shapes=tuple(str(s) for s in (r.get("shapes") or [])),
-                    applies=tuple(str(a) for a in (r.get("applies") or [])),
-                )
-            )
-        classes.append(screen.ClassRule(class_id=cid, rules=tuple(rules), members=members))
-    outputs = raw.get("outputs") or {}
-    decl = screen.ScreenDeclaration(
-        classes=tuple(classes),
-        report_prefix=str(outputs.get("report_prefix") or "ops/probes/at-rest/"),
-        deny_set_object=str(outputs.get("deny_set_object") or "ops/seal/deny-set.json"),
-        pub002_object=str(outputs.get("pub002_object") or "ops/seal/pub002-listing.json"),
-    )
-    screen.validate_declaration(decl)
-    return decl
+    try:
+        return screen.declaration_from_table(raw, source=str(p))
+    except ValueError as e:
+        _fail(str(e))
 
 
 # --- the L1 scan ----------------------------------------------------------------

@@ -227,6 +227,13 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "courtlistener_recap": "accountability",
     "documentcloud": "records",
     "eyes_on_flock": "flock_portal",
+    # P36.74 (WV-10/ADR-188): the Flock transparency-portal probe connector —
+    # one bounded GET per committed known portal, stops on any challenge, and
+    # emits sig.probe-run/1 per run. The source row stays
+    # ingestion_permitted=false; activation is the operator's P36.12 Wave-B
+    # execution under ING-GO-B — this mapping makes the connector routable
+    # without making the source loadable.
+    "flock_transparency_portals": "flock_portal_probe",
     "openstates": "accountability",
     "fbi_cde_agency_registry": "agency_registry",
     # P26.12 (SOURCES.11): the federal companion to the OpenStates sweep — the
@@ -1317,6 +1324,26 @@ def _run_live(
         logical_run=getattr(sink, "logical_run", None),
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
+    # P36.74 (WV-10/ADR-188): the probe run's single sig.probe-run/1 record —
+    # every attempted portal's served/refused outcome with its kind — lands
+    # beside the fetch record under the probe-records surface. The record is
+    # written for the probe connector only; the row stays gated until the
+    # operator's P36.12 ING-GO-B flip runs this path.
+    from .flock_portal_probe import (
+        FlockPortalProbeConnector,
+        probe_run_record,
+        write_probe_run_record,
+    )
+
+    if isinstance(connector, FlockPortalProbeConnector):
+        write_probe_run_record(
+            probe_run_record(
+                connector,
+                report,
+                run_id=str(getattr(sink, "run_id", None) or "live"),
+            ),
+            capture_dir / "probe_records",
+        )
     transport.close()
     return SourceRunReport(
         source_id=source_id,
@@ -1627,7 +1654,10 @@ def _run_over_fixture(
         rate_limiter=RateLimiter(sleep=lambda _seconds: None),
     )
     targets: list[Mapping[str, Any]] = [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]
-    if kind == "oversight_report" or source_id == "fema_hsgp_allocations":
+    if kind == "oversight_report" or source_id in {
+        "fema_hsgp_allocations",
+        "flock_transparency_portals",
+    }:
         # P31.12: a targeted report lookup resolves its reviewed live_targets row
         # (the synthetic fixture URL names no reviewed report). P31.13: FEMA's
         # reviewed assistance slices are live targets too — the synthetic

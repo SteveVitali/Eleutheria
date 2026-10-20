@@ -65,6 +65,16 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .dot_511 import registry_targets
 
         return registry_targets(source_id)
+    if kind == "flock_portal_probe_targets":
+        # P36.74 (WV-10/ADR-188): the probe source's live targets ARE the
+        # committed aggregator-derived inventory in
+        # data/flock_portal_probe_targets.toml — the ~917 portals already
+        # known from the Eyes on Flock snapshot, never new discovery. The
+        # source row stays ingestion_permitted=false until the operator's
+        # P36.12 Wave-B ING-GO-B flip.
+        from .flock_portal_probe import probe_targets
+
+        return probe_targets()
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the
