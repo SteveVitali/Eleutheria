@@ -33,7 +33,10 @@ assertCoverageMetrics(COVERAGE_METRICS);
 // figures — each cell's record count carries artifact + pointer.
 const TILES = getMapDensityBins();
 
-const slug = (s: string): string => s.replace(/_/g, "-");
+// Figure ids + anchors are lowercase slug tokens (assertFigureSpec); export
+// metric ids can carry uppercase dimension values ("jurisdiction-NY").
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 // The ONE figures[] registry for this page (UXR-34).
 const FIGURES = defineFigures("coverage", [
   ...COVERAGE_METRICS.map((m, i) => ({

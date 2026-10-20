@@ -37,7 +37,10 @@ const sourceCount = getFreshness().length;
 // definition anchor + the release artifact (the visible "source" link) + the
 // downloadable file that recomputes it (the /artifact/ route) + the record
 // list where a release is bound (named absence until then).
-const slug = (s: string): string => s.replace(/_/g, "-");
+// Figure ids are lowercase slug tokens (assertFigureSpec); export metric ids
+// can carry uppercase dimension values ("jurisdiction_NY").
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const FIGURES = defineFigures("home", [
   {
     id: "jurisdictions",
