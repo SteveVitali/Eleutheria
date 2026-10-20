@@ -1,0 +1,202 @@
+{
+  "base_url": "https://sig-alerts-e5ctyx36jq-uc.a.run.app",
+  "captured_at": "2026-10-14T12:50:35Z",
+  "routes": {
+    "/.sig-release.json": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/403.html": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/403/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/404.html": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/410.html": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/410/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/_astro/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/corrections/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/coverage-metrics/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/curate/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/curate/submit/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/data-collection/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/data-freshness/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/dispute/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/dossier/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/editorial-standards/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/evidence/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/favicon.svg": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/index.html": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/intake/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/map/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/methodology/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/network/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/releases/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/research-dossier/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/research-queue/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/robots.txt": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/search/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/sitemap.xml": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/sources/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/status/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/style-guide/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/task/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/task/new/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/task/new/demo_roundtrip/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/terms/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/tiles/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/visual-language/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    },
+    "/watch/": {
+      "bytes": 356,
+      "sha256": "8bff40995d8ece040f6f368cbb117d4db9572adea9e5a58c47bbff7fb33f822e",
+      "status": 501
+    }
+  },
+  "schema": "route-capture/1"
+}
