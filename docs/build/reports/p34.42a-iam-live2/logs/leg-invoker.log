@@ -1,0 +1,27 @@
+window OK: 2026-10-14T12:49:51Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+window OK: 2026-10-14T12:49:53Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+-- invoker: sig-alerts authenticates its caller by IAM (G1-11) --
++ gcloud run services add-iam-policy-binding sig-alerts --member serviceAccount:873541617837-compute@developer.gserviceaccount.com --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+Updated IAM policy for service [sig-alerts].
+bindings:
+- members:
+  - allUsers
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  role: roles/run.invoker
+etag: BwZdzF4ldq0=
+version: 1
++ gcloud run services remove-iam-policy-binding sig-alerts --member allUsers --role roles/run.invoker --region us-central1 --project zeta-medley-508121-u7
+Updated IAM policy for service [sig-alerts].
+bindings:
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  role: roles/run.invoker
+etag: BwZdzF45WDI=
+version: 1
+   rollback: gcloud run services set-iam-policy sig-alerts <repo>/docs/build/reports/p34.42a-iam-live2/pre/service-sig-alerts-iam.json --region us-central1
+   sig-api + sig-web STAY allUsers — public read API + public site (public responses do not change).
+iam-service-accounts invoker: done (mode=apply)

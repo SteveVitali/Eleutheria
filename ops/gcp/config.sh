@@ -143,7 +143,7 @@ export SIG_LB_STATE_DIR="${SIG_LB_STATE_DIR:-${TMPDIR:-/tmp}/p34.40}"
 # mutations — it must run BEFORE any deploy that names these accounts.
 export SIG_SA_API="sig-api-rt"          # cloudsql.client + sig-pg-password accessor only
 export SIG_SA_WEB="sig-web-rt"          # objectViewer on ${SIG_BUCKET_WEB} only
-export SIG_SA_ALERTS="sig-alerts-rt"    # no project roles, no secret access
+export SIG_SA_ALERTS="sig-alerts-rt"    # no project roles; accessor on sig-alert-webhook-token only (D-P34.42a-1 option (a))
 export SIG_API_SA_EMAIL="${SIG_SA_API}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
 export SIG_WEB_SA_EMAIL="${SIG_SA_WEB}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
 export SIG_ALERTS_SA_EMAIL="${SIG_SA_ALERTS}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
