@@ -34,7 +34,10 @@
 #               sig-alerts-rt — idempotent).
 #   bindings    the declared project role (cloudsql.client → sig-api-rt), the
 #               web-bucket objectViewer (→ sig-web-rt) and the per-consumer
-#               secret accessor (sig-pg-password → sig-api-rt).
+#               secret accessors (sig-pg-password → sig-api-rt;
+#               sig-alert-webhook-token → sig-alerts-rt — the receiver mounts
+#               it as SIG_ALERT_WEBHOOK_TOKEN, the leg-1 finding the operator
+#               approved as D-P34.42a-1 option (a) 2026-10-14).
 #   revisions   one same-image revision per service — `run services update
 #               --service-account` keeps every other field, the image digest
 #               included, byte-identical (an identity change, never a roll).
@@ -270,7 +273,14 @@ do_bindings() {
     --member "serviceAccount:${SIG_API_SA_EMAIL}" \
     --role roles/secretmanager.secretAccessor
   _log "   rollback: gcloud secrets remove-iam-policy-binding ${SIG_SECRET_PG_PASSWORD} --member serviceAccount:${SIG_API_SA_EMAIL} --role roles/secretmanager.secretAccessor"
-  _log "   sig-alerts-rt: NO bindings — it carries no project roles and reads no secret."
+  # sig-alerts-rt: accessor on its own webhook-token secret ONLY — the service
+  # mounts it as env SIG_ALERT_WEBHOOK_TOKEN (the leg-1 refusal; D-P34.42a-1
+  # option (a), operator-approved 2026-10-14). No project roles, no other secret.
+  run gcloud secrets add-iam-policy-binding "${SIG_SECRET_ALERT_HOOK}" \
+    --project "${SIG_GCP_PROJECT}" \
+    --member "serviceAccount:${SIG_ALERTS_SA_EMAIL}" \
+    --role roles/secretmanager.secretAccessor
+  _log "   rollback: gcloud secrets remove-iam-policy-binding ${SIG_SECRET_ALERT_HOOK} --member serviceAccount:${SIG_ALERTS_SA_EMAIL} --role roles/secretmanager.secretAccessor"
 }
 
 do_revisions() {
@@ -424,6 +434,7 @@ do_rollback() {
     _plan "per service: gcloud run services update <svc> --service-account <prior SA from pre/service-<svc>.json>"
     _plan "gcloud run services set-iam-policy ${SIG_ALERTS_SERVICE} pre/service-${SIG_ALERTS_SERVICE}-iam.json  (restores allUsers + drops the caller grant)"
     _plan "gcloud secrets remove-iam-policy-binding ${SIG_SECRET_PG_PASSWORD} --member serviceAccount:${SIG_API_SA_EMAIL}"
+    _plan "gcloud secrets remove-iam-policy-binding ${SIG_SECRET_ALERT_HOOK} --member serviceAccount:${SIG_ALERTS_SA_EMAIL}"
     _plan "gcloud storage buckets remove-iam-policy-binding gs://${SIG_BUCKET_WEB} --member serviceAccount:${SIG_WEB_SA_EMAIL}"
     _plan "gcloud projects remove-iam-policy-binding ${SIG_GCP_PROJECT} --member serviceAccount:${SIG_API_SA_EMAIL} --role roles/cloudsql.client"
     _plan "gcloud iam service-accounts delete sig-{api,web,alerts}-rt@…  (last — only once unbound)"
@@ -448,6 +459,10 @@ print(spec.get("serviceAccountName", ""))' "${STATE_DIR}/pre/service-${svc}.json
   gcloud secrets remove-iam-policy-binding "${SIG_SECRET_PG_PASSWORD}" \
     --project "${SIG_GCP_PROJECT}" \
     --member "serviceAccount:${SIG_API_SA_EMAIL}" \
+    --role roles/secretmanager.secretAccessor || true
+  gcloud secrets remove-iam-policy-binding "${SIG_SECRET_ALERT_HOOK}" \
+    --project "${SIG_GCP_PROJECT}" \
+    --member "serviceAccount:${SIG_ALERTS_SA_EMAIL}" \
     --role roles/secretmanager.secretAccessor || true
   gcloud storage buckets remove-iam-policy-binding "gs://${SIG_BUCKET_WEB}" \
     --member "serviceAccount:${SIG_WEB_SA_EMAIL}" \
