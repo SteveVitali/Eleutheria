@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "e324b22c1aef193d3260204fc728c66f50beb50b",
+  "input_commit": "3de40484ca32c9604d3b74fb71b032f974dee1ca",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "9af07ed4ad1a52092bc3cb4e585c1e3f21f6dc82d0983d033a4bc262e6a7fc2c"
+      "sha256": "9ac24365956d6eea162a3bda669037838f1bc761bd823dd1df677a2d95262b93"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -322,7 +322,7 @@
     },
     {
       "path": "docs/adr/ADR-079-second-jurisdiction-france-gex-adapter-wiring-and-the-okc-assumption-dispositions.md",
-      "sha256": "b24bac2b63557e5133c40c039f11ff77ea95c8753e6c85dfc0276e3fbbf11d25"
+      "sha256": "523ddd1a1282503921390877fd88f939d0e7b73e61b9c0f33023c8099de9cd9a"
     },
     {
       "path": "docs/adr/ADR-080-government-mandated-disclosure-ccops-one-connector-three-source-adapters-the-per-agency-aggregate-row-schema-and-the-two-layer-procured-not-deployed-guard.md",
@@ -494,7 +494,7 @@
     },
     {
       "path": "docs/adr/ADR-122-role-semantics-count-scope-and-conservative-organization-identity.md",
-      "sha256": "77880756d837860f088384beb5ab1edd2b9a7a02205ff9eec043ebe8c9bc71ad"
+      "sha256": "49ba5ef7f283fb0702ffeced1e3fff224ffd9bec8139fe993ed524976a7f8f9f"
     },
     {
       "path": "docs/adr/ADR-123-shared-bitemporal-occurrence-selection.md",
@@ -635,6 +635,10 @@
     {
       "path": "docs/adr/ADR-159-organisation-publication-registry-auto-allow.md",
       "sha256": "043e4b654f8ef1e5f7121e76b37be7a93582353a9f5f5449e3e73696d09f7878"
+    },
+    {
+      "path": "docs/adr/ADR-160-jurisdiction-registry-boundary-pack-and-lookup-1.md",
+      "sha256": "403f5803c6b7a63de38c29b3f2acf8963a6376ba423cf6ea5d379ad6edc0f904"
     },
     {
       "path": "docs/adr/ADR-161-release-identity-v2-and-clock-guards.md",
@@ -834,15 +838,15 @@
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "7f8ccbf61d946b4494b3d0ca2404b37c7eaa7e0aee583275717cba1cbd8587c9"
+      "sha256": "c36f410891404370e019aa20cfbd195de0a55a703d6316b9616f133066b6d88f"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "e29359af4b6cf7e34fc3a8fcb527a1442a0ee0331e9ce0005f0030f75b249458"
+      "sha256": "89ba0627d5165f3d09e5f20256a20a75c3e286150e14802ac9b96eee62d77b94"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "6be0205d480dfd5f01bdc9ee6fa8b77336e07fa65798e57f3a4b0a09acea72b8"
+      "sha256": "7c85e56d0007d826a264d7182f96f7816ce6131ae5780982acb59de7a1de4237"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -850,7 +854,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "fb23a06a7465c39d7994454ac3a58fcfadcb3a1bccd82616fa762d3d9bc2fda9"
+      "sha256": "5135253c94f33cf205586fa679751a8160f18d344578a96e08bdd4d89765856d"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1937,6 +1941,10 @@
       "sha256": "b10b165eb4a145beb40bb2ea9f6444eed25c040a40cadcd0e6d3274d11323c2a"
     },
     {
+      "path": "docs/build/runs/P35.17.md",
+      "sha256": "633b6ce21836e5d408f0ffa4fcc3bebe2f88c6d5646e3a400d640439fcffe831"
+    },
+    {
       "path": "docs/build/runs/P35.1a.md",
       "sha256": "076da449c0a013dd2912b24b3ba06e2b6615136ccebd276d8774aa72694e91dc"
     },
@@ -2162,7 +2170,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "375e41c27f83a9e128edcf314cd51dd7cf4752ccf57f65133c115d3004bfe0f6"
+      "sha256": "06c5f04902c957e1bc1382854e37a7aad04acd9ce7fa3c32fe3fc9c322a7504f"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
@@ -2726,7 +2734,7 @@
     },
     {
       "path": "docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md",
-      "sha256": "698f6e8b6a55e3a08805fd1618cabb0f474ce2936ec429c3a2c58018acdf4d80"
+      "sha256": "831ab1805d948407f649985b61f64091679c3d68cfc257a8f111e3172ba87c0a"
     },
     {
       "path": "docs/tickets/298_P35.18__declared-jurisdiction-scheme.md",

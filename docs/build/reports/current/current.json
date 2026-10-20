@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "e324b22c1aef193d3260204fc728c66f50beb50b",
-  "manifest_inputs": 1048,
+  "input_commit": "3de40484ca32c9604d3b74fb71b032f974dee1ca",
+  "manifest_inputs": 1050,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.17",
-    "lastCompleted": "P35.16",
+    "nextTicket": "P35.18",
+    "lastCompleted": "P35.17",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.16-geometry-defects-at-ingest",
+    "chainTip": "r11/P35.17-jurisdiction-registry-and-boundary-pack-v3",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-17T06:40:09Z"
+    "updatedAt": "2026-10-17T08:31:00Z"
   },
   "counts": {
     "obligations": 169,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 43,
+    "return_pass_rows": 44,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9066,6 +9066,14 @@
         "gates_cell": "hosted, production write — QUEUED, never exercised this run; OM-20 — GATE-G4 §4 OM-20 list names P35.16 verbatim (\"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only INSERTs only; AR-3 + AR-2 window outside the AR-3 freeze",
         "operator_cell": "nothing until the live re-run — dry-run is the default; `--apply` only inside the window; rollback forward-only (the claims stand)",
         "rerun_cell": "`implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true` · landed row 296 (PR #309 — production not touched)",
+        "obligations": []
+      },
+      {
+        "key": "P35.17",
+        "obligations_cell": "the queued hosted boundary-source capture leg: the OCFL capture of `census_gazetteer_tiger` (TIGER/Line state/county/place + Gazetteer names/points + cartographic 500k) and `natural_earth_10m` (admin-0/admin-1) into the evidence store — append-only objects with digests — then the live pack build + registry assembly + the real `boundaries_root`",
+        "gates_cell": "hosted, production write — QUEUED, never exercised this run (`live_verification=false`); the operator's HG-03 flips of both source rows are the precondition (OP-26 — both stay `ingestion_permitted=false` here); OM-20 — GATE-G4 §4 OM-20 list names P35.17 verbatim (\"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only OCFL objects only; AR-3 + AR-2 window outside the AR-3 freeze",
+        "operator_cell": "the HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m` to `ingestion_permitted=true` in an operator-signed commit/row (OP-26), then the re-run inside the authorised window — nothing else until the flips land; the terms capture already landed (both rights packets committed)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed row 297 (PR #310 — capture not run; no boundary-source bytes fetched, staged, or written)",
         "obligations": []
       }
     ]
@@ -19111,10 +19119,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "33cccb54ba025238112f41aaa616a9498a1fb2a627fad938eb1a6cc5bab92fd1",
+  "manifest_sha256": "94072b11e2bb0af8b6c152da7536b3bacfba9cf5fe4c0e9a214d4e13cb619837",
   "current_md": {
     "lines": 63,
-    "bytes": 15611,
+    "bytes": 15627,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

@@ -958,3 +958,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/296_P35.16__geometry-defects-a
   go = '''pre-authorised: GATE-G4 §4 OM-20 list names P35.16 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P35.17"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued hosted boundary-source capture leg: the OCFL capture of `census_gazetteer_tiger` (TIGER/Line state/county/place + Gazetteer names/points + cartographic 500k) and `natural_earth_10m` (admin-0/admin-1) into the evidence store — append-only objects with digests — then the live pack build + registry assembly + the real `boundaries_root`'''
+gates_cell = '''hosted, production write — QUEUED, never exercised this run (`live_verification=false`); the operator's HG-03 flips of both source rows are the precondition (OP-26 — both stay `ingestion_permitted=false` here); OM-20 — GATE-G4 §4 OM-20 list names P35.17 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only OCFL objects only; AR-3 + AR-2 window outside the AR-3 freeze'''
+operator_cell = '''the HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m` to `ingestion_permitted=true` in an operator-signed commit/row (OP-26), then the re-run inside the authorised window — nothing else until the flips land; the terms capture already landed (both rights packets committed)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed row 297 (PR #310 — capture not run; no boundary-source bytes fetched, staged, or written)'''
+
+  [[row.legs]]
+  id = "P35.17-boundary-source-capture"
+  obligations = []
+  earliest = '''the OM-19 re-run invocation after the operator's HG-03 flips of both boundary sources land (OP-26) — the capture runs inside the authorised window'''
+  excluded = ["AR-3 freeze"]
+  go = '''pre-authorised: GATE-G4 §4 OM-20 list names P35.17 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10)'''
+  rerun = '''implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true'''
+  live_dependants = []
