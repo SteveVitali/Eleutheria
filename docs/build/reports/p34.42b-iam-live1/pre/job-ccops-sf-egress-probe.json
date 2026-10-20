@@ -1,0 +1,88 @@
+{
+  "apiVersion": "run.googleapis.com/v1",
+  "kind": "Job",
+  "metadata": {
+    "annotations": {
+      "run.googleapis.com/client-name": "gcloud",
+      "run.googleapis.com/client-version": "583.0.0",
+      "run.googleapis.com/creator": "<redacted-operator-account>",
+      "run.googleapis.com/lastModifier": "<redacted-operator-account>",
+      "run.googleapis.com/operation-id": "8d742aa7-ddea-4bc2-85c2-0d60ba98cb0a"
+    },
+    "creationTimestamp": "2026-09-16T04:09:03.095186Z",
+    "generation": 3,
+    "labels": {
+      "cloud.googleapis.com/location": "us-central1",
+      "run.googleapis.com/lastUpdatedTime": "2026-09-16T04:14:21.833137Z"
+    },
+    "name": "ccops-sf-egress-probe",
+    "namespace": "873541617837",
+    "resourceVersion": "AAZbkezkHJA",
+    "selfLink": "/apis/run.googleapis.com/v1/namespaces/873541617837/jobs/ccops-sf-egress-probe",
+    "uid": "2d2caa6c-081a-4ad7-ad3b-55473b961aec"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "run.googleapis.com/client-name": "gcloud",
+          "run.googleapis.com/client-version": "583.0.0",
+          "run.googleapis.com/execution-environment": "gen2"
+        },
+        "labels": {
+          "client.knative.dev/nonce": "zez_hod_ced"
+        }
+      },
+      "spec": {
+        "taskCount": 1,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "-sS",
+                  "-o",
+                  "/dev/null",
+                  "-w",
+                  "%{http_code} %{content_type} %{url_effective}",
+                  "--max-time",
+                  "30",
+                  "https://www.sf.gov/surveillance-technology-inventory"
+                ],
+                "command": [
+                  "curl"
+                ],
+                "image": "curlimages/curl:8.10.1",
+                "resources": {
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                }
+              }
+            ],
+            "maxRetries": 3,
+            "serviceAccountName": "873541617837-compute@developer.gserviceaccount.com",
+            "timeoutSeconds": "600"
+          }
+        }
+      }
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "status": "True",
+        "type": "Ready"
+      }
+    ],
+    "executionCount": 3,
+    "latestCreatedExecution": {
+      "completionStatus": "EXECUTION_SUCCEEDED",
+      "completionTimestamp": "2026-09-16T04:16:01.548828Z",
+      "creationTimestamp": "2026-09-16T04:14:27.535633Z",
+      "name": "ccops-sf-egress-probe-2p59l"
+    },
+    "observedGeneration": 3
+  }
+}
