@@ -15,7 +15,7 @@ _RDF-style value kind — known value, unknown value, or no value (§9.5)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ValueKind](https://ontology.sig-project.org/schema/enum/ValueKind)
+URI: [sig:enum/ValueKind](https://ontology.surveillancegraph.org/schema/enum/ValueKind)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -51,7 +51,7 @@ URI: [sig:enum/ValueKind](https://ontology.sig-project.org/schema/enum/ValueKind
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -64,7 +64,7 @@ URI: [sig:enum/ValueKind](https://ontology.sig-project.org/schema/enum/ValueKind
 ```yaml
 name: ValueKind
 description: RDF-style value kind — known value, unknown value, or no value (§9.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   value:

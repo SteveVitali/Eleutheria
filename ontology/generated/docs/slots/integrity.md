@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/integrity](https://ontology.sig-project.org/schema/slot/integrity)
+URI: [sig:slot/integrity](https://ontology.surveillancegraph.org/schema/slot/integrity)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/integrity](https://ontology.sig-project.org/schema/slot/integrity
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/integrity](https://ontology.sig-project.org/schema/slot/integrity
 <details>
 ```yaml
 name: integrity
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceArtifact
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/observation_count](https://ontology.sig-project.org/schema/slot/observation_count)
+URI: [sig:slot/observation_count](https://ontology.surveillancegraph.org/schema/slot/observation_count)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/observation_count](https://ontology.sig-project.org/schema/slot/o
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/observation_count](https://ontology.sig-project.org/schema/slot/o
 <details>
 ```yaml
 name: observation_count
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

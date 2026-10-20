@@ -15,7 +15,7 @@ _Why an assertion failed closed into assertion_quarantine (SIG-TRUST-001). Disti
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/QuarantineReason](https://ontology.sig-project.org/schema/enum/QuarantineReason)
+URI: [sig:enum/QuarantineReason](https://ontology.surveillancegraph.org/schema/enum/QuarantineReason)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -58,7 +58,7 @@ URI: [sig:enum/QuarantineReason](https://ontology.sig-project.org/schema/enum/Qu
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -73,7 +73,7 @@ name: QuarantineReason
 description: Why an assertion failed closed into assertion_quarantine (SIG-TRUST-001).
   Distinct reasons keep extractor failure separate from an unsupported locator and
   an unknown type separate from a missing binding.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   bad_digest:

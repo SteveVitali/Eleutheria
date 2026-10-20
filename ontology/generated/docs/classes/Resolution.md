@@ -14,7 +14,7 @@ _A stored current-best decision record (§16.4, L3), not a view._
 
 
 
-URI: [sig:class/Resolution](https://ontology.sig-project.org/schema/class/Resolution)
+URI: [sig:class/Resolution](https://ontology.surveillancegraph.org/schema/class/Resolution)
 
 
 
@@ -106,7 +106,7 @@ URI: [sig:class/Resolution](https://ontology.sig-project.org/schema/class/Resolu
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -133,13 +133,13 @@ URI: [sig:class/Resolution](https://ontology.sig-project.org/schema/class/Resolu
 ```yaml
 name: Resolution
 description: A stored current-best decision record (§16.4, L3), not a view.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - Resolution
@@ -148,7 +148,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - Resolution
@@ -157,28 +157,28 @@ attributes:
     range: predicate_code
   resolved_value:
     name: resolved_value
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Resolution
     range: string
   confidence:
     name: confidence
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Resolution
     range: WeightClass
   contradiction_state:
     name: contradiction_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Resolution
     range: ContradictionState
   rationale:
     name: rationale
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Resolution
@@ -193,13 +193,13 @@ attributes:
 ```yaml
 name: Resolution
 description: A stored current-best decision record (§16.4, L3), not a view.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Resolution
     domain_of:
     - Claim
@@ -209,7 +209,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Resolution
     domain_of:
     - Claim
@@ -219,7 +219,7 @@ attributes:
     range: predicate_code
   resolved_value:
     name: resolved_value
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Resolution
     domain_of:
@@ -227,7 +227,7 @@ attributes:
     range: string
   confidence:
     name: confidence
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Resolution
     domain_of:
@@ -235,7 +235,7 @@ attributes:
     range: WeightClass
   contradiction_state:
     name: contradiction_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Resolution
     domain_of:
@@ -243,7 +243,7 @@ attributes:
     range: ContradictionState
   rationale:
     name: rationale
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Resolution
     domain_of:
@@ -252,7 +252,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Resolution

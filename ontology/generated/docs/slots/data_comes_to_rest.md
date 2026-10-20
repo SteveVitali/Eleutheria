@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/data_comes_to_rest](https://ontology.sig-project.org/schema/slot/data_comes_to_rest)
+URI: [sig:slot/data_comes_to_rest](https://ontology.surveillancegraph.org/schema/slot/data_comes_to_rest)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/data_comes_to_rest](https://ontology.sig-project.org/schema/slot/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/data_comes_to_rest](https://ontology.sig-project.org/schema/slot/
 <details>
 ```yaml
 name: data_comes_to_rest
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: IntegrationEdge
 domain_of:

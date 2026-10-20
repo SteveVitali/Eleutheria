@@ -14,7 +14,7 @@ _The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001): u
 
 
 
-URI: [sig:class/AssertionQuarantine](https://ontology.sig-project.org/schema/class/AssertionQuarantine)
+URI: [sig:class/AssertionQuarantine](https://ontology.surveillancegraph.org/schema/class/AssertionQuarantine)
 
 
 
@@ -109,7 +109,7 @@ URI: [sig:class/AssertionQuarantine](https://ontology.sig-project.org/schema/cla
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -138,48 +138,48 @@ name: AssertionQuarantine
 description: 'The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001):
   unknown predicates/types and binding failures land here with reason and full payload
   — never silently dropped, never public-readable.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   reason:
     name: reason
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
     range: QuarantineReason
   connector_name:
     name: connector_name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
     range: string
   source_ref:
     name: source_ref
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
     range: Source
   subject_ref:
     name: subject_ref
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
     range: string
   predicate_id:
     name: predicate_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
     range: string
   received_at:
     name: received_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
@@ -187,7 +187,7 @@ attributes:
   payload_digest:
     name: payload_digest
     description: The content-keyed idempotency identity (a re-run is +0).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AssertionQuarantine
@@ -204,13 +204,13 @@ name: AssertionQuarantine
 description: 'The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001):
   unknown predicates/types and binding failures land here with reason and full payload
   — never silently dropped, never public-readable.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   reason:
     name: reason
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -218,7 +218,7 @@ attributes:
     range: QuarantineReason
   connector_name:
     name: connector_name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -226,7 +226,7 @@ attributes:
     range: string
   source_ref:
     name: source_ref
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -234,7 +234,7 @@ attributes:
     range: Source
   subject_ref:
     name: subject_ref
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -242,7 +242,7 @@ attributes:
     range: string
   predicate_id:
     name: predicate_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -250,7 +250,7 @@ attributes:
     range: string
   received_at:
     name: received_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -259,7 +259,7 @@ attributes:
   payload_digest:
     name: payload_digest
     description: The content-keyed idempotency identity (a re-run is +0).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AssertionQuarantine
     domain_of:
@@ -268,7 +268,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: AssertionQuarantine

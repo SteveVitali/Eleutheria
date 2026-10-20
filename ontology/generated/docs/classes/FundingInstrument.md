@@ -14,7 +14,7 @@ _[NEW] Purchaser != operator != funder (§11.12, SIG-ONTO-033). Grants and third
 
 
 
-URI: [sig:class/FundingInstrument](https://ontology.sig-project.org/schema/class/FundingInstrument)
+URI: [sig:class/FundingInstrument](https://ontology.surveillancegraph.org/schema/class/FundingInstrument)
 
 
 
@@ -124,7 +124,7 @@ URI: [sig:class/FundingInstrument](https://ontology.sig-project.org/schema/class
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -152,27 +152,27 @@ URI: [sig:class/FundingInstrument](https://ontology.sig-project.org/schema/class
 name: FundingInstrument
 description: '[NEW] Purchaser != operator != funder (§11.12, SIG-ONTO-033). Grants
   and third-party funding; federal grant → local surveillance is traceable.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   funder:
     name: funder
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
     range: Organization
   recipient:
     name: recipient
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
     range: Organization
   instrument_type:
     name: instrument_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
@@ -181,28 +181,28 @@ attributes:
   program_name:
     name: program_name
     description: e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
     range: string
   amount:
     name: amount
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Contract
     - FundingInstrument
     range: money
   award_date:
     name: award_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
     range: edtf
   period:
     name: period
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
@@ -210,7 +210,7 @@ attributes:
     range: string
   conditions:
     name: conditions
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
@@ -218,7 +218,7 @@ attributes:
   federal_award_id:
     name: federal_award_id
     description: USAspending award/sub-award id — the traceable link (SIG-ONTO-033).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - FundingInstrument
@@ -234,13 +234,13 @@ attributes:
 name: FundingInstrument
 description: '[NEW] Purchaser != operator != funder (§11.12, SIG-ONTO-033). Grants
   and third-party funding; federal grant → local surveillance is traceable.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   funder:
     name: funder
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -248,7 +248,7 @@ attributes:
     range: Organization
   recipient:
     name: recipient
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -256,7 +256,7 @@ attributes:
     range: Organization
   instrument_type:
     name: instrument_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -266,7 +266,7 @@ attributes:
   program_name:
     name: program_name
     description: e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -274,7 +274,7 @@ attributes:
     range: string
   amount:
     name: amount
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: FundingInstrument
     domain_of:
     - Contract
@@ -282,7 +282,7 @@ attributes:
     range: money
   award_date:
     name: award_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -290,7 +290,7 @@ attributes:
     range: edtf
   period:
     name: period
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -299,7 +299,7 @@ attributes:
     range: string
   conditions:
     name: conditions
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -308,7 +308,7 @@ attributes:
   federal_award_id:
     name: federal_award_id
     description: USAspending award/sub-award id — the traceable link (SIG-ONTO-033).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: FundingInstrument
     domain_of:
@@ -317,7 +317,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: FundingInstrument

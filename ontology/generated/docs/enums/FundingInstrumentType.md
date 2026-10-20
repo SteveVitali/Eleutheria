@@ -15,7 +15,7 @@ _Funding instrument type (§11.12)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/FundingInstrumentType](https://ontology.sig-project.org/schema/enum/FundingInstrumentType)
+URI: [sig:enum/FundingInstrumentType](https://ontology.surveillancegraph.org/schema/enum/FundingInstrumentType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -56,7 +56,7 @@ URI: [sig:enum/FundingInstrumentType](https://ontology.sig-project.org/schema/en
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ URI: [sig:enum/FundingInstrumentType](https://ontology.sig-project.org/schema/en
 ```yaml
 name: FundingInstrumentType
 description: Funding instrument type (§11.12).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   federal_grant:

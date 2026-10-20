@@ -14,7 +14,7 @@ _A true value bars publication outright (§43.5)._
 
 
 
-URI: [sig:slot/residential_parcel_flag](https://ontology.sig-project.org/schema/slot/residential_parcel_flag)
+URI: [sig:slot/residential_parcel_flag](https://ontology.surveillancegraph.org/schema/slot/residential_parcel_flag)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/residential_parcel_flag](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/residential_parcel_flag](https://ontology.sig-project.org/schema/
 ```yaml
 name: residential_parcel_flag
 description: A true value bars publication outright (§43.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

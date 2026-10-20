@@ -7,13 +7,13 @@
 # physical L2 table (the L2/L1 split and its DDL are P02). Every [NEW] entity is
 # present: Jurisdiction, Person, CandidateAsset, FundingInstrument,
 # LegalInstrument, RecordsRequest.
-id: https://ontology.sig-project.org/schema/entities
+id: https://ontology.surveillancegraph.org/schema/entities
 name: sig_entities
 title: SIG entity catalog (§11)
 license: Apache-2.0
 prefixes:
   linkml: https://w3id.org/linkml/
-  sig: https://ontology.sig-project.org/schema/
+  sig: https://ontology.surveillancegraph.org/schema/
 default_prefix: sig
 default_range: string
 imports:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/capability](https://ontology.sig-project.org/schema/slot/capability)
+URI: [sig:slot/capability](https://ontology.surveillancegraph.org/schema/slot/capability)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/capability](https://ontology.sig-project.org/schema/slot/capabili
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/capability](https://ontology.sig-project.org/schema/slot/capabili
 <details>
 ```yaml
 name: capability
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Capability
 domain_of:

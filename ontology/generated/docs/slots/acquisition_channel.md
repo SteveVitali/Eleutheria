@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/acquisition_channel](https://ontology.sig-project.org/schema/slot/acquisition_channel)
+URI: [sig:slot/acquisition_channel](https://ontology.surveillancegraph.org/schema/slot/acquisition_channel)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/acquisition_channel](https://ontology.sig-project.org/schema/slot
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/acquisition_channel](https://ontology.sig-project.org/schema/slot
 <details>
 ```yaml
 name: acquisition_channel
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contract
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/source_uri](https://ontology.sig-project.org/schema/slot/source_uri)
+URI: [sig:slot/source_uri](https://ontology.surveillancegraph.org/schema/slot/source_uri)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/source_uri](https://ontology.sig-project.org/schema/slot/source_u
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/source_uri](https://ontology.sig-project.org/schema/slot/source_u
 <details>
 ```yaml
 name: source_uri
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

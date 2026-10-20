@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/implements_technology](https://ontology.sig-project.org/schema/slot/implements_technology)
+URI: [sig:slot/implements_technology](https://ontology.surveillancegraph.org/schema/slot/implements_technology)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/implements_technology](https://ontology.sig-project.org/schema/sl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/implements_technology](https://ontology.sig-project.org/schema/sl
 <details>
 ```yaml
 name: implements_technology
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Product
 domain_of:

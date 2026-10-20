@@ -14,7 +14,7 @@ _Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049)._
 
 
 
-URI: [sig:slot/automaticity](https://ontology.sig-project.org/schema/slot/automaticity)
+URI: [sig:slot/automaticity](https://ontology.surveillancegraph.org/schema/slot/automaticity)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/automaticity](https://ontology.sig-project.org/schema/slot/automa
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/automaticity](https://ontology.sig-project.org/schema/slot/automa
 ```yaml
 name: automaticity
 description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccessRelationship
 domain_of:

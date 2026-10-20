@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/valid_edtf](https://ontology.sig-project.org/schema/slot/valid_edtf)
+URI: [sig:slot/valid_edtf](https://ontology.surveillancegraph.org/schema/slot/valid_edtf)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/valid_edtf](https://ontology.sig-project.org/schema/slot/valid_ed
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/valid_edtf](https://ontology.sig-project.org/schema/slot/valid_ed
 <details>
 ```yaml
 name: valid_edtf
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

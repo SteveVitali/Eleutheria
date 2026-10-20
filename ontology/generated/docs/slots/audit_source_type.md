@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/audit_source_type](https://ontology.sig-project.org/schema/slot/audit_source_type)
+URI: [sig:slot/audit_source_type](https://ontology.surveillancegraph.org/schema/slot/audit_source_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/audit_source_type](https://ontology.sig-project.org/schema/slot/a
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/audit_source_type](https://ontology.sig-project.org/schema/slot/a
 <details>
 ```yaml
 name: audit_source_type
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: UsageAggregate
 domain_of:

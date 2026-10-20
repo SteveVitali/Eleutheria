@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/state](https://ontology.sig-project.org/schema/slot/state)
+URI: [sig:slot/state](https://ontology.surveillancegraph.org/schema/slot/state)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/state](https://ontology.sig-project.org/schema/slot/state)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/state](https://ontology.sig-project.org/schema/slot/state)
 <details>
 ```yaml
 name: state
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contradiction
 domain_of:

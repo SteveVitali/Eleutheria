@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/connector_name](https://ontology.sig-project.org/schema/slot/connector_name)
+URI: [sig:slot/connector_name](https://ontology.surveillancegraph.org/schema/slot/connector_name)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/connector_name](https://ontology.sig-project.org/schema/slot/conn
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/connector_name](https://ontology.sig-project.org/schema/slot/conn
 <details>
 ```yaml
 name: connector_name
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AssertionQuarantine
 domain_of:

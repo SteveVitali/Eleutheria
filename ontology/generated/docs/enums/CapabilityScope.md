@@ -15,7 +15,7 @@ _Capability scope values (§11.6, §13.2)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/CapabilityScope](https://ontology.sig-project.org/schema/enum/CapabilityScope)
+URI: [sig:enum/CapabilityScope](https://ontology.surveillancegraph.org/schema/enum/CapabilityScope)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -56,7 +56,7 @@ URI: [sig:enum/CapabilityScope](https://ontology.sig-project.org/schema/enum/Cap
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ URI: [sig:enum/CapabilityScope](https://ontology.sig-project.org/schema/enum/Cap
 ```yaml
 name: CapabilityScope
 description: Capability scope values (§11.6, §13.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   own:

@@ -15,7 +15,7 @@ _Organization alias qualifier (§11.2)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/AliasType](https://ontology.sig-project.org/schema/enum/AliasType)
+URI: [sig:enum/AliasType](https://ontology.surveillancegraph.org/schema/enum/AliasType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -55,7 +55,7 @@ URI: [sig:enum/AliasType](https://ontology.sig-project.org/schema/enum/AliasType
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -68,7 +68,7 @@ URI: [sig:enum/AliasType](https://ontology.sig-project.org/schema/enum/AliasType
 ```yaml
 name: AliasType
 description: Organization alias qualifier (§11.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   abbreviation:

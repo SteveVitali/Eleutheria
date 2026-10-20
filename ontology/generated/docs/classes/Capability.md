@@ -14,7 +14,7 @@ _A verb.object.scope capability (§11.6, SIG-ONTO-023)._
 
 
 
-URI: [sig:class/Capability](https://ontology.sig-project.org/schema/class/Capability)
+URI: [sig:class/Capability](https://ontology.surveillancegraph.org/schema/class/Capability)
 
 
 
@@ -85,7 +85,7 @@ URI: [sig:class/Capability](https://ontology.sig-project.org/schema/class/Capabi
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -112,20 +112,20 @@ URI: [sig:class/Capability](https://ontology.sig-project.org/schema/class/Capabi
 ```yaml
 name: Capability
 description: A verb.object.scope capability (§11.6, SIG-ONTO-023).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   capability:
     name: capability
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Capability
     range: capability_code
   scope:
     name: scope
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Capability
@@ -142,13 +142,13 @@ attributes:
 ```yaml
 name: Capability
 description: A verb.object.scope capability (§11.6, SIG-ONTO-023).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   capability:
     name: capability
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Capability
     domain_of:
@@ -156,7 +156,7 @@ attributes:
     range: capability_code
   scope:
     name: scope
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Capability
     domain_of:
@@ -167,7 +167,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Capability

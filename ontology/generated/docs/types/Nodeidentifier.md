@@ -42,7 +42,7 @@ URI: [shex:nonLiteral](http://www.w3.org/ns/shex#nonLiteral)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 

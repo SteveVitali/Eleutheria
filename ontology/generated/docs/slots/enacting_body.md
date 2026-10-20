@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/enacting_body](https://ontology.sig-project.org/schema/slot/enacting_body)
+URI: [sig:slot/enacting_body](https://ontology.surveillancegraph.org/schema/slot/enacting_body)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/enacting_body](https://ontology.sig-project.org/schema/slot/enact
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/enacting_body](https://ontology.sig-project.org/schema/slot/enact
 <details>
 ```yaml
 name: enacting_body
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalInstrument
 domain_of:

@@ -14,7 +14,7 @@ _Normalized reason_category retains the raw value (P2)._
 
 
 
-URI: [sig:slot/reason_raw_value](https://ontology.sig-project.org/schema/slot/reason_raw_value)
+URI: [sig:slot/reason_raw_value](https://ontology.surveillancegraph.org/schema/slot/reason_raw_value)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/reason_raw_value](https://ontology.sig-project.org/schema/slot/re
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/reason_raw_value](https://ontology.sig-project.org/schema/slot/re
 ```yaml
 name: reason_raw_value
 description: Normalized reason_category retains the raw value (P2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: UsageAggregate
 domain_of:

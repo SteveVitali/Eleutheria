@@ -14,7 +14,7 @@ _When the binding was asserted — distinct from the capture's retrieval time._
 
 
 
-URI: [sig:slot/bound_at](https://ontology.sig-project.org/schema/slot/bound_at)
+URI: [sig:slot/bound_at](https://ontology.surveillancegraph.org/schema/slot/bound_at)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/bound_at](https://ontology.sig-project.org/schema/slot/bound_at)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/bound_at](https://ontology.sig-project.org/schema/slot/bound_at)
 name: bound_at
 description: When the binding was asserted — distinct from the capture's retrieval
   time.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ClaimEvidence
 domain_of:

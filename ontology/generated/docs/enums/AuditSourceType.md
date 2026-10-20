@@ -15,7 +15,7 @@ _Audit source type — these are NOT interchangeable (§11.16, §23.7)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/AuditSourceType](https://ontology.sig-project.org/schema/enum/AuditSourceType)
+URI: [sig:enum/AuditSourceType](https://ontology.surveillancegraph.org/schema/enum/AuditSourceType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -52,7 +52,7 @@ URI: [sig:enum/AuditSourceType](https://ontology.sig-project.org/schema/enum/Aud
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ URI: [sig:enum/AuditSourceType](https://ontology.sig-project.org/schema/enum/Aud
 ```yaml
 name: AuditSourceType
 description: Audit source type — these are NOT interchangeable (§11.16, §23.7).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   organization_audit:

@@ -14,7 +14,7 @@ _USAspending award/sub-award id — the traceable link (SIG-ONTO-033)._
 
 
 
-URI: [sig:slot/federal_award_id](https://ontology.sig-project.org/schema/slot/federal_award_id)
+URI: [sig:slot/federal_award_id](https://ontology.surveillancegraph.org/schema/slot/federal_award_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/federal_award_id](https://ontology.sig-project.org/schema/slot/fe
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/federal_award_id](https://ontology.sig-project.org/schema/slot/fe
 ```yaml
 name: federal_award_id
 description: USAspending award/sub-award id — the traceable link (SIG-ONTO-033).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: FundingInstrument
 domain_of:

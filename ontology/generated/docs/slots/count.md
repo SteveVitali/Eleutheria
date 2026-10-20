@@ -14,7 +14,7 @@ _Subject to small-cell suppression (§18.4)._
 
 
 
-URI: [sig:slot/count](https://ontology.sig-project.org/schema/slot/count)
+URI: [sig:slot/count](https://ontology.surveillancegraph.org/schema/slot/count)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/count](https://ontology.sig-project.org/schema/slot/count)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/count](https://ontology.sig-project.org/schema/slot/count)
 ```yaml
 name: count
 description: Subject to small-cell suppression (§18.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: UsageAggregate
 domain_of:

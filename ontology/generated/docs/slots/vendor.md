@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/vendor](https://ontology.sig-project.org/schema/slot/vendor)
+URI: [sig:slot/vendor](https://ontology.surveillancegraph.org/schema/slot/vendor)
 <!-- no inheritance hierarchy -->
 
 

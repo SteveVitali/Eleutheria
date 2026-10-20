@@ -15,7 +15,7 @@ _Policy type (§11.13)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/PolicyType](https://ontology.sig-project.org/schema/enum/PolicyType)
+URI: [sig:enum/PolicyType](https://ontology.surveillancegraph.org/schema/enum/PolicyType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -58,7 +58,7 @@ URI: [sig:enum/PolicyType](https://ontology.sig-project.org/schema/enum/PolicyTy
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -71,7 +71,7 @@ URI: [sig:enum/PolicyType](https://ontology.sig-project.org/schema/enum/PolicyTy
 ```yaml
 name: PolicyType
 description: Policy type (§11.13).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   retention:

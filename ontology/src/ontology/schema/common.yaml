@@ -9,7 +9,7 @@
 # (§13.2) — are NOT permissible-value enums here: they are versioned SKOS concept
 # schemes whose term lists live in ontology/vocab/ (§13 l.2153) and are bound to
 # slots by the `technology_code` / `capability_code` types below.
-id: https://ontology.sig-project.org/schema/common
+id: https://ontology.surveillancegraph.org/schema/common
 name: sig_common
 title: SIG common types, slots, and structural vocabularies
 description: >-
@@ -19,7 +19,7 @@ description: >-
 license: Apache-2.0
 prefixes:
   linkml: https://w3id.org/linkml/
-  sig: https://ontology.sig-project.org/schema/
+  sig: https://ontology.surveillancegraph.org/schema/
   skos: http://www.w3.org/2004/02/skos/core#
   xsd: http://www.w3.org/2001/XMLSchema#
 default_prefix: sig

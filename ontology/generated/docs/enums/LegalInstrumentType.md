@@ -15,7 +15,7 @@ _Legal instrument type, internationalized and country-namespaced (§11.14, §13.
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/LegalInstrumentType](https://ontology.sig-project.org/schema/enum/LegalInstrumentType)
+URI: [sig:enum/LegalInstrumentType](https://ontology.surveillancegraph.org/schema/enum/LegalInstrumentType)
 
 ## Permissible Values
 | Value | Meaning | Description | Additional Info |
@@ -58,7 +58,7 @@ URI: [sig:enum/LegalInstrumentType](https://ontology.sig-project.org/schema/enum
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -75,7 +75,7 @@ description: Legal instrument type, internationalized and country-namespaced (§
   instruments are `<cc>.*` children linked by `is_a`, added under a national namespace
   rather than by widening a US-shaped enum (§5.3). P18.2 is the first consumer (the
   French arrêté préfectoral / CNIL decision).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   statute:

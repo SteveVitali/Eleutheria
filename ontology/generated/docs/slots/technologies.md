@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/technologies](https://ontology.sig-project.org/schema/slot/technologies)
+URI: [sig:slot/technologies](https://ontology.surveillancegraph.org/schema/slot/technologies)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/technologies](https://ontology.sig-project.org/schema/slot/techno
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/technologies](https://ontology.sig-project.org/schema/slot/techno
 <details>
 ```yaml
 name: technologies
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

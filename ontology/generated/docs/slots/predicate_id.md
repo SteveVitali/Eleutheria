@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/predicate_id](https://ontology.sig-project.org/schema/slot/predicate_id)
+URI: [sig:slot/predicate_id](https://ontology.surveillancegraph.org/schema/slot/predicate_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/predicate_id](https://ontology.sig-project.org/schema/slot/predic
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/predicate_id](https://ontology.sig-project.org/schema/slot/predic
 <details>
 ```yaml
 name: predicate_id
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AssertionQuarantine
 domain_of:

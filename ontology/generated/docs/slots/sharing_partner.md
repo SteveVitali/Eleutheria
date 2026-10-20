@@ -14,7 +14,7 @@ _Repeatable, directional._
 
 
 
-URI: [sig:slot/sharing_partner](https://ontology.sig-project.org/schema/slot/sharing_partner)
+URI: [sig:slot/sharing_partner](https://ontology.surveillancegraph.org/schema/slot/sharing_partner)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/sharing_partner](https://ontology.sig-project.org/schema/slot/sha
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/sharing_partner](https://ontology.sig-project.org/schema/slot/sha
 ```yaml
 name: sharing_partner
 description: Repeatable, directional.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

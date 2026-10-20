@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/conditions](https://ontology.sig-project.org/schema/slot/conditions)
+URI: [sig:slot/conditions](https://ontology.surveillancegraph.org/schema/slot/conditions)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/conditions](https://ontology.sig-project.org/schema/slot/conditio
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/conditions](https://ontology.sig-project.org/schema/slot/conditio
 <details>
 ```yaml
 name: conditions
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: FundingInstrument
 domain_of:

@@ -15,7 +15,7 @@ _Directness D from the (genre × predicate) matrix (§10.5)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ClaimDirectness](https://ontology.sig-project.org/schema/enum/ClaimDirectness)
+URI: [sig:enum/ClaimDirectness](https://ontology.surveillancegraph.org/schema/enum/ClaimDirectness)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -54,7 +54,7 @@ URI: [sig:enum/ClaimDirectness](https://ontology.sig-project.org/schema/enum/Cla
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -67,7 +67,7 @@ URI: [sig:enum/ClaimDirectness](https://ontology.sig-project.org/schema/enum/Cla
 ```yaml
 name: ClaimDirectness
 description: Directness D from the (genre × predicate) matrix (§10.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   D1:

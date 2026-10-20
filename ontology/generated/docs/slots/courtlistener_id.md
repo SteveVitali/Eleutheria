@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/courtlistener_id](https://ontology.sig-project.org/schema/slot/courtlistener_id)
+URI: [sig:slot/courtlistener_id](https://ontology.surveillancegraph.org/schema/slot/courtlistener_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/courtlistener_id](https://ontology.sig-project.org/schema/slot/co
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/courtlistener_id](https://ontology.sig-project.org/schema/slot/co
 <details>
 ```yaml
 name: courtlistener_id
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalProceeding
 domain_of:

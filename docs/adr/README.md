@@ -217,6 +217,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-214](ADR-214-role-edges-dated-time-and-recorded-supersession.md) | Role edges, honest time, and recorded supersession (P35.26) | P35.26 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP7`, | accepted |
 | [ADR-215](ADR-215-shared-entity-labels-slugs-hashes.md) | The shared entity label registry (P35.29) | P35.29 (Round 11 / P35 sub-round 11B, manifest row | accepted |
 | [ADR-216](ADR-216-network-edge-dates-evidence-and-literal-partners.md) | Honest network edges: dates, evidence, literal partners, degree (P35.30) | P35.30 (Round 11 / P35 sub-round 11B, manifest row | accepted |
+| [ADR-217](ADR-217-iri-base-on-the-owned-domain-alias-map-and-compat-note.md) | IRI base on the owned domain, the append-only alias map, and the compat note (P35.38b) | P35.38b (Round 11 / P35 sub-round 11B, manifest row 317, | Accepted |
 
 ## Notes
 

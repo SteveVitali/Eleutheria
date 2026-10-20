@@ -14,7 +14,7 @@ _Typed from the closed catalog (§12.1.2)._
 
 
 
-URI: [sig:slot/edge_type](https://ontology.sig-project.org/schema/slot/edge_type)
+URI: [sig:slot/edge_type](https://ontology.surveillancegraph.org/schema/slot/edge_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -77,7 +77,7 @@ URI: [sig:slot/edge_type](https://ontology.sig-project.org/schema/slot/edge_type
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -98,7 +98,7 @@ URI: [sig:slot/edge_type](https://ontology.sig-project.org/schema/slot/edge_type
 ```yaml
 name: edge_type
 description: Typed from the closed catalog (§12.1.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Edge
 domain_of:

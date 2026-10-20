@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/source_ref](https://ontology.sig-project.org/schema/slot/source_ref)
+URI: [sig:slot/source_ref](https://ontology.surveillancegraph.org/schema/slot/source_ref)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/source_ref](https://ontology.sig-project.org/schema/slot/source_r
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/source_ref](https://ontology.sig-project.org/schema/slot/source_r
 <details>
 ```yaml
 name: source_ref
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AssertionQuarantine
 domain_of:

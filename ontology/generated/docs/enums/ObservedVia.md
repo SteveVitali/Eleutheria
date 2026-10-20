@@ -15,7 +15,7 @@ _How a configuration state was observed (§11.15, SIG-ONTO-036)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ObservedVia](https://ontology.sig-project.org/schema/enum/ObservedVia)
+URI: [sig:enum/ObservedVia](https://ontology.surveillancegraph.org/schema/enum/ObservedVia)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -53,7 +53,7 @@ URI: [sig:enum/ObservedVia](https://ontology.sig-project.org/schema/enum/Observe
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ URI: [sig:enum/ObservedVia](https://ontology.sig-project.org/schema/enum/Observe
 ```yaml
 name: ObservedVia
 description: How a configuration state was observed (§11.15, SIG-ONTO-036).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   portal:

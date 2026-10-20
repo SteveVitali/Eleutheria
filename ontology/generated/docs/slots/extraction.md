@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/extraction](https://ontology.sig-project.org/schema/slot/extraction)
+URI: [sig:slot/extraction](https://ontology.surveillancegraph.org/schema/slot/extraction)
 <!-- no inheritance hierarchy -->
 
 

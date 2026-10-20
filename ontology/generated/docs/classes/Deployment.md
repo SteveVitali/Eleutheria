@@ -14,7 +14,7 @@ _The bridge between organizational adoption and individual devices; creatable wi
 
 
 
-URI: [sig:class/Deployment](https://ontology.sig-project.org/schema/class/Deployment)
+URI: [sig:class/Deployment](https://ontology.surveillancegraph.org/schema/class/Deployment)
 
 
 
@@ -208,7 +208,7 @@ URI: [sig:class/Deployment](https://ontology.sig-project.org/schema/class/Deploy
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -236,20 +236,20 @@ URI: [sig:class/Deployment](https://ontology.sig-project.org/schema/class/Deploy
 name: Deployment
 description: The bridge between organizational adoption and individual devices; creatable
   with NO product, NO vendor, and NO physical asset (§11.7, SIG-ONTO-026).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   deploying_organization:
     name: deploying_organization
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: Organization
   product:
     name: product
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
@@ -257,7 +257,7 @@ attributes:
     range: Product
   vendor:
     name: vendor
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Product
     - Deployment
@@ -266,7 +266,7 @@ attributes:
   technology:
     name: technology
     description: Repeatable; the coarsest level the evidence supports.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Technology
     - Deployment
@@ -275,7 +275,7 @@ attributes:
   actually_provides_capability:
     name: actually_provides_capability
     description: Evidentiary; never silently inferred from product default (SIG-ONTO-018).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
@@ -283,28 +283,28 @@ attributes:
     multivalued: true
   procurement_state:
     name: procurement_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: ProcurementState
   physical_state:
     name: physical_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: PhysicalState
   operational_state:
     name: operational_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: OperationalState
   authorization_state:
     name: authorization_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
@@ -312,14 +312,14 @@ attributes:
   litigation_hold:
     name: litigation_hold
     description: A flag, coexisting with any state combination (SIG-ONTO-061).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: boolean
   jurisdiction:
     name: jurisdiction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Organization
     - Deployment
@@ -328,56 +328,56 @@ attributes:
     range: Jurisdiction
   contracted_device_count:
     name: contracted_device_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: integer
   installed_device_count:
     name: installed_device_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: integer
   active_device_count:
     name: active_device_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: integer
   proposed_at:
     name: proposed_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: edtf
   approved_at:
     name: approved_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: edtf
   contracted_at:
     name: contracted_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: edtf
   active_from:
     name: active_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
     range: edtf
   inactive_at:
     name: inactive_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Deployment
@@ -393,13 +393,13 @@ attributes:
 name: Deployment
 description: The bridge between organizational adoption and individual devices; creatable
   with NO product, NO vendor, and NO physical asset (§11.7, SIG-ONTO-026).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   deploying_organization:
     name: deploying_organization
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -407,7 +407,7 @@ attributes:
     range: Organization
   product:
     name: product
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -416,7 +416,7 @@ attributes:
     range: Product
   vendor:
     name: vendor
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Deployment
     domain_of:
     - Product
@@ -426,7 +426,7 @@ attributes:
   technology:
     name: technology
     description: Repeatable; the coarsest level the evidence supports.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Deployment
     domain_of:
     - Technology
@@ -436,7 +436,7 @@ attributes:
   actually_provides_capability:
     name: actually_provides_capability
     description: Evidentiary; never silently inferred from product default (SIG-ONTO-018).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -445,7 +445,7 @@ attributes:
     multivalued: true
   procurement_state:
     name: procurement_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -453,7 +453,7 @@ attributes:
     range: ProcurementState
   physical_state:
     name: physical_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -461,7 +461,7 @@ attributes:
     range: PhysicalState
   operational_state:
     name: operational_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -469,7 +469,7 @@ attributes:
     range: OperationalState
   authorization_state:
     name: authorization_state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -478,7 +478,7 @@ attributes:
   litigation_hold:
     name: litigation_hold
     description: A flag, coexisting with any state combination (SIG-ONTO-061).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -486,7 +486,7 @@ attributes:
     range: boolean
   jurisdiction:
     name: jurisdiction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Deployment
     domain_of:
     - Organization
@@ -496,7 +496,7 @@ attributes:
     range: Jurisdiction
   contracted_device_count:
     name: contracted_device_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -504,7 +504,7 @@ attributes:
     range: integer
   installed_device_count:
     name: installed_device_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -512,7 +512,7 @@ attributes:
     range: integer
   active_device_count:
     name: active_device_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -520,7 +520,7 @@ attributes:
     range: integer
   proposed_at:
     name: proposed_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -528,7 +528,7 @@ attributes:
     range: edtf
   approved_at:
     name: approved_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -536,7 +536,7 @@ attributes:
     range: edtf
   contracted_at:
     name: contracted_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -544,7 +544,7 @@ attributes:
     range: edtf
   active_from:
     name: active_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -552,7 +552,7 @@ attributes:
     range: edtf
   inactive_at:
     name: inactive_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Deployment
     domain_of:
@@ -561,7 +561,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Deployment

@@ -15,7 +15,7 @@ _The genre of an evidence artifact (§10.3.2). SIG-INGEST-047 additionally carri
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ArtifactType](https://ontology.sig-project.org/schema/enum/ArtifactType)
+URI: [sig:enum/ArtifactType](https://ontology.surveillancegraph.org/schema/enum/ArtifactType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -77,7 +77,7 @@ URI: [sig:enum/ArtifactType](https://ontology.sig-project.org/schema/enum/Artifa
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ description: The genre of an evidence artifact (§10.3.2). SIG-INGEST-047 additi
   carries state_auditor_survey, warrant, and procurement_aggregator_record (§23.6)
   — the state-auditor surveys are R1 government datasets and the aggregator record
   is the paywalled procurement-aggregator lead under a LINK custody posture.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   contract:

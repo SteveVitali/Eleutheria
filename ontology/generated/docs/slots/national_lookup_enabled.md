@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/national_lookup_enabled](https://ontology.sig-project.org/schema/slot/national_lookup_enabled)
+URI: [sig:slot/national_lookup_enabled](https://ontology.surveillancegraph.org/schema/slot/national_lookup_enabled)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/national_lookup_enabled](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/national_lookup_enabled](https://ontology.sig-project.org/schema/
 <details>
 ```yaml
 name: national_lookup_enabled
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

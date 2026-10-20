@@ -15,7 +15,7 @@ _How a temporal bound is known (§9.5)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/TemporalBoundKind](https://ontology.sig-project.org/schema/enum/TemporalBoundKind)
+URI: [sig:enum/TemporalBoundKind](https://ontology.surveillancegraph.org/schema/enum/TemporalBoundKind)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -52,7 +52,7 @@ URI: [sig:enum/TemporalBoundKind](https://ontology.sig-project.org/schema/enum/T
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ URI: [sig:enum/TemporalBoundKind](https://ontology.sig-project.org/schema/enum/T
 ```yaml
 name: TemporalBoundKind
 description: How a temporal bound is known (§9.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   known:

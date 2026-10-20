@@ -14,7 +14,7 @@ _MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016)._
 
 
 
-URI: [sig:slot/public_interest_basis](https://ontology.sig-project.org/schema/slot/public_interest_basis)
+URI: [sig:slot/public_interest_basis](https://ontology.surveillancegraph.org/schema/slot/public_interest_basis)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/public_interest_basis](https://ontology.sig-project.org/schema/sl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/public_interest_basis](https://ontology.sig-project.org/schema/sl
 ```yaml
 name: public_interest_basis
 description: MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Person
 domain_of:

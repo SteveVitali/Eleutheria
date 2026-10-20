@@ -25,7 +25,7 @@ def test_jsonld_representation_is_valid_json_ld(client: TestClient) -> None:
     assert r.headers["content-type"].startswith("application/ld+json")
     doc = json.loads(r.text)
     assert doc  # a non-empty JSON-LD document
-    assert "sig.example/id/agency/okcpd" in r.text
+    assert "surveillancegraph.org/id/agency/okcpd" in r.text
 
 
 def test_rdf_turtle_representation(client: TestClient) -> None:

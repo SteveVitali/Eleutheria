@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/deployments](https://ontology.sig-project.org/schema/slot/deployments)
+URI: [sig:slot/deployments](https://ontology.surveillancegraph.org/schema/slot/deployments)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/deployments](https://ontology.sig-project.org/schema/slot/deploym
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/deployments](https://ontology.sig-project.org/schema/slot/deploym
 <details>
 ```yaml
 name: deployments
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

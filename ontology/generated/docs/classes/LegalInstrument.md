@@ -14,7 +14,7 @@ _[NEW] Laws and regulations as a modelled entity (§11.14). Gives the internatio
 
 
 
-URI: [sig:class/LegalInstrument](https://ontology.sig-project.org/schema/class/LegalInstrument)
+URI: [sig:class/LegalInstrument](https://ontology.surveillancegraph.org/schema/class/LegalInstrument)
 
 
 
@@ -134,7 +134,7 @@ URI: [sig:class/LegalInstrument](https://ontology.sig-project.org/schema/class/L
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -163,27 +163,27 @@ name: LegalInstrument
 description: '[NEW] Laws and regulations as a modelled entity (§11.14). Gives the
   international requirement somewhere to put an arrêté préfectoral, a CNIL decision,
   or an EU AI Act obligation.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   instrument_type:
     name: instrument_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - FundingInstrument
     - LegalInstrument
     range: LegalInstrumentType
   enacting_body:
     name: enacting_body
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalInstrument
     range: Organization
   jurisdiction:
     name: jurisdiction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Organization
     - Deployment
@@ -192,35 +192,35 @@ attributes:
     range: Jurisdiction
   citation:
     name: citation
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalInstrument
     range: string
   effective_from:
     name: effective_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Policy
     - LegalInstrument
     range: edtf
   effective_to:
     name: effective_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Policy
     - LegalInstrument
     range: edtf
   sunset_date:
     name: sunset_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalInstrument
     range: edtf
   constrains_technology:
     name: constrains_technology
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalInstrument
@@ -228,7 +228,7 @@ attributes:
     multivalued: true
   constrains_capability:
     name: constrains_capability
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalInstrument
@@ -237,7 +237,7 @@ attributes:
   requires_authorization_of:
     name: requires_authorization_of
     description: CCOPS-style approval requirements.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalInstrument
@@ -255,13 +255,13 @@ name: LegalInstrument
 description: '[NEW] Laws and regulations as a modelled entity (§11.14). Gives the
   international requirement somewhere to put an arrêté préfectoral, a CNIL decision,
   or an EU AI Act obligation.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   instrument_type:
     name: instrument_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: LegalInstrument
     domain_of:
     - FundingInstrument
@@ -269,7 +269,7 @@ attributes:
     range: LegalInstrumentType
   enacting_body:
     name: enacting_body
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalInstrument
     domain_of:
@@ -277,7 +277,7 @@ attributes:
     range: Organization
   jurisdiction:
     name: jurisdiction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: LegalInstrument
     domain_of:
     - Organization
@@ -287,7 +287,7 @@ attributes:
     range: Jurisdiction
   citation:
     name: citation
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalInstrument
     domain_of:
@@ -295,7 +295,7 @@ attributes:
     range: string
   effective_from:
     name: effective_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: LegalInstrument
     domain_of:
     - Policy
@@ -303,7 +303,7 @@ attributes:
     range: edtf
   effective_to:
     name: effective_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: LegalInstrument
     domain_of:
     - Policy
@@ -311,7 +311,7 @@ attributes:
     range: edtf
   sunset_date:
     name: sunset_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalInstrument
     domain_of:
@@ -319,7 +319,7 @@ attributes:
     range: edtf
   constrains_technology:
     name: constrains_technology
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalInstrument
     domain_of:
@@ -328,7 +328,7 @@ attributes:
     multivalued: true
   constrains_capability:
     name: constrains_capability
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalInstrument
     domain_of:
@@ -338,7 +338,7 @@ attributes:
   requires_authorization_of:
     name: requires_authorization_of
     description: CCOPS-style approval requirements.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalInstrument
     domain_of:
@@ -348,7 +348,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: LegalInstrument

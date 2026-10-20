@@ -14,7 +14,7 @@ _[NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person row carries 
 
 
 
-URI: [sig:class/Person](https://ontology.sig-project.org/schema/class/Person)
+URI: [sig:class/Person](https://ontology.surveillancegraph.org/schema/class/Person)
 
 
 
@@ -79,7 +79,7 @@ URI: [sig:class/Person](https://ontology.sig-project.org/schema/class/Person)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -109,14 +109,14 @@ description: '[NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person
   carries NO surveillance attributes and MUST NOT be reachable from any automated
   extraction path. It exists only for named public officials and SIG''s own attributable
   curators.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   public_interest_basis:
     name: public_interest_basis
     description: MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Person
@@ -125,7 +125,7 @@ attributes:
   human_review_completed:
     name: human_review_completed
     description: Person creation MUST have been through human review (SIG-ONTO-016).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Person
@@ -135,7 +135,7 @@ attributes:
     name: role_description
     description: The public role justifying inclusion (e.g. named official in an accountability
       event).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Person
@@ -153,14 +153,14 @@ description: '[NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person
   carries NO surveillance attributes and MUST NOT be reachable from any automated
   extraction path. It exists only for named public officials and SIG''s own attributable
   curators.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   public_interest_basis:
     name: public_interest_basis
     description: MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Person
     domain_of:
@@ -170,7 +170,7 @@ attributes:
   human_review_completed:
     name: human_review_completed
     description: Person creation MUST have been through human review (SIG-ONTO-016).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Person
     domain_of:
@@ -181,7 +181,7 @@ attributes:
     name: role_description
     description: The public role justifying inclusion (e.g. named official in an accountability
       event).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Person
     domain_of:
@@ -190,7 +190,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Person

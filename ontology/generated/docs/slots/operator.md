@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/operator](https://ontology.sig-project.org/schema/slot/operator)
+URI: [sig:slot/operator](https://ontology.surveillancegraph.org/schema/slot/operator)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/operator](https://ontology.sig-project.org/schema/slot/operator)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/operator](https://ontology.sig-project.org/schema/slot/operator)
 <details>
 ```yaml
 name: operator
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: DataSystem
 domain_of:

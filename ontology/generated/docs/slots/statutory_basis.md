@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/statutory_basis](https://ontology.sig-project.org/schema/slot/statutory_basis)
+URI: [sig:slot/statutory_basis](https://ontology.surveillancegraph.org/schema/slot/statutory_basis)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/statutory_basis](https://ontology.sig-project.org/schema/slot/sta
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/statutory_basis](https://ontology.sig-project.org/schema/slot/sta
 <details>
 ```yaml
 name: statutory_basis
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: RecordsRequest
 domain_of:

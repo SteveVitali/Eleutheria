@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/parent_organization](https://ontology.sig-project.org/schema/slot/parent_organization)
+URI: [sig:slot/parent_organization](https://ontology.surveillancegraph.org/schema/slot/parent_organization)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/parent_organization](https://ontology.sig-project.org/schema/slot
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/parent_organization](https://ontology.sig-project.org/schema/slot
 <details>
 ```yaml
 name: parent_organization
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

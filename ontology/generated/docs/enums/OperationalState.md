@@ -15,7 +15,7 @@ _Track 3 — operational (§13.4)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/OperationalState](https://ontology.sig-project.org/schema/enum/OperationalState)
+URI: [sig:enum/OperationalState](https://ontology.surveillancegraph.org/schema/enum/OperationalState)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -55,7 +55,7 @@ URI: [sig:enum/OperationalState](https://ontology.sig-project.org/schema/enum/Op
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -68,7 +68,7 @@ URI: [sig:enum/OperationalState](https://ontology.sig-project.org/schema/enum/Op
 ```yaml
 name: OperationalState
 description: Track 3 — operational (§13.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   unknown:

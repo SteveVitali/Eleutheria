@@ -15,7 +15,7 @@ _Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_request is U
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/AcquisitionMethod](https://ontology.sig-project.org/schema/enum/AcquisitionMethod)
+URI: [sig:enum/AcquisitionMethod](https://ontology.surveillancegraph.org/schema/enum/AcquisitionMethod)
 
 ## Permissible Values
 | Value | Meaning | Description | Additional Info |
@@ -49,7 +49,7 @@ URI: [sig:enum/AcquisitionMethod](https://ontology.sig-project.org/schema/enum/A
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ description: Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_
   is US-specific; the abstract parent `records_request` carries national children
   linked by `is_a`, plus `no_equivalent_available` for jurisdictions with no access
   regime (itself a coverage fact worth recording).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   records_request:

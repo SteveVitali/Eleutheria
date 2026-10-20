@@ -14,7 +14,7 @@ _The explicit basis string recording how each absent field was derived._
 
 
 
-URI: [sig:slot/assertion_map_basis](https://ontology.sig-project.org/schema/slot/assertion_map_basis)
+URI: [sig:slot/assertion_map_basis](https://ontology.surveillancegraph.org/schema/slot/assertion_map_basis)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/assertion_map_basis](https://ontology.sig-project.org/schema/slot
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/assertion_map_basis](https://ontology.sig-project.org/schema/slot
 ```yaml
 name: assertion_map_basis
 description: The explicit basis string recording how each absent field was derived.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

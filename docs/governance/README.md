@@ -20,7 +20,7 @@ adopt the spec's policy, they do not redefine it.
 
 ## The policies
 
-Twelve documents. **Status** is taken from each document itself: *adopted* (a first-class policy
+Thirteen documents. **Status** is taken from each document itself: *adopted* (a first-class policy
 in force), *protocol adopted; not yet run* (the procedure is fixed but its human step is gated),
 *published* (a live, machine-checked page), *template* (a recorded template/instrument a
 per-instance run fills in), *prepared; not ratified* (an operator packet for a built-but-gated
@@ -41,3 +41,4 @@ advice).
 | [Publication opinion drafts](publication-opinion-drafts.md) | the four scoped HG-02 publication-law questions answered as drafted analyses the operator adopted in place of counsel — each row publish-permitting or conditioned, supersedeable by real counsel | operator-adopted analyses (D-LEGAL.1-1) | §42–§46 | (HG-02; no requirement id) |
 | [Identifier re-key correction note](identifier-rekey-note.md) | the dated correction note for the P34.18 personal-handle identifier re-key: what changed, what the spine and git history retain, neutral old-citation handling | adopted (P34.18 / ADR-178) | §0.7 (Part VIII) | SIG-PUB-002, SIG-STORE-011 |
 | [Capability-scope amendment proposal](capability-scope-amendment-proposal.md) | the P35.14a (SEED-12b) record of the realised `capability.yaml` scope set diverging from SIG-ONTO-060's declared list: the evidence, the out-of-list enumeration, and the drafted amendment text — a proposal for the operator, never a silent relaxation of the closed list | proposed; not applied (G.7.5) | §13.4 | SIG-ONTO-060 |
+| [IRI base compatibility note](iri-base-compat-note.md) | the dated note for the P35.38b identity-base move to `surveillancegraph.org`: what changed, what stayed immutable, the append-only alias map, the recorded unregistered-domain residual | adopted (P35.38b / ADR-217) | §21.6, §38 | SIG-INGEST-016, SIG-EXPORT-002, F-184 (b-half) |

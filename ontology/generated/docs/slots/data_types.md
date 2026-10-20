@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/data_types](https://ontology.sig-project.org/schema/slot/data_types)
+URI: [sig:slot/data_types](https://ontology.surveillancegraph.org/schema/slot/data_types)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/data_types](https://ontology.sig-project.org/schema/slot/data_typ
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/data_types](https://ontology.sig-project.org/schema/slot/data_typ
 <details>
 ```yaml
 name: data_types
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: DataSystem
 domain_of:

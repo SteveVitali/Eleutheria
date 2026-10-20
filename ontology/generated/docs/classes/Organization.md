@@ -14,7 +14,7 @@ _The single entity for ALL institutional actors; "vendor" is a role, not a subty
 
 
 
-URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Organization)
+URI: [sig:class/Organization](https://ontology.surveillancegraph.org/schema/class/Organization)
 
 
 
@@ -178,7 +178,7 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -206,21 +206,21 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
 name: Organization
 description: The single entity for ALL institutional actors; "vendor" is a role, not
   a subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   canonical_name:
     name: canonical_name
     description: A claim, not an authoritative column (§8.2, SIG-ONTO-003).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
     range: string
   alias:
     name: alias
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -228,7 +228,7 @@ attributes:
     multivalued: true
   alias_type:
     name: alias_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -238,7 +238,7 @@ attributes:
     name: name_lang
     description: Repeatable BCP-47 language tags for the multilingual entity names
       (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -249,7 +249,7 @@ attributes:
     description: Repeatable qualifier naming the transliteration scheme a romanised/
       transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the
       original script stays recoverable (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -257,21 +257,21 @@ attributes:
     multivalued: true
   organization_type:
     name: organization_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
     range: OrganizationType
   parent_organization:
     name: parent_organization
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
     range: Organization
   jurisdiction:
     name: jurisdiction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -282,7 +282,7 @@ attributes:
   identifier:
     name: identifier
     description: Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -290,7 +290,7 @@ attributes:
     multivalued: true
   identifier_system:
     name: identifier_system
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -298,14 +298,14 @@ attributes:
     multivalued: true
   government_domain:
     name: government_domain
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
     range: string
   address:
     name: address
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -313,7 +313,7 @@ attributes:
     multivalued: true
   valid_from:
     name: valid_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -322,7 +322,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -332,7 +332,7 @@ attributes:
   publication_review:
     name: publication_review
     description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Organization
@@ -348,14 +348,14 @@ attributes:
 name: Organization
 description: The single entity for ALL institutional actors; "vendor" is a role, not
   a subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   canonical_name:
     name: canonical_name
     description: A claim, not an authoritative column (§8.2, SIG-ONTO-003).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -363,7 +363,7 @@ attributes:
     range: string
   alias:
     name: alias
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -372,7 +372,7 @@ attributes:
     multivalued: true
   alias_type:
     name: alias_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -383,7 +383,7 @@ attributes:
     name: name_lang
     description: Repeatable BCP-47 language tags for the multilingual entity names
       (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Organization
     domain_of:
     - Jurisdiction
@@ -395,7 +395,7 @@ attributes:
     description: Repeatable qualifier naming the transliteration scheme a romanised/
       transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the
       original script stays recoverable (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Organization
     domain_of:
     - Jurisdiction
@@ -404,7 +404,7 @@ attributes:
     multivalued: true
   organization_type:
     name: organization_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -412,7 +412,7 @@ attributes:
     range: OrganizationType
   parent_organization:
     name: parent_organization
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -420,7 +420,7 @@ attributes:
     range: Organization
   jurisdiction:
     name: jurisdiction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -432,7 +432,7 @@ attributes:
   identifier:
     name: identifier
     description: Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -441,7 +441,7 @@ attributes:
     multivalued: true
   identifier_system:
     name: identifier_system
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -450,7 +450,7 @@ attributes:
     multivalued: true
   government_domain:
     name: government_domain
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -458,7 +458,7 @@ attributes:
     range: string
   address:
     name: address
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -467,7 +467,7 @@ attributes:
     multivalued: true
   valid_from:
     name: valid_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Organization
     domain_of:
     - Jurisdiction
@@ -477,7 +477,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Organization
     domain_of:
     - Jurisdiction
@@ -488,7 +488,7 @@ attributes:
   publication_review:
     name: publication_review
     description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Organization
     domain_of:
@@ -497,7 +497,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Organization

@@ -14,7 +14,7 @@ _A Technology reference, not a free string._
 
 
 
-URI: [sig:slot/asset_type](https://ontology.sig-project.org/schema/slot/asset_type)
+URI: [sig:slot/asset_type](https://ontology.surveillancegraph.org/schema/slot/asset_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/asset_type](https://ontology.sig-project.org/schema/slot/asset_ty
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/asset_type](https://ontology.sig-project.org/schema/slot/asset_ty
 ```yaml
 name: asset_type
 description: A Technology reference, not a free string.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

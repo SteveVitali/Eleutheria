@@ -14,7 +14,7 @@ _Reference databases as infrastructure — representable even where SIG holds no
 
 
 
-URI: [sig:class/DataSystem](https://ontology.sig-project.org/schema/class/DataSystem)
+URI: [sig:class/DataSystem](https://ontology.surveillancegraph.org/schema/class/DataSystem)
 
 
 
@@ -136,7 +136,7 @@ URI: [sig:class/DataSystem](https://ontology.sig-project.org/schema/class/DataSy
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -164,20 +164,20 @@ URI: [sig:class/DataSystem](https://ontology.sig-project.org/schema/class/DataSy
 name: DataSystem
 description: Reference databases as infrastructure — representable even where SIG
   holds no sensor (§11.10, SIG-ONTO-031).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   operator:
     name: operator
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - DataSystem
     range: Organization
   vendor:
     name: vendor
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Product
     - Deployment
@@ -185,14 +185,14 @@ attributes:
     range: Organization
   product:
     name: product
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Deployment
     - DataSystem
     range: Product
   data_types:
     name: data_types
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - DataSystem
@@ -201,14 +201,14 @@ attributes:
   retention:
     name: retention
     description: A ConfigurationState fact where it varies per deployment.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - DataSystem
     range: duration_iso
   system_scope:
     name: system_scope
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - DataSystem
@@ -216,7 +216,7 @@ attributes:
   holds_data_collected_by:
     name: holds_data_collected_by
     description: Custody != collection.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - DataSystem
@@ -232,13 +232,13 @@ attributes:
 name: DataSystem
 description: Reference databases as infrastructure — representable even where SIG
   holds no sensor (§11.10, SIG-ONTO-031).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   operator:
     name: operator
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: DataSystem
     domain_of:
@@ -246,7 +246,7 @@ attributes:
     range: Organization
   vendor:
     name: vendor
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: DataSystem
     domain_of:
     - Product
@@ -255,7 +255,7 @@ attributes:
     range: Organization
   product:
     name: product
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: DataSystem
     domain_of:
     - Deployment
@@ -263,7 +263,7 @@ attributes:
     range: Product
   data_types:
     name: data_types
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: DataSystem
     domain_of:
@@ -273,7 +273,7 @@ attributes:
   retention:
     name: retention
     description: A ConfigurationState fact where it varies per deployment.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: DataSystem
     domain_of:
@@ -281,7 +281,7 @@ attributes:
     range: duration_iso
   system_scope:
     name: system_scope
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: DataSystem
     domain_of:
@@ -290,7 +290,7 @@ attributes:
   holds_data_collected_by:
     name: holds_data_collected_by
     description: Custody != collection.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: DataSystem
     domain_of:
@@ -299,7 +299,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: DataSystem

@@ -14,7 +14,7 @@ _Supporting evidence artifacts/sources; every fact is evidenced (SIG-CHART-013).
 
 
 
-URI: [sig:slot/sources](https://ontology.sig-project.org/schema/slot/sources)
+URI: [sig:slot/sources](https://ontology.surveillancegraph.org/schema/slot/sources)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/sources](https://ontology.sig-project.org/schema/slot/sources)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/sources](https://ontology.sig-project.org/schema/slot/sources)
 ```yaml
 name: sources
 description: Supporting evidence artifacts/sources; every fact is evidenced (SIG-CHART-013).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 domain_of:
 - AccountabilityEvent

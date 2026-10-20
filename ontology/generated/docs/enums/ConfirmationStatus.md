@@ -15,7 +15,7 @@ _How a physical asset was confirmed (§11.8)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ConfirmationStatus](https://ontology.sig-project.org/schema/enum/ConfirmationStatus)
+URI: [sig:enum/ConfirmationStatus](https://ontology.surveillancegraph.org/schema/enum/ConfirmationStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -53,7 +53,7 @@ URI: [sig:enum/ConfirmationStatus](https://ontology.sig-project.org/schema/enum/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ URI: [sig:enum/ConfirmationStatus](https://ontology.sig-project.org/schema/enum/
 ```yaml
 name: ConfirmationStatus
 description: How a physical asset was confirmed (§11.8).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   field_confirmed:

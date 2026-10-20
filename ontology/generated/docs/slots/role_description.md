@@ -14,7 +14,7 @@ _The public role justifying inclusion (e.g. named official in an accountability 
 
 
 
-URI: [sig:slot/role_description](https://ontology.sig-project.org/schema/slot/role_description)
+URI: [sig:slot/role_description](https://ontology.surveillancegraph.org/schema/slot/role_description)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/role_description](https://ontology.sig-project.org/schema/slot/ro
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/role_description](https://ontology.sig-project.org/schema/slot/ro
 name: role_description
 description: The public role justifying inclusion (e.g. named official in an accountability
   event).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Person
 domain_of:

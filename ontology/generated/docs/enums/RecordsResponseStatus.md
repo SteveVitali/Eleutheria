@@ -15,7 +15,7 @@ _Records-request response status (§11.19). no_responsive_records is a positive 
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/RecordsResponseStatus](https://ontology.sig-project.org/schema/enum/RecordsResponseStatus)
+URI: [sig:enum/RecordsResponseStatus](https://ontology.surveillancegraph.org/schema/enum/RecordsResponseStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -58,7 +58,7 @@ URI: [sig:enum/RecordsResponseStatus](https://ontology.sig-project.org/schema/en
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -72,7 +72,7 @@ URI: [sig:enum/RecordsResponseStatus](https://ontology.sig-project.org/schema/en
 name: RecordsResponseStatus
 description: Records-request response status (§11.19). no_responsive_records is a
   positive finding (SIG-ONTO-040).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   draft:

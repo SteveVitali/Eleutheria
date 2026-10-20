@@ -15,7 +15,7 @@ _Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068). The d
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/JurisdictionType](https://ontology.sig-project.org/schema/enum/JurisdictionType)
+URI: [sig:enum/JurisdictionType](https://ontology.surveillancegraph.org/schema/enum/JurisdictionType)
 
 ## Permissible Values
 | Value | Meaning | Description | Additional Info |
@@ -73,7 +73,7 @@ URI: [sig:enum/JurisdictionType](https://ontology.sig-project.org/schema/enum/Ju
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -89,7 +89,7 @@ description: Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO
   The dotless terms are the shared abstract levels every country's hierarchy maps
   onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs
   its own level names in without widening a US-shaped enum.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   country:

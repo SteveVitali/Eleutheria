@@ -54,7 +54,7 @@ AS_OF = date(2026, 9, 1)
 JURISDICTION = "Oklahoma City, Oklahoma"
 AGENCY = "Oklahoma City Police Department (OKCPD)"
 DEPLOYMENT_ID = "sig:deployment:okc-okcpd-flock"
-PERMALINK = "https://sig-project.org/dossier/okc-okcpd-flock?as_of=2026-09-01"
+PERMALINK = "https://surveillancegraph.org/dossier/okc-okcpd-flock?as_of=2026-09-01"
 
 _FIXTURE = Path(__file__).parent / "fixtures" / "okc_sources.json"
 

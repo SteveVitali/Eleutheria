@@ -15,7 +15,7 @@ _Product lifecycle status (§11.4)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ProductStatus](https://ontology.sig-project.org/schema/enum/ProductStatus)
+URI: [sig:enum/ProductStatus](https://ontology.surveillancegraph.org/schema/enum/ProductStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -54,7 +54,7 @@ URI: [sig:enum/ProductStatus](https://ontology.sig-project.org/schema/enum/Produ
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -67,7 +67,7 @@ URI: [sig:enum/ProductStatus](https://ontology.sig-project.org/schema/enum/Produ
 ```yaml
 name: ProductStatus
 description: Product lifecycle status (§11.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   announced:

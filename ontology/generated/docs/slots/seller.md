@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/seller](https://ontology.sig-project.org/schema/slot/seller)
+URI: [sig:slot/seller](https://ontology.surveillancegraph.org/schema/slot/seller)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/seller](https://ontology.sig-project.org/schema/slot/seller)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/seller](https://ontology.sig-project.org/schema/slot/seller)
 <details>
 ```yaml
 name: seller
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contract
 domain_of:

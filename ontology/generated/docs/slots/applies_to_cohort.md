@@ -14,7 +14,7 @@ _Partial termination cohort — all / new_customers_only / existing_customers_on
 
 
 
-URI: [sig:slot/applies_to_cohort](https://ontology.sig-project.org/schema/slot/applies_to_cohort)
+URI: [sig:slot/applies_to_cohort](https://ontology.surveillancegraph.org/schema/slot/applies_to_cohort)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/applies_to_cohort](https://ontology.sig-project.org/schema/slot/a
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/applies_to_cohort](https://ontology.sig-project.org/schema/slot/a
 name: applies_to_cohort
 description: Partial termination cohort — all / new_customers_only / existing_customers_only
   (SIG-ONTO-046).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: IntegrationEdge
 domain_of:

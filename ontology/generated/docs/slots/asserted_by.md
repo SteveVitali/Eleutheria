@@ -14,7 +14,7 @@ _Which party asserted it — perspectival (§12.1.5)._
 
 
 
-URI: [sig:slot/asserted_by](https://ontology.sig-project.org/schema/slot/asserted_by)
+URI: [sig:slot/asserted_by](https://ontology.surveillancegraph.org/schema/slot/asserted_by)
 <!-- no inheritance hierarchy -->
 
 
@@ -76,7 +76,7 @@ URI: [sig:slot/asserted_by](https://ontology.sig-project.org/schema/slot/asserte
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -97,7 +97,7 @@ URI: [sig:slot/asserted_by](https://ontology.sig-project.org/schema/slot/asserte
 ```yaml
 name: asserted_by
 description: Which party asserted it — perspectival (§12.1.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Edge
 domain_of:

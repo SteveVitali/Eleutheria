@@ -15,7 +15,7 @@ _The claim's review state (append-only; a review lands as a new claim)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ReviewStatus](https://ontology.sig-project.org/schema/enum/ReviewStatus)
+URI: [sig:enum/ReviewStatus](https://ontology.surveillancegraph.org/schema/enum/ReviewStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -53,7 +53,7 @@ URI: [sig:enum/ReviewStatus](https://ontology.sig-project.org/schema/enum/Review
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ URI: [sig:enum/ReviewStatus](https://ontology.sig-project.org/schema/enum/Review
 ```yaml
 name: ReviewStatus
 description: The claim's review state (append-only; a review lands as a new claim).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   unreviewed:

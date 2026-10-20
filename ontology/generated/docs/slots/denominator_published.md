@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/denominator_published](https://ontology.sig-project.org/schema/slot/denominator_published)
+URI: [sig:slot/denominator_published](https://ontology.surveillancegraph.org/schema/slot/denominator_published)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/denominator_published](https://ontology.sig-project.org/schema/sl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/denominator_published](https://ontology.sig-project.org/schema/sl
 <details>
 ```yaml
 name: denominator_published
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CoverageRecord
 domain_of:

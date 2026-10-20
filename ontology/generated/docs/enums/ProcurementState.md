@@ -15,7 +15,7 @@ _Track 1 — procurement (§13.4). `unknown` is admissible and default (SIG-ONTO
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ProcurementState](https://ontology.sig-project.org/schema/enum/ProcurementState)
+URI: [sig:enum/ProcurementState](https://ontology.surveillancegraph.org/schema/enum/ProcurementState)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -63,7 +63,7 @@ URI: [sig:enum/ProcurementState](https://ontology.sig-project.org/schema/enum/Pr
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -76,7 +76,7 @@ URI: [sig:enum/ProcurementState](https://ontology.sig-project.org/schema/enum/Pr
 ```yaml
 name: ProcurementState
 description: Track 1 — procurement (§13.4). `unknown` is admissible and default (SIG-ONTO-063).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   unknown:

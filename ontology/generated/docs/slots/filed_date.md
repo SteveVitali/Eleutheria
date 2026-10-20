@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/filed_date](https://ontology.sig-project.org/schema/slot/filed_date)
+URI: [sig:slot/filed_date](https://ontology.surveillancegraph.org/schema/slot/filed_date)
 <!-- no inheritance hierarchy -->
 
 

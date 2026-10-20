@@ -14,7 +14,7 @@ _Configured vs observed vs declared — never defaulted into one another (SIG-ON
 
 
 
-URI: [sig:slot/access_kind](https://ontology.sig-project.org/schema/slot/access_kind)
+URI: [sig:slot/access_kind](https://ontology.surveillancegraph.org/schema/slot/access_kind)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/access_kind](https://ontology.sig-project.org/schema/slot/access_
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -94,7 +94,7 @@ URI: [sig:slot/access_kind](https://ontology.sig-project.org/schema/slot/access_
 name: access_kind
 description: Configured vs observed vs declared — never defaulted into one another
   (SIG-ONTO-042).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccessRelationship
 domain_of:

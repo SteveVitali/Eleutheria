@@ -14,7 +14,7 @@ _CCOPS-style approval requirements._
 
 
 
-URI: [sig:slot/requires_authorization_of](https://ontology.sig-project.org/schema/slot/requires_authorization_of)
+URI: [sig:slot/requires_authorization_of](https://ontology.surveillancegraph.org/schema/slot/requires_authorization_of)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/requires_authorization_of](https://ontology.sig-project.org/schem
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/requires_authorization_of](https://ontology.sig-project.org/schem
 ```yaml
 name: requires_authorization_of
 description: CCOPS-style approval requirements.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalInstrument
 domain_of:

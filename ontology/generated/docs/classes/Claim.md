@@ -14,7 +14,7 @@ _An append-only assertion (subject, predicate, value, ...) — the substance of 
 
 
 
-URI: [sig:class/Claim](https://ontology.sig-project.org/schema/class/Claim)
+URI: [sig:class/Claim](https://ontology.surveillancegraph.org/schema/class/Claim)
 
 
 
@@ -319,7 +319,7 @@ URI: [sig:class/Claim](https://ontology.sig-project.org/schema/class/Claim)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -347,13 +347,13 @@ URI: [sig:class/Claim](https://ontology.sig-project.org/schema/class/Claim)
 name: Claim
 description: An append-only assertion (subject, predicate, value, ...) — the substance
   of the graph (§10.3, L1). Physical append-only table is P02.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -363,7 +363,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -373,28 +373,28 @@ attributes:
     range: predicate_code
   value:
     name: value
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   value_kind:
     name: value_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: ValueKind
   raw_value:
     name: raw_value
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   absence_kind:
     name: absence_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -402,21 +402,21 @@ attributes:
     range: AbsenceKind
   evidence_role:
     name: evidence_role
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: EvidenceRole
   supersedes:
     name: supersedes
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: Claim
   object_type:
     name: object_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -425,7 +425,7 @@ attributes:
     name: object_entity_ref
     description: The resolved entity an entity_ref object names; never a person (Part
       VIII).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -433,7 +433,7 @@ attributes:
   unit:
     name: unit
     description: REQUIRED when object_type is quantity (§10.3.5).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -442,42 +442,42 @@ attributes:
   raw_context:
     name: raw_context
     description: The citation anchor within the artifact (P2), as structured text.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   normalization_id:
     name: normalization_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   normalization_version:
     name: normalization_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   valid_edtf:
     name: valid_edtf
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: edtf
   observed_edtf:
     name: observed_edtf
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: edtf
   observed_at_kind:
     name: observed_at_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -486,35 +486,35 @@ attributes:
     name: observed_unknown_reason
     description: REQUIRED when observed_at is absent — an absent observation time
       always says why.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   source_reliability:
     name: source_reliability
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: SourceReliability
   reliability_provisional:
     name: reliability_provisional
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: boolean
   claim_directness:
     name: claim_directness
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: ClaimDirectness
   artifact_integrity:
     name: artifact_integrity
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -523,21 +523,21 @@ attributes:
     name: legacy_source_tier
     description: An upstream's own Tier A-F label, passthrough only — never used in
       resolution (§10.4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   claim_polarity:
     name: claim_polarity
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: ClaimPolarity
   rank:
     name: rank
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -545,7 +545,7 @@ attributes:
     range: ClaimRank
   review_status:
     name: review_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -553,21 +553,21 @@ attributes:
   sensitivity_tier:
     name: sensitivity_tier
     description: The §42 sensitivity tier; absent never silently lowers.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - PhysicalAsset
     - Claim
     range: integer
   assertion_rationale:
     name: assertion_rationale
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: string
   derived_from_claim_ids:
     name: derived_from_claim_ids
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -575,14 +575,14 @@ attributes:
     multivalued: true
   revises_claim:
     name: revises_claim
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
     range: Claim
   retraction_of:
     name: retraction_of
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -590,7 +590,7 @@ attributes:
   correction_reason:
     name: correction_reason
     description: REQUIRED when revises_claim is set (§16.6).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -599,7 +599,7 @@ attributes:
     name: assertion_map_id
     description: The named versioned mapping the row's defaults were derived under
       (sig.assertion.map.v1).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -607,7 +607,7 @@ attributes:
   assertion_map_basis:
     name: assertion_map_basis
     description: The explicit basis string recording how each absent field was derived.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Claim
@@ -623,13 +623,13 @@ attributes:
 name: Claim
 description: An append-only assertion (subject, predicate, value, ...) — the substance
   of the graph (§10.3, L1). Physical append-only table is P02.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -640,7 +640,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -651,7 +651,7 @@ attributes:
     range: predicate_code
   value:
     name: value
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -659,7 +659,7 @@ attributes:
     range: string
   value_kind:
     name: value_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -667,7 +667,7 @@ attributes:
     range: ValueKind
   raw_value:
     name: raw_value
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -675,7 +675,7 @@ attributes:
     range: string
   absence_kind:
     name: absence_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -684,7 +684,7 @@ attributes:
     range: AbsenceKind
   evidence_role:
     name: evidence_role
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -692,7 +692,7 @@ attributes:
     range: EvidenceRole
   supersedes:
     name: supersedes
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -700,7 +700,7 @@ attributes:
     range: Claim
   object_type:
     name: object_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -710,7 +710,7 @@ attributes:
     name: object_entity_ref
     description: The resolved entity an entity_ref object names; never a person (Part
       VIII).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -719,7 +719,7 @@ attributes:
   unit:
     name: unit
     description: REQUIRED when object_type is quantity (§10.3.5).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -729,7 +729,7 @@ attributes:
   raw_context:
     name: raw_context
     description: The citation anchor within the artifact (P2), as structured text.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -737,7 +737,7 @@ attributes:
     range: string
   normalization_id:
     name: normalization_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -745,7 +745,7 @@ attributes:
     range: string
   normalization_version:
     name: normalization_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -753,7 +753,7 @@ attributes:
     range: string
   valid_edtf:
     name: valid_edtf
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -761,7 +761,7 @@ attributes:
     range: edtf
   observed_edtf:
     name: observed_edtf
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -769,7 +769,7 @@ attributes:
     range: edtf
   observed_at_kind:
     name: observed_at_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -779,7 +779,7 @@ attributes:
     name: observed_unknown_reason
     description: REQUIRED when observed_at is absent — an absent observation time
       always says why.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -787,7 +787,7 @@ attributes:
     range: string
   source_reliability:
     name: source_reliability
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -795,7 +795,7 @@ attributes:
     range: SourceReliability
   reliability_provisional:
     name: reliability_provisional
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -803,7 +803,7 @@ attributes:
     range: boolean
   claim_directness:
     name: claim_directness
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -811,7 +811,7 @@ attributes:
     range: ClaimDirectness
   artifact_integrity:
     name: artifact_integrity
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -821,7 +821,7 @@ attributes:
     name: legacy_source_tier
     description: An upstream's own Tier A-F label, passthrough only — never used in
       resolution (§10.4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -829,7 +829,7 @@ attributes:
     range: string
   claim_polarity:
     name: claim_polarity
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -837,7 +837,7 @@ attributes:
     range: ClaimPolarity
   rank:
     name: rank
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -846,7 +846,7 @@ attributes:
     range: ClaimRank
   review_status:
     name: review_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -855,7 +855,7 @@ attributes:
   sensitivity_tier:
     name: sensitivity_tier
     description: The §42 sensitivity tier; absent never silently lowers.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Claim
     domain_of:
     - PhysicalAsset
@@ -863,7 +863,7 @@ attributes:
     range: integer
   assertion_rationale:
     name: assertion_rationale
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -871,7 +871,7 @@ attributes:
     range: string
   derived_from_claim_ids:
     name: derived_from_claim_ids
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -880,7 +880,7 @@ attributes:
     multivalued: true
   revises_claim:
     name: revises_claim
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -888,7 +888,7 @@ attributes:
     range: Claim
   retraction_of:
     name: retraction_of
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -897,7 +897,7 @@ attributes:
   correction_reason:
     name: correction_reason
     description: REQUIRED when revises_claim is set (§16.6).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -907,7 +907,7 @@ attributes:
     name: assertion_map_id
     description: The named versioned mapping the row's defaults were derived under
       (sig.assertion.map.v1).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -916,7 +916,7 @@ attributes:
   assertion_map_basis:
     name: assertion_map_basis
     description: The explicit basis string recording how each absent field was derived.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Claim
     domain_of:
@@ -925,7 +925,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Claim

@@ -43,7 +43,7 @@ URI: [xsd:time](http://www.w3.org/2001/XMLSchema#time)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/system_scope](https://ontology.sig-project.org/schema/slot/system_scope)
+URI: [sig:slot/system_scope](https://ontology.surveillancegraph.org/schema/slot/system_scope)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/system_scope](https://ontology.sig-project.org/schema/slot/system
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/system_scope](https://ontology.sig-project.org/schema/slot/system
 <details>
 ```yaml
 name: system_scope
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: DataSystem
 domain_of:

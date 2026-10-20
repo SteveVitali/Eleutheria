@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/mobility](https://ontology.sig-project.org/schema/slot/mobility)
+URI: [sig:slot/mobility](https://ontology.surveillancegraph.org/schema/slot/mobility)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/mobility](https://ontology.sig-project.org/schema/slot/mobility)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/mobility](https://ontology.sig-project.org/schema/slot/mobility)
 <details>
 ```yaml
 name: mobility
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

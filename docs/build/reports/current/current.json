@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "11350b24e17a4d8932e26126acb01f841ea30ea9",
-  "manifest_inputs": 1074,
+  "input_commit": "cec9402a57a458c82f3d8cb4c2f43bbbe17a31b1",
+  "manifest_inputs": 1076,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P35.38b",
@@ -26,13 +26,13 @@
     "updatedAt": "2026-10-20T05:23Z"
   },
   "counts": {
-    "obligations": 169,
-    "owed": 95,
-    "open": 92,
+    "obligations": 171,
+    "owed": 96,
+    "open": 93,
     "partial": 3,
-    "terminal": 74,
-    "events": 659,
-    "transitions": 36,
+    "terminal": 75,
+    "events": 662,
+    "transitions": 37,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
@@ -8434,13 +8434,13 @@
     },
     {
       "id": "D-P35.3-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P35.3-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P35.3-1:e1",
       "kind": "F",
-      "owner": "the failing surface's owning row",
-      "landing": "the owning row of the surface the compartment exempts — it either fixes the placeholder content and deletes the compartment, or records why the declared compartment is the honest terminal posture; due before the round-11 tail sweep",
+      "owner": "the watch feed owning surface",
+      "landing": "the trigger verbatim lands: WATCH_UID_DOMAIN is the one declared constant and watchEventUid stamps @surveillancegraph.org (web/src/lib/watch.ts), web/tests/unit/watch.test.ts pins the owned domain, the alias map records the watch-feed-uid family (match: suffix), and the watch-feed-uid sentinel compartment in ops/sentinels.toml is deleted in the same change",
       "landing_source": "event-head",
-      "backlog_home": "BL-084",
+      "backlog_home": "BL-085",
       "item": "The watch-feed event UIDs stamp the placeholder domain `@sig.example` into the public `.ics`/`.xml` subscription artifacts (`web/src/lib/watch.ts` `watchEventUid` — the ia-landing e2e already encodes \"never sig.example\" for permalinks; the feed UIDs reuse the retired placeholder anyway)",
       "unblocked_by": "owner: the watch feed's owning row · trigger: a re-domain of the UID (e.g. `surveillancegraph.org`) + `web/tests/unit/watch.test.ts` updated · due: before the round-11 tail sweep",
       "verify": "`sig-ops sentinel-scan` over a fresh `web/dist` shows `watch-feed-uid` exempting 0 `sig-example-domain` hits; the compartment then deletes cleanly",
@@ -8476,6 +8476,32 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.3-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P35.3-1",
+          "seq": 1,
+          "expected_previous_event": "D-P35.3-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P35.38b",
+          "owner": "the watch feed owning surface",
+          "landing": "the trigger verbatim lands: WATCH_UID_DOMAIN is the one declared constant and watchEventUid stamps @surveillancegraph.org (web/src/lib/watch.ts), web/tests/unit/watch.test.ts pins the owned domain, the alias map records the watch-feed-uid family (match: suffix), and the watch-feed-uid sentinel compartment in ops/sentinels.toml is deleted in the same change",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/src/lib/watch.ts",
+            "web/tests/unit/watch.test.ts",
+            "ops/sentinels.toml",
+            "docs/governance/iri-base-alias-map.json",
+            "docs/build/runs/P35.38b.md"
+          ],
+          "observed_at": "2026-10-20",
+          "recorded_at": "2026-10-20",
+          "source_commit": "cec9402a57a458c82f3d8cb4c2f43bbbe17a31b1",
+          "reason": "P35.38b (row 317) lands the re-domain the row named verbatim — the UID host moves to the owned domain and the declaring sentinel compartment is removed; closing per the DEFERRALS-first rule (an OPEN row this ticket unblocks)"
         }
       ]
     },
@@ -8651,6 +8677,104 @@
           "source_commit": "87fb543a",
           "reason": "the debt's trigger verbatim is met on real PG: a lane-evidenced raw-ok + P8-clear source writes storage_tier='public' and the read path serves tier='public' with tier_basis='recorded' (tests/db/test_transparency_views.py::test_recorded_raw_ok_clear_writes_and_serves_public; make test-db 717/717). public is never a default — unknown, absent, restricted and unresolved lanes still derive sealed, the recorded-unknown verdict stays distinct from an undeclared block, and the interim rights-record basis remains the fallback (it never reaches public). The P35.31 run-ledger note is closed by docs/build/runs/P35.35.md",
           "recorded_at": "2026-10-19"
+        }
+      ]
+    },
+    {
+      "id": "D-P35.38b-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.38b-1:e0",
+      "kind": "F",
+      "owner": "the vocabulary/DB owning row",
+      "landing": "a new sqitch change re-seeds or supersedes the hosted vocabulary IRI metadata (or an ADR records deployed rows as the published identifier set, left as history); the old IRIs stay valid names under iri-base-alias-map.json either way; due before the next predicate-registry version bump",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "The deployed sqitch change set carries ~280 old-base predicate IRIs (`db/deploy/closed_vocabulary.sql` seed rows + `vocab_enforcement_count`, `vocab_geometry_defect`, `vocab_published_by` deploy/verify) and `db/sqitch.plan` carries old-domain author lines — the published vocabulary's `iri` metadata column still names `ontology.sig-project.org/...`",
+      "unblocked_by": "owner: the vocabulary/DB owning row · trigger: a new sqitch change re-seeding or superseding the IRI metadata lands (or an ADR records 'deployed rows are the published identifier set — left as history') · due: before the next predicate-registry version bump",
+      "verify": "`git grep -lF sig-project.org -- db/` returns only `db/sqitch.plan`, or the new change + ADR record the call and `make test-db` is green; `tests/unit/test_identity_base.py`'s `db/` history region shrinks to `sqitch.plan`",
+      "proxy": "the predicate *join key* is `predicate_id` (the slug), never the IRI — claims, exports and the ontology all mint/read new-base IRIs already; the old IRIs in deployed seed rows are descriptive metadata mapped by `docs/governance/iri-base-alias-map.json`",
+      "line": 1357,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.38b-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.38b-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.38b",
+          "owner": "the vocabulary/DB owning row",
+          "landing": "a new sqitch change re-seeds or supersedes the hosted vocabulary IRI metadata (or an ADR records deployed rows as the published identifier set, left as history); the old IRIs stay valid names under iri-base-alias-map.json either way; due before the next predicate-registry version bump",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/governance/iri-base-alias-map.json",
+            "db/deploy/closed_vocabulary.sql",
+            "tests/unit/test_identity_base.py",
+            "docs/adr/ADR-217-iri-base-on-the-owned-domain-alias-map-and-compat-note.md"
+          ],
+          "observed_at": "2026-10-20",
+          "recorded_at": "2026-10-20",
+          "source_commit": "cec9402a57a458c82f3d8cb4c2f43bbbe17a31b1",
+          "reason": "migration anchor appended by P35.38b (row 317) — the deployed (immutable) sqitch change set carries ~280 old-base predicate IRIs in hosted vocabulary seed rows; the predicate join key is predicate_id (the slug), never the IRI, so exports already mint new-base names and the deployed rows are mapped history — the hosted re-stamp is a DB-side call, recorded not hidden",
+          "anchor": {
+            "row_line": 1357,
+            "row_sha256": "73bcd47f766e7e8eeb529245c01f871af7dee5799db3d5c4fc0f12e2aa0a376b",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.38b-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.38b-2:e0",
+      "kind": "F",
+      "owner": "the contribution-back/OSM surface owning row + the operator",
+      "landing": "the OP-10 contact alias exists (or the operator names the contact), the disclosure owning row picks real target routes, and the external OSM-wiki organised-editing page is edited; the two _EXEMPT_FILES entries in tests/unit/test_identity_base.py are deleted in the same change; due before the next organised-editing push or the round-11 tail sweep",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "The published OSM organised-editing disclosure still names `osm-contact@sig.example` plus `https://sig.example/licence` + `https://sig.example/records` (`tasks/src/tasks/data/organised_editing.toml`, mirrored in `docs/governance/organised-editing-activity.md`)",
+      "unblocked_by": "owner: the contribution-back/OSM surface's owning row + the operator · trigger: OP-10's alias exists (or the operator names the contact) + the disclosure's owning row picks real targets + the OSM wiki page is updated · due: before the next organised-editing push or the round-11 tail sweep",
+      "verify": "`git grep -lF sig.example -- tasks/ docs/governance/` returns zero; the OSM wiki organised-editing page carries the new contact+URLs; `tests/unit/test_identity_base.py`'s `_EXEMPT_FILES` loses both entries",
+      "proxy": "the exposure is bounded to two named files the guard exempts verbatim; the placeholder domain remains unregistered and inbound-dependent on nothing — the disclosure is outbound text, and B-6's 'don't buy' stands",
+      "line": 1358,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.38b-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.38b-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.38b",
+          "owner": "the contribution-back/OSM surface owning row + the operator",
+          "landing": "the OP-10 contact alias exists (or the operator names the contact), the disclosure owning row picks real target routes, and the external OSM-wiki organised-editing page is edited; the two _EXEMPT_FILES entries in tests/unit/test_identity_base.py are deleted in the same change; due before the next organised-editing push or the round-11 tail sweep",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tasks/src/tasks/data/organised_editing.toml",
+            "docs/governance/organised-editing-activity.md",
+            "tests/unit/test_identity_base.py",
+            "docs/adr/ADR-217-iri-base-on-the-owned-domain-alias-map-and-compat-note.md"
+          ],
+          "observed_at": "2026-10-20",
+          "recorded_at": "2026-10-20",
+          "source_commit": "cec9402a57a458c82f3d8cb4c2f43bbbe17a31b1",
+          "reason": "migration anchor appended by P35.38b (row 317) — the published OSM organised-editing disclosure names osm-contact@sig.example + two sig.example URLs; repointing needs a provisioned contact address (minting an unreceivable address fabricates a contact), real target routes, and the external OSM-wiki edit — bounded to two named files the guard exempts verbatim",
+          "anchor": {
+            "row_line": 1358,
+            "row_sha256": "491322af4679756fc606fe437b811424d01077a6856d6bb9ea085880fb4f21f3",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
         }
       ]
     }
@@ -19145,7 +19269,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "deb6322befca15eff97aa996135f7d19f6d25d46b09169caad5170f9470f9310",
+  "manifest_sha256": "a1ce50edf0c35f5753ccb0977c565c7bb335131964a508751cd51d054f9ec9a6",
   "current_md": {
     "lines": 63,
     "bytes": 15610,

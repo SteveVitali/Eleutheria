@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/observed_via](https://ontology.sig-project.org/schema/slot/observed_via)
+URI: [sig:slot/observed_via](https://ontology.surveillancegraph.org/schema/slot/observed_via)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/observed_via](https://ontology.sig-project.org/schema/slot/observ
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/observed_via](https://ontology.sig-project.org/schema/slot/observ
 <details>
 ```yaml
 name: observed_via
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

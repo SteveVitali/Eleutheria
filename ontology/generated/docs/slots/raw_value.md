@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/raw_value](https://ontology.sig-project.org/schema/slot/raw_value)
+URI: [sig:slot/raw_value](https://ontology.surveillancegraph.org/schema/slot/raw_value)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/raw_value](https://ontology.sig-project.org/schema/slot/raw_value
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/raw_value](https://ontology.sig-project.org/schema/slot/raw_value
 <details>
 ```yaml
 name: raw_value
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

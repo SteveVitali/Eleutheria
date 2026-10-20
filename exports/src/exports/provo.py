@@ -29,8 +29,12 @@ from datetime import datetime
 
 from rdflib import PROV, RDF, XSD, Graph, Literal, Namespace, URIRef
 
-# The base namespace SIG mints lineage URIs under. Stable and dereferenceable-shaped.
-SIG = Namespace("https://sig-project.org/prov/")
+# The one declared identity base for every IRI the provenance surface mints
+# (P35.38b / ADR-217 — owned domain; pre-cut `/prov/` IRIs under the retired
+# `sig-project` host stay valid names via
+# docs/governance/iri-base-alias-map.json — append-only, a name mapping,
+# never an HTTP-redirect claim).
+SIG = Namespace("https://surveillancegraph.org/prov/")
 
 
 # --- lineage input (a thin, DB-agnostic projection of the lineage rows) -------
@@ -57,10 +61,11 @@ class Curator:
 @dataclass(frozen=True)
 class IngestRun:
     run_id: str
-    connector_name: str
+    connector_name: str | None = None
     connector_version: str | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
+    used_capture_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -77,6 +82,15 @@ class Capture:
     source_id: str | None = None
     run_id: str | None = None
     retrieved_at: datetime | None = None
+    content_digest: str | None = None
+    # The S-6-gated upstream reference (statements.upstream_block vocabulary):
+    # ``full_url`` carries upstream_url; ``host_only`` carries host + a path
+    # hash; ``withheld_by_policy``/``no_upstream_url_recorded`` carry only the
+    # status token — the URL itself is never emitted where S-6 forbids it.
+    upstream_status: str | None = None
+    upstream_url: str | None = None
+    upstream_host: str | None = None
+    upstream_path_sha256: str | None = None
 
 
 @dataclass(frozen=True)
@@ -174,7 +188,12 @@ def build_prov_graph(lineage: Lineage) -> Graph:
     for run in lineage.runs:
         node = run_uri(run.run_id)
         g.add((node, RDF.type, PROV.Activity))
-        g.add((node, PROV.wasAssociatedWith, connector_uri(run.connector_name)))
+        if run.connector_name is not None:
+            g.add((node, PROV.wasAssociatedWith, connector_uri(run.connector_name)))
+        if run.connector_version is not None:
+            g.add((node, SIG.version, Literal(run.connector_version)))
+        for used in run.used_capture_ids:
+            g.add((node, PROV.used, capture_uri(used)))
         _instant(g, node, PROV.startedAtTime, run.started_at)
         _instant(g, node, PROV.endedAtTime, run.finished_at)
     for extraction in lineage.extractions:
@@ -195,6 +214,16 @@ def build_prov_graph(lineage: Lineage) -> Graph:
         if capture.run_id is not None:
             g.add((node, PROV.wasGeneratedBy, run_uri(capture.run_id)))
         _instant(g, node, PROV.generatedAtTime, capture.retrieved_at)
+        if capture.content_digest is not None:
+            g.add((node, SIG.contentDigest, Literal(capture.content_digest)))
+        if capture.upstream_status is not None:
+            g.add((node, SIG.upstreamStatus, Literal(capture.upstream_status)))
+        if capture.upstream_url is not None:
+            g.add((node, SIG.upstreamUrl, URIRef(capture.upstream_url)))
+        if capture.upstream_host is not None:
+            g.add((node, SIG.upstreamHost, Literal(capture.upstream_host)))
+        if capture.upstream_path_sha256 is not None:
+            g.add((node, SIG.upstreamPathSha256, Literal(capture.upstream_path_sha256)))
     for claim in lineage.claims:
         node = claim_uri(claim.claim_id)
         g.add((node, RDF.type, PROV.Entity))
@@ -274,6 +303,10 @@ def validate_prov_graph(graph: Graph) -> None:
             raise ProvValidationError(
                 f"prov:wasAttributedTo must relate an Entity to an Agent: {s} -> {o}"
             )
+    # used relates Activity -> Entity.
+    for s, _p, o in graph.triples((None, PROV.used, None)):
+        if _kind(s) != "Activity" or _kind(o) != "Entity":
+            raise ProvValidationError(f"prov:used must relate an Activity to an Entity: {s} -> {o}")
 
 
 # --- serialisation ------------------------------------------------------------

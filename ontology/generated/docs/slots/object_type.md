@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/object_type](https://ontology.sig-project.org/schema/slot/object_type)
+URI: [sig:slot/object_type](https://ontology.surveillancegraph.org/schema/slot/object_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/object_type](https://ontology.sig-project.org/schema/slot/object_
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/object_type](https://ontology.sig-project.org/schema/slot/object_
 <details>
 ```yaml
 name: object_type
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

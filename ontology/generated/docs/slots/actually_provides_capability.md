@@ -14,7 +14,7 @@ _Evidentiary; never silently inferred from product default (SIG-ONTO-018)._
 
 
 
-URI: [sig:slot/actually_provides_capability](https://ontology.sig-project.org/schema/slot/actually_provides_capability)
+URI: [sig:slot/actually_provides_capability](https://ontology.surveillancegraph.org/schema/slot/actually_provides_capability)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/actually_provides_capability](https://ontology.sig-project.org/sc
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/actually_provides_capability](https://ontology.sig-project.org/sc
 ```yaml
 name: actually_provides_capability
 description: Evidentiary; never silently inferred from product default (SIG-ONTO-018).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

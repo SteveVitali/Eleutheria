@@ -14,7 +14,7 @@ _The OCFL object the capture's bytes were committed under._
 
 
 
-URI: [sig:slot/ocfl_object_id](https://ontology.sig-project.org/schema/slot/ocfl_object_id)
+URI: [sig:slot/ocfl_object_id](https://ontology.surveillancegraph.org/schema/slot/ocfl_object_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/ocfl_object_id](https://ontology.sig-project.org/schema/slot/ocfl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/ocfl_object_id](https://ontology.sig-project.org/schema/slot/ocfl
 ```yaml
 name: ocfl_object_id
 description: The OCFL object the capture's bytes were committed under.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

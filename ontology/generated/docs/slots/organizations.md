@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/organizations](https://ontology.sig-project.org/schema/slot/organizations)
+URI: [sig:slot/organizations](https://ontology.surveillancegraph.org/schema/slot/organizations)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/organizations](https://ontology.sig-project.org/schema/slot/organ
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/organizations](https://ontology.sig-project.org/schema/slot/organ
 <details>
 ```yaml
 name: organizations
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

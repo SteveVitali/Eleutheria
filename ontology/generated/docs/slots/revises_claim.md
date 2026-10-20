@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/revises_claim](https://ontology.sig-project.org/schema/slot/revises_claim)
+URI: [sig:slot/revises_claim](https://ontology.surveillancegraph.org/schema/slot/revises_claim)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/revises_claim](https://ontology.sig-project.org/schema/slot/revis
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/revises_claim](https://ontology.sig-project.org/schema/slot/revis
 <details>
 ```yaml
 name: revises_claim
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

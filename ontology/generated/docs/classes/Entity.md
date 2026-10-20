@@ -16,7 +16,7 @@ _Abstract base — every entity has identity (§3.1 defining standard)._
 * __NOTE__: this is an abstract class and should not be instantiated directly
 
 
-URI: [sig:class/Entity](https://ontology.sig-project.org/schema/class/Entity)
+URI: [sig:class/Entity](https://ontology.surveillancegraph.org/schema/class/Entity)
 
 
 
@@ -162,7 +162,7 @@ URI: [sig:class/Entity](https://ontology.sig-project.org/schema/class/Entity)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -189,7 +189,7 @@ URI: [sig:class/Entity](https://ontology.sig-project.org/schema/class/Entity)
 ```yaml
 name: Entity
 description: Abstract base — every entity has identity (§3.1 defining standard).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 abstract: true
 slots:
@@ -204,14 +204,14 @@ slots:
 ```yaml
 name: Entity
 description: Abstract base — every entity has identity (§3.1 defining standard).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 abstract: true
 attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Entity

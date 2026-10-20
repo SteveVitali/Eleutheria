@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/resolved_value](https://ontology.sig-project.org/schema/slot/resolved_value)
+URI: [sig:slot/resolved_value](https://ontology.surveillancegraph.org/schema/slot/resolved_value)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/resolved_value](https://ontology.sig-project.org/schema/slot/reso
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/resolved_value](https://ontology.sig-project.org/schema/slot/reso
 <details>
 ```yaml
 name: resolved_value
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Resolution
 domain_of:

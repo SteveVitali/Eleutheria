@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "11350b24e17a4d8932e26126acb01f841ea30ea9",
+  "input_commit": "cec9402a57a458c82f3d8cb4c2f43bbbe17a31b1",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "d1c6b2bdd2f9fd44d07f1db4ccd4e0552f5c573dd8dcf64cbb0b992b5faf2b2c"
+      "sha256": "1e3e3f6baa612bb1034fe42a8f0c54ac8ba94953dc9643bf1adabaabeff3e5ee"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -857,8 +857,12 @@
       "sha256": "3bbba28347847cc7a37c88789506cd4fa4dbe424a9e8c2730d23c17913adc3c3"
     },
     {
+      "path": "docs/adr/ADR-217-iri-base-on-the-owned-domain-alias-map-and-compat-note.md",
+      "sha256": "e1f389576e7a7416e4386e2e8b1dbf1443b76302ece58070682f4ea119da3702"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "b90b14d364ff1f5279c6603e91a20dae4692e039e8ffdcb2e8564797b986de0a"
+      "sha256": "170ca343b7f13b701bb5574ddc649dd14852aa200cfac9a4eb162c41c475a0bd"
     },
     {
       "path": "docs/build/BACKLOG.csv",
@@ -950,7 +954,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "a1184dda2f19ad699ddfb0bf3d06a4b29a62d0fa408ec3c98af6786478d24cf4"
+      "sha256": "f74615d29565d7b0d6d18e9875732e5d1c20772090ba3f1546f960783abbf59f"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2063,6 +2067,10 @@
     {
       "path": "docs/build/runs/P35.38a.md",
       "sha256": "c8f94d0d01985d4c97a18eaae6f8079553c52bcf18008d88ca27f9561792f3fb"
+    },
+    {
+      "path": "docs/build/runs/P35.38b.md",
+      "sha256": "3768e513f6d869dbb83e90c62294d346d1379b027932b4afcb32950ae46b6474"
     },
     {
       "path": "docs/build/runs/P35.4.md",
@@ -3686,7 +3694,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "137e21f43bcacf69c988e4405113daf30deff065f75a9fa2217ae5110e7a9fed"
+      "sha256": "1c0fdde89cce9237e83eff4ad1fc0ccc4baae3353e64064126bb058bccccbca2"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

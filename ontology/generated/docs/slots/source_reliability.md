@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/source_reliability](https://ontology.sig-project.org/schema/slot/source_reliability)
+URI: [sig:slot/source_reliability](https://ontology.surveillancegraph.org/schema/slot/source_reliability)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/source_reliability](https://ontology.sig-project.org/schema/slot/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/source_reliability](https://ontology.sig-project.org/schema/slot/
 <details>
 ```yaml
 name: source_reliability
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/award_date](https://ontology.sig-project.org/schema/slot/award_date)
+URI: [sig:slot/award_date](https://ontology.surveillancegraph.org/schema/slot/award_date)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/award_date](https://ontology.sig-project.org/schema/slot/award_da
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/award_date](https://ontology.sig-project.org/schema/slot/award_da
 <details>
 ```yaml
 name: award_date
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: FundingInstrument
 domain_of:

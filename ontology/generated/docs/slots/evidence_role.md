@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/evidence_role](https://ontology.sig-project.org/schema/slot/evidence_role)
+URI: [sig:slot/evidence_role](https://ontology.surveillancegraph.org/schema/slot/evidence_role)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/evidence_role](https://ontology.sig-project.org/schema/slot/evide
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/evidence_role](https://ontology.sig-project.org/schema/slot/evide
 <details>
 ```yaml
 name: evidence_role
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

@@ -14,7 +14,7 @@ _Qualified by system (osm.node, osm.way, osm.relation, deflock.id, ...)._
 
 
 
-URI: [sig:slot/upstream_id](https://ontology.sig-project.org/schema/slot/upstream_id)
+URI: [sig:slot/upstream_id](https://ontology.surveillancegraph.org/schema/slot/upstream_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/upstream_id](https://ontology.sig-project.org/schema/slot/upstrea
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/upstream_id](https://ontology.sig-project.org/schema/slot/upstrea
 ```yaml
 name: upstream_id
 description: Qualified by system (osm.node, osm.way, osm.relation, deflock.id, ...).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/federal_sharing_enabled](https://ontology.sig-project.org/schema/slot/federal_sharing_enabled)
+URI: [sig:slot/federal_sharing_enabled](https://ontology.surveillancegraph.org/schema/slot/federal_sharing_enabled)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/federal_sharing_enabled](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/federal_sharing_enabled](https://ontology.sig-project.org/schema/
 <details>
 ```yaml
 name: federal_sharing_enabled
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

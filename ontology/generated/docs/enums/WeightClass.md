@@ -15,7 +15,7 @@ _Composed weight class W (§10.6)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/WeightClass](https://ontology.sig-project.org/schema/enum/WeightClass)
+URI: [sig:enum/WeightClass](https://ontology.surveillancegraph.org/schema/enum/WeightClass)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -53,7 +53,7 @@ URI: [sig:enum/WeightClass](https://ontology.sig-project.org/schema/enum/WeightC
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ URI: [sig:enum/WeightClass](https://ontology.sig-project.org/schema/enum/WeightC
 ```yaml
 name: WeightClass
 description: Composed weight class W (§10.6).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   W0:

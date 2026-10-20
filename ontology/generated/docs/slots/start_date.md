@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/start_date](https://ontology.sig-project.org/schema/slot/start_date)
+URI: [sig:slot/start_date](https://ontology.surveillancegraph.org/schema/slot/start_date)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/start_date](https://ontology.sig-project.org/schema/slot/start_da
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/start_date](https://ontology.sig-project.org/schema/slot/start_da
 <details>
 ```yaml
 name: start_date
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contract
 domain_of:

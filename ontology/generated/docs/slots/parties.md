@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/parties](https://ontology.sig-project.org/schema/slot/parties)
+URI: [sig:slot/parties](https://ontology.surveillancegraph.org/schema/slot/parties)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/parties](https://ontology.sig-project.org/schema/slot/parties)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/parties](https://ontology.sig-project.org/schema/slot/parties)
 <details>
 ```yaml
 name: parties
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalProceeding
 domain_of:

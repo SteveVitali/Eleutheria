@@ -15,7 +15,7 @@ _DataSystem scope (§11.10)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/SystemScope](https://ontology.sig-project.org/schema/enum/SystemScope)
+URI: [sig:enum/SystemScope](https://ontology.surveillancegraph.org/schema/enum/SystemScope)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -55,7 +55,7 @@ URI: [sig:enum/SystemScope](https://ontology.sig-project.org/schema/enum/SystemS
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -68,7 +68,7 @@ URI: [sig:enum/SystemScope](https://ontology.sig-project.org/schema/enum/SystemS
 ```yaml
 name: SystemScope
 description: DataSystem scope (§11.10).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   agency_local:

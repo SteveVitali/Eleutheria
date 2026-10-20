@@ -36,6 +36,12 @@ OCFL_VERSION = "ocfl_1.1"
 OCFL_OBJECT_VERSION = "ocfl_object_1.1"
 INVENTORY_TYPE = "https://ocfl.io/1.1/spec/#inventory"
 DIGEST_ALGORITHM = "sha512"
+
+#: The one declared identity base the default OCFL inventory ``user.address``
+#: mints under (P35.38b / ADR-217 — owned domain; pre-cut addresses under the
+#: retired `sig-project` host stay valid names via
+#: docs/governance/iri-base-alias-map.json).
+DEFAULT_USER_ADDRESS = "https://surveillancegraph.org"
 CONTENT_DIRECTORY = "content"
 # Registered OCFL storage-layout extension (hashed + id n-tuple); recorded in
 # ocfl_layout.json so a third party can locate an object from its id alone.
@@ -185,7 +191,7 @@ class OcflStore:
             "created": created_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "state": state,
             "message": message,
-            "user": user or {"name": "sig-evidence", "address": "https://sig-project.org"},
+            "user": user or {"name": "sig-evidence", "address": DEFAULT_USER_ADDRESS},
         }
 
         inventory = {

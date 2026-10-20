@@ -14,7 +14,7 @@ _e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA._
 
 
 
-URI: [sig:slot/program_name](https://ontology.sig-project.org/schema/slot/program_name)
+URI: [sig:slot/program_name](https://ontology.surveillancegraph.org/schema/slot/program_name)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/program_name](https://ontology.sig-project.org/schema/slot/progra
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/program_name](https://ontology.sig-project.org/schema/slot/progra
 ```yaml
 name: program_name
 description: e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: FundingInstrument
 domain_of:

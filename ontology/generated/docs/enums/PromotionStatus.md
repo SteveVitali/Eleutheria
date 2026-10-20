@@ -15,7 +15,7 @@ _Candidate-asset promotion lifecycle (§11.9, §43.5)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/PromotionStatus](https://ontology.sig-project.org/schema/enum/PromotionStatus)
+URI: [sig:enum/PromotionStatus](https://ontology.surveillancegraph.org/schema/enum/PromotionStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -53,7 +53,7 @@ URI: [sig:enum/PromotionStatus](https://ontology.sig-project.org/schema/enum/Pro
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ URI: [sig:enum/PromotionStatus](https://ontology.sig-project.org/schema/enum/Pro
 ```yaml
 name: PromotionStatus
 description: Candidate-asset promotion lifecycle (§11.9, §43.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   unreviewed:

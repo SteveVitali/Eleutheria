@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/date](https://ontology.sig-project.org/schema/slot/date)
+URI: [sig:slot/date](https://ontology.surveillancegraph.org/schema/slot/date)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/date](https://ontology.sig-project.org/schema/slot/date)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/date](https://ontology.sig-project.org/schema/slot/date)
 <details>
 ```yaml
 name: date
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

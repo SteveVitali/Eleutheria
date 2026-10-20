@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/confirmation_status](https://ontology.sig-project.org/schema/slot/confirmation_status)
+URI: [sig:slot/confirmation_status](https://ontology.surveillancegraph.org/schema/slot/confirmation_status)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/confirmation_status](https://ontology.sig-project.org/schema/slot
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/confirmation_status](https://ontology.sig-project.org/schema/slot
 <details>
 ```yaml
 name: confirmation_status
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

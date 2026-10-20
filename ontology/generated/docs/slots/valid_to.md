@@ -14,7 +14,7 @@ _When it ceased to be true; distinct from unknown vs ongoing (§9.5)._
 
 
 
-URI: [sig:slot/valid_to](https://ontology.sig-project.org/schema/slot/valid_to)
+URI: [sig:slot/valid_to](https://ontology.surveillancegraph.org/schema/slot/valid_to)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/valid_to](https://ontology.sig-project.org/schema/slot/valid_to)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/valid_to](https://ontology.sig-project.org/schema/slot/valid_to)
 ```yaml
 name: valid_to
 description: When it ceased to be true; distinct from unknown vs ongoing (§9.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 domain_of:
 - Jurisdiction

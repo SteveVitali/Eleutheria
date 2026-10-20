@@ -15,7 +15,7 @@ _Wikidata-style rank among competing claims of a (subject, predicate)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ClaimRank](https://ontology.sig-project.org/schema/enum/ClaimRank)
+URI: [sig:enum/ClaimRank](https://ontology.surveillancegraph.org/schema/enum/ClaimRank)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -51,7 +51,7 @@ URI: [sig:enum/ClaimRank](https://ontology.sig-project.org/schema/enum/ClaimRank
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -64,7 +64,7 @@ URI: [sig:enum/ClaimRank](https://ontology.sig-project.org/schema/enum/ClaimRank
 ```yaml
 name: ClaimRank
 description: Wikidata-style rank among competing claims of a (subject, predicate).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   preferred:

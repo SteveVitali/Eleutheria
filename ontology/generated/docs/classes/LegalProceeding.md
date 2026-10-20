@@ -14,7 +14,7 @@ _Split from AccountabilityEvent — dockets, parties, filings, posture (§11.18)
 
 
 
-URI: [sig:class/LegalProceeding](https://ontology.sig-project.org/schema/class/LegalProceeding)
+URI: [sig:class/LegalProceeding](https://ontology.surveillancegraph.org/schema/class/LegalProceeding)
 
 
 
@@ -118,7 +118,7 @@ URI: [sig:class/LegalProceeding](https://ontology.sig-project.org/schema/class/L
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -145,34 +145,34 @@ URI: [sig:class/LegalProceeding](https://ontology.sig-project.org/schema/class/L
 ```yaml
 name: LegalProceeding
 description: Split from AccountabilityEvent — dockets, parties, filings, posture (§11.18).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   court:
     name: court
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
     range: Organization
   docket_number:
     name: docket_number
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
     range: string
   case_name:
     name: case_name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
     range: string
   parties:
     name: parties
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
@@ -180,7 +180,7 @@ attributes:
     multivalued: true
   party_role:
     name: party_role
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
@@ -188,7 +188,7 @@ attributes:
     multivalued: true
   filed_date:
     name: filed_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
@@ -196,28 +196,28 @@ attributes:
     range: edtf
   disposition_date:
     name: disposition_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
     range: edtf
   posture:
     name: posture
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
     range: ProceedingPosture
   courtlistener_id:
     name: courtlistener_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
     range: string
   recap_id:
     name: recap_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - LegalProceeding
@@ -232,13 +232,13 @@ attributes:
 ```yaml
 name: LegalProceeding
 description: Split from AccountabilityEvent — dockets, parties, filings, posture (§11.18).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   court:
     name: court
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -246,7 +246,7 @@ attributes:
     range: Organization
   docket_number:
     name: docket_number
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -254,7 +254,7 @@ attributes:
     range: string
   case_name:
     name: case_name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -262,7 +262,7 @@ attributes:
     range: string
   parties:
     name: parties
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -271,7 +271,7 @@ attributes:
     multivalued: true
   party_role:
     name: party_role
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -280,7 +280,7 @@ attributes:
     multivalued: true
   filed_date:
     name: filed_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -289,7 +289,7 @@ attributes:
     range: edtf
   disposition_date:
     name: disposition_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -297,7 +297,7 @@ attributes:
     range: edtf
   posture:
     name: posture
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -305,7 +305,7 @@ attributes:
     range: ProceedingPosture
   courtlistener_id:
     name: courtlistener_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -313,7 +313,7 @@ attributes:
     range: string
   recap_id:
     name: recap_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: LegalProceeding
     domain_of:
@@ -322,7 +322,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: LegalProceeding

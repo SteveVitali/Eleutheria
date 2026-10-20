@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/audit_case_code_required](https://ontology.sig-project.org/schema/slot/audit_case_code_required)
+URI: [sig:slot/audit_case_code_required](https://ontology.surveillancegraph.org/schema/slot/audit_case_code_required)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/audit_case_code_required](https://ontology.sig-project.org/schema
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/audit_case_code_required](https://ontology.sig-project.org/schema
 <details>
 ```yaml
 name: audit_case_code_required
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

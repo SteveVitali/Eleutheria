@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/renewal_options](https://ontology.sig-project.org/schema/slot/renewal_options)
+URI: [sig:slot/renewal_options](https://ontology.surveillancegraph.org/schema/slot/renewal_options)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/renewal_options](https://ontology.sig-project.org/schema/slot/ren
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/renewal_options](https://ontology.sig-project.org/schema/slot/ren
 <details>
 ```yaml
 name: renewal_options
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contract
 domain_of:

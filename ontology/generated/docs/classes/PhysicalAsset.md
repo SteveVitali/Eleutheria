@@ -14,7 +14,7 @@ _A field-observed device; geometry is OPTIONAL and operator absence is a first-c
 
 
 
-URI: [sig:class/PhysicalAsset](https://ontology.sig-project.org/schema/class/PhysicalAsset)
+URI: [sig:class/PhysicalAsset](https://ontology.surveillancegraph.org/schema/class/PhysicalAsset)
 
 
 
@@ -142,7 +142,7 @@ URI: [sig:class/PhysicalAsset](https://ontology.sig-project.org/schema/class/Phy
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -171,14 +171,14 @@ name: PhysicalAsset
 description: A field-observed device; geometry is OPTIONAL and operator absence is
   a first-class countable state (§11.8, SIG-ONTO-027/028). Accommodates ways and relations,
   not only nodes, and MUST NOT force sensors into a camera abstraction.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   asset_type:
     name: asset_type
     description: A Technology reference, not a free string.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -186,28 +186,28 @@ attributes:
   geometry:
     name: geometry
     description: Optional (SIG-GEO-004).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
     range: geometry_wkt
   mobility:
     name: mobility
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
     range: Mobility
   manufacturer:
     name: manufacturer
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
     range: Organization
   model:
     name: model
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -215,7 +215,7 @@ attributes:
   deployment:
     name: deployment
     description: May be absent — the orphaned-device case.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -223,14 +223,14 @@ attributes:
     range: Deployment
   first_observed:
     name: first_observed
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
     range: datetime
   last_observed:
     name: last_observed
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -239,7 +239,7 @@ attributes:
     name: upstream_id
     description: Qualified by system (osm.node, osm.way, osm.relation, deflock.id,
       ...).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -247,14 +247,14 @@ attributes:
     multivalued: true
   osm_version:
     name: osm_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
     range: integer
   sensitivity_tier:
     name: sensitivity_tier
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -262,7 +262,7 @@ attributes:
     range: string
   confirmation_status:
     name: confirmation_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - PhysicalAsset
@@ -279,14 +279,14 @@ name: PhysicalAsset
 description: A field-observed device; geometry is OPTIONAL and operator absence is
   a first-class countable state (§11.8, SIG-ONTO-027/028). Accommodates ways and relations,
   not only nodes, and MUST NOT force sensors into a camera abstraction.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   asset_type:
     name: asset_type
     description: A Technology reference, not a free string.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -295,7 +295,7 @@ attributes:
   geometry:
     name: geometry
     description: Optional (SIG-GEO-004).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -303,7 +303,7 @@ attributes:
     range: geometry_wkt
   mobility:
     name: mobility
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -311,7 +311,7 @@ attributes:
     range: Mobility
   manufacturer:
     name: manufacturer
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -319,7 +319,7 @@ attributes:
     range: Organization
   model:
     name: model
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -328,7 +328,7 @@ attributes:
   deployment:
     name: deployment
     description: May be absent — the orphaned-device case.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -337,7 +337,7 @@ attributes:
     range: Deployment
   first_observed:
     name: first_observed
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -345,7 +345,7 @@ attributes:
     range: datetime
   last_observed:
     name: last_observed
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -355,7 +355,7 @@ attributes:
     name: upstream_id
     description: Qualified by system (osm.node, osm.way, osm.relation, deflock.id,
       ...).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -364,7 +364,7 @@ attributes:
     multivalued: true
   osm_version:
     name: osm_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -372,7 +372,7 @@ attributes:
     range: integer
   sensitivity_tier:
     name: sensitivity_tier
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -381,7 +381,7 @@ attributes:
     range: string
   confirmation_status:
     name: confirmation_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: PhysicalAsset
     domain_of:
@@ -390,7 +390,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: PhysicalAsset

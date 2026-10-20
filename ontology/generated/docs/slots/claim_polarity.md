@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/claim_polarity](https://ontology.sig-project.org/schema/slot/claim_polarity)
+URI: [sig:slot/claim_polarity](https://ontology.surveillancegraph.org/schema/slot/claim_polarity)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/claim_polarity](https://ontology.sig-project.org/schema/slot/clai
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/claim_polarity](https://ontology.sig-project.org/schema/slot/clai
 <details>
 ```yaml
 name: claim_polarity
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

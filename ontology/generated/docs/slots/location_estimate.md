@@ -14,7 +14,7 @@ _With estimate_radius_m — never a bare point._
 
 
 
-URI: [sig:slot/location_estimate](https://ontology.sig-project.org/schema/slot/location_estimate)
+URI: [sig:slot/location_estimate](https://ontology.surveillancegraph.org/schema/slot/location_estimate)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/location_estimate](https://ontology.sig-project.org/schema/slot/l
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/location_estimate](https://ontology.sig-project.org/schema/slot/l
 ```yaml
 name: location_estimate
 description: With estimate_radius_m — never a bare point.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

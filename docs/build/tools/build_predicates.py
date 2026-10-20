@@ -69,7 +69,7 @@ P=[
  ("observed_use_edge",VOL,"1mo",UNI,"boolean","single","Observed-use sharing edge (windowed)."),
  ("asset_data_controller",MOD,"12mo",NEV,"uriorcurie","single","Contested data-controller assertion — recorded, not adjudicated (§12.4)."),
 ]
-BASE="https://ontology.sig-project.org/vocab/predicate/1.0.0/"
+BASE="https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/"
 rows=[]
 for slug,vol,hl,strat,dt,card,defn in P:
     d=dict(DEFAULT); d.update(MATRIX.get(slug,{}))

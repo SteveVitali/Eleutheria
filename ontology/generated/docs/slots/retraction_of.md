@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/retraction_of](https://ontology.sig-project.org/schema/slot/retraction_of)
+URI: [sig:slot/retraction_of](https://ontology.surveillancegraph.org/schema/slot/retraction_of)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/retraction_of](https://ontology.sig-project.org/schema/slot/retra
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/retraction_of](https://ontology.sig-project.org/schema/slot/retra
 <details>
 ```yaml
 name: retraction_of
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

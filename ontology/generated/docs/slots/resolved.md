@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/resolved](https://ontology.sig-project.org/schema/slot/resolved)
+URI: [sig:slot/resolved](https://ontology.surveillancegraph.org/schema/slot/resolved)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/resolved](https://ontology.sig-project.org/schema/slot/resolved)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/resolved](https://ontology.sig-project.org/schema/slot/resolved)
 <details>
 ```yaml
 name: resolved
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ResearchTask
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/address](https://ontology.sig-project.org/schema/slot/address)
+URI: [sig:slot/address](https://ontology.surveillancegraph.org/schema/slot/address)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/address](https://ontology.sig-project.org/schema/slot/address)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/address](https://ontology.sig-project.org/schema/slot/address)
 <details>
 ```yaml
 name: address
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

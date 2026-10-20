@@ -14,7 +14,7 @@ _[NEW] RF/heuristic leads that MUST live in a separate entity type and MUST NOT 
 
 
 
-URI: [sig:class/CandidateAsset](https://ontology.sig-project.org/schema/class/CandidateAsset)
+URI: [sig:class/CandidateAsset](https://ontology.surveillancegraph.org/schema/class/CandidateAsset)
 
 
 
@@ -109,7 +109,7 @@ URI: [sig:class/CandidateAsset](https://ontology.sig-project.org/schema/class/Ca
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -137,13 +137,13 @@ URI: [sig:class/CandidateAsset](https://ontology.sig-project.org/schema/class/Ca
 name: CandidateAsset
 description: '[NEW] RF/heuristic leads that MUST live in a separate entity type and
   MUST NOT appear in any public device layer until promoted under §43.5 (§11.9, SIG-ONTO-029/030).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   detection_method:
     name: detection_method
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
@@ -151,14 +151,14 @@ attributes:
   location_estimate:
     name: location_estimate
     description: With estimate_radius_m — never a bare point.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
     range: geometry_wkt
   estimate_radius_m:
     name: estimate_radius_m
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
@@ -166,21 +166,21 @@ attributes:
   identifier_prefix:
     name: identifier_prefix
     description: OUI or similar; never a full MAC.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
     range: string
   observation_count:
     name: observation_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
     range: integer
   promotion_status:
     name: promotion_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
@@ -188,7 +188,7 @@ attributes:
   residential_parcel_flag:
     name: residential_parcel_flag
     description: A true value bars publication outright (§43.5).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CandidateAsset
@@ -204,13 +204,13 @@ attributes:
 name: CandidateAsset
 description: '[NEW] RF/heuristic leads that MUST live in a separate entity type and
   MUST NOT appear in any public device layer until promoted under §43.5 (§11.9, SIG-ONTO-029/030).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   detection_method:
     name: detection_method
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -219,7 +219,7 @@ attributes:
   location_estimate:
     name: location_estimate
     description: With estimate_radius_m — never a bare point.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -227,7 +227,7 @@ attributes:
     range: geometry_wkt
   estimate_radius_m:
     name: estimate_radius_m
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -236,7 +236,7 @@ attributes:
   identifier_prefix:
     name: identifier_prefix
     description: OUI or similar; never a full MAC.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -244,7 +244,7 @@ attributes:
     range: string
   observation_count:
     name: observation_count
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -252,7 +252,7 @@ attributes:
     range: integer
   promotion_status:
     name: promotion_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -261,7 +261,7 @@ attributes:
   residential_parcel_flag:
     name: residential_parcel_flag
     description: A true value bars publication outright (§43.5).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CandidateAsset
     domain_of:
@@ -270,7 +270,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: CandidateAsset

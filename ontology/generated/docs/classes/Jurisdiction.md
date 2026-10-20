@@ -14,7 +14,7 @@ _[NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable
 
 
 
-URI: [sig:class/Jurisdiction](https://ontology.sig-project.org/schema/class/Jurisdiction)
+URI: [sig:class/Jurisdiction](https://ontology.surveillancegraph.org/schema/class/Jurisdiction)
 
 
 
@@ -131,7 +131,7 @@ URI: [sig:class/Jurisdiction](https://ontology.sig-project.org/schema/class/Juri
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -159,13 +159,13 @@ URI: [sig:class/Jurisdiction](https://ontology.sig-project.org/schema/class/Juri
 name: Jurisdiction
 description: '[NEW] A first-class jurisdiction with a self-referential hierarchy,
   a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   jurisdiction_type:
     name: jurisdiction_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -173,7 +173,7 @@ attributes:
   parent_jurisdiction:
     name: parent_jurisdiction
     description: Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -183,7 +183,7 @@ attributes:
     name: code_system
     description: Repeatable code-system identifiers (us.census.geoid, iso.3166-2,
       fr.insee, ...).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -191,7 +191,7 @@ attributes:
     multivalued: true
   code:
     name: code
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -200,21 +200,21 @@ attributes:
   boundary:
     name: boundary
     description: MultiPolygon, 4326.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
     range: geometry_wkt
   boundary_source:
     name: boundary_source
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
     range: uriorcurie
   name:
     name: name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -223,7 +223,7 @@ attributes:
   name_lang:
     name: name_lang
     description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -235,7 +235,7 @@ attributes:
     description: Repeatable qualifier naming the transliteration scheme a romanised/
       transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated
       name carries it so the original script stays recoverable (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
@@ -244,7 +244,7 @@ attributes:
     multivalued: true
   valid_from:
     name: valid_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -253,7 +253,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -271,13 +271,13 @@ attributes:
 name: Jurisdiction
 description: '[NEW] A first-class jurisdiction with a self-referential hierarchy,
   a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   jurisdiction_type:
     name: jurisdiction_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -286,7 +286,7 @@ attributes:
   parent_jurisdiction:
     name: parent_jurisdiction
     description: Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -297,7 +297,7 @@ attributes:
     name: code_system
     description: Repeatable code-system identifiers (us.census.geoid, iso.3166-2,
       fr.insee, ...).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -306,7 +306,7 @@ attributes:
     multivalued: true
   code:
     name: code
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -316,7 +316,7 @@ attributes:
   boundary:
     name: boundary
     description: MultiPolygon, 4326.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -324,7 +324,7 @@ attributes:
     range: geometry_wkt
   boundary_source:
     name: boundary_source
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -332,7 +332,7 @@ attributes:
     range: uriorcurie
   name:
     name: name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -342,7 +342,7 @@ attributes:
   name_lang:
     name: name_lang
     description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -355,7 +355,7 @@ attributes:
     description: Repeatable qualifier naming the transliteration scheme a romanised/
       transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated
       name carries it so the original script stays recoverable (SIG-ONTO-069).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Jurisdiction
     domain_of:
@@ -365,7 +365,7 @@ attributes:
     multivalued: true
   valid_from:
     name: valid_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Jurisdiction
     domain_of:
     - Jurisdiction
@@ -375,7 +375,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Jurisdiction
     domain_of:
     - Jurisdiction
@@ -386,7 +386,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Jurisdiction

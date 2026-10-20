@@ -14,7 +14,7 @@ _A first-class, addressable contradiction object (§31)._
 
 
 
-URI: [sig:class/Contradiction](https://ontology.sig-project.org/schema/class/Contradiction)
+URI: [sig:class/Contradiction](https://ontology.surveillancegraph.org/schema/class/Contradiction)
 
 
 
@@ -88,7 +88,7 @@ URI: [sig:class/Contradiction](https://ontology.sig-project.org/schema/class/Con
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -115,13 +115,13 @@ URI: [sig:class/Contradiction](https://ontology.sig-project.org/schema/class/Con
 ```yaml
 name: Contradiction
 description: A first-class, addressable contradiction object (§31).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - Resolution
@@ -130,7 +130,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - Resolution
@@ -139,7 +139,7 @@ attributes:
     range: predicate_code
   state:
     name: state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contradiction
@@ -154,13 +154,13 @@ attributes:
 ```yaml
 name: Contradiction
 description: A first-class, addressable contradiction object (§31).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Contradiction
     domain_of:
     - Claim
@@ -170,7 +170,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Contradiction
     domain_of:
     - Claim
@@ -180,7 +180,7 @@ attributes:
     range: predicate_code
   state:
     name: state
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contradiction
     domain_of:
@@ -189,7 +189,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Contradiction

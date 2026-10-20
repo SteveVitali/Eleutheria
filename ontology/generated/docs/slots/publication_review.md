@@ -14,7 +14,7 @@ _Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013)
 
 
 
-URI: [sig:slot/publication_review](https://ontology.sig-project.org/schema/slot/publication_review)
+URI: [sig:slot/publication_review](https://ontology.surveillancegraph.org/schema/slot/publication_review)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/publication_review](https://ontology.sig-project.org/schema/slot/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/publication_review](https://ontology.sig-project.org/schema/slot/
 ```yaml
 name: publication_review
 description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

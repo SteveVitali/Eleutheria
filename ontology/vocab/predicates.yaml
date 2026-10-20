@@ -96,7 +96,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Date a contract was signed.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_signed_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -127,7 +127,7 @@ predicates:
   value_datatype: decimal
   cardinality: single
   definition: Monetary value of a contract.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_value
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -158,7 +158,7 @@ predicates:
   value_datatype: integer
   cardinality: single
   definition: Device quantity specified by a contract.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contracted_device_count
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -189,7 +189,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Contract term start.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_start_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -220,7 +220,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Contract term end.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_end_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -251,7 +251,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Citation of a legal instrument.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/statutory_citation
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -282,7 +282,7 @@ predicates:
   value_datatype: decimal
   cardinality: single
   definition: Amount of a funding instrument.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funding_amount
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -313,7 +313,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Named funding program (e.g. Byrne JAG).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funding_program_name
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -344,7 +344,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: USAspending award/sub-award id.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/federal_award_id
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -375,7 +375,7 @@ predicates:
   value_datatype: EpistemicStatus
   cardinality: single
   definition: Epistemic status of an accountability event.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_epistemic_status
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -406,7 +406,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Legal name of an organization (a claim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_legal_name
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -437,7 +437,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: single
   definition: Jurisdiction an organization serves.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_jurisdiction
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -468,7 +468,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: FBI ORI9 identifier.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_ori
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: authoritative_source_wins
@@ -499,7 +499,7 @@ predicates:
   value_datatype: OrganizationType
   cardinality: single
   definition: Organization type.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_type
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -530,7 +530,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: single
   definition: Vendor of a product.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_vendor
   volatility_class: GLACIAL
   half_life: 5y
   resolution_strategy: max_support
@@ -561,7 +561,7 @@ predicates:
   value_datatype: capability_code
   cardinality: multi
   definition: Marketing-level product capabilities (defeasible).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_capabilities
   volatility_class: GLACIAL
   half_life: 5y
   resolution_strategy: max_support
@@ -592,7 +592,7 @@ predicates:
   value_datatype: ProductStatus
   cardinality: single
   definition: Product lifecycle status.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -623,7 +623,7 @@ predicates:
   value_datatype: technology_code
   cardinality: multi
   definition: Technology implemented by a product.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/implements_technology
   volatility_class: GLACIAL
   half_life: 5y
   resolution_strategy: max_support
@@ -654,7 +654,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: multi
   definition: Parent jurisdiction.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/jurisdiction_parent
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -685,7 +685,7 @@ predicates:
   value_datatype: geometry_wkt
   cardinality: single
   definition: Jurisdiction boundary geometry (temporally versioned).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/jurisdiction_boundary
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -716,7 +716,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Whether a deployment exists.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_exists
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -747,7 +747,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: single
   definition: Operator attribution for an asset.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_operator
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -778,7 +778,7 @@ predicates:
   value_datatype: geometry_wkt
   cardinality: single
   definition: Location of a fixed asset.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/fixed_asset_location
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -809,7 +809,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: A value stated in a written policy.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/written_policy_value
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -840,7 +840,7 @@ predicates:
   value_datatype: EnforcementMechanism
   cardinality: single
   definition: Policy enforcement mechanism.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_enforcement_mechanism
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -871,7 +871,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Configured offence-category filter.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/offense_category_filter
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -902,7 +902,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Whether a case code is required for audit.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/audit_case_code_required
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -933,7 +933,7 @@ predicates:
   value_datatype: SystemScope
   cardinality: single
   definition: Scope of a data system.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/data_system_scope
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -964,7 +964,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: multi
   definition: Custodian-vs-collector relationship.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/holds_data_collected_by
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -995,7 +995,7 @@ predicates:
   value_datatype: Role
   cardinality: multi
   definition: Assignment of one of the fourteen roles.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/role_assignment
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -1026,7 +1026,7 @@ predicates:
   value_datatype: geometry_wkt
   cardinality: single
   definition: Estimated location of a candidate asset.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/candidate_location_estimate
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -1057,7 +1057,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Whether an asset exists at a location.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_exists_at_location
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: max_support
@@ -1088,7 +1088,7 @@ predicates:
   value_datatype: ProcurementState
   cardinality: single
   definition: Deployment procurement track state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procurement_state
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -1119,7 +1119,7 @@ predicates:
   value_datatype: AuthorizationState
   cardinality: single
   definition: Deployment authorization track state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorization_state
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -1150,7 +1150,7 @@ predicates:
   value_datatype: duration_iso
   cardinality: single
   definition: Configured retention (duration or bucket).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_retention_days
   volatility_class: MODERATE
   half_life: 9mo
   resolution_strategy: latest_observation_wins
@@ -1181,7 +1181,7 @@ predicates:
   value_datatype: duration_iso
   cardinality: single
   definition: Vendor default retention (inference basis only).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor_default_retention
   volatility_class: MODERATE
   half_life: 9mo
   resolution_strategy: max_support
@@ -1212,7 +1212,7 @@ predicates:
   value_datatype: duration_iso
   cardinality: single
   definition: Retention configured on a data system.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/data_system_retention
   volatility_class: MODERATE
   half_life: 9mo
   resolution_strategy: latest_observation_wins
@@ -1243,7 +1243,7 @@ predicates:
   value_datatype: ProceedingPosture
   cardinality: single
   definition: Legal proceeding posture.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_posture
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -1274,7 +1274,7 @@ predicates:
   value_datatype: RecordsResponseStatus
   cardinality: single
   definition: Records-request response status.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/records_response_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -1305,7 +1305,7 @@ predicates:
   value_datatype: PromotionStatus
   cardinality: single
   definition: Candidate-asset promotion status.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/candidate_promotion_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -1336,7 +1336,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Whether an integration edge is active.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/integration_edge_active
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -1367,7 +1367,7 @@ predicates:
   value_datatype: OperationalState
   cardinality: single
   definition: Deployment operational track state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operational_state
   volatility_class: FAST
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -1398,7 +1398,7 @@ predicates:
   value_datatype: integer
   cardinality: single
   definition: Currently active device count.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/active_device_count
   volatility_class: FAST
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -1432,7 +1432,7 @@ predicates:
   value_datatype: integer
   cardinality: single
   definition: Installed device count.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/installed_device_count
   volatility_class: FAST
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -1463,7 +1463,7 @@ predicates:
   value_datatype: integer
   cardinality: single
   definition: Device quantity actually billed on an invoice (§29.1).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/invoiced_device_count
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -1495,7 +1495,7 @@ predicates:
   cardinality: single
   definition: Independently field-observed and mapped device count; a LOWER BOUND
     only, never an estimate of the true count (§29.1, SIG-RECON-027).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mapped_device_count
   volatility_class: SLOW
   half_life: 12mo
   resolution_strategy: max_support
@@ -1527,7 +1527,7 @@ predicates:
   cardinality: single
   definition: Device count someone stated in public (press release, council
     presentation) (§29.1).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/claimed_device_count
   volatility_class: FAST
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -1558,7 +1558,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: multi
   definition: Configured sharing partners (directional).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_sharing_partner_set
   volatility_class: FAST
   half_life: 4mo
   resolution_strategy: latest_observation_wins
@@ -1596,7 +1596,7 @@ predicates:
     P31.6 / ADR-113 — the partner's portal identifier for portal-sourced edges
     (Eyes on Flock slugs), else a partner-organisation ref under ADR-112's
     identity rules (audit workbooks, the NVLS pooled-lookup vendor constant).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_sharing_partner
   volatility_class: FAST
   half_life: 4mo
   resolution_strategy: latest_observation_wins
@@ -1631,7 +1631,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Configured-access sharing edge state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_access_edge
   volatility_class: FAST
   half_life: 4mo
   resolution_strategy: latest_observation_wins
@@ -1662,7 +1662,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: State lookup toggle.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/state_lookup_enabled
   volatility_class: VOLATILE
   half_life: 2mo
   resolution_strategy: latest_observation_wins
@@ -1693,7 +1693,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: National lookup toggle.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/national_lookup_enabled
   volatility_class: VOLATILE
   half_life: 2mo
   resolution_strategy: latest_observation_wins
@@ -1724,7 +1724,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Federal sharing toggle.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/federal_sharing_enabled
   volatility_class: VOLATILE
   half_life: 2mo
   resolution_strategy: latest_observation_wins
@@ -1755,7 +1755,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Subscribed hotlist topics.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/subscribed_hotlist_topic
   volatility_class: VOLATILE
   half_life: 2mo
   resolution_strategy: latest_observation_wins
@@ -1786,7 +1786,7 @@ predicates:
   value_datatype: integer
   cardinality: single
   definition: Windowed usage count (indexed, not stale — SIG-RECON-011).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/windowed_search_count
   volatility_class: VOLATILE
   half_life: 1mo
   resolution_strategy: interval_union
@@ -1817,7 +1817,7 @@ predicates:
   value_datatype: boolean
   cardinality: single
   definition: Observed-use sharing edge (windowed).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_use_edge
   volatility_class: VOLATILE
   half_life: 1mo
   resolution_strategy: interval_union
@@ -1848,7 +1848,7 @@ predicates:
   value_datatype: uriorcurie
   cardinality: single
   definition: Contested data-controller assertion — recorded, not adjudicated (§12.4).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_data_controller
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: never_resolve
@@ -1879,7 +1879,7 @@ predicates:
   value_datatype: decimal
   cardinality: single
   definition: WGS84 latitude of a registry-listed camera, as published (post-§19.4 tier) by the registry.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_latitude
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -1914,7 +1914,7 @@ predicates:
   value_datatype: decimal
   cardinality: single
   definition: WGS84 longitude of a registry-listed camera, as published (post-§19.4 tier) by the registry.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_longitude
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -1950,7 +1950,7 @@ predicates:
   cardinality: single
   definition: Which registry field(s) or geometry produced the published camera coordinate (extraction
     provenance).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_coordinate_source
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -1981,7 +1981,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: The registry's own key for a camera row (identity-bearing; exact match only).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_external_ref
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2012,7 +2012,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: The issuing source's own record identifier (identity-bearing; exact match only).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/external_id
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2052,7 +2052,7 @@ predicates:
     is distinct from the connector-forbidden `camera_count` device-count
     genre, and Part VIII prohibits the row-level surfaces this predicate
     deliberately replaces.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/enforcement_count
   volatility_class: VOLATILE
   half_life: 6mo
   resolution_strategy: interval_union
@@ -2089,7 +2089,7 @@ predicates:
     operator field (the target's operator key or a feature operator attribute).
     P32.3 / ADR-122: the registry's publisher label is NOT operator evidence —
     it lands on `camera_registry_publisher` instead (categorical).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_operator
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -2122,7 +2122,7 @@ predicates:
   cardinality: single
   definition: Admin-1/country code of the jurisdiction a registry-listed camera sits in, as attributed
     by the registry target (categorical).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_jurisdiction
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -2153,7 +2153,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: County / district named on a registry camera row (categorical).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_county
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -2184,7 +2184,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Roadway named on a registry camera row.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_roadway
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -2215,7 +2215,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Display name / label on a registry camera row.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_name
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -2246,7 +2246,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Facing direction stated on a registry camera row.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_direction
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -2277,7 +2277,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Operational status stated on a registry camera row (as of the capture).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_status
   volatility_class: FAST
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -2308,7 +2308,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Camera type stated on a registry row or OSM camera tag (categorical).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_type
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -2339,7 +2339,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Mount stated on a registry row or OSM camera tag (categorical).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_mount
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -2371,7 +2371,7 @@ predicates:
   cardinality: single
   definition: The purchasing organisation of a contract or procurement notice (§11.11); also written as
     an organisation entity-ref claim (ADR-112).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/buyer
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/buyer
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2404,7 +2404,7 @@ predicates:
   cardinality: multi
   definition: The supplying organisation of a contract or award (§11.11); also written as an organisation
     entity-ref claim (ADR-112).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/seller
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/seller
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2437,7 +2437,7 @@ predicates:
   cardinality: single
   definition: The paying organisation of a funding instrument (§11.12); also written as an organisation
     entity-ref claim (ADR-112).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funder
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funder
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2470,7 +2470,7 @@ predicates:
   cardinality: single
   definition: The receiving party of a funding instrument or award (§11.12); also written as an organisation
     entity-ref claim (ADR-112).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/recipient
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/recipient
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2506,7 +2506,7 @@ predicates:
     vendor per agency aggregate); written as an organisation entity-ref claim
     where the name resolves deterministically (P31.6 / ADR-113, under ADR-112's
     partner-identity rules).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -2538,7 +2538,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Monetary amount a contract, award or notice states, verbatim (§11.11/§11.12).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/amount
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/amount
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2571,7 +2571,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Currency of the stated amount (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/currency
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/currency
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2603,7 +2603,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Date a contract was signed (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/signed_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/signed_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2636,7 +2636,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Contract term start (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/start_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/start_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2669,7 +2669,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Contract term end (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/end_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/end_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2702,7 +2702,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Renewal options a contract states (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/renewal_options
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_options
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2734,7 +2734,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Products or services a contract names, verbatim (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/products
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/products
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2767,7 +2767,7 @@ predicates:
   cardinality: multi
   definition: Quantities a contract states for its products (§11.11); a stated quantity, never a deployed
     count.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/quantities
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/quantities
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2799,7 +2799,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: A document a procurement record links or contains (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/document
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/document
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2831,7 +2831,7 @@ predicates:
   value_datatype: AcquisitionChannel
   cardinality: single
   definition: How the contract was acquired (§11.11 AcquisitionChannel).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_channel
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/acquisition_channel
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2863,7 +2863,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: The cooperative master award a piggyback contract rides (§11.11, SIG-ONTO-032).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/parent_cooperative_contract
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/parent_cooperative_contract
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2895,7 +2895,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: The contract this contract amends (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/amends_contract
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/amends_contract
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2927,7 +2927,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: A dated procurement lifecycle transition (§13.4 ProcurementState).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/lifecycle_transition
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/lifecycle_transition
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -2960,7 +2960,7 @@ predicates:
   value_datatype: FundingInstrumentType
   cardinality: single
   definition: Type of a funding instrument (§11.12 FundingInstrumentType).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/instrument_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/instrument_type
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -2992,7 +2992,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Named funding program of a funding instrument (§11.12).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/program_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/program_name
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3025,7 +3025,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Date a funding instrument was awarded (§11.12).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/award_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/award_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3057,7 +3057,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Period of performance a funding instrument or award states (§11.12).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/period
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/period
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3089,7 +3089,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Conditions a funding instrument states (§11.12).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/conditions
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/conditions
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3121,7 +3121,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Type of a procurement notice as its source states it (solicitation, award notice, ...).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/notice_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_type
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3153,7 +3153,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Date a procurement notice was published.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/posted_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/posted_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3185,7 +3185,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Response deadline a procurement notice states (may be amended).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/response_deadline
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/response_deadline
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -3217,7 +3217,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Title a procurement notice states, verbatim.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/title
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/title
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -3249,7 +3249,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Description a procurement record states, verbatim.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/description
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/description
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -3281,7 +3281,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Place-of-performance literal a notice states (NUTS code or city, verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/place_of_performance
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/place_of_performance
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3313,7 +3313,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Country of a notice's buyer (ISO 3166-1 alpha-2 from the reviewed map).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/country
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/country
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3346,7 +3346,7 @@ predicates:
   cardinality: multi
   definition: The record's own text contains a reviewed literal (the verbatim slice) — a text match, never
     a deployment.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/matched_keyword
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/matched_keyword
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3378,7 +3378,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: A captured document contains a reviewed content-vocabulary term (the verbatim literal).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/content_term
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/content_term
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3410,7 +3410,7 @@ predicates:
   value_datatype: AccountabilityEventType
   cardinality: single
   definition: Type of an accountability event (§11.17).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_type
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3442,7 +3442,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Date of an accountability event (§11.17).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3475,7 +3475,7 @@ predicates:
   cardinality: multi
   definition: Organisations an accountability event names (§11.17); each also written as an organisation
     entity-ref claim (ADR-112).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_organizations
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_organizations
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3507,7 +3507,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Deployments an accountability event names (§11.17), verbatim.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_deployments
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_deployments
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3539,7 +3539,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Technologies an accountability event names (§11.17), verbatim.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_technologies
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_technologies
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3571,7 +3571,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Class of party an accountability event affected (§11.17) — a class, never a named individual.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/affected_party_class
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/affected_party_class
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -3603,7 +3603,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Court of a legal proceeding (§11.18).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_court
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_court
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3635,7 +3635,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Docket number of a legal proceeding (identity-bearing; exact match only).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_docket_number
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_docket_number
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3667,7 +3667,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: Case name of a legal proceeding (§11.18), verbatim.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_case_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_case_name
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3700,7 +3700,7 @@ predicates:
   cardinality: multi
   definition: Parties of a legal proceeding (§11.18), verbatim; never an entity (litigants are routinely
     natural persons, Part VIII).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_parties
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_parties
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3732,7 +3732,7 @@ predicates:
   value_datatype: string
   cardinality: multi
   definition: Role of a party in a legal proceeding (§11.18).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_party_role
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_party_role
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3764,7 +3764,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Filing date of a legal proceeding (§11.18).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_filed_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_filed_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3796,7 +3796,7 @@ predicates:
   value_datatype: edtf
   cardinality: single
   definition: Disposition date of a legal proceeding (§11.18).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_disposition_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_disposition_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3828,7 +3828,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: CourtListener id of a legal proceeding (identity-bearing; exact match only).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_courtlistener_id
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_courtlistener_id
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3860,7 +3860,7 @@ predicates:
   value_datatype: string
   cardinality: single
   definition: RECAP id of a legal proceeding (identity-bearing; exact match only).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_recap_id
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_recap_id
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3893,7 +3893,7 @@ predicates:
   cardinality: single
   definition: >-
     The bill index record's own external id (e.g. an OpenStates or Congress id), verbatim.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_external_id
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3926,7 +3926,7 @@ predicates:
   cardinality: single
   definition: >-
     The bill identifier the index states (e.g. 'HB 2761').
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_identifier
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -3959,7 +3959,7 @@ predicates:
   cardinality: single
   definition: >-
     The bill's title as the index states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_title
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -3993,7 +3993,7 @@ predicates:
   cardinality: single
   definition: >-
     The legislative session the bill index assigns the bill to.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_session
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4026,7 +4026,7 @@ predicates:
   cardinality: single
   definition: >-
     The jurisdiction the bill index assigns the bill to (a bill never moves legislatures).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_jurisdiction
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4060,7 +4060,7 @@ predicates:
   definition: >-
     The chamber the bill index assigns the bill to (where a unicameral index omits it, no
     claim is emitted).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_chamber
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4093,7 +4093,7 @@ predicates:
   cardinality: single
   definition: >-
     The bill's status text as the index states it (progresses; latest capture wins).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -4126,7 +4126,7 @@ predicates:
   cardinality: single
   definition: >-
     The date the bill's status last changed as the index states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_status_date
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -4160,7 +4160,7 @@ predicates:
   definition: >-
     The bill's own text matched a reviewed surveillance term (verbatim slice) — a text
     match, never a deployment.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_matched_keyword
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -4194,7 +4194,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the source states the deployment operates a public transparency portal.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_exists
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_exists
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -4227,7 +4227,7 @@ predicates:
   cardinality: multi
   definition: >-
     A prohibited use the portal states for the deployment's data (verbatim clause).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_stated_prohibited_use
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_stated_prohibited_use
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -4260,7 +4260,7 @@ predicates:
   cardinality: single
   definition: >-
     The freshness stamp the portal declares for its own data (self-reported).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_last_updated_declared
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_last_updated_declared
   volatility_class: VOLATILE
   half_life: 1mo
   resolution_strategy: latest_observation_wins
@@ -4293,7 +4293,7 @@ predicates:
   cardinality: single
   definition: >-
     Windowed vehicles-detected count a portal declares (indexed, not stale — SIG-RECON-011).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vehicles_detected_windowed_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vehicles_detected_windowed_count
   volatility_class: VOLATILE
   half_life: 1mo
   resolution_strategy: interval_union
@@ -4326,7 +4326,7 @@ predicates:
   cardinality: single
   definition: >-
     Windowed hotlist-hit count a portal declares (indexed, not stale — SIG-RECON-011).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/hotlist_hit_windowed_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/hotlist_hit_windowed_count
   volatility_class: VOLATILE
   half_life: 1mo
   resolution_strategy: interval_union
@@ -4359,7 +4359,7 @@ predicates:
   cardinality: single
   definition: >-
     Windowed usage-search count a portal declares (indexed, not stale — SIG-RECON-011).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_search_windowed_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/usage_search_windowed_count
   volatility_class: VOLATILE
   half_life: 1mo
   resolution_strategy: interval_union
@@ -4393,7 +4393,7 @@ predicates:
   cardinality: single
   definition: >-
     The records request's own text, verbatim from the request record.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/request_text
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/request_text
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4427,7 +4427,7 @@ predicates:
   definition: >-
     The requesting party the request record names (verbatim; a platform user id is a
     literal, not an entity).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/requesting_party
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/requesting_party
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4460,7 +4460,7 @@ predicates:
   cardinality: single
   definition: >-
     The agency the request record names as its target (verbatim identifier or name).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/target_agency
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/target_agency
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4493,7 +4493,7 @@ predicates:
   cardinality: single
   definition: >-
     The request's response status as the platform states it (progresses; latest wins).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/response_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/response_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -4527,7 +4527,7 @@ predicates:
   cardinality: single
   definition: >-
     The date the platform states the request was answered.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/response_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/response_date
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -4561,7 +4561,7 @@ predicates:
   definition: >-
     The acquisition method a record assigns to the instrument or filing (verbatim code, e.g.
     'fr.cada').
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_method
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/acquisition_method
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -4594,7 +4594,7 @@ predicates:
   cardinality: multi
   definition: >-
     A technology the legal instrument constrains, as the instrument record states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/constrains_technology
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/constrains_technology
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4627,7 +4627,7 @@ predicates:
   cardinality: single
   definition: >-
     The date the instrument takes effect, as the record states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_from
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effective_from
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4660,7 +4660,7 @@ predicates:
   cardinality: single
   definition: >-
     The body that enacted the instrument, as the record states it (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/enacting_body
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/enacting_body
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4693,7 +4693,7 @@ predicates:
   cardinality: single
   definition: >-
     The jurisdiction a record assigns to its subject (verbatim name or code).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/jurisdiction
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -4726,7 +4726,7 @@ predicates:
   cardinality: single
   definition: >-
     A citation of a legal instrument the record states (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/citation
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/citation
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4760,7 +4760,7 @@ predicates:
   cardinality: single
   definition: >-
     The date the instrument sunsets, as the record states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sunset_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sunset_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4793,7 +4793,7 @@ predicates:
   cardinality: single
   definition: >-
     The 'as of' date a record declares for the data it carries.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/as_of
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/as_of
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4827,7 +4827,7 @@ predicates:
   definition: >-
     A technology the record names for its subject (verbatim name; resolution picks the best-
     supported, dissenting values stay visible).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/technology
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -4860,7 +4860,7 @@ predicates:
   cardinality: multi
   definition: >-
     A retention-period clause a filing or policy states for the subject (verbatim text).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_period
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/retention_period
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: latest_observation_wins
@@ -4893,7 +4893,7 @@ predicates:
   cardinality: multi
   definition: >-
     A use restriction a filing, statute or policy states for the subject (verbatim clause).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/use_restriction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/use_restriction
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -4927,7 +4927,7 @@ predicates:
   definition: >-
     A sharing restriction a filing, statute or policy states for the subject (verbatim
     clause).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_restriction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_restriction
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -4961,7 +4961,7 @@ predicates:
   definition: >-
     The legal authority a filing or record cites as authorizing the subject (verbatim
     citation).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_authority
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legal_authority
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -4994,7 +4994,7 @@ predicates:
   cardinality: single
   definition: >-
     The ordinance citation a filing or record states (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ordinance_citation
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ordinance_citation
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -5033,7 +5033,7 @@ predicates:
     envelope would collapse distinct fields into one 'state' — a fabricated decision.
     Recorded but deliberately not adjudicated (§12.4, SIG-RECON-013); the claims stay
     visible on the subject.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/disclosure_field_state
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/disclosure_field_state
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: never_resolve
@@ -5066,7 +5066,7 @@ predicates:
   cardinality: single
   definition: >-
     Hit volume a release reports for its subject over the release's own window.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/hit_volume_observed
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/hit_volume_observed
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -5099,7 +5099,7 @@ predicates:
   cardinality: single
   definition: >-
     Scan volume a release reports for its subject over the release's own window.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/scan_volume_observed
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/scan_volume_observed
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -5132,7 +5132,7 @@ predicates:
   cardinality: single
   definition: >-
     Non-hit proportion a release reports for its subject over the release's own window.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/non_hit_proportion_observed
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/non_hit_proportion_observed
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -5165,7 +5165,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the release reports the subject participates in a pooled-lookup arrangement.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/pooled_lookup_participation
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/pooled_lookup_participation
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -5198,7 +5198,7 @@ predicates:
   cardinality: single
   definition: >-
     The sharing-partner degree (count bucket) a release reports for its subject.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_partner_degree
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner_degree
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5231,7 +5231,7 @@ predicates:
   cardinality: multi
   definition: >-
     A supplier the record attributes an AI-surveillance capability to (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_supplier
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ai_surveillance_supplier
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5264,7 +5264,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the record reports the country sources AI-surveillance technology from China.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_china
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_china
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5297,7 +5297,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the record reports the country sources AI-surveillance technology from the US.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_us
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_us
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5330,7 +5330,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the record reports the country uses AI surveillance.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/uses_ai_surveillance
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/uses_ai_surveillance
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5363,7 +5363,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the record reports the country uses facial recognition.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/uses_facial_recognition
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/uses_facial_recognition
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5396,7 +5396,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the record reports the country runs smart-city surveillance.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/smart_city_surveillance
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/smart_city_surveillance
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5429,7 +5429,7 @@ predicates:
   cardinality: single
   definition: >-
     Whether the record reports the country runs smart policing.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/smart_policing
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/smart_policing
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5462,7 +5462,7 @@ predicates:
   cardinality: single
   definition: >-
     The facial-recognition status the record assigns the country (verbatim label).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/facial_recognition_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/facial_recognition_status
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5495,7 +5495,7 @@ predicates:
   cardinality: multi
   definition: >-
     The asset type a map element's tags state (e.g. surveillance:type, verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_type
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5529,7 +5529,7 @@ predicates:
   definition: >-
     A surveillance-zone tag the map element carries (verbatim; the tag space is polluted
     with types and booleans — never trusted alone, R1-F1.4).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/surveillance_zone
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/surveillance_zone
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5562,7 +5562,7 @@ predicates:
   cardinality: multi
   definition: >-
     The manufacturer the map element's tags state (verbatim; multivalue tags split on ';').
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/manufacturer
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/manufacturer
   volatility_class: GLACIAL
   half_life: 5y
   resolution_strategy: max_support
@@ -5595,7 +5595,7 @@ predicates:
   cardinality: multi
   definition: >-
     The manufacturer Wikidata QID the map element's tags state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/manufacturer_qid
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/manufacturer_qid
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -5628,7 +5628,7 @@ predicates:
   cardinality: multi
   definition: >-
     The brand the map element's tags state (verbatim; multivalue tags split on ';').
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/brand
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/brand
   volatility_class: GLACIAL
   half_life: 5y
   resolution_strategy: max_support
@@ -5661,7 +5661,7 @@ predicates:
   cardinality: multi
   definition: >-
     The brand Wikidata QID the map element's tags state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/brand_qid
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/brand_qid
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -5695,7 +5695,7 @@ predicates:
   definition: >-
     The operator the map element's tags state, verbatim (free text — not a resolved partner
     identity).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_stated
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_stated
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -5728,7 +5728,7 @@ predicates:
   cardinality: multi
   definition: >-
     The operator Wikidata QID the map element's tags state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_qid
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_qid
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -5761,7 +5761,7 @@ predicates:
   cardinality: single
   definition: >-
     The operator type the map element's tags state (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_type
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -5794,7 +5794,7 @@ predicates:
   cardinality: single
   definition: >-
     The power arrangement the map element's tags state (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/power_arrangement
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/power_arrangement
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5827,7 +5827,7 @@ predicates:
   cardinality: single
   definition: >-
     The earliest observation date the map element's tags or history state.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/first_observed
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/first_observed
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -5860,7 +5860,7 @@ predicates:
   cardinality: single
   definition: >-
     The source the map element's tags credit for the mapping (verbatim source tag).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/mapping_source
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mapping_source
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5893,7 +5893,7 @@ predicates:
   cardinality: single
   definition: >-
     The facing direction the map element's tags state (bearing or cardinal, verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/direction
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/direction
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -5928,7 +5928,7 @@ predicates:
   definition: >-
     A surveillance tag the element carries that the reviewed vocabulary did not map
     (verbatim; a research marker, not a classification).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/unmapped_surveillance_tag
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/unmapped_surveillance_tag
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: max_support
@@ -5965,7 +5965,7 @@ predicates:
     (SIG-TRUST-003): a publisher label never evidences camera operation,
     ownership, vendor or access status, and never mints an organisation
     entity-ref (the OSM contributor label is the canonical case).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_registry_publisher
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -6007,7 +6007,7 @@ predicates:
     contributors", "EFF & MuckRock — Data Driven (2018)"); it never evidences
     camera operation, ownership, vendor or access status, and — a provenance
     role — never mints an organisation entity-ref (ADR-112/ADR-122).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/published_by
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: max_support
@@ -6047,7 +6047,7 @@ predicates:
     in different scopes answer different questions — they are retained
     separately and never adjudicated against each other (a scope mismatch is
     not a contradiction).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/count_scope
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: never_resolve
@@ -6083,7 +6083,7 @@ predicates:
     Qualifier: the refinement inside a count_scope (e.g. privately_owned,
     partner_agency, agency_operated). Two counts differ on detail at the same
     scope label are still different questions (P32.3 / SIG-TRUST-004).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/count_scope_detail
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: never_resolve
@@ -6119,7 +6119,7 @@ predicates:
     Qualifier: where the evidence behind a claim came from (e.g. seed_fixture,
     live_capture). P32.3 / SIG-TRUST-004: seed-fixture material is labelled so
     no read surface presents it as primary live evidence.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/evidence_origin
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: never_resolve
@@ -6153,7 +6153,7 @@ predicates:
   cardinality: single
   definition: >- 
     The date the asset was installed (OSM `start_date`; a valid_from input).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/installation_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/installation_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6185,7 +6185,7 @@ predicates:
   cardinality: single
   definition: >- 
     The date the upstream record was last verified (OSM `check_date`; a staleness input, never an installation date).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/last_checked
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/last_checked
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6217,7 +6217,7 @@ predicates:
   cardinality: single
   definition: >- 
     The upstream device reference/label, preserved as the source's own identifier (OSM `ref`).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/upstream_ref
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/upstream_ref
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6249,7 +6249,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A permitted use the transparency portal states for the deployment (verbatim; a portal assertion, recorded not adjudicated).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_stated_permitted_use
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_stated_permitted_use
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -6281,7 +6281,7 @@ predicates:
   cardinality: single
   definition: >- 
     A deployment-genre document states the subject organisation deployed the technology (§46; procured NEVER implies deployed — only a deployment claim on a deployment-genre document carries this).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deployed
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployed
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -6313,7 +6313,7 @@ predicates:
   cardinality: single
   definition: >- 
     The document states the deployment is in operation.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/in_operation
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/in_operation
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6345,7 +6345,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A capability the deployment actually provides (a §46 deployment fact).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/actually_provides_capability
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/actually_provides_capability
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: max_support
@@ -6377,7 +6377,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A technology the procurement record procured (procured is not deployed, §46).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/procured_technology
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procured_technology
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6409,7 +6409,7 @@ predicates:
   cardinality: single
   definition: >- 
     The contract amount as the document states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_amount
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_amount
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6441,7 +6441,7 @@ predicates:
   cardinality: single
   definition: >- 
     The contract's own number as the document states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_number
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_number
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6473,7 +6473,7 @@ predicates:
   cardinality: single
   definition: >- 
     The procurement date the document states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procurement_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6505,7 +6505,7 @@ predicates:
   cardinality: single
   definition: >- 
     A legal instrument the pathway document names.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_instrument
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legal_instrument
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6537,7 +6537,7 @@ predicates:
   cardinality: single
   definition: >- 
     A product the document names (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_name
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -6569,7 +6569,7 @@ predicates:
   cardinality: single
   definition: >- 
     The vendor the document names (verbatim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor_name
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -6601,7 +6601,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A service or feed the organisation subscribes to (pathway relationship).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribes_to
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/subscribes_to
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6633,7 +6633,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A party whose data the subject resells (pathway relationship).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/resells_data_from
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/resells_data_from
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6665,7 +6665,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A party the subject pushes alerts to (pathway relationship).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/pushes_alerts_to
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6697,7 +6697,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A feed the subject ingests data from (pathway relationship).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ingests_feed_from
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ingests_feed_from
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6729,7 +6729,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A party the subject federates searches to (pathway relationship).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/federates_search_to
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/federates_search_to
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6761,7 +6761,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A programme or network the subject enrols an asset into (pathway relationship).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/enrolls_asset_into
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/enrolls_asset_into
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -6793,7 +6793,7 @@ predicates:
   cardinality: single
   definition: >- 
     The date the records request was filed (§11.19).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/filed_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/filed_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6825,7 +6825,7 @@ predicates:
   cardinality: single
   definition: >- 
     The records platform the request was filed on (§11.19).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/platform
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/platform
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6857,7 +6857,7 @@ predicates:
   cardinality: single
   definition: >- 
     A records-request record assertion (§11.19).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/records_request
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/records_request
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6889,7 +6889,7 @@ predicates:
   cardinality: multi
   definition: >- 
     The released-document artifact ids the request links (§11.19).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/released_documents
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/released_documents
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6921,7 +6921,7 @@ predicates:
   cardinality: single
   definition: >- 
     The statutory basis the request cites.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_basis
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/statutory_basis
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6953,7 +6953,7 @@ predicates:
   cardinality: single
   definition: >- 
     An agenda-item record assertion (the agenda document's own item).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agenda_item
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agenda_item
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -6985,7 +6985,7 @@ predicates:
   cardinality: single
   definition: >- 
     A contract record assertion (§11.11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7017,7 +7017,7 @@ predicates:
   cardinality: single
   definition: >- 
     A funding-instrument record assertion (§11.12).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_instrument
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funding_instrument
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7049,7 +7049,7 @@ predicates:
   cardinality: single
   definition: >- 
     A portal-index record assertion (the portal's own index row).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_index
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_index
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7081,7 +7081,7 @@ predicates:
   cardinality: single
   definition: >- 
     A procurement-notice record assertion.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_notice
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procurement_notice
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7113,7 +7113,7 @@ predicates:
   cardinality: single
   definition: >- 
     An accountability-event record assertion (§11.17).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/accountability_event
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/accountability_event
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7145,7 +7145,7 @@ predicates:
   cardinality: single
   definition: >- 
     The source an accountability record attributes the event to.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_source
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_source
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7177,7 +7177,7 @@ predicates:
   cardinality: single
   definition: >- 
     A legal-proceeding record assertion (§11.17).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_proceeding
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legal_proceeding
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7209,7 +7209,7 @@ predicates:
   cardinality: single
   definition: >- 
     A legislative-bill record assertion (§11.18; the bill index's own record).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/legislative_bill
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legislative_bill
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7241,7 +7241,7 @@ predicates:
   cardinality: single
   definition: >- 
     An agency-registry record assertion (the registry's own row).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_registry_entry
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_registry_entry
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7273,7 +7273,7 @@ predicates:
   cardinality: single
   definition: >- 
     The agency name as the registry states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_name
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_name
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -7305,7 +7305,7 @@ predicates:
   cardinality: single
   definition: >- 
     The agency's ORI9 identifier as the registry states it.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_ori9
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_ori9
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7337,7 +7337,7 @@ predicates:
   cardinality: single
   definition: >- 
     The agency type the registry states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_type
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_type
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -7369,7 +7369,7 @@ predicates:
   cardinality: single
   definition: >- 
     The state the registry records for the agency.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_state
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_state
   volatility_class: SLOW
   half_life: 5y
   resolution_strategy: authoritative_source_wins
@@ -7401,7 +7401,7 @@ predicates:
   cardinality: single
   definition: >- 
     The county the registry records for the agency.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_county
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_county
   volatility_class: SLOW
   half_life: 5y
   resolution_strategy: authoritative_source_wins
@@ -7433,7 +7433,7 @@ predicates:
   cardinality: single
   definition: >- 
     The agency latitude the registry states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_latitude
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_latitude
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: authoritative_source_wins
@@ -7465,7 +7465,7 @@ predicates:
   cardinality: single
   definition: >- 
     The agency longitude the registry states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_longitude
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_longitude
   volatility_class: GLACIAL
   half_life: 10y
   resolution_strategy: authoritative_source_wins
@@ -7497,7 +7497,7 @@ predicates:
   cardinality: single
   definition: >- 
     Whether the registry records the agency as a NIBRS participant.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/nibrs_participant
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/nibrs_participant
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -7529,7 +7529,7 @@ predicates:
   cardinality: single
   definition: >- 
     The date the registry records the agency's NIBRS participation began.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/nibrs_start_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/nibrs_start_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7561,7 +7561,7 @@ predicates:
   cardinality: single
   definition: >- 
     An audit aggregate cell whose source rows were redacted (structural marker).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_cell_redacted
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/audit_cell_redacted
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7593,7 +7593,7 @@ predicates:
   cardinality: single
   definition: >- 
     A deployment lifecycle transition the audit records.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_lifecycle_transition
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_lifecycle_transition
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7625,7 +7625,7 @@ predicates:
   cardinality: single
   definition: >- 
     An aggregate usage/search count over a redacted window (never per-person).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_search_aggregate
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/usage_search_aggregate
   volatility_class: MODERATE
   half_life: 6mo
   resolution_strategy: authoritative_source_wins
@@ -7657,7 +7657,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A per-column retention window the release states, preserved with its own unit (SIG-INGEST-043d — vendors' incommensurable units are never normalized).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_window_observed
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/retention_window_observed
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -7689,7 +7689,7 @@ predicates:
   cardinality: single
   definition: >- 
     A traffic-camera record assertion (the camera registry's own record).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/traffic_camera
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/traffic_camera
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7721,7 +7721,7 @@ predicates:
   cardinality: single
   definition: >- 
     The acquisition cost the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_cost
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/acquisition_cost
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7753,7 +7753,7 @@ predicates:
   cardinality: single
   definition: >- 
     The approval status the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/approval_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/approval_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -7785,7 +7785,7 @@ predicates:
   cardinality: single
   definition: >- 
     The audit mechanism the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_mechanism
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/audit_mechanism
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -7817,7 +7817,7 @@ predicates:
   cardinality: single
   definition: >- 
     The complaint count the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/complaint_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/complaint_count
   volatility_class: MODERATE
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -7849,7 +7849,7 @@ predicates:
   cardinality: single
   definition: >- 
     The data-access arrangement the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/data_access
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/data_access
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -7881,7 +7881,7 @@ predicates:
   cardinality: single
   definition: >- 
     The deployment location the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_location
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_location
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -7913,7 +7913,7 @@ predicates:
   cardinality: single
   definition: >- 
     The deprecation reason the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deprecation_reason
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deprecation_reason
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -7945,7 +7945,7 @@ predicates:
   cardinality: single
   definition: >- 
     The disparate-impact finding the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/disparate_impact
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/disparate_impact
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -7977,7 +7977,7 @@ predicates:
   cardinality: single
   definition: >- 
     The effective date the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_date
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effective_date
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -8009,7 +8009,7 @@ predicates:
   cardinality: single
   definition: >- 
     The effectiveness claim the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/effectiveness_claim
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effectiveness_claim
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -8041,7 +8041,7 @@ predicates:
   cardinality: single
   definition: >- 
     The in-use status the mandated disclosure states (in_use_statuses).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/in_use
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/in_use
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -8073,7 +8073,7 @@ predicates:
   cardinality: single
   definition: >- 
     The in-use-without-policy count the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/in_use_without_policy_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/in_use_without_policy_count
   volatility_class: MODERATE
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -8105,7 +8105,7 @@ predicates:
   cardinality: single
   definition: >- 
     The non-compliance finding the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/non_compliance_finding
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/non_compliance_finding
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -8137,7 +8137,7 @@ predicates:
   cardinality: single
   definition: >- 
     The operating cost the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operating_cost
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operating_cost
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -8169,7 +8169,7 @@ predicates:
   cardinality: single
   definition: >- 
     The oversight body the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/oversight_body
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/oversight_body
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8201,7 +8201,7 @@ predicates:
   cardinality: single
   definition: >- 
     The pilot status the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/pilot_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/pilot_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -8233,7 +8233,7 @@ predicates:
   cardinality: single
   definition: >- 
     The policy-compliance share the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_compliance_share
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_compliance_share
   volatility_class: MODERATE
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -8265,7 +8265,7 @@ predicates:
   cardinality: single
   definition: >- 
     The policy status the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_status
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_status
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -8297,7 +8297,7 @@ predicates:
   cardinality: single
   definition: >- 
     The reporting cadence the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/reporting_cadence
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/reporting_cadence
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8329,7 +8329,7 @@ predicates:
   cardinality: multi
   definition: >- 
     A sharing partner the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_partner
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -8361,7 +8361,7 @@ predicates:
   cardinality: single
   definition: >- 
     The signage visibility the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/signage_visibility
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/signage_visibility
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -8393,7 +8393,7 @@ predicates:
   cardinality: single
   definition: >- 
     The technology category the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/technology_category
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology_category
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: max_support
@@ -8425,7 +8425,7 @@ predicates:
   cardinality: single
   definition: >- 
     The training the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/training
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/training
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -8457,7 +8457,7 @@ predicates:
   cardinality: single
   definition: >- 
     The usage count the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/usage_count
   volatility_class: MODERATE
   half_life: 6mo
   resolution_strategy: latest_observation_wins
@@ -8489,7 +8489,7 @@ predicates:
   cardinality: single
   definition: >- 
     The vendor subsidy the mandated disclosure states.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_subsidy
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor_subsidy
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: authoritative_source_wins
@@ -8522,7 +8522,7 @@ predicates:
   definition: >-
     A capability slug the legal instrument constrains (§11.14 LegalInstrument
     surface; the france_belgium connector's instrument claims).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/constrains_capability
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/constrains_capability
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -8555,7 +8555,7 @@ predicates:
   definition: >-
     The date a procurement contract's term ends (§11.11 contract facts; the
     okc_procurement document extractor's surface).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_term_end
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_term_end
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -8589,7 +8589,7 @@ predicates:
     The date a legal instrument ceases to be in force (§11.14 LegalInstrument;
     paired with effective_from, distinct from sunset_date which is the
     legislated expiry).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_to
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effective_to
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -8623,7 +8623,7 @@ predicates:
     An ISO 3166-1 country code a vendor is asserted to operate in (the
     coarse_international connector's curated vendor rows; a vendor-level fact,
     never a deployment claim).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operates_in_country
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operates_in_country
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -8657,7 +8657,7 @@ predicates:
     A policy-document clause locator/text the document asserts (§11-flavoured
     clause-organised policy facts; the okcpd_policy extractor's surface — a
     clause locates to a §).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_clause
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_clause
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8690,7 +8690,7 @@ predicates:
   definition: >-
     A quantity a contract/procurement record states for a product or line item
     (§11.11 stated quantities — a stated quantity, never a deployed count).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/quantity
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/quantity
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -8724,7 +8724,7 @@ predicates:
     An actor/entity class the legal instrument requires authorisation from or
     of (§11.14 LegalInstrument surface; the france_belgium connector's
     instrument claims).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/requires_authorization_of
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/requires_authorization_of
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -8758,7 +8758,7 @@ predicates:
     The element carries no `operator`/`operator:wikidata` tag — operator absence
     as a first-class, countable state (SIG-ONTO-028; the ~116,800-device
     attribution backlog), never an implicit NULL.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_absent
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_absent
   volatility_class: MODERATE
   half_life: 12mo
   resolution_strategy: latest_observation_wins
@@ -8792,7 +8792,7 @@ predicates:
     Whether the deployment's configuration requires multi-factor authentication
     (§11.15 ConfigurationState — MFA fails the configuration-cut rule and is a
     config slot, SIG-ONTO-035).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/mfa_required
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mfa_required
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8826,7 +8826,7 @@ predicates:
     The deployment's configured retention period — an ISO-8601 duration OR an
     ordinal bucket verbatim (SIG-ONTO-035a: a bucket is never coerced to a
     midpoint, bound, or point value).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_days
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/retention_days
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8860,7 +8860,7 @@ predicates:
     The entity the configuration permits live-stream access to (§11.15
     ConfigurationState; an entity_ref carried by the object seam).
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/live_stream_permitted_to
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/live_stream_permitted_to
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8894,7 +8894,7 @@ predicates:
     A third-party system the deployment's configuration integrates with
     (§11.15 ConfigurationState; an entity_ref carried by the object seam).
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/third_party_integration
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/third_party_integration
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8928,7 +8928,7 @@ predicates:
     The channel a configuration fact was observed through — `portal`,
     `config_screenshot`, `foia_export`, `vendor_statement`, or `contract_term`
     (§11.15 ConfigurationState provenance vocabulary).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_via
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_via
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -8964,7 +8964,7 @@ predicates:
     as federates_search_to, SIG-ONTO-046). Carrier of 'automated alerts' in the
     twelve-power-properties map (SIG-ONTO-051).
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/distributes_list_to
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/distributes_list_to
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -8998,7 +8998,7 @@ predicates:
     §12.3 integration edge: A can issue per-incident, consent-gated requests to
     B's users/devices.
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/requests_data_from
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/requests_data_from
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -9032,7 +9032,7 @@ predicates:
     §12.3 integration edge: A grants B legal permission to operate a capability;
     authority moves, no data does.
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/authorizes
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorizes
   volatility_class: SLOW
   half_life: 3y
   resolution_strategy: authoritative_source_wins
@@ -9066,7 +9066,7 @@ predicates:
     §12.3 lifecycle edge: B's deployment supersedes A's for the same capability
     at the same organization (temporal substitution).
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/replaced_by
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/replaced_by
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9100,7 +9100,7 @@ predicates:
     §12.3 lifecycle edge: the product/deployment that replaces another for the
     same capability at the same organization — the forward pair of replaced_by.
   object_kind: entity_ref
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/succeeds
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/succeeds
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9135,7 +9135,7 @@ predicates:
     upstream taxonomy (SIG-ONTO-059): a vocabulary event keyed on the Atlas
     version at which the category retired, never a world change — a
     disappearance is "category retired", not a deployment ending.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/atlas_category_retired
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/atlas_category_retired
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9171,7 +9171,7 @@ predicates:
     connector but NEVER emitted: an upstream category disappearance is a
     vocabulary event (atlas_category_retired), not a world event. Registered so
     the id is governed vocabulary, not an unowned literal.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_ended
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_ended
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9205,7 +9205,7 @@ predicates:
     A mapping-event row recorded when a previously-seen OSM element vanishes
     from a later snapshot (event_class 'mapping_event'): the element left the
     map, which is NOT evidence the physical asset left the street.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/osm_element_deleted
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/osm_element_deleted
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9241,7 +9241,7 @@ predicates:
     inferred from a map deletion: osm_element_deleted (a mapping event) is the
     only claim a snapshot diff may emit; removal in the world needs its own
     evidence. Registered so the id is governed vocabulary, not an unowned literal.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/physical_removed_from_street
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/physical_removed_from_street
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9279,7 +9279,7 @@ predicates:
     `line`. Registered by P36.3 (ACQ-03) so the closed vocabulary accepts the
     `geometry_kind="area"` values P36.4's programme-area emit and P36.6's ATE
     zone layers assert.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/geometry_kind
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/geometry_kind
   volatility_class: SLOW
   half_life: 2y
   resolution_strategy: authoritative_source_wins
@@ -9316,7 +9316,7 @@ predicates:
     DC's PSA). The subject is the published area bucket the operator groups its
     programme counts by, never a camera device, a geometry, a registrant, a
     name, or an address (P36.7 / R11-ACQ-11).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/programme_area
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: authoritative_source_wins
@@ -9356,7 +9356,7 @@ predicates:
     name, address, location, plate, or device record (P36.7 / R11-ACQ-11) —
     distinct from `enforcement_count` (enforcement outcomes) and from the
     connector-forbidden `camera_count` device-count genre.
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/programme_count
   volatility_class: VOLATILE
   half_life: 6mo
   resolution_strategy: interval_union
@@ -9402,7 +9402,7 @@ predicates:
     corrected coordinate is a new `camera_latitude`/`camera_longitude` claim
     citing the originals in `derived_from_claim_ids` (P35.16 / R11-DATA-01,
     F-322, SIG-GEO-008, SIG-IDENT-004, SIG-ONTO-011).
-  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/geometry_defect
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/geometry_defect
   volatility_class: IMMUTABLE
   half_life: infinite
   resolution_strategy: never_resolve

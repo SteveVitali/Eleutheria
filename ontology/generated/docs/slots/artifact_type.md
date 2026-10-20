@@ -14,7 +14,7 @@ _The genre of the artifact (§10.3.2, SIG-INGEST-047)._
 
 
 
-URI: [sig:slot/artifact_type](https://ontology.sig-project.org/schema/slot/artifact_type)
+URI: [sig:slot/artifact_type](https://ontology.surveillancegraph.org/schema/slot/artifact_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/artifact_type](https://ontology.sig-project.org/schema/slot/artif
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/artifact_type](https://ontology.sig-project.org/schema/slot/artif
 ```yaml
 name: artifact_type
 description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceArtifact
 domain_of:

@@ -15,7 +15,7 @@ _The role a piece of evidence plays for a claim (§13.3)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/EvidenceRole](https://ontology.sig-project.org/schema/enum/EvidenceRole)
+URI: [sig:enum/EvidenceRole](https://ontology.surveillancegraph.org/schema/enum/EvidenceRole)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -55,7 +55,7 @@ URI: [sig:enum/EvidenceRole](https://ontology.sig-project.org/schema/enum/Eviden
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -68,7 +68,7 @@ URI: [sig:enum/EvidenceRole](https://ontology.sig-project.org/schema/enum/Eviden
 ```yaml
 name: EvidenceRole
 description: The role a piece of evidence plays for a claim (§13.3).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   establishes:

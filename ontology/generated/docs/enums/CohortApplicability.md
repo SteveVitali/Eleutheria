@@ -15,7 +15,7 @@ _Which cohort an integration termination applies to (§12.3, SIG-ONTO-046)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/CohortApplicability](https://ontology.sig-project.org/schema/enum/CohortApplicability)
+URI: [sig:enum/CohortApplicability](https://ontology.surveillancegraph.org/schema/enum/CohortApplicability)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -51,7 +51,7 @@ URI: [sig:enum/CohortApplicability](https://ontology.sig-project.org/schema/enum
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -64,7 +64,7 @@ URI: [sig:enum/CohortApplicability](https://ontology.sig-project.org/schema/enum
 ```yaml
 name: CohortApplicability
 description: Which cohort an integration termination applies to (§12.3, SIG-ONTO-046).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   all:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/from_capture](https://ontology.sig-project.org/schema/slot/from_capture)
+URI: [sig:slot/from_capture](https://ontology.surveillancegraph.org/schema/slot/from_capture)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/from_capture](https://ontology.sig-project.org/schema/slot/from_c
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/from_capture](https://ontology.sig-project.org/schema/slot/from_c
 <details>
 ```yaml
 name: from_capture
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Extraction
 domain_of:

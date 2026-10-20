@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/quantities](https://ontology.sig-project.org/schema/slot/quantities)
+URI: [sig:slot/quantities](https://ontology.surveillancegraph.org/schema/slot/quantities)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/quantities](https://ontology.sig-project.org/schema/slot/quantiti
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/quantities](https://ontology.sig-project.org/schema/slot/quantiti
 <details>
 ```yaml
 name: quantities
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contract
 domain_of:

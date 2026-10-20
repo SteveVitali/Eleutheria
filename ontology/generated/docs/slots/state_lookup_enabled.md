@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/state_lookup_enabled](https://ontology.sig-project.org/schema/slot/state_lookup_enabled)
+URI: [sig:slot/state_lookup_enabled](https://ontology.surveillancegraph.org/schema/slot/state_lookup_enabled)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/state_lookup_enabled](https://ontology.sig-project.org/schema/slo
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/state_lookup_enabled](https://ontology.sig-project.org/schema/slo
 <details>
 ```yaml
 name: state_lookup_enabled
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

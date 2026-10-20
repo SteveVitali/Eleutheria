@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/predicate](https://ontology.sig-project.org/schema/slot/predicate)
+URI: [sig:slot/predicate](https://ontology.surveillancegraph.org/schema/slot/predicate)
 <!-- no inheritance hierarchy -->
 
 

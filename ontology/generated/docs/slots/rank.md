@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/rank](https://ontology.sig-project.org/schema/slot/rank)
+URI: [sig:slot/rank](https://ontology.surveillancegraph.org/schema/slot/rank)
 <!-- no inheritance hierarchy -->
 
 

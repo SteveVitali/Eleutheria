@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/epistemic_status](https://ontology.sig-project.org/schema/slot/epistemic_status)
+URI: [sig:slot/epistemic_status](https://ontology.surveillancegraph.org/schema/slot/epistemic_status)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/epistemic_status](https://ontology.sig-project.org/schema/slot/ep
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/epistemic_status](https://ontology.sig-project.org/schema/slot/ep
 <details>
 ```yaml
 name: epistemic_status
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

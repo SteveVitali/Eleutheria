@@ -3579,7 +3579,7 @@
             "type": "string"
         }
     },
-    "$id": "https://ontology.sig-project.org/schema/sig",
+    "$id": "https://ontology.surveillancegraph.org/schema/sig",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": true,
     "metamodel_version": "1.11.0",

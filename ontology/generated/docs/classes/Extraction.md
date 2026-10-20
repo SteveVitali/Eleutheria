@@ -14,7 +14,7 @@ _A run that extracted claims from a capture (§10.2)._
 
 
 
-URI: [sig:class/Extraction](https://ontology.sig-project.org/schema/class/Extraction)
+URI: [sig:class/Extraction](https://ontology.surveillancegraph.org/schema/class/Extraction)
 
 
 
@@ -105,7 +105,7 @@ URI: [sig:class/Extraction](https://ontology.sig-project.org/schema/class/Extrac
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -132,34 +132,34 @@ URI: [sig:class/Extraction](https://ontology.sig-project.org/schema/class/Extrac
 ```yaml
 name: Extraction
 description: A run that extracted claims from a capture (§10.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   from_capture:
     name: from_capture
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Extraction
     range: EvidenceCapture
   extraction_method:
     name: extraction_method
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Extraction
     range: string
   extractor_name:
     name: extractor_name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Extraction
     range: string
   extractor_version:
     name: extractor_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Extraction
@@ -167,7 +167,7 @@ attributes:
     range: string
   normalizer_version:
     name: normalizer_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Extraction
@@ -175,7 +175,7 @@ attributes:
   extraction_config_digest:
     name: extraction_config_digest
     description: The versioned config identity the extraction ran under.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Extraction
@@ -191,13 +191,13 @@ attributes:
 ```yaml
 name: Extraction
 description: A run that extracted claims from a capture (§10.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   from_capture:
     name: from_capture
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Extraction
     domain_of:
@@ -205,7 +205,7 @@ attributes:
     range: EvidenceCapture
   extraction_method:
     name: extraction_method
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Extraction
     domain_of:
@@ -213,7 +213,7 @@ attributes:
     range: string
   extractor_name:
     name: extractor_name
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Extraction
     domain_of:
@@ -221,7 +221,7 @@ attributes:
     range: string
   extractor_version:
     name: extractor_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Extraction
     domain_of:
@@ -230,7 +230,7 @@ attributes:
     range: string
   normalizer_version:
     name: normalizer_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Extraction
     domain_of:
@@ -239,7 +239,7 @@ attributes:
   extraction_config_digest:
     name: extraction_config_digest
     description: The versioned config identity the extraction ran under.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Extraction
     domain_of:
@@ -249,7 +249,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Extraction

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/observed_edtf](https://ontology.sig-project.org/schema/slot/observed_edtf)
+URI: [sig:slot/observed_edtf](https://ontology.surveillancegraph.org/schema/slot/observed_edtf)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/observed_edtf](https://ontology.sig-project.org/schema/slot/obser
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/observed_edtf](https://ontology.sig-project.org/schema/slot/obser
 <details>
 ```yaml
 name: observed_edtf
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

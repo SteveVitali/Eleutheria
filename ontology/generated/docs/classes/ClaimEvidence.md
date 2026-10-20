@@ -14,7 +14,7 @@ _One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured 
 
 
 
-URI: [sig:class/ClaimEvidence](https://ontology.sig-project.org/schema/class/ClaimEvidence)
+URI: [sig:class/ClaimEvidence](https://ontology.surveillancegraph.org/schema/class/ClaimEvidence)
 
 
 
@@ -151,7 +151,7 @@ URI: [sig:class/ClaimEvidence](https://ontology.sig-project.org/schema/class/Cla
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -180,13 +180,13 @@ name: ClaimEvidence
 description: One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured
   artifact the extraction consumed, with its typed locator and binding classification
   (SIG-TRUST-002).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   claim:
     name: claim
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
@@ -194,14 +194,14 @@ attributes:
     range: Claim
   capture:
     name: capture
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
     range: EvidenceCapture
   extraction:
     name: extraction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
@@ -209,7 +209,7 @@ attributes:
     range: Extraction
   role:
     name: role
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
@@ -219,28 +219,28 @@ attributes:
     name: locator_kind
     description: The kind of the typed locator row (locator fields live in the physical
       jsonb row).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
     range: LocatorKind
   extraction_config_digest:
     name: extraction_config_digest
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Extraction
     - ClaimEvidence
     range: string
   extractor_version:
     name: extractor_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Extraction
     - ClaimEvidence
     range: string
   binding_status:
     name: binding_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
@@ -249,7 +249,7 @@ attributes:
     name: bound_at
     description: When the binding was asserted — distinct from the capture's retrieval
       time.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimEvidence
@@ -266,13 +266,13 @@ name: ClaimEvidence
 description: One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured
   artifact the extraction consumed, with its typed locator and binding classification
   (SIG-TRUST-002).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   claim:
     name: claim
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -281,7 +281,7 @@ attributes:
     range: Claim
   capture:
     name: capture
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -289,7 +289,7 @@ attributes:
     range: EvidenceCapture
   extraction:
     name: extraction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -298,7 +298,7 @@ attributes:
     range: Extraction
   role:
     name: role
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -309,7 +309,7 @@ attributes:
     name: locator_kind
     description: The kind of the typed locator row (locator fields live in the physical
       jsonb row).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -317,7 +317,7 @@ attributes:
     range: LocatorKind
   extraction_config_digest:
     name: extraction_config_digest
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimEvidence
     domain_of:
     - Extraction
@@ -325,7 +325,7 @@ attributes:
     range: string
   extractor_version:
     name: extractor_version
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimEvidence
     domain_of:
     - Extraction
@@ -333,7 +333,7 @@ attributes:
     range: string
   binding_status:
     name: binding_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -343,7 +343,7 @@ attributes:
     name: bound_at
     description: When the binding was asserted — distinct from the capture's retrieval
       time.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimEvidence
     domain_of:
@@ -352,7 +352,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: ClaimEvidence

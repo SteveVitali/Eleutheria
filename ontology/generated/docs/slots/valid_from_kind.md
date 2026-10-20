@@ -14,7 +14,7 @@ _Whether valid_from is known, unknown, or ongoing (§9.5, SIG-ONTO-044)._
 
 
 
-URI: [sig:slot/valid_from_kind](https://ontology.sig-project.org/schema/slot/valid_from_kind)
+URI: [sig:slot/valid_from_kind](https://ontology.surveillancegraph.org/schema/slot/valid_from_kind)
 <!-- no inheritance hierarchy -->
 
 
@@ -69,7 +69,7 @@ URI: [sig:slot/valid_from_kind](https://ontology.sig-project.org/schema/slot/val
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -90,7 +90,7 @@ URI: [sig:slot/valid_from_kind](https://ontology.sig-project.org/schema/slot/val
 ```yaml
 name: valid_from_kind
 description: Whether valid_from is known, unknown, or ongoing (§9.5, SIG-ONTO-044).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 domain_of:
 - Edge

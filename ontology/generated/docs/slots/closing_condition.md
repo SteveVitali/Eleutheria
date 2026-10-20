@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/closing_condition](https://ontology.sig-project.org/schema/slot/closing_condition)
+URI: [sig:slot/closing_condition](https://ontology.surveillancegraph.org/schema/slot/closing_condition)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/closing_condition](https://ontology.sig-project.org/schema/slot/c
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/closing_condition](https://ontology.sig-project.org/schema/slot/c
 <details>
 ```yaml
 name: closing_condition
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ResearchTask
 domain_of:

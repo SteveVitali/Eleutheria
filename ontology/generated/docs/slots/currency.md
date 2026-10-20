@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/currency](https://ontology.sig-project.org/schema/slot/currency)
+URI: [sig:slot/currency](https://ontology.surveillancegraph.org/schema/slot/currency)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/currency](https://ontology.sig-project.org/schema/slot/currency)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/currency](https://ontology.sig-project.org/schema/slot/currency)
 <details>
 ```yaml
 name: currency
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Contract
 domain_of:

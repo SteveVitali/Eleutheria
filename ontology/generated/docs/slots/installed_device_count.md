@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/installed_device_count](https://ontology.sig-project.org/schema/slot/installed_device_count)
+URI: [sig:slot/installed_device_count](https://ontology.surveillancegraph.org/schema/slot/installed_device_count)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/installed_device_count](https://ontology.sig-project.org/schema/s
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/installed_device_count](https://ontology.sig-project.org/schema/s
 <details>
 ```yaml
 name: installed_device_count
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

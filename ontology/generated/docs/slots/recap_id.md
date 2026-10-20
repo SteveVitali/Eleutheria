@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/recap_id](https://ontology.sig-project.org/schema/slot/recap_id)
+URI: [sig:slot/recap_id](https://ontology.surveillancegraph.org/schema/slot/recap_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/recap_id](https://ontology.sig-project.org/schema/slot/recap_id)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/recap_id](https://ontology.sig-project.org/schema/slot/recap_id)
 <details>
 ```yaml
 name: recap_id
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalProceeding
 domain_of:

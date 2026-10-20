@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/name_lang](https://ontology.sig-project.org/schema/slot/name_lang)
+URI: [sig:slot/name_lang](https://ontology.surveillancegraph.org/schema/slot/name_lang)
 <!-- no inheritance hierarchy -->
 
 

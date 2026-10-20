@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/granularity](https://ontology.sig-project.org/schema/slot/granularity)
+URI: [sig:slot/granularity](https://ontology.surveillancegraph.org/schema/slot/granularity)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/granularity](https://ontology.sig-project.org/schema/slot/granula
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/granularity](https://ontology.sig-project.org/schema/slot/granula
 <details>
 ```yaml
 name: granularity
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: IntegrationEdge
 domain_of:

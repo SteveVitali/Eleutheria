@@ -14,7 +14,7 @@ _A data-bearing integration edge (§12.3). Edges are per (product-pair, data-kin
 
 
 
-URI: [sig:class/IntegrationEdge](https://ontology.sig-project.org/schema/class/IntegrationEdge)
+URI: [sig:class/IntegrationEdge](https://ontology.surveillancegraph.org/schema/class/IntegrationEdge)
 
 
 
@@ -178,7 +178,7 @@ URI: [sig:class/IntegrationEdge](https://ontology.sig-project.org/schema/class/I
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -207,14 +207,14 @@ name: IntegrationEdge
 description: A data-bearing integration edge (§12.3). Edges are per (product-pair,
   data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally terminable,
   mid-contract, possibly partially, via applies_to_cohort.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Edge
 attributes:
   data_kind:
     name: data_kind
     description: The kind of data that moves (part of the edge key, SIG-ONTO-046).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
@@ -222,35 +222,35 @@ attributes:
     required: true
   initiator:
     name: initiator
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: uriorcurie
   transport:
     name: transport
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: string
   granularity:
     name: granularity
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: string
   data_comes_to_rest:
     name: data_comes_to_rest
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: boolean
   scope:
     name: scope
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     domain_of:
     - Capability
     - AccessRelationship
@@ -258,28 +258,28 @@ attributes:
     range: CapabilityScope
   consent_gate:
     name: consent_gate
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: boolean
   mechanism:
     name: mechanism
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: string
   terminable_by:
     name: terminable_by
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
     range: uriorcurie
   termination_reason:
     name: termination_reason
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
@@ -288,7 +288,7 @@ attributes:
     name: applies_to_cohort
     description: Partial termination cohort — all / new_customers_only / existing_customers_only
       (SIG-ONTO-046).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - IntegrationEdge
@@ -305,14 +305,14 @@ name: IntegrationEdge
 description: A data-bearing integration edge (§12.3). Edges are per (product-pair,
   data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally terminable,
   mid-contract, possibly partially, via applies_to_cohort.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Edge
 attributes:
   data_kind:
     name: data_kind
     description: The kind of data that moves (part of the edge key, SIG-ONTO-046).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -321,7 +321,7 @@ attributes:
     required: true
   initiator:
     name: initiator
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -329,7 +329,7 @@ attributes:
     range: uriorcurie
   transport:
     name: transport
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -337,7 +337,7 @@ attributes:
     range: string
   granularity:
     name: granularity
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -345,7 +345,7 @@ attributes:
     range: string
   data_comes_to_rest:
     name: data_comes_to_rest
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -353,7 +353,7 @@ attributes:
     range: boolean
   scope:
     name: scope
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - Capability
@@ -362,7 +362,7 @@ attributes:
     range: CapabilityScope
   consent_gate:
     name: consent_gate
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -370,7 +370,7 @@ attributes:
     range: boolean
   mechanism:
     name: mechanism
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -378,7 +378,7 @@ attributes:
     range: string
   terminable_by:
     name: terminable_by
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -386,7 +386,7 @@ attributes:
     range: uriorcurie
   termination_reason:
     name: termination_reason
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -396,7 +396,7 @@ attributes:
     name: applies_to_cohort
     description: Partial termination cohort — all / new_customers_only / existing_customers_only
       (SIG-ONTO-046).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -404,7 +404,7 @@ attributes:
     range: CohortApplicability
   id:
     name: id
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     identifier: true
     owner: IntegrationEdge
     domain_of:
@@ -415,7 +415,7 @@ attributes:
   source:
     name: source
     description: The asserting/originating node (directed — §12.1.1).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -424,7 +424,7 @@ attributes:
     required: true
   target:
     name: target
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - ResearchTask
@@ -434,7 +434,7 @@ attributes:
   edge_type:
     name: edge_type
     description: Typed from the closed catalog (§12.1.2).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:
@@ -443,7 +443,7 @@ attributes:
     required: true
   valid_from:
     name: valid_from
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - Jurisdiction
@@ -453,7 +453,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - Jurisdiction
@@ -464,21 +464,21 @@ attributes:
   valid_from_kind:
     name: valid_from_kind
     description: Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - Edge
     range: TemporalBoundKind
   valid_to_kind:
     name: valid_to_kind
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - Edge
     range: TemporalBoundKind
   observed_at:
     name: observed_at
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - Edge
@@ -486,7 +486,7 @@ attributes:
   sources:
     name: sources
     description: At least one supporting claim (§12.1.4, SIG-CHART-013).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: IntegrationEdge
     domain_of:
     - AccountabilityEvent
@@ -496,7 +496,7 @@ attributes:
   asserted_by:
     name: asserted_by
     description: Which party asserted it — perspectival (§12.1.5).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: IntegrationEdge
     domain_of:

@@ -14,7 +14,7 @@ _A flag, coexisting with any state combination (SIG-ONTO-061)._
 
 
 
-URI: [sig:slot/litigation_hold](https://ontology.sig-project.org/schema/slot/litigation_hold)
+URI: [sig:slot/litigation_hold](https://ontology.surveillancegraph.org/schema/slot/litigation_hold)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/litigation_hold](https://ontology.sig-project.org/schema/slot/lit
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/litigation_hold](https://ontology.sig-project.org/schema/slot/lit
 ```yaml
 name: litigation_hold
 description: A flag, coexisting with any state combination (SIG-ONTO-061).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

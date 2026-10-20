@@ -14,7 +14,7 @@ _[NEW] A public-records request SIG both cites as provenance and generates as a 
 
 
 
-URI: [sig:class/RecordsRequest](https://ontology.sig-project.org/schema/class/RecordsRequest)
+URI: [sig:class/RecordsRequest](https://ontology.surveillancegraph.org/schema/class/RecordsRequest)
 
 
 
@@ -145,7 +145,7 @@ URI: [sig:class/RecordsRequest](https://ontology.sig-project.org/schema/class/Re
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -173,76 +173,76 @@ URI: [sig:class/RecordsRequest](https://ontology.sig-project.org/schema/class/Re
 name: RecordsRequest
 description: '[NEW] A public-records request SIG both cites as provenance and generates
   as a task (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   requesting_party:
     name: requesting_party
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: Organization
   target_agency:
     name: target_agency
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: Organization
   request_text:
     name: request_text
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: string
   filed_date:
     name: filed_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - LegalProceeding
     - RecordsRequest
     range: edtf
   response_date:
     name: response_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: edtf
   response_status:
     name: response_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: RecordsResponseStatus
   statutory_basis:
     name: statutory_basis
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: LegalInstrument
   platform:
     name: platform
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: RecordsPlatform
   external_id:
     name: external_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
     range: string
   released_documents:
     name: released_documents
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - RecordsRequest
@@ -259,13 +259,13 @@ attributes:
 name: RecordsRequest
 description: '[NEW] A public-records request SIG both cites as provenance and generates
   as a task (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   requesting_party:
     name: requesting_party
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -273,7 +273,7 @@ attributes:
     range: Organization
   target_agency:
     name: target_agency
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -281,7 +281,7 @@ attributes:
     range: Organization
   request_text:
     name: request_text
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -289,7 +289,7 @@ attributes:
     range: string
   filed_date:
     name: filed_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: RecordsRequest
     domain_of:
     - LegalProceeding
@@ -297,7 +297,7 @@ attributes:
     range: edtf
   response_date:
     name: response_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -305,7 +305,7 @@ attributes:
     range: edtf
   response_status:
     name: response_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -313,7 +313,7 @@ attributes:
     range: RecordsResponseStatus
   statutory_basis:
     name: statutory_basis
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -321,7 +321,7 @@ attributes:
     range: LegalInstrument
   platform:
     name: platform
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -329,7 +329,7 @@ attributes:
     range: RecordsPlatform
   external_id:
     name: external_id
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -337,7 +337,7 @@ attributes:
     range: string
   released_documents:
     name: released_documents
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: RecordsRequest
     domain_of:
@@ -347,7 +347,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: RecordsRequest

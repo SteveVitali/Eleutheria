@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/derived_from_claim_ids](https://ontology.sig-project.org/schema/slot/derived_from_claim_ids)
+URI: [sig:slot/derived_from_claim_ids](https://ontology.surveillancegraph.org/schema/slot/derived_from_claim_ids)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/derived_from_claim_ids](https://ontology.sig-project.org/schema/s
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/derived_from_claim_ids](https://ontology.sig-project.org/schema/s
 <details>
 ```yaml
 name: derived_from_claim_ids
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

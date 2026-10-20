@@ -14,7 +14,7 @@ _The PhysicalAsset / Deployment / DataSystem the role is held over._
 
 
 
-URI: [sig:slot/over](https://ontology.sig-project.org/schema/slot/over)
+URI: [sig:slot/over](https://ontology.surveillancegraph.org/schema/slot/over)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/over](https://ontology.sig-project.org/schema/slot/over)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/over](https://ontology.sig-project.org/schema/slot/over)
 ```yaml
 name: over
 description: The PhysicalAsset / Deployment / DataSystem the role is held over.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: RoleAssignment
 domain_of:

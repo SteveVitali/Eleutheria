@@ -15,7 +15,7 @@ _The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§1
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/OrganizationRelationType](https://ontology.sig-project.org/schema/enum/OrganizationRelationType)
+URI: [sig:enum/OrganizationRelationType](https://ontology.surveillancegraph.org/schema/enum/OrganizationRelationType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -49,7 +49,7 @@ URI: [sig:enum/OrganizationRelationType](https://ontology.sig-project.org/schema
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ description: 'The seven-value vocabulary of the reified, bitemporal Organization
   records carrying valid + transaction time, never as a mutable column. A pure rename
   is deliberately NOT here: renaming produces a new version and a dated alias, never
   a succession relation (SIG-IDENT-017).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   same_as:
