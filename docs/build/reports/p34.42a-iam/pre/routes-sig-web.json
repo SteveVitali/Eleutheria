@@ -1,0 +1,202 @@
+{
+  "base_url": "https://sig-web-e5ctyx36jq-uc.a.run.app",
+  "captured_at": "2026-10-14T10:02:44Z",
+  "routes": {
+    "/.sig-release.json": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/403.html": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/403/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/404.html": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/410.html": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/410/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/_astro/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/corrections/": {
+      "bytes": 6805,
+      "sha256": "a4ffc1fc2dc3f19642dea1d77146473cad0c04c76089efcdb023de5b9d318191",
+      "status": 200
+    },
+    "/coverage-metrics/": {
+      "bytes": 88519,
+      "sha256": "328aeabe81fbe5919d6cbaaec8ab150abe2251e936bcfef37244995a063230d9",
+      "status": 200
+    },
+    "/curate/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/curate/submit/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/data-collection/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/data-freshness/": {
+      "bytes": 80321,
+      "sha256": "db8130e5715018da6e6b0dab2b37893bf435e8009c8a5b3e1c796c36fcaf13b6",
+      "status": 200
+    },
+    "/dispute/": {
+      "bytes": 7782,
+      "sha256": "0661236c189a0865361d890a03ecd5269fb78796af6df4a7eee5f6c8e8eb7ae0",
+      "status": 200
+    },
+    "/dossier/": {
+      "bytes": 28627,
+      "sha256": "96e38ff8df6c6a55504018d54d307ca014738ccddc9a84daae9fb49424d11c53",
+      "status": 200
+    },
+    "/editorial-standards/": {
+      "bytes": 9751,
+      "sha256": "7d279300cd2d9d90a34605bbef53917c45bdcd88e28bb24c67344e243f2c4d96",
+      "status": 200
+    },
+    "/evidence/": {
+      "bytes": 5660,
+      "sha256": "b6fc5cdffabba1875d7bb6d74bdf1abfb8559864c1c00bf1c42d3c74c7de2008",
+      "status": 200
+    },
+    "/favicon.svg": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/index.html": {
+      "bytes": 85844,
+      "sha256": "a007e380588b13f7928e0c3404587848fb7566e957ab1fb0f99bd27fb51702ab",
+      "status": 200
+    },
+    "/intake/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/map/": {
+      "bytes": 3460837,
+      "sha256": "4e5bb4dd79a428a4b8000971327222bae3d48c3575da686bd41ee4032157a63e",
+      "status": 200
+    },
+    "/methodology/": {
+      "bytes": 12288,
+      "sha256": "ee703b8c5ed92c197fac63100c1550e653bd257f74028d53f3dcef0cfb715af2",
+      "status": 200
+    },
+    "/network/": {
+      "bytes": 358510,
+      "sha256": "4fedfe3164ad66b7b44d115069d2d7a503fdc662c468b2951abba30628712f67",
+      "status": 200
+    },
+    "/releases/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/research-dossier/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/research-queue/": {
+      "bytes": 689410,
+      "sha256": "0b62c05eb399cf58d8cbaa875456c3d3b362580a559eacbdf63afb42362ff9d4",
+      "status": 200
+    },
+    "/robots.txt": {
+      "bytes": 245,
+      "sha256": "0f4bd8627b01ba74d21762744d30ad4269450b5d6b4019ad109d370fc60374dd",
+      "status": 200
+    },
+    "/search/": {
+      "bytes": 152450,
+      "sha256": "fdd696cbd93e50559e2b87e472897d2acdf0f89b332d8618ed2503ed2ec6ad36",
+      "status": 200
+    },
+    "/sitemap.xml": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/sources/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/status/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/style-guide/": {
+      "bytes": 8915,
+      "sha256": "03955ef144ef2d1d79594a758cc8aeb55425bcf2a962803f9ef2dc859983b041",
+      "status": 200
+    },
+    "/task/": {
+      "bytes": 146,
+      "sha256": "32f2fa940d4b4fe19aca1e53a24e5aac29c57b7c5ee78588325b87f1b649c864",
+      "status": 403
+    },
+    "/task/new/": {
+      "bytes": 146,
+      "sha256": "32f2fa940d4b4fe19aca1e53a24e5aac29c57b7c5ee78588325b87f1b649c864",
+      "status": 403
+    },
+    "/task/new/demo_roundtrip/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/terms/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/tiles/": {
+      "bytes": 146,
+      "sha256": "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0",
+      "status": 404
+    },
+    "/visual-language/": {
+      "bytes": 19584,
+      "sha256": "79e4ba8f6c53044a021a1d21d3b0c2ef8c23cbd3a4f6a8cfaa246c93b7dbbbfc",
+      "status": 200
+    },
+    "/watch/": {
+      "bytes": 8631,
+      "sha256": "0d384e78f47a3f118dd2794d7ee70b0f2cfc2cc8c824a6020c531d04ff366118",
+      "status": 200
+    }
+  },
+  "schema": "route-capture/1"
+}

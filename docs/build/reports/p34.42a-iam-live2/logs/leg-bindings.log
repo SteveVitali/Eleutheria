@@ -1,0 +1,96 @@
+window OK: 2026-10-14T12:49:14Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+window OK: 2026-10-14T12:49:15Z (≥ 2026-10-13T12:00:00Z, outside 03:00–06:30Z — note: outside the preferred 14:00–20:00Z weekday slot)
+-- bindings: the declared least-privilege grants --
++ gcloud projects add-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
+Updated IAM policy for project [zeta-medley-508121-u7].
+bindings:
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-artifactregistry.iam.gserviceaccount.com
+  role: roles/artifactregistry.serviceAgent
+- members:
+  - serviceAccount:873541617837@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-cloudscheduler.iam.gserviceaccount.com
+  role: roles/cloudscheduler.serviceAgent
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  - serviceAccount:sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/cloudsql.client
+- members:
+  - serviceAccount:873541617837@cloudservices.gserviceaccount.com
+  role: roles/compute.instanceGroupManagerServiceAgent
+- members:
+  - serviceAccount:service-873541617837@compute-system.iam.gserviceaccount.com
+  role: roles/compute.serviceAgent
+- members:
+  - serviceAccount:service-873541617837@containerregistry.iam.gserviceaccount.com
+  role: roles/containerregistry.ServiceAgent
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  role: roles/editor
+- members:
+  - user:<redacted-operator-account>
+  role: roles/owner
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-pubsub.iam.gserviceaccount.com
+  role: roles/pubsub.serviceAgent
+- members:
+  - serviceAccount:service-873541617837@serverless-robot-prod.iam.gserviceaccount.com
+  role: roles/run.serviceAgent
+etag: BwZdzFvpDCc=
+version: 1
+   rollback: gcloud projects remove-iam-policy-binding zeta-medley-508121-u7 --member serviceAccount:sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/cloudsql.client
++ gcloud storage buckets add-iam-policy-binding gs://zeta-medley-508121-u7-sig-web --member serviceAccount:sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
+bindings:
+- members:
+  - projectEditor:zeta-medley-508121-u7
+  - projectOwner:zeta-medley-508121-u7
+  role: roles/storage.legacyBucketOwner
+- members:
+  - projectViewer:zeta-medley-508121-u7
+  role: roles/storage.legacyBucketReader
+- members:
+  - projectEditor:zeta-medley-508121-u7
+  - projectOwner:zeta-medley-508121-u7
+  role: roles/storage.legacyObjectOwner
+- members:
+  - projectViewer:zeta-medley-508121-u7
+  role: roles/storage.legacyObjectReader
+- members:
+  - allUsers
+  - serviceAccount:sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+etag: CAk=
+kind: storage#policy
+resourceId: projects/_/buckets/zeta-medley-508121-u7-sig-web
+version: 1
+   rollback: gcloud storage buckets remove-iam-policy-binding gs://zeta-medley-508121-u7-sig-web --member serviceAccount:sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/storage.objectViewer
++ gcloud secrets add-iam-policy-binding sig-pg-password --project zeta-medley-508121-u7 --member serviceAccount:sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+Updated IAM policy for secret [sig-pg-password].
+bindings:
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  - serviceAccount:sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZdzFwNBuI=
+version: 1
+   rollback: gcloud secrets remove-iam-policy-binding sig-pg-password --member serviceAccount:sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
++ gcloud secrets add-iam-policy-binding sig-alert-webhook-token --project zeta-medley-508121-u7 --member serviceAccount:sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+Updated IAM policy for secret [sig-alert-webhook-token].
+bindings:
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  - serviceAccount:sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZdzFwdKy4=
+version: 1
+   rollback: gcloud secrets remove-iam-policy-binding sig-alert-webhook-token --member serviceAccount:sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --role roles/secretmanager.secretAccessor
+iam-service-accounts bindings: done (mode=apply)
