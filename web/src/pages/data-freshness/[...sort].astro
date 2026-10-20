@@ -149,6 +149,20 @@ const specs: FigureSpec[] = [
         breakdown: `#fig-not-eval-${sid}`,
         targets: freshnessTargets(row.source),
       },
+      {
+        // P35.41 (K9 §5.3): the undated published-claim share of the
+        // staleness denominator — "not evaluable: m undated", a count,
+        // never an "unknown".
+        id: `undated-${sid}`,
+        class: "freshness",
+        value: row.undated_count,
+        artifact: FRESHNESS_ARTIFACT,
+        pointer: `/${i}/undated_count`,
+        definition: "#summary-heading",
+        href: FRESHNESS_HREF,
+        breakdown: `#fig-undated-${sid}`,
+        targets: freshnessTargets(row.source),
+      },
     ];
     if (!isNotEvaluable(row.status)) {
       rowSpecs.push({
@@ -160,6 +174,19 @@ const specs: FigureSpec[] = [
         definition: "#summary-heading",
         href: FRESHNESS_HREF,
         breakdown: `#fig-stale-${sid}`,
+        targets: freshnessTargets(row.source),
+      });
+      // P35.41 (K9 §5.3): the "of m evaluable" denominator the stale count
+      // is measured against.
+      rowSpecs.push({
+        id: `evaluable-${sid}`,
+        class: "freshness",
+        value: row.staleness_evaluable_count,
+        artifact: FRESHNESS_ARTIFACT,
+        pointer: `/${i}/staleness_evaluable_count`,
+        definition: "#summary-heading",
+        href: FRESHNESS_HREF,
+        breakdown: `#fig-evaluable-${sid}`,
         targets: freshnessTargets(row.source),
       });
     }
@@ -195,6 +222,14 @@ const fig = (id: string) => {
       <strong>"Not evaluable"</strong> means staleness could not be evaluated for that
       source — no declared volatility class, or no dated observation staleness can be
       measured against (§32.4, SIG-METRIC-006). It is never reported as "ok".
+    </p>
+  )}
+  {ALL_ROWS.length > 0 && (
+    <p class="sig-table-note" data-testid="evaluated-at-note">
+      Every freshness value on this page was evaluated at{" "}
+      <strong><time datetime={ALL_ROWS[0]!.evaluated_at}>{ALL_ROWS[0]!.evaluated_at}</time></strong>
+      {" "}— the release's as-of instant, not the date you are reading this
+      (K9 C-4: release pages answer at the release's clock, never the reader's).
     </p>
   )}
 
@@ -259,6 +294,7 @@ const fig = (id: string) => {
               <th scope="col">Stale entities (for their predicate class)</th>
               <th scope="col">Staleness not evaluable</th>
               <th scope="col">Volatility class</th>
+              <th scope="col">Evaluated at</th>
             </tr>
           </thead>
           <tbody>
@@ -276,9 +312,22 @@ const fig = (id: string) => {
                     would read as measured (GQ-15, ED-43). */}
                 <td data-testid="stale-count">{isNotEvaluable(row.status)
                   ? "not evaluable"
-                  : <Figure figure={fig(`stale-${slug(row.source)}`)} order="inline">{fmtInt(row.stale_entity_count)}</Figure>}</td>
-                <td data-testid="staleness-not-evaluable"><Figure figure={fig(`not-eval-${slug(row.source)}`)} order="inline">{fmtInt(row.staleness_not_evaluable)}</Figure></td>
+                  : <>
+                      <Figure figure={fig(`stale-${slug(row.source)}`)} order="inline">{fmtInt(row.stale_entity_count)}</Figure>
+                      {" of "}
+                      <Figure figure={fig(`evaluable-${slug(row.source)}`)} order="inline">{fmtInt(row.staleness_evaluable_count)}</Figure>
+                      {" evaluable"}
+                    </>}</td>
+                <td data-testid="staleness-not-evaluable">
+                  <Figure figure={fig(`not-eval-${slug(row.source)}`)} order="inline">{fmtInt(row.staleness_not_evaluable)}</Figure>
+                  {row.undated_count > 0 && <>
+                    {" + "}
+                    <Figure figure={fig(`undated-${slug(row.source)}`)} order="inline">{fmtInt(row.undated_count)}</Figure>
+                    {" undated"}
+                  </>}
+                </td>
                 <td data-testid="volatility-class">{evaluableLabel(row.volatility_class)}</td>
+                <td data-testid="evaluated-at"><time datetime={row.evaluated_at}>{row.evaluated_at}</time></td>
               </tr>
             ))}
           </tbody>

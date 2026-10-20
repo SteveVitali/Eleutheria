@@ -785,13 +785,24 @@ _RESUME_MARKS = (
     ") "
     "SELECT DISTINCT ON (m.target_key) m.target_key, m.state, m.capture_digest, m.source_uri,"
     " m.media_type, m.byte_size, m.retrieved_at, m.records,"
-    " m.ocfl_object_id, m.ocfl_version, m.run_id::text "
+    " m.ocfl_object_id, m.ocfl_version, m.run_id::text,"
+    " m.records_digest, m.upstream_modified_at, m.upstream_token, m.upstream_modified_basis "
     "FROM ingest_run_capture m JOIN runs r ON r.run_id = m.run_id "
     "WHERE r.started_at > COALESCE((SELECT at FROM done), '-infinity'::timestamptz) "
     "ORDER BY m.target_key, (m.state = 'flushed') DESC, m.recorded_at DESC"
 )
 
+#: P35.41 shape — the pre-P35.41 spine lacks the four columns; the pre-change
+#: variant stays so a mark never fails a spine one migration behind.
 _RECORD_CAPTURE = (
+    "INSERT INTO ingest_run_capture(run_id, target_key, state, capture_digest, source_uri,"
+    " media_type, byte_size, retrieved_at, records, ocfl_object_id, ocfl_version,"
+    " records_digest, upstream_modified_at, upstream_token, upstream_modified_basis) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+    "ON CONFLICT (run_id, target_key, state) DO NOTHING"
+)
+
+_RECORD_CAPTURE_LEGACY = (
     "INSERT INTO ingest_run_capture(run_id, target_key, state, capture_digest, source_uri,"
     " media_type, byte_size, retrieved_at, records, ocfl_object_id, ocfl_version) "
     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
@@ -1395,9 +1406,10 @@ class PgClaimSink:
                     "successful": list(SUCCESSFUL_STATUSES),
                 },
             ).fetchall()
-        except psycopg.errors.UndefinedTable:
-            # A spine without the ``ingest_run_capture`` change (an image rolled
-            # ahead of its schema): run without resume rather than fail the ingest.
+        except (psycopg.errors.UndefinedTable, psycopg.errors.UndefinedColumn):
+            # A spine without the ``ingest_run_capture`` change — or without the
+            # P35.41 freshness columns — (an image rolled ahead of its schema):
+            # run without resume rather than fail the ingest.
             _log.warning("ingest_run_capture is absent; running without resume (ADR-111)")
             self._logical_run = None
             return []
@@ -1413,6 +1425,10 @@ class PgClaimSink:
             "ocfl_object_id",
             "ocfl_version",
             "run_id",
+            "records_digest",
+            "upstream_modified_at",
+            "upstream_token",
+            "upstream_modified_basis",
         )
         return [dict(zip(keys, row, strict=True)) for row in rows]
 
@@ -1429,6 +1445,10 @@ class PgClaimSink:
         records: int | None = None,
         ocfl_object_id: str | None = None,
         ocfl_version: str | None = None,
+        records_digest: str | None = None,
+        upstream_modified_at: str | None = None,
+        upstream_token: str | None = None,
+        upstream_modified_basis: str | None = None,
     ) -> None:
         """Append this execution's ``state`` mark for one fetch target (append-only).
 
@@ -1440,6 +1460,13 @@ class PgClaimSink:
         ``flushed`` once every claim of the capture has committed, with the number
         of records the capture emitted. A no-op without a logical run. A second
         mark of the same state for the same target is +0.
+
+        P35.41 / SIG-TRANSP-031: ``records_digest`` is the flushed mark's
+        fingerprint of the emitted record set (the SIG record-change signal —
+        byte-only differences never mint one), and the ``upstream_*`` triple is
+        the publisher's own declared change value with its basis label —
+        ``None`` where the transport declared nothing, never a guessed
+        retrieval timestamp.
         """
         if not self._logical_run:
             return
@@ -1448,22 +1475,51 @@ class PgClaimSink:
         if (state == "flushed") != (records is not None):
             raise ValueError("a flushed mark carries its record count; a captured mark none")
         run_id = self._ensure_run()
-        self._conn.execute(
-            _RECORD_CAPTURE,
-            (
-                run_id,
-                target_key,
-                state,
-                capture_digest,
-                source_uri,
-                media_type,
-                byte_size,
-                retrieved_at,
-                records,
-                ocfl_object_id,
-                ocfl_version,
-            ),
-        )
+        try:
+            # A savepoint bounds the probe: a failed INSERT on a spine one
+            # migration behind aborts only the savepoint, not the run's
+            # transaction — the legacy shape then lands cleanly.
+            with self._conn.transaction():
+                self._conn.execute(
+                    _RECORD_CAPTURE,
+                    (
+                        run_id,
+                        target_key,
+                        state,
+                        capture_digest,
+                        source_uri,
+                        media_type,
+                        byte_size,
+                        retrieved_at,
+                        records,
+                        ocfl_object_id,
+                        ocfl_version,
+                        records_digest,
+                        upstream_modified_at,
+                        upstream_token,
+                        upstream_modified_basis,
+                    ),
+                )
+        except psycopg.errors.UndefinedColumn:
+            # A spine one migration behind the image (P35.41 not yet deployed):
+            # the mark still lands with everything the old schema records —
+            # the freshness columns stay absent, never fabricated.
+            self._conn.execute(
+                _RECORD_CAPTURE_LEGACY,
+                (
+                    run_id,
+                    target_key,
+                    state,
+                    capture_digest,
+                    source_uri,
+                    media_type,
+                    byte_size,
+                    retrieved_at,
+                    records,
+                    ocfl_object_id,
+                    ocfl_version,
+                ),
+            )
 
     def _lane_and_custody(self, source_id: str) -> tuple[str, str]:
         """The capture's ``(storage_tier, custody_posture)`` for one source.

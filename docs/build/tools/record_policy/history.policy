@@ -102,6 +102,9 @@ allow db/sqitch.plan 2026-10-24T00:00:00Z ingest_run_report [rights_sources_line
 # future of the pre-commit HEAD only while the line is in flight; past-dated the moment its
 # commit lands.
 allow db/sqitch.plan 2026-10-25T00:00:00Z ingest_run_report_upstream_recon [transparency_views] 2026-10-19T11:05:12Z
+# P35.41 (ticket 320): capture_freshness_marks' planned_at is its real `date -u` stamp — future of
+# the pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-25T00:00:00Z capture_freshness_marks [transparency_source] 2026-10-20T21:19:34Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).

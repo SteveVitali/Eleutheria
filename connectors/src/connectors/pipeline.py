@@ -28,12 +28,13 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from typing import Any
 
 from evidence.ingest_run import claim_set_fingerprint
 
+from .claim_identity_ingest import predicate_temporal_classes
 from .disappearance import (
     Disappearance,
     failing_status_for_error,
@@ -63,6 +64,7 @@ from .stages import (
     StageArtifact,
 )
 from .stages import content_digest as stage_content_digest
+from .upstream_modified import UpstreamDeclared, upstream_declared
 
 _log = logging.getLogger(__name__)
 
@@ -137,6 +139,12 @@ class RunReport:
     #: seed targets (a bounded slice). The rest are listed in ``sweep_skipped``
     #: with reason ``target_limit``, and the run completes ``partial``.
     target_limited: bool = False
+    #: P35.41 / SIG-TRANSP-031: the ``records_digest`` of each flushed capture,
+    #: in emit order — the order-independent fingerprint of that capture's
+    #: emitted record set under the registry's temporal classes. The live-run
+    #: record combines them into its run-level ``records_digest``; a mark's
+    #: per-capture value is the SIG record-change signal.
+    records_digests: list[str] = field(default_factory=list)
 
     @property
     def fingerprint(self) -> str:
@@ -274,6 +282,13 @@ def _mark_capture(ledger: CaptureLedger | None, key: str, capture: CaptureRef, *
         retrieved_at=capture.retrieved_at,
         ocfl_object_id=capture.ocfl_object_id,
         ocfl_version=capture.ocfl_version,
+        # P35.41 / SIG-TRANSP-031: the upstream's declared change value rides
+        # the mark with the capture identity — the acquisition lane records
+        # what the PUBLISHER asserted, the release lane renders it; the two
+        # clocks never mix.
+        upstream_modified_at=capture.upstream_modified_at,
+        upstream_token=capture.upstream_token,
+        upstream_modified_basis=capture.upstream_modified_basis,
         **kw,
     )
 
@@ -292,6 +307,15 @@ def _capture_of(mark: Mapping[str, Any]) -> CaptureRef:
         ocfl_object_id=str(mark["ocfl_object_id"]) if mark.get("ocfl_object_id") else None,
         ocfl_version=str(mark["ocfl_version"]) if mark.get("ocfl_version") else None,
         original_run_id=str(mark["run_id"]) if mark.get("run_id") else None,
+        # P35.41: the mark's stored upstream-declared value survives a resume —
+        # a reprocessed capture keeps the declaration its acquisition read.
+        upstream_modified_at=(
+            str(mark["upstream_modified_at"]) if mark.get("upstream_modified_at") else None
+        ),
+        upstream_token=str(mark["upstream_token"]) if mark.get("upstream_token") else None,
+        upstream_modified_basis=(
+            str(mark["upstream_modified_basis"]) if mark.get("upstream_modified_basis") else None
+        ),
     )
 
 
@@ -302,21 +326,36 @@ def _emit(
     key: str,
     capture: CaptureRef,
     claims: list[dict[str, Any]],
+    *,
+    classes: Mapping[str, Any] | None = None,
 ) -> None:
     """Flush one capture's claims (P31.4 / ADR-111) and account for them.
 
     On a live run the claims are asserted now, one ``assert_claims`` call per
     capture (a commit boundary, ADR-110), and the target's ``flushed`` mark is
-    appended once they have committed. Replay and shadow runs assert nothing
+    appended once they have committed — carrying P35.41's ``records_digest``,
+    the order-independent fingerprint of the emitted record set under the
+    registry's temporal classes (SIG-TRANSP-031's *SIG record change* date:
+    the mark that introduced a different record set, never a byte-only or
+    volatile-field-only difference). Replay and shadow runs assert nothing
     (SIG-INGEST-018/019). The report keeps every record unless the context
     retains only some (bounded memory); the count is always exact.
     """
+    records_digest = claim_set_fingerprint(claims, classes=classes)
+    report.records_digests.append(records_digest)
     if ctx.asserts_claims and ctx.claim_sink is not None:
         # P32.2 (SIG-TRUST-002): the sink binds the ACTUAL capture the claims'
         # extraction consumed — its digest, retrieval time and OCFL version —
         # rather than inventing a per-run placeholder.
         ctx.claim_sink.assert_claims(claims, capture=capture)
-        _mark_capture(ledger, key, capture, state="flushed", records=len(claims))
+        _mark_capture(
+            ledger,
+            key,
+            capture,
+            state="flushed",
+            records=len(claims),
+            records_digest=records_digest,
+        )
     report.claim_count += len(claims)
     retain = ctx.retain_record
     report.claims.extend(claims if retain is None else [c for c in claims if retain(c)])
@@ -421,6 +460,31 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
     if isinstance(budget, int) and not isinstance(budget, bool):
         report.sweep_budget = int(budget)
 
+    # P35.41 / SIG-TRANSP-031: the upstream-declared change read rides the
+    # fetch lane — one bounded metadata GET per platform document per run
+    # (deduped across a layer's page targets), issued only on a mark-writing
+    # run; the payload-declared and S-14 header lanes cost no egress at all.
+    # ``temporal_classes`` is the registry's obs/ref map the flushed mark's
+    # ``records_digest`` is fingerprinted under.
+    metadata_cache: dict[str, UpstreamDeclared] = {}
+    declared_fetcher = ctx.fetcher if ledger is not None else None
+    temporal_classes = predicate_temporal_classes()
+
+    def _with_declared(
+        target: Mapping[str, Any], fetched: FetchResult, capture: CaptureRef
+    ) -> CaptureRef:
+        declared = upstream_declared(
+            target, fetched, fetcher=declared_fetcher, metadata_cache=metadata_cache
+        )
+        if not declared.exposed:
+            return capture
+        return replace(
+            capture,
+            upstream_modified_at=declared.at,
+            upstream_token=declared.token,
+            upstream_modified_basis=declared.basis,
+        )
+
     for target in targets:
         key = _target_key(target)
         action, stored = _resume_target(connector, ctx, report, key, marks.get(key))
@@ -434,7 +498,7 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
             if reprocessed is not None:
                 _addressed(ctx, Stage.CAPTURE, stored)
                 report.captures.append(stored)
-                _emit(ctx, report, ledger, key, stored, reprocessed)
+                _emit(ctx, report, ledger, key, stored, reprocessed, classes=temporal_classes)
                 continue
         governed = bool(target.get("quota_governed"))
         if governed and report.quota_reached:
@@ -465,11 +529,19 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
         if fetched is None:
             continue
         _addressed(ctx, Stage.FETCH, fetched)
-        capture = connector.capture(ctx, fetched)
+        capture = _with_declared(target, fetched, connector.capture(ctx, fetched))
         _addressed(ctx, Stage.CAPTURE, capture)
         report.captures.append(capture)
         _mark_capture(ledger, key, capture, state="captured")
-        _emit(ctx, report, ledger, key, capture, run_post_capture(connector, ctx, capture))
+        _emit(
+            ctx,
+            report,
+            ledger,
+            key,
+            capture,
+            run_post_capture(connector, ctx, capture),
+            classes=temporal_classes,
+        )
 
     # Bounded discovery continuation (P25.5): a captured resource index is the
     # discovery surface for its per-document children (RAA index rows, CCOPS
@@ -505,7 +577,7 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
                 if fetched is None:
                     continue
                 _addressed(ctx, Stage.FETCH, fetched)
-                child = connector.capture(ctx, fetched)
+                child = _with_declared(target, fetched, connector.capture(ctx, fetched))
                 _mark_capture(ledger, key, child, state="captured")
             _addressed(ctx, Stage.CAPTURE, child)
             report.captures.append(child)
@@ -535,7 +607,7 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
                     }
                 )
                 continue
-            _emit(ctx, report, ledger, key, child, claims)
+            _emit(ctx, report, ledger, key, child, claims, classes=temporal_classes)
 
     # SIG-INGEST-018/019: replay and shadow runs produce claims but never assert.
     # A live run has asserted each capture's claims as it went (P31.4).

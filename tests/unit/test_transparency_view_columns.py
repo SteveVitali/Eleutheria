@@ -26,6 +26,55 @@ from policy.transparency import (
 
 DEPLOY = Path(__file__).resolve().parents[2] / "db" / "deploy" / "transparency_views.sql"
 SOURCE_DEPLOY = Path(__file__).resolve().parents[2] / "db" / "deploy" / "transparency_source.sql"
+DB = Path(__file__).resolve().parents[2] / "db"
+
+
+def _plan_order() -> list[str]:
+    """The sqitch change names in ``db/sqitch.plan`` order."""
+    names = []
+    for line in (DB / "sqitch.plan").read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith(("#", "%")):
+            continue
+        names.append(line.split()[0])
+    return names
+
+
+def _latest_view_sql(view: str) -> str:
+    """The LAST ``CREATE [OR REPLACE] VIEW <view>`` across deploy scripts in
+    plan order — append-only sqitch discipline (P35.41's
+    ``capture_freshness_marks`` extends ``v_transparency_capture``): the
+    newest change defines the current shape; earlier deploys are history,
+    never the contract the allow-list closes on."""
+    latest: str | None = None
+    for name in _plan_order():
+        f = DB / "deploy" / f"{name}.sql"
+        if not f.exists():
+            continue
+        sql = f.read_text()
+        if re.search(rf"CREATE (?:OR REPLACE )?VIEW {re.escape(view)} AS", sql):
+            latest = sql
+    assert latest is not None, f"no deploy script defines {view}"
+    return latest
+
+
+def _latest_verify_sql(view: str) -> str:
+    """The LAST verify script carrying a ``FROM <view> … WHERE FALSE``
+    statement — the newest change's verify is the deployed contract."""
+    latest: str | None = None
+    for name in _plan_order():
+        f = DB / "verify" / f"{name}.sql"
+        if not f.exists():
+            continue
+        sql = _strip_comments(f.read_text())
+        has_stmt = any(
+            re.search(rf"\bFROM {re.escape(view)}\b", s) and "WHERE FALSE" in s
+            for s in sql.split(";")
+        )
+        if has_stmt:
+            latest = sql
+    assert latest is not None, f"no verify script selects {view} WHERE FALSE"
+    return latest
 
 
 def _split_top_level(select_list: str) -> list[str]:
@@ -61,7 +110,9 @@ def _column_name(expr: str) -> str:
 def _view_columns(sql: str, view: str, from_marker: str) -> list[str]:
     """The outer SELECT list's output names — the SELECT nearest before the
     outer FROM (the CTE selects sit earlier in the same statement)."""
-    start = sql.index(f"CREATE VIEW {view} AS")
+    m_start = re.search(rf"CREATE (?:OR REPLACE )?VIEW {re.escape(view)} AS", sql)
+    assert m_start is not None, view
+    start = m_start.start()
     end = sql.index("GRANT SELECT ON", start)
     body = sql[start:end]
     from_at = body.index(from_marker)
@@ -104,8 +155,11 @@ def test_run_view_columns_match_allow_list():
 
 
 def test_capture_view_columns_match_allow_list():
-    sql = DEPLOY.read_text()
-    cols = _view_columns(sql, "v_transparency_capture", "FROM ingest_run_capture irc")
+    cols = _view_columns(
+        _latest_view_sql("v_transparency_capture"),
+        "v_transparency_capture",
+        "FROM ingest_run_capture irc",
+    )
     assert cols == list(TRANSPARENCY_CAPTURE_VIEW_COLUMNS)
 
 
@@ -135,12 +189,13 @@ def test_export_queries_select_the_allow_list_verbatim():
 def test_verify_script_selects_the_same_columns():
     """The sqitch verify script's explicit-column selects must match the
     allow-lists — a drift means the deploy check and the runtime contract
-    test different surfaces."""
-    verify = _strip_comments((DEPLOY.parents[1] / "verify" / "transparency_views.sql").read_text())
+    test different surfaces. Each view's LATEST verify (plan order) is the
+    deployed contract — an earlier change's verify checks its own shape."""
     for view, cols in (
         ("v_transparency_run", TRANSPARENCY_RUN_VIEW_COLUMNS),
         ("v_transparency_capture", TRANSPARENCY_CAPTURE_VIEW_COLUMNS),
     ):
+        verify = _latest_verify_sql(view)
         stmt = next(
             (
                 s

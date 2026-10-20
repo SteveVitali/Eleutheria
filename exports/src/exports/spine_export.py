@@ -129,6 +129,7 @@ from .shaping import (
 )
 from .tiles import render_compartment_sites_pmtiles
 from .transparency import (
+    _UNSET,
     SOURCE_RIGHTS_COLUMNS,
     _lane_map,
     _registry_lane_decision,
@@ -3542,7 +3543,7 @@ def build_spine_export(
     registry: Mapping[str, Any] | None = None,
     dossier_packets: Sequence[Mapping[str, Any]] | None = None,
     placement: _placement.PlacementEngine | None = None,
-    cadence_sources: Mapping[str, Mapping[str, str]] | None = None,
+    cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
     scheduler_drift: Mapping[str, bool] | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
@@ -4700,6 +4701,8 @@ def run_spine_export(
     boundary_pack: str | Path | None = None,
     jurisdiction_registry: str | Path | None = None,
     boundary_spec: str | Path | None = None,
+    cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
+    scheduler_drift: Mapping[str, bool] | None = None,
 ) -> SpineExport:
     """Execute the read-only reads and assemble the national export.
 
@@ -4867,6 +4870,12 @@ def run_spine_export(
         subject_flags=subject_flags,
         dossier_packets=dossier_packets,
         placement=engine,
+        # P35.41: the cadence declaration and orchestration's drift flags ride
+        # through — ``_UNSET`` lets the emit load the committed
+        # ``ops/cadence.toml`` itself; an explicit ``None`` is the honest
+        # "doc unreadable" marker, never silently either.
+        cadence_sources=cadence_sources,
+        scheduler_drift=scheduler_drift,
     )
 
 

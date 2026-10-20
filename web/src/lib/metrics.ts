@@ -67,7 +67,13 @@ export function evaluableLabel(value: string): string {
 
 /** Per-source freshness row (SIG-METRIC-007). All fields are required —
  * including `staleness_not_evaluable`, the count of dated observations
- * staleness was never evaluated for (P35.20b). */
+ * staleness was never evaluated for (P35.20b), and P35.41's additions:
+ * `evaluated_at` (every freshness value carries its evaluation time — the
+ * release as-of, never the reader's clock), `staleness_evaluable_count`
+ * (the "of m evaluable" denominator, K9 §5.3), `undated_count` (the
+ * "not evaluable: m undated" share), and the §5.2 volatility basis
+ * (`volatility_distribution` over ALL published claims +
+ * `unregistered_predicate_count`). */
 export interface FreshnessRow {
   source: string;
   last_successful_run: string;
@@ -81,6 +87,22 @@ export interface FreshnessRow {
   /** The source's DECLARED §28.3 volatility class (SIG-METRIC-006), or
    * `not_evaluable` when undeclared — never a guessed class. */
   volatility_class: string;
+  /** The instant the freshness values were evaluated at — the release
+   * as-of (P35.41 / K9 C-4's two-clocks rule). */
+  evaluated_at: string;
+  /** The "of m evaluable" denominator — deduped dated observations the
+   * staleness measure evaluated (K9 §5.3). */
+  staleness_evaluable_count: number;
+  /** Published claims carrying no `observed_at` — the "not evaluable: m
+   * undated" share (K9 §5.3); a count, never "unknown". */
+  undated_count: number;
+  /** The registry volatility-class distribution over ALL the source's
+   * published claims — the disclosed §5.2 basis (K9), never a class voted
+   * in place of the declared gate. */
+  volatility_distribution: Record<string, number>;
+  /** Published claims whose predicate the registry does not declare —
+   * counted honestly, never silently dropped (K9 §5.2). */
+  unregistered_predicate_count: number;
 }
 
 /** Refuse a freshness row that drops a required field (SIG-METRIC-007). */
@@ -93,6 +115,12 @@ export function assertFreshnessRow(row: FreshnessRow): void {
   if (!Number.isFinite(row.stale_entity_count)) missing.push("stale_entity_count");
   if (!Number.isFinite(row.staleness_not_evaluable)) missing.push("staleness_not_evaluable");
   if (!row.volatility_class) missing.push("volatility_class");
+  if (!row.evaluated_at) missing.push("evaluated_at");
+  if (!Number.isFinite(row.staleness_evaluable_count)) missing.push("staleness_evaluable_count");
+  if (!Number.isFinite(row.undated_count)) missing.push("undated_count");
+  if (!row.volatility_distribution || typeof row.volatility_distribution !== "object")
+    missing.push("volatility_distribution");
+  if (!Number.isFinite(row.unregistered_predicate_count)) missing.push("unregistered_predicate_count");
   if (missing.length > 0) {
     throw new Error(`freshness row for "${row.source}" missing: ${missing.join(", ")} (SIG-METRIC-007)`);
   }

@@ -630,8 +630,16 @@ def test_source_freshness_rows_and_not_evaluable() -> None:
         "stale_entity_count",
         "staleness_not_evaluable",
         "volatility_class",
+        # P35.41 (K9 §5.2–5.3): the evaluation instant, the "of m evaluable"
+        # denominator, the undated share and the §5.2 volatility basis.
+        "evaluated_at",
+        "staleness_evaluable_count",
+        "undated_count",
+        "volatility_distribution",
+        "unregistered_predicate_count",
     }
     assert row["staleness_not_evaluable"] == 1
+    assert row["evaluated_at"]  # every freshness value carries its evaluation time
 
 
 def test_undeclared_source_reads_not_evaluable_never_ok() -> None:

@@ -915,7 +915,10 @@ TRANSPARENCY_RUN_VIEW_COLUMNS: tuple[str, ...] = (
 #: The columns ``v_transparency_capture`` may carry. ``target_key`` /
 #: ``source_uri`` pass through the S-6 URL scrub at emission (the view is
 #: ``sig_export``-only — the artifact, not the view, is the publication
-#: boundary); a sealed-tier capture's URL never leaves this surface.
+#: boundary); a sealed-tier capture's URL never leaves this surface. The
+#: trailing four are P35.41's freshness columns (``capture_freshness_marks``):
+#: the emitted record-set fingerprint and the upstream's DECLARED change
+#: value with its basis — declared metadata only, never raw headers.
 TRANSPARENCY_CAPTURE_VIEW_COLUMNS: tuple[str, ...] = (
     "run_id",
     "target_key",
@@ -935,6 +938,10 @@ TRANSPARENCY_CAPTURE_VIEW_COLUMNS: tuple[str, ...] = (
     "http_status",
     "source_id",
     "shared_run",
+    "records_digest",
+    "upstream_modified_at",
+    "upstream_token",
+    "upstream_modified_basis",
 )
 
 #: The columns ``v_transparency_source`` may carry (P35.35 / J3 §3.3 item 3):

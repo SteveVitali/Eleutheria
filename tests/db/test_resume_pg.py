@@ -345,6 +345,54 @@ def test_the_resume_rule_on_real_pg(clean_dsn: str) -> None:
         s._conn.close()
 
 
+def test_freshness_columns_round_trip_and_check(clean_dsn: str) -> None:
+    """P35.41 / SIG-TRANSP-031: the mark's ``records_digest`` (flushed-only by
+    CHECK) and the upstream-declared triple round-trip through
+    ``record_capture`` → ``resume_marks`` — and a digest on a ``captured``
+    mark is refused."""
+    a = _sink(clean_dsn, "F")
+    a.record_capture(
+        "p1",
+        state="captured",
+        capture_digest="d-p1",
+        source_uri="u-p1",
+        media_type="application/json",
+        byte_size=1,
+        upstream_modified_at="2026-10-01T08:00:00Z",
+        upstream_token='"v3"',
+        upstream_modified_basis="rowsUpdatedAt",
+    )
+    a.record_capture(
+        "p2",
+        state="flushed",
+        capture_digest="d-p2",
+        source_uri="u-p2",
+        media_type="application/json",
+        byte_size=2,
+        records=4,
+        records_digest="ab" * 32,
+    )
+    a.record_completion("failed", detail="OperationalError")
+    marks = {m["target_key"]: m for m in _sink(clean_dsn, "F").resume_marks()}
+    assert marks["p1"]["upstream_modified_at"] is not None
+    assert marks["p1"]["upstream_token"] == '"v3"'
+    assert marks["p1"]["upstream_modified_basis"] == "rowsUpdatedAt"
+    assert marks["p2"]["records_digest"] == "ab" * 32
+    # The CHECK: a records_digest never rides an unflushed mark — a captured
+    # mark has no record set yet, and a claimed one would fabricate the
+    # SIG-record-change signal.
+    with pytest.raises(psycopg.errors.CheckViolation):
+        a.record_capture(
+            "p3",
+            state="captured",
+            capture_digest="d-p3",
+            source_uri="u-p3",
+            media_type="application/json",
+            byte_size=1,
+            records_digest="cd" * 32,
+        )
+
+
 def test_a_spine_without_the_marks_table_runs_without_resume() -> None:
     from db.claim_sink import PgClaimSink
 

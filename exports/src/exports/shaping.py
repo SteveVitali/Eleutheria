@@ -63,7 +63,7 @@ from __future__ import annotations
 import json
 import tomllib
 from collections.abc import Mapping, Sequence, Set
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from functools import lru_cache
@@ -689,6 +689,15 @@ class ShapedSourceFreshness:
     staleness_not_evaluable: int  # dated observations never evaluated
     volatility_class: str  # the declared class, or NOT_EVALUABLE
     claims: int
+    #: P35.41 (K9 §5.2–5.3, SIG-TRANSP-029/030): the evaluation instant every
+    #: freshness value carries (the release as-of, ``date.isoformat()``), the
+    #: undated published-claim share of the staleness denominator, and the
+    #: registry-class distribution over ALL the source's published claims —
+    #: the disclosed basis beside the declared-class staleness gate.
+    evaluated_at: str = ""
+    undated_count: int = 0
+    volatility_distribution: Mapping[str, int] = field(default_factory=dict)
+    unregistered_predicate_count: int = 0
 
     def freshness_row(self) -> dict[str, Any]:
         """The ``web/src/lib/metrics.ts`` ``FreshnessRow`` contract (SIG-METRIC-007).
@@ -697,11 +706,14 @@ class ShapedSourceFreshness:
         declared volatility class, or no evaluable dated observation — the
         row's ``status`` and ``volatility_class`` read ``not_evaluable`` and
         the not-evaluable observation count is emitted. A non-evaluable row
-        NEVER reads ``ok`` or ``stale 0``.
+        NEVER reads ``ok`` or ``stale 0``. P35.41 adds the evaluation instant,
+        the ``stale n of m evaluable`` denominator, the undated share and the
+        §5.2 volatility basis — counts, never an "unknown".
         """
         evaluable = self.freshness.staleness_evaluable
         return {
             "source": self.freshness.source_id,
+            "evaluated_at": self.evaluated_at,
             # A value the spine does not record is published as the explicit honest-absence
             # token (P30.3) — never an empty string (a DROPPED field, which the web refuses)
             # and never a guessed date (§3.1). Since P31.2 (ADR-109) the dates come from the
@@ -719,8 +731,18 @@ class ShapedSourceFreshness:
             ),
             "status": self.freshness.status if evaluable else NOT_EVALUABLE,
             "stale_entity_count": self.freshness.stale_count,
+            # P35.41 (K9 §5.3): the "of m evaluable" denominator and the
+            # undated share — "stale n of m evaluable" or
+            # "not evaluable: m undated", never a fabricated figure.
+            "staleness_evaluable_count": self.freshness.tracked_count,
+            "undated_count": self.undated_count,
             "staleness_not_evaluable": self.staleness_not_evaluable,
             "volatility_class": self.volatility_class,
+            # P35.41 (K9 §5.2): the registry-class distribution over ALL the
+            # source's published claims — the disclosed basis, never a class
+            # voted in place of the declared gate.
+            "volatility_distribution": dict(self.volatility_distribution),
+            "unregistered_predicate_count": self.unregistered_predicate_count,
         }
 
     def as_json(self) -> dict[str, Any]:
@@ -729,6 +751,10 @@ class ShapedSourceFreshness:
             "staleness_not_evaluable": self.staleness_not_evaluable,
             "volatility_class": self.volatility_class,
             "claims": self.claims,
+            "evaluated_at": self.evaluated_at,
+            "undated_count": self.undated_count,
+            "volatility_distribution": dict(self.volatility_distribution),
+            "unregistered_predicate_count": self.unregistered_predicate_count,
         }
 
 
@@ -765,8 +791,44 @@ def _freshness_specs() -> tuple[Any, ...]:
             unit="count",
         ),
         _CS(
+            "evaluated_at",
+            "the instant the freshness values were evaluated at — the "
+            "release as-of, never the reader's clock (P35.41 / K9 C-4)",
+            nullable=False,
+        ),
+        _CS(
+            "staleness_evaluable_count",
+            "the ``of m evaluable`` denominator — deduped dated observations "
+            "staleness evaluated (K9 §5.3)",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "undated_count",
+            "published claims carrying no ``observed_at`` — the "
+            "``not evaluable: m undated`` share (K9 §5.3)",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
             "staleness_not_evaluable",
             "dated observations staleness was never evaluated for (P35.20b)",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "volatility_distribution",
+            "the registry volatility-class distribution over ALL the "
+            "source's published claims — the §5.2 basis (K9)",
+            nullable=False,
+        ),
+        _CS(
+            "unregistered_predicate_count",
+            "published claims whose predicate the registry does not declare "
+            "— counted, never silently dropped (K9 §5.2)",
             dtype="integer",
             nullable=False,
             unit="count",
@@ -1017,6 +1079,26 @@ QUERIES: dict[str, str] = {
         "   AND {PUB_GATE}"
         " GROUP BY cs.source_id, c.subject_id, c.predicate_id"
         " ORDER BY cs.source_id, c.subject_id, c.predicate_id"
+    ),
+    # P35.41 (K9 §5.2): the volatility-distribution basis — per-(source,
+    # predicate) claim counts over EVERY published predicate, dated and
+    # undated alike, under the same eligibility gate as the observations
+    # read. The chip and the "n undated" share are derived from this, never
+    # from the dated-observation set alone.
+    "freshness_predicates": (
+        "{EFFECTIVE}" + "SELECT cs.source_id, c.predicate_id, count(*) AS claims,"
+        "       count(*) FILTER (WHERE c.observed_at IS NOT NULL) AS dated"
+        "  FROM claim c"
+        "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE upper_inf(c.sys_period)"
+        "   AND rr.redistributable = 'yes'"
+        "   AND c.sensitivity_tier = 0"
+        "   AND {PUB_GATE}"
+        " GROUP BY cs.source_id, c.predicate_id"
+        " ORDER BY cs.source_id, c.predicate_id"
     ),
     # Sharing-edge claims: entity_ref / sharing predicates at the public tier,
     # publishable-effective only (the public dataset never names a partner a
@@ -1823,12 +1905,42 @@ def coverage_metrics(
     return tuple(metrics)
 
 
+def _source_volatility_basis(
+    predicate_rows: Sequence[Sequence[Any]],
+) -> dict[str, dict[str, Any]]:
+    """Per-source §5.2 basis (P35.41 / K9): the registry volatility-class
+    distribution over ALL published claims, the undated share, and the
+    unregistered-predicate count — the disclosed denominators beside the
+    declared-class staleness gate (which stays P35.20b's, never a vote).
+    ``predicate_rows`` are ``(source_id, predicate_id, claims, dated)``."""
+    by_source: dict[str, dict[str, Any]] = {}
+    for r in predicate_rows:
+        source_id = str(r[0] or "")
+        if not source_id:
+            continue
+        entry = by_source.setdefault(
+            source_id, {"distribution": {}, "unregistered": 0, "undated": 0}
+        )
+        predicate_id = str(r[1] or "")
+        n_claims = int(r[2] or 0)
+        dated = int(r[3] or 0) if len(r) > 3 else 0
+        try:
+            cls = str(predicate_meta(predicate_id)["volatility_class"])
+        except KeyError:
+            entry["unregistered"] += n_claims
+        else:
+            entry["distribution"][cls] = entry["distribution"].get(cls, 0) + n_claims
+        entry["undated"] += n_claims - dated
+    return by_source
+
+
 def source_freshness_rows(
     observations: Sequence[Sequence[Any]],
     *,
     run_stats: Mapping[str, Mapping[str, Any]],
     as_of: date,
     volatility_classes: Mapping[str, str] | None = None,
+    predicate_rows: Sequence[Sequence[Any]] = (),
 ) -> list[ShapedSourceFreshness]:
     """Per-source freshness (SIG-METRIC-007), volatility-relative (SIG-METRIC-006).
 
@@ -1851,6 +1963,9 @@ def source_freshness_rows(
     declarations; an explicit mapping overrides them (test seam).
     """
     classes = declared_volatility_classes() if volatility_classes is None else volatility_classes
+    # P35.41 (K9 §5.2): the all-predicate distribution basis — same sources,
+    # every published predicate, dated and undated alike.
+    basis = _source_volatility_basis(predicate_rows)
 
     by_source: dict[str, list[tuple[str, str, date]]] = {}
     for r in observations:
@@ -1896,12 +2011,17 @@ def source_freshness_rows(
             declared_volatility_class=declared,
             not_evaluable_count=not_evaluable,
         )
+        vol_basis = basis.get(source_id, {})
         rows.append(
             ShapedSourceFreshness(
                 freshness=freshness,
                 staleness_not_evaluable=freshness.not_evaluable_count,
                 volatility_class=declared if declared is not None else NOT_EVALUABLE,
                 claims=int(stats.get("claims", len(by_source.get(source_id, ())))),
+                evaluated_at=as_of.isoformat(),
+                undated_count=int(vol_basis.get("undated", 0)),
+                volatility_distribution=vol_basis.get("distribution", {}),
+                unregistered_predicate_count=int(vol_basis.get("unregistered", 0)),
             )
         )
     return rows
@@ -2206,11 +2326,23 @@ def build_shaped_dataset(
     freshness_observations = raw.get("freshness_observations")
     if freshness_observations is None:
         freshness_observations = _freshness_observations_from_claims(publishable_claims)
+    # P35.41 (K9 §5.2): the all-predicate distribution read — absent (the
+    # pre-change fixture seam) it degrades to the same aggregate over the
+    # publishable shaping claims, honestly narrower.
+    freshness_predicates = raw.get("freshness_predicates")
+    if freshness_predicates is None:
+        pred_cells: dict[tuple[str, str], list[int]] = {}
+        for c in publishable_claims:
+            cell = pred_cells.setdefault((str(c.source_id), str(c.predicate_id)), [0, 0])
+            cell[0] += 1
+            cell[1] += 1 if c.observed_at else 0
+        freshness_predicates = [(sid, pred, n, d) for (sid, pred), (n, d) in pred_cells.items()]
     sources = source_freshness_rows(
         freshness_observations,
         run_stats=run_stats,
         as_of=as_of_date,
         volatility_classes=volatility_classes,
+        predicate_rows=freshness_predicates,
     )
 
     sharing_edges = shape_sharing_edges(raw.get("sharing_edges") or [])

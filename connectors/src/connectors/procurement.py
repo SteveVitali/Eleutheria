@@ -4783,6 +4783,10 @@ def _fetch_paged_index(
         body=merged,
         media_type=first.media_type,
         retrieved_at=first.retrieved_at,
+        # P35.41: the first page's response headers ride through — the
+        # upstream-declared lane (Last-Modified / ETag) reads what the
+        # publisher asserted on the fetched document.
+        headers=dict(first.headers),
     )
 
 
