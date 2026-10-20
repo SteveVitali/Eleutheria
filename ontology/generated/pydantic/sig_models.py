@@ -2,10 +2,20 @@ from __future__ import annotations
 
 import re
 import sys
-from datetime import date, datetime, time
+from datetime import (
+    date,
+    datetime,
+    time
+)
 from decimal import Decimal
 from enum import Enum
-from typing import Any, ClassVar, Literal, Optional, Union
+from typing import (
+    Any,
+    ClassVar,
+    Literal,
+    Optional,
+    Union
+)
 
 from pydantic import (
     BaseModel,
@@ -15,7 +25,7 @@ from pydantic import (
     SerializationInfo,
     SerializerFunctionWrapHandler,
     field_validator,
-    model_serializer,
+    model_serializer
 )
 
 
@@ -25,75 +35,63 @@ version = "1.0.0"
 
 class ConfiguredBaseModel(BaseModel):
     model_config = ConfigDict(
-        serialize_by_alias=True,
-        validate_by_name=True,
-        validate_assignment=True,
-        validate_default=True,
-        extra="forbid",
-        arbitrary_types_allowed=True,
-        use_enum_values=True,
-        strict=False,
+        serialize_by_alias = True,
+        validate_by_name = True,
+        validate_assignment = True,
+        validate_default = True,
+        extra = "forbid",
+        arbitrary_types_allowed = True,
+        use_enum_values = True,
+        strict = False,
     )
+
+
+
 
 
 class LinkMLMeta(RootModel):
     root: dict[str, Any] = {}
     model_config = ConfigDict(frozen=True)
 
-    def __getattr__(self, key: str):
+    def __getattr__(self, key:str):
         return getattr(self.root, key)
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key:str):
         return self.root[key]
 
-    def __setitem__(self, key: str, value):
+    def __setitem__(self, key:str, value):
         self.root[key] = value
 
-    def __contains__(self, key: str) -> bool:
+    def __contains__(self, key:str) -> bool:
         return key in self.root
 
 
-linkml_meta = LinkMLMeta(
-    {
-        "default_prefix": "sig",
-        "default_range": "string",
-        "description": "The canonical SIG ontology: entities (§11), relationships "
-        "(§12), and the structural controlled vocabularies (§13). One "
-        "LinkML source generates every downstream form (§20.1).",
-        "id": "https://ontology.surveillancegraph.org/schema/sig",
-        "imports": ["linkml:types", "common", "entities", "edges"],
-        "license": "Apache-2.0",
-        "name": "sig",
-        "prefixes": {
-            "dcterms": {
-                "prefix_prefix": "dcterms",
-                "prefix_reference": "http://purl.org/dc/terms/",
-            },
-            "linkml": {"prefix_prefix": "linkml", "prefix_reference": "https://w3id.org/linkml/"},
-            "sig": {
-                "prefix_prefix": "sig",
-                "prefix_reference": "https://ontology.surveillancegraph.org/schema/",
-            },
-            "skos": {
-                "prefix_prefix": "skos",
-                "prefix_reference": "http://www.w3.org/2004/02/skos/core#",
-            },
-            "xsd": {
-                "prefix_prefix": "xsd",
-                "prefix_reference": "http://www.w3.org/2001/XMLSchema#",
-            },
-        },
-        "source_file": "ontology/src/ontology/schema/sig.yaml",
-        "title": "Surveillance Infrastructure Graph ontology",
-    }
-)
-
+linkml_meta = LinkMLMeta({'default_prefix': 'sig',
+     'default_range': 'string',
+     'description': 'The canonical SIG ontology: entities (§11), relationships '
+                    '(§12), and the structural controlled vocabularies (§13). One '
+                    'LinkML source generates every downstream form (§20.1).',
+     'id': 'https://ontology.surveillancegraph.org/schema/sig',
+     'imports': ['linkml:types', 'common', 'entities', 'edges'],
+     'license': 'Apache-2.0',
+     'name': 'sig',
+     'prefixes': {'dcterms': {'prefix_prefix': 'dcterms',
+                              'prefix_reference': 'http://purl.org/dc/terms/'},
+                  'linkml': {'prefix_prefix': 'linkml',
+                             'prefix_reference': 'https://w3id.org/linkml/'},
+                  'sig': {'prefix_prefix': 'sig',
+                          'prefix_reference': 'https://ontology.surveillancegraph.org/schema/'},
+                  'skos': {'prefix_prefix': 'skos',
+                           'prefix_reference': 'http://www.w3.org/2004/02/skos/core#'},
+                  'xsd': {'prefix_prefix': 'xsd',
+                          'prefix_reference': 'http://www.w3.org/2001/XMLSchema#'}},
+     'source_file': 'ontology/src/ontology/schema/sig.yaml',
+     'title': 'Surveillance Infrastructure Graph ontology'} )
 
 class TemporalBoundKind(str, Enum):
     """
     How a temporal bound is known (§9.5).
     """
-
     known = "known"
     """
     A specific known bound.
@@ -112,7 +110,6 @@ class SourceReliability(str, Enum):
     """
     Reliability R of the publisher, not the claim (§10.4).
     """
-
     R1 = "R1"
     """
     Highest reliability.
@@ -131,7 +128,6 @@ class ClaimDirectness(str, Enum):
     """
     Directness D from the (genre × predicate) matrix (§10.5).
     """
-
     D1 = "D1"
     """
     Authoritative record of the fact itself.
@@ -162,7 +158,6 @@ class ArtifactIntegrity(str, Enum):
     """
     Integrity I of the artifact (§10.6).
     """
-
     I1 = "I1"
     I2 = "I2"
     I3 = "I3"
@@ -172,7 +167,6 @@ class ArtifactType(str, Enum):
     """
     The genre of an evidence artifact (§10.3.2). SIG-INGEST-047 additionally carries state_auditor_survey, warrant, and procurement_aggregator_record (§23.6) — the state-auditor surveys are R1 government datasets and the aggregator record is the paywalled procurement-aggregator lead under a LINK custody posture.
     """
-
     contract = "contract"
     invoice = "invoice"
     council_minutes = "council_minutes"
@@ -226,7 +220,6 @@ class Currency(str, Enum):
     """
     Currency C derived at query time from volatility half-life (§28.3).
     """
-
     C1 = "C1"
     """
     CURRENT.
@@ -249,7 +242,6 @@ class WeightClass(str, Enum):
     """
     Composed weight class W (§10.6).
     """
-
     W0 = "W0"
     W1 = "W1"
     W2 = "W2"
@@ -261,7 +253,6 @@ class EvidenceRole(str, Enum):
     """
     The role a piece of evidence plays for a claim (§13.3).
     """
-
     establishes = "establishes"
     corroborates = "corroborates"
     contextualizes = "contextualizes"
@@ -274,7 +265,6 @@ class EpistemicStatus(str, Enum):
     """
     Required epistemic status of an accountability event (§11.17, SIG-ONTO-038).
     """
-
     alleged = "alleged"
     reported = "reported"
     confirmed = "confirmed"
@@ -289,7 +279,6 @@ class AbsenceKind(str, Enum):
     """
     How an absence is known — negative space is queryable (§9.5).
     """
-
     not_researched = "not_researched"
     searched_not_found = "searched_not_found"
     evidence_of_absence = "evidence_of_absence"
@@ -300,7 +289,6 @@ class ContradictionState(str, Enum):
     """
     State of a contradiction (§31).
     """
-
     uncontested = "uncontested"
     resolved_conflict = "resolved_conflict"
     unresolved_conflict = "unresolved_conflict"
@@ -311,7 +299,6 @@ class ValueKind(str, Enum):
     """
     RDF-style value kind — known value, unknown value, or no value (§9.5).
     """
-
     value = "value"
     somevalue = "somevalue"
     """
@@ -327,7 +314,6 @@ class PredicateVolatility(str, Enum):
     """
     Volatility class governing currency decay (§28.3, SIG-RECON-008).
     """
-
     IMMUTABLE = "IMMUTABLE"
     """
     Never changes; half-life infinite; always C1.
@@ -343,7 +329,6 @@ class ResolutionStrategy(str, Enum):
     """
     Per-predicate resolution strategy (§28.4, SIG-RECON-012).
     """
-
     latest_observation_wins = "latest_observation_wins"
     authoritative_source_wins = "authoritative_source_wins"
     interval_union = "interval_union"
@@ -359,7 +344,6 @@ class SkosMappingRelation(str, Enum):
     """
     SKOS mapping relations for crosswalks (§20.3).
     """
-
     exactMatch = "exactMatch"
     closeMatch = "closeMatch"
     broadMatch = "broadMatch"
@@ -371,7 +355,6 @@ class ProcurementState(str, Enum):
     """
     Track 1 — procurement (§13.4). `unknown` is admissible and default (SIG-ONTO-063).
     """
-
     unknown = "unknown"
     proposed = "proposed"
     rfp_issued = "rfp_issued"
@@ -393,7 +376,6 @@ class PhysicalState(str, Enum):
     """
     Track 2 — physical (§13.4). `replaced` is deliberately NOT here (SIG-ONTO-062).
     """
-
     unknown = "unknown"
     not_installed = "not_installed"
     installation = "installation"
@@ -408,7 +390,6 @@ class OperationalState(str, Enum):
     """
     Track 3 — operational (§13.4).
     """
-
     unknown = "unknown"
     inactive = "inactive"
     pilot = "pilot"
@@ -422,7 +403,6 @@ class AuthorizationState(str, Enum):
     """
     Track 4 — authorization (§13.4).
     """
-
     unknown = "unknown"
     unauthorized = "unauthorized"
     approval_pending = "approval_pending"
@@ -436,7 +416,6 @@ class Role(str, Enum):
     """
     The fourteen separately-modelled roles (§12.4). Never collapsed to owner/operator.
     """
-
     owner = "owner"
     """
     Who could lawfully remove it?
@@ -499,7 +478,6 @@ class AccessKind(str, Enum):
     """
     The three edge types that MUST NEVER be merged (§12.2).
     """
-
     configured_access = "configured_access"
     """
     The system is set up to permit it.
@@ -518,7 +496,6 @@ class Automaticity(str, Enum):
     """
     How access is triggered (§12.5).
     """
-
     automatic = "automatic"
     manual_approval = "manual_approval"
     per_incident_consent = "per_incident_consent"
@@ -529,7 +506,6 @@ class CapabilityScope(str, Enum):
     """
     Capability scope values (§11.6, §13.2).
     """
-
     own = "own"
     partner = "partner"
     state = "state"
@@ -543,7 +519,6 @@ class CohortApplicability(str, Enum):
     """
     Which cohort an integration termination applies to (§12.3, SIG-ONTO-046).
     """
-
     all = "all"
     new_customers_only = "new_customers_only"
     existing_customers_only = "existing_customers_only"
@@ -553,7 +528,6 @@ class Mobility(str, Enum):
     """
     Physical asset mobility (§11.8).
     """
-
     fixed = "fixed"
     redeployable = "redeployable"
     vehicle_mounted = "vehicle_mounted"
@@ -566,7 +540,6 @@ class ConfirmationStatus(str, Enum):
     """
     How a physical asset was confirmed (§11.8).
     """
-
     field_confirmed = "field_confirmed"
     imagery_confirmed = "imagery_confirmed"
     record_confirmed = "record_confirmed"
@@ -578,7 +551,6 @@ class DetectionMethod(str, Enum):
     """
     How a candidate asset was detected (§11.9, SIG-ONTO-030).
     """
-
     rf_oui_match = "rf_oui_match"
     wigle_observation = "wigle_observation"
     imagery_detection = "imagery_detection"
@@ -591,7 +563,6 @@ class PromotionStatus(str, Enum):
     """
     Candidate-asset promotion lifecycle (§11.9, §43.5).
     """
-
     unreviewed = "unreviewed"
     corroborated = "corroborated"
     promoted = "promoted"
@@ -603,7 +574,6 @@ class ProductStatus(str, Enum):
     """
     Product lifecycle status (§11.4).
     """
-
     announced = "announced"
     available = "available"
     end_of_sale = "end_of_sale"
@@ -616,7 +586,6 @@ class SystemScope(str, Enum):
     """
     DataSystem scope (§11.10).
     """
-
     agency_local = "agency_local"
     vendor_cloud_single_tenant = "vendor_cloud_single_tenant"
     vendor_cloud_shared = "vendor_cloud_shared"
@@ -630,7 +599,6 @@ class AcquisitionChannel(str, Enum):
     """
     Contract acquisition channel (§11.11, SIG-ONTO-032).
     """
-
     direct_award = "direct_award"
     competitive_rfp = "competitive_rfp"
     sole_source = "sole_source"
@@ -645,7 +613,6 @@ class FundingInstrumentType(str, Enum):
     """
     Funding instrument type (§11.12).
     """
-
     federal_grant = "federal_grant"
     state_grant = "state_grant"
     private_donation = "private_donation"
@@ -660,7 +627,6 @@ class PolicyType(str, Enum):
     """
     Policy type (§11.13).
     """
-
     retention = "retention"
     acceptable_use = "acceptable_use"
     warrant_requirement = "warrant_requirement"
@@ -677,7 +643,6 @@ class EnforcementMechanism(str, Enum):
     """
     Policy enforcement mechanism (§11.13).
     """
-
     none_stated = "none_stated"
     internal_discipline = "internal_discipline"
     audit = "audit"
@@ -690,7 +655,6 @@ class ObservedVia(str, Enum):
     """
     How a configuration state was observed (§11.15, SIG-ONTO-036).
     """
-
     portal = "portal"
     config_screenshot = "config_screenshot"
     foia_export = "foia_export"
@@ -702,7 +666,6 @@ class LegalInstrumentType(str, Enum):
     """
     Legal instrument type, internationalized and country-namespaced (§11.14, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract parents; national instruments are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening a US-shaped enum (§5.3). P18.2 is the first consumer (the French arrêté préfectoral / CNIL decision).
     """
-
     statute = "statute"
     ordinance = "ordinance"
     regulation = "regulation"
@@ -749,7 +712,6 @@ class AccountabilityEventType(str, Enum):
     """
     Accountability event type (§11.17).
     """
-
     false_stop = "false_stop"
     wrongful_arrest = "wrongful_arrest"
     alleged_stalking_misuse = "alleged_stalking_misuse"
@@ -770,7 +732,6 @@ class ProceedingPosture(str, Enum):
     """
     Legal proceeding posture (§11.18).
     """
-
     filed = "filed"
     pending = "pending"
     dismissed = "dismissed"
@@ -786,7 +747,6 @@ class SourceClass(str, Enum):
     """
     The six evidence source classes of OL-2E-AL-03 (§11.17, SIG-ONTO-039). An accountability incident MUST be linkable to all six, with the class RECORDED on the evidence link, so a claim resting only on advocacy analysis is distinguishable from one resting on a court record. These are epistemic classes of the reporting, NOT the R1..R6 reliability tiers (§10.4).
     """
-
     primary_record = "primary_record"
     """
     A primary document — the underlying record itself (a contract, a filing exhibit, an incident report).
@@ -817,7 +777,6 @@ class AuditSourceType(str, Enum):
     """
     Audit source type — these are NOT interchangeable (§11.16, §23.7).
     """
-
     organization_audit = "organization_audit"
     network_audit = "network_audit"
     portal_public_audit = "portal_public_audit"
@@ -828,7 +787,6 @@ class RecordsResponseStatus(str, Enum):
     """
     Records-request response status (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).
     """
-
     draft = "draft"
     filed = "filed"
     acknowledged = "acknowledged"
@@ -845,7 +803,6 @@ class RecordsPlatform(str, Enum):
     """
     Records-request platform (§11.19).
     """
-
     muckrock = "muckrock"
     nextrequest = "nextrequest"
     govqa = "govqa"
@@ -859,7 +816,6 @@ class AliasType(str, Enum):
     """
     Organization alias qualifier (§11.2).
     """
-
     abbreviation = "abbreviation"
     former_name = "former_name"
     slug = "slug"
@@ -873,7 +829,6 @@ class OrganizationRelationType(str, Enum):
     """
     The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§14.5, SIG-IDENT-016). Organizational change is modelled as first-class relation records carrying valid + transaction time, never as a mutable column. A pure rename is deliberately NOT here: renaming produces a new version and a dated alias, never a succession relation (SIG-IDENT-017).
     """
-
     same_as = "same_as"
     """
     The two records denote the same real-world organization.
@@ -908,7 +863,6 @@ class GeometryPrecision(str, Enum):
     """
     How precisely a stored geometry locates its subject (§14.2, SIG-IDENT-004). An agency-registry latitude/longitude MUST be stored as `organization_centroid_or_unknown` and MUST NOT be used for point-in-polygon jurisdiction assignment or as an organization address — using an agency centroid as a device location would be a fabrication.
     """
-
     rooftop = "rooftop"
     """
     A rooftop / address-point geocode.
@@ -935,7 +889,6 @@ class GeometryKind(str, Enum):
     """
     The geometry shape kind a record declares for its subject (§19, SIG-GEO-003): the asset model MUST NOT assume a point. A record whose publisher's geometry is a zone or programme area declares `area` — automated-traffic-enforcement zones and published camera programme areas are areas, never device points — and a route-shaped record declares `line`. The `geometry_kind` predicate (ontology/vocab/predicates.yaml) carries this vocabulary's member on the claim surface; an area-shaped record MUST NOT be flattened to a device point.
     """
-
     point = "point"
     """
     A point geometry — one coordinate site (a device point).
@@ -954,7 +907,6 @@ class JurisdictionType(str, Enum):
     """
     Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract levels every country's hierarchy maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs its own level names in without widening a US-shaped enum.
     """
-
     country = "country"
     state_province = "state_province"
     county = "county"
@@ -1022,7 +974,6 @@ class OrganizationType(str, Enum):
     """
     Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068). "vendor" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity. `law_enforcement` is the shared abstract parent every country's police-force types map onto; national forces are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening the `us.*` set.
     """
-
     law_enforcement = "law_enforcement"
     """
     Abstract parent of every country's law-enforcement organization types (SIG-ONTO-068).
@@ -1101,7 +1052,6 @@ class AcquisitionMethod(str, Enum):
     """
     Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_request is US-specific; the abstract parent `records_request` carries national children linked by `is_a`, plus `no_equivalent_available` for jurisdictions with no access regime (itself a coverage fact worth recording).
     """
-
     records_request = "records_request"
     """
     Abstract parent of all public-records regimes.
@@ -1121,7 +1071,6 @@ class Salience(str, Enum):
     """
     Technology salience rating (§13.1, SIG-ONTO-056).
     """
-
     L = "L"
     """
     Low.
@@ -1144,7 +1093,6 @@ class ClaimObjectType(str, Enum):
     """
     The declared shape of a claim's object — declared, never inferred (§10.3.5).
     """
-
     literal = "literal"
     entity_ref = "entity_ref"
     vocab_term = "vocab_term"
@@ -1163,7 +1111,6 @@ class ClaimPolarity(str, Enum):
     """
     Whether the claim affirms or denies its predicate (§10.3).
     """
-
     affirms = "affirms"
     denies = "denies"
 
@@ -1172,7 +1119,6 @@ class ClaimRank(str, Enum):
     """
     Wikidata-style rank among competing claims of a (subject, predicate).
     """
-
     preferred = "preferred"
     normal = "normal"
     deprecated = "deprecated"
@@ -1182,7 +1128,6 @@ class ReviewStatus(str, Enum):
     """
     The claim's review state (append-only; a review lands as a new claim).
     """
-
     unreviewed = "unreviewed"
     machine_accepted = "machine_accepted"
     human_verified = "human_verified"
@@ -1194,7 +1139,6 @@ class ObservedAtKind(str, Enum):
     """
     How the observation time is known (T2, §9.4).
     """
-
     exact = "exact"
     approximate = "approximate"
     bounded_above = "bounded_above"
@@ -1205,7 +1149,6 @@ class LocatorKind(str, Enum):
     """
     The six addressable ways a claim's evidence link points into the captured bytes it was extracted from (§24.1, SIG-PARSE-003). Unknown kinds fail closed — never silently re-anchored to the whole document.
     """
-
     page = "page"
     bbox = "bbox"
     cell = "cell"
@@ -1218,7 +1161,6 @@ class BindingStatus(str, Enum):
     """
     How a claim↔capture evidence link was bound (SIG-TRUST-002). The honest classifications — a link is never presented as byte-anchored provenance it is not.
     """
-
     actual_capture = "actual_capture"
     """
     Typed locator into the actual captured bytes consumed.
@@ -1241,7 +1183,6 @@ class CaptureClassification(str, Enum):
     """
     What an evidence_capture row actually is (SIG-TRUST-002). 'legacy' is the honest default for rows whose provenance predates the classification.
     """
-
     actual = "actual"
     """
     A byte-bearing capture of a real source URI.
@@ -1260,7 +1201,6 @@ class QuarantineReason(str, Enum):
     """
     Why an assertion failed closed into assertion_quarantine (SIG-TRUST-001). Distinct reasons keep extractor failure separate from an unsupported locator and an unknown type separate from a missing binding.
     """
-
     bad_digest = "bad_digest"
     unknown_predicate = "unknown_predicate"
     unknown_object_type = "unknown_object_type"
@@ -1280,7 +1220,6 @@ class Direction(str, Enum):
     """
     Explicit edge direction — never symmetric by default (§12.5, SIG-ONTO-049).
     """
-
     a_to_b = "a_to_b"
     b_to_a = "b_to_a"
 
@@ -1289,7 +1228,6 @@ class EdgeType(str, Enum):
     """
     The closed catalog of relationship types (§12.1, SIG-ONTO-041). Untyped edges are a schema error. Prohibited edges (§12.8) are intentionally absent.
     """
-
     ingests_feed_from = "ingests_feed_from"
     """
     B pulls a continuous stream from A; data comes to rest in B.
@@ -1371,1995 +1309,714 @@ class EdgeType(str, Enum):
     published_by_source = "published_by_source"
 
 
+
 class Entity(ConfiguredBaseModel):
     """
     Abstract base — every entity has identity (§3.1 defining standard).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"abstract": True, "from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Jurisdiction(Entity):
     """
     [NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    jurisdiction_type: Optional[JurisdictionType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}}
-    )
-    parent_jurisdiction: Optional[list[str]] = Field(
-        default=None,
-        description="""Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}},
-    )
-    code_system: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable code-system identifiers (us.census.geoid, iso.3166-2, fr.insee, ...).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}},
-    )
-    code: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}}
-    )
-    boundary: Optional[str] = Field(
-        default=None,
-        description="""MultiPolygon, 4326.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}},
-    )
-    boundary_source: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}}
-    )
-    name: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction"]}}
-    )
-    name_lang: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction", "Organization"]}},
-    )
-    transliteration_scheme: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable qualifier naming the transliteration scheme a romanised/ transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated name carries it so the original script stays recoverable (SIG-ONTO-069).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction", "Organization"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    jurisdiction_type: Optional[JurisdictionType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    parent_jurisdiction: Optional[list[str]] = Field(default=None, description="""Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    code_system: Optional[list[str]] = Field(default=None, description="""Repeatable code-system identifiers (us.census.geoid, iso.3166-2, fr.insee, ...).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    code: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    boundary: Optional[str] = Field(default=None, description="""MultiPolygon, 4326.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    boundary_source: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    name: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
+    name_lang: Optional[list[str]] = Field(default=None, description="""Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    transliteration_scheme: Optional[list[str]] = Field(default=None, description="""Repeatable qualifier naming the transliteration scheme a romanised/ transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated name carries it so the original script stays recoverable (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Organization(Entity):
     """
     The single entity for ALL institutional actors; \"vendor\" is a role, not a subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    canonical_name: Optional[str] = Field(
-        default=None,
-        description="""A claim, not an authoritative column (§8.2, SIG-ONTO-003).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}},
-    )
-    alias: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    alias_type: Optional[list[AliasType]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    name_lang: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction", "Organization"]}},
-    )
-    transliteration_scheme: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Jurisdiction", "Organization"]}},
-    )
-    organization_type: Optional[OrganizationType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    parent_organization: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    jurisdiction: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Organization", "Deployment", "LegalInstrument", "ClaimQualifier"]
-            }
-        },
-    )
-    identifier: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}},
-    )
-    identifier_system: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    government_domain: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    address: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}}
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    publication_review: Optional[bool] = Field(
-        default=None,
-        description="""Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Organization"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    canonical_name: Optional[str] = Field(default=None, description="""A claim, not an authoritative column (§8.2, SIG-ONTO-003).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    alias: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    alias_type: Optional[list[AliasType]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    name_lang: Optional[list[str]] = Field(default=None, description="""Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    transliteration_scheme: Optional[list[str]] = Field(default=None, description="""Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    organization_type: Optional[OrganizationType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    parent_organization: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    jurisdiction: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization',
+                       'Deployment',
+                       'LegalInstrument',
+                       'ClaimQualifier']} })
+    identifier: Optional[list[str]] = Field(default=None, description="""Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    identifier_system: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    government_domain: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    address: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    publication_review: Optional[bool] = Field(default=None, description="""Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Person(Entity):
     """
     [NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person row carries NO surveillance attributes and MUST NOT be reachable from any automated extraction path. It exists only for named public officials and SIG's own attributable curators.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    public_interest_basis: str = Field(
-        default=...,
-        description="""MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Person"]}},
-    )
-    human_review_completed: bool = Field(
-        default=...,
-        description="""Person creation MUST have been through human review (SIG-ONTO-016).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Person"]}},
-    )
-    role_description: Optional[str] = Field(
-        default=None,
-        description="""The public role justifying inclusion (e.g. named official in an accountability event).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Person"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    public_interest_basis: str = Field(default=..., description="""MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person']} })
+    human_review_completed: bool = Field(default=..., description="""Person creation MUST have been through human review (SIG-ONTO-016).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person']} })
+    role_description: Optional[str] = Field(default=None, description="""The public role justifying inclusion (e.g. named official in an accountability event).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Product(Entity):
     """
     A product; MUST NOT be equated with a Technology (§11.4, SIG-ONTO-017).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    product_name: Optional[str] = Field(
-        default=None,
-        description="""Time-bounded; products are renamed constantly.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Product"]}},
-    )
-    vendor: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Product", "Deployment", "DataSystem"]}},
-    )
-    implements_technology: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Product"]}}
-    )
-    can_offer_capability: Optional[list[str]] = Field(
-        default=None,
-        description="""Defeasible / marketing-level only (SIG-ONTO-018).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Product"]}},
-    )
-    product_status: Optional[ProductStatus] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Product"]}}
-    )
-    successor_product: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Product"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    product_name: Optional[str] = Field(default=None, description="""Time-bounded; products are renamed constantly.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Product']} })
+    vendor: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product', 'Deployment', 'DataSystem']} })
+    implements_technology: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product']} })
+    can_offer_capability: Optional[list[str]] = Field(default=None, description="""Defeasible / marketing-level only (SIG-ONTO-018).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Product']} })
+    product_status: Optional[ProductStatus] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product']} })
+    successor_product: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Technology(Entity):
     """
     A three-level technology (domain→family→technology, §11.5, SIG-ONTO-019). The authoritative term hierarchy is the SKOS Technology scheme (§13.1); this class carries the code and its rollup levels for a specific referenced node.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    technology: Optional[str] = Field(
-        default=None,
-        description="""The technology-level slug.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Technology", "Deployment"]}},
-    )
-    family: Optional[str] = Field(
-        default=None,
-        description="""The family-level slug this rolls up to.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Technology"]}},
-    )
-    domain: Optional[str] = Field(
-        default=None,
-        description="""The domain-level slug this rolls up to.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Technology"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    technology: Optional[str] = Field(default=None, description="""The technology-level slug.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Technology', 'Deployment']} })
+    family: Optional[str] = Field(default=None, description="""The family-level slug this rolls up to.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Technology']} })
+    domain: Optional[str] = Field(default=None, description="""The domain-level slug this rolls up to.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Technology']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Capability(Entity):
     """
     A verb.object.scope capability (§11.6, SIG-ONTO-023).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    capability: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Capability"]}}
-    )
-    scope: Optional[CapabilityScope] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Capability", "AccessRelationship", "IntegrationEdge"]}
-        },
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    capability: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Capability']} })
+    scope: Optional[CapabilityScope] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Capability', 'AccessRelationship', 'IntegrationEdge']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Deployment(Entity):
     """
     The bridge between organizational adoption and individual devices; creatable with NO product, NO vendor, and NO physical asset (§11.7, SIG-ONTO-026).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    deploying_organization: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    product: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment", "DataSystem"]}}
-    )
-    vendor: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Product", "Deployment", "DataSystem"]}},
-    )
-    technology: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable; the coarsest level the evidence supports.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Technology", "Deployment"]}},
-    )
-    actually_provides_capability: Optional[list[str]] = Field(
-        default=None,
-        description="""Evidentiary; never silently inferred from product default (SIG-ONTO-018).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}},
-    )
-    procurement_state: Optional[ProcurementState] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    physical_state: Optional[PhysicalState] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    operational_state: Optional[OperationalState] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    authorization_state: Optional[AuthorizationState] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    litigation_hold: Optional[bool] = Field(
-        default=None,
-        description="""A flag, coexisting with any state combination (SIG-ONTO-061).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}},
-    )
-    jurisdiction: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Organization", "Deployment", "LegalInstrument", "ClaimQualifier"]
-            }
-        },
-    )
-    contracted_device_count: Optional[int] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    installed_device_count: Optional[int] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    active_device_count: Optional[int] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    proposed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    approved_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    contracted_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    active_from: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    inactive_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    deploying_organization: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    product: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment', 'DataSystem']} })
+    vendor: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product', 'Deployment', 'DataSystem']} })
+    technology: Optional[list[str]] = Field(default=None, description="""Repeatable; the coarsest level the evidence supports.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Technology', 'Deployment']} })
+    actually_provides_capability: Optional[list[str]] = Field(default=None, description="""Evidentiary; never silently inferred from product default (SIG-ONTO-018).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    procurement_state: Optional[ProcurementState] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    physical_state: Optional[PhysicalState] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    operational_state: Optional[OperationalState] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    authorization_state: Optional[AuthorizationState] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    litigation_hold: Optional[bool] = Field(default=None, description="""A flag, coexisting with any state combination (SIG-ONTO-061).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    jurisdiction: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization',
+                       'Deployment',
+                       'LegalInstrument',
+                       'ClaimQualifier']} })
+    contracted_device_count: Optional[int] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    installed_device_count: Optional[int] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    active_device_count: Optional[int] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    proposed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    approved_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    contracted_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    active_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    inactive_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class PhysicalAsset(Entity):
     """
     A field-observed device; geometry is OPTIONAL and operator absence is a first-class countable state (§11.8, SIG-ONTO-027/028). Accommodates ways and relations, not only nodes, and MUST NOT force sensors into a camera abstraction.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    asset_type: Optional[str] = Field(
-        default=None,
-        description="""A Technology reference, not a free string.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}},
-    )
-    geometry: Optional[str] = Field(
-        default=None,
-        description="""Optional (SIG-GEO-004).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}},
-    )
-    mobility: Optional[Mobility] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    manufacturer: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    model: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    deployment: Optional[str] = Field(
-        default=None,
-        description="""May be absent — the orphaned-device case.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset", "ConfigurationState"]}},
-    )
-    first_observed: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    last_observed: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    upstream_id: Optional[list[str]] = Field(
-        default=None,
-        description="""Qualified by system (osm.node, osm.way, osm.relation, deflock.id, ...).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}},
-    )
-    osm_version: Optional[int] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    sensitivity_tier: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset", "Claim"]}}
-    )
-    confirmation_status: Optional[ConfirmationStatus] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    asset_type: Optional[str] = Field(default=None, description="""A Technology reference, not a free string.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    geometry: Optional[str] = Field(default=None, description="""Optional (SIG-GEO-004).""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    mobility: Optional[Mobility] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    manufacturer: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    model: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    deployment: Optional[str] = Field(default=None, description="""May be absent — the orphaned-device case.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset', 'ConfigurationState']} })
+    first_observed: Optional[datetime ] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    last_observed: Optional[datetime ] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    upstream_id: Optional[list[str]] = Field(default=None, description="""Qualified by system (osm.node, osm.way, osm.relation, deflock.id, ...).""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    osm_version: Optional[int] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    sensitivity_tier: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset', 'Claim']} })
+    confirmation_status: Optional[ConfirmationStatus] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class CandidateAsset(Entity):
     """
     [NEW] RF/heuristic leads that MUST live in a separate entity type and MUST NOT appear in any public device layer until promoted under §43.5 (§11.9, SIG-ONTO-029/030).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    detection_method: Optional[DetectionMethod] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}}
-    )
-    location_estimate: Optional[str] = Field(
-        default=None,
-        description="""With estimate_radius_m — never a bare point.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}},
-    )
-    estimate_radius_m: Optional[float] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}}
-    )
-    identifier_prefix: Optional[str] = Field(
-        default=None,
-        description="""OUI or similar; never a full MAC.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}},
-    )
-    observation_count: Optional[int] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}}
-    )
-    promotion_status: Optional[PromotionStatus] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}}
-    )
-    residential_parcel_flag: Optional[bool] = Field(
-        default=None,
-        description="""A true value bars publication outright (§43.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["CandidateAsset"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    detection_method: Optional[DetectionMethod] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    location_estimate: Optional[str] = Field(default=None, description="""With estimate_radius_m — never a bare point.""", json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    estimate_radius_m: Optional[float] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    identifier_prefix: Optional[str] = Field(default=None, description="""OUI or similar; never a full MAC.""", json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    observation_count: Optional[int] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    promotion_status: Optional[PromotionStatus] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    residential_parcel_flag: Optional[bool] = Field(default=None, description="""A true value bars publication outright (§43.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class DataSystem(Entity):
     """
     Reference databases as infrastructure — representable even where SIG holds no sensor (§11.10, SIG-ONTO-031).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    operator: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["DataSystem"]}}
-    )
-    vendor: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Product", "Deployment", "DataSystem"]}},
-    )
-    product: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Deployment", "DataSystem"]}}
-    )
-    data_types: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["DataSystem"]}}
-    )
-    retention: Optional[str] = Field(
-        default=None,
-        description="""A ConfigurationState fact where it varies per deployment.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DataSystem"]}},
-    )
-    system_scope: Optional[SystemScope] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["DataSystem"]}}
-    )
-    holds_data_collected_by: Optional[str] = Field(
-        default=None,
-        description="""Custody != collection.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["DataSystem"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    operator: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['DataSystem']} })
+    vendor: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product', 'Deployment', 'DataSystem']} })
+    product: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment', 'DataSystem']} })
+    data_types: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['DataSystem']} })
+    retention: Optional[str] = Field(default=None, description="""A ConfigurationState fact where it varies per deployment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['DataSystem']} })
+    system_scope: Optional[SystemScope] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['DataSystem']} })
+    holds_data_collected_by: Optional[str] = Field(default=None, description="""Custody != collection.""", json_schema_extra = { "linkml_meta": {'domain_of': ['DataSystem']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Contract(Entity):
     """
     A contract; acquisition_channel and parent_cooperative_contract are REQUIRED model elements (§11.11, SIG-ONTO-032).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    buyer: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    seller: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    amount: Optional[Decimal] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Contract", "FundingInstrument"]}},
-    )
-    currency: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    signed_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    start_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    end_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    renewal_options: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    products: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    quantities: Optional[list[int]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    document: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract", "Policy"]}}
-    )
-    acquisition_channel: Optional[AcquisitionChannel] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    parent_cooperative_contract: Optional[str] = Field(
-        default=None,
-        description="""The master award being ridden (SIG-ONTO-032).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}},
-    )
-    amends_contract: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    buyer: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    seller: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    amount: Optional[Decimal] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract', 'FundingInstrument']} })
+    currency: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    signed_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    start_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    end_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    renewal_options: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    products: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    quantities: Optional[list[int]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    document: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract', 'Policy']} })
+    acquisition_channel: Optional[AcquisitionChannel] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    parent_cooperative_contract: Optional[str] = Field(default=None, description="""The master award being ridden (SIG-ONTO-032).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    amends_contract: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class FundingInstrument(Entity):
     """
     [NEW] Purchaser != operator != funder (§11.12, SIG-ONTO-033). Grants and third-party funding; federal grant → local surveillance is traceable.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    funder: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument"]}}
-    )
-    recipient: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument"]}}
-    )
-    instrument_type: Optional[FundingInstrumentType] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument", "LegalInstrument"]}},
-    )
-    program_name: Optional[str] = Field(
-        default=None,
-        description="""e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument"]}},
-    )
-    amount: Optional[Decimal] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Contract", "FundingInstrument"]}},
-    )
-    award_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument"]}}
-    )
-    period: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument", "UsageAggregate"]}},
-    )
-    conditions: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument"]}}
-    )
-    federal_award_id: Optional[str] = Field(
-        default=None,
-        description="""USAspending award/sub-award id — the traceable link (SIG-ONTO-033).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    funder: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
+    recipient: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
+    instrument_type: Optional[FundingInstrumentType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument', 'LegalInstrument']} })
+    program_name: Optional[str] = Field(default=None, description="""e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.""", json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
+    amount: Optional[Decimal] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract', 'FundingInstrument']} })
+    award_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
+    period: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument', 'UsageAggregate']} })
+    conditions: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
+    federal_award_id: Optional[str] = Field(default=None, description="""USAspending award/sub-award id — the traceable link (SIG-ONTO-033).""", json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Policy(Entity):
     """
     An institutional policy; MUST NOT be merged with ConfigurationState (§11.13, SIG-ONTO-034). Their disagreement is a first-class finding.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    policy_type: Optional[PolicyType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Policy"]}}
-    )
-    applies_to: Optional[list[str]] = Field(
-        default=None,
-        description="""Organization, Deployment, or Product — polymorphic and repeatable.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Policy"]}},
-    )
-    effective_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Policy", "LegalInstrument"]}},
-    )
-    effective_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Policy", "LegalInstrument"]}},
-    )
-    adopting_body: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Policy"]}}
-    )
-    text: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Policy"]}}
-    )
-    document: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contract", "Policy"]}}
-    )
-    enforcement_mechanism: Optional[EnforcementMechanism] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Policy"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    policy_type: Optional[PolicyType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
+    applies_to: Optional[list[str]] = Field(default=None, description="""Organization, Deployment, or Product — polymorphic and repeatable.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
+    effective_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy', 'LegalInstrument']} })
+    effective_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy', 'LegalInstrument']} })
+    adopting_body: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
+    text: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
+    document: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract', 'Policy']} })
+    enforcement_mechanism: Optional[EnforcementMechanism] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class LegalInstrument(Entity):
     """
     [NEW] Laws and regulations as a modelled entity (§11.14). Gives the international requirement somewhere to put an arrêté préfectoral, a CNIL decision, or an EU AI Act obligation.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    instrument_type: Optional[LegalInstrumentType] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument", "LegalInstrument"]}},
-    )
-    enacting_body: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalInstrument"]}}
-    )
-    jurisdiction: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Organization", "Deployment", "LegalInstrument", "ClaimQualifier"]
-            }
-        },
-    )
-    citation: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalInstrument"]}}
-    )
-    effective_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Policy", "LegalInstrument"]}},
-    )
-    effective_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Policy", "LegalInstrument"]}},
-    )
-    sunset_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalInstrument"]}}
-    )
-    constrains_technology: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalInstrument"]}}
-    )
-    constrains_capability: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalInstrument"]}}
-    )
-    requires_authorization_of: Optional[list[str]] = Field(
-        default=None,
-        description="""CCOPS-style approval requirements.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["LegalInstrument"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    instrument_type: Optional[LegalInstrumentType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument', 'LegalInstrument']} })
+    enacting_body: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
+    jurisdiction: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization',
+                       'Deployment',
+                       'LegalInstrument',
+                       'ClaimQualifier']} })
+    citation: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
+    effective_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy', 'LegalInstrument']} })
+    effective_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy', 'LegalInstrument']} })
+    sunset_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
+    constrains_technology: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
+    constrains_capability: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
+    requires_authorization_of: Optional[list[str]] = Field(default=None, description="""CCOPS-style approval requirements.""", json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class ConfigurationState(Entity):
     """
     Promoted to a first-class, time-versioned, per-Deployment entity (§11.15). Configuration is observed, never assumed (SIG-ONTO-036). Retention is a duration OR an ordinal bucket; SIG never fabricates a midpoint (SIG-ONTO-035a).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    deployment: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset", "ConfigurationState"]}},
-    )
-    retention_days: Optional[str] = Field(
-        default=None,
-        description="""Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}},
-    )
-    retention_bucket: Optional[str] = Field(
-        default=None,
-        description="""The ordinal bucket form; comparison operates on intervals, never a coerced point.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}},
-    )
-    subscribed_hotlist_topic: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    sharing_partner: Optional[list[str]] = Field(
-        default=None,
-        description="""Repeatable, directional.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}},
-    )
-    state_lookup_enabled: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    national_lookup_enabled: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    federal_sharing_enabled: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    offense_category_filter: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    live_stream_permitted_to: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    third_party_integration: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    audit_case_code_required: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    mfa_required: Optional[bool] = Field(
-        default=None,
-        description="""Whether the deployment's access configuration requires multi-factor authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted from evidence, never assumed.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}},
-    )
-    observed_via: Optional[ObservedVia] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ConfigurationState"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    deployment: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset', 'ConfigurationState']} })
+    retention_days: Optional[str] = Field(default=None, description="""Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).""", json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    retention_bucket: Optional[str] = Field(default=None, description="""The ordinal bucket form; comparison operates on intervals, never a coerced point.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    subscribed_hotlist_topic: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    sharing_partner: Optional[list[str]] = Field(default=None, description="""Repeatable, directional.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    state_lookup_enabled: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    national_lookup_enabled: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    federal_sharing_enabled: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    offense_category_filter: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    live_stream_permitted_to: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    third_party_integration: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    audit_case_code_required: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    mfa_required: Optional[bool] = Field(default=None, description="""Whether the deployment's access configuration requires multi-factor authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted from evidence, never assumed.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    observed_via: Optional[ObservedVia] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class UsageAggregate(Entity):
     """
     Aggregated usage; direction is the point (§11.16). NO per-search, per-plate, or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, §18.1).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    searching_org: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}}
-    )
-    source_org: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}}
-    )
-    period: Optional[str] = Field(
-        default=None,
-        description="""Minimum granularity one month for published data (§18.4).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["FundingInstrument", "UsageAggregate"]}},
-    )
-    count: Optional[int] = Field(
-        default=None,
-        description="""Subject to small-cell suppression (§18.4).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}},
-    )
-    search_scope: Optional[CapabilityScope] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}}
-    )
-    reason_category: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}}
-    )
-    reason_raw_value: Optional[str] = Field(
-        default=None,
-        description="""Normalized reason_category retains the raw value (P2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}},
-    )
-    audit_source_type: Optional[AuditSourceType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate"]}}
-    )
-    coverage_period: Optional[str] = Field(
-        default=None,
-        description="""What span the underlying audit covered — distinct from period.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate", "CoverageRecord"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    searching_org: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    source_org: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    period: Optional[str] = Field(default=None, description="""Minimum granularity one month for published data (§18.4).""", json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument', 'UsageAggregate']} })
+    count: Optional[int] = Field(default=None, description="""Subject to small-cell suppression (§18.4).""", json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    search_scope: Optional[CapabilityScope] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    reason_category: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    reason_raw_value: Optional[str] = Field(default=None, description="""Normalized reason_category retains the raw value (P2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    audit_source_type: Optional[AuditSourceType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
+    coverage_period: Optional[str] = Field(default=None, description="""What span the underlying audit covered — distinct from period.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate', 'CoverageRecord']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class AccountabilityEvent(Entity):
     """
     An accountability event; epistemic_status is REQUIRED and rendered everywhere (§11.17, SIG-ONTO-038/039).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    event_type: Optional[AccountabilityEventType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}}
-    )
-    epistemic_status: EpistemicStatus = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}}
-    )
-    date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}}
-    )
-    organizations: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}}
-    )
-    deployments: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}}
-    )
-    technologies: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}}
-    )
-    affected_party_class: Optional[str] = Field(
-        default=None,
-        description="""A class, never a named private individual (N4).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}},
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    source_classes: Optional[list[SourceClass]] = Field(
-        default=None,
-        description="""The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`party_role` on LegalProceeding). Recording the class on the evidence link is what makes a claim resting only on advocacy analysis distinguishable from one resting on a court record (SIG-ONTO-039).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    event_type: Optional[AccountabilityEventType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    epistemic_status: EpistemicStatus = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    organizations: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    deployments: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    technologies: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    affected_party_class: Optional[str] = Field(default=None, description="""A class, never a named private individual (N4).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    sources: Optional[list[str]] = Field(default=None, description="""Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    source_classes: Optional[list[SourceClass]] = Field(default=None, description="""The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`party_role` on LegalProceeding). Recording the class on the evidence link is what makes a claim resting only on advocacy analysis distinguishable from one resting on a court record (SIG-ONTO-039).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class LegalProceeding(Entity):
     """
     Split from AccountabilityEvent — dockets, parties, filings, posture (§11.18).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    court: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    docket_number: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    case_name: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    parties: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    party_role: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    filed_date: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding", "RecordsRequest"]}},
-    )
-    disposition_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    posture: Optional[ProceedingPosture] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    courtlistener_id: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    recap_id: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    court: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    docket_number: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    case_name: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    parties: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    party_role: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    filed_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding', 'RecordsRequest']} })
+    disposition_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    posture: Optional[ProceedingPosture] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    courtlistener_id: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    recap_id: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class RecordsRequest(Entity):
     """
     [NEW] A public-records request SIG both cites as provenance and generates as a task (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    requesting_party: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    target_agency: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    request_text: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    filed_date: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["LegalProceeding", "RecordsRequest"]}},
-    )
-    response_date: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    response_status: Optional[RecordsResponseStatus] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    statutory_basis: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    platform: Optional[RecordsPlatform] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    external_id: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    released_documents: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["RecordsRequest"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    requesting_party: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    target_agency: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    request_text: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    filed_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding', 'RecordsRequest']} })
+    response_date: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    response_status: Optional[RecordsResponseStatus] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    statutory_basis: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    platform: Optional[RecordsPlatform] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    external_id: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    released_documents: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Source(Entity):
     """
     A publisher of evidence (§10.2, §11.20). Distinct from artifact and capture.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    publisher_name: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Source"]}}
-    )
-    reliability: Optional[SourceReliability] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Source"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    publisher_name: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Source']} })
+    reliability: Optional[SourceReliability] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Source']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class EvidenceArtifact(Entity):
     """
     A specific artifact published by a Source (§10.2).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    published_by: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceArtifact"]}}
-    )
-    artifact_type: Optional[ArtifactType] = Field(
-        default=None,
-        description="""The genre of the artifact (§10.3.2, SIG-INGEST-047).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceArtifact"]}},
-    )
-    integrity: Optional[ArtifactIntegrity] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceArtifact"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    published_by: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
+    artifact_type: Optional[ArtifactType] = Field(default=None, description="""The genre of the artifact (§10.3.2, SIG-INGEST-047).""", json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
+    integrity: Optional[ArtifactIntegrity] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class EvidenceCapture(Entity):
     """
     A content-addressed capture of an artifact at a time (§10.2, L0).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    captures_artifact: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    captured_at: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    content_digest: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    ocfl_object_id: Optional[str] = Field(
-        default=None,
-        description="""The OCFL object the capture's bytes were committed under.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}},
-    )
-    ocfl_version: Optional[str] = Field(
-        default=None,
-        description="""The immutable OCFL version this occurrence IS — a binding pins this version, never a mutable inventory head.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}},
-    )
-    source_uri: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    blob_digest: Optional[str] = Field(
-        default=None,
-        description="""The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}},
-    )
-    capture_classification: Optional[CaptureClassification] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    byte_size: Optional[int] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    media_type: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["EvidenceCapture"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    captures_artifact: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    captured_at: Optional[datetime ] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    content_digest: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    ocfl_object_id: Optional[str] = Field(default=None, description="""The OCFL object the capture's bytes were committed under.""", json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    ocfl_version: Optional[str] = Field(default=None, description="""The immutable OCFL version this occurrence IS — a binding pins this version, never a mutable inventory head.""", json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    source_uri: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    blob_digest: Optional[str] = Field(default=None, description="""The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).""", json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    capture_classification: Optional[CaptureClassification] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    byte_size: Optional[int] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    media_type: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Extraction(Entity):
     """
     A run that extracted claims from a capture (§10.2).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    from_capture: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Extraction"]}}
-    )
-    extraction_method: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Extraction"]}}
-    )
-    extractor_name: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Extraction"]}}
-    )
-    extractor_version: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Extraction", "ClaimEvidence"]}},
-    )
-    normalizer_version: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Extraction"]}}
-    )
-    extraction_config_digest: Optional[str] = Field(
-        default=None,
-        description="""The versioned config identity the extraction ran under.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Extraction", "ClaimEvidence"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    from_capture: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction']} })
+    extraction_method: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction']} })
+    extractor_name: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction']} })
+    extractor_version: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction', 'ClaimEvidence']} })
+    normalizer_version: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction']} })
+    extraction_config_digest: Optional[str] = Field(default=None, description="""The versioned config identity the extraction ran under.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction', 'ClaimEvidence']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Claim(Entity):
     """
     An append-only assertion (subject, predicate, value, ...) — the substance of the graph (§10.3, L1). Physical append-only table is P02.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    subject: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    predicate: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    value: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    value_kind: Optional[ValueKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    raw_value: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    absence_kind: Optional[AbsenceKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim", "CoverageRecord"]}}
-    )
-    evidence_role: Optional[EvidenceRole] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    supersedes: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    object_type: Optional[ClaimObjectType] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    object_entity_ref: Optional[str] = Field(
-        default=None,
-        description="""The resolved entity an entity_ref object names; never a person (Part VIII).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    unit: Optional[str] = Field(
-        default=None,
-        description="""REQUIRED when object_type is quantity (§10.3.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim", "ClaimQualifier"]}},
-    )
-    raw_context: Optional[str] = Field(
-        default=None,
-        description="""The citation anchor within the artifact (P2), as structured text.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    normalization_id: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    normalization_version: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    valid_edtf: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    observed_edtf: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    observed_at_kind: Optional[ObservedAtKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    observed_unknown_reason: Optional[str] = Field(
-        default=None,
-        description="""REQUIRED when observed_at is absent — an absent observation time always says why.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    source_reliability: Optional[SourceReliability] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    reliability_provisional: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    claim_directness: Optional[ClaimDirectness] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    artifact_integrity: Optional[ArtifactIntegrity] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    legacy_source_tier: Optional[str] = Field(
-        default=None,
-        description="""An upstream's own Tier A-F label, passthrough only — never used in resolution (§10.4).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    claim_polarity: Optional[ClaimPolarity] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    rank: Optional[ClaimRank] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim", "ClaimQualifier"]}}
-    )
-    review_status: Optional[ReviewStatus] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    sensitivity_tier: Optional[int] = Field(
-        default=None,
-        description="""The §42 sensitivity tier; absent never silently lowers.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["PhysicalAsset", "Claim"]}},
-    )
-    assertion_rationale: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    derived_from_claim_ids: Optional[list[str]] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    revises_claim: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    retraction_of: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}}
-    )
-    correction_reason: Optional[str] = Field(
-        default=None,
-        description="""REQUIRED when revises_claim is set (§16.6).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    assertion_map_id: Optional[str] = Field(
-        default=None,
-        description="""The named versioned mapping the row's defaults were derived under (sig.assertion.map.v1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    assertion_map_basis: Optional[str] = Field(
-        default=None,
-        description="""The explicit basis string recording how each absent field was derived.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Claim"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    value: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    value_kind: Optional[ValueKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    raw_value: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    absence_kind: Optional[AbsenceKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'CoverageRecord']} })
+    evidence_role: Optional[EvidenceRole] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    supersedes: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    object_type: Optional[ClaimObjectType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    object_entity_ref: Optional[str] = Field(default=None, description="""The resolved entity an entity_ref object names; never a person (Part VIII).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    unit: Optional[str] = Field(default=None, description="""REQUIRED when object_type is quantity (§10.3.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'ClaimQualifier']} })
+    raw_context: Optional[str] = Field(default=None, description="""The citation anchor within the artifact (P2), as structured text.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    normalization_id: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    normalization_version: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    valid_edtf: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    observed_edtf: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    observed_at_kind: Optional[ObservedAtKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    observed_unknown_reason: Optional[str] = Field(default=None, description="""REQUIRED when observed_at is absent — an absent observation time always says why.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    source_reliability: Optional[SourceReliability] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    reliability_provisional: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    claim_directness: Optional[ClaimDirectness] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    artifact_integrity: Optional[ArtifactIntegrity] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    legacy_source_tier: Optional[str] = Field(default=None, description="""An upstream's own Tier A-F label, passthrough only — never used in resolution (§10.4).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    claim_polarity: Optional[ClaimPolarity] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    rank: Optional[ClaimRank] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'ClaimQualifier']} })
+    review_status: Optional[ReviewStatus] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    sensitivity_tier: Optional[int] = Field(default=None, description="""The §42 sensitivity tier; absent never silently lowers.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset', 'Claim']} })
+    assertion_rationale: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    derived_from_claim_ids: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    revises_claim: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    retraction_of: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    correction_reason: Optional[str] = Field(default=None, description="""REQUIRED when revises_claim is set (§16.6).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    assertion_map_id: Optional[str] = Field(default=None, description="""The named versioned mapping the row's defaults were derived under (sig.assertion.map.v1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    assertion_map_basis: Optional[str] = Field(default=None, description="""The explicit basis string recording how each absent field was derived.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Claim']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class ClaimEvidence(Entity):
     """
     One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured artifact the extraction consumed, with its typed locator and binding classification (SIG-TRUST-002).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    claim: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence", "ClaimQualifier"]}},
-    )
-    capture: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence"]}}
-    )
-    extraction: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence", "ClaimQualifier"]}},
-    )
-    role: Optional[EvidenceRole] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence", "RoleAssignment"]}},
-    )
-    locator_kind: Optional[LocatorKind] = Field(
-        default=None,
-        description="""The kind of the typed locator row (locator fields live in the physical jsonb row).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence"]}},
-    )
-    extraction_config_digest: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Extraction", "ClaimEvidence"]}},
-    )
-    extractor_version: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["Extraction", "ClaimEvidence"]}},
-    )
-    binding_status: Optional[BindingStatus] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence"]}}
-    )
-    bound_at: Optional[datetime] = Field(
-        default=None,
-        description="""When the binding was asserted — distinct from the capture's retrieval time.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    claim: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'ClaimQualifier']} })
+    capture: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence']} })
+    extraction: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'ClaimQualifier']} })
+    role: Optional[EvidenceRole] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'RoleAssignment']} })
+    locator_kind: Optional[LocatorKind] = Field(default=None, description="""The kind of the typed locator row (locator fields live in the physical jsonb row).""", json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence']} })
+    extraction_config_digest: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction', 'ClaimEvidence']} })
+    extractor_version: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction', 'ClaimEvidence']} })
+    binding_status: Optional[BindingStatus] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence']} })
+    bound_at: Optional[datetime ] = Field(default=None, description="""When the binding was asserted — distinct from the capture's retrieval time.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class ClaimQualifier(Entity):
     """
     One typed qualifier statement on a claim (§16.5): the six FIELD_MAP §3 categories — instrument lifecycle, execution evidence, money/currency/ period, actor roles, capability/modality, clause applicability.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    claim: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence", "ClaimQualifier"]}},
-    )
-    qualifier_id: Optional[str] = Field(
-        default=None,
-        description="""A registered predicate id — unregistered keys quarantine, never guessed.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimQualifier"]}},
-    )
-    unit: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim", "ClaimQualifier"]}}
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        description="""The qualifier's own applicability valid time (e.g. an instrument's effective period).""",
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    jurisdiction: Optional[str] = Field(
-        default=None,
-        description="""The applicability jurisdiction the qualifier scopes to.""",
-        json_schema_extra={
-            "linkml_meta": {
-                "domain_of": ["Organization", "Deployment", "LegalInstrument", "ClaimQualifier"]
-            }
-        },
-    )
-    rank: Optional[ClaimRank] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim", "ClaimQualifier"]}}
-    )
-    extraction: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence", "ClaimQualifier"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    claim: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'ClaimQualifier']} })
+    qualifier_id: Optional[str] = Field(default=None, description="""A registered predicate id — unregistered keys quarantine, never guessed.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimQualifier']} })
+    unit: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'ClaimQualifier']} })
+    valid_from: Optional[str] = Field(default=None, description="""The qualifier's own applicability valid time (e.g. an instrument's effective period).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    jurisdiction: Optional[str] = Field(default=None, description="""The applicability jurisdiction the qualifier scopes to.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization',
+                       'Deployment',
+                       'LegalInstrument',
+                       'ClaimQualifier']} })
+    rank: Optional[ClaimRank] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'ClaimQualifier']} })
+    extraction: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'ClaimQualifier']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class AssertionQuarantine(Entity):
     """
     The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001): unknown predicates/types and binding failures land here with reason and full payload — never silently dropped, never public-readable.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    reason: Optional[QuarantineReason] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}}
-    )
-    connector_name: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}}
-    )
-    source_ref: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}}
-    )
-    subject_ref: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}}
-    )
-    predicate_id: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}}
-    )
-    received_at: Optional[datetime] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}}
-    )
-    payload_digest: Optional[str] = Field(
-        default=None,
-        description="""The content-keyed idempotency identity (a re-run is +0).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AssertionQuarantine"]}},
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    reason: Optional[QuarantineReason] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    connector_name: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    source_ref: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    subject_ref: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    predicate_id: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    received_at: Optional[datetime ] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    payload_digest: Optional[str] = Field(default=None, description="""The content-keyed idempotency identity (a re-run is +0).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Resolution(Entity):
     """
     A stored current-best decision record (§16.4, L3), not a view.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    subject: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    predicate: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    resolved_value: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Resolution"]}}
-    )
-    confidence: Optional[WeightClass] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Resolution"]}}
-    )
-    contradiction_state: Optional[ContradictionState] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Resolution"]}}
-    )
-    rationale: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Resolution"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    resolved_value: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Resolution']} })
+    confidence: Optional[WeightClass] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Resolution']} })
+    contradiction_state: Optional[ContradictionState] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Resolution']} })
+    rationale: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Resolution']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Contradiction(Entity):
     """
     A first-class, addressable contradiction object (§31).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    subject: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    predicate: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    state: Optional[ContradictionState] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Contradiction"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    state: Optional[ContradictionState] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contradiction']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class ResearchTask(Entity):
     """
     [NEW] A research task as an object (§11.22, behaviour at §33.2).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    task_type: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask"]}}
-    )
-    target: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    closing_condition: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask"]}}
-    )
-    resolved: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    task_type: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask']} })
+    target: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    closing_condition: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask']} })
+    resolved: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class CoverageRecord(Entity):
     """
     [NEW] Makes negative claims queryable (§11.23, §32.2).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/entities"}
-    )
-
-    subject: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    predicate: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Claim", "Resolution", "Contradiction", "CoverageRecord"]}
-        },
-    )
-    absence_kind: Optional[AbsenceKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Claim", "CoverageRecord"]}}
-    )
-    coverage_period: Optional[str] = Field(
-        default=None,
-        json_schema_extra={"linkml_meta": {"domain_of": ["UsageAggregate", "CoverageRecord"]}},
-    )
-    denominator_published: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["CoverageRecord"]}}
-    )
-    id: str = Field(
-        default=...,
-        description="""The entity's stable minted identity (L2 identity only, §8.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}},
-    )
+    subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
+    absence_kind: Optional[AbsenceKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'CoverageRecord']} })
+    coverage_period: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate', 'CoverageRecord']} })
+    denominator_published: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['CoverageRecord']} })
+    id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 
 class Edge(ConfiguredBaseModel):
     """
     Universal edge requirements (§12.1): directed, typed, time-bounded, evidenced, and perspectival.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
+         'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"abstract": True, "from_schema": "https://ontology.surveillancegraph.org/schema/edges"}
-    )
-
-    id: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}}
-    )
-    source: str = Field(
-        default=...,
-        description="""The asserting/originating node (directed — §12.1.1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    target: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    edge_type: EdgeType = Field(
-        default=...,
-        description="""Typed from the closed catalog (§12.1.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_from_kind: Optional[TemporalBoundKind] = Field(
-        default=None,
-        description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_to_kind: Optional[TemporalBoundKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    observed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    asserted_by: Optional[str] = Field(
-        default=None,
-        description="""Which party asserted it — perspectival (§12.1.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
+    id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
+    source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    target: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    edge_type: EdgeType = Field(default=..., description="""Typed from the closed catalog (§12.1.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_from_kind: Optional[TemporalBoundKind] = Field(default=None, description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_to_kind: Optional[TemporalBoundKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    observed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    sources: Optional[list[str]] = Field(default=None, description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    asserted_by: Optional[str] = Field(default=None, description="""Which party asserted it — perspectival (§12.1.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
 
 
 class AccessRelationship(Edge):
     """
     A sharing/access relationship; direction, scope, automaticity, and kind are all required — never reduced to `shares_with` (§12.5, SIG-ONTO-049). The three access kinds (§12.2) are never merged (SIG-ONTO-042).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/edges"}
-    )
-
-    scope: CapabilityScope = Field(
-        default=...,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Capability", "AccessRelationship", "IntegrationEdge"]}
-        },
-    )
-    direction: Direction = Field(
-        default=...,
-        description="""Required; never symmetric by default (SIG-ONTO-049).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccessRelationship"]}},
-    )
-    automaticity: Automaticity = Field(
-        default=...,
-        description="""Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccessRelationship"]}},
-    )
-    access_kind: AccessKind = Field(
-        default=...,
-        description="""Configured vs observed vs declared — never defaulted into one another (SIG-ONTO-042).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccessRelationship"]}},
-    )
-    id: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}}
-    )
-    source: str = Field(
-        default=...,
-        description="""The asserting/originating node (directed — §12.1.1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    target: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    edge_type: EdgeType = Field(
-        default=...,
-        description="""Typed from the closed catalog (§12.1.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_from_kind: Optional[TemporalBoundKind] = Field(
-        default=None,
-        description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_to_kind: Optional[TemporalBoundKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    observed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    asserted_by: Optional[str] = Field(
-        default=None,
-        description="""Which party asserted it — perspectival (§12.1.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
+    scope: CapabilityScope = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Capability', 'AccessRelationship', 'IntegrationEdge']} })
+    direction: Direction = Field(default=..., description="""Required; never symmetric by default (SIG-ONTO-049).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
+    automaticity: Automaticity = Field(default=..., description="""Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
+    access_kind: AccessKind = Field(default=..., description="""Configured vs observed vs declared — never defaulted into one another (SIG-ONTO-042).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
+    id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
+    source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    target: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    edge_type: EdgeType = Field(default=..., description="""Typed from the closed catalog (§12.1.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_from_kind: Optional[TemporalBoundKind] = Field(default=None, description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_to_kind: Optional[TemporalBoundKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    observed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    sources: Optional[list[str]] = Field(default=None, description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    asserted_by: Optional[str] = Field(default=None, description="""Which party asserted it — perspectival (§12.1.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
 
 
 class IntegrationEdge(Edge):
     """
     A data-bearing integration edge (§12.3). Edges are per (product-pair, data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally terminable, mid-contract, possibly partially, via applies_to_cohort.
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/edges"}
-    )
-
-    data_kind: str = Field(
-        default=...,
-        description="""The kind of data that moves (part of the edge key, SIG-ONTO-046).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}},
-    )
-    initiator: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    transport: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    granularity: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    data_comes_to_rest: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    scope: Optional[CapabilityScope] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Capability", "AccessRelationship", "IntegrationEdge"]}
-        },
-    )
-    consent_gate: Optional[bool] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    mechanism: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    terminable_by: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    termination_reason: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}}
-    )
-    applies_to_cohort: Optional[CohortApplicability] = Field(
-        default=None,
-        description="""Partial termination cohort — all / new_customers_only / existing_customers_only (SIG-ONTO-046).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["IntegrationEdge"]}},
-    )
-    id: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}}
-    )
-    source: str = Field(
-        default=...,
-        description="""The asserting/originating node (directed — §12.1.1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    target: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    edge_type: EdgeType = Field(
-        default=...,
-        description="""Typed from the closed catalog (§12.1.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_from_kind: Optional[TemporalBoundKind] = Field(
-        default=None,
-        description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_to_kind: Optional[TemporalBoundKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    observed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    asserted_by: Optional[str] = Field(
-        default=None,
-        description="""Which party asserted it — perspectival (§12.1.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
+    data_kind: str = Field(default=..., description="""The kind of data that moves (part of the edge key, SIG-ONTO-046).""", json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    initiator: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    transport: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    granularity: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    data_comes_to_rest: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    scope: Optional[CapabilityScope] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Capability', 'AccessRelationship', 'IntegrationEdge']} })
+    consent_gate: Optional[bool] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    mechanism: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    terminable_by: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    termination_reason: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    applies_to_cohort: Optional[CohortApplicability] = Field(default=None, description="""Partial termination cohort — all / new_customers_only / existing_customers_only (SIG-ONTO-046).""", json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
+    id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
+    source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    target: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    edge_type: EdgeType = Field(default=..., description="""Typed from the closed catalog (§12.1.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_from_kind: Optional[TemporalBoundKind] = Field(default=None, description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_to_kind: Optional[TemporalBoundKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    observed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    sources: Optional[list[str]] = Field(default=None, description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    asserted_by: Optional[str] = Field(default=None, description="""Which party asserted it — perspectival (§12.1.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
 
 
 class RoleAssignment(Edge):
     """
     Assigns one of the fourteen roles (§12.4, SIG-ONTO-047) from a party to an asset/deployment/system. Modelled separately so the seven load-bearing separations (SIG-ONTO-048) are each independently representable, and so §43.3 coordinate sensitivity can be evaluated at the ROLE level (host≠owner).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/edges"}
-    )
-
-    role: Role = Field(
-        default=...,
-        json_schema_extra={"linkml_meta": {"domain_of": ["ClaimEvidence", "RoleAssignment"]}},
-    )
-    party: str = Field(
-        default=...,
-        description="""The Organization (or, rarely and reviewed, Person) holding the role.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["RoleAssignment"]}},
-    )
-    over: str = Field(
-        default=...,
-        description="""The PhysicalAsset / Deployment / DataSystem the role is held over.""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["RoleAssignment"]}},
-    )
-    id: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}}
-    )
-    source: str = Field(
-        default=...,
-        description="""The asserting/originating node (directed — §12.1.1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    target: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    edge_type: EdgeType = Field(
-        default=...,
-        description="""Typed from the closed catalog (§12.1.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_from_kind: Optional[TemporalBoundKind] = Field(
-        default=None,
-        description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_to_kind: Optional[TemporalBoundKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    observed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    asserted_by: Optional[str] = Field(
-        default=None,
-        description="""Which party asserted it — perspectival (§12.1.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
+    role: Role = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'RoleAssignment']} })
+    party: str = Field(default=..., description="""The Organization (or, rarely and reviewed, Person) holding the role.""", json_schema_extra = { "linkml_meta": {'domain_of': ['RoleAssignment']} })
+    over: str = Field(default=..., description="""The PhysicalAsset / Deployment / DataSystem the role is held over.""", json_schema_extra = { "linkml_meta": {'domain_of': ['RoleAssignment']} })
+    id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
+    source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    target: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    edge_type: EdgeType = Field(default=..., description="""Typed from the closed catalog (§12.1.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_from_kind: Optional[TemporalBoundKind] = Field(default=None, description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_to_kind: Optional[TemporalBoundKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    observed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    sources: Optional[list[str]] = Field(default=None, description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    asserted_by: Optional[str] = Field(default=None, description="""Which party asserted it — perspectival (§12.1.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
 
 
 class StructuralEdge(Edge):
     """
     Organizational/structural relationships (§12.6).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/edges"}
-    )
-
-    id: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}}
-    )
-    source: str = Field(
-        default=...,
-        description="""The asserting/originating node (directed — §12.1.1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    target: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    edge_type: EdgeType = Field(
-        default=...,
-        description="""Typed from the closed catalog (§12.1.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_from_kind: Optional[TemporalBoundKind] = Field(
-        default=None,
-        description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_to_kind: Optional[TemporalBoundKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    observed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    asserted_by: Optional[str] = Field(
-        default=None,
-        description="""Which party asserted it — perspectival (§12.1.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
+    id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
+    source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    target: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    edge_type: EdgeType = Field(default=..., description="""Typed from the closed catalog (§12.1.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_from_kind: Optional[TemporalBoundKind] = Field(default=None, description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_to_kind: Optional[TemporalBoundKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    observed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    sources: Optional[list[str]] = Field(default=None, description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    asserted_by: Optional[str] = Field(default=None, description="""Which party asserted it — perspectival (§12.1.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
 
 
 class ProvenanceEdge(Edge):
     """
     Provenance relationships among claims, captures, artifacts, and sources (§12.7).
     """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta(
-        {"from_schema": "https://ontology.surveillancegraph.org/schema/edges"}
-    )
-
-    id: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["Entity", "Edge"]}}
-    )
-    source: str = Field(
-        default=...,
-        description="""The asserting/originating node (directed — §12.1.1).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    target: str = Field(
-        default=..., json_schema_extra={"linkml_meta": {"domain_of": ["ResearchTask", "Edge"]}}
-    )
-    edge_type: EdgeType = Field(
-        default=...,
-        description="""Typed from the closed catalog (§12.1.2).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_from: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_to: Optional[str] = Field(
-        default=None,
-        json_schema_extra={
-            "linkml_meta": {"domain_of": ["Jurisdiction", "Organization", "ClaimQualifier", "Edge"]}
-        },
-    )
-    valid_from_kind: Optional[TemporalBoundKind] = Field(
-        default=None,
-        description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
-    valid_to_kind: Optional[TemporalBoundKind] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    observed_at: Optional[str] = Field(
-        default=None, json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}}
-    )
-    sources: Optional[list[str]] = Field(
-        default=None,
-        description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["AccountabilityEvent", "Edge"]}},
-    )
-    asserted_by: Optional[str] = Field(
-        default=None,
-        description="""Which party asserted it — perspectival (§12.1.5).""",
-        json_schema_extra={"linkml_meta": {"domain_of": ["Edge"]}},
-    )
+    id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
+    source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    target: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
+    edge_type: EdgeType = Field(default=..., description="""Typed from the closed catalog (§12.1.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'ClaimQualifier', 'Edge']} })
+    valid_from_kind: Optional[TemporalBoundKind] = Field(default=None, description="""Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    valid_to_kind: Optional[TemporalBoundKind] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    observed_at: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
+    sources: Optional[list[str]] = Field(default=None, description="""At least one supporting claim (§12.1.4, SIG-CHART-013).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    asserted_by: Optional[str] = Field(default=None, description="""Which party asserted it — perspectival (§12.1.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
 
 
 # Model rebuild
