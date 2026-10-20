@@ -81,6 +81,22 @@ export SIG_SCHEDULER_CRON_PROBE="0 */6 * * *"    # every 6h UTC
 # is_replay ingest_run. Operator-invoked only: deployed here, NEVER scheduled
 # (a replay is a named decision, not a cadence).
 export SIG_RUN_JOB_REPLAY="sig-replay-ingest"
+# P35.1b (G1-NEW-4 keep-list): sig-export's BAKED args are a refused exit-64
+# guard — `export.sh run` always overrides args at execute time, so a bare
+# execute is a recorded no-op instead of a stale --as-of baked at deploy time.
+# Shared by export.sh's job leg and fleet-sweep.sh's export-guard roll.
+export SIG_EXPORT_GUARD="echo 'sig-export runs via ops/gcp/export.sh run — it supplies the real --as-of args at execute time; a bare execution is a refused no-op' >&2 && exit 64"
+# --- the P35.1b fleet-hygiene sweep (ops/gcp/fleet-sweep.sh, ticket 291) -----
+# One windowed leg-runner over the recorded contract sets: the six cruft-job
+# deletions, the AR cleanup-policy dry-run + apply on the `sig` repo, the four
+# cron reconciles, the sig-export guard roll, and the sig-alerts disposition.
+# The contract window is a weekday 14:00–20:00Z slot ONLY (AR-3 + AR-2); an
+# apply outside it exits 42 (queued). SIG_SWEEP_NOW overrides the clock for
+# the offline guard test only; SIG_SWEEP_AUTHOR carries the recorded operator
+# id every mutating apply needs (OM-20's scope discipline — silence is never
+# consent); SIG_SWEEP_ALERTS_DISPOSITION names retire|rebuild for the
+# sig-alerts leg; SIG_SWEEP_ALERT_IMAGE the rebuild's deployable image.
+export SIG_SWEEP_STATE_DIR="${SIG_SWEEP_STATE_DIR:-${TMPDIR:-/tmp}/p35.1b-sweep}"
 export SIG_ALERTS_SERVICE="sig-alerts"
 export SIG_SECRET_ALERT_HOOK="sig-alert-webhook-token"
 export SIG_WEB_SERVICE="sig-web"

@@ -48,6 +48,9 @@ SHELL_SCRIPTS = [
     "at-rest-audit.sh",
     "quality-probe.sh",
     "seed-declared-jobs.sh",
+    "fleet-sweep.sh",
+    "wave-a.sh",
+    "wave-b.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -70,6 +73,7 @@ EXECUTABLE_SCRIPTS = [
     "at-rest-audit.sh",
     "quality-probe.sh",
     "seed-declared-jobs.sh",
+    "fleet-sweep.sh",
 ]
 
 

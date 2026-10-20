@@ -30,6 +30,11 @@ schema = "sig.iam-identities/1"
 # P35.11/ACQ-07 +2: the two ADR-185 S8 tribal screened-lane jobs the Wave-A
 # cadence rows declare (created PAUSED; their sources stay gated until the
 # wave-open HG-03 flip list) — 98 → 100.
+# P35.1b −6 (pending): the fleet-sweep deletes the six [[retired_jobs]] names
+# (the four egress probes + sig-sink-bench + sig-ingest-resume-test). After the
+# sweep lands, this count becomes 94 and the six names drop out of the
+# [[job_class]] `jobs` lists below — the amendment rides the sweep's apply run,
+# so the pin stays correct for a jobs-leg re-count BEFORE the sweep.
 expected_job_count = 100
 
 # --- the three service runtime identities (P34.42a) ---------------------------

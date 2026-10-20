@@ -13,6 +13,7 @@ from __future__ import annotations
 import io
 import json
 import subprocess
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -232,3 +233,123 @@ def test_cli_alerts_lists_the_ledger(ledger_path: Path, capsys: pytest.CaptureFi
     assert cli.main(["alerts", "--limit", "1"]) == 0
     out = capsys.readouterr().out
     assert '"k2"' in out and '"k1"' not in out
+
+
+# --- P35.1b: the repo-owned sig-alerts receiver + the IAM caller path ---------
+
+
+def _serve(server):
+    import threading
+
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+    t.start()
+    return t
+
+
+def _post(url: str, body: bytes, headers: dict) -> int:
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=5.0) as resp:
+            return resp.status
+    except urllib.error.HTTPError as exc:
+        return exc.code
+
+
+def test_receiver_accepts_a_valid_bearer_and_scrubs_the_line() -> None:
+    lines: list[str] = []
+    server = A.build_receiver_server(0, token="app-tok", emit=lines.append)
+    _serve(server)
+    try:
+        port = server.server_port
+        url = f"http://127.0.0.1:{port}/alerts"
+        status = _post(
+            url,
+            b'{"text":"down"}',
+            {"Authorization": "Bearer app-tok", "Content-Type": "application/json"},
+        )
+        assert status == 204
+        assert len(lines) == 1
+        assert lines[0].startswith("SIG-ALERT-RECEIVED ")
+        assert '"/alerts"' in lines[0]
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_receiver_rejects_a_wrong_or_missing_token() -> None:
+    lines: list[str] = []
+    server = A.build_receiver_server(0, token="app-tok", emit=lines.append)
+    _serve(server)
+    try:
+        url = f"http://127.0.0.1:{server.server_port}/"
+        assert _post(url, b"{}", {"Authorization": "Bearer wrong"}) == 401
+        assert _post(url, b"{}", {}) == 401
+        assert lines == []
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_iam_mode_sends_the_oidc_bearer_and_the_app_token_header(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """P35.1b: under SIG_ALERT_WEBHOOK_IAM the Authorization header carries the
+    Google-signed id token (the private front door) and the app token rides
+    X-SIG-Alert-Token — the receiver authenticates on the app token either way.
+    """
+    monkeypatch.setenv("SIG_ALERT_WEBHOOK_URL", "https://sig-alerts-abc.run.app/hook")
+    monkeypatch.setenv("SIG_ALERT_WEBHOOK_TOKEN", "app-tok")
+    monkeypatch.setenv("SIG_ALERT_WEBHOOK_IAM", "1")
+    posted: list[urllib.request.Request] = []
+    audiences: list[str] = []
+
+    class _Resp:
+        status = 204
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, **kw: posted.append(req) or _Resp())
+    notifier = A.WebhookNotifier(id_token=lambda aud: audiences.append(aud) or "ID-TOKEN")
+    assert notifier.send(A.Alert.create("t", "critical", "m")) is True
+    assert audiences == ["https://sig-alerts-abc.run.app"]
+    req = posted[0]
+    assert req.get_header("Authorization") == "Bearer ID-TOKEN"
+    assert req.get_header("X-sig-alert-token") == "app-tok"
+
+
+def test_iam_mode_without_an_id_token_never_posts(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    posted: list = []
+    monkeypatch.setattr(
+        urllib.request, "urlopen", lambda *a, **k: posted.append(a)
+    )  # pragma: no cover - must not run
+    notifier = A.WebhookNotifier(
+        url="https://svc.run.app/", token="t", iam=True, id_token=lambda aud: None
+    )
+    assert notifier.send(A.Alert.create("t", "warn", "m")) is False
+    assert posted == []
+
+
+def test_receiver_accepts_the_app_token_via_the_iam_header() -> None:
+    """Round-trip the IAM shape: Authorization carries the front-door id token,
+    X-SIG-Alert-Token the app secret — the receiver accepts it."""
+    lines: list[str] = []
+    server = A.build_receiver_server(0, token="app-tok", emit=lines.append)
+    _serve(server)
+    try:
+        url = f"http://127.0.0.1:{server.server_port}/"
+        status = _post(
+            url,
+            b"{}",
+            {"Authorization": "Bearer GOOGLE-ID-TOKEN", "X-SIG-Alert-Token": "app-tok"},
+        )
+        assert status == 204
+        assert len(lines) == 1
+    finally:
+        server.shutdown()
+        server.server_close()

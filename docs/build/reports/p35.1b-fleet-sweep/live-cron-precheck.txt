@@ -1,0 +1,4 @@
+projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-eyes-on-flock	0 5 23 * 0	ENABLED
+projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-openstates	0 5 2 * 2	ENABLED
+projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-congress-gov	0 5 3 * 2	ENABLED
+projects/zeta-medley-508121-u7/locations/us-central1/jobs/sig-sched-sam-gov	0 5 1 * 1	ENABLED

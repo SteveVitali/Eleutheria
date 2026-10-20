@@ -907,3 +907,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   go = '''verbatim-go: the ordered-prefix gate — L0–L9 green or held-reported, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
   live_dependants = ["P36.72b"]
+[[row]]
+key = "P35.1b"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + verified AR-2 backup → the four cron reconciles (eyes_on_flock/openstates/congress_gov/sam_gov) → the sig-export exit-64 guard roll → AR dry-run → the six `[[retired_jobs]]` deletions → AR policy apply → the `sig-alerts` disposition (retire recorded — 4 policies + 1 channel live) → post-sweep proof; read-only prechecks landed'''
+gates_cell = '''hosted, production write; OM-20 conditional — the GATE-G4 OM-20 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires at the next GATE, OM-10); AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_SWEEP_AUTHOR` operator id required; AR-2 backup SUCCESSFUL + fresh prestate before the first destructive leg; voided by failed AR-2/red probe/contradicting production read; after `--check` + PR #302 head-bound CI green'''
+operator_cell = '''nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only (no ADC/network); rollback replays the recorded cron pre-states + per-job recreation recipes; the dispatcher consolidation is P35.1c's, never this leg's'''
+rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — sweep queued on the closed 2026-10-16T01:25Z out-of-window attempt, exit 42; production untouched)'''
+
+  [[row.legs]]
+  id = "P35.1b-fleet-sweep-live"
+  obligations = []
+  earliest = '''the next weekday 14:00-20:00Z slot (AR-3 + AR-2), operator ADC armed + `SIG_SWEEP_AUTHOR` set + PR #302 head-bound CI green; fresh prestate + backup legs run inside the same invocation before any destructive leg'''
+  excluded = ["weekends + outside-14:00-20:00Z"]
+  go = '''pre-authorised: the GATE-G4 OM-20 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires at the next GATE, OM-10)'''
+  rerun = '''implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true'''
+  live_dependants = []

@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `6b5006dae06e3784ce50832a08bb079c52da74b7` · inputs hashed: 1038 · wall-clock receipt: `receipt.json`
+> input_commit: `b4049688cd0ad1e6616a61e9607aee4c4f2b11a6` · inputs hashed: 1039 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.1b` · lastCompleted `P36.12`
-- chainTip `r11/P36.12-wave-b-activation` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-15T18:03:10Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.1c` · lastCompleted `P35.1b`
+- chainTip `r11/P35.1b-fleet-hygiene-v2` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-15T18:03:10Z`
 
 ## Obligations
 
@@ -20,7 +20,7 @@
 
 ## RETURN PASS — owed live legs (generated region)
 
-- `return-pass` → see [return-pass.md](return-pass.md) (complete — 44 rows)
+- `return-pass` → see [return-pass.md](return-pass.md) (complete — 45 rows)
 
 ## Known inconsistencies (preserved, never synthesized)
 
