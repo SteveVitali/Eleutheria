@@ -212,6 +212,82 @@ def assert_separated(placed: Sequence[PlacedTable]) -> None:
             )
 
 
+# --- P35.39 (SIG-TRANSP-016, J3 §6.5): the emitted rights columns -------------
+#
+# The ``_rights`` block's columns, declared beside the writer that emits them.
+# ``row_rights`` returns the policy-layer obligations block; ``formats.py``
+# keeps it nested under ``_rights`` (JSONL) or ``rights`` (JSON-LD/GeoJSON) and
+# flattens it to ``rights_*`` in the columnar formats. The member names below
+# are ``policy.licensing.downstream_obligations``'s output keys — one declared
+# vocabulary, so the CSV header can never carry an undocumented provenance
+# column.
+
+
+def _rights_specs() -> tuple[Any, ...]:
+    from .column_registry import ColumnSpec as _CS
+
+    members = (
+        ("source_id", "the registry source this row's rights record governs", "string"),
+        ("license", "the effective SPDX licence id governing the row", "string"),
+        ("license_url", "the canonical licence text URL", "string"),
+        (
+            "attribution_required",
+            "whether re-users must carry the attribution string",
+            "boolean",
+        ),
+        ("attribution", "the effective attribution credit text", "string"),
+        ("share_alike", "whether the governing licence is share-alike", "boolean"),
+        ("terms_url", "the source's recorded terms-of-use URL", "string"),
+        ("upstream_license", "the upstream licence the source declares", "string"),
+        (
+            "captured_terms_verbatim",
+            "the captured licence/terms text when the source's grant needed "
+            "verbatim capture (ADR-183)",
+            "string",
+        ),
+        (
+            "captured_terms_evidence",
+            "the evidence reference for the captured terms",
+            "string",
+        ),
+        (
+            "publication_basis",
+            "the operator-recorded publication basis for express-terms sources",
+            "string",
+        ),
+    )
+    return (
+        _CS(
+            "_rights",
+            "the per-row rights-provenance block (nested in the JSONL form; "
+            "flattened to rights_* columns elsewhere) — SIG-EXPORT-006 / "
+            "SIG-LIC-011, computed by policy.licensing.downstream_obligations",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "rights",
+            "the same per-row rights block, nested under ``rights`` in the "
+            "JSON-LD and GeoJSON serialisations",
+            dtype="object",
+        ),
+        *(
+            _CS(
+                f"rights_{name}",
+                f"the rights block's ``{name}`` member — {desc}",
+                dtype=dtype,
+                enum_source="policy:licensing.downstream_obligations",
+            )
+            for name, desc, dtype in members
+        ),
+    )
+
+
+#: The shared per-row rights columns — aggregated into every bundle table's
+#: registry resource (``ResourceSpec.rights_block``).
+RIGHTS_BLOCK_SPECS = _rights_specs()
+
+
 def row_rights(record: RightsRecord, registry: Mapping[str, Any] | None = None) -> dict[str, Any]:
     """The per-row rights-provenance block (SIG-EXPORT-006 / SIG-LIC-011).
 
@@ -320,6 +396,7 @@ def most_permissive_license(
 
 
 __all__ = [
+    "RIGHTS_BLOCK_SPECS",
     "RIGHTS_KEY",
     "UnknownSourceError",
     "AttributionGateError",

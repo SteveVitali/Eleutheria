@@ -135,6 +135,27 @@ function sigChrome() {
         const publicUrls = urls
           .filter((u) => !INTERNAL_SEGMENTS.has(new URL(u).pathname.split("/")[1]))
           .sort();
+        // P35.39 (SIG-TRANSP-017 / J3 §6.6): the linked machine metadata is
+        // sitemap-listed. The DCAT-3 catalog the export emits (`catalog.jsonld`
+        // at the bundle root) is copied to a web-owned route — `/releases/` is a
+        // protected prefix the release pipeline owns, so the build can never
+        // serve it there. Export mode only: a fixtures build carries no real
+        // catalog, and the sitemap never names a URL the built site will not
+        // resolve (QW-11: every loc must answer on the emitted tree).
+        if (process.env.SIG_DATA_SOURCE === "export") {
+          const repoRoot = fileURLToPath(new URL("../", import.meta.url));
+          const override = process.env.SIG_EXPORT_DIR;
+          const exportDir =
+            override !== undefined && override !== ""
+              ? resolve(repoRoot, override)
+              : join(repoRoot, "exports/out/okc");
+          const catalogSrc = join(exportDir, "catalog.jsonld");
+          if (existsSync(catalogSrc)) {
+            mkdirSync(join(distDir, "data"), { recursive: true });
+            cpSync(catalogSrc, join(distDir, "data", "catalog.jsonld"));
+            publicUrls.push(`${origin}/data/catalog.jsonld`);
+          }
+        }
         const sitemap =
           `<?xml version="1.0" encoding="UTF-8"?>\n` +
           `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

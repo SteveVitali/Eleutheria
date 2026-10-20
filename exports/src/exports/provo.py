@@ -220,6 +220,12 @@ def build_prov_graph(lineage: Lineage) -> Graph:
             g.add((node, SIG.upstreamStatus, Literal(capture.upstream_status)))
         if capture.upstream_url is not None:
             g.add((node, SIG.upstreamUrl, URIRef(capture.upstream_url)))
+            # P35.39 (J3 §6.6): the upstream document is the capture's primary
+            # source — the DCAT/PROV chain a catalog consumer can follow back
+            # to where the evidence actually came from. The upstream node is
+            # typed Entity so the hadPrimarySource edge is spec-clean.
+            g.add((URIRef(capture.upstream_url), RDF.type, PROV.Entity))
+            g.add((node, PROV.hadPrimarySource, URIRef(capture.upstream_url)))
         if capture.upstream_host is not None:
             g.add((node, SIG.upstreamHost, Literal(capture.upstream_host)))
         if capture.upstream_path_sha256 is not None:

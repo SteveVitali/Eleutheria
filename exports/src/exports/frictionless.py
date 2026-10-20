@@ -13,7 +13,7 @@ date is the release's observation-time snapshot).
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 
 from .manifest import PUBLICATION_BASIS, Artifact, BuildSpec, canonical_json
 
@@ -39,11 +39,16 @@ def _license_entry(license_id: str) -> dict[str, object]:
     return entry
 
 
-def _resource(artifact: Artifact) -> dict[str, object]:
+def _resource(
+    artifact: Artifact,
+    *,
+    schema_path: str | None = None,
+    sources: Sequence[str] = (),
+) -> dict[str, object]:
     # Frictionless `format` is the file extension (csv, parquet, jsonl, …), not the
     # media subtype — the media type is carried separately in `mediatype`.
     fmt = artifact.path.rsplit(".", 1)[-1] if "." in artifact.path else ""
-    return {
+    out: dict[str, object] = {
         "name": artifact.name,
         "path": artifact.path,
         "format": fmt,
@@ -52,26 +57,75 @@ def _resource(artifact: Artifact) -> dict[str, object]:
         "hash": f"sha256:{artifact.sha256}",
         "licenses": [_license_entry(artifact.license)],
     }
+    # P35.39 (SIG-TRANSP-016 / J3 §6.5): the linked Table Schema the registry
+    # generated for this resource's columns + the upstream sources it draws on.
+    if schema_path is not None:
+        out["schema"] = schema_path
+    if sources:
+        out["sources"] = [{"title": s} for s in sorted(set(sources))]
+    return out
 
 
-def data_package(artifacts: Sequence[Artifact], build_spec: BuildSpec) -> bytes:
-    """A Frictionless ``datapackage.json`` over the tabular ``artifacts`` (SIG-EXPORT-002).
+def data_package(
+    artifacts: Sequence[Artifact],
+    build_spec: BuildSpec | None,
+    *,
+    schema_by_path: Mapping[str, str] | None = None,
+    sources_by_path: Mapping[str, Sequence[str]] | None = None,
+    version: str | None = None,
+    created: str | None = None,
+    package_id: str | None = None,
+) -> bytes:
+    """A Frictionless **v2** ``datapackage.json`` over the tabular ``artifacts``
+    (SIG-EXPORT-002; P35.39 / J3 §6.5 NEW-11).
 
     Each resource carries its own licence and checksum, because a package spans multiple
     compartments (§42.2) and a consumer must know each resource's licence individually.
+    ``schema_by_path`` links every registry-covered resource to its generated
+    ``schemas/<resource>.tableschema.json``; ``sources_by_path`` names the
+    upstream source ids each resource draws on. ``version``/``created`` default
+    to the build's release identity — the publication-bound descriptor emitted
+    at activation (``build_spec=None``) passes ``version=<publication_id>``,
+    ``created=<activation>``, ``package_id=<the release's concept>``.
     """
     licenses = sorted({a.license for a in artifacts})
+    schema_map = schema_by_path or {}
+    sources_map = sources_by_path or {}
+    if build_spec is not None:
+        name = version or build_spec.release_id()
+        pkg_id = package_id or build_spec.concept_id()
+        default_version = build_spec.release_id()
+        default_created = build_spec.as_of_snapshot.isoformat()
+    else:
+        name = version or "sig-release"
+        pkg_id = package_id or name
+        default_version = version or ""
+        default_created = created or ""
     descriptor = {
+        "$schema": "https://datapackage.org/profiles/2.0/datapackage.json",
         "profile": "data-package",
-        "name": build_spec.release_id(),
-        "id": build_spec.concept_id(),
-        "version": build_spec.release_id(),
-        "created": build_spec.as_of_snapshot.isoformat(),
+        "name": name,
+        "id": pkg_id,
+        "version": version or default_version,
+        "created": created or default_created,
         # P34.21a (E2 H-6, OM-08, ADR-167/ADR-182): the publication-basis label,
         # the same string manifest.json and LICENCES.json carry.
         "publication_basis": PUBLICATION_BASIS,
+        "contributors": [
+            {
+                "title": "Surveillance Infrastructure Graph (SIG)",
+                "role": "publisher",
+            }
+        ],
         "licenses": [_license_entry(lic) for lic in licenses],
-        "resources": [_resource(a) for a in sorted(artifacts, key=lambda a: a.path)],
+        "resources": [
+            _resource(
+                a,
+                schema_path=schema_map.get(a.path),
+                sources=sources_map.get(a.path, ()),
+            )
+            for a in sorted(artifacts, key=lambda a: a.path)
+        ],
     }
     return canonical_json(descriptor)
 

@@ -68,6 +68,8 @@ import { SOURCES_FIXTURE, sourceLicenceTable, type SourceLicenceRow } from "./so
 import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
+import { isDataDictionary, type DataDictionary } from "./dictionary";
+import { DICTIONARY_FIXTURE } from "./dictionary-fixture";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -1183,6 +1185,34 @@ export function getSourceLicenceTable(): SourceLicenceRow[] {
     return parsed.rows;
   }
   return sourceLicenceTable(exportDir());
+}
+
+/**
+ * P35.39 (SIG-TRANSP-016, J3 §6.5): the generated `sig.data-dictionary/1`
+ * document behind `/data/dictionary/` — `<exportDir>/dictionary.json` in
+ * export mode, the committed demonstration document in fixtures mode.
+ * Export mode fails LOUD on a missing/malformed artifact (the dictionary is
+ * a first-class emitted file since this row — a pre-P35.39 export is stale,
+ * never silently patched).
+ */
+export function getDataDictionary(): DataDictionary {
+  if (dataSource() === "fixtures") return DICTIONARY_FIXTURE;
+  const path = `${exportDir()}/dictionary.json`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch (cause) {
+    throw new Error(
+      `SIG_DATA_SOURCE=export but the data dictionary is missing: ${path}. ` +
+        "Rebuild the export (`sig-exports build` emits `dictionary.json` since P35.39).",
+      { cause },
+    );
+  }
+  const parsed: unknown = JSON.parse(raw);
+  if (!isDataDictionary(parsed)) {
+    throw new Error(`${path}: not a valid sig.data-dictionary/1 document`);
+  }
+  return parsed;
 }
 
 /** The `sig.source-licence-table/1` artifact shape (`web/sources.json`). */

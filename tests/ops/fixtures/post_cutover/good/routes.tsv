@@ -14,6 +14,7 @@ route:https://surveillancegraph.org/tiles/	route_d9dcc4e53304.txt
 route:https://surveillancegraph.org/corrections/	route_0e39d42fa375.txt
 route:https://surveillancegraph.org/coverage-metrics/	route_29e23add138a.txt
 route:https://surveillancegraph.org/data-collection/	route_24f8a488e572.txt
+route:https://surveillancegraph.org/data/	route_aa160b9d21de.txt
 route:https://surveillancegraph.org/data-freshness/	route_5db427faa310.txt
 route:https://surveillancegraph.org/dispute/	route_7cd7e80cc5db.txt
 route:https://surveillancegraph.org/dossier/	route_c0218a626ea0.txt

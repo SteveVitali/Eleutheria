@@ -110,19 +110,32 @@ test("sitemap lists canonical-origin URLs only, all resolvable (QW-11)", async (
       (p) => !p.includes("/print/") && !(CHROME_PAGES as readonly string[]).includes(p),
     ),
   );
+  // P35.39: the sitemap may also name linked machine-metadata FILES (the DCAT
+  // catalog the build serves at /data/catalog.jsonld in export mode). A file
+  // loc resolves on the canonical origin but is not a page — no canonical
+  // link element — so it is allow-listed, not in PUBLIC_PAGES.
+  const METADATA_LOCS = new Set<string>(["/data/catalog.jsonld"]);
   for (const loc of locs) {
     expect(loc.startsWith(`${ORIGIN}/`), `non-canonical URL in sitemap: ${loc}`).toBe(true);
     const path = new URL(loc).pathname;
-    expect(routes.has(path), `sitemap lists a non-public or non-canonical route: ${loc}`).toBe(true);
+    expect(
+      routes.has(path) || METADATA_LOCS.has(path),
+      `sitemap lists a non-public or non-canonical route: ${loc}`,
+    ).toBe(true);
   }
   // Error pages, the /terms forwarder, print views and internal routes are never
   // canonical content — they must not appear.
   for (const banned of ["/404", "/403", "/410", "/terms/", "/print/", "/curate/", "/visual-language/"]) {
     expect(xml.includes(banned), `sitemap must not contain ${banned}`).toBe(false);
   }
-  // Every listed URL resolves as its own canonical.
+  // Every listed URL resolves; HTML pages resolve as their own canonical.
   for (const loc of locs) {
     const path = new URL(loc).pathname;
+    if (METADATA_LOCS.has(path)) {
+      const res = await request.get(path);
+      expect(res.status(), `${path} must resolve`).toBe(200);
+      continue;
+    }
     const html = await htmlOf(request, path);
     expect(html, `${path} canonicalises to itself`).toContain(`rel="canonical" href="${loc}"`);
   }

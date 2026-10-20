@@ -63,7 +63,7 @@ from policy.eligibility import (
 
 from . import release_identity as RI
 from . import site_release as SR
-from .manifest import canonical_json, sha256_hex
+from .manifest import Artifact, canonical_json, sha256_hex
 from .published_record import (
     PROJECTION_VERSION,
     claim_index_from_jsonl,
@@ -1442,6 +1442,10 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
         # P35.13: the site-release object is emitted after the manifest like
         # the catalog entry — external to the hash cycle by construction.
         f"releases/{pub}/release.json",
+        # P35.39: the publication-bound metadata emitted at activation —
+        # the Frictionless descriptor + the per-release DCAT dataset.
+        f"releases/{pub}/datapackage.json",
+        f"releases/{pub}/catalog.jsonld",
     }
     for base in ("r", f"releases/{pub}"):
         root = release_dir / base
@@ -1843,6 +1847,100 @@ def _emit_overlay(
     _atomic_write(staged / "compat_index.json", canonical_json(compat))
 
 
+def _emit_activation_metadata(
+    registry: ReleaseRegistry,
+    staged: Path,
+    release_dir: Path,
+    pub: str,
+    entry: Mapping[str, Any],
+    now: datetime,
+) -> None:
+    """P35.39 (SIG-TRANSP-016 / J3 §6.6): the publication-bound metadata —
+
+    * ``releases/{pub}/datapackage.json`` — the Frictionless v2 descriptor
+      over this release's integrity-manifested artifacts, ``version`` the
+      publication id and ``created`` the activation instant;
+    * ``releases/{pub}/catalog.jsonld`` — the DCAT 3 dataset for this release
+      (``dcat:previousVersion`` the prior activated publication,
+      ``prov:wasGeneratedBy`` the export run's provenance node);
+    * ``releases/catalog.jsonld`` — the DatasetSeries catalog over every
+      activated release (regenerated each activation, like the index).
+
+    These are overlay objects: they describe the staged tree and may name
+    the activation time, which the immutable bytes could never know.
+    """
+    from . import dcat, frictionless
+
+    integrity_path = release_dir / f"releases/{pub}/integrity_manifest.json"
+    integrity = _read_json(integrity_path) if integrity_path.exists() else {}
+    arts = [
+        Artifact(
+            name=Path(str(a.get("path", ""))).name,
+            path=str(a.get("path", "")),
+            media_type=str(a.get("media_type") or "application/octet-stream"),
+            compartment=str(a.get("compartment") or ""),
+            license=str(a.get("license") or ""),
+            sha256=str(a.get("sha256") or ""),
+            byte_size=int(a.get("byte_size") or 0),
+        )
+        for a in integrity.get("artifacts") or []
+    ]
+    dp = frictionless.data_package(
+        arts,
+        None,
+        version=pub,
+        created=now.isoformat(),
+        package_id=f"{dcat.SIG_NS}release/{pub}",
+    )
+    _atomic_write(staged / f"releases/{pub}/datapackage.json", dp)
+
+    pubs = registry.catalog().get("publications") or []
+    prev: dict[str, Any] | None = None
+    for e in pubs:
+        if str(e.get("publication_id")) == pub:
+            break
+        prev = e
+    rel_ds = {
+        "@context": dcat.CONTEXT,
+        "@id": f"{dcat.SIG_NS}release/{pub}",
+        "@type": "dcat:Dataset",
+        "dct:title": f"SIG release {pub}",
+        "dcat:inSeries": {"@id": dcat.SERIES_IRI},
+        "dcat:version": pub,
+        "dct:issued": now.isoformat(),
+        "prov:wasGeneratedBy": {"@id": f"{dcat.SIG_PROV}run/{entry.get('data_release_id') or pub}"},
+        "dcat:distribution": [
+            {
+                "@id": f"{dcat.SIG_NS}distribution/releases/{pub}/datapackage.json",
+                "@type": "dcat:Distribution",
+                "dct:title": f"SIG release {pub} Frictionless descriptor",
+                "dcat:downloadURL": {
+                    "@id": f"{dcat.CANONICAL_ORIGIN}/releases/{pub}/datapackage.json"
+                },
+                "dcat:mediaType": "application/json",
+            }
+        ],
+    }
+    if prev is not None:
+        rel_ds["dcat:previousVersion"] = {
+            "@id": f"{dcat.SIG_NS}release/{prev.get('publication_id')}"
+        }
+    _atomic_write(staged / f"releases/{pub}/catalog.jsonld", canonical_json(rel_ds))
+
+    activations: dict[str, Any] = {}
+    for e in pubs:
+        p = str(e.get("publication_id") or "")
+        rec = registry._path(f"activations/{p}.json")
+        if p == pub:
+            activations[p] = {"activated_at": now.isoformat()}
+        elif rec.exists():
+            activations[p] = _read_json(rec)
+    _atomic_write(
+        staged / "releases" / "catalog.jsonld",
+        dcat.series_catalog(pubs, activations=activations),
+    )
+
+
 def _update_compat(registry: ReleaseRegistry, entry: Mapping[str, Any]) -> None:
     compat = registry.compat()
     entries = compat.get("entries") or []
@@ -1960,6 +2058,13 @@ def activate(
         stamp=mutable_stamp,
     )
     _emit_overlay(registry, stamp=mutable_stamp, latest_pub=pub)
+    # P35.39 (SIG-TRANSP-016 / J3 §6.6): the linked machine metadata —
+    # this publication's Frictionless descriptor (version = publication_id,
+    # created = the activation instant) + the DCAT 3 series catalog over
+    # every activated release. Both are activation-time overlay objects —
+    # they describe the staged tree and may name the activation time, which
+    # the immutable bytes could never know.
+    _emit_activation_metadata(registry, staged, release_dir, pub, entry, now)
 
     now = now or datetime.now(UTC)
     ordinal = len(pubs)

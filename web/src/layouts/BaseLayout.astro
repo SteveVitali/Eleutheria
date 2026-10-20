@@ -22,6 +22,7 @@ import type { AsOfEcho } from "../lib/fixtures";
 import type { ProvenanceSummary } from "../lib/provenance";
 import { getSiteMetadata, getSiteProvenance } from "../lib/data";
 import { getReleaseStamp } from "../lib/release-stamp";
+import { withBase } from "../lib/paths";
 import { defaultDescription } from "../lib/meta";
 
 interface Props {
@@ -159,6 +160,12 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
         the no-release state, never a placeholder. */}
     {stamp && <meta name="sig-release" content={stamp.metaContent} />}
     {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
+    {/* P35.39 (SIG-TRANSP-017, J3 §6.6, D-J3-7): the linked machine metadata —
+        the release's publication-bound Frictionless descriptor (`describedby`)
+        and the DCAT 3 series catalog (`alternate`). Both are LINKED files;
+        JSON-LD is never inlined on a public page. */}
+    {stamp && <link rel="describedby" type="application/json" href={withBase(`releases/${stamp.publicationId}/datapackage.json`)} />}
+    {stamp && <link rel="alternate" type="application/ld+json" href={withBase("releases/catalog.jsonld")} />}
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>

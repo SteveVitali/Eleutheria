@@ -34,6 +34,9 @@ export const SHELL_PAGES = [
   // (SIG-INGEST-036 rule 1). T0 — ships zero <script> like every other
   // non-island public page.
   "/data-collection/",
+  // P35.39 (TX-10a): the generated data dictionary — a T1 content page,
+  // zero <script>, rendering the export's own dictionary.json.
+  "/data/dictionary/",
   // P34.17: the interim sources-and-licences page + the status page — public
   // routes, so the a11y and zero-JS sweeps cover them.
   "/sources/",

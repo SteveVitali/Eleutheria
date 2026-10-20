@@ -771,6 +771,51 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   is the declared-empty disclosure registry the descriptor digests.
   v1 descriptors stay parseable; only promotion gates on v2. No hosted
   mutation — the publish rows own the hosted descriptor write.
+- **Generated data dictionary + linked machine metadata** (P35.39 / row
+  318; R11-K13-TX-10a; owners SIG-TRANSP-016, SIG-TRANSP-017; cites
+  SIG-TRANSP-033, SIG-UI-035, SIG-EXPORT-001/006, J3 §6.5–6.7 + §6.10 +
+  D-J3-7 "linked files only", K13 §7 W2, J1 NEW-11, DR-C3-01) — every
+  emitted column is now declared in one exporter-side column registry
+  (`exports/column_registry.py` — description, datatype, unit,
+  nullability, enum source + generated-enum values where applicable) and
+  every write seam fails closed on an undocumented column:
+  `assert_documented` at each writer's emit point and
+  `assert_path_documented` over every manifest path at manifest build —
+  row-bearing serialisations (incl. `*.jsonl`, `*.jsonld` row streams)
+  register by stem while linked-data documents (`catalog.jsonld`,
+  `provenance.jsonld`, evidence documents) classify as documents, not
+  hidden tables. Each bundle emits `dictionary.json`
+  (`sig.data-dictionary/1`), one
+  `schemas/<resource>.tableschema.json` Frictionless Table Schema per
+  tabular resource, and a regenerated `datapackage.json` (Frictionless
+  Data Package v2: per-resource `schema` refs, sources, licences,
+  checksums, package contributors/version/created). New linked metadata
+  files — never inlined on public pages (D-J3-7): `catalog.jsonld`
+  (DCAT 3 — datasets, distributions with download URL + media type +
+  byte size + `spdx:checksum`, compartment-scoped `dct:license` +
+  `dct:accessRights`, release-series membership + previous-version
+  links, minted on the owned `/ns/` + `/prov/` bases) and
+  `provenance.jsonld` (PROV-O — export-run activity, per-capture
+  entities carrying the true recorded `retrieved_at`, never the export
+  `generated_at`, `prov:hadPrimarySource` upstream links where
+  available). Release activation emits
+  `releases/<publication_id>/datapackage.json` +
+  `releases/<publication_id>/catalog.jsonld` as declared overlays and
+  `releases/catalog.jsonld`; publish verification + release validation
+  recognise them instead of failing "undeclared artifact". Web:
+  `/data/dictionary/` renders the generated dictionary statically —
+  fixture mode ships typed fixture entries, export mode reads
+  `<exportDir>/dictionary.json` and fails loudly when absent/malformed;
+  `BaseLayout` links release metadata externally
+  (`<link rel="describedby">` + `rel="alternate"
+  type="application/ld+json">` on a valid release stamp); export-mode
+  builds copy the real `catalog.jsonld` to `dist/data/catalog.jsonld`
+  and sitemap-list it only when copied — the fixture sitemap never
+  advertises an absent artifact (the e2e sitemap check validates it as
+  a non-HTML downloadable resource). The dictionary page stays
+  zero-script and carries no inline JSON-LD. No compartment merge, no
+  claim-spine mutation, no gate/permission flip — the licence and
+  publication gates stay fail-closed.
 
 ### Changed
 

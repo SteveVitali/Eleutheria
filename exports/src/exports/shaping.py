@@ -557,6 +557,56 @@ class JurisdictionGroup:
         }
 
 
+def _jurisdiction_specs() -> tuple[Any, ...]:
+    """The ``jurisdictions`` table's columns — the registry spec for the writer above."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS(
+            "jurisdiction",
+            "the jurisdiction bucket label (the honest ``(unresolved)`` bucket included)",
+            nullable=False,
+        ),
+        _CS(
+            "subjects",
+            "publishable subjects asserting this bucket — the evaluable denominator",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "sites",
+            "the geolocated-site PublishedAggregate: ``{label, count, denominator, "
+            "not_evaluable}`` — a named-denominator count, never a total",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "conflicted_subjects",
+            "subjects whose coordinate evidence disagrees",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "source_ids",
+            "the registry sources contributing to this bucket",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "is_unresolved",
+            "true on the bucket of subjects with no evaluable jurisdiction claim",
+            dtype="boolean",
+            nullable=False,
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``jurisdictions`` resource's column specs.
+JURISDICTION_COLUMN_SPECS = _jurisdiction_specs()
+
+
 #: Sharing predicates whose claims record a partner COUNT, never a named
 #: partner (P35.30 / SIG-INGEST-043c / K2 §7 H-4): the degree is a node
 #: attribute — emitting it as an edge would draw a "relationship" to a number.
@@ -587,6 +637,40 @@ class SharingEdge:
             "claim_id": self.claim_id,
             "observed_at": self.observed_at,
         }
+
+
+def _sharing_edge_specs() -> tuple[Any, ...]:
+    """The ``sharing_edges`` table's columns — the registry spec for the writer above."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("subject_id", "the entity the observed sharing edge leaves", nullable=False),
+        _CS(
+            "predicate_id",
+            "the §29.3 sharing predicate id the edge was reconciled from",
+            nullable=False,
+        ),
+        _CS(
+            "partner_ref",
+            "the named partner reference when the claim names one (degree counts "
+            "never emit an edge)",
+        ),
+        _CS(
+            "access_kind",
+            "the §12.2 access classification — an AccessKind member, or "
+            "``unclassified`` when the predicate vocabulary cannot justify one",
+            nullable=False,
+            enum_source="export:shaping.ACCESS_KINDS",
+            declared_values=ACCESS_KINDS,
+        ),
+        _CS("source_id", "the registry source the backing claim came from"),
+        _CS("claim_id", "the backing claim's anchor id", nullable=False),
+        _CS("observed_at", "the claim's recorded observation date", dtype="date"),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``sharing_edges`` resource's column specs.
+SHARING_EDGE_COLUMN_SPECS = _sharing_edge_specs()
 
 
 @dataclass(frozen=True)
@@ -646,6 +730,60 @@ class ShapedSourceFreshness:
             "volatility_class": self.volatility_class,
             "claims": self.claims,
         }
+
+
+def _freshness_specs() -> tuple[Any, ...]:
+    """The ``freshness`` table's columns — the registry spec for ``freshness_row``."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("source", "the registry source id the row measures", nullable=False),
+        _CS(
+            "last_successful_run",
+            "the last completed ingestion run date, or the ``not-recorded`` "
+            "honest-absence token (never a dropped field, never a guess)",
+            nullable=False,
+        ),
+        _CS(
+            "last_content_change",
+            "the last date the source's content changed, or ``not-recorded``",
+            nullable=False,
+        ),
+        _CS(
+            "status",
+            "the source's run/staleness status — evaluated only against its "
+            "declared volatility class; ``not_evaluable`` when it cannot be",
+            nullable=False,
+            enum_source="export:shaping._map_run_status",
+            declared_values=("ok", "failing", "retired", "degraded", NOT_EVALUABLE),
+        ),
+        _CS(
+            "stale_entity_count",
+            "subjects whose newest observation is stale relative to the class",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "staleness_not_evaluable",
+            "dated observations staleness was never evaluated for (P35.20b)",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "volatility_class",
+            "the source's DECLARED §28.3 volatility class (never voted up from "
+            "the claim mix); ``not_evaluable`` when undeclared",
+            nullable=False,
+            enum_source="linkml:enum:PredicateVolatility",
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``freshness`` resource's column specs (also the
+#: ``web/freshness.json`` row shape — one writer, one contract).
+FRESHNESS_COLUMN_SPECS = _freshness_specs()
 
 
 @dataclass(frozen=True)

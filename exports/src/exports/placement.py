@@ -189,6 +189,59 @@ class PlacementResult:
         }
 
 
+def _placement_specs() -> tuple[Any, ...]:
+    """The sites-file columns this module stamps — the registry's spec for them.
+
+    Declared beside the writer (P35.39 / SIG-TRANSP-016): the closed
+    ``placement@1`` vocabularies above ARE the enum sources — a value outside
+    them can never reach a row (the ``__post_init__`` refuses it).
+    """
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS(
+            "jurisdiction_key",
+            "the boundary pack's canonical jurisdiction key the record placed into "
+            "(None when unplaced)",
+        ),
+        _CS(
+            "jurisdiction_chain",
+            "the ordered jurisdiction keys from country down to the placed level",
+            dtype="array",
+        ),
+        _CS(
+            "placement_basis",
+            "how the placement was derived — a closed ``placement@1`` basis",
+            enum_source="export:placement.PLACEMENT_BASIS",
+            declared_values=PLACEMENT_BASIS,
+        ),
+        _CS(
+            "placement_check",
+            "the ruleset's verdict — a closed ``placement@1`` check (R1–R8)",
+            nullable=False,
+            enum_source="export:placement.PLACEMENT_CHECKS",
+            declared_values=PLACEMENT_CHECKS,
+        ),
+        _CS(
+            "declared_scheme",
+            "the scheme of the record's declared jurisdiction identifier "
+            "(None when no usable declaration exists — never a guessed bare code)",
+        ),
+        _CS(
+            "declared_value",
+            "the declared jurisdiction identifier value within its scheme",
+        ),
+        _CS(
+            "boundary_vintage",
+            "the boundary pack vintage the placement ran against (e.g. ``tiger2024``/``ne10m-…``)",
+        ),
+    )
+
+
+#: The registry spec for the seven columns ``sites_columns`` emits (P35.39).
+PLACEMENT_COLUMN_SPECS = _placement_specs()
+
+
 # --------------------------------------------------------------------------- #
 # Engine construction — verified pack + bound registry → spatial index        #
 # --------------------------------------------------------------------------- #

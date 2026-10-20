@@ -78,6 +78,68 @@ def table_from_json(doc: dict[str, Any]) -> C.ExportTable:
     )
 
 
+def _request_specs() -> dict[str, tuple[Any, ...]]:
+    """The request-JSON table surfaces — P35.39 (SIG-TRANSP-016 / J3 §6.5).
+
+    ``build_request_from_json``/``table_from_json`` are the writers that
+    materialise these tables, so their column specs live here. A request that
+    names an unregistered table or emits an undeclared column fails the
+    build at the ``assert_documented`` seam in ``bundle._write_table_artifacts``.
+    """
+    from .column_registry import ColumnSpec as _CS
+
+    return {
+        "devices": (
+            _CS("subject_id", "the device's subject identifier", nullable=False),
+            _CS(
+                "geometry",
+                "the device's GeoJSON geometry (the feature geometry in "
+                "geojson/pmtiles serialisations)",
+                dtype="object",
+            ),
+            _CS("jurisdiction", "the request-declared jurisdiction label"),
+        ),
+        "claims": (
+            _CS("subject_id", "the claim's subject identifier", nullable=False),
+            _CS("predicate", "the predicate the claim asserts (short form)"),
+            _CS("predicate_id", "the predicate the claim asserts"),
+            _CS("value", "the claim's scalar value", dtype="any"),
+            _CS("value_low", "the claimed count's lower bound", dtype="number"),
+            _CS("value_high", "the claimed count's upper bound", dtype="number"),
+            _CS(
+                "resolution_status",
+                "the claim's resolution state",
+                enum_source="export:resolution.claim_status",
+            ),
+            _CS("absence", "the honest-absence token when no value is assertable"),
+            _CS("note", "the operator-recorded provenance note"),
+        ),
+        "legal_instruments": (
+            _CS("subject_id", "the instrument's subject identifier", nullable=False),
+            _CS("external_id", "the instrument's identifier in its issuing registry"),
+            _CS("instrument_type", "the jurisdiction-scoped instrument type slug"),
+            _CS("abstract_instrument_type", "the cross-jurisdiction instrument class"),
+            _CS("enacting_body", "the issuing authority"),
+            _CS("jurisdiction", "the jurisdiction the instrument governs"),
+            _CS("citation", "the statutory citation"),
+            _CS("effective_from", "the instrument's effective date", dtype="date"),
+            _CS("sunset_date", "the instrument's recorded sunset date", dtype="date"),
+            _CS(
+                "sunset_date_derived",
+                "whether the sunset date was derived rather than declared",
+                dtype="boolean",
+            ),
+        ),
+        "captures": (_CS("capture_id", "the evidence capture anchor id", nullable=False),),
+    }
+
+
+#: P35.39: the request-surface tables' declared columns (the registry reads
+#: these via ``column_registry()`` — request JSONs are a first-class emit
+#: surface, so they are documented like every writer).
+REQUEST_RESOURCE_SPECS = _request_specs()
+
+
 def build_request_from_json(
     doc: dict[str, Any],
 ) -> tuple[BuildSpec, list[C.ExportTable], list[RightsRecord], C.ExportTable | None]:

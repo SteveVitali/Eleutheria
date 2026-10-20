@@ -946,8 +946,14 @@ def verify_surface(
     overlay_ok = {
         f"releases/{pins.publication_id}/catalog_entry.json",
         f"releases/{pins.publication_id}/integrity_manifest.json",
+        # P35.39: the publication-bound metadata emitted at activation
+        # (release.py::_emit_activation_metadata) — Frictionless descriptor +
+        # the per-release DCAT dataset + the series catalog.
+        f"releases/{pins.publication_id}/datapackage.json",
+        f"releases/{pins.publication_id}/catalog.jsonld",
         "releases/index.html",
         "releases/catalog.json",
+        "releases/catalog.jsonld",
         "compat_index.json",
         "conf/withdrawn_routes.conf",
     }

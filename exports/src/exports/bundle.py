@@ -125,6 +125,21 @@ def _write_table_artifacts(
 ) -> list[tuple[Artifact, bytes]]:
     table = placed.table
     rows = C.enrich_rows(table, index, registry)
+    # P35.39 (SIG-TRANSP-016 / J3 §6.5): the fail-closed column gate — every
+    # column any serialisation of this table can carry must be declared in the
+    # exporter column registry; an undocumented column (or an unregistered
+    # resource) fails the build here, before any artifact byte is written.
+    from .column_registry import assert_documented
+
+    emitted: set[str] = set()
+    for row in rows:
+        emitted.update(k for k in row if k != C.RIGHTS_KEY)
+        rights = row.get(C.RIGHTS_KEY)
+        if isinstance(rights, Mapping):
+            emitted.update(f"rights_{k}" for k in rights)
+            emitted.add(C.RIGHTS_KEY)
+            emitted.add("rights")  # the nested form jsonld/geojson emit
+    assert_documented(table.name, emitted)
     # P35.16 (R11-DATA-01, F-322): disclose rows vs distinct entities — the
     # rows are observation-level records, and a licence-conflicted entity
     # splits across compartment files, so `row_count` alone would read as a
@@ -228,8 +243,54 @@ def build_bundle(
             artifact_bytes[artifact.path] = data
             tabular_artifacts.append(artifact)
 
-    # --- Frictionless Data Package over the tabular resources (SIG-EXPORT-002) ---
-    dp = frictionless.data_package(tuple(tabular_artifacts), build_spec)
+    # --- P35.39 (SIG-TRANSP-016 / J3 §6.5): the registry-generated metadata --
+    # a Table Schema per emitted resource, then the dictionary + the DCAT
+    # catalog over the whole artifact set. These are ``metadata``-compartment
+    # descriptor documents (CC-BY-4.0) like datapackage.json — they describe
+    # the data, they are never row-bearing themselves.
+    from . import column_registry as CR
+    from . import dcat as _dcat
+
+    emitted_resources = sorted({pt.table.name for pt in placed})
+    if crosswalk is not None:
+        emitted_resources = sorted({*emitted_resources, crosswalk.name})
+    # The upstream source ids each resource's rows drew on — honest per-row
+    # provenance (``ExportRow.source_id``), the ``resources[].sources`` payload.
+    sources_by_table: dict[str, list[str]] = {}
+    for pt in placed:
+        sources_by_table[pt.table.name] = sorted({r.source_id for r in pt.table.rows})
+    if crosswalk is not None:
+        sources_by_table[crosswalk.name] = sorted({r.source_id for r in crosswalk.rows})
+
+    for path, data in CR.table_schema_artifacts(emitted_resources).items():
+        art = Artifact.of(
+            name=Path(path).name,
+            path=path,
+            media_type="application/json",
+            compartment=_META_COMPARTMENT,
+            license=_DESCRIPTOR_LICENSE,
+            data=data,
+        )
+        artifacts.append(art)
+        artifact_bytes[path] = data
+
+    # --- Frictionless Data Package v2 over the tabular resources (SIG-EXPORT-002) ---
+    schema_by_path = {
+        a.path: CR.table_schema_path(res)
+        for a in tabular_artifacts
+        if (res := CR.resource_for_path(a.path)) is not None
+    }
+    sources_by_path = {
+        a.path: sources_by_table.get(res, ())
+        for a in tabular_artifacts
+        if (res := CR.resource_for_path(a.path)) is not None
+    }
+    dp = frictionless.data_package(
+        tuple(tabular_artifacts),
+        build_spec,
+        schema_by_path=schema_by_path,
+        sources_by_path=sources_by_path,
+    )
     dp_artifact = Artifact.of(
         name="datapackage.json",
         path="datapackage.json",
@@ -290,6 +351,66 @@ def build_bundle(
         artifacts.append(dist_artifact)
         artifact_bytes[dist_artifact.path] = dist_bytes
 
+    # --- P35.39: dictionary.json + catalog.jsonld over the full artifact set --
+    # Every row-bearing path must classify to a registered resource; the
+    # documents list carries the rest (descriptors, evidence payloads, the
+    # generated schemas). dictionary.json is emitted before catalog.jsonld so
+    # the catalog can distribute it; neither lists the other — ordering is by
+    # construction, not by hash cycle.
+    paths_by_resource: dict[str, list[str]] = {}
+    documents: list[dict[str, Any]] = []
+    for art in artifacts:
+        res = CR.assert_path_documented(art.path)
+        if res is None:
+            doc: dict[str, Any] = {
+                "path": art.path,
+                "media_type": art.media_type,
+                "compartment": art.compartment,
+                "license": art.license,
+            }
+            if art.schema is not None:
+                doc["schema"] = art.schema
+            documents.append(doc)
+        else:
+            paths_by_resource.setdefault(res, []).append(art.path)
+    dict_bytes = canonical_json(
+        CR.dictionary_document(
+            build_spec=build_spec,
+            resources=emitted_resources,
+            paths_by_resource=paths_by_resource,
+            documents=documents,
+            sources_by_resource=sources_by_table,
+        )
+    )
+    artifacts.append(
+        Artifact.of(
+            name="dictionary.json",
+            path="dictionary.json",
+            media_type="application/json",
+            compartment=_META_COMPARTMENT,
+            license=_DESCRIPTOR_LICENSE,
+            data=dict_bytes,
+        )
+    )
+    artifact_bytes["dictionary.json"] = dict_bytes
+    catalog_bytes = _dcat.export_catalog(
+        tuple(artifacts),
+        release_id=build_spec.release_id(),
+        created=build_spec.as_of_snapshot.isoformat(),
+        compartments_public={a.compartment for a in artifacts},
+    )
+    artifacts.append(
+        Artifact.of(
+            name="catalog.jsonld",
+            path="catalog.jsonld",
+            media_type="application/ld+json",
+            compartment=_META_COMPARTMENT,
+            license=_DESCRIPTOR_LICENSE,
+            data=catalog_bytes,
+        )
+    )
+    artifact_bytes["catalog.jsonld"] = catalog_bytes
+
     manifest = Manifest(build_spec=build_spec, artifacts=tuple(artifacts))
     return Bundle(
         build_spec=build_spec,
@@ -300,6 +421,29 @@ def build_bundle(
         evidence_artifacts=tuple(evidence_artifacts),
         distribution=distribution,
     )
+
+
+def _crosswalk_specs() -> tuple[Any, ...]:
+    """The ``sig_external_crosswalk`` columns — beside the writer (P35.39 /
+    SIG-TRANSP-016). The row shape is ``resolution.crosswalk.CrosswalkRow.
+    as_dict`` — one scheme/value per SIG id.
+    """
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("sig_id", "the SIG entity identifier", nullable=False),
+        _CS(
+            "scheme",
+            "the external identifier scheme the row maps into",
+            nullable=False,
+            enum_source="export:resolution.crosswalk",
+        ),
+        _CS("value", "the external identifier value within its scheme", nullable=False),
+    )
+
+
+#: P35.39: the ``sig_external_crosswalk`` resource's column specs.
+CROSSWALK_COLUMN_SPECS = _crosswalk_specs()
 
 
 def crosswalk_table_from_rows(
