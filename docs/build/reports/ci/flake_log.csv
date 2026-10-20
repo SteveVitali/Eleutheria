@@ -6,3 +6,24 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-10-09T21:14,262,7973564,composed,DOCKERHUB-RATE-2,37992428702,1,failure
 2026-10-09T21:24,262,7973564,web,DOCKERHUB-RATE-1,37992428702,1,failure
 2026-10-09T21:24,262,7973564,python,DOCKERHUB-RATE-3,37992428702,1,failure
+2026-10-20T20:21,327,2bf460d3,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465560095,1,failure
+2026-10-20T20:21,327,2bf460d3,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465560095,2,failure (orchestrator rerun 17:55Z — 429 again)
+2026-10-20T20:21,327,2bf460d3,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465560095,3,success (rerun from the operator account 18:54Z)
+2026-10-20T20:21,328,025a9146,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465639223,1,failure
+2026-10-20T20:21,328,025a9146,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465639223,2,success (rerun from the operator account 18:54Z)
+2026-10-20T20:21,329,54e04daa,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465731697,1,failure
+2026-10-20T20:21,329,54e04daa,python,DOCKERHUB-RATE-3 (BuildKit 429 form unmatched by pattern; operator-approved rerun),39465731697,2,success (rerun from the operator account 19:16Z)
+2026-10-20T20:21,331,dd7702a7,python,DOCKERHUB-RATE-3,39465814154,1,failure
+2026-10-20T20:21,331,dd7702a7,python,DOCKERHUB-RATE-3,39465814154,2,success (rerun from the operator account 19:16Z)
+2026-10-20T20:21,332,8d722ce4,python,DOCKERHUB-RATE-3,39465891453,1,failure
+2026-10-20T20:21,332,8d722ce4,python,DOCKERHUB-RATE-3,39465891453,2,success (orchestrator rerun 19:19Z)
+2026-10-20T20:21,334,18a59a90,python,DOCKERHUB-RATE-3,39465967906,1,failure
+2026-10-20T20:21,334,18a59a90,python,DOCKERHUB-RATE-3,39465967906,2,success (rerun from the operator account 19:38Z)
+2026-10-20T20:21,335,11908371,web,DOCKERHUB-RATE-1,39466054214,1,failure
+2026-10-20T20:21,335,11908371,web,DOCKERHUB-RATE-1,39466054214,2,success (orchestrator rerun 19:40Z)
+2026-10-20T20:21,335,11908371,python,DOCKERHUB-RATE-3,39466054214,1,failure
+2026-10-20T20:21,335,11908371,python,DOCKERHUB-RATE-3,39466054214,2,success (orchestrator rerun 19:40Z)
+2026-10-20T20:21,337,c965d6fb,web,DOCKERHUB-RATE-1,39466140022,1,failure
+2026-10-20T20:21,337,c965d6fb,web,DOCKERHUB-RATE-1,39466140022,2,success (rerun from the operator account 19:55Z)
+2026-10-20T20:21,337,c965d6fb,python,DOCKERHUB-RATE-3,39466140022,1,failure
+2026-10-20T20:21,337,c965d6fb,python,DOCKERHUB-RATE-3,39466140022,2,success (rerun from the operator account 19:55Z)
