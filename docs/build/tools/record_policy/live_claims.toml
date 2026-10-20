@@ -122,3 +122,16 @@ window = "paragraph"
 # (listed). Resolved by `git log --diff-filter=A` on this file; when the file
 # is itself uncommitted (a pre-commit local run), activation = HEAD.
 self = "docs/build/tools/record_policy/live_claims.toml"
+
+# ── carried records (ADR-218) ──
+# A repair commit that re-adds records a merge resolution dropped makes
+# `git blame` attribute those lines to the repair, so the corpus leg would
+# judge carried pre-activation records as new claims. Each entry names the
+# repair `commit` and the ancestor `source` it carried from; a line blamed to
+# `commit` is grandfathered (listed as `carried`) only when its exact text is
+# in `source`'s copy of the file AND `source`'s blame dates it before
+# activation. New text never qualifies. Full 40-hex shas; `reason` required.
+[[carried]]
+commit = "e324b22c1aef193d3260204fc728c66f50beb50b"
+source = "8e3a0356ca82e4b87dfe22d849239f8a0aa71008"
+reason = "P35.16 reconciliation repair: 85b9941a's --ours LEDGER resolution dropped the #293/P34.42a rows the forward merge of 8e3a0356 carries; e324b22c re-added them verbatim (GATE DECISIONS 2026-10-14T12:27:08Z confirmation + the P34.42a PHASE LOG entries, all authored 2026-10-14 before activation)"
