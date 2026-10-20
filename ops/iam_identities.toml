@@ -54,7 +54,7 @@ purpose = "the static site's own identity — objectViewer on the web bucket (th
 [[service_account]]
 id = "sig-alerts-rt"
 display_name = "sig-alerts runtime"
-purpose = "the alert receiver's own identity — no project roles, no secret access; it only needs to run"
+purpose = "the alert receiver's own identity — no project roles; accessor on its own sig-alert-webhook-token only (the service mounts it as env SIG_ALERT_WEBHOOK_TOKEN — the live leg-1 finding; D-P34.42a-1 option (a), operator-approved 2026-10-14)"
 
 # --- the job-class runtime identities (P34.42b) --------------------------------
 # One SA per workload CLASS (G1-01); the job→class map is derived from
@@ -387,7 +387,7 @@ consumers = ["sig-api-rt", "sig-ingest-rt", "sig-probe-rt", "sig-export-rt", "si
 
 [[secret]]
 name = "sig-alert-webhook-token"
-consumers = ["sig-probe-rt", "sig-quality-probe-rt"]   # sig-probe + P34.44b's nightly quality-probe job identity (was default-compute)
+consumers = ["sig-alerts-rt", "sig-probe-rt", "sig-quality-probe-rt"]   # the receiver mounts it as SIG_ALERT_WEBHOOK_TOKEN (leg-1 finding, D-P34.42a-1 option (a)) + sig-probe + P34.44b's nightly quality-probe job identity (was default-compute)
 jobs_revoke = ["default-compute"]
 
 [[secret]]
