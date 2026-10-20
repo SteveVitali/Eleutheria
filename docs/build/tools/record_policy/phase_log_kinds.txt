@@ -22,5 +22,6 @@ post-closeout record
 post-closeout repair
 orchestrator repair
 boundary-confirm
+dispatch boundary-confirm
 interruption
 harness-switch
