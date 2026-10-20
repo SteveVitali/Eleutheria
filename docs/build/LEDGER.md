@@ -12,7 +12,7 @@
 projectStatus:   IN_PROGRESS                           # P35.38b landed (317); no live leg
 nextTicket:      P35.39                              # row 318
 lastCompleted:   P35.38b                             # row 317
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #333@60b7c70d 5/5 (39384937743); #332@49dc2a22 5/5 (39362195311)
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #334@82683afc CI pending (-v2 re-land; #333@60b7c70d 5/5 39384937743, superseded); #332@49dc2a22 5/5 (39362195311)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.27,P35.32,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
