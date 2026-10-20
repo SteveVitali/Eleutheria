@@ -57,7 +57,9 @@ describe("'How we know this' module (SIG-UI-044)", () => {
   it("summarizes to a one-liner naming artifacts, sources, range, and review status", () => {
     const line = provenanceOneLine(DEFAULT_PROVENANCE);
     expect(line).toContain("4 artifact");
-    expect(line).toContain("independent source");
+    // P35.40 (SIG-TRANSP-026): "contributing sources" — the named predicate,
+    // never the stale "independent sources" label.
+    expect(line).toContain("contributing source");
     expect(line).toContain("2025-03-25");
   });
 });

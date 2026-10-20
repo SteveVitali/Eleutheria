@@ -12,6 +12,14 @@
 import Figure from "./Figure.astro";
 import { assertProvenanceComplete, DEFAULT_PROVENANCE, REVIEW_STATUS_LABELS } from "../lib/provenance";
 import type { ProvenanceSummary } from "../lib/provenance";
+// P35.40 (SIG-TRANSP-002/026/027, K9 §3.3): the stale "Independent sources"
+// label becomes the named predicate it measured — "Sources with published
+// claims". Site-wide, that count IS the lifecycle `published` state — read
+// from the release's `transparency/counts.json` (recomputable from
+// `sources.json`), never a second counting path. A page-scoped module
+// keeps its own per-surface count under the surface's named label
+// (`provenance.source_label` — "detectors" for the research queue).
+import { getSourceCounts } from "../lib/data";
 // P35.37 (SIG-TRANSP-013, J3 §5.4): the module's counts are material numbers —
 // each is a <Figure> pointing at web/analytics/provenance.json under
 // `pointerBase` (/surfaces/site for the site-wide module; the page's own
@@ -56,9 +64,23 @@ const tiers = Object.entries(provenance.tier_distribution).sort(([a], [b]) => a.
 const range = provenance.date_range;
 
 // The module's figures[] — the three counted components (artifact count,
-// per-tier claim counts, source-independence count) as headline-class figures.
+// per-tier claim counts, source count) as headline-class figures. The site
+// module's source count is the `published` lifecycle partition count from
+// `transparency/counts.json` (the K9 §3.3 "218" mapping); a page-scoped
+// module renders its own provenance count under the surface's label.
 const HWKT_ARTIFACT = "web/analytics/provenance.json";
 const HWKT_HREF = artifactHref(HWKT_ARTIFACT);
+const COUNTS_ARTIFACT = "transparency/counts.json";
+const COUNTS_HREF = artifactHref(COUNTS_ARTIFACT);
+const sitePublished = scope === "site" ? getSourceCounts().lifecycle.published : null;
+const sourcesValue = sitePublished?.count ?? provenance.source_independence_count;
+const sourcesArtifact = sitePublished ? COUNTS_ARTIFACT : HWKT_ARTIFACT;
+const sourcesPointer = sitePublished
+  ? "/lifecycle/published/count"
+  : `${pointerBase}/source_independence_count`;
+const sourcesLabel = sitePublished
+  ? "Sources with published claims"
+  : (provenance.source_label ?? "Contributing sources");
 const hwktSlug = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const HWKT_FIGURES = defineFigures("hwkt", [
   {
@@ -86,11 +108,11 @@ const HWKT_FIGURES = defineFigures("hwkt", [
   {
     id: "hwkt-sources",
     class: "headline",
-    value: provenance.source_independence_count,
-    artifact: HWKT_ARTIFACT,
-    pointer: `${pointerBase}/source_independence_count`,
+    value: sourcesValue,
+    artifact: sourcesArtifact,
+    pointer: sourcesPointer,
     definition: "#hwkt-heading",
-    href: HWKT_HREF,
+    href: sitePublished ? COUNTS_HREF : HWKT_HREF,
     breakdown: "#fig-hwkt-sources",
     targets: [],
   },
@@ -167,8 +189,8 @@ const hwktFig = (id: string) => HWKT_FIGURES.find((f) => f.id === id)!;
       <dd>{tiers.map(([tier, n], i) => (<>{i > 0 ? ", " : ""}<Figure figure={hwktFig(`hwkt-tier-${hwktSlug(tier)}`)} order="inline"><span data-tier={tier}>{n}×{tier}</span></Figure></>))}</dd>
     </div>
     <div data-testid="hwkt-source_independence_count" data-component="source_independence_count">
-      <dt data-copy="HW-05">Independent sources</dt>
-      <dd><Figure figure={hwktFig("hwkt-sources")} order="inline">{provenance.source_independence_count}</Figure></dd>
+      <dt data-copy="HW-14">{sourcesLabel}</dt>
+      <dd><Figure figure={hwktFig("hwkt-sources")} order="inline">{sourcesValue}</Figure></dd>
     </div>
     <div data-testid="hwkt-date_range" data-component="date_range">
       <dt data-copy="HW-06">Evidence date range</dt>

@@ -64,6 +64,22 @@ notice allowance (`data-notice`), not as a batch row.
      describes the post-rematerialize basis, so it must not ship early. -->
 | ST-11 | /status/ | Corroboration counts and identifier matching now require declared lineage; records with no declared lineage are unclassified, never independent voices. | c751850d6b030f04c86b887026d5e42fc97e0d4341668d31b5c3afec02f17573 | pending |
 
+<!-- P35.40 (TX-11, SIG-TRANSP-002/026/027): the /sources/ "How SIG counts a
+     source" block — the authored sentences are pinned; the numerals are
+     {Figure}-bound data (manifest-listed transparency/counts.json pointers)
+     and the per-state predicate text is emitted {entry.definition} data, so
+     neither is drafted copy. SC-02 pins the {fmtInt(…)} placeholder verbatim
+     like every template row. Added 2026-10-20, pending. -->
+| SC-01 | /sources/ | How SIG counts a source | b0db02ead2abed547c4e77d78421b04b7e68aa16f9ff511e6d702d7225f96e03 | pending |
+| SC-02 | /sources/ | A source is exactly one row in SIG's source registry — {fmtInt(sourceCounts.universe.count)} registry rows in this release. Connectors, capture hosts, mirrors, and tenants are attributes of a row, never sources of their own, and the counts recompute from the emitted rows in the source-rows artifact. | eb527a84df9741694a721d69dc7ab09db51c58dfe6e8d2118973b3e5ed2129ae | pending |
+| SC-03 | /sources/ | The lifecycle partition | f93188b0511d6851235c414f6272d0854b995132e081be4da8fc0dab0225d4ca | pending |
+| SC-04 | /sources/ | Every registry row lands in exactly one state; the first matching state in precedence order wins, so the six states are a partition — they sum to the universe exactly once. | dd8a78a7e4c8d69cd40a630e0a7d70b4b4be9d819b562714ef08bbbada64e50b | pending |
+| SC-05 | /sources/ | Counted alongside the lifecycle | 14daac46ed92d0c5ab6d8ac01d731f19dc897d4f15912a09f9a0bb0435b109bd | pending |
+| SC-06 | /sources/ | These predicates count the same registry rows again — each is an independent named attribute, so they do not sum to the universe. | 86c8204460e72e9594a04978edd90d589cab35edf5982b10c8292771a7efd811 | pending |
+| SC-07 | /sources/ | Identifiers that are not sources | 143f1b15498acbe5247bc870d4ba0fe11885ed8fc781af5e011c40d80f1bbd57 | pending |
+| SC-08 | /sources/ | These identifiers carry data in this release but have no row in the source registry. They are anomalies — listed here and never counted as sources anywhere on this site: | e83a9d2af96243c47794fd324a0cc1c3877e6e43b47ca4725bcacad6ee281a39 | pending |
+| SC-09 | /sources/ | The licence table below lists the sources SIG publishes rows from; the lifecycle partition above covers every registry row, including those SIG is gated from or has refused to collect. | 18372b1a9f5d8d43dfdf4118cd9a3d9f3859453afdfceaed5146ff0b45819ec6 | pending |
+
 ## Confirmation log
 
 <!-- The operator's verbatim confirmation lands here at the copy-batch sitting:

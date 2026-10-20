@@ -298,7 +298,7 @@ def test_counts_recompute_matches_emitted_numbers():
     assert recomputed["registered"] == counts["universe"]["count"] == 3
     for st in LIFECYCLE_STATES:
         assert recomputed["partition"][st] == counts["lifecycle"][st]["ids"]
-    assert recomputed["lanes"] == counts["attributes"]["lanes"]
+    assert recomputed["lanes"] == counts["attributes"]["lanes"]["by_lane"]
     assert recomputed["site_records"] == counts["attributes"]["site_records"]["count"] == 1
 
 

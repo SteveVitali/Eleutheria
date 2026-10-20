@@ -49,8 +49,11 @@ RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
 # Rows P34.17 superseded with corrected sentences (the batch is append-only —
 # the old rows stay recorded, bound to nothing): CL-03 → CL-06 (the
 # requirement id dropped from public copy), M-20 → M-43 (the "frozen holdout"
-# claim withdrawn). Asserted superseded, never silently dropped.
-SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19"}
+# claim withdrawn), DC-19 → DC-20. P35.40 superseded HW-05 ("Independent
+# sources") → HW-14: the denominator label is now per-surface data
+# ({sourcesLabel}), so the pinned row is the placeholder verbatim.
+# Asserted superseded, never silently dropped.
+SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05"}
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {

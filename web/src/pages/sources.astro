@@ -13,9 +13,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Figure from "../components/Figure.astro";
 import {
   getAttributionCorrections,
+  getSourceCounts,
   getSourceLicenceTable,
   getTermsDisclosure,
 } from "../lib/data";
+// P35.40 (SIG-TRANSP-002/026/027, K9 §3.1–3.3): the counting block renders the
+// source universe straight out of `transparency/counts.json` — one source is
+// one registry row, the six-state lifecycle partition covers every row
+// exactly once (first matching precedence state wins), attributes are
+// orthogonal named predicates, and anomaly identifiers are listed, never
+// counted.
+import { LIFECYCLE_STATES, STATE_LABELS } from "../lib/source-counts";
 import { fmtInt } from "../lib/format";
 // P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): every row count is a per-source
 // <Figure> — artifact web/sources.json (or web/terms_disclosure.json for the
@@ -25,6 +33,7 @@ import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "
 import { firstNumeral } from "../lib/dossier-figures";
 
 const sources = getSourceLicenceTable();
+const sourceCounts = getSourceCounts();
 const disclosure = getTermsDisclosure();
 const corrections = getAttributionCorrections();
 const correctedOn = corrections?.corrected_on ?? null;
@@ -36,6 +45,53 @@ const basisNumeral = firstNumeral(disclosure.basis.adopted_sentence);
 const slug = (s: string): string =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const specs: FigureSpec[] = [
+  // The counting block (P35.40): the universe and every named predicate over
+  // it, all pointers into transparency/counts.json. The emitted artifact
+  // already asserts the partition sums to the universe; the site renders it.
+  {
+    id: "count-universe",
+    class: "headline",
+    value: sourceCounts.universe.count,
+    artifact: "transparency/counts.json",
+    pointer: "/universe/count",
+    definition: "#how-counted",
+    href: artifactHref("transparency/counts.json"),
+    breakdown: "#fig-count-universe",
+    targets: [],
+  },
+  ...LIFECYCLE_STATES.map((state) => ({
+    id: `count-${state.replace(/_/g, "-")}`,
+    class: "headline" as const,
+    value: sourceCounts.lifecycle[state].count,
+    artifact: "transparency/counts.json",
+    pointer: `/lifecycle/${state}/count`,
+    definition: "#lifecycle-heading",
+    href: artifactHref("transparency/counts.json"),
+    breakdown: `#fig-count-${state.replace(/_/g, "-")}`,
+    targets: [],
+  })),
+  ...(["rights_permitted", "rights_not_permitted"] as const).map((k) => ({
+    id: `count-${k.replace(/_/g, "-")}`,
+    class: "headline" as const,
+    value: sourceCounts.attributes[k].count,
+    artifact: "transparency/counts.json",
+    pointer: `/attributes/${k}/count`,
+    definition: "#attributes-heading",
+    href: artifactHref("transparency/counts.json"),
+    breakdown: "#fig-count-rights",
+    targets: [],
+  })),
+  ...(["run_records_present", "scheduled", "site_records"] as const).map((k) => ({
+    id: `count-attr-${k.replace(/_/g, "-")}`,
+    class: "headline" as const,
+    value: sourceCounts.attributes[k].count,
+    artifact: "transparency/counts.json",
+    pointer: `/attributes/${k}/count`,
+    definition: "#attributes-heading",
+    href: artifactHref("transparency/counts.json"),
+    breakdown: `#fig-count-attr-${k.replace(/_/g, "-")}`,
+    targets: [],
+  })),
   ...sources.map((s, i) => ({
     id: `rows-${slug(s.sourceId)}`,
     class: "per_source" as const,
@@ -114,6 +170,106 @@ const fig = (id: string) => {
     republishing shows its captured terms verbatim and the basis on which SIG
     publishes them.
   </p>
+
+  <section class="sig-counting" data-testid="source-counting" aria-labelledby="how-counted">
+    <h2 id="how-counted" data-copy="SC-01">How SIG counts a source</h2>
+    <p data-copy="SC-02" id="fig-count-universe">
+      A source is exactly one row in SIG's source registry —{" "}
+      <Figure figure={fig("count-universe")} order="inline">
+        {fmtInt(sourceCounts.universe.count)}
+      </Figure>{" "}
+      registry rows in this release. Connectors, capture hosts, mirrors, and
+      tenants are attributes of a row, never sources of their own, and the
+      counts recompute from the emitted rows in{" "}
+      <a href={artifactHref("transparency/sources.json")}>the source-rows artifact</a>.
+    </p>
+
+    <h3 id="lifecycle-heading" data-copy="SC-03">The lifecycle partition</h3>
+    <p data-copy="SC-04">
+      Every registry row lands in exactly one state; the first matching state
+      in precedence order wins, so the six states are a partition — they sum
+      to the universe exactly once.
+    </p>
+    <ol class="sig-lifecycle">
+      {LIFECYCLE_STATES.map((state) => {
+        const entry = sourceCounts.lifecycle[state];
+        return (
+          <li data-testid={`lifecycle-${state}`} id={`fig-count-${state.replace(/_/g, "-")}`}>
+            <strong>{STATE_LABELS[state]}</strong> —{" "}
+            <Figure figure={fig(`count-${state.replace(/_/g, "-")}`)} order="inline">
+              {fmtInt(entry.count)}
+            </Figure>{" "}
+            {entry.count === 1 ? "source" : "sources"}. {entry.definition}
+          </li>
+        );
+      })}
+    </ol>
+
+    <h3 id="attributes-heading" data-copy="SC-05">Counted alongside the lifecycle</h3>
+    <p data-copy="SC-06">
+      These predicates count the same registry rows again — each is an
+      independent named attribute, so they do not sum to the universe.
+    </p>
+    <ul class="sig-count-attrs">
+      <li data-testid="attr-rights" id="fig-count-rights">
+        <strong>Rights</strong> —{" "}
+        <Figure figure={fig("count-rights-permitted")} order="inline">
+          {fmtInt(sourceCounts.attributes.rights_permitted.count)}
+        </Figure>{" "}
+        permitted to ingest;{" "}
+        <Figure figure={fig("count-rights-not-permitted")} order="inline">
+          {fmtInt(sourceCounts.attributes.rights_not_permitted.count)}
+        </Figure>{" "}
+        not permitted.
+      </li>
+      <li data-testid="attr-run-records" id="fig-count-attr-run-records-present">
+        <strong>Run records</strong> —{" "}
+        <Figure figure={fig("count-attr-run-records-present")} order="inline">
+          {fmtInt(sourceCounts.attributes.run_records_present.count)}
+        </Figure>{" "}
+        sources with run records in this release.{" "}
+        {sourceCounts.attributes.run_records_present.definition}
+      </li>
+      <li data-testid="attr-scheduled" id="fig-count-attr-scheduled">
+        <strong>Scheduled</strong> —{" "}
+        <Figure figure={fig("count-attr-scheduled")} order="inline">
+          {fmtInt(sourceCounts.attributes.scheduled.count)}
+        </Figure>{" "}
+        sources scheduled for recurring collection.{" "}
+        {sourceCounts.attributes.scheduled.definition}
+      </li>
+      <li data-testid="attr-site-records" id="fig-count-attr-site-records">
+        <strong>Site records</strong> —{" "}
+        <Figure figure={fig("count-attr-site-records")} order="inline">
+          {fmtInt(sourceCounts.attributes.site_records.count)}
+        </Figure>{" "}
+        sources with published site records.{" "}
+        {sourceCounts.attributes.site_records.definition}
+      </li>
+    </ul>
+
+    {sourceCounts.anomalies.ids.length > 0 && (
+      <aside class="sig-notice" data-testid="source-anomalies" aria-labelledby="anomalies-heading">
+        <h3 id="anomalies-heading" data-copy="SC-07">Identifiers that are not sources</h3>
+        <p data-copy="SC-08">
+          These identifiers carry data in this release but have no row in the
+          source registry. They are anomalies — listed here and never counted
+          as sources anywhere on this site:
+        </p>
+        <ul>
+          {sourceCounts.anomalies.ids.map((id) => (
+            <li data-testid="anomaly-id"><code>{id}</code></li>
+          ))}
+        </ul>
+      </aside>
+    )}
+
+    <p data-copy="SC-09">
+      The licence table below lists the sources SIG publishes rows from; the
+      lifecycle partition above covers every registry row, including those
+      SIG is gated from or has refused to collect.
+    </p>
+  </section>
 
   <h2 id="licences-heading" data-copy="SL-12">Sources and licences</h2>
   <table class="sig-sources" aria-labelledby="licences-heading">

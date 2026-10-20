@@ -816,6 +816,50 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   zero-script and carries no inline JSON-LD. No compartment merge, no
   claim-spine mutation, no gate/permission flip — the licence and
   publication gates stay fail-closed.
+- **The source universe, the six-state lifecycle partition, and
+  named-predicate source counts** (P35.40 / row 319; R11-K13-TX-11;
+  owners SIG-TRANSP-002, SIG-TRANSP-026, SIG-TRANSP-027; cites
+  SIG-TRANSP-001, K9 §3.1–3.3 [design ref], F-431) — one counting
+  definition now holds everywhere it is used: a **source is one
+  registry row** (`sig.source-row/1` — the row schema
+  `transparency/sources.json` emits, renamed from
+  `sig.transparency-sources/1`); a connector, tenant, endpoint,
+  capture host or mirror is an attribute of a row, never a source.
+  One exporter function computes the lifecycle partition at the
+  release's belief cut under the published precedence
+  (`withdrawn` → `published` → `ingested_not_published` →
+  `permitted_not_ingested` → `gated` → `refused`, first match wins;
+  `withdrawn` fires only on a recorded withdrawal signal — none
+  exists in today's registry, honestly zero), and `counts.json`
+  (`sig.source-counts/1`) emits every count with its named
+  predicate — the universe, the per-state counts + id lists, the
+  emitted `partition_sum` check (the export fails closed when the
+  six states do not cover the registry exactly once), orthogonal
+  attributes (rights, schedule incl. the exclusive `one_time_load`
+  facet, run records, site records, lanes, open issues), and the
+  anomaly list: identifiers carrying data (claims, captures, runs,
+  sites, cadence declarations) with no registry row are listed by
+  id, **never counted** (e.g. `okc_council_statement`,
+  `okc-contract-c241032`, `osm`). Public copy is corrected to the
+  predicates the numbers measure (K9 §3.3): the home headline
+  "N sources tracked for freshness" becomes "sources with
+  published site records" (`attributes.site_records.count`);
+  "How we know this" "Independent sources" becomes "Sources with
+  published claims" — site-wide it IS `lifecycle.published.count`
+  read from the release's `transparency/counts.json`, and
+  page-scoped modules carry a new `source_label` field naming
+  their predicate ("Detectors" on the research queue); `/sources/`
+  gains a "How SIG counts a source" block rendering the universe,
+  the partition, the attributes and the anomaly box, every numeral
+  a `<Figure>` pointing into `transparency/counts.json`; the
+  search page and freshness empty-state say "registry sources".
+  Export-mode builds read `<exportDir>/transparency/{counts,
+  sources}.json` (fail-loud on missing/malformed — including a
+  doc whose `partition_sum` does not hold or whose precedence
+  order is not the published order), and the fixture-export
+  harness emits the pair plus `dictionary.json` so a fixture-only
+  export bundle builds end to end. No ingestion-permission flip,
+  no gate tick, no spine mutation.
 
 ### Changed
 

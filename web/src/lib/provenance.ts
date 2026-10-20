@@ -51,7 +51,11 @@ export interface DateRange {
  * The "How we know this" summary for a page (SIG-UI-044). Every field corresponds
  * to one of the six required components. `tier_distribution` maps evidence tier
  * (e.g. `W3`, `W2`) to a count; `source_independence_count` is the number of
- * INDEPENDENT source classes (the count the support glyph rests on, SIG-UI-003).
+ * distinct source classes carrying publishable claims on this surface (the
+ * count the support glyph rests on, SIG-UI-003). P35.40: the public label is
+ * the named predicate (`source_label`), never "independent sources" — a
+ * source is one registry row and every published source count names what
+ * it counts (SIG-TRANSP-026).
  */
 export interface ProvenanceSummary {
   /**
@@ -67,6 +71,18 @@ export interface ProvenanceSummary {
   tier_distribution: Record<string, number>;
   /** Source-independence count — number of independent source classes. */
   source_independence_count: number;
+  /**
+   * P35.40 (SIG-TRANSP-026): the named predicate this surface's
+   * `source_independence_count` instantiates — "Sources with published
+   * claims" for provenance surfaces, "Detectors" for the research queue.
+   * Optional: the analytics artifact emits it per surface; pre-P35.40
+   * artifacts (and the fixtures fallback) render the generic
+   * "Contributing sources" label. The value is a scope-folded
+   * `published`-lifecycle count — it is never the P40 source-universe
+   * count and never an "independent sources" metric (K9 §3.3's
+   * stale-name mapping).
+   */
+  source_label?: string;
   /** Date range of the evidence (null when the page rests on no dated evidence). */
   date_range: DateRange | null;
   /** Rules applied — the ruleset version and any named resolution rules that fired. */
@@ -108,7 +124,7 @@ export function provenanceOneLine(p: ProvenanceSummary): string {
   const range = p.date_range ? `${p.date_range.earliest}–${p.date_range.latest}` : "no dated evidence";
   return (
     `${p.artifact_count} artifact(s) [${tiers}], ` +
-    `${p.source_independence_count} independent source(s), ${range}; ` +
+    `${p.source_independence_count} contributing source(s), ${range}; ` +
     `${REVIEW_STATUS_LABELS[p.human_review_status].toLowerCase()}`
   );
 }
@@ -123,6 +139,9 @@ export const DEFAULT_PROVENANCE: ProvenanceSummary = {
   artifact_count: 4,
   tier_distribution: { W3: 1, W2: 2, W1: 1 },
   source_independence_count: 3,
+  // P35.40 (SIG-TRANSP-026): the named predicate — sources carrying
+  // publishable claims — never the stale "independent sources" label.
+  source_label: "Sources with published claims",
   date_range: { earliest: "2025-03-25", latest: "2026-08-20" },
   rules_applied: ["resolver-ruleset-2026.07", "HIGHEST_TIER_WINS"],
   // P34.17 (R1.4/R1.5): the honest fixture posture — no human review has been

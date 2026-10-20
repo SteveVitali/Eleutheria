@@ -344,6 +344,9 @@ export const RESEARCH_QUEUE_PROVENANCE: ProvenanceSummary = {
   artifact_count: 4,
   tier_distribution: { W3: 1, W2: 2, W1: 1 },
   source_independence_count: 3,
+  // P35.40 (SIG-TRANSP-026): the queue's count is detectors, not sources —
+  // the named predicate, never the stale "independent sources" label.
+  source_label: "Detectors",
   date_range: { earliest: "2025-03-25", latest: "2026-08-20" },
   rules_applied: ["task-catalog-v1", "resolver-ruleset-2026.07"],
   human_review_status: "unreviewed",
@@ -354,6 +357,8 @@ export const CORRECTIONS_PROVENANCE: ProvenanceSummary = {
   artifact_count: CORRECTIONS.length,
   tier_distribution: { W3: 2, W2: 2 },
   source_independence_count: 3,
+  // P35.40 (SIG-TRANSP-026): the named predicate this count instantiates.
+  source_label: "Sources with published claims",
   date_range: { earliest: "2026-07-28", latest: "2026-08-18" },
   rules_applied: ["takedown-correction-policy-v1", "resolver-ruleset-2026.07"],
   human_review_status: "unreviewed",

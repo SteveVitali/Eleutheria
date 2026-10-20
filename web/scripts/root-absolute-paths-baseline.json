@@ -129,6 +129,12 @@
       "reason": "P35.37: provenance JSON-pointer BASE default (a key inside web/analytics/provenance.json), not a link"
     },
     {
+      "file": "src/components/HowWeKnowThis.astro",
+      "token": "/lifecycle/published/count",
+      "count": 1,
+      "reason": "P35.40: figure pointer — a JSON pointer into transparency/counts.json (the sig.source-counts/1 named-predicate count), not a link"
+    },
+    {
       "file": "src/layouts/BaseLayout.astro",
       "token": "/surfaces/site",
       "count": 1,
@@ -217,6 +223,24 @@
       "token": "/sources/$",
       "count": 2,
       "reason": "P35.37: figure pointers \"/sources/<i>/public_row_count\" + \"/sources/<i>/export_row_count\" — JSON pointers into web/sources.json, not links"
+    },
+    {
+      "file": "src/pages/sources.astro",
+      "token": "/universe/count",
+      "count": 1,
+      "reason": "P35.40: figure pointer — a JSON pointer into transparency/counts.json (the sig.source-counts/1 named-predicate count), not a link"
+    },
+    {
+      "file": "src/pages/sources.astro",
+      "token": "/lifecycle/$",
+      "count": 1,
+      "reason": "P35.40: figure pointer \"/lifecycle/<state>/count\" — a JSON pointer into transparency/counts.json, not a link"
+    },
+    {
+      "file": "src/pages/sources.astro",
+      "token": "/attributes/$",
+      "count": 2,
+      "reason": "P35.40: figure pointers \"/attributes/<predicate>/count\" — JSON pointers into transparency/counts.json, not links"
     }
   ]
 }
