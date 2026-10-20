@@ -1,0 +1,25 @@
+{
+  "action": "admit",
+  "leg": "L0",
+  "completed": [],
+  "now": "2026-10-26T15:00:00Z",
+  "go": {
+    "verbatim": "ING-GO-B: go — Wave B legs ACQ-08…ACQ-15 + the Flock probe may run inside the 2026-10-26→11-05 window; I execute the flips per OP-26",
+    "recorded_at": "2026-10-15T15:26:00Z"
+  },
+  "peel_fire_cleared": true,
+  "materialize_active": false,
+  "g2_slot_active": false,
+  "release_cut_active": false,
+  "active_manual_run": null,
+  "prestate": {
+    "captured": true,
+    "cadence_check_ok": true,
+    "path": "pre/wave-b-2026-10-26/"
+  },
+  "backup": {
+    "status": "SUCCESSFUL",
+    "id": "1793000000001",
+    "type": "ON_DEMAND"
+  }
+}

@@ -43,5 +43,6 @@
 | P35.14b | the queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) then the append-only typed-identity write (`--apply`, INS… | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` · landed row 273 (PR #275) |
 | P35.15a | the queued hosted write: INSERT-only `technology` vocabulary registration — verify it resolves in `vocab_predicate` (P35.14a's `closed_vocabulary` carries it) +… | `implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` · landed row 274 (PR #276) |
 | P35.15b | the queued hosted write: L1 ~200k-subject INSERT-only `technology` backfill on `sig-pg` (dry-run → `--apply` → read-back + `+0` re-run); claims link subjects' E… | `implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` · landed row 275 (PR #277) |
+| P36.12 | Wave-B sequence L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported | … |
 
 ← back: CURRENT.md

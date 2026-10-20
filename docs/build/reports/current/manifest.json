@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "19ed46d3ddee24baa89c56869497b764f992ec50",
+  "input_commit": "6b5006dae06e3784ce50832a08bb079c52da74b7",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -830,7 +830,7 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "c58a30c265d216ac34964daa4c22fc58b352f74ea0144957c44983d117ec6c96"
+      "sha256": "49b7d9be7654486d8a6ff9ec886cd1d2229bc870c9cb57bdc06715d203059399"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -838,7 +838,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "246233551fc6f6dc6d81f5f056408b5640a743fb2b211dcebf14ac9a153d451d"
+      "sha256": "cad599ae79f1342658fc26757986b1093bd23a6547dc5b08f148f333208fa9c1"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1969,6 +1969,10 @@
       "sha256": "5292c1a9723f6cf0be1dc0e2ed35b5411a827e9a6feb5b2287e45cf59242e2f3"
     },
     {
+      "path": "docs/build/runs/P36.12.md",
+      "sha256": "279ba569cfefb902310d55bfe03afeb9250c342a7ff0739ca4f00ab85c796e75"
+    },
+    {
       "path": "docs/build/runs/P36.15.md",
       "sha256": "33bde500e854913f730cf5ce5110d65f8e55e08879beffecc9805ec2e26cc9c4"
     },
@@ -2118,7 +2122,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "17517e7d9cc29ed8043dba9ff4f00e192e8ee9b042137fbb4d9e0e7ae0965254"
+      "sha256": "5c4e8b879b0ade2ef1cb6f7f2a151640f0d38a756b85cad486685fe8d7be85fb"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
@@ -2650,7 +2654,7 @@
     },
     {
       "path": "docs/tickets/290_P36.12__wave-b-activation.md",
-      "sha256": "c3d6c86d6a13edb7b9d366a1db85c496655f7c827cd63ef8282f366b389cd03e"
+      "sha256": "68fc57949cc095cfef4677b4b12163311f61d3f6d390d6973d37c6aee23b4e2a"
     },
     {
       "path": "docs/tickets/291_P35.1b__fleet-hygiene.md",
