@@ -178,6 +178,17 @@ export SIG_SA_SCHEDULER="sig-scheduler"             # invoker only, never a runt
 export SIG_IAM_JOBS_EARLIEST="${SIG_IAM_EARLIEST}"
 export SIG_IAM_JOBS_STATE_DIR="${SIG_IAM_JOBS_STATE_DIR:-${TMPDIR:-/tmp}/p34.42b-iam}"
 
+# --- declared-job seed bridge (P35.1a1 / D-P34.42b-2, manifest row 287a) -----
+# The ONE authorized seed leg (ops/gcp/seed-declared-jobs.sh): create exactly
+# the twelve declared-but-absent Cloud Run jobs (the ten r11-* batches + the
+# two ADR-185 screened-lane sources) on the project default compute identity —
+# migrated to sig-ingest-rt by P34.42b-live-2 — each with an existing
+# sig-scheduler run.invoker binding and a Scheduler trigger created then
+# immediately paused (R6 step 1). Its contract window is a weekday
+# 14:00–20:00Z slot ONLY (apply exits 42 outside it); SIG_SEED_NOW overrides
+# the clock for the offline guard test only.
+export SIG_SEED_STATE_DIR="${SIG_SEED_STATE_DIR:-${TMPDIR:-/tmp}/p35.1a1-seed}"
+
 # --- execution host + least-privilege DB logins (P34.43 / SIG-CONF-013) ------
 # The one-off Cloud Run execution host (ops/exec_host.toml, rendered by
 # `sig-ops exec-host`; the windowed leg is ops/gcp/exec-host.sh) and the two

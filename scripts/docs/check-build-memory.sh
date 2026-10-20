@@ -19,7 +19,7 @@
 #   file named on the last stdout line, the input identity {repo, commit, dirty, input_digest}, uniform
 #   {check, severity, file, obligation, evidence, message} records and summary.exit.
 #
-# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except six
+# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except seven
 # hunks, each tagged `SIG-LOCAL` in place (all upstream candidates):
 #   L1  write_report: `dirty` also covers the canonical spec when it lies inside the repo (the input
 #       digest reads the spec, so an uncommitted spec edit marks the report dirty). From the P32.8 fork.
@@ -36,6 +36,10 @@
 #       V11's budget is a contract bound (B4 G5 / BM-ORIENT-01).
 #   L6  `OPERATOR` joins the done-entry pseudo-id allow-list — B3's allow-list is
 #       SETUP | OPERATOR | ROUND* (CAPSTONE/DONE stay from the upstream list).
+#   L7  ID_RE's dotted tail accepts digits after the suffix letter
+#       (`\.[0-9]+[a-z]?[0-9]*`) — the inserted manifest row 287a carries the
+#       ticket id `P35.1a1`, whose `.1a1` tail upstream's `[a-z]?` stops at
+#       `.1a`. Acceptance only; the grammar is widened, never narrowed.
 # Behaviours SIG takes from upstream 0.5.0 as they are: duplicate ticket ids keyed on the id (not the
 # NN prefix); tolerant DEFERRALS status parsing (first canonical token of the last cell); human output
 # `- check: message`; the contract/patch/3 report shape (now also `guards`, `counts`, `input.now`).
@@ -45,7 +49,7 @@
 # `repo` key (upstream writes the full report, `input.repo`).
 # Verify the vendored body against the skill:
 #   diff <(sed '2,/^# ---- end of SIG vendoring banner ----/d' scripts/docs/check-build-memory.sh) \
-#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the six SIG-LOCAL hunks
+#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the seven SIG-LOCAL hunks
 # ---- end of SIG vendoring banner ----
 # check-build-memory.sh — validate a repo's build-memory layout. (BM-VALID-01.)
 #
@@ -418,7 +422,10 @@ created_after_marker() {   # <path relative to REPO> → 0 when new under the gu
 
 # Ticket-id grammar (canonical interpretation of BM-LAYOUT-02; documented in layout.md).
 # GATE-ACCEPT is the one named gate marker (the operator's accepted-deviations signature, BM-TAIL-01).
-ID_RE='((HUMAN-H|GATE-G)[0-9]+|GATE-ACCEPT|[A-Z]+[0-9]*[a-z]?(\.[0-9]+[a-z]?)?)'
+# SIG-LOCAL L7 (P35.1a1): the dotted tail accepts digits after the suffix letter
+# — inserted manifest row 287a's ticket id `P35.1a1` has the tail `.1a1`, which
+# upstream's `\.[0-9]+[a-z]?` rejects at `.1a`. Widen-only, never narrow.
+ID_RE='((HUMAN-H|GATE-G)[0-9]+|GATE-ACCEPT|[A-Z]+[0-9]*[a-z]?(\.[0-9]+[a-z]?[0-9]*)?)'
 FNAME_RE="^[0-9]{2,3}[a-z]?_${ID_RE}__[a-z0-9-]+\.md$"
 
 # ── LEDGER value reader (never-fail; strips inline comments) ──────────────────

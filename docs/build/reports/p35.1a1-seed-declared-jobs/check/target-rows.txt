@@ -1,0 +1,12 @@
+source|camreg_tribal_all_leaders_directory|sig-ingest-camreg-tribal-all-leaders-directory|sig-sched-camreg-tribal-all-leaders-directory|41 7 24 * *|30m
+source|legis_tribal_tohono_oodham_notice|sig-ingest-legis-tribal-tohono-oodham-notice|sig-sched-legis-tribal-tohono-oodham-notice|43 7 24 * *|30m
+batch|r11-ate-01|sig-ingest-r11-ate-01|sig-sched-r11-ate-01|17 7 18 * *|6h
+batch|r11-disclosures-01|sig-ingest-r11-disclosures-01|sig-sched-r11-disclosures-01|27 7 21 * *|6h
+batch|r11-disclosures-02|sig-ingest-r11-disclosures-02|sig-sched-r11-disclosures-02|27 7 22 * *|6h
+batch|r11-documents-01|sig-ingest-r11-documents-01|sig-sched-r11-documents-01|27 7 23 * *|6h
+batch|r11-layers-01|sig-ingest-r11-layers-01|sig-sched-r11-layers-01|17 7 16 * *|6h
+batch|r11-layers-02|sig-ingest-r11-layers-02|sig-sched-r11-layers-02|17 7 17 * *|6h
+batch|r11-procurement-01|sig-ingest-r11-procurement-01|sig-sched-r11-procurement-01|17 7 19 * *|6h
+batch|r11-tier2-01|sig-ingest-r11-tier2-01|sig-sched-r11-tier2-01|37 7 25 * *|6h
+batch|r11-tier2-02|sig-ingest-r11-tier2-02|sig-sched-r11-tier2-02|37 7 26 * *|6h
+batch|r11-tier2-03|sig-ingest-r11-tier2-03|sig-sched-r11-tier2-03|37 7 27 * *|6h

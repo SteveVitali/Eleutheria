@@ -494,3 +494,10 @@ def test_module_sort_is_natural() -> None:
         ["P34.17", "P34.6", "P21.5", "P34.21a", "P9.10"], key=mod.ticket_sort_key
     )
     assert ordered == ["P9.10", "P21.5", "P34.6", "P34.17", "P34.21a"]
+    # An inserted suffix-digit row (P35.1a1, manifest row 287a) sorts inside
+    # its P-ticket family — after the parent suffix, before the next number.
+    ordered = sorted(
+        ["P35.5", "P35.1a1", "P35.1a", "P35.1b", "P35.11"],
+        key=mod.ticket_sort_key,
+    )
+    assert ordered == ["P35.1a", "P35.1a1", "P35.1b", "P35.5", "P35.11"]
