@@ -61,6 +61,7 @@ from policy.eligibility import (
     latest_disposition,
 )
 
+from . import release_identity as RI
 from .manifest import canonical_json, sha256_hex
 from .published_record import (
     PROJECTION_VERSION,
@@ -107,6 +108,9 @@ TOMBSTONE_SCHEMA = "sig.tombstone/1"
 
 PUBLICATION_RE = re.compile(r"^p-[0-9a-f]{64}$")
 _PAGE_SIZE = 50
+
+#: The repo root this source tree sits in (same derivation as versioning.py).
+_REPO_ROOT = Path(__file__).resolve().parents[3]
 
 #: Compartments that never carry record routes (metadata/web are surfaces,
 #: not record compartments) — and are therefore never searchable
@@ -334,12 +338,307 @@ def _content_root(payload: Any) -> str:
     return sha256_hex(canonical_json(payload))
 
 
+# --------------------------------------------------------------------------- #
+# Descriptor v2 helpers (P35.12 / SIG-REL-001)                                 #
+# --------------------------------------------------------------------------- #
+
+
+def _transparency_root(export_dir: Path, manifest: Mapping[str, Any]) -> str | None:
+    """The J3 TX-13b transparency-surfaces root: a content root over the
+    ``{path: sha256}`` map of the export's disclosure/exclusion artifacts
+    (``exclusions.json``, ``web/terms_disclosure.json``, any emitted
+    ``*transparency*``/``*methodology*``/``*provenance*`` artifact). ``None``
+    — declared-empty — when the export carried none."""
+    roots: dict[str, str] = {}
+    for art in manifest.get("artifacts") or []:
+        path = str(art.get("path") or "")
+        name = path.rsplit("/", 1)[-1]
+        if (
+            path == "exclusions.json"
+            or path == "web/terms_disclosure.json"
+            or any(
+                marker in name
+                for marker in ("transparency", "methodology", "provenance", "disclosure")
+            )
+        ):
+            roots[path] = str(art.get("sha256") or "")
+    return _content_root(roots) if roots else None
+
+
+def _rights_registry_sha256(path: Path | None) -> str | None:
+    """sha256 of the committed rights registry (``connectors` sources.toml``)
+    the export's rights decisions read — ``None`` when the file is absent."""
+    if path is None or not path.exists():
+        return None
+    return sha256_hex(path.read_bytes())
+
+
+def _disposition_root(dispositions: Sequence[Mapping[str, Any]] | None) -> str:
+    """sha256 over the ADR-124 dispositions effective at the snapshot.
+
+    The committed ``sig.publication-withdrawals/1`` entries the export itself
+    applied are the fixture-machinery source (``policy.withdrawals``); a cut
+    (row 297+) supplies the spine-disposition set explicitly."""
+    if dispositions is None:
+        from policy.withdrawals import withdrawal_entries
+
+        entries: Sequence[Mapping[str, Any]] = withdrawal_entries()
+    else:
+        entries = dispositions
+    return _content_root(list(entries))
+
+
+def _ontology_facts() -> tuple[str | None, str | None]:
+    """``(ontology_version, ontology_generated_sha256)`` — the LinkML source
+    version plus a digest over the committed generated tree. The digest is a
+    ``{path: sha256}`` map root, never a hand-edited file."""
+    ont_version: str | None
+    try:
+        from ontology import __version__ as _v
+
+        ont_version = _v
+    except Exception:  # noqa: BLE001 - version unresolvable is honest None
+        ont_version = None
+    gen_root = _REPO_ROOT / "ontology" / "generated"
+    digest: str | None = None
+    if gen_root.exists():
+        digests = {
+            str(p.relative_to(gen_root)): sha256_hex(p.read_bytes())
+            for p in sorted(gen_root.rglob("*"))
+            if p.is_file()
+        }
+        digest = _content_root(digests) if digests else None
+    return ont_version, digest
+
+
+def _load_disclosures(
+    path: Path | None, entries: Sequence[Mapping[str, Any]] | None
+) -> list[dict[str, Any]]:
+    """The descriptor ``disclosures`` list — ``[{id, text_sha256}, …]``.
+
+    Reads the committed ``ops/disclosures.toml`` (row 297's input file is
+    declared-empty until it lands) or a caller-supplied list; each entry's
+    ``text`` is digested so the descriptor carries only the hash.
+    """
+    raw: list[Mapping[str, Any]] = []
+    if entries is not None:
+        raw = list(entries)
+    elif path is not None and path.exists():
+        import tomllib
+
+        doc = tomllib.loads(path.read_text(encoding="utf-8"))
+        raw = list(doc.get("disclosures") or [])
+    out: list[dict[str, Any]] = []
+    for entry in raw:
+        text_sha = entry.get("text_sha256")
+        if not text_sha and entry.get("text") is not None:
+            text_sha = sha256_hex(str(entry["text"]).encode("utf-8"))
+        out.append({"id": str(entry.get("id") or ""), "text_sha256": text_sha})
+    return out
+
+
+def _attribution_gate_pass_count(export_dir: Path, comps: Mapping[str, str]) -> int:
+    """How many attribution-required rows passed the E2-12 gate into this
+    export (each exported row with ``_rights.attribution_required`` is a
+    counted pass — the gate already refused any violator at build)."""
+    n = 0
+    for comp in comps:
+        path = export_dir / comp / "sites.jsonl"
+        if not path.exists():
+            continue
+        for row in _iter_jsonl(path):
+            rights = row.get("_rights")
+            if isinstance(rights, Mapping) and rights.get("attribution_required"):
+                n += 1
+    return n
+
+
+def _v2_descriptor(
+    export_dir: Path,
+    manifest: Mapping[str, Any],
+    *,
+    input_manifest_sha256: str,
+    compartment_projections: Mapping[str, Mapping[str, Any]],
+    evidence_root: str | None,
+    dossier_root: str | None,
+    comps: Mapping[str, str],
+    environment: str | None,
+    label: str | None,
+    labels_registry: Path | str | None,
+    built_at: datetime | str | None,
+    code_commit: str | None,
+    code_tree: str | None,
+    images_export: str | None,
+    boundaries_root: str | None,
+    disclosures: Sequence[Mapping[str, Any]] | None,
+    disclosures_path: Path | None,
+    evaluation: Mapping[str, Any] | None,
+    dispositions: Sequence[Mapping[str, Any]] | None,
+    graph_quality: Mapping[str, Any] | None,
+    rights_registry_path: Path | None,
+    ontology_generated_sha256: str | None | object = ...,
+    repo_root: Path | None,
+) -> dict[str, Any]:
+    """Assemble + validate the ``sig.publication-descriptor/2`` document.
+
+    The label's date derives from ``snapshot.as_of_world`` — never typed
+    (§3.3 rule 6); the commit is read from the tree, never typed (GT-7);
+    every required field is populated or explicitly declared-empty before
+    :func:`release_identity.validate_descriptor` signs off.
+    """
+    from . import __version__
+    from . import versioning as V
+
+    t0 = RI.parse_instant(built_at) or datetime.now(UTC)
+    built_at_s = t0.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    repro = dict(manifest.get("reproducibility_inputs") or {})
+    snap = dict(manifest.get("snapshot") or {})
+    # A legacy export manifest carries date-grain reproducibility inputs and
+    # no snapshot block — the v2 descriptor still records real instants
+    # (UTC midnights of the declared dates), honestly derived.
+    as_of_world = snap.get("as_of_world") or f"{repro.get('as_of_snapshot', '')}T00:00:00Z"
+    as_of_belief = snap.get("as_of_belief") or f"{repro.get('as_of_belief', '')}T00:00:00Z"
+    env = environment or manifest.get("environment") or "fixture"
+    if env not in RI.ENVIRONMENTS:
+        raise ReleaseError(
+            f"environment {env!r} is not one of {sorted(RI.ENVIRONMENTS)} — "
+            "a release declares its environment explicitly (SIG-REL-001)"
+        )
+    replay_reason = manifest.get("replay")
+    if env == "replay" and not replay_reason:
+        raise ReleaseError("environment=replay requires a recorded --replay reason (Class S)")
+
+    # The human label: typed (validated against derivation), registry-
+    # allocated under the lock, or refused — never silently minted.
+    world_dt = RI.parse_instant(as_of_world)
+    if world_dt is None:
+        raise ReleaseError(f"snapshot.as_of_world {as_of_world!r} is not an ISO instant")
+    if label is not None:
+        if not RI.LABEL_RE.match(label):
+            raise ReleaseError(f"--label {label!r} is not sig-YYYY-MM-DD.N")
+        ordinal = int(RI.LABEL_RE.match(label)[4])  # type: ignore[index]
+        if label != RI.label_for(world_dt, ordinal):
+            raise ReleaseError(
+                f"--label {label!r} does not derive from snapshot.as_of_world "
+                f"{as_of_world!r} — the label date is the data date, never typed"
+            )
+    elif labels_registry is not None:
+        label = RI.allocate_label(
+            Path(labels_registry),
+            world_dt,
+            allocated_at=t0,
+            environment=env,
+        )
+    else:
+        raise ReleaseError(
+            "a v2 release needs a label: pass --labels-registry (locked "
+            "allocation) or --label sig-YYYY-MM-DD.N (validated against the "
+            "snapshot date) — a release label is never silently minted"
+        )
+
+    commit = code_commit or V.code_commit(repo_root)
+    if not commit:
+        raise ReleaseError(
+            "code.commit could not be read from the tree (git rev-parse HEAD) "
+            "— a release never invents a commit (GT-7)"
+        )
+    tree = code_tree or V.code_tree(repo_root)
+
+    ont_version, ont_generated = _ontology_facts()
+    if ontology_generated_sha256 is not ...:
+        ont_generated = (
+            ontology_generated_sha256 if isinstance(ontology_generated_sha256, str) else None
+        )
+
+    descriptor = RI.descriptor_v2_document(
+        label=label,
+        environment=env,
+        snapshot={
+            "as_of_world": as_of_world,
+            "as_of_belief": as_of_belief,
+            "belief_pinned": snap.get("belief_pinned", False),
+            "spine_watermark": snap.get("spine_watermark"),
+            "materialize_run": snap.get("materialize_run"),
+            "sqitch_head": snap.get("sqitch_head"),
+            "restore_point": snap.get("restore_point"),
+        },
+        export={
+            "id": str(manifest.get("release_id") or ""),
+            "input_manifest_sha256": input_manifest_sha256,
+            "content_key": str(manifest.get("content_key") or ""),
+        },
+        code={
+            "commit": commit,
+            "tree": tree,
+            "images_export": images_export,
+            "renderer": {"version": __version__},
+        },
+        versions={
+            "ruleset_version": str(repro.get("ruleset_version") or ""),
+            "resolver_version": str(repro.get("resolver_version") or ""),
+            "policy_version": "publication-eligibility/1",
+            "projection_version": PROJECTION_VERSION,
+            "search_index_version": SEARCH_INDEX_VERSION,
+            "ontology_version": ont_version,
+            "ontology_generated_sha256": ont_generated,
+        },
+        gates={
+            "disposition_root": _disposition_root(dispositions),
+            "rights_registry_sha256": _rights_registry_sha256(
+                rights_registry_path or (_REPO_ROOT / "connectors/src/connectors/data/sources.toml")
+            ),
+            "attribution_gate": {
+                "version": "sig.attribution-gate/1",
+                "pass_count": _attribution_gate_pass_count(export_dir, comps),
+            },
+            "graph_quality": graph_quality,
+        },
+        evaluation=dict(evaluation or {}),
+        disclosures=_load_disclosures(
+            disclosures_path or (_REPO_ROOT / "ops" / "disclosures.toml"),
+            disclosures,
+        ),
+        compartment_projections=compartment_projections,
+        evidence_root=evidence_root,
+        dossier_root=dossier_root,
+        transparency_root=_transparency_root(export_dir, manifest),
+        boundaries_root=boundaries_root,
+        built_at=built_at_s,
+        replay_reason=str(replay_reason) if replay_reason else None,
+    )
+    failures = RI.validate_descriptor(descriptor, now=t0)
+    if failures:
+        raise ReleaseError(
+            "the assembled sig.publication-descriptor/2 fails validation — "
+            "refusing to emit an invalid descriptor:\n  " + "\n  ".join(failures)
+        )
+    return descriptor
+
+
 def build_release(
     export_dir: Path | str,
     out_dir: Path | str,
     *,
-    renderer_revision: str,
+    renderer_revision: str | None = None,
+    descriptor_version: int = 1,
     page_size: int = _PAGE_SIZE,
+    environment: str | None = None,
+    label: str | None = None,
+    labels_registry: Path | str | None = None,
+    built_at: datetime | str | None = None,
+    code_commit: str | None = None,
+    code_tree: str | None = None,
+    images_export: str | None = None,
+    boundaries_root: str | None = None,
+    disclosures: Sequence[Mapping[str, Any]] | None = None,
+    disclosures_path: Path | None = None,
+    evaluation: Mapping[str, Any] | None = None,
+    dispositions: Sequence[Mapping[str, Any]] | None = None,
+    graph_quality: Mapping[str, Any] | None = None,
+    rights_registry_path: Path | None = None,
+    ontology_generated_sha256: str | None | object = ...,
+    repo_root: Path | None = None,
 ) -> ReleaseBuild:
     """Build the immutable release bundle from an export directory.
 
@@ -406,17 +705,53 @@ def build_release(
     )
     dossier_root = _content_root(dossiers) if dossiers else None
 
-    descriptor = descriptor_document(
-        manifest=manifest,
-        input_manifest_sha256=sha256_hex(manifest_bytes),
-        compartment_projections=compartment_projections,
-        evidence_root=evidence_root,
-        dossier_root=dossier_root,
-        renderer_revision=renderer_revision,
-    )
+    if descriptor_version == 2:
+        if renderer_revision is not None:
+            raise ReleaseError(
+                "a v2 descriptor carries one code identity — renderer.revision "
+                "is code.commit; do not pass renderer_revision (NEW-3)"
+            )
+        descriptor = _v2_descriptor(
+            export_dir,
+            manifest,
+            input_manifest_sha256=sha256_hex(manifest_bytes),
+            compartment_projections=compartment_projections,
+            evidence_root=evidence_root,
+            dossier_root=dossier_root,
+            comps=comps,
+            environment=environment,
+            label=label,
+            labels_registry=labels_registry,
+            built_at=built_at,
+            code_commit=code_commit,
+            code_tree=code_tree,
+            images_export=images_export,
+            boundaries_root=boundaries_root,
+            disclosures=disclosures,
+            disclosures_path=disclosures_path,
+            evaluation=evaluation,
+            dispositions=dispositions,
+            graph_quality=graph_quality,
+            rights_registry_path=rights_registry_path,
+            ontology_generated_sha256=ontology_generated_sha256,
+            repo_root=repo_root,
+        )
+    else:
+        if renderer_revision is None:
+            raise ReleaseError("a v1 descriptor requires renderer_revision")
+        descriptor = descriptor_document(
+            manifest=manifest,
+            input_manifest_sha256=sha256_hex(manifest_bytes),
+            compartment_projections=compartment_projections,
+            evidence_root=evidence_root,
+            dossier_root=dossier_root,
+            renderer_revision=renderer_revision,
+        )
     pub = publication_id(descriptor)
     if not PUBLICATION_RE.match(pub):
         raise ReleaseError(f"internal: malformed publication id {pub!r}")
+    if labels_registry is not None and descriptor.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
+        RI.record_label_publication(labels_registry, str(descriptor["label"]), pub)
 
     # --- pass 2: emit the bound tree ---------------------------------------- #
     artifacts: list[dict[str, Any]] = []
@@ -694,28 +1029,27 @@ def build_release(
     for meta in comp_meta:
         meta["artifact_count"] = per_comp_count.get(meta["compartment"], 0)
 
+    # v1/v2 share the catalog entry shape; the accessors read whichever
+    # descriptor form the build emitted (v2's label is the data_release_id).
+    _repro_block = RI.descriptor_versions_block(descriptor)
+    _as_of_world = RI.descriptor_as_of_world(descriptor)
+    _as_of_belief = RI.descriptor_as_of_belief(descriptor)
     catalog_entry = {
         "schema": CATALOG_ENTRY_SCHEMA,
         "publication_id": pub,
         "descriptor_sha256": descriptor_sha256(descriptor),
-        "data_release_id": descriptor["data_release_id"],
-        "reproducibility": {
-            "as_of_world": descriptor["as_of_world"],
-            "as_of_belief": descriptor["as_of_belief"],
-            "ruleset_version": descriptor["ruleset_version"],
-            "resolver_version": descriptor["resolver_version"],
-            "policy_version": descriptor["policy_version"],
-            "projection_version": descriptor["projection_version"],
-            "renderer": descriptor["renderer"],
-        },
+        "data_release_id": RI.descriptor_release_id(descriptor),
+        "reproducibility": _repro_block,
         "compartments": comp_meta,
         "record_count": total_records,
         "artifact_count": 0,  # filled after manifest assembly
         "completeness": completeness,
         "compat": {
-            "as_of_world": descriptor["as_of_world"],
-            "as_of_belief": descriptor["as_of_belief"],
-            "ruleset_version": descriptor["ruleset_version"],
+            # the resolver selector matches date-grain instants (G3 labels are
+            # day-grain), so compat carries the as-of pair's UTC dates
+            "as_of_world": _as_of_world[:10],
+            "as_of_belief": _as_of_belief[:10],
+            "ruleset_version": _repro_block.get("ruleset_version"),
         },
     }
     landing_rel = f"releases/{pub}/index.html"
@@ -787,6 +1121,29 @@ def build_release(
         "export_dir": str(export_dir),
     }
     _write(out_dir / "release/build_report.json", canonical_json(report))
+
+    # §3.3 rule 4 (P35.12): no emitted date may be later than built_at —
+    # scanned over the stamp surfaces (descriptor, catalog entry, report,
+    # landings) after emit, fail-closed.
+    if descriptor.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
+        built_dt = RI.parse_instant((descriptor.get("build") or {}).get("built_at"))
+        if built_dt is not None:
+            date_failures = RI.emitted_file_date_failures(
+                [
+                    out_dir / f"releases/{pub}/descriptor.json",
+                    out_dir / f"releases/{pub}/catalog_entry.json",
+                    out_dir / "release/build_report.json",
+                    out_dir / f"releases/{pub}/index.html",
+                    out_dir / f"r/{pub}/index.html",
+                ],
+                built_dt,
+            )
+            if date_failures:
+                raise ReleaseError(
+                    "emitted date later than built_at — the release stamps are "
+                    "not date-true (SIG-REL-003):\n  " + "\n  ".join(date_failures)
+                )
+
     return ReleaseBuild(
         publication_id=pub,
         descriptor=descriptor,
@@ -1040,6 +1397,20 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
                     f"compartment {cid}: catalog search_indexed_records "
                     f"{n_indexed} != {comp['record_count']}"
                 )
+    # P35.12 (SIG-REL-001): a v2 descriptor is also re-validated field-by-field —
+    # an integrity-complete bundle whose descriptor fails §3.2 is incomplete.
+    desc_path = release_dir / f"releases/{pub}/descriptor.json"
+    if desc_path.exists():
+        try:
+            descriptor = _read_json(desc_path)
+        except Exception:  # noqa: BLE001 - unparseable descriptor is a failure
+            descriptor = None
+            failures.append(f"descriptor not parseable: {desc_path.name}")
+        if isinstance(descriptor, Mapping) and descriptor.get("schema") == (
+            RI.DESCRIPTOR_SCHEMA_V2
+        ):
+            for f in RI.validate_descriptor(descriptor):
+                failures.append(f"descriptor: {f}")
     # P34.34a (DR-C4-01): the same-origin link-resolution crawl — every
     # href/action on every emitted page must resolve to a corpus file or a
     # known site-shell/overlay route; a broken link is a release failure
@@ -1271,6 +1642,20 @@ def activate(
     pub = str(entry["publication_id"])
     manifest_sha = str(entry["manifest_sha256"])
 
+    now = now or datetime.now(UTC)
+    # §3.3 rule 3 (P35.12): for any activation, activated_at ≥ built_at —
+    # a release can never be activated before its recorded build instant.
+    desc_path = release_dir / f"releases/{pub}/descriptor.json"
+    if desc_path.exists():
+        desc = _read_json(desc_path)
+        if desc.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
+            built = RI.parse_instant((desc.get("build") or {}).get("built_at"))
+            if built is not None and now < built:
+                raise ReleaseError(
+                    f"activated_at {now.isoformat()} is earlier than built_at "
+                    f"{built.isoformat()} — activation refused (SIG-REL-003)"
+                )
+
     existing = registry.find(pub)
     if existing is not None and str(existing.get("manifest_sha256")) != manifest_sha:
         raise ReleaseError(
@@ -1342,6 +1727,60 @@ def activate(
         ),
     )
     return activation
+
+
+def promote(
+    registry_dir: Path | str,
+    release_dir: Path | str,
+    *,
+    repo_root: Path | str | None = None,
+    tree_clean: bool | None = None,
+    pushed: bool | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """The SIG-REL-002 promotion gate — ``activate()`` behind every refusal.
+
+    Only a ``sig.publication-descriptor/2`` release may promote: v1
+    candidates (the ``p-17b713`` fixture class) are refused by the v2-only
+    rule alone. The remaining refusals are named by
+    :func:`release_identity.promotion_refusals` — dirty tree (recorded or
+    live), unpushed commit, ``0.0.0``/missing version fields, a non-sha
+    commit, an as-of not later than the latest activated release's. On
+    zero refusals the release activates exactly as :func:`activate` does —
+    the gate adds checks, never a different activation path. Nothing
+    hosted is touched: the registry is the caller's local directory.
+    """
+    release_dir = Path(release_dir)
+    # Find the descriptor under releases/<pub>/descriptor.json — the release
+    # dir's own report names the namespace when it exists.
+    descriptor: Mapping[str, Any] | None = None
+    for cand in sorted(release_dir.glob("releases/*/descriptor.json")):
+        descriptor = _read_json(cand)
+        break
+    if descriptor is None:
+        raise ReleaseError(
+            f"{release_dir} carries no releases/*/descriptor.json — nothing to promote"
+        )
+    registry = ReleaseRegistry(Path(registry_dir))
+    previous = registry.latest()
+    previous_asof: str | None = None
+    if previous is not None:
+        prev_pub = str(previous.get("publication_id") or "")
+        prev_entry = registry.find(prev_pub)
+        if prev_entry is not None:
+            previous_asof = (
+                str((prev_entry.get("reproducibility") or {}).get("as_of_world") or "") or None
+            )
+    refusals = RI.promotion_refusals(
+        descriptor,
+        repo_root=repo_root,
+        previous_as_of_world=previous_asof,
+        tree_clean=tree_clean,
+        pushed=pushed,
+    )
+    if refusals:
+        raise ReleaseError("promotion refused (SIG-REL-002):\n  - " + "\n  - ".join(refusals))
+    return activate(registry_dir, release_dir, now=now)
 
 
 def rollback(

@@ -849,6 +849,8 @@ def test_cli_verbs(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
                 str(export),
                 "--out",
                 str(out),
+                "--schema-version",
+                "1",
                 "--renderer-revision",
                 REVISION,
             ]

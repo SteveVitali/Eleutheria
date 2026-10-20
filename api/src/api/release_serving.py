@@ -207,7 +207,11 @@ class ReleaseServingStore:
         if as_of_world is None:
             try:
                 descriptor = self.read_json(pub, f"releases/{pub}/descriptor.json")
-                as_of_world = descriptor.get("as_of_world")
+                # v1 carries the flat field; v2 (sig.publication-descriptor/2,
+                # P35.12) carries snapshot.as_of_world — read whichever is set.
+                as_of_world = descriptor.get("as_of_world") or (
+                    descriptor.get("snapshot") or {}
+                ).get("as_of_world")
             except (_ArtifactAbsent, ReleaseServingError):
                 as_of_world = None
         return ReleaseIdentity(

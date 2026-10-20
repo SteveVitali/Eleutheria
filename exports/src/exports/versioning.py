@@ -41,6 +41,39 @@ def code_commit8(repo: Path | None = None) -> str:
     return commit if out.returncode == 0 and len(commit) == 8 else ""
 
 
+def code_commit(repo: Path | None = None) -> str:
+    """The full 40-hex commit of ``repo``'s HEAD, or ``""`` when no git tree answers."""
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo or _REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    commit = out.stdout.strip()
+    return commit if out.returncode == 0 and len(commit) == 40 else ""
+
+
+def code_tree(repo: Path | None = None) -> str:
+    """``clean`` | ``dirty`` | ``unknown`` — the working-tree state at read time."""
+    try:
+        out = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(repo or _REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+    if out.returncode != 0:
+        return "unknown"
+    return "clean" if not out.stdout.strip() else "dirty"
+
+
 def default_resolver_version(*, code_commit: str | None = None) -> str:
     """``<resolution version>+g<commit8>`` — the resolver's code identity.
 
@@ -58,4 +91,4 @@ def default_resolver_version(*, code_commit: str | None = None) -> str:
     return resolution_version
 
 
-__all__ = ["code_commit8", "default_resolver_version"]
+__all__ = ["code_commit", "code_commit8", "code_tree", "default_resolver_version"]

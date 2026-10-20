@@ -93,6 +93,40 @@ def build_parser() -> argparse.ArgumentParser:
         help="Assertion-time belief instant to pin the read to (ISO-8601; §9.4). Default: current.",
     )
     build.add_argument(
+        "--replay",
+        default=None,
+        metavar="REASON",
+        help="With --from-spine: declare a Class-S rebuild of a historical "
+        "snapshot (required for a typed --as-of on an earlier UTC day; forces "
+        "environment=replay so the build can never mint a fresh live-class id).",
+    )
+    build.add_argument(
+        "--emergency",
+        default=None,
+        metavar="REASON",
+        help="With --from-spine: the emergency-takedown reason that lifts the "
+        "AR-3 frozen-window refusal (recorded on the run).",
+    )
+    build.add_argument(
+        "--environment",
+        default=None,
+        choices=["production", "staging", "fixture", "replay"],
+        help="With --from-spine: the declared environment (default production; "
+        "--replay forces replay). Rides the export manifest into the v2 descriptor.",
+    )
+    build.add_argument(
+        "--skip-host-clock-check",
+        action="store_true",
+        help="With --from-spine: skip the remote-Date host-clock sanity check "
+        "(the skip is declared on the run, never silent).",
+    )
+    build.add_argument(
+        "--host-clock-url",
+        default=None,
+        help="With --from-spine: the HTTPS endpoint whose Date header the host "
+        "clock is checked against (default: release_identity.HOST_CLOCK_URL).",
+    )
+    build.add_argument(
         "--note",
         default="",
         help='Free-text provenance note (e.g. "OSM land in flight — provisional as-of").',
@@ -270,10 +304,55 @@ def build_parser() -> argparse.ArgumentParser:
     rbuild.add_argument("--export-dir", required=True)
     rbuild.add_argument("--out", required=True)
     rbuild.add_argument(
+        "--schema-version",
+        type=int,
+        choices=[1, 2],
+        default=2,
+        help="The descriptor schema to emit (P35.12: v2 is the release "
+        "identity contract; v1 stays buildable for parity/replay).",
+    )
+    rbuild.add_argument(
         "--renderer-revision",
-        required=True,
-        help="The renderer code revision (a git sha) bound into the descriptor — "
-        "an intentional identity input, never auto-detected.",
+        default=None,
+        help="(v1 descriptors only) the renderer code revision (a git sha) "
+        "bound into the descriptor — an intentional identity input, never "
+        "auto-detected. v2 carries one code identity (code.commit).",
+    )
+    rbuild.add_argument(
+        "--labels-registry",
+        default=None,
+        help="(v2) the release-registry root holding labels.json — the human "
+        "label is allocated under its lock (sig-YYYY-MM-DD.N).",
+    )
+    rbuild.add_argument(
+        "--label",
+        default=None,
+        help="(v2) a pre-allocated sig-YYYY-MM-DD.N label — validated against "
+        "the snapshot date, never trusted (the label date is the data date).",
+    )
+    rbuild.add_argument(
+        "--environment",
+        default=None,
+        choices=["production", "staging", "fixture", "replay"],
+        help="(v2) the declared environment (default: the export manifest's, else fixture).",
+    )
+    rbuild.add_argument(
+        "--boundaries-root",
+        default=None,
+        help="(v2) the JUR-01 jurisdiction-boundaries content root (recorded, "
+        "may be declared-empty until row 297 supplies it).",
+    )
+    rbuild.add_argument(
+        "--built-at",
+        default=None,
+        help="(v2) override the build instant — replay/test seam only; the "
+        "real path stamps its own clock (ISO-8601).",
+    )
+    rbuild.add_argument(
+        "--disclosures-toml",
+        default=None,
+        help="(v2) a sig.disclosures/1 TOML to digest into the descriptor "
+        "(default: ops/disclosures.toml).",
     )
     rbuild.add_argument("--page-size", type=int, default=50)
 
@@ -285,6 +364,38 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ract.add_argument("--registry", required=True)
     ract.add_argument("--release", required=True)
+
+    rprom = rsub.add_parser(
+        "promote",
+        help="P35.12 (SIG-REL-002): the promotion gate — activate ONLY a "
+        "complete sig.publication-descriptor/2 candidate on a clean, pushed "
+        "tree; every refusal is named, nothing partial activates.",
+    )
+    rprom.add_argument("--registry", required=True)
+    rprom.add_argument("--release", required=True)
+    rprom.add_argument(
+        "--repo",
+        default=None,
+        help="The checkout whose tree/commit the live probes read (default: "
+        "the repo this source tree sits in).",
+    )
+
+    rlab = rsub.add_parser(
+        "label-allocate",
+        help="P35.12 (SIG-REL-001): allocate the next sig-YYYY-MM-DD.N label "
+        "under the registry lock (the date derives from --as-of).",
+    )
+    rlab.add_argument("--registry", required=True)
+    rlab.add_argument(
+        "--as-of",
+        required=True,
+        help="The snapshot.as_of_world instant the label's date derives from.",
+    )
+    rlab.add_argument(
+        "--environment",
+        default=None,
+        choices=["production", "staging", "fixture", "replay"],
+    )
 
     rback = rsub.add_parser(
         "rollback", help="Flip the latest pointer to an earlier activated release."
@@ -814,6 +925,11 @@ def _run_build_from_spine(
     belief: str | None,
     note: str,
     dossier_packets: list[dict[str, object]] | None = None,
+    replay: str | None = None,
+    emergency: str | None = None,
+    environment: str | None = None,
+    skip_host_clock_check: bool = False,
+    host_clock_url: str | None = None,
 ) -> int:
     """Build the real national export from the shaped spine (P27.4, read-only).
 
@@ -821,17 +937,53 @@ def _run_build_from_spine(
     shapes + reads the supplementary sets inside it, licence-slices every site, and
     writes the compartmented bundle + the ten P27.1 web-contract JSONs + per-compartment
     PMTiles + PROV-O lineage + the loud exclusions report. Never mutates the spine.
+
+    P35.12 / SIG-REL-003: this operator path is where the G3 §3.3 clock
+    guards bind — T0 read once, the AR-3 frozen-window refusal, the
+    host-clock sanity check and the as-of/belief clock rules (future
+    refuses; an earlier-day as-of requires --replay, which forces
+    environment=replay → a Class-S build, never a fresh live-class one).
     """
-    from datetime import datetime
+    from datetime import UTC, datetime
 
     import psycopg
 
     from .audit import redact_dsn
+    from .release_identity import (
+        ClockGuardError,
+        assert_not_frozen,
+        check_as_of_clock,
+        host_clock_report,
+        parse_instant,
+    )
     from .spine_export import run_spine_export
+
+    # T0 is read exactly once here and shared by every guard + the build.
+    t0 = datetime.now(UTC)
+    if replay:
+        environment = "replay"
+    environment = environment or "production"
+    try:
+        assert_not_frozen(t0, emergency=emergency)
+        check_as_of_clock(as_of, t0, replay=replay)
+        check_as_of_clock(belief, t0, replay=replay)
+    except ClockGuardError as e:
+        print(f"sig-exports build: refused — {e}")
+        return 4
+    if skip_host_clock_check:
+        host_clock: dict[str, object] = {"skipped": True, "reason": "--skip-host-clock-check"}
+    else:
+        try:
+            host_clock = dict(host_clock_report(t0, url=host_clock_url or "https://www.google.com"))
+        except ClockGuardError as e:
+            print(f"sig-exports build: refused — {e}")
+            return 4
 
     belief_instant = None
     if belief:
-        belief_instant = datetime.fromisoformat(belief.replace("Z", "+00:00"))
+        belief_instant = parse_instant(belief)
+    if emergency:
+        note = f"[emergency: {emergency}] {note}".strip()
 
     spine_label = redact_dsn(dsn)
     conn = psycopg.connect(dsn, autocommit=True)
@@ -843,12 +995,22 @@ def _run_build_from_spine(
             note=note,
             spine_label=spine_label,
             dossier_packets=dossier_packets,
+            generated_at=t0,
+            environment=environment,
+            replay=replay,
         )
     finally:
         conn.close()
 
     export.write_to(out_dir)
-    summary = {"out_dir": out_dir, "spine_label": spine_label, **export.summary()}
+    summary = {
+        "out_dir": out_dir,
+        "spine_label": spine_label,
+        "environment": environment,
+        "replay": replay,
+        "host_clock": host_clock,
+        **export.summary(),
+    }
     sys.stdout.write(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     return 0
 
@@ -1221,6 +1383,11 @@ def main(argv: list[str] | None = None) -> int:
                 belief=args.belief,
                 note=args.note,
                 dossier_packets=packets or None,
+                replay=args.replay,
+                emergency=args.emergency,
+                environment=args.environment,
+                skip_host_clock_check=args.skip_host_clock_check,
+                host_clock_url=args.host_clock_url,
             )
         if args.dsn is not None:
             print("sig-exports build: --dsn is only valid with --from-spine")
@@ -1274,12 +1441,23 @@ def _run_release(args: argparse.Namespace) -> int:
 
     verb = args.release_command
     if verb == "build":
-        build = rel.build_release(
-            args.export_dir,
-            args.out,
-            renderer_revision=args.renderer_revision,
-            page_size=args.page_size,
-        )
+        try:
+            build = rel.build_release(
+                args.export_dir,
+                args.out,
+                renderer_revision=args.renderer_revision,
+                descriptor_version=args.schema_version,
+                page_size=args.page_size,
+                environment=args.environment,
+                label=args.label,
+                labels_registry=args.labels_registry,
+                built_at=args.built_at,
+                boundaries_root=args.boundaries_root,
+                disclosures_path=Path(args.disclosures_toml) if args.disclosures_toml else None,
+            )
+        except rel.ReleaseError as e:
+            print(f"sig-exports release build: refused — {e}")
+            return 4
         print(json.dumps(build.report, indent=2))
         return 0
     if verb == "validate":
@@ -1303,6 +1481,29 @@ def _run_release(args: argparse.Namespace) -> int:
             print(f"sig-exports release activate: refused — {e}")
             return 4
         print(json.dumps(act, indent=2))
+        return 0
+    if verb == "promote":
+        from .release_identity import ClockGuardError, LabelRegistryError
+
+        # The live tree/push probes default to the repo this source tree sits
+        # in — the machine the operator runs the gate on.
+        repo = Path(args.repo) if args.repo else Path(__file__).resolve().parents[3]
+        try:
+            act = rel.promote(args.registry, args.release, repo_root=repo)
+        except (rel.ReleaseError, ClockGuardError, LabelRegistryError) as e:
+            print(f"sig-exports release promote: refused — {e}")
+            return 4
+        print(json.dumps(act, indent=2))
+        return 0
+    if verb == "label-allocate":
+        from .release_identity import LabelRegistryError, allocate_label
+
+        try:
+            label = allocate_label(Path(args.registry), args.as_of, environment=args.environment)
+        except LabelRegistryError as e:
+            print(f"sig-exports release label-allocate: refused — {e}")
+            return 4
+        print(label)
         return 0
     if verb == "rollback":
         try:

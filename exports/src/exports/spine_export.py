@@ -2695,6 +2695,11 @@ def run_spine_export(
     resolver_version: str | None = None,
     dataset_slug: str = "sig",
     dossier_packets: Sequence[Mapping[str, Any]] | None = None,
+    generated_at: datetime | None = None,
+    environment: str | None = None,
+    replay: str | None = None,
+    materialize_run: str | None = None,
+    restore_point: str | None = None,
 ) -> SpineExport:
     """Execute the read-only reads and assemble the national export.
 
@@ -2703,16 +2708,39 @@ def run_spine_export(
     state. The session is put in read-only mode first — no statement can mutate the
     append-only spine (§16). When the caller already holds an open transaction (the
     test seam) the reads run inside it unchanged.
+
+    P35.12 / SIG-REL-003 clock rules: ``generated_at`` is T0 — read exactly
+    once here (injected by tests/replay); the default ``as_of`` is literally
+    that same instant, and a typed ``as_of`` later than T0 refuses before
+    any DB read (a future snapshot can never be cut). ``environment`` /
+    ``replay`` ride the :class:`BuildSpec` into the export manifest (the
+    release builder reads them back for the v2 descriptor); ``replay``
+    marks a Class-S rebuild of a historical snapshot.
     """
+    from .release_identity import ClockGuardError, parse_instant
     from .shaping import (
         _queries_for,
         build_shaped_dataset,
         fetch_shaping_raw,
     )
-    from .versioning import default_resolver_version
+    from .versioning import code_commit, default_resolver_version
 
-    generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    as_of = as_of or generated_at
+    # T0, read exactly once (G3 §3.3 rule 7): the build instant, the default
+    # as-of, and every emitted stamp share it.
+    t0 = generated_at or datetime.now(UTC)
+    if t0.tzinfo is None:
+        t0 = t0.replace(tzinfo=UTC)
+    t0 = t0.astimezone(UTC)
+    generated_at_s = t0.strftime("%Y-%m-%dT%H:%M:%SZ")
+    as_of = as_of or generated_at_s
+    as_of_dt = parse_instant(as_of)
+    if as_of_dt is None:
+        raise ClockGuardError(f"--as-of {as_of!r} is not an ISO-8601 date or instant")
+    if as_of_dt > t0:
+        raise ClockGuardError(
+            f"--as-of {as_of!r} is later than the build instant {generated_at_s} — "
+            "an export can never name a future snapshot (SIG-REL-003)"
+        )
 
     cur = conn.cursor()
     cur.execute("SET default_transaction_read_only = on")
@@ -2720,6 +2748,7 @@ def run_spine_export(
     snapshot = status is None or int(status) == 0
     if snapshot:
         cur.execute("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY")
+    sqitch_head: str | None = None
     try:
         cur.execute("SELECT to_regclass('rights_decision') IS NOT NULL")
         has_row = cur.fetchone()
@@ -2732,6 +2761,15 @@ def run_spine_export(
         export_raw.update(
             {k: resolve_public_text(v) for k, v in fetch_materialized_graph(cur).items()}
         )
+        # The sqitch head inside the SAME snapshot (SIG-REL-001
+        # snapshot.sqitch_head — the schema state the export ran against);
+        # an absent sqitch schema degrades to None, honestly recorded.
+        cur.execute("SELECT to_regclass('sqitch.changes') IS NOT NULL")
+        has_sqitch = cur.fetchone()
+        if has_sqitch and has_sqitch[0]:
+            cur.execute("SELECT change FROM sqitch.changes ORDER BY committed_at DESC LIMIT 1")
+            row = cur.fetchone()
+            sqitch_head = str(row[0]) if row and row[0] else None
     finally:
         if snapshot:
             cur.execute("ROLLBACK")
@@ -2739,7 +2777,7 @@ def run_spine_export(
     dataset = build_shaped_dataset(
         shaping_raw,
         as_of=as_of,
-        generated_at=generated_at,
+        generated_at=generated_at_s,
         spine_label=spine_label,
         note=note,
     )
@@ -2763,13 +2801,32 @@ def run_spine_export(
             # exports placeholder the pre-REL-10 manifests carried.
             resolver_version=resolver_version or default_resolver_version(),
             dataset_slug=dataset_slug,
+            # SIG-REL-001 (P35.12): the full instants, watermark, commit and
+            # declared environment/replay — the export-id key inputs and the
+            # descriptor snapshot block's source.
+            as_of_snapshot_instant=as_of,
+            as_of_belief_instant=(
+                (belief if belief.tzinfo is not None else belief.replace(tzinfo=UTC))
+                .astimezone(UTC)
+                .strftime("%Y-%m-%dT%H:%M:%SZ")
+                if belief is not None
+                else generated_at_s
+            ),
+            belief_pinned=belief is not None,
+            spine_watermark=str(shaping_raw.get("spine_watermark") or "") or None,
+            code_commit=code_commit() or None,
+            environment=environment,
+            replay=replay,
+            materialize_run=materialize_run,
+            sqitch_head=sqitch_head,
+            restore_point=restore_point,
         )
 
     return build_spine_export(
         dataset,
         export_raw,
         build_spec=build_spec,
-        generated_at=generated_at,
+        generated_at=generated_at_s,
         note=note,
         belief=belief,
         claims=claims,

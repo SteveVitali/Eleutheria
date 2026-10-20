@@ -49,6 +49,7 @@ import hashlib
 import json
 import time
 from collections.abc import Mapping, Sequence
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -527,10 +528,15 @@ def build_candidate_export(
     ruleset_version: str = PROVISIONAL_RULESET,
     resolver_version: str | None = None,
     dossier_packets: Sequence[Mapping[str, Any]] | None = None,
+    generated_at: datetime | None = None,
 ) -> Any:
     """The licence-compartmented spine export, stamped with the candidate
     ruleset identity (``provisional-ruleset/1``) and the deferral-carrying
-    note/label — one ``REPEATABLE READ READ ONLY`` snapshot, no mutation."""
+    note/label — one ``REPEATABLE READ READ ONLY`` snapshot, no mutation.
+
+    ``generated_at`` is the P35.12 T0 injection seam: tests pin it at/after a
+    synthetic ``as_of`` so the future-as-of clock guard (SIG-REL-003) still
+    binds on real builds while fixture snapshots stay buildable."""
     from exports.spine_export import run_spine_export
 
     return run_spine_export(
@@ -542,6 +548,7 @@ def build_candidate_export(
         ruleset_version=ruleset_version,
         resolver_version=resolver_version,
         dossier_packets=dossier_packets,
+        generated_at=generated_at,
     )
 
 
@@ -1143,6 +1150,7 @@ def run_candidate(
     renderer_revision: str | None = None,
     export_subdir: str = "candidate_export",
     release_subdir: str = "candidate_release",
+    generated_at: datetime | None = None,
 ) -> dict[str, Any]:
     """Build the whole unpublished candidate packet; return the manifest + paths.
 
@@ -1187,6 +1195,7 @@ def run_candidate(
         as_of=as_of,
         belief=belief,
         dossier_packets=dossier_packets,
+        generated_at=generated_at,
     )
     export.write_to(export_dir)
     export_manifest = json.loads((export_dir / "manifest.json").read_text(encoding="utf-8"))
