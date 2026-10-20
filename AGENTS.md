@@ -138,6 +138,26 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
    register of owed gate-pending work (build-memory v2). A deferral not in that file did not happen; if
    your ticket or a landed prerequisite unblocks an `OPEN` row, closing it (verify + flip to `DONE` with
    evidence) is part of your run. Gates refuse to pass while an `OPEN` row scoped to that phase remains.
+9. **An agent never commits a gate-affecting record — it stages it and the operator signs (OP-25,
+   SIG-SEC-010, A-16; ADR-147 decision 6).** G4c (the `check_gate_signatures` tool under
+   `docs/build/tools/`, in the `docs` job) fails every commit that adds one unless *that commit's own*
+   SSH signature verifies against `docs/build/tools/record_policy/allowed_signers`. The records are: a
+   `decision`, `waiver` or `pre-authorization` row in a LEDGER `## GATE DECISIONS` table; a readout
+   `Status:` line set to a signed status (SIGNED, PASSED, SKIPPED-BY-OPERATOR, NOT-PASSABLE) in
+   `docs/build/readouts/`; and an `ingestion_permitted` false→true flip in `sources.toml`. An agent
+   never generates, holds or loads the operator's key, so when an operator answer must be recorded as
+   one of these, the agent (1) writes the record verbatim (BM-GATE-05), **stages it alone** (only those
+   lines; nothing else in the index) and **stops**, asking the operator to commit it; (2) the operator
+   commits it with `git -c gpg.format=ssh -c user.signingkey=~/.ssh/sig_gate_key.pub commit -S` and a
+   `Harness: operator` trailer (OM-01), as in `aab6c8ef`; (3) the agent resumes on top of that commit,
+   putting follow-ups (projection regeneration, PHASE LOG, run ledger) in its own trailered commits.
+   **Never relabel an operator decision as `confirmation` or `correction` to get past the gate.** A
+   `confirmation` is only the yes/no answer to a restated hedged or interrogative answer (BM-GATE-06,
+   OM-09, ADR-147 decision 4); a `correction` only corrects an existing record (e.g. SEED-07's ADR-146
+   DATE CORRECTION row). G4c skips both because they carry no new decision. Coverage is per commit and
+   history is append-only, so once an unsigned record lands no later commit can cover it: its PR, and
+   every later push range that contains it, stay red for good (PR #292 `3a7916d6`, #294 `336c5282`, #299
+   `6df21fce`).
 
 ## Build memory — where it lives (v2: ADR-073, extended by ADR-126/127 under ADR-120)
 
@@ -193,6 +213,9 @@ operator-approved `D-R10-MEMORY-1` cutover.
 - Never commit build logs under `docs/build/logs/` (gitignored) or `sbom.cdx.json`; the rest of
   `docs/build/` **is** committed build memory (build-memory v2, ADR-073). `.agents/scratch/` is retired.
 - Never tick a human gate (`HG-nn`) or flip a source to `ingestion_permitted=true` — operator action.
+- Never commit a gate-affecting record (a GATE DECISIONS `decision`/`waiver`/`pre-authorization` row, a
+  signed readout `Status:`, an `ingestion_permitted` flip) and never relabel one as
+  `confirmation`/`correction`: stage it alone and stop; the operator signs the commit (Gotcha 9, OP-25).
 - Never merge, tag, or push `main`; the operator integrates the stack after the chain.
 - Never store secrets in files — tokens/keys are environment variables only (**HG-09**).
 
