@@ -306,6 +306,13 @@
 | SL-19 | /sources/ | rows in this export | 5f285b2ea8a9a93acb17cd852cb4478aab4e53ca25b4fd4ae5b7cff98cc94f01 | pending |
 | TR-03 | /terms/ | SIG is currently run by an individual maintainer, not by an organization. It has no fiscal sponsor or incorporated legal entity yet. | 278a8979b859186856c836555c81bf28671f1ab8599e1eec45f0dcdf0f4721b8 | pending |
 | DC-20 | /data-collection/ | The dispute page names the contact address and states its own operating status. | 807abbdea05119fd2521ee1c2573421053639107963ffcd561c342cbe16a8bcf | pending |
+| RS-04 | component/BaseLayout | Release {stamp.label} · data as of {stamp.asOfWorld} · built {stamp.builtAt} from code {stamp.commit8} · {stamp.publicationShort} · release.json | 07768f1a04c0b09fc1f42a2ff62178c62028ffba983eab5ac9d85ea0b7528f33 | pending |
+| RS-05 | component/BaseLayout | This is the latest view. Cite the fixed copy: /r/{stamp.publicationId}/. The public API also serves newer, unreleased records, labelled "live". | 207e05074a8eca13a7ca403eeac3fea06498845f88e98451c95926eef8bcc898 | pending |
+| ST-10 | /status/ | Release {stamp.label} · data as of {stamp.asOfWorld} · built {stamp.builtAt} from code {stamp.commit8} · {stamp.publicationShort} · release.json. This is the latest view. Cite the fixed copy: /r/{stamp.publicationId}/. The public API also serves newer, unreleased records, labelled "live". | 6c444a5354b034b6963e99871b132b9e8d46d1ac74231b8922d2fcacce6054bf | pending |
+| JD-08 | /dossier/[slug]/print/ | — release {stamp.label} · built {stamp.builtAt} from code {stamp.commit8} · {stamp.publicationShort} · release.json | 5e2a7fe0a6c2991e3711d64e685def5db74972ab0aa49e796177ad4ffceea986 | pending |
+| XR-01 | exports/release_pages.py | Release {label} · data as of {as_of} · built {built} from code {commit8} · {pub_short} · release.json | 27cd49b70ffa497d20fb6b56f7ed633360d4bf732bbf1aec054bdf9b49d3fbdd | pending |
+| XR-02 | exports/release_pages.py | This is the latest view. Cite the fixed copy: /r/{publication_id}/. The public API also serves newer, unreleased records, labelled "live". | 9a97e0ca830020a6256fdff904bb9bb615f7860a8f7f7173903c2e9dd9f60d16 | pending |
+| XR-03 | exports/release_pages.py | This is the fixed copy of this release — cite this URL. The public API also serves newer, unreleased records, labelled "live". | 8c167d306e9dd022baa24ff392a7251161f6d6de722c8b5419c877ee874bd16d | pending |
 
 ## Confirmation log
 

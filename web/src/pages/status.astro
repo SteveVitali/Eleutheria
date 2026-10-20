@@ -11,10 +11,14 @@
 // N-string (`data-notice`, B-2 notice allowance until GATE-G4).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getSiteMetadata } from "../lib/data";
+import { getReleaseStamp } from "../lib/release-stamp";
 
 const meta = getSiteMetadata();
 const releaseId = meta.releaseId;
 const asOfWorld = meta.asOf.as_of_world;
+// P35.13 (SIG-REL-009): the currency answer names the release fully once a
+// sig.site-release/1 is bound — interim sentence until then.
+const stamp = getReleaseStamp();
 ---
 
 <BaseLayout title="Status" path="/status/">
@@ -31,7 +35,18 @@ const asOfWorld = meta.asOf.as_of_world;
   </p>
 
   <h2 id="currency-heading" data-copy="ST-08">How current this site is</h2>
-  {releaseId ? (
+  {stamp ? (
+    <p data-copy="ST-10" data-testid="status-release">
+      Release {stamp.label} · data as of {stamp.asOfWorld} · built{" "}
+      {stamp.builtAt} from code{" "}
+      <a href={stamp.commitHref}><code>{stamp.commit8}</code></a> ·{" "}
+      <code>{stamp.publicationShort}</code> ·{" "}
+      <a href={stamp.describedby}>release.json</a>.
+      This is the latest view. Cite the fixed copy:{" "}
+      <a href={`/r/${stamp.publicationId}/`}><code>/r/{stamp.publicationId}/</code></a>.
+      The public API also serves newer, unreleased records, labelled "live".
+    </p>
+  ) : releaseId ? (
     <p data-copy="ST-04">
       This site shows release {releaseId}, data as of {asOfWorld}.
       The public API is updated continuously and may show newer records.

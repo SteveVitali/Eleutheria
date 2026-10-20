@@ -608,11 +608,22 @@ export function validateDossier(dossier: Dossier): void {
  * summary top level (`what_we_dont_know`) AND inside the sections, so the API,
  * the print export, and the HTML summary all satisfy SIG-UI-011.
  */
-export function renderDossierJson(dossier: Dossier, origin?: string): Record<string, unknown> {
+export function renderDossierJson(
+  dossier: Dossier,
+  origin?: string,
+  release?: { label: string; publication_id: string; as_of_world: string },
+): Record<string, unknown> {
   validateDossier(dossier);
   const permalink = dossierPermalink(dossier, origin);
   return {
     subject: dossier.subject_label,
+    // P35.13 (SIG-REL-009, G3 §6.1): the JSON twin carries the same provenance
+    // the stamp names — the `release` block (label, publication_id,
+    // as_of_world) and the `licence` block in the §6.1 wire form, matching the
+    // exports-side `sig.published-record/2` blocks. Absent (never fabricated)
+    // when the build has no release bound.
+    ...(release ? { release } : {}),
+    ...(release ? { licence: { id: "CC-BY-4.0", compartment: "web" } } : {}),
     jurisdiction: dossier.jurisdiction,
     as_of_world: dossier.asOf.as_of_world,
     as_of_belief: dossier.asOf.as_of_belief,

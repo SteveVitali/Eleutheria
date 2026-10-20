@@ -11,6 +11,7 @@ import type { APIRoute, GetStaticPaths } from "astro";
 import { renderDossierJson } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
 import { getDossiers } from "../../lib/data";
+import { getReleaseStamp } from "../../lib/release-stamp";
 
 export const getStaticPaths: GetStaticPaths = () =>
   getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
@@ -18,7 +19,10 @@ export const getStaticPaths: GetStaticPaths = () =>
 export const GET: APIRoute = ({ props }) => {
   const { dossier } = props as { dossier: Dossier };
   const origin = new URL(import.meta.env.SITE ?? "https://surveillancegraph.org").origin;
-  const body = renderDossierJson(dossier, origin);
+  // P35.13 (SIG-REL-009, G3 §6.1): the JSON twin carries the release + licence
+  // blocks when a sig.site-release/1 is bound — `null` bound-free.
+  const stamp = getReleaseStamp();
+  const body = renderDossierJson(dossier, origin, stamp?.releaseBlock);
   return new Response(JSON.stringify(body, null, 2), {
     headers: { "content-type": "application/json; charset=utf-8" },
   });

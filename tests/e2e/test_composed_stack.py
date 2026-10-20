@@ -1072,3 +1072,129 @@ def test_p34_20_export_build_carries_no_fixture_capture_diff(
     evidence_dir = dist / "evidence"
     routes = [p for p in evidence_dir.iterdir() if p.is_dir()] if evidence_dir.exists() else []
     assert routes == [], f"unexpected evidence claim routes: {routes}"
+
+
+# --- P35.13: the built site carries the release provenance stamp ----------------
+
+
+@pytest.fixture(scope="session")
+def web_build_with_release(
+    tmp_path_factory: pytest.TempPathFactory,
+) -> tuple[_WebBuild, dict[str, Any]]:
+    """P35.13 / SIG-REL-009 (G3 §6.1): an export-mode build bound to a REAL
+    ``sig.site-release/1``.
+
+    Same recipe as ``web_build_from_export`` (``sig-exports build
+    --jurisdiction okc`` + the fixture surface overlay), then a real v2
+    ``build_release`` over those export bytes produces the release's own
+    ``release.json`` — the stamp's only data source — passed to the web build
+    via ``SIG_RELEASE_JSON`` (the provenance seam
+    ``web/src/lib/release-stamp.ts`` reads).
+    """
+    from exports.release import build_release
+
+    web_dir = _require_web_env()
+    export_dir = tmp_path_factory.mktemp("okc_export_rel")
+    built = subprocess.run(
+        ["sig-exports", "build", "--jurisdiction", "okc", "--out", str(export_dir)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert built.returncode == 0, f"sig-exports build failed: {built.stderr}"
+    overlay = subprocess.run(
+        ["npm", "--prefix", str(web_dir), "run", "export:fixtures", "--", str(export_dir)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert overlay.returncode == 0, f"fixture overlay failed: {overlay.stderr}"
+
+    release_dir = tmp_path_factory.mktemp("okc_release")
+    build_release(
+        export_dir,
+        release_dir / "out",
+        descriptor_version=2,
+        labels_registry=tmp_path_factory.mktemp("labels"),
+        built_at=datetime(2026, 10, 16, 12, 0, 0, tzinfo=UTC),
+        code_commit="0a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d",
+        code_tree="clean",
+        ontology_generated_sha256="b" * 64,
+    )
+    release_json = release_dir / "out" / "release.json"
+    assert release_json.is_file(), "a v2 build must emit the site-release object"
+    site_release = json.loads(release_json.read_text(encoding="utf-8"))
+
+    proc = subprocess.run(
+        ["npm", "--prefix", str(web_dir), "run", "build"],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+        env={
+            **os.environ,
+            "SIG_DATA_SOURCE": "export",
+            "SIG_EXPORT_DIR": str(export_dir),
+            "SIG_RELEASE_JSON": str(release_json),
+        },
+    )
+    return (
+        _WebBuild(dist=web_dir / "dist", returncode=proc.returncode, data_source="export"),
+        site_release,
+    )
+
+
+def test_p35_13_built_site_carries_the_release_stamp(
+    web_build_with_release: tuple[_WebBuild, dict[str, Any]],
+) -> None:
+    """The §6.1 provenance stamp on the built public pages — meta + link +
+    the visible line — plus the JSON twins' release/licence blocks, and no
+    client JS anywhere the stamp renders."""
+    import re
+
+    build, sr = web_build_with_release
+    assert build.returncode == 0, "release-bound build must exit 0"
+    label, pub = sr["label"], sr["publication_id"]
+
+    dossier = build.dist / "dossier" / "oklahoma-city" / "index.html"
+    assert dossier.exists()
+    html = dossier.read_text(encoding="utf-8")
+    assert f'<meta name="sig-release" content="{label} {pub}">' in html
+    assert '<link rel="describedby" type="application/json" href="/release.json">' in html
+    assert f"Release {label} · data as of" in html
+    assert "This is the latest view." in html
+    assert f"/r/{pub}/" in html
+    assert 'data-testid="release-stamp"' in html
+    assert "<script" not in html, "a stamped content page stays zero-JS (SIG-UI-036)"
+
+    status = build.dist / "status" / "index.html"
+    assert status.exists()
+    shtml = status.read_text(encoding="utf-8")
+    assert f"Release {label} · data as of" in shtml
+    assert f"/r/{pub}/" in shtml
+
+    print_page = build.dist / "dossier" / "oklahoma-city" / "print" / "index.html"
+    assert print_page.exists()
+    phtml = print_page.read_text(encoding="utf-8")
+    assert f"release {label}" in phtml
+    assert f'<meta name="sig-release" content="{label} {pub}">' in phtml
+
+    # The JSON twin names the same release + licence blocks (G3 §6.1).
+    twin = build.dist / "dossier" / "oklahoma-city.json"
+    assert twin.exists(), "the static dossier JSON must emit"
+    doc = json.loads(twin.read_text(encoding="utf-8"))
+    assert doc["release"] == {
+        "label": label,
+        "publication_id": pub,
+        "as_of_world": sr["as_of_world"],
+    }
+    assert doc["licence"] == {"id": "CC-BY-4.0", "compartment": "web"}
+
+    # The interim-text rule (G3 §6.1 NEW-2): this fixture release is not
+    # belief-pinned, so no stamp element on the built site may claim a
+    # pinning posture — the stamp reports the descriptor's actual state.
+    assert sr["belief_pinned"] is False
+    for page in build.dist.rglob("*.html"):
+        text = page.read_text(encoding="utf-8")
+        for m in re.finditer(r'data-testid="release-stamp[^"]*"[^>]*>(.*?)</p>', text, re.S):
+            inner = re.sub(r"<[^>]+>", "", m.group(1))
+            assert "pinned" not in inner.lower()

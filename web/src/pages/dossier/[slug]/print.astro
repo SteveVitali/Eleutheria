@@ -19,6 +19,7 @@ import ActionBlocks from "../../../components/ActionBlocks.astro";
 import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
 import { getDossiers } from "../../../lib/data";
+import { getReleaseStamp } from "../../../lib/release-stamp";
 import { displayJurisdiction, dossierDisplayTitle } from "../../../lib/jurisdictions";
 import { defaultDescription } from "../../../lib/meta";
 
@@ -38,6 +39,11 @@ const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ")
 const SECTIONS_PER_PAGE = 3;
 const origin = Astro.site ? Astro.site.origin : undefined;
 const link = dossierPermalink(dossier, origin);
+
+// P35.13 (SIG-REL-009, G3 §6.1): the print form names the release it was
+// printed from on every page footer — a council copy of "release
+// sig-2026-10-15.1" is citable on its own.
+const stamp = getReleaseStamp();
 
 // Chunk the twelve sections into fixed-size pages; page 1 also carries the header,
 // the incompleteness banner, and the "what we don't know" summary.
@@ -59,6 +65,8 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
     <meta name="description" content={defaultDescription(`${pageTitle} — SIG dossier (print)`)} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
+    {stamp && <meta name="sig-release" content={stamp.metaContent} />}
+    {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
   </head>
   <body>
     <div class="sig-print-toolbar" role="note">
@@ -117,6 +125,14 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
             belief <time datetime={dossier.asOf.as_of_belief}>{dossier.asOf.as_of_belief}</time>
           </span>{" "}
           <a class="sig-print-footer__permalink" data-testid="print-permalink" href={link}>{link}</a>
+          {stamp && (
+            <span class="sig-print-footer__release" data-testid="print-release" data-copy="JD-08">
+              {" "}— release {stamp.label} · built {stamp.builtAt} from code{" "}
+              <a href={stamp.commitHref}><code>{stamp.commit8}</code></a> ·{" "}
+              <code>{stamp.publicationShort}</code> ·{" "}
+              <a href={stamp.describedby}>release.json</a>
+            </span>
+          )}
         </footer>
       </div>
     ))}

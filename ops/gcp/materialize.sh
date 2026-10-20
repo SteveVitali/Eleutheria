@@ -117,16 +117,20 @@ do_schema() {
 do_image() {
   _log "-- image: Cloud Build ${IMAGE} from git archive HEAD (never retags :latest)"
   if [ "${SIG_GCP_MODE}" = "check" ]; then
-    _plan "git archive --format=tar.gz HEAD > <tmp>/ctx.tgz && gcloud builds submit <tmp>/ctx.tgz --config <tmp>/cloudbuild.yaml   # docker build -f ops/Dockerfile -t ${IMAGE}"
+    _plan "git archive --format=tar.gz HEAD > <tmp>/ctx.tgz && gcloud builds submit <tmp>/ctx.tgz --config <tmp>/cloudbuild.yaml   # docker build -f ops/Dockerfile --build-arg SIG_CODE_COMMIT=<HEAD> -t ${IMAGE}"
     return 0
   fi
-  local tmp
+  local tmp head_sha
   tmp="$(mktemp -d)"
   git -C "${_repo}" archive --format=tar.gz HEAD > "${tmp}/ctx.tgz"
+  # P35.13 / SIG-REL-009 (G3 §6.3): the build pins its own code identity —
+  # the OCI revision label + SIG_CODE_COMMIT the API stamps — from the same
+  # HEAD the context archives (never a movable ref).
+  head_sha="$(git -C "${_repo}" rev-parse HEAD)"
   cat > "${tmp}/cloudbuild.yaml" <<YAML
 steps:
 - name: gcr.io/cloud-builders/docker
-  args: ["build", "-f", "ops/Dockerfile", "-t", "${IMAGE}", "."]
+  args: ["build", "-f", "ops/Dockerfile", "--build-arg", "SIG_CODE_COMMIT=${head_sha}", "-t", "${IMAGE}", "."]
 images: ["${IMAGE}"]
 timeout: 3600s
 YAML

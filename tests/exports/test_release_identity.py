@@ -422,6 +422,11 @@ def test_cli_from_spine_future_as_of_refuses(capsys: pytest.CaptureFixture[str])
             "--out",
             "/tmp/x",
             "--skip-host-clock-check",
+            # The AR-3 daily window (03:00–06:30Z) is a wall-clock guard:
+            # --emergency lifts it so the future refusal under test always
+            # binds, whatever UTC hour the suite runs in.
+            "--emergency",
+            "synthetic clock-guard test",
         ]
     )
     assert code == 4
@@ -444,6 +449,11 @@ def test_cli_from_spine_earlier_day_requires_replay(
             "--out",
             "/tmp/x",
             "--skip-host-clock-check",
+            # See test_cli_from_spine_future_as_of_refuses: --emergency lifts
+            # the wall-clock AR-3 window so the replay refusal under test
+            # binds at any UTC hour.
+            "--emergency",
+            "synthetic clock-guard test",
         ]
     )
     assert code == 4

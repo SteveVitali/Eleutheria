@@ -121,6 +121,14 @@ class PublishedRecord:
     publication_id: str | None = None
     href: str | None = None
     json_href: str | None = None
+    #: P35.13 / SIG-REL-009 (G3 §6.1): the JSON twin's provenance blocks —
+    #: ``release {label, publication_id, as_of_world}`` names the release the
+    #: record is bound into (``label`` is ``None`` on a v1 build, which has no
+    #: human label — declared-empty, never invented), and ``licence {id,
+    #: compartment}`` restates the record's own licence in the block form.
+    #: Both are bound-view fields, never hashed into the projection.
+    release: dict[str, Any] | None = None
+    licence: dict[str, Any] | None = None
     schema: str = PROJECTION_VERSION
 
     # -- serialisation -------------------------------------------------------- #
@@ -154,13 +162,28 @@ class PublishedRecord:
         doc["publication_id"] = self.publication_id
         doc["href"] = self.href
         doc["json_href"] = self.json_href
+        # P35.13 (SIG-REL-009): the JSON twin's provenance blocks — declared-
+        # empty when the record was bound without a release (e.g. a bare
+        # projection call outside a release build), never absent.
+        doc["release"] = dict(self.release) if self.release is not None else None
+        doc["licence"] = dict(self.licence) if self.licence is not None else None
         return doc
 
     def json_bytes(self) -> bytes:
         return canonical_json(self.as_json())
 
-    def bind(self, publication_id: str) -> PublishedRecord:
-        """Bind the namespace: fill ``publication_id``/``href``/``json_href``."""
+    def bind(
+        self,
+        publication_id: str,
+        *,
+        release_label: str | None = None,
+        as_of_world: str | None = None,
+    ) -> PublishedRecord:
+        """Bind the namespace: fill ``publication_id``/``href``/``json_href``
+        plus the §6.1 ``release``/``licence`` provenance blocks (P35.13,
+        SIG-REL-009). ``release_label`` is the release's ``sig-YYYY-MM-DD.N``
+        human label — ``None`` on a v1 build (declared-empty); ``as_of_world``
+        is the release's data-as-of instant, never derived here."""
         base = (
             f"/r/{publication_id}/c/{self.compartment}/entity/{self.entity_type}/{self.entity_id}"
         )
@@ -169,6 +192,12 @@ class PublishedRecord:
             publication_id=publication_id,
             href=f"{base}/",
             json_href=f"{base}.json",
+            release={
+                "label": release_label,
+                "publication_id": publication_id,
+                "as_of_world": as_of_world,
+            },
+            licence={"id": self.license, "compartment": self.compartment},
         )
 
 

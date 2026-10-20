@@ -31,13 +31,21 @@ def apply(registry: str | Path, staged: str | Path) -> dict[str, Any]:
     ``/entity/<t>/<id>/`` convenience stubs follow the registry's latest
     pointer (P34.41: a stub denies when the record it would point at is
     denied under the active release)."""
-    from exports.release import ReleaseRegistry, apply_withdrawals
+    from exports.release import ReleaseRegistry, apply_withdrawals, load_mutable_stamp
 
     reg = ReleaseRegistry(Path(registry))
     latest = reg.latest() or {}
-    out = apply_withdrawals(
-        Path(staged), reg.withdrawals(), active_pub=latest.get("publication_id")
+    latest_pub = latest.get("publication_id")
+    # P35.13: re-applied tombstones carry the CURRENT release's §6.1 stamp —
+    # the barrier rewrites mutable pages, and a mutable page always names
+    # the release it answers for (None when there is none or it predates
+    # sig.site-release/1).
+    stamp = (
+        load_mutable_stamp(Path(staged) / f"releases/{latest_pub}/release.json")
+        if latest_pub
+        else None
     )
+    out = apply_withdrawals(Path(staged), reg.withdrawals(), active_pub=latest_pub, stamp=stamp)
     # the internal route→disposition stub map is CLI-serialised as its
     # sorted route list (dispositions are not JSON values)
     stubs = out.get("entity_stubs") or {}
