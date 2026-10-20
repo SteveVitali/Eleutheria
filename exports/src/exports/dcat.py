@@ -21,10 +21,11 @@ Two documents come out of this module:
   publication and ``prov:wasGeneratedBy`` naming the export run's provenance
   node.
 
-Every IRI mints under the owned bases — ``https://surveillancegraph.org/ns/``
-for vocabulary anchors and ``https://surveillancegraph.org/prov/`` for
-lineage nodes (P35.38b / ADR-217). The retired ``sig-project.org`` host is
-never reintroduced.
+Every IRI mints under the owned bases — the ``ns`` base for vocabulary
+anchors and the ``prov`` base for lineage nodes, each imported from its one
+declared emitter (``exports.formats.SIG_NS`` / ``exports.provo.SIG``,
+P35.38b / ADR-217's one-declared-base-per-surface rule). The retired
+project host (ADR-217) is never reintroduced.
 """
 
 from __future__ import annotations
@@ -32,16 +33,14 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
+from .formats import SIG_NS  # the one declared /ns/ emitter (P35.38b)
 from .frictionless import license_url
 from .manifest import Artifact, canonical_json
+from .provo import SIG as SIG_PROV  # the one declared /prov/ emitter (P35.38b)
 
 #: The public origin every ``dcat:downloadURL`` resolves against (P27.6 /
 #: ADR-093 — the same canonical origin the web build stamps).
 CANONICAL_ORIGIN = "https://surveillancegraph.org"
-#: The owned vocabulary IRI base (P35.38b) — D-J3-7's linked metadata anchors.
-SIG_NS = "https://surveillancegraph.org/ns/"
-#: The provenance IRI base ``exports.provo`` mints capture/run nodes under.
-SIG_PROV = "https://surveillancegraph.org/prov/"
 
 #: The JSON-LD context the catalogs share (DCAT 3 + DCTerms + PROV + SPDX).
 CONTEXT: dict[str, Any] = {
