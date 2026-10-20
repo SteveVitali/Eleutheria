@@ -130,9 +130,9 @@ reason = "the research dossier's disclosed stand-in assertions carry https://fix
 
 [[compartment]]
 id = "sources-demo-entries"
-paths = ["web/dist/sources/**", "dist/sources/**", "sources/**"]
+paths = ["web/dist/sources/**", "dist/sources/**", "sources/**", "web/dist/artifact/web/sources.json", "web/dist/artifact/web/terms_disclosure.json", "dist/artifact/web/sources.json", "dist/artifact/web/terms_disclosure.json", "artifact/web/sources.json", "artifact/web/terms_disclosure.json"]
 allow = ["example-test-tld"]
-reason = "the /sources index carries visibly-labelled demonstration entries (demo-portal/demo-registry, example.invalid) for the terms-licence display — whether a demo entry belongs on the public registry is the owning row's call"
+reason = "the /sources index carries visibly-labelled demonstration entries (demo-portal/demo-registry, example.invalid) for the terms-licence display — whether a demo entry belongs on the public registry is the owning row's call; the /artifact/<path>.json mirror (P35.37) serves the same disclosed bytes under artifact/web/"
 debt = "D-P35.3-2"
 
 # ── Contact domains ───────────────────────────────────────────────────────────
