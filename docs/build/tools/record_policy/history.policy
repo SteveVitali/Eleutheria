@@ -602,3 +602,13 @@ seed-commit 5acac1d3
 # Scope: findings attributed to 739338d8 only; no other commit borrows
 # the exemption.
 seed-commit 739338d8
+# P35.36 (2026-10-19): 8e9bc541 repaired the run-ledger header `ci:`
+# field in place — `ci: pass — \`#331@21866dae\`` (em-dash before the
+# claim token) was an unparseable fragment flagged by
+# verify-recorded-ci on 3a093ed5 (run 39345390271 docs-red). The
+# repair rewrote the field to the canonical `ci: pass #331@21866dae
+# — …` form — payload bytes untouched, no appended entry can fix the
+# in-range field line (the P35.65 ab0f97ab/739338d8 pattern).
+# Scope: findings attributed to 8e9bc541 only; no other commit borrows
+# the exemption.
+seed-commit 8e9bc541
