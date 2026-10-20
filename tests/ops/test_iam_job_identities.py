@@ -33,6 +33,7 @@ from ops.iam_identities import (
     BASIC_ROLES,
     RUN_INVOKER_ROLE,
     Snapshot,
+    cadence_due_jobs,
     check_same_image,
     condition_expression,
     diff_snapshot,
@@ -113,8 +114,15 @@ def test_job_map_covers_every_live_job_exactly_once(decl, cadence, job_map) -> N
     # sig-probe + 3 manual ingest + sig-export + sig-materialize + 4 cruft
     # egress probes (P35.1b deletes them; until then they hold probe-class
     # grants).
+    # P35.1c (pending): the [dispatcher] job (sig-sched-due) is NOT yet in
+    # the map — the map is a live-coverage map and the dispatcher's create is
+    # a pending OM-20 leg; its class claim lands with the consolidation
+    # leg's own amendment (the live-side "claimed by no class" check
+    # enforces it once the job exists). expected_job_count stays the live
+    # pin (100 → 95 after the sweep −6 and the dispatcher +1).
     assert len(job_map) == 100
     assert decl.expected_job_count == 100
+    assert (cadence.get("dispatcher") or {}).get("job") not in job_map
     names = {s["job"] for s in cadence.get("sources", [])}
     names |= {b["job"] for b in cadence.get("batches", [])}
     names.add((cadence.get("probes") or {}).get("job"))
@@ -293,7 +301,9 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
     assert "objects/evidence/captures/" in flat
     # Five job-only secrets drop the default-compute accessor.
     assert flat.count("secrets remove-iam-policy-binding") == 5
-    # (3) 100 same-image job updates — identity only, never an image.
+    # (3) 100 same-image job updates — identity only, never an image. The
+    # P35.1c dispatcher job is not in the map yet (its create is the
+    # consolidation's own pending leg; the claim lands with that amendment).
     job_updates = [s for s in steps if s.phase == "jobs"]
     assert len(job_updates) == 100
     for s in job_updates:
@@ -302,15 +312,34 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
         assert "--image" not in " ".join(s.command)
         assert "run deploy" not in " ".join(s.command)
         assert s.rollback, s.note
-    # (4) the scheduler invoker move: run.invoker on each scheduled job.
-    sched = [s for s in steps if "run jobs add-iam-policy-binding" in " ".join(s.command)]
-    # 70 source + 8 camreg-batch + 1 probe triggers, +10 P35.6 r11-* batch
-    # triggers — 79 -> 89 scheduled-job invoker bindings. P35.11/ACQ-07 adds
-    # the two ADR-185 S8 tribal screened-lane triggers — 89 -> 91.
-    assert len(sched) == 91
-    for s in sched:
+    # (4) the invoker moves — P35.1c splits them by `targets`:
+    #   * `scheduled` (sig-scheduler@): the jobs that still carry a trigger
+    #     under the consolidated shape — the probe, the dispatcher itself,
+    #     and the kept-declared-pin batch-05 trigger: 3 bindings.
+    #   * `due` (sig-ingest-rt@): the non-paused retired rows' jobs the
+    #     dispatcher jobs:run's AS its runtime SA — the 89 retired minus the
+    #     12 declared-paused rows: 77 bindings. The member must be the
+    #     [dispatcher].sa_class identity.
+    sched = [
+        s
+        for s in steps
+        if "run jobs add-iam-policy-binding" in " ".join(s.command)
+        and "sig-scheduler@" in " ".join(s.command)
+    ]
+    due = [
+        s
+        for s in steps
+        if "run jobs add-iam-policy-binding" in " ".join(s.command)
+        and "sig-ingest-rt@" in " ".join(s.command)
+    ]
+    assert len(sched) == 3
+    assert len(due) == 77
+    for s in sched + due:
         assert "--role=roles/run.invoker" in " ".join(s.command)
-        assert "sig-scheduler@" in " ".join(s.command)
+    sched_jobs = {
+        " ".join(s.command).split("jobs add-iam-policy-binding ")[-1].split(" ")[0] for s in sched
+    }
+    assert sched_jobs == {"sig-probe", "sig-sched-due", "sig-ingest-camreg-batch-05"}
     # (5) sig-alerts: grant the declared callers (sig-probe-rt +
     # P34.44b's sig-quality-probe-rt) before the revokes.
     grants = [s for s in steps if "services add-iam-policy-binding" in " ".join(s.command)]
@@ -428,8 +457,26 @@ def _post_jobs_snapshot(decl, cadence, job_map) -> Snapshot:
             [s["job"] for s in cadence.get("sources", [])]
             + [b["job"] for b in cadence.get("batches", [])]
             + [(cadence.get("probes") or {}).get("job")]
+            + [(cadence.get("dispatcher") or {}).get("job")]
         )
         if job
+    }
+    # P35.1c: the due-invoker leg judges each due-target job's own recorded
+    # IAM policy — the dispatcher's runtime SA (ingest class) must hold
+    # run.invoker on every non-paused retired row's job.
+    job_policies = {
+        job: {
+            "bindings": [
+                {
+                    "role": RUN_INVOKER_ROLE,
+                    "members": [
+                        f"serviceAccount:{emails['sig-scheduler']}",
+                        f"serviceAccount:{emails['sig-ingest-rt']}",
+                    ],
+                }
+            ]
+        }
+        for job in cadence_due_jobs(cadence)
     }
     return Snapshot(
         service_accounts=set(emails.values()),
@@ -458,6 +505,7 @@ def _post_jobs_snapshot(decl, cadence, job_map) -> Snapshot:
             }
         },
         job_describes=job_describes,
+        job_policies=job_policies,
         scheduler_describes=sched,
         run_jobs=set(job_map),
         compute_sa=COMPUTE_SA,
@@ -791,11 +839,31 @@ def test_jobs_leg_offline_verify_from_state(tmp_path: Path, decl, cadence, job_m
         [s["job"] for s in cadence.get("sources", [])]
         + [b["job"] for b in cadence.get("batches", [])]
         + [(cadence.get("probes") or {}).get("job")]
+        + [(cadence.get("dispatcher") or {}).get("job")]
     )
     for job in scheduled:
         (state / f"sched-{job}.json").write_text(
             json.dumps(
                 {"httpTarget": {"oauthToken": {"serviceAccountEmail": emails["sig-scheduler"]}}}
+            )
+        )
+    # P35.1c: the due-invoker leg judges each due-target job's own policy —
+    # the dispatcher's runtime SA holds run.invoker (sig-scheduler's binding
+    # stays for the per-source rollback, per the [[job_invoker]] note).
+    for job in cadence_due_jobs(cadence):
+        (state / f"job-{job}-iam.json").write_text(
+            json.dumps(
+                {
+                    "bindings": [
+                        {
+                            "role": RUN_INVOKER_ROLE,
+                            "members": [
+                                f"serviceAccount:{emails['sig-scheduler']}",
+                                f"serviceAccount:{emails['sig-ingest-rt']}",
+                            ],
+                        }
+                    ]
+                }
             )
         )
     (state / "service-sig-alerts-iam.json").write_text(

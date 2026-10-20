@@ -885,6 +885,10 @@ cadence = "monthly"
 cron = "17 7 18 * *"
 job = "sig-ingest-r11-ate-01"
 scheduler = "sig-sched-r11-ate-01"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["camreg_dc_ddot_ate", "camreg_montgomery_md_ate", "camreg_nyc_mta_bus_lane_ate", "camreg_tacoma_wa_ate", "camreg_howard_md_school_zone_ate", "camreg_lakeland_fl_red_light", "camreg_suffolk_ny_red_light", "camreg_medford_or_ate", "camreg_ctdot_speed_safety"]
 note = "Round-11 batch r11-ate-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.6 (ACQ-10) review: the batch is the ticket's nine GATED sources \u2014 camreg_dc_ddot_ate is the licence-mismatch fallback the plan names for the DC ASC pair (CC-BY-4.0 vs dot_511_dc's CC0-1.0); camreg_montgomery_md_ate consolidates the two generated Montgomery rows into ONE member carrying all three targets in the same run (I8 \u00a75.3 R1). The DE red-light target consolidated under dot_511_de rides that source's r11-layers-01 seat, and the two Chicago aggregate targets ride camreg_chicago_il's existing camreg-batch-02 seat (a source holds one seat). The nine rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
@@ -895,6 +899,10 @@ cadence = "monthly"
 cron = "27 7 21 * *"
 job = "sig-ingest-r11-disclosures-01"
 scheduler = "sig-sched-r11-disclosures-01"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["statrep_mn_bca", "statrep_va_rga", "statrep_wa_ago_alpr_registry", "statrep_va_vsp_alpr", "statrep_va_vscc_alpr", "statrep_ne_crime_commission_alpr", "statrep_vt_dps_alpr", "statrep_md_dls_mandated_reports", "statrep_il_isp_alpr", "statrep_austin_tx_auditor"]
 note = "Round-11 batch r11-disclosures-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.8 (ACQ-12) review: the ten member rows renamed to the I8 \u00a75.5 design ids; the 21st-of-month window sits after the 15th release cut and before disclosures-02 (I8 \u00a77.3). The rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
@@ -905,6 +913,10 @@ cadence = "monthly"
 cron = "27 7 22 * *"
 job = "sig-ingest-r11-disclosures-02"
 scheduler = "sig-sched-r11-disclosures-02"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["statrep_me_dps_uav", "statrep_hi_judiciary_interception", "statrep_wa_watech_frt", "statrep_co_frt_accountability", "statrep_de_diac", "statrep_wa_wtsc_ate", "statrep_detroit_mi_frt_weekly", "statrep_us_dhs_privacy_compliance", "statrep_fl_flhsmv_red_light", "statrep_pa_wzssc", "statrep_md_msp_css", "statrep_mn_court_interception", "legis_us_dhs_sorn_plate_data", "statrep_seattle_wa_sdot_ate", "statrep_il_icjia_drone", "statrep_seattle_wa_oig"]
 note = "Round-11 batch r11-disclosures-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.9a+P36.9b review: the sixteen members carry the I8 \u00a75.6 design ids; consolidations under plan R1 \u2014 statrep_co_arvada_facial_recognition + statrep_mn_unmanned_aerial_vehicle absorbed into the statrep_co_frt_accountability / statrep_mn_bca targets (the MN UAV family rides statrep_mn_bca's disclosures-01 seat; a source holds one batch seat), statrep_wa_automated_traffic_safety absorbed into statrep_wa_wtsc_ate (the WTSC index enumerates the municipal reports), and the four component DHS seats (component_privacy / obim_pia / cbp_border / cbp_pia) absorbed into statrep_us_dhs_privacy_compliance's five targets (16 seats, 592\u2192587 registered). All stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
@@ -915,6 +927,10 @@ cadence = "monthly"
 cron = "27 7 23 * *"
 job = "sig-ingest-r11-documents-01"
 scheduler = "sig-sched-r11-documents-01"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["ccops_columbia_mo", "agenda_haskell_ar_council", "ccops_st_louis_mo", "ccops_dayton_oh", "grant_tx_txdmv_mvcpa", "grant_ca_bscc_ort", "grant_fl_senate_lfir", "ccops_anchorage_ak", "policy_orange_county_ca_sheriff", "policy_pasadena_ca_pd", "grant_al_adeca_psn", "grant_nj_oag_bwc", "agenda_des_moines_ia_council", "agenda_jasper_sc_council", "procportal_davie_fl_purchasing", "procportal_forsyth_nc_purchasing", "legis_ca_gov_code_53166", "ccops_austin_tx", "legis_gu_governor", "grant_ok_dac_jag_lle", "policy_st_cloud_mn_isd742", "policy_onslow_nc_schools", "policy_pflugerville_tx_isd", "policy_whitesboro_ny_csd", "policy_bangor_me_pd", "policy_houston_tx_hpd", "policy_albuquerque_nm_apd", "policy_little_rock_ar_pd"]
 note = "Round-11 batch r11-documents-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.10 (ACQ-14) review: the eleven renamed members carry their I8 \u00a75.7 design ids (five ccops_* CCOPS rows, four district self-disclosure pages and the seven agency-policy seats \u2014 legis_ca_gov_code_53166 included); P36.11 (ACQ-15) review: the twelve document members carry their I8 \u00a75.8 design ids (six grant records, three council/agenda documents, two procurement portal notices, one Guam legislation page \u2014 agenda_des_moines_ia_council, agenda_haskell_ar_council, agenda_jasper_sc_council, grant_al_adeca_psn, grant_ca_bscc_ort, grant_fl_senate_lfir, grant_nj_oag_bwc, grant_ok_dac_jag_lle, grant_tx_txdmv_mvcpa, legis_gu_governor, procportal_davie_fl_purchasing, procportal_forsyth_nc_purchasing). All stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
@@ -925,6 +941,10 @@ cadence = "monthly"
 cron = "17 7 16 * *"
 job = "sig-ingest-r11-layers-01"
 scheduler = "sig-sched-r11-layers-01"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["dot_511_de", "dot_511_vt", "dot_511_wv", "dot_511_mi", "camreg_ne_lincoln_traffic_cameras", "camreg_omaha_ne_parks_cameras", "camreg_hyattsville_md_cctv_camera_2024", "dot_511_nc"]
 note = "Round-11 batch r11-layers-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.4 (ACQ-08) review: the batch is the eight GATED members of the ticket\u2019s ten-layer scope \u2014 camreg_denver_co and camreg_seattle_wa are already permitted (P26.16, GL-GATE-07) and ride their existing camreg-batch-0x rows; a source may hold only one batch seat, so the two new targets on those sources inherit their existing cadence. The eight rows stay gated until the operator\u2019s OP-26 Wave-B flip under ING-GO-B."
@@ -935,6 +955,10 @@ cadence = "monthly"
 cron = "17 7 17 * *"
 job = "sig-ingest-r11-layers-02"
 scheduler = "sig-sched-r11-layers-02"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["camreg_fdot_flock", "camreg_pueblo_co_flock", "camreg_rocky_mount_nc_lpr_cameras", "camreg_shelbyville_tn_flock_cameras", "camreg_temecula_ca_flock_wfl1", "camreg_marble_falls_tx_flock_locations", "camreg_va_prince_william_county", "camreg_milford_ct_flocklprcam", "camreg_elgin_il_lpr_cameras", "camreg_south_fulton_ga_lpr_cameras", "camreg_va_pittsylvania_county_stationary", "camreg_alabaster_al_lpr_cameras", "camreg_thomasville_ga_flock_location", "camreg_leon_county_fl_overwatch_viewer", "camreg_ga_peachtree_corners_flock_camera"]
 note = "Round-11 batch r11-layers-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.5 (ACQ-09) review: the batch is the ticket's fifteen GATED sources \u2014 the ACQ-01-generated pair camreg_fl_d3_flock_camera + camreg_fl_flock_removal_status consolidates into ONE member camreg_fdot_flock carrying both targets in the same run (I8 \u00a75.2 \u2014 a removal fact is never asserted against a stale inventory). Monthly cadence even for the 'once' layers: the 2026 removal wave (FDOT's order, I9a NEW-2) makes currency the value. The fifteen rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
@@ -945,6 +969,10 @@ cadence = "monthly"
 cron = "17 7 19 * *"
 job = "sig-ingest-r11-procurement-01"
 scheduler = "sig-sched-r11-procurement-01"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["procportal_cook_il_awards", "procportal_wa_des_contract_sales", "camreg_dc_ovsjg_camera_rebate"]
 note = "Round-11 batch r11-procurement-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.7 (ACQ-11) review: the three members are the ticket's final source ids \u2014 the ACQ-01 generated rows (procportal_il_cook_county_procurement / procportal_wa_washington_des_statewide / camreg_dc_private_security_camera) are replaced by their I8-design ids; all three stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
@@ -955,6 +983,10 @@ cadence = "monthly"
 cron = "37 7 25 * *"
 job = "sig-ingest-r11-tier2-01"
 scheduler = "sig-sched-r11-tier2-01"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["camreg_us_municipal_contract_expenditure", "statrep_us_wiretap_summary_tables", "procportal_tx_texas_dir_cooperative", "legis_us_federal_register_api", "camreg_jeffersonville_in_flock", "camreg_ca_monterey_park_flock_camera", "statrep_us_2024_federal_agency", "camreg_az_mesa_city_of_expenditures", "camreg_us_socrata_hosted_vendor", "camreg_nj_new_jersey_yourmoney", "statrep_us_ice_287_participating", "dot_511_nm", "camreg_santa_fe_nm_park_cameras", "camreg_detroit_mi_project_green_light", "procportal_pr_consulta_del_registro", "camreg_de_delaware_checkbook_expenditure", "camreg_fl_broward_county_us_palm_beach", "camreg_ga_savannah_flock_camera", "camreg_la_east_baton_rouge_parish_flock", "camreg_ga_flock_cameras_asof", "camreg_gastonia_nc_flock_condor_cameras", "camreg_wa_washington_state_open", "camreg_us_nces_school_survey_on_crime", "agenda_nd_fargo_city_commission_agendas", "agenda_jersey_city_nj_digital_agenda", "agenda_durham_nc_agenda_center", "agenda_hialeah_fl_agenda_center", "agenda_frisco_tx_onbase_agenda_online", "agenda_tampa_fl_onbase_agenda_online", "procportal_fl_florida_buy_cooperative", "camreg_ma_massachusetts_capital", "ccops_ok_tulsa_flock_policies", "ccops_san_diego_ca", "ccops_ca_san_diego_sunshine_act_goods", "camreg_ga_brookhaven_flock_camera", "camreg_mi_detroit_dpd_shotspotter", "camreg_nv_las_vegas_us_clark_county", "ccops_gb_eng_barnet_traffic_cctv", "procportal_wa_wsipc_rfp_24", "agenda_savannah_ga_2023_05_25", "procportal_ny_northeastern_regional", "policy_ok_oklahoma_dac_uved", "statrep_vt_vermont_law_enforcement", "statrep_us_dhs_ai_use", "procportal_us_naspo_valuepoint_portfolio", "ccops_ok_oklahoma_city_okc_flock_council", "procportal_ok_oklahoma_omes_statewide", "statrep_ca_california_auditor_alpr"]
 note = "Round-11 Wave-D batch r11-tier2-01 (I8 \u00a77.1 days 25\u201327 07:37Z; members assigned deterministically by ACQ-01 \u2014 ACQ-27 may re-balance)."
@@ -965,6 +997,10 @@ cadence = "monthly"
 cron = "37 7 26 * *"
 job = "sig-ingest-r11-tier2-02"
 scheduler = "sig-sched-r11-tier2-02"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["camreg_us_agency_published_flock", "statrep_tx_south_padre_island_faa", "camreg_us_ate_camera_location_and_per", "grant_il_illinois_gata_csfa", "camreg_us_body_worn_camera", "legis_pr_sistema_nico_de", "camreg_us_agency_drone_flight", "dot_511_nv", "dot_511_id", "camreg_gb_eng_north_cctv_cameras", "camreg_au_qld_towns_cctv_camera_register", "camreg_au_tas_hobar_security_camera", "camreg_au_wa_perth_security_cameras", "camreg_eu_eea_data_europa_search_api", "agenda_us_agency_fusus_real", "legis_vi_legislature_virgin_islands", "camreg_bloomington_il_drone_flights", "camreg_peoria_il_drone_usage", "camreg_medford_or_drone_deployments_fs", "grant_oh_ohio_criminal_justice", "grant_ma_massachusetts_law_enforcement", "ccops_mi_wayne_county_commission", "legis_pr_rc0787_resoluci_de", "legis_pr_rs0604_resoluci_del", "legis_pr_rc0740_investigaci_sobre", "legis_pr_rcs0198_resoluci_conjunta", "legis_pr_pc0560_plan_de", "legis_pr_pc0489_ley_del", "ccops_iso_au_privacy_commissioner", "statrep_gb_enforcement_action", "statrep_fr_cnil_utilisation_de", "camreg_oakland_ca_shotspotter_2013_2015", "ccops_hi_honolulu_police_department", "statrep_ca_special_parliament_use", "dot_511_gb", "camreg_gb_eng_leice_cctv_cameras", "camreg_gb_eng_mansf_cctv_cameras", "camreg_gb_eng_traff_trafford_cctv", "camreg_gb_eng_barnet_cctv_camera", "camreg_gb_eng_barnet_cctv_traffic", "camreg_gb_eng_brist_cctv_cameras", "camreg_gb_sct_edinburgh_public_cctv", "camreg_au_ckan_package_search", "camreg_au_vic_ballarat_cctv_cameras", "camreg_au_vic_geelong_closed_circuit", "camreg_au_nsw_sydney_street_safety", "camreg_au_tas_emergency_closed_circuit", "camreg_ie_d_dublin_traffic_poles_with"]
 note = "Round-11 Wave-D batch r11-tier2-02 (I8 \u00a77.1 days 25\u201327 07:37Z; members assigned deterministically by ACQ-01 \u2014 ACQ-27 may re-balance)."
@@ -975,6 +1011,10 @@ cadence = "monthly"
 cron = "37 7 27 * *"
 job = "sig-ingest-r11-tier2-03"
 scheduler = "sig-sched-r11-tier2-03"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "6h"
 members = ["ccops_it_tn_trento_provvedimento_dell_11", "camreg_es_md_madrid_c_maras_de", "camreg_it_me_messina_videosorveglianza", "camreg_fr_92_grand_paris_seine_ouest_vid", "camreg_pt_11_lisboa_sistema_de", "camreg_ua_18_korosten", "policy_us_private_camera_registry", "statrep_new_york_ny_nyc_doi_oig", "camreg_la_new_orleans_eye_on", "camreg_il_chicago_violence_reduction", "statrep_us_upturn_mass_extraction_2020", "statrep_us_ice_287_monthly", "agenda_az_maricopa_county_board_of", "agenda_tx_dallas_county_commissioners", "agenda_bexar_county_tx_agenda_center", "statrep_gb_sct_joint_assurance_review", "camreg_si_048_ko_evje_videonadzor_na", "ccops_oh_cincinnati_police_department", "ccops_ca_san_diego_privacy_advisory", "ccops_ny_new_york_nyc_comptroller", "policy_anaheim_ca_pd_policy_manual", "camreg_gb_eng_runny_cctv_cameras", "camreg_gb_eng_south_skdc_cctv", "camreg_gb_sct_clackmannanshire_cctv", "camreg_gb_eng_ipswich_cctv_camera", "statrep_gb_eng_seven_cctv_june_2026", "ccops_si_085_novo_mesto_evidenca_o", "policy_lafayette_in_camera_registration", "policy_zionsville_in_camera_registry", "ccops_ri_narragansett_police_camera", "ccops_ca_calistoga_police_department", "ccops_ca_pinole_police_department", "ccops_mn_dayton_police_department", "ccops_nc_charlotte_mecklenburg_police", "grant_us_doj_cops_technology", "grant_ok_safe_oklahoma_grant", "policy_chicago_il_oemc_link_your", "statrep_tx_ca_nm_ri_fl_il_eff_red_flag", "ccops_nc_elizabeth_city_police", "ccops_il_chicago_oig_shotspotter", "ccops_san_francisco_bay_ca", "statrep_gb_uk_algorithmic_transparency", "ccops_mo_st_louis_fy21_spi_shotspotter", "legis_ie_rs_general_scheme", "ccops_san_jose_ca", "ccops_santa_clara_county_ca", "policy_maricopa_county_az_mcso_policies", "policy_norman_ok_alpr_policy_amendment"]
 note = "Round-11 Wave-D batch r11-tier2-03 (I8 \u00a77.1 days 25\u201327 07:37Z; members assigned deterministically by ACQ-01 \u2014 ACQ-27 may re-balance)."
@@ -1068,6 +1108,10 @@ cadence = "monthly"              # the upstream 'most recent weekly update' ride
 cron = "41 7 24 * *"             # day 24, 07:41 UTC — first fire after Wave A
 job = "sig-ingest-camreg-tribal-all-leaders-directory"
 scheduler = "sig-sched-camreg-tribal-all-leaders-directory"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "30m"
 note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): dossier_documents clause_fields over the BIA layer's metadata page only; the 601-row arcgis_query is a recorded non-target outcome ([[enumerated]] 'screened_lane')."
 
@@ -1077,6 +1121,10 @@ cadence = "monthly"              # irregular upstream — on-change floor
 cron = "43 7 24 * *"             # day 24, 07:43 UTC — first fire after Wave A
 job = "sig-ingest-legis-tribal-tohono-oodham-notice"
 scheduler = "sig-sched-legis-tribal-tohono-oodham-notice"
+state = "paused"              # R6 declared-inert: the row is skipped by the
+                                    # due dispatcher until its wave resume flips this
+                                    # to "enabled" (P35.1c — the trigger-shape change
+                                    # carries the pause on the row, not the trigger)
 task_timeout = "30m"
 note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): the single Tohono O'odham hearing-notice PDF; institutional facts only — the named chairperson is never emitted (officer-naming gate)."
 
@@ -1239,6 +1287,505 @@ job = "sig-probe"
 # array is what scheduled-ops.sh embeds and what live-diff compares.
 args = '["-c","exec sig-ops live-diff --live --alert"]'
 note = "runs `sig-ops live-diff` (repo declaration vs live) daily; drift fires the recorded-alert seam (P34.4/ADR-077)"
+
+# --- P35.1c (G1-TRIM B-13=a, ticket 291a): the hourly due dispatcher --------
+#
+# The single hourly trigger `sig-sched-due` fires the `sig-sched-due` Cloud Run
+# job, which reads THIS file (the published declaration bundle in-image,
+# SIG_OPS_DECLARED_GCS — a cadence change takes effect without an image roll,
+# SIG-OPS-005), computes every `[[sources]]`/`[[batches]]` row whose cron last
+# fired inside the window since the previous dispatch, and enqueues each due
+# job (the Cloud Run `jobs:run` endpoint — the same call the retired per-row
+# triggers made). Every evaluation appends a `sig.dispatch-due/1` run row under
+# ops/runs/_dispatcher/; a run that evaluated no rows fails (SIG-ENG-042).
+#
+# Consolidation changes the trigger SHAPE only: the per-row cadence records
+# above stay the scheduler of record's data, `state = "paused"` is the
+# row-level pause lever the retired triggers' pause carried (R6 rows stay
+# inert until their wave's resume leg flips the declaration), and a row's
+# `scheduler` name now names its retired trigger on the retire list below.
+[dispatcher]
+job = "sig-sched-due"
+scheduler = "sig-sched-due"
+cron = "13 * * * *"            # hourly at :13 UTC — every declared row fires at
+                               # :mm; the :13 dispatch covers the fire window
+                               # since the previous dispatch (minute precision)
+sa_class = "ingest"            # the iam_identities.toml class the job runs as
+task_timeout = "30m"           # evaluate + enqueue is a bounded sweep, never a run
+note = "one hourly trigger replaces the per-source trigger set; the job enqueues each due row's Cloud Run job and appends a sig.dispatch-due/1 run row"
+
+# The per-source trigger retire list (the consolidation's name-checked set):
+# every `[[sources]]`/`[[batches]]` scheduler name appears exactly once with
+# disposition retired | kept-declared-pin — a trigger not listed here is never
+# touched. `kept-manual` rows name the [[manual_jobs]] members so the list is
+# complete: they carry no trigger by design and are never dispatcher-dispatched.
+# live-diff reports a retired name still live as "declared retired but still
+# live" until the consolidation leg's recorded delete lands.
+
+[[retire_triggers]]
+name = "sig-sched-osm-overpass"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-decp-fr"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-raa-prefectures"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-muckrock"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-eff-atlas"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-usaspending"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-eff-data-driven"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-osm-element-history"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-madada"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ccops-seattle"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ccops-nyc-post"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ccops-sf"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-pathways-rtcc"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-pathways-fr-css"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-pathways-drones"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-carnegie-ai-gsi"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-frwm"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-aspi"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ok-statute"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-okcpd-policy"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-okc-procurement"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-legistar"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-primegov"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-civicclerk"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-escribe"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-eyes-on-flock"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-fbi-cde"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-sam-gov"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-openstates"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-congress-gov"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-ky"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-il"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-ut"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-or"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-ia"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-wa"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-dc"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-mo"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-austin-tx"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-nola-la"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batonrouge-la"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-winnipeg-mb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-act-au"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-siouxfalls-sd"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-baltimore-md"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-ottawa-on"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-sheffield-gb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-washington-dc"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-nottingham-gb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-york-gb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-glasgow-gb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-northayrshire-gb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-lambeth-gb"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-peel-on"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-rochester-ny"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-goldcoast-au"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-puertogaitan-co"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-procportal-austin-tx"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-procportal-sf-ca"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-procportal-kcmo-mo"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-procportal-nyc-ny"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ted-eu"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-gao-surveillance-reports"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dhs-oig-reports"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dhs-fusion-center-assessments"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-uk-surveillance-camera-commissioner"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ccops-oakland"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ccops-cambridge"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-ccops-somerville"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-fema-hsgp-allocations"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-tribal-all-leaders-directory"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-legis-tribal-tohono-oodham-notice"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-02"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-03"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-04"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-05"
+disposition = "kept-declared-pin"
+reason = "D-P31.4-1: the feff986c [[pins]] hold's trigger stays live until the pin's owning leg resolves it — never consolidated"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-06"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-07"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-batch-08"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-ate-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-disclosures-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-disclosures-02"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-documents-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-layers-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-layers-02"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-procurement-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-tier2-01"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-tier2-02"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-r11-tier2-03"
+disposition = "retired"
+reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-export"
+disposition = "kept-manual"
+reason = "[[manual_jobs]] member — never triggered by design; named here so the list is complete"
+
+[[retire_triggers]]
+name = "sig-materialize"
+disposition = "kept-manual"
+reason = "[[manual_jobs]] member — never triggered by design; named here so the list is complete"
+
+[[retire_triggers]]
+name = "sig-replay-ingest"
+disposition = "kept-manual"
+reason = "[[manual_jobs]] member — never triggered by design; named here so the list is complete"
 
 # Declared bucket posture (the live-diff bucket leg): the four well-known
 # buckets keyed by suffix on {project}. `public` asserts the allUsers

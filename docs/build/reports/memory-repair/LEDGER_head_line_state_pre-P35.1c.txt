@@ -1,0 +1,1 @@
+> - **State.** Round 11 in progress (GATE-B, C10 2026-10-01); prior State/head lines archived byte-for-byte (comment above). PHASE LOG ends with P35.1b (row 291 — fleet-hygiene sweep machinery committed; the mutating sweep QUEUED in RETURN PASS on the closed window, exit 42; P36.12's eleven legs + P35.1a1's seed leg still QUEUED); next → P35.1c (291a).

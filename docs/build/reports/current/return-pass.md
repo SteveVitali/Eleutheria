@@ -45,5 +45,6 @@
 | P35.15b | the queued hosted write: L1 ~200k-subject INSERT-only `technology` backfill on `sig-pg` (dry-run → `--apply` → read-back + `+0` re-run); claims link subjects' E… | `implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` · landed row 275 (PR #277) |
 | P36.12 | Wave-B sequence L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported | … |
 | P35.1b | the queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + verified AR-2 backup → the four cron reconciles (eyes_on_flock/openstate… | `implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — sweep queued on the closed 2026-10-16T01:25Z … |
+| P35.1c | the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy the `sig-sched-due` job + its ONE hourly tr… | `implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — consolidation queued: GATE-G4's … |
 
 ← back: CURRENT.md

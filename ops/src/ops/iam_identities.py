@@ -149,13 +149,14 @@ class JobClass:
     sources: bool = False  # claims every [[sources]] job in ops/cadence.toml
     batches: bool = False  # claims every [[batches]] job
     probes: bool = False  # claims [probes].job
+    dispatcher: bool = False  # claims [dispatcher].job (P35.1c)
     jobs: tuple[str, ...] = ()  # explicit job names (manual + cruft jobs)
 
 
 @dataclass(frozen=True)
 class JobInvoker:
     member: str  # a declared SA id (the scheduler invoker identity)
-    targets: str  # "scheduled" — every cadence-scheduled job
+    targets: str  # "scheduled" — trigger-carrying jobs | "due" — dispatcher-dispatched jobs
 
 
 @dataclass(frozen=True)
@@ -257,7 +258,12 @@ def load_cadence(path: str | Path | None = None) -> dict[str, Any]:
 
 def cadence_job_names(cadence: dict[str, Any]) -> dict[str, list[str]]:
     """The jobs ops/cadence.toml owns, by kind."""
-    out: dict[str, list[str]] = {"sources": [], "batches": [], "probes": []}
+    out: dict[str, list[str]] = {
+        "sources": [],
+        "batches": [],
+        "probes": [],
+        "dispatcher": [],
+    }
     for s in cadence.get("sources") or []:
         out["sources"].append(_check_name(s.get("job"), "cadence sources"))
     for b in cadence.get("batches") or []:
@@ -265,13 +271,52 @@ def cadence_job_names(cadence: dict[str, Any]) -> dict[str, list[str]]:
     probe_job = (cadence.get("probes") or {}).get("job")
     if probe_job:
         out["probes"].append(_check_name(probe_job, "cadence probes"))
+    disp_job = (cadence.get("dispatcher") or {}).get("job")
+    if disp_job:
+        out["dispatcher"].append(_check_name(disp_job, "cadence dispatcher"))
     return out
 
 
 def cadence_scheduled_jobs(cadence: dict[str, Any]) -> list[str]:
-    """Every job that carries a Cloud Scheduler trigger in cadence.toml."""
+    """Every job that carries a Cloud Scheduler trigger in cadence.toml.
+
+    P35.1c (G1-TRIM B-13=a): under the consolidated shape — a ``[dispatcher]``
+    table is declared — the per-row triggers named ``retired`` on
+    ``[[retire_triggers]]`` carry no trigger, so the scheduled set is the
+    probe, the dispatcher job, and the rows whose names are declared
+    ``kept-declared-pin`` (today batch-05's D-P31.4-1 pin). Without a
+    dispatcher the shape is per-source: every row's trigger lives.
+    """
     names = cadence_job_names(cadence)
-    return names["sources"] + names["batches"] + names["probes"]
+    disp = cadence.get("dispatcher") or {}
+    if not disp:
+        return names["sources"] + names["batches"] + names["probes"]
+    retire = {r.get("name"): r.get("disposition", "") for r in cadence.get("retire_triggers") or []}
+    kept: list[str] = []
+    for row in (cadence.get("sources") or []) + (cadence.get("batches") or []):
+        if retire.get(row.get("scheduler"), "") != "retired":
+            kept.append(_check_name(row.get("job"), "cadence kept job"))
+    return kept + names["probes"] + names["dispatcher"]
+
+
+def cadence_due_jobs(cadence: dict[str, Any]) -> list[str]:
+    """The jobs the hourly due dispatcher invokes via ``jobs:run`` (P35.1c):
+    every non-paused ``[[sources]]``/``[[batches]]`` row whose scheduler is
+    declared ``retired`` on ``[[retire_triggers]]``. Paused rows ride the
+    due-set's skip, kept-declared-pin rows keep their own trigger, and
+    kept-manual names are never dispatched — none is a due target.
+    """
+    if not (cadence.get("dispatcher") or {}):
+        return []
+    retire = {r.get("name"): r.get("disposition", "") for r in cadence.get("retire_triggers") or []}
+    out: list[str] = []
+    for row in (cadence.get("sources") or []) + (cadence.get("batches") or []):
+        if row.get("state", "enabled") == "paused":
+            continue
+        if retire.get(row.get("scheduler"), "") != "retired":
+            continue
+        out.append(_check_name(row.get("job"), "cadence due job"))
+    return out
 
 
 def cadence_scheduler_triggers(cadence: dict[str, Any]) -> dict[str, str]:
@@ -304,6 +349,8 @@ def resolve_job_map(decl: Declaration, cadence: dict[str, Any]) -> dict[str, str
             claimed += names["batches"]
         if cls.probes:
             claimed += names["probes"]
+        if cls.dispatcher:
+            claimed += names["dispatcher"]
         claimed += list(cls.jobs)
         for job in claimed:
             if job in job_map:
@@ -312,7 +359,20 @@ def resolve_job_map(decl: Declaration, cadence: dict[str, Any]) -> dict[str, str
                     f"and class {cls.name!r} — every job resolves exactly one class"
                 )
             job_map[job] = cls.name
-    unclaimed = [j for kind in names.values() for j in kind if j not in job_map]
+    # P35.1c: the [dispatcher] job is exempt from the declared-side unclaimed
+    # requirement while its create is a pending OM-20 leg — the map is a
+    # live-coverage map and the dispatcher job does not exist yet. Its class
+    # claim (a class's `dispatcher = true`) lands with the consolidation
+    # leg's own amendment, the same convention as the [[retired_jobs]] names
+    # above; once the job IS live the live-side "claimed by no class" check
+    # enforces the claim, so a forgotten amendment can never slip through.
+    unclaimed = [
+        j
+        for kind in names.values()
+        if kind is not names["dispatcher"]
+        for j in kind
+        if j not in job_map
+    ]
     if unclaimed:
         _fail(f"cadence job(s) claimed by no class: {sorted(unclaimed)}")
     return job_map
@@ -484,8 +544,10 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
             )
         class_bound_sa.add(sa)
         jobs = tuple(_check_name(j, f"job_class {name} jobs") for j in c.get("jobs") or [])
-        if not (c.get("sources") or c.get("batches") or c.get("probes") or jobs):
-            _fail(f"job_class {name}: claims no jobs — sources/batches/probes/jobs")
+        if not (
+            c.get("sources") or c.get("batches") or c.get("probes") or c.get("dispatcher") or jobs
+        ):
+            _fail(f"job_class {name}: claims no jobs — sources/batches/probes/dispatcher/jobs")
         job_classes.append(
             JobClass(
                 name=name,
@@ -493,6 +555,7 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
                 sources=bool(c.get("sources")),
                 batches=bool(c.get("batches")),
                 probes=bool(c.get("probes")),
+                dispatcher=bool(c.get("dispatcher")),
                 jobs=jobs,
             )
         )
@@ -509,14 +572,22 @@ def load_declaration(path: str | Path | None = None) -> Declaration:
         member = v.get("member")
         if member not in seen_sa:
             _fail(f"job_invoker {i}: {member!r} is not a declared service account")
-        if member in bound_sa or member in class_bound_sa:
+        targets = v.get("targets")
+        if targets not in ("scheduled", "due"):
+            _fail(f"job_invoker {i}: targets {targets!r} must be 'scheduled' or 'due'")
+        if member in bound_sa:
+            _fail(
+                f"job_invoker {i}: {member!r} is a service identity — "
+                "service and job invoker grants never mix (AR-8)"
+            )
+        if member in class_bound_sa and targets != "due":
             _fail(
                 f"job_invoker {i}: {member!r} is a workload identity — "
-                "the invoker SA is never a runtime identity (P25.7)"
+                "the scheduled-trigger invoker SA is never a runtime identity "
+                "(P25.7). Only the 'due' target may be bound to a job-class "
+                "SA: the P35.1c dispatcher invokes each due job AS its runtime "
+                "identity — the jobs:run signer is the dispatcher's own SA."
             )
-        targets = v.get("targets")
-        if targets != "scheduled":
-            _fail(f"job_invoker {i}: targets {targets!r} must be 'scheduled'")
         job_invokers.append(JobInvoker(member=member, targets=targets))
 
     oneoffs: list[Oneoff] = []
@@ -1013,6 +1084,53 @@ def plan_steps(
                             ],
                         )
                     )
+            elif v.targets == "due":
+                # P35.1c: the dispatcher's runtime SA (the sa_class identity)
+                # invokes each due-target job via jobs:run — the same call the
+                # retired triggers signed as sig-scheduler. The member must be
+                # the declared dispatcher class's SA — never another identity.
+                if cadence is None:
+                    _fail("the due-dispatcher invoker move needs the cadence file")
+                disp = cadence.get("dispatcher") or {}
+                want_member = class_sa.get(str(disp.get("sa_class", "")), "")
+                if want_member and v.member != want_member:
+                    _fail(
+                        f"job_invoker targets=due: member {v.member!r} is not "
+                        f"the [dispatcher].sa_class identity ({want_member!r}) — "
+                        "the due invoker is the dispatcher's runtime SA"
+                    )
+                for job in sorted(set(cadence_due_jobs(cadence))):
+                    steps.append(
+                        Step(
+                            phase="invokers",
+                            note=(
+                                f"{job}: {RUN_INVOKER_ROLE} to {v.member} "
+                                "(the dispatcher's SA — it jobs:run each due job)"
+                            ),
+                            command=[
+                                "gcloud",
+                                "run",
+                                "jobs",
+                                "add-iam-policy-binding",
+                                job,
+                                f"--member=serviceAccount:{sa_email(project, v.member)}",
+                                f"--role={RUN_INVOKER_ROLE}",
+                                f"--region={region}",
+                                f"--project={project}",
+                            ],
+                            rollback=[
+                                "gcloud",
+                                "run",
+                                "jobs",
+                                "remove-iam-policy-binding",
+                                job,
+                                f"--member=serviceAccount:{sa_email(project, v.member)}",
+                                f"--role={RUN_INVOKER_ROLE}",
+                                f"--region={region}",
+                                f"--project={project}",
+                            ],
+                        )
+                    )
 
     # Service invoker rules: the leg-matched rule per service (`all` judges
     # the last-declared jobs posture).
@@ -1114,6 +1232,7 @@ class Snapshot:
     secret_policies: dict[str, dict[str, Any]]  # secret name → policy
     service_describes: dict[str, dict[str, Any]]  # service name → describe JSON
     service_policies: dict[str, dict[str, Any]]  # service name → IAM policy
+    job_policies: dict[str, dict[str, Any]]  # job → IAM policy (P35.1c: the due-invoker leg judges)
     job_describes: dict[str, dict[str, Any]]  # job name → describe JSON
     scheduler_describes: dict[str, dict[str, Any]]  # job name → trigger describe
     run_jobs: set[str] | None  # every live Cloud Run job name (`run jobs list`)
@@ -1148,6 +1267,7 @@ def load_snapshot(state_dir: str | Path) -> Snapshot:
     secrets: dict[str, dict[str, Any]] = {}
     describes: dict[str, dict[str, Any]] = {}
     policies: dict[str, dict[str, Any]] = {}
+    job_policies: dict[str, dict[str, Any]] = {}
     jobs: dict[str, dict[str, Any]] = {}
     schedulers: dict[str, dict[str, Any]] = {}
     run_jobs: set[str] | None = None
@@ -1161,7 +1281,10 @@ def load_snapshot(state_dir: str | Path) -> Snapshot:
         elif f.name == "run-jobs.json":
             run_jobs = _job_names_from_listing(_load_json(f))
         elif f.name.startswith("job-") and f.name.endswith("-iam.json"):
-            pass  # per-job invoker policy — judged via scheduler describes
+            # P35.1c: the due-invoker leg judges the dispatcher SA's binding on
+            # each due-target job directly (a retired row has no trigger whose
+            # OIDC describe could stand proxy for the grant).
+            job_policies[f.name[len("job-") : -len("-iam.json")]] = _load_json(f)
         elif f.name.startswith("job-") and f.name.endswith(".json"):
             jobs[f.name[len("job-") : -len(".json")]] = _load_json(f)
         elif f.name.startswith("sched-") and f.name.endswith(".json"):
@@ -1183,6 +1306,7 @@ def load_snapshot(state_dir: str | Path) -> Snapshot:
         secret_policies=secrets,
         service_describes=describes,
         service_policies=policies,
+        job_policies=job_policies,
         job_describes=jobs,
         scheduler_describes=schedulers,
         run_jobs=run_jobs,
@@ -1524,19 +1648,43 @@ def diff_snapshot(
             if got != want:
                 diffs.append(f"job {job} runs as {got!r}, declared {want} (class {cls})")
         for v in decl.job_invokers:
-            if v.targets != "scheduled":
-                continue
-            want = sa_email(project, v.member)
-            for job in sorted(set(cadence_scheduled_jobs(cadence))):
-                desc = snap.scheduler_describes.get(job)
-                if desc is None:
-                    diffs.append(
-                        f"UNREADABLE: no sched-{job}.json trigger describe in the snapshot"
+            if v.targets == "scheduled":
+                want = sa_email(project, v.member)
+                for job in sorted(set(cadence_scheduled_jobs(cadence))):
+                    desc = snap.scheduler_describes.get(job)
+                    if desc is None:
+                        diffs.append(
+                            f"UNREADABLE: no sched-{job}.json trigger describe in the snapshot"
+                        )
+                        continue
+                    got = _scheduler_identity(desc)
+                    if got != want:
+                        diffs.append(
+                            f"scheduler trigger for {job} signs as {got!r}, declared {want}"
+                        )
+            elif v.targets == "due":
+                # P35.1c: a due-target job carries no scheduler trigger, so the
+                # dispatcher SA's run.invoker grant is judged on the job's own
+                # recorded policy (job-<name>-iam.json).
+                disp = cadence.get("dispatcher") or {}
+                want_member = class_sa.get(str(disp.get("sa_class", "")), "")
+                if want_member and v.member != want_member:
+                    _fail(
+                        f"job_invoker targets=due: member {v.member!r} is not "
+                        f"the [dispatcher].sa_class identity ({want_member!r}) — "
+                        "the due invoker is the dispatcher's runtime SA"
                     )
-                    continue
-                got = _scheduler_identity(desc)
-                if got != want:
-                    diffs.append(f"scheduler trigger for {job} signs as {got!r}, declared {want}")
+                want = f"serviceAccount:{sa_email(project, v.member)}"
+                for job in sorted(set(cadence_due_jobs(cadence))):
+                    policy = snap.job_policies.get(job)
+                    if policy is None:
+                        diffs.append(f"UNREADABLE: no job-{job}-iam.json policy in the snapshot")
+                        continue
+                    if want not in _policy_members(policy, RUN_INVOKER_ROLE):
+                        diffs.append(
+                            f"due-target job {job} does not grant {RUN_INVOKER_ROLE} "
+                            f"to {want} — the dispatcher cannot jobs:run it"
+                        )
 
     # The exec host is ephemeral by construction: a `<job_prefix>-*` job in
     # `run jobs list` at rest is a cleanup that did not run — flag every one.

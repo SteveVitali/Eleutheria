@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "b4049688cd0ad1e6616a61e9607aee4c4f2b11a6",
-  "manifest_inputs": 1039,
+  "input_commit": "008ebea92fce9b262f959b379ac7f4e30fb48ca6",
+  "manifest_inputs": 1040,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.1c",
-    "lastCompleted": "P35.1b",
+    "nextTicket": "P35.3",
+    "lastCompleted": "P35.1c",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.1b-fleet-hygiene-v2",
+    "chainTip": "r11/P35.1c-dispatcher-consolidation",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-15T18:03:10Z"
+    "updatedAt": "2026-10-16T05:16:12Z"
   },
   "counts": {
     "obligations": 166,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 41,
+    "return_pass_rows": 42,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8909,6 +8909,14 @@
         "gates_cell": "hosted, production write; OM-20 conditional — the GATE-G4 OM-20 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires at the next GATE, OM-10); AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_SWEEP_AUTHOR` operator id required; AR-2 backup SUCCESSFUL + fresh prestate before the first destructive leg; voided by failed AR-2/red probe/contradicting production read; after `--check` + PR #302 head-bound CI green",
         "operator_cell": "nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only (no ADC/network); rollback replays the recorded cron pre-states + per-job recreation recipes; the dispatcher consolidation is P35.1c's, never this leg's",
         "rerun_cell": "`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — sweep queued on the closed 2026-10-16T01:25Z out-of-window attempt, exit 42; production untouched)",
+        "obligations": []
+      },
+      {
+        "key": "P35.1c",
+        "obligations_cell": "the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy the `sig-sched-due` job + its ONE hourly trigger + the due-invoker bindings → verify (shape asserts + staged `--dry-run`) → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof (retired absent, kept pin + dispatcher live, closing live-diff + cost delta); read-only/offline evidence landed",
+        "gates_cell": "hosted, production write; OM-20 — the GATE-G4 §4 enumeration (2026-10-09T17:32Z) predates the C13 split and names 291, never 291a literally → NOT pre-authorised; waits on an operator amendment explicitly naming row 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` operator id required; fresh prestate before the first destructive leg; voided by failed AR-2/red probe/contradicting production read; after `--check` + PR #303 head-bound CI green",
+        "operator_cell": "explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until the amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only (no ADC/network); rollback deletes the dispatcher trigger+job and replays `scheduled-ops.sh --apply --shape per-source`; the fleet sweep is P35.1b's leg, never this one's",
+        "rerun_cell": "`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — consolidation queued: GATE-G4's OM-20 list predates the split and never names 291a; production untouched)",
         "obligations": []
       }
     ]
@@ -18954,10 +18962,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c5c5c3b578fa3a7ecfbb818cc2b6030ba00ad9abb3d76d3d0704228201cdb917",
+  "manifest_sha256": "12e22ef33367425e42c2311b0f8e128ba11838781b739d5d551e95107b0a0485",
   "current_md": {
     "lines": 63,
-    "bytes": 15601,
+    "bytes": 15608,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
