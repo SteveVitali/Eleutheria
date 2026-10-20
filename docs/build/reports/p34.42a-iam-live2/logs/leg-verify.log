@@ -1,0 +1,75 @@
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+-- verify: poststate capture → iam diff + same-image gate + byte-compare --
+ERROR: (gcloud.secrets.get-iam-policy) NOT_FOUND: Secret [projects/873541617837/secrets/sig-audit-password] not found. This command is authenticated as <redacted-operator-account> which is the active account specified by the [core/account] property.
+ERROR: (gcloud.secrets.get-iam-policy) NOT_FOUND: Secret [projects/873541617837/secrets/sig-recovery-password] not found. This command is authenticated as <redacted-operator-account> which is the active account specified by the [core/account] property.
+ERROR: (gcloud.secrets.get-iam-policy) NOT_FOUND: Secret [projects/873541617837/secrets/sig-er-rerun-password] not found. This command is authenticated as <redacted-operator-account> which is the active account specified by the [core/account] property.
+route-compare capture: 39 routes → <repo>/docs/build/reports/p34.42a-iam-live2/post/routes-sig-api.json
+route-compare verify: 39 routes byte-identical
+route-compare capture: 39 routes → <repo>/docs/build/reports/p34.42a-iam-live2/post/routes-sig-web.json
+route-compare verify: 39 routes byte-identical
+route-compare capture: 39 routes → <repo>/docs/build/reports/p34.42a-iam-live2/post/routes-sig-alerts.json
+route-compare verify: 39 routes byte-identical
+check-revisions: clean — every workload kept its recorded image
+iam diff (services): clean — the snapshot carries the declared posture
+-- analysis: policy-troubleshooter over the three runtime SAs (read-only) --
+   troubleshoot cloudsql.instances.delete on //cloudresourcemanager.googleapis.com/projects/zeta-medley-508121-u7 for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-restricted for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-backups for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-public for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-web for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-alert-webhook-token for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-api-env for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-data-gov-key for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-maproulette-api-key for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-muckrock-refresh for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-openstates-key for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-sam-gov-key for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-client-id for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-client-secret for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-sandbox-token for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-audit-password for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-recovery-password for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-er-rerun-password for sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot cloudsql.instances.delete on //cloudresourcemanager.googleapis.com/projects/zeta-medley-508121-u7 for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-restricted for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-backups for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-public for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-web for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-pg-password for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-alert-webhook-token for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-api-env for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-data-gov-key for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-maproulette-api-key for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-muckrock-refresh for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-openstates-key for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-sam-gov-key for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-client-id for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-client-secret for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-sandbox-token for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-audit-password for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-recovery-password for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-er-rerun-password for sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot cloudsql.instances.delete on //cloudresourcemanager.googleapis.com/projects/zeta-medley-508121-u7 for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-restricted for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-backups for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-public for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot storage.objects.delete on //storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-web for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-pg-password for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-api-env for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-data-gov-key for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-maproulette-api-key for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-muckrock-refresh for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-openstates-key for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-sam-gov-key for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-client-id for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-client-secret for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-zenodo-sandbox-token for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-audit-password for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-recovery-password for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   troubleshoot secretmanager.versions.access on //secretmanager.googleapis.com/projects/zeta-medley-508121-u7/secrets/sig-er-rerun-password for sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com: read failed (recorded, non-fatal)
+   analysis OK — no runtime SA holds delete on the spine/evidence stores or a foreign secret.
+verify OK — every service on its own SA, images byte-identical, sig-alerts IAM-invoked.
+iam-service-accounts verify: done (mode=apply)
