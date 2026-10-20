@@ -151,12 +151,17 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     # The 14-secret consumer matrix is complete (P34.43 adds the two DB-login
     # credentials consumed by the exec identity alone; P34.45 adds the third —
     # the write-capable sig_materialize_login password); the services-leg
-    # accessor grant set is unchanged (sig-api-rt on sig-pg-password), the
-    # jobs-leg grants are the job-class consumers, and the five job-only
+    # accessor grant set is sig-api-rt on sig-pg-password plus the operator-
+    # approved D-P34.42a-1 option (a) grant — sig-alerts-rt on its own
+    # sig-alert-webhook-token (the receiver mounts it; the leg-1 refusal),
+    # the jobs-leg grants are the job-class consumers, and the five job-only
     # secrets carry a jobs_revoke on default-compute.
     assert len(decl.secrets) == 14
     api_env = next(s for s in decl.secrets if s.name == "sig-api-env")
     assert api_env.consumers == ()  # recorded, 0 versions, never deleted
+    hook = next(s for s in decl.secrets if s.name == "sig-alert-webhook-token")
+    assert "sig-alerts-rt" in hook.consumers  # D-P34.42a-1 option (a)
+    assert "default-compute" in hook.jobs_revoke
     revoked = {s.name for s in decl.secrets if "default-compute" in s.jobs_revoke}
     assert revoked == {
         "sig-alert-webhook-token",
@@ -258,8 +263,16 @@ def test_plan_steps_cover_the_contract_mutation_list(decl) -> None:
     )
     assert "secrets add-iam-policy-binding sig-pg-password" in flat
     assert "roles/secretmanager.secretAccessor" in flat
+    # The one operator-approved addition (D-P34.42a-1 option (a), 2026-10-14):
+    # sig-alerts-rt reads its own webhook-token secret — the receiver mounts
+    # it as SIG_ALERT_WEBHOOK_TOKEN (the live leg-1 refusal).
+    assert "secrets add-iam-policy-binding sig-alert-webhook-token" in flat
+    assert (
+        "sig-alerts-rt@sig-test-project.iam.gserviceaccount.com "
+        "--role=roles/secretmanager.secretAccessor" in flat
+    )
     # No other secret gains a binding in this leg.
-    assert flat.count("secrets add-iam-policy-binding") == 1
+    assert flat.count("secrets add-iam-policy-binding") == 2
     # (3) one same-image revision per service with --service-account
     for svc, sa in (
         ("sig-api", "sig-api-rt"),
@@ -321,6 +334,12 @@ def test_diff_reports_every_missing_piece_on_the_pre_leg_snapshot(decl, pre) -> 
         "missing secret accessor "
         "serviceAccount:sig-api-rt@sig-test-project.iam.gserviceaccount.com "
         "on sig-pg-password" in joined
+    )
+    # The declared consumer the leg-1 production read exposed (D-P34.42a-1).
+    assert (
+        "missing secret accessor "
+        "serviceAccount:sig-alerts-rt@sig-test-project.iam.gserviceaccount.com "
+        "on sig-alert-webhook-token" in joined
     )
     for svc in ("sig-api", "sig-web", "sig-alerts"):
         assert f"service {svc} runs as '{COMPUTE_SA}'" in joined
@@ -554,6 +573,7 @@ def test_iam_check_prints_the_full_plan() -> None:
         "roles/cloudsql.client",
         "roles/storage.objectViewer",
         "roles/secretmanager.secretAccessor",
+        "secrets add-iam-policy-binding sig-alert-webhook-token",
         "run services update sig-api --service-account",
         "run services update sig-web --service-account",
         "run services update sig-alerts --service-account",
@@ -617,6 +637,7 @@ def test_iam_rollback_plan_restores_the_recorded_prestate() -> None:
     plan = proc.stdout
     assert "run services update <svc> --service-account <prior SA" in plan
     assert "set-iam-policy sig-alerts" in plan
+    assert "secrets remove-iam-policy-binding sig-alert-webhook-token" in plan
     assert "service-accounts delete" in plan
 
 

@@ -431,6 +431,16 @@ seed-commit 917dd2a5
 # Scope: findings attributed to 4ce44ed9 only; no other commit borrows the exemption.
 seed-commit 4ce44ed9
 
+# ── P34.42a live-2 recorded-ci fragment repair ─────────────────────────────
+# 9a02c24f's PHASE LOG `P34.42a correction` entry carried `ci: fail
+# #292@3a7916d`, which the G3b recorded-CI verifier cannot parse (its grammar
+# knows pass/pass-after-rerun — run 38569608755, "unparseable ci: fragment").
+# The in-place reword at 73893e41 describes the failure in words (the docs job
+# failed on #292@3a7916d, run 38564514959) — append-only is preserved by this
+# declaration (same pattern as c4b2aa21).
+# Scope: findings attributed to 73893e41 only; no other commit borrows the exemption.
+seed-commit 73893e41
+
 # ── P35.66 orient-probe repair (ticket 288; recorded 2026-10-15) ────────────
 # Commit 6c05e605 is the verifier-backed budget repair: the closeout commit
 # 9ee1829b's PHASE LOG ticket entry ran 3,444 B, pushing the orient-probe V11
