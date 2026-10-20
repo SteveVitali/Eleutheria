@@ -283,3 +283,118 @@ def test_quarantine_payload_is_content_keyed() -> None:
     p = quarantine_payload(_record(value="x"), connector_name="atlas", source_id="src")
     assert p["schema"] == "sig.assertion/1" and p["connector_name"] == "atlas"
     assert p["record"]["subject_id"] == "subj:1"
+
+
+# --- P35.18 (JUR-02a / K4 §3.2): candidate_identifier -> value_json -----------
+
+
+def test_candidate_identifier_persists_as_scheme_value_in_value_json() -> None:
+    """A record's ``candidate_identifier`` lands in ``value_json`` as the
+    ``{scheme, value}`` pair — the declared scheme survives to the spine."""
+    import json
+
+    a = assertion_from_record(
+        _record(
+            value="OK",
+            candidate_identifier={"scheme": "us.state_abbr", "value": "OK"},
+        ),
+        binding=_binding(),
+    )
+    assert isinstance(a, TypedAssertion)
+    assert json.loads(a.value_json) == {"scheme": "us.state_abbr", "value": "OK"}
+
+
+def test_candidate_identifier_leaves_the_text_value_and_digest_inputs_alone() -> None:
+    """The claim's text value is byte-identical and the digest is over the
+    RECORD (never the derived jsonb) — persisting the pair changes neither."""
+    import json
+
+    from db.claim_sink import content_digest
+
+    rec = _record(
+        value="US-DE",
+        candidate_identifier={"scheme": "iso.3166_2", "value": "US-DE"},
+    )
+    digest_before = content_digest(rec)
+    a = assertion_from_record(rec, binding=_binding())
+    assert isinstance(a, TypedAssertion)
+    assert a.value_text == "US-DE" and a.raw_value == "US-DE"
+    assert "value_json" not in rec  # the adapter never mutates the record
+    assert content_digest(rec) == digest_before
+    assert json.loads(a.value_json)["scheme"] == "iso.3166_2"
+
+
+def test_candidate_identifier_merges_into_existing_value_json() -> None:
+    """An existing ``value_json`` object keeps its fields; the pair is additive."""
+    import json
+
+    a = assertion_from_record(
+        _record(
+            value="x",
+            value_json={"note": "kept"},
+            candidate_identifier={"scheme": "openstates.jurisdiction", "value": "ocd"},
+        ),
+        binding=_binding(),
+    )
+    assert isinstance(a, TypedAssertion)
+    doc = json.loads(a.value_json)
+    assert doc == {
+        "note": "kept",
+        "scheme": "openstates.jurisdiction",
+        "value": "ocd",
+    }
+
+
+def test_candidate_identifier_conflict_with_value_json_rejects() -> None:
+    """A record whose ``value_json`` already declares a *different* pair fails
+    closed — an ambiguous identifier never lands on the spine."""
+    r = assertion_from_record(
+        _record(
+            value="x",
+            value_json={"scheme": "us.state_abbr", "value": "OK"},
+            candidate_identifier={"scheme": "iso.3166_2", "value": "US-OK"},
+        ),
+        binding=_binding(),
+    )
+    assert isinstance(r, Rejection)
+    assert r.reason is QuarantineReason.MISSING_REQUIRED_FIELD
+
+
+def test_candidate_identifier_non_mapping_value_json_rejects() -> None:
+    r = assertion_from_record(
+        _record(
+            value="x",
+            value_json="not-an-object",
+            candidate_identifier={"scheme": "us.state_abbr", "value": "OK"},
+        ),
+        binding=_binding(),
+    )
+    assert isinstance(r, Rejection)
+    assert r.reason is QuarantineReason.MISSING_REQUIRED_FIELD
+
+
+def test_a_malformed_candidate_identifier_rejects() -> None:
+    """Missing scheme/value keys fail closed (fail-closed, quarantine upstream)."""
+    for bad in (
+        "us.state_abbr:OK",  # a string, not a pair
+        {"scheme": "us.state_abbr"},  # no value
+        {"value": "OK"},  # no scheme
+        {"scheme": "", "value": "OK"},  # empty scheme
+        {"scheme": "us.state_abbr", "value": ""},  # empty value
+    ):
+        r = assertion_from_record(_record(value="x", candidate_identifier=bad), binding=_binding())
+        assert isinstance(r, Rejection), bad
+        assert r.reason is QuarantineReason.MISSING_REQUIRED_FIELD
+
+
+def test_no_candidate_identifier_keeps_value_json_unchanged() -> None:
+    """Back-compat: a record with no candidate_identifier shapes exactly as
+    before — including an absent ``value_json`` staying ``None``."""
+    a = assertion_from_record(_record(value="x"), binding=_binding())
+    assert isinstance(a, TypedAssertion)
+    assert a.value_json is None
+    b = assertion_from_record(_record(value="x", value_json={"only": "this"}), binding=_binding())
+    assert isinstance(b, TypedAssertion)
+    import json
+
+    assert json.loads(b.value_json) == {"only": "this"}

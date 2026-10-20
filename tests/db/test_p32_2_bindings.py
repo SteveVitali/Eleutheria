@@ -117,6 +117,7 @@ def clean_dsn(sig_database: dict[str, object]) -> Iterator[str]:
             "sig.p32_2.d2",
             "sig.p32_2.good",
             "sig.p32_2.i",
+            "sig.p32_2.jur",
             "sig.p32_2.l",
             "sig.p32_2.q",
             "sig.p32_2.q1",
@@ -561,3 +562,53 @@ def test_quarantine_is_not_publicly_readable(clean_dsn: str) -> None:
         conn.execute("SET ROLE sig_read_public")
         with pytest.raises(psycopg.errors.InsufficientPrivilege):
             conn.execute("SELECT count(*) FROM assertion_quarantine").fetchone()
+
+
+# --- P35.18 (JUR-02a / K4 §3.2): candidate_identifier -> value_json ----------
+
+
+def test_candidate_identifier_lands_in_value_json(clean_dsn: str) -> None:
+    """End-to-end: a record's declared ``candidate_identifier`` persists into
+    ``claim.value_json`` as the ``{scheme, value}`` pair — text value and
+    digest untouched."""
+    import json
+
+    cap = _capture(b"jur-csv", "https://example/jur.csv", _T1)
+    sink = _sink(clean_dsn)
+    sink.assert_claims(
+        [
+            _claim(
+                "cam:j1",
+                "sig.p32_2.jur",
+                "OK",
+                candidate_identifier={"scheme": "us.state_abbr", "value": "OK"},
+            )
+        ],
+        capture=cap,
+    )
+    assert sink.report.inserted == 1 and sink.report.quarantined == 0
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        row = _row("SELECT value_text, value_json::text FROM claim", conn)
+        assert row[0] == "OK"
+        assert json.loads(row[1]) == {"scheme": "us.state_abbr", "value": "OK"}
+
+
+def test_a_malformed_candidate_identifier_quarantines(clean_dsn: str) -> None:
+    """A pair without scheme/value fails closed into ``assertion_quarantine``
+    (missing_required_field) — an ambiguous identifier never lands."""
+    cap = _capture(b"bad-pair", "https://example/bad.csv", _T1)
+    sink = _sink(clean_dsn)
+    sink.assert_claims(
+        [
+            _claim(
+                "cam:j2",
+                "sig.p32_2.jur",
+                "OK",
+                candidate_identifier={"scheme": "us.state_abbr"},
+            )
+        ],
+        capture=cap,
+    )
+    assert sink.report.inserted == 0 and sink.report.quarantined == 1
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        assert _one("SELECT reason FROM assertion_quarantine", conn) == "missing_required_field"

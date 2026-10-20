@@ -87,6 +87,7 @@ from . import analytics, provo
 from . import compartments as C
 from .audit import _LATEST_DECISION_CTE
 from .bundle import Bundle, build_bundle
+from .jurisdictions import jurisdiction_slug
 from .manifest import (
     PUBLICATION_BASIS,
     Artifact,
@@ -1682,7 +1683,9 @@ def _coverage_gaps(
         gap: dict[str, Any] = {
             "label": predicate.replace("_", " "),
             "kind": kind,
-            "subject_id": subject or f"jurisdiction:{_slugify(jurisdiction)}",
+            # P35.18 (JUR-02a): ``jurisdiction`` is the declared-scheme bucket
+            # key — the subject id slugs the KEY, never a bare value.
+            "subject_id": subject or f"jurisdiction:{jurisdiction_slug(jurisdiction)}",
             "predicate_id": predicate,
             "note": "Recorded negative-space coverage finding (§32.1).",
         }
@@ -1729,7 +1732,10 @@ def _dossiers(
     site_jurisdiction = {str(s.entity_id): s.jurisdiction for s in dataset.sites}
     dossiers: list[dict[str, Any]] = []
     for group in dataset.jurisdictions:
-        slug = _slugify(group.jurisdiction)
+        # P35.18 (JUR-02a): the dossier slug derives from the declared-scheme
+        # jurisdiction KEY (``iso3166-2:US-OK`` → ``iso3166-2-us-ok``), never
+        # a bare asserted value.
+        slug = jurisdiction_slug(group.jurisdiction)
         by_role = governance.get(group.jurisdiction, {})
         # Governance-chain rows, keyed by the dossier section they ride into.
         gov_rows: dict[str, list[dict[str, Any]]] = {}
@@ -1848,12 +1854,9 @@ def _dossier_index(dossiers: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]
     ]
 
 
-def _slugify(text: str) -> str:
-    keep = [c.lower() if c.isalnum() else "-" for c in text]
-    slug = "".join(keep)
-    while "--" in slug:
-        slug = slug.replace("--", "-")
-    return slug.strip("-") or "unresolved"
+# P35.18 (JUR-02a): the only slugging this module performs on the jurisdiction
+# path is ``jurisdictions.jurisdiction_slug`` — of the declared-scheme KEY,
+# never a bare value; the old bare-value slug helper is gone by design.
 
 
 # --------------------------------------------------------------------------- #

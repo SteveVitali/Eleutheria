@@ -533,6 +533,56 @@ def assertion_from_record(
             {"record": dict(record)},
         )
     value_json = record.get("value_json")
+
+    # -- P35.18 / JUR-02a (K4 §3.2): the declared identifier scheme persists --
+    # A connector's ``candidate_identifier`` — the ``{scheme, value}`` pair a
+    # claim's value is asserted under (SIG-IDENT-006, SIG-INGEST-034) — is
+    # written into ``value_json`` so the claim's text value and content digest
+    # stay byte-identical (the digest covers the record, not the stored jsonb).
+    # A malformed pair, a non-mapping ``value_json`` it cannot merge into, or a
+    # pre-existing *conflicting* ``scheme``/``value`` rejects — an ambiguous
+    # identifier never lands on the spine.
+    candidate = record.get("candidate_identifier")
+    if candidate is not None:
+        if (
+            not isinstance(candidate, Mapping)
+            or not isinstance(candidate.get("scheme"), str)
+            or not str(candidate.get("scheme") or "").strip()
+            or not isinstance(candidate.get("value"), str)
+            or not str(candidate.get("value") or "").strip()
+        ):
+            return Rejection(
+                QuarantineReason.MISSING_REQUIRED_FIELD,
+                "candidate_identifier must be a {scheme, value} mapping of non-empty strings",
+                {"candidate_identifier": str(candidate)[:200], "record": dict(record)},
+            )
+        pair = {
+            "scheme": str(candidate["scheme"]).strip(),
+            "value": str(candidate["value"]).strip(),
+        }
+        if value_json is None:
+            value_json = pair
+        elif not isinstance(value_json, Mapping):
+            return Rejection(
+                QuarantineReason.MISSING_REQUIRED_FIELD,
+                "value_json must be a JSON object to carry candidate_identifier; "
+                f"got {type(value_json).__name__}",
+                {"record": dict(record)},
+            )
+        else:
+            merged = dict(value_json)
+            for key, val in pair.items():
+                if key in merged and merged[key] != val:
+                    return Rejection(
+                        QuarantineReason.MISSING_REQUIRED_FIELD,
+                        f"candidate_identifier declares {key}={val!r} but the "
+                        f"record's value_json already carries {key}={merged[key]!r} "
+                        "— an ambiguous identifier never lands",
+                        {"record": dict(record)},
+                    )
+                merged[key] = val
+            value_json = merged
+
     normalization_id = _str_or_none(record.get("normalization_id"))
     normalization_version = _str_or_none(record.get("normalization_version"))
 

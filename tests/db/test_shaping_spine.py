@@ -13,6 +13,8 @@ connection is rolled back by the ``conn`` fixture.
 
 from __future__ import annotations
 
+import json
+
 import pytest
 from api.store_pg import PgReadStore
 from exports.shaping import (
@@ -106,26 +108,36 @@ def _claim(
     author_id,
     capture_id=None,
     tier=0,
+    value_json=None,
 ) -> str:
-    cur.execute(
-        "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,value_text,"
+    cols = (
+        "subject_id,predicate_id,object_type,value_kind,value_text,"
         "value_num,raw_value,observed_at,source_reliability,claim_directness,"
         "artifact_integrity,asserted_by,assertion_rationale,ingest_run_id,rights_id,"
-        "sensitivity_tier) "
+        "sensitivity_tier"
+    )
+    params: list = [
+        subject,
+        predicate,
+        object_type,
+        value,
+        value_num,
+        "" if value is None else str(value),
+        author_id,
+        run_id,
+        rights_id,
+        tier,
+    ]
+    if value_json is not None:
+        # P35.18 (JUR-02a): the persisted {scheme, value} identifier pair.
+        cols += ",value_json"
+        params.append(value_json)
+    cur.execute(
+        f"INSERT INTO claim({cols}) "
         "VALUES(%s,%s,%s,'value',%s,%s,%s,'2026-05-01T00:00:00Z','R1','D1','I1',"
-        "%s,'fixture',%s,%s,%s) RETURNING claim_id",
-        (
-            subject,
-            predicate,
-            object_type,
-            value,
-            value_num,
-            "" if value is None else str(value),
-            author_id,
-            run_id,
-            rights_id,
-            tier,
-        ),
+        f"%s,'fixture',%s,%s,%s{',%s' if value_json is not None else ''}) "
+        "RETURNING claim_id",
+        tuple(params),
     )
     claim_id = cur.fetchone()[0]
     if capture_id is not None:
@@ -425,6 +437,40 @@ def test_run_shaping_over_seeded_spine(conn, seeded) -> None:
 
     # Provenance completeness over shaped claims: every claim has a source.
     assert ds.provenance["is_complete"] is True
+
+
+def test_a_scheme_carrying_claim_keys_the_bucket_end_to_end(conn, seeded) -> None:
+    """P35.18 / JUR-02a (staging seam): a claim whose ``value_json`` carries
+    the persisted ``{scheme, value}`` pair keys its bucket under the canonical
+    jurisdiction key — through the real read-only query path, while the
+    seeded bare "OK" claims keep their honest bare bucket."""
+    cur = conn.cursor()
+    run = _run(cur, "camreg_fix")
+    _source(cur, "camreg_fix", seeded["cc0"])
+    cap = _artifact_capture(cur, "camreg_fix", seeded["cc0"], run, "fix")
+    author = _entity(cur, "person")
+    s6 = _entity(cur)
+    _claim(
+        cur,
+        subject=s6,
+        predicate="camera_jurisdiction",
+        value="OK",
+        run_id=run,
+        rights_id=seeded["cc0"],
+        author_id=author,
+        capture_id=cap,
+        value_json=json.dumps({"scheme": "us.state_abbr", "value": "OK"}),
+    )
+    ds = run_shaping(conn, as_of="2026-09-23", note="seeded", spine_label="seeded")
+    sites = {s.entity_id: s for s in ds.sites}
+    site = sites[str(s6)]
+    assert site.jurisdiction == "iso3166-2:US-OK"
+    obs = site.jurisdiction_envelope.observations[0]
+    assert obs.scheme == "us.state_abbr" and obs.scheme_basis == "candidate_identifier"
+    # The seeded bare "OK" bucket stays honest and separate — no mix.
+    assert sites[seeded["s1"]].jurisdiction == "OK"
+    buckets = {j.jurisdiction: j for j in ds.jurisdictions}
+    assert "iso3166-2:US-OK" in buckets and "OK" in buckets
 
 
 def test_run_shaping_is_read_only(conn, seeded) -> None:
