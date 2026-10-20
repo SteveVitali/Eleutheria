@@ -22,9 +22,12 @@ Two legs:
   with an assert hit and no negate hit is a CLAIM. Claims on lines whose
   blamed commit predates the policy's own introduction commit are
   ``grandfathered`` — *exempt by date, listed* (the ADR-199 precedent; the
-  binding did not exist to cite). Claims at/after activation — including any
-  uncommitted/dirty line — must carry a resolvable citation in their
-  paragraph window.
+  binding did not exist to cite). A claim blamed to a repair commit listed in
+  `[[carried]]` is grandfathered only when its exact text is carried from a
+  listed ancestor `source` whose own blame dates it before activation (ADR-218
+  — a re-added record keeps its provenance; new text never qualifies). Claims
+  at/after activation — including any uncommitted/dirty line — must carry a
+  resolvable citation in their paragraph window.
 * **range** — `git diff` of the change restricted to corpus surfaces; every
   claim the change *adds* must cite (commit time = the range head's
   committer time).
@@ -128,27 +131,61 @@ def _file_latest_ts(root: pathlib.Path, rel: str) -> int | None:
     return None
 
 
-def _blame_line_ts(root: pathlib.Path, rel: str) -> dict[int, int]:
-    """line-no → committer-time; dirty lines blame as _ZERO_SHA → 'now'."""
-    out = _git(root, "blame", "--line-porcelain", "--", rel)
-    ts: dict[int, int] = {}
+def _blame(root: pathlib.Path, rel: str, rev: str | None = None) -> dict[int, tuple[str, int, str]]:
+    """line-no → (blamed sha, committer-time, line text) at `rev` (default: the
+    working tree); dirty lines blame as _ZERO_SHA → 'now'."""
+    args = ["blame", "--line-porcelain"] + ([rev] if rev else []) + ["--", rel]
+    out = _git(root, *args)
+    info: dict[int, tuple[str, int, str]] = {}
     if out.returncode != 0:
-        return ts
-    line_no = 0
-    pending_zero = False
+        return info
+    line_no, sha, ts = 0, "", 0
     now = int(datetime.now(UTC).timestamp())
     for raw in out.stdout.splitlines():
         m = re.match(r"^([0-9a-f]{40}) \d+ (\d+)", raw)
         if m:
-            line_no = int(m.group(2))
-            pending_zero = m.group(1) == _ZERO_SHA
+            sha, line_no = m.group(1), int(m.group(2))
+            ts = now if sha == _ZERO_SHA else 0
             continue
-        if raw.startswith("committer-time "):
+        if raw.startswith("committer-time ") and sha != _ZERO_SHA:
             try:
-                ts[line_no] = now if pending_zero else int(raw.split()[1])
+                ts = int(raw.split()[1])
             except ValueError:
                 pass
-    return ts
+        elif raw.startswith("\t"):
+            info[line_no] = (sha, ts, raw[1:])
+    return info
+
+
+def _carried_exempt(
+    root: pathlib.Path,
+    carried: list[dict],
+    sha: str,
+    rel: str,
+    text: str,
+    activation: int,
+    cache: dict[tuple[str, str], set[str]],
+) -> dict | None:
+    """The `[[carried]]` entry exempting a line blamed to repair commit `sha`, or
+    None. A repair commit that re-adds records a merge dropped makes `git blame`
+    attribute them to the repair; the entry restores their provenance only when
+    every check holds: `source` is an ancestor of `commit`, the exact line text
+    exists in `source`'s copy of the file, and `source`'s own blame dates that
+    line before activation. A line whose text is new can never be exempted."""
+    for entry in carried:
+        if entry["commit"] != sha:
+            continue
+        source = entry["source"]
+        if _git(root, "merge-base", "--is-ancestor", source, sha).returncode != 0:
+            continue
+        key = (source, rel)
+        if key not in cache:
+            cache[key] = {
+                t for (_s, ts, t) in _blame(root, rel, source).values() if 0 < ts < activation
+            }
+        if text in cache[key]:
+            return entry
+    return None
 
 
 def _head_of_range(spec: str) -> str:
@@ -332,6 +369,16 @@ def load_policy(root: pathlib.Path) -> tuple[dict, list[str]]:
     for key in ("committed_glob", "remote_sha_re", "remote_stamp_re"):
         if not cit.get(key):
             errs.append(f"policy [citation].{key} is required")
+    carried = pol.get("carried", [])
+    if not isinstance(carried, list):
+        errs.append("policy [[carried]] must be an array of tables")
+    else:
+        for i, entry in enumerate(carried):
+            for key in ("commit", "source"):
+                if not re.fullmatch(r"[0-9a-f]{40}", str(entry.get(key, ""))):
+                    errs.append(f"policy [[carried]][{i}].{key} must be a full 40-hex sha")
+            if not str(entry.get("reason", "")).strip():
+                errs.append(f"policy [[carried]][{i}].reason is required")
     return pol, errs
 
 
@@ -341,12 +388,15 @@ def _report(result: dict, verbose: bool) -> None:
         f"files {result['files']} · segments {result['segments']} · "
         f"claims {result['claims']} · grandfathered {result['grandfathered']} · "
         f"cited {result['cited']} · violations {len(result['violations'])}"
+        + (f" · carried {result['carried']}" if result.get("carried") else "")
     )
     for v in result["violations"]:
         print(f"  VIOLATION {v['file']}:{v['line']}: {v['reason']} — {v['segment'][:100]}")
     if result["grandfathered_list"] and verbose:
         for g in result["grandfathered_list"]:
             print(f"  grandfathered {g['file']}:{g['line']}: {g['segment'][:100]}")
+    for g in result.get("carried_list", []):
+        print(f"  carried {g['file']}:{g['line']} ({g['carried']}): {g['segment'][:80]}")
     for w in result.get("warnings", []):
         print(f"  warning: {w}", file=sys.stderr)
 
@@ -377,13 +427,17 @@ def run(
         "segments": 0,
         "claims": 0,
         "grandfathered": 0,
+        "carried": 0,
         "cited": 0,
         "violations": [],
         "grandfathered_list": [],
+        "carried_list": [],
         "warnings": [],
     }
 
     if mode == "corpus":
+        carried: list[dict] = policy.get("carried", [])
+        carried_cache: dict[tuple[str, str], set[str]] = {}
         files = _glob_files(root, policy["surfaces"]["corpus"])
         if not files:
             print("check_live_claims: VACUOUS — no corpus files matched", file=sys.stderr)
@@ -409,16 +463,31 @@ def run(
                     {"file": rel, "line": n, "segment": s} for n, s in claims
                 ]
                 continue
-            line_ts = _blame_line_ts(root, rel)
+            blame = _blame(root, rel)
             for n, seg in claims:
                 result["claims"] += 1
-                ts = line_ts.get(n)
-                if ts is None:
+                sha, ts, _text = blame.get(n, ("", -1, ""))
+                if ts < 0:
                     result["warnings"].append(f"{rel}:{n}: unblamable line — judged at HEAD time")
                     ts = _git_ts(root, "HEAD") or activation
                 if ts < activation:
                     result["grandfathered"] += 1
                     result["grandfathered_list"].append({"file": rel, "line": n, "segment": seg})
+                    continue
+                entry = _carried_exempt(
+                    root, carried, sha, rel, lines[n - 1], activation, carried_cache
+                )
+                if entry is not None:
+                    result["grandfathered"] += 1
+                    result["carried"] += 1
+                    result["carried_list"].append(
+                        {
+                            "file": rel,
+                            "line": n,
+                            "segment": seg,
+                            "carried": f"{entry['commit'][:8]} from {entry['source'][:8]}",
+                        }
+                    )
                     continue
                 ok, why = _check_citation(root, _window(lines, n), ts, policy)
                 if ok:
