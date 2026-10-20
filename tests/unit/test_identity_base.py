@@ -64,6 +64,12 @@ _EXEMPT_FILES: frozenset[str] = frozenset(
         "tasks/src/tasks/data/organised_editing.toml",
         "docs/governance/organised-editing-activity.md",
         "tests/unit/test_identity_base.py",  # this guard's own needles
+        # record artifacts that quote the ADR/contract text verbatim — they name
+        # the retired base inside a decision description, never mint it:
+        "CHANGELOG.md",  # the per-ticket changelog entry cites the ADR-217 summary
+        # generated spec — Appendix F mirrors spec_src/99a_appF_adr.md, which
+        # itself sits in the docs/research history region:
+        "docs/2_canonical_design_spec.md",
     }
 )
 
