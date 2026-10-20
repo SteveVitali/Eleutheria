@@ -21,5 +21,6 @@ ticket
 post-closeout record
 post-closeout repair
 orchestrator repair
+boundary-confirm
 interruption
 harness-switch

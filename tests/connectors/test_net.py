@@ -55,8 +55,13 @@ def test_no_unowned_contact_domain_literal_in_shipped_code() -> None:
     # shipped code or config. The contract's scope is exactly these trees;
     # historical records (db/sqitch.plan author lines, landed ADRs, run
     # ledgers, captured evidence fixtures) are excluded by scoping, never
-    # edited.
-    scope = ["connectors", "tasks", "policy", "ops", "web/src"]
+    # edited. P35.3 (SIG-OPS-012): `ops/sentinels.toml` is the designated
+    # owner of the literal — it is the committed sentinel registry whose
+    # unregistered-contact-domain sentinel *detects* the placeholder (the
+    # same class of ownership as this test file's own literal). Excluding
+    # it by scope, never by obfuscating the pattern — a human auditing for
+    # the domain should still find it there.
+    scope = ["connectors", "tasks", "policy", "ops", "web/src", ":!ops/sentinels.toml"]
     out = subprocess.run(
         ["git", "-C", str(REPO_ROOT), "grep", "-n", "-e", "sig-project.org", "--", *scope],
         capture_output=True,

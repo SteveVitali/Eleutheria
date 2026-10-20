@@ -128,6 +128,20 @@ _DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 _PROBE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 _OWNER_RE = re.compile(r"^(P\d+\.\d+[a-z]?|SEED-\d+[a-z]?|PLAN-[A-Z0-9]+)$")
 
+# P35.3 (G10 placement, SIG-OPS-011): the registry's trigger-point vocabulary and
+# the `via` surface grammar. A probe fires at one or more of {pull request,
+# release candidate, publish, schedule, round tail}; `schedule`/`publish`
+# declarations name the real surface they resolve against — `job:`/`trigger:` a
+# name declared in ops/cadence.toml or ops/quality_probe.toml, `verb:` a
+# committed `sig-ops` subcommand, `row:` the owning chain row's ticket file.
+TRIGGER_VOCAB = frozenset({"pr", "candidate", "publish", "schedule", "tail"})
+VIA_REQUIRED = frozenset({"schedule", "publish"})
+_VIA_RE = re.compile(r"^(job|trigger|verb|row):[A-Za-z0-9_.][A-Za-z0-9_.\-]*$")
+_CADENCE = "ops/cadence.toml"
+_QUALITY_PROBE = "ops/quality_probe.toml"
+_OPS_CLI = "ops/src/ops/cli.py"
+_PARSER_RE = re.compile(r"""add_parser\(\s*["']([a-z0-9][a-z0-9\-]*)["']""")
+
 EC_WORDS = frozenset({"MET", "MET-DIFFERENTLY", "MET-ENGINEERED"})
 RS_WORDS = frozenset({"MET", "MET-DIFFERENTLY"})
 
@@ -610,9 +624,157 @@ def load_sweep(root: pathlib.Path) -> tuple[list[dict], str | None]:
                 f"{where}: record {rec!r} — the expected probe-run/1 record lands under "
                 "docs/build/reports/probes/*.json (or a cited gs:// path)"
             )
+        # G10 placement: every probe declares its trigger points; a probe with no
+        # declared trigger point fails the registry's own validation.
+        triggers = p.get("triggers")
+        if not isinstance(triggers, list) or not all(isinstance(t, str) for t in (triggers or [])):
+            errors.append(
+                f"{where}: no declared trigger points — every production-truth probe "
+                f"declares where it fires (⊆ {sorted(TRIGGER_VOCAB)}; G10, SIG-OPS-011)"
+            )
+            triggers = []
+        else:
+            bad = [t for t in triggers if t not in TRIGGER_VOCAB]
+            if bad:
+                errors.append(
+                    f"{where}: triggers {bad} outside the vocabulary {sorted(TRIGGER_VOCAB)}"
+                )
+            if not triggers:
+                errors.append(
+                    f"{where}: empty triggers — a probe with no declared trigger point "
+                    "fires nowhere (G10)"
+                )
+            if len(set(triggers)) != len(triggers):
+                errors.append(f"{where}: duplicate trigger points")
+        declared = set(triggers)
+        placement = p.get("placement", {})
+        if not isinstance(placement, dict):
+            errors.append(f"{where}: placement is not a table")
+            placement = {}
+        for key in placement:
+            if key not in declared:
+                errors.append(
+                    f"{where}: placement names {key!r} — a trigger point the probe does not declare"
+                )
+        via = p.get("via", {})
+        if not isinstance(via, dict):
+            errors.append(f"{where}: via is not a table")
+            via = {}
+        for key, val in via.items():
+            if key not in TRIGGER_VOCAB:
+                errors.append(f"{where}: via.{key} names an unknown trigger point")
+            elif key not in declared:
+                errors.append(
+                    f"{where}: via.{key} resolves a trigger point the probe does not declare"
+                )
+            elif not _VIA_RE.match(str(val)):
+                errors.append(f"{where}: via.{key} {val!r} is not job:/trigger:/verb:/row:<name>")
+        for t in sorted(VIA_REQUIRED):
+            if t in declared and not str(via.get(t, "")).strip():
+                errors.append(
+                    f"{where}: declares the {t!r} trigger but names no via.{t} surface — "
+                    "the scheduled/post-publish declaration must resolve against a real "
+                    "job/publish surface"
+                )
     if errors:
         return [], "; ".join(errors)
     return probes, None
+
+
+def _declared_surfaces(root: pathlib.Path) -> tuple[set[str], set[str], set[str], set[str]]:
+    """The real surfaces a probe registry's `via` declarations resolve against.
+
+    ``(jobs, triggers, verbs, rows)`` — job and scheduler names declared in
+    ``ops/cadence.toml`` + ``ops/quality_probe.toml``, the ``sig-ops`` subcommand
+    names in ``ops/src/ops/cli.py``, and the chain-row ticket ids under
+    ``docs/tickets/`` (``row:P34.10`` resolves when a ``*_P34.10__*.md`` contract
+    exists).
+    """
+    jobs: set[str] = set()
+    triggers: set[str] = set()
+    verbs: set[str] = set()
+    rows: set[str] = set()
+
+    def _toml(rel: str) -> dict:
+        path = root / rel
+        if not path.is_file():
+            return {}
+        try:
+            with path.open("rb") as fh:
+                return tomllib.load(fh)
+        except tomllib.TOMLDecodeError:
+            return {}
+
+    cadence = _toml(_CADENCE)
+    for section in ("probes", "live_diff", "dispatcher"):
+        blk = cadence.get(section) or {}
+        for key in ("job", "scheduler"):
+            val = blk.get(key)
+            if isinstance(val, str) and val.strip():
+                (jobs if key == "job" else triggers).add(val)
+    for blk in cadence.get("maintenance", []) + cadence.get("manual_jobs", []):
+        for key in ("job", "scheduler", "id"):
+            val = blk.get(key)
+            if isinstance(val, str) and val.strip():
+                if key == "scheduler":
+                    triggers.add(val)
+                else:
+                    jobs.add(val)
+    for blk in cadence.get("sources", []) + cadence.get("batches", []):
+        for key in ("job", "scheduler"):
+            val = blk.get(key)
+            if isinstance(val, str) and val.strip():
+                (jobs if key == "job" else triggers).add(val)
+    quality = _toml(_QUALITY_PROBE)
+    if str(quality.get("job", "")).strip():
+        jobs.add(quality["job"])
+    qsched = quality.get("scheduler") or {}
+    if str(qsched.get("name", "")).strip():
+        triggers.add(qsched["name"])
+
+    cli = root / _OPS_CLI
+    if cli.is_file():
+        verbs.update(_PARSER_RE.findall(cli.read_text(errors="replace")))
+    tickets = root / "docs" / "tickets"
+    if tickets.is_dir():
+        for f in tickets.glob("*_P*__*.md"):
+            m = re.match(r".*_(P\d+\.\d+[a-z]?)__", f.name)
+            if m:
+                rows.add(m.group(1))
+    return jobs, triggers, verbs, rows
+
+
+def check_probe_surfaces(
+    probes: list[dict], root: pathlib.Path
+) -> tuple[list[str], dict[str, int]]:
+    """Dry-run resolution (G10, staging layer): every `via` surface resolves.
+
+    The scheduled/post-publish executions themselves are the owning rows' legs —
+    this leg only proves the named job/trigger/verb/row surface exists.
+    """
+    errors: list[str] = []
+    stats = {"via_declarations": 0, "via_evaluated": 0}
+    jobs, triggers, verbs, rows = _declared_surfaces(root)
+    targets = {"job": jobs, "trigger": triggers, "verb": verbs, "row": rows}
+    for p in probes:
+        via = p.get("via") or {}
+        if not isinstance(via, dict):
+            continue
+        for key, val in via.items():
+            if not isinstance(val, str) or ":" not in val:
+                continue
+            kind, _, name = val.partition(":")
+            stats["via_declarations"] += 1
+            stats["via_evaluated"] += 1
+            pool = targets.get(kind, set())
+            if name not in pool:
+                errors.append(
+                    f"probe {p.get('id')}: via.{key} = {val!r} does not resolve — no "
+                    f"declared {kind} named {name!r} "
+                    f"({len(pool)} candidates under {_CADENCE}/{_QUALITY_PROBE}/"
+                    f"{_OPS_CLI}/docs/tickets/)"
+                )
+    return errors, stats
 
 
 def check_probe_sweep(
@@ -739,6 +901,13 @@ def check(
         stats.update(s)
     stats["sweep_probes"] = len(probes)
 
+    # G10 staging layer: the scheduled/post-publish `via` declarations resolve
+    # against the real surfaces (dry-run resolution — executions are the owning
+    # rows' legs, this only proves the named surface exists).
+    e, s = check_probe_surfaces(probes, root)
+    errors.extend(e)
+    stats.update(s)
+
     if round_tail is not None:
         at = at or datetime.now(UTC)
         scan = _risk_scan((root / RISK).read_text()) if (root / RISK).is_file() else {"reviews": []}
@@ -777,6 +946,7 @@ def _fmt_stats(stats: dict[str, int]) -> str:
         f"packets {stats.get('packets_evaluated', 0)}/{stats.get('packets', 0)}"
         f" ({stats.get('claims', 0)} claims)",
         f"sweep {stats.get('sweep_probes', 0)} probes",
+        f"via {stats.get('via_evaluated', 0)}/{stats.get('via_declarations', 0)} resolved",
     ]
     if "probes" in stats:
         parts.append(f"probe-records {stats.get('probes_evaluated', 0)}/{stats.get('probes', 0)}")

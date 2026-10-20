@@ -21,6 +21,18 @@
 # their owners' (P35.3 and the OPS rows) — this file is the contract, not the probe.
 #
 # Records land under docs/build/reports/probes/<id>.json.
+#
+# P35.3 (G10 placement, SIG-OPS-011): each [[probe]] additionally declares its
+# trigger points — `triggers` ⊆ {pr, candidate, publish, schedule, tail} per
+# the B4 §4 G10 placement matrix verbatim (a probe with no declared trigger
+# point fails validation), `placement` carries the matrix's per-cell text
+# where it is not a bare checkmark, and `via` names the real surface each
+# scheduled/post-publish declaration resolves against — `job:`/`trigger:` a
+# job or scheduler declared in ops/cadence.toml or ops/quality_probe.toml,
+# `verb:` a committed `sig-ops` verb, `row:` the owning chain row when the
+# executions land as that row's job legs. `tail` is implied by membership in
+# this file but is still declared explicitly. check_round_close.py validates
+# the declarations; ops.probe_registry resolves the `via` surfaces.
 
 schema = "tail-probe-sweep/1"
 
@@ -31,6 +43,9 @@ requires = ["SIG-OPS-003"]
 owner = "P34.10"
 command = "uv run sig-ops republish-probe --record-out docs/build/reports/probes/route-allowlist.json"
 record = "docs/build/reports/probes/route-allowlist.json"
+triggers = ["pr", "candidate", "publish", "schedule", "tail"]
+placement = { pr = "build-output test", publish = "every origin, incl. the sig-web bucket", schedule = "6-hourly" }
+via = { publish = "verb:publish-web", schedule = "trigger:sig-sched-probe" }
 
 [[probe]]
 id = "release-record"
@@ -39,6 +54,9 @@ requires = ["SIG-OPS-004", "DR-C3-14"]
 owner = "P34.10"
 command = "uv run sig-ops release-record-probe --record-out docs/build/reports/probes/release-record.json"
 record = "docs/build/reports/probes/release-record.json"
+triggers = ["candidate", "publish", "schedule", "tail"]
+placement = { schedule = "daily" }
+via = { publish = "verb:publish-web", schedule = "row:P34.10" }
 
 [[probe]]
 id = "live-config-drift"
@@ -47,6 +65,9 @@ requires = ["SIG-OPS-005"]
 owner = "P35.1a"
 command = "uv run sig-ops drift-probe --record-out docs/build/reports/probes/live-config-drift.json"
 record = "docs/build/reports/probes/live-config-drift.json"
+triggers = ["schedule", "tail"]
+placement = { schedule = "daily" }
+via = { schedule = "trigger:sig-sched-live-diff" }
 
 [[probe]]
 id = "monitoring-liveness"
@@ -55,6 +76,8 @@ requires = ["SIG-OPS-006"]
 owner = "P35.2"
 command = "uv run sig-ops monitoring-probe --record-out docs/build/reports/probes/monitoring-liveness.json"
 record = "docs/build/reports/probes/monitoring-liveness.json"
+triggers = ["schedule", "tail"]
+via = { schedule = "trigger:sig-sched-probe" }
 
 [[probe]]
 id = "attribution-sanity"
@@ -62,6 +85,9 @@ title = "every rights_attribution_required row has holder + terms URL, holder fr
 requires = ["SIG-OPS-011", "DR-C3-09"]
 owner = "P35.3"
 command = "uv run sig-ops probe-sweep --only attribution-sanity --record-out docs/build/reports/probes/attribution-sanity.json"
+triggers = ["pr", "candidate", "publish", "schedule", "tail"]
+placement = { pr = "fixture export", candidate = "bulk files", publish = "API sample", schedule = "weekly" }
+via = { publish = "verb:publish-web", schedule = "trigger:sig-sched-quality-probe" }
 record = "docs/build/reports/probes/attribution-sanity.json"
 
 [[probe]]
@@ -71,6 +97,8 @@ requires = ["SIG-OPS-011", "DR-C3-05", "DR-C3-11"]
 owner = "P35.3"
 command = "uv run sig-ops probe-sweep --only jurisdiction-coordinate --record-out docs/build/reports/probes/jurisdiction-coordinate.json"
 record = "docs/build/reports/probes/jurisdiction-coordinate.json"
+triggers = ["pr", "candidate", "tail"]
+placement = { pr = "fixture export" }
 
 [[probe]]
 id = "api-release-parity"
@@ -79,6 +107,9 @@ requires = ["SIG-OPS-011", "DR-C3-12"]
 owner = "P35.3"
 command = "uv run sig-ops probe-sweep --only api-release-parity --record-out docs/build/reports/probes/api-release-parity.json"
 record = "docs/build/reports/probes/api-release-parity.json"
+triggers = ["pr", "publish", "schedule", "tail"]
+placement = { pr = "contract test", schedule = "daily" }
+via = { publish = "verb:publish-web", schedule = "trigger:sig-sched-quality-probe" }
 
 [[probe]]
 id = "number-truth"
@@ -87,6 +118,8 @@ requires = ["SIG-OPS-011", "DR-C3-15"]
 owner = "P35.3"
 command = "uv run sig-ops probe-sweep --only number-truth --record-out docs/build/reports/probes/number-truth.json"
 record = "docs/build/reports/probes/number-truth.json"
+triggers = ["candidate", "tail"]
+placement = { candidate = "recompute" }
 
 [[probe]]
 id = "fixture-sentinel"
@@ -95,6 +128,9 @@ requires = ["SIG-OPS-011", "DRAFT-OPS-2"]
 owner = "P35.3"
 command = "uv run sig-ops sentinel-scan --record-out docs/build/reports/probes/fixture-sentinel.json"
 record = "docs/build/reports/probes/fixture-sentinel.json"
+triggers = ["pr", "candidate", "publish", "schedule", "tail"]
+placement = { pr = "build output", schedule = "daily API sample" }
+via = { publish = "verb:publish-web", schedule = "trigger:sig-sched-quality-probe" }
 
 [[probe]]
 id = "claim-markers"
@@ -103,3 +139,5 @@ requires = ["SIG-OPS-011", "DR-C3-03"]
 owner = "P35.3"
 command = "uv run sig-ops claim-marker-scan --record-out docs/build/reports/probes/claim-markers.json"
 record = "docs/build/reports/probes/claim-markers.json"
+triggers = ["pr", "candidate", "tail"]
+placement = { pr = "build output" }

@@ -577,6 +577,142 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the sig.probe-run/1 record here (default: stdout).",
     )
 
+    # --- P35.3 (G10): the fixture-sentinel scan, the claim-marker binding, the
+    # probe sweep's registered legs and the registry's own surface. All
+    # read-only; every one emits sig.probe-run/1 via the shared ops.probe_run
+    # seam (one record format, never a parallel schema). -----------------------
+    sscan = sub.add_parser(
+        "sentinel-scan",
+        help="P35.3: the fixture-sentinel scan (SIG-OPS-012) — sweeps the "
+        "public web build / release-candidate output / sampled API responses "
+        "for the ops/sentinels.toml sentinels (example.test, sig.example, "
+        "_FIXTURE, demo_, Reviewer A/B, loopback URLs, undisclosed stand-in "
+        "captures, unregistered contact domains). A hit outside a declared "
+        "fixture compartment fails. Emits the fixture-sentinel probe-run/1.",
+    )
+    sscan.add_argument(
+        "--config",
+        default=None,
+        help="the sentinels table (default: ops/sentinels.toml).",
+    )
+    sscan.add_argument(
+        "--scan",
+        action="append",
+        default=[],
+        help="a directory to sweep (repeatable). Default: web/dist when present.",
+    )
+    sscan.add_argument(
+        "--rc",
+        action="append",
+        default=[],
+        help="a release-candidate build-output tree to sweep (repeatable).",
+    )
+    sscan.add_argument(
+        "--api-sample",
+        action="append",
+        default=[],
+        help="a directory of sampled live API responses to sweep (repeatable).",
+    )
+    sscan.add_argument(
+        "--record-out",
+        default=None,
+        help="write the sig.probe-run/1 record here (default: stdout).",
+    )
+
+    cmscan = sub.add_parser(
+        "claim-marker-scan",
+        help="P35.3: the claim-marker check (DR-C3-03) — 'human-verified' / "
+        "'Reviewed' / 'independent review' assertions count only where a "
+        "recorded human-completion marker exists (a marker:<path> citation "
+        "resolving to a committed reviewer/recorded/subject record). An agent "
+        "label never counts as a human label. Emits the claim-markers probe-run/1.",
+    )
+    cmscan.add_argument(
+        "--config",
+        default=None,
+        help="the sentinels table (default: ops/sentinels.toml).",
+    )
+    cmscan.add_argument(
+        "--scan",
+        action="append",
+        default=[],
+        help="a directory to sweep (repeatable). Default: web/dist when present.",
+    )
+    cmscan.add_argument(
+        "--rc",
+        action="append",
+        default=[],
+        help="a release-candidate build-output tree to sweep (repeatable).",
+    )
+    cmscan.add_argument(
+        "--api-sample",
+        action="append",
+        default=[],
+        help="a directory of sampled live API responses to sweep (repeatable).",
+    )
+    cmscan.add_argument(
+        "--record-out",
+        default=None,
+        help="write the sig.probe-run/1 record here (default: stdout).",
+    )
+
+    pswp = sub.add_parser(
+        "probe-sweep",
+        help="P35.3: run one registered production-truth probe and emit its "
+        "sig.probe-run/1 record (the evidence form this row binds; each leg's "
+        "deeper check logic is its owning row's — a leg without inputs is "
+        "'skipped', never fabricated).",
+    )
+    pswp.add_argument(
+        "--only",
+        required=True,
+        choices=sorted(
+            [
+                "attribution-sanity",
+                "jurisdiction-coordinate",
+                "api-release-parity",
+                "number-truth",
+            ]
+        ),
+        help="the registered probe id to run.",
+    )
+    pswp.add_argument(
+        "--public-dir",
+        default=None,
+        help="the partitioned public export root (attribution sanity / "
+        "jurisdiction-coordinate / number-truth).",
+    )
+    pswp.add_argument(
+        "--api-sample",
+        default=None,
+        help="a directory of sampled /v1/dossier/{scope} API responses (api-release-parity).",
+    )
+    pswp.add_argument(
+        "--release-dir",
+        default=None,
+        help="the release JSON tree the API samples compare against (api-release-parity).",
+    )
+    pswp.add_argument(
+        "--record-out",
+        default=None,
+        help="write the sig.probe-run/1 record here (default: stdout).",
+    )
+
+    preg = sub.add_parser(
+        "probe-registry",
+        help="P35.3: the committed production-truth probe registry "
+        "(docs/build/tools/record_policy/tail_probe_sweep.toml) — `check` "
+        "validates the grammar + dry-run-resolves every via surface against "
+        "the real job/publish surfaces; `list` prints the table. Offline.",
+    )
+    preg.add_argument("action", choices=("check", "list"))
+    preg.add_argument(
+        "--json",
+        dest="as_json",
+        action="store_true",
+        help="print the registry report as JSON.",
+    )
+
     drill = sub.add_parser(
         "backup-drill",
         help="dump the compose PG and restore into a fresh DB, asserting the graph reproduces",
@@ -2869,6 +3005,109 @@ def _cmd_post_cutover_probe(args: argparse.Namespace) -> int:
     return 0 if record["overall"] != "fail" else 1
 
 
+# --- P35.3 (G10): sentinel scan / claim-marker scan / probe sweep / registry ---
+
+
+def _emit_probe_record(record: dict, record_out: str | None, label: str) -> int:
+    """Write/print the sig.probe-run/1 record + its sha256 output digest."""
+    from .probe_run import write_record
+
+    if record_out:
+        digest = write_record(record, Path(record_out).resolve())
+        print(f"sig-ops {label}: record -> {record_out} sha256:{digest}")
+    else:
+        print(json.dumps(record, indent=2, sort_keys=True))
+    print(
+        f"sig-ops {label}: overall={record['overall']} "
+        f"generated_at={record['generated_at']} probe={record.get('probe')}",
+        file=sys.stderr,
+    )
+    return 0 if record["overall"] != "fail" else 1
+
+
+def _scan_roots(args: argparse.Namespace) -> list[Path]:
+    roots = [Path(d).resolve() for d in (*args.scan, *args.rc, *args.api_sample)]
+    if not roots:
+        default = Path("web/dist")
+        if default.is_dir():
+            roots = [default.resolve()]
+    return roots
+
+
+def _scan_subject(roots: list[Path], cfg_path: Path) -> dict:
+    """Repo-relative subject paths — a committed record never embeds the
+    machine-local checkout path (it must be reproducible off any checkout)."""
+
+    def rel(p: Path) -> str:
+        try:
+            return str(p.relative_to(_REPO_ROOT))
+        except ValueError:
+            return str(p)
+
+    return {"scan_roots": [rel(r) for r in roots], "config": rel(cfg_path)}
+
+
+def _cmd_sentinel_scan(args: argparse.Namespace) -> int:
+    """P35.3: the fixture-sentinel scan — emits the fixture-sentinel record."""
+    from .truth_scan import SENTINELS_PATH, _iter_files, load_sentinels, sentinel_record
+
+    cfg_path = Path(args.config).resolve() if args.config else SENTINELS_PATH
+    cfg, errors = load_sentinels(cfg_path)
+    roots = _scan_roots(args)
+    files = _iter_files(roots, _REPO_ROOT)
+    record = sentinel_record(cfg, errors, files, _REPO_ROOT, subject=_scan_subject(roots, cfg_path))
+    return _emit_probe_record(record, args.record_out, "sentinel-scan")
+
+
+def _cmd_claim_marker_scan(args: argparse.Namespace) -> int:
+    """P35.3: the claim-marker check — emits the claim-markers record."""
+    from .truth_scan import SENTINELS_PATH, _iter_files, claim_marker_record, load_sentinels
+
+    cfg_path = Path(args.config).resolve() if args.config else SENTINELS_PATH
+    cfg, errors = load_sentinels(cfg_path)
+    roots = _scan_roots(args)
+    files = _iter_files(roots, _REPO_ROOT)
+    record = claim_marker_record(
+        cfg, errors, files, _REPO_ROOT, subject=_scan_subject(roots, cfg_path)
+    )
+    return _emit_probe_record(record, args.record_out, "claim-marker-scan")
+
+
+def _cmd_probe_sweep(args: argparse.Namespace) -> int:
+    """P35.3: run one registered probe — emits its probe-run/1 record."""
+    from .truth_scan import sweep_record
+
+    record = sweep_record(
+        args.only,
+        public_dir=Path(args.public_dir).resolve() if args.public_dir else None,
+        api_sample=Path(args.api_sample).resolve() if args.api_sample else None,
+        release_dir=Path(args.release_dir).resolve() if args.release_dir else None,
+    )
+    return _emit_probe_record(record, args.record_out, f"probe-sweep {args.only}")
+
+
+def _cmd_probe_registry(args: argparse.Namespace) -> int:
+    """P35.3: validate + dry-run-resolve the committed probe registry."""
+    from .probe_registry import describe, registry_report
+
+    report = registry_report(_REPO_ROOT)
+    if args.as_json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+    elif args.action == "list":
+        for p in report["probes"]:
+            print(describe(p))
+    if report["errors"]:
+        for e in report["errors"]:
+            print(f"sig-ops probe-registry: {e}", file=sys.stderr)
+        return 1
+    if args.action == "check":
+        print(
+            f"sig-ops probe-registry: OK — {report['probe_count']} probes, "
+            "every via surface resolved (dry-run)"
+        )
+    return 0
+
+
 def _cmd_backup_drill(args: argparse.Namespace) -> int:
     from .backup import DrillError, restore_drill
 
@@ -4815,6 +5054,14 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_republish_probe(args)
     if args.command == "post-cutover-probe":
         return _cmd_post_cutover_probe(args)
+    if args.command == "sentinel-scan":
+        return _cmd_sentinel_scan(args)
+    if args.command == "claim-marker-scan":
+        return _cmd_claim_marker_scan(args)
+    if args.command == "probe-sweep":
+        return _cmd_probe_sweep(args)
+    if args.command == "probe-registry":
+        return _cmd_probe_registry(args)
     if args.command == "backup-drill":
         return _cmd_backup_drill(args)
     if args.command == "cloudsql-drill":

@@ -1,0 +1,116 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE live-claim binding policy (P35.3 — SIG-MEM-011, B4 G10): a committed
+# build-memory / readiness / README statement that *asserts production state*
+# must cite a `sig.probe-run/1` record no older than `freshness_hours` at its
+# commit. The lint verifies the citation form — never the truth of the
+# underlying probe (B4 §2.3 item 8, carried explicitly).
+#
+#   [surfaces]   the committed surfaces the corpus leg scans (repo-relative
+#                globs).
+#   [claims]     `assert` — sentence patterns that can assert production state;
+#                `negate` — same-segment patterns that disclose/deny instead
+#                ("no live fetch", "gate-pending", "until live", …). A segment
+#                with an assert hit and no negate hit is a CLAIM.
+#   [citation]   how a claim cites its probe-run record: a committed path
+#                under `committed_glob` (resolved, parsed, freshness-checked
+#                against the claim's commit time) or a digested remote path
+#                (`gs://…` carrying `sha256:<64hex>` + `generated_at:<ISO>`
+#                inline — the digest binds the bytes; the stamp is checked).
+#   [context]    the claim's citation window: the containing markdown
+#                paragraph (blank-line delimited block).
+#
+# GRANDFATHERING — "exempt by date, listed" (the ADR-199 precedent): the
+# binding lands with this file. A claim on a line whose blamed commit predates
+# the commit that introduced this policy is reported as `grandfathered`
+# (listed, never silent) — the binding did not exist to cite. A claim
+# committed at-or-after activation must cite. `--range` mode is the
+# enforcement edge: every claim a change *adds* must cite.
+schema = "sig.live-claim-policy/1"
+
+[surfaces]
+corpus = [
+    "README.md",
+    "docs/build/OPERATIONAL_READINESS.md",
+    "docs/build/LEDGER.md",
+    "docs/build/reports/**/*.md",
+    "docs/build/runs/**/*.md",
+]
+
+[claims]
+# Words that can assert production state. Classified per markdown segment —
+# a `;`/`.`/table-cell/sentence boundary bounds the statement.
+assert = [
+    '\bdeployed\b',
+    '\blive\b',
+    '\bpublicly\b',
+    '\bproduction\b',
+    '\bhosted\b',
+    '\breachable\b',
+    '\blaunched\b',
+    '\boperational\b',
+    '\bis serving\b',
+    '\bserves live\b',
+    '\bis live\b',
+    '\bin production\b',
+]
+# A segment carrying any of these discloses, denies, or defers — it is not a
+# production-state assertion. Ordered most-specific first; applied to the
+# whole segment, never just the matched word.
+negate = [
+    '\bno\b',
+    '\bnot\b',
+    '\bnon[- ]',
+    '\bnever\b',
+    '\bwithout\b',
+    '\bnothing\b',
+    '\bnone\b',
+    "\\bisn't\\b", "\\baren't\\b", "\\bwasn't\\b", "\\bweren't\\b",
+    "\\bdon't\\b", "\\bdoesn't\\b", "\\bdidn't\\b", "\\bcannot\\b", "\\bcan't\\b", "\\bwon't\\b",
+    "\\bhasn't\\b", "\\bhaven't\\b", "\\bhadn't\\b", "\\bhas not\\b", "\\bhave not\\b",
+    '\bun-?deploy', '\bun-?publish', '\bunverified\b', '\bunreviewed\b',
+    '\bpre-?live\b', '\bpre-?deploy', '\bpre-?public', '\bpre-?launch',
+    '\bpending\b', '\bdeferred\b', '\bgate[ -]?pending\b', '\bgated\b', '\bqueued\b',
+    '\bplanned\b', '\bowed\b', '\bowes\b', '\babsen', '\brefus',
+    '\bblocked\b', '\bstopped\b', '\bpaused\b',
+    '\bprepared_not_executed\b', '\bprepared\b',
+    '\bdry[- ]run\b', '\bshadow\b', '\bfixture', '\bstaging\b', '\bstaged\b',
+    '\bplaceholder\b', '\bsample[ds]?\b', '\bsynthetic\b', '\bmock\b', '\bfake\b',
+    '\bstand[- ]?in\b', '\bspecimen\b', '\bdemo\b',
+    '\buntil\b', '\bunless\b', '\bbefore\b', '\bonce\b', '\bwhen\b', '\bif\b',
+    '\bwould\b', '\bwill\b', '\bcould\b', '\bshould\b', '\bmay\b', '\bmight\b',
+    '\bfuture\b', '\bupcoming\b', '\bto be\b', '\bto go\b', '\bgoing to\b',
+    '\bto launch', '\bto deploy', '\bto publish',
+    '\bonly when\b', '\bonly after\b', '\bonly if\b',
+    '\byet\b', '\bstill\b', '\bremains?\b', '\bzero\b',
+    '\brather than\b', '\binstead of\b', '\bexcept\b',
+    '\bcandid', '\bprospectiv', '\bhypothetic',
+    '\bsimulat', '\breplay', '\brehears',
+    '\bforbid', '\bprohibit',
+]
+
+[citation]
+# Committed record citation: a repo path under this glob must exist, parse as
+# `sig.probe-run/1` (version, generated_at, checks, overall), and be
+# `generated_at` within `freshness_hours` before the claim's commit time
+# (never materially after it — `skew_minutes` covers clock slop). An optional
+# trailing `(sha256:<64hex>)` must equal the record bytes' digest.
+committed_glob = "docs/build/reports/probes/*.json"
+# Remote record citation: `gs://…` carrying the digest + declared stamp inline:
+#   gs://bucket/path/record.json (sha256:<64hex>) (generated_at:<ISO8601>)
+remote_scheme = 'gs://'
+remote_sha_re = 'sha256:([0-9a-f]{64})'
+remote_stamp_re = 'generated_at:([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z)'
+freshness_hours = 24
+skew_minutes = 10
+
+[context]
+# The citation window is the containing markdown paragraph — the maximal run
+# of contiguous non-blank, non-heading lines holding the claim segment.
+window = "paragraph"
+
+[activation]
+# The binding lands with this file: claims on lines whose blamed commit is
+# older than the commit that introduced this policy are `grandfathered`
+# (listed). Resolved by `git log --diff-filter=A` on this file; when the file
+# is itself uncommitted (a pre-commit local run), activation = HEAD.
+self = "docs/build/tools/record_policy/live_claims.toml"

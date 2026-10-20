@@ -1,0 +1,58 @@
+{
+  "checks": {
+    "compartments": {
+      "checked": 2,
+      "verdict": "pass",
+      "violations": []
+    },
+    "config": {
+      "errors": [],
+      "sentinels": 9,
+      "verdict": "pass"
+    },
+    "contact-domains": {
+      "domains_checked": 1,
+      "verdict": "pass",
+      "violation_count": 0,
+      "violations": []
+    },
+    "sentinels": {
+      "exempted": {
+        "curate-loopback": 7,
+        "research-dossier-standin": 13,
+        "sources-demo-entries": 2,
+        "visual-language-demo": 1,
+        "watch-feed-uid": 6
+      },
+      "files_scanned": 71,
+      "hits": {
+        "demo-marker": 1,
+        "example-test-tld": 2,
+        "fixture-iri": 13,
+        "loopback-url": 7,
+        "sig-example-domain": 6
+      },
+      "verdict": "pass",
+      "violation_count": 0,
+      "violations": []
+    },
+    "standin-disclosure": {
+      "candidates": 54,
+      "evaluated": 54,
+      "verdict": "pass",
+      "violation_count": 0,
+      "violations": []
+    }
+  },
+  "generated_at": "2026-10-16T06:51:28Z",
+  "overall": "pass",
+  "probe": "fixture-sentinel",
+  "release": {},
+  "subject": {
+    "config": "ops/sentinels.toml",
+    "scan_roots": [
+      "web/dist"
+    ]
+  },
+  "version": "sig.probe-run/1"
+}

@@ -1,0 +1,33 @@
+{
+  "checks": {
+    "assertions": {
+      "assertions": {},
+      "exempted": {},
+      "files_scanned": 71,
+      "verdict": "pass",
+      "violation_count": 0,
+      "violations": []
+    },
+    "config": {
+      "claim_markers": 3,
+      "errors": [],
+      "verdict": "pass"
+    },
+    "marker-records": {
+      "markers_checked": 0,
+      "note": "every cited marker:<path> resolved and validated during the scan",
+      "verdict": "pass"
+    }
+  },
+  "generated_at": "2026-10-16T06:51:28Z",
+  "overall": "pass",
+  "probe": "claim-markers",
+  "release": {},
+  "subject": {
+    "config": "ops/sentinels.toml",
+    "scan_roots": [
+      "web/dist"
+    ]
+  },
+  "version": "sig.probe-run/1"
+}

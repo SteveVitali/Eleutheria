@@ -38,6 +38,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, NoReturn
 
+from .probe_run import PROBE_RUN_VERSION
+
 SCHEMA = "sig.exec-host/1"
 DEFAULT_DECLARATION = Path(__file__).resolve().parents[3] / "ops" / "exec_host.toml"
 
@@ -45,11 +47,12 @@ DEFAULT_DECLARATION = Path(__file__).resolve().parents[3] / "ops" / "exec_host.t
 #: cleanup only ever deletes a name this run created, and only this shape.
 PURPOSE_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,40}$")
 JOB_PREFIX_RE = re.compile(r"^sig-[a-z0-9-]{1,40}$")
+
 STAMP_RE = re.compile(r"^\d{8}T\d{6}Z$")
 SECRET_NAME_RE = re.compile(r"^[a-z][a-z0-9-]{0,60}$")
 ENV_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,60}$")
 
-PROBE_RUN_VERSION = "sig.probe-run/1"
+# sig.probe-run/1 — the one record format, shared via ops.probe_run (P35.3).
 
 
 def _fail(msg: str) -> NoReturn:

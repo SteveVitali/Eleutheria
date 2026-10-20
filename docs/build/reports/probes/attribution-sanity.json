@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "check": {
+      "missing_attribution": 0,
+      "missing_terms_url": 0,
+      "rows_checked": 2,
+      "verdict": "pass"
+    }
+  },
+  "generated_at": "2026-10-16T07:20:03Z",
+  "overall": "pass",
+  "probe": "attribution-sanity",
+  "release": {},
+  "subject": {
+    "api_sample": null,
+    "public_dir": "/Users/stevenvitali/Eleutheria/exports/out/okc",
+    "release_dir": null
+  },
+  "version": "sig.probe-run/1"
+}

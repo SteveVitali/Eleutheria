@@ -56,6 +56,8 @@ requires = ["SIG-OPS-003"]
 owner = "P34.10"
 command = "uv run sig-ops republish-probe --record-out docs/build/reports/probes/route.json"
 record = "docs/build/reports/probes/route-allowlist.json"
+triggers = ["pr", "candidate", "publish", "schedule", "tail"]
+via = { publish = "verb:publish-web", schedule = "trigger:sig-sched-probe" }
 
 [[probe]]
 id = "number-truth"
@@ -64,7 +66,12 @@ requires = ["SIG-OPS-011", "DR-C3-15"]
 owner = "P35.3"
 command = "uv run sig-ops probe-sweep --only number-truth --record-out <record>"
 record = "docs/build/reports/probes/number-truth.json"
+triggers = ["candidate", "tail"]
 """
+
+# the real surfaces the fixture sweep's `via` declarations resolve against
+CADENCE = '[probes]\njob = "sig-probe"\nscheduler = "sig-sched-probe"\n'
+CLI = 'sub.add_parser("publish-web")\n'
 
 RISK = """# Risk register
 
@@ -244,6 +251,8 @@ def _tree(tmp_path: pathlib.Path, **files) -> pathlib.Path:
         "docs/build/LEDGER.md": LEDGER,
         "docs/build/tools/record_policy/round_close.toml": POLICY,
         "docs/build/tools/record_policy/tail_probe_sweep.toml": SWEEP,
+        "ops/cadence.toml": CADENCE,
+        "ops/src/ops/cli.py": CLI,
         "docs/traceability.md": TRACE,
         "docs/build/TICKET_VS_SPEC.md": TVS,
         "docs/build/readouts/GATE-G4.md": PACKET_OK,
@@ -551,12 +560,74 @@ def test_bad_sweep_contract_fails(tmp_path) -> None:
     assert any("number-truth" in e and "record" in e for e in errors)
 
 
-def test_cli_exit_codes(tmp_path) -> None:
-    root = _tree(tmp_path / "ok")
-    assert crc.main(["--root", str(root), "check"]) == 0
-    bad = _tree(tmp_path / "bad", **{"docs/traceability.md": "no pointer\n"})
-    assert crc.main(["--root", str(bad), "check"]) == 1
-    assert crc.main(["--root", str(root), "check", "--round-tail", "not-a-date"]) == 2
+# ── G10 trigger placement: declared trigger points + resolvable `via` surfaces ──
+
+
+def _sweep_with(probe_mutations: list[tuple[str, str]]) -> str:
+    sweep = SWEEP
+    for old, new in probe_mutations:
+        sweep = sweep.replace(old, new, 1)
+    return sweep
+
+
+def test_probe_without_triggers_fails(tmp_path) -> None:
+    bad = _sweep_with([('triggers = ["candidate", "tail"]\n', "")])
+    errors = _errors(
+        _tree(tmp_path, **{"docs/build/tools/record_policy/tail_probe_sweep.toml": bad})
+    )
+    assert any("number-truth" in e and "no declared trigger points" in e for e in errors)
+
+
+def test_probe_empty_or_unknown_triggers_fail(tmp_path) -> None:
+    bad = _sweep_with([('triggers = ["candidate", "tail"]', "triggers = []")])
+    errors = _errors(
+        _tree(tmp_path, **{"docs/build/tools/record_policy/tail_probe_sweep.toml": bad})
+    )
+    assert any("number-truth" in e and "empty triggers" in e for e in errors)
+
+    bad = _sweep_with([('triggers = ["candidate", "tail"]', 'triggers = ["nightly", "tail"]')])
+    errors = _errors(
+        _tree(tmp_path / "b", **{"docs/build/tools/record_policy/tail_probe_sweep.toml": bad})
+    )
+    assert any("number-truth" in e and "outside the vocabulary" in e for e in errors)
+
+
+def test_scheduled_probe_needs_a_resolvable_via(tmp_path) -> None:
+    # declares "schedule" but names no via surface
+    bad = _sweep_with(
+        [
+            ('triggers = ["candidate", "tail"]', 'triggers = ["candidate", "schedule", "tail"]'),
+        ]
+    )
+    errors = _errors(
+        _tree(tmp_path, **{"docs/build/tools/record_policy/tail_probe_sweep.toml": bad})
+    )
+    assert any("number-truth" in e and "names no via.schedule" in e for e in errors)
+
+    # a via that parses but resolves against no real surface
+    bad = _sweep_with(
+        [
+            ('schedule = "trigger:sig-sched-probe"', 'schedule = "trigger:sig-sched-nope"'),
+        ]
+    )
+    errors = _errors(
+        _tree(tmp_path / "b", **{"docs/build/tools/record_policy/tail_probe_sweep.toml": bad})
+    )
+    assert any("route-allowlist" in e and "does not resolve" in e for e in errors)
+
+    # a via naming a trigger the probe does not declare
+    bad = _sweep_with(
+        [
+            (
+                'triggers = ["candidate", "tail"]',
+                'triggers = ["candidate", "tail"]\nvia = { schedule = "trigger:sig-sched-probe" }',
+            ),
+        ]
+    )
+    errors = _errors(
+        _tree(tmp_path / "c", **{"docs/build/tools/record_policy/tail_probe_sweep.toml": bad})
+    )
+    assert any("number-truth" in e and "does not declare" in e for e in errors)
 
 
 def test_committed_tree_passes() -> None:
@@ -565,4 +636,13 @@ def test_committed_tree_passes() -> None:
     assert errors == [], errors[:20]
     assert stats["deferred_evaluated"] == stats["deferred"] > 0
     assert stats["banners_evaluated"] == stats["banners"] > 0
-    assert stats["sweep_probes"] > 0
+    # G10 dry-run resolution: every registry `via` resolves against a real surface
+    assert stats["via_evaluated"] == stats["via_declarations"] > 0
+
+
+def test_cli_exit_codes(tmp_path) -> None:
+    root = _tree(tmp_path / "ok")
+    assert crc.main(["--root", str(root), "check"]) == 0
+    bad = _tree(tmp_path / "bad", **{"docs/traceability.md": "no pointer\n"})
+    assert crc.main(["--root", str(bad), "check"]) == 1
+    assert crc.main(["--root", str(root), "check", "--round-tail", "not-a-date"]) == 2
