@@ -259,6 +259,104 @@ def test_vacuous_corpus_exits_3(tmp_path, capsys) -> None:
     assert "VACUOUS" in capsys.readouterr().err
 
 
+def _head(root: pathlib.Path) -> str:
+    return subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
+
+
+T_REPAIR = "2026-10-17T00:00:00Z"  # a repair commit after activation
+CLAIM = "It is also deployed."
+
+
+def _carried_repo(tmp_path: pathlib.Path, readded: str = CLAIM) -> tuple[pathlib.Path, str, str]:
+    """A pre-activation claim (source), dropped by a later commit, then re-added
+    by a repair commit after activation — `git blame` attributes the re-added
+    line to the repair. Returns (root, source sha, repair sha)."""
+    root = _repo(tmp_path)
+    _write(root, "README.md", f"Intro.\n{CLAIM}\n")
+    _commit(root, "2026-09-24T00:00:00Z")
+    _bind(root)
+    source = _head(root)
+    _write(root, "README.md", "Intro.\n")
+    _commit(root, T_CLAIM, "drop (a bad merge resolution)")
+    _write(root, "README.md", f"Intro.\n{readded}\n")
+    _commit(root, T_REPAIR, "repair: re-add the dropped record")
+    return root, source, _head(root)
+
+
+def _list_carried(root: pathlib.Path, commit: str, source: str) -> None:
+    _write(
+        root,
+        POLICY_REL,
+        POLICY + f'\n[[carried]]\ncommit = "{commit}"\nsource = "{source}"\nreason = "fixture"\n',
+    )
+    _commit(root, "2026-10-17T01:00:00Z", "list the carry")
+
+
+def test_carried_readd_without_entry_fails(tmp_path) -> None:
+    root, _source, _repair = _carried_repo(tmp_path)
+    assert _corpus(root) == 1
+
+
+def test_carried_readd_with_entry_passes(tmp_path, capsys) -> None:
+    root, source, repair = _carried_repo(tmp_path)
+    _list_carried(root, repair, source)
+    assert clc.run(root, "corpus", spec=None, json_out=None, verbose=True) == 0
+    out = capsys.readouterr().out
+    assert "carried 1" in out
+    assert f"carried README.md:2 ({repair[:8]} from {source[:8]})" in out
+
+
+def test_carried_entry_never_exempts_new_text(tmp_path) -> None:
+    root, source, repair = _carried_repo(tmp_path, readded="It is now publicly deployed.")
+    _list_carried(root, repair, source)
+    assert _corpus(root) == 1
+
+
+def test_carried_entry_needs_pre_activation_source(tmp_path) -> None:
+    root = _repo(tmp_path)
+    _bind(root)
+    _write(root, "README.md", f"Intro.\n{CLAIM}\n")
+    _commit(root, T_CLAIM)  # the source line itself postdates activation
+    source = _head(root)
+    _write(root, "README.md", "Intro.\n")
+    _commit(root, "2026-10-16T12:00:00Z")
+    _write(root, "README.md", f"Intro.\n{CLAIM}\n")
+    _commit(root, T_REPAIR)
+    _list_carried(root, _head(root), source)
+    assert _corpus(root) == 1
+
+
+def test_carried_entry_needs_ancestor_source(tmp_path) -> None:
+    root, _source, repair = _carried_repo(tmp_path)
+    home = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    _git(root, "checkout", "-q", "--orphan", "elsewhere")
+    _write(root, "README.md", f"{CLAIM}\n")
+    _commit(root, "2026-09-20T00:00:00Z")
+    unrelated = _head(root)
+    _git(root, "checkout", "-q", "-f", home)
+    _list_carried(root, repair, unrelated)
+    assert _corpus(root) == 1
+
+
+def test_malformed_carried_entry_is_a_usage_error(tmp_path) -> None:
+    root = _repo(tmp_path)
+    _write(
+        root,
+        POLICY_REL,
+        POLICY + '\n[[carried]]\ncommit = "abc123"\nsource = "def456"\n',
+    )
+    _commit(root, T_BIND)
+    _write(root, "README.md", "Intro.\n")
+    _commit(root, T_CLAIM)
+    assert _corpus(root) == 2
+
+
 def test_committed_tree_passes() -> None:
     # the real repo's corpus is consistent — every claim either predates the
     # binding or cites its record.
