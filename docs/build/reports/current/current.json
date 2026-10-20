@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "79f1f261f389fbb2d88efa264dc9545a4bd9e774",
+  "input_commit": "1f0e5df2b4330840a3b0f0fef7b8ec1487778fd0",
   "manifest_inputs": 1059,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -9,7 +9,7 @@
     "lastCompleted": "P35.25",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42a,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -26,18 +26,18 @@
     "updatedAt": "2026-10-18T11:28:34Z"
   },
   "counts": {
-    "obligations": 168,
+    "obligations": 169,
     "owed": 95,
     "open": 92,
     "partial": 3,
-    "terminal": 73,
-    "events": 657,
-    "transitions": 35,
+    "terminal": 74,
+    "events": 660,
+    "transitions": 37,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 47,
+    "return_pass_rows": 46,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -8267,6 +8267,109 @@
       ]
     },
     {
+      "id": "D-P34.42a-1",
+      "status": "DONE",
+      "status_source": "event-head D-P34.42a-1:e2",
+      "kind": "P",
+      "owner": "the P34.42a-live-2 worker (engineering), under the operator's recorded decision",
+      "landing": "satisfied by the operator-approved option-(a) retry: `sig-alerts-rt` declared a consumer of `sig-alert-webhook-token` and granted `roles/secretmanager.secretAccessor` by the scripted `bindings` step; the verbatim IAM leg re-ran on `r11/P34.42a-live-2` and every required verification is green",
+      "landing_source": "event-head",
+      "backlog_home": "BL-084",
+      "item": "The operator decision the P34.42a IAM leg's 2026-10-14 stop routes here: the live `sig-alerts` service mounts `sig-alert-webhook-token` as env `SIG_ALERT_WEBHOOK_TOKEN` (`secretKeyRef` key `latest` — `docs/build/reports/p34.42a-iam/pre/service-sig-alerts.json`), so its runtime SA must hold `roles/secretmanager.secretAccessor` on that secret — but the landed declaration (`ops/iam_identities.toml`, PR #252) asserts `sig-alerts-rt` carries no secret access and omits it from the secret's `consumers` (which names only `sig-probe-rt`/`sig-quality-probe-rt`). Cloud Run refused the same-image revision; the leg stopped per the voided-by/stop rules and rolled back to the recorded prestate (verified byte-for-byte: service identities, digests, IAM policies, SA list, bindings all restored; 39/39 routes byte-identical per service). The call: (a) amend the declaration — `sig-alerts-rt` joins `sig-alert-webhook-token`'s consumers + the scripted `bindings` step gains that one grant — then re-run the verbatim leg on `r11/P34.42a-live-2`, or (b) re-design the receiver so it never mounts the token (larger; the declaration's \"no secret access\" claim stands)",
+      "unblocked_by": "owner: the operator · trigger: the operator's call on the declaration fix — amend the TOML (a) or re-scope sig-alerts (b) · due: before P34.42b's `live:` edge (`live:P34.42a` is its precondition)",
+      "verify": "a `P34.42a-live-2` run whose poststate `sig-ops iam diff --leg services` is clean, `check-revisions` shows identical digests, the troubleshooter analysis answers NOT_GRANTED everywhere, and `sig-alerts` has no `allUsers` invoker — or, for (b), the amended declaration plus the same clean poststate",
+      "proxy": "production is exactly the recorded prestate (nothing dangling: no `-rt` SAs, no added bindings, invokers untouched); the defect is confined to the declaration — the consumer matrix already models exactly this grant for other consumers",
+      "line": 1283,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.42a-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.42a-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.42a",
+          "owner": "the operator",
+          "landing": "the operator's call on the declaration defect — amend ops/iam_identities.toml so sig-alerts-rt consumes sig-alert-webhook-token (the least-privilege truth) and the scripted bindings step grants that one accessor, then re-run the leg on r11/P34.42a-live-2; or re-scope sig-alerts so it never mounts the token; due before P34.42b's live: edge (live:P34.42a is its precondition)",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/251_P34.42a__least-privilege-service-identities.md",
+            "docs/build/runs/P34.42a.md",
+            "docs/build/reports/p34.42a-iam/README.md",
+            "docs/build/reports/p34.42a-iam/pre/service-sig-alerts.json",
+            "ops/iam_identities.toml",
+            "ops/src/ops/alerts.py"
+          ],
+          "observed_at": "2026-10-14",
+          "source_commit": "1f043d12",
+          "reason": "migration anchor appended by the P34.42a live leg (row 251, branch r11/P34.42a-live-1) for the deferral row it added — the leg stopped at the revisions step when Cloud Run refused the sig-alerts same-image revision (sig-alerts mounts sig-alert-webhook-token as env SIG_ALERT_WEBHOOK_TOKEN, so sig-alerts-rt needs secretAccessor the landed declaration denies it); a production read contradicting a record voids the S5-3 pre-authorisation, so the leg rolled back to the recorded prestate (verified identical; 39/39 routes byte-identical per service) and routes the declaration decision here; appended, never migrate; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger:/due: cell",
+          "anchor": {
+            "row_line": 1283,
+            "row_sha256": "dfff240416fc7be73aca2742ae4f6266f4ae1e334b9a38f964508d876f914ebc",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-14"
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.42a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P34.42a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P34.42a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.42a",
+          "owner": "the P34.42a-live-2 worker (engineering), under the operator's recorded decision",
+          "landing": "P34.42a live leg 2 on `r11/P34.42a-live-2` — amend `ops/iam_identities.toml` so `sig-alerts-rt` consumes `sig-alert-webhook-token` plus the one scripted `roles/secretmanager.secretAccessor` grant, then run the verbatim IAM leg",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/LEDGER.md",
+            "docs/build/runs/P34.42a.md",
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/251_P34.42a__least-privilege-service-identities.md"
+          ],
+          "observed_at": "2026-10-14",
+          "recorded_at": "2026-10-14",
+          "source_commit": "d15b4834a8a30aea72591d07dde2af46e6738a6f",
+          "reason": "progress note, not a close: at the OM-18 pause the operator answered \"approve, proceed\" (recorded verbatim in the LEDGER GATE DECISIONS confirmation row at 2026-10-14T12:27:08Z). Recorder's reading: the operator chose D-P34.42a-1 option (a) — the least-privilege declaration correction only — and authorized one verbatim IAM-leg re-run on `r11/P34.42a-live-2`; no broader IAM or production change is approved. The obligation stays OPEN until the live leg's poststate and verification evidence satisfy it."
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.42a-1:e2",
+          "kind": "transition",
+          "obligation_id": "D-P34.42a-1",
+          "seq": 2,
+          "expected_previous_event": "D-P34.42a-1:e1",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.42a",
+          "owner": "the P34.42a-live-2 worker (engineering), under the operator's recorded decision",
+          "landing": "satisfied by the operator-approved option-(a) retry: `sig-alerts-rt` declared a consumer of `sig-alert-webhook-token` and granted `roles/secretmanager.secretAccessor` by the scripted `bindings` step; the verbatim IAM leg re-ran on `r11/P34.42a-live-2` and every required verification is green",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.42a.md",
+            "docs/build/reports/p34.42a-iam-live2/README.md",
+            "docs/build/reports/p34.42a-iam-live2/pre/service-sig-alerts.json",
+            "docs/build/reports/p34.42a-iam-live2/post/service-sig-alerts-iam.json",
+            "docs/build/reports/p34.42a-iam-live2/post/secret-sig-alert-webhook-token-iam.json",
+            "docs/build/reports/p34.42a-iam-live2/anonymous-probe.txt",
+            "docs/tickets/DEFERRALS.md",
+            "ops/iam_identities.toml"
+          ],
+          "observed_at": "2026-10-14",
+          "source_commit": "9a02c24f713f11a22815d17a684549c4ad766fad",
+          "reason": "DONE on the live-2 evidence (2026-10-14, all times date -u): the operator's recorded \"approve, proceed\" (GATE DECISIONS confirmation 2026-10-14T12:27:08Z) was option (a) only — `ops/iam_identities.toml` now declares `sig-alerts-rt` a consumer of `sig-alert-webhook-token` and the scripted bindings step applies exactly that one accessor grant. Leg 2 ran inside the AR-3 window (12:48-12:53Z): prestate captured and semantically equal to leg-1's post-rollback state; `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt` created; the four declared bindings applied; same-image revisions `sig-api-00011-wic`/`sig-web-00005-hbr`/`sig-alerts-00007-qcs` deployed serving 100% on their runtime SAs; `sig-alerts` invoker = the recorded caller SA only (`allUsers` revoked — anonymous probe now HTTP 403 after ~90s propagation; `sig-api`/`sig-web` stay public by declaration at 200). Poststate: `sig-ops iam diff --leg services` clean; `check-revisions` clean (byte-identical images); `route-compare verify` 39/39 byte-identical per service; troubleshooter reads unavailable (recorded non-fatal) but the captured-policy analysis finds no basic role, no delete on the spine/evidence stores and no foreign-secret accessor on any runtime SA — no GRANTED pair. `live:P34.42a` is satisfied; the declaration-production contradiction is resolved by the declared truth.",
+          "recorded_at": "2026-10-14"
+        }
+      ]
+    },
+    {
       "id": "D-P35.1a-1",
       "status": "DONE",
       "status_source": "event-head D-P35.1a-1:e1",
@@ -8279,7 +8382,7 @@
       "unblocked_by": "owner: the operator · trigger: the operator's call on (a)/(b) — re-authorise + order P34.42b's leg before this one and name the wave-row reconciliation mode · due: before P35.1b (this leg's `live_dependants`) and before the Wave-A window opens 2026-10-19",
       "verify": "a `P35.1a-live-2` run whose prestate shows `sig-probe-rt`/`sig-ingest-rt` present, whose authorised `scheduled-ops.sh` form completes the Scheduler reconcile + bundle publish, and whose poststate `sig-ops live-diff --live` exits 0 or reports only P35.1b-queued drift",
       "proxy": "the scheduler of record is fully declared and the read-only diff works — today's in-band `live-diff --live` ran (exit 1, 52 findings — honest evidence, `docs/build/reports/p35.1a-scheduled-ops/logs/live-diff-run1.out`); every missing trigger is declared, none undeclared; `sig-sched-pg-logical-export` was never created, so D-P34.6-2's inert-until-go invariant holds",
-      "line": 1283,
+      "line": 1294,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -8358,7 +8461,7 @@
       "unblocked_by": "owner: the operator · trigger: the operator's call on (a)/(b)/(c) — resolve the declared-vs-live count so `iam-job-identities.sh --apply all` can run inside a fresh AR-3/AR-2 window, and re-confirm the P35.1a-live-2 ordering against the two-way SA/job dependency · due: before the P35.1a-live-2 retry and before the Wave-A window opens 2026-10-19",
       "verify": "a `P34.42b-live-2` run whose prestate re-count matches the (possibly amended) declaration — every declared job present live or the declaration scoped to the live fleet — so `_assert_map_covers` + `assert_no_executions` pass and the scripted apply completes with `sig-ops iam diff --leg jobs` clean",
       "proxy": "the leg machinery itself is proven and honest: `--check all` rendered the full ordered plan (exit 0), the guards refused exactly as designed (no mutation ran, no partial apply possible), and the whole contradiction is captured under `docs/build/reports/p34.42b-iam-live1/`",
-      "line": 1294,
+      "line": 1305,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -8445,7 +8548,7 @@
       "unblocked_by": "owner: the watch feed's owning row · trigger: a re-domain of the UID (e.g. `surveillancegraph.org`) + `web/tests/unit/watch.test.ts` updated · due: before the round-11 tail sweep",
       "verify": "`sig-ops sentinel-scan` over a fresh `web/dist` shows `watch-feed-uid` exempting 0 `sig-example-domain` hits; the compartment then deletes cleanly",
       "proxy": "the `watch-feed-uid` compartment exempts exactly `sig-example-domain` on exactly `web/dist/watch/**` — the exposure is bounded and audited",
-      "line": 1307,
+      "line": 1318,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -8492,7 +8595,7 @@
       "unblocked_by": "owner: the sources surface's owning row · trigger: a keep-or-remove call on the demonstration entries (a real disclosure page needs no example.invalid entries) · due: before the round-11 tail sweep",
       "verify": "`sig-ops sentinel-scan` over a fresh `web/dist` shows `sources-demo-entries` exempting 0 `example-test-tld` hits; the compartment then deletes cleanly",
       "proxy": "the `sources-demo-entries` compartment exempts exactly `example-test-tld` on exactly `web/dist/sources/**`; the entries are visibly labelled \"(demonstration entry)\" on the page",
-      "line": 1308,
+      "line": 1319,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -8539,7 +8642,7 @@
       "unblocked_by": "owner: the operator · trigger: the operator's call on (a)/(b)/(c) · due: before the next personal-id rekey batch or the round-11 tail sweep, whichever lands first",
       "verify": "on a machine holding the handle list, `uv run pytest tests/unit/test_p34_18_aliases.py` goes green under the recorded remediation, or the remediation's record (an ADR / governance-note amendment) explicitly bounds the retained quotes and the tests' contract is amended accordingly",
       "proxy": "the failure is confined to machines holding the restricted map — CI skips with the recorded reason; every hit sits in already-committed files, and P35.3's own additions carry zero handle hits (verified: worktree counts equal HEAD counts file-for-file)",
-      "line": 1323,
+      "line": 1334,
       "events": [
         {
           "schema": "obligation-event/1",
@@ -8795,14 +8898,6 @@
         "gates_cell": "hosted, window-bound (AR-3): each leg earliest `2026-10-13T12:00Z` excl. 03:00-10:00Z daily — exits 42; pre-authorised — L1 S5-3 (11A list; expires GATE-G4), L2 GATE-B GB-Q4 (11A list; expires GATE-G4); non-zero byte-compare stops",
         "operator_cell": "nothing until window + ADC — dry-run default; rollback = re-import the URL-map prestate / redeploy prior digest",
         "rerun_cell": "`implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2) · landed row 249 (PR #250)",
-        "obligations": []
-      },
-      {
-        "key": "P34.42a",
-        "obligations_cell": "the queued IAM leg (G1-01/F-272 services half): create `sig-api-rt`/`sig-web-rt`/`sig-alerts-rt`, least-privilege bindings + `sig-pg-password`, same-image revision per service, `sig-alerts` IAM invocation — `ops/iam_identities.toml`; halves landed",
-        "gates_cell": "hosted, window-bound (AR-3 + AR-2): earliest `2026-10-13T12:00Z`, excl. 03:00-06:30Z/d — exits 42; pre-authorised: S5-3 (11A list; expires GATE-G4); voided-by red probe/failed restore; AR-2 `prestate` first; poststate `iam diff` + `check-revisions` + byte-compare + troubleshooter (GRANTED = fail) or roll back",
-        "operator_cell": "nothing until window + ADC — dry-run default; rollback replays the recorded prestate",
-        "rerun_cell": "`implement-spec spec=docs/tickets/251_P34.42a__least-privilege-service-identities.md live_verification=true` (IAM leg only) · landed row 251 (PR #252)",
         "obligations": []
       },
       {
@@ -19040,7 +19135,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c443b79156a8897554a38dd699c808e1fde7b9c3299614e323861dfcfe291c27",
+  "manifest_sha256": "b697c8e8654eec2e09de69316cb9d5dba07c40b58836d8c3caee9f45103ddf24",
   "current_md": {
     "lines": 63,
     "bytes": 15625,
