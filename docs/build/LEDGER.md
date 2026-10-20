@@ -27,8 +27,8 @@ benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
-harness:         devin-desktop/claude-opus-5-5-high/orchestrator # temporary; swe-2-high before P35.41
-updatedAt:       2026-10-20T20:20Z
+harness:         devin-desktop/swe-2-high/subagent  # restored 20:55Z after the Opus repair interval (STACK-CARRY-1)
+updatedAt:       2026-10-20T20:55Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1128,3 +1128,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-20 — P35.40 post-closeout record — `ci: pass #337@6ed027db` 5/5 head-bound (run 39444369716: python 20m43s, web 15m57s, composed 3m6s, docs 1m29s, security 29s; `reports/ci/p35_40_pr337.json` read 15:23:09Z — stack pass except waived `blockedOn: CI fail on #299@19ed46d (docs)`) · heads verbatim `d0156f84` → `596dac9a` → `153ded67` (last-3 compaction, declared) → `db6fe9e3` (docs-red 39442980504 live-claim lint) → `6ed027db` repair · PR #337 open · chainTip → r11/P35.40-… · next → P35.41 (320) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-20 — P35.40 orchestrator repair — #307→#337 stack reconciliation (operator-directed carry of `172c9dab`; #293/P34.42a rows verbatim first; OP-25 not triggered) + ADR-218 `a0270540` · `ci: pass #337@c965d6f` stack-wide · #295…#314 merged to `main`, #299 waiver expired, `blockedOn` clears · detail: OPEN FINDINGS STACK-CARRY-1, RELAND-AUDIT-1, CARRY-MERGE-1 · no production mutation · next → P35.41 (320) · harness: devin-desktop/claude-opus-5-5-high/orchestrator
 - 2026-10-20 — P35.40 harness-switch — devin-desktop/swe-2-high/subagent → devin-desktop/claude-opus-5-5-high/orchestrator (temporary, by the operator) · commits it wrote that carry the swe-2-high trailer: STACK-CARRY-1 · swe-2-high resumes before P35.41 · harness: devin-desktop/claude-opus-5-5-high/orchestrator
+- 2026-10-20 — P35.41 harness-switch — devin-desktop/claude-opus-5-5-high/orchestrator → devin-desktop/swe-2-high/subagent · operator's words: "switched back to SWE-2 High. Proceed with resumed orchestrate-build drive" · restart probe PASS (`reports/isolation/dispatch-P35.41.md`; control echoed, nonce absent, start 20:54:37Z > record 20:54:30Z) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-20 — P35.41 dispatch boundary-confirm — `ci: pass #337@2d85a16` 5/5 head-bound (run 39491858342; `logs/ci-P35.41-pre-dispatch.json`) · stack pass, no waived red · dispatching P35.41 (320 — freshness semantics v2; deps P35.33+P35.32+P35.20b+P35.34; OM-20 connector roll listed in GATE-G4 §4 → in-ticket pre-authorised, expires GATE-G5) · harness: devin-desktop/swe-2-high/subagent
