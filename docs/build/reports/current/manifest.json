@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "a64fa5a34a5a89b298222359ba9c2fb9abead688",
+  "input_commit": "a7a5d9de2e56f9f2a68bd09de329acd94a674505",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "03b17aa9652b09575111d2c720ffb5784178f5cc9072e239845aa4bce63f547b"
+      "sha256": "bdeeb577503bee474d7b81b6a7d60a0d1386f1d1f07d2a440db3e38eceff34bc"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -841,12 +841,16 @@
       "sha256": "40fd97f13528bccc923e211ae33c373e2d6d4ed2ce812b509f0bd4247b08d6f4"
     },
     {
+      "path": "docs/adr/ADR-218-live-claim-lint-carried-record-provenance.md",
+      "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "9dbba24d1871d2a694faa790a4694cad8fd685ca3ad057762b2945396c1926b2"
+      "sha256": "868d943e43e3b372fdc94fd1927751395244c0dd98407e5417233fe03321abc8"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "2507aaba9ca4cf9124576224a13768ceeda8af55cc24a4a21f715951584e63b0"
+      "sha256": "f4b84b6d973c64f93d783dff72bd35b318ec627c8e36bd05d095cf2d00ce7167"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
