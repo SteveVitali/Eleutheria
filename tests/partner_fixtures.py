@@ -177,13 +177,19 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
 
     Records stamped with a connector vocabulary version normalize the stamp
     back to the base-commit value before digesting (the golden pins it); every
-    other field digests exactly as stored.
+    other field digests exactly as stored. P35.16 (R11-DATA-01, F-322) added
+    two additive stamps the golden predates — the declared ``axis_order``
+    every entity row now carries, and the ``geometry_defect`` verdict block a
+    defect-marked row carries — so they normalize out the same way (new
+    recorded provenance, never a rewrite of base-commit content).
     """
     from connectors.accountability import vocab_version as _acc_vv
     from connectors.dot_511 import vocab_version as _dot_vv
     from connectors.procurement import vocab_version as _proc_vv
     from db.claim_sink import content_digest
 
+    if "axis_order" in record or "geometry_defect" in record:
+        record = {k: v for k, v in record.items() if k not in ("axis_order", "geometry_defect")}
     if "vocab_version" in record:
         vv = str(record["vocab_version"])
         if vv == str(_acc_vv()):

@@ -24,6 +24,28 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Geometry-defect detection at ingest and export row/entity
+  disclosure** (P35.16 / row 296, catalog `R11-DATA-01`; owned finding
+  **F-322 (S1)**; cites SIG-GEO-008, SIG-IDENT-004, SIG-ONTO-011,
+  SIG-INGEST-033, ADR-092/113/210) — every camera-registry target now
+  declares its positional `axis_order` (`lon-lat`/`lat-lon`; `lat-lon`
+  on the F-322 Nottingham/mark43 transposed-serve targets) and a
+  resolvable detector bound (`extent` or a `jurisdiction_extents.toml`
+  row). Ingest runs four closed-class detectors — `null_island`,
+  `axis_swap`, `sign_flip`, `wrong_jurisdiction` — on the publisher's
+  raw pair before the parcel screen; a defect-marked record emits a
+  `geometry_defect` marking claim (registered predicate, insert-only
+  `vocab_geometry_defect` sqitch change) and asserts NO device-point
+  coordinate claims. Corrections land append-only through
+  `sig-connectors geometry-corrections` (dry-run default, `--apply`
+  writes via `PgClaimSink`; `revises_claim` + `correction_reason` +
+  `derived_from_claim_ids`), scoped by the committed
+  `sig.geometry-corrections/1` artifact. Export manifests now carry
+  `distinct_entities` beside `row_count` on entity-bearing tables —
+  observation-level rows vs distinct subjects disclosed, never an
+  inflated census. The hosted correction write is staged, not applied
+  (`live_verification=false`; re-runs under the ticket's OM-19 prompt).
+
 - **Release provenance stamp, `release.json` and `X-SIG-*` headers**
   (P35.13 / row 295; **SIG-REL-009** owner; cites SIG-REL-001/002/003,
   SIG-MEM-011, SIG-SEC-008, SIG-REL-010; G3 §6) — every release surface

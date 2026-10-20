@@ -80,7 +80,12 @@
 # the declared `coordinate_mode="fields"` source), `LOCATION_DESCRIPTION`
 # (DC ASC's site-name label), `direction_of_travel` (Tacoma AE direction).
 # Additive only.
-vocab_version = "2026.10.12.3"
+# 2026.10.17 (P35.16 / R11-DATA-01, F-322): `geometry_defect` joins the
+# allowlist — the registered predicate marking a published coordinate pair
+# that failed its declared detector bound (axis_swap / null_island /
+# sign_flip / wrong_jurisdiction); a defect-marked point emits NO
+# device-point coordinate claims. Additive only.
+vocab_version = "2026.10.17"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -124,6 +129,14 @@ predicate_allowlist = [
   # `deployment_date_field`, e.g. MTA `implementation_date`) emits under.
   "enforcement_count",
   "installation_date",
+  # P35.16 (R11-DATA-01, F-322): `geometry_defect` — the recorded defect
+  # verdict marking a published coordinate pair that failed its declared
+  # detector bound (axis_swap / null_island / sign_flip /
+  # wrong_jurisdiction). A defect-marked point asserts NO device-point
+  # coordinate claims — the defective pair is marked, never asserted as a
+  # location (SIG-IDENT-004); the class + observed pair + bound ride the
+  # claim evidence. A registered predicates.yaml member.
+  "geometry_defect",
   # P36.7 (ACQ-11): `programme_area` — the programme-area aggregate subject
   # assertion (a published PSA group row, never a camera); `programme_count` —
   # the registered predicate the programme-aggregate transports emit per

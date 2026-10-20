@@ -53,6 +53,14 @@
 # this registry. Assessment convention unchanged (ADR-104): the emitting genre
 # and `connector_run` cells are assessed per row, the rest read D6; each row's
 # `# P35.14a assessment:` comment names the assessed cells.
+#
+# P35.16 (R11-DATA-01, F-322 / SIG-GEO-008): `geometry_defect` — the recorded
+# defect marking the ingest detectors and the append-only correction pass emit
+# on a subject whose published coordinate pair contradicts the declared axis
+# order / jurisdiction extent (axis_swap, null_island, sign_flip,
+# wrong_jurisdiction). The claim marks the defect; it never rewrites the
+# original coordinate claim (corrections ride new claims citing
+# `derived_from_claim_ids` — SIG-ONTO-011 correction-by-addition).
 scheme: predicate
 title: SIG predicate registry (§13.6)
 version: 1.0.0
@@ -9322,6 +9330,56 @@ predicates:
     news_article: D6
     vendor_default_page: D6
     camera_registry: D2
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+
+- predicate_id: geometry_defect
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A recorded geometry-defect marking on a registry-observed subject: the
+    defect class an ingest detector or the append-only correction pass found
+    in the published coordinate pair — `axis_swap` (the pair sits outside the
+    declared extent and the transposed pair sits inside it), `null_island`
+    (the pair is at/near (0,0)), `sign_flip` (the pair sits outside the
+    declared extent and negating exactly one axis lands it inside), or
+    `wrong_jurisdiction` (the pair contradicts the declared extent and no
+    transposition or sign flip rescues it). The observed pair, the declared
+    extent it failed and the detector version ride the claim's evidence; the
+    claim only MARKS the defect — the original coordinate claims stand and any
+    corrected coordinate is a new `camera_latitude`/`camera_longitude` claim
+    citing the originals in `derived_from_claim_ids` (P35.16 / R11-DATA-01,
+    F-322, SIG-GEO-008, SIG-IDENT-004, SIG-ONTO-011).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/geometry_defect
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: never_resolve
+  # P35.16 assessment: camera_registry D4 (a detector verdict derived from the
+  # published record + the declared extent — never publisher text);
+  # connector_run D3 (a recorded run observation); all other genres D6.
+  # `never_resolve` is explicit: defect classes are a closed set whose
+  # envelope would collapse the class the claim exists to record.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
     connector_run: D3
     agenda_document: D6
     bill_index: D6

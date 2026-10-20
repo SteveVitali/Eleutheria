@@ -299,7 +299,17 @@ def assert_target_geometry_kind(target: Mapping[str, Any]) -> str:
 
 
 def target_geometry_violations() -> list[str]:
-    """``sig-connectors validate`` rules for the per-target geometry kind."""
+    """``sig-connectors validate`` rules for the per-target geometry kind,
+    axis order and detector extent (P35.16 / R11-DATA-01).
+
+    Every registry row must carry an explicit ``axis_order`` — the recorded
+    default exists for synthetic/run-time targets, never a committed row
+    (the un-declared default is exactly the F-322 defect condition). The
+    defect detectors need a resolvable bound: an explicit ``extent`` field
+    or a ``jurisdiction_extents`` row for the declared ``(scheme, state)``;
+    ``sig.unresolved`` rows carry neither by design — the detector records
+    a skip on them, never a silent pass.
+    """
     violations: list[str] = []
     for row in target_table().get("targets", []):
         label = f"target {row.get('id')!r} (source {row.get('source_id')!r})"
@@ -307,6 +317,31 @@ def target_geometry_violations() -> list[str]:
             assert_target_geometry_kind(row)
         except GeometryKindNotDeclared as exc:
             violations.append(f"{label}: {exc}")
+        try:
+            assert_target_axis_order(row)
+        except AxisOrderNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+        if not str(row.get("axis_order") or "").strip():
+            violations.append(
+                f"{label}: missing 'axis_order' — P35.16 requires the "
+                "per-target declaration; the documented default exists for "
+                "synthetic targets only"
+            )
+        if row.get("extent") is not None:
+            try:
+                _extent_tuple(row["extent"], owner=label)
+            except ExtentNotDeclared as exc:
+                violations.append(f"{label}: {exc}")
+        else:
+            scheme = str(row.get("jurisdiction_scheme") or "us.state_abbr")
+            code = str(row.get("state") or "")
+            if scheme != "sig.unresolved" and (scheme, code) not in jurisdiction_extents():
+                violations.append(
+                    f"{label}: no resolvable detector bound — jurisdiction "
+                    f"{scheme}:{code} has no jurisdiction_extents.toml row and "
+                    "the target carries no 'extent' (the defect detectors "
+                    "would record a skip, never evaluate)"
+                )
     return violations
 
 
@@ -425,6 +460,331 @@ def target_status_violations() -> list[str]:
         except CoordinatePrecisionNotDeclared as exc:
             violations.append(f"{label}: {exc}")
     return violations
+
+
+# --- the declared axis order + detector extent (P35.16 / R11-DATA-01, F-322) --
+
+#: The closed vocabulary for a target's ``axis_order`` — the order the
+#: published coordinate pair's POSITIONAL slots carry: the ArcGIS ``x``/``y``
+#: geometry member and bare ``coordinates[]`` arrays. ``lon-lat`` is the
+#: Esri/GeoJSON order (slot 0 = longitude); ``lat-lon`` declares the publisher
+#: serves the pair transposed (F-322's Nottingham and mark43 defect groups)
+#: and the positional read un-transposes it. A NAMED ``latitude``/``longitude``
+#: field pair stays name-authoritative under either declaration — a publisher
+#: that swapped its named columns produces a detector-flagged defect, never a
+#: silent relabel.
+_AXIS_ORDERS = frozenset({"lon-lat", "lat-lon"})
+
+#: The documented default when a row omits ``axis_order`` — a declared default,
+#: recorded (the ticket's explicit escape): the Esri/GeoJSON slot order. A
+#: committed registry row must declare the field (``sig-connectors validate``
+#: requires it); the default exists for synthetic/run-time target rows.
+_DEFAULT_AXIS_ORDER = "lon-lat"
+
+
+class AxisOrderNotDeclared(Exception):
+    """A registry defect: an ``axis_order`` outside the closed set.
+
+    Deliberately NOT a per-record rejection: a target that mis-declares how
+    its published pair orders its axes is a broken registry row — the run
+    fails loudly rather than interpreting coordinates on a guess (P35.16 /
+    F-322; a guessed order is exactly how the 562-row Nottingham swap landed).
+    """
+
+
+def assert_target_axis_order(target: Mapping[str, Any]) -> str:
+    """The target's declared ``axis_order`` — the documented default when unset."""
+    order = str(target.get("axis_order") or "").strip()
+    if not order:
+        return _DEFAULT_AXIS_ORDER
+    if order not in _AXIS_ORDERS:
+        raise AxisOrderNotDeclared(
+            f"registry target {target.get('id')!r} declares axis_order={order!r}, "
+            f"which is not a member ({sorted(_AXIS_ORDERS)}) — the declaration is "
+            "closed vocabulary, never a guessed orientation"
+        )
+    return order
+
+
+#: A declared detector bound — ``(min_lon, min_lat, max_lon, max_lat)`` in
+#: WGS84 degrees, lon-lat corner order (the declared ``lon-lat`` default).
+Extent = tuple[float, float, float, float]
+
+
+class ExtentNotDeclared(Exception):
+    """A registry defect: a declared extent that is not a well-formed bound.
+
+    A malformed ``extent`` is a broken registry row, never a silently
+    unbounded check — fail closed (P35.16).
+    """
+
+
+def _extent_tuple(value: Any, *, owner: str) -> Extent:
+    """Validate a declared ``[min_lon, min_lat, max_lon, max_lat]`` bound."""
+    if not isinstance(value, (list, tuple)) or len(value) != 4:
+        raise ExtentNotDeclared(
+            f"{owner}: extent must be [min_lon, min_lat, max_lon, max_lat] — got {value!r}"
+        )
+    nums = [_as_float(v) for v in value]
+    if any(v is None for v in nums):
+        raise ExtentNotDeclared(f"{owner}: extent values must be numeric — got {value!r}")
+    min_lon, min_lat, max_lon, max_lat = (float(v) for v in nums if v is not None)
+    if not (-180.0 <= min_lon < max_lon <= 180.0 and -90.0 <= min_lat < max_lat <= 90.0):
+        raise ExtentNotDeclared(
+            f"{owner}: extent {nums} is not an ordered in-range bound "
+            "(-180<=min_lon<max_lon<=180, -90<=min_lat<max_lat<=90)"
+        )
+    return (min_lon, min_lat, max_lon, max_lat)
+
+
+@cache
+def jurisdiction_extents() -> dict[tuple[str, str], Extent]:
+    """The declared per-jurisdiction detector bounds (``jurisdiction_extents.toml``).
+
+    Keyed ``(jurisdiction_scheme, code)`` — the same schemes the registry rows
+    declare (``us.state_abbr``, ``iso.3166_2``, ``iso.3166_1_alpha2``). These
+    are SIG-declared detector bounds, not evidence: a point outside its
+    declared bound is flagged, never silently corrected or dropped.
+    ``sig.unresolved`` targets have no row by design.
+    """
+    out: dict[tuple[str, str], Extent] = {}
+    for row in load_table("jurisdiction_extents").get("extents", []):
+        key = (str(row.get("scheme") or ""), str(row.get("code") or ""))
+        out[key] = _extent_tuple(row.get("extent"), owner=f"jurisdiction extent {key}")
+    return out
+
+
+def declared_extent(target: Mapping[str, Any]) -> tuple[Extent | None, str]:
+    """The extent a record's point checks against — ``(bound, ref)``.
+
+    Resolution order (the ticket's "declared bbox/registry extent"): the
+    target's own ``extent`` field where a generic jurisdiction bound is not
+    trustworthy (city-tier and unresolved-jurisdiction targets), else the
+    ``jurisdiction_extents`` row for its declared ``(scheme, state)``; ``None``
+    means not evaluable — a recorded skip, never a silent pass.
+    """
+    if target.get("extent") is not None:
+        return (
+            _extent_tuple(target["extent"], owner=f"target {target.get('id')!r}"),
+            f"target:{target.get('id')}",
+        )
+    scheme = str(target.get("jurisdiction_scheme") or "us.state_abbr")
+    code = str(target.get("state") or "")
+    bound = jurisdiction_extents().get((scheme, code))
+    if bound is not None:
+        return (bound, f"{scheme}:{code}")
+    return (None, "unresolved")
+
+
+# --- the geometry-defect detectors (P35.16 / R11-DATA-01, F-322) --------------
+
+#: The closed defect-class vocabulary a ``geometry_defect`` claim carries.
+_DEFECT_CLASSES = frozenset({"axis_swap", "null_island", "sign_flip", "wrong_jurisdiction"})
+
+#: The null-island bound — the F-322 measure ("within 1 degree of (0,0)").
+_NULL_ISLAND_EPSILON_DEG = 1.0
+
+#: The detector build stamped into each defect claim's evidence — "which check
+#: produced the marking" stays answerable off the claim itself.
+_DETECTOR_VERSION = "sig.p35-16-geometry-detector/1"
+
+
+@dataclass(frozen=True)
+class GeometryDefect:
+    """A recorded defect verdict on a resolved ``(lat, lon)`` pair (P35.16).
+
+    The verdict MARKS — it never rewrites the pair. ``extent``/``extent_ref``
+    name the declared bound the observed pair failed (``None``/``"none"`` for
+    ``null_island``, which needs no extent — (0,0) is defective on its own).
+    """
+
+    defect_class: str
+    observed_latitude: float
+    observed_longitude: float
+    extent: Extent | None
+    extent_ref: str
+    detail: str
+
+    def as_evidence(self) -> dict[str, Any]:
+        """The defect record carried in the claim/entity evidence."""
+        return {
+            "defect_class": self.defect_class,
+            "observed_latitude": self.observed_latitude,
+            "observed_longitude": self.observed_longitude,
+            "declared_extent": list(self.extent) if self.extent is not None else None,
+            "extent_ref": self.extent_ref,
+            "detector": _DETECTOR_VERSION,
+            "detail": self.detail,
+        }
+
+
+def _inside_extent(lat: float, lon: float, extent: Extent) -> bool:
+    min_lon, min_lat, max_lon, max_lat = extent
+    return min_lat <= lat <= max_lat and min_lon <= lon <= max_lon
+
+
+def detect_geometry_defect(
+    lat: float, lon: float, target: Mapping[str, Any]
+) -> GeometryDefect | None:
+    """Evaluate a resolved published pair against its declared bounds (P35.16).
+
+    Runs on the publisher's RAW coordinate (pre-tier, pre-screen) — the defect
+    is in the published evidence, so the check reads it before any transform.
+    Classes, in precedence order:
+
+    * ``null_island`` — within :data:`_NULL_ISLAND_EPSILON_DEG` of (0,0)
+      (F-322's dot_511_ga / fl511_fl defect group). (0,0) is also "outside"
+      every real target extent but carries the oceanic-origin signature —
+      it classifies on its own name first.
+    * ``axis_swap`` — outside the declared extent AND the transposed pair
+      lands inside (F-322's Nottingham/mark43 group).
+    * ``sign_flip`` — outside AND negating exactly one axis lands inside (a
+      hemisphere-impossible sign; both-axes-rescuable is ambiguous and reads
+      ``wrong_jurisdiction``).
+    * ``wrong_jurisdiction`` — outside the declared extent with no
+      transposition or single sign flip rescuing it (F-322's
+      trafficops/gmh_emc/bangla/oosgis groups).
+
+    ``None`` means clean OR not evaluable (no declared extent — a recorded
+    skip, the caller still stamps the outcome; a point inside its bound is
+    defect-free by construction). Out-of-range values never reach here —
+    :func:`extract_coordinate` already fails them closed.
+    """
+    if abs(lat) <= _NULL_ISLAND_EPSILON_DEG and abs(lon) <= _NULL_ISLAND_EPSILON_DEG:
+        return GeometryDefect(
+            "null_island",
+            lat,
+            lon,
+            None,
+            "none",
+            f"published pair ({lat}, {lon}) sits within "
+            f"{_NULL_ISLAND_EPSILON_DEG}° of (0,0) — null-island placeholder "
+            "geometry, not a camera location",
+        )
+    extent, extent_ref = declared_extent(target)
+    if extent is None:
+        return None
+    if _inside_extent(lat, lon, extent):
+        return None
+    if _inside_extent(lon, lat, extent):
+        return GeometryDefect(
+            "axis_swap",
+            lat,
+            lon,
+            extent,
+            extent_ref,
+            f"published pair ({lat}, {lon}) sits outside {extent_ref} but the "
+            f"transposed pair ({lon}, {lat}) lands inside it — the feed's "
+            "axis order contradicts its declaration",
+        )
+    flips = [
+        axis
+        for axis, fixed in (
+            ("latitude", (-lat, lon)),
+            ("longitude", (lat, -lon)),
+        )
+        if _inside_extent(fixed[0], fixed[1], extent)
+    ]
+    if len(flips) == 1:
+        return GeometryDefect(
+            "sign_flip",
+            lat,
+            lon,
+            extent,
+            extent_ref,
+            f"published pair ({lat}, {lon}) sits outside {extent_ref}; "
+            f"negating the {flips[0]} axis lands it inside — a "
+            "hemisphere-impossible sign",
+        )
+    return GeometryDefect(
+        "wrong_jurisdiction",
+        lat,
+        lon,
+        extent,
+        extent_ref,
+        f"published pair ({lat}, {lon}) sits outside {extent_ref} and no "
+        "transposition or single sign flip rescues it — the recorded "
+        "jurisdiction contradicts the published geometry",
+    )
+
+
+def geometry_correction_scopes() -> list[Any]:
+    """Resolve the committed ``sig.geometry-corrections/1`` artifact into
+    :class:`db.geometry_corrections.DefectScope` rows (the correction pass's
+    declared authorization).
+
+    Each artifact row names ``(source_id, target_id)`` + the finding's
+    expected class; the bound it evaluates against resolves the same way
+    :func:`declared_extent` does — the artifact/target's explicit ``extent``
+    first, else the ``jurisdiction_extents`` row for the target's declared
+    ``(scheme, state)``. A row naming a target the registry does not carry —
+    or whose expected class is outside the closed defect vocabulary — is a
+    broken declaration: fail closed, never a guessed scope.
+    """
+    from db.geometry_corrections import DefectScope
+
+    artifact = load_table("geometry_corrections")
+    if artifact.get("schema") != "sig.geometry-corrections/1":
+        raise AxisOrderNotDeclared(
+            "geometry_corrections.toml declares schema "
+            f"{artifact.get('schema')!r} — expected 'sig.geometry-corrections/1'"
+        )
+    registry = {
+        (str(r.get("source_id") or ""), str(r.get("id") or "")): r
+        for r in target_table().get("targets", [])
+    }
+    scopes: list[Any] = []
+    for row in artifact.get("groups", []):
+        key = (str(row.get("source_id") or ""), str(row.get("target_id") or ""))
+        target = registry.get(key)
+        if target is None:
+            raise AxisOrderNotDeclared(
+                f"geometry_corrections group {row.get('group')!r} names "
+                f"{key[0]}/{key[1]} — no committed target row carries it"
+            )
+        expected = str(row.get("expected_class") or "")
+        if expected not in _DEFECT_CLASSES:
+            raise AxisOrderNotDeclared(
+                f"geometry_corrections group {row.get('group')!r} declares "
+                f"expected_class={expected!r} outside {sorted(_DEFECT_CLASSES)}"
+            )
+        if row.get("extent") is not None:
+            extent: tuple[float, ...] | None = _extent_tuple(
+                row["extent"], owner=f"correction group {row.get('group')!r}"
+            )
+            extent_ref = f"target:{target.get('id')}"
+        else:
+            extent, extent_ref = declared_extent(target)
+            extent = tuple(extent) if extent is not None else None
+        scopes.append(
+            DefectScope(
+                group=str(row.get("group") or ""),
+                source_id=key[0],
+                target_id=key[1],
+                expected_class=expected,
+                extent=extent if extent is None else (extent[0], extent[1], extent[2], extent[3]),
+                extent_ref=extent_ref,
+                license_spdx=str(target.get("license_spdx") or "") or None,
+            )
+        )
+    return scopes
+
+
+def scan_extents() -> dict[tuple[str, str], tuple[float, float, float, float]]:
+    """``(source_id, target_id)`` -> the resolvable detector bound, for every
+    keyed registry target — the out-of-scope flag scan's input (a target
+    without a bound is not evaluable and never appears)."""
+    out: dict[tuple[str, str], tuple[float, float, float, float]] = {}
+    for row in target_table().get("targets", []):
+        bound, _ref = declared_extent(row)
+        if bound is not None:
+            out[(str(row.get("source_id") or ""), str(row.get("id") or ""))] = (
+                bound[0],
+                bound[1],
+                bound[2],
+                bound[3],
+            )
+    return out
 
 
 # --- the declared aggregate transport (P36.6 / ACQ-10, I8 NEW-7) --------------
@@ -1006,6 +1366,14 @@ def expand_registry_rows(
         # bounded) emit.
         status_disposition = assert_target_status_disposition(row)
         coordinate_precision = assert_target_coordinate_precision(row)
+        # P35.16 (R11-DATA-01, F-322): the declared axis order + the declared
+        # detector bound (when the row carries one) ride the expanded target
+        # into the emit seam — a malformed declaration is a broken registry
+        # row, never a guessed orientation.
+        axis_order = assert_target_axis_order(row)
+        row_extent = row.get("extent")
+        if row_extent is not None:
+            row_extent = _extent_tuple(row_extent, owner=f"target {row.get('id')!r}")
         # P36.6 (ACQ-10): the aggregate declaration + the declared field
         # bindings (camera_ref_field / deployment_date_field) are validated
         # at expansion — a broken declaration is a registry defect, never a
@@ -1036,7 +1404,10 @@ def expand_registry_rows(
                 "technology": technology,
                 "record_kind": declared_record_kind(row),
                 "geometry_kind": geometry_kind,
+                "axis_order": axis_order,
             }
+            if row_extent is not None:
+                target["extent"] = list(row_extent)
             if status_disposition:
                 target["status_disposition"] = status_disposition
                 target["removal_status_values"] = sorted(_row_removal_status_values(row))
@@ -1186,9 +1557,15 @@ def socrata_point_geometry(fields: Mapping[str, Any]) -> dict[str, Any] | None:
             and isinstance(coords, (list, tuple))
             and len(coords) >= 2
         ):
+            # A positional pair — the publisher's own slot order; the
+            # target's declared `axis_order` interprets it (P35.16).
             return {"x": coords[0], "y": coords[1]}
         if value.get("latitude") is not None and value.get("longitude") is not None:
-            return {"x": value["longitude"], "y": value["latitude"]}
+            # A NAMED pair — the keys are authoritative under any declared
+            # axis_order (a swapped named column is a detector-flagged
+            # defect, never a silent relabel); `named` keeps the flag off
+            # the positional interpretation.
+            return {"x": value["longitude"], "y": value["latitude"], "named": True}
     return None
 
 
@@ -1287,7 +1664,10 @@ def _matching_fields(fields: Mapping[str, Any], aliases: Iterable[str]) -> list[
 
 
 def extract_coordinate(
-    fields: Mapping[str, Any], geometry: Mapping[str, Any] | None
+    fields: Mapping[str, Any],
+    geometry: Mapping[str, Any] | None,
+    *,
+    axis_order: str = _DEFAULT_AXIS_ORDER,
 ) -> tuple[float, float, str]:
     """The operator-published ``(lat, lon, coord_source)`` for one feature.
 
@@ -1299,9 +1679,25 @@ def extract_coordinate(
     KC/WSDOT, UDOT) and layers whose aliased columns are unusable (P26.16:
     DMS-text ``LATITUDE``/``LONGITUDE``, projected ``x``/``y`` attributes,
     publisher-swapped columns) still carry their real point in geometry.
+
+    P35.16 (F-322): the target's declared ``axis_order`` interprets every
+    POSITIONAL pair — the ArcGIS ``x``/``y`` geometry and GeoJSON
+    ``coordinates[]`` slots. Under ``lat-lon`` the first slot carries
+    latitude (the transposed-serve class F-322 found on the Nottingham and
+    mark43 layers) and the read un-transposes it; the recorded
+    ``coord_source`` marks the applied order (``geometry:lat-lon``).
+    NAMED field pairs — ``latitude``/``longitude`` aliases and a Socrata
+    point object's own named keys (``"named"``) — stay name-authoritative
+    under either declaration: a swapped named column is a detector-flagged
+    defect, never a silent relabel.
+
     A record with no usable coordinate anywhere raises
     :class:`CoordinateRejected` — fail closed.
     """
+    if axis_order not in _AXIS_ORDERS:
+        raise AxisOrderNotDeclared(
+            f"extract_coordinate refuses an undeclared axis_order {axis_order!r}"
+        )
     lat_pairs = _matching_fields(fields, vocab()["lat_fields"])
     lon_pairs = _matching_fields(fields, vocab()["lon_fields"])
     saw_numeric = False
@@ -1315,15 +1711,24 @@ def extract_coordinate(
             if -90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0:
                 return (lat, lon, f"fields:{lat_pair[0]}/{lon_pair[0]}")
     if geometry is not None and geometry.get("x") is not None and geometry.get("y") is not None:
-        lat = _as_float(geometry.get("y"))
-        lon = _as_float(geometry.get("x"))
+        # Positional slots: under "lat-lon" the x slot carries latitude; a
+        # `named` geometry (a keyed point object) is name-authoritative and
+        # never re-ordered.
+        if axis_order == "lat-lon" and not geometry.get("named"):
+            lat = _as_float(geometry.get("x"))
+            lon = _as_float(geometry.get("y"))
+        else:
+            lat = _as_float(geometry.get("y"))
+            lon = _as_float(geometry.get("x"))
         if lat is None or lon is None:
             raise CoordinateRejected("malformed", "geometry: values are not numeric")
         if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
             raise CoordinateRejected(
                 "out_of_range", f"geometry: lat={lat} lon={lon} outside valid ranges"
             )
-        return (lat, lon, "geometry")
+        reordered = axis_order == "lat-lon" and not geometry.get("named")
+        source = "geometry:lat-lon" if reordered else "geometry"
+        return (lat, lon, source)
     if lat_pairs and lon_pairs:
         raise CoordinateRejected(
             "out_of_range" if saw_numeric else "malformed",
@@ -1603,6 +2008,16 @@ class CameraRegistryEntry:
     #: The ``<signal_id>@<version>`` of the declared signal the verdict came
     #: from — "what input" is always answerable off the emitted row.
     parcel_screen_signal: str = ""
+    #: P35.16 (R11-DATA-01, F-322): the target's declared positional axis
+    #: order — stamped on the entity row so "which order this record's pair
+    #: was read under" is answerable off the record itself.
+    axis_order: str = "lon-lat"
+    #: P35.16: the recorded defect verdict when a detector fired on the
+    #: published pair — a defect-marked record emits a ``geometry_defect``
+    #: claim (class + observed pair + the declared bound it failed) and NO
+    #: device-point coordinate claims; the defective pair is never asserted
+    #: as a location (SIG-IDENT-004) and never silently corrected.
+    geometry_defect: GeometryDefect | None = None
 
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
@@ -1625,9 +2040,10 @@ class CameraRegistryEntry:
             )
         if self.geometry_kind == "point" and (self.latitude is None or self.longitude is None):
             # P35.66: a residential-parcel-flagged point is demoted to C3 —
-            # it publishes NO coordinate by design, so the requirement is
-            # waived for it alone (the flag carries its own invariants below).
-            if not self.residential_parcel_flag:
+            # it publishes NO coordinate by design. P35.16 (F-322): a
+            # defect-marked point withholds the defective pair the same way —
+            # never asserted as a location. Both carry their own invariants.
+            if not self.residential_parcel_flag and self.geometry_defect is None:
                 raise ValueError("a point CameraRegistryEntry requires published coordinates")
         # P35.66 (SIG-PUB-005/013): the recorded screen verdict is closed
         # vocabulary; the flag is true iff the verdict is ``intersects``; a
@@ -1704,6 +2120,33 @@ class CameraRegistryEntry:
                 )
             if self.valid_to_kind == "exact" and not self.valid_to:
                 raise ValueError("an 'exact' valid_to bound requires the published date")
+        # P35.16 (R11-DATA-01, F-322): the declared axis order is closed
+        # vocabulary — a hand-built entry cannot smuggle an undeclared
+        # orientation into the claim surface — and a defect verdict carries
+        # only a member of the closed class set with NO device-point
+        # coordinate asserted beside it (the defective pair is marked,
+        # never asserted as a location; SIG-IDENT-004).
+        if self.axis_order not in _AXIS_ORDERS:
+            raise ValueError(
+                f"axis_order {self.axis_order!r} is not a declared order ({sorted(_AXIS_ORDERS)})"
+            )
+        if self.geometry_defect is not None:
+            if self.geometry_defect.defect_class not in _DEFECT_CLASSES:
+                raise ValueError(
+                    f"geometry defect class {self.geometry_defect.defect_class!r} "
+                    f"is not a member ({sorted(_DEFECT_CLASSES)}) — a detector "
+                    "verdict is a recorded class, never an ad-hoc label"
+                )
+            if self.latitude is not None or self.longitude is not None:
+                raise ValueError(
+                    "a defect-marked entry publishes no device coordinate — "
+                    "the defective pair is marked, never asserted as a location"
+                )
+            if self.residential_parcel_flag:
+                raise ValueError(
+                    "a defect-marked entry cannot be residential-parcel-flagged "
+                    "— the parcel screen never ran against the defective pair"
+                )
 
     @property
     def subject_id(self) -> str:
@@ -1803,6 +2246,10 @@ class CameraRegistryEntry:
             "residential_parcel_flag": self.residential_parcel_flag,
             "parcel_screen": self.parcel_screen,
             "parcel_screen_signal": self.parcel_screen_signal,
+            # P35.16 (R11-DATA-01, F-322): the declared positional axis order
+            # the record's pair was read under rides the entity row — "which
+            # order" is answerable off the record itself.
+            "axis_order": self.axis_order,
             "excluded_fields": list(self.excluded_fields),
             "evidence_genre": "camera_registry",
             "evidence": ev,
@@ -1822,6 +2269,10 @@ class CameraRegistryEntry:
             # P36.5 (P4): the publisher's declared precision caveat rides the
             # entity row so it travels with the record.
             entity["coordinate_precision"] = self.coordinate_precision
+        if self.geometry_defect is not None:
+            # P35.16: the recorded defect verdict rides the entity row — the
+            # record itself carries which class fired on which observed pair.
+            entity["geometry_defect"] = self.geometry_defect.as_evidence()
         rows: list[dict[str, Any]] = [
             _stamp(
                 entity,
@@ -1868,7 +2319,35 @@ class CameraRegistryEntry:
                 # scoped-name identity (SIG-TRUST-004).
                 op["partner_jurisdiction"] = f"{self.jurisdiction_scheme}:{self.state}"
             rows.append(op)
-        if self.geometry_kind == "point" and self.residential_parcel_flag:
+        if self.geometry_kind == "point" and self.geometry_defect is not None:
+            # P35.16 (R11-DATA-01, F-322 / SIG-GEO-008 / SIG-IDENT-004): the
+            # defect verdict MARKS the record — a ``geometry_defect`` claim
+            # carries the class and the recorded observed pair, and NO
+            # ``camera_latitude``/``camera_longitude`` claim asserts the
+            # defective pair as a location. ``coordinate_source`` still
+            # emits — it records WHICH read produced the withheld pair
+            # (the ``geometry:lat-lon`` source is the applied axis-order
+            # evidence). The observed pair's asserted values stay in the
+            # claim EVIDENCE (the published values are the provenance);
+            # the value is the class — fail-closed legibility (the
+            # P35.15b rationale: the asserted slot reads as the class).
+            rows.append(
+                self._claim(
+                    "geometry_defect",
+                    self.geometry_defect.defect_class,
+                    self.geometry_defect.defect_class,
+                    {**ev, "geometry_defect": self.geometry_defect.as_evidence()},
+                )
+            )
+            rows.append(
+                self._claim(
+                    "camera_coordinate_source",
+                    self.coordinate_source,
+                    self.coordinate_source,
+                    ev,
+                )
+            )
+        elif self.geometry_kind == "point" and self.residential_parcel_flag:
             # SIG-PUB-005/013 (P35.66): a parcel-intersecting device point is
             # demoted to C3 — program-level facts only, NO location claims.
             # The entity row's parcel_screen/flag/signal stamp is the recorded
@@ -2430,6 +2909,12 @@ def _entry_from_raw(
     ring_count = 0
     parcel_screen = ParcelScreenVerdict.UNSCREENED.value
     residential_parcel_flag = False
+    # P35.16 (R11-DATA-01, F-322): the declared positional axis order the
+    # point read applies, and the recorded defect verdict when a detector
+    # fires. Non-point records stamp the declared order too — "which order
+    # the record was read under" is answerable off every row.
+    axis_order = assert_target_axis_order(target)
+    geometry_defect: GeometryDefect | None = None
     if geometry_kind == "area":
         geometry_wkt, centroid_raw_lat, centroid_raw_lon, ring_count = area_geometry(
             raw.get("geometry")
@@ -2439,15 +2924,20 @@ def _entry_from_raw(
         )
         coord_source = "geometry:rings"
     elif geometry_kind == "point":
-        lat, lon, coord_source = extract_coordinate(fields, raw.get("geometry"))
-        verdict = screen_point(lat, lon, signal=sig)
-        parcel_screen = verdict.value
-        if verdict is ParcelScreenVerdict.INTERSECTS:
-            # SIG-PUB-005: automatic demotion — a device point on a declared
-            # residential parcel publishes program-level facts only (C3, geo
-            # tier 3 = no location). The screen ran on the publisher's
-            # coordinate BEFORE the tier transform; the precise point is
-            # withheld at emit, never published at any precision (SIG-PUB-013).
+        lat, lon, coord_source = extract_coordinate(
+            fields, raw.get("geometry"), axis_order=axis_order
+        )
+        # P35.16 (F-322 / SIG-GEO-008 / SIG-IDENT-004): the detectors run on
+        # the publisher's RAW pair, before the parcel screen and the tier
+        # transform — the defect lives in the published evidence. A flagged
+        # record is MARKED (entity + `geometry_defect` claim): the defective
+        # pair never asserts as a device location, the parcel screen is not
+        # run against a point the evidence doesn't support (it records
+        # `unscreened`), and the record is never silently corrected — a
+        # `lat-lon` target's un-transposition happens at the extract read,
+        # so a still-broken feed lands here flagged.
+        geometry_defect = detect_geometry_defect(lat, lon, target)
+        if geometry_defect is not None:
             try:
                 cls = SensitivityClass(sensitivity_class)
             except ValueError as exc:
@@ -2455,13 +2945,32 @@ def _entry_from_raw(
                     "invalid_sensitivity_class",
                     f"target pins unknown sensitivity class {sensitivity_class!r}",
                 ) from exc
-            sensitivity_class = demote_for_residential_parcel(cls, True).value
-            tier = geo_tier_for(SensitivityClass(sensitivity_class))
+            tier = geo_tier_for(cls)
             lat = None
             lon = None
-            residential_parcel_flag = True
         else:
-            lat, lon, tier = publishable_coordinate(lat, lon, sensitivity_class)
+            verdict = screen_point(lat, lon, signal=sig)
+            parcel_screen = verdict.value
+            if verdict is ParcelScreenVerdict.INTERSECTS:
+                # SIG-PUB-005: automatic demotion — a device point on a declared
+                # residential parcel publishes program-level facts only (C3, geo
+                # tier 3 = no location). The screen ran on the publisher's
+                # coordinate BEFORE the tier transform; the precise point is
+                # withheld at emit, never published at any precision (SIG-PUB-013).
+                try:
+                    cls = SensitivityClass(sensitivity_class)
+                except ValueError as exc:
+                    raise CoordinateRejected(
+                        "invalid_sensitivity_class",
+                        f"target pins unknown sensitivity class {sensitivity_class!r}",
+                    ) from exc
+                sensitivity_class = demote_for_residential_parcel(cls, True).value
+                tier = geo_tier_for(SensitivityClass(sensitivity_class))
+                lat = None
+                lon = None
+                residential_parcel_flag = True
+            else:
+                lat, lon, tier = publishable_coordinate(lat, lon, sensitivity_class)
     elif geometry_kind == "line":
         # P36.6 (ACQ-10): a route/programme record declares shape ``line`` —
         # an enforced corridor (MTA's bus-lane ATE routes), not a device
@@ -2567,6 +3076,8 @@ def _entry_from_raw(
         residential_parcel_flag=residential_parcel_flag,
         parcel_screen=parcel_screen,
         parcel_screen_signal=sig.stamp,
+        axis_order=axis_order,
+        geometry_defect=geometry_defect,
     )
 
 

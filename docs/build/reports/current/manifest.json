@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "7677b1f9113fe9595fc286e3b8006a648228c283",
+  "input_commit": "e324b22c1aef193d3260204fc728c66f50beb50b",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "9ff69e830b65e3eb701bb9c9689ca3d118e5b2e8b14593ff418e7c5143016d40"
+      "sha256": "9af07ed4ad1a52092bc3cb4e585c1e3f21f6dc82d0983d033a4bc262e6a7fc2c"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -825,16 +825,24 @@
       "sha256": "ddbfe4570ec3215a6d75d2c20e4de87edad0d3e2b45469671831dcafe51637a0"
     },
     {
+      "path": "docs/adr/ADR-210-axis-order-declarations-and-geometry-defect-classes.md",
+      "sha256": "40f3f8c6491906dc7a52044b84cbf015ba25917f4d01360e6768ba2d692e940e"
+    },
+    {
+      "path": "docs/adr/ADR-218-live-claim-lint-carried-record-provenance.md",
+      "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "6a4cc89fdfd48db0b4334a301c8e48a7cfad3d51685b93f5845de15ddced6c94"
+      "sha256": "7f8ccbf61d946b4494b3d0ca2404b37c7eaa7e0aee583275717cba1cbd8587c9"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "8cfcae27210823571cc4d0acdc0370785e59d5b78a055254bf92f705183cc79a"
+      "sha256": "e29359af4b6cf7e34fc3a8fcb527a1442a0ee0331e9ce0005f0030f75b249458"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "b4f520232330a859d8dfaa508ccf0c3b494cb2da198e39e13071d1d5c29bb07d"
+      "sha256": "6be0205d480dfd5f01bdc9ee6fa8b77336e07fa65798e57f3a4b0a09acea72b8"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -842,7 +850,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "b8bcf587744b832bf78f5e27de8a70b84059e9bc41bd71ed2e9c90eb8cba3e03"
+      "sha256": "fb23a06a7465c39d7994454ac3a58fcfadcb3a1bccd82616fa762d3d9bc2fda9"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1925,6 +1933,10 @@
       "sha256": "023a8d1825cf7cdf2cf29288ece5b385e00343bd5480065de8042bf184df9d6f"
     },
     {
+      "path": "docs/build/runs/P35.16.md",
+      "sha256": "b10b165eb4a145beb40bb2ea9f6444eed25c040a40cadcd0e6d3274d11323c2a"
+    },
+    {
       "path": "docs/build/runs/P35.1a.md",
       "sha256": "076da449c0a013dd2912b24b3ba06e2b6615136ccebd276d8774aa72694e91dc"
     },
@@ -2150,7 +2162,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "5f9fe0d976d66b60471549bab40d14bf8e4ba1c2fca89cc0d9023d0e50e80e3f"
+      "sha256": "375e41c27f83a9e128edcf314cd51dd7cf4752ccf57f65133c115d3004bfe0f6"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
@@ -2710,7 +2722,7 @@
     },
     {
       "path": "docs/tickets/296_P35.16__geometry-defects-at-ingest.md",
-      "sha256": "1f8e74c882a6ff79da0423b563cbd8d6ca9d286e7037d1cac49999f0e3367e9a"
+      "sha256": "51e51a73a84d5c3ab1ac6350b00a4dff333136498a45fa1b2457fc9e386319c8"
     },
     {
       "path": "docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md",
