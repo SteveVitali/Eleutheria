@@ -1,0 +1,104 @@
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+-- rollback: restore the recorded prestate (never a blind revert) --
+Deploying...
+Creating Revision.....................done
+Done.
+Service [sig-api] revision [sig-api-00011-wic] has been deployed and is serving 100 percent of traffic.
+Service URL: https://sig-api-873541617837.us-central1.run.app
+The revision can be reached directly at https://p318---sig-api-e5ctyx36jq-uc.a.run.app
+Deploying...
+Creating Revision.....................................................done
+Routing traffic.....done
+Done.
+Service [sig-web] revision [sig-web-00004-h6r] has been deployed and is serving 100 percent of traffic.
+Service URL: https://sig-web-873541617837.us-central1.run.app
+Deploying...
+Creating Revision..........................................................done
+Routing traffic.....done
+Done.
+Service [sig-alerts] revision [sig-alerts-00006-g26] has been deployed and is serving 100 percent of traffic.
+Service URL: https://sig-alerts-873541617837.us-central1.run.app
+Updated IAM policy for service [sig-alerts].
+bindings:
+- members:
+  - allUsers
+  role: roles/run.invoker
+etag: BwZdyhq9Is4=
+version: 1
+Updated IAM policy for secret [sig-pg-password].
+bindings:
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZdyhrPyWE=
+version: 1
+bindings:
+- members:
+  - projectEditor:zeta-medley-508121-u7
+  - projectOwner:zeta-medley-508121-u7
+  role: roles/storage.legacyBucketOwner
+- members:
+  - projectViewer:zeta-medley-508121-u7
+  role: roles/storage.legacyBucketReader
+- members:
+  - projectEditor:zeta-medley-508121-u7
+  - projectOwner:zeta-medley-508121-u7
+  role: roles/storage.legacyObjectOwner
+- members:
+  - projectViewer:zeta-medley-508121-u7
+  role: roles/storage.legacyObjectReader
+- members:
+  - allUsers
+  role: roles/storage.objectViewer
+etag: CAg=
+kind: storage#policy
+resourceId: projects/_/buckets/zeta-medley-508121-u7-sig-web
+version: 1
+Updated IAM policy for project [zeta-medley-508121-u7].
+bindings:
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-artifactregistry.iam.gserviceaccount.com
+  role: roles/artifactregistry.serviceAgent
+- members:
+  - serviceAccount:873541617837@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-cloudscheduler.iam.gserviceaccount.com
+  role: roles/cloudscheduler.serviceAgent
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  role: roles/cloudsql.client
+- members:
+  - serviceAccount:873541617837@cloudservices.gserviceaccount.com
+  role: roles/compute.instanceGroupManagerServiceAgent
+- members:
+  - serviceAccount:service-873541617837@compute-system.iam.gserviceaccount.com
+  role: roles/compute.serviceAgent
+- members:
+  - serviceAccount:service-873541617837@containerregistry.iam.gserviceaccount.com
+  role: roles/containerregistry.ServiceAgent
+- members:
+  - serviceAccount:873541617837-compute@developer.gserviceaccount.com
+  role: roles/editor
+- members:
+  - user:<redacted-operator-account>
+  role: roles/owner
+- members:
+  - serviceAccount:service-873541617837@gcp-sa-pubsub.iam.gserviceaccount.com
+  role: roles/pubsub.serviceAgent
+- members:
+  - serviceAccount:service-873541617837@serverless-robot-prod.iam.gserviceaccount.com
+  role: roles/run.serviceAgent
+etag: BwZdyhsNx6A=
+version: 1
+deleted service account [sig-api-rt@zeta-medley-508121-u7.iam.gserviceaccount.com]
+deleted service account [sig-web-rt@zeta-medley-508121-u7.iam.gserviceaccount.com]
+deleted service account [sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com]
+rollback applied — prior SAs restored, invoker policy re-set, bindings + SAs removed.
+iam-service-accounts rollback: done (mode=apply)

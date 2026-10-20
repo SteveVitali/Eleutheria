@@ -1,0 +1,13 @@
+==============================================================
+SIG GCP IaC — P34.42a — least-privilege runtime identities (G1-01, SIG-SEC-007) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+-- prestate: the IAM restore point under /tmp/p34.42a-iam/pre (read-only) --
+ERROR: (gcloud.secrets.get-iam-policy) NOT_FOUND: Secret [projects/873541617837/secrets/sig-audit-password] not found. This command is authenticated as <redacted-operator-account> which is the active account specified by the [core/account] property.
+ERROR: (gcloud.secrets.get-iam-policy) NOT_FOUND: Secret [projects/873541617837/secrets/sig-recovery-password] not found. This command is authenticated as <redacted-operator-account> which is the active account specified by the [core/account] property.
+ERROR: (gcloud.secrets.get-iam-policy) NOT_FOUND: Secret [projects/873541617837/secrets/sig-er-rerun-password] not found. This command is authenticated as <redacted-operator-account> which is the active account specified by the [core/account] property.
+route-compare capture: 39 routes → /tmp/p34.42a-iam/pre/routes-sig-api.json
+route-compare capture: 39 routes → /tmp/p34.42a-iam/pre/routes-sig-web.json
+route-compare capture: 39 routes → /tmp/p34.42a-iam/pre/routes-sig-alerts.json
+   prestate recorded under /tmp/p34.42a-iam/pre (date -u: 2026-10-14T10:02:50Z)
+iam-service-accounts prestate: done (mode=apply)
