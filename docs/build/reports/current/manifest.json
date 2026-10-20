@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "49dc2a22064fc706f0d156a58cbef36e3c7629f2",
+  "input_commit": "f024f79827d3277579324b6c50af9f3f4235f9d4",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -2058,7 +2058,7 @@
     },
     {
       "path": "docs/build/runs/P35.37.md",
-      "sha256": "879f4ada8e462687234f28b2c30701cf14298f7c04f221743a5fc44e004a06d8"
+      "sha256": "73b29bda99253b0e04c18fc971d8d7a0c64c21ec3702adf376efe096ebced664"
     },
     {
       "path": "docs/build/runs/P35.38a.md",
@@ -2906,7 +2906,7 @@
     },
     {
       "path": "docs/tickets/316_P35.37__figure-to-evidence-pointers.md",
-      "sha256": "0d91ef274d831fdc70b0fbee1bbd4dd711082be41beb4581932514cb5e9bd52c"
+      "sha256": "126752f29b8de33a8d9b6c12069b5703a7dc9013e7c36e5e82cda338ca332099"
     },
     {
       "path": "docs/tickets/317_P35.38b__iri-base-and-provenance-identity.md",
