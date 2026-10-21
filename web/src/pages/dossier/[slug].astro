@@ -17,7 +17,7 @@ import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../lib/dossier";
-import { getDossiers } from "../../lib/data";
+import { getDossiers, getDossierProvenance } from "../../lib/data";
 import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
 
 export function getStaticPaths() {
@@ -40,9 +40,20 @@ const SECTION_TITLES = sectionTitlesFor(lang);
 const jurisdiction = displayJurisdiction(dossier.jurisdiction);
 const pageTitle = dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction);
 const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ") : null;
+// ED-41: the dossier's "How we know this" derives from its OWN evidence set — the
+// per-dossier provenance row the export emitted for this slug. `undefined` (no
+// emitted row) renders the site-wide summary labelled site-wide, never site
+// totals under the dossier's name.
+const provenance = getDossierProvenance(dossier.slug);
 ---
 
-<BaseLayout title={pageTitle} path={dossierPath(dossier.slug)} lang={lang}>
+<BaseLayout
+  title={pageTitle}
+  path={dossierPath(dossier.slug)}
+  lang={lang}
+  provenance={provenance}
+  provenanceName={`${jurisdiction.label} dossier`}
+>
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
   {combinesList && (
     <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-01">This dossier combines {combinesList}.</p>

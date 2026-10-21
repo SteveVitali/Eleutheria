@@ -52,6 +52,7 @@ from policy.licensing import compute_export_license
 from policy.rights import RightsRecord
 
 from . import compartments as C
+from .jurisdictions import jurisdiction_slug
 from .shaping import ShapedDataset
 
 # --------------------------------------------------------------------------- #
@@ -606,6 +607,51 @@ def _provenance(
         "human_review_status": "unreviewed",
         "denominator": f"{len(task_rows)} research tasks (§39.7 detector outputs)",
     }
+    # ED-41 (F-05, C3 NEW-3/NEW-13, SIG-UI-044): one provenance row PER DOSSIER —
+    # the dossier's own evidence set, never a pointer at the site totals. A
+    # dossier's scope is the claims backing the sites in its jurisdiction bucket
+    # (``ShapedSite.claim_ids`` — the observation claims shaping each published
+    # site row), so "N independent sources" on /dossier/<key>/ counts only the
+    # sources backing THAT dossier's subjects. A surface with no emitted row
+    # falls back to the site-wide summary labelled site-wide — the web layout's
+    # honest fallback, never site numbers under the dossier's name.
+    claim_artifacts: dict[str, set[str]] = {}
+    for binding in raw.get("evidence_bindings") or ():
+        try:
+            claim_artifacts.setdefault(str(binding[0]), set()).add(str(binding[2]))
+        except (TypeError, IndexError):  # a malformed row degrades, never crashes
+            continue
+    dossier_scopes: dict[str, dict[str, Any]] = {}
+    sites_by_jurisdiction: dict[str, list[Any]] = {}
+    for site_row in dataset.sites:
+        sites_by_jurisdiction.setdefault(str(site_row.jurisdiction), []).append(site_row)
+    for group in dataset.jurisdictions:
+        scoped_claim_ids: set[str] = set()
+        for site_row in sites_by_jurisdiction.get(str(group.jurisdiction), ()):
+            scoped_claim_ids.update(str(cid) for cid in site_row.claim_ids)
+        scoped_weights = [r for r in weight_rows if r["claim_id"] in scoped_claim_ids]
+        scoped_artifacts = {
+            artifact for cid in scoped_claim_ids for artifact in claim_artifacts.get(cid, ())
+        }
+        slug = jurisdiction_slug(str(group.jurisdiction))
+        dossier_scopes[slug] = {
+            "artifact_count": len(scoped_artifacts),
+            "tier_distribution": _tier_distribution(scoped_weights, as_of),
+            "source_independence_count": len(
+                {r["source_id"] for r in scoped_weights if r["source_id"]}
+            ),
+            "date_range": _date_range(scoped_weights),
+            "rules_applied": [ruleset_version],
+            # Per-dossier human-review posture is unknown — the site-level
+            # verdicts don't name subjects. Honest, never inherited site posture.
+            "human_review_status": "unreviewed",
+            "denominator": (
+                f"{len(scoped_weights)} publishable tier-0 claims about the "
+                f"{group.jurisdiction} dossier's subjects carrying the epistemic "
+                "axes (reliability/directness/integrity/observed_at)"
+            ),
+        }
+
     licences = {r["spdx"] for r in weight_rows if r["spdx"]}
     return _envelope(
         SCHEMA_PROVENANCE,
@@ -616,7 +662,12 @@ def _provenance(
         ),
         _compartments_for_licences(licences, registry),
         ruleset_version=ruleset_version,
-        surfaces={"site": site, "corrections": corrections, "research_queue": research_queue},
+        surfaces={
+            "site": site,
+            "corrections": corrections,
+            "research_queue": research_queue,
+            "dossiers": dossier_scopes,
+        },
     )
 
 

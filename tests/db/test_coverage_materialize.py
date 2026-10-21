@@ -22,6 +22,8 @@ PG18+PostGIS:
 
 from __future__ import annotations
 
+import json
+
 import psycopg
 import pytest
 from conftest import seed_claim_prerequisites
@@ -364,6 +366,136 @@ def _ratio(conn: object, predicate: str) -> tuple[int, int]:
     ).fetchone()
     assert row is not None
     return int(row[0]), int(row[1])
+
+
+def _ratio_row(conn: object, predicate: str) -> dict:
+    row = conn.execute(
+        "SELECT numerator, denominator, not_evaluable, exclusions "
+        "FROM coverage_record "
+        "WHERE metric_method = 'reconciliation_ratio' AND predicate_id = %s "
+        "ORDER BY coverage_id DESC",
+        (predicate,),
+    ).fetchone()
+    assert row is not None
+    exclusions = row[3]
+    if isinstance(exclusions, str):
+        exclusions = json.loads(exclusions)
+    return {
+        "numerator": int(row[0]),
+        "denominator": int(row[1]),
+        "not_evaluable": int(row[2]),
+        "exclusions": dict(exclusions),
+    }
+
+
+def test_excluded_subjects_are_disclosed_never_clamped(conn: object) -> None:
+    """P35.20a / ED-42 (F-134): the numerator counts only subjects whose CURRENT
+    envelope picked a publishable winner; every excluded subject is a NAMED class
+    on the row — ``resolved + Σexcluded = claimed``, never a clamped N-of-N."""
+    seeded = _seed_two_subjects(conn)
+    prereqs = seeded["prereqs"]
+    s2_pred_a = _claim(conn, prereqs, seeded["s2"], PRED_A, 9, None)
+    _resolution(conn, seeded["s1"], PRED_A, seeded["claim_a"])  # resolved publishable
+    _resolution(conn, seeded["s2"], PRED_A, None)  # unresolved_conflict — withheld
+    materialize_coverage(conn, negative_space=False)
+    row = _ratio_row(conn, PRED_A)
+    assert (row["numerator"], row["denominator"]) == (1, 2)
+    assert row["not_evaluable"] == 1
+    assert row["exclusions"]["conflicted"] == 1
+    assert row["numerator"] + row["not_evaluable"] == row["denominator"]
+    # The disclosure rides the surface seam as data, not prose.
+    [current] = [
+        r
+        for r in read_materialized_coverage(conn)
+        if r["metric_method"] == "reconciliation_ratio" and r["predicate_id"] == PRED_A
+    ]
+    assert current["exclusions"]["conflicted"] == 1
+    assert current["not_evaluable"] == 1.0
+    # s2's own claim id is unused but keeps the fixture honest (the claim exists).
+    assert s2_pred_a is not None
+
+
+def test_a_withheld_winning_claim_is_disclosed_as_withheld(conn: object) -> None:
+    """A resolved value whose winning claim fails the publication-disposition gate
+    is EXCLUDED as ``withheld`` — never counted and never silently dropped."""
+    seeded = _seed_two_subjects(conn)
+    prereqs = seeded["prereqs"]
+    withheld_claim = _claim(conn, prereqs, seeded["s2"], PRED_A, 9, None)
+    _resolution(conn, seeded["s1"], PRED_A, seeded["claim_a"])
+    _resolution(conn, seeded["s2"], PRED_A, withheld_claim)
+    # The append-only disposition registry withholds the winning claim.
+    conn.execute(
+        "INSERT INTO publication_disposition(target_kind,target_id,disposition,"
+        "reason_category,authority,policy_version) "
+        "VALUES('claim',%s,'withhold','withheld_after_review','fixture','pv/1')",
+        (str(withheld_claim),),
+    )
+    materialize_coverage(conn, negative_space=False)
+    row = _ratio_row(conn, PRED_A)
+    assert (row["numerator"], row["denominator"]) == (1, 2)
+    assert row["exclusions"]["withheld"] == 1
+    assert row["exclusions"]["conflicted"] == 0
+    assert row["numerator"] + row["not_evaluable"] == row["denominator"]
+
+
+def test_numerator_counts_only_subjects_in_the_denominator_by_join(conn: object) -> None:
+    """A resolution envelope for a subject WITHOUT a claimed tier-0 predicate row
+    can never inflate the numerator — the numerator is a subset of the claimed
+    population BY JOIN (GQ-16)."""
+    seeded = _seed_two_subjects(conn)
+    prereqs = seeded["prereqs"]
+    # s3 has a resolution envelope for PRED_A but NO PRED_A claim — it is not
+    # in the denominator, so it can never enter the numerator either.
+    s3 = conn.execute(
+        "INSERT INTO entity(entity_type) VALUES('deployment') RETURNING entity_id"
+    ).fetchone()[0]
+    orphan = _claim(conn, prereqs, s3, PRED_B, 1, None)
+    _resolution(conn, s3, PRED_A, orphan)  # resolved, but s3 claims no PRED_A
+    _resolution(conn, seeded["s1"], PRED_A, seeded["claim_a"])
+    materialize_coverage(conn, negative_space=False)
+    row = _ratio_row(conn, PRED_A)
+    # Only s1 claims PRED_A at tier-0 — the denominator is {s1} alone, and the
+    # numerator can never reach outside it (s3's envelope is invisible here).
+    assert (row["numerator"], row["denominator"]) == (1, 1)
+    assert row["numerator"] + row["not_evaluable"] == row["denominator"]
+
+
+def test_the_ratio_check_refuses_exclusions_that_do_not_reconcile(conn: object) -> None:
+    """The ``coverage_ratio_exclusions_sum`` CHECK pins the disclosure at the DB:
+    a reconciliation_ratio row whose numerator + not_evaluable ≠ denominator is
+    refused — an N-of-N can never be written beside excluded subjects."""
+    # The honest disclosing row lands.
+    conn.execute(
+        "INSERT INTO coverage_record(absence_kind, metric_method, metric_label,"
+        " named_denominator, numerator, denominator, not_evaluable, exclusions,"
+        " metric_value, input_digest) "
+        "VALUES('not_applicable','reconciliation_ratio','x','named',5,10,5,"
+        "'{\"conflicted\":5}','0.5','digest-ok-reconcile')"
+    )
+    # …but a ratio whose excluded count does not reconstruct its denominator is
+    # refused — an N-of-N can never be written beside excluded subjects. (Last:
+    # the expected violation aborts the test transaction.)
+    with pytest.raises(psycopg.errors.CheckViolation):
+        conn.execute(
+            "INSERT INTO coverage_record(absence_kind, metric_method, metric_label,"
+            " named_denominator, numerator, denominator, not_evaluable, exclusions,"
+            " metric_value, input_digest) "
+            "VALUES('not_applicable','reconciliation_ratio','x','named',5,10,0,"
+            "'{\"conflicted\":5}','0.5','digest-bad-reconcile')"
+        )
+
+
+def test_a_pre_exclusions_row_still_satisfies_the_check(conn: object) -> None:
+    """Back-compat: a reconciliation row WITHOUT exclusions (pre-P35.20a shape —
+    ``exclusions IS NULL``) is accepted; the CHECK constrains only rows that
+    disclose (``exclusions IS NULL OR numerator + not_evaluable = denominator``)."""
+    conn.execute(
+        "INSERT INTO coverage_record(absence_kind, metric_method, metric_label,"
+        " named_denominator, numerator, denominator, not_evaluable,"
+        " metric_value, input_digest) "
+        "VALUES('not_applicable','reconciliation_ratio','x','named',5,10,5,"
+        "'0.5','digest-legacy-reconcile')"
+    )
 
 
 def test_an_unresolved_conflict_is_never_counted_as_a_resolved_value(conn: object) -> None:

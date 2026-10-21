@@ -464,3 +464,18 @@ seed-commit e6b8200e
 # subject.
 # Scope: findings attributed to 56d0b7f9 only; no other commit borrows the exemption.
 seed-commit 56d0b7f9
+
+# ── P35.19 run-ledger head-record append-position exemption (recorded 2026-10-18) ──
+# fabd79b2 (the P35.20a post-closeout/dispatch-boundary record commit) appended
+# P35.19's final pushed head `4909c141` inside the closed run ledger's
+# `## Pushed heads (verbatim)` section rather than at EOF — flagged by the
+# PR-range history guard as append-position (BM-INDEX-02, 5 findings). The
+# section is the ledger's designated verbatim head list and already carries the
+# record-commit heads the exempted 56d0b7f9 block added in the same position;
+# moving this one head to EOF would split the verbatim list the section exists
+# to hold. Append-only is preserved by this declaration (same mechanism as the
+# 56d0b7f9/ef1fb3bf blocks above; no line was removed or rewritten — the
+# exemption covers insertions only).
+# Scope: findings attributed to fabd79b2 only; no other commit borrows the
+# exemption.
+seed-commit fabd79b2

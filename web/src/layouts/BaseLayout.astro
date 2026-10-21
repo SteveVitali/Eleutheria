@@ -68,7 +68,12 @@ const noindex = Astro.props.noindex ?? false;
 const siteMeta = getSiteMetadata();
 const asOf = Astro.props.asOf ?? siteMeta.asOf;
 const rulesetVersion = Astro.props.rulesetVersion ?? siteMeta.rulesetVersion;
-// P30.3: a real-data build's site-wide default is derived from the export itself — never
+// P30.3 + P35.20a (ED-41): the "How we know this" contract — a page either supplies its
+// OWN emitted provenance row (a per-dossier/per-surface summary, scope "page") or it
+// renders the SITE-WIDE summary explicitly labelled site-wide (scope "site"). The
+// silent version of this fallback is dead: site totals can never carry a surface's
+// name, because the label always names the scope the numbers were actually counted
+// over. A real-data build's site-wide default derives from the export itself — never
 // the committed OKC demo summary (`DEFAULT_PROVENANCE` stays the fixtures-mode default).
 const provenance = Astro.props.provenance ?? getSiteProvenance();
 // P34.11 (QW-6, F-05/F-132): when a page supplies its own provenance summary it is

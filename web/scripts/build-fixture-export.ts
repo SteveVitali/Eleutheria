@@ -235,6 +235,25 @@ analytic(
         site: DEFAULT_PROVENANCE,
         corrections: CORRECTIONS_PROVENANCE,
         research_queue: RESEARCH_QUEUE_PROVENANCE,
+        // P35.20a / ED-41: one provenance row per dossier slug — the surface the
+        // data layer's `getDossierProvenance` reads. These are fixture values
+        // (the harness is a test seam); the spine export derives each dossier's
+        // row from the claims backing ITS sites. A dossier with no row here
+        // falls back to the site-wide summary labelled site-wide.
+        dossiers: Object.fromEntries(
+          [...DOSSIERS, ...JURISDICTION_DOSSIERS].map((d) => [
+            d.slug,
+            {
+              artifact_count: 1,
+              tier_distribution: { W2: 1 },
+              source_independence_count: 1,
+              date_range: { earliest: AS_OF.as_of_world, latest: AS_OF.as_of_world },
+              rules_applied: [RULESET_VERSION],
+              human_review_status: "unreviewed",
+              denominator: `the claims backing the ${d.slug} dossier's sites (fixture values)`,
+            },
+          ]),
+        ),
       },
     },
   ),

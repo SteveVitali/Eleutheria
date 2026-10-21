@@ -949,6 +949,28 @@ export function getCaptureDiff(): [Capture, Capture] | null {
   return DIFF_CAPTURES;
 }
 
+/**
+ * The per-dossier "How we know this" summary (ED-41 / SIG-UI-044). Export mode
+ * reads `surfaces.dossiers[<slug>]` — the provenance row the spine export emits
+ * scoped to the claims backing THAT dossier's sites. When no row was emitted
+ * for the key (a pre-P35.20a export, or a non-jurisdiction surface), `undefined`
+ * returns so the layout renders the site-wide summary labelled site-wide —
+ * the honest fallback, never site totals under the dossier's name. Fixtures
+ * mode → `undefined` (the committed demo dossiers have no emitted rows).
+ */
+export function getDossierProvenance(slug: string): ProvenanceSummary | undefined {
+  if (dataSource() === "fixtures") return undefined;
+  return readAnalytics("provenance", (env) => {
+    const dossiers = (env.surfaces as Record<string, unknown> | undefined)?.dossiers as
+      | Record<string, unknown>
+      | undefined;
+    if (dossiers == null) return undefined; // a pre-change export has no per-dossier rows
+    const summary = dossiers[slug];
+    if (summary == null) return undefined;  // no emitted row for this surface → site-wide
+    return summary as ProvenanceSummary;
+  });
+}
+
 /** The provenance summary for the corrections surface ("How we know this", SIG-UI-044). */
 export function getCorrectionsProvenance(): ProvenanceSummary | undefined {
   if (dataSource() === "export") {

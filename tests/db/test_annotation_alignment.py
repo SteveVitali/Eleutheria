@@ -147,6 +147,10 @@ PAIRS: list[Pair] = [
             "named_denominator": "P28.4 the NAMED denominator, never a total (SIG-METRIC-010; "
             "nullable; CHECK-pinned non-reality when a metric row)",
             "metric_value": "P28.4 the ratio/recall/share value (nullable; NULL on an absence row)",
+            "exclusions": "P35.20a per-class exclusion disclosure (jsonb, nullable) — "
+            "{conflicted, withheld, non_publishable, filtered} beside a reconciliation "
+            "ratio; the materializer sets it, CoverageRecord does not source it "
+            "(coverage_exclusion_disclosure sqitch change; NULL on absence/legacy rows)",
         },
     ),
     Pair(

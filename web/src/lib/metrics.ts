@@ -97,6 +97,16 @@ export interface CoverageMetric {
   population_note: string;
   /** Must be false: SIG never publishes a population total (SIG-METRIC-010). */
   is_population_total: false;
+  /**
+   * ED-42 (F-134): the per-class exclusion disclosure beside a reconciliation
+   * ratio — `{conflicted, withheld, non_publishable, filtered}` counts of the
+   * denominator's subjects that did NOT make the numerator. Optional (absent on
+   * non-ratio metrics); when present the ratio's "N of M" is always honest —
+   * N + `excluded_total` = M, never a clamped N-of-N.
+   */
+  exclusions?: Record<string, number>;
+  /** The summed exclusion count disclosed beside the numerator (ED-42). */
+  excluded_total?: number;
 }
 
 const _FORBIDDEN_DENOMINATORS = /^(reality|the population|all (jurisdictions|devices|agencies)( that exist)?)$/i;

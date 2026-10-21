@@ -33,7 +33,7 @@ from exports.compartments import assert_separated
 from exports.manifest import BuildSpec
 from exports.shaping import build_shaped_dataset, parse_shaping_claims
 from exports.spine_export import build_spine_export
-from test_spine_export import _rows, _site
+from test_spine_export import _rows, _site, _web
 
 _ANALYTICS_PREFIX = "web/analytics/"
 
@@ -439,7 +439,12 @@ def test_provenance_carries_the_three_surfaces_and_the_wtier_distribution() -> N
     )
     export = _export(claims)
     payload = _analytic(export, "provenance")
-    assert set(payload["surfaces"]) == {"site", "corrections", "research_queue"}
+    assert set(payload["surfaces"]) == {
+        "site",
+        "corrections",
+        "research_queue",
+        "dossiers",
+    }
     site = payload["surfaces"]["site"]
     # The real §10.6 evidence-tier analytics over the publishable claims —
     # R1/D1/I1 claims still-current at as_of → W4 (dispositive).
@@ -448,6 +453,52 @@ def test_provenance_carries_the_three_surfaces_and_the_wtier_distribution() -> N
     assert site["date_range"] == {"earliest": "2026-05-01", "latest": "2026-05-01"}
     assert site["rules_applied"] == ["ruleset/1"]
     assert site["human_review_status"] == "unreviewed"
+
+
+def test_dossier_provenance_is_scoped_to_the_dossiers_own_evidence() -> None:
+    """ED-41 (F-05/F-132): every dossier carries its OWN provenance row — counted
+    over the claims backing that dossier's sites, never the site totals under
+    the dossier's name. Two dossiers with disjoint evidence sets get disjoint
+    numbers; no dossier row may equal the site-wide row unless its scope IS
+    the site."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site(
+        "B", "48.85", "2.35", "Paris", source_id="fr_src", spdx="CC-BY-4.0"
+    )
+    export = _export(claims)
+    payload = _analytic(export, "provenance")
+    dossiers = payload["surfaces"]["dossiers"]
+    web_dossiers = _web(export, "dossiers")
+    # Every dossier the site renders has its own emitted row, keyed by the same
+    # slug — the layout can never look a dossier up and find nothing.
+    assert set(dossiers) == {d["slug"] for d in web_dossiers}
+    assert len(dossiers) == 2
+    okc = dossiers[next(d["slug"] for d in web_dossiers if d["jurisdiction"] == "Oklahoma")]
+    paris = dossiers[next(d["slug"] for d in web_dossiers if d["jurisdiction"] == "Paris")]
+    # Each dossier's row counts ONLY its own claims' sources — never the site
+    # total (2 sources) under a dossier name.
+    assert okc["source_independence_count"] == 1  # src_a only
+    assert paris["source_independence_count"] == 1  # fr_src only
+    # The claims backing each dossier's sites are the dossier's scope — 3 claims
+    # per site here (lat + lon + jurisdiction), tier W4 each.
+    assert okc["tier_distribution"] == {"W4": 3}
+    assert paris["tier_distribution"] == {"W4": 3}
+    # And every dossier row is a complete SIG-UI-044 summary that names its own
+    # scope — never inheriting the site's review posture or denominator.
+    for slug, summary in dossiers.items():
+        for component in (
+            "artifact_count",
+            "tier_distribution",
+            "source_independence_count",
+            "date_range",
+            "rules_applied",
+            "human_review_status",
+            "denominator",
+        ):
+            assert component in summary, f"dossiers[{slug}] is missing {component}"
+        assert summary["human_review_status"] == "unreviewed"
+    # A dossier row can never accidentally BE the site row: the site counts both
+    # sources; each dossier counts its own one.
+    assert okc != payload["surfaces"]["site"]
 
 
 def test_provenance_wtiers_follow_the_ordinal_composition_and_d6_is_untiered() -> None:

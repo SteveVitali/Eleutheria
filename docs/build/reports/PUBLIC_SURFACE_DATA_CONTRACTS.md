@@ -37,6 +37,11 @@ so downstream tickets code against a fixed contract rather than re-deriving it.
   `denominator`, a `population_note`, and `is_population_total: false`. The forbidden-denominator guard
   (`assertCoverageMetric`) rejects "reality"/"all …". A count without a named denominator is not
   publishable.
+- **Exclusions are disclosed beside the ratio (ED-42/F-134, P35.20a).** A reconciliation-ratio
+  `CoverageMetric` MAY carry optional `exclusions` (`{conflicted, withheld, non_publishable, filtered}`)
+  and `excluded_total` — the denominator's subjects that did not make the numerator, as data. When
+  present, `numerator + excluded_total = denominator`: the "N of M" can never read whole while
+  records are excluded.
 - **Coordinate reduction by sensitivity tier (§19.4/§43.3, Part VIII §0.7).** `MapAsset.tier ∈ {0,1,2,3}`
   drives precision; `lat`/`lon` are nullable — a tier-3/mobile/unknown asset publishes NO point, only a
   `JurisdictionIndicator` roll-up. No per-person or per-plate field appears in any surface.

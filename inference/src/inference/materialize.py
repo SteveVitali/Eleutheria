@@ -42,9 +42,11 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from typing import Any
+
+from db.dispositions import claim_eligible_sql
 
 from .completeness import (
     CompletenessMethod,
@@ -57,6 +59,7 @@ from .peer_classes import PeerClass, load_peer_classes
 
 __all__ = [
     "CoverageMaterializeSummary",
+    "EXCLUSION_CLASSES",
     "assert_coverage_row_has_named_denominator",
     "coverage_input_digest",
     "metric_row",
@@ -149,6 +152,7 @@ def coverage_input_digest(row: dict[str, Any]) -> str:
         "numerator": _num(row.get("numerator")),
         "denominator": _num(row.get("denominator")),
         "not_evaluable": _num(row.get("not_evaluable")),
+        "exclusions": row.get("exclusions"),
         "named_denominator": row.get("named_denominator"),
         "metric_value": _num(row.get("metric_value")),
     }
@@ -169,6 +173,7 @@ def metric_row(
     subject_class: str,
     jurisdiction_id: str | None = None,
     predicate_id: str | None = None,
+    exclusions: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     """Map a §32.2 :class:`~inference.denominators.PublishedAggregate` onto a coverage row.
 
@@ -177,6 +182,11 @@ def metric_row(
     ``not_applicable`` — a counted quantity is not a kind of absence. The row is validated
     through :func:`assert_coverage_row_has_named_denominator` before it is returned, so a
     caller cannot construct a total.
+
+    ``exclusions`` (F-134 / ED-42) is the per-class disclosure beside a
+    reconciliation ratio — ``{conflicted, withheld, non_publishable, filtered}`` —
+    persisted on the row so the exclusion counts survive as data, not as a sentence
+    (``numerator + Σexcluded = denominator``).
     """
     row: dict[str, Any] = {
         "subject_id": None,
@@ -193,6 +203,7 @@ def metric_row(
         "numerator": aggregate.count,
         "denominator": aggregate.denominator,
         "not_evaluable": aggregate.not_evaluable,
+        "exclusions": dict(exclusions) if exclusions is not None else None,
         "named_denominator": named_denominator,
         "metric_value": value,
     }
@@ -223,6 +234,7 @@ def absence_row(record: CoverageRecord) -> dict[str, Any]:
         "numerator": None,
         "denominator": None,
         "not_evaluable": None,
+        "exclusions": None,
         "named_denominator": None,
         "metric_value": None,
     }
@@ -270,34 +282,82 @@ def read_provenance_completeness(
     return provenance_completeness(claim_ids, claims_with_resolvable_evidence=with_evidence)
 
 
+#: The exclusion classes a per-predicate reconciliation ratio discloses beside its
+#: numerator (F-134 / ED-42). Every claimed subject lands in exactly one of these or
+#: the numerator — ``resolved + Σexcluded = claimed`` by construction:
+#:
+#: * ``conflicted`` — a current §16.4 envelope exists but picked NO winner
+#:   (``unresolved_conflict``/``insufficient`` — the value is withheld as
+#:   conflicting, F-134's "5,290 withheld").
+#: * ``withheld`` — a current envelope picked a winner whose claim fails the
+#:   publication-disposition eligibility rule (claim/subject/object withheld).
+#: * ``non_publishable`` — a current envelope picked a winner that is eligible but
+#:   not currently publishable (non-tier-0 or a lapsed/superseded ``sys_period`` —
+#:   the resolved value is not what a public surface would show).
+#: * ``filtered`` — the subject is claimed but NO current resolution envelope
+#:   covers it at all (filtered out of the resolved set — the materializer has
+#:   no live decision for it).
+EXCLUSION_CLASSES: tuple[str, ...] = ("conflicted", "withheld", "non_publishable", "filtered")
+
+#: Envelope states that carry no winning claim — a value no defensible resolution
+#: resolved (§3.1: an unresolved_conflict resolves nothing).
+_CONFLICTED_STATES = frozenset({"unresolved_conflict", "insufficient"})
+
+
+def _table_present(conn: Any, table: str) -> bool:
+    row = conn.execute("SELECT to_regclass(%s)", (table,)).fetchone()
+    return bool(row and row[0])
+
+
 def read_predicate_reconciliation(
     conn: Any, *, jurisdiction: str | None = None
 ) -> list[dict[str, Any]]:
     """Per-predicate reconciliation ratio over the resolved spine (SIG-METRIC-009).
 
-    For each predicate, the number of subjects that carry a materialized §16.4 resolution
-    decision, of the subjects that carry a tier-0 claim for that predicate — "N of M
-    subjects with a <predicate> claim have a resolved value". A per-agency-style
-    reconciliation ratio, each carrying its named denominator; NEVER extrapolated to a
-    total. Returns ``[{predicate_id, claimed_subjects, resolved_subjects}]``.
+    For each predicate, the number of subjects whose CURRENT §16.4 envelope picked a
+    winning claim that is itself publishable (tier-0, currently-valid, publication-
+    eligible), OF the subjects that carry a tier-0, currently-valid claim for that
+    predicate — "N of M subjects with a <predicate> claim have a resolved publishable
+    value". A per-agency-style reconciliation ratio, each carrying its named
+    denominator; NEVER extrapolated to a total.
+
+    F-134 / ED-42: the numerator is computed BY JOIN against the denominator set —
+    never a second population clamped with ``min(resolved, claimed)`` (the clamp let
+    "232,625 of 232,625" read true while 5,290 subjects were withheld as
+    conflicting). Every claimed subject lands in exactly one bucket — the numerator
+    or one exclusion class — and the excluded counts ride the row for disclosure
+    (``resolved + Σexcluded = claimed``).
+
+    Returns ``[{predicate_id, claimed_subjects, resolved_subjects, exclusions}]`` —
+    ``exclusions`` carries every class with its count (zeros included, so a surface
+    can always say "none withheld").
     """
     params: list[Any] = []
     juris = _jurisdiction_filter(jurisdiction, params)
     claimed = conn.execute(
-        "SELECT c.predicate_id, count(DISTINCT c.subject_id) "
+        "SELECT c.predicate_id, c.subject_id::text "
         "  FROM claim c "
         " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period)"
         + juris
-        + " GROUP BY c.predicate_id ORDER BY c.predicate_id",
+        + " GROUP BY c.predicate_id, c.subject_id ORDER BY c.predicate_id",
         tuple(params),
     ).fetchall()
-    claimed_by_pred = {str(r[0]): int(r[1]) for r in claimed}
+    claimed_by_pred: dict[str, set[str]] = {}
+    for r in claimed:
+        claimed_by_pred.setdefault(str(r[0]), set()).add(str(r[1]))
 
-    # Resolved subjects per predicate — restricted to the same jurisdiction scope so the
-    # numerator can never exceed its denominator. Only a decision that picked a winning
-    # claim is a "resolved value": a first-class ``unresolved_conflict`` envelope (both
-    # sides retained, §3.1) resolves nothing and must never be counted as resolved
-    # (P30.2 finding COVERAGE-RESOLVED-01 — the hosted 299-vs-190 conflict was counted).
+    # The P32.5/ADR-124 claim-eligibility fragment — the same SQL twin the export
+    # inlines; a pre-P32.5 spine (no disposition registry — and no organization
+    # table the entity leg of the fragment consults) answers ``true``.
+    has_registry = _table_present(conn, "publication_disposition") and _table_present(
+        conn, "organization"
+    )
+    claim_gate = claim_eligible_sql("wc") if has_registry else "true"
+
+    # Current envelopes for the claimed subjects — ``upper_inf(r.sys_period)`` is
+    # the "current decision" filter the old numerator lacked: a superseded winning
+    # resolution is history, never a resolved value (P31.7 resightings close the
+    # prior row's sys_period before a new decision lands).
     rparams: list[Any] = []
     rjuris = ""
     if jurisdiction:
@@ -305,23 +365,88 @@ def read_predicate_reconciliation(
         rjuris = (
             " AND r.subject_id IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
         )
-    resolved = conn.execute(
-        "SELECT r.predicate_id, count(DISTINCT r.subject_id) "
-        "  FROM resolution r WHERE r.winning_claim IS NOT NULL"
-        + rjuris
-        + " GROUP BY r.predicate_id",
+    envelopes = conn.execute(
+        "SELECT r.subject_id::text, r.predicate_id, r.winning_claim::text,"
+        "       r.contradiction_state "
+        "  FROM resolution r WHERE upper_inf(r.sys_period)" + rjuris + " ORDER BY r.subject_id",
         tuple(rparams),
     ).fetchall()
-    resolved_by_pred = {str(r[0]): int(r[1]) for r in resolved}
+    env_by_pair: dict[tuple[str, str], list[tuple[str | None, str]]] = {}
+    winners: set[str] = set()
+    for subject_id, predicate_id, winning_claim, state in envelopes:
+        pair = (str(predicate_id), str(subject_id))
+        env_by_pair.setdefault(pair, []).append(
+            (None if winning_claim is None else str(winning_claim), str(state))
+        )
+        if winning_claim is not None:
+            winners.add(str(winning_claim))
+
+    # The publishability of every winning claim, batch-checked on the same
+    # claim-level rule the denominator's surfaces apply: tier-0 AND currently
+    # valid AND publication-eligible. A winner row invisible to this role (a
+    # non-tier-0 claim under RLS) or a lapsed sys_period resolves to a
+    # non-publishable verdict.
+    win_ok: dict[str, str] = {}
+    if winners:
+        rows = conn.execute(
+            "SELECT wc.claim_id::text,"
+            "       (wc.sensitivity_tier = 0 AND upper_inf(wc.sys_period)) AS pub_tier,"
+            f"       ({claim_gate}) AS eligible"
+            "  FROM claim wc WHERE wc.claim_id = ANY(%s::uuid[])",
+            (sorted(winners),),
+        ).fetchall()
+        for claim_id, pub_tier, eligible in rows:
+            cid = str(claim_id)
+            if not bool(eligible):
+                win_ok[cid] = "withheld"
+            elif not bool(pub_tier):
+                win_ok[cid] = "non_publishable"
+            else:
+                win_ok[cid] = "resolved"
+        for cid in winners - set(win_ok):
+            win_ok[cid] = "non_publishable"  # invisible to this role — not publishable
 
     out: list[dict[str, Any]] = []
-    for predicate_id, claimed_subjects in claimed_by_pred.items():
-        resolved_subjects = min(resolved_by_pred.get(predicate_id, 0), claimed_subjects)
+    for predicate_id in sorted(claimed_by_pred):
+        subjects = claimed_by_pred[predicate_id]
+        exclusions = {k: 0 for k in EXCLUSION_CLASSES}
+        resolved_subjects = 0
+        for subject_id in subjects:
+            envs = env_by_pair.get((predicate_id, subject_id), [])
+            if not envs:
+                exclusions["filtered"] += 1
+                continue
+            verdicts = {
+                "resolved": 0,
+                "withheld": 0,
+                "non_publishable": 0,
+                "unresolved": 0,
+            }
+            for winning_claim, state in envs:
+                if winning_claim is None or state in _CONFLICTED_STATES:
+                    verdicts["unresolved"] += 1
+                else:
+                    verdicts[win_ok.get(winning_claim, "non_publishable")] += 1
+            if verdicts["resolved"]:
+                resolved_subjects += 1
+            elif verdicts["withheld"]:
+                exclusions["withheld"] += 1
+            elif verdicts["non_publishable"]:
+                exclusions["non_publishable"] += 1
+            else:
+                # Envelopes exist but none picked a defensible winner.
+                exclusions["conflicted"] += 1
+        claimed_subjects = len(subjects)
+        # The disclosure invariant — a claimed subject can never fall through
+        # the buckets: the excluded counts + the numerator reconstruct the
+        # denominator exactly (SIG-METRIC-009/003).
+        assert resolved_subjects + sum(exclusions.values()) == claimed_subjects
         out.append(
             {
                 "predicate_id": predicate_id,
                 "claimed_subjects": claimed_subjects,
                 "resolved_subjects": resolved_subjects,
+                "exclusions": exclusions,
             }
         )
     return out
@@ -415,10 +540,10 @@ def _insert_coverage(conn: Any, row: dict[str, Any]) -> bool:
         "INSERT INTO coverage_record"
         "(subject_id, subject_class, jurisdiction_id, predicate_id, absence_kind, "
         " sources_searched, searched_at, searched_by, search_method, "
-        " metric_method, metric_label, numerator, denominator, not_evaluable, "
+        " metric_method, metric_label, numerator, denominator, not_evaluable, exclusions, "
         " named_denominator, metric_value, input_digest) "
         "VALUES (%s, %s, %s, %s, %s, %s, %s::timestamptz, %s, %s, "
-        " %s, %s, %s, %s, %s, %s, %s, %s) "
+        " %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s) "
         "ON CONFLICT (input_digest) WHERE input_digest IS NOT NULL "
         "DO NOTHING RETURNING coverage_id",
         (
@@ -436,6 +561,7 @@ def _insert_coverage(conn: Any, row: dict[str, Any]) -> bool:
             row.get("numerator"),
             row.get("denominator"),
             row.get("not_evaluable"),
+            json.dumps(row.get("exclusions")) if row.get("exclusions") is not None else None,
             row.get("named_denominator"),
             row.get("metric_value"),
             row["input_digest"],
@@ -467,18 +593,23 @@ def _metric_rows_for_spine(conn: Any, *, jurisdiction: str | None) -> Iterable[d
             jurisdiction_id=None,
         )
 
-    # §32.5 per-predicate reconciliation ratio — resolved subjects of claimed subjects.
+    # §32.5 per-predicate reconciliation ratio — resolved publishable subjects of
+    # claimed subjects, with the excluded classes disclosed (F-134 / ED-42):
+    # ``not_evaluable`` carries the excluded total and ``exclusions`` the per-class
+    # breakdown, so ``numerator + not_evaluable = denominator`` always (and the
+    # ratio can never read N of N while an exclusion exists).
     for rec in read_predicate_reconciliation(conn, jurisdiction=jurisdiction):
         pred = rec["predicate_id"]
         claimed = rec["claimed_subjects"]
         resolved = rec["resolved_subjects"]
+        exclusions = rec["exclusions"]
         if claimed <= 0:
             continue
         agg = PublishedAggregate(
             label=f"subjects with a resolved {pred} value",
             count=resolved,
             denominator=claimed,
-            not_evaluable=0,
+            not_evaluable=sum(exclusions.values()),
         )
         yield metric_row(
             agg,
@@ -488,6 +619,7 @@ def _metric_rows_for_spine(conn: Any, *, jurisdiction: str | None) -> Iterable[d
             subject_class="subject",
             jurisdiction_id=None,
             predicate_id=pred,
+            exclusions=exclusions,
         )
 
 
@@ -572,10 +704,18 @@ def read_materialized_coverage(conn: Any, *, role: str | None = None) -> list[di
     """
     if role:
         conn.execute(f"SET ROLE {role}")
+    # Back-compat: a pre-P35.20a spine lacks the ``exclusions`` column — select NULL
+    # rather than aborting the whole surface read (information_schema probe is
+    # non-erroring, the same posture _MATERIALIZED_SEAMS' guards take).
+    has_exclusions = conn.execute(
+        "SELECT 1 FROM information_schema.columns"
+        "  WHERE table_name = 'coverage_record' AND column_name = 'exclusions'"
+    ).fetchone()
     rows = conn.execute(
         "SELECT coverage_id::text, subject_id::text, subject_class, jurisdiction_id::text, "
         "       predicate_id, absence_kind, sources_searched, "
         "       metric_method, metric_label, numerator, denominator, not_evaluable, "
+        f"       {'exclusions' if has_exclusions else 'NULL'}, "
         "       named_denominator, metric_value "
         "  FROM ("
         "    SELECT DISTINCT ON (" + _COVERAGE_KEY + ") * "
@@ -587,6 +727,9 @@ def read_materialized_coverage(conn: Any, *, role: str | None = None) -> list[di
     ).fetchall()
     out: list[dict[str, Any]] = []
     for r in rows:
+        exclusions = r[12]
+        if isinstance(exclusions, str):
+            exclusions = json.loads(exclusions)
         out.append(
             {
                 "coverage_id": r[0],
@@ -601,8 +744,9 @@ def read_materialized_coverage(conn: Any, *, role: str | None = None) -> list[di
                 "numerator": None if r[9] is None else float(r[9]),
                 "denominator": None if r[10] is None else float(r[10]),
                 "not_evaluable": None if r[11] is None else float(r[11]),
-                "named_denominator": r[12],
-                "metric_value": None if r[13] is None else float(r[13]),
+                "exclusions": exclusions,
+                "named_denominator": r[13],
+                "metric_value": None if r[14] is None else float(r[14]),
             }
         )
     return out
