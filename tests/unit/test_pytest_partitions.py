@@ -307,3 +307,24 @@ def test_makefile_reaches_test_par_and_ci_yml_uses_it() -> None:
         and "PYTEST_PARTITIONS_CMD"
         not in (REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text()
     )
+
+
+def test_committed_table_keeps_bare_conftest_importers_isolated() -> None:
+    """tests/db and tests/e2e re-import helpers via ``sys.modules['conftest']``,
+    so a second conftest dir on their partition line shadows it (the measured
+    D1 constraint — the api conftest produced 27 db collection errors)."""
+    table = REPO_ROOT / "scripts" / "ci" / "pytest_partitions.txt"
+    lines = [
+        line.split()
+        for line in table.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    conftest_dirs = {p.parent.as_posix() for p in REPO_ROOT.glob("tests/*/conftest.py")}
+    bare_importers = {"tests/db", "tests/e2e"}
+    for tokens in lines:
+        for token in tokens:
+            if token in bare_importers:
+                shared = set(tokens) - {token}
+                assert not shared & conftest_dirs, (
+                    f"{token} shares a partition line with conftest dirs {shared & conftest_dirs}"
+                )
